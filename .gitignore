@@ -13,3 +13,8 @@ Plugins
 *.suo
 *.xcodeproj
 *.xcworkspace
+/Content/Vefects
+/Content/StylizedShadersPack
+/Content/scifi_modern_GUI
+/Content/SciFi_Impacts
+/Content/MagicOrb_EnergyCore
