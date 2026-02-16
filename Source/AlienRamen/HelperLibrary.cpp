@@ -151,118 +151,57 @@ static bool ArePropertiesCompatible(const FProperty* Src, const FProperty* Dst)
 	return false;
 }
 
-static bool ExtractWildcardStruct(FFrame& Stack, const UStruct*& OutStructType, const void*& OutStructPtr)
-{
-	OutStructType = nullptr;
-	OutStructPtr = nullptr;
-
-	Stack.MostRecentProperty = nullptr;
-	Stack.MostRecentPropertyAddress = nullptr;
-
-	// Step one parameter from the VM stack (the wildcard)
-	Stack.StepCompiledIn<FProperty>(nullptr);
-
-	FProperty* PassedProperty = Stack.MostRecentProperty;
-	void* PassedPropertyAddress = Stack.MostRecentPropertyAddress;
-
-	if (!PassedProperty || !PassedPropertyAddress)
-	{
-		return false;
-	}
-
-	// Make sure it's *actually* a struct wildcard
-	const FStructProperty* StructProp = CastField<FStructProperty>(PassedProperty);
-	if (!StructProp || !StructProp->Struct)
-	{
-		return false;
-	}
-
-	OutStructType = StructProp->Struct;
-	OutStructPtr = PassedPropertyAddress;
-	return true;
-}
-
 static void DebugLog(bool bEnableLog, const FString& Msg)
 {
 	if (!bEnableLog) return;
 	UE_LOG(LogAlienRamenHelperLibrary, Log, TEXT("%s"), *Msg);
 }
 
-
 // -------------------------
-// CustomThunks
+// Public API
 // -------------------------
 
-DEFINE_FUNCTION(UHelperLibrary::execExtractObjectToStructByName)
+void UHelperLibrary::ApplyStructToObjectByName(UObject* Target, const FInstancedStruct& StructData)
 {
-	P_GET_OBJECT(UObject, Source);
-
-	const UStruct* StructType = nullptr;
-	const void* StructPtrConst = nullptr;
-	const bool bHasStruct = ExtractWildcardStruct(Stack, StructType, StructPtrConst);
-
-	P_GET_PROPERTY_REF(FIntProperty, OutPropertiesCopied);
-	P_GET_PROPERTY_REF(FIntProperty, OutPropertiesSkipped);
-	P_FINISH;
-
-	OutPropertiesCopied = 0;
-	OutPropertiesSkipped = 0;
-
-	if (!Source || !bHasStruct)
+	if (!Target)
 	{
 		UE_LOG(LogAlienRamenHelperLibrary, Warning,
-			TEXT("ExtractObjectToStructByName: invalid input (Source=%s, HasStruct=%d)"),
-			*GetNameSafe(Source), bHasStruct ? 1 : 0);
+			TEXT("ApplyStructToObjectByName: invalid input (Target=null)"));
 		return;
 	}
 
-	void* StructPtr = const_cast<void*>(StructPtrConst);
+	if (!StructData.IsValid())
+	{
+		UE_LOG(LogAlienRamenHelperLibrary, Warning,
+			TEXT("ApplyStructToObjectByName: invalid input (StructData is not valid) Target=%s"),
+			*GetNameSafe(Target));
+		return;
+	}
 
-	ExtractObjectToStructByName_Impl(
-		Source,
-		StructType,
-		StructPtr,
-		&OutPropertiesCopied,
-		&OutPropertiesSkipped,
-		/*bEnableLog*/ true,
-		/*bResetStructToDefaults*/ true
-	);
+	const UScriptStruct* StructType = StructData.GetScriptStruct();
+	const void* StructPtr = StructData.GetMemory();
+
+	ApplyStructToObjectByName_Impl(Target, StructType, StructPtr, /*bEnableLog*/ true);
 }
 
-DEFINE_FUNCTION(UHelperLibrary::execApplyStructToObjectByName)
+FInstancedStruct UHelperLibrary::ExtractObjectToStructByName(UObject* Source, UScriptStruct* StructType)
 {
-	P_GET_OBJECT(UObject, Target);
+	FInstancedStruct Out;
 
-	const UStruct* StructType = nullptr;
-	const void* StructPtr = nullptr;
-	const bool bHasStruct = ExtractWildcardStruct(Stack, StructType, StructPtr);
-
-	P_GET_PROPERTY_REF(FIntProperty, OutPropertiesCopied);
-	P_GET_PROPERTY_REF(FIntProperty, OutPropertiesSkipped);
-	P_FINISH;
-
-	OutPropertiesCopied = 0;
-	OutPropertiesSkipped = 0;
-
-	if (!Target || !bHasStruct)
+	if (!Source || !StructType)
 	{
 		UE_LOG(LogAlienRamenHelperLibrary, Warning,
-			TEXT("ApplyStructToObjectByName: invalid input (Target=%s, HasStruct=%d)"),
-			*GetNameSafe(Target), bHasStruct ? 1 : 0);
-		return;
+			TEXT("ExtractObjectToStructByName: invalid input (Source=%s, StructType=%s)"),
+			*GetNameSafe(Source), *GetNameSafe(StructType));
+		return Out;
 	}
 
-	ApplyStructToObjectByName_Impl(
-		Target,
-		StructType,
-		StructPtr,
-		&OutPropertiesCopied,
-		&OutPropertiesSkipped,
-		nullptr,
-		nullptr,
-		nullptr,
-		/*bEnableLog*/ true
-	);
+	Out.InitializeAs(StructType);
+
+	void* StructPtr = Out.GetMutableMemory();
+	ExtractObjectToStructByName_Impl(Source, StructType, StructPtr, /*bEnableLog*/ true, /*bResetStructToDefaults*/ false);
+
+	return Out;
 }
 
 // -------------------------
@@ -273,8 +212,6 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 	UObject* Source,
 	const UStruct* StructType,
 	void* StructPtr,
-	int32* OutPropertiesCopied,
-	int32* OutPropertiesSkipped,
 	bool bEnableLog,
 	bool bResetStructToDefaults)
 {
@@ -290,8 +227,8 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 		*GetNameSafe(SourceClass),
 		*GetNameSafe(StructType)));
 
-	// Reset output struct to defaults so the result behaves like a "fresh snapshot".
-	// IMPORTANT: Destroy then Initialize to avoid leaking / double-owning dynamic fields (TArray/TMap/FString/etc).
+	// Only needed when caller passes in an already-live struct buffer they want reset.
+	// For FInstancedStruct::InitializeAs, the memory is already constructed.
 	if (bResetStructToDefaults)
 	{
 		StructType->DestroyStruct(StructPtr);
@@ -307,15 +244,6 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 		SrcByName.Add(NormalizePropNameKey(P), P);
 	}
 
-	auto IncSkipped = [&]()
-		{
-			if (OutPropertiesSkipped) { (*OutPropertiesSkipped)++; }
-		};
-	auto IncCopied = [&]()
-		{
-			if (OutPropertiesCopied) { (*OutPropertiesCopied)++; }
-		};
-
 	// Iterate DEST (struct) properties, find matching SOURCE (object) properties.
 	for (TFieldIterator<FProperty> It(StructType); It; ++It)
 	{
@@ -330,7 +258,6 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 
 		if (Candidates.Num() == 0)
 		{
-			IncSkipped();
 			DebugLog(bEnableLog, FString::Printf(TEXT("  MISSING ON SOURCE: %s"), *CleanName.ToString()));
 			continue;
 		}
@@ -338,7 +265,6 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 		FProperty* BestSrc = nullptr;
 		for (FProperty* Cand : Candidates)
 		{
-			// Src = object property, Dst = struct property.
 			if (ArePropertiesCompatible(Cand, DstProp))
 			{
 				BestSrc = Cand;
@@ -348,23 +274,19 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 
 		if (!BestSrc)
 		{
-			IncSkipped();
-
-			const FString SrcType = Candidates[0] ? Candidates[0]->GetClass()->GetName() : TEXT("Unknown");
-			const FString DstType = DstProp->GetClass()->GetName();
+			const FString SrcTypeName = Candidates[0] ? Candidates[0]->GetClass()->GetName() : TEXT("Unknown");
+			const FString DstTypeName = DstProp->GetClass()->GetName();
 
 			DebugLog(bEnableLog, FString::Printf(TEXT("  TYPE MISMATCH: %s (Src=%s Dst=%s)"),
-				*CleanName.ToString(), *SrcType, *DstType));
+				*CleanName.ToString(), *SrcTypeName, *DstTypeName));
 			continue;
 		}
 
 		const void* SrcValuePtr = BestSrc->ContainerPtrToValuePtr<void>(Source);
 		void* DstValuePtr = DstProp->ContainerPtrToValuePtr<void>(StructPtr);
 
-		// Copy using the DEST property so the copy semantics match the struct field.
 		DstProp->CopyCompleteValue(DstValuePtr, SrcValuePtr);
 
-		IncCopied();
 		DebugLog(bEnableLog, FString::Printf(TEXT("  COPIED: %s"), *CleanName.ToString()));
 	}
 }
@@ -373,11 +295,6 @@ void UHelperLibrary::ApplyStructToObjectByName_Impl(
 	UObject* Target,
 	const UStruct* StructType,
 	const void* StructPtr,
-	int32* OutPropertiesCopied,
-	int32* OutPropertiesSkipped,
-	TArray<FName>* OutCopiedNames,
-	TArray<FName>* OutMissingNames,
-	TArray<FName>* OutTypeMismatchNames,
 	bool bEnableLog)
 {
 	if (!Target || !StructType || !StructPtr)
@@ -401,15 +318,6 @@ void UHelperLibrary::ApplyStructToObjectByName_Impl(
 		DstByName.Add(NormalizePropNameKey(P), P);
 	}
 
-	auto IncSkipped = [&]()
-		{
-			if (OutPropertiesSkipped) { (*OutPropertiesSkipped)++; }
-		};
-	auto IncCopied = [&]()
-		{
-			if (OutPropertiesCopied) { (*OutPropertiesCopied)++; }
-		};
-
 	for (TFieldIterator<FProperty> It(StructType); It; ++It)
 	{
 		FProperty* SrcProp = *It;
@@ -423,8 +331,6 @@ void UHelperLibrary::ApplyStructToObjectByName_Impl(
 
 		if (Candidates.Num() == 0)
 		{
-			IncSkipped();
-			if (OutMissingNames) { OutMissingNames->Add(CleanName); }
 			DebugLog(bEnableLog, FString::Printf(TEXT("  MISSING: %s"), *CleanName.ToString()));
 			continue;
 		}
@@ -441,14 +347,11 @@ void UHelperLibrary::ApplyStructToObjectByName_Impl(
 
 		if (!BestDst)
 		{
-			IncSkipped();
-			if (OutTypeMismatchNames) { OutTypeMismatchNames->Add(CleanName); }
-
-			const FString SrcType = SrcProp->GetClass()->GetName();
-			const FString DstType = Candidates[0] ? Candidates[0]->GetClass()->GetName() : TEXT("Unknown");
+			const FString SrcTypeName = SrcProp->GetClass()->GetName();
+			const FString DstTypeName = Candidates[0] ? Candidates[0]->GetClass()->GetName() : TEXT("Unknown");
 
 			DebugLog(bEnableLog, FString::Printf(TEXT("  TYPE MISMATCH: %s (Src=%s Dst=%s)"),
-				*CleanName.ToString(), *SrcType, *DstType));
+				*CleanName.ToString(), *SrcTypeName, *DstTypeName));
 			continue;
 		}
 
@@ -457,9 +360,6 @@ void UHelperLibrary::ApplyStructToObjectByName_Impl(
 
 		BestDst->CopyCompleteValue(DstValuePtr, SrcValuePtr);
 
-		IncCopied();
-		if (OutCopiedNames) { OutCopiedNames->Add(CleanName); }
 		DebugLog(bEnableLog, FString::Printf(TEXT("  COPIED: %s"), *CleanName.ToString()));
 	}
 }
-

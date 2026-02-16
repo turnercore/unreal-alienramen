@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "StructUtils/InstancedStruct.h"
 #include "HelperLibrary.generated.h"
 
 UCLASS()
@@ -10,44 +11,27 @@ class ALIENRAMEN_API UHelperLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-
 	/** Apply matching struct properties to Target by name (case-insensitive). */
-	UFUNCTION(BlueprintCallable, CustomThunk, Category = "AlienRamen|Helpers|Reflection",
-		meta = (CustomStructureParam = "StructData", DisplayName = "Apply Struct To Object (By Name)"))
+	UFUNCTION(BlueprintCallable, Category = "AlienRamen|Helpers|Reflection",
+		meta = (DisplayName = "Apply Struct To Object (By Name)"))
 	static void ApplyStructToObjectByName(
 		UObject* Target,
-		const int32& StructData,
-		int32& OutPropertiesCopied,
-		int32& OutPropertiesSkipped
+		const FInstancedStruct& StructData
 	);
 
-	DECLARE_FUNCTION(execApplyStructToObjectByName);
-
-
-	/** Fill OutStructData from Source by matching property name (case-insensitive) + compatible type. */
-	UFUNCTION(BlueprintCallable, CustomThunk, Category = "AlienRamen|Helpers|Reflection",
-		meta = (CustomStructureParam = "OutStructData", DisplayName = "Extract Object To Struct (By Name)"))
-	static void ExtractObjectToStructByName(
+	/** Create an instance of StructType, fill it from Source by matching property name (case-insensitive). */
+	UFUNCTION(BlueprintCallable, Category = "AlienRamen|Helpers|Reflection",
+		meta = (DisplayName = "Extract Object To Struct (By Name)"))
+	static FInstancedStruct ExtractObjectToStructByName(
 		UObject* Source,
-		int32& OutStructData,
-		int32& OutPropertiesCopied,
-		int32& OutPropertiesSkipped
+		UScriptStruct* StructType
 	);
-
-	DECLARE_FUNCTION(execExtractObjectToStructByName);
-
 
 private:
-
 	static void ApplyStructToObjectByName_Impl(
 		UObject* Target,
 		const UStruct* StructType,
 		const void* StructPtr,
-		int32* OutPropertiesCopied,
-		int32* OutPropertiesSkipped,
-		TArray<FName>* OutCopiedNames,
-		TArray<FName>* OutMissingNames,
-		TArray<FName>* OutTypeMismatchNames,
 		bool bEnableLog
 	);
 
@@ -55,8 +39,6 @@ private:
 		UObject* Source,
 		const UStruct* StructType,
 		void* StructPtr,
-		int32* OutPropertiesCopied,
-		int32* OutPropertiesSkipped,
 		bool bEnableLog,
 		bool bResetStructToDefaults
 	);
