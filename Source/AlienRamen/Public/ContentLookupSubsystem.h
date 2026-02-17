@@ -102,7 +102,7 @@ public:
 	// Validates registry content (duplicate roots, missing tables, etc.)
 	// Returns true if it looks usable.
 	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
-	bool ValidateRegistry(FString& OutError) const;
+	bool ValidateRegistry(FString& OutError);
 
 	// Generic lookup: resolves the route, finds the DataTable row, and returns the row as an InstancedStruct.
 	// OutRow will contain a copy of the row struct (type depends on the DataTable's RowStruct).
@@ -116,7 +116,7 @@ public:
 
 private:
 	// Internal: choose active registry (runtime override first, else loaded asset).
-	UContentLookupRegistry* GetActiveRegistry() const;
+	UContentLookupRegistry* GetActiveRegistry();
 
 	// Internal: resolve table by prefix match.
 	UDataTable* ResolveTableForTag(FGameplayTag Tag, FGameplayTag& OutMatchedRoot, FString& OutError);
