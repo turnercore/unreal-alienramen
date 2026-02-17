@@ -21,22 +21,21 @@ void UContentLookupSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	// If no runtime registry set, try to load the asset one.
-	if (!Registry && RegistryAsset.IsValid())
-	{
-		Registry = RegistryAsset.Get();
-	}
+	// Pull Config=Game properties (RegistryAsset) from DefaultGame.ini
+	LoadConfig();
 
+	// If runtime Registry isn't already set (e.g. by BP), load from config asset
 	if (!Registry && !RegistryAsset.IsNull())
 	{
 		Registry = RegistryAsset.LoadSynchronous();
 		if (!Registry)
 		{
-			UE_LOG(LogContentLookup, Warning, TEXT("Initialize: Failed to load RegistryAsset."));
+			UE_LOG(LogContentLookup, Warning, TEXT("Initialize: Failed to load RegistryAsset from config: %s"),
+				*RegistryAsset.ToSoftObjectPath().ToString());
 		}
 	}
 
-	// Optional: validate on startup (non-fatal).
+	// Optional validation
 	{
 		FString Err;
 		if (!ValidateRegistry(Err))
@@ -56,15 +55,19 @@ void UContentLookupSubsystem::Deinitialize()
 
 void UContentLookupSubsystem::SetRegistry(UContentLookupRegistry* InRegistry)
 {
+	if (!InRegistry)
+	{
+		UE_LOG(LogContentLookup, Warning, TEXT("SetRegistry called with null. Ignoring."));
+		return;
+	}
+
 	Registry = InRegistry;
 	ClearCache();
 
-	FString Err;
-	if (!ValidateRegistry(Err))
-	{
-		UE_LOG(LogContentLookup, Warning, TEXT("SetRegistry: Registry validation warning: %s"), *Err);
-	}
+	UE_LOG(LogContentLookup, Log, TEXT("SetRegistry override: %s"), *GetNameSafe(Registry));
 }
+
+
 
 void UContentLookupSubsystem::ClearCache()
 {
@@ -189,19 +192,34 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError) const
 
 UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry() const
 {
+	// Runtime override wins
 	if (Registry)
 	{
 		return Registry;
 	}
 
-	// If RegistryAsset was already resolved to a loaded object, prefer that.
-	if (RegistryAsset.IsValid())
+	// If the soft pointer is set, try to resolve/load it
+	if (!RegistryAsset.IsNull())
 	{
-		return RegistryAsset.Get();
+		if (RegistryAsset.IsValid())
+		{
+			return RegistryAsset.Get();
+		}
+
+		// Load on-demand (safe: it's a DataAsset)
+		UContentLookupRegistry* Loaded = RegistryAsset.LoadSynchronous();
+		if (!Loaded)
+		{
+			UE_LOG(LogContentLookup, Warning, TEXT("GetActiveRegistry: Failed to load RegistryAsset (World=%s, GI=%s)"),
+				*GetNameSafe(GetWorld()),
+				*GetNameSafe(GetGameInstance()));
+		}
+		return Loaded;
 	}
 
 	return nullptr;
 }
+
 
 UDataTable* UContentLookupSubsystem::ResolveTableForTag(FGameplayTag Tag, FGameplayTag& OutMatchedRoot, FString& OutError)
 {
@@ -211,8 +229,9 @@ UDataTable* UContentLookupSubsystem::ResolveTableForTag(FGameplayTag Tag, FGamep
 	UContentLookupRegistry* Active = GetActiveRegistry();
 	if (!Active)
 	{
-		OutError = TEXT("No active registry.");
-		return nullptr;
+		OutError = FString::Printf(TEXT("No active registry. (World=%s, GI=%s)"),
+			*GetNameSafe(GetWorld()),
+			*GetNameSafe(GetGameInstance()));		return nullptr;
 	}
 
 	// Best-match strategy: pick the most specific (longest) matching RootTag.

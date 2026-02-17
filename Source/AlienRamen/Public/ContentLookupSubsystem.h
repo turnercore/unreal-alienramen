@@ -1,4 +1,3 @@
-// ContentLookupSubsystem.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,7 +7,6 @@
 #include "Engine/DataAsset.h"
 #include "StructUtils/InstancedStruct.h"
 #include "ContentLookupSubsystem.generated.h"
-
 
 DECLARE_LOG_CATEGORY_EXTERN(LogContentLookup, Log, All);
 
@@ -48,7 +46,7 @@ public:
  *     RootTag: Unlocks.Ships -> DT_Unlocks_Ships
  *     Leaf: Sammy -> RowName 'Sammy'
  */
-UCLASS()
+UCLASS(Config = Game)
 class ALIENRAMEN_API UContentLookupSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -61,8 +59,9 @@ public:
 	// ---- Registry Source ----
 	// Assign this in defaults (CDO) or set it at runtime via SetRegistry().
 	// Keeping it soft helps cooking + load order; we load it in Initialize().
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ContentLookup")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "ContentLookup")
 	TSoftObjectPtr<UContentLookupRegistry> RegistryAsset;
+
 
 	// Runtime override (optional). If set, this takes priority over RegistryAsset.
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "ContentLookup")
