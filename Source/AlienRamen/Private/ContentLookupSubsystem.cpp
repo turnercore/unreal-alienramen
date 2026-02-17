@@ -2,6 +2,8 @@
 
 #include "ContentLookupSubsystem.h"
 #include "UObject/SoftObjectPtr.h"
+#include "StructUtils/InstancedStruct.h"
+
 
 DEFINE_LOG_CATEGORY(LogContentLookup);
 
@@ -184,6 +186,7 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError) const
 	return true;
 }
 
+
 UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry() const
 {
 	if (Registry)
@@ -270,4 +273,83 @@ UDataTable* UContentLookupSubsystem::LoadAndCacheTable(const FGameplayTag& RootT
 
 	LoadedTables.Add(RootTag, DT);
 	return DT;
+}
+
+bool UContentLookupSubsystem::LookupWithGameplayTag(
+	FGameplayTag Tag,
+	FInstancedStruct& OutRow,
+	FString& OutError
+)
+{
+	OutRow.Reset();
+	OutError.Reset();
+
+	UDataTable* DT = nullptr;
+	FName RowName = NAME_None;
+
+	if (!GetTableAndRowNameFromTag(Tag, DT, RowName, OutError))
+	{
+		UE_LOG(LogContentLookup, Warning, TEXT("LookupWithGameplayTag(%s): %s"), *Tag.ToString(), *OutError);
+		return false;
+	}
+
+	if (!DT)
+	{
+		OutError = FString::Printf(TEXT("Resolved DataTable is null for tag '%s'."), *Tag.ToString());
+		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		return false;
+	}
+
+	const UScriptStruct* RowStruct = DT->GetRowStruct();
+	if (!RowStruct)
+	{
+		OutError = FString::Printf(TEXT("DataTable '%s' has no RowStruct (tag '%s')."), *GetNameSafe(DT), *Tag.ToString());
+		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		return false;
+	}
+
+	// Find the row as raw memory.
+	// Using FindRow() is the most compatible approach.
+	static const FString Context(TEXT("ContentLookupSubsystem::LookupWithGameplayTag"));
+	const uint8* RowData = DT->FindRowUnchecked(RowName);
+
+	// If FindRowUnchecked isn't available in your build, comment the line above and uncomment this:
+	// const uint8* RowData = reinterpret_cast<const uint8*>(DT->FindRow<uint8>(RowName, Context, /*bWarnIfMissing*/ false));
+
+	// More universally safe fallback (no template gymnastics):
+	if (!RowData)
+	{
+		// FindRowUnchecked can return null if missing. Validate the row exists.
+		if (!DT->GetRowMap().Contains(RowName))
+		{
+			OutError = FString::Printf(TEXT("Row '%s' not found in DataTable '%s' for tag '%s'."),
+				*RowName.ToString(),
+				*GetNameSafe(DT),
+				*Tag.ToString());
+			UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+			return false;
+		}
+
+		// Get raw pointer from row map
+		const uint8* const* RowPtr = DT->GetRowMap().Find(RowName);
+		RowData = RowPtr ? *RowPtr : nullptr;
+	}
+
+	if (!RowData)
+	{
+		OutError = FString::Printf(TEXT("Row '%s' could not be resolved in DataTable '%s' for tag '%s'."),
+			*RowName.ToString(),
+			*GetNameSafe(DT),
+			*Tag.ToString());
+		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		return false;
+	}
+
+	// Copy the row into an InstancedStruct
+	OutRow.InitializeAs(RowStruct);
+	void* Dest = OutRow.GetMutableMemory();
+	check(Dest);
+
+	RowStruct->CopyScriptStruct(Dest, RowData);
+	return true;
 }

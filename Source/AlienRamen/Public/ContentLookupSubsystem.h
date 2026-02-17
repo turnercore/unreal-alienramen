@@ -6,7 +6,9 @@
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "Engine/DataAsset.h"
+#include "StructUtils/InstancedStruct.h"
 #include "ContentLookupSubsystem.generated.h"
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogContentLookup, Log, All);
 
@@ -102,6 +104,16 @@ public:
 	// Returns true if it looks usable.
 	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
 	bool ValidateRegistry(FString& OutError) const;
+
+	// Generic lookup: resolves the route, finds the DataTable row, and returns the row as an InstancedStruct.
+	// OutRow will contain a copy of the row struct (type depends on the DataTable's RowStruct).
+	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
+	bool LookupWithGameplayTag(
+		FGameplayTag Tag,
+		FInstancedStruct& OutRow,
+		FString& OutError
+	);
+
 
 private:
 	// Internal: choose active registry (runtime override first, else loaded asset).
