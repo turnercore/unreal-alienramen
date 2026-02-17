@@ -23,6 +23,8 @@ void UContentLookupSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	// Pull Config=Game properties (RegistryAsset) from DefaultGame.ini
 	LoadConfig();
+	UE_LOG(LogContentLookup, Warning, TEXT("RegistryAsset path: %s"), *RegistryAsset.ToSoftObjectPath().ToString());
+
 
 	// If runtime Registry isn't already set (e.g. by BP), load from config asset
 	if (!Registry && !RegistryAsset.IsNull())
@@ -145,7 +147,7 @@ bool UContentLookupSubsystem::DoesRowExistForTag(FGameplayTag Tag, FString& OutE
 	return true;
 }
 
-bool UContentLookupSubsystem::ValidateRegistry(FString& OutError) const
+bool UContentLookupSubsystem::ValidateRegistry(FString& OutError)
 {
 	OutError.Reset();
 
@@ -189,8 +191,7 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError) const
 	return true;
 }
 
-
-UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry() const
+UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry()
 {
 	// Runtime override wins
 	if (Registry)
@@ -198,23 +199,18 @@ UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry() const
 		return Registry;
 	}
 
-	// If the soft pointer is set, try to resolve/load it
+	// Load from soft ref and KEEP it alive by storing in Registry (hard ref UPROPERTY)
 	if (!RegistryAsset.IsNull())
 	{
-		if (RegistryAsset.IsValid())
+		Registry = RegistryAsset.LoadSynchronous();
+		if (!Registry)
 		{
-			return RegistryAsset.Get();
-		}
-
-		// Load on-demand (safe: it's a DataAsset)
-		UContentLookupRegistry* Loaded = RegistryAsset.LoadSynchronous();
-		if (!Loaded)
-		{
-			UE_LOG(LogContentLookup, Warning, TEXT("GetActiveRegistry: Failed to load RegistryAsset (World=%s, GI=%s)"),
+			UE_LOG(LogContentLookup, Warning, TEXT("GetActiveRegistry: Failed to load RegistryAsset. Path=%s (World=%s, GI=%s)"),
+				*RegistryAsset.ToSoftObjectPath().ToString(),
 				*GetNameSafe(GetWorld()),
 				*GetNameSafe(GetGameInstance()));
 		}
-		return Loaded;
+		return Registry;
 	}
 
 	return nullptr;
