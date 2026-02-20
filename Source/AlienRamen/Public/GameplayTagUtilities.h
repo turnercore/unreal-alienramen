@@ -14,6 +14,15 @@ public:
 	// -----------------------
 	// Tag path helpers
 	// -----------------------
+	// Returns ONLY the direct children of ParentTag (one level deeper), not grandchildren.
+	// Example: Parent=Unlocks.Ships -> [Unlocks.Ships.Ship1, Unlocks.Ships.Ship2, ...]
+	UFUNCTION(BlueprintCallable, Category = "AlienRamen|Tags")
+	static bool GetDirectChildrenOfTag(
+		FGameplayTag ParentTag,
+		TArray<FGameplayTag>& OutDirectChildren,
+		bool& bFoundAny,
+		FGameplayTag& OutFirstChild
+	);
 
 	UFUNCTION(BlueprintPure, Category = "AlienRamen|Tags")
 	static int32 GetTagDepth(FGameplayTag Tag);

@@ -148,3 +148,54 @@ bool UGameplayTagUtilities::ReplaceTagInSlot(FGameplayTagContainer& InOutContain
 	InOutContainer.AddTag(NewTag);
 	return true;
 }
+
+bool UGameplayTagUtilities::GetDirectChildrenOfTag(
+	FGameplayTag ParentTag,
+	TArray<FGameplayTag>& OutDirectChildren,
+	bool& bFoundAny,
+	FGameplayTag& OutFirstChild
+)
+{
+	OutDirectChildren.Reset();
+	bFoundAny = false;
+	OutFirstChild = FGameplayTag();
+
+	if (!ParentTag.IsValid())
+	{
+		return false; // invalid input
+	}
+
+	UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
+
+	// Get ALL descendants (subtree) of ParentTag
+	const FGameplayTagContainer Descendants = Manager.RequestGameplayTagChildren(ParentTag);
+
+	if (Descendants.IsEmpty())
+	{
+		return true; // valid input, just no children
+	}
+
+	const int32 ParentDepth = GetTagDepth(ParentTag);
+	TArray<FGameplayTag> All;
+	Descendants.GetGameplayTagArray(All);
+
+	// Filter to only tags that are exactly 1 level deeper than parent
+	for (const FGameplayTag& T : All)
+	{
+		if (!T.IsValid()) continue;
+
+		const int32 Depth = GetTagDepth(T);
+		if (Depth == ParentDepth + 1)
+		{
+			OutDirectChildren.Add(T);
+		}
+	}
+
+	bFoundAny = OutDirectChildren.Num() > 0;
+	if (bFoundAny)
+	{
+		OutFirstChild = OutDirectChildren[0];
+	}
+
+	return true;
+}
