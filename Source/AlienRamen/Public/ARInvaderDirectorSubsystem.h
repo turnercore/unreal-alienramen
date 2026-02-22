@@ -95,6 +95,7 @@ private:
 	bool SelectWave(FName& OutWaveRow, FARWaveDefRow& OutWaveDef, bool& bOutColorSwap);
 	bool SelectStage(FName& OutStageRow, FARStageDefRow& OutStageDef, const TSet<FName>* ExcludedRows = nullptr);
 	FVector ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal) const;
+	void ApplyEnemyGameplayEffects(class AAREnemyBase* Enemy, const FARWaveDefRow& WaveDef, const FARWaveEnemySpawnDef& SpawnDef);
 	bool IsInsideGameplayBounds(const FVector& Location) const;
 	bool IsInsideLeakBounds(const FVector& Location) const;
 	UARInvaderRuntimeStateComponent* GetOrCreateRuntimeComponent();
