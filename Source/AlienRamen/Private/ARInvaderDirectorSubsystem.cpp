@@ -422,6 +422,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 
 			Enemy->SetEnemyColor(EffectiveColor);
 			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, SpawnDef.SlotIndex, Wave.Def.FormationMode, Wave.Phase, GetWorld()->GetTimeSeconds());
+			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);
 			Wave.SpawnedCount++;
@@ -926,6 +927,51 @@ FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpaw
 	}
 
 	return Loc;
+}
+
+void UARInvaderDirectorSubsystem::ApplyEnemyGameplayEffects(AAREnemyBase* Enemy, const FARWaveDefRow& WaveDef, const FARWaveEnemySpawnDef& SpawnDef)
+{
+	if (!Enemy || !Enemy->HasAuthority())
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* ASC = Enemy->GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Cannot apply enemy gameplay effects: missing ASC on '%s'."),
+			*GetNameSafe(Enemy));
+		return;
+	}
+
+	int32 AppliedCount = 0;
+	auto ApplyEffects = [ASC, &AppliedCount](const TArray<TSubclassOf<UGameplayEffect>>& Effects)
+	{
+		for (const TSubclassOf<UGameplayEffect>& EffectClass : Effects)
+		{
+			if (!EffectClass)
+			{
+				continue;
+			}
+
+			const FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+			const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(EffectClass, 1.f, Context);
+			if (Spec.IsValid())
+			{
+				ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+				AppliedCount++;
+			}
+		}
+	};
+
+	ApplyEffects(CurrentStageDef.EnemyGameplayEffects);
+	ApplyEffects(WaveDef.EnemyGameplayEffects);
+	ApplyEffects(SpawnDef.EnemyGameplayEffects);
+
+	if (AppliedCount > 0)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderDirector] Applied %d gameplay effects to enemy '%s'."), AppliedCount, *GetNameSafe(Enemy));
+	}
 }
 
 bool UARInvaderDirectorSubsystem::IsInsideGameplayBounds(const FVector& Location) const

@@ -14,9 +14,9 @@ namespace ARSaveSlotSortInternal
 	static FString NormalizePropNameKey(const FProperty* P)
 	{
 #if ENGINE_MAJOR_VERSION >= 5
-		return NormalizeNameKey(P ? P->GetAuthoredName() : FString());
+		return ARSaveSlotSortInternal::NormalizeNameKey(P ? P->GetAuthoredName() : FString());
 #else
-		return NormalizeNameKey(P ? P->GetName() : FString());
+		return ARSaveSlotSortInternal::NormalizeNameKey(P ? P->GetName() : FString());
 #endif
 	}
 }

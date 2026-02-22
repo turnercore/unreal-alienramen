@@ -6,6 +6,7 @@
 #include "ARInvaderTypes.generated.h"
 
 class AAREnemyBase;
+class UGameplayEffect;
 
 UENUM(BlueprintType)
 enum class EAREnemyColor : uint8
@@ -92,6 +93,10 @@ struct FARWaveEnemySpawnDef
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	FVector2D AuthoredScreenOffset = FVector2D::ZeroVector;
+
+	// Effects applied to this spawned enemy instance (in addition to wave/stage effects).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
 };
 
 USTRUCT(BlueprintType)
@@ -194,6 +199,10 @@ struct FARWaveDefRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	FGameplayTagContainer BannedArchetypeTags;
+
+	// Effects applied to all enemies spawned by this wave.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
 };
 
 USTRUCT(BlueprintType)
@@ -228,6 +237,10 @@ struct FARStageDefRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
 	FGameplayTagContainer BannedArchetypeTags;
+
+	// Effects applied to all enemies spawned while this stage is active.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
 	FString RewardDescriptor;
