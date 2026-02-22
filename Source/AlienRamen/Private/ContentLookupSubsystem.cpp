@@ -1,7 +1,7 @@
 // ContentLookupSubsystem.cpp
 
 #include "ContentLookupSubsystem.h"
-#include "AlienRamen.h"
+#include "ARLog.h"
 #include "UObject/SoftObjectPtr.h"
 #include "StructUtils/InstancedStruct.h"
 

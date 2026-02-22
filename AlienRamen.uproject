@@ -12,6 +12,11 @@
 				"Engine",
 				"GameplayAbilities"
 			]
+		},
+		{
+			"Name": "AlienRamenEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
 		}
 	],
 	"Plugins": [
