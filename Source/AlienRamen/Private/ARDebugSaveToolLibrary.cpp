@@ -3,6 +3,7 @@
 #include "ARLog.h"
 
 #include "GameFramework/SaveGame.h"
+#include "GameplayTagsManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/SoftObjectPath.h"
 #include "UObject/UnrealType.h"
@@ -13,6 +14,34 @@ namespace ARDebugSaveToolInternal
 	static const TCHAR* DebugSaveClassPath = TEXT("/Game/CodeAlong/Blueprints/SaveSystem/SG_AlienRamenSave.SG_AlienRamenSave_C");
 	static const TCHAR* DebugIndexSlot = TEXT("SaveIndexDebug");
 	static const TCHAR* DebugSlotSuffix = TEXT("_debug");
+	static constexpr int32 MaxDebugRevisionsToKeep = 5;
+
+	static FName BuildRevisionSlotName(FName BaseSlotName, int32 SlotNumber)
+	{
+		return FName(*FString::Printf(TEXT("%s_%d"), *BaseSlotName.ToString(), SlotNumber));
+	}
+
+	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber)
+	{
+		OutBaseSlotName.Reset();
+		OutSlotNumber = 0;
+
+		int32 LastUnderscore = INDEX_NONE;
+		if (!InSlotName.FindLastChar(TEXT('_'), LastUnderscore) || LastUnderscore <= 0 || LastUnderscore >= InSlotName.Len() - 1)
+		{
+			return false;
+		}
+
+		const FString SuffixPart = InSlotName.Mid(LastUnderscore + 1);
+		if (!SuffixPart.IsNumeric())
+		{
+			return false;
+		}
+
+		OutBaseSlotName = InSlotName.Left(LastUnderscore);
+		OutSlotNumber = FCString::Atoi(*SuffixPart);
+		return true;
+	}
 
 	static bool TryGetIntField(const UStruct* StructType, const void* StructData, const FString& FieldPrefix, int32& OutValue)
 	{
@@ -22,12 +51,15 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (const FIntProperty* IntProp = CastField<FIntProperty>(Prop))
 			{
-				OutValue = IntProp->GetPropertyValue_InContainer(StructData);
-				return true;
+				if (const int32* ValuePtr = IntProp->ContainerPtrToValuePtr<int32>(StructData))
+				{
+					OutValue = *ValuePtr;
+					return true;
+				}
 			}
 		}
 
@@ -41,12 +73,15 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (FIntProperty* IntProp = CastField<FIntProperty>(Prop))
 			{
-				IntProp->SetPropertyValue_InContainer(StructData, InValue);
-				return true;
+				if (int32* ValuePtr = IntProp->ContainerPtrToValuePtr<int32>(StructData))
+				{
+					*ValuePtr = InValue;
+					return true;
+				}
 			}
 		}
 
@@ -61,12 +96,15 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (const FNameProperty* NameProp = CastField<FNameProperty>(Prop))
 			{
-				OutValue = NameProp->GetPropertyValue_InContainer(StructData);
-				return true;
+				if (const FName* ValuePtr = NameProp->ContainerPtrToValuePtr<FName>(StructData))
+				{
+					OutValue = *ValuePtr;
+					return true;
+				}
 			}
 		}
 
@@ -80,12 +118,15 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (FNameProperty* NameProp = CastField<FNameProperty>(Prop))
 			{
-				NameProp->SetPropertyValue_InContainer(StructData, InValue);
-				return true;
+				if (FName* ValuePtr = NameProp->ContainerPtrToValuePtr<FName>(StructData))
+				{
+					*ValuePtr = InValue;
+					return true;
+				}
 			}
 		}
 
@@ -100,7 +141,7 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (const FStructProperty* StructProp = CastField<FStructProperty>(Prop))
 			{
@@ -123,7 +164,7 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
 			{
@@ -146,7 +187,7 @@ namespace ARDebugSaveToolInternal
 		for (TFieldIterator<FProperty> It(StructType); It; ++It)
 		{
 			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix)) continue;
+			if (!Prop || !Prop->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase)) continue;
 
 			if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
 			{
@@ -229,6 +270,15 @@ FName UARDebugSaveToolLibrary::NormalizeDebugSlotName(FName DesiredSlotBaseOrSlo
 	if (Slot.IsEmpty())
 	{
 		Slot = FString::Printf(TEXT("Debug_%s"), *FGuid::NewGuid().ToString(EGuidFormats::Digits).Left(8));
+	}
+
+	// Accept both base slot names (`foo_debug`) and revision names (`foo_debug_12`) and normalize to base.
+	FString ParsedBase;
+	int32 ParsedRevision = 0;
+	if (ARDebugSaveToolInternal::TrySplitRevisionSlotName(Slot, ParsedBase, ParsedRevision)
+		&& ParsedBase.EndsWith(Suffix, ESearchCase::IgnoreCase))
+	{
+		Slot = ParsedBase;
 	}
 
 	if (!Slot.EndsWith(Suffix, ESearchCase::IgnoreCase))
@@ -348,7 +398,7 @@ FProperty* UARDebugSaveToolLibrary::FindPropertyByNamePrefix(const UStruct* Stru
 	for (TFieldIterator<FProperty> It(StructType); It; ++It)
 	{
 		FProperty* Prop = *It;
-		if (Prop && Prop->GetName().StartsWith(Prefix))
+		if (Prop && Prop->GetName().StartsWith(Prefix, ESearchCase::IgnoreCase))
 		{
 			return Prop;
 		}
@@ -465,12 +515,19 @@ bool UARDebugSaveToolLibrary::UpsertSlotEntry(USaveGame* DebugIndexSave, const F
 	}
 
 	void* TargetElem = Helper.GetRawPtr(FoundIndex);
-	ARDebugSaveToolInternal::TrySetNameField(InnerStructProp->Struct, TargetElem, TEXT("SlotName"), Entry.SlotName);
-	ARDebugSaveToolInternal::TrySetIntField(InnerStructProp->Struct, TargetElem, TEXT("SlotNumber"), Entry.SlotNumber);
+	const bool bSetSlotName = ARDebugSaveToolInternal::TrySetNameField(InnerStructProp->Struct, TargetElem, TEXT("SlotName"), Entry.SlotName);
+	const bool bSetSlotNumber = ARDebugSaveToolInternal::TrySetIntField(InnerStructProp->Struct, TargetElem, TEXT("SlotNumber"), Entry.SlotNumber);
 	ARDebugSaveToolInternal::TrySetIntField(InnerStructProp->Struct, TargetElem, TEXT("SaveVersion"), Entry.SaveVersion);
 	ARDebugSaveToolInternal::TrySetIntField(InnerStructProp->Struct, TargetElem, TEXT("CyclesPlayed"), Entry.CyclesPlayed);
 	ARDebugSaveToolInternal::TrySetDateTimeField(InnerStructProp->Struct, TargetElem, TEXT("LastSavedTime"), Entry.LastSavedTime);
 	ARDebugSaveToolInternal::TrySetIntField(InnerStructProp->Struct, TargetElem, TEXT("Money"), Entry.Money);
+
+	if (!bSetSlotName || !bSetSlotNumber)
+	{
+		OutError = TEXT("Could not write SlotName/SlotNumber to debug index SlotNames entry.");
+		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|Validation] %s"), *OutError);
+		return false;
+	}
 
 	return true;
 }
@@ -571,18 +628,19 @@ bool UARDebugSaveToolLibrary::CreateDebugSave(FName DesiredSlotBase, FName& OutD
 	TArray<FARDebugSaveSlotEntry> ExistingSlots;
 	ReadSlotEntries(DebugIndex, ExistingSlots, IndexError);
 
-	int32 MaxSlotNumber = 0;
-	int32 ExistingSlotNumber = INDEX_NONE;
 	for (const FARDebugSaveSlotEntry& Existing : ExistingSlots)
 	{
-		MaxSlotNumber = FMath::Max(MaxSlotNumber, Existing.SlotNumber);
 		if (Existing.SlotName == OutDebugSlotName)
 		{
-			ExistingSlotNumber = Existing.SlotNumber;
+			OutError = FString::Printf(TEXT("Debug slot base '%s' already exists. Load it instead of creating."),
+				*OutDebugSlotName.ToString());
+			UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|Validation] %s"), *OutError);
+			return false;
 		}
 	}
 
-	const int32 NewSlotNumber = (ExistingSlotNumber != INDEX_NONE) ? ExistingSlotNumber : (MaxSlotNumber + 1);
+	const int32 NewSlotNumber = 0;
+	const FName PhysicalSlotName = ARDebugSaveToolInternal::BuildRevisionSlotName(OutDebugSlotName, NewSlotNumber);
 
 	USaveGame* NewSave = UGameplayStatics::CreateSaveGameObject(SaveClass);
 	if (!NewSave)
@@ -596,9 +654,9 @@ bool UARDebugSaveToolLibrary::CreateDebugSave(FName DesiredSlotBase, FName& OutD
 	ARDebugSaveToolInternal::TrySetIntPropertyOnObject(NewSave, TEXT("SaveSlotNumber"), NewSlotNumber);
 	ARDebugSaveToolInternal::TrySetDateTimePropertyOnObject(NewSave, TEXT("LastSaved"), FDateTime::UtcNow());
 
-	if (!UGameplayStatics::SaveGameToSlot(NewSave, OutDebugSlotName.ToString(), DefaultUserIndex))
+	if (!UGameplayStatics::SaveGameToSlot(NewSave, PhysicalSlotName.ToString(), DefaultUserIndex))
 	{
-		OutError = FString::Printf(TEXT("Failed to save debug slot '%s'."), *OutDebugSlotName.ToString());
+		OutError = FString::Printf(TEXT("Failed to save debug slot '%s'."), *PhysicalSlotName.ToString());
 		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|IO] %s"), *OutError);
 		return false;
 	}
@@ -615,7 +673,8 @@ bool UARDebugSaveToolLibrary::CreateDebugSave(FName DesiredSlotBase, FName& OutD
 		return false;
 	}
 
-	UE_LOG(ARLog, Log, TEXT("[DebugSaveTool] Created debug save slot '%s' (SlotNumber=%d)."), *OutDebugSlotName.ToString(), NewSlotNumber);
+	UE_LOG(ARLog, Log, TEXT("[DebugSaveTool] Created debug save base '%s' at revision '%s'."),
+		*OutDebugSlotName.ToString(), *PhysicalSlotName.ToString());
 	OutSaveGame = NewSave;
 	return true;
 }
@@ -626,17 +685,59 @@ bool UARDebugSaveToolLibrary::LoadDebugSave(FName DebugSlotName, USaveGame*& Out
 	OutSaveGame = nullptr;
 	OutError.Reset();
 
-	if (!UGameplayStatics::DoesSaveGameExist(NormalizedSlot.ToString(), DefaultUserIndex))
+	FString IndexError;
+	USaveGame* DebugIndex = LoadOrCreateDebugIndexSave(IndexError);
+	if (!DebugIndex)
 	{
-		OutError = FString::Printf(TEXT("Debug slot '%s' does not exist."), *NormalizedSlot.ToString());
+		OutError = IndexError;
+		return false;
+	}
+
+	TArray<FARDebugSaveSlotEntry> ExistingSlots;
+	ReadSlotEntries(DebugIndex, ExistingSlots, IndexError);
+
+	int32 SlotNumber = INDEX_NONE;
+	for (const FARDebugSaveSlotEntry& Existing : ExistingSlots)
+	{
+		if (Existing.SlotName == NormalizedSlot)
+		{
+			SlotNumber = Existing.SlotNumber;
+			break;
+		}
+	}
+
+	if (SlotNumber == INDEX_NONE)
+	{
+		OutError = FString::Printf(TEXT("Debug slot base '%s' is not present in debug index."), *NormalizedSlot.ToString());
 		UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|IO] %s"), *OutError);
 		return false;
 	}
 
-	USaveGame* Loaded = UGameplayStatics::LoadGameFromSlot(NormalizedSlot.ToString(), DefaultUserIndex);
+	const FName PhysicalSlotName = ARDebugSaveToolInternal::BuildRevisionSlotName(NormalizedSlot, SlotNumber);
+	if (!UGameplayStatics::DoesSaveGameExist(PhysicalSlotName.ToString(), DefaultUserIndex))
+	{
+		// Migration fallback for older debug saves that were stored as non-revisioned `<base>` files.
+		if (UGameplayStatics::DoesSaveGameExist(NormalizedSlot.ToString(), DefaultUserIndex))
+		{
+			USaveGame* LegacyLoaded = UGameplayStatics::LoadGameFromSlot(NormalizedSlot.ToString(), DefaultUserIndex);
+			if (LegacyLoaded)
+			{
+				UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|IO] Loaded legacy non-revisioned slot '%s'."),
+					*NormalizedSlot.ToString());
+				OutSaveGame = LegacyLoaded;
+				return true;
+			}
+		}
+
+		OutError = FString::Printf(TEXT("Debug slot revision '%s' does not exist."), *PhysicalSlotName.ToString());
+		UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|IO] %s"), *OutError);
+		return false;
+	}
+
+	USaveGame* Loaded = UGameplayStatics::LoadGameFromSlot(PhysicalSlotName.ToString(), DefaultUserIndex);
 	if (!Loaded)
 	{
-		OutError = FString::Printf(TEXT("Failed to load debug slot '%s'."), *NormalizedSlot.ToString());
+		OutError = FString::Printf(TEXT("Failed to load debug slot '%s'."), *PhysicalSlotName.ToString());
 		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|IO] %s"), *OutError);
 		return false;
 	}
@@ -655,16 +756,6 @@ bool UARDebugSaveToolLibrary::SaveDebugSave(FName DebugSlotName, USaveGame* Save
 		return false;
 	}
 
-	ARDebugSaveToolInternal::TrySetNamePropertyOnObject(SaveGameObject, TEXT("SaveSlot"), NormalizedSlot);
-	ARDebugSaveToolInternal::TrySetDateTimePropertyOnObject(SaveGameObject, TEXT("LastSaved"), FDateTime::UtcNow());
-
-	if (!UGameplayStatics::SaveGameToSlot(SaveGameObject, NormalizedSlot.ToString(), DefaultUserIndex))
-	{
-		OutError = FString::Printf(TEXT("Failed to save debug slot '%s'."), *NormalizedSlot.ToString());
-		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|IO] %s"), *OutError);
-		return false;
-	}
-
 	FString IndexError;
 	USaveGame* DebugIndex = LoadOrCreateDebugIndexSave(IndexError);
 	if (!DebugIndex)
@@ -675,18 +766,36 @@ bool UARDebugSaveToolLibrary::SaveDebugSave(FName DebugSlotName, USaveGame* Save
 
 	TArray<FARDebugSaveSlotEntry> ExistingSlots;
 	ReadSlotEntries(DebugIndex, ExistingSlots, IndexError);
-	int32 SlotNumberHint = 1;
+	int32 LatestSlotNumber = INDEX_NONE;
 	for (const FARDebugSaveSlotEntry& Existing : ExistingSlots)
 	{
 		if (Existing.SlotName == NormalizedSlot)
 		{
-			SlotNumberHint = Existing.SlotNumber;
+			LatestSlotNumber = Existing.SlotNumber;
 			break;
 		}
-		SlotNumberHint = FMath::Max(SlotNumberHint, Existing.SlotNumber + 1);
 	}
 
-	const FARDebugSaveSlotEntry Entry = BuildSlotEntryFromSave(SaveGameObject, NormalizedSlot, SlotNumberHint);
+	if (LatestSlotNumber == INDEX_NONE)
+	{
+		LatestSlotNumber = -1;
+	}
+
+	const int32 NewSlotNumber = LatestSlotNumber + 1;
+	const FName PhysicalSlotName = ARDebugSaveToolInternal::BuildRevisionSlotName(NormalizedSlot, NewSlotNumber);
+
+	ARDebugSaveToolInternal::TrySetNamePropertyOnObject(SaveGameObject, TEXT("SaveSlot"), NormalizedSlot);
+	ARDebugSaveToolInternal::TrySetIntPropertyOnObject(SaveGameObject, TEXT("SaveSlotNumber"), NewSlotNumber);
+	ARDebugSaveToolInternal::TrySetDateTimePropertyOnObject(SaveGameObject, TEXT("LastSaved"), FDateTime::UtcNow());
+
+	if (!UGameplayStatics::SaveGameToSlot(SaveGameObject, PhysicalSlotName.ToString(), DefaultUserIndex))
+	{
+		OutError = FString::Printf(TEXT("Failed to save debug slot '%s'."), *PhysicalSlotName.ToString());
+		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|IO] %s"), *OutError);
+		return false;
+	}
+
+	const FARDebugSaveSlotEntry Entry = BuildSlotEntryFromSave(SaveGameObject, NormalizedSlot, NewSlotNumber);
 	if (!UpsertSlotEntry(DebugIndex, Entry, OutError))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|IO] Could not upsert debug index for '%s': %s"), *NormalizedSlot.ToString(), *OutError);
@@ -698,7 +807,19 @@ bool UARDebugSaveToolLibrary::SaveDebugSave(FName DebugSlotName, USaveGame* Save
 		return false;
 	}
 
-	UE_LOG(ARLog, Log, TEXT("[DebugSaveTool] Saved debug slot '%s'."), *NormalizedSlot.ToString());
+	// Keep only the trailing N revisions.
+	const int32 OldestRevisionToKeep = FMath::Max(0, NewSlotNumber - (ARDebugSaveToolInternal::MaxDebugRevisionsToKeep - 1));
+	for (int32 Revision = 0; Revision < OldestRevisionToKeep; ++Revision)
+	{
+		const FName OldRevisionSlot = ARDebugSaveToolInternal::BuildRevisionSlotName(NormalizedSlot, Revision);
+		if (UGameplayStatics::DoesSaveGameExist(OldRevisionSlot.ToString(), DefaultUserIndex))
+		{
+			UGameplayStatics::DeleteGameInSlot(OldRevisionSlot.ToString(), DefaultUserIndex);
+		}
+	}
+
+	UE_LOG(ARLog, Log, TEXT("[DebugSaveTool] Saved debug slot base '%s' as revision '%s'."),
+		*NormalizedSlot.ToString(), *PhysicalSlotName.ToString());
 	return true;
 }
 
@@ -707,20 +828,42 @@ bool UARDebugSaveToolLibrary::DeleteDebugSave(FName DebugSlotName, FString& OutE
 	OutError.Reset();
 	const FName NormalizedSlot = NormalizeDebugSlotName(DebugSlotName);
 
-	const bool bDeleted = UGameplayStatics::DeleteGameInSlot(NormalizedSlot.ToString(), DefaultUserIndex);
-	if (!bDeleted && UGameplayStatics::DoesSaveGameExist(NormalizedSlot.ToString(), DefaultUserIndex))
-	{
-		OutError = FString::Printf(TEXT("Failed to delete debug slot '%s'."), *NormalizedSlot.ToString());
-		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|IO] %s"), *OutError);
-		return false;
-	}
-
 	FString IndexError;
 	USaveGame* DebugIndex = LoadOrCreateDebugIndexSave(IndexError);
 	if (!DebugIndex)
 	{
 		OutError = IndexError;
 		return false;
+	}
+
+	int32 LastKnownRevision = INDEX_NONE;
+	TArray<FARDebugSaveSlotEntry> ExistingSlots;
+	ReadSlotEntries(DebugIndex, ExistingSlots, IndexError);
+	for (const FARDebugSaveSlotEntry& Existing : ExistingSlots)
+	{
+		if (Existing.SlotName == NormalizedSlot)
+		{
+			LastKnownRevision = Existing.SlotNumber;
+			break;
+		}
+	}
+
+	if (LastKnownRevision != INDEX_NONE)
+	{
+		for (int32 Revision = 0; Revision <= LastKnownRevision; ++Revision)
+		{
+			const FName RevisionSlot = ARDebugSaveToolInternal::BuildRevisionSlotName(NormalizedSlot, Revision);
+			if (UGameplayStatics::DoesSaveGameExist(RevisionSlot.ToString(), DefaultUserIndex))
+			{
+				UGameplayStatics::DeleteGameInSlot(RevisionSlot.ToString(), DefaultUserIndex);
+			}
+		}
+	}
+
+	// Legacy cleanup for any non-revisioned debug slot.
+	if (UGameplayStatics::DoesSaveGameExist(NormalizedSlot.ToString(), DefaultUserIndex))
+	{
+		UGameplayStatics::DeleteGameInSlot(NormalizedSlot.ToString(), DefaultUserIndex);
 	}
 
 	if (!RemoveSlotEntry(DebugIndex, NormalizedSlot, OutError))
@@ -888,4 +1031,90 @@ void UARDebugSaveToolLibrary::GetDebugSaveDiagnostics(USaveGame* SaveGameObject,
 		Prop->ExportTextItem_Direct(Row.ValueAsString, ValuePtr, nullptr, SaveGameObject, PPF_None);
 		OutFields.Add(Row);
 	}
+}
+
+bool UARDebugSaveToolLibrary::SetUnlocksToAllKnownTags(USaveGame* SaveGameObject, bool bIncludeUnlocksRootTag, int32& OutTagCount, FString& OutError)
+{
+	OutTagCount = 0;
+	OutError.Reset();
+
+	if (!SaveGameObject)
+	{
+		OutError = TEXT("SaveGameObject is null.");
+		UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|Validation] %s"), *OutError);
+		return false;
+	}
+
+	FGameplayTagContainer AllTags;
+	UGameplayTagsManager::Get().RequestAllGameplayTags(AllTags, true);
+	TArray<FGameplayTag> AllTagArray;
+	AllTags.GetGameplayTagArray(AllTagArray);
+
+	const FGameplayTag UnlocksRootTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Unlocks")), false);
+	TArray<FGameplayTag> UnlockCandidates;
+	UnlockCandidates.Reserve(AllTagArray.Num());
+
+	for (const FGameplayTag& Tag : AllTagArray)
+	{
+		if (!Tag.IsValid())
+		{
+			continue;
+		}
+
+		const FString TagString = Tag.ToString();
+		const bool bMatchesByHierarchy = UnlocksRootTag.IsValid() && Tag.MatchesTag(UnlocksRootTag);
+		const bool bMatchesByPrefix = TagString.StartsWith(TEXT("Unlocks."));
+		const bool bIsRoot = TagString.Equals(TEXT("Unlocks"));
+
+		if (!(bMatchesByHierarchy || bMatchesByPrefix))
+		{
+			continue;
+		}
+
+		if (!bIncludeUnlocksRootTag && bIsRoot)
+		{
+			continue;
+		}
+
+		UnlockCandidates.Add(Tag);
+	}
+
+	FGameplayTagContainer UnlockTags;
+	for (const FGameplayTag& Tag : UnlockCandidates)
+	{
+		const FString TagString = Tag.ToString();
+		const FString ChildPrefix = TagString + TEXT(".");
+		bool bHasChild = false;
+
+		for (const FGameplayTag& OtherTag : UnlockCandidates)
+		{
+			if (OtherTag == Tag)
+			{
+				continue;
+			}
+
+			if (OtherTag.ToString().StartsWith(ChildPrefix))
+			{
+				bHasChild = true;
+				break;
+			}
+		}
+
+		if (!bHasChild)
+		{
+			UnlockTags.AddTag(Tag);
+		}
+	}
+
+	if (!ARDebugSaveToolInternal::TrySetGameplayTagContainerPropertyOnObject(SaveGameObject, TEXT("Unlocks"), UnlockTags))
+	{
+		OutError = TEXT("Could not set Unlocks container on save object.");
+		UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|Validation] %s"), *OutError);
+		return false;
+	}
+
+	OutTagCount = UnlockTags.Num();
+	UE_LOG(ARLog, Log, TEXT("[DebugSaveTool] Set Unlocks to all known tags (count=%d) on '%s'."),
+		OutTagCount, *GetNameSafe(SaveGameObject));
+	return true;
 }

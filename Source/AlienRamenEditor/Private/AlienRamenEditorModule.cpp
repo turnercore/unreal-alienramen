@@ -106,6 +106,13 @@ namespace ARDebugSaveEditor
 
 						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
 						[
+							SNew(SButton)
+							.Text(FText::FromString("Unlock All (Current)"))
+							.OnClicked(this, &SPanel::OnUnlockAllCurrent)
+						]
+
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
+						[
 							SAssignNew(CurrentSlotText, STextBlock)
 							.Text(FText::FromString("Current Slot: <none>"))
 						]
@@ -196,9 +203,10 @@ namespace ARDebugSaveEditor
 
 			CurrentSlotName = NewSlotName;
 			CurrentSaveObject.Reset(NewSave);
+			SlotNameTextBox->SetText(FText::GetEmpty());
 			BindCurrentSaveToDetails();
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Created slot '%s'."), *NewSlotName.ToString()));
+			SetStatus(FString::Printf(TEXT("Created slot base '%s' at revision 0."), *NewSlotName.ToString()));
 			return FReply::Handled();
 		}
 
@@ -272,6 +280,31 @@ namespace ARDebugSaveEditor
 
 			RefreshSlots();
 			SetStatus(FString::Printf(TEXT("Deleted slot '%s'."), *SlotToDelete.ToString()));
+			return FReply::Handled();
+		}
+
+		FReply OnUnlockAllCurrent()
+		{
+			if (!CurrentSaveObject)
+			{
+				SetStatus(TEXT("No save object loaded."));
+				return FReply::Handled();
+			}
+
+			int32 TagCount = 0;
+			FString Error;
+			if (!UARDebugSaveToolLibrary::SetUnlocksToAllKnownTags(CurrentSaveObject.Get(), false, TagCount, Error))
+			{
+				SetStatus(FString::Printf(TEXT("Unlock All failed: %s"), *Error));
+				return FReply::Handled();
+			}
+
+			if (SaveDetailsView.IsValid())
+			{
+				SaveDetailsView->ForceRefresh();
+			}
+
+			SetStatus(FString::Printf(TEXT("Unlocks set to all known unlock tags (%d). Press Save Current to persist."), TagCount));
 			return FReply::Handled();
 		}
 
