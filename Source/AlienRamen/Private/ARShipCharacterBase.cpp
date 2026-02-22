@@ -616,9 +616,9 @@ bool AARShipCharacterBase::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, c
 	if (!AbilityCDO) return false;
 
 	// Gather tags from:
-	// 1) Ability's declared AbilityTags
+	// 1) Ability's declared asset tags
 	// 2) Spec's dynamic source tags (grant-time injected tags)
-	const FGameplayTagContainer& AbilityTags = AbilityCDO->AbilityTags;
+	const FGameplayTagContainer& AbilityTags = AbilityCDO->GetAssetTags();
 	const FGameplayTagContainer& SpecTags = Spec.GetDynamicSpecSourceTags();
 
 	// Scoring:

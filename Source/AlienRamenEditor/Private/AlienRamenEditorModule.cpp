@@ -119,7 +119,6 @@ namespace ARDebugSaveEditor
 						+ SVerticalBox::Slot().FillHeight(1.f)
 						[
 							SAssignNew(SlotListView, SListView<TSharedPtr<FARDebugSaveSlotEntry>>)
-							.ItemHeight(24.f)
 							.ListItemsSource(&SlotItems)
 							.OnGenerateRow(this, &SPanel::OnGenerateRow)
 						]
