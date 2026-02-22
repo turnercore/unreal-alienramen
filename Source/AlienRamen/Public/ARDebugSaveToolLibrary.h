@@ -172,6 +172,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Debug Save")
 	static void GetDebugSaveDiagnostics(USaveGame* SaveGameObject, TArray<FARDebugFieldDiagnostic>& OutFields);
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Debug Save")
+	static bool SetUnlocksToAllKnownTags(USaveGame* SaveGameObject, bool bIncludeUnlocksRootTag, int32& OutTagCount, FString& OutError);
+
 private:
 	static constexpr int32 DefaultUserIndex = 0;
 
@@ -190,4 +193,3 @@ private:
 
 	static FARDebugSaveSlotEntry BuildSlotEntryFromSave(USaveGame* SaveGameObject, FName SlotName, int32 SlotNumberHint);
 };
-
