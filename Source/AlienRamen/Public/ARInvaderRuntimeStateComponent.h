@@ -7,6 +7,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnWavePhaseChangedSignature, int32, WaveInstanceId, EARWavePhase, NewPhase);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnStageChangedSignature, FName, NewStageRowName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnStageChoiceChangedSignature, bool, bInStageChoice, FName, LeftStageRowName, FName, RightStageRowName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnStageRewardGrantedSignature, FName, StageRowName, const FString&, RewardDescriptor);
 
 UCLASS(ClassGroup=(AR), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class ALIENRAMEN_API UARInvaderRuntimeStateComponent : public UActorComponent
@@ -28,6 +30,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
 	FAROnStageChangedSignature OnStageChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
+	FAROnStageChoiceChangedSignature OnStageChoiceChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
+	FAROnStageRewardGrantedSignature OnStageRewardGranted;
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -39,4 +47,3 @@ protected:
 
 	void BroadcastSnapshotDelta(const FARInvaderRuntimeSnapshot& OldSnapshot, const FARInvaderRuntimeSnapshot& NewSnapshot);
 };
-

@@ -44,6 +44,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader", meta = (BlueprintAuthorityOnly))
 	bool ForceStage(FName StageRowName);
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader", meta = (BlueprintAuthorityOnly))
+	bool SubmitStageChoice(bool bChooseLeft);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
+	EARInvaderFlowState GetFlowState() const { return FlowState; }
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
 	FString DumpRuntimeState() const;
 
@@ -73,11 +79,21 @@ private:
 	void RecountAliveAndHandleLeaks();
 	void EvaluateLossConditions();
 	void PushSnapshotToGameState();
+	void EnterAwaitStageClear();
+	void EnterStageChoice();
+	void EnterTransition(FName ChosenStageRow, const FARStageDefRow& ChosenStageDef);
+	void EnterStageIntro(const FARStageDefRow& StageDef);
+	void DispatchStageReward(const FName& CompletedStageRow, const FARStageDefRow& CompletedStageDef);
+	bool BuildStageChoiceOptions(FName& OutLeftRow, FARStageDefRow& OutLeftDef, FName& OutRightRow, FARStageDefRow& OutRightDef);
+	void TickStageChoice(float DeltaTime);
+	void TickTransition(float DeltaTime);
+	void TickStageIntro(float DeltaTime);
+	float ResolveStageIntroSeconds(const FARStageDefRow& StageDef) const;
 
 	bool SpawnWaveFromDefinition(FName WaveRowName, const FARWaveDefRow& WaveDef, bool bColorSwap);
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
 	bool SelectWave(FName& OutWaveRow, FARWaveDefRow& OutWaveDef, bool& bOutColorSwap);
-	bool SelectStage(FName& OutStageRow, FARStageDefRow& OutStageDef);
+	bool SelectStage(FName& OutStageRow, FARStageDefRow& OutStageDef, const TSet<FName>* ExcludedRows = nullptr);
 	FVector ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal) const;
 	bool IsInsideGameplayBounds(const FVector& Location) const;
 	bool IsInsideLeakBounds(const FVector& Location) const;
@@ -98,6 +114,8 @@ private:
 	void HandleConsoleDumpState(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleStart(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleStop(const TArray<FString>& Args, UWorld* InWorld);
+	void HandleConsoleChooseStage(const TArray<FString>& Args, UWorld* InWorld);
+	void HandleConsoleForceIntro(const TArray<FString>& Args, UWorld* InWorld);
 
 private:
 	bool bRunActive = false;
@@ -111,9 +129,25 @@ private:
 	float TimeSinceLastWaveSpawn = 0.f;
 	int32 NextWaveInstanceId = 1;
 	int32 LeakCount = 0;
+	int32 StageSequence = 0;
+	int32 RewardEventId = 0;
+
+	EARInvaderFlowState FlowState = EARInvaderFlowState::Stopped;
+	float StageChoiceElapsed = 0.f;
+	float StageTransitionRemaining = 0.f;
+	float StageIntroRemaining = 0.f;
+	float RuntimeIntroOverrideSeconds = -1.f;
 
 	FName CurrentStageRow = NAME_None;
 	FARStageDefRow CurrentStageDef;
+	FName PendingStageRow = NAME_None;
+	FARStageDefRow PendingStageDef;
+	FName ChoiceLeftStageRow = NAME_None;
+	FARStageDefRow ChoiceLeftStageDef;
+	FName ChoiceRightStageRow = NAME_None;
+	FARStageDefRow ChoiceRightStageDef;
+	FName LastRewardStageRow = NAME_None;
+	FString LastRewardDescriptor;
 
 	TArray<FWaveRuntimeInternal> ActiveWaves;
 	TSet<FName> OneTimeWaveRowsUsed;
@@ -131,4 +165,6 @@ private:
 	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdDumpState;
 	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdStart;
 	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdStop;
+	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdChooseStage;
+	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdForceIntro;
 };
