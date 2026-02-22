@@ -4,18 +4,21 @@
 #include "Algo/StableSort.h"
 #include "UObject/UnrealType.h"
 
-static FString NormalizeNameKey(const FString& InName)
+namespace ARSaveSlotSortInternal
 {
-	return InName.ToLower();
-}
+	static FString NormalizeNameKey(const FString& InName)
+	{
+		return InName.ToLower();
+	}
 
-static FString NormalizePropNameKey(const FProperty* P)
-{
+	static FString NormalizePropNameKey(const FProperty* P)
+	{
 #if ENGINE_MAJOR_VERSION >= 5
-	return NormalizeNameKey(P ? P->GetAuthoredName() : FString());
+		return NormalizeNameKey(P ? P->GetAuthoredName() : FString());
 #else
-	return NormalizeNameKey(P ? P->GetName() : FString());
+		return NormalizeNameKey(P ? P->GetName() : FString());
 #endif
+	}
 }
 
 DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
@@ -51,7 +54,7 @@ DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
 	UScriptStruct* StructType = InnerStructProp->Struct;
 
 	// Find a DateTime property matching FieldName (case-insensitive, authored name)
-	const FString WantedKey = NormalizeNameKey(FieldName.ToString());
+	const FString WantedKey = ARSaveSlotSortInternal::NormalizeNameKey(FieldName.ToString());
 
 	FStructProperty* DateTimeProp = nullptr;
 	for (TFieldIterator<FProperty> It(StructType); It; ++It)
@@ -59,7 +62,7 @@ DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
 		FProperty* P = *It;
 		if (!P) continue;
 
-		if (NormalizePropNameKey(P) == WantedKey)
+		if (ARSaveSlotSortInternal::NormalizePropNameKey(P) == WantedKey)
 		{
 			FStructProperty* SP = CastField<FStructProperty>(P);
 			if (SP && SP->Struct == TBaseStructure<FDateTime>::Get())
