@@ -83,6 +83,35 @@
 - `BP_OnEnemyDied`
 - Reward/drop implementation remains intentionally deferred.
 
+## Invader Runtime V1 (New)
+
+- Authority brain: `UARInvaderDirectorSubsystem` (`UTickableWorldSubsystem`, server-only execution).
+- Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState` with `FARInvaderRuntimeSnapshot`.
+- Data source: DataTables (`FARWaveDefRow`, `FARStageDefRow`) configured via `UARInvaderDirectorSettings`.
+- Wave phases: `Entering`, `Active`, `Berserk`, `Expired`.
+- Director supports:
+- continuous threat growth
+- stage selection and stage modifiers
+- wave selection with constraints (threat/player count/one-time/required+blocked tags/repeat downweight)
+- deterministic color swap variant on repeat when allowed
+- overlap rule: next wave can spawn while previous is berserk/overtime
+- early-clear wave advancement
+- loss checks (all players down, leak threshold)
+- soft cap telemetry (`SoftCapAliveEnemies`, `SoftCapActiveProjectiles`)
+- Enemy context additions:
+- replicated wave context (`WaveInstanceId`, `FormationSlotIndex`, `FormationMode`, `WavePhase`)
+- server-side entering fire gate (`>= 1s` on-screen before firing in Entering phase)
+- leak/offscreen tracking hooks
+- StateTree events are sent by `AAREnemyAIController::NotifyWavePhaseChanged(...)` on server.
+- Console commands:
+- `ar.invader.start [Seed]`
+- `ar.invader.stop`
+- `ar.invader.force_wave <RowName>`
+- `ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`
+- `ar.invader.force_threat <Value>`
+- `ar.invader.force_stage <RowName>`
+- `ar.invader.dump_state`
+
 ## Logging Standard
 
 - Global project logging category is `ARLog` (searchable, consistent)

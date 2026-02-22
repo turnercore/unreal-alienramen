@@ -8,20 +8,13 @@
 #include "GameplayAbilitySpec.h"
 #include "GameplayEffectTypes.h"
 #include "GameFramework/Character.h"
+#include "ARInvaderTypes.h"
 #include "AREnemyBase.generated.h"
 
 class UAbilitySystemComponent;
 class UARAttributeSetCore;
 class UARAbilitySet;
 struct FOnAttributeChangeData;
-
-UENUM(BlueprintType)
-enum class EAREnemyColor : uint8
-{
-	Red = 0,
-	White = 1,
-	Blue = 2,
-};
 
 UCLASS()
 class ALIENRAMEN_API AAREnemyBase : public ACharacter, public IAbilitySystemInterface
@@ -40,13 +33,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
 	UARAttributeSetCore* GetCoreAttributes() const { return AttributeSetCore; }
 
-	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
 	bool ActivateAbilityByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch = false);
 
-	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
 	void CancelAbilitiesByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch = true);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
 	void HandleDeath(AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
@@ -57,6 +50,30 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Lifecycle")
 	bool IsDead() const { return bIsDead; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
+	void SetEnemyColor(EAREnemyColor InColor) { EnemyColor = InColor; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARFormationMode InFormationMode, EARWavePhase InWavePhase, float InPhaseStartServerTime);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	void SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	void NotifyEnteredGameplayScreen(float InServerTime);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	bool CanFireByWaveRules() const;
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	int32 GetWaveInstanceId() const { return WaveInstanceId; }
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	EARWavePhase GetWavePhase() const { return WavePhase; }
+
+	bool HasBeenCountedAsLeak() const { return bCountedAsLeak; }
+	void MarkCountedAsLeak() { bCountedAsLeak = true; }
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -101,6 +118,27 @@ protected:
 	UFUNCTION()
 	void OnRep_IsDead();
 
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	int32 WaveInstanceId = INDEX_NONE;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	int32 FormationSlotIndex = INDEX_NONE;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	EARFormationMode FormationMode = EARFormationMode::None;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	EARWavePhase WavePhase = EARWavePhase::Entering;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	float WavePhaseStartServerTime = 0.f;
+
+	UFUNCTION()
+	void OnRep_WaveRuntimeContext();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Invader")
+	void BP_OnWavePhaseChanged(EARWavePhase NewPhase);
+
 private:
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> StartupGrantedAbilityHandles;
@@ -110,4 +148,7 @@ private:
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	bool bStartupSetApplied = false;
+	bool bCountedAsLeak = false;
+	bool bHasEnteredGameplayScreen = false;
+	float EnteredGameplayScreenServerTime = 0.f;
 };

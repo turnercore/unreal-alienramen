@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "GameplayTagContainer.h"
+#include "ARInvaderTypes.h"
 #include "AREnemyAIController.generated.h"
 
 class UStateTree;
@@ -14,6 +16,7 @@ class ALIENRAMEN_API AAREnemyAIController : public AAIController
 
 public:
 	AAREnemyAIController();
+	void NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase);
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
@@ -28,5 +31,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI")
 	TObjectPtr<UStateTree> DefaultStateTree;
-};
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
+	FGameplayTag EnteringPhaseEventTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
+	FGameplayTag ActivePhaseEventTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
+	FGameplayTag BerserkPhaseEventTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
+	FGameplayTag ExpiredPhaseEventTag;
+};

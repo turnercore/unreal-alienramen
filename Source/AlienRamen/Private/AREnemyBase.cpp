@@ -11,6 +11,7 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
 namespace AREnemyBaseInternal
@@ -248,10 +249,10 @@ void AAREnemyBase::HandleDeath_Implementation(AActor* InstigatorActor)
 		AbilitySystemComponent->CancelAllAbilities();
 	}
 
-	if (AController* Controller = GetController())
+	if (AController* PawnController = GetController())
 	{
-		Controller->StopMovement();
-		if (AAIController* AIController = Cast<AAIController>(Controller))
+		PawnController->StopMovement();
+		if (AAIController* AIController = Cast<AAIController>(PawnController))
 		{
 			if (UBrainComponent* Brain = AIController->GetBrainComponent())
 			{
@@ -274,9 +275,93 @@ void AAREnemyBase::OnRep_IsDead()
 	}
 }
 
+void AAREnemyBase::SetWaveRuntimeContext(
+	int32 InWaveInstanceId,
+	int32 InFormationSlotIndex,
+	EARFormationMode InFormationMode,
+	EARWavePhase InWavePhase,
+	float InPhaseStartServerTime)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const EARWavePhase PreviousPhase = WavePhase;
+	WaveInstanceId = InWaveInstanceId;
+	FormationSlotIndex = InFormationSlotIndex;
+	FormationMode = InFormationMode;
+	WavePhase = InWavePhase;
+	WavePhaseStartServerTime = InPhaseStartServerTime;
+	ForceNetUpdate();
+
+	if (PreviousPhase != WavePhase)
+	{
+		BP_OnWavePhaseChanged(WavePhase);
+		if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
+		{
+			EnemyAI->NotifyWavePhaseChanged(WaveInstanceId, WavePhase);
+		}
+	}
+}
+
+void AAREnemyBase::SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime)
+{
+	SetWaveRuntimeContext(WaveInstanceId, FormationSlotIndex, FormationMode, InWavePhase, InPhaseStartServerTime);
+}
+
+void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
+{
+	if (!HasAuthority() || bHasEnteredGameplayScreen)
+	{
+		return;
+	}
+
+	bHasEnteredGameplayScreen = true;
+	EnteredGameplayScreenServerTime = InServerTime;
+}
+
+bool AAREnemyBase::CanFireByWaveRules() const
+{
+	if (WavePhase != EARWavePhase::Entering)
+	{
+		return true;
+	}
+
+	if (!bHasEnteredGameplayScreen)
+	{
+		return false;
+	}
+
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	const float Now = World->GetTimeSeconds();
+	return (Now - EnteredGameplayScreenServerTime) >= 1.0f;
+}
+
+void AAREnemyBase::OnRep_WaveRuntimeContext()
+{
+	BP_OnWavePhaseChanged(WavePhase);
+}
+
 bool AAREnemyBase::ActivateAbilityByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch)
 {
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] ActivateAbilityByTag ignored on non-authority for '%s'."), *GetNameSafe(this));
+		return false;
+	}
+
 	if (!AbilitySystemComponent || !AbilityTag.IsValid())
+	{
+		return false;
+	}
+
+	if (!CanFireByWaveRules())
 	{
 		return false;
 	}
@@ -289,6 +374,12 @@ bool AAREnemyBase::ActivateAbilityByTag(FGameplayTag AbilityTag, bool bAllowPart
 void AAREnemyBase::CancelAbilitiesByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch)
 {
 	(void)bAllowPartialMatch;
+
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] CancelAbilitiesByTag ignored on non-authority for '%s'."), *GetNameSafe(this));
+		return;
+	}
 
 	if (!AbilitySystemComponent || !AbilityTag.IsValid())
 	{
@@ -307,6 +398,11 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AAREnemyBase, EnemyColor);
 	DOREPLIFETIME(AAREnemyBase, EnemyArchetypeTag);
 	DOREPLIFETIME(AAREnemyBase, bIsDead);
+	DOREPLIFETIME(AAREnemyBase, WaveInstanceId);
+	DOREPLIFETIME(AAREnemyBase, FormationSlotIndex);
+	DOREPLIFETIME(AAREnemyBase, FormationMode);
+	DOREPLIFETIME(AAREnemyBase, WavePhase);
+	DOREPLIFETIME(AAREnemyBase, WavePhaseStartServerTime);
 }
 
 void AAREnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
