@@ -89,13 +89,22 @@
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState` with `FARInvaderRuntimeSnapshot`.
 - Data source: DataTables (`FARWaveDefRow`, `FARStageDefRow`) configured via `UARInvaderDirectorSettings`.
 - Wave phases: `Entering`, `Active`, `Berserk`, `Expired`.
+- Director flow states: `StageIntro`, `Combat`, `AwaitStageClear`, `StageChoice`, `Transition`, `Stopped`.
 - Director supports:
 - continuous threat growth
 - stage selection and stage modifiers
+- stage-choice loop (left/right stage options after clear) with replicated options for UI
 - wave selection with constraints (threat/player count/one-time/required+blocked tags/repeat downweight)
 - deterministic color swap variant on repeat when allowed
 - overlap rule: next wave can spawn while previous is berserk/overtime
 - early-clear wave advancement
+- per-stage intro pacing window before first spawn
+- intro duration resolution order:
+- runtime override (`ar.invader.force_intro`)
+- settings debug override (`bOverrideStageIntroForDebug`, `DebugStageIntroSeconds`)
+- stage row override (`FARStageDefRow.StageIntroSeconds`, when >= 0)
+- settings default (`DefaultStageIntroSeconds`)
+- stage timer expiry enters `AwaitStageClear` and stops new wave spawning until board is clear
 - loss checks (all players down, leak threshold)
 - soft cap telemetry (`SoftCapAliveEnemies`, `SoftCapActiveProjectiles`)
 - Enemy context additions:
@@ -103,13 +112,16 @@
 - server-side entering fire gate (`>= 1s` on-screen before firing in Entering phase)
 - leak/offscreen tracking hooks
 - StateTree events are sent by `AAREnemyAIController::NotifyWavePhaseChanged(...)` on server.
+- Stage reward hook currently dispatches descriptor events (`RewardDescriptor`) and logs; gameplay reward application remains BP/gameplay integration.
 - Console commands:
 - `ar.invader.start [Seed]`
 - `ar.invader.stop`
+- `ar.invader.choose_stage <left|right>`
 - `ar.invader.force_wave <RowName>`
 - `ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`
 - `ar.invader.force_threat <Value>`
 - `ar.invader.force_stage <RowName>`
+- `ar.invader.force_intro <Seconds|clear>`
 - `ar.invader.dump_state`
 
 ## Logging Standard

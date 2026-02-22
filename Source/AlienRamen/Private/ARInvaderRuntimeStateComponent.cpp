@@ -35,6 +35,20 @@ void UARInvaderRuntimeStateComponent::BroadcastSnapshotDelta(
 		OnStageChanged.Broadcast(NewSnapshot.StageRowName);
 	}
 
+	const bool bOldInChoice = OldSnapshot.FlowState == EARInvaderFlowState::StageChoice;
+	const bool bNewInChoice = NewSnapshot.FlowState == EARInvaderFlowState::StageChoice;
+	if (bOldInChoice != bNewInChoice
+		|| OldSnapshot.StageChoiceLeftRowName != NewSnapshot.StageChoiceLeftRowName
+		|| OldSnapshot.StageChoiceRightRowName != NewSnapshot.StageChoiceRightRowName)
+	{
+		OnStageChoiceChanged.Broadcast(bNewInChoice, NewSnapshot.StageChoiceLeftRowName, NewSnapshot.StageChoiceRightRowName);
+	}
+
+	if (NewSnapshot.RewardEventId > OldSnapshot.RewardEventId)
+	{
+		OnStageRewardGranted.Broadcast(NewSnapshot.LastRewardStageRowName, NewSnapshot.LastRewardDescriptor);
+	}
+
 	TMap<int32, EARWavePhase> OldPhasesByWaveId;
 	OldPhasesByWaveId.Reserve(OldSnapshot.ActiveWaves.Num());
 	for (const FARWaveInstanceState& OldWave : OldSnapshot.ActiveWaves)
@@ -57,4 +71,3 @@ void UARInvaderRuntimeStateComponent::GetLifetimeReplicatedProps(TArray<FLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UARInvaderRuntimeStateComponent, RuntimeSnapshot);
 }
-

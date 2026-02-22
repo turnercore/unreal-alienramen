@@ -21,6 +21,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	TSoftObjectPtr<UDataTable> StageDataTable;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
+	FName InitialStageRow;
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
 	float BaseThreatGainPerSecond = 1.f;
 
@@ -29,6 +32,24 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
 	float NewWaveDelayWhenOvertime = 3.f;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
+	float StageTransitionDelay = 0.75f;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
+	float DefaultStageIntroSeconds = 2.5f;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run|Debug")
+	bool bOverrideStageIntroForDebug = false;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run|Debug", meta = (EditCondition = "bOverrideStageIntroForDebug", ClampMin = "0.0"))
+	float DebugStageIntroSeconds = 0.f;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
+	float StageChoiceAutoSelectSeconds = 0.f;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
+	bool bStageChoiceAutoSelectLeft = true;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
 	int32 LeakLossThreshold = 20;
@@ -63,4 +84,3 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Telemetry")
 	TSoftClassPtr<AActor> ProjectileActorClass;
 };
-

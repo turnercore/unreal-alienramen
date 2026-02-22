@@ -25,6 +25,17 @@ enum class EARWavePhase : uint8
 };
 
 UENUM(BlueprintType)
+enum class EARInvaderFlowState : uint8
+{
+	Combat = 0,
+	AwaitStageClear = 1,
+	StageChoice = 2,
+	Transition = 3,
+	StageIntro = 4,
+	Stopped = 5
+};
+
+UENUM(BlueprintType)
 enum class EAREntryMode : uint8
 {
 	StreamIn = 0,
@@ -196,6 +207,10 @@ struct FARStageDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
 	float StageDuration = 55.f;
 
+	// If < 0, director settings default intro duration is used.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	float StageIntroSeconds = -1.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
 	float ThreatGainMultiplier = 1.f;
 
@@ -257,6 +272,9 @@ struct FARInvaderRuntimeSnapshot
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	EARInvaderFlowState FlowState = EARInvaderFlowState::Stopped;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	float Threat = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
@@ -269,6 +287,27 @@ struct FARInvaderRuntimeSnapshot
 	float StageElapsedTime = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	float StageIntroRemainingTime = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	FName StageChoiceLeftRowName = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	FName StageChoiceRightRowName = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	FString StageChoiceLeftReward;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	FString StageChoiceRightReward;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	float StageChoiceElapsedTime = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	int32 StageSequence = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	int32 LeakCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
@@ -276,6 +315,15 @@ struct FARInvaderRuntimeSnapshot
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	int32 Seed = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	int32 RewardEventId = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	FName LastRewardStageRowName = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	FString LastRewardDescriptor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	int32 SoftCapAliveEnemies = 0;
