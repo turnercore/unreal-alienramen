@@ -337,6 +337,7 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("  - %s"), *Tag.ToString());
 	}
+	ApplyLoadoutTagsToASC(LoadoutTags);
 
 	// 3) Resolve + apply Ship baseline row
 	{
@@ -896,4 +897,26 @@ void AARShipCharacterBase::LogAllPropertiesOnStruct(const UScriptStruct* StructT
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("=== End Properties ==="));
+}
+
+void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags)
+{
+	if (!HasAuthority()) return;
+	if (InLoadoutTags.IsEmpty()) return;
+
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ApplyLoadoutTagsToASC: No ASC found"));
+		return;
+	}
+
+	ASC->AddLooseGameplayTags(InLoadoutTags);
+	AppliedLooseTags.AppendTags(InLoadoutTags);
+
+	UE_LOG(LogTemp, Warning, TEXT("ApplyLoadoutTagsToASC: Mirrored %d loadout tags into ASC"), InLoadoutTags.Num());
+	for (const FGameplayTag& Tag : InLoadoutTags)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  - Mirrored tag: %s"), *Tag.ToString());
+	}
 }

@@ -89,6 +89,7 @@ protected:
 	// ---- Loadout application (server only) ----
 	void ClearAppliedLoadout();
 	void GrantCommonAbilitySetFromController(AController* NewController);
+	void ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags);
 
 	// Apply baseline for any row struct that contains common fields:
 	// Stats, StartupAbilities, StartupEffects, ShipTags, MovementType, PrimaryWeapon(optional)
@@ -133,6 +134,7 @@ protected:
 	UPROPERTY(Transient)
 	TArray<FActiveGameplayEffectHandle> AppliedEffectHandles;
 
+	// Tracks loose tags applied at runtime (row baseline + mirrored loadout tags) for cleanup.
 	UPROPERTY(Transient)
 	FGameplayTagContainer AppliedLooseTags;
 
