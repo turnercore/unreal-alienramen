@@ -16,11 +16,11 @@ struct FContentLookupRoute
 	GENERATED_BODY()
 
 	// Example: Unlocks.Ships
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ContentLookup")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
 	FGameplayTag RootTag;
 
 	// Example: DT_Unlocks_Ships
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ContentLookup")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
 	TSoftObjectPtr<UDataTable> DataTable;
 };
 
@@ -31,7 +31,7 @@ class ALIENRAMEN_API UContentLookupRegistry : public UDataAsset
 
 public:
 	// List rather than map for editor friendliness.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ContentLookup")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
 	TArray<FContentLookupRoute> Routes;
 };
 
@@ -59,12 +59,12 @@ public:
 	// ---- Registry Source ----
 	// Assign this in defaults (CDO) or set it at runtime via SetRegistry().
 	// Keeping it soft helps cooking + load order; we load it in Initialize().
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "ContentLookup")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
 	TSoftObjectPtr<UContentLookupRegistry> RegistryAsset;
 
 
 	// Runtime override (optional). If set, this takes priority over RegistryAsset.
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "ContentLookup")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
 	TObjectPtr<UContentLookupRegistry> Registry;
 
 	// ---- Cache ----
@@ -74,39 +74,25 @@ public:
 	// ---- Blueprint Helpers ----
 
 	// Provide a registry at runtime (e.g., from GameInstance or during testing).
-	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
 	void SetRegistry(UContentLookupRegistry* InRegistry);
 
 	// Clears cached loaded tables (useful during PIE iteration).
-	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
 	void ClearCache();
 
-	// Returns the leaf segment used as RowName (Unlocks.Ships.Sammy -> Sammy).
-	UFUNCTION(BlueprintPure, Category = "ContentLookup")
-	static FName GetLeafRowNameFromTag(FGameplayTag Tag);
-
-	// Core: Given a tag, returns the matching DataTable and RowName (leaf),
-	// plus a readable error if anything fails.
-	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
-	bool GetTableAndRowNameFromTag(
-		FGameplayTag Tag,
-		UPARAM(DisplayName = "DataTable") UDataTable*& OutDataTable,
-		UPARAM(DisplayName = "RowName") FName& OutRowName,
-		FString& OutError
-	);
-
 	// Convenience: checks existence without returning the row struct.
-	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
 	bool DoesRowExistForTag(FGameplayTag Tag, FString& OutError);
 
 	// Validates registry content (duplicate roots, missing tables, etc.)
 	// Returns true if it looks usable.
-	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
 	bool ValidateRegistry(FString& OutError);
 
 	// Generic lookup: resolves the route, finds the DataTable row, and returns the row as an InstancedStruct.
 	// OutRow will contain a copy of the row struct (type depends on the DataTable's RowStruct).
-	UFUNCTION(BlueprintCallable, Category = "ContentLookup")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
 	bool LookupWithGameplayTag(
 		FGameplayTag Tag,
 		FInstancedStruct& OutRow,
@@ -115,6 +101,17 @@ public:
 
 
 private:
+	// Returns the leaf segment used as RowName (Unlocks.Ships.Sammy -> Sammy).
+	static FName GetLeafRowNameFromTag(FGameplayTag Tag);
+
+	// Core internal helper: resolve matching DataTable and RowName (leaf).
+	bool GetTableAndRowNameFromTag(
+		FGameplayTag Tag,
+		UDataTable*& OutDataTable,
+		FName& OutRowName,
+		FString& OutError
+	);
+
 	// Internal: choose active registry (runtime override first, else loaded asset).
 	UContentLookupRegistry* GetActiveRegistry();
 

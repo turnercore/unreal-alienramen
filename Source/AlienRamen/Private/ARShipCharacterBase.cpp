@@ -15,6 +15,8 @@
 
 #include "UObject/UnrealType.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogARShipGAS, Log, All);
+
 // --------------------
 // Static names (row struct fields)
 // --------------------
@@ -328,15 +330,11 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	FGameplayTagContainer LoadoutTags;
 	if (!GetPlayerLoadoutTags(LoadoutTags))
 	{
-		UE_LOG(LogTemp, Error, TEXT("PossessedBy: Failed to get LoadoutTags from PlayerState"));
+		UE_LOG(LogARShipGAS, Error, TEXT("Possess failed: could not read LoadoutTags from PlayerState."));
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("PossessedBy: Got %d LoadoutTags:"), LoadoutTags.Num());
-	for (const FGameplayTag& Tag : LoadoutTags)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("  - %s"), *Tag.ToString());
-	}
+	UE_LOG(LogARShipGAS, Verbose, TEXT("Possess: applying %d loadout tags."), LoadoutTags.Num());
 	ApplyLoadoutTagsToASC(LoadoutTags);
 
 	// 3) Resolve + apply Ship baseline row
@@ -344,22 +342,19 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 		FGameplayTag ShipTag;
 		if (!FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag))
 		{
-			UE_LOG(LogTemp, Error, TEXT("PossessedBy: No ship tag found under root '%s'"), *TAGROOT_Ships.ToString());
+			UE_LOG(LogARShipGAS, Error, TEXT("Possess failed: no ship tag found under root '%s'."), *TAGROOT_Ships.ToString());
 			return;
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("PossessedBy: Found ShipTag = '%s'"), *ShipTag.ToString());
 
 		FInstancedStruct ShipRow;
 		FString Error;
 		if (ResolveRowFromTag(ShipTag, ShipRow, Error))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PossessedBy: Successfully resolved ship row"));
 			ApplyResolvedRowBaseline(ShipRow);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("PossessedBy: Failed to resolve ship row. Error: %s"), *Error);
+			UE_LOG(LogARShipGAS, Error, TEXT("Possess failed: could not resolve ship row for '%s'. %s"), *ShipTag.ToString(), *Error);
 			return;
 		}
 	}
@@ -452,27 +447,18 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 	const UScriptStruct* StructType = RowStruct.GetScriptStruct();
 	const void* StructData = RowStruct.GetMemory();
 	if (!StructType || !StructData) return;
-
-	UE_LOG(LogTemp, Warning, TEXT("ApplyResolvedRowBaseline: Processing struct '%s'"), *StructType->GetName());
-
-	// DEBUG: List all properties on this struct
-	LogAllPropertiesOnStruct(StructType);
+	UE_LOG(LogARShipGAS, Verbose, TEXT("Applying loadout row baseline from struct '%s'."), *StructType->GetName());
 	// Stats effect (optional)
 	{
 		TSubclassOf<UGameplayEffect> StatsGE = ExtractEffectClass(StructType, StructData, NAME_Stats);
 		if (StatsGE)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  - Found Stats effect: %s"), *StatsGE->GetName());
 			const FGameplayEffectContextHandle Ctx = ASC->MakeEffectContext();
 			const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(StatsGE, 1.0f, Ctx);
 			if (Spec.IsValid())
 			{
 				AppliedEffectHandles.Add(ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()));
 			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  - No Stats effect found (property '%s' not found or null)"), *NAME_Stats.ToString());
 		}
 	}
 
@@ -482,65 +468,13 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 		UARWeaponDefinition* WeaponDef = ExtractWeaponDef(StructType, StructData, NAME_PrimaryWeapon);
 		if (WeaponDef)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  - Found Primary Weapon: %s"), *WeaponDef->GetName());
 			CurrentPrimaryWeapon = WeaponDef;
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  - No Primary Weapon found (property '%s' not found or null)"), *NAME_PrimaryWeapon.ToString());
 		}
 	}
 
 	// Startup abilities/effects
-	{
-		// Debug: Check if property exists (using prefix matching now)
-		FProperty* P = FindPropertyByNamePrefix(StructType, NAME_StartupAbilities.ToString());
-		if (P)
-		{
-			FArrayProperty* ArrayProp = CastField<FArrayProperty>(P);
-			if (ArrayProp)
-			{
-				FScriptArrayHelper Helper(ArrayProp, ArrayProp->ContainerPtrToValuePtr<void>(StructData));
-				int32 NumAbilities = Helper.Num();
-				UE_LOG(LogTemp, Warning, TEXT("  - Found StartupAbilities array with %d elements"), NumAbilities);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  - StartupAbilities property exists but is NOT an array (type: %s)"), *P->GetClass()->GetName());
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  - StartupAbilities property NOT FOUND on struct"));
-		}
-
-		GrantAbilityArrayFromStruct(ASC, StructType, StructData, NAME_StartupAbilities, GrantedAbilityHandles);
-	}
-
-	{
-		// Debug: Check if property exists (using prefix matching now)
-		FProperty* P = FindPropertyByNamePrefix(StructType, NAME_StartupEffects.ToString());
-		if (P)
-		{
-			FArrayProperty* ArrayProp = CastField<FArrayProperty>(P);
-			if (ArrayProp)
-			{
-				FScriptArrayHelper Helper(ArrayProp, ArrayProp->ContainerPtrToValuePtr<void>(StructData));
-				int32 NumEffects = Helper.Num();
-				UE_LOG(LogTemp, Warning, TEXT("  - Found StartupEffects array with %d elements"), NumEffects);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  - StartupEffects property exists but is NOT an array"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  - StartupEffects property NOT FOUND on struct"));
-		}
-
-		ApplyEffectArrayFromStruct(ASC, StructType, StructData, NAME_StartupEffects, AppliedEffectHandles);
-	}
+	GrantAbilityArrayFromStruct(ASC, StructType, StructData, NAME_StartupAbilities, GrantedAbilityHandles);
+	ApplyEffectArrayFromStruct(ASC, StructType, StructData, NAME_StartupEffects, AppliedEffectHandles);
 
 	// Loose tags (ShipTags field)
 	{
@@ -549,13 +483,8 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 
 		if (!LooseTags.IsEmpty())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  - Found %d ShipTags"), LooseTags.Num());
 			ASC->AddLooseGameplayTags(LooseTags);
 			AppliedLooseTags.AppendTags(LooseTags);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  - ShipTags property is empty or not found"));
 		}
 	}
 
@@ -564,19 +493,12 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 		FGameplayTag MovementTag;
 		if (ExtractGameplayTagFromStruct(StructType, StructData, NAME_MovementType, MovementTag))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  - Found MovementType: %s"), *MovementTag.ToString());
 			FGameplayTagContainer MoveTags;
 			MoveTags.AddTag(MovementTag);
 			ASC->AddLooseGameplayTags(MoveTags);
 			AppliedLooseTags.AppendTags(MoveTags);
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  - No MovementType found"));
-		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("ApplyResolvedRowBaseline: COMPLETE"));
 }
 
 // --------------------
@@ -700,12 +622,6 @@ bool AARShipCharacterBase::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, c
 	const FGameplayTagContainer& AbilityTags = AbilityCDO->AbilityTags;
 	const FGameplayTagContainer& SpecTags = Spec.GetDynamicSpecSourceTags();
 
-	// DEBUG
-	UE_LOG(LogTemp, Warning, TEXT("SpecMatchesAnyTag: Ability=%s"), *AbilityCDO->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("  AbilityTags (%d): %s"), AbilityTags.Num(), *AbilityTags.ToStringSimple());
-	UE_LOG(LogTemp, Warning, TEXT("  SpecTags (%d): %s"), SpecTags.Num(), *SpecTags.ToStringSimple());
-	UE_LOG(LogTemp, Warning, TEXT("  Looking for tags (%d): %s"), InTagsToMatch.Num(), *InTagsToMatch.ToStringSimple());
-
 	// Scoring:
 	// - exact match => +100
 	// - parent match => +10
@@ -719,7 +635,6 @@ bool AARShipCharacterBase::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, c
 
 		if (AbilityTags.HasTagExact(Query) || SpecTags.HasTagExact(Query))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("    MATCH (exact): %s"), *Query.ToString());
 			Best = FMath::Max(Best, 100);
 			bAny = true;
 			continue;
@@ -728,17 +643,13 @@ bool AARShipCharacterBase::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, c
 		// Parent match: query is a parent of some ability tag
 		if (AbilityTags.HasTag(Query) || SpecTags.HasTag(Query))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("    MATCH (parent): %s"), *Query.ToString());
 			Best = FMath::Max(Best, 10);
 			bAny = true;
 			continue;
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("    NO MATCH: %s"), *Query.ToString());
 	}
 
 	OutBestScore = Best;
-	UE_LOG(LogTemp, Warning, TEXT("  Result: bAny=%d, Score=%d"), bAny, Best);
 	return bAny;
 }
 
@@ -807,29 +718,23 @@ bool AARShipCharacterBase::ActivateAbilityByTags(const FGameplayTagContainer& In
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) 
 	{
-		UE_LOG(LogTemp, Error, TEXT("ActivateAbilityByTags: No ASC found"));
+		UE_LOG(LogARShipGAS, Error, TEXT("ActivateAbilityByTags failed: no ASC found."));
 		return false;
 	}
 	if (InTagsToActivate.IsEmpty()) 
 	{
-		UE_LOG(LogTemp, Error, TEXT("ActivateAbilityByTags: Empty tag container"));
+		UE_LOG(LogARShipGAS, Error, TEXT("ActivateAbilityByTags failed: empty tag container."));
 		return false;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("ActivateAbilityByTags: Looking for tags: %s"), *InTagsToActivate.ToStringSimple());
 
 	FGameplayAbilitySpecHandle Handle;
 	if (!PickBestMatchingAbilityHandle(ASC, InTagsToActivate, Handle))
 	{
-		UE_LOG(LogTemp, Error, TEXT("ActivateAbilityByTags: No matching ability found"));
+		UE_LOG(LogARShipGAS, Warning, TEXT("ActivateAbilityByTags: no matching ability for tags '%s'."), *InTagsToActivate.ToStringSimple());
 		return false;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("ActivateAbilityByTags: Found matching ability, attempting to activate"));
-
-	bool bResult = ASC->TryActivateAbility(Handle, bAllowRemoteActivation);
-	UE_LOG(LogTemp, Warning, TEXT("ActivateAbilityByTags: TryActivateAbility returned %d"), bResult);
-	return bResult;
+	return ASC->TryActivateAbility(Handle, bAllowRemoteActivation);
 }
 
 int32 AARShipCharacterBase::ActivateAllAbilitiesByTag(FGameplayTag Tag, bool bAllowRemoteActivation)
@@ -887,16 +792,15 @@ void AARShipCharacterBase::LogAllPropertiesOnStruct(const UScriptStruct* StructT
 {
 	if (!StructType) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("=== Properties on struct '%s' ==="), *StructType->GetName());
+	UE_LOG(LogARShipGAS, VeryVerbose, TEXT("Properties on struct '%s':"), *StructType->GetName());
 	for (TFieldIterator<FProperty> It(StructType); It; ++It)
 	{
 		FProperty* Prop = *It;
 		if (Prop)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  - %s (%s)"), *Prop->GetName(), *Prop->GetClass()->GetName());
+			UE_LOG(LogARShipGAS, VeryVerbose, TEXT("  - %s (%s)"), *Prop->GetName(), *Prop->GetClass()->GetName());
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("=== End Properties ==="));
 }
 
 void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags)
@@ -907,16 +811,12 @@ void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& In
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ApplyLoadoutTagsToASC: No ASC found"));
+		UE_LOG(LogARShipGAS, Error, TEXT("ApplyLoadoutTagsToASC failed: no ASC found."));
 		return;
 	}
 
 	ASC->AddLooseGameplayTags(InLoadoutTags);
 	AppliedLooseTags.AppendTags(InLoadoutTags);
 
-	UE_LOG(LogTemp, Warning, TEXT("ApplyLoadoutTagsToASC: Mirrored %d loadout tags into ASC"), InLoadoutTags.Num());
-	for (const FGameplayTag& Tag : InLoadoutTags)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("  - Mirrored tag: %s"), *Tag.ToString());
-	}
+	UE_LOG(LogARShipGAS, Verbose, TEXT("Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());
 }
