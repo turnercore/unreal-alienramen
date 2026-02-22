@@ -143,7 +143,8 @@
 - V1 intentionally bypasses SG helper function flows (`Init`, `UpdateSavedGameState`, `UpdateSavedPlayerStates`)
 - V1 intentionally does not replicate production backup behavior
 - `SaveSlotNumber` is treated as a per-slot revision counter (not slot-list index)
-- Physical save files use revision naming: `<BaseSlotName>_<SaveSlotNumber>` (example: `test_debug_3`)
+- Physical save files use revision naming: `<BaseSlotName>__<SaveSlotNumber>` (example: `test_debug__3`)
+- Legacy single-underscore revision names are still recognized for migration compatibility
 - Index `SlotName` stores base slot name and `SlotNumber` stores latest revision for load/rollback behavior
 - Saving increments revision and keeps trailing 5 revisions for that slot base
 - Creating a slot fails if the base already exists (prevents accidental overwrite); use load + save to make next revision

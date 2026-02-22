@@ -18,7 +18,7 @@ namespace ARDebugSaveToolInternal
 
 	static FName BuildRevisionSlotName(FName BaseSlotName, int32 SlotNumber)
 	{
-		return FName(*FString::Printf(TEXT("%s_%d"), *BaseSlotName.ToString(), SlotNumber));
+		return FName(*FString::Printf(TEXT("%s__%d"), *BaseSlotName.ToString(), SlotNumber));
 	}
 
 	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber)
@@ -26,19 +26,30 @@ namespace ARDebugSaveToolInternal
 		OutBaseSlotName.Reset();
 		OutSlotNumber = 0;
 
-		int32 LastUnderscore = INDEX_NONE;
-		if (!InSlotName.FindLastChar(TEXT('_'), LastUnderscore) || LastUnderscore <= 0 || LastUnderscore >= InSlotName.Len() - 1)
+		int32 DelimIndex = InSlotName.Find(TEXT("__"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		int32 DelimLen = 2;
+		if (DelimIndex == INDEX_NONE)
+		{
+			// Legacy fallback for older revision names with single underscore.
+			if (!InSlotName.FindLastChar(TEXT('_'), DelimIndex))
+			{
+				return false;
+			}
+			DelimLen = 1;
+		}
+
+		if (DelimIndex <= 0 || DelimIndex >= InSlotName.Len() - DelimLen)
 		{
 			return false;
 		}
 
-		const FString SuffixPart = InSlotName.Mid(LastUnderscore + 1);
+		const FString SuffixPart = InSlotName.Mid(DelimIndex + DelimLen);
 		if (!SuffixPart.IsNumeric())
 		{
 			return false;
 		}
 
-		OutBaseSlotName = InSlotName.Left(LastUnderscore);
+		OutBaseSlotName = InSlotName.Left(DelimIndex);
 		OutSlotNumber = FCString::Atoi(*SuffixPart);
 		return true;
 	}
