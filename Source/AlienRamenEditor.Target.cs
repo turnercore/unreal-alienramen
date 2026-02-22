@@ -10,6 +10,6 @@ public class AlienRamenEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V6;
 
-		ExtraModuleNames.AddRange( new string[] { "AlienRamen" } );
+		ExtraModuleNames.AddRange( new string[] { "AlienRamen", "AlienRamenEditor" } );
 	}
 }
