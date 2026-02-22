@@ -69,7 +69,19 @@
 - `USaveSlotSortLibrary`: custom thunk to sort struct arrays by `FDateTime`
 - `UHelperLibrary`: reflection-based struct/object property copy by normalized names
 - `UARWeaponDefinition`: weapon data asset (`ProjectileClass`, fire rate, damage GE, base damage)
-- `AAREnemyBase`: C++ enemy base for Invader enemies with ASC/attribute injection foundation
+- `AAREnemyBase`: C++ enemy base for Invader enemies (now `ACharacter`-based) with ASC, core attributes, startup ability set support, replicated enemy metadata, and authoritative death hook
+- `AAREnemyAIController`: C++ AI controller base with `UStateTreeAIComponent` and server-side start/stop StateTree lifecycle
+
+## Enemy Runtime Contract
+
+- Enemy movement foundation is `ACharacter` for nav/path-following reliability while visuals can still present “flying” behavior.
+- Enemy ASC is actor-owned (owner/avatar = enemy actor), server-authoritative.
+- Enemy base supports optional startup ability set grants (`UARAbilitySet`) on authority.
+- Enemy base exposes helper APIs for activate/cancel by gameplay tag.
+- Enemy death is server-gated and one-shot (`bIsDead`) with Blueprint extension points:
+- `BP_OnEnemyInitialized`
+- `BP_OnEnemyDied`
+- Reward/drop implementation remains intentionally deferred.
 
 ## Logging Standard
 
