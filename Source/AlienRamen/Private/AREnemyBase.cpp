@@ -2,6 +2,7 @@
 
 
 #include "AREnemyBase.h"
+#include "AlienRamen.h"
 
 #include "AbilitySystemComponent.h"
 #include "ARAttributeSetCore.h"
@@ -47,10 +48,15 @@ void AAREnemyBase::UnPossessed()
 
 void AAREnemyBase::InitAbilityActorInfo()
 {
-	if (!AbilitySystemComponent) return;
+	if (!AbilitySystemComponent)
+	{
+		UE_LOG(ARLog, Error, TEXT("[EnemyBase] InitAbilityActorInfo failed: no AbilitySystemComponent on '%s'."), *GetNameSafe(this));
+		return;
+	}
 
 	// Enemy-owned ASC: owner and avatar are this pawn.
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	UE_LOG(ARLog, Verbose, TEXT("[EnemyBase] Initialized ASC actor info for '%s'."), *GetNameSafe(this));
 }
 
 void AAREnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

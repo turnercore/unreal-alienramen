@@ -1,9 +1,8 @@
 #include "SaveSlotSortLibrary.h"
+#include "AlienRamen.h"
 
 #include "Algo/StableSort.h"
 #include "UObject/UnrealType.h"
-
-DEFINE_LOG_CATEGORY_STATIC(LogSaveSlotSortLibrary, Log, All);
 
 static FString NormalizeNameKey(const FString& InName)
 {
@@ -36,7 +35,7 @@ DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
 
 	if (!ArrayProp || !ArrayAddr)
 	{
-		UE_LOG(LogSaveSlotSortLibrary, Warning, TEXT("SortStructArrayByDateTimeField: TargetArray is invalid."));
+		UE_LOG(ARLog, Warning, TEXT("[SaveSlotSort] SortStructArrayByDateTimeField failed: TargetArray is invalid."));
 		return;
 	}
 
@@ -44,8 +43,8 @@ DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
 	FStructProperty* InnerStructProp = CastField<FStructProperty>(ArrayProp->Inner);
 	if (!InnerStructProp || !InnerStructProp->Struct)
 	{
-		UE_LOG(LogSaveSlotSortLibrary, Warning,
-			TEXT("SortStructArrayByDateTimeField: TargetArray must be an array of structs."));
+		UE_LOG(ARLog, Warning,
+			TEXT("[SaveSlotSort] SortStructArrayByDateTimeField failed: TargetArray must be an array of structs."));
 		return;
 	}
 
@@ -73,8 +72,8 @@ DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
 
 	if (!DateTimeProp)
 	{
-		UE_LOG(LogSaveSlotSortLibrary, Warning,
-			TEXT("SortStructArrayByDateTimeField: Could not find DateTime field '%s' on struct '%s'."),
+		UE_LOG(ARLog, Warning,
+			TEXT("[SaveSlotSort] SortStructArrayByDateTimeField failed: could not find DateTime field '%s' on struct '%s'."),
 			*FieldName.ToString(), *GetNameSafe(StructType));
 		return;
 	}
@@ -126,8 +125,8 @@ DEFINE_FUNCTION(USaveSlotSortLibrary::execSortStructArrayByDateTimeField)
 		}
 	}
 
-	UE_LOG(LogSaveSlotSortLibrary, Log,
-		TEXT("Sorted %d elements of '%s' by DateTime field '%s' (%s)."),
+	UE_LOG(ARLog, Verbose,
+		TEXT("[SaveSlotSort] Sorted %d elements of '%s' by DateTime field '%s' (%s)."),
 		Num, *GetNameSafe(StructType), *FieldName.ToString(), bNewestFirst ? TEXT("newest first") : TEXT("oldest first"));
 }
 

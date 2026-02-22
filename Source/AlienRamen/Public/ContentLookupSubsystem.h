@@ -8,8 +8,6 @@
 #include "StructUtils/InstancedStruct.h"
 #include "ContentLookupSubsystem.generated.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogContentLookup, Log, All);
-
 USTRUCT(BlueprintType)
 struct FContentLookupRoute
 {

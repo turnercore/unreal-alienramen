@@ -1,11 +1,10 @@
 // HelperLibrary.cpp
 
 #include "HelperLibrary.h"
+#include "AlienRamen.h"
 
 #include "Engine/Engine.h"
 #include "UObject/UnrealType.h"
-
-DEFINE_LOG_CATEGORY_STATIC(LogAlienRamenHelperLibrary, Log, All);
 
 // -------------------------
 // Helpers
@@ -154,7 +153,7 @@ static bool ArePropertiesCompatible(const FProperty* Src, const FProperty* Dst)
 static void DebugLog(bool bEnableLog, const FString& Msg)
 {
 	if (!bEnableLog) return;
-	UE_LOG(LogAlienRamenHelperLibrary, Log, TEXT("%s"), *Msg);
+	UE_LOG(ARLog, VeryVerbose, TEXT("[HelperLibrary] %s"), *Msg);
 }
 
 // -------------------------
@@ -165,15 +164,15 @@ void UHelperLibrary::ApplyStructToObjectByName(UObject* Target, const FInstanced
 {
 	if (!Target)
 	{
-		UE_LOG(LogAlienRamenHelperLibrary, Warning,
-			TEXT("ApplyStructToObjectByName: invalid input (Target=null)"));
+		UE_LOG(ARLog, Warning,
+			TEXT("[HelperLibrary] ApplyStructToObjectByName invalid input (Target=null)."));
 		return;
 	}
 
 	if (!StructData.IsValid())
 	{
-		UE_LOG(LogAlienRamenHelperLibrary, Warning,
-			TEXT("ApplyStructToObjectByName: invalid input (StructData is not valid) Target=%s"),
+		UE_LOG(ARLog, Warning,
+			TEXT("[HelperLibrary] ApplyStructToObjectByName invalid input (StructData invalid) Target=%s"),
 			*GetNameSafe(Target));
 		return;
 	}
@@ -190,8 +189,8 @@ FInstancedStruct UHelperLibrary::ExtractObjectToStructByName(UObject* Source, US
 
 	if (!Source || !StructType)
 	{
-		UE_LOG(LogAlienRamenHelperLibrary, Warning,
-			TEXT("ExtractObjectToStructByName: invalid input (Source=%s, StructType=%s)"),
+		UE_LOG(ARLog, Warning,
+			TEXT("[HelperLibrary] ExtractObjectToStructByName invalid input (Source=%s, StructType=%s)"),
 			*GetNameSafe(Source), *GetNameSafe(StructType));
 		return Out;
 	}
