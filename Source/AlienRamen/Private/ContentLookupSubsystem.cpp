@@ -1,11 +1,9 @@
 // ContentLookupSubsystem.cpp
 
 #include "ContentLookupSubsystem.h"
+#include "AlienRamen.h"
 #include "UObject/SoftObjectPtr.h"
 #include "StructUtils/InstancedStruct.h"
-
-
-DEFINE_LOG_CATEGORY(LogContentLookup);
 
 static FString GetLeafSegment(const FString& In)
 {
@@ -23,7 +21,7 @@ void UContentLookupSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	// Pull Config=Game properties (RegistryAsset) from DefaultGame.ini
 	LoadConfig();
-	UE_LOG(LogContentLookup, Warning, TEXT("RegistryAsset path: %s"), *RegistryAsset.ToSoftObjectPath().ToString());
+	UE_LOG(ARLog, Verbose, TEXT("[ContentLookup] Initialize with RegistryAsset path: %s"), *RegistryAsset.ToSoftObjectPath().ToString());
 
 
 	// If runtime Registry isn't already set (e.g. by BP), load from config asset
@@ -32,7 +30,7 @@ void UContentLookupSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		Registry = RegistryAsset.LoadSynchronous();
 		if (!Registry)
 		{
-			UE_LOG(LogContentLookup, Warning, TEXT("Initialize: Failed to load RegistryAsset from config: %s"),
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Failed to load RegistryAsset from config: %s"),
 				*RegistryAsset.ToSoftObjectPath().ToString());
 		}
 	}
@@ -42,7 +40,7 @@ void UContentLookupSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		FString Err;
 		if (!ValidateRegistry(Err))
 		{
-			UE_LOG(LogContentLookup, Warning, TEXT("Initialize: Registry validation warning: %s"), *Err);
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Registry validation warning: %s"), *Err);
 		}
 	}
 }
@@ -59,14 +57,14 @@ void UContentLookupSubsystem::SetRegistry(UContentLookupRegistry* InRegistry)
 {
 	if (!InRegistry)
 	{
-		UE_LOG(LogContentLookup, Warning, TEXT("SetRegistry called with null. Ignoring."));
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] SetRegistry called with null; ignoring."));
 		return;
 	}
 
 	Registry = InRegistry;
 	ClearCache();
 
-	UE_LOG(LogContentLookup, Log, TEXT("SetRegistry override: %s"), *GetNameSafe(Registry));
+	UE_LOG(ARLog, Log, TEXT("[ContentLookup] Registry override set: %s"), *GetNameSafe(Registry));
 }
 
 
@@ -96,7 +94,7 @@ bool UContentLookupSubsystem::GetTableAndRowNameFromTag(
 	if (!Tag.IsValid())
 	{
 		OutError = TEXT("Tag is invalid.");
-		UE_LOG(LogContentLookup, Warning, TEXT("GetTableAndRowNameFromTag: %s"), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] GetTableAndRowNameFromTag failed: %s"), *OutError);
 		return false;
 	}
 
@@ -104,7 +102,7 @@ bool UContentLookupSubsystem::GetTableAndRowNameFromTag(
 	UDataTable* DT = ResolveTableForTag(Tag, MatchedRoot, OutError);
 	if (!DT)
 	{
-		UE_LOG(LogContentLookup, Warning, TEXT("GetTableAndRowNameFromTag(%s): %s"), *Tag.ToString(), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Could not resolve table for tag '%s': %s"), *Tag.ToString(), *OutError);
 		return false;
 	}
 
@@ -112,7 +110,7 @@ bool UContentLookupSubsystem::GetTableAndRowNameFromTag(
 	if (RowName.IsNone())
 	{
 		OutError = TEXT("Computed RowName is None (empty leaf).");
-		UE_LOG(LogContentLookup, Warning, TEXT("GetTableAndRowNameFromTag(%s): %s"), *Tag.ToString(), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Could not compute RowName for tag '%s': %s"), *Tag.ToString(), *OutError);
 		return false;
 	}
 
@@ -140,7 +138,7 @@ bool UContentLookupSubsystem::DoesRowExistForTag(FGameplayTag Tag, FString& OutE
 			*GetNameSafe(DT),
 			*Tag.ToString());
 
-		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] %s"), *OutError);
 		return false;
 	}
 
@@ -155,12 +153,14 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError)
 	if (!Active)
 	{
 		OutError = TEXT("No registry set (RegistryAsset and Registry are both null).");
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Registry validation failed: %s"), *OutError);
 		return false;
 	}
 
 	if (Active->Routes.Num() == 0)
 	{
 		OutError = TEXT("Registry has zero routes.");
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Registry validation failed: %s"), *OutError);
 		return false;
 	}
 
@@ -171,12 +171,14 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError)
 		if (!Route.RootTag.IsValid())
 		{
 			OutError = TEXT("Registry contains a route with an invalid RootTag.");
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Registry validation failed: %s"), *OutError);
 			return false;
 		}
 
 		if (Seen.Contains(Route.RootTag))
 		{
 			OutError = FString::Printf(TEXT("Duplicate RootTag in registry: %s"), *Route.RootTag.ToString());
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Registry validation failed: %s"), *OutError);
 			return false;
 		}
 		Seen.Add(Route.RootTag);
@@ -184,6 +186,7 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError)
 		if (Route.DataTable.IsNull())
 		{
 			OutError = FString::Printf(TEXT("Route '%s' has a null DataTable reference."), *Route.RootTag.ToString());
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Registry validation failed: %s"), *OutError);
 			return false;
 		}
 	}
@@ -205,7 +208,7 @@ UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry()
 		Registry = RegistryAsset.LoadSynchronous();
 		if (!Registry)
 		{
-			UE_LOG(LogContentLookup, Warning, TEXT("GetActiveRegistry: Failed to load RegistryAsset. Path=%s (World=%s, GI=%s)"),
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Failed loading RegistryAsset. Path=%s (World=%s, GI=%s)"),
 				*RegistryAsset.ToSoftObjectPath().ToString(),
 				*GetNameSafe(GetWorld()),
 				*GetNameSafe(GetGameInstance()));
@@ -227,7 +230,9 @@ UDataTable* UContentLookupSubsystem::ResolveTableForTag(FGameplayTag Tag, FGamep
 	{
 		OutError = FString::Printf(TEXT("No active registry. (World=%s, GI=%s)"),
 			*GetNameSafe(GetWorld()),
-			*GetNameSafe(GetGameInstance()));		return nullptr;
+			*GetNameSafe(GetGameInstance()));
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] ResolveTableForTag failed for '%s': %s"), *Tag.ToString(), *OutError);
+		return nullptr;
 	}
 
 	// Best-match strategy: pick the most specific (longest) matching RootTag.
@@ -257,6 +262,7 @@ UDataTable* UContentLookupSubsystem::ResolveTableForTag(FGameplayTag Tag, FGamep
 	if (!BestRoute)
 	{
 		OutError = FString::Printf(TEXT("No route found for tag '%s'."), *Tag.ToString());
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] ResolveTableForTag failed: %s"), *OutError);
 		return nullptr;
 	}
 
@@ -276,6 +282,7 @@ UDataTable* UContentLookupSubsystem::LoadAndCacheTable(const FGameplayTag& RootT
 	if (TableRef.IsNull())
 	{
 		OutError = FString::Printf(TEXT("Route '%s' has a null DataTable reference."), *RootTag.ToString());
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] LoadAndCacheTable failed: %s"), *OutError);
 		return nullptr;
 	}
 
@@ -283,6 +290,7 @@ UDataTable* UContentLookupSubsystem::LoadAndCacheTable(const FGameplayTag& RootT
 	if (!DT)
 	{
 		OutError = FString::Printf(TEXT("Failed to load DataTable for route '%s'."), *RootTag.ToString());
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] LoadAndCacheTable failed: %s"), *OutError);
 		return nullptr;
 	}
 
@@ -304,14 +312,14 @@ bool UContentLookupSubsystem::LookupWithGameplayTag(
 
 	if (!GetTableAndRowNameFromTag(Tag, DT, RowName, OutError))
 	{
-		UE_LOG(LogContentLookup, Warning, TEXT("LookupWithGameplayTag(%s): %s"), *Tag.ToString(), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] LookupWithGameplayTag failed for '%s': %s"), *Tag.ToString(), *OutError);
 		return false;
 	}
 
 	if (!DT)
 	{
 		OutError = FString::Printf(TEXT("Resolved DataTable is null for tag '%s'."), *Tag.ToString());
-		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] %s"), *OutError);
 		return false;
 	}
 
@@ -319,7 +327,7 @@ bool UContentLookupSubsystem::LookupWithGameplayTag(
 	if (!RowStruct)
 	{
 		OutError = FString::Printf(TEXT("DataTable '%s' has no RowStruct (tag '%s')."), *GetNameSafe(DT), *Tag.ToString());
-		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] %s"), *OutError);
 		return false;
 	}
 
@@ -341,7 +349,7 @@ bool UContentLookupSubsystem::LookupWithGameplayTag(
 				*RowName.ToString(),
 				*GetNameSafe(DT),
 				*Tag.ToString());
-			UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] %s"), *OutError);
 			return false;
 		}
 
@@ -356,7 +364,7 @@ bool UContentLookupSubsystem::LookupWithGameplayTag(
 			*RowName.ToString(),
 			*GetNameSafe(DT),
 			*Tag.ToString());
-		UE_LOG(LogContentLookup, Warning, TEXT("%s"), *OutError);
+		UE_LOG(ARLog, Warning, TEXT("[ContentLookup] %s"), *OutError);
 		return false;
 	}
 

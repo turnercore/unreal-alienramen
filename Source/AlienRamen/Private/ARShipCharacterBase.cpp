@@ -1,6 +1,7 @@
 // ARShipCharacterBase.cpp
 
 #include "ARShipCharacterBase.h"
+#include "AlienRamen.h"
 
 #include "ARPlayerStateBase.h"
 #include "ARPlayerController.h"
@@ -14,8 +15,6 @@
 #include "ARWeaponDefinition.h"
 
 #include "UObject/UnrealType.h"
-
-DEFINE_LOG_CATEGORY_STATIC(LogARShipGAS, Log, All);
 
 // --------------------
 // Static names (row struct fields)
@@ -330,11 +329,11 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	FGameplayTagContainer LoadoutTags;
 	if (!GetPlayerLoadoutTags(LoadoutTags))
 	{
-		UE_LOG(LogARShipGAS, Error, TEXT("Possess failed: could not read LoadoutTags from PlayerState."));
+		UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess failed: could not read LoadoutTags from PlayerState."));
 		return;
 	}
 
-	UE_LOG(LogARShipGAS, Verbose, TEXT("Possess: applying %d loadout tags."), LoadoutTags.Num());
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Possess: applying %d loadout tags."), LoadoutTags.Num());
 	ApplyLoadoutTagsToASC(LoadoutTags);
 
 	// 3) Resolve + apply Ship baseline row
@@ -342,7 +341,7 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 		FGameplayTag ShipTag;
 		if (!FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag))
 		{
-			UE_LOG(LogARShipGAS, Error, TEXT("Possess failed: no ship tag found under root '%s'."), *TAGROOT_Ships.ToString());
+			UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess failed: no ship tag found under root '%s'."), *TAGROOT_Ships.ToString());
 			return;
 		}
 
@@ -354,7 +353,7 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 		}
 		else
 		{
-			UE_LOG(LogARShipGAS, Error, TEXT("Possess failed: could not resolve ship row for '%s'. %s"), *ShipTag.ToString(), *Error);
+			UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess failed: could not resolve ship row for '%s'. %s"), *ShipTag.ToString(), *Error);
 			return;
 		}
 	}
@@ -447,7 +446,7 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 	const UScriptStruct* StructType = RowStruct.GetScriptStruct();
 	const void* StructData = RowStruct.GetMemory();
 	if (!StructType || !StructData) return;
-	UE_LOG(LogARShipGAS, Verbose, TEXT("Applying loadout row baseline from struct '%s'."), *StructType->GetName());
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Applying loadout row baseline from struct '%s'."), *StructType->GetName());
 	// Stats effect (optional)
 	{
 		TSubclassOf<UGameplayEffect> StatsGE = ExtractEffectClass(StructType, StructData, NAME_Stats);
@@ -718,19 +717,19 @@ bool AARShipCharacterBase::ActivateAbilityByTags(const FGameplayTagContainer& In
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) 
 	{
-		UE_LOG(LogARShipGAS, Error, TEXT("ActivateAbilityByTags failed: no ASC found."));
+		UE_LOG(ARLog, Error, TEXT("[ShipGAS] ActivateAbilityByTags failed: no ASC found."));
 		return false;
 	}
 	if (InTagsToActivate.IsEmpty()) 
 	{
-		UE_LOG(LogARShipGAS, Error, TEXT("ActivateAbilityByTags failed: empty tag container."));
+		UE_LOG(ARLog, Error, TEXT("[ShipGAS] ActivateAbilityByTags failed: empty tag container."));
 		return false;
 	}
 
 	FGameplayAbilitySpecHandle Handle;
 	if (!PickBestMatchingAbilityHandle(ASC, InTagsToActivate, Handle))
 	{
-		UE_LOG(LogARShipGAS, Warning, TEXT("ActivateAbilityByTags: no matching ability for tags '%s'."), *InTagsToActivate.ToStringSimple());
+		UE_LOG(ARLog, Warning, TEXT("[ShipGAS] ActivateAbilityByTags: no matching ability for tags '%s'."), *InTagsToActivate.ToStringSimple());
 		return false;
 	}
 
@@ -792,13 +791,13 @@ void AARShipCharacterBase::LogAllPropertiesOnStruct(const UScriptStruct* StructT
 {
 	if (!StructType) return;
 
-	UE_LOG(LogARShipGAS, VeryVerbose, TEXT("Properties on struct '%s':"), *StructType->GetName());
+	UE_LOG(ARLog, VeryVerbose, TEXT("[ShipGAS] Properties on struct '%s':"), *StructType->GetName());
 	for (TFieldIterator<FProperty> It(StructType); It; ++It)
 	{
 		FProperty* Prop = *It;
 		if (Prop)
 		{
-			UE_LOG(LogARShipGAS, VeryVerbose, TEXT("  - %s (%s)"), *Prop->GetName(), *Prop->GetClass()->GetName());
+			UE_LOG(ARLog, VeryVerbose, TEXT("[ShipGAS]   - %s (%s)"), *Prop->GetName(), *Prop->GetClass()->GetName());
 		}
 	}
 }
@@ -811,12 +810,12 @@ void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& In
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC)
 	{
-		UE_LOG(LogARShipGAS, Error, TEXT("ApplyLoadoutTagsToASC failed: no ASC found."));
+		UE_LOG(ARLog, Error, TEXT("[ShipGAS] ApplyLoadoutTagsToASC failed: no ASC found."));
 		return;
 	}
 
 	ASC->AddLooseGameplayTags(InLoadoutTags);
 	AppliedLooseTags.AppendTags(InLoadoutTags);
 
-	UE_LOG(LogARShipGAS, Verbose, TEXT("Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());
 }
