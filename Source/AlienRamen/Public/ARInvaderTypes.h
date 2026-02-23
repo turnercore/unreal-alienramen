@@ -61,13 +61,6 @@ enum class EARSpawnEdge : uint8
 	Right = 2
 };
 
-UENUM(BlueprintType)
-enum class EARFormationNodeType : uint8
-{
-	Anchor = 0,
-	Rotator = 1
-};
-
 USTRUCT(BlueprintType)
 struct FARWaveEnemySpawnDef
 {
@@ -89,38 +82,11 @@ struct FARWaveEnemySpawnDef
 	float SpawnDelay = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	FName FormationNodeId = NAME_None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	FVector2D AuthoredScreenOffset = FVector2D::ZeroVector;
 
 	// Effects applied to this spawned enemy instance (in addition to wave/stage effects).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
-};
-
-USTRUCT(BlueprintType)
-struct FARWaveFormationNodeDef
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	FName NodeId = NAME_None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	EARFormationNodeType NodeType = EARFormationNodeType::Anchor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	FVector2D ScreenPosition = FVector2D::ZeroVector;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	float Radius = 400.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	float AngularSpeedDegPerSec = 45.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	bool bClockwise = true;
 };
 
 USTRUCT(BlueprintType)
@@ -187,9 +153,6 @@ struct FARWaveDefRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	TArray<FARWaveEnemySpawnDef> EnemySpawns;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	TArray<FARWaveFormationNodeDef> FormationNodes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	FGameplayTagContainer WaveTags;
