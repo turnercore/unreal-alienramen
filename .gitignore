@@ -13,9 +13,14 @@ Plugins
 *.suo
 *.xcodeproj
 *.xcworkspace
-/Content/Vefects
-/Content/StylizedShadersPack
-/Content/scifi_modern_GUI
-/Content/SciFi_Impacts
-/Content/MagicOrb_EnergyCore
-/Content/Developers
+
+# OS Garbage
+.DS_Store
+Thumbs.db
+Desktop.ini
+# Logs
+*.log
+*.log.*
+
+# Temp files
+tmp
