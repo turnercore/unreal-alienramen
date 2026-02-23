@@ -7,6 +7,7 @@
 
 class UARInvaderRuntimeStateComponent;
 class UDataTable;
+class IConsoleObject;
 
 UCLASS()
 class ALIENRAMEN_API UARInvaderDirectorSubsystem : public UTickableWorldSubsystem
@@ -159,13 +160,13 @@ private:
 
 	TMap<TWeakObjectPtr<class AAREnemyBase>, float> OffscreenDurationByEnemy;
 
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdForceWave;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdForcePhase;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdForceThreat;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdForceStage;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdDumpState;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdStart;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdStop;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdChooseStage;
-	TUniquePtr<class FAutoConsoleCommandWithWorldAndArgs> CmdForceIntro;
+	IConsoleObject* CmdForceWave = nullptr;
+	IConsoleObject* CmdForcePhase = nullptr;
+	IConsoleObject* CmdForceThreat = nullptr;
+	IConsoleObject* CmdForceStage = nullptr;
+	IConsoleObject* CmdDumpState = nullptr;
+	IConsoleObject* CmdStart = nullptr;
+	IConsoleObject* CmdStop = nullptr;
+	IConsoleObject* CmdChooseStage = nullptr;
+	IConsoleObject* CmdForceIntro = nullptr;
 };
