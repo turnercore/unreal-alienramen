@@ -8,6 +8,7 @@
 #include "ARPlayerStateBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "Algo/StableSort.h"
 #include "Engine/DataTable.h"
 #include "EngineUtils.h"
 #include "GameFramework/GameStateBase.h"
@@ -678,7 +679,7 @@ bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition(FName WaveRowName, con
 	Wave.Phase = EARWavePhase::Entering;
 
 	// Ensure deterministic spawn ordering by spawn delay.
-	Wave.Def.EnemySpawns.Sort([](const FARWaveEnemySpawnDef& A, const FARWaveEnemySpawnDef& B)
+	Algo::StableSort(Wave.Def.EnemySpawns, [](const FARWaveEnemySpawnDef& A, const FARWaveEnemySpawnDef& B)
 	{
 		return A.SpawnDelay < B.SpawnDelay;
 	});

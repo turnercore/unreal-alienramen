@@ -1,4 +1,5 @@
 #include "ARDebugSaveToolLibrary.h"
+#include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
 
 #include "IDetailsView.h"
@@ -370,6 +371,13 @@ public:
 			.SetTooltipText(FText::FromString("Create, load, edit, and save isolated debug save slots."))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
+			ARInvaderAuthoringEditor::TabName,
+			FOnSpawnTab::CreateStatic(&ARInvaderAuthoringEditor::SpawnTab))
+			.SetDisplayName(FText::FromString("Invader Authoring Tool"))
+			.SetTooltipText(FText::FromString("Author invader waves/stages, validate, preview, and run PIE tests."))
+			.SetMenuType(ETabSpawnerMenuType::Hidden);
+
 		UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FAlienRamenEditorModule::RegisterMenus));
 	}
 
@@ -380,6 +388,7 @@ public:
 			UToolMenus::UnRegisterStartupCallback(this);
 		}
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDebugSaveEditor::TabName);
+		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderAuthoringEditor::TabName);
 	}
 
 private:
@@ -402,11 +411,22 @@ private:
 			FText::FromString("Open the Alien Ramen debug save authoring tool."),
 			FSlateIcon(),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenTab));
+		Section.AddMenuEntry(
+			"OpenARInvaderAuthoringTool",
+			FText::FromString("Alien Ramen Invader Authoring"),
+			FText::FromString("Open the invader wave/stage authoring tool."),
+			FSlateIcon(),
+			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenInvaderAuthoringTab));
 	}
 
 	void OpenTab(const FToolMenuContext&)
 	{
 		FGlobalTabmanager::Get()->TryInvokeTab(ARDebugSaveEditor::TabName);
+	}
+
+	void OpenInvaderAuthoringTab(const FToolMenuContext&)
+	{
+		FGlobalTabmanager::Get()->TryInvokeTab(ARInvaderAuthoringEditor::TabName);
 	}
 };
 

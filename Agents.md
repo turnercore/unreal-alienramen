@@ -26,6 +26,7 @@
 
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
+- Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Gameplay/content is Blueprint-heavy in `Content/CodeAlong/Blueprints`
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
 
@@ -98,6 +99,7 @@
 - `Event.Wave.Phase.Berserk`
 - `Event.Wave.Phase.Expired`
 - Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, `SlotIndex`) until a dedicated formation system is reintroduced.
+- Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - Console controls implemented:
@@ -115,6 +117,29 @@
 
 - Still active and used by runtime widget + editor tab, but expected to be replaced during upcoming C++ save-system refactor.
 - Keep only currently necessary integration notes here; avoid expanding detailed schema/behavior docs for this legacy path unless needed for active work.
+
+## Invader Authoring Editor Tool (Current)
+
+- Tab name: `AR_InvaderAuthoringTool`, display name `Invader Authoring Tool`.
+- Main menu entry: `Window -> Alien Ramen Invader Authoring`.
+- Data source is direct DataTable authoring (no intermediate asset format):
+- wave rows: `FARWaveDefRow` in `UARInvaderDirectorSettings::WaveDataTable`
+- stage rows: `FARStageDefRow` in `UARInvaderDirectorSettings::StageDataTable`
+- Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
+- Wave authoring model is delay-layered:
+- layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
+- same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
+- Palette contract:
+- auto-discovers `AAREnemyBase` subclasses (loaded/native + Blueprint generated classes)
+- applies class+color chips (Red/Blue/White) to spawned entries
+- favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
+- Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
+- `DefaultTestMap` (default `/Game/Maps/Lvl_InvaderDebug`)
+- `LastSeed`
+- `FavoriteEnemyClasses`
+- preview flags (`bHideOtherLayersInWavePreview`, `bShowApproximatePreviewBanner`)
+- Validation is author-time only and currently checks missing references, wave/stage range issues, missing enemy classes, incompatible stage-wave tag constraints, and warns on non-enforced archetype tags.
+- PIE harness uses existing runtime console commands (`ar.invader.*`) and is intended to run as listen-server single-player by default.
 
 ## Logging
 
