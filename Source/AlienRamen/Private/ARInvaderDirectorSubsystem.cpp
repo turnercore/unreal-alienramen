@@ -1307,63 +1307,92 @@ float UARInvaderDirectorSubsystem::ResolveStageIntroSeconds(const FARStageDefRow
 
 void UARInvaderDirectorSubsystem::RegisterConsoleCommands()
 {
-	CmdForceWave = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	if (CmdForceWave)
+	{
+		return;
+	}
+
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+
+	CmdForceWave = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.force_wave"),
 		TEXT("Force spawn a wave by row name."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceWave));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceWave),
+		ECVF_Default);
 
-	CmdForcePhase = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdForcePhase = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.force_phase"),
 		TEXT("Force wave phase: <WaveId> <Entering|Active|Berserk|Expired>."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForcePhase));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForcePhase),
+		ECVF_Default);
 
-	CmdForceThreat = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdForceThreat = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.force_threat"),
 		TEXT("Force threat value."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceThreat));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceThreat),
+		ECVF_Default);
 
-	CmdForceStage = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdForceStage = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.force_stage"),
 		TEXT("Force stage row name."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceStage));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceStage),
+		ECVF_Default);
 
-	CmdDumpState = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdDumpState = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.dump_state"),
 		TEXT("Dump invader runtime state."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleDumpState));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleDumpState),
+		ECVF_Default);
 
-	CmdStart = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdStart = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.start"),
 		TEXT("Start invader run. Optional arg: seed."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleStart));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleStart),
+		ECVF_Default);
 
-	CmdStop = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdStop = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.stop"),
 		TEXT("Stop invader run."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleStop));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleStop),
+		ECVF_Default);
 
-	CmdChooseStage = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdChooseStage = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.choose_stage"),
 		TEXT("Submit stage choice: left|right."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleChooseStage));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleChooseStage),
+		ECVF_Default);
 
-	CmdForceIntro = MakeUnique<FAutoConsoleCommandWithWorldAndArgs>(
+	CmdForceIntro = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.force_intro"),
 		TEXT("Override stage intro seconds for debug. Usage: <seconds> or clear"),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceIntro));
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceIntro),
+		ECVF_Default);
 }
 
 void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
 {
-	CmdForceWave.Reset();
-	CmdForcePhase.Reset();
-	CmdForceThreat.Reset();
-	CmdForceStage.Reset();
-	CmdDumpState.Reset();
-	CmdStart.Reset();
-	CmdStop.Reset();
-	CmdChooseStage.Reset();
-	CmdForceIntro.Reset();
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+
+	auto Unregister = [&ConsoleManager](IConsoleObject*& Cmd)
+	{
+		if (!Cmd)
+		{
+			return;
+		}
+
+		ConsoleManager.UnregisterConsoleObject(Cmd);
+		Cmd = nullptr;
+	};
+
+	Unregister(CmdForceWave);
+	Unregister(CmdForcePhase);
+	Unregister(CmdForceThreat);
+	Unregister(CmdForceStage);
+	Unregister(CmdDumpState);
+	Unregister(CmdStart);
+	Unregister(CmdStop);
+	Unregister(CmdChooseStage);
+	Unregister(CmdForceIntro);
 }
 
 void UARInvaderDirectorSubsystem::HandleConsoleForceWave(const TArray<FString>& Args, UWorld* InWorld)

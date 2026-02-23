@@ -99,6 +99,7 @@
 - `Event.Wave.Phase.Expired`
 - Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, `SlotIndex`) until a dedicated formation system is reintroduced.
 - Director has stage-choice loop and overlap/early-clear spawning rules.
+- Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - Console controls implemented:
 - `ar.invader.start [Seed]`
 - `ar.invader.stop`
