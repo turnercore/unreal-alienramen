@@ -389,18 +389,6 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				continue;
 			}
 
-			if (SpawnDef.FormationNodeId != NAME_None)
-			{
-				const bool bFoundNode = Wave.Def.FormationNodes.ContainsByPredicate(
-					[&SpawnDef](const FARWaveFormationNodeDef& Node) { return Node.NodeId == SpawnDef.FormationNodeId; });
-				if (!bFoundNode)
-				{
-					UE_LOG(ARLog, Warning,
-						TEXT("[InvaderDirector|Validation] Wave '%s' spawn index %d references missing formation node '%s'. Falling back to non-formation behavior."),
-						*Wave.RowName.ToString(), Wave.NextSpawnIndex, *SpawnDef.FormationNodeId.ToString());
-				}
-			}
-
 			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

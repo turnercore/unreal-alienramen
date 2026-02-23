@@ -97,6 +97,7 @@
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
 - `Event.Wave.Phase.Expired`
+- Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, `SlotIndex`) until a dedicated formation system is reintroduced.
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Console controls implemented:
 - `ar.invader.start [Seed]`
