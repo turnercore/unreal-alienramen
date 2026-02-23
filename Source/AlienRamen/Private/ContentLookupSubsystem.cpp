@@ -1,6 +1,7 @@
 // ContentLookupSubsystem.cpp
 
 #include "ContentLookupSubsystem.h"
+#include "ARContentLookupSettings.h"
 #include "ARLog.h"
 #include "UObject/SoftObjectPtr.h"
 #include "StructUtils/InstancedStruct.h"
@@ -19,18 +20,18 @@ void UContentLookupSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	// Pull Config=Game properties (RegistryAsset) from DefaultGame.ini
-	LoadConfig();
-	UE_LOG(ARLog, Verbose, TEXT("[ContentLookup] Initialize with RegistryAsset path: %s"), *RegistryAsset.ToSoftObjectPath().ToString());
+	// If runtime Registry isn't already set (e.g. by BP), load from project settings asset.
+	const UARContentLookupSettings* Settings = GetDefault<UARContentLookupSettings>();
+	const TSoftObjectPtr<UContentLookupRegistry> RegistryAsset = Settings ? Settings->RegistryAsset : TSoftObjectPtr<UContentLookupRegistry>();
+	UE_LOG(ARLog, Verbose, TEXT("[ContentLookup] Initialize with settings RegistryAsset path: %s"),
+		*RegistryAsset.ToSoftObjectPath().ToString());
 
-
-	// If runtime Registry isn't already set (e.g. by BP), load from config asset
 	if (!Registry && !RegistryAsset.IsNull())
 	{
 		Registry = RegistryAsset.LoadSynchronous();
 		if (!Registry)
 		{
-			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Failed to load RegistryAsset from config: %s"),
+			UE_LOG(ARLog, Warning, TEXT("[ContentLookup] Failed to load RegistryAsset from settings: %s"),
 				*RegistryAsset.ToSoftObjectPath().ToString());
 		}
 	}
@@ -202,7 +203,10 @@ UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry()
 		return Registry;
 	}
 
-	// Load from soft ref and KEEP it alive by storing in Registry (hard ref UPROPERTY)
+	const UARContentLookupSettings* Settings = GetDefault<UARContentLookupSettings>();
+	const TSoftObjectPtr<UContentLookupRegistry> RegistryAsset = Settings ? Settings->RegistryAsset : TSoftObjectPtr<UContentLookupRegistry>();
+
+	// Load from settings soft ref and KEEP it alive by storing in Registry (hard ref UPROPERTY)
 	if (!RegistryAsset.IsNull())
 	{
 		Registry = RegistryAsset.LoadSynchronous();

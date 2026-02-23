@@ -44,7 +44,7 @@ public:
  *     RootTag: Unlocks.Ships -> DT_Unlocks_Ships
  *     Leaf: Sammy -> RowName 'Sammy'
  */
-UCLASS(Config = Game)
+UCLASS()
 class ALIENRAMEN_API UContentLookupSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -55,13 +55,7 @@ public:
 	virtual void Deinitialize() override;
 
 	// ---- Registry Source ----
-	// Assign this in defaults (CDO) or set it at runtime via SetRegistry().
-	// Keeping it soft helps cooking + load order; we load it in Initialize().
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
-	TSoftObjectPtr<UContentLookupRegistry> RegistryAsset;
-
-
-	// Runtime override (optional). If set, this takes priority over RegistryAsset.
+	// Runtime override (optional). If set, this takes priority over project settings RegistryAsset.
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Content Lookup")
 	TObjectPtr<UContentLookupRegistry> Registry;
 
