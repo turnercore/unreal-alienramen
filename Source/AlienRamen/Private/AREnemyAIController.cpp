@@ -15,10 +15,10 @@ AAREnemyAIController::AAREnemyAIController()
 		StateTreeComponent->SetStartLogicAutomatically(false);
 	}
 
-	EnteringPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Wave.Phase.Entering")), false);
-	ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Wave.Phase.Active")), false);
-	BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Wave.Phase.Berserk")), false);
-	ExpiredPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Wave.Phase.Expired")), false);
+	EnteringPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Entering")), false);
+	ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Active")), false);
+	BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Berserk")), false);
+	ExpiredPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Expired")), false);
 }
 
 void AAREnemyAIController::OnPossess(APawn* InPawn)
