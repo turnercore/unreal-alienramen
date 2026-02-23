@@ -92,6 +92,11 @@
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
 - Wave phases: `Entering`, `Active`, `Berserk`, `Expired`.
+- Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
+- `Event.Wave.Phase.Entering`
+- `Event.Wave.Phase.Active`
+- `Event.Wave.Phase.Berserk`
+- `Event.Wave.Phase.Expired`
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Console controls implemented:
 - `ar.invader.start [Seed]`
