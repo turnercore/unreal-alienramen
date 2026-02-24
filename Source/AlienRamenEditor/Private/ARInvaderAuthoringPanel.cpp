@@ -113,8 +113,8 @@ namespace
 		Circle,
 		Triangle,
 		Diamond,
-		Count,
-		Star
+		Star,
+		Count
 	};
 
 	static EPaletteShape NormalizePaletteShape(int32 ShapeCycle)
@@ -195,11 +195,11 @@ namespace
 
 		auto OffsetToLocal = [&Size, &BoundsMin, &BoundsMax](const FVector2D& Offset)
 		{
-			const float VerticalRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
-			const float HorizontalRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
-			const float HorizontalAlpha = (Offset.Y - BoundsMin.Y) / HorizontalRange;
-			const float VerticalAlpha = (Offset.X - BoundsMin.X) / VerticalRange;
-			return FVector2D(HorizontalAlpha * Size.X, Size.Y - (VerticalAlpha * Size.Y));
+			const float XRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
+			const float YRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
+			const float YAlpha = (Offset.Y - BoundsMin.Y) / YRange;
+			const float XAlpha = (Offset.X - BoundsMin.X) / XRange;
+			return FVector2D(YAlpha * Size.X, Size.Y - (XAlpha * Size.Y));
 		};
 
 		int32 BestIndex = INDEX_NONE;
@@ -3204,7 +3204,6 @@ bool SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty(const FPropertyAndPar
 	const FName PropertyName = PropertyAndParent.Property.GetFName();
 	static const TSet<FName> HiddenSpawnProperties =
 	{
-		TEXT("SlotIndex"),
 		TEXT("bFormationLockEnter"),
 		TEXT("bFormationLockActive")
 	};
@@ -4412,4 +4411,3 @@ bool SInvaderAuthoringPanel::ExecPIECommand(const FString& Command)
 	}
 	return bResult;
 }
-
