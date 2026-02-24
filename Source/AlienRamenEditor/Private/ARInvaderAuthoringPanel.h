@@ -20,6 +20,8 @@ class STableViewBase;
 class SBorder;
 struct FPropertyChangedEvent;
 class FScopedTransaction;
+class UObject;
+class FTransactionObjectEvent;
 
 struct FInvaderAuthoringIssue
 {
@@ -120,6 +122,10 @@ private:
 	void SelectStageRow(FName RowName);
 	void SelectLayerByDelay(float Delay);
 	void SelectSpawn(int32 SpawnIndex);
+	void ApplySpawnSelection(const TSet<int32>& NewSelection, int32 PreferredPrimary = INDEX_NONE);
+	void ClearSpawnSelection();
+	void SyncSpawnListSelectionFromState();
+	void HandleObjectTransacted(UObject* Object, const FTransactionObjectEvent& Event);
 
 	// row CRUD
 	FReply OnCreateRow();
@@ -139,11 +145,13 @@ private:
 	TSharedRef<SWidget> BuildSpawnContextMenu();
 	void MoveSpawnWithinLayer(int32 Direction);
 	void UpdateLayerDelay(float OldDelay, float NewDelay);
-	void HandleCanvasSpawnSelected(int32 SpawnIndex);
+	void HandleCanvasSpawnSelected(int32 SpawnIndex, bool bToggle, bool bRangeSelect);
+	void HandleCanvasClearSpawnSelection();
 	void HandleCanvasOpenSpawnContextMenu(int32 SpawnIndex, const FVector2D& ScreenPosition);
-	void HandleCanvasBeginSpawnDrag(int32 SpawnIndex);
+	void HandleCanvasBeginSpawnDrag();
 	void HandleCanvasEndSpawnDrag();
-	void HandleCanvasSpawnMoved(int32 SpawnIndex, const FVector2D& NewOffset);
+	void HandleCanvasSelectedSpawnsMoved(const FVector2D& OffsetDelta);
+	void HandleCanvasSelectionRectChanged(const TArray<int32>& RectSelection, bool bAppendToSelection);
 	void HandleCanvasAddSpawnAt(const FVector2D& NewOffset);
 
 	// preview
@@ -203,6 +211,7 @@ private:
 	FName SelectedStageRow = NAME_None;
 	float SelectedLayerDelay = 0.f;
 	int32 SelectedSpawnIndex = INDEX_NONE;
+	TSet<int32> SelectedSpawnIndices;
 	float PreviewTime = 0.f;
 	float ForcedThreatValue = 0.f;
 
@@ -214,6 +223,8 @@ private:
 	TArray<FPaletteEntry> PaletteEntries;
 	TOptional<FPaletteEntry> ActivePaletteEntry;
 	TMap<FSoftClassPath, bool> EnemyPaletteClassCompatibilityCache;
+	TMap<int32, FVector2D> SpawnDragStartOffsets;
+	FDelegateHandle ObjectTransactedHandle;
 	TUniquePtr<FScopedTransaction> SpawnDragTransaction;
 	bool bSpawnDragChanged = false;
 
@@ -235,4 +246,5 @@ private:
 	TStrongObjectPtr<UARInvaderSpawnProxy> SpawnProxy;
 
 	bool bApplyingProxyToModel = false;
+	bool bSyncingSpawnSelection = false;
 };
