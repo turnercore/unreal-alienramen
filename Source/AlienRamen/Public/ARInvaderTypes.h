@@ -133,11 +133,12 @@ struct FARWaveDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	bool bFormationLockActive = false;
 
+	// Entering primarily ends by runtime condition checks; this is timeout fallback.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float EnterDuration = 3.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
-	float ActiveDuration = 16.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta=(DisplayName="Wave Duration"))
+	float WaveDuration = 16.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	FARBerserkProfile BerserkProfile;

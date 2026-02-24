@@ -293,6 +293,8 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	FormationMode = InFormationMode;
 	WavePhase = InWavePhase;
 	WavePhaseStartServerTime = InPhaseStartServerTime;
+	bHasEnteredGameplayScreen = false;
+	bReachedFormationSlot = false;
 	ForceNetUpdate();
 
 	if (PreviousPhase != WavePhase)
@@ -331,6 +333,16 @@ void AAREnemyBase::SetFormationLockRules(bool bInFormationLockEnter, bool bInFor
 	bFormationLockEnter = bInFormationLockEnter;
 	bFormationLockActive = bInFormationLockActive;
 	ForceNetUpdate();
+}
+
+void AAREnemyBase::SetReachedFormationSlot(bool bInReachedFormationSlot)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bReachedFormationSlot = bInReachedFormationSlot;
 }
 
 bool AAREnemyBase::CanFireByWaveRules() const
