@@ -347,11 +347,6 @@ void AAREnemyBase::SetReachedFormationSlot(bool bInReachedFormationSlot)
 
 bool AAREnemyBase::CanFireByWaveRules() const
 {
-	if (WavePhase != EARWavePhase::Entering)
-	{
-		return true;
-	}
-
 	if (!bHasEnteredGameplayScreen)
 	{
 		return false;
