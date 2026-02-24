@@ -21,4 +21,9 @@ UARInvaderToolingSettings::UARInvaderToolingSettings()
 	{
 		BackupsFolder.Path = TEXT("/Game/Data/Backups");
 	}
+
+	if (PIELoadSlotName.IsNone())
+	{
+		PIELoadSlotName = TEXT("Debug");
+	}
 }
