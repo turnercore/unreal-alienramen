@@ -24,6 +24,7 @@
 #include "Styling/AppStyle.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "UObject/UObjectGlobals.h"
 #include "UObject/SoftObjectPath.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
@@ -198,25 +199,29 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			TFunction<const FARWaveDefRow*()> InGetWaveRow,
 			TFunction<float()> InGetSelectedLayerDelay,
 			TFunction<bool()> InGetHideOtherLayers,
-			TFunction<int32()> InGetSelectedSpawnIndex,
+			TFunction<TSet<int32>()> InGetSelectedSpawnIndices,
 			TFunction<float()> InGetPreviewTime,
-			TFunction<void(int32)> InOnSpawnSelected,
+			TFunction<void(int32, bool, bool)> InOnSpawnSelected,
+			TFunction<void()> InOnClearSelection,
 			TFunction<void(int32, const FVector2D&)> InOnOpenSpawnContextMenu,
-			TFunction<void(int32)> InOnBeginDragSpawn,
+			TFunction<void()> InOnBeginDragSpawn,
 			TFunction<void()> InOnEndDragSpawn,
-			TFunction<void(int32, const FVector2D&)> InOnSpawnMoved,
+			TFunction<void(const FVector2D&)> InOnMoveSelectedSpawnsByDelta,
+			TFunction<void(const TArray<int32>&, bool)> InOnSelectionRectChanged,
 			TFunction<void(const FVector2D&)> InOnAddSpawnAt)
 		{
 			GetWaveRow = MoveTemp(InGetWaveRow);
 			GetSelectedLayerDelay = MoveTemp(InGetSelectedLayerDelay);
 			GetHideOtherLayers = MoveTemp(InGetHideOtherLayers);
-			GetSelectedSpawnIndex = MoveTemp(InGetSelectedSpawnIndex);
+			GetSelectedSpawnIndices = MoveTemp(InGetSelectedSpawnIndices);
 			GetPreviewTime = MoveTemp(InGetPreviewTime);
 			OnSpawnSelected = MoveTemp(InOnSpawnSelected);
+			OnClearSelection = MoveTemp(InOnClearSelection);
 			OnOpenSpawnContextMenu = MoveTemp(InOnOpenSpawnContextMenu);
 			OnBeginDragSpawn = MoveTemp(InOnBeginDragSpawn);
 			OnEndDragSpawn = MoveTemp(InOnEndDragSpawn);
-			OnSpawnMoved = MoveTemp(InOnSpawnMoved);
+			OnMoveSelectedSpawnsByDelta = MoveTemp(InOnMoveSelectedSpawnsByDelta);
+			OnSelectionRectChanged = MoveTemp(InOnSelectionRectChanged);
 			OnAddSpawnAt = MoveTemp(InOnAddSpawnAt);
 		}
 
@@ -272,7 +277,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 
 			const bool bHideOtherLayers = GetHideOtherLayers ? GetHideOtherLayers() : false;
 			const float SelectedLayerDelay = GetSelectedLayerDelay ? GetSelectedLayerDelay() : 0.f;
-			const int32 SelectedIndex = GetSelectedSpawnIndex ? GetSelectedSpawnIndex() : INDEX_NONE;
+			const TSet<int32> SelectedIndices = GetSelectedSpawnIndices ? GetSelectedSpawnIndices() : TSet<int32>();
 			const float InPreviewTime = GetPreviewTime ? GetPreviewTime() : 0.f;
 
 			for (int32 Index = 0; Index < WaveRow->EnemySpawns.Num(); ++Index)
@@ -300,7 +305,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					ESlateDrawEffect::None,
 					DotColor);
 
-				if (Index == SelectedIndex)
+				if (SelectedIndices.Contains(Index))
 				{
 					FSlateDrawElement::MakeBox(
 						OutDrawElements,
@@ -312,7 +317,30 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				}
 			}
 
-			return LayerId + 4;
+			if (bSelectionRectActive)
+			{
+				const FVector2D Min(FMath::Min(SelectionRectStart.X, SelectionRectEnd.X), FMath::Min(SelectionRectStart.Y, SelectionRectEnd.Y));
+				const FVector2D Max(FMath::Max(SelectionRectStart.X, SelectionRectEnd.X), FMath::Max(SelectionRectStart.Y, SelectionRectEnd.Y));
+				const FVector2D RectSize = Max - Min;
+				FSlateDrawElement::MakeBox(
+					OutDrawElements,
+					LayerId + 4,
+					AllottedGeometry.ToPaintGeometry(RectSize, FSlateLayoutTransform(Min)),
+					FAppStyle::GetBrush("WhiteBrush"),
+					ESlateDrawEffect::None,
+					FLinearColor(0.2f, 0.6f, 1.f, 0.15f));
+				FSlateDrawElement::MakeLines(
+					OutDrawElements,
+					LayerId + 5,
+					AllottedGeometry.ToPaintGeometry(),
+					{ Min, FVector2D(Max.X, Min.Y), Max, FVector2D(Min.X, Max.Y), Min },
+					ESlateDrawEffect::None,
+					FLinearColor(0.35f, 0.75f, 1.f, 0.9f),
+					true,
+					1.5f);
+			}
+
+			return LayerId + 6;
 		}
 
 		virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
@@ -335,9 +363,26 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			{
 				if (Closest != INDEX_NONE && OnSpawnSelected)
 				{
-					DraggedSpawnIndex = Closest;
+					const bool bToggle = MouseEvent.IsControlDown();
+					const bool bRangeSelect = MouseEvent.IsShiftDown();
+					OnSpawnSelected(Closest, bToggle, bRangeSelect);
 					bStartedDragTransaction = false;
-					OnSpawnSelected(Closest);
+					DraggedSpawnIndex = Closest;
+					DragStartOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+					bSelectionRectActive = false;
+					return FReply::Handled().CaptureMouse(AsShared());
+				}
+
+				if (Closest == INDEX_NONE)
+				{
+					bSelectionRectActive = true;
+					SelectionRectStart = Local;
+					SelectionRectEnd = Local;
+					bSelectionRectAppend = MouseEvent.IsControlDown() || MouseEvent.IsShiftDown();
+					if (!bSelectionRectAppend && OnClearSelection)
+					{
+						OnClearSelection();
+					}
 					return FReply::Handled().CaptureMouse(AsShared());
 				}
 			}
@@ -347,7 +392,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				{
 					if (OnSpawnSelected)
 					{
-						OnSpawnSelected(Closest);
+						OnSpawnSelected(Closest, false, false);
 					}
 					if (OnOpenSpawnContextMenu)
 					{
@@ -390,18 +435,30 @@ class SInvaderWaveCanvas final : public SLeafWidget
 
 			if (!MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton) || DraggedSpawnIndex == INDEX_NONE)
 			{
-				return FReply::Unhandled();
+				if (!MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton) || !bSelectionRectActive || !HasMouseCapture())
+				{
+					return FReply::Unhandled();
+				}
+
+				const FARWaveDefRow* WaveRow = GetWaveRow ? GetWaveRow() : nullptr;
+				SelectionRectEnd = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+				if (OnSelectionRectChanged)
+				{
+					OnSelectionRectChanged(FindSpawnsInRect(WaveRow, MyGeometry, SelectionRectStart, SelectionRectEnd), bSelectionRectAppend);
+				}
+				return FReply::Handled();
 			}
 
-			if (OnSpawnMoved)
+			if (OnMoveSelectedSpawnsByDelta)
 			{
 				if (!bStartedDragTransaction && OnBeginDragSpawn)
 				{
-					OnBeginDragSpawn(DraggedSpawnIndex);
+					OnBeginDragSpawn();
 					bStartedDragTransaction = true;
 				}
 				const FVector2D Local = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-				OnSpawnMoved(DraggedSpawnIndex, LocalToOffset(Local, MyGeometry.GetLocalSize()));
+				const FVector2D CurrentOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+				OnMoveSelectedSpawnsByDelta(CurrentOffset - DragStartOffset);
 				return FReply::Handled();
 			}
 
@@ -418,6 +475,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				}
 				DraggedSpawnIndex = INDEX_NONE;
 				bStartedDragTransaction = false;
+				bSelectionRectActive = false;
 				if (HasMouseCapture())
 				{
 					return FReply::Handled().ReleaseMouseCapture();
@@ -435,6 +493,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			}
 			DraggedSpawnIndex = INDEX_NONE;
 			bStartedDragTransaction = false;
+			bSelectionRectActive = false;
 		}
 
 		virtual void OnMouseLeave(const FPointerEvent& MouseEvent) override
@@ -463,6 +522,51 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				GetHideOtherLayers ? GetHideOtherLayers() : false);
 		}
 
+		TArray<int32> FindSpawnsInRect(const FARWaveDefRow* WaveRow, const FGeometry& MyGeometry, const FVector2D& A, const FVector2D& B) const
+		{
+			TArray<int32> Result;
+			if (!WaveRow)
+			{
+				return Result;
+			}
+
+			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+			const FVector2D BoundsMin = Settings->GameplayBoundsMin;
+			const FVector2D BoundsMax = Settings->GameplayBoundsMax;
+			const FVector2D Size = MyGeometry.GetLocalSize();
+			const bool bHideOtherLayers = GetHideOtherLayers ? GetHideOtherLayers() : false;
+			const float SelectedLayerDelay = GetSelectedLayerDelay ? GetSelectedLayerDelay() : 0.f;
+
+			const FVector2D Min(FMath::Min(A.X, B.X), FMath::Min(A.Y, B.Y));
+			const FVector2D Max(FMath::Max(A.X, B.X), FMath::Max(A.Y, B.Y));
+
+			auto OffsetToLocal = [&Size, &BoundsMin, &BoundsMax](const FVector2D& Offset)
+			{
+				const float XRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
+				const float YRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
+				const float XAlpha = (Offset.X - BoundsMin.X) / XRange;
+				const float YAlpha = (Offset.Y - BoundsMin.Y) / YRange;
+				return FVector2D(XAlpha * Size.X, Size.Y - (YAlpha * Size.Y));
+			};
+
+			for (int32 Index = 0; Index < WaveRow->EnemySpawns.Num(); ++Index)
+			{
+				const FARWaveEnemySpawnDef& Spawn = WaveRow->EnemySpawns[Index];
+				if (bHideOtherLayers && !FMath::IsNearlyEqual(Spawn.SpawnDelay, SelectedLayerDelay, LayerMatchTolerance))
+				{
+					continue;
+				}
+
+				const FVector2D Local = OffsetToLocal(Spawn.AuthoredScreenOffset);
+				if (Local.X >= Min.X && Local.X <= Max.X && Local.Y >= Min.Y && Local.Y <= Max.Y)
+				{
+					Result.Add(Index);
+				}
+			}
+
+			return Result;
+		}
+
 		FVector2D LocalToOffset(const FVector2D& Local, const FVector2D& Size) const
 		{
 			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
@@ -481,18 +585,25 @@ class SInvaderWaveCanvas final : public SLeafWidget
 		TFunction<const FARWaveDefRow*()> GetWaveRow;
 		TFunction<float()> GetSelectedLayerDelay;
 		TFunction<bool()> GetHideOtherLayers;
-		TFunction<int32()> GetSelectedSpawnIndex;
+		TFunction<TSet<int32>()> GetSelectedSpawnIndices;
 		TFunction<float()> GetPreviewTime;
-		TFunction<void(int32)> OnSpawnSelected;
+		TFunction<void(int32, bool, bool)> OnSpawnSelected;
+		TFunction<void()> OnClearSelection;
 		TFunction<void(int32, const FVector2D&)> OnOpenSpawnContextMenu;
-		TFunction<void(int32)> OnBeginDragSpawn;
+		TFunction<void()> OnBeginDragSpawn;
 		TFunction<void()> OnEndDragSpawn;
-		TFunction<void(int32, const FVector2D&)> OnSpawnMoved;
+		TFunction<void(const FVector2D&)> OnMoveSelectedSpawnsByDelta;
+		TFunction<void(const TArray<int32>&, bool)> OnSelectionRectChanged;
 		TFunction<void(const FVector2D&)> OnAddSpawnAt;
 
 		int32 DraggedSpawnIndex = INDEX_NONE;
 		int32 HoveredSpawnIndex = INDEX_NONE;
 		bool bStartedDragTransaction = false;
+		bool bSelectionRectActive = false;
+		bool bSelectionRectAppend = false;
+		FVector2D DragStartOffset = FVector2D::ZeroVector;
+		FVector2D SelectionRectStart = FVector2D::ZeroVector;
+		FVector2D SelectionRectEnd = FVector2D::ZeroVector;
 	};
 
 const FName ARInvaderAuthoringEditor::TabName(TEXT("AR_InvaderAuthoringTool"));
@@ -533,6 +644,7 @@ void SInvaderAuthoringPanel::Construct(const FArguments& InArgs)
 	RefreshRowItems();
 	RefreshDetailsObjects();
 	RefreshIssues();
+	ObjectTransactedHandle = FCoreUObjectDelegates::OnObjectTransacted.AddSP(SharedThis(this), &SInvaderAuthoringPanel::HandleObjectTransacted);
 	SetStatus(TEXT("Invader authoring tool ready."));
 }
 
@@ -548,6 +660,11 @@ SInvaderAuthoringPanel::~SInvaderAuthoringPanel()
 	{
 		SpawnDetailsView->OnFinishedChangingProperties().RemoveAll(this);
 	}
+	if (ObjectTransactedHandle.IsValid())
+	{
+		FCoreUObjectDelegates::OnObjectTransacted.Remove(ObjectTransactedHandle);
+		ObjectTransactedHandle.Reset();
+	}
 }
 
 FReply SInvaderAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
@@ -556,12 +673,17 @@ FReply SInvaderAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKey
 	const FKey Key = InKeyEvent.GetKey();
 	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
 	{
-		if (Mode == EAuthoringMode::Waves && SelectedSpawnIndex != INDEX_NONE)
+		if (Mode == EAuthoringMode::Waves)
 		{
-			return OnDeleteSelectedSpawn();
+			if (!SelectedSpawnIndices.IsEmpty())
+			{
+				return OnDeleteSelectedSpawn();
+			}
+			SetStatus(TEXT("No spawn selected. Use the row Delete button to remove a wave row."));
+			return FReply::Handled();
 		}
 
-		if (Mode == EAuthoringMode::Waves ? !SelectedWaveRow.IsNone() : !SelectedStageRow.IsNone())
+		if (!SelectedStageRow.IsNone())
 		{
 			return OnDeleteRow();
 		}
@@ -793,6 +915,7 @@ void SInvaderAuthoringPanel::BuildLayout()
 							[
 								SAssignNew(SpawnListView, SListView<TSharedPtr<FSpawnItem>>)
 								.ListItemsSource(&SpawnItems)
+								.SelectionMode(ESelectionMode::Multi)
 								.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateSpawnRow)
 								.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenSpawnContextMenu)
 								.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleSpawnSelectionChanged)
@@ -936,13 +1059,15 @@ void SInvaderAuthoringPanel::BuildLayout()
 			[this]() { return GetSelectedWaveRowConst(); },
 			[this]() { return SelectedLayerDelay; },
 			[]() { return GetDefault<UARInvaderAuthoringEditorSettings>()->bHideOtherLayersInWavePreview; },
-			[this]() { return SelectedSpawnIndex; },
+			[this]() { return SelectedSpawnIndices; },
 			[this]() { return PreviewTime; },
-			[this](int32 SpawnIndex) { HandleCanvasSpawnSelected(SpawnIndex); },
+			[this](int32 SpawnIndex, bool bToggle, bool bRangeSelect) { HandleCanvasSpawnSelected(SpawnIndex, bToggle, bRangeSelect); },
+			[this]() { HandleCanvasClearSpawnSelection(); },
 			[this](int32 SpawnIndex, const FVector2D& ScreenPos) { HandleCanvasOpenSpawnContextMenu(SpawnIndex, ScreenPos); },
-			[this](int32 SpawnIndex) { HandleCanvasBeginSpawnDrag(SpawnIndex); },
+			[this]() { HandleCanvasBeginSpawnDrag(); },
 			[this]() { HandleCanvasEndSpawnDrag(); },
-			[this](int32 SpawnIndex, const FVector2D& NewOffset) { HandleCanvasSpawnMoved(SpawnIndex, NewOffset); },
+			[this](const FVector2D& OffsetDelta) { HandleCanvasSelectedSpawnsMoved(OffsetDelta); },
+			[this](const TArray<int32>& RectSelection, bool bAppendToSelection) { HandleCanvasSelectionRectChanged(RectSelection, bAppendToSelection); },
 			[this](const FVector2D& NewOffset) { HandleCanvasAddSpawnAt(NewOffset); });
 	}
 }
@@ -1050,9 +1175,25 @@ const FARStageDefRow* SInvaderAuthoringPanel::GetSelectedStageRowConst() const
 FARWaveEnemySpawnDef* SInvaderAuthoringPanel::GetSelectedSpawn()
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	if (!Row)
 	{
 		return nullptr;
+	}
+
+	if (!Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		for (int32 Index : SelectedSpawnIndices)
+		{
+			if (Row->EnemySpawns.IsValidIndex(Index))
+			{
+				SelectedSpawnIndex = Index;
+				break;
+			}
+		}
+		if (!Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+		{
+			return nullptr;
+		}
 	}
 	return &Row->EnemySpawns[SelectedSpawnIndex];
 }
@@ -1238,25 +1379,34 @@ void SInvaderAuthoringPanel::RefreshSpawnItems()
 		break;
 	}
 
-	if (!SpawnItems.ContainsByPredicate([this](const TSharedPtr<FSpawnItem>& Item)
+	TSet<int32> VisibleIndices;
+	for (const TSharedPtr<FSpawnItem>& Item : SpawnItems)
 	{
-		return Item.IsValid() && Item->SpawnIndex == SelectedSpawnIndex;
-	}))
+		if (Item.IsValid())
+		{
+			VisibleIndices.Add(Item->SpawnIndex);
+		}
+	}
+	for (TSet<int32>::TIterator It(SelectedSpawnIndices); It; ++It)
 	{
-		SelectedSpawnIndex = SpawnItems.IsEmpty() ? INDEX_NONE : SpawnItems[0]->SpawnIndex;
+		if (!VisibleIndices.Contains(*It))
+		{
+			It.RemoveCurrent();
+		}
+	}
+	if (SelectedSpawnIndex != INDEX_NONE && !SelectedSpawnIndices.Contains(SelectedSpawnIndex))
+	{
+		SelectedSpawnIndex = INDEX_NONE;
+	}
+	if (SelectedSpawnIndex == INDEX_NONE && SelectedSpawnIndices.Num() > 0)
+	{
+		SelectedSpawnIndex = *SelectedSpawnIndices.CreateConstIterator();
 	}
 
 	if (SpawnListView.IsValid())
 	{
 		SpawnListView->RequestListRefresh();
-		for (const TSharedPtr<FSpawnItem>& Item : SpawnItems)
-		{
-			if (Item.IsValid() && Item->SpawnIndex == SelectedSpawnIndex)
-			{
-				SpawnListView->SetSelection(Item);
-				break;
-			}
-		}
+		SyncSpawnListSelectionFromState();
 	}
 
 	RefreshDetailsObjects();
@@ -1381,7 +1531,7 @@ ECheckBoxState SInvaderAuthoringPanel::IsModeChecked(EAuthoringMode QueryMode) c
 void SInvaderAuthoringPanel::SelectWaveRow(FName RowName)
 {
 	SelectedWaveRow = RowName;
-	SelectedSpawnIndex = INDEX_NONE;
+	ClearSpawnSelection();
 	RefreshLayerItems();
 	RefreshSpawnItems();
 	RefreshDetailsObjects();
@@ -1390,6 +1540,8 @@ void SInvaderAuthoringPanel::SelectWaveRow(FName RowName)
 void SInvaderAuthoringPanel::SelectStageRow(FName RowName)
 {
 	SelectedStageRow = RowName;
+	SelectedSpawnIndex = INDEX_NONE;
+	SelectedSpawnIndices.Reset();
 	RefreshDetailsObjects();
 }
 
@@ -1405,22 +1557,62 @@ void SInvaderAuthoringPanel::SelectLayerByDelay(float Delay)
 
 void SInvaderAuthoringPanel::SelectSpawn(int32 SpawnIndex)
 {
-	SelectedSpawnIndex = SpawnIndex;
+	TSet<int32> Selection;
+	if (SpawnIndex != INDEX_NONE)
+	{
+		Selection.Add(SpawnIndex);
+	}
+	ApplySpawnSelection(Selection, SpawnIndex);
+}
+
+void SInvaderAuthoringPanel::ApplySpawnSelection(const TSet<int32>& NewSelection, int32 PreferredPrimary)
+{
+	SelectedSpawnIndices = NewSelection;
+	if (SelectedSpawnIndices.IsEmpty())
+	{
+		SelectedSpawnIndex = INDEX_NONE;
+	}
+	else if (PreferredPrimary != INDEX_NONE && SelectedSpawnIndices.Contains(PreferredPrimary))
+	{
+		SelectedSpawnIndex = PreferredPrimary;
+	}
+	else if (!SelectedSpawnIndices.Contains(SelectedSpawnIndex))
+	{
+		SelectedSpawnIndex = *SelectedSpawnIndices.CreateConstIterator();
+	}
+
 	if (SpawnListView.IsValid())
 	{
-		for (const TSharedPtr<FSpawnItem>& Item : SpawnItems)
-		{
-			if (Item.IsValid() && Item->SpawnIndex == SelectedSpawnIndex)
-			{
-				SpawnListView->SetSelection(Item, ESelectInfo::Direct);
-				break;
-			}
-		}
+		SyncSpawnListSelectionFromState();
 	}
+
 	RefreshDetailsObjects();
 	if (WaveCanvas.IsValid())
 	{
 		WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+	}
+}
+
+void SInvaderAuthoringPanel::ClearSpawnSelection()
+{
+	ApplySpawnSelection(TSet<int32>(), INDEX_NONE);
+}
+
+void SInvaderAuthoringPanel::SyncSpawnListSelectionFromState()
+{
+	if (!SpawnListView.IsValid())
+	{
+		return;
+	}
+
+	TGuardValue<bool> SelectionGuard(bSyncingSpawnSelection, true);
+	SpawnListView->ClearSelection();
+	for (const TSharedPtr<FSpawnItem>& Item : SpawnItems)
+	{
+		if (Item.IsValid() && SelectedSpawnIndices.Contains(Item->SpawnIndex))
+		{
+			SpawnListView->SetItemSelection(Item, true, ESelectInfo::Direct);
+		}
 	}
 }
 
@@ -1584,6 +1776,7 @@ FReply SInvaderAuthoringPanel::OnDeleteRow()
 	{
 		SelectedWaveRow = NAME_None;
 		SelectedSpawnIndex = INDEX_NONE;
+		SelectedSpawnIndices.Reset();
 	}
 	else
 	{
@@ -1636,7 +1829,7 @@ FReply SInvaderAuthoringPanel::OnAddLayer()
 
 	Row->EnemySpawns.Add(Spawn);
 	SelectedLayerDelay = NewDelay;
-	SelectedSpawnIndex = Row->EnemySpawns.Num() - 1;
+	SelectSpawn(Row->EnemySpawns.Num() - 1);
 
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
@@ -1671,7 +1864,7 @@ FReply SInvaderAuthoringPanel::OnAddSpawnToLayer()
 	}
 
 	Row->EnemySpawns.Add(Spawn);
-	SelectedSpawnIndex = Row->EnemySpawns.Num() - 1;
+	SelectSpawn(Row->EnemySpawns.Num() - 1);
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
@@ -1682,41 +1875,71 @@ FReply SInvaderAuthoringPanel::OnAddSpawnToLayer()
 FReply SInvaderAuthoringPanel::OnDeleteSelectedSpawn()
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	if (!Row || !WaveTable || SelectedSpawnIndices.IsEmpty())
 	{
 		SetStatus(TEXT("Select a spawn first."));
 		return FReply::Handled();
 	}
 
+	TArray<int32> ToDelete = SelectedSpawnIndices.Array();
+	ToDelete.Sort(TGreater<int32>());
+	ToDelete = ToDelete.FilterByPredicate([Row](int32 Index) { return Row->EnemySpawns.IsValidIndex(Index); });
+	if (ToDelete.IsEmpty())
+	{
+		SetStatus(TEXT("Selected spawn set is out of date. Refreshing selection."));
+		ClearSpawnSelection();
+		RefreshSpawnItems();
+		return FReply::Handled();
+	}
+
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringDeleteSpawn", "Delete Wave Spawn"));
 	WaveTable->Modify();
-	Row->EnemySpawns.RemoveAt(SelectedSpawnIndex);
-	SelectedSpawnIndex = INDEX_NONE;
+	for (int32 Index : ToDelete)
+	{
+		Row->EnemySpawns.RemoveAt(Index);
+	}
+	ClearSpawnSelection();
 
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
-	SetStatus(TEXT("Deleted selected spawn."));
+	SetStatus(FString::Printf(TEXT("Deleted %d selected spawn(s)."), ToDelete.Num()));
 	return FReply::Handled();
 }
 
 void SInvaderAuthoringPanel::SetSelectedSpawnColor(EAREnemyColor NewColor)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	if (!Row || !WaveTable || SelectedSpawnIndices.IsEmpty())
 	{
 		return;
 	}
 
-	FARWaveEnemySpawnDef& Spawn = Row->EnemySpawns[SelectedSpawnIndex];
-	if (Spawn.EnemyColor == NewColor)
+	TArray<int32> TargetIndices = SelectedSpawnIndices.Array();
+	TargetIndices.Sort();
+	bool bAnyChanged = false;
+	for (int32 Index : TargetIndices)
+	{
+		if (Row->EnemySpawns.IsValidIndex(Index) && Row->EnemySpawns[Index].EnemyColor != NewColor)
+		{
+			bAnyChanged = true;
+			break;
+		}
+	}
+
+	if (!bAnyChanged)
 	{
 		return;
 	}
-
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringSetSpawnColor", "Set Wave Spawn Color"));
 	WaveTable->Modify();
-	Spawn.EnemyColor = NewColor;
+	for (int32 Index : TargetIndices)
+	{
+		if (Row->EnemySpawns.IsValidIndex(Index))
+		{
+			Row->EnemySpawns[Index].EnemyColor = NewColor;
+		}
+	}
 	MarkTableDirty(WaveTable);
 	RefreshSpawnItems();
 	RefreshDetailsObjects();
@@ -1729,15 +1952,31 @@ void SInvaderAuthoringPanel::SetSelectedSpawnColor(EAREnemyColor NewColor)
 
 TSharedPtr<SWidget> SInvaderAuthoringPanel::OnOpenSpawnContextMenu()
 {
-	if (Mode != EAuthoringMode::Waves || SelectedSpawnIndex == INDEX_NONE)
+	if (Mode != EAuthoringMode::Waves || SelectedSpawnIndices.IsEmpty())
 	{
 		return nullptr;
 	}
 
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	if (!Row)
 	{
 		return nullptr;
+	}
+
+	if (!Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		for (int32 Candidate : SelectedSpawnIndices)
+		{
+			if (Row->EnemySpawns.IsValidIndex(Candidate))
+			{
+				SelectedSpawnIndex = Candidate;
+				break;
+			}
+		}
+		if (!Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+		{
+			return nullptr;
+		}
 	}
 
 	return BuildSpawnContextMenu();
@@ -1778,7 +2017,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildSpawnContextMenu()
 void SInvaderAuthoringPanel::MoveSpawnWithinLayer(int32 Direction)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	if (!Row || !WaveTable || SelectedSpawnIndices.IsEmpty())
 	{
 		return;
 	}
@@ -1792,24 +2031,88 @@ void SInvaderAuthoringPanel::MoveSpawnWithinLayer(int32 Direction)
 		}
 	}
 
-	const int32 Pos = LayerIndices.IndexOfByKey(SelectedSpawnIndex);
-	const int32 NewPos = Pos + Direction;
-	if (Pos == INDEX_NONE || !LayerIndices.IsValidIndex(NewPos))
+	TSet<int32> LayerSelection;
+	for (int32 Index : LayerIndices)
+	{
+		if (SelectedSpawnIndices.Contains(Index))
+		{
+			LayerSelection.Add(Index);
+		}
+	}
+	if (LayerSelection.IsEmpty())
 	{
 		return;
 	}
 
-	const int32 SwapA = LayerIndices[Pos];
-	const int32 SwapB = LayerIndices[NewPos];
-	if (!Row->EnemySpawns.IsValidIndex(SwapA) || !Row->EnemySpawns.IsValidIndex(SwapB))
-	{
-		return;
-	}
-
-	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringReorderSpawn", "Reorder Wave Spawn"));
+	FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringReorderSpawn", "Reorder Wave Spawn"));
 	WaveTable->Modify();
-	Row->EnemySpawns.Swap(SwapA, SwapB);
-	SelectedSpawnIndex = SwapB;
+	bool bAnyMoved = false;
+
+	auto SwapAndTrackSelection = [this, &LayerSelection, Row, &bAnyMoved](int32 A, int32 B)
+	{
+		if (!Row->EnemySpawns.IsValidIndex(A) || !Row->EnemySpawns.IsValidIndex(B))
+		{
+			return;
+		}
+
+		const bool bASelected = LayerSelection.Contains(A);
+		const bool bBSelected = LayerSelection.Contains(B);
+		if (bASelected == bBSelected)
+		{
+			return;
+		}
+
+		Row->EnemySpawns.Swap(A, B);
+		bAnyMoved = true;
+		if (bASelected)
+		{
+			LayerSelection.Remove(A);
+			LayerSelection.Add(B);
+		}
+		else
+		{
+			LayerSelection.Remove(B);
+			LayerSelection.Add(A);
+		}
+		if (SelectedSpawnIndex == A)
+		{
+			SelectedSpawnIndex = B;
+		}
+		else if (SelectedSpawnIndex == B)
+		{
+			SelectedSpawnIndex = A;
+		}
+	};
+
+	if (Direction < 0)
+	{
+		for (int32 i = 1; i < LayerIndices.Num(); ++i)
+		{
+			SwapAndTrackSelection(LayerIndices[i], LayerIndices[i - 1]);
+		}
+	}
+	else if (Direction > 0)
+	{
+		for (int32 i = LayerIndices.Num() - 2; i >= 0; --i)
+		{
+			SwapAndTrackSelection(LayerIndices[i], LayerIndices[i + 1]);
+		}
+	}
+
+	if (!bAnyMoved)
+	{
+		Tx.Cancel();
+		return;
+	}
+
+	for (int32 Index : LayerIndices)
+	{
+		SelectedSpawnIndices.Remove(Index);
+	}
+	for (int32 Index : LayerSelection)
+	{
+		SelectedSpawnIndices.Add(Index);
+	}
 
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
@@ -1851,9 +2154,68 @@ void SInvaderAuthoringPanel::UpdateLayerDelay(float OldDelay, float NewDelay)
 	RefreshSpawnItems();
 }
 
-void SInvaderAuthoringPanel::HandleCanvasSpawnSelected(int32 SpawnIndex)
+void SInvaderAuthoringPanel::HandleCanvasSpawnSelected(int32 SpawnIndex, bool bToggle, bool bRangeSelect)
 {
+	if (SpawnIndex == INDEX_NONE)
+	{
+		return;
+	}
+
+	FARWaveDefRow* Row = GetSelectedWaveRow();
+	if (!Row || !Row->EnemySpawns.IsValidIndex(SpawnIndex))
+	{
+		return;
+	}
+
+	if (bRangeSelect && SelectedSpawnIndex != INDEX_NONE && Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		const float TargetDelay = Row->EnemySpawns[SpawnIndex].SpawnDelay;
+		const float AnchorDelay = Row->EnemySpawns[SelectedSpawnIndex].SpawnDelay;
+		if (FMath::IsNearlyEqual(TargetDelay, AnchorDelay, LayerMatchTolerance))
+		{
+			int32 MinIndex = FMath::Min(SelectedSpawnIndex, SpawnIndex);
+			int32 MaxIndex = FMath::Max(SelectedSpawnIndex, SpawnIndex);
+			TSet<int32> RangeSelection = bToggle ? SelectedSpawnIndices : TSet<int32>();
+			for (int32 Index = MinIndex; Index <= MaxIndex; ++Index)
+			{
+				if (Row->EnemySpawns.IsValidIndex(Index) && FMath::IsNearlyEqual(Row->EnemySpawns[Index].SpawnDelay, TargetDelay, LayerMatchTolerance))
+				{
+					RangeSelection.Add(Index);
+				}
+			}
+			ApplySpawnSelection(RangeSelection, SpawnIndex);
+			return;
+		}
+	}
+
+	if (bToggle)
+	{
+		TSet<int32> UpdatedSelection = SelectedSpawnIndices;
+		if (UpdatedSelection.Contains(SpawnIndex))
+		{
+			UpdatedSelection.Remove(SpawnIndex);
+		}
+		else
+		{
+			UpdatedSelection.Add(SpawnIndex);
+		}
+		ApplySpawnSelection(UpdatedSelection, SpawnIndex);
+		return;
+	}
+
+	if (SelectedSpawnIndices.Contains(SpawnIndex) && SelectedSpawnIndices.Num() > 1)
+	{
+		// Preserve current multi-selection so drag can move the group.
+		ApplySpawnSelection(SelectedSpawnIndices, SpawnIndex);
+		return;
+	}
+
 	SelectSpawn(SpawnIndex);
+}
+
+void SInvaderAuthoringPanel::HandleCanvasClearSpawnSelection()
+{
+	ClearSpawnSelection();
 }
 
 void SInvaderAuthoringPanel::HandleCanvasOpenSpawnContextMenu(int32 SpawnIndex, const FVector2D& ScreenPosition)
@@ -1871,10 +2233,10 @@ void SInvaderAuthoringPanel::HandleCanvasOpenSpawnContextMenu(int32 SpawnIndex, 
 	}
 }
 
-void SInvaderAuthoringPanel::HandleCanvasBeginSpawnDrag(int32 SpawnIndex)
+void SInvaderAuthoringPanel::HandleCanvasBeginSpawnDrag()
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SpawnIndex))
+	if (!Row || !WaveTable || SelectedSpawnIndices.IsEmpty())
 	{
 		return;
 	}
@@ -1887,6 +2249,20 @@ void SInvaderAuthoringPanel::HandleCanvasBeginSpawnDrag(int32 SpawnIndex)
 	SpawnDragTransaction = MakeUnique<FScopedTransaction>(
 		NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringDragSpawn", "Move Wave Spawn"));
 	WaveTable->Modify();
+	SpawnDragStartOffsets.Reset();
+	for (int32 Index : SelectedSpawnIndices)
+	{
+		if (Row->EnemySpawns.IsValidIndex(Index))
+		{
+			SpawnDragStartOffsets.Add(Index, Row->EnemySpawns[Index].AuthoredScreenOffset);
+		}
+	}
+	if (SpawnDragStartOffsets.IsEmpty())
+	{
+		SpawnDragTransaction->Cancel();
+		SpawnDragTransaction.Reset();
+		return;
+	}
 	bSpawnDragChanged = false;
 }
 
@@ -1903,39 +2279,54 @@ void SInvaderAuthoringPanel::HandleCanvasEndSpawnDrag()
 	}
 
 	SpawnDragTransaction.Reset();
+	SpawnDragStartOffsets.Reset();
 	bSpawnDragChanged = false;
 }
 
-void SInvaderAuthoringPanel::HandleCanvasSpawnMoved(int32 SpawnIndex, const FVector2D& NewOffset)
+void SInvaderAuthoringPanel::HandleCanvasSelectedSpawnsMoved(const FVector2D& OffsetDelta)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SpawnIndex))
+	if (!Row || !WaveTable || SpawnDragStartOffsets.IsEmpty())
 	{
 		return;
 	}
 
-	FARWaveEnemySpawnDef& Spawn = Row->EnemySpawns[SpawnIndex];
-	if (Spawn.AuthoredScreenOffset.Equals(NewOffset, 0.01f))
+	bool bAnyChanged = false;
+	for (const TPair<int32, FVector2D>& Pair : SpawnDragStartOffsets)
+	{
+		if (!Row->EnemySpawns.IsValidIndex(Pair.Key))
+		{
+			continue;
+		}
+		const FVector2D NewOffset = Pair.Value + OffsetDelta;
+		if (!Row->EnemySpawns[Pair.Key].AuthoredScreenOffset.Equals(NewOffset, 0.01f))
+		{
+			Row->EnemySpawns[Pair.Key].AuthoredScreenOffset = NewOffset;
+			bAnyChanged = true;
+		}
+	}
+	if (!bAnyChanged)
 	{
 		return;
 	}
 
-	if (!SpawnDragTransaction.IsValid())
+	if (SpawnDragTransaction.IsValid())
 	{
-		const FScopedTransaction Tx(
-			NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringMoveSpawnImmediate", "Move Wave Spawn"));
-		WaveTable->Modify();
-		Spawn.AuthoredScreenOffset = NewOffset;
-	}
-	else
-	{
-		Spawn.AuthoredScreenOffset = NewOffset;
 		bSpawnDragChanged = true;
 	}
 
-	SelectedSpawnIndex = SpawnIndex;
 	MarkTableDirty(WaveTable);
 	RefreshDetailsObjects();
+}
+
+void SInvaderAuthoringPanel::HandleCanvasSelectionRectChanged(const TArray<int32>& RectSelection, bool bAppendToSelection)
+{
+	TSet<int32> UpdatedSelection = bAppendToSelection ? SelectedSpawnIndices : TSet<int32>();
+	for (int32 Index : RectSelection)
+	{
+		UpdatedSelection.Add(Index);
+	}
+	ApplySpawnSelection(UpdatedSelection, SelectedSpawnIndex);
 }
 
 void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
@@ -1963,7 +2354,7 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	}
 
 	Row->EnemySpawns.Add(Spawn);
-	SelectedSpawnIndex = Row->EnemySpawns.Num() - 1;
+	SelectSpawn(Row->EnemySpawns.Num() - 1);
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
@@ -2161,11 +2552,25 @@ void SInvaderAuthoringPanel::HandleLayerSelectionChanged(TSharedPtr<FLayerItem> 
 
 void SInvaderAuthoringPanel::HandleSpawnSelectionChanged(TSharedPtr<FSpawnItem> Item, ESelectInfo::Type)
 {
-	if (!Item.IsValid())
+	if (bSyncingSpawnSelection)
 	{
 		return;
 	}
-	SelectSpawn(Item->SpawnIndex);
+
+	TSet<int32> NewSelection;
+	if (SpawnListView.IsValid())
+	{
+		const TArray<TSharedPtr<FSpawnItem>> ListSelection = SpawnListView->GetSelectedItems();
+		for (const TSharedPtr<FSpawnItem>& SelectedItem : ListSelection)
+		{
+			if (SelectedItem.IsValid())
+			{
+				NewSelection.Add(SelectedItem->SpawnIndex);
+			}
+		}
+	}
+
+	ApplySpawnSelection(NewSelection, Item.IsValid() ? Item->SpawnIndex : SelectedSpawnIndex);
 }
 
 void SInvaderAuthoringPanel::HandleIssueSelectionChanged(TSharedPtr<FInvaderAuthoringIssue> Item, ESelectInfo::Type)
@@ -2588,6 +2993,28 @@ void SInvaderAuthoringPanel::RefreshIssues()
 	if (IssueListView.IsValid())
 	{
 		IssueListView->RequestListRefresh();
+	}
+}
+
+void SInvaderAuthoringPanel::HandleObjectTransacted(UObject* Object, const FTransactionObjectEvent& Event)
+{
+	(void)Event;
+	if (!Object)
+	{
+		return;
+	}
+
+	if (Object != WaveTable && Object != StageTable)
+	{
+		return;
+	}
+
+	RefreshRowItems();
+	RefreshDetailsObjects();
+	RefreshIssues();
+	if (WaveCanvas.IsValid())
+	{
+		WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
 	}
 }
 
