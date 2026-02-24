@@ -68,7 +68,7 @@ private:
 		int32 AliveCount = 0;
 		bool bColorSwap = false;
 		FName StageRowName = NAME_None;
-		EARWavePhase Phase = EARWavePhase::Entering;
+		EARWavePhase Phase = EARWavePhase::Active;
 		TArray<TWeakObjectPtr<class AAREnemyBase>> SpawnedEnemies;
 	};
 

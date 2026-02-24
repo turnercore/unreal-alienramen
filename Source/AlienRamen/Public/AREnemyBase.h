@@ -146,7 +146,7 @@ protected:
 	EARFormationMode FormationMode = EARFormationMode::None;
 
 	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
-	EARWavePhase WavePhase = EARWavePhase::Entering;
+	EARWavePhase WavePhase = EARWavePhase::Active;
 
 	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
 	float WavePhaseStartServerTime = 0.f;

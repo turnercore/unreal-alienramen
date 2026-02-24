@@ -19,10 +19,8 @@ enum class EAREnemyColor : uint8
 UENUM(BlueprintType)
 enum class EARWavePhase : uint8
 {
-	Entering = 0,
-	Active = 1,
-	Berserk = 2,
-	Expired = 3
+	Active = 0,
+	Berserk = 1
 };
 
 UENUM(BlueprintType)
@@ -173,9 +171,6 @@ struct FARStageDefRow : public FTableRowBase
 	float ThreatGainMultiplier = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
-	float BerserkTimeMultiplier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float EnemyHealthMultiplier = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
@@ -207,7 +202,7 @@ struct FARWaveInstanceState
 	FName WaveRowName = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
-	EARWavePhase Phase = EARWavePhase::Entering;
+	EARWavePhase Phase = EARWavePhase::Active;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	float WaveStartServerTime = 0.f;

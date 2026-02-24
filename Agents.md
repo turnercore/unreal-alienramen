@@ -95,16 +95,14 @@
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
-- Wave phases in runtime flow: `Entering`, `Active`, `Berserk` (no timed auto-expire from `Berserk`; waves clear when spawned enemies are dead and fully spawned).
-- Entering-to-Active transition contract:
-- primary transition is condition-driven (wave fully spawned and each live spawned enemy has either entered gameplay screen or reported formation-slot arrival)
-- `FARWaveDefRow::EnterDuration` is timeout fallback only
-- wave active timing uses `FARWaveDefRow::WaveDuration` (authoring-visible)
+- Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
+- Wave phases in runtime flow: `Active`, `Berserk` (waves start `Active`, then time-transition to `Berserk`; waves clear when spawned enemies are dead and fully spawned).
+- Entering behavior is per-enemy movement/state logic (on-screen/formation arrival), not a wave phase.
+- `FARWaveDefRow::WaveDuration` controls `Active -> Berserk` timing.
+- stage rows no longer include/use a berserk/wave-time multiplier; stage timing knobs do not scale per-wave active duration
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
-- `Event.Wave.Phase.Entering`
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
-- `Event.Wave.Phase.Expired`
 - Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
@@ -134,7 +132,7 @@
 - `ar.invader.stop`
 - `ar.invader.choose_stage <left|right>`
 - `ar.invader.force_wave <RowName>`
-- `ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`
+- `ar.invader.force_phase <WaveId> <Active|Berserk>`
 - `ar.invader.force_threat <Value>`
 - `ar.invader.force_stage <RowName>`
 - `ar.invader.force_intro <Seconds|clear>`

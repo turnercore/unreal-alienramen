@@ -33,14 +33,9 @@ protected:
 	TObjectPtr<UStateTree> DefaultStateTree;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
-	FGameplayTag EnteringPhaseEventTag;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
 	FGameplayTag ActivePhaseEventTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
 	FGameplayTag BerserkPhaseEventTag;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
-	FGameplayTag ExpiredPhaseEventTag;
 };
