@@ -11,7 +11,7 @@ class ALIENRAMENEDITOR_API UARInvaderWaveRowProxy : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Wave", meta=(ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "", meta=(ShowOnlyInnerProperties))
 	FARWaveDefRow Row;
 };
 
@@ -21,7 +21,7 @@ class ALIENRAMENEDITOR_API UARInvaderStageRowProxy : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Stage", meta=(ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "", meta=(ShowOnlyInnerProperties))
 	FARStageDefRow Row;
 };
 
@@ -31,6 +31,21 @@ class ALIENRAMENEDITOR_API UARInvaderSpawnProxy : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Spawn", meta=(ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "", meta=(ShowOnlyInnerProperties))
 	FARWaveEnemySpawnDef Spawn;
+};
+
+UCLASS(Transient)
+class ALIENRAMENEDITOR_API UARInvaderPIESaveLoadedBridge : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	void Configure(FSimpleDelegate InOnLoaded);
+
+	UFUNCTION()
+	void HandleSignalOnGameLoaded();
+
+private:
+	FSimpleDelegate OnLoaded;
 };

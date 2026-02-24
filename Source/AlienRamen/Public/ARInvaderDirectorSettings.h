@@ -58,16 +58,16 @@ public:
 	FVector SpawnOrigin = FVector::ZeroVector;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
-	float SpawnOffscreenDistance = 2800.f;
+	float SpawnOffscreenDistance = 1400.f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	float SpawnLaneSpacing = 220.f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")
-	FVector2D GameplayBoundsMin = FVector2D(-2800.f, -2200.f);
+	FVector2D GameplayBoundsMin = FVector2D(0.f, -1350.f);
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")
-	FVector2D GameplayBoundsMax = FVector2D(2800.f, 2200.f);
+	FVector2D GameplayBoundsMax = FVector2D(1400.f, 1550.f);
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")
 	float OffscreenCullSeconds = 12.f;

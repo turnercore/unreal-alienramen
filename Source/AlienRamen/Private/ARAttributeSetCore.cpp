@@ -8,6 +8,11 @@
 UARAttributeSetCore::UARAttributeSetCore()
 {
 	// Reasonable defaults (you can also set these in a GE instead)
+	MaxHealth.SetBaseValue(1.0f);
+	MaxHealth.SetCurrentValue(1.0f);
+	Health.SetBaseValue(1.0f);
+	Health.SetCurrentValue(1.0f);
+
 	DamageTakenMultiplier.SetBaseValue(1.0f);
 	DamageTakenMultiplier.SetCurrentValue(1.0f);
 
