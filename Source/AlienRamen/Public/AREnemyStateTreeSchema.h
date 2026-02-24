@@ -18,5 +18,13 @@ class ALIENRAMEN_API UAREnemyStateTreeSchema : public UStateTreeAIComponentSchem
 
 public:
 	UAREnemyStateTreeSchema(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-};
 
+	virtual void PostLoad() override;
+
+#if WITH_EDITOR
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
+#endif
+
+private:
+	void SyncContextDescriptorTypes();
+};

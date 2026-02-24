@@ -142,10 +142,10 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
 	float WavePhaseStartServerTime = 0.f;
 
-	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader", meta = (AllowPrivateAccess = "true"))
 	bool bFormationLockEnter = false;
 
-	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader", meta = (AllowPrivateAccess = "true"))
 	bool bFormationLockActive = false;
 
 	UFUNCTION()
