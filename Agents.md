@@ -15,12 +15,12 @@
 - If exposure choice is unclear, ask before locking API surface.
 - Blueprint API categories should be under `Alien Ramen|...` (or existing subsystem category path following that prefix).
 - When you add a new subsystem or major flow, include:
-- ownership/authority model
-- configuration source (settings/data assets/tables)
-- runtime entry points and expected lifecycle
-- integration touchpoints with existing systems
-- If you remove or deprecate a system, explicitly note current status and replacement direction.
-- Keep wording specific enough that a new agent can act without rediscovery.
+    1. ownership/authority model
+    2. configuration source (settings/data assets/tables)
+    3. runtime entry points and expected lifecycle
+    4. integration touchpoints with existing systems
+    5. If you remove or deprecate a system, explicitly note current status and replacement direction.
+    6. Keep wording specific enough that a new agent can act without rediscovery.
 - Always try to compile after making changes.
 
 ## High-Level Architecture
