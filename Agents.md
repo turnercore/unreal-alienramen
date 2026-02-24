@@ -21,6 +21,7 @@
 - integration touchpoints with existing systems
 - If you remove or deprecate a system, explicitly note current status and replacement direction.
 - Keep wording specific enough that a new agent can act without rediscovery.
+- Always try to compile after making changes.
 
 ## High-Level Architecture
 
@@ -98,8 +99,18 @@
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
 - `Event.Wave.Phase.Expired`
+- Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
+- defaults `AIControllerClass` to `AAREnemyAIController`
+- defaults `ContextActorClass` to `AAREnemyBase`
 - Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, `SlotIndex`) until a dedicated formation system is reintroduced.
 - Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
+- Per-spawn formation lock flags are authored in wave data (`FARWaveEnemySpawnDef`):
+- `bFormationLockEnter` (lock during `Entering`)
+- `bFormationLockActive` (lock during `Active`)
+- Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
+- Enemy runtime exposes replicated lock state for AI/StateTree reads:
+- `AAREnemyBase.bFormationLockEnter`
+- `AAREnemyBase.bFormationLockActive`
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - Console controls implemented:

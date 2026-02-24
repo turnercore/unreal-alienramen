@@ -84,6 +84,14 @@ struct FARWaveEnemySpawnDef
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	FVector2D AuthoredScreenOffset = FVector2D::ZeroVector;
 
+	// If true, AI should treat this enemy as formation-locked during Entering phase.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	bool bFormationLockEnter = false;
+
+	// If true, AI should treat this enemy as formation-locked during Active phase.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	bool bFormationLockActive = false;
+
 	// Effects applied to this spawned enemy instance (in addition to wave/stage effects).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
 	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;

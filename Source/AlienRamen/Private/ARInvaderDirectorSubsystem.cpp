@@ -411,6 +411,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 
 			Enemy->SetEnemyColor(EffectiveColor);
 			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, SpawnDef.SlotIndex, Wave.Def.FormationMode, Wave.Phase, GetWorld()->GetTimeSeconds());
+			Enemy->SetFormationLockRules(SpawnDef.bFormationLockEnter, SpawnDef.bFormationLockActive);
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);
