@@ -103,20 +103,25 @@
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
+- Enemy AI also emits one-shot entry event tag `Event.Wave.Entered` per enemy when entry condition is met.
 - Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
-- Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, runtime spawn ordinal/slot) until a dedicated formation system is reintroduced.
+- Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`) or `FormationMode`; formation behavior is driven by runtime AI/state + wave lock flags.
 - Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
 - Formation lock flags are authored at wave level (`FARWaveDefRow`), not per-spawn:
 - `bFormationLockEnter` (lock during `Entering`)
 - `bFormationLockActive` (lock during `Active`)
 - Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
+- Entered event dispatch to enemy StateTree is gated by entry-lock rules:
+- when `bFormationLockEnter=false`, Entered event is dispatched once enemy first enters gameplay bounds
+- when `bFormationLockEnter=true`, Entered event is dispatched once enemy reports formation-slot arrival (`SetReachedFormationSlot(true)`)
 - `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
 - `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
 - Spawn edge behavior contract:
-- `Top` spawns offscreen on `+X` and preserves authored `Y` lane (plus deterministic lane offset)
-- `Left`/`Right` spawn offscreen on `Y` edges and preserve authored `X` lane (plus deterministic lane offset)
+- `Top` translates authored formation offscreen on `+X` while preserving formation geometry
+- `Left`/`Right` translate authored formation offscreen on `Y` edges while preserving formation geometry
+- wave-level random mirror options `bAllowFlipX`/`bAllowFlipY` can mirror authored offsets around gameplay-bounds center before offscreen translation
 - default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
 - leak bound check uses low-X boundary (`Location.X >= GameplayBoundsMin.X`) for player-side loss detection in this coordinate layout
 - Enemy runtime exposes entry-completion hook:
@@ -156,7 +161,7 @@
 - Row list supports multi-select duplicate/delete for wave/stage rows.
 - Row list supports right-click context menu actions (`Rename`, `Duplicate`, `Delete`) for selected wave/stage rows.
 - New-row creation uses rename textbox content as base name when present (with `_N` uniqueness suffix as needed).
-- Table persistence defaults to auto-save on edit (`UARInvaderToolingSettings::bAutoSaveTablesOnEdit=true`): edits write directly to the live wave/stage DataTable packages (no row indirection/replacement), so references remain stable.
+- Table persistence now follows standard editor dirty-package flow by default: edits mark wave/stage DataTable packages dirty and rely on Unreal save prompts/manual save actions (no per-edit autosave churn).
 - PIE save bootstrap settings are in `UARInvaderToolingSettings` (`Project Settings -> Alien Ramen -> Tooling -> Invader Authoring|PIE Save Bootstrap`):
 - `bEnablePIESaveBootstrap`
 - `PIEBootstrapLoadingMap`

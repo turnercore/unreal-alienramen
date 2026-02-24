@@ -35,15 +35,6 @@ enum class EARInvaderFlowState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EARFormationMode : uint8
-{
-	None = 0,
-	Hold = 1,
-	RotateCW = 2,
-	RotateCCW = 3
-};
-
-UENUM(BlueprintType)
 enum class EARSpawnEdge : uint8
 {
 	Top = 0,
@@ -120,16 +111,21 @@ struct FARWaveDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float RepeatWeightPenalty = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
-	EARFormationMode FormationMode = EARFormationMode::None;
-
-	// If true, AI should treat enemies in this wave as formation-locked during Entering.
+	// If true, enemies stay formation-locked until they report formation-slot arrival.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	bool bFormationLockEnter = false;
 
 	// If true, AI should treat enemies in this wave as formation-locked during Active.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	bool bFormationLockActive = false;
+
+	// If true, runtime may mirror authored spawn offsets across gameplay-bounds center on X.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bAllowFlipX = false;
+
+	// If true, runtime may mirror authored spawn offsets across gameplay-bounds center on Y.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bAllowFlipY = false;
 
 	// Entering primarily ends by runtime condition checks; this is timeout fallback.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")

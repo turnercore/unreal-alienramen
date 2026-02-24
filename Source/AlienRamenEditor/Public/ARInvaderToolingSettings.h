@@ -29,7 +29,7 @@ public:
 	FDirectoryPath EnemiesFolder;
 
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Persistence")
-	bool bAutoSaveTablesOnEdit = true;
+	bool bAutoSaveTablesOnEdit = false;
 
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Backups")
 	bool bCreateBackupOnToolOpen = true;

@@ -115,6 +115,8 @@ void AAREnemyBase::PossessedBy(AController* NewController)
 		ApplyStartupAbilitySet();
 	}
 
+	TryDispatchWavePhaseEvent();
+	TryDispatchEnteredEvent();
 	BP_OnEnemyInitialized();
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Possessed '%s' by '%s'."),
 		*GetNameSafe(this), *GetNameSafe(NewController));
@@ -278,7 +280,6 @@ void AAREnemyBase::OnRep_IsDead()
 void AAREnemyBase::SetWaveRuntimeContext(
 	int32 InWaveInstanceId,
 	int32 InFormationSlotIndex,
-	EARFormationMode InFormationMode,
 	EARWavePhase InWavePhase,
 	float InPhaseStartServerTime)
 {
@@ -288,28 +289,35 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	}
 
 	const EARWavePhase PreviousPhase = WavePhase;
+	const int32 PreviousWaveInstanceId = WaveInstanceId;
 	WaveInstanceId = InWaveInstanceId;
 	FormationSlotIndex = InFormationSlotIndex;
-	FormationMode = InFormationMode;
 	WavePhase = InWavePhase;
 	WavePhaseStartServerTime = InPhaseStartServerTime;
 	bHasEnteredGameplayScreen = false;
 	bReachedFormationSlot = false;
+	bHasDispatchedEnteredEvent = false;
+	LastDispatchedWavePhaseWaveId = INDEX_NONE;
 	ForceNetUpdate();
 
-	if (PreviousPhase != WavePhase)
+	if (PreviousPhase != WavePhase || PreviousWaveInstanceId != WaveInstanceId)
 	{
-		BP_OnWavePhaseChanged(WavePhase);
-		if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
-		{
-			EnemyAI->NotifyWavePhaseChanged(WaveInstanceId, WavePhase);
-		}
+		TryDispatchWavePhaseEvent();
 	}
+	TryDispatchEnteredEvent();
 }
 
 void AAREnemyBase::SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime)
 {
-	SetWaveRuntimeContext(WaveInstanceId, FormationSlotIndex, FormationMode, InWavePhase, InPhaseStartServerTime);
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	WavePhase = InWavePhase;
+	WavePhaseStartServerTime = InPhaseStartServerTime;
+	ForceNetUpdate();
+	TryDispatchWavePhaseEvent();
 }
 
 void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
@@ -321,6 +329,7 @@ void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
 
 	bHasEnteredGameplayScreen = true;
 	EnteredGameplayScreenServerTime = InServerTime;
+	TryDispatchEnteredEvent();
 }
 
 void AAREnemyBase::SetFormationLockRules(bool bInFormationLockEnter, bool bInFormationLockActive)
@@ -332,6 +341,7 @@ void AAREnemyBase::SetFormationLockRules(bool bInFormationLockEnter, bool bInFor
 
 	bFormationLockEnter = bInFormationLockEnter;
 	bFormationLockActive = bInFormationLockActive;
+	TryDispatchEnteredEvent();
 	ForceNetUpdate();
 }
 
@@ -343,6 +353,48 @@ void AAREnemyBase::SetReachedFormationSlot(bool bInReachedFormationSlot)
 	}
 
 	bReachedFormationSlot = bInReachedFormationSlot;
+	TryDispatchEnteredEvent();
+}
+
+void AAREnemyBase::TryDispatchWavePhaseEvent()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (LastDispatchedWavePhaseWaveId == WaveInstanceId && LastDispatchedWavePhase == WavePhase)
+	{
+		return;
+	}
+
+	LastDispatchedWavePhaseWaveId = WaveInstanceId;
+	LastDispatchedWavePhase = WavePhase;
+	BP_OnWavePhaseChanged(WavePhase);
+	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
+	{
+		EnemyAI->NotifyWavePhaseChanged(WaveInstanceId, WavePhase);
+	}
+}
+
+void AAREnemyBase::TryDispatchEnteredEvent()
+{
+	if (!HasAuthority() || bHasDispatchedEnteredEvent)
+	{
+		return;
+	}
+
+	const bool bEnteredReady = bFormationLockEnter ? bReachedFormationSlot : bHasEnteredGameplayScreen;
+	if (!bEnteredReady)
+	{
+		return;
+	}
+
+	bHasDispatchedEnteredEvent = true;
+	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
+	{
+		EnemyAI->NotifyWaveEntered(WaveInstanceId);
+	}
 }
 
 bool AAREnemyBase::CanFireByWaveRules() const
@@ -419,7 +471,6 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AAREnemyBase, bIsDead);
 	DOREPLIFETIME(AAREnemyBase, WaveInstanceId);
 	DOREPLIFETIME(AAREnemyBase, FormationSlotIndex);
-	DOREPLIFETIME(AAREnemyBase, FormationMode);
 	DOREPLIFETIME(AAREnemyBase, WavePhase);
 	DOREPLIFETIME(AAREnemyBase, WavePhaseStartServerTime);
 	DOREPLIFETIME(AAREnemyBase, bFormationLockEnter);

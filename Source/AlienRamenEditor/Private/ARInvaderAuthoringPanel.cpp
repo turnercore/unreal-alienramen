@@ -1846,12 +1846,6 @@ void SInvaderAuthoringPanel::MarkTableDirty(UDataTable* Table)
 		return;
 	}
 	Table->MarkPackageDirty();
-
-	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
-	if (ToolingSettings && ToolingSettings->bAutoSaveTablesOnEdit)
-	{
-		SaveTable(Table, false);
-	}
 }
 
 void SInvaderAuthoringPanel::SaveTable(UDataTable* Table, bool bPromptForCheckout)
@@ -3105,7 +3099,7 @@ float SInvaderAuthoringPanel::GetMaxPreviewTime() const
 	{
 		MaxDelay = FMath::Max(MaxDelay, Spawn.SpawnDelay);
 	}
-	return FMath::Max(1.f, MaxDelay + FMath::Max(0.f, Row->EnterDuration + Row->WaveDuration));
+	return FMath::Max(1.f, MaxDelay + FMath::Max(0.f, Row->WaveDuration));
 }
 
 FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
@@ -3116,9 +3110,8 @@ FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
 		return FText::FromString(TEXT("No wave selected."));
 	}
 
-	const float EnterTimeout = FMath::Max(0.f, Row->EnterDuration);
-	const float ActiveEnd = EnterTimeout + FMath::Max(0.f, Row->WaveDuration);
-	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Enter until ready (timeout %.2fs) | Active [%.2f-%.2f] Berserk [%.2f-INF]"), PreviewTime, EnterTimeout, EnterTimeout, ActiveEnd, ActiveEnd));
+	const float ActiveEnd = FMath::Max(0.f, Row->WaveDuration);
+	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Active [0.00-%.2f] Berserk [%.2f-INF]"), PreviewTime, ActiveEnd, ActiveEnd));
 }
 
 void SInvaderAuthoringPanel::HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event)
