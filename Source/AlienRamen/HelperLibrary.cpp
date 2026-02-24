@@ -1,5 +1,3 @@
-// HelperLibrary.cpp
-
 #include "HelperLibrary.h"
 #include "ARLog.h"
 
