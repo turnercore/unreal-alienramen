@@ -26,5 +26,17 @@ public:
 	// Long package path, e.g. /Game/CodeAlong/Blueprints/Enemies.
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring")
 	FDirectoryPath EnemiesFolder;
-};
 
+	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Persistence")
+	bool bAutoSaveTablesOnEdit = true;
+
+	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Backups")
+	bool bCreateBackupOnToolOpen = true;
+
+	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Backups", meta=(ClampMin="1", UIMin="1"))
+	int32 BackupRetentionCount = 10;
+
+	// Long package path under /Game where backup snapshots are written, e.g. /Game/Data/Backups.
+	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Backups")
+	FDirectoryPath BackupsFolder;
+};

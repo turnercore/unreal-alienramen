@@ -16,5 +16,9 @@ UARInvaderToolingSettings::UARInvaderToolingSettings()
 	{
 		EnemiesFolder.Path = TEXT("/Game/CodeAlong/Blueprints/Enemies");
 	}
-}
 
+	if (BackupsFolder.Path.IsEmpty())
+	{
+		BackupsFolder.Path = TEXT("/Game/Data/Backups");
+	}
+}

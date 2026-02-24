@@ -43,7 +43,11 @@
 #include "Widgets/Views/STableRow.h"
 #include "Widgets/Layout/SWidgetSwitcher.h"
 #include "Misc/PackageName.h"
+#include "Misc/DateTime.h"
+#include "Misc/Paths.h"
+#include "HAL/FileManager.h"
 #include "InputCoreTypes.h"
+#include "UObject/SavePackage.h"
 
 namespace
 {
@@ -640,6 +644,7 @@ void SInvaderAuthoringPanel::Construct(const FArguments& InArgs)
 
 	BuildLayout();
 	RefreshTables();
+	EnsureInitialTableBackups();
 	RefreshPalette();
 	RefreshRowItems();
 	RefreshDetailsObjects();
@@ -1476,29 +1481,178 @@ FName SInvaderAuthoringPanel::MakeUniqueRowName(UDataTable* Table, const FString
 	return FName(*Candidate);
 }
 
-void SInvaderAuthoringPanel::MarkTableDirty(UDataTable* Table) const
+void SInvaderAuthoringPanel::MarkTableDirty(UDataTable* Table)
 {
 	if (!Table)
 	{
 		return;
 	}
 	Table->MarkPackageDirty();
+
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	if (ToolingSettings && ToolingSettings->bAutoSaveTablesOnEdit)
+	{
+		SaveTable(Table, false);
+	}
 }
 
-void SInvaderAuthoringPanel::SaveTable(UDataTable* Table)
+void SInvaderAuthoringPanel::SaveTable(UDataTable* Table, bool bPromptForCheckout)
 {
 	if (!Table)
 	{
 		return;
 	}
-	TArray<UPackage*> Packages;
-	Packages.Add(Table->GetOutermost());
-	FEditorFileUtils::PromptForCheckoutAndSave(Packages, false, false);
+
+	if (bPromptForCheckout)
+	{
+		TArray<UPackage*> Packages;
+		Packages.Add(Table->GetOutermost());
+		FEditorFileUtils::PromptForCheckoutAndSave(Packages, false, false);
+		return;
+	}
+
+	if (!SaveTablePackage(Table))
+	{
+		SetStatus(FString::Printf(TEXT("Auto-save failed for '%s'."), *Table->GetName()));
+	}
 }
 
-void SInvaderAuthoringPanel::SaveActiveTable()
+void SInvaderAuthoringPanel::SaveActiveTable(bool bPromptForCheckout)
 {
-	SaveTable(GetActiveTable());
+	SaveTable(GetActiveTable(), bPromptForCheckout);
+}
+
+bool SInvaderAuthoringPanel::SaveTablePackage(UDataTable* Table) const
+{
+	if (!Table || !Table->GetOutermost())
+	{
+		return false;
+	}
+
+	const FString PackageName = Table->GetOutermost()->GetName();
+	const FString PackageFilename = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+	SaveArgs.Error = GError;
+	SaveArgs.SaveFlags = SAVE_NoError;
+	return UPackage::SavePackage(Table->GetOutermost(), Table, *PackageFilename, SaveArgs);
+}
+
+void SInvaderAuthoringPanel::EnsureInitialTableBackups()
+{
+	if (bInitialBackupsCreated)
+	{
+		return;
+	}
+
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	if (!ToolingSettings || !ToolingSettings->bCreateBackupOnToolOpen)
+	{
+		bInitialBackupsCreated = true;
+		return;
+	}
+
+	FString BackupFolder = ToolingSettings->BackupsFolder.Path;
+	if (BackupFolder.IsEmpty())
+	{
+		BackupFolder = TEXT("/Game/Data/Backups");
+	}
+	if (!BackupFolder.StartsWith(TEXT("/")))
+	{
+		BackupFolder = FString(TEXT("/")) + BackupFolder;
+	}
+	BackupFolder.RemoveFromEnd(TEXT("/"));
+
+	if (!FPackageName::IsValidLongPackageName(BackupFolder))
+	{
+		SetStatus(FString::Printf(TEXT("Backups folder '%s' is not a valid package path. Skipping backups."), *BackupFolder));
+		bInitialBackupsCreated = true;
+		return;
+	}
+
+	const int32 RetentionCount = FMath::Max(1, ToolingSettings->BackupRetentionCount);
+	if (WaveTable)
+	{
+		CreateTableBackup(WaveTable, BackupFolder, RetentionCount);
+	}
+	if (StageTable)
+	{
+		CreateTableBackup(StageTable, BackupFolder, RetentionCount);
+	}
+
+	bInitialBackupsCreated = true;
+}
+
+void SInvaderAuthoringPanel::CreateTableBackup(UDataTable* Table, const FString& BackupFolderLongPackagePath, int32 RetentionCount)
+{
+	if (!Table || !Table->GetOutermost())
+	{
+		return;
+	}
+
+	const FString SourcePackageName = Table->GetOutermost()->GetName();
+	const FString SourceAssetName = FPackageName::GetLongPackageAssetName(SourcePackageName);
+	const FDateTime Now = FDateTime::Now();
+	const FString Timestamp = FString::Printf(TEXT("%04d%02d%02d_%02d%02d%02d"), Now.GetYear(), Now.GetMonth(), Now.GetDay(), Now.GetHour(), Now.GetMinute(), Now.GetSecond());
+	const FString BackupAssetName = FString::Printf(TEXT("%s__%s"), *SourceAssetName, *Timestamp);
+	const FString BackupPackageName = BackupFolderLongPackagePath / BackupAssetName;
+	const FString BackupFilename = FPackageName::LongPackageNameToFilename(BackupPackageName, FPackageName::GetAssetPackageExtension());
+
+	IFileManager::Get().MakeDirectory(*FPaths::GetPath(BackupFilename), true);
+
+	UPackage* BackupPackage = CreatePackage(*BackupPackageName);
+	if (!BackupPackage)
+	{
+		SetStatus(FString::Printf(TEXT("Failed to create backup package for '%s'."), *SourceAssetName));
+		return;
+	}
+
+	UObject* ExistingObject = StaticFindObject(UDataTable::StaticClass(), BackupPackage, *BackupAssetName);
+	if (ExistingObject)
+	{
+		ExistingObject->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors);
+	}
+
+	UDataTable* BackupTable = DuplicateObject<UDataTable>(Table, BackupPackage, *BackupAssetName);
+	if (!BackupTable)
+	{
+		SetStatus(FString::Printf(TEXT("Failed to duplicate backup table for '%s'."), *SourceAssetName));
+		return;
+	}
+
+	BackupPackage->MarkPackageDirty();
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+	SaveArgs.Error = GError;
+	SaveArgs.SaveFlags = SAVE_NoError;
+	if (!UPackage::SavePackage(BackupPackage, BackupTable, *BackupFilename, SaveArgs))
+	{
+		SetStatus(FString::Printf(TEXT("Failed to save backup '%s'."), *BackupAssetName));
+		return;
+	}
+
+	PruneTableBackups(BackupFolderLongPackagePath, SourceAssetName, RetentionCount);
+}
+
+void SInvaderAuthoringPanel::PruneTableBackups(const FString& BackupFolderLongPackagePath, const FString& AssetBaseName, int32 RetentionCount)
+{
+	const FString BackupDirectory = FPackageName::LongPackageNameToFilename(BackupFolderLongPackagePath, TEXT(""));
+	const FString Pattern = FString::Printf(TEXT("%s__*.uasset"), *AssetBaseName);
+	TArray<FString> BackupFiles;
+	IFileManager::Get().FindFiles(BackupFiles, *(BackupDirectory / Pattern), true, false);
+	BackupFiles.Sort([](const FString& A, const FString& B)
+	{
+		return A > B;
+	});
+
+	for (int32 Index = RetentionCount; Index < BackupFiles.Num(); ++Index)
+	{
+		const FString BackupUAssetPath = BackupDirectory / BackupFiles[Index];
+		const FString BasePath = FPaths::ChangeExtension(BackupUAssetPath, TEXT(""));
+		IFileManager::Get().Delete(*BackupUAssetPath, false, true, true);
+		IFileManager::Get().Delete(*(BasePath + TEXT(".uexp")), false, true, true);
+		IFileManager::Get().Delete(*(BasePath + TEXT(".ubulk")), false, true, true);
+	}
 }
 
 void SInvaderAuthoringPanel::SetStatus(const FString& Message)

@@ -128,6 +128,11 @@
 - wave rows: `FARWaveDefRow`
 - stage rows: `FARStageDefRow`
 - Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
+- Table persistence defaults to auto-save on edit (`UARInvaderToolingSettings::bAutoSaveTablesOnEdit=true`): edits write directly to the live wave/stage DataTable packages (no row indirection/replacement), so references remain stable.
+- First tool-open backup snapshot support:
+- when enabled (`bCreateBackupOnToolOpen`), the panel duplicates currently loaded wave/stage DataTables into `UARInvaderToolingSettings::BackupsFolder` (default `/Game/Data/Backups`) on first panel initialization
+- retention is capped per source table by `BackupRetentionCount` (oldest backups are pruned beyond the cap)
+- backup assets are suffixed with timestamp (`<SourceAsset>__YYYYMMDD_HHMMSS`)
 - Wave spawn selection is multi-select aware and synchronized between canvas + spawn list:
 - list uses multi-selection
 - canvas supports click select, ctrl-toggle, shift range-select (same layer), and drag-rectangle selection

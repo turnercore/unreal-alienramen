@@ -110,9 +110,13 @@ private:
 	const FARStageDefRow* GetSelectedStageRowConst() const;
 	FARWaveEnemySpawnDef* GetSelectedSpawn();
 	FName MakeUniqueRowName(UDataTable* Table, const FString& BaseName) const;
-	void MarkTableDirty(UDataTable* Table) const;
-	void SaveTable(UDataTable* Table);
-	void SaveActiveTable();
+	void MarkTableDirty(UDataTable* Table);
+	void SaveTable(UDataTable* Table, bool bPromptForCheckout = true);
+	void SaveActiveTable(bool bPromptForCheckout = true);
+	bool SaveTablePackage(UDataTable* Table) const;
+	void EnsureInitialTableBackups();
+	void CreateTableBackup(UDataTable* Table, const FString& BackupFolderLongPackagePath, int32 RetentionCount);
+	void PruneTableBackups(const FString& BackupFolderLongPackagePath, const FString& AssetBaseName, int32 RetentionCount);
 	void SetStatus(const FString& Message);
 
 	// mode and selection
@@ -247,4 +251,5 @@ private:
 
 	bool bApplyingProxyToModel = false;
 	bool bSyncingSpawnSelection = false;
+	bool bInitialBackupsCreated = false;
 };
