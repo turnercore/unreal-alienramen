@@ -55,7 +55,7 @@ public:
 	void SetEnemyColor(EAREnemyColor InColor) { EnemyColor = InColor; }
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
-	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARFormationMode InFormationMode, EARWavePhase InWavePhase, float InPhaseStartServerTime);
+	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARWavePhase InWavePhase, float InPhaseStartServerTime);
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
 	void SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime);
@@ -143,9 +143,6 @@ protected:
 	int32 FormationSlotIndex = INDEX_NONE;
 
 	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
-	EARFormationMode FormationMode = EARFormationMode::None;
-
-	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
 	EARWavePhase WavePhase = EARWavePhase::Active;
 
 	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
@@ -175,5 +172,11 @@ private:
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;
 	bool bReachedFormationSlot = false;
+	bool bHasDispatchedEnteredEvent = false;
+	int32 LastDispatchedWavePhaseWaveId = INDEX_NONE;
+	EARWavePhase LastDispatchedWavePhase = EARWavePhase::Berserk;
 	float EnteredGameplayScreenServerTime = 0.f;
+
+	void TryDispatchWavePhaseEvent();
+	void TryDispatchEnteredEvent();
 };

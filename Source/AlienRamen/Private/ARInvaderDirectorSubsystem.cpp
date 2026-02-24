@@ -399,7 +399,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				continue;
 			}
 
-			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex);
+			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex, Wave.bFlipX, Wave.bFlipY);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -419,8 +419,8 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 			}
 
 			Enemy->SetEnemyColor(EffectiveColor);
-			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, Wave.NextSpawnIndex, Wave.Def.FormationMode, Wave.Phase, GetWorld()->GetTimeSeconds());
 			Enemy->SetFormationLockRules(Wave.Def.bFormationLockEnter, Wave.Def.bFormationLockActive);
+			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, Wave.NextSpawnIndex, Wave.Phase, GetWorld()->GetTimeSeconds());
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);
@@ -712,6 +712,8 @@ bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition(FName WaveRowName, con
 	Wave.SpawnedCount = 0;
 	Wave.AliveCount = 0;
 	Wave.bColorSwap = bColorSwap;
+	Wave.bFlipX = Wave.Def.bAllowFlipX && RunRng.FRand() < 0.5f;
+	Wave.bFlipY = Wave.Def.bAllowFlipY && RunRng.FRand() < 0.5f;
 	Wave.StageRowName = CurrentStageRow;
 	Wave.Phase = EARWavePhase::Active;
 
@@ -735,15 +737,23 @@ bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition(FName WaveRowName, con
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderDirector|WaveDef] WaveId=%d row='%s' waveDuration=%.2fs spawns=%d maxSpawnDelay=%.2fs formationMode=%d lockEnter=%d lockActive=%d."),
+		TEXT("[InvaderDirector|WaveDef] WaveId=%d row='%s' waveDuration=%.2fs spawns=%d maxSpawnDelay=%.2fs lockEnter=%d lockActive=%d."),
 		SpawnedWave.WaveInstanceId,
 		*WaveRowName.ToString(),
 		SpawnedWave.Def.WaveDuration,
 		SpawnedWave.Def.EnemySpawns.Num(),
 		MaxSpawnDelay,
-		static_cast<int32>(SpawnedWave.Def.FormationMode),
 		SpawnedWave.Def.bFormationLockEnter ? 1 : 0,
 		SpawnedWave.Def.bFormationLockActive ? 1 : 0);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderDirector|WaveDef] WaveId=%d flipX=%d flipY=%d (allowedX=%d allowedY=%d)."),
+		SpawnedWave.WaveInstanceId,
+		SpawnedWave.bFlipX ? 1 : 0,
+		SpawnedWave.bFlipY ? 1 : 0,
+		SpawnedWave.Def.bAllowFlipX ? 1 : 0,
+		SpawnedWave.Def.bAllowFlipY ? 1 : 0);
 	return true;
 }
 
@@ -926,10 +936,23 @@ bool UARInvaderDirectorSubsystem::SelectStage(FName& OutStageRow, FARStageDefRow
 	return true;
 }
 
-FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal) const
+FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	FVector Loc = Settings->SpawnOrigin + FVector(SpawnDef.AuthoredScreenOffset.X, SpawnDef.AuthoredScreenOffset.Y, -26.f);
+	const float CenterX = (Settings->GameplayBoundsMin.X + Settings->GameplayBoundsMax.X) * 0.5f;
+	const float CenterY = (Settings->GameplayBoundsMin.Y + Settings->GameplayBoundsMax.Y) * 0.5f;
+
+	FVector2D AuthoredOffset = SpawnDef.AuthoredScreenOffset;
+	if (bFlipX)
+	{
+		AuthoredOffset.X = (CenterX * 2.f) - AuthoredOffset.X;
+	}
+	if (bFlipY)
+	{
+		AuthoredOffset.Y = (CenterY * 2.f) - AuthoredOffset.Y;
+	}
+
+	FVector Loc = Settings->SpawnOrigin + FVector(AuthoredOffset.X, AuthoredOffset.Y, -26.f);
 	const float OffscreenDistance = FMath::Abs(Settings->SpawnOffscreenDistance);
 	const float GameplaySizeX = FMath::Max(0.f, Settings->GameplayBoundsMax.X - Settings->GameplayBoundsMin.X);
 	const float GameplaySizeY = FMath::Max(0.f, Settings->GameplayBoundsMax.Y - Settings->GameplayBoundsMin.Y);
@@ -980,8 +1003,8 @@ FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpaw
 			TEXT("[InvaderDirector|SpawnPos] Ordinal=%d edge=%d authored=(%.1f,%.1f) world=(%.1f,%.1f,%.1f)."),
 			SpawnOrdinal,
 			static_cast<int32>(SpawnDef.SpawnEdge),
-			SpawnDef.AuthoredScreenOffset.X,
-			SpawnDef.AuthoredScreenOffset.Y,
+			AuthoredOffset.X,
+			AuthoredOffset.Y,
 			Loc.X,
 			Loc.Y,
 			Loc.Z);
