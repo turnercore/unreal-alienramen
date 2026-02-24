@@ -128,6 +128,14 @@
 - wave rows: `FARWaveDefRow`
 - stage rows: `FARStageDefRow`
 - Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
+- Wave spawn selection is multi-select aware and synchronized between canvas + spawn list:
+- list uses multi-selection
+- canvas supports click select, ctrl-toggle, shift range-select (same layer), and drag-rectangle selection
+- clicking empty canvas clears selection when not using additive modifiers
+- canvas drag on a selected spawn moves the full selected group
+- spawn context actions (delete, color set) apply to the current spawn selection set.
+- Keyboard `Delete/Backspace` in wave mode only deletes selected spawn(s); it does not fall through to deleting the selected wave row when no spawns are selected.
+- The panel listens to object transaction events for authored wave/stage tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
 - Wave authoring model is delay-layered:
 - layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
 - same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
