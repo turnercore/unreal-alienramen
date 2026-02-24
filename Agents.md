@@ -93,7 +93,8 @@
 - Invader authority brain: `UARInvaderDirectorSubsystem` (server-only `UTickableWorldSubsystem`).
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
-- Wave phases: `Entering`, `Active`, `Berserk`, `Expired`.
+- Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
+- Wave phases in runtime flow: `Entering`, `Active`, `Berserk` (no timed auto-expire from `Berserk`; waves clear when spawned enemies are dead and fully spawned).
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
 - `Event.Wave.Phase.Entering`
 - `Event.Wave.Phase.Active`
@@ -102,12 +103,19 @@
 - Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
-- Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, `SlotIndex`) until a dedicated formation system is reintroduced.
+- Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`); formation behavior should be implemented via AI/state logic using runtime context (`FormationMode`, runtime spawn ordinal/slot) until a dedicated formation system is reintroduced.
 - Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
-- Per-spawn formation lock flags are authored in wave data (`FARWaveEnemySpawnDef`):
+- Formation lock flags are authored at wave level (`FARWaveDefRow`), not per-spawn:
 - `bFormationLockEnter` (lock during `Entering`)
 - `bFormationLockActive` (lock during `Active`)
 - Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
+- `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
+- `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
+- Spawn edge behavior contract:
+- `Top` spawns offscreen on `+X` and preserves authored `Y` lane (plus deterministic lane offset)
+- `Left`/`Right` spawn offscreen on `Y` edges and preserve authored `X` lane (plus deterministic lane offset)
+- default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=1400`
+- leak bound check uses low-X boundary (`Location.X >= GameplayBoundsMin.X`) for player-side loss detection in this coordinate layout
 - Enemy runtime exposes replicated lock state for AI/StateTree reads:
 - `AAREnemyBase.bFormationLockEnter`
 - `AAREnemyBase.bFormationLockActive`
@@ -139,9 +147,22 @@
 - wave rows: `FARWaveDefRow`
 - stage rows: `FARStageDefRow`
 - Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
+- Row list supports multi-select duplicate/delete for wave/stage rows.
+- Row list supports right-click context menu actions (`Rename`, `Duplicate`, `Delete`) for selected wave/stage rows.
+- New-row creation uses rename textbox content as base name when present (with `_N` uniqueness suffix as needed).
 - Table persistence defaults to auto-save on edit (`UARInvaderToolingSettings::bAutoSaveTablesOnEdit=true`): edits write directly to the live wave/stage DataTable packages (no row indirection/replacement), so references remain stable.
+- PIE save bootstrap settings are in `UARInvaderToolingSettings` (`Project Settings -> Alien Ramen -> Tooling -> Invader Authoring|PIE Save Bootstrap`):
+- `bEnablePIESaveBootstrap`
+- `PIEBootstrapLoadingMap`
+- `PIELoadSlotName` (default `Debug`)
+- `PIELoadSlotNumber` (default `0`)
+- `PIEBootstrapDebugMap`
+- When enabled, PIE harness starts on loading map, waits for PIE world, calls `GameInstance.LoadSave(SlotName, SlotNumber)` by reflection, then performs deferred debug travel.
+- Deferred debug travel subscribes to GameInstance dispatcher `SignalOnGameLoaded` (when present) and opens the debug level on signal; fallback path uses load-complete bool function/property detection and short-delay timeout protection before `OpenLevel` to debug map (or editor default test map fallback).
 - First tool-open backup snapshot support:
 - when enabled (`bCreateBackupOnToolOpen`), the panel duplicates currently loaded wave/stage DataTables into `UARInvaderToolingSettings::BackupsFolder` (default `/Game/Data/Backups`) on first panel initialization
+- backup creation is deferred briefly via ticker after panel construct to avoid early editor-startup validator registration warnings
+- backup package saves use autosave-style save flags (`SAVE_FromAutosave`) to reduce validator churn/noise during automatic backup writes
 - retention is capped per source table by `BackupRetentionCount` (oldest backups are pruned beyond the cap)
 - backup assets are suffixed with timestamp (`<SourceAsset>__YYYYMMDD_HHMMSS`)
 - Wave spawn selection is multi-select aware and synchronized between canvas + spawn list:
@@ -155,14 +176,22 @@
 - Wave authoring model is delay-layered:
 - layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
 - same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
+- Wave panel UX:
+- top toolbar actions (`Reload Tables`, `Validate Selected`, `Validate All`) have explicit tooltips and separated layout
+- `Add Layer` moved into `Wave Layers` header; `Add Spawn`/`Delete` moved into `Layer Spawns` header
+- layer spawn list supports drag-drop reordering within a layer (same delay bucket)
+- stages mode hides enemy palette + spawn details panels
+- validation issues are in a collapsible panel and auto-collapse when empty
+- Wave/stage/spawn authoring detail categories are flattened to `Wave`, `Stage`, and `Spawn` (no `AR|Invader|...` category-path nesting in the authoring details panels).
 - Palette contract:
 - scans Blueprint enemy classes under `UARInvaderToolingSettings::EnemiesFolder` (does not scan whole project)
 - excludes base class `AAREnemyBase` and transient skeleton/reinst classes
 - palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
 - favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
-- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by palette labels + wave-canvas spawn glyph rendering (`SQ`/`CI`/`TR`/`DI`)
-- palette row right-click syncs the class Blueprint asset into Content Browser
+- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by wave-canvas glyph rendering (Square/Circle/Triangle/Diamond)
+- palette uses star toggle glyphs for favorites (`★`/`☆`)
+- palette row right-click opens a context menu with `Find in Content Browser`
 - Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
 - `DefaultTestMap` (default `/Game/Maps/Lvl_InvaderDebug`)
 - `LastSeed`

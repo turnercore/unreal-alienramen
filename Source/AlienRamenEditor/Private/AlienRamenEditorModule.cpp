@@ -7,6 +7,7 @@
 #include "Modules/ModuleManager.h"
 #include "PropertyEditorModule.h"
 #include "ToolMenus.h"
+#include "Styling/AppStyle.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
@@ -369,6 +370,7 @@ public:
 			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDebugSaveTab))
 			.SetDisplayName(FText::FromString("Debug Save Tool"))
 			.SetTooltipText(FText::FromString("Create, load, edit, and save isolated debug save slots."))
+			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
@@ -376,6 +378,7 @@ public:
 			FOnSpawnTab::CreateStatic(&ARInvaderAuthoringEditor::SpawnTab))
 			.SetDisplayName(FText::FromString("Invader Authoring Tool"))
 			.SetTooltipText(FText::FromString("Author invader waves/stages, validate, preview, and run PIE tests."))
+			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Viewports"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
 		UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FAlienRamenEditorModule::RegisterMenus));
@@ -409,13 +412,13 @@ private:
 			"OpenARDebugSaveTool",
 			FText::FromString("Alien Ramen Debug Save Tool"),
 			FText::FromString("Open the Alien Ramen debug save authoring tool."),
-			FSlateIcon(),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenTab));
 		Section.AddMenuEntry(
 			"OpenARInvaderAuthoringTool",
 			FText::FromString("Alien Ramen Invader Authoring"),
 			FText::FromString("Open the invader wave/stage authoring tool."),
-			FSlateIcon(),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Viewports"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenInvaderAuthoringTab));
 	}
 

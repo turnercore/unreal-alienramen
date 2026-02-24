@@ -12,13 +12,17 @@ class UDataTable;
 class UARInvaderWaveRowProxy;
 class UARInvaderStageRowProxy;
 class UARInvaderSpawnProxy;
+class UARInvaderPIESaveLoadedBridge;
 class SInvaderWaveCanvas;
 class FSpawnTabArgs;
 class SDockTab;
 class ITableRow;
 class STableViewBase;
 class SBorder;
+class SExpandableArea;
+enum class EItemDropZone;
 struct FPropertyChangedEvent;
+struct FPropertyAndParent;
 class FScopedTransaction;
 class UObject;
 class FTransactionObjectEvent;
@@ -119,6 +123,8 @@ private:
 	void CreateTableBackup(UDataTable* Table, const FString& BackupFolderLongPackagePath, int32 RetentionCount);
 	void PruneTableBackups(const FString& BackupFolderLongPackagePath, const FString& AssetBaseName, int32 RetentionCount);
 	void SetStatus(const FString& Message);
+	TArray<FName> GetSelectedRowNames() const;
+	FName GetPrimarySelectedRowName() const;
 
 	// mode and selection
 	void SetMode(EAuthoringMode NewMode);
@@ -146,8 +152,11 @@ private:
 	void SetSelectedSpawnColor(EAREnemyColor NewColor);
 	FReply OnMoveSpawnUp();
 	FReply OnMoveSpawnDown();
+	void ReorderSpawnByDrop(int32 SourceSpawnIndex, int32 TargetSpawnIndex, EItemDropZone DropZone);
 	TSharedPtr<SWidget> OnOpenSpawnContextMenu();
 	TSharedRef<SWidget> BuildSpawnContextMenu();
+	TSharedPtr<SWidget> OnOpenRowContextMenu();
+	TSharedRef<SWidget> BuildRowContextMenu();
 	void MoveSpawnWithinLayer(int32 Direction);
 	void UpdateLayerDelay(float OldDelay, float NewDelay);
 	void HandleCanvasSpawnSelected(int32 SpawnIndex, bool bToggle, bool bRangeSelect);
@@ -168,11 +177,13 @@ private:
 	// details callbacks
 	void HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event);
 	void HandleSpawnPropertiesChanged(const FPropertyChangedEvent& Event);
+	bool ShouldShowWaveDetailProperty(const FPropertyAndParent& PropertyAndParent) const;
+	bool ShouldShowSpawnDetailProperty(const FPropertyAndParent& PropertyAndParent) const;
 
 	// list callbacks
-	TSharedRef<ITableRow> OnGenerateRowNameRow(TSharedPtr<FRowNameItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
+	TSharedRef<ITableRow> OnGenerateRowNameRow(TSharedPtr<FRowNameItem> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	TSharedRef<ITableRow> OnGenerateLayerRow(TSharedPtr<FLayerItem> Item, const TSharedRef<STableViewBase>& OwnerTable);
-	TSharedRef<ITableRow> OnGenerateSpawnRow(TSharedPtr<FSpawnItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
+	TSharedRef<ITableRow> OnGenerateSpawnRow(TSharedPtr<FSpawnItem> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	TSharedRef<ITableRow> OnGenerateIssueRow(TSharedPtr<FInvaderAuthoringIssue> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
 
 	void HandleRowListSelectionChanged(TSharedPtr<FRowNameItem> Item, ESelectInfo::Type);
@@ -206,6 +217,8 @@ private:
 	FReply OnForceThreat();
 	FReply OnDumpState();
 	bool EnsurePIESession(bool bStartIfNeeded);
+	void SchedulePIESaveBootstrap();
+	bool RunPIESaveBootstrap();
 	UWorld* GetPIEWorld() const;
 	bool ExecPIECommand(const FString& Command);
 
@@ -248,12 +261,15 @@ private:
 	TSharedPtr<IDetailsView> RowDetailsView;
 	TSharedPtr<IDetailsView> SpawnDetailsView;
 	TSharedPtr<SBorder> PaletteHost;
+	TSharedPtr<SExpandableArea> ValidationIssuesArea;
 
 	TStrongObjectPtr<UARInvaderWaveRowProxy> WaveProxy;
 	TStrongObjectPtr<UARInvaderStageRowProxy> StageProxy;
 	TStrongObjectPtr<UARInvaderSpawnProxy> SpawnProxy;
+	TStrongObjectPtr<UARInvaderPIESaveLoadedBridge> PIESaveLoadedBridge;
 
 	bool bApplyingProxyToModel = false;
 	bool bSyncingSpawnSelection = false;
 	bool bInitialBackupsCreated = false;
+	bool bPendingPIESaveBootstrap = false;
 };
