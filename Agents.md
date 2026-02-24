@@ -150,6 +150,8 @@
 - palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
 - favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
+- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by palette labels + wave-canvas spawn glyph rendering (`SQ`/`CI`/`TR`/`DI`)
+- palette row right-click syncs the class Blueprint asset into Content Browser
 - Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
 - `DefaultTestMap` (default `/Game/Maps/Lvl_InvaderDebug`)
 - `LastSeed`
