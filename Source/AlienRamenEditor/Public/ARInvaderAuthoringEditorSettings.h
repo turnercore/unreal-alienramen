@@ -25,6 +25,10 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Palette")
 	TArray<FSoftClassPath> FavoriteEnemyClasses;
 
+	// Per-enemy-class authoring shape used by the palette/canvas preview (0-based cycle value).
+	UPROPERTY(Config, EditAnywhere, Category = "Palette")
+	TMap<FSoftClassPath, int32> EnemyClassShapeCycles;
+
 	UPROPERTY(Config, EditAnywhere, Category = "Preview")
 	bool bHideOtherLayersInWavePreview = true;
 
