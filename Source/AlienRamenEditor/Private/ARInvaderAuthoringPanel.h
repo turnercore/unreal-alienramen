@@ -67,6 +67,7 @@ private:
 		EAREnemyColor Color = EAREnemyColor::Red;
 		FText Label;
 		bool bFavorite = false;
+		int32 ShapeCycle = 0;
 	};
 
 	struct FRowNameItem
@@ -181,6 +182,9 @@ private:
 
 	// palette
 	void ToggleFavoriteClass(const FSoftClassPath& ClassPath);
+	int32 GetPaletteShapeCycle(const FSoftClassPath& ClassPath) const;
+	void CyclePaletteShape(const FSoftClassPath& ClassPath);
+	void SyncPaletteClassInContentBrowser(const FSoftClassPath& ClassPath);
 	void SetActivePaletteEntry(const FPaletteEntry& Entry);
 	TSharedRef<SWidget> BuildPaletteWidget();
 

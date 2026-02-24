@@ -81,6 +81,59 @@ namespace
 		}
 	}
 
+	enum class EPaletteShape : uint8
+	{
+		Square = 0,
+		Circle,
+		Triangle,
+		Diamond,
+		Count
+	};
+
+	static EPaletteShape NormalizePaletteShape(int32 ShapeCycle)
+	{
+		const int32 Count = static_cast<int32>(EPaletteShape::Count);
+		const int32 Normalized = ((ShapeCycle % Count) + Count) % Count;
+		return static_cast<EPaletteShape>(Normalized);
+	}
+
+	static FString PaletteShapeShortName(int32 ShapeCycle)
+	{
+		switch (NormalizePaletteShape(ShapeCycle))
+		{
+		case EPaletteShape::Circle:
+			return TEXT("CI");
+		case EPaletteShape::Triangle:
+			return TEXT("TR");
+		case EPaletteShape::Diamond:
+			return TEXT("DI");
+		case EPaletteShape::Square:
+		default:
+			return TEXT("SQ");
+		}
+	}
+
+	static int32 GetPaletteShapeCycleForClass(const UClass* EnemyClass)
+	{
+		if (!EnemyClass)
+		{
+			return 0;
+		}
+
+		const UARInvaderAuthoringEditorSettings* Settings = GetDefault<UARInvaderAuthoringEditorSettings>();
+		if (!Settings)
+		{
+			return 0;
+		}
+
+		const FSoftClassPath ClassPath(EnemyClass);
+		if (const int32* SavedShape = Settings->EnemyClassShapeCycles.Find(ClassPath))
+		{
+			return *SavedShape;
+		}
+		return 0;
+	}
+
 	static int32 FindClosestSpawn(
 		const FARWaveDefRow* WaveRow,
 		const FVector2D& LocalPoint,
@@ -299,25 +352,28 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					DotColor.A = 0.20f;
 				}
 
-				const FVector2D DotSize(12.f, 12.f);
-				const FVector2D DotPos = Local - (DotSize * 0.5f);
-				FSlateDrawElement::MakeBox(
+				const int32 ShapeCycle = GetPaletteShapeCycleForClass(Spawn.EnemyClass);
+				DrawShape(
 					OutDrawElements,
 					LayerId + 2,
-					AllottedGeometry.ToPaintGeometry(DotSize, FSlateLayoutTransform(DotPos)),
-					FAppStyle::GetBrush("WhiteBrush"),
-					ESlateDrawEffect::None,
-					DotColor);
+					AllottedGeometry,
+					Local,
+					DotColor,
+					ShapeCycle,
+					12.f,
+					false);
 
 				if (SelectedIndices.Contains(Index))
 				{
-					FSlateDrawElement::MakeBox(
+					DrawShape(
 						OutDrawElements,
 						LayerId + 3,
-						AllottedGeometry.ToPaintGeometry(FVector2D(18.f, 18.f), FSlateLayoutTransform(Local - FVector2D(9.f, 9.f))),
-						FAppStyle::GetBrush("WhiteBrush"),
-						ESlateDrawEffect::None,
-						FLinearColor(1.f, 1.f, 1.f, 0.3f));
+						AllottedGeometry,
+						Local,
+						FLinearColor(1.f, 1.f, 1.f, 0.3f),
+						ShapeCycle,
+						18.f,
+						true);
 				}
 			}
 
@@ -508,6 +564,90 @@ class SInvaderWaveCanvas final : public SLeafWidget
 		}
 
 	private:
+		void DrawShape(
+			FSlateWindowElementList& OutDrawElements,
+			int32 Layer,
+			const FGeometry& Geometry,
+			const FVector2D& Center,
+			const FLinearColor& Color,
+			int32 ShapeCycle,
+			float Size,
+			bool bOutlineOnly) const
+		{
+			const EPaletteShape Shape = NormalizePaletteShape(ShapeCycle);
+			const float Half = Size * 0.5f;
+			switch (Shape)
+			{
+			case EPaletteShape::Circle:
+			{
+				TArray<FVector2D> CirclePoints;
+				CirclePoints.Reserve(17);
+				for (int32 i = 0; i <= 16; ++i)
+				{
+					const float Angle = (2.f * PI * static_cast<float>(i)) / 16.f;
+					CirclePoints.Add(Center + FVector2D(FMath::Cos(Angle), FMath::Sin(Angle)) * Half);
+				}
+				FSlateDrawElement::MakeLines(
+					OutDrawElements,
+					Layer,
+					Geometry.ToPaintGeometry(),
+					CirclePoints,
+					ESlateDrawEffect::None,
+					Color,
+					true,
+					bOutlineOnly ? 2.f : 3.f);
+				break;
+			}
+			case EPaletteShape::Triangle:
+			{
+				const FVector2D A = Center + FVector2D(0.f, -Half);
+				const FVector2D B = Center + FVector2D(Half, Half);
+				const FVector2D C = Center + FVector2D(-Half, Half);
+				FSlateDrawElement::MakeLines(
+					OutDrawElements,
+					Layer,
+					Geometry.ToPaintGeometry(),
+					{ A, B, C, A },
+					ESlateDrawEffect::None,
+					Color,
+					true,
+					bOutlineOnly ? 2.f : 3.f);
+				break;
+			}
+			case EPaletteShape::Diamond:
+			{
+				const FVector2D A = Center + FVector2D(0.f, -Half);
+				const FVector2D B = Center + FVector2D(Half, 0.f);
+				const FVector2D C = Center + FVector2D(0.f, Half);
+				const FVector2D D = Center + FVector2D(-Half, 0.f);
+				FSlateDrawElement::MakeLines(
+					OutDrawElements,
+					Layer,
+					Geometry.ToPaintGeometry(),
+					{ A, B, C, D, A },
+					ESlateDrawEffect::None,
+					Color,
+					true,
+					bOutlineOnly ? 2.f : 3.f);
+				break;
+			}
+			case EPaletteShape::Square:
+			default:
+			{
+				const FVector2D DotSize(Size, Size);
+				const FVector2D DotPos = Center - (DotSize * 0.5f);
+				FSlateDrawElement::MakeBox(
+					OutDrawElements,
+					Layer,
+					Geometry.ToPaintGeometry(DotSize, FSlateLayoutTransform(DotPos)),
+					FAppStyle::GetBrush("WhiteBrush"),
+					ESlateDrawEffect::None,
+					Color);
+				break;
+			}
+			}
+		}
+
 		int32 FindSpawnAtLocalPoint(const FARWaveDefRow* WaveRow, const FGeometry& MyGeometry, const FVector2D& Local) const
 		{
 			if (!WaveRow)
@@ -693,7 +833,6 @@ FReply SInvaderAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKey
 			return OnDeleteRow();
 		}
 	}
-
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
 
@@ -2760,6 +2899,62 @@ void SInvaderAuthoringPanel::ToggleFavoriteClass(const FSoftClassPath& ClassPath
 	RefreshPalette();
 }
 
+int32 SInvaderAuthoringPanel::GetPaletteShapeCycle(const FSoftClassPath& ClassPath) const
+{
+	const UARInvaderAuthoringEditorSettings* Settings = GetDefault<UARInvaderAuthoringEditorSettings>();
+	if (!Settings)
+	{
+		return 0;
+	}
+	if (const int32* SavedShape = Settings->EnemyClassShapeCycles.Find(ClassPath))
+	{
+		return *SavedShape;
+	}
+	return 0;
+}
+
+void SInvaderAuthoringPanel::CyclePaletteShape(const FSoftClassPath& ClassPath)
+{
+	UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
+	const int32 CurrentShape = GetPaletteShapeCycle(ClassPath);
+	const int32 NextShape = (CurrentShape + 1) % static_cast<int32>(EPaletteShape::Count);
+	Settings->EnemyClassShapeCycles.Add(ClassPath, NextShape);
+	Settings->SaveConfig();
+	RefreshPalette();
+	if (WaveCanvas.IsValid())
+	{
+		WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+	}
+	SetStatus(FString::Printf(TEXT("Palette shape set: %s -> %s"), *MakePaletteClassDisplayName(ClassPath), *PaletteShapeShortName(NextShape)));
+}
+
+void SInvaderAuthoringPanel::SyncPaletteClassInContentBrowser(const FSoftClassPath& ClassPath)
+{
+	if (!GEditor)
+	{
+		return;
+	}
+
+	FString AssetObjectPath = ClassPath.ToString();
+	if (AssetObjectPath.IsEmpty())
+	{
+		return;
+	}
+
+	AssetObjectPath.RemoveFromEnd(TEXT("_C"));
+	UObject* AssetObject = LoadObject<UObject>(nullptr, *AssetObjectPath);
+	if (!AssetObject)
+	{
+		SetStatus(FString::Printf(TEXT("Could not locate asset for '%s'."), *MakePaletteClassDisplayName(ClassPath)));
+		return;
+	}
+
+	TArray<UObject*> AssetsToSync;
+	AssetsToSync.Add(AssetObject);
+	GEditor->SyncBrowserToObjects(AssetsToSync);
+	SetStatus(FString::Printf(TEXT("Synced Content Browser to '%s'."), *AssetObject->GetName()));
+}
+
 void SInvaderAuthoringPanel::SetActivePaletteEntry(const FPaletteEntry& Entry)
 {
 	ActivePaletteEntry = Entry;
@@ -2772,6 +2967,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 	{
 		FSoftClassPath ClassPath;
 		bool bFavorite = false;
+		int32 ShapeCycle = 0;
 	};
 
 	TArray<FPaletteClassRow> PaletteClassRows;
@@ -2787,6 +2983,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		FPaletteClassRow& NewRow = PaletteClassRows.AddDefaulted_GetRef();
 		NewRow.ClassPath = Entry.EnemyClassPath;
 		NewRow.bFavorite = Entry.bFavorite;
+		NewRow.ShapeCycle = Entry.ShapeCycle;
 	}
 
 	PaletteClassRows.Sort([](const FPaletteClassRow& A, const FPaletteClassRow& B)
@@ -2813,6 +3010,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		FPaletteEntry FallbackEntry;
 		FallbackEntry.EnemyClassPath = ClassPath;
 		FallbackEntry.Color = Color;
+		FallbackEntry.ShapeCycle = GetPaletteShapeCycle(ClassPath);
 		FallbackEntry.Label = FText::FromString(
 			FString::Printf(TEXT("%s %s"), *MakePaletteClassDisplayName(ClassPath), *EnemyColorToName(Color)));
 		SetActivePaletteEntry(FallbackEntry);
@@ -2824,12 +3022,25 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		const FSoftClassPath ClassPath = Row.ClassPath;
 		const FString ClassName = MakePaletteClassDisplayName(ClassPath);
 		const bool bFavorite = Row.bFavorite;
+		const int32 ShapeCycle = Row.ShapeCycle;
 
 		Box->AddSlot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 		[
+			SNew(SBorder)
+			.OnMouseButtonDown_Lambda([this, ClassPath](const FGeometry&, const FPointerEvent& MouseEvent)
+			{
+				if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+				{
+					SyncPaletteClassInContentBrowser(ClassPath);
+					return FReply::Handled();
+				}
+				return FReply::Unhandled();
+			})
+			[
 			SNew(SHorizontalBox)
 			+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 4.f, 0.f)
 				[
+#if 0
 					SNew(SButton)
 					.Text(FText::FromString(bFavorite ? TEXT("★") : TEXT("☆")))
 					.OnClicked_Lambda([this, ClassPath]()
@@ -2837,10 +3048,29 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 						ToggleFavoriteClass(ClassPath);
 						return FReply::Handled();
 					})
+#endif
+					SNew(SButton)
+					.Text(FText::FromString(bFavorite ? TEXT("*") : TEXT("+")))
+					.OnClicked_Lambda([this, ClassPath]()
+					{
+						ToggleFavoriteClass(ClassPath);
+						return FReply::Handled();
+					})
 				]
+			+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 4.f, 0.f)
+			[
+				SNew(SButton)
+				.ToolTipText(FText::FromString("Cycle shape"))
+				.Text(FText::FromString(PaletteShapeShortName(ShapeCycle)))
+				.OnClicked_Lambda([this, ClassPath]()
+				{
+					CyclePaletteShape(ClassPath);
+					return FReply::Handled();
+				})
+			]
 			+ SHorizontalBox::Slot().FillWidth(1.f).VAlign(VAlign_Center)
 			[
-				SNew(STextBlock).Text(FText::FromString(ClassName))
+				SNew(STextBlock).Text(FText::FromString(FString::Printf(TEXT("[%s] %s"), *PaletteShapeShortName(ShapeCycle), *ClassName)))
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
@@ -2874,6 +3104,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 					SelectPalette(ClassPath, EAREnemyColor::White);
 					return FReply::Handled();
 				})
+			]
 			]
 		];
 	}
@@ -2963,6 +3194,7 @@ void SInvaderAuthoringPanel::RefreshPalette()
 			Entry.EnemyClassPath = ClassPath;
 			Entry.Color = Color;
 			Entry.bFavorite = Favorites.Contains(ClassPath);
+			Entry.ShapeCycle = GetPaletteShapeCycle(ClassPath);
 			Entry.Label = FText::FromString(FString::Printf(TEXT("%s %s"), *MakePaletteClassDisplayName(ClassPath), *EnemyColorToName(Color)));
 			PaletteEntries.Add(Entry);
 		}
