@@ -5,6 +5,19 @@
 #include "StateTree.h"
 #include "StateTreeExecutionTypes.h"
 
+namespace AREnemyAIControllerInternal
+{
+	static const TCHAR* ToPhaseName(EARWavePhase Phase)
+	{
+		switch (Phase)
+		{
+		case EARWavePhase::Active: return TEXT("Active");
+		case EARWavePhase::Berserk: return TEXT("Berserk");
+		default: return TEXT("Unknown");
+		}
+	}
+}
+
 AAREnemyAIController::AAREnemyAIController()
 {
 	bStartAILogicOnPossess = false;
@@ -15,10 +28,9 @@ AAREnemyAIController::AAREnemyAIController()
 		StateTreeComponent->SetStartLogicAutomatically(false);
 	}
 
-	EnteringPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Entering")), false);
 	ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Active")), false);
 	BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Berserk")), false);
-	ExpiredPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Expired")), false);
+	EnteredEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Entered")), false);
 }
 
 void AAREnemyAIController::OnPossess(APawn* InPawn)
@@ -67,7 +79,10 @@ void AAREnemyAIController::StopStateTree(const FString& Reason)
 	}
 
 	StateTreeComponent->StopLogic(Reason);
-	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Stopped StateTree for '%s'. Reason: %s"), *GetNameSafe(this), *Reason);
+	if (!Reason.Equals(TEXT("Enemy unpossessed"), ESearchCase::IgnoreCase))
+	{
+		UE_LOG(ARLog, Log, TEXT("[EnemyAI] Stopped StateTree for '%s'. Reason: %s"), *GetNameSafe(this), *Reason);
+	}
 }
 
 void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase)
@@ -80,10 +95,8 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 	FGameplayTag EventTag;
 	switch (NewPhase)
 	{
-	case EARWavePhase::Entering: EventTag = EnteringPhaseEventTag; break;
 	case EARWavePhase::Active: EventTag = ActivePhaseEventTag; break;
 	case EARWavePhase::Berserk: EventTag = BerserkPhaseEventTag; break;
-	case EARWavePhase::Expired: EventTag = ExpiredPhaseEventTag; break;
 	default: break;
 	}
 
@@ -94,6 +107,19 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 
 	const FStateTreeEvent Event(EventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
 	StateTreeComponent->SendStateTreeEvent(Event);
-	UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Sent StateTree wave phase event %s for WaveId=%d on '%s'."),
-		*EventTag.ToString(), WaveInstanceId, *GetNameSafe(this));
+	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Entered wave phase '%s' for WaveId=%d on '%s' (Event=%s)."),
+		AREnemyAIControllerInternal::ToPhaseName(NewPhase), WaveInstanceId, *GetNameSafe(this), *EventTag.ToString());
+}
+
+void AAREnemyAIController::NotifyWaveEntered(int32 WaveInstanceId)
+{
+	if (!HasAuthority() || !StateTreeComponent || !EnteredEventTag.IsValid())
+	{
+		return;
+	}
+
+	const FStateTreeEvent Event(EnteredEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
+	StateTreeComponent->SendStateTreeEvent(Event);
+	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent entered event for WaveId=%d on '%s' (Event=%s)."),
+		WaveInstanceId, *GetNameSafe(this), *EnteredEventTag.ToString());
 }

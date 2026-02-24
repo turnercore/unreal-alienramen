@@ -17,6 +17,7 @@ class ALIENRAMEN_API AAREnemyAIController : public AAIController
 public:
 	AAREnemyAIController();
 	void NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase);
+	void NotifyWaveEntered(int32 WaveInstanceId);
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
@@ -33,14 +34,12 @@ protected:
 	TObjectPtr<UStateTree> DefaultStateTree;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
-	FGameplayTag EnteringPhaseEventTag;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
 	FGameplayTag ActivePhaseEventTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
 	FGameplayTag BerserkPhaseEventTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
-	FGameplayTag ExpiredPhaseEventTag;
+	FGameplayTag EnteredEventTag;
+
 };

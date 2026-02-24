@@ -22,6 +22,16 @@ namespace ARInvaderInternal
 		if (InColor == EAREnemyColor::Blue) return EAREnemyColor::Red;
 		return InColor;
 	}
+
+	static const TCHAR* ToPhaseName(EARWavePhase Phase)
+	{
+		switch (Phase)
+		{
+		case EARWavePhase::Active: return TEXT("Active");
+		case EARWavePhase::Berserk: return TEXT("Berserk");
+		default: return TEXT("Unknown");
+		}
+	}
 }
 
 UARInvaderDirectorSubsystem::UARInvaderDirectorSubsystem()
@@ -369,7 +379,6 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 {
 	(void)DeltaTime;
 
-	const float StageBerserkTimeMultiplier = FMath::Max(0.05f, CurrentStageDef.BerserkTimeMultiplier <= 0.f ? 1.f : CurrentStageDef.BerserkTimeMultiplier);
 	const float Now = RunElapsed;
 
 	for (FWaveRuntimeInternal& Wave : ActiveWaves)
@@ -390,7 +399,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				continue;
 			}
 
-			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex);
+			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex, Wave.bFlipX, Wave.bFlipY);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -410,7 +419,8 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 			}
 
 			Enemy->SetEnemyColor(EffectiveColor);
-			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, SpawnDef.SlotIndex, Wave.Def.FormationMode, Wave.Phase, GetWorld()->GetTimeSeconds());
+			Enemy->SetFormationLockRules(Wave.Def.bFormationLockEnter, Wave.Def.bFormationLockActive);
+			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, Wave.NextSpawnIndex, Wave.Phase, GetWorld()->GetTimeSeconds());
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);
@@ -421,30 +431,22 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 			Wave.NextSpawnIndex++;
 		}
 
-		const float EnterDuration = FMath::Max(0.f, Wave.Def.EnterDuration);
-		const float ActiveDuration = FMath::Max(0.f, Wave.Def.ActiveDuration * StageBerserkTimeMultiplier);
-		const float BerserkDuration = FMath::Max(0.f, Wave.Def.BerserkDuration * StageBerserkTimeMultiplier);
+		const float WaveDuration = FMath::Max(0.f, Wave.Def.WaveDuration);
 		const float TimeInWave = Now - Wave.WaveStartTime;
 
-		if (Wave.Phase == EARWavePhase::Entering)
+		if (Wave.Phase == EARWavePhase::Active)
 		{
-			if (Wave.Def.EntryMode == EAREntryMode::Immediate || TimeInWave >= EnterDuration)
+			if (TimeInWave >= WaveDuration)
 			{
-				TransitionWavePhase(Wave, EARWavePhase::Active);
-			}
-		}
-		else if (Wave.Phase == EARWavePhase::Active)
-		{
-			if (TimeInWave >= (EnterDuration + ActiveDuration))
-			{
+				UE_LOG(
+					ARLog,
+					Log,
+					TEXT("[InvaderDirector|Phase] Wave %d ('%s') Active->Berserk elapsed=%.2fs waveDuration=%.2fs."),
+					Wave.WaveInstanceId,
+					*Wave.RowName.ToString(),
+					TimeInWave,
+					WaveDuration);
 				TransitionWavePhase(Wave, EARWavePhase::Berserk);
-			}
-		}
-		else if (Wave.Phase == EARWavePhase::Berserk)
-		{
-			if (TimeInWave >= (EnterDuration + ActiveDuration + BerserkDuration))
-			{
-				TransitionWavePhase(Wave, EARWavePhase::Expired);
 			}
 		}
 	}
@@ -481,7 +483,7 @@ void UARInvaderDirectorSubsystem::SpawnWavesIfNeeded()
 		}
 	}
 
-	bool bAnyEnteringOrActive = false;
+	bool bAnyActive = false;
 	bool bAnyAlive = false;
 	for (const FWaveRuntimeInternal& Wave : ActiveWaves)
 	{
@@ -489,9 +491,9 @@ void UARInvaderDirectorSubsystem::SpawnWavesIfNeeded()
 		{
 			bAnyAlive = true;
 		}
-		if (Wave.Phase == EARWavePhase::Entering || Wave.Phase == EARWavePhase::Active)
+		if (Wave.Phase == EARWavePhase::Active)
 		{
-			bAnyEnteringOrActive = true;
+			bAnyActive = true;
 		}
 	}
 
@@ -502,7 +504,7 @@ void UARInvaderDirectorSubsystem::SpawnWavesIfNeeded()
 		bShouldSpawn = true;
 		RequiredDelay = Settings->NewWaveDelayAfterClear;
 	}
-	else if (!bAnyEnteringOrActive)
+	else if (!bAnyActive)
 	{
 		bShouldSpawn = true;
 		RequiredDelay = Settings->NewWaveDelayWhenOvertime;
@@ -512,6 +514,27 @@ void UARInvaderDirectorSubsystem::SpawnWavesIfNeeded()
 	{
 		return;
 	}
+
+	const TCHAR* SpawnReason = TEXT("Unknown");
+	if (ActiveWaves.IsEmpty() || !bAnyAlive)
+	{
+		SpawnReason = TEXT("NoAliveWaves");
+	}
+	else if (!bAnyActive)
+	{
+		SpawnReason = TEXT("Overtime_NoActiveWave");
+	}
+
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderDirector|SpawnGate] Triggered reason=%s activeWaves=%d aliveEnemies=%d hasActive=%d timeSinceLast=%.2fs requiredDelay=%.2fs."),
+		SpawnReason,
+		ActiveWaves.Num(),
+		AliveEnemies,
+		bAnyActive ? 1 : 0,
+		TimeSinceLastWaveSpawn,
+		RequiredDelay);
 
 	FName WaveRow;
 	FARWaveDefRow WaveDef;
@@ -555,12 +578,20 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 			}
 			else
 			{
+				// Do not offscreen-cull before first gameplay entry; entering paths can legitimately begin offscreen.
+				if (!Enemy->HasEnteredGameplayScreen())
+				{
+					// Still alive while entering from offscreen; keep wave alive accounting correct.
+					NewAlive++;
+					continue;
+				}
+
 				float& OffscreenSeconds = OffscreenDurationByEnemy.FindOrAdd(Enemy);
 				OffscreenSeconds += GetWorld()->GetDeltaSeconds();
 				if (OffscreenSeconds >= Settings->OffscreenCullSeconds)
 				{
-					UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Culling offscreen enemy '%s' after %.2fs."),
-						*GetNameSafe(Enemy), OffscreenSeconds);
+					UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Culling offscreen enemy '%s' after %.2fs at Loc=(%.1f, %.1f, %.1f)."),
+						*GetNameSafe(Enemy), OffscreenSeconds, Loc.X, Loc.Y, Loc.Z);
 					Enemy->HandleDeath(nullptr);
 					Enemy->Destroy();
 					continue;
@@ -602,7 +633,7 @@ void UARInvaderDirectorSubsystem::EvaluateLossConditions()
 
 	if (AreAllPlayersDown())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Loss condition reached: all players down."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Loss condition reached: all evaluated players are down."));
 		StopInvaderRun();
 	}
 }
@@ -668,6 +699,12 @@ bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition(FName WaveRowName, con
 	Wave.WaveInstanceId = NextWaveInstanceId++;
 	Wave.RowName = WaveRowName;
 	Wave.Def = WaveDef;
+	Wave.Def.EnterDuration = FMath::Max(0.f, Wave.Def.EnterDuration);
+	if (Wave.Def.WaveDuration <= 0.f)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Wave '%s' has WaveDuration <= 0; defaulting to 16s."), *WaveRowName.ToString());
+		Wave.Def.WaveDuration = 16.f;
+	}
 	Wave.WaveStartTime = RunElapsed;
 	Wave.PhaseStartTime = RunElapsed;
 	Wave.NextSpawnTime = RunElapsed;
@@ -675,8 +712,10 @@ bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition(FName WaveRowName, con
 	Wave.SpawnedCount = 0;
 	Wave.AliveCount = 0;
 	Wave.bColorSwap = bColorSwap;
+	Wave.bFlipX = Wave.Def.bAllowFlipX && RunRng.FRand() < 0.5f;
+	Wave.bFlipY = Wave.Def.bAllowFlipY && RunRng.FRand() < 0.5f;
 	Wave.StageRowName = CurrentStageRow;
-	Wave.Phase = EARWavePhase::Entering;
+	Wave.Phase = EARWavePhase::Active;
 
 	// Ensure deterministic spawn ordering by spawn delay.
 	Algo::StableSort(Wave.Def.EnemySpawns, [](const FARWaveEnemySpawnDef& A, const FARWaveEnemySpawnDef& B)
@@ -685,8 +724,36 @@ bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition(FName WaveRowName, con
 	});
 
 	ActiveWaves.Add(MoveTemp(Wave));
+	const FWaveRuntimeInternal& SpawnedWave = ActiveWaves.Last();
+
+	float MaxSpawnDelay = 0.f;
+	for (const FARWaveEnemySpawnDef& SpawnDef : SpawnedWave.Def.EnemySpawns)
+	{
+		MaxSpawnDelay = FMath::Max(MaxSpawnDelay, SpawnDef.SpawnDelay);
+	}
+
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Spawned wave '%s' (WaveId=%d, ColorSwap=%d)."),
-		*WaveRowName.ToString(), ActiveWaves.Last().WaveInstanceId, bColorSwap ? 1 : 0);
+		*WaveRowName.ToString(), SpawnedWave.WaveInstanceId, bColorSwap ? 1 : 0);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderDirector|WaveDef] WaveId=%d row='%s' waveDuration=%.2fs spawns=%d maxSpawnDelay=%.2fs lockEnter=%d lockActive=%d."),
+		SpawnedWave.WaveInstanceId,
+		*WaveRowName.ToString(),
+		SpawnedWave.Def.WaveDuration,
+		SpawnedWave.Def.EnemySpawns.Num(),
+		MaxSpawnDelay,
+		SpawnedWave.Def.bFormationLockEnter ? 1 : 0,
+		SpawnedWave.Def.bFormationLockActive ? 1 : 0);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderDirector|WaveDef] WaveId=%d flipX=%d flipY=%d (allowedX=%d allowedY=%d)."),
+		SpawnedWave.WaveInstanceId,
+		SpawnedWave.bFlipX ? 1 : 0,
+		SpawnedWave.bFlipY ? 1 : 0,
+		SpawnedWave.Def.bAllowFlipX ? 1 : 0,
+		SpawnedWave.Def.bAllowFlipY ? 1 : 0);
 	return true;
 }
 
@@ -708,8 +775,8 @@ bool UARInvaderDirectorSubsystem::TransitionWavePhase(FWaveRuntimeInternal& Wave
 		}
 	}
 
-	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Wave %d ('%s') phase -> %d"),
-		Wave.WaveInstanceId, *Wave.RowName.ToString(), static_cast<int32>(NewPhase));
+	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Wave %d ('%s') phase -> %s"),
+		Wave.WaveInstanceId, *Wave.RowName.ToString(), ARInvaderInternal::ToPhaseName(NewPhase));
 	return true;
 }
 
@@ -869,28 +936,40 @@ bool UARInvaderDirectorSubsystem::SelectStage(FName& OutStageRow, FARStageDefRow
 	return true;
 }
 
-FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal) const
+FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	FVector Loc = Settings->SpawnOrigin;
-	const float OffsetFromLane = SpawnOrdinal * Settings->SpawnLaneSpacing;
+	const float CenterX = (Settings->GameplayBoundsMin.X + Settings->GameplayBoundsMax.X) * 0.5f;
+	const float CenterY = (Settings->GameplayBoundsMin.Y + Settings->GameplayBoundsMax.Y) * 0.5f;
+
+	FVector2D AuthoredOffset = SpawnDef.AuthoredScreenOffset;
+	if (bFlipX)
+	{
+		AuthoredOffset.X = (CenterX * 2.f) - AuthoredOffset.X;
+	}
+	if (bFlipY)
+	{
+		AuthoredOffset.Y = (CenterY * 2.f) - AuthoredOffset.Y;
+	}
+
+	FVector Loc = Settings->SpawnOrigin + FVector(AuthoredOffset.X, AuthoredOffset.Y, -26.f);
+	const float OffscreenDistance = FMath::Abs(Settings->SpawnOffscreenDistance);
+	const float GameplaySizeX = FMath::Max(0.f, Settings->GameplayBoundsMax.X - Settings->GameplayBoundsMin.X);
+	const float GameplaySizeY = FMath::Max(0.f, Settings->GameplayBoundsMax.Y - Settings->GameplayBoundsMin.Y);
 
 	switch (SpawnDef.SpawnEdge)
 	{
 	case EARSpawnEdge::Top:
-		Loc.Y += Settings->SpawnOffscreenDistance;
-		Loc.X += SpawnDef.AuthoredScreenOffset.X + OffsetFromLane;
-		Loc.Y += SpawnDef.AuthoredScreenOffset.Y;
+		// Keep authored formation shape, translated one gameplay-screen above the top boundary.
+		Loc.X += (GameplaySizeX + OffscreenDistance);
 		break;
 	case EARSpawnEdge::Left:
-		Loc.X -= Settings->SpawnOffscreenDistance;
-		Loc.X += SpawnDef.AuthoredScreenOffset.X;
-		Loc.Y += SpawnDef.AuthoredScreenOffset.Y + OffsetFromLane;
+		// Keep authored formation shape, translated one gameplay-screen left of the left boundary.
+		Loc.Y -= (GameplaySizeY + OffscreenDistance);
 		break;
 	case EARSpawnEdge::Right:
-		Loc.X += Settings->SpawnOffscreenDistance;
-		Loc.X += SpawnDef.AuthoredScreenOffset.X;
-		Loc.Y += SpawnDef.AuthoredScreenOffset.Y + OffsetFromLane;
+		// Keep authored formation shape, translated one gameplay-screen right of the right boundary.
+		Loc.Y += (GameplaySizeY + OffscreenDistance);
 		break;
 	default:
 		break;
@@ -902,19 +981,34 @@ FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpaw
 		switch (SpawnDef.SpawnEdge)
 		{
 		case EARSpawnEdge::Top:
-			Loc.Y = Settings->GameplayBoundsMax.Y + FMath::Abs(Settings->SpawnOffscreenDistance * 0.5f);
+			Loc.X = Settings->GameplayBoundsMax.X + FMath::Abs(Settings->SpawnOffscreenDistance * 0.5f);
 			break;
 		case EARSpawnEdge::Left:
-			Loc.X = Settings->GameplayBoundsMin.X - FMath::Abs(Settings->SpawnOffscreenDistance * 0.5f);
+			Loc.Y = Settings->GameplayBoundsMin.Y - FMath::Abs(Settings->SpawnOffscreenDistance * 0.5f);
 			break;
 		case EARSpawnEdge::Right:
-			Loc.X = Settings->GameplayBoundsMax.X + FMath::Abs(Settings->SpawnOffscreenDistance * 0.5f);
+			Loc.Y = Settings->GameplayBoundsMax.Y + FMath::Abs(Settings->SpawnOffscreenDistance * 0.5f);
 			break;
 		default:
 			break;
 		}
 	}
 
+	Loc.Z = -26.f;
+	if (SpawnOrdinal < 4)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[InvaderDirector|SpawnPos] Ordinal=%d edge=%d authored=(%.1f,%.1f) world=(%.1f,%.1f,%.1f)."),
+			SpawnOrdinal,
+			static_cast<int32>(SpawnDef.SpawnEdge),
+			AuthoredOffset.X,
+			AuthoredOffset.Y,
+			Loc.X,
+			Loc.Y,
+			Loc.Z);
+	}
 	return Loc;
 }
 
@@ -975,7 +1069,8 @@ bool UARInvaderDirectorSubsystem::IsInsideGameplayBounds(const FVector& Location
 bool UARInvaderDirectorSubsystem::IsInsideLeakBounds(const FVector& Location) const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	return Location.Y >= Settings->GameplayBoundsMin.Y;
+	// Leak is evaluated past the "player side" boundary, which is the low-X edge in this project layout.
+	return Location.X >= Settings->GameplayBoundsMin.X;
 }
 
 UARInvaderRuntimeStateComponent* UARInvaderDirectorSubsystem::GetOrCreateRuntimeComponent()
@@ -1099,7 +1194,7 @@ bool UARInvaderDirectorSubsystem::AreAllPlayersDown() const
 		return false;
 	}
 
-	int32 NumPlayers = 0;
+	int32 NumEvaluatedPlayers = 0;
 	int32 NumDown = 0;
 	for (APlayerState* PSBase : GS->PlayerArray)
 	{
@@ -1109,21 +1204,28 @@ bool UARInvaderDirectorSubsystem::AreAllPlayersDown() const
 			continue;
 		}
 
-		NumPlayers++;
 		const UAbilitySystemComponent* ASC = PS->GetASC();
 		if (!ASC)
 		{
 			continue;
 		}
 
+		const float MaxHealth = ASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
 		const float Health = ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+		if (MaxHealth <= 0.f)
+		{
+			// Player state/attributes are not initialized yet; do not treat as down.
+			continue;
+		}
+
+		NumEvaluatedPlayers++;
 		if (Health <= 0.f)
 		{
 			NumDown++;
 		}
 	}
 
-	return NumPlayers > 0 && NumPlayers == NumDown;
+	return NumEvaluatedPlayers > 0 && NumEvaluatedPlayers == NumDown;
 }
 
 void UARInvaderDirectorSubsystem::SetCurrentStage(FName StageRowName, const FARStageDefRow& StageDef)
@@ -1323,7 +1425,7 @@ void UARInvaderDirectorSubsystem::RegisterConsoleCommands()
 
 	CmdForcePhase = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.force_phase"),
-		TEXT("Force wave phase: <WaveId> <Entering|Active|Berserk|Expired>."),
+		TEXT("Force wave phase: <WaveId> <Active|Berserk>."),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForcePhase),
 		ECVF_Default);
 
@@ -1374,26 +1476,35 @@ void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
 {
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 
-	auto Unregister = [&ConsoleManager](IConsoleObject*& Cmd)
+	auto UnregisterByName = [&ConsoleManager](const TCHAR* Name)
 	{
-		if (!Cmd)
+		if (!Name || !ConsoleManager.IsNameRegistered(Name))
 		{
 			return;
 		}
 
-		ConsoleManager.UnregisterConsoleObject(Cmd);
-		Cmd = nullptr;
+		ConsoleManager.UnregisterConsoleObject(Name, false);
 	};
 
-	Unregister(CmdForceWave);
-	Unregister(CmdForcePhase);
-	Unregister(CmdForceThreat);
-	Unregister(CmdForceStage);
-	Unregister(CmdDumpState);
-	Unregister(CmdStart);
-	Unregister(CmdStop);
-	Unregister(CmdChooseStage);
-	Unregister(CmdForceIntro);
+	UnregisterByName(TEXT("ar.invader.force_wave"));
+	UnregisterByName(TEXT("ar.invader.force_phase"));
+	UnregisterByName(TEXT("ar.invader.force_threat"));
+	UnregisterByName(TEXT("ar.invader.force_stage"));
+	UnregisterByName(TEXT("ar.invader.dump_state"));
+	UnregisterByName(TEXT("ar.invader.start"));
+	UnregisterByName(TEXT("ar.invader.stop"));
+	UnregisterByName(TEXT("ar.invader.choose_stage"));
+	UnregisterByName(TEXT("ar.invader.force_intro"));
+
+	CmdForceWave = nullptr;
+	CmdForcePhase = nullptr;
+	CmdForceThreat = nullptr;
+	CmdForceStage = nullptr;
+	CmdDumpState = nullptr;
+	CmdStart = nullptr;
+	CmdStop = nullptr;
+	CmdChooseStage = nullptr;
+	CmdForceIntro = nullptr;
 }
 
 void UARInvaderDirectorSubsystem::HandleConsoleForceWave(const TArray<FString>& Args, UWorld* InWorld)
@@ -1410,11 +1521,20 @@ void UARInvaderDirectorSubsystem::HandleConsoleForcePhase(const TArray<FString>&
 	LexFromString(WaveId, *Args[0]);
 	const FString PhaseStr = Args[1].ToLower();
 
-	EARWavePhase Phase = EARWavePhase::Active;
-	if (PhaseStr == TEXT("entering")) Phase = EARWavePhase::Entering;
-	else if (PhaseStr == TEXT("active")) Phase = EARWavePhase::Active;
-	else if (PhaseStr == TEXT("berserk")) Phase = EARWavePhase::Berserk;
-	else if (PhaseStr == TEXT("expired")) Phase = EARWavePhase::Expired;
+	EARWavePhase Phase;
+	if (PhaseStr == TEXT("active"))
+	{
+		Phase = EARWavePhase::Active;
+	}
+	else if (PhaseStr == TEXT("berserk"))
+	{
+		Phase = EARWavePhase::Berserk;
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Debug] Invalid phase '%s'. Valid: Active|Berserk."), *Args[1]);
+		return;
+	}
 
 	ForceWavePhase(WaveId, Phase);
 }

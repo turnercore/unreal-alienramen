@@ -19,10 +19,8 @@ enum class EAREnemyColor : uint8
 UENUM(BlueprintType)
 enum class EARWavePhase : uint8
 {
-	Entering = 0,
-	Active = 1,
-	Berserk = 2,
-	Expired = 3
+	Active = 0,
+	Berserk = 1
 };
 
 UENUM(BlueprintType)
@@ -34,23 +32,6 @@ enum class EARInvaderFlowState : uint8
 	Transition = 3,
 	StageIntro = 4,
 	Stopped = 5
-};
-
-UENUM(BlueprintType)
-enum class EAREntryMode : uint8
-{
-	StreamIn = 0,
-	FormationEnter = 1,
-	Immediate = 2
-};
-
-UENUM(BlueprintType)
-enum class EARFormationMode : uint8
-{
-	None = 0,
-	Hold = 1,
-	RotateCW = 2,
-	RotateCCW = 3
 };
 
 UENUM(BlueprintType)
@@ -66,26 +47,23 @@ struct FARWaveEnemySpawnDef
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<AAREnemyBase> EnemyClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	int32 SlotIndex = INDEX_NONE;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	EAREnemyColor EnemyColor = EAREnemyColor::Red;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	EARSpawnEdge SpawnEdge = EARSpawnEdge::Top;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	float SpawnDelay = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	FVector2D AuthoredScreenOffset = FVector2D::ZeroVector;
 
 	// Effects applied to this spawned enemy instance (in addition to wave/stage effects).
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
 };
 
@@ -94,13 +72,13 @@ struct FARBerserkProfile
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float MoveSpeedMultiplier = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float FireRateMultiplier = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	FGameplayTagContainer BehaviorTags;
 };
 
@@ -109,62 +87,64 @@ struct FARWaveDefRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float MinThreat = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float MaxThreat = 1000.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	int32 SelectionWeight = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	int32 MinPlayers = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	int32 MaxPlayers = 2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	bool bOneTimeOnlyPerRun = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	bool bAllowColorSwap = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float RepeatWeightPenalty = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	EAREntryMode EntryMode = EAREntryMode::StreamIn;
+	// If true, enemies stay formation-locked until they report formation-slot arrival.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bFormationLockEnter = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	EARFormationMode FormationMode = EARFormationMode::None;
+	// If true, AI should treat enemies in this wave as formation-locked during Active.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bFormationLockActive = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	// If true, runtime may mirror authored spawn offsets across gameplay-bounds center on X.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bAllowFlipX = false;
+
+	// If true, runtime may mirror authored spawn offsets across gameplay-bounds center on Y.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bAllowFlipY = false;
+
+	// Entering primarily ends by runtime condition checks; this is timeout fallback.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float EnterDuration = 3.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	float ActiveDuration = 16.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta=(DisplayName="Wave Duration"))
+	float WaveDuration = 16.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	float BerserkDuration = 12.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	FARBerserkProfile BerserkProfile;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	TArray<FARWaveEnemySpawnDef> EnemySpawns;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	FGameplayTagContainer WaveTags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	FGameplayTagContainer StageTags;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
-	FGameplayTagContainer BannedArchetypeTags;
-
 	// Effects applied to all enemies spawned by this wave.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Wave")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
 };
 
@@ -173,39 +153,36 @@ struct FARStageDefRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float SelectionWeight = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float StageDuration = 55.f;
 
 	// If < 0, director settings default intro duration is used.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float StageIntroSeconds = -1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float ThreatGainMultiplier = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
-	float BerserkTimeMultiplier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float EnemyHealthMultiplier = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	FGameplayTagContainer RequiredWaveTags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	FGameplayTagContainer BlockedWaveTags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	FGameplayTagContainer BannedArchetypeTags;
 
 	// Effects applied to all enemies spawned while this stage is active.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Stage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	FString RewardDescriptor;
 };
 
@@ -221,7 +198,7 @@ struct FARWaveInstanceState
 	FName WaveRowName = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
-	EARWavePhase Phase = EARWavePhase::Entering;
+	EARWavePhase Phase = EARWavePhase::Active;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	float WaveStartServerTime = 0.f;

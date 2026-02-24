@@ -24,6 +24,7 @@
 #include "Styling/AppStyle.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "DragAndDrop/DecoratedDragDropOp.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/SoftObjectPath.h"
 #include "Widgets/Docking/SDockTab.h"
@@ -34,6 +35,7 @@
 #include "Widgets/Input/SSlider.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
+#include "Widgets/Layout/SExpandableArea.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SSplitter.h"
 #include "Widgets/Layout/SWrapBox.h"
@@ -45,13 +47,37 @@
 #include "Misc/PackageName.h"
 #include "Misc/DateTime.h"
 #include "Misc/Paths.h"
+#include "Containers/Ticker.h"
 #include "HAL/FileManager.h"
 #include "InputCoreTypes.h"
 #include "UObject/SavePackage.h"
+#include "UObject/UnrealType.h"
+#include "Kismet/GameplayStatics.h"
 
 namespace
 {
 	static constexpr float LayerMatchTolerance = 0.0001f;
+	static constexpr float PIEBootstrapPollInterval = 0.2f;
+	static constexpr float PIEBootstrapFallbackDelaySeconds = 0.75f;
+	static constexpr float PIEBootstrapTimeoutSeconds = 20.0f;
+
+	class FInvaderSpawnDragDropOp : public FDecoratedDragDropOp
+	{
+	public:
+		DRAG_DROP_OPERATOR_TYPE(FInvaderSpawnDragDropOp, FDecoratedDragDropOp)
+
+		int32 SourceSpawnIndex = INDEX_NONE;
+
+		static TSharedRef<FInvaderSpawnDragDropOp> New(int32 InSourceSpawnIndex, const FString& Label)
+		{
+			TSharedRef<FInvaderSpawnDragDropOp> Op = MakeShared<FInvaderSpawnDragDropOp>();
+			Op->SourceSpawnIndex = InSourceSpawnIndex;
+			Op->DefaultHoverText = FText::FromString(Label);
+			Op->CurrentHoverText = Op->DefaultHoverText;
+			Op->Construct();
+			return Op;
+		}
+	};
 
 	static FLinearColor GetEnemyColor(EAREnemyColor Color)
 	{
@@ -87,6 +113,7 @@ namespace
 		Circle,
 		Triangle,
 		Diamond,
+		Star,
 		Count
 	};
 
@@ -110,6 +137,24 @@ namespace
 		case EPaletteShape::Square:
 		default:
 			return TEXT("SQ");
+		}
+	}
+
+	static FString PaletteShapeGlyph(int32 ShapeCycle)
+	{
+		switch (NormalizePaletteShape(ShapeCycle))
+		{
+		case EPaletteShape::Circle:
+			return TEXT("●");
+		case EPaletteShape::Triangle:
+			return TEXT("▲");
+		case EPaletteShape::Diamond:
+			return TEXT("◆");
+		case EPaletteShape::Star:
+			return TEXT("★");
+		case EPaletteShape::Square:
+		default:
+			return TEXT("■");
 		}
 	}
 
@@ -152,9 +197,9 @@ namespace
 		{
 			const float XRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
 			const float YRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
-			const float XAlpha = (Offset.X - BoundsMin.X) / XRange;
 			const float YAlpha = (Offset.Y - BoundsMin.Y) / YRange;
-			return FVector2D(XAlpha * Size.X, Size.Y - (YAlpha * Size.Y));
+			const float XAlpha = (Offset.X - BoundsMin.X) / XRange;
+			return FVector2D(YAlpha * Size.X, Size.Y - (XAlpha * Size.Y));
 		};
 
 		int32 BestIndex = INDEX_NONE;
@@ -240,6 +285,98 @@ namespace
 		Name.TrimStartAndEndInline();
 		return Name.IsEmpty() ? FPackageName::ObjectPathToObjectName(ClassPath.ToString()) : Name;
 	}
+
+	static bool TryReadBoolPropertyByName(const UObject* Object, const FName PropertyName, bool& bOutValue)
+	{
+		if (!Object || PropertyName.IsNone())
+		{
+			return false;
+		}
+
+		const FBoolProperty* BoolProp = FindFProperty<FBoolProperty>(Object->GetClass(), PropertyName);
+		if (!BoolProp)
+		{
+			return false;
+		}
+
+		bOutValue = BoolProp->GetPropertyValue_InContainer(Object);
+		return true;
+	}
+
+	static bool TryCallNoArgBoolFunctionByName(UObject* Object, const FName FunctionName, bool& bOutValue)
+	{
+		if (!Object || FunctionName.IsNone())
+		{
+			return false;
+		}
+
+		UFunction* Fn = Object->FindFunction(FunctionName);
+		if (!Fn)
+		{
+			return false;
+		}
+
+		if (Fn->NumParms != 1 || !Fn->GetReturnProperty())
+		{
+			return false;
+		}
+
+		const FBoolProperty* ReturnBool = CastField<FBoolProperty>(Fn->GetReturnProperty());
+		if (!ReturnBool)
+		{
+			return false;
+		}
+
+		TArray<uint8> Buffer;
+		Buffer.SetNumZeroed(Fn->ParmsSize);
+		Object->ProcessEvent(Fn, Buffer.GetData());
+		bOutValue = ReturnBool->GetPropertyValue(Buffer.GetData() + ReturnBool->GetOffset_ForUFunction());
+		return true;
+	}
+
+	static bool IsPIESaveLoadComplete(UObject* GameInstance, bool& bOutHadSignal)
+	{
+		bOutHadSignal = false;
+
+		bool bValue = false;
+		static const FName BoolFunctionCandidates[] =
+		{
+			TEXT("IsGameLoaded"),
+			TEXT("HasGameLoaded"),
+			TEXT("IsSaveLoaded"),
+			TEXT("HasSaveLoaded"),
+			TEXT("IsLoadCompleted"),
+			TEXT("HasLoadCompleted"),
+		};
+		for (const FName& Name : BoolFunctionCandidates)
+		{
+			if (TryCallNoArgBoolFunctionByName(GameInstance, Name, bValue))
+			{
+				bOutHadSignal = true;
+				return bValue;
+			}
+		}
+
+		static const FName BoolPropertyCandidates[] =
+		{
+			TEXT("bGameLoaded"),
+			TEXT("bIsGameLoaded"),
+			TEXT("bSaveLoaded"),
+			TEXT("bIsSaveLoaded"),
+			TEXT("bLoadCompleted"),
+		};
+		for (const FName& Name : BoolPropertyCandidates)
+		{
+			if (TryReadBoolPropertyByName(GameInstance, Name, bValue))
+			{
+				bOutHadSignal = true;
+				return bValue;
+			}
+		}
+
+		return false;
+	}
+
 }
 
 class SInvaderWaveCanvas final : public SLeafWidget
@@ -319,11 +456,11 @@ class SInvaderWaveCanvas final : public SLeafWidget
 
 			auto OffsetToLocal = [&Size, &BoundsMin, &BoundsMax](const FVector2D& Offset)
 			{
-				const float XRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
-				const float YRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
-				const float XAlpha = (Offset.X - BoundsMin.X) / XRange;
-				const float YAlpha = (Offset.Y - BoundsMin.Y) / YRange;
-				return FVector2D(XAlpha * Size.X, Size.Y - (YAlpha * Size.Y));
+				const float VerticalRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
+				const float HorizontalRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
+				const float HorizontalAlpha = (Offset.Y - BoundsMin.Y) / HorizontalRange;
+				const float VerticalAlpha = (Offset.X - BoundsMin.X) / VerticalRange;
+				return FVector2D(HorizontalAlpha * Size.X, Size.Y - (VerticalAlpha * Size.Y));
 			};
 
 			const FARWaveDefRow* WaveRow = GetWaveRow ? GetWaveRow() : nullptr;
@@ -587,6 +724,18 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					const float Angle = (2.f * PI * static_cast<float>(i)) / 16.f;
 					CirclePoints.Add(Center + FVector2D(FMath::Cos(Angle), FMath::Sin(Angle)) * Half);
 				}
+				if (!bOutlineOnly)
+				{
+					const FVector2D FillSize(Half * 1.2f, Half * 1.2f);
+					const FVector2D FillPos = Center - (FillSize * 0.5f);
+					FSlateDrawElement::MakeBox(
+						OutDrawElements,
+						Layer,
+						Geometry.ToPaintGeometry(FillSize, FSlateLayoutTransform(FillPos)),
+						FAppStyle::GetBrush("WhiteBrush"),
+						ESlateDrawEffect::None,
+						Color);
+				}
 				FSlateDrawElement::MakeLines(
 					OutDrawElements,
 					Layer,
@@ -603,6 +752,18 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				const FVector2D A = Center + FVector2D(0.f, -Half);
 				const FVector2D B = Center + FVector2D(Half, Half);
 				const FVector2D C = Center + FVector2D(-Half, Half);
+				if (!bOutlineOnly)
+				{
+					const FVector2D FillSize(Half * 1.2f, Half * 1.2f);
+					const FVector2D FillPos = Center - (FillSize * 0.5f);
+					FSlateDrawElement::MakeBox(
+						OutDrawElements,
+						Layer,
+						Geometry.ToPaintGeometry(FillSize, FSlateLayoutTransform(FillPos)),
+						FAppStyle::GetBrush("WhiteBrush"),
+						ESlateDrawEffect::None,
+						Color);
+				}
 				FSlateDrawElement::MakeLines(
 					OutDrawElements,
 					Layer,
@@ -620,6 +781,18 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				const FVector2D B = Center + FVector2D(Half, 0.f);
 				const FVector2D C = Center + FVector2D(0.f, Half);
 				const FVector2D D = Center + FVector2D(-Half, 0.f);
+				if (!bOutlineOnly)
+				{
+					const FVector2D FillSize(Half * 1.15f, Half * 1.15f);
+					const FVector2D FillPos = Center - (FillSize * 0.5f);
+					FSlateDrawElement::MakeBox(
+						OutDrawElements,
+						Layer,
+						Geometry.ToPaintGeometry(FillSize, FSlateLayoutTransform(FillPos)),
+						FAppStyle::GetBrush("WhiteBrush"),
+						ESlateDrawEffect::None,
+						Color);
+				}
 				FSlateDrawElement::MakeLines(
 					OutDrawElements,
 					Layer,
@@ -686,11 +859,11 @@ class SInvaderWaveCanvas final : public SLeafWidget
 
 			auto OffsetToLocal = [&Size, &BoundsMin, &BoundsMax](const FVector2D& Offset)
 			{
-				const float XRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
-				const float YRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
-				const float XAlpha = (Offset.X - BoundsMin.X) / XRange;
-				const float YAlpha = (Offset.Y - BoundsMin.Y) / YRange;
-				return FVector2D(XAlpha * Size.X, Size.Y - (YAlpha * Size.Y));
+				const float VerticalRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
+				const float HorizontalRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
+				const float HorizontalAlpha = (Offset.Y - BoundsMin.Y) / HorizontalRange;
+				const float VerticalAlpha = (Offset.X - BoundsMin.X) / VerticalRange;
+				return FVector2D(HorizontalAlpha * Size.X, Size.Y - (VerticalAlpha * Size.Y));
 			};
 
 			for (int32 Index = 0; Index < WaveRow->EnemySpawns.Num(); ++Index)
@@ -716,13 +889,13 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 			const FVector2D BoundsMin = Settings->GameplayBoundsMin;
 			const FVector2D BoundsMax = Settings->GameplayBoundsMax;
-			const float XRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
-			const float YRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
-			const float XAlpha = FMath::Clamp(Local.X / FMath::Max(1.f, Size.X), 0.f, 1.f);
-			const float YAlpha = FMath::Clamp(1.f - (Local.Y / FMath::Max(1.f, Size.Y)), 0.f, 1.f);
+			const float VerticalRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
+			const float HorizontalRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
+			const float HorizontalAlpha = FMath::Clamp(Local.X / FMath::Max(1.f, Size.X), 0.f, 1.f);
+			const float VerticalAlpha = FMath::Clamp(1.f - (Local.Y / FMath::Max(1.f, Size.Y)), 0.f, 1.f);
 			return FVector2D(
-				BoundsMin.X + (XRange * XAlpha),
-				BoundsMin.Y + (YRange * YAlpha));
+				BoundsMin.X + (VerticalRange * VerticalAlpha),
+				BoundsMin.Y + (HorizontalRange * HorizontalAlpha));
 		}
 
 	private:
@@ -771,20 +944,35 @@ void SInvaderAuthoringPanel::Construct(const FArguments& InArgs)
 	SpawnProxy.Reset(NewObject<UARInvaderSpawnProxy>(GetTransientPackage()));
 
 	FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	FDetailsViewArgs DetailsArgs;
-	DetailsArgs.bAllowSearch = true;
-	DetailsArgs.bHideSelectionTip = true;
-	DetailsArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
-	DetailsArgs.bUpdatesFromSelection = false;
+	FDetailsViewArgs RowDetailsArgs;
+	RowDetailsArgs.bAllowSearch = true;
+	RowDetailsArgs.bHideSelectionTip = true;
+	RowDetailsArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
+	RowDetailsArgs.bUpdatesFromSelection = false;
 
-	RowDetailsView = PropertyEditorModule.CreateDetailView(DetailsArgs);
-	SpawnDetailsView = PropertyEditorModule.CreateDetailView(DetailsArgs);
+	FDetailsViewArgs SpawnDetailsArgs = RowDetailsArgs;
+	SpawnDetailsArgs.bAllowSearch = false;
+
+	RowDetailsView = PropertyEditorModule.CreateDetailView(RowDetailsArgs);
+	SpawnDetailsView = PropertyEditorModule.CreateDetailView(SpawnDetailsArgs);
+	RowDetailsView->SetIsPropertyVisibleDelegate(FIsPropertyVisible::CreateSP(this, &SInvaderAuthoringPanel::ShouldShowWaveDetailProperty));
+	SpawnDetailsView->SetIsPropertyVisibleDelegate(FIsPropertyVisible::CreateSP(this, &SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty));
 	RowDetailsView->OnFinishedChangingProperties().AddSP(SharedThis(this), &SInvaderAuthoringPanel::HandleWaveRowPropertiesChanged);
 	SpawnDetailsView->OnFinishedChangingProperties().AddSP(SharedThis(this), &SInvaderAuthoringPanel::HandleSpawnPropertiesChanged);
 
 	BuildLayout();
 	RefreshTables();
-	EnsureInitialTableBackups();
+	{
+		const TWeakPtr<SInvaderAuthoringPanel> WeakPanel = SharedThis(this);
+		FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([WeakPanel](float)
+		{
+			if (const TSharedPtr<SInvaderAuthoringPanel> Pinned = WeakPanel.Pin())
+			{
+				Pinned->EnsureInitialTableBackups();
+			}
+			return false;
+		}), 1.0f);
+	}
 	RefreshPalette();
 	RefreshRowItems();
 	RefreshDetailsObjects();
@@ -876,10 +1064,15 @@ void SInvaderAuthoringPanel::BuildLayout()
 					SNew(STextBlock).Text(FText::FromString("Stages"))
 				]
 			]
+			+ SHorizontalBox::Slot().FillWidth(1.f)
+			[
+				SNew(SSpacer)
+			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 8.f, 0.f)
 			[
 				SNew(SButton)
 				.Text(FText::FromString("Reload Tables"))
+				.ToolTipText(FText::FromString("Reload wave and stage DataTables from disk."))
 				.OnClicked_Lambda([this]()
 				{
 					RefreshTables();
@@ -893,12 +1086,14 @@ void SInvaderAuthoringPanel::BuildLayout()
 			[
 				SNew(SButton)
 				.Text(FText::FromString("Validate Selected"))
+				.ToolTipText(FText::FromString("Validate the currently selected wave or stage row."))
 				.OnClicked(this, &SInvaderAuthoringPanel::OnValidateSelected)
 			]
 			+ SHorizontalBox::Slot().AutoWidth()
 			[
 				SNew(SButton)
 				.Text(FText::FromString("Validate All"))
+				.ToolTipText(FText::FromString("Validate all wave and stage rows in loaded tables."))
 				.OnClicked(this, &SInvaderAuthoringPanel::OnValidateAll)
 			]
 		]
@@ -926,7 +1121,12 @@ void SInvaderAuthoringPanel::BuildLayout()
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 					[
 						SAssignNew(RenameTextBox, SEditableTextBox)
-						.HintText(FText::FromString("Rename selected row"))
+						.HintText_Lambda([this]()
+						{
+							return Mode == EAuthoringMode::Waves
+								? FText::FromString("Name Wave")
+								: FText::FromString("Name Stage");
+						})
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 					[
@@ -948,7 +1148,9 @@ void SInvaderAuthoringPanel::BuildLayout()
 					[
 						SAssignNew(RowListView, SListView<TSharedPtr<FRowNameItem>>)
 						.ListItemsSource(&RowItems)
+						.SelectionMode(ESelectionMode::Multi)
 						.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateRowNameRow)
+						.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenRowContextMenu)
 						.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleRowListSelectionChanged)
 					]
 				]
@@ -963,66 +1165,6 @@ void SInvaderAuthoringPanel::BuildLayout()
 					+ SWidgetSwitcher::Slot()
 					[
 						SNew(SVerticalBox)
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-						[
-							SNew(STextBlock)
-							.Visibility_Lambda([]()
-							{
-								return GetDefault<UARInvaderAuthoringEditorSettings>()->bShowApproximatePreviewBanner
-									? EVisibility::Visible
-									: EVisibility::Collapsed;
-							})
-							.Text(FText::FromString("Wave layout is approximate preview only. Verify behavior in PIE."))
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-						[
-							SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 8.f, 0.f)
-							[
-								SNew(SButton).Text(FText::FromString("Add Layer")).OnClicked(this, &SInvaderAuthoringPanel::OnAddLayer)
-							]
-							+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 8.f, 0.f)
-							[
-								SNew(SButton).Text(FText::FromString("Add Spawn"))
-								.OnClicked(this, &SInvaderAuthoringPanel::OnAddSpawnToLayer)
-							]
-							+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 8.f, 0.f)
-							[
-								SNew(SButton).Text(FText::FromString("Delete Spawn"))
-								.OnClicked(this, &SInvaderAuthoringPanel::OnDeleteSelectedSpawn)
-							]
-							+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 8.f, 0.f)
-							[
-								SNew(SButton).Text(FText::FromString("Move Up"))
-								.OnClicked(this, &SInvaderAuthoringPanel::OnMoveSpawnUp)
-							]
-							+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 8.f, 0.f)
-							[
-								SNew(SButton).Text(FText::FromString("Move Down"))
-								.OnClicked(this, &SInvaderAuthoringPanel::OnMoveSpawnDown)
-							]
-							+ SHorizontalBox::Slot().AutoWidth()
-							[
-								SNew(SCheckBox)
-								.IsChecked_Lambda([this]()
-								{
-									return GetDefault<UARInvaderAuthoringEditorSettings>()->bHideOtherLayersInWavePreview ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState NewState)
-								{
-									UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
-									Settings->bHideOtherLayersInWavePreview = (NewState == ECheckBoxState::Checked);
-									Settings->SaveConfig();
-									if (WaveCanvas.IsValid())
-									{
-										WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
-									}
-								})
-								[
-									SNew(STextBlock).Text(FText::FromString("Hide other layers"))
-								]
-							]
-						]
 						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 						[
 							SAssignNew(PreviewSlider, SSlider)
@@ -1050,19 +1192,78 @@ void SInvaderAuthoringPanel::BuildLayout()
 							SNew(SSplitter)
 							+ SSplitter::Slot().Value(0.45f)
 							[
-								SAssignNew(LayerListView, SListView<TSharedPtr<FLayerItem>>)
-								.ListItemsSource(&LayerItems)
-								.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateLayerRow)
-								.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleLayerSelectionChanged)
+								SNew(SVerticalBox)
+								+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+								[
+									SNew(SHorizontalBox)
+									+ SHorizontalBox::Slot().FillWidth(1.f)
+									[
+										SNew(STextBlock).Text(FText::FromString("Wave Layers"))
+									]
+									+ SHorizontalBox::Slot().AutoWidth().Padding(8.f, 0.f, 0.f, 0.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("+"))
+										.ToolTipText(FText::FromString("Add a new spawn delay layer."))
+										.OnClicked(this, &SInvaderAuthoringPanel::OnAddLayer)
+									]
+									+ SHorizontalBox::Slot().AutoWidth().Padding(8.f, 0.f, 0.f, 0.f)
+									[
+										SNew(SCheckBox)
+										.IsChecked_Lambda([this]()
+										{
+											return GetDefault<UARInvaderAuthoringEditorSettings>()->bHideOtherLayersInWavePreview ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+										})
+										.OnCheckStateChanged_Lambda([this](ECheckBoxState NewState)
+										{
+											UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
+											Settings->bHideOtherLayersInWavePreview = (NewState == ECheckBoxState::Checked);
+											Settings->SaveConfig();
+											if (WaveCanvas.IsValid())
+											{
+												WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+											}
+										})
+										[
+											SNew(STextBlock).Text(FText::FromString("Hide Other Layers"))
+										]
+									]
+								]
+								+ SVerticalBox::Slot().FillHeight(1.f)
+								[
+									SAssignNew(LayerListView, SListView<TSharedPtr<FLayerItem>>)
+									.ListItemsSource(&LayerItems)
+									.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateLayerRow)
+									.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleLayerSelectionChanged)
+								]
 							]
 							+ SSplitter::Slot().Value(0.55f)
 							[
-								SAssignNew(SpawnListView, SListView<TSharedPtr<FSpawnItem>>)
-								.ListItemsSource(&SpawnItems)
-								.SelectionMode(ESelectionMode::Multi)
-								.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateSpawnRow)
-								.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenSpawnContextMenu)
-								.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleSpawnSelectionChanged)
+								SNew(SVerticalBox)
+								+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+								[
+									SNew(SHorizontalBox)
+									+ SHorizontalBox::Slot().FillWidth(1.f)
+									[
+										SNew(STextBlock).Text(FText::FromString("Spawns"))
+									]
+									+ SHorizontalBox::Slot().AutoWidth().Padding(6.f, 0.f, 0.f, 0.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Delete"))
+										.ToolTipText(FText::FromString("Delete selected spawns in this layer list."))
+										.OnClicked(this, &SInvaderAuthoringPanel::OnDeleteSelectedSpawn)
+									]
+								]
+								+ SVerticalBox::Slot().FillHeight(1.f)
+								[
+									SAssignNew(SpawnListView, SListView<TSharedPtr<FSpawnItem>>)
+									.ListItemsSource(&SpawnItems)
+									.SelectionMode(ESelectionMode::Multi)
+									.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateSpawnRow)
+									.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenSpawnContextMenu)
+									.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleSpawnSelectionChanged)
+								]
 							]
 						]
 					]
@@ -1094,11 +1295,14 @@ void SInvaderAuthoringPanel::BuildLayout()
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 					[
-						SNew(STextBlock).Text(FText::FromString("Enemy Palette"))
+						SNew(STextBlock)
+						.Visibility_Lambda([this]() { return Mode == EAuthoringMode::Waves ? EVisibility::Visible : EVisibility::Collapsed; })
+						.Text(FText::FromString("Enemy Palette"))
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 					[
 						SAssignNew(PaletteHost, SBorder)
+						.Visibility_Lambda([this]() { return Mode == EAuthoringMode::Waves ? EVisibility::Visible : EVisibility::Collapsed; })
 						[
 							BuildPaletteWidget()
 						]
@@ -1113,22 +1317,37 @@ void SInvaderAuthoringPanel::BuildLayout()
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 					[
-						SNew(STextBlock).Text(FText::FromString("Selected Spawn Details"))
+						SNew(STextBlock)
+						.Visibility_Lambda([this]() { return Mode == EAuthoringMode::Waves ? EVisibility::Visible : EVisibility::Collapsed; })
+						.Text(FText::FromString("Selected Spawn Details"))
 					]
 					+ SVerticalBox::Slot().FillHeight(0.28f).Padding(0.f, 0.f, 0.f, 6.f)
 					[
-						SpawnDetailsView.ToSharedRef()
+						SNew(SBox)
+						.Visibility_Lambda([this]() { return Mode == EAuthoringMode::Waves ? EVisibility::Visible : EVisibility::Collapsed; })
+						[
+							SpawnDetailsView.ToSharedRef()
+						]
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+					+ SVerticalBox::Slot().AutoHeight()
 					[
-						SNew(STextBlock).Text(FText::FromString("Validation Issues"))
-					]
-					+ SVerticalBox::Slot().FillHeight(0.27f).Padding(0.f, 0.f, 0.f, 6.f)
-					[
-						SAssignNew(IssueListView, SListView<TSharedPtr<FInvaderAuthoringIssue>>)
-						.ListItemsSource(&IssueItems)
-						.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateIssueRow)
-						.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleIssueSelectionChanged)
+						SAssignNew(ValidationIssuesArea, SExpandableArea)
+						.HeaderContent()
+						[
+							SNew(STextBlock).Text(FText::FromString("Validation Issues"))
+						]
+						.BodyContent()
+						[
+							SNew(SBox)
+							.MinDesiredHeight(120.f)
+							.MaxDesiredHeight(220.f)
+							[
+								SAssignNew(IssueListView, SListView<TSharedPtr<FInvaderAuthoringIssue>>)
+								.ListItemsSource(&IssueItems)
+								.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateIssueRow)
+								.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleIssueSelectionChanged)
+							]
+						]
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 					[
@@ -1627,12 +1846,6 @@ void SInvaderAuthoringPanel::MarkTableDirty(UDataTable* Table)
 		return;
 	}
 	Table->MarkPackageDirty();
-
-	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
-	if (ToolingSettings && ToolingSettings->bAutoSaveTablesOnEdit)
-	{
-		SaveTable(Table, false);
-	}
 }
 
 void SInvaderAuthoringPanel::SaveTable(UDataTable* Table, bool bPromptForCheckout)
@@ -1763,7 +1976,8 @@ void SInvaderAuthoringPanel::CreateTableBackup(UDataTable* Table, const FString&
 	FSavePackageArgs SaveArgs;
 	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
 	SaveArgs.Error = GError;
-	SaveArgs.SaveFlags = SAVE_NoError;
+	// Backups are editor safety snapshots; save as autosave-style writes to avoid startup validator churn.
+	SaveArgs.SaveFlags = SAVE_NoError | SAVE_FromAutosave;
 	if (!UPackage::SavePackage(BackupPackage, BackupTable, *BackupFilename, SaveArgs))
 	{
 		SetStatus(FString::Printf(TEXT("Failed to save backup '%s'."), *BackupAssetName));
@@ -1801,6 +2015,45 @@ void SInvaderAuthoringPanel::SetStatus(const FString& Message)
 	{
 		StatusText->SetText(FText::FromString(Message));
 	}
+}
+
+TArray<FName> SInvaderAuthoringPanel::GetSelectedRowNames() const
+{
+	TArray<FName> Result;
+	if (!RowListView.IsValid())
+	{
+		return Result;
+	}
+
+	const TArray<TSharedPtr<FRowNameItem>> SelectedItems = RowListView->GetSelectedItems();
+	Result.Reserve(SelectedItems.Num());
+	for (const TSharedPtr<FRowNameItem>& Item : SelectedItems)
+	{
+		if (Item.IsValid() && !Item->RowName.IsNone())
+		{
+			Result.AddUnique(Item->RowName);
+		}
+	}
+	if (Result.IsEmpty())
+	{
+		const FName Fallback = Mode == EAuthoringMode::Waves ? SelectedWaveRow : SelectedStageRow;
+		if (!Fallback.IsNone())
+		{
+			Result.Add(Fallback);
+		}
+	}
+	return Result;
+}
+
+FName SInvaderAuthoringPanel::GetPrimarySelectedRowName() const
+{
+	const TArray<FName> SelectedRows = GetSelectedRowNames();
+	if (!SelectedRows.IsEmpty())
+	{
+		return SelectedRows[0];
+	}
+
+	return Mode == EAuthoringMode::Waves ? SelectedWaveRow : SelectedStageRow;
 }
 
 void SInvaderAuthoringPanel::SetMode(EAuthoringMode NewMode)
@@ -1920,17 +2173,20 @@ FReply SInvaderAuthoringPanel::OnCreateRow()
 
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringCreateRow", "Create Invader Row"));
 	Table->Modify();
+	const FString RequestedName = RenameTextBox.IsValid() ? RenameTextBox->GetText().ToString().TrimStartAndEnd() : FString();
 
 	if (Mode == EAuthoringMode::Waves)
 	{
-		const FName RowName = MakeUniqueRowName(Table, TEXT("Wave_New"));
+		const FString BaseName = RequestedName.IsEmpty() ? FString(TEXT("Wave_New")) : RequestedName;
+		const FName RowName = MakeUniqueRowName(Table, BaseName);
 		FARWaveDefRow NewRow;
 		Table->AddRow(RowName, NewRow);
 		SelectedWaveRow = RowName;
 	}
 	else
 	{
-		const FName RowName = MakeUniqueRowName(Table, TEXT("Stage_New"));
+		const FString BaseName = RequestedName.IsEmpty() ? FString(TEXT("Stage_New")) : RequestedName;
+		const FName RowName = MakeUniqueRowName(Table, BaseName);
 		FARStageDefRow NewRow;
 		Table->AddRow(RowName, NewRow);
 		SelectedStageRow = RowName;
@@ -1939,6 +2195,10 @@ FReply SInvaderAuthoringPanel::OnCreateRow()
 	MarkTableDirty(Table);
 	RefreshRowItems();
 	RefreshDetailsObjects();
+	if (!RequestedName.IsEmpty() && RenameTextBox.IsValid())
+	{
+		RenameTextBox->SetText(FText::GetEmpty());
+	}
 	SetStatus(TEXT("Created new row."));
 	return FReply::Handled();
 }
@@ -1954,37 +2214,58 @@ FReply SInvaderAuthoringPanel::OnDuplicateRow()
 
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringDuplicateRow", "Duplicate Invader Row"));
 	Table->Modify();
+	const TArray<FName> SourceRows = GetSelectedRowNames();
+	if (SourceRows.IsEmpty())
+	{
+		SetStatus(TEXT("Select one or more rows first."));
+		return FReply::Handled();
+	}
+
+	int32 DuplicatedCount = 0;
 
 	if (Mode == EAuthoringMode::Waves)
 	{
-		const FARWaveDefRow* Source = Table->FindRow<FARWaveDefRow>(SelectedWaveRow, TEXT("Duplicate"), false);
-		if (!Source)
+		for (const FName SourceRow : SourceRows)
 		{
-			SetStatus(TEXT("Select a wave row first."));
-			return FReply::Handled();
-		}
+			const FARWaveDefRow* Source = Table->FindRow<FARWaveDefRow>(SourceRow, TEXT("Duplicate"), false);
+			if (!Source)
+			{
+				continue;
+			}
 
-		const FName NewName = MakeUniqueRowName(Table, SelectedWaveRow.ToString() + TEXT("_Copy"));
-		Table->AddRow(NewName, *Source);
-		SelectedWaveRow = NewName;
+			const FName NewName = MakeUniqueRowName(Table, SourceRow.ToString() + TEXT("_Copy"));
+			Table->AddRow(NewName, *Source);
+			SelectedWaveRow = NewName;
+			++DuplicatedCount;
+		}
 	}
 	else
 	{
-		const FARStageDefRow* Source = Table->FindRow<FARStageDefRow>(SelectedStageRow, TEXT("Duplicate"), false);
-		if (!Source)
+		for (const FName SourceRow : SourceRows)
 		{
-			SetStatus(TEXT("Select a stage row first."));
-			return FReply::Handled();
+			const FARStageDefRow* Source = Table->FindRow<FARStageDefRow>(SourceRow, TEXT("Duplicate"), false);
+			if (!Source)
+			{
+				continue;
+			}
+
+			const FName NewName = MakeUniqueRowName(Table, SourceRow.ToString() + TEXT("_Copy"));
+			Table->AddRow(NewName, *Source);
+			SelectedStageRow = NewName;
+			++DuplicatedCount;
 		}
-		const FName NewName = MakeUniqueRowName(Table, SelectedStageRow.ToString() + TEXT("_Copy"));
-		Table->AddRow(NewName, *Source);
-		SelectedStageRow = NewName;
+	}
+
+	if (DuplicatedCount <= 0)
+	{
+		SetStatus(TEXT("No valid selected rows to duplicate."));
+		return FReply::Handled();
 	}
 
 	MarkTableDirty(Table);
 	RefreshRowItems();
 	RefreshDetailsObjects();
-	SetStatus(TEXT("Duplicated row."));
+	SetStatus(FString::Printf(TEXT("Duplicated %d row(s)."), DuplicatedCount));
 	return FReply::Handled();
 }
 
@@ -2041,6 +2322,10 @@ FReply SInvaderAuthoringPanel::OnRenameRow()
 	MarkTableDirty(Table);
 	RefreshRowItems();
 	RefreshDetailsObjects();
+	if (RenameTextBox.IsValid())
+	{
+		RenameTextBox->SetText(FText::GetEmpty());
+	}
 	SetStatus(FString::Printf(TEXT("Renamed row '%s' -> '%s'."), *OldName.ToString(), *NewName.ToString()));
 	return FReply::Handled();
 }
@@ -2053,8 +2338,8 @@ FReply SInvaderAuthoringPanel::OnDeleteRow()
 		return FReply::Handled();
 	}
 
-	const FName Target = Mode == EAuthoringMode::Waves ? SelectedWaveRow : SelectedStageRow;
-	if (Target.IsNone())
+	const TArray<FName> Targets = GetSelectedRowNames();
+	if (Targets.IsEmpty())
 	{
 		SetStatus(TEXT("Select a row first."));
 		return FReply::Handled();
@@ -2062,7 +2347,20 @@ FReply SInvaderAuthoringPanel::OnDeleteRow()
 
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringDeleteRow", "Delete Invader Row"));
 	Table->Modify();
-	Table->RemoveRow(Target);
+	int32 DeletedCount = 0;
+	for (const FName Target : Targets)
+	{
+		if (Table->GetRowMap().Contains(Target))
+		{
+			Table->RemoveRow(Target);
+			++DeletedCount;
+		}
+	}
+	if (DeletedCount <= 0)
+	{
+		SetStatus(TEXT("No valid selected rows to delete."));
+		return FReply::Handled();
+	}
 	MarkTableDirty(Table);
 
 	if (Mode == EAuthoringMode::Waves)
@@ -2078,7 +2376,7 @@ FReply SInvaderAuthoringPanel::OnDeleteRow()
 
 	RefreshRowItems();
 	RefreshDetailsObjects();
-	SetStatus(FString::Printf(TEXT("Deleted row '%s'."), *Target.ToString()));
+	SetStatus(FString::Printf(TEXT("Deleted %d row(s)."), DeletedCount));
 	return FReply::Handled();
 }
 
@@ -2307,6 +2605,114 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildSpawnContextMenu()
 	return MenuBuilder.MakeWidget();
 }
 
+void SInvaderAuthoringPanel::ReorderSpawnByDrop(int32 SourceSpawnIndex, int32 TargetSpawnIndex, EItemDropZone DropZone)
+{
+	FARWaveDefRow* Row = GetSelectedWaveRow();
+	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SourceSpawnIndex) || !Row->EnemySpawns.IsValidIndex(TargetSpawnIndex))
+	{
+		return;
+	}
+
+	if (SourceSpawnIndex == TargetSpawnIndex)
+	{
+		return;
+	}
+
+	const float SourceDelay = Row->EnemySpawns[SourceSpawnIndex].SpawnDelay;
+	const float TargetDelay = Row->EnemySpawns[TargetSpawnIndex].SpawnDelay;
+	if (!FMath::IsNearlyEqual(SourceDelay, TargetDelay, LayerMatchTolerance))
+	{
+		return;
+	}
+
+	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringDragReorderSpawn", "Reorder Wave Spawn"));
+	WaveTable->Modify();
+
+	FARWaveEnemySpawnDef Moved = Row->EnemySpawns[SourceSpawnIndex];
+	Row->EnemySpawns.RemoveAt(SourceSpawnIndex);
+
+	int32 InsertIndex = TargetSpawnIndex;
+	if (DropZone == EItemDropZone::BelowItem)
+	{
+		InsertIndex = (SourceSpawnIndex < TargetSpawnIndex) ? TargetSpawnIndex : (TargetSpawnIndex + 1);
+	}
+	else
+	{
+		InsertIndex = (SourceSpawnIndex < TargetSpawnIndex) ? (TargetSpawnIndex - 1) : TargetSpawnIndex;
+	}
+	InsertIndex = FMath::Clamp(InsertIndex, 0, Row->EnemySpawns.Num());
+	Row->EnemySpawns.Insert(Moved, InsertIndex);
+
+	SelectedSpawnIndices.Reset();
+	SelectedSpawnIndices.Add(InsertIndex);
+	SelectedSpawnIndex = InsertIndex;
+
+	MarkTableDirty(WaveTable);
+	RefreshLayerItems();
+	RefreshSpawnItems();
+	SetStatus(FString::Printf(TEXT("Reordered spawn to index %d."), InsertIndex));
+}
+
+TSharedPtr<SWidget> SInvaderAuthoringPanel::OnOpenRowContextMenu()
+{
+	if (!RowListView.IsValid())
+	{
+		return nullptr;
+	}
+
+	const TArray<FName> SelectedRows = GetSelectedRowNames();
+	if (SelectedRows.IsEmpty())
+	{
+		return nullptr;
+	}
+
+	return BuildRowContextMenu();
+}
+
+TSharedRef<SWidget> SInvaderAuthoringPanel::BuildRowContextMenu()
+{
+	const TArray<FName> SelectedRows = GetSelectedRowNames();
+	const bool bSingleSelection = (SelectedRows.Num() == 1);
+	const bool bWaves = (Mode == EAuthoringMode::Waves);
+	const FText TypeText = bWaves ? FText::FromString("Wave") : FText::FromString("Stage");
+	const FText NameActionText = bWaves ? FText::FromString("Name Wave") : FText::FromString("Name Stage");
+	const FText NameActionDescText = bWaves
+		? FText::FromString("Set the selected wave name from the Name Wave field.")
+		: FText::FromString("Set the selected stage name from the Name Stage field.");
+
+	FMenuBuilder MenuBuilder(true, nullptr);
+	MenuBuilder.BeginSection("RowActions", TypeText);
+	MenuBuilder.AddMenuEntry(
+		NameActionText,
+		NameActionDescText,
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				OnRenameRow();
+			}),
+			FCanExecuteAction::CreateLambda([bSingleSelection]() { return bSingleSelection; })));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Duplicate"),
+		FText::FromString("Duplicate selected row(s)."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			OnDuplicateRow();
+		})));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Delete"),
+		FText::FromString("Delete selected row(s)."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			OnDeleteRow();
+		})));
+	MenuBuilder.EndSection();
+
+	return MenuBuilder.MakeWidget();
+}
+
 void SInvaderAuthoringPanel::MoveSpawnWithinLayer(int32 Direction)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
@@ -2529,7 +2935,16 @@ void SInvaderAuthoringPanel::HandleCanvasOpenSpawnContextMenu(int32 SpawnIndex, 
 void SInvaderAuthoringPanel::HandleCanvasBeginSpawnDrag()
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
-	if (!Row || !WaveTable || SelectedSpawnIndices.IsEmpty())
+	if (!Row || !WaveTable)
+	{
+		return;
+	}
+
+	if (SelectedSpawnIndices.IsEmpty() && SelectedSpawnIndex != INDEX_NONE && Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		SelectedSpawnIndices.Add(SelectedSpawnIndex);
+	}
+	if (SelectedSpawnIndices.IsEmpty())
 	{
 		return;
 	}
@@ -2570,6 +2985,11 @@ void SInvaderAuthoringPanel::HandleCanvasEndSpawnDrag()
 	{
 		SpawnDragTransaction->Cancel();
 	}
+	else
+	{
+		MarkTableDirty(WaveTable);
+		RefreshDetailsObjects();
+	}
 
 	SpawnDragTransaction.Reset();
 	SpawnDragStartOffsets.Reset();
@@ -2608,7 +3028,6 @@ void SInvaderAuthoringPanel::HandleCanvasSelectedSpawnsMoved(const FVector2D& Of
 		bSpawnDragChanged = true;
 	}
 
-	MarkTableDirty(WaveTable);
 	RefreshDetailsObjects();
 }
 
@@ -2680,7 +3099,7 @@ float SInvaderAuthoringPanel::GetMaxPreviewTime() const
 	{
 		MaxDelay = FMath::Max(MaxDelay, Spawn.SpawnDelay);
 	}
-	return FMath::Max(1.f, MaxDelay + FMath::Max(0.f, Row->EnterDuration + Row->ActiveDuration + Row->BerserkDuration));
+	return FMath::Max(1.f, MaxDelay + FMath::Max(0.f, Row->WaveDuration));
 }
 
 FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
@@ -2691,10 +3110,8 @@ FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
 		return FText::FromString(TEXT("No wave selected."));
 	}
 
-	const float EnterEnd = FMath::Max(0.f, Row->EnterDuration);
-	const float ActiveEnd = EnterEnd + FMath::Max(0.f, Row->ActiveDuration);
-	const float BerserkEnd = ActiveEnd + FMath::Max(0.f, Row->BerserkDuration);
-	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Enter [0-%.2f] Active [%.2f-%.2f] Berserk [%.2f-%.2f]"), PreviewTime, EnterEnd, EnterEnd, ActiveEnd, ActiveEnd, BerserkEnd));
+	const float ActiveEnd = FMath::Max(0.f, Row->WaveDuration);
+	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Active [0.00-%.2f] Berserk [%.2f-INF]"), PreviewTime, ActiveEnd, ActiveEnd));
 }
 
 void SInvaderAuthoringPanel::HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event)
@@ -2757,11 +3174,60 @@ void SInvaderAuthoringPanel::HandleSpawnPropertiesChanged(const FPropertyChanged
 	RefreshSpawnItems();
 }
 
-TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateRowNameRow(TSharedPtr<FRowNameItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const
+bool SInvaderAuthoringPanel::ShouldShowWaveDetailProperty(const FPropertyAndParent& PropertyAndParent) const
+{
+	if (Mode != EAuthoringMode::Waves)
+	{
+		return true;
+	}
+
+	const FName PropertyName = PropertyAndParent.Property.GetFName();
+	static const TSet<FName> HiddenWaveProperties =
+	{
+		TEXT("EntryMode"),
+		TEXT("BerserkDuration"),
+		TEXT("StageTags"),
+		TEXT("BannedArchetypeTags"),
+		TEXT("EnterDuration")
+	};
+
+	return !HiddenWaveProperties.Contains(PropertyName);
+}
+
+bool SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty(const FPropertyAndParent& PropertyAndParent) const
+{
+	if (Mode != EAuthoringMode::Waves)
+	{
+		return true;
+	}
+
+	const FName PropertyName = PropertyAndParent.Property.GetFName();
+	static const TSet<FName> HiddenSpawnProperties =
+	{
+		TEXT("bFormationLockEnter"),
+		TEXT("bFormationLockActive")
+	};
+
+	return !HiddenSpawnProperties.Contains(PropertyName);
+}
+
+TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateRowNameRow(TSharedPtr<FRowNameItem> Item, const TSharedRef<STableViewBase>& OwnerTable)
 {
 	return SNew(STableRow<TSharedPtr<FRowNameItem>>, OwnerTable)
 	[
-		SNew(STextBlock).Text(FText::FromName(Item.IsValid() ? Item->RowName : NAME_None))
+		SNew(SBorder)
+		.BorderImage(FAppStyle::GetBrush("NoBorder"))
+		.OnMouseButtonDown_Lambda([this, Item](const FGeometry&, const FPointerEvent& MouseEvent)
+		{
+			if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton && Item.IsValid() && RowListView.IsValid())
+			{
+				RowListView->SetSelection(Item, ESelectInfo::Direct);
+			}
+			return FReply::Unhandled();
+		})
+		[
+			SNew(STextBlock).Text(FText::FromName(Item.IsValid() ? Item->RowName : NAME_None))
+		]
 	];
 }
 
@@ -2793,12 +3259,65 @@ TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateLayerRow(TSharedPtr<FLay
 	];
 }
 
-TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateSpawnRow(TSharedPtr<FSpawnItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const
+TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateSpawnRow(TSharedPtr<FSpawnItem> Item, const TSharedRef<STableViewBase>& OwnerTable)
 {
 	const FString Label = Item.IsValid()
 		? FString::Printf(TEXT("#%d  %s  %s"), Item->SpawnIndex, *EnemyColorToName(Item->Color), *Item->EnemyClassName)
 		: TEXT("<invalid>");
 	return SNew(STableRow<TSharedPtr<FSpawnItem>>, OwnerTable)
+		.OnDragDetected_Lambda([Item, Label](const FGeometry&, const FPointerEvent& MouseEvent)
+		{
+			if (!Item.IsValid() || MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
+			{
+				return FReply::Unhandled();
+			}
+			return FReply::Handled().BeginDragDrop(FInvaderSpawnDragDropOp::New(Item->SpawnIndex, Label));
+		})
+		.OnCanAcceptDrop_Lambda([this, Item](const FDragDropEvent& DragDropEvent, EItemDropZone DropZone, TSharedPtr<FSpawnItem>)
+		{
+			(void)DropZone;
+			if (!Item.IsValid())
+			{
+				return TOptional<EItemDropZone>();
+			}
+
+			const TSharedPtr<FInvaderSpawnDragDropOp> DragOp = DragDropEvent.GetOperationAs<FInvaderSpawnDragDropOp>();
+			if (!DragOp.IsValid() || DragOp->SourceSpawnIndex == Item->SpawnIndex)
+			{
+				return TOptional<EItemDropZone>();
+			}
+
+			FARWaveDefRow* Row = GetSelectedWaveRow();
+			if (!Row || !Row->EnemySpawns.IsValidIndex(DragOp->SourceSpawnIndex) || !Row->EnemySpawns.IsValidIndex(Item->SpawnIndex))
+			{
+				return TOptional<EItemDropZone>();
+			}
+
+			const float SourceDelay = Row->EnemySpawns[DragOp->SourceSpawnIndex].SpawnDelay;
+			const float TargetDelay = Row->EnemySpawns[Item->SpawnIndex].SpawnDelay;
+			if (!FMath::IsNearlyEqual(SourceDelay, TargetDelay, LayerMatchTolerance))
+			{
+				return TOptional<EItemDropZone>();
+			}
+
+			return TOptional<EItemDropZone>(DropZone);
+		})
+		.OnAcceptDrop_Lambda([this, Item](const FDragDropEvent& DragDropEvent, EItemDropZone DropZone, TSharedPtr<FSpawnItem>)
+		{
+			if (!Item.IsValid())
+			{
+				return FReply::Unhandled();
+			}
+
+			const TSharedPtr<FInvaderSpawnDragDropOp> DragOp = DragDropEvent.GetOperationAs<FInvaderSpawnDragDropOp>();
+			if (!DragOp.IsValid())
+			{
+				return FReply::Unhandled();
+			}
+
+			ReorderSpawnByDrop(DragOp->SourceSpawnIndex, Item->SpawnIndex, DropZone);
+			return FReply::Handled();
+		})
 	[
 		SNew(STextBlock).Text(FText::FromString(Label))
 	];
@@ -3031,7 +3550,21 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 			{
 				if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 				{
-					SyncPaletteClassInContentBrowser(ClassPath);
+					FMenuBuilder MenuBuilder(true, nullptr);
+					MenuBuilder.AddMenuEntry(
+						FText::FromString(TEXT("Find in Content Browser")),
+						FText::FromString(TEXT("Sync Content Browser to this enemy Blueprint.")),
+						FSlateIcon(),
+						FUIAction(FExecuteAction::CreateLambda([this, ClassPath]()
+						{
+							SyncPaletteClassInContentBrowser(ClassPath);
+						})));
+					FSlateApplication::Get().PushMenu(
+						AsShared(),
+						FWidgetPath(),
+						MenuBuilder.MakeWidget(),
+						MouseEvent.GetScreenSpacePosition(),
+						FPopupTransitionEffect(FPopupTransitionEffect::ContextMenu));
 					return FReply::Handled();
 				}
 				return FReply::Unhandled();
@@ -3050,7 +3583,8 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 					})
 #endif
 					SNew(SButton)
-					.Text(FText::FromString(bFavorite ? TEXT("*") : TEXT("+")))
+					.Text(FText::FromString(bFavorite ? TEXT("★") : TEXT("☆")))
+					.ToolTipText(FText::FromString("Toggle favorite"))
 					.OnClicked_Lambda([this, ClassPath]()
 					{
 						ToggleFavoriteClass(ClassPath);
@@ -3061,7 +3595,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 			[
 				SNew(SButton)
 				.ToolTipText(FText::FromString("Cycle shape"))
-				.Text(FText::FromString(PaletteShapeShortName(ShapeCycle)))
+				.Text(FText::FromString(PaletteShapeGlyph(ShapeCycle)))
 				.OnClicked_Lambda([this, ClassPath]()
 				{
 					CyclePaletteShape(ClassPath);
@@ -3070,7 +3604,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 			]
 			+ SHorizontalBox::Slot().FillWidth(1.f).VAlign(VAlign_Center)
 			[
-				SNew(STextBlock).Text(FText::FromString(FString::Printf(TEXT("[%s] %s"), *PaletteShapeShortName(ShapeCycle), *ClassName)))
+				SNew(STextBlock).Text(FText::FromString(ClassName))
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
@@ -3318,9 +3852,9 @@ void SInvaderAuthoringPanel::ValidateWaveRow(const FName RowName, const FARWaveD
 	{
 		OutIssues.Add({ false, true, RowName, TEXT("RepeatWeightPenalty is outside runtime clamp range [0.01, 1.0].") });
 	}
-	if (!Row.BannedArchetypeTags.IsEmpty())
+	if (Row.WaveDuration <= 0.f)
 	{
-		OutIssues.Add({ false, true, RowName, TEXT("BannedArchetypeTags is authored but not currently enforced by runtime selection.") });
+		OutIssues.Add({ false, true, RowName, TEXT("WaveDuration <= 0. Runtime will default to 16 seconds.") });
 	}
 	for (int32 i = 0; i < Row.EnemySpawns.Num(); ++i)
 	{
@@ -3380,6 +3914,10 @@ void SInvaderAuthoringPanel::RefreshIssues()
 	{
 		IssueListView->RequestListRefresh();
 	}
+	if (ValidationIssuesArea.IsValid() && IssueItems.IsEmpty())
+	{
+		ValidationIssuesArea->SetExpanded(false);
+	}
 }
 
 void SInvaderAuthoringPanel::HandleObjectTransacted(UObject* Object, const FTransactionObjectEvent& Event)
@@ -3409,12 +3947,14 @@ FReply SInvaderAuthoringPanel::OnStartOrAttachPIE()
 	if (GetPIEWorld())
 	{
 		SetStatus(TEXT("Attached to existing PIE session."));
+		SchedulePIESaveBootstrap();
 		return FReply::Handled();
 	}
 
 	if (EnsurePIESession(true))
 	{
 		SetStatus(TEXT("PIE launch requested..."));
+		SchedulePIESaveBootstrap();
 	}
 	else
 	{
@@ -3425,6 +3965,8 @@ FReply SInvaderAuthoringPanel::OnStartOrAttachPIE()
 
 FReply SInvaderAuthoringPanel::OnStopPIE()
 {
+	bPendingPIESaveBootstrap = false;
+	PIESaveLoadedBridge.Reset();
 	if (GEditor)
 	{
 		GEditor->RequestEndPlayMap();
@@ -3443,6 +3985,11 @@ FReply SInvaderAuthoringPanel::OnStartRun()
 	if (!GetPIEWorld())
 	{
 		SetStatus(TEXT("PIE launch requested. Run again once PIE is active."));
+		return FReply::Handled();
+	}
+	if (!GetPIEWorld()->GetAuthGameMode())
+	{
+		SetStatus(TEXT("PIE server world is not ready yet. Try Start Run again in a moment."));
 		return FReply::Handled();
 	}
 
@@ -3526,13 +4073,21 @@ bool SInvaderAuthoringPanel::EnsurePIESession(bool bStartIfNeeded)
 	}
 
 	UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
-	if (!Settings->DefaultTestMap.IsNull())
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	const bool bUseBootstrapLoadingMap = ToolingSettings
+		&& ToolingSettings->bEnablePIESaveBootstrap
+		&& !ToolingSettings->PIEBootstrapLoadingMap.IsNull();
+	const TSoftObjectPtr<UWorld> StartupMap = bUseBootstrapLoadingMap
+		? ToolingSettings->PIEBootstrapLoadingMap
+		: Settings->DefaultTestMap;
+
+	if (!StartupMap.IsNull())
 	{
-		const FSoftObjectPath MapPath = Settings->DefaultTestMap.ToSoftObjectPath();
+		const FSoftObjectPath MapPath = StartupMap.ToSoftObjectPath();
 		FString MapPackageName = MapPath.GetLongPackageName();
 		if (MapPackageName.IsEmpty())
 		{
-			MapPackageName = Settings->DefaultTestMap.ToString();
+			MapPackageName = StartupMap.ToString();
 		}
 		if (!UEditorLoadingAndSavingUtils::LoadMap(MapPackageName))
 		{
@@ -3552,9 +4107,255 @@ bool SInvaderAuthoringPanel::EnsurePIESession(bool bStartIfNeeded)
 	return true;
 }
 
+void SInvaderAuthoringPanel::SchedulePIESaveBootstrap()
+{
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	if (!ToolingSettings || !ToolingSettings->bEnablePIESaveBootstrap)
+	{
+		return;
+	}
+	if (bPendingPIESaveBootstrap)
+	{
+		return;
+	}
+
+	bPendingPIESaveBootstrap = true;
+	const TWeakPtr<SInvaderAuthoringPanel> WeakPanel = SharedThis(this);
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([WeakPanel](float)
+	{
+		const TSharedPtr<SInvaderAuthoringPanel> Pinned = WeakPanel.Pin();
+		if (!Pinned.IsValid())
+		{
+			return false;
+		}
+
+		if (!Pinned->bPendingPIESaveBootstrap)
+		{
+			return false;
+		}
+
+		if (!Pinned->GetPIEWorld())
+		{
+			return true;
+		}
+
+		Pinned->RunPIESaveBootstrap();
+		Pinned->bPendingPIESaveBootstrap = false;
+		return false;
+	}), 0.2f);
+}
+
+bool SInvaderAuthoringPanel::RunPIESaveBootstrap()
+{
+	UWorld* PIEWorld = GetPIEWorld();
+	if (!PIEWorld)
+	{
+		return false;
+	}
+
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	if (!ToolingSettings || !ToolingSettings->bEnablePIESaveBootstrap)
+	{
+		return false;
+	}
+
+	UGameInstance* GI = PIEWorld->GetGameInstance();
+	if (!GI)
+	{
+		SetStatus(TEXT("PIE save bootstrap failed: no GameInstance."));
+		return false;
+	}
+
+	UFunction* LoadFn = GI->FindFunction(FName(TEXT("LoadSave")));
+	if (!LoadFn)
+	{
+		SetStatus(TEXT("PIE save bootstrap failed: GameInstance function 'LoadSave' not found."));
+		return false;
+	}
+
+	TArray<uint8> ParamsBuffer;
+	void* ParamsPtr = nullptr;
+	if (LoadFn->ParmsSize > 0)
+	{
+		ParamsBuffer.SetNumZeroed(LoadFn->ParmsSize);
+		ParamsPtr = ParamsBuffer.GetData();
+
+		static const FName SlotNameParamName(TEXT("SlotName"));
+		static const FName SlotNumberParamName(TEXT("SlotNumber"));
+
+		for (TFieldIterator<FProperty> It(LoadFn); It; ++It)
+		{
+			FProperty* ParamProp = *It;
+			if (!ParamProp || !ParamProp->HasAnyPropertyFlags(CPF_Parm) || ParamProp->HasAnyPropertyFlags(CPF_ReturnParm))
+			{
+				continue;
+			}
+
+			void* ValuePtr = ParamProp->ContainerPtrToValuePtr<void>(ParamsPtr);
+			if (!ValuePtr)
+			{
+				continue;
+			}
+
+			if (ParamProp->GetFName() == SlotNameParamName)
+			{
+				if (FNameProperty* NameProp = CastField<FNameProperty>(ParamProp))
+				{
+					NameProp->SetPropertyValue(ValuePtr, ToolingSettings->PIELoadSlotName);
+				}
+				else if (FStrProperty* StrProp = CastField<FStrProperty>(ParamProp))
+				{
+					StrProp->SetPropertyValue(ValuePtr, ToolingSettings->PIELoadSlotName.ToString());
+				}
+			}
+			else if (ParamProp->GetFName() == SlotNumberParamName)
+			{
+				if (FIntProperty* IntProp = CastField<FIntProperty>(ParamProp))
+				{
+					IntProp->SetPropertyValue(ValuePtr, ToolingSettings->PIELoadSlotNumber);
+				}
+				else if (FInt64Property* Int64Prop = CastField<FInt64Property>(ParamProp))
+				{
+					Int64Prop->SetPropertyValue(ValuePtr, static_cast<int64>(ToolingSettings->PIELoadSlotNumber));
+				}
+			}
+		}
+	}
+
+	FString DebugMapPackageName;
+	const TSoftObjectPtr<UWorld> DebugMap = !ToolingSettings->PIEBootstrapDebugMap.IsNull()
+		? ToolingSettings->PIEBootstrapDebugMap
+		: GetDefault<UARInvaderAuthoringEditorSettings>()->DefaultTestMap;
+	if (!DebugMap.IsNull())
+	{
+		const FSoftObjectPath DebugMapPath = DebugMap.ToSoftObjectPath();
+		DebugMapPackageName = DebugMapPath.GetLongPackageName();
+		if (DebugMapPackageName.IsEmpty())
+		{
+			DebugMapPackageName = DebugMap.ToString();
+		}
+	}
+
+	if (DebugMapPackageName.IsEmpty())
+	{
+		SetStatus(TEXT("PIE save bootstrap loaded save (no debug travel map set)."));
+		return true;
+	}
+
+	const TWeakPtr<SInvaderAuthoringPanel> WeakPanel = SharedThis(this);
+	const TWeakObjectPtr<UGameInstance> WeakGI = GI;
+	const FString TravelMap = DebugMapPackageName;
+	const TSharedRef<bool> bTravelIssued = MakeShared<bool>(false);
+	auto TryTravel = [WeakPanel, TravelMap, bTravelIssued](const FString& ReasonPrefix) -> bool
+	{
+		if (*bTravelIssued)
+		{
+			return true;
+		}
+
+		const TSharedPtr<SInvaderAuthoringPanel> Pinned = WeakPanel.Pin();
+		if (!Pinned.IsValid())
+		{
+			return false;
+		}
+
+		UWorld* CurrentPIEWorld = Pinned->GetPIEWorld();
+		if (!CurrentPIEWorld)
+		{
+			return false;
+		}
+
+		UGameplayStatics::OpenLevel(CurrentPIEWorld, FName(*TravelMap), true);
+		Pinned->SetStatus(FString::Printf(TEXT("%s opening level '%s'."), *ReasonPrefix, *TravelMap));
+		Pinned->PIESaveLoadedBridge.Reset();
+		*bTravelIssued = true;
+		return true;
+	};
+
+	bool bSubscribedToSignal = false;
+	if (FMulticastDelegateProperty* LoadedSignalProperty = FindFProperty<FMulticastDelegateProperty>(GI->GetClass(), FName(TEXT("SignalOnGameLoaded"))))
+	{
+		UARInvaderPIESaveLoadedBridge* Bridge = NewObject<UARInvaderPIESaveLoadedBridge>(GetTransientPackage());
+		Bridge->Configure(FSimpleDelegate::CreateLambda([TryTravel]()
+		{
+			TryTravel(TEXT("PIE save bootstrap received SignalOnGameLoaded;"));
+		}));
+
+		FScriptDelegate ScriptDelegate;
+		ScriptDelegate.BindUFunction(Bridge, GET_FUNCTION_NAME_CHECKED(UARInvaderPIESaveLoadedBridge, HandleSignalOnGameLoaded));
+		LoadedSignalProperty->RemoveDelegate(ScriptDelegate, GI);
+		LoadedSignalProperty->AddDelegate(ScriptDelegate, GI);
+		PIESaveLoadedBridge.Reset(Bridge);
+		bSubscribedToSignal = true;
+		SetStatus(TEXT("PIE save bootstrap subscribed to SignalOnGameLoaded."));
+	}
+
+	GI->ProcessEvent(LoadFn, ParamsPtr);
+	if (*bTravelIssued)
+	{
+		return true;
+	}
+
+	const double StartTimeSeconds = FPlatformTime::Seconds();
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([WeakPanel, WeakGI, TryTravel, bTravelIssued, bSubscribedToSignal, StartTimeSeconds](float)
+	{
+		if (*bTravelIssued)
+		{
+			return false;
+		}
+
+		const TSharedPtr<SInvaderAuthoringPanel> Pinned = WeakPanel.Pin();
+		if (!Pinned.IsValid())
+		{
+			return false;
+		}
+		if (!Pinned->GetPIEWorld())
+		{
+			return true;
+		}
+
+		const double ElapsedSeconds = FPlatformTime::Seconds() - StartTimeSeconds;
+		const bool bTimedOut = ElapsedSeconds >= PIEBootstrapTimeoutSeconds;
+
+		if (bSubscribedToSignal)
+		{
+			if (!bTimedOut)
+			{
+				return true;
+			}
+			TryTravel(TEXT("PIE save bootstrap timed out waiting for SignalOnGameLoaded;"));
+			return false;
+		}
+
+		bool bHadSignal = false;
+		const bool bLoadComplete = IsPIESaveLoadComplete(WeakGI.Get(), bHadSignal);
+		const bool bFallbackReady = ElapsedSeconds >= PIEBootstrapFallbackDelaySeconds;
+		if (!(bLoadComplete || (!bHadSignal && bFallbackReady) || bTimedOut))
+		{
+			return true;
+		}
+
+		if (bTimedOut)
+		{
+			TryTravel(TEXT("PIE save bootstrap timeout waiting for load complete;"));
+		}
+		else if (bLoadComplete)
+		{
+			TryTravel(TEXT("PIE save bootstrap load complete;"));
+		}
+		else
+		{
+			TryTravel(TEXT("PIE save bootstrap load invoked (no completion signal detected);"));
+		}
+		return false;
+	}), PIEBootstrapPollInterval);
+
+	return true;
+}
+
 UWorld* SInvaderAuthoringPanel::GetPIEWorld() const
 {
-	if (GEditor && GEditor->PlayWorld)
+	if (GEditor && GEditor->PlayWorld && GEditor->PlayWorld->GetAuthGameMode())
 	{
 		return GEditor->PlayWorld;
 	}
@@ -3568,9 +4369,29 @@ UWorld* SInvaderAuthoringPanel::GetPIEWorld() const
 	{
 		if (Context.WorldType == EWorldType::PIE)
 		{
+			if (UWorld* World = Context.World())
+			{
+				if (World->GetAuthGameMode())
+				{
+					return World;
+				}
+			}
+		}
+	}
+
+	if (GEditor && GEditor->PlayWorld)
+	{
+		return GEditor->PlayWorld;
+	}
+
+	for (const FWorldContext& Context : GEngine->GetWorldContexts())
+	{
+		if (Context.WorldType == EWorldType::PIE)
+		{
 			return Context.World();
 		}
 	}
+
 	return nullptr;
 }
 
