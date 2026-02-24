@@ -123,14 +123,18 @@
 - Tab name: `AR_InvaderAuthoringTool`, display name `Invader Authoring Tool`.
 - Main menu entry: `Window -> Alien Ramen Invader Authoring`.
 - Data source is direct DataTable authoring (no intermediate asset format):
-- wave rows: `FARWaveDefRow` in `UARInvaderDirectorSettings::WaveDataTable`
-- stage rows: `FARStageDefRow` in `UARInvaderDirectorSettings::StageDataTable`
+- preferred source: `UARInvaderToolingSettings` (`Project Settings -> Alien Ramen -> Tooling`)
+- fallback source: `UARInvaderDirectorSettings` when tooling table refs are unset
+- wave rows: `FARWaveDefRow`
+- stage rows: `FARStageDefRow`
 - Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
 - Wave authoring model is delay-layered:
 - layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
 - same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
 - Palette contract:
-- auto-discovers `AAREnemyBase` subclasses (loaded/native + Blueprint generated classes)
+- scans Blueprint enemy classes under `UARInvaderToolingSettings::EnemiesFolder` (does not scan whole project)
+- excludes base class `AAREnemyBase` and transient skeleton/reinst classes
+- palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
 - favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
 - Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
@@ -155,3 +159,7 @@
 - `ARLog` is exported for cross-module use: `ALIENRAMEN_API DECLARE_LOG_CATEGORY_EXTERN(...)`.
 - Use `UToolMenus::TryGet()` pattern (not `UToolMenus::IsToolMenusAvailable()` in this engine branch).
 - `AlienRamen.cpp` include order must keep `AlienRamen.h` first.
+- UE 5.7 editor API compatibility for `ARInvaderAuthoringPanel`:
+- include `FileHelpers.h` for both `FEditorFileUtils` and `UEditorLoadingAndSavingUtils`
+- use `ULevelEditorPlaySettings` setters (`SetPlayNetMode`, `SetPlayNumberOfClients`, `SetRunUnderOneProcess`) instead of direct member access
+- `AlienRamenEditor.Build.cs` must include `GameplayTags` because authoring code copies row structs containing `FGameplayTagContainer`.
