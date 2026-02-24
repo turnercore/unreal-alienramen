@@ -118,6 +118,7 @@
 - when `bFormationLockEnter=true`, Entered event is dispatched once enemy reports formation-slot arrival (`SetReachedFormationSlot(true)`)
 - `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
 - `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
+- Formation slot index is runtime-only context on `AAREnemyBase` (`FormationSlotIndex`), assigned from deterministic spawn ordinal when the director spawns enemies.
 - Spawn edge behavior contract:
 - `Top` translates authored formation offscreen on `+X` while preserving formation geometry
 - `Left`/`Right` translate authored formation offscreen on `Y` edges while preserving formation geometry
