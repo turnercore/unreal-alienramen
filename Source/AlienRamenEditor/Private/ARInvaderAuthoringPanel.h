@@ -13,7 +13,7 @@ class UARInvaderWaveRowProxy;
 class UARInvaderStageRowProxy;
 class UARInvaderSpawnProxy;
 class SInvaderWaveCanvas;
-struct FSpawnTabArgs;
+class FSpawnTabArgs;
 class SDockTab;
 class ITableRow;
 class STableViewBase;
@@ -49,6 +49,8 @@ public:
 
 	void Construct(const FArguments& InArgs);
 	~SInvaderAuthoringPanel();
+	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual bool SupportsKeyboardFocus() const override { return true; }
 
 private:
 	enum class EAuthoringMode : uint8
@@ -130,11 +132,15 @@ private:
 	FReply OnAddLayer();
 	FReply OnAddSpawnToLayer();
 	FReply OnDeleteSelectedSpawn();
+	void SetSelectedSpawnColor(EAREnemyColor NewColor);
 	FReply OnMoveSpawnUp();
 	FReply OnMoveSpawnDown();
+	TSharedPtr<SWidget> OnOpenSpawnContextMenu();
+	TSharedRef<SWidget> BuildSpawnContextMenu();
 	void MoveSpawnWithinLayer(int32 Direction);
 	void UpdateLayerDelay(float OldDelay, float NewDelay);
 	void HandleCanvasSpawnSelected(int32 SpawnIndex);
+	void HandleCanvasOpenSpawnContextMenu(int32 SpawnIndex, const FVector2D& ScreenPosition);
 	void HandleCanvasBeginSpawnDrag(int32 SpawnIndex);
 	void HandleCanvasEndSpawnDrag();
 	void HandleCanvasSpawnMoved(int32 SpawnIndex, const FVector2D& NewOffset);
@@ -152,7 +158,7 @@ private:
 
 	// list callbacks
 	TSharedRef<ITableRow> OnGenerateRowNameRow(TSharedPtr<FRowNameItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
-	TSharedRef<ITableRow> OnGenerateLayerRow(TSharedPtr<FLayerItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
+	TSharedRef<ITableRow> OnGenerateLayerRow(TSharedPtr<FLayerItem> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	TSharedRef<ITableRow> OnGenerateSpawnRow(TSharedPtr<FSpawnItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
 	TSharedRef<ITableRow> OnGenerateIssueRow(TSharedPtr<FInvaderAuthoringIssue> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
 

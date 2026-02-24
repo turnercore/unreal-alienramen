@@ -2,6 +2,7 @@
 
 #include "ARInvaderAuthoringEditorProxies.h"
 #include "ARInvaderAuthoringEditorSettings.h"
+#include "ARInvaderToolingSettings.h"
 #include "AREnemyBase.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
@@ -10,11 +11,10 @@
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
 #include "Editor/UnrealEdEngine.h"
-#include "EditorFileUtils.h"
-#include "EditorLoadingAndSavingUtils.h"
+#include "FileHelpers.h"
 #include "Engine/Blueprint.h"
 #include "Engine/DataTable.h"
-#include "IAssetRegistry.h"
+#include "AssetRegistry/IAssetRegistry.h"
 #include "IDetailsView.h"
 #include "Modules/ModuleManager.h"
 #include "PlayInEditorDataTypes.h"
@@ -22,8 +22,9 @@
 #include "ScopedTransaction.h"
 #include "Settings/LevelEditorPlaySettings.h"
 #include "Styling/AppStyle.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "UObject/SoftObjectPath.h"
-#include "UObject/UObjectIterator.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SCheckBox.h"
@@ -41,6 +42,7 @@
 #include "Widgets/Views/STableRow.h"
 #include "Widgets/Layout/SWidgetSwitcher.h"
 #include "Misc/PackageName.h"
+#include "InputCoreTypes.h"
 
 namespace
 {
@@ -119,7 +121,70 @@ namespace
 		return BestDistSq <= FMath::Square(14.f) ? BestIndex : INDEX_NONE;
 	}
 
-	class SInvaderWaveCanvas final : public SLeafWidget
+	static bool IsPaletteClassSupported(const UClass* Class)
+	{
+		if (!Class)
+		{
+			return false;
+		}
+
+		if (!Class->IsChildOf(AAREnemyBase::StaticClass()) || Class == AAREnemyBase::StaticClass())
+		{
+			return false;
+		}
+
+		if (Class->HasAnyClassFlags(CLASS_Abstract | CLASS_Deprecated | CLASS_NewerVersionExists))
+		{
+			return false;
+		}
+
+		const FString Name = Class->GetName();
+		if (Name.StartsWith(TEXT("SKEL_")) || Name.StartsWith(TEXT("REINST_")))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	static FString MakePaletteClassDisplayName(const FSoftClassPath& ClassPath)
+	{
+		FString Name = FPackageName::ObjectPathToObjectName(ClassPath.ToString());
+
+		if (Name.RemoveFromEnd(TEXT("_C")))
+		{
+			// already stripped class suffix
+		}
+
+		if (Name.StartsWith(TEXT("SKEL_")))
+		{
+			Name.RightChopInline(5, EAllowShrinking::No);
+		}
+		if (Name.StartsWith(TEXT("REINST_")))
+		{
+			Name.RightChopInline(7, EAllowShrinking::No);
+		}
+
+		if (Name.StartsWith(TEXT("BP_EnemyBase_")))
+		{
+			Name.RightChopInline(13, EAllowShrinking::No);
+		}
+		else if (Name.StartsWith(TEXT("BP_EnermyBase_")))
+		{
+			Name.RightChopInline(14, EAllowShrinking::No);
+		}
+		else if (Name.StartsWith(TEXT("BP_")))
+		{
+			Name.RightChopInline(3, EAllowShrinking::No);
+		}
+
+		Name.ReplaceInline(TEXT("_"), TEXT(" "));
+		Name.TrimStartAndEndInline();
+		return Name.IsEmpty() ? FPackageName::ObjectPathToObjectName(ClassPath.ToString()) : Name;
+	}
+}
+
+class SInvaderWaveCanvas final : public SLeafWidget
 	{
 	public:
 		SLATE_BEGIN_ARGS(SInvaderWaveCanvas) {}
@@ -136,6 +201,7 @@ namespace
 			TFunction<int32()> InGetSelectedSpawnIndex,
 			TFunction<float()> InGetPreviewTime,
 			TFunction<void(int32)> InOnSpawnSelected,
+			TFunction<void(int32, const FVector2D&)> InOnOpenSpawnContextMenu,
 			TFunction<void(int32)> InOnBeginDragSpawn,
 			TFunction<void()> InOnEndDragSpawn,
 			TFunction<void(int32, const FVector2D&)> InOnSpawnMoved,
@@ -147,6 +213,7 @@ namespace
 			GetSelectedSpawnIndex = MoveTemp(InGetSelectedSpawnIndex);
 			GetPreviewTime = MoveTemp(InGetPreviewTime);
 			OnSpawnSelected = MoveTemp(InOnSpawnSelected);
+			OnOpenSpawnContextMenu = MoveTemp(InOnOpenSpawnContextMenu);
 			OnBeginDragSpawn = MoveTemp(InOnBeginDragSpawn);
 			OnEndDragSpawn = MoveTemp(InOnEndDragSpawn);
 			OnSpawnMoved = MoveTemp(InOnSpawnMoved);
@@ -261,16 +328,8 @@ namespace
 				return FReply::Unhandled();
 			}
 
-			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 			const FVector2D Local = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-			const int32 Closest = FindClosestSpawn(
-				WaveRow,
-				Local,
-				MyGeometry.GetLocalSize(),
-				Settings->GameplayBoundsMin,
-				Settings->GameplayBoundsMax,
-				GetSelectedLayerDelay ? GetSelectedLayerDelay() : 0.f,
-				GetHideOtherLayers ? GetHideOtherLayers() : false);
+			const int32 Closest = FindSpawnAtLocalPoint(WaveRow, MyGeometry, Local);
 
 			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 			{
@@ -284,6 +343,19 @@ namespace
 			}
 			else if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 			{
+				if (Closest != INDEX_NONE)
+				{
+					if (OnSpawnSelected)
+					{
+						OnSpawnSelected(Closest);
+					}
+					if (OnOpenSpawnContextMenu)
+					{
+						OnOpenSpawnContextMenu(Closest, MouseEvent.GetScreenSpacePosition());
+						return FReply::Handled();
+					}
+				}
+
 				if (OnAddSpawnAt)
 				{
 					OnAddSpawnAt(LocalToOffset(Local, MyGeometry.GetLocalSize()));
@@ -296,6 +368,26 @@ namespace
 
 		virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
 		{
+			if (GetWaveRow)
+			{
+				const FARWaveDefRow* WaveRow = GetWaveRow();
+				const FVector2D Local = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+				const int32 Closest = FindSpawnAtLocalPoint(WaveRow, MyGeometry, Local);
+				if (Closest != HoveredSpawnIndex)
+				{
+					HoveredSpawnIndex = Closest;
+					if (WaveRow && WaveRow->EnemySpawns.IsValidIndex(HoveredSpawnIndex) && WaveRow->EnemySpawns[HoveredSpawnIndex].EnemyClass)
+					{
+						const FString HoverName = MakePaletteClassDisplayName(FSoftClassPath(WaveRow->EnemySpawns[HoveredSpawnIndex].EnemyClass));
+						SetToolTipText(FText::FromString(HoverName));
+					}
+					else
+					{
+						SetToolTipText(FText::GetEmpty());
+					}
+				}
+			}
+
 			if (!MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton) || DraggedSpawnIndex == INDEX_NONE)
 			{
 				return FReply::Unhandled();
@@ -345,7 +437,32 @@ namespace
 			bStartedDragTransaction = false;
 		}
 
+		virtual void OnMouseLeave(const FPointerEvent& MouseEvent) override
+		{
+			SLeafWidget::OnMouseLeave(MouseEvent);
+			HoveredSpawnIndex = INDEX_NONE;
+			SetToolTipText(FText::GetEmpty());
+		}
+
 	private:
+		int32 FindSpawnAtLocalPoint(const FARWaveDefRow* WaveRow, const FGeometry& MyGeometry, const FVector2D& Local) const
+		{
+			if (!WaveRow)
+			{
+				return INDEX_NONE;
+			}
+
+			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+			return FindClosestSpawn(
+				WaveRow,
+				Local,
+				MyGeometry.GetLocalSize(),
+				Settings->GameplayBoundsMin,
+				Settings->GameplayBoundsMax,
+				GetSelectedLayerDelay ? GetSelectedLayerDelay() : 0.f,
+				GetHideOtherLayers ? GetHideOtherLayers() : false);
+		}
+
 		FVector2D LocalToOffset(const FVector2D& Local, const FVector2D& Size) const
 		{
 			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
@@ -367,15 +484,16 @@ namespace
 		TFunction<int32()> GetSelectedSpawnIndex;
 		TFunction<float()> GetPreviewTime;
 		TFunction<void(int32)> OnSpawnSelected;
+		TFunction<void(int32, const FVector2D&)> OnOpenSpawnContextMenu;
 		TFunction<void(int32)> OnBeginDragSpawn;
 		TFunction<void()> OnEndDragSpawn;
 		TFunction<void(int32, const FVector2D&)> OnSpawnMoved;
 		TFunction<void(const FVector2D&)> OnAddSpawnAt;
 
 		int32 DraggedSpawnIndex = INDEX_NONE;
+		int32 HoveredSpawnIndex = INDEX_NONE;
 		bool bStartedDragTransaction = false;
 	};
-}
 
 const FName ARInvaderAuthoringEditor::TabName(TEXT("AR_InvaderAuthoringTool"));
 
@@ -430,6 +548,26 @@ SInvaderAuthoringPanel::~SInvaderAuthoringPanel()
 	{
 		SpawnDetailsView->OnFinishedChangingProperties().RemoveAll(this);
 	}
+}
+
+FReply SInvaderAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	(void)MyGeometry;
+	const FKey Key = InKeyEvent.GetKey();
+	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
+	{
+		if (Mode == EAuthoringMode::Waves && SelectedSpawnIndex != INDEX_NONE)
+		{
+			return OnDeleteSelectedSpawn();
+		}
+
+		if (Mode == EAuthoringMode::Waves ? !SelectedWaveRow.IsNone() : !SelectedStageRow.IsNone())
+		{
+			return OnDeleteRow();
+		}
+	}
+
+	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
 
 void SInvaderAuthoringPanel::BuildLayout()
@@ -656,6 +794,7 @@ void SInvaderAuthoringPanel::BuildLayout()
 								SAssignNew(SpawnListView, SListView<TSharedPtr<FSpawnItem>>)
 								.ListItemsSource(&SpawnItems)
 								.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateSpawnRow)
+								.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenSpawnContextMenu)
 								.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleSpawnSelectionChanged)
 							]
 						]
@@ -688,7 +827,7 @@ void SInvaderAuthoringPanel::BuildLayout()
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 					[
-						SNew(STextBlock).Text(FText::FromString("Enemy Palette (Class + Color)"))
+						SNew(STextBlock).Text(FText::FromString("Enemy Palette"))
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 					[
@@ -697,9 +836,17 @@ void SInvaderAuthoringPanel::BuildLayout()
 							BuildPaletteWidget()
 						]
 					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+					[
+						SNew(STextBlock).Text(FText::FromString("Selected Row Details"))
+					]
 					+ SVerticalBox::Slot().FillHeight(0.45f).Padding(0.f, 0.f, 0.f, 6.f)
 					[
 						RowDetailsView.ToSharedRef()
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+					[
+						SNew(STextBlock).Text(FText::FromString("Selected Spawn Details"))
 					]
 					+ SVerticalBox::Slot().FillHeight(0.28f).Padding(0.f, 0.f, 0.f, 6.f)
 					[
@@ -792,6 +939,7 @@ void SInvaderAuthoringPanel::BuildLayout()
 			[this]() { return SelectedSpawnIndex; },
 			[this]() { return PreviewTime; },
 			[this](int32 SpawnIndex) { HandleCanvasSpawnSelected(SpawnIndex); },
+			[this](int32 SpawnIndex, const FVector2D& ScreenPos) { HandleCanvasOpenSpawnContextMenu(SpawnIndex, ScreenPos); },
 			[this](int32 SpawnIndex) { HandleCanvasBeginSpawnDrag(SpawnIndex); },
 			[this]() { HandleCanvasEndSpawnDrag(); },
 			[this](int32 SpawnIndex, const FVector2D& NewOffset) { HandleCanvasSpawnMoved(SpawnIndex, NewOffset); },
@@ -804,18 +952,37 @@ void SInvaderAuthoringPanel::RefreshTables()
 	WaveTable = nullptr;
 	StageTable = nullptr;
 
-	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	if (!Settings)
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	if (!ToolingSettings)
 	{
-		SetStatus(TEXT("Missing UARInvaderDirectorSettings."));
+		SetStatus(TEXT("Missing UARInvaderToolingSettings."));
 		return;
 	}
 
-	WaveTable = Settings->WaveDataTable.LoadSynchronous();
-	StageTable = Settings->StageDataTable.LoadSynchronous();
+	WaveTable = ToolingSettings->WaveDataTable.LoadSynchronous();
+	StageTable = ToolingSettings->StageDataTable.LoadSynchronous();
 	if (!WaveTable || !StageTable)
 	{
-		SetStatus(FString::Printf(TEXT("Failed loading tables from settings. Wave='%s' Stage='%s'"), *Settings->WaveDataTable.ToString(), *Settings->StageDataTable.ToString()));
+		const UARInvaderDirectorSettings* RuntimeSettings = GetDefault<UARInvaderDirectorSettings>();
+		if (RuntimeSettings)
+		{
+			if (!WaveTable)
+			{
+				WaveTable = RuntimeSettings->WaveDataTable.LoadSynchronous();
+			}
+			if (!StageTable)
+			{
+				StageTable = RuntimeSettings->StageDataTable.LoadSynchronous();
+			}
+		}
+	}
+
+	if (!WaveTable || !StageTable)
+	{
+		SetStatus(FString::Printf(
+			TEXT("Failed loading tables. Tooling Wave='%s' Stage='%s'."),
+			*ToolingSettings->WaveDataTable.ToString(),
+			*ToolingSettings->StageDataTable.ToString()));
 	}
 }
 
@@ -1063,7 +1230,9 @@ void SInvaderAuthoringPanel::RefreshSpawnItems()
 			Item->SpawnIndex = SpawnIndex;
 			Item->Delay = Spawn.SpawnDelay;
 			Item->Color = Spawn.EnemyColor;
-			Item->EnemyClassName = Spawn.EnemyClass ? Spawn.EnemyClass->GetName() : TEXT("<None>");
+			Item->EnemyClassName = Spawn.EnemyClass
+				? MakePaletteClassDisplayName(FSoftClassPath(Spawn.EnemyClass))
+				: TEXT("<None>");
 			SpawnItems.Add(Item);
 		}
 		break;
@@ -1237,6 +1406,17 @@ void SInvaderAuthoringPanel::SelectLayerByDelay(float Delay)
 void SInvaderAuthoringPanel::SelectSpawn(int32 SpawnIndex)
 {
 	SelectedSpawnIndex = SpawnIndex;
+	if (SpawnListView.IsValid())
+	{
+		for (const TSharedPtr<FSpawnItem>& Item : SpawnItems)
+		{
+			if (Item.IsValid() && Item->SpawnIndex == SelectedSpawnIndex)
+			{
+				SpawnListView->SetSelection(Item, ESelectInfo::Direct);
+				break;
+			}
+		}
+	}
 	RefreshDetailsObjects();
 	if (WaveCanvas.IsValid())
 	{
@@ -1520,6 +1700,81 @@ FReply SInvaderAuthoringPanel::OnDeleteSelectedSpawn()
 	return FReply::Handled();
 }
 
+void SInvaderAuthoringPanel::SetSelectedSpawnColor(EAREnemyColor NewColor)
+{
+	FARWaveDefRow* Row = GetSelectedWaveRow();
+	if (!Row || !WaveTable || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		return;
+	}
+
+	FARWaveEnemySpawnDef& Spawn = Row->EnemySpawns[SelectedSpawnIndex];
+	if (Spawn.EnemyColor == NewColor)
+	{
+		return;
+	}
+
+	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringSetSpawnColor", "Set Wave Spawn Color"));
+	WaveTable->Modify();
+	Spawn.EnemyColor = NewColor;
+	MarkTableDirty(WaveTable);
+	RefreshSpawnItems();
+	RefreshDetailsObjects();
+	if (WaveCanvas.IsValid())
+	{
+		WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+	}
+	SetStatus(FString::Printf(TEXT("Set selected spawn color: %s."), *EnemyColorToName(NewColor)));
+}
+
+TSharedPtr<SWidget> SInvaderAuthoringPanel::OnOpenSpawnContextMenu()
+{
+	if (Mode != EAuthoringMode::Waves || SelectedSpawnIndex == INDEX_NONE)
+	{
+		return nullptr;
+	}
+
+	FARWaveDefRow* Row = GetSelectedWaveRow();
+	if (!Row || !Row->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		return nullptr;
+	}
+
+	return BuildSpawnContextMenu();
+}
+
+TSharedRef<SWidget> SInvaderAuthoringPanel::BuildSpawnContextMenu()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+	MenuBuilder.BeginSection("SpawnActions", FText::FromString("Spawn"));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Set Color: Red"),
+		FText::FromString("Set selected spawn enemy color to Red."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EAREnemyColor::Red)));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Set Color: Blue"),
+		FText::FromString("Set selected spawn enemy color to Blue."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EAREnemyColor::Blue)));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Set Color: White"),
+		FText::FromString("Set selected spawn enemy color to White."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EAREnemyColor::White)));
+	MenuBuilder.AddMenuSeparator();
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Delete Spawn"),
+		FText::FromString("Delete selected spawn."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			OnDeleteSelectedSpawn();
+		})));
+	MenuBuilder.EndSection();
+	return MenuBuilder.MakeWidget();
+}
+
 void SInvaderAuthoringPanel::MoveSpawnWithinLayer(int32 Direction)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
@@ -1599,6 +1854,21 @@ void SInvaderAuthoringPanel::UpdateLayerDelay(float OldDelay, float NewDelay)
 void SInvaderAuthoringPanel::HandleCanvasSpawnSelected(int32 SpawnIndex)
 {
 	SelectSpawn(SpawnIndex);
+}
+
+void SInvaderAuthoringPanel::HandleCanvasOpenSpawnContextMenu(int32 SpawnIndex, const FVector2D& ScreenPosition)
+{
+	SelectSpawn(SpawnIndex);
+	TSharedPtr<SWidget> MenuWidget = OnOpenSpawnContextMenu();
+	if (MenuWidget.IsValid())
+	{
+		FSlateApplication::Get().PushMenu(
+			AsShared(),
+			FWidgetPath(),
+			MenuWidget.ToSharedRef(),
+			ScreenPosition,
+			FPopupTransitionEffect(FPopupTransitionEffect::ContextMenu));
+	}
 }
 
 void SInvaderAuthoringPanel::HandleCanvasBeginSpawnDrag(int32 SpawnIndex)
@@ -1811,7 +2081,7 @@ TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateRowNameRow(TSharedPtr<FR
 	];
 }
 
-TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateLayerRow(TSharedPtr<FLayerItem> Item, const TSharedRef<STableViewBase>& OwnerTable) const
+TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateLayerRow(TSharedPtr<FLayerItem> Item, const TSharedRef<STableViewBase>& OwnerTable)
 {
 	const FString Label = Item.IsValid() ? FString::Printf(TEXT("Delay %.2fs (%d spawns)"), Item->Delay, Item->Count) : TEXT("<invalid>");
 	return SNew(STableRow<TSharedPtr<FLayerItem>>, OwnerTable)
@@ -1985,7 +2255,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		FallbackEntry.EnemyClassPath = ClassPath;
 		FallbackEntry.Color = Color;
 		FallbackEntry.Label = FText::FromString(
-			FString::Printf(TEXT("%s %s"), *FPackageName::ObjectPathToObjectName(ClassPath.ToString()), *EnemyColorToName(Color)));
+			FString::Printf(TEXT("%s %s"), *MakePaletteClassDisplayName(ClassPath), *EnemyColorToName(Color)));
 		SetActivePaletteEntry(FallbackEntry);
 	};
 
@@ -1993,7 +2263,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 	for (const FPaletteClassRow& Row : PaletteClassRows)
 	{
 		const FSoftClassPath ClassPath = Row.ClassPath;
-		const FString ClassName = FPackageName::ObjectPathToObjectName(ClassPath.ToString());
+		const FString ClassName = MakePaletteClassDisplayName(ClassPath);
 		const bool bFavorite = Row.bFavorite;
 
 		Box->AddSlot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
@@ -2002,7 +2272,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 			+ SHorizontalBox::Slot().AutoWidth().Padding(0.f, 0.f, 4.f, 0.f)
 				[
 					SNew(SButton)
-					.Text(FText::FromString(bFavorite ? TEXT("Fav") : TEXT("+Fav")))
+					.Text(FText::FromString(bFavorite ? TEXT("★") : TEXT("☆")))
 					.OnClicked_Lambda([this, ClassPath]()
 					{
 						ToggleFavoriteClass(ClassPath);
@@ -2061,25 +2331,22 @@ void SInvaderAuthoringPanel::RefreshPalette()
 	PaletteEntries.Reset();
 
 	TSet<FSoftClassPath> UniqueClasses;
-	for (TObjectIterator<UClass> It; It; ++It)
-	{
-		UClass* Cls = *It;
-		if (!Cls || !Cls->IsChildOf(AAREnemyBase::StaticClass()))
-		{
-			continue;
-		}
-		if (Cls->HasAnyClassFlags(CLASS_Abstract | CLASS_Deprecated | CLASS_NewerVersionExists))
-		{
-			continue;
-		}
-		UniqueClasses.Add(FSoftClassPath(Cls));
-	}
-
 	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
 	FARFilter Filter;
 	Filter.ClassPaths.Add(UBlueprint::StaticClass()->GetClassPathName());
 	Filter.bRecursiveClasses = true;
-	Filter.PackagePaths.Add(TEXT("/Game"));
+	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
+	FString EnemyFolder = ToolingSettings ? ToolingSettings->EnemiesFolder.Path : FString();
+	if (EnemyFolder.IsEmpty())
+	{
+		EnemyFolder = TEXT("/Game");
+	}
+	if (!EnemyFolder.StartsWith(TEXT("/")))
+	{
+		EnemyFolder = FString(TEXT("/")) + EnemyFolder;
+	}
+	EnemyFolder.RemoveFromEnd(TEXT("/"));
+	Filter.PackagePaths.Add(*EnemyFolder);
 	Filter.bRecursivePaths = true;
 
 	TArray<FAssetData> Assets;
@@ -2112,9 +2379,7 @@ void SInvaderAuthoringPanel::RefreshPalette()
 				LoadedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
 			}
 
-			bIsCompatibleEnemyClass = LoadedClass
-				&& LoadedClass->IsChildOf(AAREnemyBase::StaticClass())
-				&& !LoadedClass->HasAnyClassFlags(CLASS_Abstract);
+			bIsCompatibleEnemyClass = IsPaletteClassSupported(LoadedClass);
 			EnemyPaletteClassCompatibilityCache.Add(ClassPath, bIsCompatibleEnemyClass);
 		}
 
@@ -2139,7 +2404,7 @@ void SInvaderAuthoringPanel::RefreshPalette()
 			Entry.EnemyClassPath = ClassPath;
 			Entry.Color = Color;
 			Entry.bFavorite = Favorites.Contains(ClassPath);
-			Entry.Label = FText::FromString(FString::Printf(TEXT("%s %s"), *FPackageName::ObjectPathToObjectName(ClassPath.ToString()), *EnemyColorToName(Color)));
+			Entry.Label = FText::FromString(FString::Printf(TEXT("%s %s"), *MakePaletteClassDisplayName(ClassPath), *EnemyColorToName(Color)));
 			PaletteEntries.Add(Entry);
 		}
 	}
@@ -2464,9 +2729,9 @@ bool SInvaderAuthoringPanel::EnsurePIESession(bool bStartIfNeeded)
 	}
 
 	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
-	PlaySettings->PlayNetMode = EPlayNetMode::PIE_ListenServer;
-	PlaySettings->PlayNumberOfClients = 1;
-	PlaySettings->RunUnderOneProcess = true;
+	PlaySettings->SetPlayNetMode(EPlayNetMode::PIE_ListenServer);
+	PlaySettings->SetPlayNumberOfClients(1);
+	PlaySettings->SetRunUnderOneProcess(true);
 	PlaySettings->SaveConfig();
 
 	FRequestPlaySessionParams Params;
