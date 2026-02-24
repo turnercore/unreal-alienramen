@@ -58,7 +58,7 @@ public:
 	FVector SpawnOrigin = FVector::ZeroVector;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
-	float SpawnOffscreenDistance = 1400.f;
+	float SpawnOffscreenDistance = 350.f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	float SpawnLaneSpacing = 220.f;

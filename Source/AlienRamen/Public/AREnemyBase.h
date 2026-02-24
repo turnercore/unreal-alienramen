@@ -80,6 +80,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
 	bool GetFormationLockActive() const { return bFormationLockActive; }
+	
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	bool HasEnteredGameplayScreen() const { return bHasEnteredGameplayScreen; }
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	bool HasReachedFormationSlot() const { return bReachedFormationSlot; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	void SetReachedFormationSlot(bool bInReachedFormationSlot);
 
 	bool HasBeenCountedAsLeak() const { return bCountedAsLeak; }
 	void MarkCountedAsLeak() { bCountedAsLeak = true; }
@@ -165,5 +174,6 @@ private:
 	bool bStartupSetApplied = false;
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;
+	bool bReachedFormationSlot = false;
 	float EnteredGameplayScreenServerTime = 0.f;
 };

@@ -22,6 +22,7 @@ namespace ARInvaderInternal
 		if (InColor == EAREnemyColor::Blue) return EAREnemyColor::Red;
 		return InColor;
 	}
+
 }
 
 UARInvaderDirectorSubsystem::UARInvaderDirectorSubsystem()
@@ -423,19 +424,42 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 		}
 
 		const float EnterDuration = FMath::Max(0.f, Wave.Def.EnterDuration);
-		const float ActiveDuration = FMath::Max(0.f, Wave.Def.ActiveDuration * StageBerserkTimeMultiplier);
+		const float WaveDuration = FMath::Max(0.f, Wave.Def.WaveDuration * StageBerserkTimeMultiplier);
 		const float TimeInWave = Now - Wave.WaveStartTime;
 
 		if (Wave.Phase == EARWavePhase::Entering)
 		{
-			if (TimeInWave >= EnterDuration)
+			const bool bFullySpawned = Wave.NextSpawnIndex >= Wave.Def.EnemySpawns.Num();
+			bool bAllSpawnedEnemiesReady = true;
+			for (const TWeakObjectPtr<AAREnemyBase>& WeakEnemy : Wave.SpawnedEnemies)
 			{
+				const AAREnemyBase* Enemy = WeakEnemy.Get();
+				if (!Enemy || Enemy->IsDead())
+				{
+					continue;
+				}
+
+				if (!Enemy->HasEnteredGameplayScreen() && !Enemy->HasReachedFormationSlot())
+				{
+					bAllSpawnedEnemiesReady = false;
+					break;
+				}
+			}
+
+			const bool bEntryCompletedByCondition = bFullySpawned && bAllSpawnedEnemiesReady;
+			const bool bEntryTimeoutReached = EnterDuration > 0.f && TimeInWave >= EnterDuration;
+			if (bEntryCompletedByCondition || bEntryTimeoutReached)
+			{
+				if (bEntryTimeoutReached && !bEntryCompletedByCondition)
+				{
+					UE_LOG(ARLog, Verbose, TEXT("[InvaderDirector] Enter timeout fallback for wave %d ('%s')."), Wave.WaveInstanceId, *Wave.RowName.ToString());
+				}
 				TransitionWavePhase(Wave, EARWavePhase::Active);
 			}
 		}
 		else if (Wave.Phase == EARWavePhase::Active)
 		{
-			if (TimeInWave >= (EnterDuration + ActiveDuration))
+			if (TimeInWave >= (EnterDuration + WaveDuration))
 			{
 				TransitionWavePhase(Wave, EARWavePhase::Berserk);
 			}
@@ -548,12 +572,18 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 			}
 			else
 			{
+				// Do not offscreen-cull before first gameplay entry; entering paths can legitimately begin offscreen.
+				if (!Enemy->HasEnteredGameplayScreen())
+				{
+					continue;
+				}
+
 				float& OffscreenSeconds = OffscreenDurationByEnemy.FindOrAdd(Enemy);
 				OffscreenSeconds += GetWorld()->GetDeltaSeconds();
 				if (OffscreenSeconds >= Settings->OffscreenCullSeconds)
 				{
-					UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Culling offscreen enemy '%s' after %.2fs."),
-						*GetNameSafe(Enemy), OffscreenSeconds);
+					UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Culling offscreen enemy '%s' after %.2fs at Loc=(%.1f, %.1f, %.1f)."),
+						*GetNameSafe(Enemy), OffscreenSeconds, Loc.X, Loc.Y, Loc.Z);
 					Enemy->HandleDeath(nullptr);
 					Enemy->Destroy();
 					continue;

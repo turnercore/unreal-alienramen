@@ -376,6 +376,7 @@ namespace
 
 		return false;
 	}
+
 }
 
 class SInvaderWaveCanvas final : public SLeafWidget
@@ -3104,7 +3105,7 @@ float SInvaderAuthoringPanel::GetMaxPreviewTime() const
 	{
 		MaxDelay = FMath::Max(MaxDelay, Spawn.SpawnDelay);
 	}
-	return FMath::Max(1.f, MaxDelay + FMath::Max(0.f, Row->EnterDuration + Row->ActiveDuration));
+	return FMath::Max(1.f, MaxDelay + FMath::Max(0.f, Row->EnterDuration + Row->WaveDuration));
 }
 
 FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
@@ -3115,9 +3116,9 @@ FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
 		return FText::FromString(TEXT("No wave selected."));
 	}
 
-	const float EnterEnd = FMath::Max(0.f, Row->EnterDuration);
-	const float ActiveEnd = EnterEnd + FMath::Max(0.f, Row->ActiveDuration);
-	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Enter [0-%.2f] Active [%.2f-%.2f] Berserk [%.2f-INF]"), PreviewTime, EnterEnd, EnterEnd, ActiveEnd, ActiveEnd));
+	const float EnterTimeout = FMath::Max(0.f, Row->EnterDuration);
+	const float ActiveEnd = EnterTimeout + FMath::Max(0.f, Row->WaveDuration);
+	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Enter until ready (timeout %.2fs) | Active [%.2f-%.2f] Berserk [%.2f-INF]"), PreviewTime, EnterTimeout, EnterTimeout, ActiveEnd, ActiveEnd));
 }
 
 void SInvaderAuthoringPanel::HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event)
@@ -3193,7 +3194,8 @@ bool SInvaderAuthoringPanel::ShouldShowWaveDetailProperty(const FPropertyAndPare
 		TEXT("EntryMode"),
 		TEXT("BerserkDuration"),
 		TEXT("StageTags"),
-		TEXT("BannedArchetypeTags")
+		TEXT("BannedArchetypeTags"),
+		TEXT("EnterDuration")
 	};
 
 	return !HiddenWaveProperties.Contains(PropertyName);
