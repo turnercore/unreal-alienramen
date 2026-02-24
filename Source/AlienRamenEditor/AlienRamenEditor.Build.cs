@@ -18,8 +18,9 @@ public class AlienRamenEditor : ModuleRules
 			"LevelEditor",
 			"PropertyEditor",
 			"ToolMenus",
+			"AssetRegistry",
+			"DeveloperSettings",
 			"AlienRamen"
 		});
 	}
 }
-
