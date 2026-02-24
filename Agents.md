@@ -94,7 +94,12 @@
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
+- Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Wave phases in runtime flow: `Entering`, `Active`, `Berserk` (no timed auto-expire from `Berserk`; waves clear when spawned enemies are dead and fully spawned).
+- Entering-to-Active transition contract:
+- primary transition is condition-driven (wave fully spawned and each live spawned enemy has either entered gameplay screen or reported formation-slot arrival)
+- `FARWaveDefRow::EnterDuration` is timeout fallback only
+- wave active timing uses `FARWaveDefRow::WaveDuration` (authoring-visible)
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
 - `Event.Wave.Phase.Entering`
 - `Event.Wave.Phase.Active`
@@ -114,8 +119,11 @@
 - Spawn edge behavior contract:
 - `Top` spawns offscreen on `+X` and preserves authored `Y` lane (plus deterministic lane offset)
 - `Left`/`Right` spawn offscreen on `Y` edges and preserve authored `X` lane (plus deterministic lane offset)
-- default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=1400`
+- default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
 - leak bound check uses low-X boundary (`Location.X >= GameplayBoundsMin.X`) for player-side loss detection in this coordinate layout
+- Enemy runtime exposes entry-completion hook:
+- `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
+- `AAREnemyBase::HasReachedFormationSlot()`
 - Enemy runtime exposes replicated lock state for AI/StateTree reads:
 - `AAREnemyBase.bFormationLockEnter`
 - `AAREnemyBase.bFormationLockActive`
