@@ -3860,6 +3860,10 @@ void SInvaderAuthoringPanel::ValidateWaveRow(const FName RowName, const FARWaveD
 	{
 		OutIssues.Add({ false, true, RowName, TEXT("RepeatWeightPenalty is outside runtime clamp range [0.01, 1.0].") });
 	}
+	if (Row.WaveDuration <= 0.f)
+	{
+		OutIssues.Add({ false, true, RowName, TEXT("WaveDuration <= 0. Runtime will default to 16 seconds.") });
+	}
 	for (int32 i = 0; i < Row.EnemySpawns.Num(); ++i)
 	{
 		if (!Row.EnemySpawns[i].EnemyClass)
