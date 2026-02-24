@@ -30,6 +30,7 @@ AAREnemyAIController::AAREnemyAIController()
 
 	ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Active")), false);
 	BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Berserk")), false);
+	EnteredEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Entered")), false);
 }
 
 void AAREnemyAIController::OnPossess(APawn* InPawn)
@@ -108,4 +109,17 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 	StateTreeComponent->SendStateTreeEvent(Event);
 	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Entered wave phase '%s' for WaveId=%d on '%s' (Event=%s)."),
 		AREnemyAIControllerInternal::ToPhaseName(NewPhase), WaveInstanceId, *GetNameSafe(this), *EventTag.ToString());
+}
+
+void AAREnemyAIController::NotifyWaveEntered(int32 WaveInstanceId)
+{
+	if (!HasAuthority() || !StateTreeComponent || !EnteredEventTag.IsValid())
+	{
+		return;
+	}
+
+	const FStateTreeEvent Event(EnteredEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
+	StateTreeComponent->SendStateTreeEvent(Event);
+	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent entered event for WaveId=%d on '%s' (Event=%s)."),
+		WaveInstanceId, *GetNameSafe(this), *EnteredEventTag.ToString());
 }
