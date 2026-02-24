@@ -66,11 +66,20 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
 	bool CanFireByWaveRules() const;
 
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	void SetFormationLockRules(bool bInFormationLockEnter, bool bInFormationLockActive);
+
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
 	int32 GetWaveInstanceId() const { return WaveInstanceId; }
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
 	EARWavePhase GetWavePhase() const { return WavePhase; }
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	bool GetFormationLockEnter() const { return bFormationLockEnter; }
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	bool GetFormationLockActive() const { return bFormationLockActive; }
 
 	bool HasBeenCountedAsLeak() const { return bCountedAsLeak; }
 	void MarkCountedAsLeak() { bCountedAsLeak = true; }
@@ -132,6 +141,12 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
 	float WavePhaseStartServerTime = 0.f;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	bool bFormationLockEnter = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	bool bFormationLockActive = false;
 
 	UFUNCTION()
 	void OnRep_WaveRuntimeContext();
