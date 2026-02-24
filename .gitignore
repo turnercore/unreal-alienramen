@@ -24,3 +24,7 @@ Desktop.ini
 
 # Temp files
 tmp
+
+# Developer folder
+Content/Developers/
+Content/Vefects/
