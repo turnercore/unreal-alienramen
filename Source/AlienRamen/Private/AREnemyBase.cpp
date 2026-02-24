@@ -321,6 +321,18 @@ void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
 	EnteredGameplayScreenServerTime = InServerTime;
 }
 
+void AAREnemyBase::SetFormationLockRules(bool bInFormationLockEnter, bool bInFormationLockActive)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bFormationLockEnter = bInFormationLockEnter;
+	bFormationLockActive = bInFormationLockActive;
+	ForceNetUpdate();
+}
+
 bool AAREnemyBase::CanFireByWaveRules() const
 {
 	if (WavePhase != EARWavePhase::Entering)
@@ -403,6 +415,8 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AAREnemyBase, FormationMode);
 	DOREPLIFETIME(AAREnemyBase, WavePhase);
 	DOREPLIFETIME(AAREnemyBase, WavePhaseStartServerTime);
+	DOREPLIFETIME(AAREnemyBase, bFormationLockEnter);
+	DOREPLIFETIME(AAREnemyBase, bFormationLockActive);
 }
 
 void AAREnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
