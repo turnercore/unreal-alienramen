@@ -130,15 +130,18 @@
 - default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
 - entered-screen detection uses inset bounds (`UARInvaderDirectorSettings::EnteredScreenInset`, default `40`) to avoid firing on first edge contact
 - Leak detection ownership:
-- each enemy determines its own leak state on authority via `AAREnemyBase::CheckAndMarkLeaked(LeakBoundaryX)`
+- leak detection/reporting is enemy-owned (BP/C++ enemy logic decides leak timing and calls director report API)
 - Blueprint/manual trigger path should call `UARInvaderDirectorSubsystem::ReportEnemyLeaked(Enemy)` directly (for example from Earth trigger overlap).
-- Director owns aggregate leak progression/loss rules and increments run `LeakCount` via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
+- Director no longer performs boundary leak polling/destruction; it owns aggregate leak progression/loss rules and increments run `LeakCount` only via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
 - `AAREnemyBase::HasReachedFormationSlot()`
 - Enemy runtime exposes replicated lock state for AI/StateTree reads:
 - `AAREnemyBase.bFormationLockEnter`
 - `AAREnemyBase.bFormationLockActive`
+- Enemy exposes Blueprint/StateTree-friendly ASC tag query helpers on actor context:
+- `AAREnemyBase::HasASCGameplayTag(FGameplayTag)`
+- `AAREnemyBase::HasAnyASCGameplayTags(FGameplayTagContainer)`
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
 - GameState replicated leak read model:
