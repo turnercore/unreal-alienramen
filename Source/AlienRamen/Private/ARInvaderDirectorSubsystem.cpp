@@ -622,14 +622,6 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 				}
 			}
 
-			if (Enemy->CheckAndMarkLeaked(Settings->GameplayBoundsMin.X))
-			{
-				ReportEnemyLeaked(Enemy);
-				Enemy->HandleDeath(nullptr);
-				Enemy->Destroy();
-				continue;
-			}
-
 			NewAlive++;
 		}
 		Wave.AliveCount = NewAlive;

@@ -79,6 +79,7 @@ AAREnemyBase::AAREnemyBase()
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	StateTreeASC = AbilitySystemComponent;
 
 	AttributeSetCore = CreateDefaultSubobject<UARAttributeSetCore>(TEXT("AttributeSetCore"));
 }
@@ -502,6 +503,26 @@ void AAREnemyBase::CancelAbilitiesByTag(FGameplayTag AbilityTag, bool bAllowPart
 	FGameplayTagContainer WithTags;
 	WithTags.AddTag(AbilityTag);
 	AbilitySystemComponent->CancelAbilities(&WithTags, nullptr);
+}
+
+bool AAREnemyBase::HasASCGameplayTag(FGameplayTag TagToCheck) const
+{
+	if (!AbilitySystemComponent || !TagToCheck.IsValid())
+	{
+		return false;
+	}
+
+	return AbilitySystemComponent->HasMatchingGameplayTag(TagToCheck);
+}
+
+bool AAREnemyBase::HasAnyASCGameplayTags(const FGameplayTagContainer& TagsToCheck) const
+{
+	if (!AbilitySystemComponent || TagsToCheck.IsEmpty())
+	{
+		return false;
+	}
+
+	return AbilitySystemComponent->HasAnyMatchingGameplayTags(TagsToCheck);
 }
 
 void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

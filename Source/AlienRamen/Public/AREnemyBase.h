@@ -39,6 +39,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
 	void CancelAbilitiesByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch = true);
 
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
+	bool HasASCGameplayTag(FGameplayTag TagToCheck) const;
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
+	bool HasAnyASCGameplayTags(const FGameplayTagContainer& TagsToCheck) const;
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
 	void HandleDeath(AActor* InstigatorActor);
 
@@ -124,6 +130,10 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	// StateTree-friendly alias so tasks/conditions can bind ASC directly from Actor context.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
+	TObjectPtr<UAbilitySystemComponent> StateTreeASC;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UARAttributeSetCore> AttributeSetCore;
