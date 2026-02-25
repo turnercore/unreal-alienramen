@@ -402,8 +402,11 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex, Wave.bFlipX, Wave.bFlipY);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-			AAREnemyBase* Enemy = GetWorld()->SpawnActor<AAREnemyBase>(SpawnDef.EnemyClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+			// Face straight down gameplay progression (toward low-X / player side) consistently.
+			constexpr float BaseSpawnYaw = 180.f;
+			const FRotator SpawnRotation(0.f, BaseSpawnYaw + Settings->SpawnFacingYawOffset, 0.f);
+			AAREnemyBase* Enemy = GetWorld()->SpawnActor<AAREnemyBase>(SpawnDef.EnemyClass, SpawnLocation, SpawnRotation, SpawnParams);
 			if (!Enemy)
 			{
 				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Failed to spawn enemy class '%s' for wave '%s'."),
@@ -573,7 +576,10 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 			const FVector Loc = Enemy->GetActorLocation();
 			if (IsInsideGameplayBounds(Loc))
 			{
-				Enemy->NotifyEnteredGameplayScreen(GetWorld()->GetTimeSeconds());
+				if (IsInsideEnteredScreenBounds(Loc))
+				{
+					Enemy->NotifyEnteredGameplayScreen(GetWorld()->GetTimeSeconds());
+				}
 				OffscreenDurationByEnemy.FindOrAdd(Enemy) = 0.f;
 			}
 			else
@@ -1064,6 +1070,28 @@ bool UARInvaderDirectorSubsystem::IsInsideGameplayBounds(const FVector& Location
 		&& Location.X <= Settings->GameplayBoundsMax.X
 		&& Location.Y >= Settings->GameplayBoundsMin.Y
 		&& Location.Y <= Settings->GameplayBoundsMax.Y;
+}
+
+bool UARInvaderDirectorSubsystem::IsInsideEnteredScreenBounds(const FVector& Location) const
+{
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	const float Inset = FMath::Max(0.f, Settings->EnteredScreenInset);
+
+	const float MinX = Settings->GameplayBoundsMin.X + Inset;
+	const float MaxX = Settings->GameplayBoundsMax.X - Inset;
+	const float MinY = Settings->GameplayBoundsMin.Y + Inset;
+	const float MaxY = Settings->GameplayBoundsMax.Y - Inset;
+
+	// If inset collapses the range, fallback to normal gameplay bounds.
+	if (MinX >= MaxX || MinY >= MaxY)
+	{
+		return IsInsideGameplayBounds(Location);
+	}
+
+	return Location.X >= MinX
+		&& Location.X <= MaxX
+		&& Location.Y >= MinY
+		&& Location.Y <= MaxY;
 }
 
 bool UARInvaderDirectorSubsystem::IsInsideLeakBounds(const FVector& Location) const

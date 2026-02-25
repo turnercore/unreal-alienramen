@@ -87,6 +87,7 @@
 
 - Enemies are `ACharacter`-based for movement/nav reliability (even if visuals are flying).
 - `AAREnemyBase` is actor-owned ASC (owner/avatar = enemy), server-authoritative.
+- `AAREnemyBase` defaults `CharacterMovement.bOrientRotationToMovement=false`; per-enemy child Blueprints can opt in when pilot-style steering rotation is desired.
 - Enemy death is one-shot and server-gated (`bIsDead`), with BP hooks:
 - `BP_OnEnemyInitialized`
 - `BP_OnEnemyDied`
@@ -103,7 +104,9 @@
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
-- Enemy AI also emits one-shot entry event tag `Event.Wave.Entered` per enemy when entry condition is met.
+- Enemy AI emits one-shot enemy entry events for StateTree:
+- `Event.Enemy.EnteredScreen` fires first time enemy is inside entered-screen bounds.
+- `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
 - Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
@@ -113,9 +116,8 @@
 - `bFormationLockEnter` (lock during `Entering`)
 - `bFormationLockActive` (lock during `Active`)
 - Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
-- Entered event dispatch to enemy StateTree is gated by entry-lock rules:
-- when `bFormationLockEnter=false`, Entered event is dispatched once enemy first enters gameplay bounds
-- when `bFormationLockEnter=true`, Entered event is dispatched once enemy reports formation-slot arrival (`SetReachedFormationSlot(true)`)
+- StateTree startup/initialization order: enemy AI controller defers StateTree start to next tick after possess so invader runtime context and wave lock flags are applied before logic begins.
+- Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetFormationLockRules(...)` and remain readable from actor context in StateTree.
 - `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
 - `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
 - Formation slot index is runtime-only context on `AAREnemyBase` (`FormationSlotIndex`), assigned from deterministic spawn ordinal when the director spawns enemies.
@@ -123,7 +125,9 @@
 - `Top` translates authored formation offscreen on `+X` while preserving formation geometry
 - `Left`/`Right` translate authored formation offscreen on `Y` edges while preserving formation geometry
 - wave-level random mirror options `bAllowFlipX`/`bAllowFlipY` can mirror authored offsets around gameplay-bounds center before offscreen translation
+- Runtime enemy spawn facing is fixed to straight-down gameplay progression (toward low-X/player side) at spawn in `UARInvaderDirectorSubsystem`, with configurable `UARInvaderDirectorSettings::SpawnFacingYawOffset` for mesh-forward correction.
 - default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
+- entered-screen detection uses inset bounds (`UARInvaderDirectorSettings::EnteredScreenInset`, default `40`) to avoid firing on first edge contact
 - leak bound check uses low-X boundary (`Location.X >= GameplayBoundsMin.X`) for player-side loss detection in this coordinate layout
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
@@ -131,6 +135,8 @@
 - Enemy runtime exposes replicated lock state for AI/StateTree reads:
 - `AAREnemyBase.bFormationLockEnter`
 - `AAREnemyBase.bFormationLockActive`
+- Enemy facing helper API:
+- `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - Console controls implemented:
