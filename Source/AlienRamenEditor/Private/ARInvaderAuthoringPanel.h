@@ -143,6 +143,7 @@ private:
 	FReply OnDuplicateRow();
 	FReply OnRenameRow();
 	FReply OnDeleteRow();
+	FReply OnToggleSelectedRowsEnabled();
 	FReply OnSaveTable();
 
 	// wave editing

@@ -324,6 +324,18 @@ void AAREnemyBase::SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServ
 	TryDispatchWavePhaseEvent();
 }
 
+void AAREnemyBase::SetFormationTargetWorldLocation(const FVector& InFormationTargetWorldLocation)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FormationTargetWorldLocation = InFormationTargetWorldLocation;
+	bHasFormationTargetWorldLocation = true;
+	ForceNetUpdate();
+}
+
 void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
 {
 	if (!HasAuthority() || bHasEnteredGameplayScreen)
@@ -538,6 +550,8 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AAREnemyBase, WavePhaseStartServerTime);
 	DOREPLIFETIME(AAREnemyBase, bFormationLockEnter);
 	DOREPLIFETIME(AAREnemyBase, bFormationLockActive);
+	DOREPLIFETIME(AAREnemyBase, FormationTargetWorldLocation);
+	DOREPLIFETIME(AAREnemyBase, bHasFormationTargetWorldLocation);
 }
 
 void AAREnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

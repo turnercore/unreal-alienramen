@@ -417,6 +417,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				continue;
 			}
 
+			const FVector FormationTargetLocation = ComputeFormationTargetLocation(SpawnDef, Wave.bFlipX, Wave.bFlipY);
 			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex, Wave.bFlipX, Wave.bFlipY);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -440,6 +441,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 			}
 
 			Enemy->SetEnemyColor(EffectiveColor);
+			Enemy->SetFormationTargetWorldLocation(FormationTargetLocation);
 			Enemy->SetFormationLockRules(Wave.Def.bFormationLockEnter, Wave.Def.bFormationLockActive);
 			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, Wave.NextSpawnIndex, Wave.Phase, GetWorld()->GetTimeSeconds());
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
@@ -822,6 +824,11 @@ bool UARInvaderDirectorSubsystem::SelectWave(FName& OutWaveRow, FARWaveDefRow& O
 			continue;
 		}
 
+		if (!Row->bEnabled)
+		{
+			continue;
+		}
+
 		if (Threat < Row->MinThreat || Threat > Row->MaxThreat)
 		{
 			continue;
@@ -922,6 +929,11 @@ bool UARInvaderDirectorSubsystem::SelectStage(FName& OutStageRow, FARStageDefRow
 			continue;
 		}
 
+		if (!Row->bEnabled)
+		{
+			continue;
+		}
+
 		const float Weight = FMath::Max(0.01f, Row->SelectionWeight);
 		TotalWeight += Weight;
 		Candidates.Add({Pair.Key, *Row, Weight});
@@ -949,7 +961,7 @@ bool UARInvaderDirectorSubsystem::SelectStage(FName& OutStageRow, FARStageDefRow
 	return true;
 }
 
-FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const
+FVector UARInvaderDirectorSubsystem::ComputeFormationTargetLocation(const FARWaveEnemySpawnDef& SpawnDef, bool bFlipX, bool bFlipY) const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 	const float CenterX = (Settings->GameplayBoundsMin.X + Settings->GameplayBoundsMax.X) * 0.5f;
@@ -966,6 +978,13 @@ FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpaw
 	}
 
 	FVector Loc = Settings->SpawnOrigin + FVector(AuthoredOffset.X, AuthoredOffset.Y, -26.f);
+	return Loc;
+}
+
+FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const
+{
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	FVector Loc = ComputeFormationTargetLocation(SpawnDef, bFlipX, bFlipY);
 	const float OffscreenDistance = FMath::Abs(Settings->SpawnOffscreenDistance);
 	const float GameplaySizeX = FMath::Max(0.f, Settings->GameplayBoundsMax.X - Settings->GameplayBoundsMin.X);
 	const float GameplaySizeY = FMath::Max(0.f, Settings->GameplayBoundsMax.Y - Settings->GameplayBoundsMin.Y);
@@ -1010,14 +1029,14 @@ FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation(const FARWaveEnemySpaw
 	Loc.Z = -26.f;
 	if (SpawnOrdinal < 4)
 	{
-		UE_LOG(
+	UE_LOG(
 			ARLog,
 			Verbose,
 			TEXT("[InvaderDirector|SpawnPos] Ordinal=%d edge=%d authored=(%.1f,%.1f) world=(%.1f,%.1f,%.1f)."),
 			SpawnOrdinal,
 			static_cast<int32>(SpawnDef.SpawnEdge),
-			AuthoredOffset.X,
-			AuthoredOffset.Y,
+			SpawnDef.AuthoredScreenOffset.X,
+			SpawnDef.AuthoredScreenOffset.Y,
 			Loc.X,
 			Loc.Y,
 			Loc.Z);
