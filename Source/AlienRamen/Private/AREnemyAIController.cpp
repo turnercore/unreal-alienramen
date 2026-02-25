@@ -86,7 +86,13 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 		return;
 	}
 
-	if (DefaultStateTree)
+	// Possess/startup ordering can invoke this more than once; keep startup idempotent.
+	if (GetPawn() != InPawn || IsStateTreeRunning())
+	{
+		return;
+	}
+
+	if (DefaultStateTree && !IsStateTreeRunning())
 	{
 		StateTreeComponent->SetStateTree(DefaultStateTree);
 	}
@@ -94,6 +100,11 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 	StateTreeComponent->StartLogic();
 	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Started StateTree for controller '%s' on pawn '%s'."),
 		*GetNameSafe(this), *GetNameSafe(InPawn));
+}
+
+bool AAREnemyAIController::IsStateTreeRunning() const
+{
+	return StateTreeComponent && StateTreeComponent->IsRunning();
 }
 
 void AAREnemyAIController::StopStateTree(const FString& Reason)
@@ -112,7 +123,7 @@ void AAREnemyAIController::StopStateTree(const FString& Reason)
 
 void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase)
 {
-	if (!HasAuthority() || !StateTreeComponent)
+	if (!HasAuthority() || !StateTreeComponent || !IsStateTreeRunning())
 	{
 		return;
 	}
@@ -138,7 +149,7 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 
 void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 {
-	if (!HasAuthority() || !StateTreeComponent || !EnteredScreenEventTag.IsValid())
+	if (!HasAuthority() || !StateTreeComponent || !IsStateTreeRunning() || !EnteredScreenEventTag.IsValid())
 	{
 		return;
 	}
@@ -151,7 +162,7 @@ void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 
 void AAREnemyAIController::NotifyEnemyInFormation(int32 WaveInstanceId)
 {
-	if (!HasAuthority() || !StateTreeComponent || !InFormationEventTag.IsValid())
+	if (!HasAuthority() || !StateTreeComponent || !IsStateTreeRunning() || !InFormationEventTag.IsValid())
 	{
 		return;
 	}
