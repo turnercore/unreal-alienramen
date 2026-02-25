@@ -15,9 +15,6 @@ class UAbilitySystemComponent;
 class UARAttributeSetCore;
 class UARAbilitySet;
 struct FOnAttributeChangeData;
-class AAREnemyBase;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAREnemyLeakedSignature, AAREnemyBase*, Enemy);
 
 UCLASS()
 class ALIENRAMEN_API AAREnemyBase : public ACharacter, public IAbilitySystemInterface
@@ -50,9 +47,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
 	void BP_OnEnemyDied(AActor* InstigatorActor);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
-	void BP_OnEnemyLeaked();
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Lifecycle")
 	bool IsDead() const { return bIsDead; }
@@ -97,14 +91,11 @@ public:
 	void SetReachedFormationSlot(bool bInReachedFormationSlot);
 
 	// Returns true only on the first frame this enemy is considered leaked.
-	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader")
 	bool CheckAndMarkLeaked(float LeakBoundaryX);
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
 	bool IsLeaked() const { return bCountedAsLeak; }
-
-	UPROPERTY(BlueprintAssignable, Category = "AR|Enemy|Invader")
-	FAREnemyLeakedSignature SignalEnemyLeaked;
 
 	bool HasBeenCountedAsLeak() const { return bCountedAsLeak; }
 	void MarkCountedAsLeak() { bCountedAsLeak = true; }

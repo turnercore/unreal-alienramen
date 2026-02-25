@@ -30,8 +30,7 @@ enum class EARInvaderFlowState : uint8
 	AwaitStageClear = 1,
 	StageChoice = 2,
 	Transition = 3,
-	StageIntro = 4,
-	Stopped = 5
+	Stopped = 4
 };
 
 UENUM(BlueprintType)
@@ -159,10 +158,6 @@ struct FARStageDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float StageDuration = 55.f;
 
-	// If < 0, director settings default intro duration is used.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
-	float StageIntroSeconds = -1.f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float ThreatGainMultiplier = 1.f;
 
@@ -238,9 +233,6 @@ struct FARInvaderRuntimeSnapshot
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	float StageElapsedTime = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
-	float StageIntroRemainingTime = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	FName StageChoiceLeftRowName = NAME_None;
