@@ -128,7 +128,11 @@
 - Runtime enemy spawn facing is fixed to straight-down gameplay progression (toward low-X/player side) at spawn in `UARInvaderDirectorSubsystem`, with configurable `UARInvaderDirectorSettings::SpawnFacingYawOffset` for mesh-forward correction.
 - default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
 - entered-screen detection uses inset bounds (`UARInvaderDirectorSettings::EnteredScreenInset`, default `40`) to avoid firing on first edge contact
-- leak bound check uses low-X boundary (`Location.X >= GameplayBoundsMin.X`) for player-side loss detection in this coordinate layout
+- Leak detection ownership:
+- each enemy determines its own leak state on authority via `AAREnemyBase::CheckAndMarkLeaked(LeakBoundaryX)` and emits:
+- `AAREnemyBase::SignalEnemyLeaked`
+- `AAREnemyBase::BP_OnEnemyLeaked`
+- Director still owns aggregate leak progression/loss rules and increments run `LeakCount` when a newly leaked enemy is reported.
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
 - `AAREnemyBase::HasReachedFormationSlot()`
@@ -137,6 +141,9 @@
 - `AAREnemyBase.bFormationLockActive`
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
+- GameState replicated leak read model:
+- `UARInvaderRuntimeStateComponent::LeakCount` is replicated with RepNotify.
+- `UARInvaderRuntimeStateComponent::OnEnemyLeaked` broadcasts on both server updates and client RepNotify updates with `(NewLeakCount, Delta)`.
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - Console controls implemented:

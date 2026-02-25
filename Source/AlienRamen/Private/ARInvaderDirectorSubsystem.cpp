@@ -604,9 +604,8 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 				}
 			}
 
-			if (!IsInsideLeakBounds(Loc) && !Enemy->HasBeenCountedAsLeak())
+			if (Enemy->CheckAndMarkLeaked(Settings->GameplayBoundsMin.X))
 			{
-				Enemy->MarkCountedAsLeak();
 				LeakCount++;
 				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Enemy leaked. LeakCount=%d"), LeakCount);
 				Enemy->HandleDeath(nullptr);
@@ -1092,13 +1091,6 @@ bool UARInvaderDirectorSubsystem::IsInsideEnteredScreenBounds(const FVector& Loc
 		&& Location.X <= MaxX
 		&& Location.Y >= MinY
 		&& Location.Y <= MaxY;
-}
-
-bool UARInvaderDirectorSubsystem::IsInsideLeakBounds(const FVector& Location) const
-{
-	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	// Leak is evaluated past the "player side" boundary, which is the low-X edge in this project layout.
-	return Location.X >= Settings->GameplayBoundsMin.X;
 }
 
 UARInvaderRuntimeStateComponent* UARInvaderDirectorSubsystem::GetOrCreateRuntimeComponent()
