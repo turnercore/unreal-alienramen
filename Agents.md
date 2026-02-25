@@ -97,11 +97,13 @@
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
+- Director sets explicit per-enemy formation target world location at spawn (`AAREnemyBase::SetFormationTargetWorldLocation(...)`) derived from authored offset (+ optional flips) before offscreen edge translation.
 - Wave phases in runtime flow: `Active`, `Berserk` (waves start `Active`, then time-transition to `Berserk`; waves clear when spawned enemies are dead and fully spawned).
 - Entering behavior is per-enemy movement/state logic (on-screen/formation arrival), not a wave phase.
 - `FARWaveDefRow::WaveDuration` controls `Active -> Berserk` timing.
 - stage rows no longer include/use a berserk/wave-time multiplier; stage timing knobs do not scale per-wave active duration
 - Stage intro timing is no longer owned by invader stage data/director flow; startup/intro pacing should be driven externally (for example GameMode/state orchestration) before calling `StartInvaderRun`.
+- Wave/stage rows include authored enable toggles (`FARWaveDefRow::bEnabled`, `FARStageDefRow::bEnabled`); director selection skips disabled rows.
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
@@ -136,6 +138,10 @@
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
 - `AAREnemyBase::HasReachedFormationSlot()`
+- Enemy runtime exposes formation target context from director:
+- `AAREnemyBase::SetFormationTargetWorldLocation(FVector)` (authority)
+- `AAREnemyBase::GetFormationTargetWorldLocation()`
+- `AAREnemyBase::HasFormationTargetWorldLocation()`
 - Enemy runtime exposes replicated lock state for AI/StateTree reads:
 - `AAREnemyBase.bFormationLockEnter`
 - `AAREnemyBase.bFormationLockActive`
@@ -176,6 +182,7 @@
 - Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
 - Row list supports multi-select duplicate/delete for wave/stage rows.
 - Row list supports right-click context menu actions (`Rename`, `Duplicate`, `Delete`) for selected wave/stage rows.
+- Row list right-click context menu includes `Enable`/`Disable` toggle for selected wave/stage rows; disabled rows render grayed with `[Disabled]` tag in the row list.
 - New-row creation uses rename textbox content as base name when present (with `_N` uniqueness suffix as needed).
 - Table persistence now follows standard editor dirty-package flow by default: edits mark wave/stage DataTable packages dirty and rely on Unreal save prompts/manual save actions (no per-edit autosave churn).
 - PIE save bootstrap settings are in `UARInvaderToolingSettings` (`Project Settings -> Alien Ramen -> Tooling -> Invader Authoring|PIE Save Bootstrap`):

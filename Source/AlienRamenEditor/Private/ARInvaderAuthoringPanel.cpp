@@ -2067,6 +2067,11 @@ void SInvaderAuthoringPanel::SetMode(EAuthoringMode NewMode)
 	Mode = NewMode;
 	RefreshRowItems();
 	RefreshDetailsObjects();
+	if (RenameTextBox.IsValid())
+	{
+		const FName CurrentRow = (Mode == EAuthoringMode::Waves) ? SelectedWaveRow : SelectedStageRow;
+		RenameTextBox->SetText(CurrentRow.IsNone() ? FText::GetEmpty() : FText::FromName(CurrentRow));
+	}
 }
 
 ECheckBoxState SInvaderAuthoringPanel::IsModeChecked(EAuthoringMode QueryMode) const
@@ -2077,6 +2082,10 @@ ECheckBoxState SInvaderAuthoringPanel::IsModeChecked(EAuthoringMode QueryMode) c
 void SInvaderAuthoringPanel::SelectWaveRow(FName RowName)
 {
 	SelectedWaveRow = RowName;
+	if (RenameTextBox.IsValid())
+	{
+		RenameTextBox->SetText(RowName.IsNone() ? FText::GetEmpty() : FText::FromName(RowName));
+	}
 	ClearSpawnSelection();
 	RefreshLayerItems();
 	RefreshSpawnItems();
@@ -2086,6 +2095,10 @@ void SInvaderAuthoringPanel::SelectWaveRow(FName RowName)
 void SInvaderAuthoringPanel::SelectStageRow(FName RowName)
 {
 	SelectedStageRow = RowName;
+	if (RenameTextBox.IsValid())
+	{
+		RenameTextBox->SetText(RowName.IsNone() ? FText::GetEmpty() : FText::FromName(RowName));
+	}
 	SelectedSpawnIndex = INDEX_NONE;
 	SelectedSpawnIndices.Reset();
 	RefreshDetailsObjects();
@@ -2377,6 +2390,100 @@ FReply SInvaderAuthoringPanel::OnDeleteRow()
 	RefreshRowItems();
 	RefreshDetailsObjects();
 	SetStatus(FString::Printf(TEXT("Deleted %d row(s)."), DeletedCount));
+	return FReply::Handled();
+}
+
+FReply SInvaderAuthoringPanel::OnToggleSelectedRowsEnabled()
+{
+	UDataTable* Table = GetActiveTable();
+	if (!Table)
+	{
+		SetStatus(TEXT("No active table loaded."));
+		return FReply::Handled();
+	}
+
+	const TArray<FName> Targets = GetSelectedRowNames();
+	if (Targets.IsEmpty())
+	{
+		SetStatus(TEXT("Select one or more rows first."));
+		return FReply::Handled();
+	}
+
+	bool bAllEnabled = true;
+	bool bAnyValidRow = false;
+	if (Mode == EAuthoringMode::Waves)
+	{
+		for (const FName RowName : Targets)
+		{
+			const FARWaveDefRow* Row = Table->FindRow<FARWaveDefRow>(RowName, TEXT("ToggleEnabled"), false);
+			if (!Row)
+			{
+				continue;
+			}
+			bAnyValidRow = true;
+			bAllEnabled &= Row->bEnabled;
+		}
+	}
+	else
+	{
+		for (const FName RowName : Targets)
+		{
+			const FARStageDefRow* Row = Table->FindRow<FARStageDefRow>(RowName, TEXT("ToggleEnabled"), false);
+			if (!Row)
+			{
+				continue;
+			}
+			bAnyValidRow = true;
+			bAllEnabled &= Row->bEnabled;
+		}
+	}
+
+	if (!bAnyValidRow)
+	{
+		SetStatus(TEXT("No valid selected rows to update."));
+		return FReply::Handled();
+	}
+
+	const bool bSetEnabled = !bAllEnabled;
+	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringToggleRowEnabled", "Toggle Invader Row Enabled"));
+	Table->Modify();
+
+	int32 ChangedCount = 0;
+	if (Mode == EAuthoringMode::Waves)
+	{
+		for (const FName RowName : Targets)
+		{
+			FARWaveDefRow* Row = Table->FindRow<FARWaveDefRow>(RowName, TEXT("ToggleEnabled"), false);
+			if (Row && Row->bEnabled != bSetEnabled)
+			{
+				Row->bEnabled = bSetEnabled;
+				++ChangedCount;
+			}
+		}
+	}
+	else
+	{
+		for (const FName RowName : Targets)
+		{
+			FARStageDefRow* Row = Table->FindRow<FARStageDefRow>(RowName, TEXT("ToggleEnabled"), false);
+			if (Row && Row->bEnabled != bSetEnabled)
+			{
+				Row->bEnabled = bSetEnabled;
+				++ChangedCount;
+			}
+		}
+	}
+
+	if (ChangedCount <= 0)
+	{
+		SetStatus(TEXT("Selected rows were already in that state."));
+		return FReply::Handled();
+	}
+
+	MarkTableDirty(Table);
+	RefreshRowItems();
+	RefreshDetailsObjects();
+	SetStatus(FString::Printf(TEXT("%s %d row(s)."), bSetEnabled ? TEXT("Enabled") : TEXT("Disabled"), ChangedCount));
 	return FReply::Handled();
 }
 
@@ -2679,6 +2786,43 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildRowContextMenu()
 	const FText NameActionDescText = bWaves
 		? FText::FromString("Set the selected wave name from the Name Wave field.")
 		: FText::FromString("Set the selected stage name from the Name Stage field.");
+	const UDataTable* Table = GetActiveTable();
+	bool bAllEnabled = true;
+	bool bAnyValidRow = false;
+	if (Table)
+	{
+		if (bWaves)
+		{
+			for (const FName RowName : SelectedRows)
+			{
+				const FARWaveDefRow* Row = Table->FindRow<FARWaveDefRow>(RowName, TEXT("BuildRowContextMenu"), false);
+				if (!Row)
+				{
+					continue;
+				}
+				bAnyValidRow = true;
+				bAllEnabled &= Row->bEnabled;
+			}
+		}
+		else
+		{
+			for (const FName RowName : SelectedRows)
+			{
+				const FARStageDefRow* Row = Table->FindRow<FARStageDefRow>(RowName, TEXT("BuildRowContextMenu"), false);
+				if (!Row)
+				{
+					continue;
+				}
+				bAnyValidRow = true;
+				bAllEnabled &= Row->bEnabled;
+			}
+		}
+	}
+	const bool bDisableAction = bAnyValidRow && bAllEnabled;
+	const FText ToggleText = bDisableAction ? FText::FromString("Disable") : FText::FromString("Enable");
+	const FText ToggleDescText = bDisableAction
+		? FText::FromString("Disable selected row(s) so they are not picked by runtime selection.")
+		: FText::FromString("Enable selected row(s) so they can be picked by runtime selection.");
 
 	FMenuBuilder MenuBuilder(true, nullptr);
 	MenuBuilder.BeginSection("RowActions", TypeText);
@@ -2692,6 +2836,14 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildRowContextMenu()
 				OnRenameRow();
 			}),
 			FCanExecuteAction::CreateLambda([bSingleSelection]() { return bSingleSelection; })));
+	MenuBuilder.AddMenuEntry(
+		ToggleText,
+		ToggleDescText,
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			OnToggleSelectedRowsEnabled();
+		})));
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Duplicate"),
 		FText::FromString("Duplicate selected row(s)."),
@@ -3213,6 +3365,32 @@ bool SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty(const FPropertyAndPar
 
 TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateRowNameRow(TSharedPtr<FRowNameItem> Item, const TSharedRef<STableViewBase>& OwnerTable)
 {
+	bool bEnabled = true;
+	FName RowName = Item.IsValid() ? Item->RowName : NAME_None;
+	if (!RowName.IsNone())
+	{
+		if (Mode == EAuthoringMode::Waves)
+		{
+			if (const FARWaveDefRow* Row = GetWaveRow(RowName))
+			{
+				bEnabled = Row->bEnabled;
+			}
+		}
+		else
+		{
+			if (const FARStageDefRow* Row = GetStageRow(RowName))
+			{
+				bEnabled = Row->bEnabled;
+			}
+		}
+	}
+
+	const FText RowText = FText::FromString(
+		bEnabled
+			? RowName.ToString()
+			: FString::Printf(TEXT("%s [Disabled]"), *RowName.ToString()));
+	const FSlateColor RowColor = bEnabled ? FSlateColor::UseForeground() : FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f, 1.f));
+
 	return SNew(STableRow<TSharedPtr<FRowNameItem>>, OwnerTable)
 	[
 		SNew(SBorder)
@@ -3226,7 +3404,7 @@ TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateRowNameRow(TSharedPtr<FR
 			return FReply::Unhandled();
 		})
 		[
-			SNew(STextBlock).Text(FText::FromName(Item.IsValid() ? Item->RowName : NAME_None))
+			SNew(STextBlock).Text(RowText).ColorAndOpacity(RowColor)
 		]
 	];
 }

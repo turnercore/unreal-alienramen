@@ -96,6 +96,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
 	void SetReachedFormationSlot(bool bInReachedFormationSlot);
 
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
+	void SetFormationTargetWorldLocation(const FVector& InFormationTargetWorldLocation);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	FVector GetFormationTargetWorldLocation() const { return FormationTargetWorldLocation; }
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
+	bool HasFormationTargetWorldLocation() const { return bHasFormationTargetWorldLocation; }
+
 	// Returns true only on the first frame this enemy is considered leaked.
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader")
 	bool CheckAndMarkLeaked(float LeakBoundaryX);
@@ -170,6 +179,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader", meta = (AllowPrivateAccess = "true"))
 	bool bFormationLockActive = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	FVector FormationTargetWorldLocation = FVector::ZeroVector;
+
+	UPROPERTY(ReplicatedUsing=OnRep_WaveRuntimeContext, BlueprintReadOnly, Category = "AR|Enemy|Invader")
+	bool bHasFormationTargetWorldLocation = false;
 
 	UFUNCTION()
 	void OnRep_WaveRuntimeContext();

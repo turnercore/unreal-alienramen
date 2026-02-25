@@ -98,6 +98,7 @@ private:
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
 	bool SelectWave(FName& OutWaveRow, FARWaveDefRow& OutWaveDef, bool& bOutColorSwap);
 	bool SelectStage(FName& OutStageRow, FARStageDefRow& OutStageDef, const TSet<FName>* ExcludedRows = nullptr);
+	FVector ComputeFormationTargetLocation(const FARWaveEnemySpawnDef& SpawnDef, bool bFlipX, bool bFlipY) const;
 	FVector ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const;
 	void ApplyEnemyGameplayEffects(class AAREnemyBase* Enemy, const FARWaveDefRow& WaveDef, const FARWaveEnemySpawnDef& SpawnDef);
 	bool IsInsideGameplayBounds(const FVector& Location) const;
