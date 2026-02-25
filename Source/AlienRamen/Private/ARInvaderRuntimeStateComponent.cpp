@@ -16,6 +16,13 @@ void UARInvaderRuntimeStateComponent::SetRuntimeSnapshot(const FARInvaderRuntime
 		return;
 	}
 
+	const int32 PreviousLeakCount = LeakCount;
+	LeakCount = InSnapshot.LeakCount;
+	if (LeakCount != PreviousLeakCount)
+	{
+		BroadcastLeakDelta(PreviousLeakCount, LeakCount);
+	}
+
 	const FARInvaderRuntimeSnapshot Previous = RuntimeSnapshot;
 	RuntimeSnapshot = InSnapshot;
 	BroadcastSnapshotDelta(Previous, RuntimeSnapshot);
@@ -24,6 +31,11 @@ void UARInvaderRuntimeStateComponent::SetRuntimeSnapshot(const FARInvaderRuntime
 void UARInvaderRuntimeStateComponent::OnRep_RuntimeSnapshot(const FARInvaderRuntimeSnapshot& PreviousSnapshot)
 {
 	BroadcastSnapshotDelta(PreviousSnapshot, RuntimeSnapshot);
+}
+
+void UARInvaderRuntimeStateComponent::OnRep_LeakCount(int32 PreviousLeakCount)
+{
+	BroadcastLeakDelta(PreviousLeakCount, LeakCount);
 }
 
 void UARInvaderRuntimeStateComponent::BroadcastSnapshotDelta(
@@ -66,8 +78,18 @@ void UARInvaderRuntimeStateComponent::BroadcastSnapshotDelta(
 	}
 }
 
+void UARInvaderRuntimeStateComponent::BroadcastLeakDelta(int32 OldLeakCount, int32 NewLeakCount)
+{
+	const int32 Delta = NewLeakCount - OldLeakCount;
+	if (Delta > 0)
+	{
+		OnEnemyLeaked.Broadcast(NewLeakCount, Delta);
+	}
+}
+
 void UARInvaderRuntimeStateComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UARInvaderRuntimeStateComponent, LeakCount);
 	DOREPLIFETIME(UARInvaderRuntimeStateComponent, RuntimeSnapshot);
 }

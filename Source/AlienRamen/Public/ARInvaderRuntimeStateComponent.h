@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnWavePhaseChangedSignature, int
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnStageChangedSignature, FName, NewStageRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnStageChoiceChangedSignature, bool, bInStageChoice, FName, LeftStageRowName, FName, RightStageRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnStageRewardGrantedSignature, FName, StageRowName, const FString&, RewardDescriptor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnEnemyLeakedSignature, int32, NewLeakCount, int32, Delta);
 
 UCLASS(ClassGroup=(AR), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class ALIENRAMEN_API UARInvaderRuntimeStateComponent : public UActorComponent
@@ -36,14 +37,27 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
 	FAROnStageRewardGrantedSignature OnStageRewardGranted;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
+	FAROnEnemyLeakedSignature OnEnemyLeaked;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
+	int32 GetLeakCount() const { return LeakCount; }
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(ReplicatedUsing=OnRep_RuntimeSnapshot, BlueprintReadOnly, Category = "Alien Ramen|Invader")
 	FARInvaderRuntimeSnapshot RuntimeSnapshot;
 
+	UPROPERTY(ReplicatedUsing=OnRep_LeakCount, BlueprintReadOnly, Category = "Alien Ramen|Invader")
+	int32 LeakCount = 0;
+
 	UFUNCTION()
 	void OnRep_RuntimeSnapshot(const FARInvaderRuntimeSnapshot& PreviousSnapshot);
 
+	UFUNCTION()
+	void OnRep_LeakCount(int32 PreviousLeakCount);
+
 	void BroadcastSnapshotDelta(const FARInvaderRuntimeSnapshot& OldSnapshot, const FARInvaderRuntimeSnapshot& NewSnapshot);
+	void BroadcastLeakDelta(int32 OldLeakCount, int32 NewLeakCount);
 };

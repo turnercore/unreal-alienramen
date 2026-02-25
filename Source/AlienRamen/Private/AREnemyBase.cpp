@@ -361,6 +361,25 @@ void AAREnemyBase::SetReachedFormationSlot(bool bInReachedFormationSlot)
 	TryDispatchInFormationEvent();
 }
 
+bool AAREnemyBase::CheckAndMarkLeaked(float LeakBoundaryX)
+{
+	if (!HasAuthority() || bCountedAsLeak || bIsDead)
+	{
+		return false;
+	}
+
+	// In this coordinate layout, leak means crossing player-side low-X boundary.
+	if (GetActorLocation().X >= LeakBoundaryX)
+	{
+		return false;
+	}
+
+	bCountedAsLeak = true;
+	SignalEnemyLeaked.Broadcast(this);
+	BP_OnEnemyLeaked();
+	return true;
+}
+
 void AAREnemyBase::TryDispatchWavePhaseEvent()
 {
 	if (!HasAuthority())
