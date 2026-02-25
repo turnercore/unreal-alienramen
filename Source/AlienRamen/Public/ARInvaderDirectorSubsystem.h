@@ -8,6 +8,7 @@
 class UARInvaderRuntimeStateComponent;
 class UDataTable;
 class IConsoleObject;
+class AAREnemyBase;
 
 UCLASS()
 class ALIENRAMEN_API UARInvaderDirectorSubsystem : public UTickableWorldSubsystem
@@ -54,6 +55,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
 	FString DumpRuntimeState() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
+	bool ReportEnemyLeaked(AAREnemyBase* Enemy);
+
 private:
 	struct FWaveRuntimeInternal
 	{
@@ -85,13 +89,10 @@ private:
 	void EnterAwaitStageClear();
 	void EnterStageChoice();
 	void EnterTransition(FName ChosenStageRow, const FARStageDefRow& ChosenStageDef);
-	void EnterStageIntro(const FARStageDefRow& StageDef);
 	void DispatchStageReward(const FName& CompletedStageRow, const FARStageDefRow& CompletedStageDef);
 	bool BuildStageChoiceOptions(FName& OutLeftRow, FARStageDefRow& OutLeftDef, FName& OutRightRow, FARStageDefRow& OutRightDef);
 	void TickStageChoice(float DeltaTime);
 	void TickTransition(float DeltaTime);
-	void TickStageIntro(float DeltaTime);
-	float ResolveStageIntroSeconds(const FARStageDefRow& StageDef) const;
 
 	bool SpawnWaveFromDefinition(FName WaveRowName, const FARWaveDefRow& WaveDef, bool bColorSwap);
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
@@ -119,7 +120,6 @@ private:
 	void HandleConsoleStart(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleStop(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleChooseStage(const TArray<FString>& Args, UWorld* InWorld);
-	void HandleConsoleForceIntro(const TArray<FString>& Args, UWorld* InWorld);
 
 private:
 	bool bRunActive = false;
@@ -139,8 +139,6 @@ private:
 	EARInvaderFlowState FlowState = EARInvaderFlowState::Stopped;
 	float StageChoiceElapsed = 0.f;
 	float StageTransitionRemaining = 0.f;
-	float StageIntroRemaining = 0.f;
-	float RuntimeIntroOverrideSeconds = -1.f;
 
 	FName CurrentStageRow = NAME_None;
 	FARStageDefRow CurrentStageDef;
@@ -156,6 +154,7 @@ private:
 	TArray<FWaveRuntimeInternal> ActiveWaves;
 	TSet<FName> OneTimeWaveRowsUsed;
 	FName LastWaveRowName = NAME_None;
+	TSet<TWeakObjectPtr<AAREnemyBase>> ReportedLeakedEnemies;
 
 	TObjectPtr<UDataTable> WaveTable = nullptr;
 	TObjectPtr<UDataTable> StageTable = nullptr;
@@ -170,5 +169,4 @@ private:
 	IConsoleObject* CmdStart = nullptr;
 	IConsoleObject* CmdStop = nullptr;
 	IConsoleObject* CmdChooseStage = nullptr;
-	IConsoleObject* CmdForceIntro = nullptr;
 };

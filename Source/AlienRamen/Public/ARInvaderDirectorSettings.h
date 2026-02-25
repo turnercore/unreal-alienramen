@@ -37,15 +37,6 @@ public:
 	float StageTransitionDelay = 0.75f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
-	float DefaultStageIntroSeconds = 2.5f;
-
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run|Debug")
-	bool bOverrideStageIntroForDebug = false;
-
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run|Debug", meta = (EditCondition = "bOverrideStageIntroForDebug", ClampMin = "0.0"))
-	float DebugStageIntroSeconds = 0.f;
-
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
 	float StageChoiceAutoSelectSeconds = 0.f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
