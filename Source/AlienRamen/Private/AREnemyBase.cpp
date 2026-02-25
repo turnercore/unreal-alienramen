@@ -71,7 +71,7 @@ AAREnemyBase::AAREnemyBase()
 
 	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
 	{
-		MoveComp->bOrientRotationToMovement = true;
+		MoveComp->bOrientRotationToMovement = false;
 		MoveComp->RotationRate = FRotator(0.f, 640.f, 0.f);
 		MoveComp->GravityScale = 0.f;
 	}
@@ -116,7 +116,8 @@ void AAREnemyBase::PossessedBy(AController* NewController)
 	}
 
 	TryDispatchWavePhaseEvent();
-	TryDispatchEnteredEvent();
+	TryDispatchEnteredScreenEvent();
+	TryDispatchInFormationEvent();
 	BP_OnEnemyInitialized();
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Possessed '%s' by '%s'."),
 		*GetNameSafe(this), *GetNameSafe(NewController));
@@ -296,7 +297,8 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	WavePhaseStartServerTime = InPhaseStartServerTime;
 	bHasEnteredGameplayScreen = false;
 	bReachedFormationSlot = false;
-	bHasDispatchedEnteredEvent = false;
+	bHasDispatchedEnteredScreenEvent = false;
+	bHasDispatchedInFormationEvent = false;
 	LastDispatchedWavePhaseWaveId = INDEX_NONE;
 	ForceNetUpdate();
 
@@ -304,7 +306,8 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	{
 		TryDispatchWavePhaseEvent();
 	}
-	TryDispatchEnteredEvent();
+	TryDispatchEnteredScreenEvent();
+	TryDispatchInFormationEvent();
 }
 
 void AAREnemyBase::SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime)
@@ -329,7 +332,8 @@ void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
 
 	bHasEnteredGameplayScreen = true;
 	EnteredGameplayScreenServerTime = InServerTime;
-	TryDispatchEnteredEvent();
+	TryDispatchEnteredScreenEvent();
+	TryDispatchInFormationEvent();
 }
 
 void AAREnemyBase::SetFormationLockRules(bool bInFormationLockEnter, bool bInFormationLockActive)
@@ -341,7 +345,8 @@ void AAREnemyBase::SetFormationLockRules(bool bInFormationLockEnter, bool bInFor
 
 	bFormationLockEnter = bInFormationLockEnter;
 	bFormationLockActive = bInFormationLockActive;
-	TryDispatchEnteredEvent();
+	TryDispatchEnteredScreenEvent();
+	TryDispatchInFormationEvent();
 	ForceNetUpdate();
 }
 
@@ -353,7 +358,7 @@ void AAREnemyBase::SetReachedFormationSlot(bool bInReachedFormationSlot)
 	}
 
 	bReachedFormationSlot = bInReachedFormationSlot;
-	TryDispatchEnteredEvent();
+	TryDispatchInFormationEvent();
 }
 
 void AAREnemyBase::TryDispatchWavePhaseEvent()
@@ -377,23 +382,42 @@ void AAREnemyBase::TryDispatchWavePhaseEvent()
 	}
 }
 
-void AAREnemyBase::TryDispatchEnteredEvent()
+void AAREnemyBase::TryDispatchEnteredScreenEvent()
 {
-	if (!HasAuthority() || bHasDispatchedEnteredEvent)
+	if (!HasAuthority() || bHasDispatchedEnteredScreenEvent)
 	{
 		return;
 	}
 
-	const bool bEnteredReady = bFormationLockEnter ? bReachedFormationSlot : bHasEnteredGameplayScreen;
-	if (!bEnteredReady)
+	if (!bHasEnteredGameplayScreen)
 	{
 		return;
 	}
 
-	bHasDispatchedEnteredEvent = true;
+	bHasDispatchedEnteredScreenEvent = true;
 	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
 	{
-		EnemyAI->NotifyWaveEntered(WaveInstanceId);
+		EnemyAI->NotifyEnemyEnteredScreen(WaveInstanceId);
+	}
+}
+
+void AAREnemyBase::TryDispatchInFormationEvent()
+{
+	if (!HasAuthority() || bHasDispatchedInFormationEvent)
+	{
+		return;
+	}
+
+	// InFormation means "formation slot reached while on screen".
+	if (!bReachedFormationSlot || !bHasEnteredGameplayScreen)
+	{
+		return;
+	}
+
+	bHasDispatchedInFormationEvent = true;
+	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
+	{
+		EnemyAI->NotifyEnemyInFormation(WaveInstanceId);
 	}
 }
 

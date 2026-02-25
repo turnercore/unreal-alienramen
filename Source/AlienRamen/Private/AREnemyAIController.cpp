@@ -4,6 +4,8 @@
 #include "Components/StateTreeAIComponent.h"
 #include "StateTree.h"
 #include "StateTreeExecutionTypes.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 namespace AREnemyAIControllerInternal
 {
@@ -30,14 +32,32 @@ AAREnemyAIController::AAREnemyAIController()
 
 	ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Active")), false);
 	BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Berserk")), false);
-	EnteredEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Entered")), false);
+	EnteredScreenEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Enemy.EnteredScreen")), false);
+	InFormationEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Enemy.InFormation")), false);
 }
 
 void AAREnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	StartStateTreeForPawn(InPawn);
+	if (UWorld* World = GetWorld())
+	{
+		TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
+		TWeakObjectPtr<APawn> WeakPawn(InPawn);
+		World->GetTimerManager().SetTimerForNextTick([WeakThis, WeakPawn]()
+		{
+			if (!WeakThis.IsValid())
+			{
+				return;
+			}
+
+			WeakThis->StartStateTreeForPawn(WeakPawn.Get());
+		});
+	}
+	else
+	{
+		StartStateTreeForPawn(InPawn);
+	}
 }
 
 void AAREnemyAIController::OnUnPossess()
@@ -51,6 +71,11 @@ void AAREnemyAIController::OnUnPossess()
 void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 {
 	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!InPawn)
 	{
 		return;
 	}
@@ -111,15 +136,28 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 		AREnemyAIControllerInternal::ToPhaseName(NewPhase), WaveInstanceId, *GetNameSafe(this), *EventTag.ToString());
 }
 
-void AAREnemyAIController::NotifyWaveEntered(int32 WaveInstanceId)
+void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 {
-	if (!HasAuthority() || !StateTreeComponent || !EnteredEventTag.IsValid())
+	if (!HasAuthority() || !StateTreeComponent || !EnteredScreenEventTag.IsValid())
 	{
 		return;
 	}
 
-	const FStateTreeEvent Event(EnteredEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
+	const FStateTreeEvent Event(EnteredScreenEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
 	StateTreeComponent->SendStateTreeEvent(Event);
-	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent entered event for WaveId=%d on '%s' (Event=%s)."),
-		WaveInstanceId, *GetNameSafe(this), *EnteredEventTag.ToString());
+	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent entered-screen event for WaveId=%d on '%s' (Event=%s)."),
+		WaveInstanceId, *GetNameSafe(this), *EnteredScreenEventTag.ToString());
+}
+
+void AAREnemyAIController::NotifyEnemyInFormation(int32 WaveInstanceId)
+{
+	if (!HasAuthority() || !StateTreeComponent || !InFormationEventTag.IsValid())
+	{
+		return;
+	}
+
+	const FStateTreeEvent Event(InFormationEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
+	StateTreeComponent->SendStateTreeEvent(Event);
+	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent in-formation event for WaveId=%d on '%s' (Event=%s)."),
+		WaveInstanceId, *GetNameSafe(this), *InFormationEventTag.ToString());
 }
