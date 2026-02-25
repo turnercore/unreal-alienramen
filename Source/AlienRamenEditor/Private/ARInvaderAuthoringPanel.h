@@ -287,4 +287,6 @@ private:
 	bool bSyncingSpawnSelection = false;
 	bool bInitialBackupsCreated = false;
 	bool bPendingPIESaveBootstrap = false;
+	bool bPIESaveBootstrapContinueRequested = false;
+	bool bPIESaveBootstrapRouteThroughLoading = false;
 };

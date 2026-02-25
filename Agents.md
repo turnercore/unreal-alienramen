@@ -195,7 +195,8 @@
 - `PIELoadSlotName` (default `Debug`)
 - `PIELoadSlotNumber` (default `0`)
 - `PIEBootstrapDebugMap`
-- When enabled, PIE harness starts on loading map, waits for PIE world, calls `GameInstance.LoadSave(SlotName, SlotNumber)` by reflection, then performs deferred debug travel.
+- When enabled, PIE harness launches from the destination/debug map first (so PIE exit returns to that map), then performs a one-time runtime hop to the configured loading map before running save bootstrap and deferred travel back to destination/debug map.
+- Before tool-driven startup map switching for PIE launch, the panel prompts save/checkout for a dirty currently loaded editor map package; cancelling save aborts launch.
 - Deferred debug travel subscribes to GameInstance dispatcher `SignalOnGameLoaded` (when present) and opens the debug level on signal; fallback path uses load-complete bool function/property detection and short-delay timeout protection before `OpenLevel` to debug map (or editor default test map fallback).
 - First tool-open backup snapshot support:
 - when enabled (`bCreateBackupOnToolOpen`), the panel duplicates currently loaded wave/stage DataTables into `UARInvaderToolingSettings::BackupsFolder` (default `/Game/Data/Backups`) on first panel initialization
