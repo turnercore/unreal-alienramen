@@ -61,6 +61,22 @@ namespace
 	static constexpr float PIEBootstrapFallbackDelaySeconds = 0.75f;
 	static constexpr float PIEBootstrapTimeoutSeconds = 20.0f;
 
+	static FString ResolveMapPackageName(const TSoftObjectPtr<UWorld>& MapRef)
+	{
+		if (MapRef.IsNull())
+		{
+			return FString();
+		}
+
+		const FSoftObjectPath MapPath = MapRef.ToSoftObjectPath();
+		FString MapPackageName = MapPath.GetLongPackageName();
+		if (MapPackageName.IsEmpty())
+		{
+			MapPackageName = MapRef.ToString();
+		}
+		return MapPackageName;
+	}
+
 	class FInvaderSpawnDragDropOp : public FDecoratedDragDropOp
 	{
 	public:
@@ -4416,6 +4432,8 @@ FReply SInvaderAuthoringPanel::OnStartOrAttachPIE()
 FReply SInvaderAuthoringPanel::OnStopPIE()
 {
 	bPendingPIESaveBootstrap = false;
+	bPIESaveBootstrapContinueRequested = false;
+	bPIESaveBootstrapRouteThroughLoading = false;
 	PIESaveLoadedBridge.Reset();
 	if (GEditor)
 	{
@@ -4524,24 +4542,48 @@ bool SInvaderAuthoringPanel::EnsurePIESession(bool bStartIfNeeded)
 
 	UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
 	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
-	const bool bUseBootstrapLoadingMap = ToolingSettings
-		&& ToolingSettings->bEnablePIESaveBootstrap
-		&& !ToolingSettings->PIEBootstrapLoadingMap.IsNull();
-	const TSoftObjectPtr<UWorld> StartupMap = bUseBootstrapLoadingMap
-		? ToolingSettings->PIEBootstrapLoadingMap
+	const bool bBootstrapEnabled = ToolingSettings && ToolingSettings->bEnablePIESaveBootstrap;
+	const TSoftObjectPtr<UWorld> StartupMap = (ToolingSettings && !ToolingSettings->PIEBootstrapDebugMap.IsNull())
+		? ToolingSettings->PIEBootstrapDebugMap
 		: Settings->DefaultTestMap;
+	const FString StartupMapPackageName = ResolveMapPackageName(StartupMap);
+	const FString LoadingMapPackageName = (ToolingSettings && !ToolingSettings->PIEBootstrapLoadingMap.IsNull())
+		? ResolveMapPackageName(ToolingSettings->PIEBootstrapLoadingMap)
+		: FString();
+
+	bPIESaveBootstrapRouteThroughLoading = bBootstrapEnabled
+		&& !StartupMapPackageName.IsEmpty()
+		&& !LoadingMapPackageName.IsEmpty()
+		&& !StartupMapPackageName.Equals(LoadingMapPackageName, ESearchCase::IgnoreCase);
 
 	if (!StartupMap.IsNull())
 	{
-		const FSoftObjectPath MapPath = StartupMap.ToSoftObjectPath();
-		FString MapPackageName = MapPath.GetLongPackageName();
-		if (MapPackageName.IsEmpty())
+		if (!StartupMapPackageName.IsEmpty())
 		{
-			MapPackageName = StartupMap.ToString();
+			if (UWorld* EditorWorld = GEditor->GetEditorWorldContext().World())
+			{
+				if (UPackage* EditorWorldPackage = EditorWorld->GetOutermost())
+				{
+					const FString CurrentEditorMapPackageName = EditorWorldPackage->GetName();
+					if (EditorWorldPackage->IsDirty()
+						&& !CurrentEditorMapPackageName.Equals(StartupMapPackageName, ESearchCase::IgnoreCase))
+					{
+						TArray<UPackage*> PackagesToSave;
+						PackagesToSave.Add(EditorWorldPackage);
+						const auto SaveResult = FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, false, false);
+						if (SaveResult == FEditorFileUtils::PR_Cancelled || SaveResult == FEditorFileUtils::PR_Failure)
+						{
+							SetStatus(TEXT("PIE launch cancelled: current map was not saved."));
+							return false;
+						}
+					}
+				}
+			}
 		}
-		if (!UEditorLoadingAndSavingUtils::LoadMap(MapPackageName))
+
+		if (!UEditorLoadingAndSavingUtils::LoadMap(StartupMapPackageName))
 		{
-			SetStatus(FString::Printf(TEXT("Failed to load default test map '%s'."), *MapPackageName));
+			SetStatus(FString::Printf(TEXT("Failed to load startup map '%s'."), *StartupMapPackageName));
 			return false;
 		}
 	}
@@ -4589,9 +4631,10 @@ void SInvaderAuthoringPanel::SchedulePIESaveBootstrap()
 			return true;
 		}
 
+		Pinned->bPIESaveBootstrapContinueRequested = false;
 		Pinned->RunPIESaveBootstrap();
-		Pinned->bPendingPIESaveBootstrap = false;
-		return false;
+		Pinned->bPendingPIESaveBootstrap = Pinned->bPIESaveBootstrapContinueRequested;
+		return Pinned->bPendingPIESaveBootstrap;
 	}), 0.2f);
 }
 
@@ -4607,6 +4650,23 @@ bool SInvaderAuthoringPanel::RunPIESaveBootstrap()
 	if (!ToolingSettings || !ToolingSettings->bEnablePIESaveBootstrap)
 	{
 		return false;
+	}
+
+	if (bPIESaveBootstrapRouteThroughLoading && !ToolingSettings->PIEBootstrapLoadingMap.IsNull())
+	{
+		const FString LoadingMapPackageName = ResolveMapPackageName(ToolingSettings->PIEBootstrapLoadingMap);
+		const FString CurrentMapPackageName = PIEWorld->GetOutermost() ? PIEWorld->GetOutermost()->GetName() : FString();
+		if (!LoadingMapPackageName.IsEmpty()
+			&& !CurrentMapPackageName.Equals(LoadingMapPackageName, ESearchCase::IgnoreCase))
+		{
+			UGameplayStatics::OpenLevel(PIEWorld, FName(*LoadingMapPackageName), true);
+			SetStatus(FString::Printf(TEXT("PIE save bootstrap routing through loading map '%s'."), *LoadingMapPackageName));
+			bPIESaveBootstrapContinueRequested = true;
+			bPIESaveBootstrapRouteThroughLoading = false;
+			return true;
+		}
+
+		bPIESaveBootstrapRouteThroughLoading = false;
 	}
 
 	UGameInstance* GI = PIEWorld->GetGameInstance();
@@ -4672,19 +4732,10 @@ bool SInvaderAuthoringPanel::RunPIESaveBootstrap()
 		}
 	}
 
-	FString DebugMapPackageName;
 	const TSoftObjectPtr<UWorld> DebugMap = !ToolingSettings->PIEBootstrapDebugMap.IsNull()
 		? ToolingSettings->PIEBootstrapDebugMap
 		: GetDefault<UARInvaderAuthoringEditorSettings>()->DefaultTestMap;
-	if (!DebugMap.IsNull())
-	{
-		const FSoftObjectPath DebugMapPath = DebugMap.ToSoftObjectPath();
-		DebugMapPackageName = DebugMapPath.GetLongPackageName();
-		if (DebugMapPackageName.IsEmpty())
-		{
-			DebugMapPackageName = DebugMap.ToString();
-		}
-	}
+	const FString DebugMapPackageName = ResolveMapPackageName(DebugMap);
 
 	if (DebugMapPackageName.IsEmpty())
 	{
