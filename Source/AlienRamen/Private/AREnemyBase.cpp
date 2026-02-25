@@ -375,8 +375,7 @@ bool AAREnemyBase::CheckAndMarkLeaked(float LeakBoundaryX)
 	}
 
 	bCountedAsLeak = true;
-	SignalEnemyLeaked.Broadcast(this);
-	BP_OnEnemyLeaked();
+
 	return true;
 }
 

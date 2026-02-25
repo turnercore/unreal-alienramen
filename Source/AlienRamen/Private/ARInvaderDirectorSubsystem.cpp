@@ -99,7 +99,6 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 	StageElapsed = 0.f;
 	StageChoiceElapsed = 0.f;
 	StageTransitionRemaining = 0.f;
-	StageIntroRemaining = 0.f;
 	TimeSinceLastWaveSpawn = TNumericLimits<float>::Max();
 	NextWaveInstanceId = 1;
 	LeakCount = 0;
@@ -109,6 +108,7 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 	ActiveWaves.Reset();
 	OneTimeWaveRowsUsed.Reset();
 	LastWaveRowName = NAME_None;
+	ReportedLeakedEnemies.Reset();
 	OffscreenDurationByEnemy.Reset();
 	PendingStageRow = NAME_None;
 	ChoiceLeftStageRow = NAME_None;
@@ -144,7 +144,7 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 
 	if (!CurrentStageRow.IsNone())
 	{
-		EnterStageIntro(CurrentStageDef);
+		FlowState = EARInvaderFlowState::Combat;
 	}
 
 	PushSnapshotToGameState();
@@ -161,10 +161,10 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 	bRunActive = false;
 	FlowState = EARInvaderFlowState::Stopped;
 	ActiveWaves.Reset();
+	ReportedLeakedEnemies.Reset();
 	OffscreenDurationByEnemy.Reset();
 	ChoiceLeftStageRow = NAME_None;
 	ChoiceRightStageRow = NAME_None;
-	StageIntroRemaining = 0.f;
 	PushSnapshotToGameState();
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stopped run."));
 }
@@ -210,6 +210,26 @@ bool UARInvaderDirectorSubsystem::ForceWavePhase(int32 WaveInstanceId, EARWavePh
 	return false;
 }
 
+bool UARInvaderDirectorSubsystem::ReportEnemyLeaked(AAREnemyBase* Enemy)
+{
+	if (!Enemy || !GetWorld() || !GetWorld()->GetAuthGameMode() || !bRunActive)
+	{
+		return false;
+	}
+
+	TWeakObjectPtr<AAREnemyBase> WeakEnemy(Enemy);
+	if (ReportedLeakedEnemies.Contains(WeakEnemy))
+	{
+		return false;
+	}
+
+	ReportedLeakedEnemies.Add(WeakEnemy);
+	LeakCount++;
+	UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Enemy leaked '%s'. LeakCount=%d"), *GetNameSafe(Enemy), LeakCount);
+	PushSnapshotToGameState();
+	return true;
+}
+
 void UARInvaderDirectorSubsystem::ForceThreat(float NewThreat)
 {
 	Threat = FMath::Max(0.f, NewThreat);
@@ -232,7 +252,8 @@ bool UARInvaderDirectorSubsystem::ForceStage(FName StageRowName)
 	}
 
 	SetCurrentStage(StageRowName, *StageRow);
-	EnterStageIntro(*StageRow);
+	FlowState = EARInvaderFlowState::Combat;
+	TimeSinceLastWaveSpawn = TNumericLimits<float>::Max();
 	PendingStageRow = NAME_None;
 	ChoiceLeftStageRow = NAME_None;
 	ChoiceRightStageRow = NAME_None;
@@ -263,7 +284,7 @@ bool UARInvaderDirectorSubsystem::SubmitStageChoice(bool bChooseLeft)
 FString UARInvaderDirectorSubsystem::DumpRuntimeState() const
 {
 	FString Out = FString::Printf(
-		TEXT("InvaderRun Active=%d Flow=%d Seed=%d Threat=%.2f Run=%.2fs Stage='%s' StageTime=%.2fs IntroLeft=%.2fs Leak=%d/%d Waves=%d Choice(L='%s',R='%s',t=%.2f)"),
+		TEXT("InvaderRun Active=%d Flow=%d Seed=%d Threat=%.2f Run=%.2fs Stage='%s' StageTime=%.2fs Leak=%d/%d Waves=%d Choice(L='%s',R='%s',t=%.2f)"),
 		bRunActive ? 1 : 0,
 		static_cast<int32>(FlowState),
 		RunSeed,
@@ -271,7 +292,6 @@ FString UARInvaderDirectorSubsystem::DumpRuntimeState() const
 		RunElapsed,
 		*CurrentStageRow.ToString(),
 		StageElapsed,
-		StageIntroRemaining,
 		LeakCount,
 		GetDefault<UARInvaderDirectorSettings>()->LeakLossThreshold,
 		ActiveWaves.Num(),
@@ -301,9 +321,6 @@ void UARInvaderDirectorSubsystem::TickDirector(float DeltaTime)
 
 	switch (FlowState)
 	{
-	case EARInvaderFlowState::StageIntro:
-		TickStageIntro(DeltaTime);
-		break;
 	case EARInvaderFlowState::Combat:
 		StageElapsed += DeltaTime;
 		UpdateThreat(DeltaTime);
@@ -351,7 +368,8 @@ void UARInvaderDirectorSubsystem::UpdateStage(float DeltaTime)
 		if (SelectStage(NewStageRow, NewStageDef))
 		{
 			SetCurrentStage(NewStageRow, NewStageDef);
-			EnterStageIntro(NewStageDef);
+			FlowState = EARInvaderFlowState::Combat;
+			TimeSinceLastWaveSpawn = TNumericLimits<float>::Max();
 		}
 		return;
 	}
@@ -606,8 +624,7 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 
 			if (Enemy->CheckAndMarkLeaked(Settings->GameplayBoundsMin.X))
 			{
-				LeakCount++;
-				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Enemy leaked. LeakCount=%d"), LeakCount);
+				ReportEnemyLeaked(Enemy);
 				Enemy->HandleDeath(nullptr);
 				Enemy->Destroy();
 				continue;
@@ -663,7 +680,6 @@ void UARInvaderDirectorSubsystem::PushSnapshotToGameState()
 	Snapshot.RunElapsedTime = RunElapsed;
 	Snapshot.StageRowName = CurrentStageRow;
 	Snapshot.StageElapsedTime = StageElapsed;
-	Snapshot.StageIntroRemainingTime = StageIntroRemaining;
 	Snapshot.StageChoiceLeftRowName = ChoiceLeftStageRow;
 	Snapshot.StageChoiceRightRowName = ChoiceRightStageRow;
 	Snapshot.StageChoiceLeftReward = ChoiceLeftStageDef.RewardDescriptor;
@@ -1257,19 +1273,6 @@ void UARInvaderDirectorSubsystem::SetCurrentStage(FName StageRowName, const FARS
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stage changed to '%s'."), *CurrentStageRow.ToString());
 }
 
-void UARInvaderDirectorSubsystem::EnterStageIntro(const FARStageDefRow& StageDef)
-{
-	StageIntroRemaining = ResolveStageIntroSeconds(StageDef);
-	FlowState = StageIntroRemaining > 0.f ? EARInvaderFlowState::StageIntro : EARInvaderFlowState::Combat;
-	if (FlowState == EARInvaderFlowState::Combat)
-	{
-		TimeSinceLastWaveSpawn = TNumericLimits<float>::Max();
-	}
-
-	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stage intro started for '%s' (%.2fs)."),
-		*CurrentStageRow.ToString(), StageIntroRemaining);
-}
-
 void UARInvaderDirectorSubsystem::EnterAwaitStageClear()
 {
 	if (FlowState != EARInvaderFlowState::Combat)
@@ -1391,41 +1394,8 @@ void UARInvaderDirectorSubsystem::TickTransition(float DeltaTime)
 	ChoiceLeftStageRow = NAME_None;
 	ChoiceRightStageRow = NAME_None;
 	StageChoiceElapsed = 0.f;
-	EnterStageIntro(CurrentStageDef);
-}
-
-void UARInvaderDirectorSubsystem::TickStageIntro(float DeltaTime)
-{
-	StageIntroRemaining = FMath::Max(0.f, StageIntroRemaining - DeltaTime);
-	if (StageIntroRemaining > 0.f)
-	{
-		return;
-	}
-
 	FlowState = EARInvaderFlowState::Combat;
 	TimeSinceLastWaveSpawn = TNumericLimits<float>::Max();
-	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stage intro complete for '%s'; combat started."), *CurrentStageRow.ToString());
-}
-
-float UARInvaderDirectorSubsystem::ResolveStageIntroSeconds(const FARStageDefRow& StageDef) const
-{
-	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	if (RuntimeIntroOverrideSeconds >= 0.f)
-	{
-		return RuntimeIntroOverrideSeconds;
-	}
-
-	if (Settings->bOverrideStageIntroForDebug)
-	{
-		return FMath::Max(0.f, Settings->DebugStageIntroSeconds);
-	}
-
-	if (StageDef.StageIntroSeconds >= 0.f)
-	{
-		return StageDef.StageIntroSeconds;
-	}
-
-	return FMath::Max(0.f, Settings->DefaultStageIntroSeconds);
 }
 
 void UARInvaderDirectorSubsystem::RegisterConsoleCommands()
@@ -1484,12 +1454,6 @@ void UARInvaderDirectorSubsystem::RegisterConsoleCommands()
 		TEXT("Submit stage choice: left|right."),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleChooseStage),
 		ECVF_Default);
-
-	CmdForceIntro = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.invader.force_intro"),
-		TEXT("Override stage intro seconds for debug. Usage: <seconds> or clear"),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleForceIntro),
-		ECVF_Default);
 }
 
 void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
@@ -1514,7 +1478,6 @@ void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
 	UnregisterByName(TEXT("ar.invader.start"));
 	UnregisterByName(TEXT("ar.invader.stop"));
 	UnregisterByName(TEXT("ar.invader.choose_stage"));
-	UnregisterByName(TEXT("ar.invader.force_intro"));
 
 	CmdForceWave = nullptr;
 	CmdForcePhase = nullptr;
@@ -1524,7 +1487,6 @@ void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
 	CmdStart = nullptr;
 	CmdStop = nullptr;
 	CmdChooseStage = nullptr;
-	CmdForceIntro = nullptr;
 }
 
 void UARInvaderDirectorSubsystem::HandleConsoleForceWave(const TArray<FString>& Args, UWorld* InWorld)
@@ -1614,25 +1576,3 @@ void UARInvaderDirectorSubsystem::HandleConsoleChooseStage(const TArray<FString>
 	}
 }
 
-void UARInvaderDirectorSubsystem::HandleConsoleForceIntro(const TArray<FString>& Args, UWorld* InWorld)
-{
-	if (InWorld != GetWorld() || Args.Num() < 1) return;
-
-	if (Args[0].Equals(TEXT("clear"), ESearchCase::IgnoreCase))
-	{
-		RuntimeIntroOverrideSeconds = -1.f;
-		UE_LOG(ARLog, Log, TEXT("[InvaderDirector|Debug] Cleared runtime intro override."));
-		return;
-	}
-
-	float IntroSeconds = 0.f;
-	LexFromString(IntroSeconds, *Args[0]);
-	RuntimeIntroOverrideSeconds = FMath::Max(0.f, IntroSeconds);
-
-	if (FlowState == EARInvaderFlowState::StageIntro)
-	{
-		StageIntroRemaining = RuntimeIntroOverrideSeconds;
-	}
-
-	UE_LOG(ARLog, Log, TEXT("[InvaderDirector|Debug] Runtime intro override set to %.2fs."), RuntimeIntroOverrideSeconds);
-}

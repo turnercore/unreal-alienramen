@@ -101,6 +101,7 @@
 - Entering behavior is per-enemy movement/state logic (on-screen/formation arrival), not a wave phase.
 - `FARWaveDefRow::WaveDuration` controls `Active -> Berserk` timing.
 - stage rows no longer include/use a berserk/wave-time multiplier; stage timing knobs do not scale per-wave active duration
+- Stage intro timing is no longer owned by invader stage data/director flow; startup/intro pacing should be driven externally (for example GameMode/state orchestration) before calling `StartInvaderRun`.
 - Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
 - `Event.Wave.Phase.Active`
 - `Event.Wave.Phase.Berserk`
@@ -129,10 +130,9 @@
 - default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
 - entered-screen detection uses inset bounds (`UARInvaderDirectorSettings::EnteredScreenInset`, default `40`) to avoid firing on first edge contact
 - Leak detection ownership:
-- each enemy determines its own leak state on authority via `AAREnemyBase::CheckAndMarkLeaked(LeakBoundaryX)` and emits:
-- `AAREnemyBase::SignalEnemyLeaked`
-- `AAREnemyBase::BP_OnEnemyLeaked`
-- Director still owns aggregate leak progression/loss rules and increments run `LeakCount` when a newly leaked enemy is reported.
+- each enemy determines its own leak state on authority via `AAREnemyBase::CheckAndMarkLeaked(LeakBoundaryX)`
+- Blueprint/manual trigger path should call `UARInvaderDirectorSubsystem::ReportEnemyLeaked(Enemy)` directly (for example from Earth trigger overlap).
+- Director owns aggregate leak progression/loss rules and increments run `LeakCount` via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
 - `AAREnemyBase::HasReachedFormationSlot()`
@@ -154,7 +154,6 @@
 - `ar.invader.force_phase <WaveId> <Active|Berserk>`
 - `ar.invader.force_threat <Value>`
 - `ar.invader.force_stage <RowName>`
-- `ar.invader.force_intro <Seconds|clear>`
 - `ar.invader.dump_state`
 
 ## Debug Save Tool (Current)
