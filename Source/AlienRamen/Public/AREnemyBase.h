@@ -58,7 +58,7 @@ public:
 	bool IsDead() const { return bIsDead; }
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
-	void SetEnemyColor(EAREnemyColor InColor) { EnemyColor = InColor; }
+	void SetEnemyColor(EAREnemyColor InColor);
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
 	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARWavePhase InWavePhase, float InPhaseStartServerTime);
@@ -150,8 +150,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UARAbilitySet> StartupAbilitySet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyColor, Category = "AR|Enemy|Gameplay")
 	EAREnemyColor EnemyColor = EAREnemyColor::Red;
+
+	UFUNCTION()
+	void OnRep_EnemyColor();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
+	void BP_OnEnemyColorChanged(EAREnemyColor NewColor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyArchetypeTag;

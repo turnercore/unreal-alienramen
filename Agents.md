@@ -145,6 +145,7 @@
 - Enemy runtime exposes replicated lock state for AI/StateTree reads:
 - `AAREnemyBase.bFormationLockEnter`
 - `AAREnemyBase.bFormationLockActive`
+- Enemy color is replicated with notify (`OnRep_EnemyColor`) and forwards to BP hook `BP_OnEnemyColorChanged(EAREnemyColor)`; server-side `SetEnemyColor(...)` also triggers the same BP hook immediately.
 - Enemy exposes Blueprint/StateTree-friendly ASC tag query helpers on actor context:
 - `AAREnemyBase::HasASCGameplayTag(FGameplayTag)`
 - `AAREnemyBase::HasAnyASCGameplayTags(FGameplayTagContainer)`

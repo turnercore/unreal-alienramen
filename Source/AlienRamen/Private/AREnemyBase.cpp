@@ -279,6 +279,29 @@ void AAREnemyBase::OnRep_IsDead()
 	}
 }
 
+void AAREnemyBase::SetEnemyColor(EAREnemyColor InColor)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (EnemyColor == InColor)
+	{
+		return;
+	}
+
+	EnemyColor = InColor;
+	ForceNetUpdate();
+	UE_LOG(ARLog, Verbose, TEXT("[EnemyBase] Set enemy color for '%s' -> %d."), *GetNameSafe(this), static_cast<int32>(EnemyColor));
+	BP_OnEnemyColorChanged(EnemyColor);
+}
+
+void AAREnemyBase::OnRep_EnemyColor()
+{
+	BP_OnEnemyColorChanged(EnemyColor);
+}
+
 void AAREnemyBase::SetWaveRuntimeContext(
 	int32 InWaveInstanceId,
 	int32 InFormationSlotIndex,
