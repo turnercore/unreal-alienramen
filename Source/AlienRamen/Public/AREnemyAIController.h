@@ -26,6 +26,7 @@ protected:
 
 	void StartStateTreeForPawn(APawn* InPawn);
 	void StopStateTree(const FString& Reason);
+	bool IsStateTreeRunning() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|AI")

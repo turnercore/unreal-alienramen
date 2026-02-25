@@ -393,6 +393,8 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			TFunction<const FARWaveDefRow*()> InGetWaveRow,
 			TFunction<float()> InGetSelectedLayerDelay,
 			TFunction<bool()> InGetHideOtherLayers,
+			TFunction<bool()> InGetSnapToGridEnabled,
+			TFunction<float()> InGetGridSize,
 			TFunction<TSet<int32>()> InGetSelectedSpawnIndices,
 			TFunction<float()> InGetPreviewTime,
 			TFunction<void(int32, bool, bool)> InOnSpawnSelected,
@@ -407,6 +409,8 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			GetWaveRow = MoveTemp(InGetWaveRow);
 			GetSelectedLayerDelay = MoveTemp(InGetSelectedLayerDelay);
 			GetHideOtherLayers = MoveTemp(InGetHideOtherLayers);
+			GetSnapToGridEnabled = MoveTemp(InGetSnapToGridEnabled);
+			GetGridSize = MoveTemp(InGetGridSize);
 			GetSelectedSpawnIndices = MoveTemp(InGetSelectedSpawnIndices);
 			GetPreviewTime = MoveTemp(InGetPreviewTime);
 			OnSpawnSelected = MoveTemp(InOnSpawnSelected);
@@ -435,6 +439,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 		{
 			const FVector2D Size = AllottedGeometry.GetLocalSize();
 			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+			const UARInvaderAuthoringEditorSettings* EditorSettings = GetDefault<UARInvaderAuthoringEditorSettings>();
 			const FVector2D BoundsMin = Settings->GameplayBoundsMin;
 			const FVector2D BoundsMax = Settings->GameplayBoundsMax;
 
@@ -446,22 +451,61 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				ESlateDrawEffect::None,
 				FLinearColor(0.03f, 0.03f, 0.04f, 1.f));
 
-			for (int32 Line = 1; Line < 8; ++Line)
-			{
-				const float X = (Size.X / 8.f) * Line;
-				const float Y = (Size.Y / 8.f) * Line;
-				FSlateDrawElement::MakeLines(OutDrawElements, LayerId + 1, AllottedGeometry.ToPaintGeometry(), { FVector2D(X, 0.f), FVector2D(X, Size.Y) }, ESlateDrawEffect::None, FLinearColor(0.09f, 0.09f, 0.11f, 1.f), true, 1.f);
-				FSlateDrawElement::MakeLines(OutDrawElements, LayerId + 1, AllottedGeometry.ToPaintGeometry(), { FVector2D(0.f, Y), FVector2D(Size.X, Y) }, ESlateDrawEffect::None, FLinearColor(0.09f, 0.09f, 0.11f, 1.f), true, 1.f);
-			}
-
 			auto OffsetToLocal = [&Size, &BoundsMin, &BoundsMax](const FVector2D& Offset)
 			{
-				const float VerticalRange = FMath::Max(1.f, BoundsMax.X - BoundsMin.X);
-				const float HorizontalRange = FMath::Max(1.f, BoundsMax.Y - BoundsMin.Y);
-				const float HorizontalAlpha = (Offset.Y - BoundsMin.Y) / HorizontalRange;
-				const float VerticalAlpha = (Offset.X - BoundsMin.X) / VerticalRange;
+				const float MinX = FMath::Min(BoundsMin.X, BoundsMax.X);
+				const float MaxX = FMath::Max(BoundsMin.X, BoundsMax.X);
+				const float MinY = FMath::Min(BoundsMin.Y, BoundsMax.Y);
+				const float MaxY = FMath::Max(BoundsMin.Y, BoundsMax.Y);
+				const float VerticalRange = FMath::Max(1.f, MaxX - MinX);
+				const float HorizontalRange = FMath::Max(1.f, MaxY - MinY);
+				const float HorizontalAlpha = (Offset.Y - MinY) / HorizontalRange;
+				const float VerticalAlpha = (Offset.X - MinX) / VerticalRange;
 				return FVector2D(HorizontalAlpha * Size.X, Size.Y - (VerticalAlpha * Size.Y));
 			};
+
+			const float GridSize = FMath::Max(1.f, EditorSettings ? EditorSettings->CanvasGridSize : 100.f);
+			const float MinX = FMath::Min(BoundsMin.X, BoundsMax.X);
+			const float MaxX = FMath::Max(BoundsMin.X, BoundsMax.X);
+			const float MinY = FMath::Min(BoundsMin.Y, BoundsMax.Y);
+			const float MaxY = FMath::Max(BoundsMin.Y, BoundsMax.Y);
+			const int32 MaxGridLines = 300;
+			const int32 VerticalLineCount = FMath::Clamp(FMath::FloorToInt((MaxY - MinY) / GridSize) + 1, 0, MaxGridLines);
+			const int32 HorizontalLineCount = FMath::Clamp(FMath::FloorToInt((MaxX - MinX) / GridSize) + 1, 0, MaxGridLines);
+			const float FirstGridY = FMath::CeilToFloat(MinY / GridSize) * GridSize;
+			const float FirstGridX = FMath::CeilToFloat(MinX / GridSize) * GridSize;
+
+			for (int32 Line = 0; Line < VerticalLineCount; ++Line)
+			{
+				const float GridY = FirstGridY + (static_cast<float>(Line) * GridSize);
+				const FVector2D A = OffsetToLocal(FVector2D(MinX, GridY));
+				const FVector2D B = OffsetToLocal(FVector2D(MaxX, GridY));
+				FSlateDrawElement::MakeLines(
+					OutDrawElements,
+					LayerId + 1,
+					AllottedGeometry.ToPaintGeometry(),
+					{ A, B },
+					ESlateDrawEffect::None,
+					FLinearColor(0.09f, 0.09f, 0.11f, 1.f),
+					true,
+					1.f);
+			}
+
+			for (int32 Line = 0; Line < HorizontalLineCount; ++Line)
+			{
+				const float GridX = FirstGridX + (static_cast<float>(Line) * GridSize);
+				const FVector2D A = OffsetToLocal(FVector2D(GridX, MinY));
+				const FVector2D B = OffsetToLocal(FVector2D(GridX, MaxY));
+				FSlateDrawElement::MakeLines(
+					OutDrawElements,
+					LayerId + 1,
+					AllottedGeometry.ToPaintGeometry(),
+					{ A, B },
+					ESlateDrawEffect::None,
+					FLinearColor(0.09f, 0.09f, 0.11f, 1.f),
+					true,
+					1.f);
+			}
 
 			const FARWaveDefRow* WaveRow = GetWaveRow ? GetWaveRow() : nullptr;
 			if (!WaveRow)
@@ -566,6 +610,10 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					bStartedDragTransaction = false;
 					DraggedSpawnIndex = Closest;
 					DragStartOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+					if (ShouldSnapToGrid())
+					{
+						DragStartOffset = SnapOffset(DragStartOffset);
+					}
 					bSelectionRectActive = false;
 					return FReply::Handled().CaptureMouse(AsShared());
 				}
@@ -600,7 +648,12 @@ class SInvaderWaveCanvas final : public SLeafWidget
 
 				if (OnAddSpawnAt)
 				{
-					OnAddSpawnAt(LocalToOffset(Local, MyGeometry.GetLocalSize()));
+					FVector2D NewOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+					if (ShouldSnapToGrid())
+					{
+						NewOffset = SnapOffset(NewOffset);
+					}
+					OnAddSpawnAt(NewOffset);
 					return FReply::Handled();
 				}
 			}
@@ -654,7 +707,11 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					bStartedDragTransaction = true;
 				}
 				const FVector2D Local = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-				const FVector2D CurrentOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+				FVector2D CurrentOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+				if (ShouldSnapToGrid())
+				{
+					CurrentOffset = SnapOffset(CurrentOffset);
+				}
 				OnMoveSelectedSpawnsByDelta(CurrentOffset - DragStartOffset);
 				return FReply::Handled();
 			}
@@ -898,10 +955,31 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				BoundsMin.Y + (HorizontalRange * HorizontalAlpha));
 		}
 
+		bool ShouldSnapToGrid() const
+		{
+			return GetSnapToGridEnabled ? GetSnapToGridEnabled() : false;
+		}
+
+		float GetGridSnapSize() const
+		{
+			const float RawSize = GetGridSize ? GetGridSize() : 100.f;
+			return FMath::Max(1.f, RawSize);
+		}
+
+		FVector2D SnapOffset(const FVector2D& InOffset) const
+		{
+			const float GridSize = GetGridSnapSize();
+			return FVector2D(
+				FMath::GridSnap(InOffset.X, GridSize),
+				FMath::GridSnap(InOffset.Y, GridSize));
+		}
+
 	private:
 		TFunction<const FARWaveDefRow*()> GetWaveRow;
 		TFunction<float()> GetSelectedLayerDelay;
 		TFunction<bool()> GetHideOtherLayers;
+		TFunction<bool()> GetSnapToGridEnabled;
+		TFunction<float()> GetGridSize;
 		TFunction<TSet<int32>()> GetSelectedSpawnIndices;
 		TFunction<float()> GetPreviewTime;
 		TFunction<void(int32, bool, bool)> OnSpawnSelected;
@@ -1004,6 +1082,18 @@ FReply SInvaderAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKey
 {
 	(void)MyGeometry;
 	const FKey Key = InKeyEvent.GetKey();
+	if (Mode == EAuthoringMode::Waves && InKeyEvent.IsControlDown() && !InKeyEvent.IsAltDown())
+	{
+		if (Key == EKeys::C)
+		{
+			return OnCopySelectedSpawns();
+		}
+		if (Key == EKeys::V)
+		{
+			return OnPasteSpawns();
+		}
+	}
+
 	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
 	{
 		if (Mode == EAuthoringMode::Waves)
@@ -1182,6 +1272,67 @@ void SInvaderAuthoringPanel::BuildLayout()
 						[
 							SNew(STextBlock)
 							.Text(this, &SInvaderAuthoringPanel::GetPhaseSummaryText)
+						]
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
+						[
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.f, 0.f, 8.f, 0.f)
+							[
+								SNew(SCheckBox)
+								.ToolTipText(FText::FromString("Snap canvas drag/place and paste offsets to grid."))
+								.IsChecked_Lambda([this]()
+								{
+									return IsCanvasSnapEnabled() ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+								})
+								.OnCheckStateChanged_Lambda([this](ECheckBoxState NewState)
+								{
+									UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
+									Settings->bSnapCanvasToGrid = (NewState == ECheckBoxState::Checked);
+									Settings->SaveConfig();
+									if (WaveCanvas.IsValid())
+									{
+										WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+									}
+								})
+								[
+									SNew(STextBlock).Text(FText::FromString("Snap To Grid"))
+								]
+							]
+							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.f, 0.f, 6.f, 0.f)
+							[
+								SNew(STextBlock).Text(FText::FromString("Grid Size"))
+							]
+							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+							[
+								SNew(SSpinBox<float>)
+								.MinValue(1.f)
+								.MaxValue(1000.f)
+								.Delta(5.f)
+								.ToolTipText(FText::FromString("Grid spacing in authored offset units."))
+								.Value_Lambda([this]()
+								{
+									return GetCanvasGridSize();
+								})
+								.OnValueChanged_Lambda([this](float NewValue)
+								{
+									UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
+									Settings->CanvasGridSize = FMath::Max(1.f, NewValue);
+									if (WaveCanvas.IsValid())
+									{
+										WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+									}
+								})
+								.OnValueCommitted_Lambda([this](float NewValue, ETextCommit::Type)
+								{
+									UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
+									Settings->CanvasGridSize = FMath::Max(1.f, NewValue);
+									Settings->SaveConfig();
+									if (WaveCanvas.IsValid())
+									{
+										WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+									}
+								})
+							]
 						]
 						+ SVerticalBox::Slot().FillHeight(0.62f).Padding(0.f, 0.f, 0.f, 6.f)
 						[
@@ -1422,6 +1573,8 @@ void SInvaderAuthoringPanel::BuildLayout()
 			[this]() { return GetSelectedWaveRowConst(); },
 			[this]() { return SelectedLayerDelay; },
 			[]() { return GetDefault<UARInvaderAuthoringEditorSettings>()->bHideOtherLayersInWavePreview; },
+			[this]() { return IsCanvasSnapEnabled(); },
+			[this]() { return GetCanvasGridSize(); },
 			[this]() { return SelectedSpawnIndices; },
 			[this]() { return PreviewTime; },
 			[this](int32 SpawnIndex, bool bToggle, bool bRangeSelect) { HandleCanvasSpawnSelected(SpawnIndex, bToggle, bRangeSelect); },
@@ -2605,6 +2758,83 @@ FReply SInvaderAuthoringPanel::OnDeleteSelectedSpawn()
 	return FReply::Handled();
 }
 
+FReply SInvaderAuthoringPanel::OnCopySelectedSpawns()
+{
+	FARWaveDefRow* Row = GetSelectedWaveRow();
+	if (!Row || SelectedSpawnIndices.IsEmpty())
+	{
+		SetStatus(TEXT("Select one or more spawns to copy."));
+		return FReply::Handled();
+	}
+
+	TArray<int32> SourceIndices = SelectedSpawnIndices.Array();
+	SourceIndices.Sort();
+	SourceIndices = SourceIndices.FilterByPredicate([Row](int32 Index) { return Row->EnemySpawns.IsValidIndex(Index); });
+	if (SourceIndices.IsEmpty())
+	{
+		SetStatus(TEXT("Selected spawn set is out of date. Refreshing selection."));
+		ClearSpawnSelection();
+		RefreshSpawnItems();
+		return FReply::Handled();
+	}
+
+	const FVector2D AnchorOffset = Row->EnemySpawns[SourceIndices[0]].AuthoredScreenOffset;
+	SpawnClipboardAnchorOffset = AnchorOffset;
+	SpawnClipboardEntries.Reset();
+	SpawnClipboardEntries.Reserve(SourceIndices.Num());
+	for (int32 Index : SourceIndices)
+	{
+		const FARWaveEnemySpawnDef& SourceSpawn = Row->EnemySpawns[Index];
+		FSpawnClipboardEntry& Entry = SpawnClipboardEntries.AddDefaulted_GetRef();
+		Entry.Spawn = SourceSpawn;
+		Entry.RelativeOffset = SourceSpawn.AuthoredScreenOffset - AnchorOffset;
+	}
+	SpawnPasteSerial = 0;
+	SetStatus(FString::Printf(TEXT("Copied %d spawn(s)."), SourceIndices.Num()));
+	return FReply::Handled();
+}
+
+FReply SInvaderAuthoringPanel::OnPasteSpawns()
+{
+	FARWaveDefRow* Row = GetSelectedWaveRow();
+	if (!Row || !WaveTable)
+	{
+		SetStatus(TEXT("Select a wave row first."));
+		return FReply::Handled();
+	}
+
+	if (SpawnClipboardEntries.IsEmpty())
+	{
+		SetStatus(TEXT("Spawn clipboard is empty. Copy one or more spawns first."));
+		return FReply::Handled();
+	}
+
+	const int32 PasteStep = FMath::Max(1, SpawnPasteSerial + 1);
+	const float GridSize = GetCanvasGridSize();
+	const float OffsetStep = IsCanvasSnapEnabled() ? GridSize : 50.f;
+	const FVector2D PasteDelta(0.f, OffsetStep * static_cast<float>(PasteStep));
+
+	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringPasteSpawn", "Paste Wave Spawn"));
+	WaveTable->Modify();
+	TSet<int32> NewSelection;
+	for (const FSpawnClipboardEntry& Entry : SpawnClipboardEntries)
+	{
+		FARWaveEnemySpawnDef PastedSpawn = Entry.Spawn;
+		PastedSpawn.AuthoredScreenOffset = SnapOffsetToGrid(SpawnClipboardAnchorOffset + Entry.RelativeOffset + PasteDelta);
+		const int32 NewIndex = Row->EnemySpawns.Add(PastedSpawn);
+		NewSelection.Add(NewIndex);
+	}
+
+	++SpawnPasteSerial;
+	ApplySpawnSelection(NewSelection, NewSelection.IsEmpty() ? INDEX_NONE : *NewSelection.CreateConstIterator());
+	MarkTableDirty(WaveTable);
+	RefreshLayerItems();
+	RefreshSpawnItems();
+	RefreshDetailsObjects();
+	SetStatus(FString::Printf(TEXT("Pasted %d spawn(s)."), SpawnClipboardEntries.Num()));
+	return FReply::Handled();
+}
+
 void SInvaderAuthoringPanel::SetSelectedSpawnColor(EAREnemyColor NewColor)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
@@ -2684,6 +2914,23 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildSpawnContextMenu()
 {
 	FMenuBuilder MenuBuilder(true, nullptr);
 	MenuBuilder.BeginSection("SpawnActions", FText::FromString("Spawn"));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Copy Spawn(s)"),
+		FText::FromString("Copy selected spawn(s) to clipboard."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			OnCopySelectedSpawns();
+		})));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Paste Spawn(s)"),
+		FText::FromString("Paste copied spawn(s) and select newly created entries."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			OnPasteSpawns();
+		})));
+	MenuBuilder.AddMenuSeparator();
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Set Color: Red"),
 		FText::FromString("Set selected spawn enemy color to Red."),
@@ -3205,7 +3452,7 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	WaveTable->Modify();
 	FARWaveEnemySpawnDef Spawn;
 	Spawn.SpawnDelay = SelectedLayerDelay;
-	Spawn.AuthoredScreenOffset = NewOffset;
+	Spawn.AuthoredScreenOffset = SnapOffsetToGrid(NewOffset);
 	if (ActivePaletteEntry.IsSet())
 	{
 		UClass* ResolvedClass = ActivePaletteEntry->EnemyClassPath.ResolveClass();
@@ -3222,6 +3469,31 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
+}
+
+bool SInvaderAuthoringPanel::IsCanvasSnapEnabled() const
+{
+	const UARInvaderAuthoringEditorSettings* Settings = GetDefault<UARInvaderAuthoringEditorSettings>();
+	return Settings ? Settings->bSnapCanvasToGrid : false;
+}
+
+float SInvaderAuthoringPanel::GetCanvasGridSize() const
+{
+	const UARInvaderAuthoringEditorSettings* Settings = GetDefault<UARInvaderAuthoringEditorSettings>();
+	return Settings ? FMath::Max(1.f, Settings->CanvasGridSize) : 100.f;
+}
+
+FVector2D SInvaderAuthoringPanel::SnapOffsetToGrid(const FVector2D& InOffset) const
+{
+	if (!IsCanvasSnapEnabled())
+	{
+		return InOffset;
+	}
+
+	const float GridSize = GetCanvasGridSize();
+	return FVector2D(
+		FMath::GridSnap(InOffset.X, GridSize),
+		FMath::GridSnap(InOffset.Y, GridSize));
 }
 
 void SInvaderAuthoringPanel::SetPreviewTime(float NewPreviewTime)

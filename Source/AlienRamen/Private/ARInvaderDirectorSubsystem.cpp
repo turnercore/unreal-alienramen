@@ -1411,10 +1411,9 @@ void UARInvaderDirectorSubsystem::TickTransition(float DeltaTime)
 
 void UARInvaderDirectorSubsystem::RegisterConsoleCommands()
 {
-	if (CmdForceWave)
-	{
-		return;
-	}
+	// Console command names are global; PIE world travel can initialize a new subsystem
+	// before the previous world deinitializes, so clear any prior registration first.
+	UnregisterConsoleCommands();
 
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 

@@ -34,4 +34,12 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Preview")
 	bool bShowApproximatePreviewBanner = true;
+
+	// Snap authored spawn offsets to a configurable grid when placing/dragging in canvas.
+	UPROPERTY(Config, EditAnywhere, Category = "Preview")
+	bool bSnapCanvasToGrid = false;
+
+	// Grid step size used by canvas snap and copy/paste offset nudging.
+	UPROPERTY(Config, EditAnywhere, Category = "Preview", meta=(ClampMin="1.0", UIMin="1.0"))
+	float CanvasGridSize = 100.f;
 };

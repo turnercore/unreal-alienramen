@@ -93,6 +93,12 @@ private:
 		FString EnemyClassName;
 	};
 
+	struct FSpawnClipboardEntry
+	{
+		FARWaveEnemySpawnDef Spawn;
+		FVector2D RelativeOffset = FVector2D::ZeroVector;
+	};
+
 	// setup
 	void BuildLayout();
 	void RefreshTables();
@@ -150,6 +156,8 @@ private:
 	FReply OnAddLayer();
 	FReply OnAddSpawnToLayer();
 	FReply OnDeleteSelectedSpawn();
+	FReply OnCopySelectedSpawns();
+	FReply OnPasteSpawns();
 	void SetSelectedSpawnColor(EAREnemyColor NewColor);
 	FReply OnMoveSpawnUp();
 	FReply OnMoveSpawnDown();
@@ -168,6 +176,9 @@ private:
 	void HandleCanvasSelectedSpawnsMoved(const FVector2D& OffsetDelta);
 	void HandleCanvasSelectionRectChanged(const TArray<int32>& RectSelection, bool bAppendToSelection);
 	void HandleCanvasAddSpawnAt(const FVector2D& NewOffset);
+	bool IsCanvasSnapEnabled() const;
+	float GetCanvasGridSize() const;
+	FVector2D SnapOffsetToGrid(const FVector2D& InOffset) const;
 
 	// preview
 	void SetPreviewTime(float NewPreviewTime);
@@ -246,6 +257,9 @@ private:
 	TOptional<FPaletteEntry> ActivePaletteEntry;
 	TMap<FSoftClassPath, bool> EnemyPaletteClassCompatibilityCache;
 	TMap<int32, FVector2D> SpawnDragStartOffsets;
+	TArray<FSpawnClipboardEntry> SpawnClipboardEntries;
+	FVector2D SpawnClipboardAnchorOffset = FVector2D::ZeroVector;
+	int32 SpawnPasteSerial = 0;
 	FDelegateHandle ObjectTransactedHandle;
 	TUniquePtr<FScopedTransaction> SpawnDragTransaction;
 	bool bSpawnDragChanged = false;

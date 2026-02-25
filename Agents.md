@@ -120,6 +120,8 @@
 - `bFormationLockActive` (lock during `Active`)
 - Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
 - StateTree startup/initialization order: enemy AI controller defers StateTree start to next tick after possess so invader runtime context and wave lock flags are applied before logic begins.
+- Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
+- Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
 - Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetFormationLockRules(...)` and remain readable from actor context in StateTree.
 - `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
 - `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
@@ -156,6 +158,7 @@
 - `UARInvaderRuntimeStateComponent::OnEnemyLeaked` broadcasts on both server updates and client RepNotify updates with `(NewLeakCount, Delta)`.
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
+- `UARInvaderDirectorSubsystem::RegisterConsoleCommands()` now clears existing `ar.invader.*` registrations first, so PIE map travel cannot double-register global command names across overlapping world/subsystem lifetimes.
 - Console controls implemented:
 - `ar.invader.start [Seed]`
 - `ar.invader.stop`
@@ -205,6 +208,7 @@
 - canvas supports click select, ctrl-toggle, shift range-select (same layer), and drag-rectangle selection
 - clicking empty canvas clears selection when not using additive modifiers
 - canvas drag on a selected spawn moves the full selected group
+- canvas supports spawn copy/paste (`Ctrl+C` / `Ctrl+V`) and spawn context-menu copy/paste; pasted spawns are offset and become the active selection
 - spawn context actions (delete, color set) apply to the current spawn selection set.
 - Keyboard `Delete/Backspace` in wave mode only deletes selected spawn(s); it does not fall through to deleting the selected wave row when no spawns are selected.
 - The panel listens to object transaction events for authored wave/stage tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
@@ -215,6 +219,7 @@
 - top toolbar actions (`Reload Tables`, `Validate Selected`, `Validate All`) have explicit tooltips and separated layout
 - `Add Layer` moved into `Wave Layers` header; `Add Spawn`/`Delete` moved into `Layer Spawns` header
 - layer spawn list supports drag-drop reordering within a layer (same delay bucket)
+- wave canvas exposes authoring controls for `Snap To Grid` and `Grid Size`
 - stages mode hides enemy palette + spawn details panels
 - validation issues are in a collapsible panel and auto-collapse when empty
 - Wave/stage/spawn authoring detail categories are flattened to `Wave`, `Stage`, and `Spawn` (no `AR|Invader|...` category-path nesting in the authoring details panels).
@@ -224,14 +229,14 @@
 - palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
 - favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
-- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by wave-canvas glyph rendering (Square/Circle/Triangle/Diamond)
+- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by wave-canvas glyph rendering (Square/Circle/Triangle/Diamond/Star)
 - palette uses star toggle glyphs for favorites (`★`/`☆`)
 - palette row right-click opens a context menu with `Find in Content Browser`
 - Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
 - `DefaultTestMap` (default `/Game/Maps/Lvl_InvaderDebug`)
 - `LastSeed`
 - `FavoriteEnemyClasses`
-- preview flags (`bHideOtherLayersInWavePreview`, `bShowApproximatePreviewBanner`)
+- preview flags (`bHideOtherLayersInWavePreview`, `bShowApproximatePreviewBanner`, `bSnapCanvasToGrid`, `CanvasGridSize`)
 - Validation is author-time only and currently checks missing references, wave/stage range issues, missing enemy classes, incompatible stage-wave tag constraints, and warns on non-enforced archetype tags.
 - PIE harness uses existing runtime console commands (`ar.invader.*`) and is intended to run as listen-server single-player by default.
 
