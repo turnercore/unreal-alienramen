@@ -172,11 +172,13 @@ private:
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;
 	bool bReachedFormationSlot = false;
-	bool bHasDispatchedEnteredEvent = false;
+	bool bHasDispatchedEnteredScreenEvent = false;
+	bool bHasDispatchedInFormationEvent = false;
 	int32 LastDispatchedWavePhaseWaveId = INDEX_NONE;
 	EARWavePhase LastDispatchedWavePhase = EARWavePhase::Berserk;
 	float EnteredGameplayScreenServerTime = 0.f;
 
 	void TryDispatchWavePhaseEvent();
-	void TryDispatchEnteredEvent();
+	void TryDispatchEnteredScreenEvent();
+	void TryDispatchInFormationEvent();
 };

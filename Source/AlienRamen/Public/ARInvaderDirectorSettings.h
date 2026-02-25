@@ -63,6 +63,10 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	float SpawnLaneSpacing = 220.f;
 
+	// Additional yaw correction applied after look-at spawn facing.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	float SpawnFacingYawOffset = 0.f;
+
 	// World-space gameplay bounds. Note that X is intentionally asymmetric:
 	// the player side is at the low-X boundary (X = 0), and positive X extends
 	// into the playfield. This matches the coordinate convention documented in
@@ -75,6 +79,11 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")
 	float OffscreenCullSeconds = 12.f;
+
+	// Screen-entry detection inset from gameplay bounds used for first-visibility events.
+	// Positive values require enemies to be farther inside bounds before "entered screen" is considered true.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")
+	float EnteredScreenInset = 40.f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "SoftCaps")
 	int32 SoftCapAliveEnemies = 120;
