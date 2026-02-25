@@ -87,6 +87,9 @@ struct FARWaveDefRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	bool bEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	float MinThreat = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
@@ -151,6 +154,9 @@ USTRUCT(BlueprintType)
 struct FARStageDefRow : public FTableRowBase
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
+	bool bEnabled = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stage")
 	float SelectionWeight = 1.f;
