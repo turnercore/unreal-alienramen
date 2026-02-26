@@ -130,10 +130,16 @@
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
-- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once when outside bounds.
+- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once it has remained offscreen for `OffscreenReleaseDelay` seconds.
+- projectile cull delay defaults to project settings value `UARInvaderDirectorSettings::ProjectileOffscreenCullSeconds` (default `0.1s`) when `bUseProjectSettingsOffscreenCullSeconds` is true.
+- offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for purely local/projectile cases.
+- `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
 - release path is override-friendly for pooling via `ReleaseProjectile` (`BlueprintNativeEvent`); default implementation destroys actor.
 - Pickup runtime base exists in C++: `AARPickupBase` (`Source/AlienRamen/Public/ARPickupBase.h`).
-- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, pickup evaluates XY gameplay bounds each tick and tracks offscreen time; once offscreen for `OffscreenReleaseDelay` seconds (default `0.5`), it calls `ReleasePickup()`.
+- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, pickup evaluates XY gameplay bounds each tick and tracks offscreen time; once offscreen for `OffscreenReleaseDelay` seconds, it calls `ReleasePickup()`.
+- pickup cull delay defaults to project settings value `UARInvaderDirectorSettings::PickupOffscreenCullSeconds` (default `0.1s`) when `bUseProjectSettingsOffscreenCullSeconds` is true.
+- offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for client-only pickups.
+- `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
 - pickup release path is override-friendly for pooling via `ReleasePickup` (`BlueprintNativeEvent`); default implementation destroys actor.
 - Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
 - Director sets explicit per-enemy formation target world location at spawn (`AAREnemyBase::SetFormationTargetWorldLocation(...)`) derived from authored offset (+ optional flips) before offscreen edge translation.
@@ -225,6 +231,8 @@
 - `ar.invader.force_threat <Value>`
 - `ar.invader.force_stage <RowName>`
 - `ar.invader.dump_state`
+- `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
+  - deprojects viewport corners at runtime, intersects with horizontal plane `Z=PlaneZ` (default `SpawnOrigin.Z`), logs suggested `GameplayBoundsMin/Max`, and optionally applies+saves when `apply` is provided
 
 ## Debug Save Tool (Current)
 

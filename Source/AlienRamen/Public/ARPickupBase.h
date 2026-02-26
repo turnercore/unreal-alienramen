@@ -37,9 +37,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Pickup|Culling")
 	bool bReleaseWhenOutsideGameplayBounds = true;
 
+	// If true, OffscreenReleaseDelay is pulled from project settings at BeginPlay.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Pickup|Culling")
+	bool bUseProjectSettingsOffscreenCullSeconds = true;
+
 	// Seconds a pickup can stay offscreen before being released.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Pickup|Culling", meta = (ClampMin = "0.0"))
-	float OffscreenReleaseDelay = 0.5f;
+	float OffscreenReleaseDelay = 0.1f;
 
 	// Additional XY margin around gameplay bounds before offscreen timing starts.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Pickup|Culling", meta = (ClampMin = "0.0"))
@@ -53,4 +57,3 @@ private:
 	bool bReleased = false;
 	float OffscreenSeconds = 0.f;
 };
-
