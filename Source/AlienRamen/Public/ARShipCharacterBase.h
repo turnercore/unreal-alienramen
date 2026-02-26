@@ -51,8 +51,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Abilities")
 	bool ActivateAbilityByTag(FGameplayTag Tag, bool bAllowRemoteActivation = true);
 
-	// Applies incoming damage through GAS (server-authoritative).
+	// Applies incoming damage through GAS (server-authoritative) and outputs current health.
 	UFUNCTION(BlueprintCallable, Category = "AR|Ship|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth);
 	bool ApplyDamageViaGAS(float Damage, AActor* Offender);
 
 	// Reads current Damage attribute from GAS.
