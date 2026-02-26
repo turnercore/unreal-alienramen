@@ -2,10 +2,24 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
+#include "GameplayTagContainer.h"
 #include "ARInvaderDirectorSettings.generated.h"
 
 class UDataTable;
 class AActor;
+class UARAbilitySet;
+
+USTRUCT(BlueprintType)
+struct FAREnemyArchetypeAbilitySetEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
+	FGameplayTag EnemyArchetypeTag;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
+	TSoftObjectPtr<UARAbilitySet> AbilitySet;
+};
 
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Invader Director"))
 class ALIENRAMEN_API UARInvaderDirectorSettings : public UDeveloperSettings
@@ -20,6 +34,17 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	TSoftObjectPtr<UDataTable> StageDataTable;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
+	TSoftObjectPtr<UDataTable> EnemyDataTable;
+
+	// Applied to all enemies before archetype/specific startup abilities.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
+	TSoftObjectPtr<UARAbilitySet> EnemyCommonAbilitySet;
+
+	// Optional archetype-specific startup ability sets. Exact archetype tag match preferred.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
+	TArray<FAREnemyArchetypeAbilitySetEntry> EnemyArchetypeAbilitySets;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	FName InitialStageRow;
@@ -84,6 +109,10 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "SoftCaps")
 	bool bBlockSpawnsWhenEnemySoftCapExceeded = false;
+
+	// Number of eligible wave definitions to peek ahead when preloading enemy classes.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "SoftCaps", meta=(ClampMin="0", UIMin="0"))
+	int32 EnemyPreloadWaveLookahead = 2;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Telemetry")
 	TSoftClassPtr<AActor> ProjectileActorClass;

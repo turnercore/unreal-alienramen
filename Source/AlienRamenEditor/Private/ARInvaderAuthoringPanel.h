@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "ARInvaderTypes.h"
 #include "Input/Reply.h"
+#include "UObject/SoftObjectPath.h"
 #include "Widgets/Input/SCheckBox.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Widgets/Views/SListView.h"
@@ -113,6 +114,11 @@ private:
 	UDataTable* GetActiveTable() const;
 	const FARWaveDefRow* GetWaveRow(FName RowName) const;
 	const FARStageDefRow* GetStageRow(FName RowName) const;
+	const FARInvaderEnemyDefRow* FindEnemyDefinitionByIdentifierTag(FGameplayTag IdentifierTag, FName* OutRowName = nullptr) const;
+	bool ResolveIdentifierTagForPaletteClass(const FSoftClassPath& ClassPath, FGameplayTag& OutIdentifierTag) const;
+	FString FormatSpawnEnemyLabel(const FARWaveEnemySpawnDef& Spawn) const;
+	FText GetSelectedSpawnEnemySummaryText() const;
+	EVisibility GetSelectedSpawnEnemySummaryVisibility() const;
 	FARWaveDefRow* GetMutableWaveRow(FName RowName);
 	FARStageDefRow* GetMutableStageRow(FName RowName);
 	FARWaveDefRow* GetSelectedWaveRow();
@@ -179,12 +185,14 @@ private:
 	bool IsCanvasSnapEnabled() const;
 	float GetCanvasGridSize() const;
 	FVector2D SnapOffsetToGrid(const FVector2D& InOffset) const;
+	FVector2D ClampOffsetToGameplayBounds(const FVector2D& InOffset) const;
 
 	// preview
 	void SetPreviewTime(float NewPreviewTime);
 	float GetPreviewTime() const;
 	float GetMaxPreviewTime() const;
 	FText GetPhaseSummaryText() const;
+	FText GetSelectedWaveComputedStatsText() const;
 
 	// details callbacks
 	void HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event);
@@ -208,6 +216,7 @@ private:
 	int32 GetPaletteShapeCycle(const FSoftClassPath& ClassPath) const;
 	void CyclePaletteShape(const FSoftClassPath& ClassPath);
 	void SyncPaletteClassInContentBrowser(const FSoftClassPath& ClassPath);
+	void OpenPaletteEnemyData(const FSoftClassPath& ClassPath);
 	void SetActivePaletteEntry(const FPaletteEntry& Entry);
 	TSharedRef<SWidget> BuildPaletteWidget();
 
@@ -221,13 +230,11 @@ private:
 
 	// PIE harness
 	FReply OnStartOrAttachPIE();
-	FReply OnStopPIE();
 	FReply OnStartRun();
 	FReply OnStopRun();
 	FReply OnForceStage();
 	FReply OnForceWave();
 	FReply OnForceThreat();
-	FReply OnDumpState();
 	bool EnsurePIESession(bool bStartIfNeeded);
 	void SchedulePIESaveBootstrap();
 	bool RunPIESaveBootstrap();
@@ -239,6 +246,7 @@ private:
 
 	TObjectPtr<UDataTable> WaveTable = nullptr;
 	TObjectPtr<UDataTable> StageTable = nullptr;
+	TObjectPtr<UDataTable> EnemyTable = nullptr;
 
 	FName SelectedWaveRow = NAME_None;
 	FName SelectedStageRow = NAME_None;

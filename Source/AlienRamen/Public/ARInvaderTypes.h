@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
+#include "UObject/SoftObjectPtr.h"
+#include "ARAbilitySet.h"
 #include "ARInvaderTypes.generated.h"
 
 class AAREnemyBase;
@@ -46,7 +48,12 @@ struct FARWaveEnemySpawnDef
 {
 	GENERATED_BODY()
 
+	// Enemy identity is authored by gameplay tag and resolved through the enemy definition table.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	FGameplayTag EnemyIdentifierTag;
+
+	// Legacy path retained for migration support only; runtime spawn identity should use EnemyIdentifierTag.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta=(DeprecatedProperty, DeprecationMessage="Use EnemyIdentifierTag. EnemyClass is legacy migration-only."))
 	TSubclassOf<AAREnemyBase> EnemyClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
@@ -64,6 +71,67 @@ struct FARWaveEnemySpawnDef
 	// Effects applied to this spawned enemy instance (in addition to wave/stage effects).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<TSubclassOf<UGameplayEffect>> EnemyGameplayEffects;
+};
+
+USTRUCT(BlueprintType)
+struct FARInvaderEnemyRuntimeInitData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	float MaxHealth = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	float Damage = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	float CollisionDamage = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	float MoveSpeed = 350.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	float FireRate = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	float DamageTakenMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	FGameplayTag EnemyArchetypeTag;
+
+	// Per-enemy startup abilities applied after common/archetype sets.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	TArray<FARAbilitySet_AbilityEntry> EnemySpecificAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	TArray<TSubclassOf<UGameplayEffect>> StartupGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
+	FGameplayTagContainer StartupLooseTags;
+};
+
+USTRUCT(BlueprintType)
+struct FARInvaderEnemyDefRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	bool bEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	TSoftClassPtr<AAREnemyBase> EnemyClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	FGameplayTag EnemyIdentifierTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	FARInvaderEnemyRuntimeInitData RuntimeInit;
 };
 
 USTRUCT(BlueprintType)
