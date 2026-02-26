@@ -26,6 +26,16 @@ public:
 };
 
 UCLASS(Transient)
+class ALIENRAMENEDITOR_API UARInvaderEnemyRowProxy : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, Category = "", meta=(ShowOnlyInnerProperties))
+	FARInvaderEnemyDefRow Row;
+};
+
+UCLASS(Transient)
 class ALIENRAMENEDITOR_API UARInvaderSpawnProxy : public UObject
 {
 	GENERATED_BODY()

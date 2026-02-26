@@ -1,4 +1,5 @@
 #include "ARDebugSaveToolLibrary.h"
+#include "AREnemyAuthoringPanel.h"
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
 
@@ -381,6 +382,14 @@ public:
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Viewports"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
+			ARInvaderEnemyAuthoringEditor::TabName,
+			FOnSpawnTab::CreateStatic(&ARInvaderEnemyAuthoringEditor::SpawnTab))
+			.SetDisplayName(FText::FromString("Enemy Authoring Tool"))
+			.SetTooltipText(FText::FromString("Author enemy rows, tune runtime stats, and validate enemy definitions."))
+			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"))
+			.SetMenuType(ETabSpawnerMenuType::Hidden);
+
 		UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FAlienRamenEditorModule::RegisterMenus));
 	}
 
@@ -392,6 +401,7 @@ public:
 		}
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDebugSaveEditor::TabName);
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderAuthoringEditor::TabName);
+		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderEnemyAuthoringEditor::TabName);
 	}
 
 private:
@@ -420,6 +430,12 @@ private:
 			FText::FromString("Open the invader wave/stage authoring tool."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Viewports"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenInvaderAuthoringTab));
+		Section.AddMenuEntry(
+			"OpenAREnemyAuthoringTool",
+			FText::FromString("Alien Ramen Enemy Authoring"),
+			FText::FromString("Open the dedicated enemy authoring tool."),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"),
+			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenEnemyAuthoringTab));
 	}
 
 	void OpenTab(const FToolMenuContext&)
@@ -430,6 +446,11 @@ private:
 	void OpenInvaderAuthoringTab(const FToolMenuContext&)
 	{
 		FGlobalTabmanager::Get()->TryInvokeTab(ARInvaderAuthoringEditor::TabName);
+	}
+
+	void OpenEnemyAuthoringTab(const FToolMenuContext&)
+	{
+		FGlobalTabmanager::Get()->TryInvokeTab(ARInvaderEnemyAuthoringEditor::TabName);
 	}
 };
 

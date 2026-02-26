@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "ARInvaderTypes.h"
 #include "Input/Reply.h"
+#include "UObject/SoftObjectPath.h"
 #include "Widgets/Input/SCheckBox.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Widgets/Views/SListView.h"
@@ -39,6 +40,14 @@ struct FInvaderLayerInfo
 {
 	float Delay = 0.f;
 	TArray<int32> SpawnIndices;
+};
+
+struct FInvaderPaletteDragPayload
+{
+	FSoftClassPath EnemyClassPath;
+	EAREnemyColor Color = EAREnemyColor::Red;
+	int32 ShapeCycle = 0;
+	FString Label;
 };
 
 namespace ARInvaderAuthoringEditor
@@ -113,6 +122,12 @@ private:
 	UDataTable* GetActiveTable() const;
 	const FARWaveDefRow* GetWaveRow(FName RowName) const;
 	const FARStageDefRow* GetStageRow(FName RowName) const;
+	const FARInvaderEnemyDefRow* FindEnemyDefinitionByIdentifierTag(FGameplayTag IdentifierTag, FName* OutRowName = nullptr) const;
+	bool ResolveIdentifierTagForPaletteClass(const FSoftClassPath& ClassPath, FGameplayTag& OutIdentifierTag) const;
+	FString FormatSpawnEnemyLabel(const FARWaveEnemySpawnDef& Spawn) const;
+	FText GetSelectedSpawnEnemySummaryText() const;
+	EVisibility GetSelectedSpawnEnemySummaryVisibility() const;
+	FReply OnOpenSelectedSpawnEnemyRow();
 	FARWaveDefRow* GetMutableWaveRow(FName RowName);
 	FARStageDefRow* GetMutableStageRow(FName RowName);
 	FARWaveDefRow* GetSelectedWaveRow();
@@ -175,7 +190,7 @@ private:
 	void HandleCanvasEndSpawnDrag();
 	void HandleCanvasSelectedSpawnsMoved(const FVector2D& OffsetDelta);
 	void HandleCanvasSelectionRectChanged(const TArray<int32>& RectSelection, bool bAppendToSelection);
-	void HandleCanvasAddSpawnAt(const FVector2D& NewOffset);
+	void HandleCanvasAddSpawnAt(const FVector2D& NewOffset, const TOptional<FInvaderPaletteDragPayload>& DragPayload = TOptional<FInvaderPaletteDragPayload>());
 	bool IsCanvasSnapEnabled() const;
 	float GetCanvasGridSize() const;
 	FVector2D SnapOffsetToGrid(const FVector2D& InOffset) const;
@@ -239,6 +254,7 @@ private:
 
 	TObjectPtr<UDataTable> WaveTable = nullptr;
 	TObjectPtr<UDataTable> StageTable = nullptr;
+	TObjectPtr<UDataTable> EnemyTable = nullptr;
 
 	FName SelectedWaveRow = NAME_None;
 	FName SelectedStageRow = NAME_None;

@@ -37,6 +37,12 @@ public:
 	FGameplayAttributeData Health;
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, Health)
 
+	// Meta attribute used as a temporary sink for incoming damage specs.
+	UPROPERTY(BlueprintReadOnly, Category = "AR|Survivability|Meta")
+	FGameplayAttributeData IncomingDamage;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, IncomingDamage)
+
+
 		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "AR|Survivability")
 	FGameplayAttributeData MaxHealth;
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, MaxHealth)
@@ -80,7 +86,7 @@ public:
 	FGameplayAttributeData HealingDealtMultiplier; // default 1.0
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, HealingDealtMultiplier)
 
-		// Repair speed/rate (your “repair” interaction loop)
+		// Repair speed/rate (your repair interaction loop)
 		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_RepairRate, Category = "AR|Support")
 	FGameplayAttributeData RepairRate; // interpret as "progress per second" or similar
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, RepairRate)

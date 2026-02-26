@@ -9,6 +9,7 @@ class UARInvaderRuntimeStateComponent;
 class UDataTable;
 class IConsoleObject;
 class AAREnemyBase;
+struct FStreamableHandle;
 
 UCLASS()
 class ALIENRAMEN_API UARInvaderDirectorSubsystem : public UTickableWorldSubsystem
@@ -98,6 +99,9 @@ private:
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
 	bool SelectWave(FName& OutWaveRow, FARWaveDefRow& OutWaveDef, bool& bOutColorSwap);
 	bool SelectStage(FName& OutStageRow, FARStageDefRow& OutStageDef, const TSet<FName>* ExcludedRows = nullptr);
+	bool ResolveEnemyDefinitionByTag(FGameplayTag EnemyIdentifierTag, FARInvaderEnemyDefRow& OutDef, FString& OutError);
+	void PreloadEnemyClassesForWaveCandidates();
+	void PreloadEnemyClass(const TSoftClassPtr<AAREnemyBase>& EnemyClassRef);
 	FVector ComputeFormationTargetLocation(const FARWaveEnemySpawnDef& SpawnDef, bool bFlipX, bool bFlipY) const;
 	FVector ComputeSpawnLocation(const FARWaveEnemySpawnDef& SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const;
 	void ApplyEnemyGameplayEffects(class AAREnemyBase* Enemy, const FARWaveDefRow& WaveDef, const FARWaveEnemySpawnDef& SpawnDef);
@@ -159,6 +163,10 @@ private:
 
 	TObjectPtr<UDataTable> WaveTable = nullptr;
 	TObjectPtr<UDataTable> StageTable = nullptr;
+	TObjectPtr<UDataTable> EnemyTable = nullptr;
+
+	TMap<FGameplayTag, FARInvaderEnemyDefRow> EnemyDefinitionCache;
+	TMap<FSoftObjectPath, TSharedPtr<FStreamableHandle>> EnemyClassPreloadHandles;
 
 	TMap<TWeakObjectPtr<class AAREnemyBase>, float> OffscreenDurationByEnemy;
 
