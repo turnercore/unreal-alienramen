@@ -112,7 +112,13 @@ public:
 	void BP_OnEnemyDefinitionApplied();
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
-	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARWavePhase InWavePhase, float InPhaseStartServerTime);
+	void SetWaveRuntimeContext(
+		int32 InWaveInstanceId,
+		int32 InFormationSlotIndex,
+		EARWavePhase InWavePhase,
+		float InPhaseStartServerTime,
+		bool bInFormationLockEnter = false,
+		bool bInFormationLockActive = false);
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
 	void SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime);
