@@ -12,6 +12,16 @@ AARPickupBase::AARPickupBase()
 void AARPickupBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (bUseProjectSettingsOffscreenCullSeconds)
+	{
+		const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+		if (Settings)
+		{
+			OffscreenReleaseDelay = FMath::Max(0.f, Settings->PickupOffscreenCullSeconds);
+		}
+	}
+
 	EvaluateOffscreenRelease(0.f);
 }
 
@@ -83,4 +93,3 @@ void AARPickupBase::ReleasePickup_Implementation()
 {
 	Destroy();
 }
-

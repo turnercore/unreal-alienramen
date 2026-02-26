@@ -125,6 +125,7 @@ private:
 	void HandleConsoleStart(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleStop(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleChooseStage(const TArray<FString>& Args, UWorld* InWorld);
+	void HandleConsoleCaptureBounds(const TArray<FString>& Args, UWorld* InWorld);
 	void DestroyManagedInvaderEnemies();
 
 private:
@@ -178,4 +179,5 @@ private:
 	IConsoleObject* CmdStart = nullptr;
 	IConsoleObject* CmdStop = nullptr;
 	IConsoleObject* CmdChooseStage = nullptr;
+	IConsoleObject* CmdCaptureBounds = nullptr;
 };

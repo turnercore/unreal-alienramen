@@ -15,6 +15,7 @@
 #include "Engine/DataTable.h"
 #include "EngineUtils.h"
 #include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerController.h"
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "StructUtils/InstancedStruct.h"
@@ -40,6 +41,23 @@ namespace ARInvaderInternal
 		case EARWavePhase::Berserk: return TEXT("Berserk");
 		default: return TEXT("Unknown");
 		}
+	}
+
+	static bool IntersectRayWithHorizontalPlane(const FVector& RayOrigin, const FVector& RayDirection, float PlaneZ, FVector& OutPoint)
+	{
+		if (FMath::IsNearlyZero(RayDirection.Z, KINDA_SMALL_NUMBER))
+		{
+			return false;
+		}
+
+		const float T = (PlaneZ - RayOrigin.Z) / RayDirection.Z;
+		if (T < 0.f)
+		{
+			return false;
+		}
+
+		OutPoint = RayOrigin + (RayDirection * T);
+		return true;
 	}
 }
 
@@ -1888,6 +1906,12 @@ void UARInvaderDirectorSubsystem::RegisterConsoleCommands()
 		TEXT("Submit stage choice: left|right."),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleChooseStage),
 		ECVF_Default);
+
+	CmdCaptureBounds = ConsoleManager.RegisterConsoleCommand(
+		TEXT("ar.invader.capture_bounds"),
+		TEXT("Capture gameplay bounds from viewport corner deprojection. Usage: ar.invader.capture_bounds [apply] [PlaneZ] [Margin]."),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &UARInvaderDirectorSubsystem::HandleConsoleCaptureBounds),
+		ECVF_Default);
 }
 
 void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
@@ -1912,6 +1936,7 @@ void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
 	UnregisterByName(TEXT("ar.invader.start"));
 	UnregisterByName(TEXT("ar.invader.stop"));
 	UnregisterByName(TEXT("ar.invader.choose_stage"));
+	UnregisterByName(TEXT("ar.invader.capture_bounds"));
 
 	CmdForceWave = nullptr;
 	CmdForcePhase = nullptr;
@@ -1921,6 +1946,7 @@ void UARInvaderDirectorSubsystem::UnregisterConsoleCommands()
 	CmdStart = nullptr;
 	CmdStop = nullptr;
 	CmdChooseStage = nullptr;
+	CmdCaptureBounds = nullptr;
 }
 
 void UARInvaderDirectorSubsystem::HandleConsoleForceWave(const TArray<FString>& Args, UWorld* InWorld)
@@ -2008,4 +2034,162 @@ void UARInvaderDirectorSubsystem::HandleConsoleChooseStage(const TArray<FString>
 	{
 		SubmitStageChoice(false);
 	}
+}
+
+void UARInvaderDirectorSubsystem::HandleConsoleCaptureBounds(const TArray<FString>& Args, UWorld* InWorld)
+{
+	if (InWorld != GetWorld())
+	{
+		return;
+	}
+
+	const UARInvaderDirectorSettings* DefaultSettings = GetDefault<UARInvaderDirectorSettings>();
+	if (!DefaultSettings)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] Missing director settings."));
+		return;
+	}
+
+	bool bApply = false;
+	bool bHasPlaneZ = false;
+	bool bHasMargin = false;
+	float PlaneZ = DefaultSettings->SpawnOrigin.Z;
+	float Margin = 0.f;
+
+	for (const FString& Arg : Args)
+	{
+		const FString Lower = Arg.ToLower();
+		if (Lower == TEXT("apply") || Lower == TEXT("set") || Lower == TEXT("save"))
+		{
+			bApply = true;
+			continue;
+		}
+
+		float Parsed = 0.f;
+		if (!LexTryParseString(Parsed, *Arg))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] Invalid arg '%s'. Usage: ar.invader.capture_bounds [apply] [PlaneZ] [Margin]."), *Arg);
+			return;
+		}
+
+		if (!bHasPlaneZ)
+		{
+			PlaneZ = Parsed;
+			bHasPlaneZ = true;
+		}
+		else if (!bHasMargin)
+		{
+			Margin = Parsed;
+			bHasMargin = true;
+		}
+		else
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] Too many numeric args. Usage: ar.invader.capture_bounds [apply] [PlaneZ] [Margin]."));
+			return;
+		}
+	}
+
+	APlayerController* LocalPC = nullptr;
+	for (FConstPlayerControllerIterator It = InWorld->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* Candidate = It->Get();
+		if (Candidate && Candidate->IsLocalController())
+		{
+			LocalPC = Candidate;
+			break;
+		}
+	}
+
+	if (!LocalPC)
+	{
+		LocalPC = UGameplayStatics::GetPlayerController(InWorld, 0);
+	}
+
+	if (!LocalPC)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] No local PlayerController found."));
+		return;
+	}
+
+	int32 ViewportX = 0;
+	int32 ViewportY = 0;
+	LocalPC->GetViewportSize(ViewportX, ViewportY);
+	if (ViewportX <= 1 || ViewportY <= 1)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] Invalid viewport size (%d x %d)."), ViewportX, ViewportY);
+		return;
+	}
+
+	TArray<FVector2D, TInlineAllocator<4>> Corners;
+	Corners.Add(FVector2D(0.f, 0.f));
+	Corners.Add(FVector2D(static_cast<float>(ViewportX - 1), 0.f));
+	Corners.Add(FVector2D(0.f, static_cast<float>(ViewportY - 1)));
+	Corners.Add(FVector2D(static_cast<float>(ViewportX - 1), static_cast<float>(ViewportY - 1)));
+
+	float MinX = TNumericLimits<float>::Max();
+	float MinY = TNumericLimits<float>::Max();
+	float MaxX = TNumericLimits<float>::Lowest();
+	float MaxY = TNumericLimits<float>::Lowest();
+
+	for (const FVector2D& Corner : Corners)
+	{
+		FVector RayOrigin = FVector::ZeroVector;
+		FVector RayDirection = FVector::ZeroVector;
+		if (!LocalPC->DeprojectScreenPositionToWorld(Corner.X, Corner.Y, RayOrigin, RayDirection))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] Deproject failed at corner (%.0f, %.0f)."), Corner.X, Corner.Y);
+			return;
+		}
+
+		FVector WorldPoint = FVector::ZeroVector;
+		if (!ARInvaderInternal::IntersectRayWithHorizontalPlane(RayOrigin, RayDirection, PlaneZ, WorldPoint))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|BoundsCapture] Ray-plane intersection failed at corner (%.0f, %.0f)."), Corner.X, Corner.Y);
+			return;
+		}
+
+		MinX = FMath::Min(MinX, WorldPoint.X);
+		MinY = FMath::Min(MinY, WorldPoint.Y);
+		MaxX = FMath::Max(MaxX, WorldPoint.X);
+		MaxY = FMath::Max(MaxY, WorldPoint.Y);
+	}
+
+	const float SafeMargin = FMath::Abs(Margin);
+	MinX -= SafeMargin;
+	MinY -= SafeMargin;
+	MaxX += SafeMargin;
+	MaxY += SafeMargin;
+
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderDirector|BoundsCapture] Suggested bounds: Min=(%.1f, %.1f) Max=(%.1f, %.1f) PlaneZ=%.1f Viewport=%dx%d Margin=%.1f"),
+		MinX,
+		MinY,
+		MaxX,
+		MaxY,
+		PlaneZ,
+		ViewportX,
+		ViewportY,
+		SafeMargin);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderDirector|BoundsCapture] Copy values: GameplayBoundsMin=(X=%.1f,Y=%.1f) GameplayBoundsMax=(X=%.1f,Y=%.1f)"),
+		MinX,
+		MinY,
+		MaxX,
+		MaxY);
+
+	if (!bApply)
+	{
+		return;
+	}
+
+	UARInvaderDirectorSettings* MutableSettings = GetMutableDefault<UARInvaderDirectorSettings>();
+	MutableSettings->GameplayBoundsMin = FVector2D(MinX, MinY);
+	MutableSettings->GameplayBoundsMax = FVector2D(MaxX, MaxY);
+	MutableSettings->SaveConfig();
+
+	UE_LOG(ARLog, Log, TEXT("[InvaderDirector|BoundsCapture] Applied + saved GameplayBoundsMin/Max to project settings."));
 }

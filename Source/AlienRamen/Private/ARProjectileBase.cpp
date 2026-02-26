@@ -12,16 +12,31 @@ AARProjectileBase::AARProjectileBase()
 void AARProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	EvaluateOffscreenRelease();
+
+	if (bUseProjectSettingsOffscreenCullSeconds)
+	{
+		const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+		if (Settings)
+		{
+			OffscreenReleaseDelay = FMath::Max(0.f, Settings->ProjectileOffscreenCullSeconds);
+		}
+	}
+
+	EvaluateOffscreenReleaseInternal(0.f);
 }
 
 void AARProjectileBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	EvaluateOffscreenRelease();
+	EvaluateOffscreenReleaseInternal(DeltaSeconds);
 }
 
 void AARProjectileBase::EvaluateOffscreenRelease()
+{
+	EvaluateOffscreenReleaseInternal(0.f);
+}
+
+void AARProjectileBase::EvaluateOffscreenReleaseInternal(float DeltaSeconds)
 {
 	if (bReleased || !bReleaseWhenOutsideGameplayBounds)
 	{
@@ -33,14 +48,23 @@ void AARProjectileBase::EvaluateOffscreenRelease()
 		return;
 	}
 
-	if (!IsOutsideGameplayBounds())
+	const bool bOffscreen = IsOutsideGameplayBounds();
+	if (!bOffscreen)
+	{
+		OffscreenSeconds = 0.f;
+		return;
+	}
+
+	OffscreenSeconds += FMath::Max(0.f, DeltaSeconds);
+	if (OffscreenSeconds < FMath::Max(0.f, OffscreenReleaseDelay))
 	{
 		return;
 	}
 
 	bReleased = true;
-	UE_LOG(ARLog, Verbose, TEXT("[ProjectileBase] Offscreen release for '%s' at (%.1f, %.1f, %.1f)."),
+	UE_LOG(ARLog, Verbose, TEXT("[ProjectileBase] Offscreen release for '%s' after %.2fs at (%.1f, %.1f, %.1f)."),
 		*GetNameSafe(this),
+		OffscreenSeconds,
 		GetActorLocation().X,
 		GetActorLocation().Y,
 		GetActorLocation().Z);
@@ -74,4 +98,3 @@ void AARProjectileBase::ReleaseProjectile_Implementation()
 {
 	Destroy();
 }
-
