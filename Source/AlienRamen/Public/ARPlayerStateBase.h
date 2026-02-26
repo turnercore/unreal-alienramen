@@ -42,6 +42,8 @@ public:
 	void ServerApplyStateFromStruct(const FInstancedStruct& SavedState);
 
 protected:
+	virtual void BeginPlay() override;
+	void EnsureDefaultLoadoutIfEmpty();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
