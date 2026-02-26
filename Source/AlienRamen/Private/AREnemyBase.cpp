@@ -225,15 +225,15 @@ void AAREnemyBase::ClearRuntimeEnemyEffects()
 	RuntimeAppliedEffectHandles.Reset();
 }
 
-void AAREnemyBase::ApplyRuntimeEnemyTags(const FGameplayTagContainer& Tags)
+void AAREnemyBase::ApplyRuntimeEnemyTags(const FGameplayTagContainer& InTags)
 {
-	if (!HasAuthority() || !AbilitySystemComponent || Tags.IsEmpty())
+	if (!HasAuthority() || !AbilitySystemComponent || InTags.IsEmpty())
 	{
 		return;
 	}
 
-	AbilitySystemComponent->AddLooseGameplayTags(Tags);
-	RuntimeAppliedLooseTags.AppendTags(Tags);
+	AbilitySystemComponent->AddLooseGameplayTags(InTags);
+	RuntimeAppliedLooseTags.AppendTags(InTags);
 }
 
 void AAREnemyBase::ClearRuntimeEnemyTags()

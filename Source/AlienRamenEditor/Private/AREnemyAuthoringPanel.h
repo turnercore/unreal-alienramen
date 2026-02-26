@@ -21,7 +21,7 @@ class UARInvaderEnemyRowProxy;
 class FSpawnTabArgs;
 struct FPropertyChangedEvent;
 class UObject;
-struct FTransactionObjectEvent;
+class FTransactionObjectEvent;
 
 namespace ARInvaderEnemyAuthoringEditor
 {
@@ -96,7 +96,7 @@ private:
 	TSharedRef<SWidget> BuildRowContextMenu();
 	FReply OnSetSelectedRowsEnabled(bool bEnable);
 	void ToggleSortByColumn(FName ColumnId);
-	FText GetSortLabel(FName ColumnId, const FString& BaseLabel) const;
+	FText GetSortLabel(FName ColumnId, FString BaseLabel) const;
 
 	void HandlePropertiesChanged(const FPropertyChangedEvent& Event);
 	void HandleObjectTransacted(UObject* Object, const FTransactionObjectEvent& Event);
