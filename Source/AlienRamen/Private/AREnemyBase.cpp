@@ -263,11 +263,14 @@ void AAREnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	BindHealthChangeDelegate();
+	BindMoveSpeedChangeDelegate();
+	RefreshCharacterMovementSpeedFromAttributes();
 }
 
 void AAREnemyBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UnbindHealthChangeDelegate();
+	UnbindMoveSpeedChangeDelegate();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -324,6 +327,8 @@ void AAREnemyBase::InitAbilityActorInfo()
 	// Enemy-owned ASC: owner and avatar are this pawn.
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	BindHealthChangeDelegate();
+	BindMoveSpeedChangeDelegate();
+	RefreshCharacterMovementSpeedFromAttributes();
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] ASC initialized for '%s'."), *GetNameSafe(this));
 }
 
@@ -547,6 +552,7 @@ void AAREnemyBase::ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitDat
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetFireRateAttribute(), RuntimeInit.FireRate);
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDamageTakenMultiplierAttribute(), RuntimeInit.DamageTakenMultiplier);
 	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetCollisionDamageAttribute(), RuntimeInit.CollisionDamage);
+	RefreshCharacterMovementSpeedFromAttributes();
 
 	EnemyArchetypeTag = RuntimeInit.EnemyArchetypeTag;
 	RuntimeSpecificAbilities = RuntimeInit.EnemySpecificAbilities;
@@ -653,6 +659,53 @@ void AAREnemyBase::OnHealthChanged(const FOnAttributeChangeData& ChangeData)
 
 		HandleDeath(DamageInstigator);
 	}
+}
+
+void AAREnemyBase::BindMoveSpeedChangeDelegate()
+{
+	if (!AbilitySystemComponent || MoveSpeedChangedDelegateHandle.IsValid())
+	{
+		return;
+	}
+
+	MoveSpeedChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+		.AddUObject(this, &AAREnemyBase::OnMoveSpeedChanged);
+}
+
+void AAREnemyBase::UnbindMoveSpeedChangeDelegate()
+{
+	if (!AbilitySystemComponent || !MoveSpeedChangedDelegateHandle.IsValid())
+	{
+		return;
+	}
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+		.Remove(MoveSpeedChangedDelegateHandle);
+	MoveSpeedChangedDelegateHandle.Reset();
+}
+
+void AAREnemyBase::OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData)
+{
+	(void)ChangeData;
+	RefreshCharacterMovementSpeedFromAttributes();
+}
+
+void AAREnemyBase::RefreshCharacterMovementSpeedFromAttributes()
+{
+	if (!AbilitySystemComponent)
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	if (!MoveComp)
+	{
+		return;
+	}
+
+	const float MoveSpeed = FMath::Max(0.f, AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute()));
+	MoveComp->MaxWalkSpeed = MoveSpeed;
+	MoveComp->MaxFlySpeed = MoveSpeed;
 }
 
 void AAREnemyBase::HandleDeath_Implementation(AActor* InstigatorActor)

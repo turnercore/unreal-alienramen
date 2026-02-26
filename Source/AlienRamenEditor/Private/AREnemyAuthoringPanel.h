@@ -89,6 +89,8 @@ private:
 
 	void ValidateRows(const TArray<FName>& TargetRows, TArray<FEnemyIssue>& OutIssues) const;
 	void ValidateSingleRow(const FName RowName, const FARInvaderEnemyDefRow& Row, TArray<FEnemyIssue>& OutIssues) const;
+	bool EnsureIdentifierTagMatchesRowName(FName RowName, FARInvaderEnemyDefRow& Row, FString* OutFailureReason = nullptr) const;
+	void NormalizeIdentifierTagsForRows(const TArray<FName>& TargetRows, bool bUseTransaction, bool* bOutAnyChanged = nullptr);
 
 	void HandleRowSelectionChanged(TSharedPtr<FEnemyRowItem> Item, ESelectInfo::Type SelectInfo);
 	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FEnemyRowItem> Item, const TSharedRef<STableViewBase>& OwnerTable);

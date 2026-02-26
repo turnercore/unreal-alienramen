@@ -33,6 +33,7 @@ namespace
 {
 	TWeakPtr<SEnemyAuthoringPanel> GActiveEnemyPanel;
 	TOptional<FGameplayTag> GPendingFocusTag;
+	static const FString EnemyIdentifierDefaultRoot(TEXT("Enemy.Identifier"));
 
 	bool HasExpectedEnemyRowStruct(const UDataTable* EnemyTable)
 	{
@@ -72,6 +73,32 @@ namespace
 
 		const FString AssetName = ClassPath.GetAssetName();
 		return AssetName.IsEmpty() ? ClassPath.ToString() : AssetName;
+	}
+
+	FString GetTagLeafString(const FGameplayTag& Tag)
+	{
+		const FString TagString = Tag.ToString();
+		int32 DotIndex = INDEX_NONE;
+		if (TagString.FindLastChar(TEXT('.'), DotIndex))
+		{
+			return TagString.Mid(DotIndex + 1);
+		}
+		return TagString;
+	}
+
+	FString BuildTagPathFromRowName(const FARInvaderEnemyDefRow& Row, const FName RowName)
+	{
+		const FString RowNameString = RowName.ToString();
+		const FString ExistingTagString = Row.EnemyIdentifierTag.ToString();
+
+		FString ParentPath = EnemyIdentifierDefaultRoot;
+		int32 DotIndex = INDEX_NONE;
+		if (ExistingTagString.FindLastChar(TEXT('.'), DotIndex) && DotIndex > 0)
+		{
+			ParentPath = ExistingTagString.Left(DotIndex);
+		}
+
+		return FString::Printf(TEXT("%s.%s"), *ParentPath, *RowNameString);
 	}
 }
 
@@ -147,6 +174,11 @@ void SEnemyAuthoringPanel::Construct(const FArguments& InArgs)
 
 	BuildLayout();
 	RefreshTable();
+	if (EnemyTable && HasExpectedEnemyRowStruct(EnemyTable))
+	{
+		const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "EnemyAuthoringNormalizeIdentifierTagsOnOpen", "Normalize Enemy Identifier Tags"));
+		NormalizeIdentifierTagsForRows(EnemyTable->GetRowNames(), true, nullptr);
+	}
 	RefreshRows();
 	RefreshDetails();
 	RefreshIssues();
@@ -649,6 +681,11 @@ FName SEnemyAuthoringPanel::GetPrimarySelectedRowName() const
 FReply SEnemyAuthoringPanel::OnReloadTable()
 {
 	RefreshTable();
+	if (EnemyTable && HasExpectedEnemyRowStruct(EnemyTable))
+	{
+		const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "EnemyAuthoringNormalizeIdentifierTags", "Normalize Enemy Identifier Tags"));
+		NormalizeIdentifierTagsForRows(EnemyTable->GetRowNames(), true, nullptr);
+	}
 	RefreshRows();
 	RefreshDetails();
 	SetStatus(TEXT("Enemy table reloaded."));
@@ -671,6 +708,7 @@ FReply SEnemyAuthoringPanel::OnCreateRow()
 
 	FARInvaderEnemyDefRow NewRow;
 	EnemyTable->AddRow(NewRowName, NewRow);
+	NormalizeIdentifierTagsForRows({ NewRowName }, false, nullptr);
 	EnemyTable->MarkPackageDirty();
 
 	RefreshRows();
@@ -698,6 +736,7 @@ FReply SEnemyAuthoringPanel::OnDuplicateRow()
 	EnemyTable->Modify();
 
 	FName LastNewRow = NAME_None;
+	TArray<FName> NewRows;
 	for (const FName& SourceRowName : SourceRows)
 	{
 		const FARInvaderEnemyDefRow* SourceRow = GetRow(SourceRowName);
@@ -709,8 +748,10 @@ FReply SEnemyAuthoringPanel::OnDuplicateRow()
 		const FName NewRowName = MakeUniqueRowName(SourceRowName.ToString() + TEXT("_Copy"));
 		EnemyTable->AddRow(NewRowName, *SourceRow);
 		LastNewRow = NewRowName;
+		NewRows.Add(NewRowName);
 	}
 
+	NormalizeIdentifierTagsForRows(NewRows, false, nullptr);
 	EnemyTable->MarkPackageDirty();
 	RefreshRows();
 	if (!LastNewRow.IsNone())
@@ -768,6 +809,7 @@ FReply SEnemyAuthoringPanel::OnRenameRow()
 	const FARInvaderEnemyDefRow CachedRow = *OldRow;
 	EnemyTable->RemoveRow(OldRowName);
 	EnemyTable->AddRow(NewRowName, CachedRow);
+	NormalizeIdentifierTagsForRows({ NewRowName }, false, nullptr);
 	EnemyTable->MarkPackageDirty();
 
 	RefreshRows();
@@ -901,6 +943,80 @@ FReply SEnemyAuthoringPanel::OnValidateAll()
 	return FReply::Handled();
 }
 
+bool SEnemyAuthoringPanel::EnsureIdentifierTagMatchesRowName(FName RowName, FARInvaderEnemyDefRow& Row, FString* OutFailureReason) const
+{
+	const FString DesiredTagPath = BuildTagPathFromRowName(Row, RowName);
+	const FGameplayTag DesiredTag = FGameplayTag::RequestGameplayTag(FName(*DesiredTagPath), false);
+	if (!DesiredTag.IsValid())
+	{
+		if (OutFailureReason)
+		{
+			*OutFailureReason = FString::Printf(TEXT("Gameplay tag '%s' is not registered."), *DesiredTagPath);
+		}
+		return false;
+	}
+
+	Row.EnemyIdentifierTag = DesiredTag;
+	return true;
+}
+
+void SEnemyAuthoringPanel::NormalizeIdentifierTagsForRows(const TArray<FName>& TargetRows, bool bUseTransaction, bool* bOutAnyChanged)
+{
+	if (bOutAnyChanged)
+	{
+		*bOutAnyChanged = false;
+	}
+
+	if (!EnemyTable || !HasExpectedEnemyRowStruct(EnemyTable) || TargetRows.IsEmpty())
+	{
+		return;
+	}
+
+	TArray<FName> ChangedRows;
+	TArray<FString> Failures;
+
+	if (bUseTransaction)
+	{
+		EnemyTable->Modify();
+	}
+
+	for (const FName RowName : TargetRows)
+	{
+		FARInvaderEnemyDefRow* MutableRow = GetMutableRow(RowName);
+		if (!MutableRow)
+		{
+			continue;
+		}
+
+		const FGameplayTag PreviousTag = MutableRow->EnemyIdentifierTag;
+		FString FailureReason;
+		if (!EnsureIdentifierTagMatchesRowName(RowName, *MutableRow, &FailureReason))
+		{
+			Failures.Add(FString::Printf(TEXT("%s: %s"), *RowName.ToString(), *FailureReason));
+			continue;
+		}
+
+		if (!MutableRow->EnemyIdentifierTag.MatchesTagExact(PreviousTag))
+		{
+			ChangedRows.Add(RowName);
+		}
+	}
+
+	if (!ChangedRows.IsEmpty())
+	{
+		EnemyTable->MarkPackageDirty();
+		if (bOutAnyChanged)
+		{
+			*bOutAnyChanged = true;
+		}
+	}
+
+	if (!Failures.IsEmpty())
+	{
+		SetStatus(FString::Printf(TEXT("Identifier tag sync incomplete: %s"), *FString::Join(Failures, TEXT(" | "))));
+	}
+}
+
 void SEnemyAuthoringPanel::ValidateRows(const TArray<FName>& TargetRows, TArray<FEnemyIssue>& OutIssues) const
 {
 	if (!EnemyTable || !HasExpectedEnemyRowStruct(EnemyTable))
@@ -961,6 +1077,15 @@ void SEnemyAuthoringPanel::ValidateSingleRow(const FName RowName, const FARInvad
 	if (!Row.EnemyIdentifierTag.IsValid())
 	{
 		OutIssues.Add({ true, RowName, TEXT("EnemyIdentifierTag is required.") });
+	}
+	else
+	{
+		const FString Leaf = GetTagLeafString(Row.EnemyIdentifierTag);
+		const FString RowNameString = RowName.ToString();
+		if (Leaf != RowNameString)
+		{
+			OutIssues.Add({ true, RowName, FString::Printf(TEXT("EnemyIdentifierTag leaf '%s' must exactly match row name '%s'."), *Leaf, *RowNameString) });
+		}
 	}
 	if (Row.EnemyClass.IsNull())
 	{
@@ -1204,6 +1329,7 @@ void SEnemyAuthoringPanel::HandlePropertiesChanged(const FPropertyChangedEvent& 
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "EnemyAuthoringEditRow", "Edit Enemy Row"));
 	EnemyTable->Modify();
 	*MutableRow = RowProxy->Row;
+	NormalizeIdentifierTagsForRows({ SelectedRowName }, false, nullptr);
 	EnemyTable->MarkPackageDirty();
 
 	RefreshRows();

@@ -42,14 +42,6 @@ struct FInvaderLayerInfo
 	TArray<int32> SpawnIndices;
 };
 
-struct FInvaderPaletteDragPayload
-{
-	FSoftClassPath EnemyClassPath;
-	EAREnemyColor Color = EAREnemyColor::Red;
-	int32 ShapeCycle = 0;
-	FString Label;
-};
-
 namespace ARInvaderAuthoringEditor
 {
 	extern const FName TabName;
@@ -127,7 +119,6 @@ private:
 	FString FormatSpawnEnemyLabel(const FARWaveEnemySpawnDef& Spawn) const;
 	FText GetSelectedSpawnEnemySummaryText() const;
 	EVisibility GetSelectedSpawnEnemySummaryVisibility() const;
-	FReply OnOpenSelectedSpawnEnemyRow();
 	FARWaveDefRow* GetMutableWaveRow(FName RowName);
 	FARStageDefRow* GetMutableStageRow(FName RowName);
 	FARWaveDefRow* GetSelectedWaveRow();
@@ -190,16 +181,18 @@ private:
 	void HandleCanvasEndSpawnDrag();
 	void HandleCanvasSelectedSpawnsMoved(const FVector2D& OffsetDelta);
 	void HandleCanvasSelectionRectChanged(const TArray<int32>& RectSelection, bool bAppendToSelection);
-	void HandleCanvasAddSpawnAt(const FVector2D& NewOffset, const TOptional<FInvaderPaletteDragPayload>& DragPayload = TOptional<FInvaderPaletteDragPayload>());
+	void HandleCanvasAddSpawnAt(const FVector2D& NewOffset);
 	bool IsCanvasSnapEnabled() const;
 	float GetCanvasGridSize() const;
 	FVector2D SnapOffsetToGrid(const FVector2D& InOffset) const;
+	FVector2D ClampOffsetToGameplayBounds(const FVector2D& InOffset) const;
 
 	// preview
 	void SetPreviewTime(float NewPreviewTime);
 	float GetPreviewTime() const;
 	float GetMaxPreviewTime() const;
 	FText GetPhaseSummaryText() const;
+	FText GetSelectedWaveComputedStatsText() const;
 
 	// details callbacks
 	void HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event);
@@ -223,6 +216,7 @@ private:
 	int32 GetPaletteShapeCycle(const FSoftClassPath& ClassPath) const;
 	void CyclePaletteShape(const FSoftClassPath& ClassPath);
 	void SyncPaletteClassInContentBrowser(const FSoftClassPath& ClassPath);
+	void OpenPaletteEnemyData(const FSoftClassPath& ClassPath);
 	void SetActivePaletteEntry(const FPaletteEntry& Entry);
 	TSharedRef<SWidget> BuildPaletteWidget();
 
@@ -236,13 +230,11 @@ private:
 
 	// PIE harness
 	FReply OnStartOrAttachPIE();
-	FReply OnStopPIE();
 	FReply OnStartRun();
 	FReply OnStopRun();
 	FReply OnForceStage();
 	FReply OnForceWave();
 	FReply OnForceThreat();
-	FReply OnDumpState();
 	bool EnsurePIESession(bool bStartIfNeeded);
 	void SchedulePIESaveBootstrap();
 	bool RunPIESaveBootstrap();

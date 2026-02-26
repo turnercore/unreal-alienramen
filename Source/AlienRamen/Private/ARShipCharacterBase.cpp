@@ -62,9 +62,9 @@ const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() co
 	return CurrentPrimaryWeapon;
 }
 
-namespace
+namespace ARShipCharacterBaseLocal
 {
-	static bool ApplyDamageToActorViaGAS(AActor* Target, float Damage, AActor* Offender)
+	static bool ApplyDamageToActorViaGAS_Local(AActor* Target, float Damage, AActor* Offender)
 	{
 		if (!Target || Damage <= 0.f)
 		{
@@ -98,7 +98,7 @@ bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
 		return false;
 	}
 
-	static const FGameplayTag DataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	static const FGameplayTag ShipDataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
 	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
 	if (Offender)
 	{
@@ -111,7 +111,7 @@ bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
 		return false;
 	}
 
-	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
+	Spec.Data->SetSetByCallerMagnitude(ShipDataDamageTag, Damage);
 	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 	return true;
 }
@@ -135,7 +135,7 @@ bool AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float Damag
 	}
 
 	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentDamageFromGAS();
-	return ApplyDamageToActorViaGAS(Target, DamageToApply, this);
+	return ARShipCharacterBaseLocal::ApplyDamageToActorViaGAS_Local(Target, DamageToApply, this);
 }
 
 // --------------------
