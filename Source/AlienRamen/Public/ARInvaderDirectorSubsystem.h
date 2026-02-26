@@ -163,7 +163,6 @@ private:
 
 	TObjectPtr<UDataTable> WaveTable = nullptr;
 	TObjectPtr<UDataTable> StageTable = nullptr;
-	TObjectPtr<UDataTable> EnemyTable = nullptr;
 
 	TMap<FGameplayTag, FARInvaderEnemyDefRow> EnemyDefinitionCache;
 	TMap<FSoftObjectPath, TSharedPtr<FStreamableHandle>> EnemyClassPreloadHandles;

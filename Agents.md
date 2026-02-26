@@ -104,10 +104,13 @@
 - core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
 - enemy set: `CollisionDamage`
 - runtime startup ability set/effects/loose tags come from enemy row runtime-init payload.
+- Enemy identifier tag is replicated with notify (`OnRep_EnemyIdentifierTag`) and forwards to BP hook `BP_OnEnemyIdentifierTagChanged`; server `SetEnemyIdentifierTag` fires the same hook immediately.
+- Enemy definition application flag `bEnemyDefinitionApplied` was removed; rely on BP hook `BP_OnEnemyDefinitionApplied` if you need lifecycle notifications.
 - Enemy archetype is row-authored runtime data (`RuntimeInit.EnemyArchetypeTag`) replicated on `AAREnemyBase` (not hand-authored per enemy BP).
 - Invader authority brain: `UARInvaderDirectorSubsystem` (server-only `UTickableWorldSubsystem`).
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
+- Director runtime no longer requires/loading the enemy DataTable to start runs; enemy definitions are resolved through `ContentLookupSubsystem` (registry asset) and cached per identifier tag. Enemy class preloading still uses the resolved definition.
 - Director keeps an enemy definition cache keyed by identifier tag and preloads likely enemy classes ahead of time (`EnemyPreloadWaveLookahead`).
 - Disabled enemy rows are hard-rejected from runtime spawn.
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.

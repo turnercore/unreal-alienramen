@@ -80,6 +80,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Gameplay")
 	FGameplayTag GetEnemyIdentifierTag() const { return EnemyIdentifierTag; }
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
+	void BP_OnEnemyIdentifierTagChanged(FGameplayTag NewIdentifierTag);
+
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
 	bool InitializeFromEnemyDefinitionTag();
 
@@ -197,8 +200,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyArchetypeTag;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyIdentifierTag, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyIdentifierTag;
+
+	UFUNCTION()
+	void OnRep_EnemyIdentifierTag();
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsDead, BlueprintReadOnly, Category = "AR|Enemy|Lifecycle")
 	bool bIsDead = false;
@@ -251,7 +257,6 @@ private:
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	bool bStartupSetApplied = false;
-	bool bEnemyDefinitionApplied = false;
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;
 	bool bReachedFormationSlot = false;

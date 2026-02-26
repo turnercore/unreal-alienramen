@@ -151,7 +151,6 @@ void AAREnemyBase::UnPossessed()
 		ClearStartupAbilitySet();
 		ClearRuntimeEnemyEffects();
 		ClearRuntimeEnemyTags();
-		bEnemyDefinitionApplied = false;
 	}
 
 	Super::UnPossessed();
@@ -392,7 +391,6 @@ bool AAREnemyBase::InitializeFromEnemyDefinitionTag()
 	}
 
 	ApplyEnemyRuntimeInitData(EnemyDef.RuntimeInit);
-	bEnemyDefinitionApplied = true;
 	ForceNetUpdate();
 	BP_OnEnemyDefinitionApplied();
 	return true;
@@ -536,6 +534,7 @@ void AAREnemyBase::SetEnemyIdentifierTag(FGameplayTag InIdentifierTag)
 
 	EnemyIdentifierTag = InIdentifierTag;
 	ForceNetUpdate();
+	BP_OnEnemyIdentifierTagChanged(EnemyIdentifierTag);
 }
 
 bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
@@ -578,6 +577,11 @@ float AAREnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 void AAREnemyBase::OnRep_EnemyColor()
 {
 	BP_OnEnemyColorChanged(EnemyColor);
+}
+
+void AAREnemyBase::OnRep_EnemyIdentifierTag()
+{
+	BP_OnEnemyIdentifierTagChanged(EnemyIdentifierTag);
 }
 
 void AAREnemyBase::SetWaveRuntimeContext(
