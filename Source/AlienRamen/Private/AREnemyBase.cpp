@@ -36,12 +36,14 @@ namespace
 
 		if (AAREnemyBase* EnemyTarget = Cast<AAREnemyBase>(Target))
 		{
-			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender);
+			float IgnoredCurrentHealth = 0.f;
+			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 		}
 
 		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
 		{
-			return ShipTarget->ApplyDamageViaGAS(Damage, Offender);
+			float IgnoredCurrentHealth = 0.f;
+			return ShipTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 		}
 
 		return false;
@@ -746,6 +748,13 @@ void AAREnemyBase::HandleDeath_Implementation(AActor* InstigatorActor)
 		*GetNameSafe(this), *GetNameSafe(InstigatorActor));
 
 	BP_OnEnemyDied(InstigatorActor);
+	BP_OnEnemyPreRelease(InstigatorActor);
+	ReleaseEnemyActor();
+}
+
+void AAREnemyBase::ReleaseEnemyActor_Implementation()
+{
+	Destroy();
 }
 
 void AAREnemyBase::OnRep_IsDead()
@@ -786,8 +795,12 @@ void AAREnemyBase::SetEnemyIdentifierTag(FGameplayTag InIdentifierTag)
 	BP_OnEnemyIdentifierTagChanged(EnemyIdentifierTag);
 }
 
-bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth)
 {
+	OutCurrentHealth = AbilitySystemComponent
+		? AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute())
+		: 0.f;
+
 	if (!HasAuthority() || bIsDead || Damage <= 0.f || !AbilitySystemComponent)
 	{
 		return false;
@@ -807,7 +820,19 @@ bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
 
 	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+
+	OutCurrentHealth = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+	if (!bIsDead && OutCurrentHealth <= 0.f)
+	{
+		HandleDeath(Offender);
+	}
 	return true;
+}
+
+bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+{
+	float IgnoredCurrentHealth = 0.f;
+	return ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 }
 
 float AAREnemyBase::GetCurrentDamageFromGAS() const
@@ -862,7 +887,8 @@ float AAREnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		EffectiveOffender = EventInstigator->GetPawn();
 	}
 
-	return ApplyDamageViaGAS(DamageAmount, EffectiveOffender) ? DamageAmount : 0.f;
+	float IgnoredCurrentHealth = 0.f;
+	return ApplyDamageViaGAS(DamageAmount, EffectiveOffender, IgnoredCurrentHealth) ? DamageAmount : 0.f;
 }
 
 void AAREnemyBase::OnRep_EnemyColor()

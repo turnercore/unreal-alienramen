@@ -73,26 +73,31 @@ namespace ARShipCharacterBaseLocal
 
 		if (AAREnemyBase* EnemyTarget = Cast<AAREnemyBase>(Target))
 		{
-			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender);
+			float IgnoredCurrentHealth = 0.f;
+			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 		}
 
 		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
 		{
-			return ShipTarget->ApplyDamageViaGAS(Damage, Offender);
+			float IgnoredCurrentHealth = 0.f;
+			return ShipTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 		}
 
 		return false;
 	}
 }
 
-bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth)
 {
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	OutCurrentHealth = ASC ? ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute()) : 0.f;
+
 	if (!HasAuthority() || Damage <= 0.f)
 	{
 		return false;
 	}
 
-	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	ASC = GetAbilitySystemComponent();
 	if (!ASC)
 	{
 		return false;
@@ -113,7 +118,14 @@ bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
 
 	Spec.Data->SetSetByCallerMagnitude(ShipDataDamageTag, Damage);
 	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+	OutCurrentHealth = ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
 	return true;
+}
+
+bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+{
+	float IgnoredCurrentHealth = 0.f;
+	return ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 }
 
 float AARShipCharacterBase::GetCurrentDamageFromGAS() const
