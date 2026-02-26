@@ -93,7 +93,7 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 
 	if (!EnsureDataTables())
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Could not start run: wave/stage/enemy DataTables are unavailable."));
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Could not start run: wave/stage DataTables are unavailable."));
 		return;
 	}
 
@@ -1464,12 +1464,16 @@ UARInvaderRuntimeStateComponent* UARInvaderDirectorSubsystem::GetOrCreateRuntime
 
 bool UARInvaderDirectorSubsystem::EnsureDataTables()
 {
-	if (WaveTable && StageTable && EnemyTable)
+	if (WaveTable && StageTable)
 	{
 		return true;
 	}
 
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	if (!Settings)
+	{
+		return false;
+	}
 	if (!WaveTable)
 	{
 		WaveTable = Settings->WaveDataTable.LoadSynchronous();
@@ -1478,15 +1482,11 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 	{
 		StageTable = Settings->StageDataTable.LoadSynchronous();
 	}
-	if (!EnemyTable)
-	{
-		EnemyTable = Settings->EnemyDataTable.LoadSynchronous();
-	}
 
-	if (!WaveTable || !StageTable || !EnemyTable)
+	if (!WaveTable || !StageTable)
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Missing data tables. Wave='%s' Stage='%s' Enemy='%s'"),
-			*Settings->WaveDataTable.ToString(), *Settings->StageDataTable.ToString(), *Settings->EnemyDataTable.ToString());
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Missing data tables. Wave='%s' Stage='%s'"),
+			*Settings->WaveDataTable.ToString(), *Settings->StageDataTable.ToString());
 		return false;
 	}
 	return true;
