@@ -249,6 +249,7 @@
 - Enemy palette rows (color buttons) can be left-dragged onto the wave canvas or spawn list to add a spawn using that enemy class/color at the drop location (or at the currently selected spawn offset when dropped on the list). Palette selection still works via click.
 - Keyboard `Delete/Backspace` in wave mode only deletes selected spawn(s); it does not fall through to deleting the selected wave row when no spawns are selected.
 - The panel listens to object transaction events for authored wave/stage/enemy tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
+- Enemy-table transactions now also force a palette rebuild (including compatibility cache reset) so newly authored enemy classes appear immediately.
 - Wave authoring model is delay-layered:
 - layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
 - same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
@@ -256,6 +257,7 @@
 - Selected wave spawn details now include resolved enemy summary and `Open Enemy Row` deep-link to the dedicated enemy tool.
 - Wave panel UX:
 - top toolbar actions (`Reload Tables`, `Validate Selected`, `Validate All`) have explicit tooltips and separated layout
+- `Reload Tables` now also refreshes the enemy palette immediately.
 - `Add Layer` moved into `Wave Layers` header; `Add Spawn`/`Delete` moved into `Layer Spawns` header
 - layer spawn list supports drag-drop reordering within a layer (same delay bucket)
 - wave canvas exposes authoring controls for `Snap To Grid` and `Grid Size`

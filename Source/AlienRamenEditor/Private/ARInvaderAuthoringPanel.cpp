@@ -1261,6 +1261,7 @@ void SInvaderAuthoringPanel::BuildLayout()
 				.OnClicked_Lambda([this]()
 				{
 					RefreshTables();
+					RefreshPalette();
 					RefreshRowItems();
 					RefreshDetailsObjects();
 					RefreshIssues();
@@ -4462,6 +4463,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 void SInvaderAuthoringPanel::RefreshPalette()
 {
 	PaletteEntries.Reset();
+	EnemyPaletteClassCompatibilityCache.Reset();
 
 	TSet<FSoftClassPath> UniqueClasses;
 	if (EnemyTable)
@@ -4737,6 +4739,11 @@ void SInvaderAuthoringPanel::HandleObjectTransacted(UObject* Object, const FTran
 	if (Object != WaveTable && Object != StageTable && Object != EnemyTable)
 	{
 		return;
+	}
+
+	if (Object == EnemyTable)
+	{
+		RefreshPalette();
 	}
 
 	RefreshRowItems();
