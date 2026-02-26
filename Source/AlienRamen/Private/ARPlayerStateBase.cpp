@@ -1,5 +1,6 @@
 #include "ARPlayerStateBase.h"
 
+#include "ARLog.h"
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "ARAttributeSetCore.h"
@@ -34,6 +35,12 @@ UAbilitySystemComponent* AARPlayerStateBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+void AARPlayerStateBase::BeginPlay()
+{
+	Super::BeginPlay();
+	EnsureDefaultLoadoutIfEmpty();
+}
+
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
 {
 	if (!SavedState.IsValid())
@@ -53,4 +60,36 @@ bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStr
 void AARPlayerStateBase::ServerApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
 {
 	IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
+	EnsureDefaultLoadoutIfEmpty();
+}
+
+void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
+{
+	if (!HasAuthority() || !LoadoutTags.IsEmpty())
+	{
+		return;
+	}
+
+	auto TryAddTag = [this](const TCHAR* TagName)
+	{
+		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TagName), false);
+		if (Tag.IsValid())
+		{
+			LoadoutTags.AddTag(Tag);
+		}
+		else
+		{
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Default loadout tag is missing: %s"), TagName);
+		}
+	};
+
+	TryAddTag(TEXT("Unlock.Ship.Sammy"));
+	TryAddTag(TEXT("Unlock.Gadget.Vac"));
+	TryAddTag(TEXT("Unlock.Secondary.Mine"));
+
+	if (!LoadoutTags.IsEmpty())
+	{
+		ForceNetUpdate();
+		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *LoadoutTags.ToStringSimple());
+	}
 }

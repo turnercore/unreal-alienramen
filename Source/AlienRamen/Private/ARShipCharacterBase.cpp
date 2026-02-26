@@ -18,6 +18,11 @@
 #include "ARWeaponDefinition.h"
 
 #include "UObject/UnrealType.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
+
+static UARWeaponDefinition* ExtractWeaponDef(const UScriptStruct* StructType, const void* StructData, FName PropName);
 
 // --------------------
 // Static names (row struct fields)
@@ -30,23 +35,33 @@ const FName AARShipCharacterBase::NAME_ShipTags(TEXT("ShipTags"));
 const FName AARShipCharacterBase::NAME_Stats(TEXT("Stats"));
 const FName AARShipCharacterBase::NAME_MovementType(TEXT("MovementType"));
 const FName AARShipCharacterBase::NAME_LoadoutTags(TEXT("LoadoutTags"));
+static const FName NAME_LegacyASC(TEXT("ASC"));
+static const FName NAME_LegacyBPInit(TEXT("_Init"));
+static const FName NAME_LegacyBasePrimaryFireRateEffect(TEXT("BasePrimaryFireRateEffect"));
 
 // --------------------
 // Tag roots
 // --------------------
 
 const FGameplayTag AARShipCharacterBase::TAGROOT_Ships =
-FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Ships"));
+FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"));
 
 const FGameplayTag AARShipCharacterBase::TAGROOT_Secondaries =
-FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Secondaries"));
+FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"));
 
 const FGameplayTag AARShipCharacterBase::TAGROOT_Gadgets =
-FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Gadgets"));
+FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget"));
 
 AARShipCharacterBase::AARShipCharacterBase()
 {
 	bReplicates = true;
+
+	static ConstructorHelpers::FClassFinder<UGameplayEffect> FireRateGEClass(
+		TEXT("/Game/CodeAlong/Blueprints/GAS/GameplayEffects/GE_WeaponFireRate"));
+	if (FireRateGEClass.Succeeded())
+	{
+		PrimaryWeaponFireRateEffectClass = FireRateGEClass.Class;
+	}
 }
 
 UAbilitySystemComponent* AARShipCharacterBase::GetAbilitySystemComponent() const
@@ -59,11 +74,126 @@ UAbilitySystemComponent* AARShipCharacterBase::GetAbilitySystemComponent() const
 
 const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() const
 {
-	return CurrentPrimaryWeapon;
+	if (CurrentPrimaryWeapon)
+	{
+		return CurrentPrimaryWeapon;
+	}
+
+	// Fallback for client/server timing races: derive weapon from current loadout tags.
+	FGameplayTagContainer LoadoutTags;
+	if (!GetPlayerLoadoutTags(LoadoutTags) || LoadoutTags.IsEmpty())
+	{
+		return nullptr;
+	}
+
+	FGameplayTag ShipTag;
+	if (!FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag))
+	{
+		return nullptr;
+	}
+
+	FInstancedStruct ShipRow;
+	FString Error;
+	if (!ResolveRowFromTag(ShipTag, ShipRow, Error))
+	{
+		return nullptr;
+	}
+
+	const UScriptStruct* StructType = ShipRow.GetScriptStruct();
+	const void* StructData = ShipRow.GetMemory();
+	if (!StructType || !StructData)
+	{
+		return nullptr;
+	}
+
+	if (UARWeaponDefinition* ResolvedWeapon = ExtractWeaponDef(StructType, StructData, NAME_PrimaryWeapon))
+	{
+		// Cache for subsequent calls.
+		const_cast<AARShipCharacterBase*>(this)->CurrentPrimaryWeapon = ResolvedWeapon;
+		return ResolvedWeapon;
+	}
+
+	return nullptr;
 }
 
 namespace ARShipCharacterBaseLocal
 {
+	static void AddRuntimeTags(UAbilitySystemComponent* ASC, const FGameplayTagContainer& Tags, bool bAuthority)
+	{
+		if (!ASC || Tags.IsEmpty())
+		{
+			return;
+		}
+
+		if (bAuthority)
+		{
+			ASC->AddLooseGameplayTags(Tags, 1, EGameplayTagReplicationState::TagOnly);
+		}
+		else
+		{
+			ASC->AddLooseGameplayTags(Tags);
+		}
+	}
+
+	static void RemoveRuntimeTags(UAbilitySystemComponent* ASC, const FGameplayTagContainer& Tags, bool bAuthority)
+	{
+		if (!ASC || Tags.IsEmpty())
+		{
+			return;
+		}
+
+		if (bAuthority)
+		{
+			ASC->RemoveLooseGameplayTags(Tags, 1, EGameplayTagReplicationState::TagOnly);
+		}
+		else
+		{
+			ASC->RemoveLooseGameplayTags(Tags);
+		}
+	}
+
+	static void SyncLegacyASCProperty(AARShipCharacterBase* Ship, UAbilitySystemComponent* InASC)
+	{
+		if (!Ship)
+		{
+			return;
+		}
+
+		FProperty* P = Ship->GetClass()->FindPropertyByName(NAME_LegacyASC);
+		FObjectProperty* OP = CastField<FObjectProperty>(P);
+		if (!OP || !OP->PropertyClass || !OP->PropertyClass->IsChildOf(UAbilitySystemComponent::StaticClass()))
+		{
+			return;
+		}
+
+		OP->SetObjectPropertyValue_InContainer(Ship, InASC);
+	}
+
+	static void SyncLegacyBasePrimaryFireRateHandle(
+		AARShipCharacterBase* Ship,
+		const FActiveGameplayEffectHandle& InHandle)
+	{
+		if (!Ship)
+		{
+			return;
+		}
+
+		FProperty* P = Ship->GetClass()->FindPropertyByName(NAME_LegacyBasePrimaryFireRateEffect);
+		FStructProperty* SP = CastField<FStructProperty>(P);
+		if (!SP || SP->Struct != FActiveGameplayEffectHandle::StaticStruct())
+		{
+			return;
+		}
+
+		void* HandlePtr = SP->ContainerPtrToValuePtr<void>(Ship);
+		if (!HandlePtr)
+		{
+			return;
+		}
+
+		*reinterpret_cast<FActiveGameplayEffectHandle*>(HandlePtr) = InHandle;
+	}
+
 	static bool ApplyDamageToActorViaGAS_Local(AActor* Target, float Damage, AActor* Offender)
 	{
 		if (!Target || Damage <= 0.f)
@@ -413,68 +543,19 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 		return;
 	}
 
+	bServerLoadoutApplied = false;
+	bLegacyBPInitInvoked = false;
+	LoadoutInitRetryCount = 0;
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
+	}
+
 	ClearAppliedLoadout();
 	GrantCommonAbilitySetFromController(NewController);
-
-	// 2) Read loadout tags from playerstate
-	FGameplayTagContainer LoadoutTags;
-	if (!GetPlayerLoadoutTags(LoadoutTags))
+	if (!TryApplyServerLoadoutFromPlayerState(true))
 	{
-		UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess failed: could not read LoadoutTags from PlayerState."));
-		return;
-	}
-
-	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Possess: applying %d loadout tags."), LoadoutTags.Num());
-	ApplyLoadoutTagsToASC(LoadoutTags);
-
-	// 3) Resolve + apply Ship baseline row
-	{
-		FGameplayTag ShipTag;
-		if (!FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag))
-		{
-			UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess failed: no ship tag found under root '%s'."), *TAGROOT_Ships.ToString());
-			return;
-		}
-
-		FInstancedStruct ShipRow;
-		FString Error;
-		if (ResolveRowFromTag(ShipTag, ShipRow, Error))
-		{
-			ApplyResolvedRowBaseline(ShipRow);
-		}
-		else
-		{
-			UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess failed: could not resolve ship row for '%s'. %s"), *ShipTag.ToString(), *Error);
-			return;
-		}
-	}
-
-	// 4) Resolve + apply Secondary row (optional)
-	{
-		FGameplayTag SecondaryTag;
-		if (FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Secondaries, SecondaryTag))
-		{
-			FInstancedStruct SecondaryRow;
-			FString Error;
-			if (ResolveRowFromTag(SecondaryTag, SecondaryRow, Error))
-			{
-				ApplyResolvedRowBaseline(SecondaryRow);
-			}
-		}
-	}
-
-	// 5) Resolve + apply Gadget row (optional)
-	{
-		FGameplayTag GadgetTag;
-		if (FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Gadgets, GadgetTag))
-		{
-			FInstancedStruct GadgetRow;
-			FString Error;
-			if (ResolveRowFromTag(GadgetTag, GadgetRow, Error))
-			{
-				ApplyResolvedRowBaseline(GadgetRow);
-			}
-		}
+		RetryServerLoadoutInit();
 	}
 }
 
@@ -487,24 +568,239 @@ void AARShipCharacterBase::OnRep_PlayerState()
 void AARShipCharacterBase::InitAbilityActorInfo()
 {
 	AARPlayerStateBase* PS = GetPlayerState<AARPlayerStateBase>();
-	if (!PS) return;
+	if (!PS)
+	{
+		CachedASC = nullptr;
+		ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
+		return;
+	}
 
 	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-	if (!ASC) return;
+	if (!ASC)
+	{
+		CachedASC = nullptr;
+		ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
+		return;
+	}
 
 	CachedASC = ASC;
 
 	// Owner = PlayerState, Avatar = this pawn
 	ASC->InitAbilityActorInfo(PS, this);
+	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, ASC);
+	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
+
+	// BP compatibility: many existing pawn blueprints expect _Init to run after ASC is valid.
+	if (!bLegacyBPInitInvoked)
+	{
+		if (UFunction* LegacyInitFn = FindFunction(NAME_LegacyBPInit))
+		{
+			ProcessEvent(LegacyInitFn, nullptr);
+			bLegacyBPInitInvoked = true;
+		}
+	}
+}
+
+void AARShipCharacterBase::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	const UARWeaponDefinition* WeaponDef = GetPrimaryWeaponDefinition();
+	if (!ASC || !WeaponDef || !PrimaryWeaponFireRateEffectClass)
+	{
+		return;
+	}
+
+	if (BasePrimaryFireRateEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(BasePrimaryFireRateEffectHandle);
+		BasePrimaryFireRateEffectHandle.Invalidate();
+	}
+
+	const FGameplayEffectContextHandle Ctx = ASC->MakeEffectContext();
+	const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(PrimaryWeaponFireRateEffectClass, 1.0f, Ctx);
+	if (!Spec.IsValid())
+	{
+		return;
+	}
+
+	static const FGameplayTag DataFireRateTag = FGameplayTag::RequestGameplayTag(TEXT("Data.FireRate"), false);
+	if (DataFireRateTag.IsValid())
+	{
+		Spec.Data->SetSetByCallerMagnitude(DataFireRateTag, WeaponDef->FireRate);
+	}
+
+	BasePrimaryFireRateEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+	ARShipCharacterBaseLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
+}
+
+void AARShipCharacterBase::ClearPrimaryWeaponRuntimeEffects()
+{
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	{
+		if (BasePrimaryFireRateEffectHandle.IsValid())
+		{
+			ASC->RemoveActiveGameplayEffect(BasePrimaryFireRateEffectHandle);
+		}
+	}
+
+	BasePrimaryFireRateEffectHandle.Invalidate();
+	ARShipCharacterBaseLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
 }
 
 void AARShipCharacterBase::UnPossessed()
 {
 	Super::UnPossessed();
+	ClearPrimaryWeaponRuntimeEffects();
+	CachedASC = nullptr;
+	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
+	bServerLoadoutApplied = false;
+	bLegacyBPInitInvoked = false;
+	LoadoutInitRetryCount = 0;
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
+	}
 
 	if (HasAuthority())
 	{
 		ClearAppliedLoadout();
+	}
+}
+
+bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
+{
+	if (!HasAuthority() || bServerLoadoutApplied)
+	{
+		return bServerLoadoutApplied;
+	}
+
+	FGameplayTagContainer LoadoutTags;
+	if (!GetPlayerLoadoutTags(LoadoutTags) || LoadoutTags.IsEmpty())
+	{
+		if (bLogErrors)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: LoadoutTags unavailable/empty; retrying."));
+		}
+		return false;
+	}
+
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Possess: applying %d loadout tags."), LoadoutTags.Num());
+	ApplyLoadoutTagsToASC(LoadoutTags);
+
+	// Ship baseline is required.
+	FGameplayTag ShipTag;
+	bool bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag);
+	if (!bFoundShipTag)
+	{
+		static const FGameplayTag LegacyShipRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Ships"), false);
+		if (LegacyShipRoot.IsValid())
+		{
+			bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, LegacyShipRoot, ShipTag);
+		}
+	}
+	if (!bFoundShipTag)
+	{
+		if (bLogErrors)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: no ship tag found under root '%s'; tags=%s"), *TAGROOT_Ships.ToString(), *LoadoutTags.ToStringSimple());
+		}
+		return false;
+	}
+
+	FInstancedStruct ShipRow;
+	FString Error;
+	if (!ResolveRowFromTag(ShipTag, ShipRow, Error))
+	{
+		if (bLogErrors)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: could not resolve ship row for '%s'. %s"), *ShipTag.ToString(), *Error);
+		}
+		return false;
+	}
+	ApplyResolvedRowBaseline(ShipRow);
+
+	// Secondary (optional)
+	FGameplayTag SecondaryTag;
+	bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Secondaries, SecondaryTag);
+	if (!bFoundSecondaryTag)
+	{
+		static const FGameplayTag LegacySecondaryRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Secondaries"), false);
+		if (LegacySecondaryRoot.IsValid())
+		{
+			bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, LegacySecondaryRoot, SecondaryTag);
+		}
+	}
+	if (bFoundSecondaryTag)
+	{
+		FInstancedStruct SecondaryRow;
+		FString SecondaryError;
+		if (ResolveRowFromTag(SecondaryTag, SecondaryRow, SecondaryError))
+		{
+			ApplyResolvedRowBaseline(SecondaryRow);
+		}
+	}
+
+	// Gadget (optional)
+	FGameplayTag GadgetTag;
+	bool bFoundGadgetTag = FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Gadgets, GadgetTag);
+	if (!bFoundGadgetTag)
+	{
+		static const FGameplayTag LegacyGadgetRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Gadgets"), false);
+		if (LegacyGadgetRoot.IsValid())
+		{
+			bFoundGadgetTag = FindFirstTagUnderRoot(LoadoutTags, LegacyGadgetRoot, GadgetTag);
+		}
+	}
+	if (bFoundGadgetTag)
+	{
+		FInstancedStruct GadgetRow;
+		FString GadgetError;
+		if (ResolveRowFromTag(GadgetTag, GadgetRow, GadgetError))
+		{
+			ApplyResolvedRowBaseline(GadgetRow);
+		}
+	}
+
+	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
+	bServerLoadoutApplied = true;
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
+	}
+	return true;
+}
+
+void AARShipCharacterBase::RetryServerLoadoutInit()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	++LoadoutInitRetryCount;
+	if (LoadoutInitRetryCount > 120)
+	{
+		UE_LOG(ARLog, Error, TEXT("[ShipGAS] Deferred init failed after %d retries."), LoadoutInitRetryCount - 1);
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		FTimerDelegate RetryDelegate;
+		RetryDelegate.BindWeakLambda(this, [this]()
+		{
+			if (!TryApplyServerLoadoutFromPlayerState(false))
+			{
+				RetryServerLoadoutInit();
+			}
+		});
+
+		World->GetTimerManager().SetTimer(LoadoutInitRetryTimer, RetryDelegate, 0.25f, false);
 	}
 }
 
@@ -533,6 +829,8 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) return;
+
+	ClearPrimaryWeaponRuntimeEffects();
 
 	const UScriptStruct* StructType = RowStruct.GetScriptStruct();
 	const void* StructData = RowStruct.GetMemory();
@@ -573,7 +871,7 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 
 		if (!LooseTags.IsEmpty())
 		{
-			ASC->AddLooseGameplayTags(LooseTags);
+			ARShipCharacterBaseLocal::AddRuntimeTags(ASC, LooseTags, HasAuthority());
 			AppliedLooseTags.AppendTags(LooseTags);
 		}
 	}
@@ -585,7 +883,7 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 		{
 			FGameplayTagContainer MoveTags;
 			MoveTags.AddTag(MovementTag);
-			ASC->AddLooseGameplayTags(MoveTags);
+			ARShipCharacterBaseLocal::AddRuntimeTags(ASC, MoveTags, HasAuthority());
 			AppliedLooseTags.AppendTags(MoveTags);
 		}
 	}
@@ -622,7 +920,7 @@ void AARShipCharacterBase::ClearAppliedLoadout()
 
 	if (!AppliedLooseTags.IsEmpty())
 	{
-		ASC->RemoveLooseGameplayTags(AppliedLooseTags);
+		ARShipCharacterBaseLocal::RemoveRuntimeTags(ASC, AppliedLooseTags, HasAuthority());
 		AppliedLooseTags.Reset();
 	}
 
@@ -639,6 +937,14 @@ bool AARShipCharacterBase::GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadou
 
 	APlayerState* PS = GetPlayerState();
 	if (!PS) return false;
+
+	// Preferred path: read native field from our canonical PlayerState class.
+	// This avoids accidentally reading a BP shadow variable with the same name.
+	if (const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PS))
+	{
+		OutLoadoutTags = ARPS->LoadoutTags;
+		return true;
+	}
 
 	// Look for a property named "LoadoutTags" on the concrete (BP) PlayerState class.
 	FProperty* P = PS->GetClass()->FindPropertyByName(NAME_LoadoutTags);
@@ -905,7 +1211,7 @@ void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& In
 		return;
 	}
 
-	ASC->AddLooseGameplayTags(InLoadoutTags);
+	ARShipCharacterBaseLocal::AddRuntimeTags(ASC, InLoadoutTags, HasAuthority());
 	AppliedLooseTags.AppendTags(InLoadoutTags);
 
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());

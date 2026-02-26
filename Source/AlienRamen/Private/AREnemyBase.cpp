@@ -439,7 +439,7 @@ void AAREnemyBase::ApplyRuntimeEnemyTags(const FGameplayTagContainer& InTags)
 		return;
 	}
 
-	AbilitySystemComponent->AddLooseGameplayTags(InTags);
+	AbilitySystemComponent->AddLooseGameplayTags(InTags, 1, EGameplayTagReplicationState::TagOnly);
 	RuntimeAppliedLooseTags.AppendTags(InTags);
 }
 
@@ -450,7 +450,7 @@ void AAREnemyBase::ClearRuntimeEnemyTags()
 		return;
 	}
 
-	AbilitySystemComponent->RemoveLooseGameplayTags(RuntimeAppliedLooseTags);
+	AbilitySystemComponent->RemoveLooseGameplayTags(RuntimeAppliedLooseTags, 1, EGameplayTagReplicationState::TagOnly);
 	RuntimeAppliedLooseTags.Reset();
 }
 

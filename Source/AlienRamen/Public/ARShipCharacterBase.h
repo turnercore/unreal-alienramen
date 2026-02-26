@@ -9,6 +9,7 @@
 #include "GameplayAbilitySpec.h"
 #include "GameplayEffectTypes.h"
 #include "StructUtils/InstancedStruct.h"
+#include "Templates/UnrealTemplate.h"
 
 #include "ARShipCharacterBase.generated.h"
 
@@ -21,6 +22,7 @@ class AARPlayerController;
 
 class UARWeaponDefinition;
 class UARAbilitySet;
+struct FTimerHandle;
 
 /**
  * Base ship character for Alien Ramen.
@@ -98,6 +100,8 @@ protected:
 
 	// Shared init: Owner = PlayerState, Avatar = this
 	void InitAbilityActorInfo();
+	void ApplyOrRefreshPrimaryWeaponRuntimeEffects();
+	void ClearPrimaryWeaponRuntimeEffects();
 
 	// ---- Loadout application (server only) ----
 	void ClearAppliedLoadout();
@@ -116,6 +120,8 @@ protected:
 
 	// Resolve a row using ContentLookupSubsystem (returns an InstancedStruct)
 	bool ResolveRowFromTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) const;
+	bool TryApplyServerLoadoutFromPlayerState(bool bLogErrors);
+	void RetryServerLoadoutInit();
 
 	// -------------------------
 	// Internal activation helpers
@@ -150,6 +156,26 @@ protected:
 	// Tracks loose tags applied at runtime (row baseline + mirrored loadout tags) for cleanup.
 	UPROPERTY(Transient)
 	FGameplayTagContainer AppliedLooseTags;
+
+	// Server-only deferred loadout init state for possess/order races.
+	UPROPERTY(Transient)
+	bool bServerLoadoutApplied = false;
+
+	UPROPERTY(Transient)
+	int32 LoadoutInitRetryCount = 0;
+
+	// BP compatibility: call legacy BP _Init once ASC is actually ready.
+	UPROPERTY(Transient)
+	bool bLegacyBPInitInvoked = false;
+
+	FTimerHandle LoadoutInitRetryTimer;
+
+	// Runtime weapon tuning effect (formerly applied from BP _Init).
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Ship|Weapon")
+	TSubclassOf<UGameplayEffect> PrimaryWeaponFireRateEffectClass;
+
+	UPROPERTY(Transient)
+	FActiveGameplayEffectHandle BasePrimaryFireRateEffectHandle;
 
 	// ---- BP row struct field names (must match your row struct fields) ----
 	static const FName NAME_PrimaryWeapon;
