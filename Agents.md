@@ -292,6 +292,7 @@
 - `ARLog` is exported for cross-module use: `ALIENRAMEN_API DECLARE_LOG_CATEGORY_EXTERN(...)`.
 - Use `UToolMenus::TryGet()` pattern (not `UToolMenus::IsToolMenusAvailable()` in this engine branch).
 - `AlienRamen.cpp` include order must keep `AlienRamen.h` first.
+- Avoid parameter/local names `Tags` on `AActor`-derived classes and related helpers; this shadows `AActor::Tags` and can fail builds under warning-as-error settings. Prefer names like `InTags` / `TagContainer`.
 - UE 5.7 editor API compatibility for `ARInvaderAuthoringPanel`:
 - include `FileHelpers.h` for both `FEditorFileUtils` and `UEditorLoadingAndSavingUtils`
 - use `ULevelEditorPlaySettings` setters (`SetPlayNetMode`, `SetPlayNumberOfClients`, `SetRunUnderOneProcess`) instead of direct member access
