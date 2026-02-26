@@ -2,6 +2,7 @@
 
 #include "AREnemyBase.h"
 #include "ARAttributeSetCore.h"
+#include "ContentLookupSubsystem.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
 #include "ARLog.h"
@@ -9,10 +10,15 @@
 
 #include "AbilitySystemComponent.h"
 #include "Algo/StableSort.h"
+#include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
 #include "EngineUtils.h"
 #include "GameFramework/GameStateBase.h"
 #include "HAL/IConsoleManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "StructUtils/InstancedStruct.h"
+#include "UObject/SoftObjectPtr.h"
+#include "UObject/UnrealType.h"
 
 namespace ARInvaderInternal
 {
@@ -87,7 +93,7 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 
 	if (!EnsureDataTables())
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Could not start run: wave/stage DataTables are unavailable."));
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Could not start run: wave/stage/enemy DataTables are unavailable."));
 		return;
 	}
 
@@ -109,6 +115,8 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 	OneTimeWaveRowsUsed.Reset();
 	LastWaveRowName = NAME_None;
 	ReportedLeakedEnemies.Reset();
+	EnemyDefinitionCache.Reset();
+	EnemyClassPreloadHandles.Reset();
 	OffscreenDurationByEnemy.Reset();
 	PendingStageRow = NAME_None;
 	ChoiceLeftStageRow = NAME_None;
@@ -162,6 +170,8 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 	FlowState = EARInvaderFlowState::Stopped;
 	ActiveWaves.Reset();
 	ReportedLeakedEnemies.Reset();
+	EnemyDefinitionCache.Reset();
+	EnemyClassPreloadHandles.Reset();
 	OffscreenDurationByEnemy.Reset();
 	ChoiceLeftStageRow = NAME_None;
 	ChoiceRightStageRow = NAME_None;
@@ -409,30 +419,55 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				break;
 			}
 
-			if (!SpawnDef.EnemyClass)
+			FARInvaderEnemyDefRow EnemyDef;
+			FString EnemyResolveError;
+			if (!ResolveEnemyDefinitionByTag(SpawnDef.EnemyIdentifierTag, EnemyDef, EnemyResolveError))
 			{
-				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Wave '%s' has empty EnemyClass at spawn index %d."),
-					*Wave.RowName.ToString(), Wave.NextSpawnIndex);
+				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Wave '%s' has invalid enemy tag at spawn index %d: %s"),
+					*Wave.RowName.ToString(), Wave.NextSpawnIndex, *EnemyResolveError);
+				Wave.NextSpawnIndex++;
+				continue;
+			}
+			if (!EnemyDef.bEnabled)
+			{
+				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Enemy tag '%s' is disabled; skipping spawn in wave '%s'."),
+					*SpawnDef.EnemyIdentifierTag.ToString(), *Wave.RowName.ToString());
+				Wave.NextSpawnIndex++;
+				continue;
+			}
+
+			UClass* EnemyClass = EnemyDef.EnemyClass.LoadSynchronous();
+			if (!EnemyClass)
+			{
+				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Enemy tag '%s' resolved with no enemy class for wave '%s'."),
+					*SpawnDef.EnemyIdentifierTag.ToString(), *Wave.RowName.ToString());
 				Wave.NextSpawnIndex++;
 				continue;
 			}
 
 			const FVector FormationTargetLocation = ComputeFormationTargetLocation(SpawnDef, Wave.bFlipX, Wave.bFlipY);
 			const FVector SpawnLocation = ComputeSpawnLocation(SpawnDef, Wave.NextSpawnIndex, Wave.bFlipX, Wave.bFlipY);
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 			// Face straight down gameplay progression (toward low-X / player side) consistently.
 			constexpr float BaseSpawnYaw = 180.f;
 			const FRotator SpawnRotation(0.f, BaseSpawnYaw + Settings->SpawnFacingYawOffset, 0.f);
-			AAREnemyBase* Enemy = GetWorld()->SpawnActor<AAREnemyBase>(SpawnDef.EnemyClass, SpawnLocation, SpawnRotation, SpawnParams);
+			const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
+			AAREnemyBase* Enemy = GetWorld()->SpawnActorDeferred<AAREnemyBase>(
+				EnemyClass,
+				SpawnTransform,
+				nullptr,
+				nullptr,
+				ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 			if (!Enemy)
 			{
 				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Failed to spawn enemy class '%s' for wave '%s'."),
-					*GetNameSafe(SpawnDef.EnemyClass), *Wave.RowName.ToString());
+					*GetNameSafe(EnemyClass), *Wave.RowName.ToString());
 				Wave.NextSpawnIndex++;
 				continue;
 			}
+
+			Enemy->SetEnemyIdentifierTag(SpawnDef.EnemyIdentifierTag);
+			UGameplayStatics::FinishSpawningActor(Enemy, SpawnTransform);
 
 			EAREnemyColor EffectiveColor = SpawnDef.EnemyColor;
 			if (Wave.bColorSwap)
@@ -493,6 +528,8 @@ void UARInvaderDirectorSubsystem::SpawnWavesIfNeeded()
 	{
 		return;
 	}
+
+	PreloadEnemyClassesForWaveCandidates();
 
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 	const int32 AliveEnemies = GetAliveEnemyCount();
@@ -1089,6 +1126,275 @@ void UARInvaderDirectorSubsystem::ApplyEnemyGameplayEffects(AAREnemyBase* Enemy,
 	}
 }
 
+bool UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag(FGameplayTag EnemyIdentifierTag, FARInvaderEnemyDefRow& OutDef, FString& OutError)
+{
+	OutDef = FARInvaderEnemyDefRow();
+	OutError.Reset();
+
+	if (!EnemyIdentifierTag.IsValid())
+	{
+		OutError = TEXT("EnemyIdentifierTag is invalid.");
+		return false;
+	}
+
+	if (const FARInvaderEnemyDefRow* Cached = EnemyDefinitionCache.Find(EnemyIdentifierTag))
+	{
+		OutDef = *Cached;
+		return true;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		OutError = TEXT("No world.");
+		return false;
+	}
+
+	UGameInstance* GI = World->GetGameInstance();
+	if (!GI)
+	{
+		OutError = TEXT("No game instance.");
+		return false;
+	}
+
+	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	if (!Lookup)
+	{
+		OutError = TEXT("No ContentLookupSubsystem.");
+		return false;
+	}
+
+	FInstancedStruct ResolvedRow;
+	if (!Lookup->LookupWithGameplayTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	{
+		return false;
+	}
+
+	const UScriptStruct* RowType = ResolvedRow.GetScriptStruct();
+	const void* RowData = ResolvedRow.GetMemory();
+	if (!RowType || !RowData)
+	{
+		OutError = TEXT("Resolved enemy row has no data.");
+		return false;
+	}
+
+	if (RowType == FARInvaderEnemyDefRow::StaticStruct())
+	{
+		OutDef = *static_cast<const FARInvaderEnemyDefRow*>(RowData);
+	}
+	else
+	{
+		auto FindAnyProp = [RowType](const TCHAR* A, const TCHAR* B = nullptr) -> const FProperty*
+		{
+			if (const FProperty* P = RowType->FindPropertyByName(A))
+			{
+				return P;
+			}
+			return B ? RowType->FindPropertyByName(B) : nullptr;
+		};
+
+		if (const FProperty* EnabledProp = FindAnyProp(TEXT("bEnabled")))
+		{
+			if (const FBoolProperty* BoolProp = CastField<FBoolProperty>(EnabledProp))
+			{
+				OutDef.bEnabled = BoolProp->GetPropertyValue_InContainer(RowData);
+			}
+		}
+
+		if (const FProperty* DisplayNameProp = FindAnyProp(TEXT("DisplayName")))
+		{
+			if (const FTextProperty* TextProp = CastField<FTextProperty>(DisplayNameProp))
+			{
+				OutDef.DisplayName = TextProp->GetPropertyValue_InContainer(RowData);
+			}
+		}
+
+		if (const FProperty* DescriptionProp = FindAnyProp(TEXT("Description")))
+		{
+			if (const FTextProperty* TextProp = CastField<FTextProperty>(DescriptionProp))
+			{
+				OutDef.Description = TextProp->GetPropertyValue_InContainer(RowData);
+			}
+		}
+
+		if (const FProperty* IdentifierProp = FindAnyProp(TEXT("EnemyIdentifierTag"), TEXT("IdentifierTag")))
+		{
+			if (const FStructProperty* StructProp = CastField<FStructProperty>(IdentifierProp))
+			{
+				if (StructProp->Struct == FGameplayTag::StaticStruct())
+				{
+					const void* ValuePtr = StructProp->ContainerPtrToValuePtr<void>(RowData);
+					OutDef.EnemyIdentifierTag = *reinterpret_cast<const FGameplayTag*>(ValuePtr);
+				}
+			}
+		}
+
+		if (const FProperty* EnemyClassProp = FindAnyProp(TEXT("EnemyClass"), TEXT("Blueprint")))
+		{
+			if (const FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(EnemyClassProp))
+			{
+				const FSoftObjectPtr SoftClassObj = SoftClassProp->GetPropertyValue_InContainer(RowData);
+				OutDef.EnemyClass = TSoftClassPtr<AAREnemyBase>(SoftClassObj.ToSoftObjectPath());
+			}
+			else if (const FClassProperty* ClassProp = CastField<FClassProperty>(EnemyClassProp))
+			{
+				OutDef.EnemyClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(RowData));
+			}
+		}
+
+		if (const FProperty* RuntimeInitProp = FindAnyProp(TEXT("RuntimeInit")))
+		{
+			if (const FStructProperty* StructProp = CastField<FStructProperty>(RuntimeInitProp))
+			{
+				if (StructProp->Struct == FARInvaderEnemyRuntimeInitData::StaticStruct())
+				{
+					const void* ValuePtr = StructProp->ContainerPtrToValuePtr<void>(RowData);
+					OutDef.RuntimeInit = *reinterpret_cast<const FARInvaderEnemyRuntimeInitData*>(ValuePtr);
+				}
+			}
+		}
+
+		if (OutDef.RuntimeInit.MaxHealth <= 0.f)
+		{
+			if (const FProperty* MaxHealthProp = FindAnyProp(TEXT("MaxHealth"), TEXT("maxHp")))
+			{
+				if (const FNumericProperty* NumericProp = CastField<FNumericProperty>(MaxHealthProp))
+				{
+					const void* ValuePtr = NumericProp->ContainerPtrToValuePtr<void>(RowData);
+					OutDef.RuntimeInit.MaxHealth = static_cast<float>(NumericProp->GetFloatingPointPropertyValue(ValuePtr));
+				}
+			}
+		}
+	}
+
+	if (!OutDef.EnemyIdentifierTag.IsValid())
+	{
+		OutDef.EnemyIdentifierTag = EnemyIdentifierTag;
+	}
+	if (OutDef.RuntimeInit.MaxHealth <= 0.f)
+	{
+		OutDef.RuntimeInit.MaxHealth = 100.f;
+	}
+
+	EnemyDefinitionCache.Add(EnemyIdentifierTag, OutDef);
+	return true;
+}
+
+void UARInvaderDirectorSubsystem::PreloadEnemyClass(const TSoftClassPtr<AAREnemyBase>& EnemyClassRef)
+{
+	if (EnemyClassRef.IsNull())
+	{
+		return;
+	}
+
+	const FSoftObjectPath Path = EnemyClassRef.ToSoftObjectPath();
+	if (!Path.IsValid() || EnemyClassPreloadHandles.Contains(Path))
+	{
+		return;
+	}
+
+	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+	if (TSharedPtr<FStreamableHandle> Handle = Streamable.RequestAsyncLoad(Path, FStreamableDelegate()))
+	{
+		EnemyClassPreloadHandles.Add(Path, Handle);
+	}
+}
+
+void UARInvaderDirectorSubsystem::PreloadEnemyClassesForWaveCandidates()
+{
+	if (!WaveTable || !StageTable)
+	{
+		return;
+	}
+
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	const int32 Lookahead = FMath::Max(0, Settings->EnemyPreloadWaveLookahead);
+	if (Lookahead <= 0)
+	{
+		return;
+	}
+
+	const int32 Players = GetActivePlayerCount();
+	struct FWaveCandidate
+	{
+		FName RowName = NAME_None;
+		const FARWaveDefRow* Def = nullptr;
+		float Weight = 0.f;
+	};
+
+	TArray<FWaveCandidate> Candidates;
+	Candidates.Reserve(WaveTable->GetRowMap().Num());
+	for (const TPair<FName, uint8*>& Pair : WaveTable->GetRowMap())
+	{
+		const FARWaveDefRow* Row = reinterpret_cast<const FARWaveDefRow*>(Pair.Value);
+		if (!Row || !Row->bEnabled)
+		{
+			continue;
+		}
+		if (Threat < Row->MinThreat || Threat > Row->MaxThreat)
+		{
+			continue;
+		}
+		if (Players < Row->MinPlayers || Players > Row->MaxPlayers)
+		{
+			continue;
+		}
+		if (Row->bOneTimeOnlyPerRun && OneTimeWaveRowsUsed.Contains(Pair.Key))
+		{
+			continue;
+		}
+		if (!CurrentStageDef.RequiredWaveTags.IsEmpty() && !Row->WaveTags.HasAll(CurrentStageDef.RequiredWaveTags))
+		{
+			continue;
+		}
+		if (!CurrentStageDef.BlockedWaveTags.IsEmpty() && Row->WaveTags.HasAny(CurrentStageDef.BlockedWaveTags))
+		{
+			continue;
+		}
+
+		float Weight = FMath::Max(1.f, static_cast<float>(Row->SelectionWeight));
+		if (Pair.Key == LastWaveRowName)
+		{
+			Weight *= FMath::Clamp(Row->RepeatWeightPenalty, 0.01f, 1.f);
+		}
+
+		FWaveCandidate Candidate;
+		Candidate.RowName = Pair.Key;
+		Candidate.Def = Row;
+		Candidate.Weight = Weight;
+		Candidates.Add(Candidate);
+	}
+
+	Candidates.Sort([](const FWaveCandidate& A, const FWaveCandidate& B)
+	{
+		if (FMath::IsNearlyEqual(A.Weight, B.Weight))
+		{
+			return A.RowName.LexicalLess(B.RowName);
+		}
+		return A.Weight > B.Weight;
+	});
+
+	const int32 Count = FMath::Min(Lookahead, Candidates.Num());
+	for (int32 Index = 0; Index < Count; ++Index)
+	{
+		const FARWaveDefRow* Row = Candidates[Index].Def;
+		if (!Row)
+		{
+			continue;
+		}
+
+		for (const FARWaveEnemySpawnDef& SpawnDef : Row->EnemySpawns)
+		{
+			FARInvaderEnemyDefRow EnemyDef;
+			FString Error;
+			if (ResolveEnemyDefinitionByTag(SpawnDef.EnemyIdentifierTag, EnemyDef, Error))
+			{
+				PreloadEnemyClass(EnemyDef.EnemyClass);
+			}
+		}
+	}
+}
+
 bool UARInvaderDirectorSubsystem::IsInsideGameplayBounds(const FVector& Location) const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
@@ -1158,7 +1464,7 @@ UARInvaderRuntimeStateComponent* UARInvaderDirectorSubsystem::GetOrCreateRuntime
 
 bool UARInvaderDirectorSubsystem::EnsureDataTables()
 {
-	if (WaveTable && StageTable)
+	if (WaveTable && StageTable && EnemyTable)
 	{
 		return true;
 	}
@@ -1172,11 +1478,15 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 	{
 		StageTable = Settings->StageDataTable.LoadSynchronous();
 	}
-
-	if (!WaveTable || !StageTable)
+	if (!EnemyTable)
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Missing data tables. Wave='%s' Stage='%s'"),
-			*Settings->WaveDataTable.ToString(), *Settings->StageDataTable.ToString());
+		EnemyTable = Settings->EnemyDataTable.LoadSynchronous();
+	}
+
+	if (!WaveTable || !StageTable || !EnemyTable)
+	{
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Missing data tables. Wave='%s' Stage='%s' Enemy='%s'"),
+			*Settings->WaveDataTable.ToString(), *Settings->StageDataTable.ToString(), *Settings->EnemyDataTable.ToString());
 		return false;
 	}
 	return true;
@@ -1585,4 +1895,3 @@ void UARInvaderDirectorSubsystem::HandleConsoleChooseStage(const TArray<FString>
 		SubmitStageChoice(false);
 	}
 }
-

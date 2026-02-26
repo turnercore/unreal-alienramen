@@ -28,6 +28,7 @@
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
+- Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Gameplay/content is Blueprint-heavy in `Content/CodeAlong/Blueprints`
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
 
@@ -50,11 +51,17 @@
 
 - `AARPlayerStateBase` owns the authoritative ASC (`UAbilitySystemComponent`) and `UARAttributeSetCore`.
 - Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
+- `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
+- Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
 - tie-break by ability level then stable order
 - `DynamicSpecSourceTags` considered with asset tags
+- Enemy damage routing is GAS-first:
+- `AAREnemyBase::ApplyDamageViaGAS(...)` builds/apply instant `UAREnemyIncomingDamageEffect` with SetByCaller `Data.Damage`
+- `UARAttributeSetCore::PostGameplayEffectExecute(...)` consumes `IncomingDamage` into shield/health using `DamageTakenMultiplier`
+- `AAREnemyBase::TakeDamage(...)` now forwards into this GAS damage path (authority), rather than direct health subtraction.
 
 ## Content Lookup System
 
@@ -87,13 +94,22 @@
 
 - Enemies are `ACharacter`-based for movement/nav reliability (even if visuals are flying).
 - `AAREnemyBase` is actor-owned ASC (owner/avatar = enemy), server-authoritative.
+- Enemy definition schema is `FARInvaderEnemyDefRow` + nested `FARInvaderEnemyRuntimeInitData` (no `StartingHealth`; health initializes from `MaxHealth` via attributes).
 - `AAREnemyBase` defaults `CharacterMovement.bOrientRotationToMovement=false`; per-enemy child Blueprints can opt in when pilot-style steering rotation is desired.
 - Enemy death is one-shot and server-gated (`bIsDead`), with BP hooks:
 - `BP_OnEnemyInitialized`
 - `BP_OnEnemyDied`
+- Enemy spawn identity is tag-first: `FARWaveEnemySpawnDef::EnemyIdentifierTag` is authoritative at runtime; `EnemyClass` in spawn rows is legacy/migration-only.
+- On possess (authority), enemy resolves definition from content lookup by identifier tag and applies base stats via `SetNumericAttributeBase`:
+- core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
+- enemy set: `CollisionDamage`
+- runtime startup ability set/effects/loose tags come from enemy row runtime-init payload.
+- Enemy archetype is row-authored runtime data (`RuntimeInit.EnemyArchetypeTag`) replicated on `AAREnemyBase` (not hand-authored per enemy BP).
 - Invader authority brain: `UARInvaderDirectorSubsystem` (server-only `UTickableWorldSubsystem`).
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
+- Director keeps an enemy definition cache keyed by identifier tag and preloads likely enemy classes ahead of time (`EnemyPreloadWaveLookahead`).
+- Disabled enemy rows are hard-rejected from runtime spawn.
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
@@ -183,6 +199,7 @@
 - fallback source: `UARInvaderDirectorSettings` when tooling table refs are unset
 - wave rows: `FARWaveDefRow`
 - stage rows: `FARStageDefRow`
+- enemy table is also loaded for wave-spawn validation/summary resolution
 - Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
 - Row list supports multi-select duplicate/delete for wave/stage rows.
 - Row list supports right-click context menu actions (`Rename`, `Duplicate`, `Delete`) for selected wave/stage rows.
@@ -211,11 +228,14 @@
 - canvas drag on a selected spawn moves the full selected group
 - canvas supports spawn copy/paste (`Ctrl+C` / `Ctrl+V`) and spawn context-menu copy/paste; pasted spawns are offset and become the active selection
 - spawn context actions (delete, color set) apply to the current spawn selection set.
+- Enemy palette rows (color buttons) can be left-dragged onto the wave canvas or spawn list to add a spawn using that enemy class/color at the drop location (or at the currently selected spawn offset when dropped on the list). Palette selection still works via click.
 - Keyboard `Delete/Backspace` in wave mode only deletes selected spawn(s); it does not fall through to deleting the selected wave row when no spawns are selected.
-- The panel listens to object transaction events for authored wave/stage tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
+- The panel listens to object transaction events for authored wave/stage/enemy tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
 - Wave authoring model is delay-layered:
 - layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
 - same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
+- Wave spawn identity authoring is tag-first (`EnemyIdentifierTag`); class path remains visible only as migration support.
+- Selected wave spawn details now include resolved enemy summary and `Open Enemy Row` deep-link to the dedicated enemy tool.
 - Wave panel UX:
 - top toolbar actions (`Reload Tables`, `Validate Selected`, `Validate All`) have explicit tooltips and separated layout
 - `Add Layer` moved into `Wave Layers` header; `Add Spawn`/`Delete` moved into `Layer Spawns` header
@@ -238,8 +258,22 @@
 - `LastSeed`
 - `FavoriteEnemyClasses`
 - preview flags (`bHideOtherLayersInWavePreview`, `bShowApproximatePreviewBanner`, `bSnapCanvasToGrid`, `CanvasGridSize`)
-- Validation is author-time only and currently checks missing references, wave/stage range issues, missing enemy classes, incompatible stage-wave tag constraints, and warns on non-enforced archetype tags.
+- Validation is author-time only and currently checks missing references, wave/stage range issues, missing/invalid spawn enemy identifier tags, enemy-row resolution/disabled rows, incompatible stage-wave tag constraints, and warns on non-enforced archetype tags.
 - PIE harness uses existing runtime console commands (`ar.invader.*`) and is intended to run as listen-server single-player by default.
+
+## Enemy Authoring Editor Tool (Current)
+
+- Tab name: `AR_EnemyAuthoringTool`, display name `Enemy Authoring Tool`.
+- Main menu entry: `Window -> Alien Ramen Enemy Authoring`.
+- Data source is direct DataTable authoring of enemy rows:
+- preferred source: `UARInvaderToolingSettings::EnemyDataTable`
+- fallback source: `UARInvaderDirectorSettings::EnemyDataTable`
+- Supports row CRUD + duplicate + rename + delete + enable/disable + save, with transactions + dirty package flow.
+- Enemy row list supports multi-select operations and right-click context menu actions (`Rename`, `Enable/Disable`, `Duplicate`, `Delete`), matching invader row-list interaction patterns.
+- Enemy row list supports sortable columns (only): `Enabled`, `DisplayName`, `EnemyClass`, `MaxHealth`, `ArchetypeTag` (no row-name or identifier-tag sortable columns).
+- Disabled enemy rows render visually muted and include `[Disabled]` in row display text.
+- Includes details editor + validation issues panel with duplicate identifier-tag checks and runtime-init stat sanity checks.
+- Exposes deep-link open/select by enemy identifier tag for wave-tool integration (`Open Enemy Row` from selected spawn summary).
 
 ## Logging
 

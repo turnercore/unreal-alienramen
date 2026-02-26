@@ -24,6 +24,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring")
 	TSoftObjectPtr<UDataTable> StageDataTable;
 
+	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring")
+	TSoftObjectPtr<UDataTable> EnemyDataTable;
+
 	// Long package path, e.g. /Game/CodeAlong/Blueprints/Enemies.
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring")
 	FDirectoryPath EnemiesFolder;

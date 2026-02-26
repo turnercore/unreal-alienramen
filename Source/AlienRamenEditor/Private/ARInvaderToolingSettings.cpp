@@ -12,6 +12,11 @@ UARInvaderToolingSettings::UARInvaderToolingSettings()
 		StageDataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Stages.DT_Stages")));
 	}
 
+	if (EnemyDataTable.IsNull())
+	{
+		EnemyDataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_InvaderEnemies.DT_InvaderEnemies")));
+	}
+
 	if (EnemiesFolder.Path.IsEmpty())
 	{
 		EnemiesFolder.Path = TEXT("/Game/CodeAlong/Blueprints/Enemies");

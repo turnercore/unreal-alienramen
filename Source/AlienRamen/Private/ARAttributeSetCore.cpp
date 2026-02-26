@@ -13,6 +13,8 @@ UARAttributeSetCore::UARAttributeSetCore()
 	MaxHealth.SetCurrentValue(DefaultMaxHealth);
 	Health.SetBaseValue(DefaultMaxHealth);
 	Health.SetCurrentValue(DefaultMaxHealth);
+	IncomingDamage.SetBaseValue(0.f);
+	IncomingDamage.SetCurrentValue(0.f);
 
 	DamageTakenMultiplier.SetBaseValue(1.0f);
 	DamageTakenMultiplier.SetCurrentValue(1.0f);
@@ -105,6 +107,32 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	const FGameplayAttribute& Attr = Data.EvaluatedData.Attribute;
+
+	// IncomingDamage is a transient meta-attribute consumed into shield/health.
+	if (Attr == GetIncomingDamageAttribute())
+	{
+		const float PendingDamage = FMath::Max(0.f, GetIncomingDamage());
+		SetIncomingDamage(0.f);
+
+		if (PendingDamage > 0.f)
+		{
+			float RemainingDamage = PendingDamage * FMath::Max(0.f, GetDamageTakenMultiplier());
+
+			if (GetMaxShield() > 0.f && GetShield() > 0.f)
+			{
+				const float NewShield = FMath::Max(0.f, GetShield() - RemainingDamage);
+				RemainingDamage = FMath::Max(0.f, RemainingDamage - GetShield());
+				SetShield(NewShield);
+			}
+
+			if (RemainingDamage > 0.f)
+			{
+				SetHealth(FMath::Clamp(GetHealth() - RemainingDamage, 0.f, GetMaxHealth()));
+			}
+		}
+
+		return;
+	}
 
 	// Clamp currents to [0..Max]
 	if (Attr == GetHealthAttribute())

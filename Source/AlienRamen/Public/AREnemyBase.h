@@ -13,7 +13,9 @@
 
 class UAbilitySystemComponent;
 class UARAttributeSetCore;
+class UAREnemyAttributeSet;
 class UARAbilitySet;
+class UGameplayEffect;
 struct FOnAttributeChangeData;
 
 UCLASS()
@@ -32,6 +34,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
 	UARAttributeSetCore* GetCoreAttributes() const { return AttributeSetCore; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
+	UAREnemyAttributeSet* GetEnemyAttributes() const { return EnemyAttributeSet; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageViaGAS(float Damage, AActor* Offender);
+
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator,
+		AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
 	bool ActivateAbilityByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch = false);
@@ -59,6 +73,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
 	void SetEnemyColor(EAREnemyColor InColor);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
+	void SetEnemyIdentifierTag(FGameplayTag InIdentifierTag);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Gameplay")
+	FGameplayTag GetEnemyIdentifierTag() const { return EnemyIdentifierTag; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
+	bool InitializeFromEnemyDefinitionTag();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
+	void BP_OnEnemyDefinitionApplied();
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
 	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARWavePhase InWavePhase, float InPhaseStartServerTime);
@@ -126,6 +152,12 @@ protected:
 	void InitAbilityActorInfo();
 	void ApplyStartupAbilitySet();
 	void ClearStartupAbilitySet();
+	void ApplyRuntimeEnemyEffects(const TArray<TSubclassOf<UGameplayEffect>>& Effects);
+	void ClearRuntimeEnemyEffects();
+	void ApplyRuntimeEnemyTags(const FGameplayTagContainer& Tags);
+	void ClearRuntimeEnemyTags();
+	bool ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString& OutError) const;
+	void ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitData& RuntimeInit);
 	void BindHealthChangeDelegate();
 	void UnbindHealthChangeDelegate();
 	void OnHealthChanged(const FOnAttributeChangeData& ChangeData);
@@ -147,6 +179,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UARAttributeSetCore> AttributeSetCore;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
+	TObjectPtr<UAREnemyAttributeSet> EnemyAttributeSet;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UARAbilitySet> StartupAbilitySet;
 
@@ -159,8 +194,11 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
 	void BP_OnEnemyColorChanged(EAREnemyColor NewColor);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyArchetypeTag;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
+	FGameplayTag EnemyIdentifierTag;
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsDead, BlueprintReadOnly, Category = "AR|Enemy|Lifecycle")
 	bool bIsDead = false;
@@ -205,8 +243,15 @@ private:
 	UPROPERTY()
 	TArray<FActiveGameplayEffectHandle> StartupAppliedEffectHandles;
 
+	UPROPERTY()
+	TArray<FActiveGameplayEffectHandle> RuntimeAppliedEffectHandles;
+
+	UPROPERTY()
+	FGameplayTagContainer RuntimeAppliedLooseTags;
+
 	FDelegateHandle HealthChangedDelegateHandle;
 	bool bStartupSetApplied = false;
+	bool bEnemyDefinitionApplied = false;
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;
 	bool bReachedFormationSlot = false;
