@@ -26,7 +26,6 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "DragAndDrop/DecoratedDragDropOp.h"
-#include "DragAndDrop/GenericDragDropPayload.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/SoftObjectPath.h"
 #include "UObject/SoftObjectPtr.h"
@@ -98,14 +97,6 @@ public:
 	}
 };
 
-struct FInvaderPaletteDragPayload
-{
-	FSoftClassPath EnemyClassPath;
-	EAREnemyColor Color = EAREnemyColor::Red;
-	int32 ShapeCycle = 0;
-	FString Label;
-};
-
 class FInvaderPaletteDragDropOp : public FDecoratedDragDropOp
 {
 public:
@@ -113,10 +104,14 @@ public:
 
 	FInvaderPaletteDragPayload Payload;
 
+	explicit FInvaderPaletteDragDropOp(const FInvaderPaletteDragPayload& InPayload)
+		: Payload(InPayload)
+	{
+	}
+
 	static TSharedRef<FInvaderPaletteDragDropOp> New(const FInvaderPaletteDragPayload& InPayload)
 	{
-		TSharedRef<FInvaderPaletteDragDropOp> Op = MakeShared<FInvaderPaletteDragDropOp>();
-		Op->Payload = InPayload;
+		TSharedRef<FInvaderPaletteDragDropOp> Op = MakeShared<FInvaderPaletteDragDropOp>(InPayload);
 		Op->DefaultHoverText = FText::FromString(InPayload.Label);
 		Op->CurrentHoverText = Op->DefaultHoverText;
 		Op->Construct();
@@ -227,7 +222,7 @@ public:
 	static FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& ClassPtr)
 	{
 		const FSoftObjectPath Path = ClassPtr.ToSoftObjectPath();
-		return Path.IsValid() ? FSoftClassPath(Path) : FSoftClassPath();
+		return Path.IsValid() ? FSoftClassPath(Path.ToString()) : FSoftClassPath();
 	}
 
 	static int32 FindClosestSpawn(
@@ -818,7 +813,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 		const TSharedPtr<FInvaderPaletteDragDropOp> DragOp = DragDropEvent.GetOperationAs<FInvaderPaletteDragDropOp>();
 		if (DragOp.IsValid())
 		{
-			HoverPalettePayload = DragOp->Payload;
+			HoverPalettePayload.Emplace(DragOp->Payload);
 		}
 	}
 
@@ -853,7 +848,9 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			NewOffset = SnapOffset(NewOffset);
 		}
 
-		OnAddSpawnAt(NewOffset, DragOp->Payload);
+		TOptional<FInvaderPaletteDragPayload> DragPayload;
+		DragPayload.Emplace(DragOp->Payload);
+		OnAddSpawnAt(NewOffset, DragPayload);
 		return FReply::Handled();
 	}
 
@@ -4086,7 +4083,9 @@ TSharedRef<ITableRow> SInvaderAuthoringPanel::OnGenerateSpawnRow(TSharedPtr<FSpa
 				{
 					Offset = Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset;
 				}
-				HandleCanvasAddSpawnAt(SnapOffsetToGrid(Offset), PaletteDrag->Payload);
+				TOptional<FInvaderPaletteDragPayload> DragPayload;
+				DragPayload.Emplace(PaletteDrag->Payload);
+				HandleCanvasAddSpawnAt(SnapOffsetToGrid(Offset), DragPayload);
 			}
 			else
 			{
@@ -4319,13 +4318,15 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		const bool bFavorite = Row.bFavorite;
 		const int32 ShapeCycle = Row.ShapeCycle;
 
-		auto MakePaletteDragReply = [this](const FSoftClassPath& InClassPath, EAREnemyColor InColor, int32 InShapeCycle)
+		auto MakePaletteDragReply = [this](const FSoftClassPath& InClassPath, EAREnemyColor InColor, int32 InShapeCycle) -> FReply
 		{
-			FInvaderPaletteDragPayload Payload;
-			Payload.EnemyClassPath = InClassPath;
-			Payload.Color = InColor;
-			Payload.ShapeCycle = InShapeCycle;
-			Payload.Label = FString::Printf(TEXT("%s %s"), *MakePaletteClassDisplayName(InClassPath), *EnemyColorToName(InColor));
+			FInvaderPaletteDragPayload Payload
+			{
+				InClassPath,
+				InColor,
+				InShapeCycle,
+				FString::Printf(TEXT("%s %s"), *MakePaletteClassDisplayName(InClassPath), *EnemyColorToName(InColor))
+			};
 			SetActivePaletteEntry({ InClassPath, InColor, FText::FromString(Payload.Label), false, InShapeCycle });
 			return FReply::Handled().BeginDragDrop(FInvaderPaletteDragDropOp::New(Payload));
 		};
@@ -4403,7 +4404,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 					SelectPalette(ClassPath, EAREnemyColor::Red);
 					return FReply::Handled();
 				})
-				.OnDragDetected_Lambda([MakePaletteDragReply, ClassPath, ShapeCycle](const FGeometry&, const FPointerEvent& MouseEvent)
+				.OnSlateButtonDragDetected_Lambda([MakePaletteDragReply, ClassPath, ShapeCycle](const FGeometry&, const FPointerEvent& MouseEvent)
 				{
 					if (MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
 					{
@@ -4422,7 +4423,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 					SelectPalette(ClassPath, EAREnemyColor::Blue);
 					return FReply::Handled();
 				})
-				.OnDragDetected_Lambda([MakePaletteDragReply, ClassPath, ShapeCycle](const FGeometry&, const FPointerEvent& MouseEvent)
+				.OnSlateButtonDragDetected_Lambda([MakePaletteDragReply, ClassPath, ShapeCycle](const FGeometry&, const FPointerEvent& MouseEvent)
 				{
 					if (MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
 					{
@@ -4441,7 +4442,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 					SelectPalette(ClassPath, EAREnemyColor::White);
 					return FReply::Handled();
 				})
-				.OnDragDetected_Lambda([MakePaletteDragReply, ClassPath, ShapeCycle](const FGeometry&, const FPointerEvent& MouseEvent)
+				.OnSlateButtonDragDetected_Lambda([MakePaletteDragReply, ClassPath, ShapeCycle](const FGeometry&, const FPointerEvent& MouseEvent)
 				{
 					if (MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
 					{

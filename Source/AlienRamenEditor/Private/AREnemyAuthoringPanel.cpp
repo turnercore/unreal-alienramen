@@ -27,7 +27,6 @@
 #include "Styling/AppStyle.h"
 #include "Engine/DataTable.h"
 #include "InputCoreTypes.h"
-#include "UObject/CoreUObjectDelegates.h"
 #include "UObject/UObjectGlobals.h"
 
 namespace
@@ -56,7 +55,7 @@ namespace
 	FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& EnemyClassRef)
 	{
 		const FSoftObjectPath Path = EnemyClassRef.ToSoftObjectPath();
-		return Path.IsValid() ? FSoftClassPath(Path) : FSoftClassPath();
+		return Path.IsValid() ? FSoftClassPath(Path.ToString()) : FSoftClassPath();
 	}
 
 	FString GetEnemyClassLabel(const FSoftClassPath& ClassPath)
@@ -1153,7 +1152,7 @@ void SEnemyAuthoringPanel::ToggleSortByColumn(FName ColumnId)
 	RefreshRows();
 }
 
-FText SEnemyAuthoringPanel::GetSortLabel(FName ColumnId, const FString& BaseLabel) const
+FText SEnemyAuthoringPanel::GetSortLabel(FName ColumnId, FString BaseLabel) const
 {
 	if (SortColumn != ColumnId)
 	{
