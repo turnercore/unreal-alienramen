@@ -1,9 +1,11 @@
 #include "AREnemyAIController.h"
 #include "ARLog.h"
+#include "AREnemyBase.h"
 
 #include "Components/StateTreeAIComponent.h"
 #include "StateTree.h"
 #include "StateTreeExecutionTypes.h"
+#include "Engine/World.h"
 namespace AREnemyAIControllerInternal
 {
 	static const TCHAR* ToPhaseName(EARWavePhase Phase)
@@ -36,8 +38,15 @@ AAREnemyAIController::AAREnemyAIController()
 void AAREnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	// Keep a safe fallback attempt here; enemy pawn also explicitly triggers this after its own possess-init.
-	StartStateTreeForPawn(InPawn);
+	// Enforce context-driven startup even if BP defaults accidentally re-enable auto-start.
+	if (StateTreeComponent)
+	{
+		StateTreeComponent->SetStartLogicAutomatically(false);
+		if (StateTreeComponent->IsRunning())
+		{
+			StateTreeComponent->StopLogic(TEXT("Waiting for wave runtime context"));
+		}
+	}
 }
 
 void AAREnemyAIController::OnUnPossess()
@@ -71,10 +80,43 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 		return;
 	}
 
+	// Don't start until director has applied wave runtime context.
+	if (const AAREnemyBase* Enemy = Cast<AAREnemyBase>(InPawn))
+	{
+		if (Enemy->GetWaveInstanceId() == INDEX_NONE)
+		{
+			if (UWorld* World = GetWorld())
+			{
+				TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
+				World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakThis]()
+				{
+					if (AAREnemyAIController* StrongThis = WeakThis.Get())
+					{
+						StrongThis->TryStartStateTreeForCurrentPawn();
+					}
+				}));
+			}
+			return;
+		}
+	}
+
 	// Possess/startup ordering can invoke this more than once; keep startup idempotent and controller-owned.
 	if (GetPawn() != InPawn || InPawn->GetController() != this || IsStateTreeRunning())
 	{
 		return;
+	}
+
+	if (const AAREnemyBase* Enemy = Cast<AAREnemyBase>(InPawn))
+	{
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[EnemyAI|StartCtx] Controller='%s' Pawn='%s' WaveId=%d LockEnter=%d LockActive=%d"),
+			*GetNameSafe(this),
+			*GetNameSafe(InPawn),
+			Enemy->GetWaveInstanceId(),
+			Enemy->GetFormationLockEnter() ? 1 : 0,
+			Enemy->GetFormationLockActive() ? 1 : 0);
 	}
 
 	if (DefaultStateTree && !IsStateTreeRunning())
@@ -85,6 +127,21 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 	StateTreeComponent->StartLogic();
 	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Started StateTree for controller '%s' on pawn '%s'."),
 		*GetNameSafe(this), *GetNameSafe(InPawn));
+
+	// Resend current enemy runtime context now that logic is running.
+	// Pre-start phase/entry events are intentionally dropped elsewhere; this keeps StateTree in sync.
+	if (AAREnemyBase* Enemy = Cast<AAREnemyBase>(InPawn))
+	{
+		NotifyWavePhaseChanged(Enemy->GetWaveInstanceId(), Enemy->GetWavePhase());
+		if (Enemy->HasEnteredGameplayScreen())
+		{
+			NotifyEnemyEnteredScreen(Enemy->GetWaveInstanceId());
+		}
+		if (Enemy->HasReachedFormationSlot())
+		{
+			NotifyEnemyInFormation(Enemy->GetWaveInstanceId());
+		}
+	}
 }
 
 bool AAREnemyAIController::IsStateTreeRunning() const

@@ -135,21 +135,6 @@ struct FARInvaderEnemyDefRow : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FARBerserkProfile
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
-	float MoveSpeedMultiplier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
-	float FireRateMultiplier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
-	FGameplayTagContainer BehaviorTags;
-};
-
-USTRUCT(BlueprintType)
 struct FARWaveDefRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -203,9 +188,6 @@ struct FARWaveDefRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta=(DisplayName="Wave Duration"))
 	float WaveDuration = 16.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
-	FARBerserkProfile BerserkProfile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
 	TArray<FARWaveEnemySpawnDef> EnemySpawns;

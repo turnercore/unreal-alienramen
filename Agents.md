@@ -21,7 +21,7 @@
     4. integration touchpoints with existing systems
     5. If you remove or deprecate a system, explicitly note current status and replacement direction.
     6. Keep wording specific enough that a new agent can act without rediscovery.
-- Always try to compile after making changes.
+- Always try to compile after making changes. Compile before updating Agents.md and other documentation.
 
 ## High-Level Architecture
 
@@ -111,9 +111,9 @@
 - enemy set: `CollisionDamage`
 - Enemy move-speed runtime flow is C++/GAS-driven: after init and on MoveSpeed attribute changes, `AAREnemyBase` syncs core `MoveSpeed` to `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed`.
 - Enemy startup ability/effect layering on possess (authority) is deterministic and deduped:
-- 1) `UARInvaderDirectorSettings::EnemyCommonAbilitySet` (global)
-- 2) best archetype match from `UARInvaderDirectorSettings::EnemyArchetypeAbilitySets` using `RuntimeInit.EnemyArchetypeTag` (exact match preferred, then closest parent tag)
-- 3) row `RuntimeInit.EnemySpecificAbilities` (non-DA per-enemy ability entries)
+-   1. `UARInvaderDirectorSettings::EnemyCommonAbilitySet` (global)
+-   2. best archetype match from `UARInvaderDirectorSettings::EnemyArchetypeAbilitySets` using `RuntimeInit.EnemyArchetypeTag` (exact match preferred, then closest parent tag)
+-   3. row `RuntimeInit.EnemySpecificAbilities` (non-DA per-enemy ability entries)
 - `RuntimeInit.StartupAbilitySet` has been removed from enemy row schema/runtime.
 - Startup loose tags/effects still come from enemy row runtime-init payload.
 - Enemy identifier tag is replicated with notify (`OnRep_EnemyIdentifierTag`) and forwards to BP hook `BP_OnEnemyIdentifierTagChanged`; server `SetEnemyIdentifierTag` fires the same hook immediately.
@@ -129,11 +129,19 @@
 - Disabled enemy rows are hard-rejected from runtime spawn.
 - Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
+- Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
+- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once when outside bounds.
+- release path is override-friendly for pooling via `ReleaseProjectile` (`BlueprintNativeEvent`); default implementation destroys actor.
+- Pickup runtime base exists in C++: `AARPickupBase` (`Source/AlienRamen/Public/ARPickupBase.h`).
+- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, pickup evaluates XY gameplay bounds each tick and tracks offscreen time; once offscreen for `OffscreenReleaseDelay` seconds (default `0.5`), it calls `ReleasePickup()`.
+- pickup release path is override-friendly for pooling via `ReleasePickup` (`BlueprintNativeEvent`); default implementation destroys actor.
 - Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
 - Director sets explicit per-enemy formation target world location at spawn (`AAREnemyBase::SetFormationTargetWorldLocation(...)`) derived from authored offset (+ optional flips) before offscreen edge translation.
 - Wave phases in runtime flow: `Active`, `Berserk` (waves start `Active`, then time-transition to `Berserk`; waves clear when spawned enemies are dead and fully spawned).
 - Entering behavior is per-enemy movement/state logic (on-screen/formation arrival), not a wave phase.
 - `FARWaveDefRow::WaveDuration` controls `Active -> Berserk` timing.
+- Wave color-swap contract: if `FARWaveDefRow::bAllowColorSwap` is true, each spawned wave instance rolls an independent 30% chance to swap Red<->Blue spawn colors (White unchanged); this is no longer tied to repeating the same wave row.
+- `FARWaveDefRow` no longer contains `BerserkProfile` tuning fields (move-speed multiplier, fire-rate multiplier, behavior tags); berserk behavior is currently state/logic driven only.
 - stage rows no longer include/use a berserk/wave-time multiplier; stage timing knobs do not scale per-wave active duration
 - Stage intro timing is no longer owned by invader stage data/director flow; startup/intro pacing should be driven externally (for example GameMode/state orchestration) before calling `StartInvaderRun`.
 - Wave/stage rows include authored enable toggles (`FARWaveDefRow::bEnabled`, `FARStageDefRow::bEnabled`); director selection skips disabled rows.
@@ -151,12 +159,15 @@
 - Formation lock flags are authored at wave level (`FARWaveDefRow`), not per-spawn:
 - `bFormationLockEnter` (lock during `Entering`)
 - `bFormationLockActive` (lock during `Active`)
-- Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
-- StateTree startup/initialization order: enemy AI controller defers StateTree start to next tick after possess so invader runtime context and wave lock flags are applied before logic begins.
-- StateTree startup/initialization order: enemy pawn (`AAREnemyBase::PossessedBy`) explicitly triggers controller StateTree start after enemy possess-init has run, and controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`).
+- Director applies these flags atomically with wave runtime context via `AAREnemyBase::SetWaveRuntimeContext(...)`.
+- StateTree startup/initialization order is wave-context-driven:
+- enemy AI controller enforces no auto-start on possess (stops running logic if needed) to avoid pre-context evaluation
+- enemy runtime context assignment (`SetWaveRuntimeContext`) triggers `TryStartStateTreeForCurrentPawn()` once lock flags/slot/phase are already set
+- controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`) and defers one tick while `WaveInstanceId == INDEX_NONE`
 - Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
 - Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
-- Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetFormationLockRules(...)` and remain readable from actor context in StateTree.
+- After StateTree startup, controller resends the pawn's current runtime context (`WavePhase`, entered-screen, in-formation) so dropped pre-start events do not leave StateTree out of sync (for example missing Berserk transition).
+- Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetWaveRuntimeContext(...)` and remain readable from actor context in StateTree.
 - `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
 - `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
 - Formation slot index is runtime-only context on `AAREnemyBase` (`FormationSlotIndex`), assigned from deterministic spawn ordinal when the director spawns enemies.
@@ -275,6 +286,7 @@
 - wave canvas exposes authoring controls for `Snap To Grid` and `Grid Size`
 - wave panel shows computed clear metrics for selected wave (`Damage to Clear` and required `DPS` over `WaveDuration`), using enemy row `MaxHealth`, optional reflected `MaxShield` when present, and `DamageTakenMultiplier` for approximation
 - wave panel layout keeps `Snap To Grid` / `Grid Size` above the canvas; preview timeline + phase text + computed clear metrics render below the canvas
+- wave panel visually groups summary/timeline and layer-spawn table regions with bordered section containers and subtle background tinting to improve section separation
 - wave canvas glyphs are intentionally larger for readability (approx 2x prior size), and authored spawn offsets are clamped to gameplay bounds during add/drag/paste/details-edit so spawns cannot drift outside canvas bounds
 - stages mode hides enemy palette + spawn details panels
 - validation issues are in a collapsible panel and auto-collapse when empty

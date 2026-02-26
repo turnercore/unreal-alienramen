@@ -96,6 +96,14 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")
 	float OffscreenCullSeconds = 12.f;
 
+	// Seconds projectiles can remain outside gameplay bounds before auto-release.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds|Projectiles", meta=(ClampMin="0.0"))
+	float ProjectileOffscreenCullSeconds = 0.1f;
+
+	// Seconds pickups can remain outside gameplay bounds before auto-release.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds|Pickups", meta=(ClampMin="0.0"))
+	float PickupOffscreenCullSeconds = 0.1f;
+
 	// Screen-entry detection inset from gameplay bounds used for first-visibility events.
 	// Positive values require enemies to be farther inside bounds before "entered screen" is considered true.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds")

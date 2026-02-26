@@ -296,13 +296,6 @@ void AAREnemyBase::PossessedBy(AController* NewController)
 	TryDispatchEnteredScreenEvent();
 	TryDispatchInFormationEvent();
 	BP_OnEnemyInitialized();
-	if (HasAuthority())
-	{
-		if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
-		{
-			EnemyAI->TryStartStateTreeForCurrentPawn();
-		}
-	}
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Possessed '%s' by '%s'."),
 		*GetNameSafe(this), *GetNameSafe(NewController));
 }
@@ -905,7 +898,9 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	int32 InWaveInstanceId,
 	int32 InFormationSlotIndex,
 	EARWavePhase InWavePhase,
-	float InPhaseStartServerTime)
+	float InPhaseStartServerTime,
+	bool bInFormationLockEnter,
+	bool bInFormationLockActive)
 {
 	if (!HasAuthority())
 	{
@@ -918,11 +913,22 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	FormationSlotIndex = InFormationSlotIndex;
 	WavePhase = InWavePhase;
 	WavePhaseStartServerTime = InPhaseStartServerTime;
+	bFormationLockEnter = bInFormationLockEnter;
+	bFormationLockActive = bInFormationLockActive;
 	bHasEnteredGameplayScreen = false;
 	bReachedFormationSlot = false;
 	bHasDispatchedEnteredScreenEvent = false;
 	bHasDispatchedInFormationEvent = false;
 	LastDispatchedWavePhaseWaveId = INDEX_NONE;
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[EnemyBase|WaveCtx] Enemy='%s' WaveId=%d LockEnter=%d LockActive=%d Phase=%d"),
+		*GetNameSafe(this),
+		WaveInstanceId,
+		bFormationLockEnter ? 1 : 0,
+		bFormationLockActive ? 1 : 0,
+		static_cast<int32>(WavePhase));
 	ForceNetUpdate();
 
 	if (PreviousPhase != WavePhase || PreviousWaveInstanceId != WaveInstanceId)
@@ -931,6 +937,12 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	}
 	TryDispatchEnteredScreenEvent();
 	TryDispatchInFormationEvent();
+
+	// Context assignment is the authoritative signal that AI can start safely.
+	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
+	{
+		EnemyAI->TryStartStateTreeForCurrentPawn();
+	}
 }
 
 void AAREnemyBase::SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime)

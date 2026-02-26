@@ -1,6 +1,7 @@
 #include "ARInvaderDirectorSubsystem.h"
 
 #include "AREnemyBase.h"
+#include "AREnemyAIController.h"
 #include "ARAttributeSetCore.h"
 #include "ContentLookupSubsystem.h"
 #include "ARInvaderDirectorSettings.h"
@@ -22,6 +23,8 @@
 
 namespace ARInvaderInternal
 {
+	static constexpr float WaveColorSwapChance = 0.30f;
+
 	static EAREnemyColor SwapEnemyColor(EAREnemyColor InColor)
 	{
 		if (InColor == EAREnemyColor::Red) return EAREnemyColor::Blue;
@@ -284,7 +287,7 @@ bool UARInvaderDirectorSubsystem::ForceWaveByRow(FName WaveRow)
 		return false;
 	}
 
-	const bool bColorSwap = (LastWaveRowName == WaveRow) && Row->bAllowColorSwap;
+	const bool bColorSwap = Row->bAllowColorSwap && (RunRng.FRand() < ARInvaderInternal::WaveColorSwapChance);
 	const bool bSpawned = SpawnWaveFromDefinition(WaveRow, *Row, bColorSwap);
 	if (bSpawned)
 	{
@@ -568,8 +571,28 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 
 			Enemy->SetEnemyColor(EffectiveColor);
 			Enemy->SetFormationTargetWorldLocation(FormationTargetLocation);
-			Enemy->SetFormationLockRules(Wave.Def.bFormationLockEnter, Wave.Def.bFormationLockActive);
-			Enemy->SetWaveRuntimeContext(Wave.WaveInstanceId, Wave.NextSpawnIndex, Wave.Phase, GetWorld()->GetTimeSeconds());
+			Enemy->SetWaveRuntimeContext(
+				Wave.WaveInstanceId,
+				Wave.NextSpawnIndex,
+				Wave.Phase,
+				GetWorld()->GetTimeSeconds(),
+				Wave.Def.bFormationLockEnter,
+				Wave.Def.bFormationLockActive);
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[InvaderDirector|SpawnCtx] Enemy='%s' WaveId=%d LockEnter=%d LockActive=%d FormationTarget=(%.1f,%.1f,%.1f)"),
+				*GetNameSafe(Enemy),
+				Wave.WaveInstanceId,
+				Enemy->GetFormationLockEnter() ? 1 : 0,
+				Enemy->GetFormationLockActive() ? 1 : 0,
+				Enemy->GetFormationTargetWorldLocation().X,
+				Enemy->GetFormationTargetWorldLocation().Y,
+				Enemy->GetFormationTargetWorldLocation().Z);
+			if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(Enemy->GetController()))
+			{
+				EnemyAI->TryStartStateTreeForCurrentPawn();
+			}
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);
@@ -1022,7 +1045,7 @@ bool UARInvaderDirectorSubsystem::SelectWave(FName& OutWaveRow, FARWaveDefRow& O
 		OutWaveDef = Candidates[0].Def;
 	}
 
-	bOutColorSwap = (OutWaveRow == LastWaveRowName) && OutWaveDef.bAllowColorSwap;
+	bOutColorSwap = OutWaveDef.bAllowColorSwap && (RunRng.FRand() < ARInvaderInternal::WaveColorSwapChance);
 	return true;
 }
 

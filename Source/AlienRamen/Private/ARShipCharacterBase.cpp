@@ -543,6 +543,13 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 		return;
 	}
 
+	// Only gameplay player controllers should trigger ship loadout init.
+	AARPlayerController* ARPC = Cast<AARPlayerController>(NewController);
+	if (!ARPC)
+	{
+		return;
+	}
+
 	bServerLoadoutApplied = false;
 	bLegacyBPInitInvoked = false;
 	LoadoutInitRetryCount = 0;
@@ -552,7 +559,7 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	}
 
 	ClearAppliedLoadout();
-	GrantCommonAbilitySetFromController(NewController);
+	GrantCommonAbilitySetFromController(ARPC);
 	if (!TryApplyServerLoadoutFromPlayerState(true))
 	{
 		RetryServerLoadoutInit();
