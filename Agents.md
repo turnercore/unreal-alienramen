@@ -50,10 +50,14 @@
 ## GAS Runtime Contract
 
 - `AARPlayerStateBase` owns the authoritative ASC (`UAbilitySystemComponent`) and `UARAttributeSetCore`.
+- `AARPlayerStateBase::LoadoutTags` is the source-of-truth loadout container. Do not create/shadow a Blueprint variable named `LoadoutTags` on derived PlayerState BPs.
+- Server applies a default debug-safe loadout when `LoadoutTags` is empty (`Unlock.Ship.Sammy`, `Unlock.Gadget.Vac`, `Unlock.Secondary.Mine`) during `BeginPlay` and after server struct-state apply.
 - Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
+- Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
+- Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
 - tie-break by ability level then stable order
@@ -62,6 +66,7 @@
 - `AAREnemyBase::ApplyDamageViaGAS(...)` builds/apply instant `UAREnemyIncomingDamageEffect` with SetByCaller `Data.Damage`
 - `UARAttributeSetCore::PostGameplayEffectExecute(...)` consumes `IncomingDamage` into shield/health using `DamageTakenMultiplier`
 - `AAREnemyBase::TakeDamage(...)` now forwards into this GAS damage path (authority), rather than direct health subtraction.
+- Loose-tag replication rule: when server mutates ASC loose gameplay tags that clients must read (mode/runtime/state tags), use replication-state-aware loose-tag APIs (`Add/RemoveLooseGameplayTags(..., EGameplayTagReplicationState::TagOnly)`) rather than non-replicated loose-tag mutation paths.
 
 ## Content Lookup System
 
@@ -180,6 +185,7 @@
 - Enemy exposes Blueprint/StateTree-friendly ASC tag query helpers on actor context:
 - `AAREnemyBase::HasASCGameplayTag(FGameplayTag)`
 - `AAREnemyBase::HasAnyASCGameplayTags(FGameplayTagContainer)`
+- Runtime loose-tag application/removal on server (ship + enemy init/runtime paths) uses ASC replication-state-aware loose-tag APIs (`EGameplayTagReplicationState::TagOnly`) so client-side ASC tag checks see the same mode/runtime tags.
 - Damage helper API contract: `ApplyDamageViaGAS(...)` on enemy/ship outputs current Health after application (same function, no separate result variant).
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
