@@ -14,7 +14,6 @@
 class UAbilitySystemComponent;
 class UARAttributeSetCore;
 class UAREnemyAttributeSet;
-class UARAbilitySet;
 class UGameplayEffect;
 struct FOnAttributeChangeData;
 
@@ -40,6 +39,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
 	bool ApplyDamageViaGAS(float Damage, AActor* Offender);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
+	float GetCurrentDamageFromGAS() const;
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
+	float GetCurrentCollisionDamageFromGAS() const;
+
+	// Applies DamageOverride if >= 0; otherwise uses GetCurrentDamageFromGAS().
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride = -1.f);
+
+	// Applies DamageOverride if >= 0; otherwise uses GetCurrentCollisionDamageFromGAS().
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyCollisionDamageToTargetViaGAS(AActor* Target, float DamageOverride = -1.f);
 
 	virtual float TakeDamage(
 		float DamageAmount,
@@ -185,9 +198,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UAREnemyAttributeSet> EnemyAttributeSet;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|GAS")
-	TObjectPtr<UARAbilitySet> StartupAbilitySet;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyColor, Category = "AR|Enemy|Gameplay")
 	EAREnemyColor EnemyColor = EAREnemyColor::Red;
 
@@ -254,6 +264,9 @@ private:
 
 	UPROPERTY()
 	FGameplayTagContainer RuntimeAppliedLooseTags;
+
+	UPROPERTY()
+	TArray<FARAbilitySet_AbilityEntry> RuntimeSpecificAbilities;
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	bool bStartupSetApplied = false;

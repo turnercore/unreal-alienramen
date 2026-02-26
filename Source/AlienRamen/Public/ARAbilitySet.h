@@ -2,11 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Abilities/GameplayAbility.h"
+#include "GameplayEffect.h"
 #include "GameplayTagContainer.h"
 #include "ARAbilitySet.generated.h"
-
-class UGameplayAbility;
-class UGameplayEffect;
 
 USTRUCT(BlueprintType)
 struct FARAbilitySet_AbilityEntry
