@@ -1394,90 +1394,113 @@ void SInvaderAuthoringPanel::BuildLayout()
 						]
 						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 						[
-							SNew(STextBlock)
-							.Text(this, &SInvaderAuthoringPanel::GetPhaseSummaryText)
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-						[
-							SNew(STextBlock)
-							.Text(this, &SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText)
+							SNew(SBorder)
+							.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+							.BorderBackgroundColor(FLinearColor(0.07f, 0.07f, 0.08f, 0.75f))
+							.Padding(8.f)
+							[
+								SNew(SVerticalBox)
+								+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+								[
+									SNew(STextBlock)
+									.Text(this, &SInvaderAuthoringPanel::GetPhaseSummaryText)
+								]
+								+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 2.f, 0.f, 4.f)
+								[
+									SNew(SBorder)
+									.BorderImage(FAppStyle::GetBrush("WhiteBrush"))
+									.BorderBackgroundColor(FLinearColor(1.f, 1.f, 1.f, 0.08f))
+									.Padding(FMargin(0.f, 1.f))
+								]
+								+ SVerticalBox::Slot().AutoHeight()
+								[
+									SNew(STextBlock)
+									.Text(this, &SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText)
+								]
+							]
 						]
 						+ SVerticalBox::Slot().FillHeight(0.38f)
 						[
-							SNew(SSplitter)
-							+ SSplitter::Slot().Value(0.45f)
+							SNew(SBorder)
+							.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+							.BorderBackgroundColor(FLinearColor(0.06f, 0.06f, 0.07f, 0.8f))
+							.Padding(6.f)
 							[
-								SNew(SVerticalBox)
-								+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+								SNew(SSplitter)
+								+ SSplitter::Slot().Value(0.45f)
 								[
-									SNew(SHorizontalBox)
-									+ SHorizontalBox::Slot().FillWidth(1.f)
+									SNew(SVerticalBox)
+									+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 									[
-										SNew(STextBlock).Text(FText::FromString("Wave Layers"))
-									]
-									+ SHorizontalBox::Slot().AutoWidth().Padding(8.f, 0.f, 0.f, 0.f)
-									[
-										SNew(SButton)
-										.Text(FText::FromString("+"))
-										.ToolTipText(FText::FromString("Add a new spawn delay layer."))
-										.OnClicked(this, &SInvaderAuthoringPanel::OnAddLayer)
-									]
-									+ SHorizontalBox::Slot().AutoWidth().Padding(8.f, 0.f, 0.f, 0.f)
-									[
-										SNew(SCheckBox)
-										.IsChecked_Lambda([this]()
-										{
-											return GetDefault<UARInvaderAuthoringEditorSettings>()->bHideOtherLayersInWavePreview ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-										})
-										.OnCheckStateChanged_Lambda([this](ECheckBoxState NewState)
-										{
-											UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
-											Settings->bHideOtherLayersInWavePreview = (NewState == ECheckBoxState::Checked);
-											Settings->SaveConfig();
-											if (WaveCanvas.IsValid())
-											{
-												WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
-											}
-										})
+										SNew(SHorizontalBox)
+										+ SHorizontalBox::Slot().FillWidth(1.f)
 										[
-											SNew(STextBlock).Text(FText::FromString("Hide Other Layers"))
+											SNew(STextBlock).Text(FText::FromString("Wave Layers"))
+										]
+										+ SHorizontalBox::Slot().AutoWidth().Padding(8.f, 0.f, 0.f, 0.f)
+										[
+											SNew(SButton)
+											.Text(FText::FromString("+"))
+											.ToolTipText(FText::FromString("Add a new spawn delay layer."))
+											.OnClicked(this, &SInvaderAuthoringPanel::OnAddLayer)
+										]
+										+ SHorizontalBox::Slot().AutoWidth().Padding(8.f, 0.f, 0.f, 0.f)
+										[
+											SNew(SCheckBox)
+											.IsChecked_Lambda([this]()
+											{
+												return GetDefault<UARInvaderAuthoringEditorSettings>()->bHideOtherLayersInWavePreview ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+											})
+											.OnCheckStateChanged_Lambda([this](ECheckBoxState NewState)
+											{
+												UARInvaderAuthoringEditorSettings* Settings = GetMutableDefault<UARInvaderAuthoringEditorSettings>();
+												Settings->bHideOtherLayersInWavePreview = (NewState == ECheckBoxState::Checked);
+												Settings->SaveConfig();
+												if (WaveCanvas.IsValid())
+												{
+													WaveCanvas->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+												}
+											})
+											[
+												SNew(STextBlock).Text(FText::FromString("Hide Other Layers"))
+											]
 										]
 									]
-								]
-								+ SVerticalBox::Slot().FillHeight(1.f)
-								[
-									SAssignNew(LayerListView, SListView<TSharedPtr<FLayerItem>>)
-									.ListItemsSource(&LayerItems)
-									.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateLayerRow)
-									.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleLayerSelectionChanged)
-								]
-							]
-							+ SSplitter::Slot().Value(0.55f)
-							[
-								SNew(SVerticalBox)
-								+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
-								[
-									SNew(SHorizontalBox)
-									+ SHorizontalBox::Slot().FillWidth(1.f)
+									+ SVerticalBox::Slot().FillHeight(1.f)
 									[
-										SNew(STextBlock).Text(FText::FromString("Spawns"))
-									]
-									+ SHorizontalBox::Slot().AutoWidth().Padding(6.f, 0.f, 0.f, 0.f)
-									[
-										SNew(SButton)
-										.Text(FText::FromString("Delete"))
-										.ToolTipText(FText::FromString("Delete selected spawns in this layer list."))
-										.OnClicked(this, &SInvaderAuthoringPanel::OnDeleteSelectedSpawn)
+										SAssignNew(LayerListView, SListView<TSharedPtr<FLayerItem>>)
+										.ListItemsSource(&LayerItems)
+										.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateLayerRow)
+										.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleLayerSelectionChanged)
 									]
 								]
-								+ SVerticalBox::Slot().FillHeight(1.f)
+								+ SSplitter::Slot().Value(0.55f)
 								[
-									SAssignNew(SpawnListView, SListView<TSharedPtr<FSpawnItem>>)
-									.ListItemsSource(&SpawnItems)
-									.SelectionMode(ESelectionMode::Multi)
-									.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateSpawnRow)
-									.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenSpawnContextMenu)
-									.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleSpawnSelectionChanged)
+									SNew(SVerticalBox)
+									+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+									[
+										SNew(SHorizontalBox)
+										+ SHorizontalBox::Slot().FillWidth(1.f)
+										[
+											SNew(STextBlock).Text(FText::FromString("Spawns"))
+										]
+										+ SHorizontalBox::Slot().AutoWidth().Padding(6.f, 0.f, 0.f, 0.f)
+										[
+											SNew(SButton)
+											.Text(FText::FromString("Delete"))
+											.ToolTipText(FText::FromString("Delete selected spawns in this layer list."))
+											.OnClicked(this, &SInvaderAuthoringPanel::OnDeleteSelectedSpawn)
+										]
+									]
+									+ SVerticalBox::Slot().FillHeight(1.f)
+									[
+										SAssignNew(SpawnListView, SListView<TSharedPtr<FSpawnItem>>)
+										.ListItemsSource(&SpawnItems)
+										.SelectionMode(ESelectionMode::Multi)
+										.OnGenerateRow(this, &SInvaderAuthoringPanel::OnGenerateSpawnRow)
+										.OnContextMenuOpening(this, &SInvaderAuthoringPanel::OnOpenSpawnContextMenu)
+										.OnSelectionChanged(this, &SInvaderAuthoringPanel::HandleSpawnSelectionChanged)
+									]
 								]
 							]
 						]
