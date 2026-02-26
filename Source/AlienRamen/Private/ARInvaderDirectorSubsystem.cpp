@@ -91,6 +91,12 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 		return;
 	}
 
+	if (bRunActive)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Start ignored: run already active. Stop current run first."));
+		return;
+	}
+
 	if (!EnsureDataTables())
 	{
 		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Could not start run: wave/stage DataTables are unavailable."));
@@ -166,17 +172,102 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 		return;
 	}
 
+	DestroyManagedInvaderEnemies();
+
 	bRunActive = false;
 	FlowState = EARInvaderFlowState::Stopped;
+	RunSeed = 0;
+	Threat = 0.f;
+	RunElapsed = 0.f;
+	StageElapsed = 0.f;
+	StageChoiceElapsed = 0.f;
+	StageTransitionRemaining = 0.f;
+	TimeSinceLastWaveSpawn = 0.f;
+	NextWaveInstanceId = 1;
+	LeakCount = 0;
+	StageSequence = 0;
+	RewardEventId = 0;
 	ActiveWaves.Reset();
+	OneTimeWaveRowsUsed.Reset();
+	LastWaveRowName = NAME_None;
 	ReportedLeakedEnemies.Reset();
 	EnemyDefinitionCache.Reset();
 	EnemyClassPreloadHandles.Reset();
 	OffscreenDurationByEnemy.Reset();
+	CurrentStageRow = NAME_None;
+	CurrentStageDef = FARStageDefRow();
+	PendingStageRow = NAME_None;
+	PendingStageDef = FARStageDefRow();
 	ChoiceLeftStageRow = NAME_None;
+	ChoiceLeftStageDef = FARStageDefRow();
 	ChoiceRightStageRow = NAME_None;
+	ChoiceRightStageDef = FARStageDefRow();
+	LastRewardStageRow = NAME_None;
+	LastRewardDescriptor.Reset();
 	PushSnapshotToGameState();
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stopped run."));
+}
+
+void UARInvaderDirectorSubsystem::DestroyManagedInvaderEnemies()
+{
+	UWorld* World = GetWorld();
+	if (!World || !World->GetAuthGameMode())
+	{
+		return;
+	}
+
+	TSet<TWeakObjectPtr<AAREnemyBase>> EnemiesToDestroy;
+	for (const FWaveRuntimeInternal& Wave : ActiveWaves)
+	{
+		for (const TWeakObjectPtr<AAREnemyBase>& EnemyPtr : Wave.SpawnedEnemies)
+		{
+			if (EnemyPtr.IsValid())
+			{
+				EnemiesToDestroy.Add(EnemyPtr);
+			}
+		}
+	}
+	for (const TPair<TWeakObjectPtr<AAREnemyBase>, float>& Pair : OffscreenDurationByEnemy)
+	{
+		if (Pair.Key.IsValid())
+		{
+			EnemiesToDestroy.Add(Pair.Key);
+		}
+	}
+	for (const TWeakObjectPtr<AAREnemyBase>& EnemyPtr : ReportedLeakedEnemies)
+	{
+		if (EnemyPtr.IsValid())
+		{
+			EnemiesToDestroy.Add(EnemyPtr);
+		}
+	}
+
+	// Safety sweep for stale run enemies that may no longer be tracked in arrays.
+	for (TActorIterator<AAREnemyBase> It(World); It; ++It)
+	{
+		AAREnemyBase* Enemy = *It;
+		if (Enemy && Enemy->GetWaveInstanceId() != INDEX_NONE)
+		{
+			EnemiesToDestroy.Add(Enemy);
+		}
+	}
+
+	int32 DestroyedCount = 0;
+	for (const TWeakObjectPtr<AAREnemyBase>& EnemyPtr : EnemiesToDestroy)
+	{
+		AAREnemyBase* Enemy = EnemyPtr.Get();
+		if (!Enemy || Enemy->IsPendingKillPending())
+		{
+			continue;
+		}
+		Enemy->Destroy();
+		++DestroyedCount;
+	}
+
+	if (DestroyedCount > 0)
+	{
+		UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stop cleanup destroyed %d managed enemies."), DestroyedCount);
+	}
 }
 
 bool UARInvaderDirectorSubsystem::ForceWaveByRow(FName WaveRow)
