@@ -19,6 +19,7 @@ Use Unreal in-game console (`~`) and run:
 - `ar.invader.force_stage <StageRowName>`
 - `ar.invader.choose_stage <left|right>`
 - `ar.invader.force_intro <Seconds|clear>`
+- `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
 
 ### Expected Behavior
 
@@ -77,3 +78,9 @@ Use Unreal in-game console (`~`) and run:
 - If currently in `StageIntro`, updates remaining intro time immediately.
 - `clear` removes runtime override and returns intro resolution to normal policy:
   runtime override -> settings debug override -> stage row override -> settings default.
+
+10. `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
+
+- Deprojects viewport corners onto a horizontal plane (defaults to `SpawnOrigin.Z`).
+- Logs suggested `GameplayBoundsMin/Max`; pass `apply` to write+save into director settings.
+- Optional args: custom PlaneZ and XY margin padding before applying.
