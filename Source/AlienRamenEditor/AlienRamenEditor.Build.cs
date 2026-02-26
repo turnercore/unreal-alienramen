@@ -20,6 +20,7 @@ public class AlienRamenEditor : ModuleRules
 			"ToolMenus",
 			"AssetRegistry",
 			"DeveloperSettings",
+			"GameplayAbilities",
 			"GameplayTags",
 			"AlienRamen"
 		});

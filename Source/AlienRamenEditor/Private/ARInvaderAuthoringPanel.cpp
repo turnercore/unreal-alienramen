@@ -1,5 +1,6 @@
 #include "ARInvaderAuthoringPanel.h"
 
+#include "AREnemyAuthoringPanel.h"
 #include "ARInvaderAuthoringEditorProxies.h"
 #include "ARInvaderAuthoringEditorSettings.h"
 #include "ARInvaderToolingSettings.h"
@@ -7,14 +8,11 @@
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
 
-#include "AssetRegistry/AssetRegistryModule.h"
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
 #include "Editor/UnrealEdEngine.h"
 #include "FileHelpers.h"
-#include "Engine/Blueprint.h"
 #include "Engine/DataTable.h"
-#include "AssetRegistry/IAssetRegistry.h"
 #include "IDetailsView.h"
 #include "Modules/ModuleManager.h"
 #include "PlayInEditorDataTypes.h"
@@ -27,6 +25,7 @@
 #include "DragAndDrop/DecoratedDragDropOp.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/SoftObjectPath.h"
+#include "UObject/SoftObjectPtr.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SCheckBox.h"
@@ -57,6 +56,9 @@
 namespace
 {
 	static constexpr float LayerMatchTolerance = 0.0001f;
+	static constexpr float WaveCanvasGlyphSize = 24.0f;
+	static constexpr float WaveCanvasSelectedGlyphSize = 30.0f;
+	static constexpr float WaveCanvasPickRadius = 20.0f;
 	static constexpr float PIEBootstrapPollInterval = 0.2f;
 	static constexpr float PIEBootstrapFallbackDelaySeconds = 0.75f;
 	static constexpr float PIEBootstrapTimeoutSeconds = 20.0f;
@@ -77,10 +79,10 @@ namespace
 		return MapPackageName;
 	}
 
-	class FInvaderSpawnDragDropOp : public FDecoratedDragDropOp
-	{
-	public:
-		DRAG_DROP_OPERATOR_TYPE(FInvaderSpawnDragDropOp, FDecoratedDragDropOp)
+class FInvaderSpawnDragDropOp : public FDecoratedDragDropOp
+{
+public:
+	DRAG_DROP_OPERATOR_TYPE(FInvaderSpawnDragDropOp, FDecoratedDragDropOp)
 
 		int32 SourceSpawnIndex = INDEX_NONE;
 
@@ -92,8 +94,8 @@ namespace
 			Op->CurrentHoverText = Op->DefaultHoverText;
 			Op->Construct();
 			return Op;
-		}
-	};
+	}
+};
 
 	static FLinearColor GetEnemyColor(EAREnemyColor Color)
 	{
@@ -129,7 +131,6 @@ namespace
 		Circle,
 		Triangle,
 		Diamond,
-		Star,
 		Count
 	};
 
@@ -166,8 +167,6 @@ namespace
 			return TEXT("▲");
 		case EPaletteShape::Diamond:
 			return TEXT("◆");
-		case EPaletteShape::Star:
-			return TEXT("★");
 		case EPaletteShape::Square:
 		default:
 			return TEXT("■");
@@ -193,6 +192,12 @@ namespace
 			return *SavedShape;
 		}
 		return 0;
+	}
+
+	static FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& ClassPtr)
+	{
+		const FSoftObjectPath Path = ClassPtr.ToSoftObjectPath();
+		return Path.IsValid() ? FSoftClassPath(Path.ToString()) : FSoftClassPath();
 	}
 
 	static int32 FindClosestSpawn(
@@ -237,7 +242,7 @@ namespace
 			}
 		}
 
-		return BestDistSq <= FMath::Square(14.f) ? BestIndex : INDEX_NONE;
+		return BestDistSq <= FMath::Square(WaveCanvasPickRadius) ? BestIndex : INDEX_NONE;
 	}
 
 	static bool IsPaletteClassSupported(const UClass* Class)
@@ -264,6 +269,36 @@ namespace
 		}
 
 		return true;
+	}
+
+	static float TryExtractOptionalRuntimeInitFloat(const FARInvaderEnemyDefRow& EnemyRow, const FName FieldName, float DefaultValue = 0.f)
+	{
+		const UScriptStruct* RowStruct = FARInvaderEnemyDefRow::StaticStruct();
+		if (!RowStruct)
+		{
+			return DefaultValue;
+		}
+
+		const FStructProperty* RuntimeInitProp = FindFProperty<FStructProperty>(RowStruct, TEXT("RuntimeInit"));
+		if (!RuntimeInitProp || !RuntimeInitProp->Struct)
+		{
+			return DefaultValue;
+		}
+
+		const void* RuntimeInitPtr = RuntimeInitProp->ContainerPtrToValuePtr<void>(&EnemyRow);
+		if (!RuntimeInitPtr)
+		{
+			return DefaultValue;
+		}
+
+		const FProperty* ValueProp = RuntimeInitProp->Struct->FindPropertyByName(FieldName);
+		const FNumericProperty* NumericProp = CastField<FNumericProperty>(ValueProp);
+		if (!NumericProp)
+		{
+			return DefaultValue;
+		}
+
+		return static_cast<float>(NumericProp->GetFloatingPointPropertyValue(NumericProp->ContainerPtrToValuePtr<void>(RuntimeInitPtr)));
 	}
 
 	static FString MakePaletteClassDisplayName(const FSoftClassPath& ClassPath)
@@ -405,39 +440,39 @@ class SInvaderWaveCanvas final : public SLeafWidget
 		{
 		}
 
-		void SetDataAccessors(
-			TFunction<const FARWaveDefRow*()> InGetWaveRow,
-			TFunction<float()> InGetSelectedLayerDelay,
-			TFunction<bool()> InGetHideOtherLayers,
-			TFunction<bool()> InGetSnapToGridEnabled,
-			TFunction<float()> InGetGridSize,
-			TFunction<TSet<int32>()> InGetSelectedSpawnIndices,
-			TFunction<float()> InGetPreviewTime,
-			TFunction<void(int32, bool, bool)> InOnSpawnSelected,
-			TFunction<void()> InOnClearSelection,
-			TFunction<void(int32, const FVector2D&)> InOnOpenSpawnContextMenu,
-			TFunction<void()> InOnBeginDragSpawn,
-			TFunction<void()> InOnEndDragSpawn,
-			TFunction<void(const FVector2D&)> InOnMoveSelectedSpawnsByDelta,
-			TFunction<void(const TArray<int32>&, bool)> InOnSelectionRectChanged,
-			TFunction<void(const FVector2D&)> InOnAddSpawnAt)
-		{
-			GetWaveRow = MoveTemp(InGetWaveRow);
-			GetSelectedLayerDelay = MoveTemp(InGetSelectedLayerDelay);
-			GetHideOtherLayers = MoveTemp(InGetHideOtherLayers);
-			GetSnapToGridEnabled = MoveTemp(InGetSnapToGridEnabled);
-			GetGridSize = MoveTemp(InGetGridSize);
-			GetSelectedSpawnIndices = MoveTemp(InGetSelectedSpawnIndices);
-			GetPreviewTime = MoveTemp(InGetPreviewTime);
-			OnSpawnSelected = MoveTemp(InOnSpawnSelected);
-			OnClearSelection = MoveTemp(InOnClearSelection);
-			OnOpenSpawnContextMenu = MoveTemp(InOnOpenSpawnContextMenu);
-			OnBeginDragSpawn = MoveTemp(InOnBeginDragSpawn);
-			OnEndDragSpawn = MoveTemp(InOnEndDragSpawn);
-			OnMoveSelectedSpawnsByDelta = MoveTemp(InOnMoveSelectedSpawnsByDelta);
-			OnSelectionRectChanged = MoveTemp(InOnSelectionRectChanged);
-			OnAddSpawnAt = MoveTemp(InOnAddSpawnAt);
-		}
+	void SetDataAccessors(
+		TFunction<const FARWaveDefRow*()> InGetWaveRow,
+		TFunction<float()> InGetSelectedLayerDelay,
+		TFunction<bool()> InGetHideOtherLayers,
+		TFunction<bool()> InGetSnapToGridEnabled,
+		TFunction<float()> InGetGridSize,
+		TFunction<TSet<int32>()> InGetSelectedSpawnIndices,
+		TFunction<float()> InGetPreviewTime,
+		TFunction<void(int32, bool, bool)> InOnSpawnSelected,
+		TFunction<void()> InOnClearSelection,
+		TFunction<void(int32, const FVector2D&)> InOnOpenSpawnContextMenu,
+		TFunction<void()> InOnBeginDragSpawn,
+		TFunction<void()> InOnEndDragSpawn,
+		TFunction<void(const FVector2D&)> InOnMoveSelectedSpawnsByDelta,
+		TFunction<void(const TArray<int32>&, bool)> InOnSelectionRectChanged,
+		TFunction<void(const FVector2D&)> InOnAddSpawnAt)
+	{
+		GetWaveRow = MoveTemp(InGetWaveRow);
+		GetSelectedLayerDelay = MoveTemp(InGetSelectedLayerDelay);
+		GetHideOtherLayers = MoveTemp(InGetHideOtherLayers);
+		GetSnapToGridEnabled = MoveTemp(InGetSnapToGridEnabled);
+		GetGridSize = MoveTemp(InGetGridSize);
+		GetSelectedSpawnIndices = MoveTemp(InGetSelectedSpawnIndices);
+		GetPreviewTime = MoveTemp(InGetPreviewTime);
+		OnSpawnSelected = MoveTemp(InOnSpawnSelected);
+		OnClearSelection = MoveTemp(InOnClearSelection);
+		OnOpenSpawnContextMenu = MoveTemp(InOnOpenSpawnContextMenu);
+		OnBeginDragSpawn = MoveTemp(InOnBeginDragSpawn);
+		OnEndDragSpawn = MoveTemp(InOnEndDragSpawn);
+		OnMoveSelectedSpawnsByDelta = MoveTemp(InOnMoveSelectedSpawnsByDelta);
+		OnSelectionRectChanged = MoveTemp(InOnSelectionRectChanged);
+		OnAddSpawnAt = MoveTemp(InOnAddSpawnAt);
+	}
 
 		virtual FVector2D ComputeDesiredSize(float) const override
 		{
@@ -543,6 +578,10 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				}
 
 				const FVector2D Local = OffsetToLocal(Spawn.AuthoredScreenOffset);
+				const float HalfDrawSize = 0.5f * WaveCanvasSelectedGlyphSize;
+				const FVector2D DrawLocal(
+					FMath::Clamp(Local.X, HalfDrawSize, FMath::Max(HalfDrawSize, Size.X - HalfDrawSize)),
+					FMath::Clamp(Local.Y, HalfDrawSize, FMath::Max(HalfDrawSize, Size.Y - HalfDrawSize)));
 				FLinearColor DotColor = GetEnemyColor(Spawn.EnemyColor);
 				if (InPreviewTime < Spawn.SpawnDelay)
 				{
@@ -554,10 +593,10 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					OutDrawElements,
 					LayerId + 2,
 					AllottedGeometry,
-					Local,
+					DrawLocal,
 					DotColor,
 					ShapeCycle,
-					12.f,
+					WaveCanvasGlyphSize,
 					false);
 
 				if (SelectedIndices.Contains(Index))
@@ -566,10 +605,10 @@ class SInvaderWaveCanvas final : public SLeafWidget
 						OutDrawElements,
 						LayerId + 3,
 						AllottedGeometry,
-						Local,
+						DrawLocal,
 						FLinearColor(1.f, 1.f, 1.f, 0.3f),
 						ShapeCycle,
-						18.f,
+						WaveCanvasSelectedGlyphSize,
 						true);
 				}
 			}
@@ -600,8 +639,8 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			return LayerId + 6;
 		}
 
-		virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
-		{
+	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
+	{
 			if (!GetWaveRow)
 			{
 				return FReply::Unhandled();
@@ -647,8 +686,8 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					return FReply::Handled().CaptureMouse(AsShared());
 				}
 			}
-			else if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
-			{
+		else if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+		{
 				if (Closest != INDEX_NONE)
 				{
 					if (OnSpawnSelected)
@@ -662,17 +701,17 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					}
 				}
 
-				if (OnAddSpawnAt)
+			if (OnAddSpawnAt)
+			{
+				FVector2D NewOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
+				if (ShouldSnapToGrid())
 				{
-					FVector2D NewOffset = LocalToOffset(Local, MyGeometry.GetLocalSize());
-					if (ShouldSnapToGrid())
-					{
-						NewOffset = SnapOffset(NewOffset);
-					}
-					OnAddSpawnAt(NewOffset);
-					return FReply::Handled();
+					NewOffset = SnapOffset(NewOffset);
 				}
+				OnAddSpawnAt(NewOffset);
+				return FReply::Handled();
 			}
+		}
 
 			return FReply::Unhandled();
 		}
@@ -687,9 +726,12 @@ class SInvaderWaveCanvas final : public SLeafWidget
 				if (Closest != HoveredSpawnIndex)
 				{
 					HoveredSpawnIndex = Closest;
-					if (WaveRow && WaveRow->EnemySpawns.IsValidIndex(HoveredSpawnIndex) && WaveRow->EnemySpawns[HoveredSpawnIndex].EnemyClass)
+					if (WaveRow && WaveRow->EnemySpawns.IsValidIndex(HoveredSpawnIndex))
 					{
-						const FString HoverName = MakePaletteClassDisplayName(FSoftClassPath(WaveRow->EnemySpawns[HoveredSpawnIndex].EnemyClass));
+						const FARWaveEnemySpawnDef& HoveredSpawn = WaveRow->EnemySpawns[HoveredSpawnIndex];
+						const FString HoverName = HoveredSpawn.EnemyIdentifierTag.IsValid()
+							? HoveredSpawn.EnemyIdentifierTag.ToString()
+							: TEXT("<No Enemy Tag>");
 						SetToolTipText(FText::FromString(HoverName));
 					}
 					else
@@ -766,12 +808,12 @@ class SInvaderWaveCanvas final : public SLeafWidget
 			bSelectionRectActive = false;
 		}
 
-		virtual void OnMouseLeave(const FPointerEvent& MouseEvent) override
-		{
-			SLeafWidget::OnMouseLeave(MouseEvent);
-			HoveredSpawnIndex = INDEX_NONE;
-			SetToolTipText(FText::GetEmpty());
-		}
+	virtual void OnMouseLeave(const FPointerEvent& MouseEvent) override
+	{
+		SLeafWidget::OnMouseLeave(MouseEvent);
+		HoveredSpawnIndex = INDEX_NONE;
+		SetToolTipText(FText::GetEmpty());
+	}
 
 	private:
 		void DrawShape(
@@ -1182,6 +1224,7 @@ void SInvaderAuthoringPanel::BuildLayout()
 				.OnClicked_Lambda([this]()
 				{
 					RefreshTables();
+					RefreshPalette();
 					RefreshRowItems();
 					RefreshDetailsObjects();
 					RefreshIssues();
@@ -1273,24 +1316,6 @@ void SInvaderAuthoringPanel::BuildLayout()
 						SNew(SVerticalBox)
 						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 						[
-							SAssignNew(PreviewSlider, SSlider)
-							.Value_Lambda([this]()
-							{
-								const float MaxTime = FMath::Max(0.01f, GetMaxPreviewTime());
-								return FMath::Clamp(GetPreviewTime() / MaxTime, 0.f, 1.f);
-							})
-							.OnValueChanged_Lambda([this](float NewValue)
-							{
-								SetPreviewTime(NewValue * FMath::Max(0.01f, GetMaxPreviewTime()));
-							})
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-						[
-							SNew(STextBlock)
-							.Text(this, &SInvaderAuthoringPanel::GetPhaseSummaryText)
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-						[
 							SNew(SHorizontalBox)
 							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.f, 0.f, 8.f, 0.f)
 							[
@@ -1353,6 +1378,29 @@ void SInvaderAuthoringPanel::BuildLayout()
 						+ SVerticalBox::Slot().FillHeight(0.62f).Padding(0.f, 0.f, 0.f, 6.f)
 						[
 							SAssignNew(WaveCanvas, SInvaderWaveCanvas)
+						]
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
+						[
+							SAssignNew(PreviewSlider, SSlider)
+							.Value_Lambda([this]()
+							{
+								const float MaxTime = FMath::Max(0.01f, GetMaxPreviewTime());
+								return FMath::Clamp(GetPreviewTime() / MaxTime, 0.f, 1.f);
+							})
+							.OnValueChanged_Lambda([this](float NewValue)
+							{
+								SetPreviewTime(NewValue * FMath::Max(0.01f, GetMaxPreviewTime()));
+							})
+						]
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
+						[
+							SNew(STextBlock)
+							.Text(this, &SInvaderAuthoringPanel::GetPhaseSummaryText)
+						]
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
+						[
+							SNew(STextBlock)
+							.Text(this, &SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText)
 						]
 						+ SVerticalBox::Slot().FillHeight(0.38f)
 						[
@@ -1496,6 +1544,18 @@ void SInvaderAuthoringPanel::BuildLayout()
 							SpawnDetailsView.ToSharedRef()
 						]
 					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
+					[
+						SNew(STextBlock)
+						.Visibility(this, &SInvaderAuthoringPanel::GetSelectedSpawnEnemySummaryVisibility)
+						.Text(FText::FromString("Resolved Enemy"))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
+					[
+						SNew(STextBlock)
+						.Visibility(this, &SInvaderAuthoringPanel::GetSelectedSpawnEnemySummaryVisibility)
+						.Text(this, &SInvaderAuthoringPanel::GetSelectedSpawnEnemySummaryText)
+					]
 					+ SVerticalBox::Slot().AutoHeight()
 					[
 						SAssignNew(ValidationIssuesArea, SExpandableArea)
@@ -1526,10 +1586,6 @@ void SInvaderAuthoringPanel::BuildLayout()
 						+ SHorizontalBox::Slot().FillWidth(1.f).Padding(0.f, 0.f, 4.f, 0.f)
 						[
 							SNew(SButton).Text(FText::FromString("Start/Attach PIE")).OnClicked(this, &SInvaderAuthoringPanel::OnStartOrAttachPIE)
-						]
-						+ SHorizontalBox::Slot().FillWidth(1.f).Padding(4.f, 0.f, 0.f, 0.f)
-						[
-							SNew(SButton).Text(FText::FromString("Stop PIE")).OnClicked(this, &SInvaderAuthoringPanel::OnStopPIE)
 						]
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
@@ -1570,10 +1626,6 @@ void SInvaderAuthoringPanel::BuildLayout()
 							SNew(SButton).Text(FText::FromString("Force Threat")).OnClicked(this, &SInvaderAuthoringPanel::OnForceThreat)
 						]
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
-					[
-						SNew(SButton).Text(FText::FromString("Dump Runtime State")).OnClicked(this, &SInvaderAuthoringPanel::OnDumpState)
-					]
 					+ SVerticalBox::Slot().AutoHeight()
 					[
 						SAssignNew(StatusText, STextBlock).Text(FText::FromString("Ready"))
@@ -1608,6 +1660,7 @@ void SInvaderAuthoringPanel::RefreshTables()
 {
 	WaveTable = nullptr;
 	StageTable = nullptr;
+	EnemyTable = nullptr;
 
 	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
 	if (!ToolingSettings)
@@ -1618,7 +1671,8 @@ void SInvaderAuthoringPanel::RefreshTables()
 
 	WaveTable = ToolingSettings->WaveDataTable.LoadSynchronous();
 	StageTable = ToolingSettings->StageDataTable.LoadSynchronous();
-	if (!WaveTable || !StageTable)
+	EnemyTable = ToolingSettings->EnemyDataTable.LoadSynchronous();
+	if (!WaveTable || !StageTable || !EnemyTable)
 	{
 		const UARInvaderDirectorSettings* RuntimeSettings = GetDefault<UARInvaderDirectorSettings>();
 		if (RuntimeSettings)
@@ -1631,15 +1685,20 @@ void SInvaderAuthoringPanel::RefreshTables()
 			{
 				StageTable = RuntimeSettings->StageDataTable.LoadSynchronous();
 			}
+			if (!EnemyTable)
+			{
+				EnemyTable = RuntimeSettings->EnemyDataTable.LoadSynchronous();
+			}
 		}
 	}
 
-	if (!WaveTable || !StageTable)
+	if (!WaveTable || !StageTable || !EnemyTable)
 	{
 		SetStatus(FString::Printf(
-			TEXT("Failed loading tables. Tooling Wave='%s' Stage='%s'."),
+			TEXT("Failed loading tables. Tooling Wave='%s' Stage='%s' Enemy='%s'."),
 			*ToolingSettings->WaveDataTable.ToString(),
-			*ToolingSettings->StageDataTable.ToString()));
+			*ToolingSettings->StageDataTable.ToString(),
+			*ToolingSettings->EnemyDataTable.ToString()));
 	}
 }
 
@@ -1664,6 +1723,152 @@ const FARStageDefRow* SInvaderAuthoringPanel::GetStageRow(FName RowName) const
 		return nullptr;
 	}
 	return StageTable->FindRow<FARStageDefRow>(RowName, TEXT("InvaderAuthoring"), false);
+}
+
+const FARInvaderEnemyDefRow* SInvaderAuthoringPanel::FindEnemyDefinitionByIdentifierTag(FGameplayTag IdentifierTag, FName* OutRowName) const
+{
+	if (OutRowName)
+	{
+		*OutRowName = NAME_None;
+	}
+
+	if (!EnemyTable || !IdentifierTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	for (const TPair<FName, uint8*>& Pair : EnemyTable->GetRowMap())
+	{
+		const FARInvaderEnemyDefRow* Row = reinterpret_cast<const FARInvaderEnemyDefRow*>(Pair.Value);
+		if (!Row)
+		{
+			continue;
+		}
+
+		if (Row->EnemyIdentifierTag.MatchesTagExact(IdentifierTag))
+		{
+			if (OutRowName)
+			{
+				*OutRowName = Pair.Key;
+			}
+			return Row;
+		}
+	}
+
+	return nullptr;
+}
+
+bool SInvaderAuthoringPanel::ResolveIdentifierTagForPaletteClass(const FSoftClassPath& ClassPath, FGameplayTag& OutIdentifierTag) const
+{
+	OutIdentifierTag = FGameplayTag();
+
+	if (!EnemyTable || !ClassPath.IsValid())
+	{
+		return false;
+	}
+
+	FName BestRowName = NAME_None;
+	FGameplayTag BestTag;
+	bool bBestEnabled = false;
+	bool bFound = false;
+	for (const TPair<FName, uint8*>& Pair : EnemyTable->GetRowMap())
+	{
+		const FARInvaderEnemyDefRow* Row = reinterpret_cast<const FARInvaderEnemyDefRow*>(Pair.Value);
+		if (!Row || !Row->EnemyIdentifierTag.IsValid())
+		{
+			continue;
+		}
+
+		const FSoftClassPath RowClassPath = ToSoftClassPath(Row->EnemyClass);
+		if (!RowClassPath.IsValid() || RowClassPath != ClassPath)
+		{
+			continue;
+		}
+
+		const bool bPreferThisRow =
+			!bFound
+			|| (!bBestEnabled && Row->bEnabled)
+			|| (bBestEnabled == Row->bEnabled && Pair.Key.LexicalLess(BestRowName));
+		if (bPreferThisRow)
+		{
+			bFound = true;
+			BestRowName = Pair.Key;
+			BestTag = Row->EnemyIdentifierTag;
+			bBestEnabled = Row->bEnabled;
+		}
+	}
+
+	if (!bFound)
+	{
+		return false;
+	}
+
+	OutIdentifierTag = BestTag;
+	return true;
+}
+
+FString SInvaderAuthoringPanel::FormatSpawnEnemyLabel(const FARWaveEnemySpawnDef& Spawn) const
+{
+	if (!Spawn.EnemyIdentifierTag.IsValid())
+	{
+		return TEXT("<No Enemy Tag>");
+	}
+
+	FName EnemyRowName = NAME_None;
+	const FARInvaderEnemyDefRow* EnemyDef = FindEnemyDefinitionByIdentifierTag(Spawn.EnemyIdentifierTag, &EnemyRowName);
+	if (!EnemyDef)
+	{
+		return FString::Printf(TEXT("%s (Unresolved)"), *Spawn.EnemyIdentifierTag.ToString());
+	}
+
+	const FString DisplayLabel = EnemyDef->DisplayName.IsEmpty()
+		? Spawn.EnemyIdentifierTag.ToString()
+		: EnemyDef->DisplayName.ToString();
+	const FString DisabledSuffix = EnemyDef->bEnabled ? TEXT("") : TEXT(" [Disabled]");
+	return FString::Printf(TEXT("%s%s"), *DisplayLabel, *DisabledSuffix);
+}
+
+FText SInvaderAuthoringPanel::GetSelectedSpawnEnemySummaryText() const
+{
+	const FARWaveDefRow* WaveRow = GetSelectedWaveRowConst();
+	if (!WaveRow || !WaveRow->EnemySpawns.IsValidIndex(SelectedSpawnIndex))
+	{
+		return FText::FromString(TEXT("No spawn selected."));
+	}
+
+	const FARWaveEnemySpawnDef& Spawn = WaveRow->EnemySpawns[SelectedSpawnIndex];
+	if (!Spawn.EnemyIdentifierTag.IsValid())
+	{
+		return FText::FromString(TEXT("Enemy tag is not set for this spawn."));
+	}
+
+	FName EnemyRowName = NAME_None;
+	const FARInvaderEnemyDefRow* EnemyDef = FindEnemyDefinitionByIdentifierTag(Spawn.EnemyIdentifierTag, &EnemyRowName);
+	if (!EnemyDef)
+	{
+		return FText::FromString(FString::Printf(TEXT("Enemy tag '%s' is not found in enemy table."), *Spawn.EnemyIdentifierTag.ToString()));
+	}
+
+	const FString DisplayName = EnemyDef->DisplayName.IsEmpty()
+		? EnemyDef->EnemyIdentifierTag.ToString()
+		: EnemyDef->DisplayName.ToString();
+	const FString EnemyClassPath = EnemyDef->EnemyClass.ToSoftObjectPath().ToString();
+	const FString Archetype = EnemyDef->RuntimeInit.EnemyArchetypeTag.IsValid()
+		? EnemyDef->RuntimeInit.EnemyArchetypeTag.ToString()
+		: TEXT("<None>");
+	return FText::FromString(FString::Printf(
+		TEXT("Enemy: %s\nRow: %s\nEnabled: %s\nClass: %s\nArchetype: %s\nMaxHealth: %.1f"),
+		*DisplayName,
+		*EnemyRowName.ToString(),
+		EnemyDef->bEnabled ? TEXT("Yes") : TEXT("No"),
+		EnemyClassPath.IsEmpty() ? TEXT("<None>") : *EnemyClassPath,
+		*Archetype,
+		EnemyDef->RuntimeInit.MaxHealth));
+}
+
+EVisibility SInvaderAuthoringPanel::GetSelectedSpawnEnemySummaryVisibility() const
+{
+	return Mode == EAuthoringMode::Waves ? EVisibility::Visible : EVisibility::Collapsed;
 }
 
 FARWaveDefRow* SInvaderAuthoringPanel::GetMutableWaveRow(FName RowName)
@@ -1903,9 +2108,7 @@ void SInvaderAuthoringPanel::RefreshSpawnItems()
 			Item->SpawnIndex = SpawnIndex;
 			Item->Delay = Spawn.SpawnDelay;
 			Item->Color = Spawn.EnemyColor;
-			Item->EnemyClassName = Spawn.EnemyClass
-				? MakePaletteClassDisplayName(FSoftClassPath(Spawn.EnemyClass))
-				: TEXT("<None>");
+			Item->EnemyClassName = FormatSpawnEnemyLabel(Spawn);
 			SpawnItems.Add(Item);
 		}
 		break;
@@ -2692,6 +2895,7 @@ FReply SInvaderAuthoringPanel::OnAddLayer()
 		}
 		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = ActivePaletteEntry->Color;
+		ResolveIdentifierTagForPaletteClass(ActivePaletteEntry->EnemyClassPath, Spawn.EnemyIdentifierTag);
 	}
 
 	Row->EnemySpawns.Add(Spawn);
@@ -2728,6 +2932,7 @@ FReply SInvaderAuthoringPanel::OnAddSpawnToLayer()
 		}
 		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = ActivePaletteEntry->Color;
+		ResolveIdentifierTagForPaletteClass(ActivePaletteEntry->EnemyClassPath, Spawn.EnemyIdentifierTag);
 	}
 
 	Row->EnemySpawns.Add(Spawn);
@@ -3426,7 +3631,7 @@ void SInvaderAuthoringPanel::HandleCanvasSelectedSpawnsMoved(const FVector2D& Of
 		{
 			continue;
 		}
-		const FVector2D NewOffset = Pair.Value + OffsetDelta;
+		const FVector2D NewOffset = ClampOffsetToGameplayBounds(Pair.Value + OffsetDelta);
 		if (!Row->EnemySpawns[Pair.Key].AuthoredScreenOffset.Equals(NewOffset, 0.01f))
 		{
 			Row->EnemySpawns[Pair.Key].AuthoredScreenOffset = NewOffset;
@@ -3469,16 +3674,21 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	FARWaveEnemySpawnDef Spawn;
 	Spawn.SpawnDelay = SelectedLayerDelay;
 	Spawn.AuthoredScreenOffset = SnapOffsetToGrid(NewOffset);
-	if (ActivePaletteEntry.IsSet())
+	const FPaletteEntry* ActiveEntry = ActivePaletteEntry.IsSet() ? &ActivePaletteEntry.GetValue() : nullptr;
+	if (ActiveEntry)
 	{
-		UClass* ResolvedClass = ActivePaletteEntry->EnemyClassPath.ResolveClass();
+		const FSoftClassPath ClassPath = ActiveEntry->EnemyClassPath;
+		EAREnemyColor Color = ActiveEntry->Color;
+		UClass* ResolvedClass = ClassPath.ResolveClass();
 		if (!ResolvedClass)
 		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ActivePaletteEntry->EnemyClassPath.ToString());
+			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
 		}
 		Spawn.EnemyClass = ResolvedClass;
-		Spawn.EnemyColor = ActivePaletteEntry->Color;
+		Spawn.EnemyColor = Color;
+		ResolveIdentifierTagForPaletteClass(ClassPath, Spawn.EnemyIdentifierTag);
 	}
+
 
 	Row->EnemySpawns.Add(Spawn);
 	SelectSpawn(Row->EnemySpawns.Num() - 1);
@@ -3501,15 +3711,33 @@ float SInvaderAuthoringPanel::GetCanvasGridSize() const
 
 FVector2D SInvaderAuthoringPanel::SnapOffsetToGrid(const FVector2D& InOffset) const
 {
-	if (!IsCanvasSnapEnabled())
+	FVector2D Result = InOffset;
+	if (IsCanvasSnapEnabled())
+	{
+		const float GridSize = GetCanvasGridSize();
+		Result = FVector2D(
+			FMath::GridSnap(InOffset.X, GridSize),
+			FMath::GridSnap(InOffset.Y, GridSize));
+	}
+	return ClampOffsetToGameplayBounds(Result);
+}
+
+FVector2D SInvaderAuthoringPanel::ClampOffsetToGameplayBounds(const FVector2D& InOffset) const
+{
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	if (!Settings)
 	{
 		return InOffset;
 	}
 
-	const float GridSize = GetCanvasGridSize();
+	const float MinX = FMath::Min(Settings->GameplayBoundsMin.X, Settings->GameplayBoundsMax.X);
+	const float MaxX = FMath::Max(Settings->GameplayBoundsMin.X, Settings->GameplayBoundsMax.X);
+	const float MinY = FMath::Min(Settings->GameplayBoundsMin.Y, Settings->GameplayBoundsMax.Y);
+	const float MaxY = FMath::Max(Settings->GameplayBoundsMin.Y, Settings->GameplayBoundsMax.Y);
+
 	return FVector2D(
-		FMath::GridSnap(InOffset.X, GridSize),
-		FMath::GridSnap(InOffset.Y, GridSize));
+		FMath::Clamp(InOffset.X, MinX, MaxX),
+		FMath::Clamp(InOffset.Y, MinY, MaxY));
 }
 
 void SInvaderAuthoringPanel::SetPreviewTime(float NewPreviewTime)
@@ -3552,6 +3780,77 @@ FText SInvaderAuthoringPanel::GetPhaseSummaryText() const
 
 	const float ActiveEnd = FMath::Max(0.f, Row->WaveDuration);
 	return FText::FromString(FString::Printf(TEXT("Preview %.2fs | Active [0.00-%.2f] Berserk [%.2f-INF]"), PreviewTime, ActiveEnd, ActiveEnd));
+}
+
+FText SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText() const
+{
+	const FARWaveDefRow* Row = GetSelectedWaveRowConst();
+	if (!Row)
+	{
+		return FText::FromString(TEXT("Computed: Select a wave row to view clear metrics."));
+	}
+
+	double TotalHealth = 0.0;
+	double TotalShield = 0.0;
+	double TotalDamageToClear = 0.0;
+	int32 MissingEnemyDefCount = 0;
+	int32 ZeroMitigationCount = 0;
+
+	for (const FARWaveEnemySpawnDef& Spawn : Row->EnemySpawns)
+	{
+		const FARInvaderEnemyDefRow* EnemyDef = FindEnemyDefinitionByIdentifierTag(Spawn.EnemyIdentifierTag, nullptr);
+		if (!EnemyDef)
+		{
+			// Mirror runtime-ish fallback expectation when a row cannot be resolved.
+			TotalHealth += 100.0;
+			TotalDamageToClear += 100.0;
+			++MissingEnemyDefCount;
+			continue;
+		}
+
+		const float Health = FMath::Max(0.f, EnemyDef->RuntimeInit.MaxHealth);
+		const float Shield = FMath::Max(0.f, TryExtractOptionalRuntimeInitFloat(*EnemyDef, TEXT("MaxShield"), 0.f));
+		const float DamageTakenMultiplier = FMath::Max(0.f, EnemyDef->RuntimeInit.DamageTakenMultiplier);
+
+		const double EffectivePool = static_cast<double>(Health + Shield);
+		TotalHealth += Health;
+		TotalShield += Shield;
+
+		if (DamageTakenMultiplier <= KINDA_SMALL_NUMBER)
+		{
+			TotalDamageToClear += EffectivePool;
+			++ZeroMitigationCount;
+		}
+		else
+		{
+			TotalDamageToClear += (EffectivePool / static_cast<double>(DamageTakenMultiplier));
+		}
+	}
+
+	const double ActiveDuration = FMath::Max(0.0, static_cast<double>(Row->WaveDuration));
+	const double RequiredDPS = ActiveDuration > KINDA_SMALL_NUMBER
+		? (TotalDamageToClear / ActiveDuration)
+		: 0.0;
+
+	FString Notes;
+	if (MissingEnemyDefCount > 0)
+	{
+		Notes += FString::Printf(TEXT("\n  Missing enemy rows: %d (using 100 HP fallback)."), MissingEnemyDefCount);
+	}
+	if (ZeroMitigationCount > 0)
+	{
+		Notes += FString::Printf(TEXT("\n  Non-damageable entries: %d (DamageTakenMultiplier <= 0)."), ZeroMitigationCount);
+	}
+
+	return FText::FromString(FString::Printf(
+		TEXT("Computed (approx)\n  Enemies: %d\n  Total HP: %.0f\n  Total Shield: %.0f\n  Damage to Clear: %.0f\n  Required DPS (WaveDuration %.1fs): %.1f/s%s"),
+		Row->EnemySpawns.Num(),
+		TotalHealth,
+		TotalShield,
+		TotalDamageToClear,
+		Row->WaveDuration,
+		RequiredDPS,
+		*Notes));
 }
 
 void SInvaderAuthoringPanel::HandleWaveRowPropertiesChanged(const FPropertyChangedEvent& Event)
@@ -3609,6 +3908,12 @@ void SInvaderAuthoringPanel::HandleSpawnPropertiesChanged(const FPropertyChanged
 	const FScopedTransaction Tx(NSLOCTEXT("AlienRamenEditor", "InvaderAuthoringEditSpawn", "Edit Wave Spawn"));
 	WaveTable->Modify();
 	Row->EnemySpawns[SelectedSpawnIndex] = SpawnProxy->Spawn;
+	Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset = ClampOffsetToGameplayBounds(Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset);
+	if (!Row->EnemySpawns[SelectedSpawnIndex].EnemyIdentifierTag.IsValid() && Row->EnemySpawns[SelectedSpawnIndex].EnemyClass)
+	{
+		const FSoftClassPath ClassPath(Row->EnemySpawns[SelectedSpawnIndex].EnemyClass);
+		ResolveIdentifierTagForPaletteClass(ClassPath, Row->EnemySpawns[SelectedSpawnIndex].EnemyIdentifierTag);
+	}
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
@@ -3645,7 +3950,8 @@ bool SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty(const FPropertyAndPar
 	static const TSet<FName> HiddenSpawnProperties =
 	{
 		TEXT("bFormationLockEnter"),
-		TEXT("bFormationLockActive")
+		TEXT("bFormationLockActive"),
+		TEXT("EnemyClass")
 	};
 
 	return !HiddenSpawnProperties.Contains(PropertyName);
@@ -3940,9 +4246,26 @@ void SInvaderAuthoringPanel::SyncPaletteClassInContentBrowser(const FSoftClassPa
 	SetStatus(FString::Printf(TEXT("Synced Content Browser to '%s'."), *AssetObject->GetName()));
 }
 
+void SInvaderAuthoringPanel::OpenPaletteEnemyData(const FSoftClassPath& ClassPath)
+{
+	FGameplayTag IdentifierTag;
+	if (!ResolveIdentifierTagForPaletteClass(ClassPath, IdentifierTag))
+	{
+		SetStatus(FString::Printf(TEXT("No enemy row found for '%s'."), *MakePaletteClassDisplayName(ClassPath)));
+		return;
+	}
+
+	ARInvaderEnemyAuthoringEditor::OpenEnemyAuthoringForIdentifierTag(IdentifierTag);
+	SetStatus(FString::Printf(TEXT("Opened enemy row for '%s'."), *IdentifierTag.ToString()));
+}
+
 void SInvaderAuthoringPanel::SetActivePaletteEntry(const FPaletteEntry& Entry)
 {
 	ActivePaletteEntry = Entry;
+	if (PaletteHost.IsValid())
+	{
+		PaletteHost->SetContent(BuildPaletteWidget());
+	}
 	SetStatus(FString::Printf(TEXT("Palette selected: %s"), *Entry.Label.ToString()));
 }
 
@@ -4008,10 +4331,39 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		const FString ClassName = MakePaletteClassDisplayName(ClassPath);
 		const bool bFavorite = Row.bFavorite;
 		const int32 ShapeCycle = Row.ShapeCycle;
+		const bool bClassSelected = ActivePaletteEntry.IsSet() && ActivePaletteEntry->EnemyClassPath == ClassPath;
+
+		auto MakeColorButton = [this, ClassPath, SelectPalette](EAREnemyColor InColor, const TCHAR* Label) -> TSharedRef<SWidget>
+		{
+			const bool bSelectedColor = ActivePaletteEntry.IsSet()
+				&& ActivePaletteEntry->EnemyClassPath == ClassPath
+				&& ActivePaletteEntry->Color == InColor;
+			const FLinearColor ChipColor = GetEnemyColor(InColor);
+			const FLinearColor OutlineColor = bSelectedColor
+				? FLinearColor(1.f, 0.95f, 0.25f, 1.f)
+				: FLinearColor(0.f, 0.f, 0.f, 0.f);
+
+			return SNew(SBorder)
+				.Padding(1.5f)
+				.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+				.BorderBackgroundColor(OutlineColor)
+				[
+					SNew(SButton)
+					.ButtonColorAndOpacity(ChipColor)
+					.Text(FText::FromString(Label))
+					.OnClicked_Lambda([this, ClassPath, InColor, SelectPalette]()
+					{
+						SelectPalette(ClassPath, InColor);
+						return FReply::Handled();
+					})
+				];
+		};
 
 		Box->AddSlot().AutoHeight().Padding(0.f, 0.f, 0.f, 4.f)
 		[
 			SNew(SBorder)
+			.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+			.BorderBackgroundColor(bClassSelected ? FLinearColor(0.2f, 0.45f, 0.95f, 0.35f) : FLinearColor(0.f, 0.f, 0.f, 0.f))
 			.OnMouseButtonDown_Lambda([this, ClassPath](const FGeometry&, const FPointerEvent& MouseEvent)
 			{
 				if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
@@ -4024,6 +4376,14 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 						FUIAction(FExecuteAction::CreateLambda([this, ClassPath]()
 						{
 							SyncPaletteClassInContentBrowser(ClassPath);
+						})));
+					MenuBuilder.AddMenuEntry(
+						FText::FromString(TEXT("Edit Enemy Data")),
+						FText::FromString(TEXT("Open the Enemy Authoring tool for this class' enemy row.")),
+						FSlateIcon(),
+						FUIAction(FExecuteAction::CreateLambda([this, ClassPath]()
+						{
+							OpenPaletteEnemyData(ClassPath);
 						})));
 					FSlateApplication::Get().PushMenu(
 						AsShared(),
@@ -4074,36 +4434,15 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
-				SNew(SButton)
-				.ButtonColorAndOpacity(GetEnemyColor(EAREnemyColor::Red))
-				.Text(FText::FromString("R"))
-				.OnClicked_Lambda([this, ClassPath, SelectPalette]()
-				{
-					SelectPalette(ClassPath, EAREnemyColor::Red);
-					return FReply::Handled();
-				})
+				MakeColorButton(EAREnemyColor::Red, TEXT("R"))
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
-				SNew(SButton)
-				.ButtonColorAndOpacity(GetEnemyColor(EAREnemyColor::Blue))
-				.Text(FText::FromString("B"))
-				.OnClicked_Lambda([this, ClassPath, SelectPalette]()
-				{
-					SelectPalette(ClassPath, EAREnemyColor::Blue);
-					return FReply::Handled();
-				})
+				MakeColorButton(EAREnemyColor::Blue, TEXT("B"))
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
-				SNew(SButton)
-				.ButtonColorAndOpacity(GetEnemyColor(EAREnemyColor::White))
-				.Text(FText::FromString("W"))
-				.OnClicked_Lambda([this, ClassPath, SelectPalette]()
-				{
-					SelectPalette(ClassPath, EAREnemyColor::White);
-					return FReply::Handled();
-				})
+				MakeColorButton(EAREnemyColor::White, TEXT("W"))
 			]
 			]
 		];
@@ -4119,63 +4458,46 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 void SInvaderAuthoringPanel::RefreshPalette()
 {
 	PaletteEntries.Reset();
+	EnemyPaletteClassCompatibilityCache.Reset();
 
 	TSet<FSoftClassPath> UniqueClasses;
-	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
-	FARFilter Filter;
-	Filter.ClassPaths.Add(UBlueprint::StaticClass()->GetClassPathName());
-	Filter.bRecursiveClasses = true;
-	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
-	FString EnemyFolder = ToolingSettings ? ToolingSettings->EnemiesFolder.Path : FString();
-	if (EnemyFolder.IsEmpty())
+	if (EnemyTable)
 	{
-		EnemyFolder = TEXT("/Game");
-	}
-	if (!EnemyFolder.StartsWith(TEXT("/")))
-	{
-		EnemyFolder = FString(TEXT("/")) + EnemyFolder;
-	}
-	EnemyFolder.RemoveFromEnd(TEXT("/"));
-	Filter.PackagePaths.Add(*EnemyFolder);
-	Filter.bRecursivePaths = true;
-
-	TArray<FAssetData> Assets;
-	AssetRegistry.GetAssets(Filter, Assets);
-	for (const FAssetData& Asset : Assets)
-	{
-		FString GeneratedClassPath;
-		if (!Asset.GetTagValue(TEXT("GeneratedClass"), GeneratedClassPath))
+		for (const FName RowName : EnemyTable->GetRowNames())
 		{
-			continue;
-		}
-
-		const FString ObjectPath = FPackageName::ExportTextPathToObjectPath(GeneratedClassPath);
-		if (ObjectPath.IsEmpty())
-		{
-			continue;
-		}
-
-		FSoftClassPath ClassPath(ObjectPath);
-		bool bIsCompatibleEnemyClass = false;
-		if (const bool* CachedCompatibility = EnemyPaletteClassCompatibilityCache.Find(ClassPath))
-		{
-			bIsCompatibleEnemyClass = *CachedCompatibility;
-		}
-		else
-		{
-			UClass* LoadedClass = ClassPath.ResolveClass();
-			if (!LoadedClass)
+			const FARInvaderEnemyDefRow* EnemyRow = EnemyTable->FindRow<FARInvaderEnemyDefRow>(RowName, TEXT("RefreshPalette"), false);
+			if (!EnemyRow || EnemyRow->EnemyClass.IsNull())
 			{
-				LoadedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
+				continue;
 			}
 
-			bIsCompatibleEnemyClass = IsPaletteClassSupported(LoadedClass);
-			EnemyPaletteClassCompatibilityCache.Add(ClassPath, bIsCompatibleEnemyClass);
-		}
+			const FSoftClassPath ClassPath = ToSoftClassPath(EnemyRow->EnemyClass);
+			if (!ClassPath.IsValid())
+			{
+				continue;
+			}
 
-		if (bIsCompatibleEnemyClass)
-		{
-			UniqueClasses.Add(ClassPath);
+			bool bIsCompatibleEnemyClass = false;
+			if (const bool* CachedCompatibility = EnemyPaletteClassCompatibilityCache.Find(ClassPath))
+			{
+				bIsCompatibleEnemyClass = *CachedCompatibility;
+			}
+			else
+			{
+				UClass* LoadedClass = ClassPath.ResolveClass();
+				if (!LoadedClass)
+				{
+					LoadedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
+				}
+
+				bIsCompatibleEnemyClass = IsPaletteClassSupported(LoadedClass);
+				EnemyPaletteClassCompatibilityCache.Add(ClassPath, bIsCompatibleEnemyClass);
+			}
+
+			if (bIsCompatibleEnemyClass)
+			{
+				UniqueClasses.Add(ClassPath);
+			}
 		}
 	}
 
@@ -4249,9 +4571,9 @@ FReply SInvaderAuthoringPanel::OnValidateAll()
 
 void SInvaderAuthoringPanel::ValidateSelected(TArray<FInvaderAuthoringIssue>& OutIssues) const
 {
-	if (!WaveTable || !StageTable)
+	if (!WaveTable || !StageTable || !EnemyTable)
 	{
-		OutIssues.Add({ true, Mode == EAuthoringMode::Waves, NAME_None, TEXT("Missing Wave/Stage table references in director settings.") });
+		OutIssues.Add({ true, Mode == EAuthoringMode::Waves, NAME_None, TEXT("Missing Wave/Stage/Enemy table references in settings.") });
 		return;
 	}
 
@@ -4275,9 +4597,9 @@ void SInvaderAuthoringPanel::ValidateSelected(TArray<FInvaderAuthoringIssue>& Ou
 
 void SInvaderAuthoringPanel::ValidateAll(TArray<FInvaderAuthoringIssue>& OutIssues) const
 {
-	if (!WaveTable || !StageTable)
+	if (!WaveTable || !StageTable || !EnemyTable)
 	{
-		OutIssues.Add({ true, true, NAME_None, TEXT("Missing Wave/Stage table references in director settings.") });
+		OutIssues.Add({ true, true, NAME_None, TEXT("Missing Wave/Stage/Enemy table references in settings.") });
 		return;
 	}
 
@@ -4324,9 +4646,24 @@ void SInvaderAuthoringPanel::ValidateWaveRow(const FName RowName, const FARWaveD
 	}
 	for (int32 i = 0; i < Row.EnemySpawns.Num(); ++i)
 	{
-		if (!Row.EnemySpawns[i].EnemyClass)
+		const FARWaveEnemySpawnDef& SpawnDef = Row.EnemySpawns[i];
+		if (!SpawnDef.EnemyIdentifierTag.IsValid())
 		{
-			OutIssues.Add({ true, true, RowName, FString::Printf(TEXT("Spawn index %d has no EnemyClass."), i) });
+			OutIssues.Add({ true, true, RowName, FString::Printf(TEXT("Spawn index %d has no EnemyIdentifierTag."), i) });
+			continue;
+		}
+
+		FName EnemyRowName = NAME_None;
+		const FARInvaderEnemyDefRow* EnemyDef = FindEnemyDefinitionByIdentifierTag(SpawnDef.EnemyIdentifierTag, &EnemyRowName);
+		if (!EnemyDef)
+		{
+			OutIssues.Add({ true, true, RowName, FString::Printf(TEXT("Spawn index %d enemy tag '%s' is missing in enemy table."), i, *SpawnDef.EnemyIdentifierTag.ToString()) });
+			continue;
+		}
+
+		if (!EnemyDef->bEnabled)
+		{
+			OutIssues.Add({ false, true, RowName, FString::Printf(TEXT("Spawn index %d resolves to disabled enemy row '%s'."), i, *EnemyRowName.ToString()) });
 		}
 	}
 }
@@ -4394,9 +4731,14 @@ void SInvaderAuthoringPanel::HandleObjectTransacted(UObject* Object, const FTran
 		return;
 	}
 
-	if (Object != WaveTable && Object != StageTable)
+	if (Object != WaveTable && Object != StageTable && Object != EnemyTable)
 	{
 		return;
+	}
+
+	if (Object == EnemyTable)
+	{
+		RefreshPalette();
 	}
 
 	RefreshRowItems();
@@ -4425,20 +4767,6 @@ FReply SInvaderAuthoringPanel::OnStartOrAttachPIE()
 	else
 	{
 		SetStatus(TEXT("Could not start or attach PIE session."));
-	}
-	return FReply::Handled();
-}
-
-FReply SInvaderAuthoringPanel::OnStopPIE()
-{
-	bPendingPIESaveBootstrap = false;
-	bPIESaveBootstrapContinueRequested = false;
-	bPIESaveBootstrapRouteThroughLoading = false;
-	PIESaveLoadedBridge.Reset();
-	if (GEditor)
-	{
-		GEditor->RequestEndPlayMap();
-		SetStatus(TEXT("PIE stop requested."));
 	}
 	return FReply::Handled();
 }
@@ -4519,15 +4847,6 @@ FReply SInvaderAuthoringPanel::OnForceThreat()
 	return FReply::Handled();
 }
 
-FReply SInvaderAuthoringPanel::OnDumpState()
-{
-	if (ExecPIECommand(TEXT("ar.invader.dump_state")))
-	{
-		SetStatus(TEXT("Dumped invader runtime state."));
-	}
-	return FReply::Handled();
-}
-
 bool SInvaderAuthoringPanel::EnsurePIESession(bool bStartIfNeeded)
 {
 	if (GetPIEWorld())
@@ -4556,35 +4875,46 @@ bool SInvaderAuthoringPanel::EnsurePIESession(bool bStartIfNeeded)
 		&& !LoadingMapPackageName.IsEmpty()
 		&& !StartupMapPackageName.Equals(LoadingMapPackageName, ESearchCase::IgnoreCase);
 
+	if (UWorld* EditorWorld = GEditor->GetEditorWorldContext().World())
+	{
+		if (UPackage* EditorWorldPackage = EditorWorld->GetOutermost())
+		{
+			if (EditorWorldPackage->IsDirty())
+			{
+				TArray<UPackage*> PackagesToSave;
+				PackagesToSave.Add(EditorWorldPackage);
+				const auto SaveResult = FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, false, false);
+				if (SaveResult == FEditorFileUtils::PR_Cancelled || SaveResult == FEditorFileUtils::PR_Failure)
+				{
+					SetStatus(TEXT("PIE launch cancelled: current map was not saved."));
+					return false;
+				}
+			}
+		}
+	}
+
 	if (!StartupMap.IsNull())
 	{
 		if (!StartupMapPackageName.IsEmpty())
 		{
+			bool bShouldLoadStartupMap = true;
 			if (UWorld* EditorWorld = GEditor->GetEditorWorldContext().World())
 			{
 				if (UPackage* EditorWorldPackage = EditorWorld->GetOutermost())
 				{
 					const FString CurrentEditorMapPackageName = EditorWorldPackage->GetName();
-					if (EditorWorldPackage->IsDirty()
-						&& !CurrentEditorMapPackageName.Equals(StartupMapPackageName, ESearchCase::IgnoreCase))
-					{
-						TArray<UPackage*> PackagesToSave;
-						PackagesToSave.Add(EditorWorldPackage);
-						const auto SaveResult = FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, false, false);
-						if (SaveResult == FEditorFileUtils::PR_Cancelled || SaveResult == FEditorFileUtils::PR_Failure)
-						{
-							SetStatus(TEXT("PIE launch cancelled: current map was not saved."));
-							return false;
-						}
-					}
+					bShouldLoadStartupMap = !CurrentEditorMapPackageName.Equals(StartupMapPackageName, ESearchCase::IgnoreCase);
 				}
 			}
-		}
 
-		if (!UEditorLoadingAndSavingUtils::LoadMap(StartupMapPackageName))
-		{
-			SetStatus(FString::Printf(TEXT("Failed to load startup map '%s'."), *StartupMapPackageName));
-			return false;
+			if (bShouldLoadStartupMap)
+			{
+				if (!UEditorLoadingAndSavingUtils::LoadMap(StartupMapPackageName))
+				{
+					SetStatus(FString::Printf(TEXT("Failed to load startup map '%s'."), *StartupMapPackageName));
+					return false;
+				}
+			}
 		}
 	}
 

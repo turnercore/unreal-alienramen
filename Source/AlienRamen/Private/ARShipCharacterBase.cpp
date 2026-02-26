@@ -6,6 +6,9 @@
 #include "ARPlayerStateBase.h"
 #include "ARPlayerController.h"
 #include "ARAbilitySet.h"
+#include "AREnemyBase.h"
+#include "AREnemyIncomingDamageEffect.h"
+#include "ARAttributeSetCore.h"
 
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
@@ -57,6 +60,94 @@ UAbilitySystemComponent* AARShipCharacterBase::GetAbilitySystemComponent() const
 const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() const
 {
 	return CurrentPrimaryWeapon;
+}
+
+namespace ARShipCharacterBaseLocal
+{
+	static bool ApplyDamageToActorViaGAS_Local(AActor* Target, float Damage, AActor* Offender)
+	{
+		if (!Target || Damage <= 0.f)
+		{
+			return false;
+		}
+
+		if (AAREnemyBase* EnemyTarget = Cast<AAREnemyBase>(Target))
+		{
+			float IgnoredCurrentHealth = 0.f;
+			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
+		}
+
+		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
+		{
+			float IgnoredCurrentHealth = 0.f;
+			return ShipTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
+		}
+
+		return false;
+	}
+}
+
+bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth)
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	OutCurrentHealth = ASC ? ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute()) : 0.f;
+
+	if (!HasAuthority() || Damage <= 0.f)
+	{
+		return false;
+	}
+
+	ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		return false;
+	}
+
+	static const FGameplayTag ShipDataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	if (Offender)
+	{
+		Context.AddInstigator(Offender, Offender);
+	}
+
+	const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(UAREnemyIncomingDamageEffect::StaticClass(), 1.f, Context);
+	if (!Spec.IsValid())
+	{
+		return false;
+	}
+
+	Spec.Data->SetSetByCallerMagnitude(ShipDataDamageTag, Damage);
+	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+	OutCurrentHealth = ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+	return true;
+}
+
+bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+{
+	float IgnoredCurrentHealth = 0.f;
+	return ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
+}
+
+float AARShipCharacterBase::GetCurrentDamageFromGAS() const
+{
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		return 0.f;
+	}
+
+	return ASC->GetNumericAttribute(UARAttributeSetCore::GetDamageAttribute());
+}
+
+bool AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride)
+{
+	if (!HasAuthority())
+	{
+		return false;
+	}
+
+	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentDamageFromGAS();
+	return ARShipCharacterBaseLocal::ApplyDamageToActorViaGAS_Local(Target, DamageToApply, this);
 }
 
 // --------------------

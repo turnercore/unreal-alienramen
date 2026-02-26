@@ -13,7 +13,8 @@
 
 class UAbilitySystemComponent;
 class UARAttributeSetCore;
-class UARAbilitySet;
+class UAREnemyAttributeSet;
+class UGameplayEffect;
 struct FOnAttributeChangeData;
 
 UCLASS()
@@ -33,6 +34,33 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
 	UARAttributeSetCore* GetCoreAttributes() const { return AttributeSetCore; }
 
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS")
+	UAREnemyAttributeSet* GetEnemyAttributes() const { return EnemyAttributeSet; }
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth);
+	bool ApplyDamageViaGAS(float Damage, AActor* Offender);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
+	float GetCurrentDamageFromGAS() const;
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
+	float GetCurrentCollisionDamageFromGAS() const;
+
+	// Applies DamageOverride if >= 0; otherwise uses GetCurrentDamageFromGAS().
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride = -1.f);
+
+	// Applies DamageOverride if >= 0; otherwise uses GetCurrentCollisionDamageFromGAS().
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyCollisionDamageToTargetViaGAS(AActor* Target, float DamageOverride = -1.f);
+
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator,
+		AActor* DamageCauser) override;
+
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
 	bool ActivateAbilityByTag(FGameplayTag AbilityTag, bool bAllowPartialMatch = false);
 
@@ -48,17 +76,40 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
 	void HandleDeath(AActor* InstigatorActor);
 
+	// Final lifecycle release step after death cleanup/signals. Default implementation destroys actor.
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
+	void ReleaseEnemyActor();
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
 	void BP_OnEnemyInitialized();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
 	void BP_OnEnemyDied(AActor* InstigatorActor);
 
+	// Fired on authority immediately before ReleaseEnemyActor() is called.
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
+	void BP_OnEnemyPreRelease(AActor* InstigatorActor);
+
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Lifecycle")
 	bool IsDead() const { return bIsDead; }
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
 	void SetEnemyColor(EAREnemyColor InColor);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
+	void SetEnemyIdentifierTag(FGameplayTag InIdentifierTag);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Gameplay")
+	FGameplayTag GetEnemyIdentifierTag() const { return EnemyIdentifierTag; }
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
+	void BP_OnEnemyIdentifierTagChanged(FGameplayTag NewIdentifierTag);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
+	bool InitializeFromEnemyDefinitionTag();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
+	void BP_OnEnemyDefinitionApplied();
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader", meta = (BlueprintAuthorityOnly))
 	void SetWaveRuntimeContext(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARWavePhase InWavePhase, float InPhaseStartServerTime);
@@ -126,9 +177,19 @@ protected:
 	void InitAbilityActorInfo();
 	void ApplyStartupAbilitySet();
 	void ClearStartupAbilitySet();
+	void ApplyRuntimeEnemyEffects(const TArray<TSubclassOf<UGameplayEffect>>& Effects);
+	void ClearRuntimeEnemyEffects();
+	void ApplyRuntimeEnemyTags(const FGameplayTagContainer& InTags);
+	void ClearRuntimeEnemyTags();
+	bool ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString& OutError) const;
+	void ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitData& RuntimeInit);
 	void BindHealthChangeDelegate();
 	void UnbindHealthChangeDelegate();
 	void OnHealthChanged(const FOnAttributeChangeData& ChangeData);
+	void BindMoveSpeedChangeDelegate();
+	void UnbindMoveSpeedChangeDelegate();
+	void OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData);
+	void RefreshCharacterMovementSpeedFromAttributes();
 
 public:	
 	// Set to false by default; enable in child Blueprints if needed.
@@ -147,8 +208,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
 	TObjectPtr<UARAttributeSetCore> AttributeSetCore;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|GAS")
-	TObjectPtr<UARAbilitySet> StartupAbilitySet;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")
+	TObjectPtr<UAREnemyAttributeSet> EnemyAttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyColor, Category = "AR|Enemy|Gameplay")
 	EAREnemyColor EnemyColor = EAREnemyColor::Red;
@@ -159,8 +220,14 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
 	void BP_OnEnemyColorChanged(EAREnemyColor NewColor);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyArchetypeTag;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyIdentifierTag, Category = "AR|Enemy|Gameplay")
+	FGameplayTag EnemyIdentifierTag;
+
+	UFUNCTION()
+	void OnRep_EnemyIdentifierTag();
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsDead, BlueprintReadOnly, Category = "AR|Enemy|Lifecycle")
 	bool bIsDead = false;
@@ -205,7 +272,17 @@ private:
 	UPROPERTY()
 	TArray<FActiveGameplayEffectHandle> StartupAppliedEffectHandles;
 
+	UPROPERTY()
+	TArray<FActiveGameplayEffectHandle> RuntimeAppliedEffectHandles;
+
+	UPROPERTY()
+	FGameplayTagContainer RuntimeAppliedLooseTags;
+
+	UPROPERTY()
+	TArray<FARAbilitySet_AbilityEntry> RuntimeSpecificAbilities;
+
 	FDelegateHandle HealthChangedDelegateHandle;
+	FDelegateHandle MoveSpeedChangedDelegateHandle;
 	bool bStartupSetApplied = false;
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;

@@ -4,9 +4,6 @@
 #include "Components/StateTreeAIComponent.h"
 #include "StateTree.h"
 #include "StateTreeExecutionTypes.h"
-#include "Engine/World.h"
-#include "TimerManager.h"
-
 namespace AREnemyAIControllerInternal
 {
 	static const TCHAR* ToPhaseName(EARWavePhase Phase)
@@ -39,25 +36,8 @@ AAREnemyAIController::AAREnemyAIController()
 void AAREnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	if (UWorld* World = GetWorld())
-	{
-		TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
-		TWeakObjectPtr<APawn> WeakPawn(InPawn);
-		World->GetTimerManager().SetTimerForNextTick([WeakThis, WeakPawn]()
-		{
-			if (!WeakThis.IsValid())
-			{
-				return;
-			}
-
-			WeakThis->StartStateTreeForPawn(WeakPawn.Get());
-		});
-	}
-	else
-	{
-		StartStateTreeForPawn(InPawn);
-	}
+	// Keep a safe fallback attempt here; enemy pawn also explicitly triggers this after its own possess-init.
+	StartStateTreeForPawn(InPawn);
 }
 
 void AAREnemyAIController::OnUnPossess()
@@ -66,6 +46,11 @@ void AAREnemyAIController::OnUnPossess()
 	ClearFocus(EAIFocusPriority::Gameplay);
 
 	Super::OnUnPossess();
+}
+
+void AAREnemyAIController::TryStartStateTreeForCurrentPawn()
+{
+	StartStateTreeForPawn(GetPawn());
 }
 
 void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
@@ -86,8 +71,8 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 		return;
 	}
 
-	// Possess/startup ordering can invoke this more than once; keep startup idempotent.
-	if (GetPawn() != InPawn || IsStateTreeRunning())
+	// Possess/startup ordering can invoke this more than once; keep startup idempotent and controller-owned.
+	if (GetPawn() != InPawn || InPawn->GetController() != this || IsStateTreeRunning())
 	{
 		return;
 	}
