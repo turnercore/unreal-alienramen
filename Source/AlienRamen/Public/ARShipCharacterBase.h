@@ -51,6 +51,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Abilities")
 	bool ActivateAbilityByTag(FGameplayTag Tag, bool bAllowRemoteActivation = true);
 
+	// Applies incoming damage through GAS (server-authoritative).
+	UFUNCTION(BlueprintCallable, Category = "AR|Ship|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageViaGAS(float Damage, AActor* Offender);
+
+	// Reads current Damage attribute from GAS.
+	UFUNCTION(BlueprintPure, Category = "AR|Ship|GAS")
+	float GetCurrentDamageFromGAS() const;
+
+	// Applies DamageOverride if >= 0; otherwise uses GetCurrentDamageFromGAS().
+	UFUNCTION(BlueprintCallable, Category = "AR|Ship|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride = -1.f);
+
 	/** Activates ONE ability that matches ANY of the tags (deterministic pick). */
 	UFUNCTION(BlueprintCallable, Category = "AR|Abilities")
 	bool ActivateAbilityByTags(const FGameplayTagContainer& InTagsToActivate, bool bAllowRemoteActivation = true);

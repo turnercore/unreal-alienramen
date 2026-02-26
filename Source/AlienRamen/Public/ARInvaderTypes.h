@@ -4,11 +4,11 @@
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPtr.h"
+#include "ARAbilitySet.h"
 #include "ARInvaderTypes.generated.h"
 
 class AAREnemyBase;
 class UGameplayEffect;
-class UARAbilitySet;
 
 UENUM(BlueprintType)
 enum class EAREnemyColor : uint8
@@ -99,8 +99,9 @@ struct FARInvaderEnemyRuntimeInitData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
 	FGameplayTag EnemyArchetypeTag;
 
+	// Per-enemy startup abilities applied after common/archetype sets.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
-	TSoftObjectPtr<UARAbilitySet> StartupAbilitySet;
+	TArray<FARAbilitySet_AbilityEntry> EnemySpecificAbilities;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
 	TArray<TSubclassOf<UGameplayEffect>> StartupGameplayEffects;

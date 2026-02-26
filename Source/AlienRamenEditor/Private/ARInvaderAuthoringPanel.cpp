@@ -8,14 +8,11 @@
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
 
-#include "AssetRegistry/AssetRegistryModule.h"
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
 #include "Editor/UnrealEdEngine.h"
 #include "FileHelpers.h"
-#include "Engine/Blueprint.h"
 #include "Engine/DataTable.h"
-#include "AssetRegistry/IAssetRegistry.h"
 #include "IDetailsView.h"
 #include "Modules/ModuleManager.h"
 #include "PlayInEditorDataTypes.h"
@@ -4467,61 +4464,43 @@ void SInvaderAuthoringPanel::RefreshPalette()
 	PaletteEntries.Reset();
 
 	TSet<FSoftClassPath> UniqueClasses;
-	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
-	FARFilter Filter;
-	Filter.ClassPaths.Add(UBlueprint::StaticClass()->GetClassPathName());
-	Filter.bRecursiveClasses = true;
-	const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>();
-	FString EnemyFolder = ToolingSettings ? ToolingSettings->EnemiesFolder.Path : FString();
-	if (EnemyFolder.IsEmpty())
+	if (EnemyTable)
 	{
-		EnemyFolder = TEXT("/Game");
-	}
-	if (!EnemyFolder.StartsWith(TEXT("/")))
-	{
-		EnemyFolder = FString(TEXT("/")) + EnemyFolder;
-	}
-	EnemyFolder.RemoveFromEnd(TEXT("/"));
-	Filter.PackagePaths.Add(*EnemyFolder);
-	Filter.bRecursivePaths = true;
-
-	TArray<FAssetData> Assets;
-	AssetRegistry.GetAssets(Filter, Assets);
-	for (const FAssetData& Asset : Assets)
-	{
-		FString GeneratedClassPath;
-		if (!Asset.GetTagValue(TEXT("GeneratedClass"), GeneratedClassPath))
+		for (const FName RowName : EnemyTable->GetRowNames())
 		{
-			continue;
-		}
-
-		const FString ObjectPath = FPackageName::ExportTextPathToObjectPath(GeneratedClassPath);
-		if (ObjectPath.IsEmpty())
-		{
-			continue;
-		}
-
-		FSoftClassPath ClassPath(ObjectPath);
-		bool bIsCompatibleEnemyClass = false;
-		if (const bool* CachedCompatibility = EnemyPaletteClassCompatibilityCache.Find(ClassPath))
-		{
-			bIsCompatibleEnemyClass = *CachedCompatibility;
-		}
-		else
-		{
-			UClass* LoadedClass = ClassPath.ResolveClass();
-			if (!LoadedClass)
+			const FARInvaderEnemyDefRow* EnemyRow = EnemyTable->FindRow<FARInvaderEnemyDefRow>(RowName, TEXT("RefreshPalette"), false);
+			if (!EnemyRow || EnemyRow->EnemyClass.IsNull())
 			{
-				LoadedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
+				continue;
 			}
 
-			bIsCompatibleEnemyClass = IsPaletteClassSupported(LoadedClass);
-			EnemyPaletteClassCompatibilityCache.Add(ClassPath, bIsCompatibleEnemyClass);
-		}
+			const FSoftClassPath ClassPath = ToSoftClassPath(EnemyRow->EnemyClass);
+			if (!ClassPath.IsValid())
+			{
+				continue;
+			}
 
-		if (bIsCompatibleEnemyClass)
-		{
-			UniqueClasses.Add(ClassPath);
+			bool bIsCompatibleEnemyClass = false;
+			if (const bool* CachedCompatibility = EnemyPaletteClassCompatibilityCache.Find(ClassPath))
+			{
+				bIsCompatibleEnemyClass = *CachedCompatibility;
+			}
+			else
+			{
+				UClass* LoadedClass = ClassPath.ResolveClass();
+				if (!LoadedClass)
+				{
+					LoadedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
+				}
+
+				bIsCompatibleEnemyClass = IsPaletteClassSupported(LoadedClass);
+				EnemyPaletteClassCompatibilityCache.Add(ClassPath, bIsCompatibleEnemyClass);
+			}
+
+			if (bIsCompatibleEnemyClass)
+			{
+				UniqueClasses.Add(ClassPath);
+			}
 		}
 	}
 

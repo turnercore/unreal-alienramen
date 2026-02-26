@@ -103,7 +103,12 @@
 - On possess (authority), enemy resolves definition from content lookup by identifier tag and applies base stats via `SetNumericAttributeBase`:
 - core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
 - enemy set: `CollisionDamage`
-- runtime startup ability set/effects/loose tags come from enemy row runtime-init payload.
+- Enemy startup ability/effect layering on possess (authority) is deterministic and deduped:
+- 1) `UARInvaderDirectorSettings::EnemyCommonAbilitySet` (global)
+- 2) best archetype match from `UARInvaderDirectorSettings::EnemyArchetypeAbilitySets` using `RuntimeInit.EnemyArchetypeTag` (exact match preferred, then closest parent tag)
+- 3) row `RuntimeInit.EnemySpecificAbilities` (non-DA per-enemy ability entries)
+- `RuntimeInit.StartupAbilitySet` has been removed from enemy row schema/runtime.
+- Startup loose tags/effects still come from enemy row runtime-init payload.
 - Enemy identifier tag is replicated with notify (`OnRep_EnemyIdentifierTag`) and forwards to BP hook `BP_OnEnemyIdentifierTagChanged`; server `SetEnemyIdentifierTag` fires the same hook immediately.
 - Enemy definition application flag `bEnemyDefinitionApplied` was removed; rely on BP hook `BP_OnEnemyDefinitionApplied` if you need lifecycle notifications.
 - Enemy archetype is row-authored runtime data (`RuntimeInit.EnemyArchetypeTag`) replicated on `AAREnemyBase` (not hand-authored per enemy BP).
@@ -172,6 +177,16 @@
 - `AAREnemyBase::HasAnyASCGameplayTags(FGameplayTagContainer)`
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
+- Damage helper APIs exposed for BP/gameplay wiring:
+- `AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
+- `AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
+- `AAREnemyBase::GetCurrentDamageFromGAS()`
+- `AAREnemyBase::GetCurrentCollisionDamageFromGAS()`
+- `AARShipCharacterBase::GetCurrentDamageFromGAS()`
+- `AAREnemyBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
+- `AAREnemyBase::ApplyCollisionDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current CollisionDamage)
+- `AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
+- Both `GetCurrentDamageFromGAS` helpers read `UARAttributeSetCore::Damage` from ASC so callers can pass attacker-authored damage into the corresponding `ApplyDamageViaGAS`.
 - GameState replicated leak read model:
 - `UARInvaderRuntimeStateComponent::LeakCount` is replicated with RepNotify.
 - `UARInvaderRuntimeStateComponent::OnEnemyLeaked` broadcasts on both server updates and client RepNotify updates with `(NewLeakCount, Delta)`.
@@ -248,7 +263,7 @@
 - validation issues are in a collapsible panel and auto-collapse when empty
 - Wave/stage/spawn authoring detail categories are flattened to `Wave`, `Stage`, and `Spawn` (no `AR|Invader|...` category-path nesting in the authoring details panels).
 - Palette contract:
-- scans Blueprint enemy classes under `UARInvaderToolingSettings::EnemiesFolder` (does not scan whole project)
+- derives enemy classes from authored enemy DataTable rows (`EnemyDataTable -> FARInvaderEnemyDefRow::EnemyClass`), not folder-based asset discovery
 - excludes base class `AAREnemyBase` and transient skeleton/reinst classes
 - palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
@@ -271,6 +286,7 @@
 - Data source is direct DataTable authoring of enemy rows:
 - preferred source: `UARInvaderToolingSettings::EnemyDataTable`
 - fallback source: `UARInvaderDirectorSettings::EnemyDataTable`
+- Enemy authoring panel treats row-struct mismatch as a hard guardrail: if the selected enemy DataTable row struct is not `FARInvaderEnemyDefRow`, the panel reports a status error and skips row parsing/population (prevents invalid row-memory reinterpret crashes).
 - Supports row CRUD + duplicate + rename + delete + enable/disable + save, with transactions + dirty package flow.
 - Enemy row list supports multi-select operations and right-click context menu actions (`Rename`, `Enable/Disable`, `Duplicate`, `Delete`), matching invader row-list interaction patterns.
 - Enemy row list supports sortable columns (only): `Enabled`, `DisplayName`, `EnemyClass`, `MaxHealth`, `ArchetypeTag` (no row-name or identifier-tag sortable columns).
@@ -296,4 +312,4 @@
 - UE 5.7 editor API compatibility for `ARInvaderAuthoringPanel`:
 - include `FileHelpers.h` for both `FEditorFileUtils` and `UEditorLoadingAndSavingUtils`
 - use `ULevelEditorPlaySettings` setters (`SetPlayNetMode`, `SetPlayNumberOfClients`, `SetRunUnderOneProcess`) instead of direct member access
-- `AlienRamenEditor.Build.cs` must include `GameplayTags` because authoring code copies row structs containing `FGameplayTagContainer`.
+- `AlienRamenEditor.Build.cs` must include `GameplayTags` and `GameplayAbilities` because authoring code reflects/copies row structs containing gameplay tags and `FARAbilitySet_AbilityEntry` (`TSubclassOf<UGameplayAbility>`).

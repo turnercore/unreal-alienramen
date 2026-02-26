@@ -17,11 +17,6 @@ UARInvaderToolingSettings::UARInvaderToolingSettings()
 		EnemyDataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_InvaderEnemies.DT_InvaderEnemies")));
 	}
 
-	if (EnemiesFolder.Path.IsEmpty())
-	{
-		EnemiesFolder.Path = TEXT("/Game/CodeAlong/Blueprints/Enemies");
-	}
-
 	if (BackupsFolder.Path.IsEmpty())
 	{
 		BackupsFolder.Path = TEXT("/Game/Data/Backups");

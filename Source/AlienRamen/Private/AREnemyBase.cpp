@@ -5,11 +5,13 @@
 #include "AREnemyAIController.h"
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
+#include "ARShipCharacterBase.h"
 #include "ARLog.h"
 
 #include "AbilitySystemComponent.h"
 #include "ARAbilitySet.h"
 #include "ARAttributeSetCore.h"
+#include "ARInvaderDirectorSettings.h"
 #include "ContentLookupSubsystem.h"
 #include "AIController.h"
 #include "BrainComponent.h"
@@ -24,23 +26,167 @@
 namespace
 {
 	const FGameplayTag DataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+
+	static bool ApplyDamageToActorViaGAS(AActor* Target, float Damage, AActor* Offender)
+	{
+		if (!Target || Damage <= 0.f)
+		{
+			return false;
+		}
+
+		if (AAREnemyBase* EnemyTarget = Cast<AAREnemyBase>(Target))
+		{
+			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender);
+		}
+
+		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
+		{
+			return ShipTarget->ApplyDamageViaGAS(Damage, Offender);
+		}
+
+		return false;
+	}
 }
 
 namespace AREnemyBaseInternal
 {
-	static void GrantAbilitySet(
+	struct FAbilityEntryKey
+	{
+		TSubclassOf<UGameplayAbility> AbilityClass;
+		FGameplayTag ActivationTag;
+		int32 Level = 0;
+
+		friend uint32 GetTypeHash(const FAbilityEntryKey& Key)
+		{
+			return HashCombine(HashCombine(GetTypeHash(Key.AbilityClass), GetTypeHash(Key.ActivationTag)), GetTypeHash(Key.Level));
+		}
+
+		bool operator==(const FAbilityEntryKey& Other) const
+		{
+			return AbilityClass == Other.AbilityClass
+				&& ActivationTag == Other.ActivationTag
+				&& Level == Other.Level;
+		}
+	};
+
+	struct FEffectEntryKey
+	{
+		TSubclassOf<UGameplayEffect> EffectClass;
+		float Level = 0.f;
+
+		friend uint32 GetTypeHash(const FEffectEntryKey& Key)
+		{
+			return HashCombine(GetTypeHash(Key.EffectClass), GetTypeHash(Key.Level));
+		}
+
+		bool operator==(const FEffectEntryKey& Other) const
+		{
+			return EffectClass == Other.EffectClass && FMath::IsNearlyEqual(Level, Other.Level);
+		}
+	};
+
+	static void AppendUniqueAbilityEntries(
+		const TArray<FARAbilitySet_AbilityEntry>& SourceEntries,
+		TArray<FARAbilitySet_AbilityEntry>& OutEntries,
+		TSet<FAbilityEntryKey>& InOutSeen)
+	{
+		for (const FARAbilitySet_AbilityEntry& Entry : SourceEntries)
+		{
+			if (!Entry.Ability)
+			{
+				continue;
+			}
+
+			const FAbilityEntryKey Key{ Entry.Ability, Entry.ActivationTag, Entry.Level };
+			if (InOutSeen.Contains(Key))
+			{
+				continue;
+			}
+
+			InOutSeen.Add(Key);
+			OutEntries.Add(Entry);
+		}
+	}
+
+	static void AppendUniqueEffectEntries(
+		const TArray<FARAbilitySet_EffectEntry>& SourceEntries,
+		TArray<FARAbilitySet_EffectEntry>& OutEntries,
+		TSet<FEffectEntryKey>& InOutSeen)
+	{
+		for (const FARAbilitySet_EffectEntry& Entry : SourceEntries)
+		{
+			if (!Entry.Effect)
+			{
+				continue;
+			}
+
+			const FEffectEntryKey Key{ Entry.Effect, Entry.Level };
+			if (InOutSeen.Contains(Key))
+			{
+				continue;
+			}
+
+			InOutSeen.Add(Key);
+			OutEntries.Add(Entry);
+		}
+	}
+
+	static const FAREnemyArchetypeAbilitySetEntry* ResolveBestArchetypeEntry(
+		const TArray<FAREnemyArchetypeAbilitySetEntry>& Entries,
+		const FGameplayTag& EnemyArchetypeTag)
+	{
+		if (!EnemyArchetypeTag.IsValid())
+		{
+			return nullptr;
+		}
+
+		const FAREnemyArchetypeAbilitySetEntry* Best = nullptr;
+		int32 BestDepth = INDEX_NONE;
+
+		for (const FAREnemyArchetypeAbilitySetEntry& Entry : Entries)
+		{
+			if (!Entry.EnemyArchetypeTag.IsValid() || Entry.AbilitySet.IsNull())
+			{
+				continue;
+			}
+
+			if (EnemyArchetypeTag.MatchesTagExact(Entry.EnemyArchetypeTag))
+			{
+				return &Entry;
+			}
+
+			if (!EnemyArchetypeTag.MatchesTag(Entry.EnemyArchetypeTag))
+			{
+				continue;
+			}
+
+			TArray<FString> TagSegments;
+			Entry.EnemyArchetypeTag.ToString().ParseIntoArray(TagSegments, TEXT("."), true);
+			const int32 Depth = TagSegments.Num();
+			if (!Best || Depth > BestDepth)
+			{
+				Best = &Entry;
+				BestDepth = Depth;
+			}
+		}
+
+		return Best;
+	}
+
+	static void GrantAbilityEntries(
 		UAbilitySystemComponent* ASC,
-		const UARAbilitySet* Set,
+		const TArray<FARAbilitySet_AbilityEntry>& Entries,
 		TArray<FGameplayAbilitySpecHandle>& OutGranted,
 		TArray<FActiveGameplayEffectHandle>& OutApplied
 	)
 	{
-		if (!ASC || !Set)
+		(void)OutApplied;
+		if (!ASC)
 		{
 			return;
 		}
 
-		for (const FARAbilitySet_AbilityEntry& Entry : Set->Abilities)
+		for (const FARAbilitySet_AbilityEntry& Entry : Entries)
 		{
 			if (!Entry.Ability)
 			{
@@ -55,8 +201,19 @@ namespace AREnemyBaseInternal
 
 			OutGranted.Add(ASC->GiveAbility(Spec));
 		}
+	}
 
-		for (const FARAbilitySet_EffectEntry& Entry : Set->StartupEffects)
+	static void ApplyEffectEntries(
+		UAbilitySystemComponent* ASC,
+		const TArray<FARAbilitySet_EffectEntry>& Entries,
+		TArray<FActiveGameplayEffectHandle>& OutApplied)
+	{
+		if (!ASC)
+		{
+			return;
+		}
+
+		for (const FARAbilitySet_EffectEntry& Entry : Entries)
 		{
 			if (!Entry.Effect)
 			{
@@ -172,16 +329,52 @@ void AAREnemyBase::InitAbilityActorInfo()
 
 void AAREnemyBase::ApplyStartupAbilitySet()
 {
-	if (!HasAuthority() || !AbilitySystemComponent || !StartupAbilitySet || bStartupSetApplied)
+	if (!HasAuthority() || !AbilitySystemComponent || bStartupSetApplied)
 	{
 		return;
 	}
 
-	AREnemyBaseInternal::GrantAbilitySet(AbilitySystemComponent, StartupAbilitySet, StartupGrantedAbilityHandles, StartupAppliedEffectHandles);
+	TArray<FARAbilitySet_AbilityEntry> AggregatedAbilities;
+	TArray<FARAbilitySet_EffectEntry> AggregatedEffects;
+	TSet<AREnemyBaseInternal::FAbilityEntryKey> SeenAbilityEntries;
+	TSet<AREnemyBaseInternal::FEffectEntryKey> SeenEffectEntries;
+
+	auto AppendAbilitySetData = [&AggregatedAbilities, &AggregatedEffects, &SeenAbilityEntries, &SeenEffectEntries](const UARAbilitySet* Set)
+	{
+		if (!Set)
+		{
+			return;
+		}
+
+		AREnemyBaseInternal::AppendUniqueAbilityEntries(Set->Abilities, AggregatedAbilities, SeenAbilityEntries);
+		AREnemyBaseInternal::AppendUniqueEffectEntries(Set->StartupEffects, AggregatedEffects, SeenEffectEntries);
+	};
+
+	const UARInvaderDirectorSettings* DirectorSettings = GetDefault<UARInvaderDirectorSettings>();
+	if (DirectorSettings)
+	{
+		AppendAbilitySetData(DirectorSettings->EnemyCommonAbilitySet.LoadSynchronous());
+
+		if (const FAREnemyArchetypeAbilitySetEntry* ArchetypeEntry =
+			AREnemyBaseInternal::ResolveBestArchetypeEntry(DirectorSettings->EnemyArchetypeAbilitySets, EnemyArchetypeTag))
+		{
+			AppendAbilitySetData(ArchetypeEntry->AbilitySet.LoadSynchronous());
+		}
+	}
+
+	AREnemyBaseInternal::AppendUniqueAbilityEntries(RuntimeSpecificAbilities, AggregatedAbilities, SeenAbilityEntries);
+
+	if (AggregatedAbilities.IsEmpty() && AggregatedEffects.IsEmpty())
+	{
+		return;
+	}
+
+	AREnemyBaseInternal::GrantAbilityEntries(AbilitySystemComponent, AggregatedAbilities, StartupGrantedAbilityHandles, StartupAppliedEffectHandles);
+	AREnemyBaseInternal::ApplyEffectEntries(AbilitySystemComponent, AggregatedEffects, StartupAppliedEffectHandles);
 	bStartupSetApplied = true;
 
-	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Applied startup ability set '%s' to '%s' (Abilities=%d Effects=%d)."),
-		*GetNameSafe(StartupAbilitySet), *GetNameSafe(this), StartupGrantedAbilityHandles.Num(), StartupAppliedEffectHandles.Num());
+	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Applied startup enemy abilities to '%s' (Abilities=%d Effects=%d)."),
+		*GetNameSafe(this), StartupGrantedAbilityHandles.Num(), StartupAppliedEffectHandles.Num());
 }
 
 void AAREnemyBase::ApplyRuntimeEnemyEffects(const TArray<TSubclassOf<UGameplayEffect>>& Effects)
@@ -356,11 +549,7 @@ void AAREnemyBase::ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitDat
 	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetCollisionDamageAttribute(), RuntimeInit.CollisionDamage);
 
 	EnemyArchetypeTag = RuntimeInit.EnemyArchetypeTag;
-
-	if (!RuntimeInit.StartupAbilitySet.IsNull())
-	{
-		StartupAbilitySet = RuntimeInit.StartupAbilitySet.LoadSynchronous();
-	}
+	RuntimeSpecificAbilities = RuntimeInit.EnemySpecificAbilities;
 
 	ClearRuntimeEnemyEffects();
 	ClearRuntimeEnemyTags();
@@ -559,6 +748,48 @@ bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
 	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 	return true;
+}
+
+float AAREnemyBase::GetCurrentDamageFromGAS() const
+{
+	if (!AbilitySystemComponent)
+	{
+		return 0.f;
+	}
+
+	return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetDamageAttribute());
+}
+
+float AAREnemyBase::GetCurrentCollisionDamageFromGAS() const
+{
+	if (!AbilitySystemComponent)
+	{
+		return 0.f;
+	}
+
+	return AbilitySystemComponent->GetNumericAttribute(UAREnemyAttributeSet::GetCollisionDamageAttribute());
+}
+
+bool AAREnemyBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride)
+{
+	if (!HasAuthority())
+	{
+		return false;
+	}
+
+	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentDamageFromGAS();
+	return ApplyDamageToActorViaGAS(Target, DamageToApply, this);
+}
+
+bool AAREnemyBase::ApplyCollisionDamageToTargetViaGAS(AActor* Target, float DamageOverride)
+{
+	if (!HasAuthority())
+	{
+		return false;
+	}
+
+	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentCollisionDamageFromGAS();
+	return ApplyDamageToActorViaGAS(Target, DamageToApply, this);
 }
 
 float AAREnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
