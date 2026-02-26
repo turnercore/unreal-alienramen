@@ -114,6 +114,8 @@
 - Enemy definition application flag `bEnemyDefinitionApplied` was removed; rely on BP hook `BP_OnEnemyDefinitionApplied` if you need lifecycle notifications.
 - Enemy archetype is row-authored runtime data (`RuntimeInit.EnemyArchetypeTag`) replicated on `AAREnemyBase` (not hand-authored per enemy BP).
 - Invader authority brain: `UARInvaderDirectorSubsystem` (server-only `UTickableWorldSubsystem`).
+- Run control contract: `StartInvaderRun` is rejected when a run is already active (must stop first).
+- Run stop contract: `StopInvaderRun` performs full cleanup (destroys managed run enemies, clears runtime wave/choice/cache state, resets run/stage/leak/threat counters, and pushes stopped snapshot).
 - Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
 - Invader data/config from DataTables and `UARInvaderDirectorSettings`.
 - Director runtime no longer requires/loading the enemy DataTable to start runs; enemy definitions are resolved through `ContentLookupSubsystem` (registry asset) and cached per identifier tag. Enemy class preloading still uses the resolved definition.
@@ -145,6 +147,7 @@
 - `bFormationLockActive` (lock during `Active`)
 - Director applies these flags to each spawned enemy via `AAREnemyBase::SetFormationLockRules(...)`.
 - StateTree startup/initialization order: enemy AI controller defers StateTree start to next tick after possess so invader runtime context and wave lock flags are applied before logic begins.
+- StateTree startup/initialization order: enemy pawn (`AAREnemyBase::PossessedBy`) explicitly triggers controller StateTree start after enemy possess-init has run, and controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`).
 - Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
 - Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
 - Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetFormationLockRules(...)` and remain readable from actor context in StateTree.
