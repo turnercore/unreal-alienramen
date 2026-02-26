@@ -6,6 +6,9 @@
 #include "ARPlayerStateBase.h"
 #include "ARPlayerController.h"
 #include "ARAbilitySet.h"
+#include "AREnemyBase.h"
+#include "AREnemyIncomingDamageEffect.h"
+#include "ARAttributeSetCore.h"
 
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
@@ -57,6 +60,82 @@ UAbilitySystemComponent* AARShipCharacterBase::GetAbilitySystemComponent() const
 const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() const
 {
 	return CurrentPrimaryWeapon;
+}
+
+namespace
+{
+	static bool ApplyDamageToActorViaGAS(AActor* Target, float Damage, AActor* Offender)
+	{
+		if (!Target || Damage <= 0.f)
+		{
+			return false;
+		}
+
+		if (AAREnemyBase* EnemyTarget = Cast<AAREnemyBase>(Target))
+		{
+			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender);
+		}
+
+		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
+		{
+			return ShipTarget->ApplyDamageViaGAS(Damage, Offender);
+		}
+
+		return false;
+	}
+}
+
+bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+{
+	if (!HasAuthority() || Damage <= 0.f)
+	{
+		return false;
+	}
+
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		return false;
+	}
+
+	static const FGameplayTag DataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	if (Offender)
+	{
+		Context.AddInstigator(Offender, Offender);
+	}
+
+	const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(UAREnemyIncomingDamageEffect::StaticClass(), 1.f, Context);
+	if (!Spec.IsValid())
+	{
+		return false;
+	}
+
+	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
+	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+	return true;
+}
+
+float AARShipCharacterBase::GetCurrentDamageFromGAS() const
+{
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		return 0.f;
+	}
+
+	return ASC->GetNumericAttribute(UARAttributeSetCore::GetDamageAttribute());
+}
+
+bool AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride)
+{
+	if (!HasAuthority())
+	{
+		return false;
+	}
+
+	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentDamageFromGAS();
+	return ApplyDamageToActorViaGAS(Target, DamageToApply, this);
 }
 
 // --------------------

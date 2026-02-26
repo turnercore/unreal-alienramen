@@ -34,6 +34,11 @@ namespace
 	TWeakPtr<SEnemyAuthoringPanel> GActiveEnemyPanel;
 	TOptional<FGameplayTag> GPendingFocusTag;
 
+	bool HasExpectedEnemyRowStruct(const UDataTable* EnemyTable)
+	{
+		return EnemyTable && EnemyTable->GetRowStruct() == FARInvaderEnemyDefRow::StaticStruct();
+	}
+
 	UDataTable* LoadEnemyTableFromSettings()
 	{
 		if (const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>())
@@ -54,8 +59,8 @@ namespace
 
 	FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& EnemyClassRef)
 	{
-		const FSoftObjectPath Path = EnemyClassRef.ToSoftObjectPath();
-		return Path.IsValid() ? FSoftClassPath(Path.ToString()) : FSoftClassPath();
+		const FString ClassPathString = EnemyClassRef.ToString();
+		return ClassPathString.IsEmpty() ? FSoftClassPath() : FSoftClassPath(ClassPathString);
 	}
 
 	FString GetEnemyClassLabel(const FSoftClassPath& ClassPath)
@@ -100,14 +105,14 @@ namespace ARInvaderEnemyAuthoringEditor
 		OutRow = FARInvaderEnemyDefRow();
 
 		UDataTable* EnemyTable = LoadEnemyTableFromSettings();
-		if (!EnemyTable || !EnemyIdentifierTag.IsValid())
+		if (!EnemyTable || !EnemyIdentifierTag.IsValid() || !HasExpectedEnemyRowStruct(EnemyTable))
 		{
 			return false;
 		}
 
-		for (const TPair<FName, uint8*>& Pair : EnemyTable->GetRowMap())
+		for (const FName RowName : EnemyTable->GetRowNames())
 		{
-			const FARInvaderEnemyDefRow* Row = reinterpret_cast<const FARInvaderEnemyDefRow*>(Pair.Value);
+			const FARInvaderEnemyDefRow* Row = EnemyTable->FindRow<FARInvaderEnemyDefRow>(RowName, TEXT("ResolveEnemyRowByIdentifierTag"), false);
 			if (!Row)
 			{
 				continue;
@@ -115,7 +120,7 @@ namespace ARInvaderEnemyAuthoringEditor
 
 			if (Row->EnemyIdentifierTag.MatchesTagExact(EnemyIdentifierTag))
 			{
-				OutRowName = Pair.Key;
+				OutRowName = RowName;
 				OutRow = *Row;
 				return true;
 			}
@@ -187,14 +192,14 @@ FReply SEnemyAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEv
 
 void SEnemyAuthoringPanel::FocusByIdentifierTag(FGameplayTag EnemyIdentifierTag)
 {
-	if (!EnemyIdentifierTag.IsValid() || !EnemyTable)
+	if (!EnemyIdentifierTag.IsValid() || !EnemyTable || !HasExpectedEnemyRowStruct(EnemyTable))
 	{
 		return;
 	}
 
-	for (const TPair<FName, uint8*>& Pair : EnemyTable->GetRowMap())
+	for (const FName RowName : EnemyTable->GetRowNames())
 	{
-		const FARInvaderEnemyDefRow* Row = reinterpret_cast<const FARInvaderEnemyDefRow*>(Pair.Value);
+		const FARInvaderEnemyDefRow* Row = EnemyTable->FindRow<FARInvaderEnemyDefRow>(RowName, TEXT("FocusByIdentifierTag"), false);
 		if (!Row)
 		{
 			continue;
@@ -202,8 +207,8 @@ void SEnemyAuthoringPanel::FocusByIdentifierTag(FGameplayTag EnemyIdentifierTag)
 
 		if (Row->EnemyIdentifierTag.MatchesTagExact(EnemyIdentifierTag))
 		{
-			SelectRow(Pair.Key);
-			SetStatus(FString::Printf(TEXT("Focused enemy row '%s' for tag '%s'."), *Pair.Key.ToString(), *EnemyIdentifierTag.ToString()));
+			SelectRow(RowName);
+			SetStatus(FString::Printf(TEXT("Focused enemy row '%s' for tag '%s'."), *RowName.ToString(), *EnemyIdentifierTag.ToString()));
 			return;
 		}
 	}
@@ -414,6 +419,17 @@ void SEnemyAuthoringPanel::RefreshTable()
 	if (!EnemyTable)
 	{
 		SetStatus(TEXT("Failed to load enemy table from tooling/runtime settings."));
+		return;
+	}
+
+	if (!HasExpectedEnemyRowStruct(EnemyTable))
+	{
+		const UScriptStruct* FoundStruct = EnemyTable->GetRowStruct();
+		SetStatus(FString::Printf(
+			TEXT("Enemy table row struct mismatch. Expected '%s', found '%s'."),
+			*GetNameSafe(FARInvaderEnemyDefRow::StaticStruct()),
+			*GetNameSafe(FoundStruct)));
+		EnemyTable = nullptr;
 	}
 }
 
@@ -430,19 +446,19 @@ void SEnemyAuthoringPanel::RefreshRows()
 		return;
 	}
 
-	for (const TPair<FName, uint8*>& Pair : EnemyTable->GetRowMap())
+	for (const FName RowName : EnemyTable->GetRowNames())
 	{
-		const FARInvaderEnemyDefRow* Row = reinterpret_cast<const FARInvaderEnemyDefRow*>(Pair.Value);
+		const FARInvaderEnemyDefRow* Row = EnemyTable->FindRow<FARInvaderEnemyDefRow>(RowName, TEXT("RefreshRows"), false);
 		if (!Row)
 		{
 			continue;
 		}
 
 		TSharedPtr<FEnemyRowItem> Item = MakeShared<FEnemyRowItem>();
-		Item->RowName = Pair.Key;
+		Item->RowName = RowName;
 		Item->bEnabled = Row->bEnabled;
 		Item->DisplayName = Row->DisplayName.IsEmpty()
-			? FText::FromString(Row->EnemyIdentifierTag.IsValid() ? Row->EnemyIdentifierTag.ToString() : Pair.Key.ToString())
+			? FText::FromString(Row->EnemyIdentifierTag.IsValid() ? Row->EnemyIdentifierTag.ToString() : RowName.ToString())
 			: Row->DisplayName;
 		Item->EnemyClassPath = ToSoftClassPath(Row->EnemyClass);
 		Item->MaxHealth = Row->RuntimeInit.MaxHealth;
@@ -887,7 +903,7 @@ FReply SEnemyAuthoringPanel::OnValidateAll()
 
 void SEnemyAuthoringPanel::ValidateRows(const TArray<FName>& TargetRows, TArray<FEnemyIssue>& OutIssues) const
 {
-	if (!EnemyTable)
+	if (!EnemyTable || !HasExpectedEnemyRowStruct(EnemyTable))
 	{
 		OutIssues.Add({ true, NAME_None, TEXT("Enemy table is not loaded.") });
 		return;
@@ -903,18 +919,18 @@ void SEnemyAuthoringPanel::ValidateRows(const TArray<FName>& TargetRows, TArray<
 	}
 
 	TMap<FGameplayTag, FName> FirstSeenByTag;
-	for (const TPair<FName, uint8*>& Pair : EnemyTable->GetRowMap())
+	for (const FName RowName : EnemyTable->GetRowNames())
 	{
-		const FARInvaderEnemyDefRow* Row = reinterpret_cast<const FARInvaderEnemyDefRow*>(Pair.Value);
+		const FARInvaderEnemyDefRow* Row = EnemyTable->FindRow<FARInvaderEnemyDefRow>(RowName, TEXT("ValidateRows"), false);
 		if (!Row)
 		{
 			continue;
 		}
 
-		const bool bShouldValidate = TargetSet.IsEmpty() || TargetSet.Contains(Pair.Key);
+		const bool bShouldValidate = TargetSet.IsEmpty() || TargetSet.Contains(RowName);
 		if (bShouldValidate)
 		{
-			ValidateSingleRow(Pair.Key, *Row, OutIssues);
+			ValidateSingleRow(RowName, *Row, OutIssues);
 		}
 
 		if (Row->EnemyIdentifierTag.IsValid())
@@ -922,19 +938,19 @@ void SEnemyAuthoringPanel::ValidateRows(const TArray<FName>& TargetRows, TArray<
 			if (const FName* FirstRowName = FirstSeenByTag.Find(Row->EnemyIdentifierTag))
 			{
 				const bool bEmitForFirst = TargetSet.IsEmpty() || TargetSet.Contains(*FirstRowName);
-				const bool bEmitForCurrent = TargetSet.IsEmpty() || TargetSet.Contains(Pair.Key);
+				const bool bEmitForCurrent = TargetSet.IsEmpty() || TargetSet.Contains(RowName);
 				if (bEmitForFirst)
 				{
-					OutIssues.Add({ true, *FirstRowName, FString::Printf(TEXT("Duplicate EnemyIdentifierTag '%s' also used by row '%s'."), *Row->EnemyIdentifierTag.ToString(), *Pair.Key.ToString()) });
+					OutIssues.Add({ true, *FirstRowName, FString::Printf(TEXT("Duplicate EnemyIdentifierTag '%s' also used by row '%s'."), *Row->EnemyIdentifierTag.ToString(), *RowName.ToString()) });
 				}
 				if (bEmitForCurrent)
 				{
-					OutIssues.Add({ true, Pair.Key, FString::Printf(TEXT("Duplicate EnemyIdentifierTag '%s' also used by row '%s'."), *Row->EnemyIdentifierTag.ToString(), *FirstRowName->ToString()) });
+					OutIssues.Add({ true, RowName, FString::Printf(TEXT("Duplicate EnemyIdentifierTag '%s' also used by row '%s'."), *Row->EnemyIdentifierTag.ToString(), *FirstRowName->ToString()) });
 				}
 			}
 			else
 			{
-				FirstSeenByTag.Add(Row->EnemyIdentifierTag, Pair.Key);
+				FirstSeenByTag.Add(Row->EnemyIdentifierTag, RowName);
 			}
 		}
 	}
@@ -973,6 +989,14 @@ void SEnemyAuthoringPanel::ValidateSingleRow(const FName RowName, const FARInvad
 	if (Row.RuntimeInit.DamageTakenMultiplier < 0.f)
 	{
 		OutIssues.Add({ true, RowName, TEXT("DamageTakenMultiplier must be >= 0.") });
+	}
+	for (int32 AbilityIndex = 0; AbilityIndex < Row.RuntimeInit.EnemySpecificAbilities.Num(); ++AbilityIndex)
+	{
+		const FARAbilitySet_AbilityEntry& Entry = Row.RuntimeInit.EnemySpecificAbilities[AbilityIndex];
+		if (!Entry.Ability)
+		{
+			OutIssues.Add({ true, RowName, FString::Printf(TEXT("EnemySpecificAbilities[%d] has no Ability class."), AbilityIndex) });
+		}
 	}
 }
 
