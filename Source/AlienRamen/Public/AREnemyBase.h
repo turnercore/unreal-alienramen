@@ -38,6 +38,7 @@ public:
 	UAREnemyAttributeSet* GetEnemyAttributes() const { return EnemyAttributeSet; }
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS", meta = (BlueprintAuthorityOnly))
+	bool ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth);
 	bool ApplyDamageViaGAS(float Damage, AActor* Offender);
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
@@ -75,11 +76,19 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
 	void HandleDeath(AActor* InstigatorActor);
 
+	// Final lifecycle release step after death cleanup/signals. Default implementation destroys actor.
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
+	void ReleaseEnemyActor();
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
 	void BP_OnEnemyInitialized();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
 	void BP_OnEnemyDied(AActor* InstigatorActor);
+
+	// Fired on authority immediately before ReleaseEnemyActor() is called.
+	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Lifecycle")
+	void BP_OnEnemyPreRelease(AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Lifecycle")
 	bool IsDead() const { return bIsDead; }

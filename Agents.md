@@ -99,6 +99,7 @@
 - Enemy death is one-shot and server-gated (`bIsDead`), with BP hooks:
 - `BP_OnEnemyInitialized`
 - `BP_OnEnemyDied`
+- Death release contract: after C++ death cleanup, enemy fires `BP_OnEnemyDied`, then `BP_OnEnemyPreRelease`, then calls `ReleaseEnemyActor()`; default `ReleaseEnemyActor` destroys actor and is the pool-replacement seam.
 - Enemy spawn identity is tag-first: `FARWaveEnemySpawnDef::EnemyIdentifierTag` is authoritative at runtime; `EnemyClass` in spawn rows is legacy/migration-only.
 - On possess (authority), enemy resolves definition from content lookup by identifier tag and applies base stats via `SetNumericAttributeBase`:
 - core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
@@ -179,6 +180,7 @@
 - Enemy exposes Blueprint/StateTree-friendly ASC tag query helpers on actor context:
 - `AAREnemyBase::HasASCGameplayTag(FGameplayTag)`
 - `AAREnemyBase::HasAnyASCGameplayTags(FGameplayTagContainer)`
+- Damage helper API contract: `ApplyDamageViaGAS(...)` on enemy/ship outputs current Health after application (same function, no separate result variant).
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
 - Damage helper APIs exposed for BP/gameplay wiring:
