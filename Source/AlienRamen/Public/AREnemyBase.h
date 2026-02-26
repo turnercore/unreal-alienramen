@@ -177,6 +177,10 @@ protected:
 	void BindHealthChangeDelegate();
 	void UnbindHealthChangeDelegate();
 	void OnHealthChanged(const FOnAttributeChangeData& ChangeData);
+	void BindMoveSpeedChangeDelegate();
+	void UnbindMoveSpeedChangeDelegate();
+	void OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData);
+	void RefreshCharacterMovementSpeedFromAttributes();
 
 public:	
 	// Set to false by default; enable in child Blueprints if needed.
@@ -269,6 +273,7 @@ private:
 	TArray<FARAbilitySet_AbilityEntry> RuntimeSpecificAbilities;
 
 	FDelegateHandle HealthChangedDelegateHandle;
+	FDelegateHandle MoveSpeedChangedDelegateHandle;
 	bool bStartupSetApplied = false;
 	bool bCountedAsLeak = false;
 	bool bHasEnteredGameplayScreen = false;

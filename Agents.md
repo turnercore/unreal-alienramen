@@ -103,6 +103,7 @@
 - On possess (authority), enemy resolves definition from content lookup by identifier tag and applies base stats via `SetNumericAttributeBase`:
 - core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
 - enemy set: `CollisionDamage`
+- Enemy move-speed runtime flow is C++/GAS-driven: after init and on MoveSpeed attribute changes, `AAREnemyBase` syncs core `MoveSpeed` to `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed`.
 - Enemy startup ability/effect layering on possess (authority) is deterministic and deduped:
 - 1) `UARInvaderDirectorSettings::EnemyCommonAbilitySet` (global)
 - 2) best archetype match from `UARInvaderDirectorSettings::EnemyArchetypeAbilitySets` using `RuntimeInit.EnemyArchetypeTag` (exact match preferred, then closest parent tag)
@@ -231,7 +232,7 @@
 - `PIELoadSlotNumber` (default `0`)
 - `PIEBootstrapDebugMap`
 - When enabled, PIE harness launches from the destination/debug map first (so PIE exit returns to that map), then performs a one-time runtime hop to the configured loading map before running save bootstrap and deferred travel back to destination/debug map.
-- Before tool-driven startup map switching for PIE launch, the panel prompts save/checkout for a dirty currently loaded editor map package; cancelling save aborts launch.
+- Before tool-driven PIE launch, the panel prompts save/checkout for a dirty currently loaded editor map package (even if already on startup map); cancelling save aborts launch.
 - Deferred debug travel subscribes to GameInstance dispatcher `SignalOnGameLoaded` (when present) and opens the debug level on signal; fallback path uses load-complete bool function/property detection and short-delay timeout protection before `OpenLevel` to debug map (or editor default test map fallback).
 - First tool-open backup snapshot support:
 - when enabled (`bCreateBackupOnToolOpen`), the panel duplicates currently loaded wave/stage DataTables into `UARInvaderToolingSettings::BackupsFolder` (default `/Game/Data/Backups`) on first panel initialization
@@ -246,7 +247,7 @@
 - canvas drag on a selected spawn moves the full selected group
 - canvas supports spawn copy/paste (`Ctrl+C` / `Ctrl+V`) and spawn context-menu copy/paste; pasted spawns are offset and become the active selection
 - spawn context actions (delete, color set) apply to the current spawn selection set.
-- Enemy palette rows (color buttons) can be left-dragged onto the wave canvas or spawn list to add a spawn using that enemy class/color at the drop location (or at the currently selected spawn offset when dropped on the list). Palette selection still works via click.
+- Enemy palette rows are click-select only (palette drag/drop spawning is disabled); canvas add-spawn uses the currently active palette class/color selection.
 - Keyboard `Delete/Backspace` in wave mode only deletes selected spawn(s); it does not fall through to deleting the selected wave row when no spawns are selected.
 - The panel listens to object transaction events for authored wave/stage/enemy tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
 - Enemy-table transactions now also force a palette rebuild (including compatibility cache reset) so newly authored enemy classes appear immediately.
@@ -254,13 +255,16 @@
 - layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
 - same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
 - Wave spawn identity authoring is tag-first (`EnemyIdentifierTag`); class path remains visible only as migration support.
-- Selected wave spawn details now include resolved enemy summary and `Open Enemy Row` deep-link to the dedicated enemy tool.
+- Selected wave spawn details include resolved enemy summary text only (no inline `Open Enemy Row` button).
 - Wave panel UX:
 - top toolbar actions (`Reload Tables`, `Validate Selected`, `Validate All`) have explicit tooltips and separated layout
 - `Reload Tables` now also refreshes the enemy palette immediately.
 - `Add Layer` moved into `Wave Layers` header; `Add Spawn`/`Delete` moved into `Layer Spawns` header
 - layer spawn list supports drag-drop reordering within a layer (same delay bucket)
 - wave canvas exposes authoring controls for `Snap To Grid` and `Grid Size`
+- wave panel shows computed clear metrics for selected wave (`Damage to Clear` and required `DPS` over `WaveDuration`), using enemy row `MaxHealth`, optional reflected `MaxShield` when present, and `DamageTakenMultiplier` for approximation
+- wave panel layout keeps `Snap To Grid` / `Grid Size` above the canvas; preview timeline + phase text + computed clear metrics render below the canvas
+- wave canvas glyphs are intentionally larger for readability (approx 2x prior size), and authored spawn offsets are clamped to gameplay bounds during add/drag/paste/details-edit so spawns cannot drift outside canvas bounds
 - stages mode hides enemy palette + spawn details panels
 - validation issues are in a collapsible panel and auto-collapse when empty
 - Wave/stage/spawn authoring detail categories are flattened to `Wave`, `Stage`, and `Spawn` (no `AR|Invader|...` category-path nesting in the authoring details panels).
@@ -270,9 +274,10 @@
 - palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
 - favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
-- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by wave-canvas glyph rendering (Square/Circle/Triangle/Diamond/Star)
+- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by wave-canvas glyph rendering (Square/Circle/Triangle/Diamond)
 - palette uses star toggle glyphs for favorites (`★`/`☆`)
-- palette row right-click opens a context menu with `Find in Content Browser`
+- palette row right-click opens a context menu with `Find in Content Browser` and `Edit Enemy Data` (opens Enemy Authoring for the resolved identifier tag)
+- active palette selection has explicit visual feedback: selected enemy class row is highlighted and selected color chip (`R/B/W`) shows a highlight outline
 - Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
 - `DefaultTestMap` (default `/Game/Maps/Lvl_InvaderDebug`)
 - `LastSeed`
@@ -290,6 +295,8 @@
 - fallback source: `UARInvaderDirectorSettings::EnemyDataTable`
 - Enemy authoring panel treats row-struct mismatch as a hard guardrail: if the selected enemy DataTable row struct is not `FARInvaderEnemyDefRow`, the panel reports a status error and skips row parsing/population (prevents invalid row-memory reinterpret crashes).
 - Supports row CRUD + duplicate + rename + delete + enable/disable + save, with transactions + dirty package flow.
+- Enemy identifier tag is editor-normalized as source-of-truth key: every row must have `EnemyIdentifierTag`, and its leaf segment must exactly equal the DataTable row name.
+- Enemy tool auto-syncs identifier tags on tool open/reload and row create/duplicate/rename/detail-edit by preserving existing tag parent path (or defaulting to `Enemy.Identifier`) and forcing leaf to row name.
 - Enemy row list supports multi-select operations and right-click context menu actions (`Rename`, `Enable/Disable`, `Duplicate`, `Delete`), matching invader row-list interaction patterns.
 - Enemy row list supports sortable columns (only): `Enabled`, `DisplayName`, `EnemyClass`, `MaxHealth`, `ArchetypeTag` (no row-name or identifier-tag sortable columns).
 - Disabled enemy rows render visually muted and include `[Disabled]` in row display text.
