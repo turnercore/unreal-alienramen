@@ -157,7 +157,7 @@ protected:
 	void ClearStartupAbilitySet();
 	void ApplyRuntimeEnemyEffects(const TArray<TSubclassOf<UGameplayEffect>>& Effects);
 	void ClearRuntimeEnemyEffects();
-	void ApplyRuntimeEnemyTags(const FGameplayTagContainer& Tags);
+	void ApplyRuntimeEnemyTags(const FGameplayTagContainer& InTags);
 	void ClearRuntimeEnemyTags();
 	bool ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString& OutError) const;
 	void ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitData& RuntimeInit);
