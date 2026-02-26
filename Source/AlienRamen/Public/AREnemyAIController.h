@@ -19,11 +19,13 @@ public:
 	void NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase);
 	void NotifyEnemyEnteredScreen(int32 WaveInstanceId);
 	void NotifyEnemyInFormation(int32 WaveInstanceId);
+	void TryStartStateTreeForCurrentPawn();
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
+private:
 	void StartStateTreeForPawn(APawn* InPawn);
 	void StopStateTree(const FString& Reason);
 	bool IsStateTreeRunning() const;

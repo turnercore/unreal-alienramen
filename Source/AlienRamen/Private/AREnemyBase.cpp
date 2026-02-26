@@ -294,6 +294,13 @@ void AAREnemyBase::PossessedBy(AController* NewController)
 	TryDispatchEnteredScreenEvent();
 	TryDispatchInFormationEvent();
 	BP_OnEnemyInitialized();
+	if (HasAuthority())
+	{
+		if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
+		{
+			EnemyAI->TryStartStateTreeForCurrentPawn();
+		}
+	}
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Possessed '%s' by '%s'."),
 		*GetNameSafe(this), *GetNameSafe(NewController));
 }
