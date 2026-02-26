@@ -22,6 +22,9 @@ public:
 	TSoftObjectPtr<UDataTable> StageDataTable;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
+	TSoftObjectPtr<UDataTable> EnemyDataTable;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	FName InitialStageRow;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
@@ -84,6 +87,10 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "SoftCaps")
 	bool bBlockSpawnsWhenEnemySoftCapExceeded = false;
+
+	// Number of eligible wave definitions to peek ahead when preloading enemy classes.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "SoftCaps", meta=(ClampMin="0", UIMin="0"))
+	int32 EnemyPreloadWaveLookahead = 2;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Telemetry")
 	TSoftClassPtr<AActor> ProjectileActorClass;

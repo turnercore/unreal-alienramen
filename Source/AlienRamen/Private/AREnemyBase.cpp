@@ -3,16 +3,28 @@
 
 #include "AREnemyBase.h"
 #include "AREnemyAIController.h"
+#include "AREnemyAttributeSet.h"
+#include "AREnemyIncomingDamageEffect.h"
 #include "ARLog.h"
 
 #include "AbilitySystemComponent.h"
 #include "ARAbilitySet.h"
 #include "ARAttributeSetCore.h"
+#include "ContentLookupSubsystem.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
+#include "StructUtils/InstancedStruct.h"
+#include "UObject/SoftObjectPtr.h"
+#include "UObject/UnrealType.h"
+
+namespace
+{
+	const FGameplayTag DataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+}
 
 namespace AREnemyBaseInternal
 {
@@ -82,6 +94,7 @@ AAREnemyBase::AAREnemyBase()
 	StateTreeASC = AbilitySystemComponent;
 
 	AttributeSetCore = CreateDefaultSubobject<UARAttributeSetCore>(TEXT("AttributeSetCore"));
+	EnemyAttributeSet = CreateDefaultSubobject<UAREnemyAttributeSet>(TEXT("EnemyAttributeSet"));
 }
 
 UAbilitySystemComponent* AAREnemyBase::GetAbilitySystemComponent() const
@@ -113,6 +126,7 @@ void AAREnemyBase::PossessedBy(AController* NewController)
 
 	if (HasAuthority())
 	{
+		InitializeFromEnemyDefinitionTag();
 		ApplyStartupAbilitySet();
 	}
 
@@ -135,6 +149,9 @@ void AAREnemyBase::UnPossessed()
 	if (HasAuthority())
 	{
 		ClearStartupAbilitySet();
+		ClearRuntimeEnemyEffects();
+		ClearRuntimeEnemyTags();
+		bEnemyDefinitionApplied = false;
 	}
 
 	Super::UnPossessed();
@@ -166,6 +183,219 @@ void AAREnemyBase::ApplyStartupAbilitySet()
 
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Applied startup ability set '%s' to '%s' (Abilities=%d Effects=%d)."),
 		*GetNameSafe(StartupAbilitySet), *GetNameSafe(this), StartupGrantedAbilityHandles.Num(), StartupAppliedEffectHandles.Num());
+}
+
+void AAREnemyBase::ApplyRuntimeEnemyEffects(const TArray<TSubclassOf<UGameplayEffect>>& Effects)
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	for (const TSubclassOf<UGameplayEffect>& EffectClass : Effects)
+	{
+		if (!EffectClass)
+		{
+			continue;
+		}
+
+		const FGameplayEffectContextHandle Ctx = AbilitySystemComponent->MakeEffectContext();
+		const FGameplayEffectSpecHandle Spec = AbilitySystemComponent->MakeOutgoingSpec(EffectClass, 1.f, Ctx);
+		if (Spec.IsValid())
+		{
+			RuntimeAppliedEffectHandles.Add(AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()));
+		}
+	}
+}
+
+void AAREnemyBase::ClearRuntimeEnemyEffects()
+{
+	if (!AbilitySystemComponent)
+	{
+		return;
+	}
+
+	for (const FActiveGameplayEffectHandle& Handle : RuntimeAppliedEffectHandles)
+	{
+		if (Handle.IsValid())
+		{
+			AbilitySystemComponent->RemoveActiveGameplayEffect(Handle);
+		}
+	}
+
+	RuntimeAppliedEffectHandles.Reset();
+}
+
+void AAREnemyBase::ApplyRuntimeEnemyTags(const FGameplayTagContainer& Tags)
+{
+	if (!HasAuthority() || !AbilitySystemComponent || Tags.IsEmpty())
+	{
+		return;
+	}
+
+	AbilitySystemComponent->AddLooseGameplayTags(Tags);
+	RuntimeAppliedLooseTags.AppendTags(Tags);
+}
+
+void AAREnemyBase::ClearRuntimeEnemyTags()
+{
+	if (!AbilitySystemComponent || RuntimeAppliedLooseTags.IsEmpty())
+	{
+		return;
+	}
+
+	AbilitySystemComponent->RemoveLooseGameplayTags(RuntimeAppliedLooseTags);
+	RuntimeAppliedLooseTags.Reset();
+}
+
+bool AAREnemyBase::ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString& OutError) const
+{
+	OutRow = FARInvaderEnemyDefRow();
+	OutError.Reset();
+
+	if (!EnemyIdentifierTag.IsValid())
+	{
+		OutError = TEXT("EnemyIdentifierTag is invalid.");
+		return false;
+	}
+
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		OutError = TEXT("No world.");
+		return false;
+	}
+
+	UGameInstance* GI = World->GetGameInstance();
+	if (!GI)
+	{
+		OutError = TEXT("No game instance.");
+		return false;
+	}
+
+	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	if (!Lookup)
+	{
+		OutError = TEXT("No content lookup subsystem.");
+		return false;
+	}
+
+	FInstancedStruct ResolvedRow;
+	if (!Lookup->LookupWithGameplayTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	{
+		return false;
+	}
+
+	if (!ResolvedRow.IsValid())
+	{
+		OutError = TEXT("Resolved row struct is invalid.");
+		return false;
+	}
+
+	const UScriptStruct* RowType = ResolvedRow.GetScriptStruct();
+	const void* RowData = ResolvedRow.GetMemory();
+	if (!RowType || !RowData)
+	{
+		OutError = TEXT("Resolved row has no struct data.");
+		return false;
+	}
+
+	if (RowType == FARInvaderEnemyDefRow::StaticStruct())
+	{
+		OutRow = *static_cast<const FARInvaderEnemyDefRow*>(RowData);
+	}
+	else
+	{
+		// Backward-compatible extraction for legacy BP row structs (maxHp + Blueprint).
+		const FProperty* MaxHealthProp = RowType->FindPropertyByName(TEXT("maxHp"));
+		if (const FNumericProperty* NumProp = CastField<FNumericProperty>(MaxHealthProp))
+		{
+			const void* ValuePtr = NumProp->ContainerPtrToValuePtr<void>(RowData);
+			OutRow.RuntimeInit.MaxHealth = static_cast<float>(NumProp->GetFloatingPointPropertyValue(ValuePtr));
+		}
+
+		const FProperty* BPProp = RowType->FindPropertyByName(TEXT("Blueprint"));
+		if (const FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(BPProp))
+		{
+			const FSoftObjectPtr SoftClassObj = SoftClassProp->GetPropertyValue_InContainer(RowData);
+			OutRow.EnemyClass = TSoftClassPtr<AAREnemyBase>(SoftClassObj.ToSoftObjectPath());
+		}
+		else if (const FClassProperty* ClassProp = CastField<FClassProperty>(BPProp))
+		{
+			OutRow.EnemyClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(RowData));
+		}
+
+		OutRow.EnemyIdentifierTag = EnemyIdentifierTag;
+		OutRow.bEnabled = true;
+	}
+
+	if (!OutRow.EnemyIdentifierTag.IsValid())
+	{
+		OutRow.EnemyIdentifierTag = EnemyIdentifierTag;
+	}
+	if (OutRow.RuntimeInit.MaxHealth <= 0.f)
+	{
+		OutRow.RuntimeInit.MaxHealth = 100.f;
+	}
+
+	return true;
+}
+
+void AAREnemyBase::ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitData& RuntimeInit)
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetMaxHealthAttribute(), RuntimeInit.MaxHealth);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetHealthAttribute(), RuntimeInit.MaxHealth);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDamageAttribute(), RuntimeInit.Damage);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetMoveSpeedAttribute(), RuntimeInit.MoveSpeed);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetFireRateAttribute(), RuntimeInit.FireRate);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDamageTakenMultiplierAttribute(), RuntimeInit.DamageTakenMultiplier);
+	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetCollisionDamageAttribute(), RuntimeInit.CollisionDamage);
+
+	EnemyArchetypeTag = RuntimeInit.EnemyArchetypeTag;
+
+	if (!RuntimeInit.StartupAbilitySet.IsNull())
+	{
+		StartupAbilitySet = RuntimeInit.StartupAbilitySet.LoadSynchronous();
+	}
+
+	ClearRuntimeEnemyEffects();
+	ClearRuntimeEnemyTags();
+	ApplyRuntimeEnemyEffects(RuntimeInit.StartupGameplayEffects);
+	ApplyRuntimeEnemyTags(RuntimeInit.StartupLooseTags);
+}
+
+bool AAREnemyBase::InitializeFromEnemyDefinitionTag()
+{
+	if (!HasAuthority())
+	{
+		return false;
+	}
+
+	FARInvaderEnemyDefRow EnemyDef;
+	FString Error;
+	if (!ResolveEnemyDefinition(EnemyDef, Error))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] Failed to resolve enemy definition for '%s': %s"),
+			*GetNameSafe(this), *Error);
+		return false;
+	}
+
+	if (!EnemyDef.bEnabled)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] Enemy definition '%s' is disabled for '%s'."),
+			*EnemyDef.EnemyIdentifierTag.ToString(), *GetNameSafe(this));
+	}
+
+	ApplyEnemyRuntimeInitData(EnemyDef.RuntimeInit);
+	bEnemyDefinitionApplied = true;
+	ForceNetUpdate();
+	BP_OnEnemyDefinitionApplied();
+	return true;
 }
 
 void AAREnemyBase::ClearStartupAbilitySet()
@@ -295,6 +525,54 @@ void AAREnemyBase::SetEnemyColor(EAREnemyColor InColor)
 	ForceNetUpdate();
 	UE_LOG(ARLog, Verbose, TEXT("[EnemyBase] Set enemy color for '%s' -> %d."), *GetNameSafe(this), static_cast<int32>(EnemyColor));
 	BP_OnEnemyColorChanged(EnemyColor);
+}
+
+void AAREnemyBase::SetEnemyIdentifierTag(FGameplayTag InIdentifierTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	EnemyIdentifierTag = InIdentifierTag;
+	ForceNetUpdate();
+}
+
+bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+{
+	if (!HasAuthority() || bIsDead || Damage <= 0.f || !AbilitySystemComponent)
+	{
+		return false;
+	}
+
+	FGameplayEffectContextHandle Context = AbilitySystemComponent->MakeEffectContext();
+	if (Offender)
+	{
+		Context.AddInstigator(Offender, Offender);
+	}
+
+	const FGameplayEffectSpecHandle Spec = AbilitySystemComponent->MakeOutgoingSpec(UAREnemyIncomingDamageEffect::StaticClass(), 1.f, Context);
+	if (!Spec.IsValid())
+	{
+		return false;
+	}
+
+	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
+	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+	return true;
+}
+
+float AAREnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	(void)DamageEvent;
+
+	AActor* EffectiveOffender = DamageCauser;
+	if (!EffectiveOffender && EventInstigator)
+	{
+		EffectiveOffender = EventInstigator->GetPawn();
+	}
+
+	return ApplyDamageViaGAS(DamageAmount, EffectiveOffender) ? DamageAmount : 0.f;
 }
 
 void AAREnemyBase::OnRep_EnemyColor()
@@ -565,6 +843,7 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AAREnemyBase, EnemyColor);
+	DOREPLIFETIME(AAREnemyBase, EnemyIdentifierTag);
 	DOREPLIFETIME(AAREnemyBase, EnemyArchetypeTag);
 	DOREPLIFETIME(AAREnemyBase, bIsDead);
 	DOREPLIFETIME(AAREnemyBase, WaveInstanceId);
@@ -582,4 +861,3 @@ void AAREnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
