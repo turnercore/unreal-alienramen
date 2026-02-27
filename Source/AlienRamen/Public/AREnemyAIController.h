@@ -27,8 +27,13 @@ protected:
 
 private:
 	void StartStateTreeForPawn(APawn* InPawn);
+	void StartStateTreeForPawn_Deferred(APawn* InPawn);
 	void StopStateTree(const FString& Reason);
 	bool IsStateTreeRunning() const;
+
+private:
+	bool bPendingStateTreeStart = false;
+	FTimerHandle DeferredStartTimerHandle;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|AI")

@@ -6,6 +6,7 @@
 #include "StateTree.h"
 #include "StateTreeExecutionTypes.h"
 #include "Engine/World.h"
+#include "TimerManager.h"
 namespace AREnemyAIControllerInternal
 {
 	static const TCHAR* ToPhaseName(EARWavePhase Phase)
@@ -53,6 +54,11 @@ void AAREnemyAIController::OnUnPossess()
 {
 	StopStateTree(TEXT("Enemy unpossessed"));
 	ClearFocus(EAIFocusPriority::Gameplay);
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(DeferredStartTimerHandle);
+	}
+	bPendingStateTreeStart = false;
 
 	Super::OnUnPossess();
 }
@@ -85,17 +91,7 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 	{
 		if (Enemy->GetWaveInstanceId() == INDEX_NONE)
 		{
-			if (UWorld* World = GetWorld())
-			{
-				TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
-				World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakThis]()
-				{
-					if (AAREnemyAIController* StrongThis = WeakThis.Get())
-					{
-						StrongThis->TryStartStateTreeForCurrentPawn();
-					}
-				}));
-			}
+			StartStateTreeForPawn_Deferred(InPawn);
 			return;
 		}
 	}
@@ -103,44 +99,89 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 	// Possess/startup ordering can invoke this more than once; keep startup idempotent and controller-owned.
 	if (GetPawn() != InPawn || InPawn->GetController() != this || IsStateTreeRunning())
 	{
+		StartStateTreeForPawn_Deferred(InPawn);
 		return;
 	}
 
-	if (const AAREnemyBase* Enemy = Cast<AAREnemyBase>(InPawn))
+	StartStateTreeForPawn_Deferred(InPawn);
+}
+
+void AAREnemyAIController::StartStateTreeForPawn_Deferred(APawn* InPawn)
+{
+	if (bPendingStateTreeStart)
 	{
-		UE_LOG(
-			ARLog,
-			Log,
-			TEXT("[EnemyAI|StartCtx] Controller='%s' Pawn='%s' WaveId=%d LockEnter=%d LockActive=%d"),
-			*GetNameSafe(this),
-			*GetNameSafe(InPawn),
-			Enemy->GetWaveInstanceId(),
-			Enemy->GetFormationLockEnter() ? 1 : 0,
-			Enemy->GetFormationLockActive() ? 1 : 0);
+		return;
 	}
 
-	if (DefaultStateTree && !IsStateTreeRunning())
-	{
-		StateTreeComponent->SetStateTree(DefaultStateTree);
-	}
+	bPendingStateTreeStart = true;
 
-	StateTreeComponent->StartLogic();
-	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Started StateTree for controller '%s' on pawn '%s'."),
-		*GetNameSafe(this), *GetNameSafe(InPawn));
-
-	// Resend current enemy runtime context now that logic is running.
-	// Pre-start phase/entry events are intentionally dropped elsewhere; this keeps StateTree in sync.
-	if (AAREnemyBase* Enemy = Cast<AAREnemyBase>(InPawn))
+	if (UWorld* World = GetWorld())
 	{
-		NotifyWavePhaseChanged(Enemy->GetWaveInstanceId(), Enemy->GetWavePhase());
-		if (Enemy->HasEnteredGameplayScreen())
+		TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
+		TWeakObjectPtr<APawn> WeakPawn(InPawn);
+		World->GetTimerManager().SetTimerForNextTick(DeferredStartTimerHandle, FTimerDelegate::CreateLambda([WeakThis, WeakPawn]()
 		{
-			NotifyEnemyEnteredScreen(Enemy->GetWaveInstanceId());
-		}
-		if (Enemy->HasReachedFormationSlot())
-		{
-			NotifyEnemyInFormation(Enemy->GetWaveInstanceId());
-		}
+			AAREnemyAIController* StrongThis = WeakThis.Get();
+			APawn* StrongPawn = WeakPawn.Get();
+			if (!StrongThis)
+			{
+				return;
+			}
+
+			StrongThis->bPendingStateTreeStart = false;
+
+			if (!StrongPawn || StrongThis->GetPawn() != StrongPawn || StrongPawn->GetController() != StrongThis)
+			{
+				return;
+			}
+
+			if (!StrongThis->StateTreeComponent)
+			{
+				UE_LOG(ARLog, Error, TEXT("[EnemyAI] Missing StateTreeComponent on '%s' during deferred start."), *GetNameSafe(StrongThis));
+				return;
+			}
+
+			if (const AAREnemyBase* Enemy = Cast<AAREnemyBase>(StrongPawn))
+			{
+				if (Enemy->GetWaveInstanceId() == INDEX_NONE)
+				{
+					StrongThis->StartStateTreeForPawn(StrongPawn);
+					return;
+				}
+
+				UE_LOG(
+					ARLog,
+					Log,
+					TEXT("[EnemyAI|StartCtx] Controller='%s' Pawn='%s' WaveId=%d LockEnter=%d LockActive=%d"),
+					*GetNameSafe(StrongThis),
+					*GetNameSafe(StrongPawn),
+					Enemy->GetWaveInstanceId(),
+					Enemy->GetFormationLockEnter() ? 1 : 0,
+					Enemy->GetFormationLockActive() ? 1 : 0);
+			}
+
+			if (StrongThis->DefaultStateTree && !StrongThis->IsStateTreeRunning())
+			{
+				StrongThis->StateTreeComponent->SetStateTree(StrongThis->DefaultStateTree);
+			}
+
+			StrongThis->StateTreeComponent->StartLogic();
+			UE_LOG(ARLog, Log, TEXT("[EnemyAI] Started StateTree for controller '%s' on pawn '%s'."),
+				*GetNameSafe(StrongThis), *GetNameSafe(StrongPawn));
+
+			if (AAREnemyBase* Enemy = Cast<AAREnemyBase>(StrongPawn))
+			{
+				StrongThis->NotifyWavePhaseChanged(Enemy->GetWaveInstanceId(), Enemy->GetWavePhase());
+				if (Enemy->HasEnteredGameplayScreen())
+				{
+					StrongThis->NotifyEnemyEnteredScreen(Enemy->GetWaveInstanceId());
+				}
+				if (Enemy->HasReachedFormationSlot())
+				{
+					StrongThis->NotifyEnemyInFormation(Enemy->GetWaveInstanceId());
+				}
+			}
+		}));
 	}
 }
 
