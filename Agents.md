@@ -337,11 +337,13 @@
 
 ## Debug Save Tool (Current)
 
-- Still active and used by runtime widget + editor tab, but expected to be replaced during upcoming C++ save-system refactor.
-- Keep only currently necessary integration notes here; avoid expanding detailed schema/behavior docs for this legacy path unless needed for active work.
-- Native meat save schema now exists in C++ as `FARMeatState` (`Source/AlienRamen/Public/ARSaveTypes.h`) with per-color buckets (`RedAmount`, `BlueAmount`, `WhiteAmount`), `UnspecifiedAmount`, and extensible `AdditionalAmountsByType` (`TMap<FGameplayTag,int32>`).
-- `FARMeatState::GetTotalAmount()` computes total meat as the sum of all buckets (colors + unspecified + additional typed entries).
-- Debug save edits (`bSetMeatAmount`) now prefer typed write into native `FARMeatState` (`SetTotalAsUnspecified`) and keep legacy fallback for BP `ST_Meat.Amount` during migration.
+- Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
+- Requires an active world/GameInstance (run PIE or a Play session); otherwise the tab reports that a subsystem is unavailable.
+- Slot listing/creation/loading/deletion uses `UARSaveSubsystem::ListSaves/CreateNewSave/LoadGame/DeleteSave` and filters slots ending with `"_debug"`.
+- New debug slot bases auto-append `"_debug"`; random names use `GenerateRandomSlotBaseName` when empty.
+- Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
+- Unlock-all action now writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager (no legacy library helper).
+- Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
 
 ## Invader Authoring Editor Tool (Current)
 
