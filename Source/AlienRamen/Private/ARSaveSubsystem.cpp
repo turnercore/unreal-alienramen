@@ -89,6 +89,7 @@ void UARSaveSubsystem::Deinitialize()
 	CurrentSaveGame = nullptr;
 	CurrentSlotBaseName = NAME_None;
 	PendingCanonicalSyncRequests.Reset();
+	PendingTravelGameStateData.Reset();
 	Super::Deinitialize();
 }
 
@@ -813,7 +814,26 @@ bool UARSaveSubsystem::PushCurrentSaveToPlayer(AARPlayerController* TargetPlayer
 
 void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 {
-	if (!Requester || !CurrentSaveGame)
+	if (!Requester)
+	{
+		return;
+	}
+
+	if (!Requester->HasAuthority())
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[SaveSubsystem] RequestGameStateHydration ignored on non-authority requester '%s'."), *GetNameSafe(Requester));
+		return;
+	}
+
+	// Travel-transient GameState data is authoritative for first hydration pass after travel.
+	if (PendingTravelGameStateData.IsValid())
+	{
+		IStructSerializable::Execute_ApplyStateFromStruct(Requester, PendingTravelGameStateData);
+		PendingTravelGameStateData.Reset();
+		return;
+	}
+
+	if (!CurrentSaveGame)
 	{
 		return;
 	}
@@ -825,10 +845,32 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 	}
 }
 
+void UARSaveSubsystem::SetPendingTravelGameStateData(const FInstancedStruct& PendingStateData)
+{
+	if (!PendingStateData.IsValid())
+	{
+		PendingTravelGameStateData.Reset();
+		return;
+	}
+
+	PendingTravelGameStateData = PendingStateData;
+}
+
+void UARSaveSubsystem::ClearPendingTravelGameStateData()
+{
+	PendingTravelGameStateData.Reset();
+}
+
 void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester)
 {
 	if (!Requester || !CurrentSaveGame)
 	{
+		return;
+	}
+
+	if (!Requester->HasAuthority())
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[SaveSubsystem] RequestPlayerStateHydration ignored on non-authority requester '%s'."), *GetNameSafe(Requester));
 		return;
 	}
 
@@ -856,7 +898,7 @@ void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester
 	// Ensure canonical replicated player-facing fields are restored even if not part of struct schema.
 	Requester->SetCharacterPicked(PlayerData.CharacterPicked);
 	Requester->SetDisplayNameValue(PlayerData.Identity.DisplayName.ToString());
-	Requester->LoadoutTags = PlayerData.LoadoutTags;
+	Requester->SetLoadoutTags(PlayerData.LoadoutTags);
 }
 
 void UARSaveSubsystem::BroadcastSaveFailure(const FARSaveResult& Result)

@@ -27,6 +27,9 @@
 
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
+- Native authoritative lobby/runtime bases:
+- `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
+- `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Gameplay/content is Blueprint-heavy in `Content/CodeAlong/Blueprints`
@@ -55,6 +58,8 @@
 - `CharacterPicked` (`EARCharacterChoice`: `None`, `Brother`, `Sister`) is native replicated state on `AARPlayerStateBase` with server setter path (`SetCharacterPicked` / `ServerPickCharacter`) and change signal `OnCharacterPickedChanged`.
 - `DisplayName` is native replicated state on `AARPlayerStateBase` with server setter path (`SetDisplayNameValue` / `ServerUpdateDisplayName`), mirrored into `PlayerName` (`SetPlayerName`), and change signal `OnDisplayNameChanged`.
 - `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
+- `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
+- `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
 - `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
 - `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
 - PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
@@ -108,6 +113,7 @@
 - Seamless travel handoff for PlayerState is C++-owned via `AARPlayerStateBase::CopyProperties`:
 - extracts/applies struct state through `IStructSerializable`
 - then explicitly carries critical replicated fields (`PlayerSlot`, `LoadoutTags`, `CharacterPicked`, `DisplayName`)
+- marks destination setup complete (`bIsSetup=true`) for copied/continued players
 - and explicitly resets transient readiness (`bIsReady=false`) on the destination PlayerState.
 
 ## Save Runtime Contract (C++ Cutover In Progress)
@@ -129,6 +135,12 @@
 - Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
 - Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- GameState hydration precedence:
+- `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
+- If no pending travel state exists, hydration falls back to `CurrentSaveGame` game-state struct.
+- `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
+- Save hydration entrypoints enforce authority on requesters:
+- `RequestGameStateHydration` and `RequestPlayerStateHydration` ignore non-authority requesters (verbose log) to preserve server-authoritative state mutation.
 - Client-join save parity handshake is controller-initiated and subsystem-served:
 - local non-authority `AARPlayerController::BeginPlay` sends `ServerRequestCanonicalSaveSync()`
 - server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
@@ -139,6 +151,16 @@
 - server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
 - clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
 - C++ debug save tooling class resolution now targets native save classes (`UARSaveGame`/`UARSaveIndexGame`) rather than BP class-path loading.
+
+## GameMode/GameState Player Lifecycle
+
+- `AARGameModeBase::HandleStartingNewPlayer_Implementation` owns authority-side join flow:
+- resolves joined `AARPlayerStateBase`
+- adds it to `AARGameStateBase::Players` via `AddTrackedPlayer`
+- if `bIsSetup==false`, assigns slot (`P1` first-free, else `P2`) and marks setup complete
+- then emits BP extension hook `BP_OnPlayerJoined`
+- `AARGameModeBase::Logout` removes leaving player from tracked players and emits `BP_OnPlayerLeft`.
+- `AARGameStateBase` now maintains replicated tracked players array (`Players`) with authority mutators (`AddTrackedPlayer`, `RemoveTrackedPlayer`) and change signal `OnTrackedPlayersChanged` (server + client via RepNotify).
 
 ## Enemy/Invader Runtime
 
