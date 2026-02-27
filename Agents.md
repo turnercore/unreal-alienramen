@@ -161,6 +161,12 @@
 - then emits BP extension hook `BP_OnPlayerJoined`
 - `AARGameModeBase::Logout` removes leaving player from tracked players and emits `BP_OnPlayerLeft`.
 - `AARGameStateBase` now maintains replicated tracked players array (`Players`) with authority mutators (`AddTrackedPlayer`, `RemoveTrackedPlayer`) and change signal `OnTrackedPlayersChanged` (server + client via RepNotify).
+- `AARGameStateBase` provides BP convenience lookups for coop player access:
+- `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from tracked players)
+- `GetOtherPlayerStateFromPlayerState(...)`
+- `GetOtherPlayerStateFromController(...)`
+- `GetOtherPlayerStateFromPawn(...)`
+- `GetOtherPlayerStateFromContext(...)` (accepts PlayerState/Controller/Pawn/UObject and resolves other tracked player)
 
 ## Enemy/Invader Runtime
 
