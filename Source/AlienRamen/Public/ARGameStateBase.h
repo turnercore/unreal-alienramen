@@ -1,11 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARPlayerStateBase.h"
 #include "GameFramework/GameStateBase.h"
 #include "StructSerializable.h"
 #include "ARGameStateBase.generated.h"
 
 class AARPlayerStateBase;
+class APlayerController;
+class APawn;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnTrackedPlayersChangedSignature);
 
@@ -28,6 +31,21 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	bool ContainsTrackedPlayer(const AARPlayerStateBase* Player) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	AARPlayerStateBase* GetPlayerBySlot(EARPlayerSlot Slot) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	AARPlayerStateBase* GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	AARPlayerStateBase* GetOtherPlayerStateFromController(const APlayerController* CurrentPlayerController) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	AARPlayerStateBase* GetOtherPlayerStateFromPawn(const APawn* CurrentPlayerPawn) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	AARPlayerStateBase* GetOtherPlayerStateFromContext(const UObject* CurrentPlayerContext) const;
 
 	const TArray<TObjectPtr<AARPlayerStateBase>>& GetTrackedPlayers() const { return Players; }
 
