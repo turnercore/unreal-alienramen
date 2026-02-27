@@ -125,6 +125,24 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	bool,
 	bOldReady);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnSetupStateChangedSignature,
+	bool,
+	bNewIsSetup,
+	bool,
+	bOldIsSetup);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnLoadoutTagsChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	const FGameplayTagContainer&,
+	NewLoadoutTags,
+	const FGameplayTagContainer&,
+	OldLoadoutTags);
+
 UCLASS()
 class ALIENRAMEN_API AARPlayerStateBase : public APlayerState, public IAbilitySystemInterface, public IStructSerializable
 {
@@ -178,6 +196,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerUpdateReady(bool bNewReady);
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	bool IsSetupComplete() const { return bIsSetup; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
+	void SetIsSetupComplete(bool bNewIsSetup);
+
 	// UI-friendly slot index for local co-op style displays (0-based, from GameState PlayerArray order).
 	// Returns INDEX_NONE if not currently resolvable.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
@@ -197,8 +221,11 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_Loadout, BlueprintReadWrite, Category = "Loadout")
 	FGameplayTagContainer LoadoutTags;
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
+	void SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags);
+
 	UFUNCTION()
-	void OnRep_Loadout();
+	void OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags);
 
 	UPROPERTY()
 	TObjectPtr<class UARAttributeSetCore> AttributeSetCore;
@@ -233,6 +260,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnReadyStatusChangedSignature OnReadyStatusChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnSetupStateChangedSignature OnSetupStateChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnLoadoutTagsChangedSignature OnLoadoutTagsChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
@@ -253,9 +286,12 @@ protected:
 	void OnRep_DisplayName(const FString& OldDisplayName);
 	UFUNCTION()
 	void OnRep_IsReady(bool bOldReady);
+	UFUNCTION()
+	void OnRep_IsSetup(bool bOldIsSetup);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
 	void SetDisplayName_Internal(const FString& NewDisplayName);
 	void SetReady_Internal(bool bNewReady);
+	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags);
 	void EnsureDefaultLoadoutIfEmpty();
 	void BindTrackedAttributeDelegates();
 	void UnbindTrackedAttributeDelegates();
@@ -282,6 +318,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsReady, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsReady = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	bool bIsSetup = false;
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MaxHealthChangedDelegateHandle;

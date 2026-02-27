@@ -16,11 +16,12 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
 	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
 	DOREPLIFETIME(AARPlayerStateBase, bIsReady);
+	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
 }
 
-void AARPlayerStateBase::OnRep_Loadout()
+void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
 {
-	// Optional: notify UI, fire delegate, etc.
+	OnLoadoutTagsChanged.Broadcast(this, PlayerSlot, LoadoutTags, OldLoadoutTags);
 }
 
 AARPlayerStateBase::AARPlayerStateBase()
@@ -158,6 +159,31 @@ void AARPlayerStateBase::ServerUpdateReady_Implementation(bool bNewReady)
 	SetReady_Internal(bNewReady);
 }
 
+void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
+{
+	if (!HasAuthority() || bIsSetup == bNewIsSetup)
+	{
+		return;
+	}
+
+	const bool bOldIsSetup = bIsSetup;
+	bIsSetup = bNewIsSetup;
+	OnRep_IsSetup(bOldIsSetup);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags)
+{
+	if (HasAuthority())
+	{
+		SetLoadoutTags_Internal(NewLoadoutTags);
+		return;
+	}
+
+	// Keep loadout authoritative on server; callers should route through server-owned setup/systems.
+	UE_LOG(ARLog, Warning, TEXT("[PlayerState] SetLoadoutTags ignored on non-authority for '%s'."), *GetNameSafe(this));
+}
+
 void AARPlayerStateBase::SetSpiceMeter(float NewSpiceValue)
 {
 	if (HasAuthority())
@@ -213,6 +239,11 @@ void AARPlayerStateBase::OnRep_IsReady(bool bOldReady)
 	OnReadyStatusChanged.Broadcast(this, PlayerSlot, bIsReady, bOldReady);
 }
 
+void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
+{
+	OnSetupStateChanged.Broadcast(bIsSetup, bOldIsSetup);
+}
+
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
 {
 	if (!HasAuthority() || CharacterPicked == NewCharacter)
@@ -259,6 +290,19 @@ void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 	ForceNetUpdate();
 }
 
+void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags)
+{
+	if (!HasAuthority() || LoadoutTags == NewLoadoutTags)
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
+	LoadoutTags = NewLoadoutTags;
+	OnRep_Loadout(OldLoadoutTags);
+	ForceNetUpdate();
+}
+
 void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 {
 	Super::CopyProperties(PlayerState);
@@ -278,11 +322,12 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	}
 
 	TargetPS->SetPlayerSlot(PlayerSlot);
-	TargetPS->LoadoutTags = LoadoutTags;
+	TargetPS->SetLoadoutTags(LoadoutTags);
 	TargetPS->SetCharacterPicked(CharacterPicked);
 	TargetPS->SetDisplayNameValue(DisplayName);
 
-	// Ready status is transient and should reset after travel handoff.
+	// Mark copied/traveled state as setup-complete; ready remains transient.
+	TargetPS->SetIsSetupComplete(true);
 	TargetPS->SetReadyForRun(false);
 }
 
@@ -315,12 +360,13 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 		return;
 	}
 
-	auto TryAddTag = [this](const TCHAR* TagName)
+	FGameplayTagContainer NewTags;
+	auto TryAddTag = [&NewTags](const TCHAR* TagName)
 	{
 		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TagName), false);
 		if (Tag.IsValid())
 		{
-			LoadoutTags.AddTag(Tag);
+			NewTags.AddTag(Tag);
 		}
 		else
 		{
@@ -332,10 +378,10 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 	TryAddTag(TEXT("Unlock.Gadget.Vac"));
 	TryAddTag(TEXT("Unlock.Secondary.Mine"));
 
-	if (!LoadoutTags.IsEmpty())
+	if (!NewTags.IsEmpty())
 	{
-		ForceNetUpdate();
-		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *LoadoutTags.ToStringSimple());
+		SetLoadoutTags_Internal(NewTags);
+		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *NewTags.ToStringSimple());
 	}
 }
 
