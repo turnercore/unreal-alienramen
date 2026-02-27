@@ -1,9 +1,9 @@
-#include "AREnemyStateTreeSchema.h"
+#include "ARStateTreeAIComponentSchema.h"
 
 #include "AREnemyAIController.h"
 #include "AREnemyBase.h"
 
-UAREnemyStateTreeSchema::UAREnemyStateTreeSchema(const FObjectInitializer& ObjectInitializer)
+UARStateTreeAIComponentSchema::UARStateTreeAIComponentSchema(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	AIControllerClass = AAREnemyAIController::StaticClass();
@@ -11,21 +11,21 @@ UAREnemyStateTreeSchema::UAREnemyStateTreeSchema(const FObjectInitializer& Objec
 	SyncContextDescriptorTypes();
 }
 
-void UAREnemyStateTreeSchema::PostLoad()
+void UARStateTreeAIComponentSchema::PostLoad()
 {
 	Super::PostLoad();
 	SyncContextDescriptorTypes();
 }
 
 #if WITH_EDITOR
-void UAREnemyStateTreeSchema::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
+void UARStateTreeAIComponentSchema::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 	SyncContextDescriptorTypes();
 }
 #endif
 
-void UAREnemyStateTreeSchema::SyncContextDescriptorTypes()
+void UARStateTreeAIComponentSchema::SyncContextDescriptorTypes()
 {
 	ContextActorClass = AAREnemyBase::StaticClass();
 	AIControllerClass = AAREnemyAIController::StaticClass();
@@ -39,3 +39,4 @@ void UAREnemyStateTreeSchema::SyncContextDescriptorTypes()
 		ContextDataDescs[1].Struct = AIControllerClass.Get();
 	}
 }
+

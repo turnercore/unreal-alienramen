@@ -27,6 +27,9 @@
 
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
+- Native authoritative lobby/runtime bases:
+- `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
+- `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Gameplay/content is Blueprint-heavy in `Content/CodeAlong/Blueprints`
@@ -51,6 +54,15 @@
 
 - `AARPlayerStateBase` owns the authoritative ASC (`UAbilitySystemComponent`) and `UARAttributeSetCore`.
 - `AARPlayerStateBase::LoadoutTags` is the source-of-truth loadout container. Do not create/shadow a Blueprint variable named `LoadoutTags` on derived PlayerState BPs.
+- PlayerState ownership migrated to C++ for lobby/runtime identity flags:
+- `CharacterPicked` (`EARCharacterChoice`: `None`, `Brother`, `Sister`) is native replicated state on `AARPlayerStateBase` with server setter path (`SetCharacterPicked` / `ServerPickCharacter`) and change signal `OnCharacterPickedChanged`.
+- `DisplayName` is native replicated state on `AARPlayerStateBase` with server setter path (`SetDisplayNameValue` / `ServerUpdateDisplayName`), mirrored into `PlayerName` (`SetPlayerName`), and change signal `OnDisplayNameChanged`.
+- `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
+- `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
+- `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
+- `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
+- `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
+- PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
 - Server applies a default debug-safe loadout when `LoadoutTags` is empty (`Unlock.Ship.Sammy`, `Unlock.Gadget.Vac`, `Unlock.Secondary.Mine`) during `BeginPlay` and after server struct-state apply.
 - Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
@@ -59,6 +71,10 @@
 - Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
+- Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
+- PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
+- Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
+- Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARShipCharacterBase` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
 - tie-break by ability level then stable order
@@ -95,6 +111,63 @@
 - Hydration is server-authoritative:
 - interface default blocks non-authority actor execution
 - PlayerState/GameState override forwards client calls via `ServerApplyStateFromStruct` RPC
+- Seamless travel handoff for PlayerState is C++-owned via `AARPlayerStateBase::CopyProperties`:
+- extracts/applies struct state through `IStructSerializable`
+- then explicitly carries critical replicated fields (`PlayerSlot`, `LoadoutTags`, `CharacterPicked`, `DisplayName`)
+- marks destination setup complete (`bIsSetup=true`) for copied/continued players
+- and explicitly resets transient readiness (`bIsReady=false`) on the destination PlayerState.
+
+## Save Runtime Contract (C++ Cutover In Progress)
+
+- Runtime save objects now exist in C++:
+- `UARSaveGame` (`Source/AlienRamen/Public/ARSaveGame.h`)
+- `UARSaveIndexGame` (`Source/AlienRamen/Public/ARSaveIndexGame.h`)
+- `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`) is the new `UGameInstanceSubsystem` entrypoint for save/load/list/create/delete and hydration requests.
+- `UARSaveGame` preserves top-level save property names used by prior BP flow (`SeenDialogue`, `DialogueFlags`, `Unlocks`, `Choices`, `Money`, `Meat`, `Material`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`) to minimize hydration rewiring.
+- BP hydration compatibility helpers are exposed on `UARSaveGame`:
+- `GetGameStateDataInstancedStruct()`
+- `GetPlayerStateDataInstancedStructByIndex(int32)`
+- `FindPlayerStateDataBySlot(...)`
+- `FindPlayerStateDataByIdentity(...)`
+- Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString`, with legacy id/display name fields).
+- Save player payload now stores native `CharacterPicked` enum (`EARCharacterChoice`) in `FARPlayerStateSaveData` (not string/name reflection).
+- Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
+- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) using thematic word pools plus a numeric ticket; when uniqueness is requested, candidates are checked against existing index entries before selection.
+- Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
+- Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
+- Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- GameState hydration precedence:
+- `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
+- If no pending travel state exists, hydration falls back to `CurrentSaveGame` game-state struct.
+- `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
+- Save hydration entrypoints enforce authority on requesters:
+- `RequestGameStateHydration` and `RequestPlayerStateHydration` ignore non-authority requesters (verbose log) to preserve server-authoritative state mutation.
+- Client-join save parity handshake is controller-initiated and subsystem-served:
+- local non-authority `AARPlayerController::BeginPlay` sends `ServerRequestCanonicalSaveSync()`
+- server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
+- target client persists snapshot via `ClientPersistCanonicalSave(...)` -> `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
+- if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
+- Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
+- Multiplayer persistence parity seam added:
+- server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
+- clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
+- C++ debug save tooling class resolution now targets native save classes (`UARSaveGame`/`UARSaveIndexGame`) rather than BP class-path loading.
+
+## GameMode/GameState Player Lifecycle
+
+- `AARGameModeBase::HandleStartingNewPlayer_Implementation` owns authority-side join flow:
+- resolves joined `AARPlayerStateBase`
+- adds it to `AARGameStateBase::Players` via `AddTrackedPlayer`
+- if `bIsSetup==false`, assigns slot (`P1` first-free, else `P2`) and marks setup complete
+- then emits BP extension hook `BP_OnPlayerJoined`
+- `AARGameModeBase::Logout` removes leaving player from tracked players and emits `BP_OnPlayerLeft`.
+- `AARGameStateBase` now maintains replicated tracked players array (`Players`) with authority mutators (`AddTrackedPlayer`, `RemoveTrackedPlayer`) and change signal `OnTrackedPlayersChanged` (server + client via RepNotify).
+- `AARGameStateBase` provides BP convenience lookups for coop player access:
+- `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from tracked players)
+- `GetOtherPlayerStateFromPlayerState(...)`
+- `GetOtherPlayerStateFromController(...)`
+- `GetOtherPlayerStateFromPawn(...)`
+- `GetOtherPlayerStateFromContext(...)` (accepts PlayerState/Controller/Pawn/UObject and resolves other tracked player)
 
 ## Enemy/Invader Runtime
 
@@ -159,9 +232,10 @@
 - Enemy AI emits one-shot enemy entry events for StateTree:
 - `Event.Enemy.EnteredScreen` fires first time enemy is inside entered-screen bounds.
 - `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
-- Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
+- Added dedicated StateTree schema class `UARStateTreeAIComponentSchema` (`AR StateTree AI Schema`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
+- `UARStateTreeAIComponent` now returns `UARStateTreeAIComponentSchema` from `GetSchema()`, so StateTree assets assigned for enemy AI must compile against that schema.
 - Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`) or `FormationMode`; formation behavior is driven by runtime AI/state + wave lock flags.
 - Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
 - Formation lock flags are authored at wave level (`FARWaveDefRow`), not per-spawn:
@@ -172,6 +246,7 @@
 - enemy AI controller enforces no auto-start on possess (stops running logic if needed) to avoid pre-context evaluation
 - enemy runtime context assignment (`SetWaveRuntimeContext`) triggers `TryStartStateTreeForCurrentPawn()` once lock flags/slot/phase are already set
 - controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`) and defers one tick while `WaveInstanceId == INDEX_NONE`
+- StateTree start always defers at least one tick after a valid context to allow enemy definition/effects/tags to finish applying before logic runs.
 - Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
 - Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
 - After StateTree startup, controller resends the pawn's current runtime context (`WavePhase`, entered-screen, in-formation) so dropped pre-start events do not leave StateTree out of sync (for example missing Berserk transition).
@@ -208,6 +283,30 @@
 - Damage helper API contract: `ApplyDamageViaGAS(...)` on enemy/ship outputs current Health after application (same function, no separate result variant).
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
+- Enemy ASC state-tag bridge helpers exist (authority only, ref-counted):
+- `AAREnemyBase::PushASCStateTag` / `PopASCStateTag`
+- `AAREnemyBase::PushASCStateTags` / `PopASCStateTags`
+- controller forwarding helpers (useful for explicit StateTree task wiring):
+- `AAREnemyAIController::PushPawnASCStateTag` / `PopPawnASCStateTag`
+- `AAREnemyAIController::PushPawnASCStateTags` / `PopPawnASCStateTags`
+- controller event forwarding helpers for BP/runtime:
+- `AAREnemyAIController::SendStateTreeEvent(const FStateTreeEvent&)`
+- `AAREnemyAIController::SendStateTreeEventByTag(FGameplayTag, FName Origin=NAME_None)`
+- `AAREnemyAIController::GetEnemyStateTreeComponent()`
+- enemy-side BP convenience wrappers:
+- `AAREnemyBase::GetEnemyAIController()`
+- `AAREnemyBase::GetEnemyStateTreeComponent()`
+- `AAREnemyBase::SendEnemyStateTreeEvent(const FStateTreeEvent&)`
+- `AAREnemyBase::SendEnemyStateTreeEventByTag(FGameplayTag, FName Origin=NAME_None)`
+- pawn->controller signal bridge (fact reporting; controller remains decision owner):
+- `AAREnemyBase::SendEnemySignalToController(FGameplayTag SignalTag, AActor* RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true)`
+- `AAREnemyAIController::ReceivePawnSignal(...)`
+- `AAREnemyAIController::BP_OnPawnSignal(...)` (optional BP hook)
+- Enemy AI now uses `UARStateTreeAIComponent` (subclass of `UStateTreeAIComponent`) which computes active StateTree state-tag set and emits tag deltas.
+- `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
+- Active-path semantics apply: if both parent and child states are active and tagged, both tags are present on ASC.
+- Avoid double-wiring: if using this automatic bridge, do not also push/pop the same tags manually in StateTree tasks.
+- Automation coverage exists for the mirror bridge in `Source/AlienRamen/Private/Tests/AREnemyAIStateTagBridgeTest.cpp` (`AlienRamen.AI.StateTree.ASCStateTagBridge`), validating add/dedupe/remove behavior from StateTree active-tag deltas to enemy ASC loose tags.
 - Damage helper APIs exposed for BP/gameplay wiring:
 - `AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
 - `AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
@@ -240,6 +339,9 @@
 
 - Still active and used by runtime widget + editor tab, but expected to be replaced during upcoming C++ save-system refactor.
 - Keep only currently necessary integration notes here; avoid expanding detailed schema/behavior docs for this legacy path unless needed for active work.
+- Native meat save schema now exists in C++ as `FARMeatState` (`Source/AlienRamen/Public/ARSaveTypes.h`) with per-color buckets (`RedAmount`, `BlueAmount`, `WhiteAmount`), `UnspecifiedAmount`, and extensible `AdditionalAmountsByType` (`TMap<FGameplayTag,int32>`).
+- `FARMeatState::GetTotalAmount()` computes total meat as the sum of all buckets (colors + unspecified + additional typed entries).
+- Debug save edits (`bSetMeatAmount`) now prefer typed write into native `FARMeatState` (`SetTotalAsUnspecified`) and keep legacy fallback for BP `ST_Meat.Amount` during migration.
 
 ## Invader Authoring Editor Tool (Current)
 
