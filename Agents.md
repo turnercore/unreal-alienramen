@@ -56,6 +56,7 @@
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
+- Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
 - Ability selection/matching is deterministic:
