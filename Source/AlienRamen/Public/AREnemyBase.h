@@ -7,13 +7,16 @@
 #include "GameplayTagContainer.h"
 #include "GameplayAbilitySpec.h"
 #include "GameplayEffectTypes.h"
+#include "StateTreeEvents.h"
 #include "GameFramework/Character.h"
 #include "ARInvaderTypes.h"
 #include "AREnemyBase.generated.h"
 
+class AAREnemyAIController;
 class UAbilitySystemComponent;
 class UARAttributeSetCore;
 class UAREnemyAttributeSet;
+class UARStateTreeAIComponent;
 class UGameplayEffect;
 struct FOnAttributeChangeData;
 
@@ -72,6 +75,23 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS")
 	bool HasAnyASCGameplayTags(const FGameplayTagContainer& TagsToCheck) const;
+
+	// StateTree/AI-facing helpers for temporary state tags on the enemy ASC.
+	// Push/Pop are ref-counted so nested states can safely share tags.
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS|State", meta = (BlueprintAuthorityOnly))
+	void PushASCStateTag(FGameplayTag StateTag);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS|State", meta = (BlueprintAuthorityOnly))
+	void PopASCStateTag(FGameplayTag StateTag);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS|State", meta = (BlueprintAuthorityOnly))
+	void PushASCStateTags(const FGameplayTagContainer& StateTags);
+
+	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|GAS|State", meta = (BlueprintAuthorityOnly))
+	void PopASCStateTags(const FGameplayTagContainer& StateTags);
+
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|GAS|State")
+	int32 GetASCStateTagRefCount(FGameplayTag StateTag) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AR|Enemy|Life", meta = (BlueprintAuthorityOnly))
 	void HandleDeath(AActor* InstigatorActor);
@@ -161,6 +181,30 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Invader")
 	bool HasFormationTargetWorldLocation() const { return bHasFormationTargetWorldLocation; }
+
+	// Convenience accessors for controller-owned StateTree runtime.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Enemy|AI|State")
+	AAREnemyAIController* GetEnemyAIController() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Enemy|AI|State")
+	UARStateTreeAIComponent* GetEnemyStateTreeComponent() const;
+
+	// Sends a fully-authored StateTree event via this enemy's AI controller (authority only).
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Enemy|AI|State", meta = (BlueprintAuthorityOnly))
+	bool SendEnemyStateTreeEvent(const FStateTreeEvent& Event);
+
+	// Convenience helper for tag-only events with optional origin.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Enemy|AI|State", meta = (BlueprintAuthorityOnly))
+	bool SendEnemyStateTreeEventByTag(FGameplayTag EventTag, FName Origin = NAME_None);
+
+	// Pawn-side fact report to AI controller. Controller owns routing/decisions.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Enemy|AI|Signal", meta = (BlueprintAuthorityOnly))
+	bool SendEnemySignalToController(
+		FGameplayTag SignalTag,
+		AActor* RelatedActor = nullptr,
+		FVector WorldLocation = FVector::ZeroVector,
+		float ScalarValue = 0.f,
+		bool bForwardToStateTree = true);
 
 	// Returns true only on the first frame this enemy is considered leaked.
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader")
@@ -298,8 +342,10 @@ private:
 	int32 LastDispatchedWavePhaseWaveId = INDEX_NONE;
 	EARWavePhase LastDispatchedWavePhase = EARWavePhase::Berserk;
 	float EnteredGameplayScreenServerTime = 0.f;
+	TMap<FGameplayTag, int32> ASCStateTagRefCounts;
 
 	void TryDispatchWavePhaseEvent();
 	void TryDispatchEnteredScreenEvent();
 	void TryDispatchInFormationEvent();
+	void ClearASCStateTags();
 };

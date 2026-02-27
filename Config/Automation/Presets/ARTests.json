@@ -1,0 +1,15 @@
+{
+	"id": "ARTests",
+	"name": "ARTests",
+	"enabledTests": [
+		"AlienRamen.AI.StateTree.ASCStateTagBridge",
+		"Blueprints.Compiler.FindBestMatchingFunc",
+		"Blueprints.Compiler.TypePromotion",
+		"Blueprints.Compiler.TypeToOperator",
+		"Blueprints.Nodes.PromotableOp.AddPinInterface",
+		"Blueprints.Nodes.PromotableOp.ConnectionChanged",
+		"Blueprints.Nodes.PromotableOp.DefaultState",
+		"Blueprints.Nodes.PromotableOp.PrimitivePromotions",
+		"Blueprints.Nodes.PromotableOp.TolerancePin"
+	]
+}

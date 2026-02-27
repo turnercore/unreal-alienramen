@@ -310,6 +310,7 @@ void AAREnemyBase::UnPossessed()
 {
 	if (HasAuthority())
 	{
+		ClearASCStateTags();
 		ClearStartupAbilitySet();
 		ClearRuntimeEnemyEffects();
 		ClearRuntimeEnemyTags();
@@ -943,6 +944,11 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	{
 		EnemyAI->TryStartStateTreeForCurrentPawn();
 	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase|WaveCtx] Enemy='%s' has no AAREnemyAIController at context assignment; StateTree start deferred."),
+			*GetNameSafe(this));
+	}
 }
 
 void AAREnemyBase::SetWavePhase(EARWavePhase InWavePhase, float InPhaseStartServerTime)
@@ -1024,6 +1030,95 @@ bool AAREnemyBase::CheckAndMarkLeaked(float LeakBoundaryX)
 	bCountedAsLeak = true;
 
 	return true;
+}
+
+AAREnemyAIController* AAREnemyBase::GetEnemyAIController() const
+{
+	return Cast<AAREnemyAIController>(GetController());
+}
+
+UARStateTreeAIComponent* AAREnemyBase::GetEnemyStateTreeComponent() const
+{
+	if (const AAREnemyAIController* EnemyAI = GetEnemyAIController())
+	{
+		return EnemyAI->GetEnemyStateTreeComponent();
+	}
+
+	return nullptr;
+}
+
+bool AAREnemyBase::SendEnemyStateTreeEvent(const FStateTreeEvent& Event)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemyStateTreeEvent ignored on non-authority for '%s' (Event=%s)."),
+			*GetNameSafe(this), *Event.Tag.ToString());
+		return false;
+	}
+
+	if (AAREnemyAIController* EnemyAI = GetEnemyAIController())
+	{
+		return EnemyAI->SendStateTreeEvent(Event);
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemyStateTreeEvent failed for '%s': no enemy AI controller (Event=%s)."),
+		*GetNameSafe(this), *Event.Tag.ToString());
+	return false;
+}
+
+bool AAREnemyBase::SendEnemyStateTreeEventByTag(FGameplayTag EventTag, FName Origin)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemyStateTreeEventByTag ignored on non-authority for '%s' (Event=%s)."),
+			*GetNameSafe(this), *EventTag.ToString());
+		return false;
+	}
+
+	if (AAREnemyAIController* EnemyAI = GetEnemyAIController())
+	{
+		return EnemyAI->SendStateTreeEventByTag(EventTag, Origin);
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemyStateTreeEventByTag failed for '%s': no enemy AI controller (Event=%s)."),
+		*GetNameSafe(this), *EventTag.ToString());
+	return false;
+}
+
+bool AAREnemyBase::SendEnemySignalToController(
+	FGameplayTag SignalTag,
+	AActor* RelatedActor,
+	FVector WorldLocation,
+	float ScalarValue,
+	bool bForwardToStateTree)
+{
+	if (!HasAuthority() || !SignalTag.IsValid())
+	{
+		if (!HasAuthority())
+		{
+			UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemySignalToController ignored on non-authority for '%s' (Signal=%s)."),
+				*GetNameSafe(this), *SignalTag.ToString());
+		}
+		else
+		{
+			UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemySignalToController ignored for '%s': invalid signal tag."), *GetNameSafe(this));
+		}
+		return false;
+	}
+
+	if (AAREnemyAIController* EnemyAI = GetEnemyAIController())
+	{
+		return EnemyAI->ReceivePawnSignal(
+			SignalTag,
+			RelatedActor,
+			WorldLocation,
+			ScalarValue,
+			bForwardToStateTree);
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemySignalToController failed for '%s': no enemy AI controller (Signal=%s)."),
+		*GetNameSafe(this), *SignalTag.ToString());
+	return false;
 }
 
 void AAREnemyBase::TryDispatchWavePhaseEvent()
@@ -1151,6 +1246,87 @@ void AAREnemyBase::CancelAbilitiesByTag(FGameplayTag AbilityTag, bool bAllowPart
 	AbilitySystemComponent->CancelAbilities(&WithTags, nullptr);
 }
 
+void AAREnemyBase::PushASCStateTag(FGameplayTag StateTag)
+{
+	if (!HasAuthority() || !AbilitySystemComponent || !StateTag.IsValid())
+	{
+		return;
+	}
+
+	int32& RefCount = ASCStateTagRefCounts.FindOrAdd(StateTag);
+	RefCount++;
+	if (RefCount > 1)
+	{
+		return;
+	}
+
+	FGameplayTagContainer SingleTag;
+	SingleTag.AddTag(StateTag);
+	AbilitySystemComponent->AddLooseGameplayTags(SingleTag, 1, EGameplayTagReplicationState::TagOnly);
+}
+
+void AAREnemyBase::PopASCStateTag(FGameplayTag StateTag)
+{
+	if (!HasAuthority() || !AbilitySystemComponent || !StateTag.IsValid())
+	{
+		return;
+	}
+
+	int32* RefCount = ASCStateTagRefCounts.Find(StateTag);
+	if (!RefCount)
+	{
+		return;
+	}
+
+	(*RefCount)--;
+	if (*RefCount > 0)
+	{
+		return;
+	}
+
+	ASCStateTagRefCounts.Remove(StateTag);
+	FGameplayTagContainer SingleTag;
+	SingleTag.AddTag(StateTag);
+	AbilitySystemComponent->RemoveLooseGameplayTags(SingleTag, 1, EGameplayTagReplicationState::TagOnly);
+}
+
+void AAREnemyBase::PushASCStateTags(const FGameplayTagContainer& StateTags)
+{
+	if (!HasAuthority() || StateTags.IsEmpty())
+	{
+		return;
+	}
+
+	for (const FGameplayTag StateTag : StateTags)
+	{
+		PushASCStateTag(StateTag);
+	}
+}
+
+void AAREnemyBase::PopASCStateTags(const FGameplayTagContainer& StateTags)
+{
+	if (!HasAuthority() || StateTags.IsEmpty())
+	{
+		return;
+	}
+
+	for (const FGameplayTag StateTag : StateTags)
+	{
+		PopASCStateTag(StateTag);
+	}
+}
+
+int32 AAREnemyBase::GetASCStateTagRefCount(FGameplayTag StateTag) const
+{
+	if (!StateTag.IsValid())
+	{
+		return 0;
+	}
+
+	const int32* RefCount = ASCStateTagRefCounts.Find(StateTag);
+	return RefCount ? *RefCount : 0;
+}
+
 bool AAREnemyBase::HasASCGameplayTag(FGameplayTag TagToCheck) const
 {
 	if (!AbilitySystemComponent || !TagToCheck.IsValid())
@@ -1169,6 +1345,31 @@ bool AAREnemyBase::HasAnyASCGameplayTags(const FGameplayTagContainer& TagsToChec
 	}
 
 	return AbilitySystemComponent->HasAnyMatchingGameplayTags(TagsToCheck);
+}
+
+void AAREnemyBase::ClearASCStateTags()
+{
+	if (!AbilitySystemComponent || ASCStateTagRefCounts.IsEmpty())
+	{
+		ASCStateTagRefCounts.Reset();
+		return;
+	}
+
+	FGameplayTagContainer TagsToRemove;
+	for (const TPair<FGameplayTag, int32>& Entry : ASCStateTagRefCounts)
+	{
+		if (Entry.Key.IsValid() && Entry.Value > 0)
+		{
+			TagsToRemove.AddTag(Entry.Key);
+		}
+	}
+
+	if (!TagsToRemove.IsEmpty())
+	{
+		AbilitySystemComponent->RemoveLooseGameplayTags(TagsToRemove, 1, EGameplayTagReplicationState::TagOnly);
+	}
+
+	ASCStateTagRefCounts.Reset();
 }
 
 void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
