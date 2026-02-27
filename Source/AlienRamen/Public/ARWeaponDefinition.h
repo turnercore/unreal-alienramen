@@ -5,6 +5,8 @@
 #include "GameplayTagContainer.h"
 #include "ARWeaponDefinition.generated.h"
 
+class UGameplayEffect;
+
 UCLASS(BlueprintType)
 class UARWeaponDefinition : public UDataAsset
 {

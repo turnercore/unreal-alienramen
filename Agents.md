@@ -58,6 +58,10 @@
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
+- Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
+- PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
+- Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
+- Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARShipCharacterBase` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
 - tie-break by ability level then stable order
@@ -157,9 +161,10 @@
 - Enemy AI emits one-shot enemy entry events for StateTree:
 - `Event.Enemy.EnteredScreen` fires first time enemy is inside entered-screen bounds.
 - `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
-- Added dedicated StateTree schema class `UAREnemyStateTreeSchema` (`AR Enemy StateTree AI Component`) for enemy AI authoring defaults:
+- Added dedicated StateTree schema class `UARStateTreeAIComponentSchema` (`AR StateTree AI Schema`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
+- `UARStateTreeAIComponent` now returns `UARStateTreeAIComponentSchema` from `GetSchema()`, so StateTree assets assigned for enemy AI must compile against that schema.
 - Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`) or `FormationMode`; formation behavior is driven by runtime AI/state + wave lock flags.
 - Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
 - Formation lock flags are authored at wave level (`FARWaveDefRow`), not per-spawn:
@@ -207,6 +212,29 @@
 - Damage helper API contract: `ApplyDamageViaGAS(...)` on enemy/ship outputs current Health after application (same function, no separate result variant).
 - Enemy facing helper API:
 - `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
+- Enemy ASC state-tag bridge helpers exist (authority only, ref-counted):
+- `AAREnemyBase::PushASCStateTag` / `PopASCStateTag`
+- `AAREnemyBase::PushASCStateTags` / `PopASCStateTags`
+- controller forwarding helpers (useful for explicit StateTree task wiring):
+- `AAREnemyAIController::PushPawnASCStateTag` / `PopPawnASCStateTag`
+- `AAREnemyAIController::PushPawnASCStateTags` / `PopPawnASCStateTags`
+- controller event forwarding helpers for BP/runtime:
+- `AAREnemyAIController::SendStateTreeEvent(const FStateTreeEvent&)`
+- `AAREnemyAIController::SendStateTreeEventByTag(FGameplayTag, FName Origin=NAME_None)`
+- `AAREnemyAIController::GetEnemyStateTreeComponent()`
+- enemy-side BP convenience wrappers:
+- `AAREnemyBase::GetEnemyAIController()`
+- `AAREnemyBase::GetEnemyStateTreeComponent()`
+- `AAREnemyBase::SendEnemyStateTreeEvent(const FStateTreeEvent&)`
+- `AAREnemyBase::SendEnemyStateTreeEventByTag(FGameplayTag, FName Origin=NAME_None)`
+- pawn->controller signal bridge (fact reporting; controller remains decision owner):
+- `AAREnemyBase::SendEnemySignalToController(FGameplayTag SignalTag, AActor* RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true)`
+- `AAREnemyAIController::ReceivePawnSignal(...)`
+- `AAREnemyAIController::BP_OnPawnSignal(...)` (optional BP hook)
+- Enemy AI now uses `UARStateTreeAIComponent` (subclass of `UStateTreeAIComponent`) which computes active StateTree state-tag set and emits tag deltas.
+- `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
+- Active-path semantics apply: if both parent and child states are active and tagged, both tags are present on ASC.
+- Avoid double-wiring: if using this automatic bridge, do not also push/pop the same tags manually in StateTree tasks.
 - Damage helper APIs exposed for BP/gameplay wiring:
 - `AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
 - `AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)

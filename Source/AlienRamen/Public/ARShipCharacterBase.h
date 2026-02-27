@@ -23,6 +23,7 @@ class AARPlayerController;
 class UARWeaponDefinition;
 class UARAbilitySet;
 struct FTimerHandle;
+struct FOnAttributeChangeData;
 
 /**
  * Base ship character for Alien Ramen.
@@ -100,6 +101,10 @@ protected:
 
 	// Shared init: Owner = PlayerState, Avatar = this
 	void InitAbilityActorInfo();
+	void BindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
+	void UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
+	void OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData);
+	void RefreshCharacterMovementSpeedFromAttributes();
 	void ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 	void ClearPrimaryWeaponRuntimeEffects();
 
@@ -176,6 +181,8 @@ protected:
 
 	UPROPERTY(Transient)
 	FActiveGameplayEffectHandle BasePrimaryFireRateEffectHandle;
+
+	FDelegateHandle MoveSpeedChangedDelegateHandle;
 
 	// ---- BP row struct field names (must match your row struct fields) ----
 	static const FName NAME_PrimaryWeapon;

@@ -35,10 +35,85 @@ UAbilitySystemComponent* AARPlayerStateBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+float AARPlayerStateBase::GetCoreAttributeValue(EARCoreAttributeType AttributeType) const
+{
+	if (!AbilitySystemComponent)
+	{
+		return 0.f;
+	}
+
+	switch (AttributeType)
+	{
+	case EARCoreAttributeType::Health:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+	case EARCoreAttributeType::MaxHealth:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
+	case EARCoreAttributeType::Spice:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceAttribute());
+	case EARCoreAttributeType::MaxSpice:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
+	case EARCoreAttributeType::MoveSpeed:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute());
+	default:
+		return 0.f;
+	}
+}
+
+FARPlayerCoreAttributeSnapshot AARPlayerStateBase::GetCoreAttributeSnapshot() const
+{
+	FARPlayerCoreAttributeSnapshot Snapshot;
+	Snapshot.Health = GetCoreAttributeValue(EARCoreAttributeType::Health);
+	Snapshot.MaxHealth = GetCoreAttributeValue(EARCoreAttributeType::MaxHealth);
+	Snapshot.Spice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	Snapshot.MaxSpice = GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+	Snapshot.MoveSpeed = GetCoreAttributeValue(EARCoreAttributeType::MoveSpeed);
+	return Snapshot;
+}
+
+float AARPlayerStateBase::GetSpiceNormalized() const
+{
+	const float MaxSpice = GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+	if (MaxSpice <= KINDA_SMALL_NUMBER)
+	{
+		return 0.f;
+	}
+
+	return FMath::Clamp(GetCoreAttributeValue(EARCoreAttributeType::Spice) / MaxSpice, 0.f, 1.f);
+}
+
+void AARPlayerStateBase::SetSpiceMeter(float NewSpiceValue)
+{
+	if (HasAuthority())
+	{
+		SetSpiceMeter_Internal(NewSpiceValue);
+		return;
+	}
+
+	ServerSetSpiceMeter(NewSpiceValue);
+}
+
+void AARPlayerStateBase::ClearSpiceMeter()
+{
+	SetSpiceMeter(0.f);
+}
+
+void AARPlayerStateBase::ServerSetSpiceMeter_Implementation(float NewSpiceValue)
+{
+	SetSpiceMeter_Internal(NewSpiceValue);
+}
+
 void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	EnsureDefaultLoadoutIfEmpty();
+	BindTrackedAttributeDelegates();
+	BroadcastTrackedAttributeSnapshot();
+}
+
+void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnbindTrackedAttributeDelegates();
+	Super::EndPlay(EndPlayReason);
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -92,4 +167,153 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 		ForceNetUpdate();
 		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *LoadoutTags.ToStringSimple());
 	}
+}
+
+void AARPlayerStateBase::BindTrackedAttributeDelegates()
+{
+	if (!AbilitySystemComponent)
+	{
+		return;
+	}
+
+	if (!HealthChangedDelegateHandle.IsValid())
+	{
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute())
+			.AddUObject(this, &AARPlayerStateBase::HandleHealthAttributeChanged);
+	}
+
+	if (!MaxHealthChangedDelegateHandle.IsValid())
+	{
+		MaxHealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute())
+			.AddUObject(this, &AARPlayerStateBase::HandleMaxHealthAttributeChanged);
+	}
+
+	if (!SpiceChangedDelegateHandle.IsValid())
+	{
+		SpiceChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute())
+			.AddUObject(this, &AARPlayerStateBase::HandleSpiceAttributeChanged);
+	}
+
+	if (!MaxSpiceChangedDelegateHandle.IsValid())
+	{
+		MaxSpiceChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute())
+			.AddUObject(this, &AARPlayerStateBase::HandleMaxSpiceAttributeChanged);
+	}
+
+	if (!MoveSpeedChangedDelegateHandle.IsValid())
+	{
+		MoveSpeedChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+			.AddUObject(this, &AARPlayerStateBase::HandleMoveSpeedAttributeChanged);
+	}
+}
+
+void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
+{
+	if (!AbilitySystemComponent)
+	{
+		HealthChangedDelegateHandle.Reset();
+		MaxHealthChangedDelegateHandle.Reset();
+		SpiceChangedDelegateHandle.Reset();
+		MaxSpiceChangedDelegateHandle.Reset();
+		MoveSpeedChangedDelegateHandle.Reset();
+		return;
+	}
+
+	if (HealthChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute())
+			.Remove(HealthChangedDelegateHandle);
+		HealthChangedDelegateHandle.Reset();
+	}
+
+	if (MaxHealthChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute())
+			.Remove(MaxHealthChangedDelegateHandle);
+		MaxHealthChangedDelegateHandle.Reset();
+	}
+
+	if (SpiceChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute())
+			.Remove(SpiceChangedDelegateHandle);
+		SpiceChangedDelegateHandle.Reset();
+	}
+
+	if (MaxSpiceChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute())
+			.Remove(MaxSpiceChangedDelegateHandle);
+		MaxSpiceChangedDelegateHandle.Reset();
+	}
+
+	if (MoveSpeedChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+			.Remove(MoveSpeedChangedDelegateHandle);
+		MoveSpeedChangedDelegateHandle.Reset();
+	}
+}
+
+void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
+{
+	const FARPlayerCoreAttributeSnapshot Snapshot = GetCoreAttributeSnapshot();
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::Health, Snapshot.Health, Snapshot.Health);
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxHealth, Snapshot.MaxHealth, Snapshot.MaxHealth);
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, Snapshot.Spice, Snapshot.Spice);
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, Snapshot.MaxSpice, Snapshot.MaxSpice);
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+
+	OnHealthChanged.Broadcast(Snapshot.Health, Snapshot.Health);
+	OnMaxHealthChanged.Broadcast(Snapshot.MaxHealth, Snapshot.MaxHealth);
+	OnSpiceChanged.Broadcast(Snapshot.Spice, Snapshot.Spice);
+	OnMaxSpiceChanged.Broadcast(Snapshot.MaxSpice, Snapshot.MaxSpice);
+	OnMoveSpeedChanged.Broadcast(Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+}
+
+void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
+{
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::Health, ChangeData.NewValue, ChangeData.OldValue);
+	OnHealthChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::HandleMaxHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
+{
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxHealth, ChangeData.NewValue, ChangeData.OldValue);
+	OnMaxHealthChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
+{
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
+	OnSpiceChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
+{
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, ChangeData.NewValue, ChangeData.OldValue);
+	OnMaxSpiceChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData)
+{
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, ChangeData.NewValue, ChangeData.OldValue);
+	OnMoveSpeedChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue)
+{
+	OnCoreAttributeChanged.Broadcast(AttributeType, NewValue, OldValue);
+}
+
+void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	const float MaxSpice = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
+	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.f, FMath::Max(0.f, MaxSpice));
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
 }
