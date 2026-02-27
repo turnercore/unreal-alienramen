@@ -549,6 +549,9 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	AARPlayerController* ARPC = Cast<AARPlayerController>(NewController);
 	if (!ARPC)
 	{
+		UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess by non-gameplay controller '%s' (class=%s); ship loadout init skipped. Expect missing abilities/stats until possessed by AARPlayerController."),
+			*GetNameSafe(NewController),
+			*GetNameSafe(NewController ? NewController->GetClass() : nullptr));
 		return;
 	}
 
