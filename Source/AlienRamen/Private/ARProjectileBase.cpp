@@ -2,6 +2,7 @@
 
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
+#include "Engine/World.h"
 
 AARProjectileBase::AARProjectileBase()
 {
@@ -33,7 +34,8 @@ void AARProjectileBase::Tick(float DeltaSeconds)
 
 void AARProjectileBase::EvaluateOffscreenRelease()
 {
-	EvaluateOffscreenReleaseInternal(0.f);
+	const float DeltaSeconds = GetWorld() ? GetWorld()->GetDeltaSeconds() : 0.f;
+	EvaluateOffscreenReleaseInternal(DeltaSeconds);
 }
 
 void AARProjectileBase::EvaluateOffscreenReleaseInternal(float DeltaSeconds)
