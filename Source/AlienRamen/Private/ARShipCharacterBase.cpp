@@ -21,6 +21,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayEffectExtension.h"
 
 static UARWeaponDefinition* ExtractWeaponDef(const UScriptStruct* StructType, const void* StructData, FName PropName);
 
@@ -580,6 +582,7 @@ void AARShipCharacterBase::InitAbilityActorInfo()
 	AARPlayerStateBase* PS = GetPlayerState<AARPlayerStateBase>();
 	if (!PS)
 	{
+		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
 		ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
 		return;
@@ -588,15 +591,23 @@ void AARShipCharacterBase::InitAbilityActorInfo()
 	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 	if (!ASC)
 	{
+		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
 		ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
 		return;
+	}
+
+	if (CachedASC != ASC)
+	{
+		UnbindMoveSpeedChangeDelegate(CachedASC);
 	}
 
 	CachedASC = ASC;
 
 	// Owner = PlayerState, Avatar = this pawn
 	ASC->InitAbilityActorInfo(PS, this);
+	BindMoveSpeedChangeDelegate(ASC);
+	RefreshCharacterMovementSpeedFromAttributes();
 	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, ASC);
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 
@@ -666,6 +677,7 @@ void AARShipCharacterBase::UnPossessed()
 {
 	Super::UnPossessed();
 	ClearPrimaryWeaponRuntimeEffects();
+	UnbindMoveSpeedChangeDelegate(CachedASC);
 	CachedASC = nullptr;
 	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
 	bServerLoadoutApplied = false;
@@ -680,6 +692,55 @@ void AARShipCharacterBase::UnPossessed()
 	{
 		ClearAppliedLoadout();
 	}
+}
+
+void AARShipCharacterBase::BindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC)
+{
+	if (!ASC || MoveSpeedChangedDelegateHandle.IsValid())
+	{
+		return;
+	}
+
+	MoveSpeedChangedDelegateHandle = ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+		.AddUObject(this, &AARShipCharacterBase::OnMoveSpeedChanged);
+}
+
+void AARShipCharacterBase::UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC)
+{
+	if (!ASC || !MoveSpeedChangedDelegateHandle.IsValid())
+	{
+		MoveSpeedChangedDelegateHandle.Reset();
+		return;
+	}
+
+	ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+		.Remove(MoveSpeedChangedDelegateHandle);
+	MoveSpeedChangedDelegateHandle.Reset();
+}
+
+void AARShipCharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData)
+{
+	(void)ChangeData;
+	RefreshCharacterMovementSpeedFromAttributes();
+}
+
+void AARShipCharacterBase::RefreshCharacterMovementSpeedFromAttributes()
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	if (!MoveComp)
+	{
+		return;
+	}
+
+	const float MoveSpeed = FMath::Max(0.f, ASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute()));
+	MoveComp->MaxWalkSpeed = MoveSpeed;
+	MoveComp->MaxFlySpeed = MoveSpeed;
 }
 
 bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
