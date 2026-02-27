@@ -1,4 +1,7 @@
 #include "ARDebugSaveToolLibrary.h"
+#include "ARSaveGame.h"
+#include "ARSaveIndexGame.h"
+#include "ARSaveTypes.h"
 
 #include "ARLog.h"
 
@@ -10,8 +13,6 @@
 
 namespace ARDebugSaveToolInternal
 {
-	static const TCHAR* DebugIndexClassPath = TEXT("/Game/CodeAlong/Blueprints/SaveSystem/SG_SaveIndex.SG_SaveIndex_C");
-	static const TCHAR* DebugSaveClassPath = TEXT("/Game/CodeAlong/Blueprints/SaveSystem/SG_AlienRamenSave.SG_AlienRamenSave_C");
 	static const TCHAR* DebugIndexSlot = TEXT("SaveIndexDebug");
 	static const TCHAR* DebugSlotSuffix = TEXT("_debug");
 	static constexpr int32 MaxDebugRevisionsToKeep = 5;
@@ -308,36 +309,12 @@ bool UARDebugSaveToolLibrary::IsDebugSlotName(FName SlotName)
 
 UClass* UARDebugSaveToolLibrary::ResolveDebugIndexClass()
 {
-	static TWeakObjectPtr<UClass> CachedClass;
-	if (CachedClass.IsValid()) return CachedClass.Get();
-
-	const FSoftClassPath Path(ARDebugSaveToolInternal::DebugIndexClassPath);
-	UClass* Loaded = Path.TryLoadClass<USaveGame>();
-	if (!Loaded)
-	{
-		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|Validation] Could not load debug index class '%s'."), ARDebugSaveToolInternal::DebugIndexClassPath);
-		return nullptr;
-	}
-
-	CachedClass = Loaded;
-	return Loaded;
+	return UARSaveIndexGame::StaticClass();
 }
 
 UClass* UARDebugSaveToolLibrary::ResolveDebugSaveClass()
 {
-	static TWeakObjectPtr<UClass> CachedClass;
-	if (CachedClass.IsValid()) return CachedClass.Get();
-
-	const FSoftClassPath Path(ARDebugSaveToolInternal::DebugSaveClassPath);
-	UClass* Loaded = Path.TryLoadClass<USaveGame>();
-	if (!Loaded)
-	{
-		UE_LOG(ARLog, Error, TEXT("[DebugSaveTool|Validation] Could not load debug save class '%s'."), ARDebugSaveToolInternal::DebugSaveClassPath);
-		return nullptr;
-	}
-
-	CachedClass = Loaded;
-	return Loaded;
+	return UARSaveGame::StaticClass();
 }
 
 USaveGame* UARDebugSaveToolLibrary::LoadOrCreateDebugIndexSave(FString& OutError)
@@ -430,6 +407,53 @@ bool UARDebugSaveToolLibrary::GetStructFromObjectProperty(UObject* Object, FName
 	OutStructType = StructProp->Struct;
 	OutValuePtr = StructProp->ContainerPtrToValuePtr<void>(Object);
 	return OutStructType && OutValuePtr;
+}
+
+static bool TrySetMeatAmountOnSaveObject(UObject* SaveGameObject, int32 InMeatAmount)
+{
+	if (!SaveGameObject)
+	{
+		return false;
+	}
+
+	FStructProperty* MeatStructProp = nullptr;
+	for (TFieldIterator<FProperty> It(SaveGameObject->GetClass()); It; ++It)
+	{
+		FProperty* Prop = *It;
+		if (!Prop || !Prop->GetName().StartsWith(TEXT("Meat"), ESearchCase::IgnoreCase))
+		{
+			continue;
+		}
+
+		MeatStructProp = CastField<FStructProperty>(Prop);
+		if (MeatStructProp)
+		{
+			break;
+		}
+	}
+
+	if (!MeatStructProp || !MeatStructProp->Struct)
+	{
+		return false;
+	}
+
+	UScriptStruct* MeatStructType = MeatStructProp->Struct;
+	void* MeatValuePtr = MeatStructProp->ContainerPtrToValuePtr<void>(SaveGameObject);
+	if (!MeatValuePtr)
+	{
+		return false;
+	}
+
+	// Preferred native C++ struct path.
+	if (MeatStructType == FARMeatState::StaticStruct())
+	{
+		FARMeatState* MeatState = reinterpret_cast<FARMeatState*>(MeatValuePtr);
+		MeatState->SetTotalAsUnspecified(InMeatAmount);
+		return true;
+	}
+
+	// Legacy BP struct fallback (`ST_Meat`) by reflected field prefix.
+	return ARDebugSaveToolInternal::TrySetIntField(MeatStructType, MeatValuePtr, TEXT("Amount"), InMeatAmount);
 }
 
 bool UARDebugSaveToolLibrary::ReadSlotEntries(USaveGame* DebugIndexSave, TArray<FARDebugSaveSlotEntry>& OutSlots, FString& OutError)
@@ -937,18 +961,9 @@ FARDebugSaveEditResult UARDebugSaveToolLibrary::ApplyDebugSaveEdits(USaveGame* S
 
 	if (Edits.bSetMeatAmount)
 	{
-		UScriptStruct* MeatStructType = nullptr;
-		void* MeatValuePtr = nullptr;
-		if (GetStructFromObjectProperty(SaveGameObject, TEXT("Meat"), MeatStructType, MeatValuePtr))
+		if (TrySetMeatAmountOnSaveObject(SaveGameObject, Edits.MeatAmount))
 		{
-			if (ARDebugSaveToolInternal::TrySetIntField(MeatStructType, MeatValuePtr, TEXT("Amount"), Edits.MeatAmount))
-			{
-				++Changes;
-			}
-			else
-			{
-				UE_LOG(ARLog, Warning, TEXT("[DebugSaveTool|Validation] Could not set Meat.Amount on save object '%s'."), *GetNameSafe(SaveGameObject));
-			}
+			++Changes;
 		}
 		else
 		{

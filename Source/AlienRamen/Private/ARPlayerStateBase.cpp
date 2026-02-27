@@ -4,12 +4,14 @@
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "ARAttributeSetCore.h"
+#include "GameFramework/GameStateBase.h"
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
+	DOREPLIFETIME(AARPlayerStateBase, PlayerSlot);
 }
 
 void AARPlayerStateBase::OnRep_Loadout()
@@ -81,6 +83,30 @@ float AARPlayerStateBase::GetSpiceNormalized() const
 	return FMath::Clamp(GetCoreAttributeValue(EARCoreAttributeType::Spice) / MaxSpice, 0.f, 1.f);
 }
 
+int32 AARPlayerStateBase::GetHUDPlayerSlotIndex() const
+{
+	const AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
+	if (!GS)
+	{
+		return INDEX_NONE;
+	}
+
+	return GS->PlayerArray.IndexOfByKey(this);
+}
+
+void AARPlayerStateBase::SetPlayerSlot(EARPlayerSlot NewSlot)
+{
+	if (!HasAuthority() || PlayerSlot == NewSlot)
+	{
+		return;
+	}
+
+	const EARPlayerSlot OldSlot = PlayerSlot;
+	PlayerSlot = NewSlot;
+	OnRep_PlayerSlot(OldSlot);
+	ForceNetUpdate();
+}
+
 void AARPlayerStateBase::SetSpiceMeter(float NewSpiceValue)
 {
 	if (HasAuthority())
@@ -114,6 +140,11 @@ void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UnbindTrackedAttributeDelegates();
 	Super::EndPlay(EndPlayReason);
+}
+
+void AARPlayerStateBase::OnRep_PlayerSlot(EARPlayerSlot OldSlot)
+{
+	OnPlayerSlotChanged.Broadcast(PlayerSlot, OldSlot);
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -264,46 +295,46 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
 
-	OnHealthChanged.Broadcast(Snapshot.Health, Snapshot.Health);
-	OnMaxHealthChanged.Broadcast(Snapshot.MaxHealth, Snapshot.MaxHealth);
-	OnSpiceChanged.Broadcast(Snapshot.Spice, Snapshot.Spice);
-	OnMaxSpiceChanged.Broadcast(Snapshot.MaxSpice, Snapshot.MaxSpice);
-	OnMoveSpeedChanged.Broadcast(Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+	OnHealthChanged.Broadcast(this, PlayerSlot, Snapshot.Health, Snapshot.Health);
+	OnMaxHealthChanged.Broadcast(this, PlayerSlot, Snapshot.MaxHealth, Snapshot.MaxHealth);
+	OnSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.Spice, Snapshot.Spice);
+	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
+	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Health, ChangeData.NewValue, ChangeData.OldValue);
-	OnHealthChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+	OnHealthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleMaxHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxHealth, ChangeData.NewValue, ChangeData.OldValue);
-	OnMaxHealthChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+	OnMaxHealthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
-	OnSpiceChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+	OnSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, ChangeData.NewValue, ChangeData.OldValue);
-	OnMaxSpiceChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, ChangeData.NewValue, ChangeData.OldValue);
-	OnMoveSpeedChanged.Broadcast(ChangeData.NewValue, ChangeData.OldValue);
+	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue)
 {
-	OnCoreAttributeChanged.Broadcast(AttributeType, NewValue, OldValue);
+	OnCoreAttributeChanged.Broadcast(this, PlayerSlot, AttributeType, NewValue, OldValue);
 }
 
 void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)

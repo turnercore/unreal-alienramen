@@ -12,6 +12,15 @@
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UARAttributeSetCore;
+class AARPlayerStateBase;
+
+UENUM(BlueprintType)
+enum class EARPlayerSlot : uint8
+{
+	Unknown = 0,
+	P1,
+	P2
+};
 
 UENUM(BlueprintType)
 enum class EARCoreAttributeType : uint8
@@ -44,8 +53,12 @@ struct FARPlayerCoreAttributeSnapshot
 	float MoveSpeed = 0.f;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FAROnCoreAttributeChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
 	EARCoreAttributeType,
 	AttributeType,
 	float,
@@ -53,7 +66,23 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	float,
 	OldValue);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnScalarAttributeChangedSignature, float, NewValue, float, OldValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnScalarAttributeChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	float,
+	NewValue,
+	float,
+	OldValue);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnPlayerSlotChangedSignature,
+	EARPlayerSlot,
+	NewSlot,
+	EARPlayerSlot,
+	OldSlot);
 
 UCLASS()
 class ALIENRAMEN_API AARPlayerStateBase : public APlayerState, public IAbilitySystemInterface, public IStructSerializable
@@ -74,6 +103,17 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	float GetSpiceNormalized() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	EARPlayerSlot GetPlayerSlot() const { return PlayerSlot; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
+	void SetPlayerSlot(EARPlayerSlot NewSlot);
+
+	// UI-friendly slot index for local co-op style displays (0-based, from GameState PlayerArray order).
+	// Returns INDEX_NONE if not currently resolvable.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
+	int32 GetHUDPlayerSlotIndex() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Attributes")
 	void SetSpiceMeter(float NewSpiceValue);
@@ -113,6 +153,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
 	FAROnScalarAttributeChangedSignature OnMoveSpeedChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnPlayerSlotChangedSignature OnPlayerSlotChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
@@ -124,6 +167,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	UFUNCTION()
+	void OnRep_PlayerSlot(EARPlayerSlot OldSlot);
 	void EnsureDefaultLoadoutIfEmpty();
 	void BindTrackedAttributeDelegates();
 	void UnbindTrackedAttributeDelegates();
@@ -138,6 +183,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlot, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MaxHealthChangedDelegateHandle;

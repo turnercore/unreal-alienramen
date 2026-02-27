@@ -51,6 +51,8 @@
 
 - `AARPlayerStateBase` owns the authoritative ASC (`UAbilitySystemComponent`) and `UARAttributeSetCore`.
 - `AARPlayerStateBase::LoadoutTags` is the source-of-truth loadout container. Do not create/shadow a Blueprint variable named `LoadoutTags` on derived PlayerState BPs.
+- `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
+- PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
 - Server applies a default debug-safe loadout when `LoadoutTags` is empty (`Unlock.Ship.Sammy`, `Unlock.Gadget.Vac`, `Unlock.Secondary.Mine`) during `BeginPlay` and after server struct-state apply.
 - Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
@@ -98,6 +100,35 @@
 - Hydration is server-authoritative:
 - interface default blocks non-authority actor execution
 - PlayerState/GameState override forwards client calls via `ServerApplyStateFromStruct` RPC
+
+## Save Runtime Contract (C++ Cutover In Progress)
+
+- Runtime save objects now exist in C++:
+- `UARSaveGame` (`Source/AlienRamen/Public/ARSaveGame.h`)
+- `UARSaveIndexGame` (`Source/AlienRamen/Public/ARSaveIndexGame.h`)
+- `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`) is the new `UGameInstanceSubsystem` entrypoint for save/load/list/create/delete and hydration requests.
+- `UARSaveGame` preserves top-level save property names used by prior BP flow (`SeenDialogue`, `DialogueFlags`, `Unlocks`, `Choices`, `Money`, `Meat`, `Material`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`) to minimize hydration rewiring.
+- BP hydration compatibility helpers are exposed on `UARSaveGame`:
+- `GetGameStateDataInstancedStruct()`
+- `GetPlayerStateDataInstancedStructByIndex(int32)`
+- `FindPlayerStateDataBySlot(...)`
+- `FindPlayerStateDataByIdentity(...)`
+- Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString`, with legacy id/display name fields).
+- Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
+- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) using thematic word pools plus a numeric ticket; when uniqueness is requested, candidates are checked against existing index entries before selection.
+- Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
+- Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
+- Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- Client-join save parity handshake is controller-initiated and subsystem-served:
+- local non-authority `AARPlayerController::BeginPlay` sends `ServerRequestCanonicalSaveSync()`
+- server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
+- target client persists snapshot via `ClientPersistCanonicalSave(...)` -> `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
+- if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
+- Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
+- Multiplayer persistence parity seam added:
+- server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
+- clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
+- C++ debug save tooling class resolution now targets native save classes (`UARSaveGame`/`UARSaveIndexGame`) rather than BP class-path loading.
 
 ## Enemy/Invader Runtime
 
@@ -268,6 +299,9 @@
 
 - Still active and used by runtime widget + editor tab, but expected to be replaced during upcoming C++ save-system refactor.
 - Keep only currently necessary integration notes here; avoid expanding detailed schema/behavior docs for this legacy path unless needed for active work.
+- Native meat save schema now exists in C++ as `FARMeatState` (`Source/AlienRamen/Public/ARSaveTypes.h`) with per-color buckets (`RedAmount`, `BlueAmount`, `WhiteAmount`), `UnspecifiedAmount`, and extensible `AdditionalAmountsByType` (`TMap<FGameplayTag,int32>`).
+- `FARMeatState::GetTotalAmount()` computes total meat as the sum of all buckets (colors + unspecified + additional typed entries).
+- Debug save edits (`bSetMeatAmount`) now prefer typed write into native `FARMeatState` (`SetTotalAsUnspecified`) and keep legacy fallback for BP `ST_Meat.Amount` during migration.
 
 ## Invader Authoring Editor Tool (Current)
 
