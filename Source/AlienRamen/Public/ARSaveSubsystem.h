@@ -63,6 +63,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestGameStateHydration(AARGameStateBase* Requester);
 
+	// Sets travel-transient GameState data to be applied first on next RequestGameStateHydration call.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void SetPendingTravelGameStateData(const FInstancedStruct& PendingStateData);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void ClearPendingTravelGameStateData();
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool HasPendingTravelGameStateData() const { return PendingTravelGameStateData.IsValid(); }
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestPlayerStateHydration(AARPlayerStateBase* Requester);
 
@@ -119,4 +129,7 @@ private:
 
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<AARPlayerController>> PendingCanonicalSyncRequests;
+
+	UPROPERTY(Transient)
+	FInstancedStruct PendingTravelGameStateData;
 };
