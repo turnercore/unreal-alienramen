@@ -1,10 +1,11 @@
 #include "ARPlayerStateBase.h"
 
+#include "ARAttributeSetCore.h"
 #include "ARLog.h"
 #include "AbilitySystemComponent.h"
-#include "Net/UnrealNetwork.h"
-#include "ARAttributeSetCore.h"
 #include "GameFramework/GameStateBase.h"
+#include "Net/UnrealNetwork.h"
+#include "StructSerializable.h"
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -12,24 +13,26 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
 	DOREPLIFETIME(AARPlayerStateBase, PlayerSlot);
+	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
+	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
+	DOREPLIFETIME(AARPlayerStateBase, bIsReady);
 }
 
 void AARPlayerStateBase::OnRep_Loadout()
 {
 	// Optional: notify UI, fire delegate, etc.
 }
+
 AARPlayerStateBase::AARPlayerStateBase()
 {
-	// PlayerState replicates by default; still safe to be explicit
 	bReplicates = true;
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
-
-	// Good default for players; you can revisit later
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	AttributeSetCore = CreateDefaultSubobject<UARAttributeSetCore>(TEXT("AttributeSetCore"));
+	DisplayName = GetPlayerName();
 }
 
 UAbilitySystemComponent* AARPlayerStateBase::GetAbilitySystemComponent() const
@@ -107,6 +110,54 @@ void AARPlayerStateBase::SetPlayerSlot(EARPlayerSlot NewSlot)
 	ForceNetUpdate();
 }
 
+void AARPlayerStateBase::SetCharacterPicked(EARCharacterChoice NewCharacter)
+{
+	if (HasAuthority())
+	{
+		SetCharacterPicked_Internal(NewCharacter);
+		return;
+	}
+
+	ServerPickCharacter(NewCharacter);
+}
+
+void AARPlayerStateBase::ServerPickCharacter_Implementation(EARCharacterChoice NewCharacter)
+{
+	SetCharacterPicked_Internal(NewCharacter);
+}
+
+void AARPlayerStateBase::SetDisplayNameValue(const FString& NewDisplayName)
+{
+	if (HasAuthority())
+	{
+		SetDisplayName_Internal(NewDisplayName);
+		return;
+	}
+
+	ServerUpdateDisplayName(NewDisplayName);
+}
+
+void AARPlayerStateBase::ServerUpdateDisplayName_Implementation(const FString& NewDisplayName)
+{
+	SetDisplayName_Internal(NewDisplayName);
+}
+
+void AARPlayerStateBase::SetReadyForRun(bool bNewReady)
+{
+	if (HasAuthority())
+	{
+		SetReady_Internal(bNewReady);
+		return;
+	}
+
+	ServerUpdateReady(bNewReady);
+}
+
+void AARPlayerStateBase::ServerUpdateReady_Implementation(bool bNewReady)
+{
+	SetReady_Internal(bNewReady);
+}
+
 void AARPlayerStateBase::SetSpiceMeter(float NewSpiceValue)
 {
 	if (HasAuthority())
@@ -145,6 +196,94 @@ void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AARPlayerStateBase::OnRep_PlayerSlot(EARPlayerSlot OldSlot)
 {
 	OnPlayerSlotChanged.Broadcast(PlayerSlot, OldSlot);
+}
+
+void AARPlayerStateBase::OnRep_CharacterPicked(EARCharacterChoice OldCharacter)
+{
+	OnCharacterPickedChanged.Broadcast(this, PlayerSlot, CharacterPicked, OldCharacter);
+}
+
+void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
+{
+	OnDisplayNameChanged.Broadcast(this, PlayerSlot, DisplayName, OldDisplayName);
+}
+
+void AARPlayerStateBase::OnRep_IsReady(bool bOldReady)
+{
+	OnReadyStatusChanged.Broadcast(this, PlayerSlot, bIsReady, bOldReady);
+}
+
+void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
+{
+	if (!HasAuthority() || CharacterPicked == NewCharacter)
+	{
+		return;
+	}
+
+	const EARCharacterChoice OldCharacter = CharacterPicked;
+	CharacterPicked = NewCharacter;
+	OnRep_CharacterPicked(OldCharacter);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::SetDisplayName_Internal(const FString& NewDisplayName)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FString SanitizedName = NewDisplayName.TrimStartAndEnd();
+	if (DisplayName == SanitizedName)
+	{
+		return;
+	}
+
+	const FString OldDisplayName = DisplayName;
+	DisplayName = SanitizedName;
+	SetPlayerName(DisplayName);
+	OnRep_DisplayName(OldDisplayName);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
+{
+	if (!HasAuthority() || bIsReady == bNewReady)
+	{
+		return;
+	}
+
+	const bool bOldReady = bIsReady;
+	bIsReady = bNewReady;
+	OnRep_IsReady(bOldReady);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
+{
+	Super::CopyProperties(PlayerState);
+
+	AARPlayerStateBase* TargetPS = Cast<AARPlayerStateBase>(PlayerState);
+	if (!TargetPS)
+	{
+		return;
+	}
+
+	if (GetClass()->ImplementsInterface(UStructSerializable::StaticClass())
+		&& TargetPS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
+	{
+		FInstancedStruct CurrentState;
+		IStructSerializable::Execute_ExtractStateToStruct(this, CurrentState);
+		IStructSerializable::Execute_ApplyStateFromStruct(TargetPS, CurrentState);
+	}
+
+	TargetPS->SetPlayerSlot(PlayerSlot);
+	TargetPS->LoadoutTags = LoadoutTags;
+	TargetPS->SetCharacterPicked(CharacterPicked);
+	TargetPS->SetDisplayNameValue(DisplayName);
+
+	// Ready status is transient and should reset after travel handoff.
+	TargetPS->SetReadyForRun(false);
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -252,36 +391,31 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 
 	if (HealthChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute())
-			.Remove(HealthChangedDelegateHandle);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute()).Remove(HealthChangedDelegateHandle);
 		HealthChangedDelegateHandle.Reset();
 	}
 
 	if (MaxHealthChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute())
-			.Remove(MaxHealthChangedDelegateHandle);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute()).Remove(MaxHealthChangedDelegateHandle);
 		MaxHealthChangedDelegateHandle.Reset();
 	}
 
 	if (SpiceChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute())
-			.Remove(SpiceChangedDelegateHandle);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute()).Remove(SpiceChangedDelegateHandle);
 		SpiceChangedDelegateHandle.Reset();
 	}
 
 	if (MaxSpiceChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute())
-			.Remove(MaxSpiceChangedDelegateHandle);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute()).Remove(MaxSpiceChangedDelegateHandle);
 		MaxSpiceChangedDelegateHandle.Reset();
 	}
 
 	if (MoveSpeedChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
-			.Remove(MoveSpeedChangedDelegateHandle);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute()).Remove(MoveSpeedChangedDelegateHandle);
 		MoveSpeedChangedDelegateHandle.Reset();
 	}
 }

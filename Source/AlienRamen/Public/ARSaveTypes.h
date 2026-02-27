@@ -83,9 +83,8 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
 	FARPlayerIdentity Identity;
 
-	// Kept as a name to avoid hard-coupling to BP-only enum assets during C++ migration.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
-	FName CharacterPicked = NAME_None;
+	EARCharacterChoice CharacterPicked = EARCharacterChoice::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
 	FGameplayTagContainer LoadoutTags;

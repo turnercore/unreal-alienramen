@@ -23,6 +23,14 @@ enum class EARPlayerSlot : uint8
 };
 
 UENUM(BlueprintType)
+enum class EARCharacterChoice : uint8
+{
+	None = 0,
+	Brother,
+	Sister
+};
+
+UENUM(BlueprintType)
 enum class EARCoreAttributeType : uint8
 {
 	Health,
@@ -84,6 +92,39 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	EARPlayerSlot,
 	OldSlot);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnCharacterPickedChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	EARCharacterChoice,
+	NewCharacter,
+	EARCharacterChoice,
+	OldCharacter);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnDisplayNameChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	const FString&,
+	NewDisplayName,
+	const FString&,
+	OldDisplayName);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnReadyStatusChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	bool,
+	bNewReady,
+	bool,
+	bOldReady);
+
 UCLASS()
 class ALIENRAMEN_API AARPlayerStateBase : public APlayerState, public IAbilitySystemInterface, public IStructSerializable
 {
@@ -109,6 +150,33 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void SetPlayerSlot(EARPlayerSlot NewSlot);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void SetCharacterPicked(EARCharacterChoice NewCharacter);
+
+	UFUNCTION(Server, Reliable)
+	void ServerPickCharacter(EARCharacterChoice NewCharacter);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FString GetDisplayNameValue() const { return DisplayName; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void SetDisplayNameValue(const FString& NewDisplayName);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateDisplayName(const FString& NewDisplayName);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	bool IsReadyForRun() const { return bIsReady; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void SetReadyForRun(bool bNewReady);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateReady(bool bNewReady);
 
 	// UI-friendly slot index for local co-op style displays (0-based, from GameState PlayerArray order).
 	// Returns INDEX_NONE if not currently resolvable.
@@ -156,9 +224,19 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnPlayerSlotChangedSignature OnPlayerSlotChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnCharacterPickedChangedSignature OnCharacterPickedChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnDisplayNameChangedSignature OnDisplayNameChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnReadyStatusChangedSignature OnReadyStatusChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
+	virtual void CopyProperties(APlayerState* PlayerState) override;
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
 	UFUNCTION(Server, Reliable)
@@ -169,6 +247,15 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	UFUNCTION()
 	void OnRep_PlayerSlot(EARPlayerSlot OldSlot);
+	UFUNCTION()
+	void OnRep_CharacterPicked(EARCharacterChoice OldCharacter);
+	UFUNCTION()
+	void OnRep_DisplayName(const FString& OldDisplayName);
+	UFUNCTION()
+	void OnRep_IsReady(bool bOldReady);
+	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
+	void SetDisplayName_Internal(const FString& NewDisplayName);
+	void SetReady_Internal(bool bNewReady);
 	void EnsureDefaultLoadoutIfEmpty();
 	void BindTrackedAttributeDelegates();
 	void UnbindTrackedAttributeDelegates();
@@ -186,6 +273,15 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlot, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
+
+	UPROPERTY(ReplicatedUsing=OnRep_CharacterPicked, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	EARCharacterChoice CharacterPicked = EARCharacterChoice::None;
+
+	UPROPERTY(ReplicatedUsing=OnRep_DisplayName, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	FString DisplayName;
+
+	UPROPERTY(ReplicatedUsing=OnRep_IsReady, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	bool bIsReady = false;
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MaxHealthChangedDelegateHandle;

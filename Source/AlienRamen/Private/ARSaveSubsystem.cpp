@@ -82,33 +82,6 @@ namespace ARSaveInternal
 		return false;
 	}
 
-	static FName TryReadCharacterPicked(const UObject* Object)
-	{
-		if (!Object)
-		{
-			return NAME_None;
-		}
-
-		for (TFieldIterator<FProperty> It(Object->GetClass()); It; ++It)
-		{
-			FProperty* Prop = *It;
-			if (!Prop || !Prop->GetName().StartsWith(TEXT("CharacterPicked"), ESearchCase::IgnoreCase))
-			{
-				continue;
-			}
-
-			const void* ValuePtr = Prop->ContainerPtrToValuePtr<void>(Object);
-			FString Exported;
-			Prop->ExportTextItem_Direct(Exported, ValuePtr, nullptr, const_cast<UObject*>(Object), PPF_None);
-			Exported.TrimStartAndEndInline();
-			if (!Exported.IsEmpty())
-			{
-				return FName(*Exported);
-			}
-		}
-
-		return NAME_None;
-	}
 }
 
 void UARSaveSubsystem::Deinitialize()
@@ -369,14 +342,14 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 
 		FARPlayerStateSaveData PlayerData;
 		PlayerData.Identity.LegacyId = ARPS->GetPlayerId();
-		PlayerData.Identity.DisplayName = FText::FromString(ARPS->GetPlayerName());
+		PlayerData.Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
 		PlayerData.Identity.PlayerSlot = ARPS->GetPlayerSlot();
 		if (PS->GetUniqueId().IsValid())
 		{
 			PlayerData.Identity.UniqueNetIdString = PS->GetUniqueId()->ToString();
 		}
 		PlayerData.LoadoutTags = ARPS->LoadoutTags;
-		PlayerData.CharacterPicked = ARSaveInternal::TryReadCharacterPicked(ARPS);
+		PlayerData.CharacterPicked = ARPS->GetCharacterPicked();
 
 		if (ARPS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
 		{
@@ -861,7 +834,7 @@ void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester
 
 	FARPlayerIdentity QueryIdentity;
 	QueryIdentity.LegacyId = Requester->GetPlayerId();
-	QueryIdentity.DisplayName = FText::FromString(Requester->GetPlayerName());
+	QueryIdentity.DisplayName = FText::FromString(Requester->GetDisplayNameValue());
 	QueryIdentity.PlayerSlot = Requester->GetPlayerSlot();
 	if (Requester->GetUniqueId().IsValid())
 	{
@@ -879,6 +852,11 @@ void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester
 	{
 		IStructSerializable::Execute_ApplyStateFromStruct(Requester, PlayerData.PlayerStateData);
 	}
+
+	// Ensure canonical replicated player-facing fields are restored even if not part of struct schema.
+	Requester->SetCharacterPicked(PlayerData.CharacterPicked);
+	Requester->SetDisplayNameValue(PlayerData.Identity.DisplayName.ToString());
+	Requester->LoadoutTags = PlayerData.LoadoutTags;
 }
 
 void UARSaveSubsystem::BroadcastSaveFailure(const FARSaveResult& Result)
