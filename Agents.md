@@ -170,6 +170,7 @@
 - enemy AI controller enforces no auto-start on possess (stops running logic if needed) to avoid pre-context evaluation
 - enemy runtime context assignment (`SetWaveRuntimeContext`) triggers `TryStartStateTreeForCurrentPawn()` once lock flags/slot/phase are already set
 - controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`) and defers one tick while `WaveInstanceId == INDEX_NONE`
+- StateTree start always defers at least one tick after a valid context to allow enemy definition/effects/tags to finish applying before logic runs.
 - Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
 - Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
 - After StateTree startup, controller resends the pawn's current runtime context (`WavePhase`, entered-screen, in-formation) so dropped pre-start events do not leave StateTree out of sync (for example missing Berserk transition).
