@@ -235,6 +235,7 @@
 - `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
 - Active-path semantics apply: if both parent and child states are active and tagged, both tags are present on ASC.
 - Avoid double-wiring: if using this automatic bridge, do not also push/pop the same tags manually in StateTree tasks.
+- Automation coverage exists for the mirror bridge in `Source/AlienRamen/Private/Tests/AREnemyAIStateTagBridgeTest.cpp` (`AlienRamen.AI.StateTree.ASCStateTagBridge`), validating add/dedupe/remove behavior from StateTree active-tag deltas to enemy ASC loose tags.
 - Damage helper APIs exposed for BP/gameplay wiring:
 - `AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
 - `AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
