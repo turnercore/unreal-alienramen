@@ -204,6 +204,7 @@
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
 - default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once it has remained offscreen for `OffscreenReleaseDelay` seconds.
+- `EvaluateOffscreenRelease()` (BlueprintCallable) advances offscreen time using world delta seconds, so manual/BP calls preserve the same delay semantics as tick-driven evaluation.
 - projectile cull delay defaults to project settings value `UARInvaderDirectorSettings::ProjectileOffscreenCullSeconds` (default `0.1s`) when `bUseProjectSettingsOffscreenCullSeconds` is true.
 - offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for purely local/projectile cases.
 - `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
