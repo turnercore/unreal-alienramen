@@ -1,9 +1,12 @@
-#include "ARDebugSaveToolLibrary.h"
 #include "AREnemyAuthoringPanel.h"
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
+#include "ARSaveSubsystem.h"
+#include "ARSaveGame.h"
+#include "ARSaveTypes.h"
 
 #include "IDetailsView.h"
+#include "Editor.h"
 #include "LevelEditor.h"
 #include "Modules/ModuleManager.h"
 #include "PropertyEditorModule.h"
@@ -23,6 +26,7 @@
 namespace ARDebugSaveEditor
 {
 	static const FName TabName(TEXT("AR_DebugSaveTool"));
+	static const FString DebugSlotSuffix = TEXT("_debug");
 
 	class SPanel final : public SCompoundWidget
 	{
@@ -128,7 +132,7 @@ namespace ARDebugSaveEditor
 
 						+ SVerticalBox::Slot().FillHeight(1.f)
 						[
-							SAssignNew(SlotListView, SListView<TSharedPtr<FARDebugSaveSlotEntry>>)
+							SAssignNew(SlotListView, SListView<TSharedPtr<FARSaveSlotDescriptor>>)
 							.ListItemsSource(&SlotItems)
 							.OnGenerateRow(this, &SPanel::OnGenerateRow)
 						]
@@ -157,11 +161,11 @@ namespace ARDebugSaveEditor
 		}
 
 	private:
-		TSharedRef<ITableRow> OnGenerateRow(TSharedPtr<FARDebugSaveSlotEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const
+		TSharedRef<ITableRow> OnGenerateRow(TSharedPtr<FARSaveSlotDescriptor> Item, const TSharedRef<STableViewBase>& OwnerTable) const
 		{
 			const FString Label = FString::Printf(TEXT("%s  |  # %d  |  Money %d"),
 				*Item->SlotName.ToString(), Item->SlotNumber, Item->Money);
-			return SNew(STableRow<TSharedPtr<FARDebugSaveSlotEntry>>, OwnerTable)
+			return SNew(STableRow<TSharedPtr<FARSaveSlotDescriptor>>, OwnerTable)
 				[
 					SNew(STextBlock).Text(FText::FromString(Label))
 				];
@@ -170,17 +174,29 @@ namespace ARDebugSaveEditor
 		void RefreshSlots()
 		{
 			FString Error;
-			TArray<FARDebugSaveSlotEntry> Slots;
-			if (!UARDebugSaveToolLibrary::ListDebugSlots(Slots, Error))
+			UARSaveSubsystem* Subsystem = GetSaveSubsystem(Error);
+			if (!Subsystem)
 			{
-				SetStatus(FString::Printf(TEXT("Refresh failed: %s"), *Error));
+				SetStatus(Error);
+				return;
+			}
+
+			TArray<FARSaveSlotDescriptor> Slots;
+			FARSaveResult Result;
+			if (!Subsystem->ListSaves(Slots, Result))
+			{
+				SetStatus(FString::Printf(TEXT("Refresh failed: %s"), *Result.Error));
 				return;
 			}
 
 			SlotItems.Reset();
-			for (const FARDebugSaveSlotEntry& Entry : Slots)
+			for (const FARSaveSlotDescriptor& Entry : Slots)
 			{
-				SlotItems.Add(MakeShared<FARDebugSaveSlotEntry>(Entry));
+				if (!IsDebugSlot(Entry.SlotName))
+				{
+					continue;
+				}
+				SlotItems.Add(MakeShared<FARSaveSlotDescriptor>(Entry));
 			}
 			SlotListView->RequestListRefresh();
 			SetStatus(FString::Printf(TEXT("Loaded %d debug slots."), SlotItems.Num()));
@@ -194,28 +210,37 @@ namespace ARDebugSaveEditor
 
 		FReply OnCreateSlot()
 		{
-			const FName BaseName(*SlotNameTextBox->GetText().ToString());
-			FName NewSlotName = NAME_None;
-			USaveGame* NewSave = nullptr;
 			FString Error;
-			if (!UARDebugSaveToolLibrary::CreateDebugSave(BaseName, NewSlotName, NewSave, Error))
+			UARSaveSubsystem* Subsystem = GetSaveSubsystem(Error);
+			if (!Subsystem)
 			{
-				SetStatus(FString::Printf(TEXT("Create failed: %s"), *Error));
+				SetStatus(Error);
 				return FReply::Handled();
 			}
 
-			CurrentSlotName = NewSlotName;
-			CurrentSaveObject.Reset(NewSave);
+			FName BaseName(*SlotNameTextBox->GetText().ToString());
+			BaseName = NormalizeDebugSlot(BaseName, Subsystem);
+
+			FARSaveSlotDescriptor NewSlot;
+			FARSaveResult Result;
+			if (!Subsystem->CreateNewSave(BaseName, NewSlot, Result))
+			{
+				SetStatus(FString::Printf(TEXT("Create failed: %s"), *Result.Error));
+				return FReply::Handled();
+			}
+
+			CurrentSlotName = NewSlot.SlotName;
+			CurrentSaveObject = Subsystem->GetCurrentSaveGame();
 			SlotNameTextBox->SetText(FText::GetEmpty());
 			BindCurrentSaveToDetails();
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Created slot base '%s' at revision 0."), *NewSlotName.ToString()));
+			SetStatus(FString::Printf(TEXT("Created slot base '%s' at revision %d."), *NewSlot.SlotName.ToString(), NewSlot.SlotNumber));
 			return FReply::Handled();
 		}
 
 		FReply OnLoadSelected()
 		{
-			const TArray<TSharedPtr<FARDebugSaveSlotEntry>> Selected = SlotListView->GetSelectedItems();
+			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
 			if (Selected.IsEmpty() || !Selected[0].IsValid())
 			{
 				SetStatus(TEXT("No slot selected."));
@@ -223,15 +248,22 @@ namespace ARDebugSaveEditor
 			}
 
 			FString Error;
-			USaveGame* Loaded = nullptr;
-			if (!UARDebugSaveToolLibrary::LoadDebugSave(Selected[0]->SlotName, Loaded, Error))
+			UARSaveSubsystem* Subsystem = GetSaveSubsystem(Error);
+			if (!Subsystem)
 			{
-				SetStatus(FString::Printf(TEXT("Load failed: %s"), *Error));
+				SetStatus(Error);
+				return FReply::Handled();
+			}
+
+			FARSaveResult Result;
+			if (!Subsystem->LoadGame(Selected[0]->SlotName, -1, Result))
+			{
+				SetStatus(FString::Printf(TEXT("Load failed: %s"), *Result.Error));
 				return FReply::Handled();
 			}
 
 			CurrentSlotName = Selected[0]->SlotName;
-			CurrentSaveObject.Reset(Loaded);
+			CurrentSaveObject = Subsystem->GetCurrentSaveGame();
 			BindCurrentSaveToDetails();
 			SetStatus(FString::Printf(TEXT("Loaded slot '%s'."), *CurrentSlotName.ToString()));
 			return FReply::Handled();
@@ -246,9 +278,17 @@ namespace ARDebugSaveEditor
 			}
 
 			FString Error;
-			if (!UARDebugSaveToolLibrary::SaveDebugSave(CurrentSlotName, CurrentSaveObject.Get(), Error))
+			UARSaveSubsystem* Subsystem = GetSaveSubsystem(Error);
+			if (!Subsystem)
 			{
-				SetStatus(FString::Printf(TEXT("Save failed: %s"), *Error));
+				SetStatus(Error);
+				return FReply::Handled();
+			}
+
+			FARSaveResult Result;
+			if (!Subsystem->SaveCurrentGame(CurrentSlotName, true, Result))
+			{
+				SetStatus(FString::Printf(TEXT("Save failed: %s"), *Result.Error));
 				return FReply::Handled();
 			}
 
@@ -259,7 +299,7 @@ namespace ARDebugSaveEditor
 
 		FReply OnDeleteSelected()
 		{
-			const TArray<TSharedPtr<FARDebugSaveSlotEntry>> Selected = SlotListView->GetSelectedItems();
+			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
 			if (Selected.IsEmpty() || !Selected[0].IsValid())
 			{
 				SetStatus(TEXT("No slot selected."));
@@ -268,16 +308,24 @@ namespace ARDebugSaveEditor
 
 			const FName SlotToDelete = Selected[0]->SlotName;
 			FString Error;
-			if (!UARDebugSaveToolLibrary::DeleteDebugSave(SlotToDelete, Error))
+			UARSaveSubsystem* Subsystem = GetSaveSubsystem(Error);
+			if (!Subsystem)
 			{
-				SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Error));
+				SetStatus(Error);
+				return FReply::Handled();
+			}
+
+			FARSaveResult Result;
+			if (!Subsystem->DeleteSave(SlotToDelete, Result))
+			{
+				SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Result.Error));
 				return FReply::Handled();
 			}
 
 			if (CurrentSlotName == SlotToDelete)
 			{
 				CurrentSlotName = NAME_None;
-				CurrentSaveObject.Reset();
+				CurrentSaveObject = nullptr;
 				BindCurrentSaveToDetails();
 			}
 
@@ -294,20 +342,31 @@ namespace ARDebugSaveEditor
 				return FReply::Handled();
 			}
 
-			int32 TagCount = 0;
-			FString Error;
-			if (!UARDebugSaveToolLibrary::SetUnlocksToAllKnownTags(CurrentSaveObject.Get(), false, TagCount, Error))
+			// Gather all unlock tags and apply directly.
+			FGameplayTagContainer UnlockTags;
+			const FGameplayTagContainer& AllTags = UGameplayTagsManager::Get().GetCompleteTagTree().GetAllGameplayTags();
+			for (const FGameplayTag& Tag : AllTags)
 			{
-				SetStatus(FString::Printf(TEXT("Unlock All failed: %s"), *Error));
+				if (Tag.ToString().StartsWith(TEXT("Unlock."), ESearchCase::IgnoreCase))
+				{
+					UnlockTags.AddTag(Tag);
+				}
+			}
+
+			if (UnlockTags.Num() == 0)
+			{
+				SetStatus(TEXT("Unlock All failed: no Unlock.* tags found."));
 				return FReply::Handled();
 			}
+
+			CurrentSaveObject->Unlocks = UnlockTags;
 
 			if (SaveDetailsView.IsValid())
 			{
 				SaveDetailsView->ForceRefresh();
 			}
 
-			SetStatus(FString::Printf(TEXT("Unlocks set to all known unlock tags (%d). Press Save Current to persist."), TagCount));
+			SetStatus(FString::Printf(TEXT("Unlocks set to all known unlock tags (%d). Press Save Current to persist."), UnlockTags.Num()));
 			return FReply::Handled();
 		}
 
@@ -347,17 +406,71 @@ namespace ARDebugSaveEditor
 			}
 		}
 
+		UARSaveSubsystem* GetSaveSubsystem(FString& OutError) const
+		{
+			OutError.Reset();
+
+			if (!GEditor)
+			{
+				OutError = TEXT("Editor context is not available.");
+				return nullptr;
+			}
+
+			UWorld* World = nullptr;
+			// Prefer PIE world if running.
+			if (GEditor->PlayWorld)
+			{
+				World = GEditor->PlayWorld;
+			}
+			else
+			{
+				World = GEditor->GetEditorWorldContext().World();
+			}
+
+			if (!World || !World->GetGameInstance())
+			{
+				OutError = TEXT("No active world/game instance. Start PIE to use Debug Save Tool.");
+				return nullptr;
+			}
+
+			UARSaveSubsystem* Subsystem = World->GetGameInstance()->GetSubsystem<UARSaveSubsystem>();
+			if (!Subsystem)
+			{
+				OutError = TEXT("UARSaveSubsystem is not available in this world.");
+			}
+			return Subsystem;
+		}
+
+		static bool IsDebugSlot(FName SlotName)
+		{
+			return SlotName.ToString().EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase);
+		}
+
+		static FName NormalizeDebugSlot(FName InName, UARSaveSubsystem* Subsystem)
+		{
+			FString Base = InName.ToString().TrimStartAndEnd();
+			if (Base.IsEmpty() && Subsystem)
+			{
+				Base = Subsystem->GenerateRandomSlotBaseName(true).ToString();
+			}
+			if (!Base.EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase))
+			{
+				Base += DebugSlotSuffix;
+			}
+			return FName(*Base);
+		}
+
 	private:
-		TArray<TSharedPtr<FARDebugSaveSlotEntry>> SlotItems;
+		TArray<TSharedPtr<FARSaveSlotDescriptor>> SlotItems;
 
 		TSharedPtr<SEditableTextBox> SlotNameTextBox;
 		TSharedPtr<STextBlock> StatusText;
 		TSharedPtr<STextBlock> CurrentSlotText;
-		TSharedPtr<SListView<TSharedPtr<FARDebugSaveSlotEntry>>> SlotListView;
+		TSharedPtr<SListView<TSharedPtr<FARSaveSlotDescriptor>>> SlotListView;
 		TSharedPtr<IDetailsView> SaveDetailsView;
 
 		FName CurrentSlotName = NAME_None;
-		TStrongObjectPtr<USaveGame> CurrentSaveObject;
+		TStrongObjectPtr<UARSaveGame> CurrentSaveObject;
 	};
 }
 
