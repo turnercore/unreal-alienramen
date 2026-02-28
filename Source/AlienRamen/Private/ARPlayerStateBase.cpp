@@ -3,6 +3,7 @@
 #include "ARAttributeSetCore.h"
 #include "ARLog.h"
 #include "AbilitySystemComponent.h"
+#include "ARSaveSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
@@ -34,6 +35,7 @@ AARPlayerStateBase::AARPlayerStateBase()
 
 	AttributeSetCore = CreateDefaultSubobject<UARAttributeSetCore>(TEXT("AttributeSetCore"));
 	DisplayName = GetPlayerName();
+	bCachedTravelReady = false;
 }
 
 UAbilitySystemComponent* AARPlayerStateBase::GetAbilitySystemComponent() const
@@ -109,6 +111,7 @@ void AARPlayerStateBase::SetPlayerSlot(EARPlayerSlot NewSlot)
 	PlayerSlot = NewSlot;
 	OnRep_PlayerSlot(OldSlot);
 	ForceNetUpdate();
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::SetCharacterPicked(EARCharacterChoice NewCharacter)
@@ -222,6 +225,7 @@ void AARPlayerStateBase::BeginPlay()
 	EnsureDefaultLoadoutIfEmpty();
 	BindTrackedAttributeDelegates();
 	BroadcastTrackedAttributeSnapshot();
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -233,11 +237,13 @@ void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AARPlayerStateBase::OnRep_PlayerSlot(EARPlayerSlot OldSlot)
 {
 	OnPlayerSlotChanged.Broadcast(PlayerSlot, OldSlot);
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::OnRep_CharacterPicked(EARCharacterChoice OldCharacter)
 {
 	OnCharacterPickedChanged.Broadcast(this, PlayerSlot, CharacterPicked, OldCharacter);
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
@@ -248,6 +254,7 @@ void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
 void AARPlayerStateBase::OnRep_IsReady(bool bOldReady)
 {
 	OnReadyStatusChanged.Broadcast(this, PlayerSlot, bIsReady, bOldReady);
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
@@ -266,6 +273,7 @@ void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewChara
 	CharacterPicked = NewCharacter;
 	OnRep_CharacterPicked(OldCharacter);
 	ForceNetUpdate();
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::SetDisplayName_Internal(const FString& NewDisplayName)
@@ -299,6 +307,7 @@ void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 	bIsReady = bNewReady;
 	OnRep_IsReady(bOldReady);
 	ForceNetUpdate();
+	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags)
@@ -312,6 +321,15 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	LoadoutTags = NewLoadoutTags;
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
+
+	// Mark save dirty so autosave can persist new loadout.
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>())
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
 }
 
 void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
@@ -538,4 +556,19 @@ void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)
 	const float MaxSpice = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
 	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.f, FMath::Max(0.f, MaxSpice));
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
+}
+
+bool AARPlayerStateBase::IsTravelReady() const
+{
+	return PlayerSlot != EARPlayerSlot::Unknown && CharacterPicked != EARCharacterChoice::None && bIsReady;
+}
+
+void AARPlayerStateBase::EvaluateTravelReadinessAndBroadcast()
+{
+	const bool bNowReady = IsTravelReady();
+	if (bCachedTravelReady != bNowReady)
+	{
+		bCachedTravelReady = bNowReady;
+		OnTravelReadinessChanged.Broadcast(bCachedTravelReady);
+	}
 }

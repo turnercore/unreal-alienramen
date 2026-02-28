@@ -15,11 +15,16 @@ class ALIENRAMEN_API AARGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	AARGameModeBase();
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Mode")
 	FGameplayTag GetModeTag() const { return ModeTag; }
+
+	// Authority helper: readiness + save + travel in one call.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
+	bool TryStartTravel(const FString& URL, const FString& Options = FString(), bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
 
 protected:
 	// Authoritative mode identity tag for this GameMode class/instance.

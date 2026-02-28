@@ -580,6 +580,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	if (bSaveInProgress)
 	{
 		OutResult.Error = TEXT("Save already in progress.");
+		OutResult.ResultCode = EARSaveResultCode::InProgress;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -591,6 +592,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	if (!World)
 	{
 		OutResult.Error = TEXT("No world available for save.");
+		OutResult.ResultCode = EARSaveResultCode::NoWorld;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -598,13 +600,28 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
 	{
 		OutResult.Error = TEXT("SaveCurrentGame must run on authority/server for canonical snapshot.");
+		OutResult.ResultCode = EARSaveResultCode::AuthorityRequired;
 		BroadcastSaveFailure(OutResult);
 		return false;
+	}
+
+	const FDateTime NowUtc = FDateTime::UtcNow();
+	if (MinSaveIntervalSeconds > 0.f && LastSaveTimestampUtc.GetTicks() != 0)
+	{
+		const double Elapsed = (NowUtc - LastSaveTimestampUtc).GetTotalSeconds();
+		if (Elapsed < MinSaveIntervalSeconds)
+		{
+			OutResult.Error = FString::Printf(TEXT("Save throttled (%.2fs < min %.2fs)."), Elapsed, MinSaveIntervalSeconds);
+			OutResult.ResultCode = EARSaveResultCode::Throttled;
+			BroadcastSaveFailure(OutResult);
+			return false;
+		}
 	}
 
 	UARSaveIndexGame* IndexObj = nullptr;
 	if (!LoadOrCreateIndex(IndexObj, OutResult))
 	{
+		OutResult.ResultCode = EARSaveResultCode::Unknown;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -639,6 +656,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	if (!SaveObject)
 	{
 		OutResult.Error = TEXT("Failed to allocate UARSaveGame.");
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -658,6 +676,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 
 	if (!SaveSaveObject(SaveObject, SlotBase, NewSlotNumber, OutResult))
 	{
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -673,6 +692,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 
 	if (!SaveIndex(IndexObj, OutResult))
 	{
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -697,9 +717,22 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	CurrentSaveGame = SaveObject;
 	CurrentSlotBaseName = SlotBase;
 	FlushPendingCanonicalSyncRequests();
+	LastSaveTimestampUtc = SaveObject->LastSaved;
+	bSaveDirty = false;
 	OutResult.bSuccess = true;
+	OutResult.ResultCode = EARSaveResultCode::Success;
 	OutResult.SlotName = SlotBase;
 	OutResult.SlotNumber = NewSlotNumber;
+
+	if (bLogSaveSuccess)
+	{
+		UE_LOG(ARLog, Log, TEXT("[SaveSubsystem] Save succeeded (Slot=%s Rev=%d Time=%s DirtyCleared=%s)"),
+			*SlotBase.ToString(),
+			NewSlotNumber,
+			*SaveObject->LastSaved.ToString(),
+			bSaveDirty ? TEXT("false") : TEXT("true"));
+	}
+
 	OnSaveCompleted.Broadcast(OutResult);
 	return true;
 }
@@ -924,10 +957,12 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 			{
 				IStructSerializable::Execute_ApplyStateFromStruct(Requester, SaveBaseline);
 			}
+			Requester->SyncCyclesFromSave(CurrentSaveGame->Cycles);
 		}
 
 		IStructSerializable::Execute_ApplyStateFromStruct(Requester, PendingTravelGameStateData);
 		PendingTravelGameStateData.Reset();
+		Requester->NotifyHydratedFromSave();
 		return;
 	}
 
@@ -941,6 +976,8 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 	{
 		IStructSerializable::Execute_ApplyStateFromStruct(Requester, StructData);
 	}
+	Requester->SyncCyclesFromSave(CurrentSaveGame->Cycles);
+	Requester->NotifyHydratedFromSave();
 }
 
 void UARSaveSubsystem::SetPendingTravelGameStateData(const FInstancedStruct& PendingStateData)
@@ -1188,11 +1225,17 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 	{
 		const int32 NewCycles = FMath::Max(0, CurrentSaveGame->Cycles + Delta);
 		CurrentSaveGame->Cycles = NewCycles;
+		bSaveDirty = true;
+		if (AARGameStateBase* GS = World->GetGameState<AARGameStateBase>())
+		{
+			GS->SyncCyclesFromSave(NewCycles);
+		}
 	}
 
 	if (!bSaveAfterIncrement)
 	{
 		OutResult.bSuccess = true;
+		OutResult.ResultCode = EARSaveResultCode::Success;
 		return true;
 	}
 
@@ -1213,6 +1256,45 @@ bool UARSaveSubsystem::GetTimeSinceLastSave(FTimespan& OutElapsed) const
 	return OutElapsed.GetTicks() >= 0;
 }
 
+bool UARSaveSubsystem::GetLastSaveTimestamp(FDateTime& OutTimestampUtc) const
+{
+	if (!CurrentSaveGame || CurrentSaveGame->LastSaved.GetTicks() == 0)
+	{
+		return false;
+	}
+	OutTimestampUtc = CurrentSaveGame->LastSaved;
+	return true;
+}
+
+bool UARSaveSubsystem::FormatTimeSinceLastSave(FText& OutText) const
+{
+	FTimespan Elapsed;
+	if (!GetTimeSinceLastSave(Elapsed))
+	{
+		return false;
+	}
+	OutText = FText::AsTimespan(Elapsed);
+	return true;
+}
+
+void UARSaveSubsystem::MarkSaveDirty()
+{
+	bSaveDirty = true;
+}
+
+bool UARSaveSubsystem::RequestAutosaveIfDirty(bool bCreateNewRevision, FARSaveResult& OutResult)
+{
+	if (!bSaveDirty)
+	{
+		OutResult = FARSaveResult();
+		OutResult.ResultCode = EARSaveResultCode::Success;
+		return false;
+	}
+
+	const bool bSaved = SaveCurrentGame(CurrentSlotBaseName, bCreateNewRevision, OutResult);
+	return bSaved;
+}
+
 void UARSaveSubsystem::BroadcastSaveFailure(const FARSaveResult& Result)
 {
 	UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] Save failed: %s"), *Result.Error);
@@ -1229,6 +1311,8 @@ void UARSaveSubsystem::ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveRes
 {
 	CurrentSaveGame = LoadedSave;
 	CurrentSlotBaseName = LoadResult.SlotName;
+	LastSaveTimestampUtc = LoadedSave->LastSaved;
+	bSaveDirty = false;
 	FlushPendingCanonicalSyncRequests();
 
 	if (UARSaveIndexGame* IndexObj = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(ARSaveInternal::SaveIndexSlot, DefaultUserIndex)))

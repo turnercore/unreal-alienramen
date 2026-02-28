@@ -159,8 +159,11 @@
     - Travel/open enforce listen hosting by auto-appending `?listen` to URLs/options; both paths require authority (server/standalone) and log a warning instead of traveling on failure.
 - Save conveniences:
     - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (authority) updates the canonical progression counter; cycles are save-owned.
-    - `GetTimeSinceLastSave(FTimespan& OutElapsed)` returns elapsed time since last saved, or false if no save/timestamp.
-    - Saves are now guarded by `bSaveInProgress`; `OnSaveStarted` fires before disk write. Concurrent save requests log/return failure (`SaveCurrentGame`), so UI can safely gate spinners/buttons via `IsSaveInProgress`.
+    - `GetTimeSinceLastSave(FTimespan& OutElapsed)`, `FormatTimeSinceLastSave(FText&)`, `GetLastSaveTimestamp(FDateTime&)` for UI-friendly timestamps.
+    - Saves are guarded by `bSaveInProgress`; `OnSaveStarted` fires before disk write. Concurrent save requests log/return failure (`SaveCurrentGame`), so UI can safely gate spinners/buttons via `IsSaveInProgress`.
+    - Save throttling via `MinSaveIntervalSeconds` (default 1s). Throttled attempts return `EARSaveResultCode::Throttled`.
+    - Save result codes now surface in `FARSaveResult.ResultCode` (`Success`, `AuthorityRequired`, `NoWorld`, `InProgress`, `Throttled`, `ValidationFailed`, `NotFound`, `Unknown`) for cheaper BP error handling.
+    - Autosave helper `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)` only runs when `bSaveDirty` is true; `MarkSaveDirty` is exposed. Cycle increments and loadout writes set `bSaveDirty`; successful saves clear it.
 - Save hydration entrypoints enforce authority on requesters:
 - `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
 - `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied (identity first, optional slot fallback).
@@ -192,8 +195,10 @@
 - marks setup complete
 - then emits BP extension hook `BP_OnPlayerJoined`
 - `AARGameModeBase::Logout` emits `BP_OnPlayerLeft`; player membership itself is maintained by built-in `PlayerArray` lifecycle.
-- `AARGameStateBase` player tracking uses built-in `AGameStateBase::PlayerArray` as the authoritative source (no parallel replicated custom `Players` array and no tracked-player wrapper APIs).
-- `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` overrides.
+- `AARGameStateBase` player tracking mirrors `PlayerArray` into replicated `Players`; `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` and on repnotify.
+- GameState UI hooks: replicated `CyclesForUI` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
+- PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
+- GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness, save, and travel; logs blocking players and delegates travel to SaveSubsystem (listen enforced).
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
 - `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from `PlayerArray` player slots)
 - `GetOtherPlayerStateFromPlayerState(...)`

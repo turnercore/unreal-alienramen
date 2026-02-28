@@ -68,9 +68,25 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool GetTimeSinceLastSave(FTimespan& OutElapsed) const;
 
+	// Returns true if we have a timestamp and outputs it (UTC).
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool GetLastSaveTimestamp(FDateTime& OutTimestampUtc) const;
+
+	// Returns localized text for elapsed time since last save; false if no save.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool FormatTimeSinceLastSave(FText& OutText) const;
+
 	// Whether a save is currently running (authority only, sync path).
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool IsSaveInProgress() const { return bSaveInProgress; }
+
+	// Marks save dirty; autosave can later persist.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void MarkSaveDirty();
+
+	// Attempts an autosave only if dirty; returns true if a save was executed.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool RequestAutosaveIfDirty(bool bCreateNewRevision, FARSaveResult& OutResult);
 
 	// Increments the canonical save's cycle counter. Authority only; can optionally persist immediately.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
@@ -178,4 +194,18 @@ private:
 
 	UPROPERTY(Transient)
 	bool bSaveInProgress = false;
+
+	UPROPERTY(Transient)
+	bool bSaveDirty = false;
+
+	UPROPERTY(Transient)
+	FDateTime LastSaveTimestampUtc;
+
+	// Minimum interval between saves (seconds). Clamp to >0 to enable throttling; 0 disables throttle.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	float MinSaveIntervalSeconds = 1.0f;
+
+	// When true, successful saves emit an Info log with slot/revision/time (useful for audit during debug).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	bool bLogSaveSuccess = false;
 };
