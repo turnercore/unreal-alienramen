@@ -12,6 +12,8 @@
 #include "Engine/Engine.h"
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/ScopeExit.h"
+#include "Templates/GuardValue.h"
 #include "StructSerializable.h"
 
 namespace ARSaveInternal
@@ -574,6 +576,16 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult)
 {
 	OutResult = FARSaveResult();
+
+	if (bSaveInProgress)
+	{
+		OutResult.Error = TEXT("Save already in progress.");
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
+	TGuardValue<bool> SaveGuard(bSaveInProgress, true);
+	OnSaveStarted.Broadcast();
 
 	UWorld* World = GetWorld();
 	if (!World)
