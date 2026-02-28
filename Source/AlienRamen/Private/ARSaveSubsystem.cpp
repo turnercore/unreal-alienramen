@@ -7,6 +7,10 @@
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
+#include "Engine/World.h"
+#include "GameFramework/GameModeBase.h"
+#include "Engine/Engine.h"
+#include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "StructSerializable.h"
 
@@ -22,13 +26,26 @@ namespace ARSaveInternal
 		TEXT("Ramen"), TEXT("Invader"), TEXT("Noodle"), TEXT("Colony"), TEXT("Dumpling"), TEXT("Broth"),
 		TEXT("MegaCorp"), TEXT("Franchise"), TEXT("Saucer"), TEXT("Payroll"), TEXT("Kiosk"), TEXT("Meatball")
 	};
-	static const TCHAR* SlotTail[] = {
-		TEXT("Incident"), TEXT("Ledger"), TEXT("Catastrophe"), TEXT("Protocol"), TEXT("Shift"), TEXT("Experiment"),
-		TEXT("Merger"), TEXT("Lunch"), TEXT("Outbreak"), TEXT("Heist"), TEXT("Audit"), TEXT("Expansion")
-	};
+static const TCHAR* SlotTail[] = {
+	TEXT("Incident"), TEXT("Ledger"), TEXT("Catastrophe"), TEXT("Protocol"), TEXT("Shift"), TEXT("Experiment"),
+	TEXT("Merger"), TEXT("Lunch"), TEXT("Outbreak"), TEXT("Heist"), TEXT("Audit"), TEXT("Expansion")
+};
 
-	static bool TryReadGameplayTagContainerField(const UObject* Object, const TCHAR* FieldPrefix, FGameplayTagContainer& OutValue)
+static void EnablePIESeamlessTravelIfNeeded()
+{
+#if !UE_BUILD_SHIPPING
+	if (GIsEditor && IsRunningPIE())
 	{
+		if (IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("net.AllowPIESeamlessTravel")))
+		{
+			CVar->Set(true, ECVF_SetByGameSetting);
+		}
+	}
+#endif
+}
+
+static bool TryReadGameplayTagContainerField(const UObject* Object, const TCHAR* FieldPrefix, FGameplayTagContainer& OutValue)
+{
 		if (!Object)
 		{
 			return false;
@@ -92,6 +109,12 @@ void UARSaveSubsystem::Deinitialize()
 	PendingCanonicalSyncRequests.Reset();
 	PendingTravelGameStateData.Reset();
 	Super::Deinitialize();
+}
+
+void UARSaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	EnablePIESeamlessTravelIfNeeded();
 }
 
 FName UARSaveSubsystem::NormalizeSlotBaseName(FName SlotBaseName)
@@ -334,7 +357,12 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		ARSaveInternal::TryReadGameplayTagContainerField(GS, TEXT("Choices"), SaveObject->Choices);
 		ARSaveInternal::TryReadIntField(GS, TEXT("Money"), SaveObject->Money);
 		ARSaveInternal::TryReadIntField(GS, TEXT("Material"), SaveObject->Material);
-		ARSaveInternal::TryReadIntField(GS, TEXT("Cycles"), SaveObject->Cycles);
+	}
+
+	// Persist cycles from current save as authoritative progression counter (not GameState-owned).
+	if (CurrentSaveGame)
+	{
+		SaveObject->Cycles = CurrentSaveGame->Cycles;
 	}
 
 	SaveObject->PlayerStates.Reset();
@@ -876,6 +904,16 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 	// Travel-transient GameState data is authoritative for first hydration pass after travel.
 	if (PendingTravelGameStateData.IsValid())
 	{
+		// Use persisted save as baseline to avoid wiping unrelated fields with travel-local zeros.
+		if (CurrentSaveGame)
+		{
+			const FInstancedStruct SaveBaseline = CurrentSaveGame->GetGameStateDataInstancedStruct();
+			if (SaveBaseline.IsValid())
+			{
+				IStructSerializable::Execute_ApplyStateFromStruct(Requester, SaveBaseline);
+			}
+		}
+
 		IStructSerializable::Execute_ApplyStateFromStruct(Requester, PendingTravelGameStateData);
 		PendingTravelGameStateData.Reset();
 		return;
@@ -954,6 +992,213 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 	Requester->SetDisplayNameValue(PlayerData.Identity.DisplayName.ToString());
 	Requester->SetLoadoutTags(PlayerData.LoadoutTags);
 	return true;
+}
+
+bool UARSaveSubsystem::ArePlayersReadyForTravel(bool bSkipReadyChecks, FString& OutError) const
+{
+	if (bSkipReadyChecks)
+	{
+		return true;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		OutError = TEXT("No world available.");
+		return false;
+	}
+
+	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
+	{
+		OutError = TEXT("Travel readiness check requires authority.");
+		return false;
+	}
+
+	const AARGameStateBase* GS = World->GetGameState<AARGameStateBase>();
+	if (!GS)
+	{
+		OutError = TEXT("No GameState available.");
+		return false;
+	}
+
+	for (APlayerState* PS : GS->PlayerArray)
+	{
+		const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PS);
+		if (!ARPS)
+		{
+			continue;
+		}
+
+		if (ARPS->GetPlayerSlot() == EARPlayerSlot::Unknown)
+		{
+			OutError = FString::Printf(TEXT("Player '%s' missing slot."), *GetNameSafe(ARPS));
+			return false;
+		}
+
+		if (ARPS->GetCharacterPicked() == EARCharacterChoice::None)
+		{
+			OutError = FString::Printf(TEXT("Player '%s' missing character choice."), *GetNameSafe(ARPS));
+			return false;
+		}
+
+		if (!ARPS->IsReadyForRun())
+		{
+			OutError = FString::Printf(TEXT("Player '%s' not ready."), *GetNameSafe(ARPS));
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool UARSaveSubsystem::CaptureGameStateForTravel(UWorld* World)
+{
+	if (!World)
+	{
+		return false;
+	}
+
+	AARGameStateBase* GS = World->GetGameState<AARGameStateBase>();
+	if (!GS || !GS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
+	{
+		return false;
+	}
+
+	FInstancedStruct GSState;
+	IStructSerializable::Execute_ExtractStateToStruct(GS, GSState);
+	if (GSState.IsValid())
+	{
+		SetPendingTravelGameStateData(GSState);
+		return true;
+	}
+
+	return false;
+}
+
+FString UARSaveSubsystem::EnsureListenOption(const FString& InURLOrOptions)
+{
+	if (InURLOrOptions.Contains(TEXT("listen"), ESearchCase::IgnoreCase))
+	{
+		return InURLOrOptions;
+	}
+
+	if (InURLOrOptions.Contains(TEXT("?")))
+	{
+		return InURLOrOptions + TEXT("&listen");
+	}
+
+	return InURLOrOptions.IsEmpty() ? FString(TEXT("listen")) : InURLOrOptions + TEXT("?listen");
+}
+
+bool UARSaveSubsystem::RequestServerTravel(const FString& URL, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+{
+	FString Error;
+	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] ServerTravel blocked: %s"), *Error);
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	CaptureGameStateForTravel(World);
+
+	FARSaveResult SaveResult;
+	if (!SaveCurrentGame(NAME_None, true, SaveResult))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] ServerTravel blocked: save failed: %s"), *SaveResult.Error);
+		return false;
+	}
+
+	const FString TravelURL = EnsureListenOption(URL);
+	return World->ServerTravel(TravelURL, bAbsolute, bSkipGameNotify);
+}
+
+bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, bool bSkipReadyChecks, bool bAbsolute)
+{
+	FString Error;
+	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] OpenLevel blocked: %s"), *Error);
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	CaptureGameStateForTravel(World);
+
+	FARSaveResult SaveResult;
+	if (!SaveCurrentGame(NAME_None, true, SaveResult))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] OpenLevel blocked: save failed: %s"), *SaveResult.Error);
+		return false;
+	}
+
+	const FString ListenOptions = EnsureListenOption(TEXT(""));
+	return UGameplayStatics::OpenLevel(World, FName(*LevelName), bAbsolute, ListenOptions);
+}
+
+bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)
+{
+	OutResult = FARSaveResult();
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		OutResult.Error = TEXT("No world available.");
+		return false;
+	}
+
+	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
+	{
+		OutResult.Error = TEXT("IncrementSaveCycles must run on authority/server.");
+		return false;
+	}
+
+	if (!CurrentSaveGame)
+	{
+		// Create an initial save so cycles have a home.
+		if (!SaveCurrentGame(NAME_None, true, OutResult))
+		{
+			return false;
+		}
+	}
+
+	if (Delta != 0)
+	{
+		const int32 NewCycles = FMath::Max(0, CurrentSaveGame->Cycles + Delta);
+		CurrentSaveGame->Cycles = NewCycles;
+	}
+
+	if (!bSaveAfterIncrement)
+	{
+		OutResult.bSuccess = true;
+		return true;
+	}
+
+	// Persist to the current slot (no forced new revision unless configured in SaveCurrentGame).
+	const bool bSaved = SaveCurrentGame(CurrentSlotBaseName, true, OutResult);
+	return bSaved;
+}
+
+bool UARSaveSubsystem::GetTimeSinceLastSave(FTimespan& OutElapsed) const
+{
+	if (!CurrentSaveGame || CurrentSaveGame->LastSaved.GetTicks() == 0)
+	{
+		return false;
+	}
+
+	const FDateTime NowUtc = FDateTime::UtcNow();
+	OutElapsed = NowUtc - CurrentSaveGame->LastSaved;
+	return OutElapsed.GetTicks() >= 0;
 }
 
 void UARSaveSubsystem::BroadcastSaveFailure(const FARSaveResult& Result)
