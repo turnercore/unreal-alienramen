@@ -172,6 +172,17 @@ void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
 	ForceNetUpdate();
 }
 
+void AARPlayerStateBase::InitializeForFirstSessionJoin()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetCharacterPicked(EARCharacterChoice::None);
+	EnsureDefaultLoadoutIfEmpty();
+}
+
 void AARPlayerStateBase::SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags)
 {
 	if (HasAuthority())

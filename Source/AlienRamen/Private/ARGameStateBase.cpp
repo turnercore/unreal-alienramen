@@ -6,7 +6,6 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
-#include "Net/UnrealNetwork.h"
 
 AARGameStateBase::AARGameStateBase()
 {
@@ -31,56 +30,11 @@ void AARGameStateBase::BeginPlay()
 	}
 }
 
-void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AARGameStateBase, Players);
-}
-
-bool AARGameStateBase::AddTrackedPlayer(AARPlayerStateBase* Player)
-{
-	if (!HasAuthority() || !Player)
-	{
-		return false;
-	}
-
-	const int32 BeforeCount = Players.Num();
-	Players.AddUnique(Player);
-	if (Players.Num() != BeforeCount)
-	{
-		OnTrackedPlayersChanged.Broadcast();
-		ForceNetUpdate();
-		return true;
-	}
-	return false;
-}
-
-bool AARGameStateBase::RemoveTrackedPlayer(AARPlayerStateBase* Player)
-{
-	if (!HasAuthority() || !Player)
-	{
-		return false;
-	}
-
-	const int32 Removed = Players.Remove(Player);
-	if (Removed > 0)
-	{
-		OnTrackedPlayersChanged.Broadcast();
-		ForceNetUpdate();
-		return true;
-	}
-	return false;
-}
-
-bool AARGameStateBase::ContainsTrackedPlayer(const AARPlayerStateBase* Player) const
-{
-	return Player && Players.Contains(const_cast<AARPlayerStateBase*>(Player));
-}
-
 AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
 {
-	for (AARPlayerStateBase* Player : Players)
+	for (APlayerState* PS : PlayerArray)
 	{
+		AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
 		if (IsValid(Player) && Player->GetPlayerSlot() == Slot)
 		{
 			return Player;
@@ -92,8 +46,9 @@ AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
 
 AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const
 {
-	for (AARPlayerStateBase* Player : Players)
+	for (APlayerState* PS : PlayerArray)
 	{
+		AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
 		if (!IsValid(Player) || Player == CurrentPlayerState)
 		{
 			continue;
@@ -144,8 +99,15 @@ AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromContext(const UObje
 	return GetOtherPlayerStateFromPlayerState(nullptr);
 }
 
-void AARGameStateBase::OnRep_Players()
+void AARGameStateBase::AddPlayerState(APlayerState* PlayerState)
 {
+	Super::AddPlayerState(PlayerState);
+	OnTrackedPlayersChanged.Broadcast();
+}
+
+void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
+{
+	Super::RemovePlayerState(PlayerState);
 	OnTrackedPlayersChanged.Broadcast();
 }
 

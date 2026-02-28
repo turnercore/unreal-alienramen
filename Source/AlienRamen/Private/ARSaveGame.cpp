@@ -1,5 +1,10 @@
 #include "ARSaveGame.h"
 
+UARSaveGame::UARSaveGame()
+{
+	SaveGameVersion = CurrentSchemaVersion;
+}
+
 FInstancedStruct UARSaveGame::GetPlayerStateDataInstancedStructByIndex(const int32 Index) const
 {
 	if (!PlayerStates.IsValidIndex(Index))
@@ -85,4 +90,3 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 	return ClampedCount;
 }
-
