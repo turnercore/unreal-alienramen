@@ -27,6 +27,10 @@
 
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
+- Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.
+- `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
+  - `BP_OnARGameInstanceInitialized`
+  - `BP_OnARGameInstanceShutdown`
 - Native authoritative lobby/runtime bases:
 - `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
 - `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
@@ -60,6 +64,7 @@
 - `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
 - `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
 - `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
+- `AARPlayerStateBase::InitializeForFirstSessionJoin()` (authority-only) is the first-join default initializer (non-seamless-travel path): resets `CharacterPicked` to `None` and ensures default loadout tags are present.
 - `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
 - `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
 - PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
@@ -122,6 +127,11 @@
 - `UARSaveGame` (`Source/AlienRamen/Public/ARSaveGame.h`)
 - `UARSaveIndexGame` (`Source/AlienRamen/Public/ARSaveIndexGame.h`)
 - `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`) is the new `UGameInstanceSubsystem` entrypoint for save/load/list/create/delete and hydration requests.
+- Save schema version is now manually controlled from a single native source:
+- `UARSaveGame::CurrentSchemaVersion` (manual bump point)
+- `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
+- write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
+- load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
 - `UARSaveGame` preserves top-level save property names used by prior BP flow (`SeenDialogue`, `DialogueFlags`, `Unlocks`, `Choices`, `Money`, `Meat`, `Material`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`) to minimize hydration rewiring.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
 - `GetGameStateDataInstancedStruct()`
@@ -140,13 +150,18 @@
 - If no pending travel state exists, hydration falls back to `CurrentSaveGame` game-state struct.
 - `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
 - Save hydration entrypoints enforce authority on requesters:
-- `RequestGameStateHydration` and `RequestPlayerStateHydration` ignore non-authority requesters (verbose log) to preserve server-authoritative state mutation.
+- `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
+- `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied (identity first, optional slot fallback).
+- PlayerState hydration no longer applies blank/default `FARPlayerStateSaveData` when no match exists (no accidental clobber of character/display/loadout on misses).
 - Client-join save parity handshake is controller-initiated and subsystem-served:
 - local non-authority `AARPlayerController::BeginPlay` sends `ServerRequestCanonicalSaveSync()`
 - server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
 - target client persists snapshot via `ClientPersistCanonicalSave(...)` -> `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
 - if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
+- Save listing supports parallel namespaces:
+- `ListSaves(...)` reads/writes the canonical save index slot (`SaveIndex`).
+- `ListDebugSaves(...)` reads/writes a separate debug index slot (`SaveIndexDebug`) so debug-save slot discovery is isolated from canonical runtime saves.
 - Multiplayer persistence parity seam added:
 - server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
 - clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
@@ -156,17 +171,23 @@
 
 - `AARGameModeBase::HandleStartingNewPlayer_Implementation` owns authority-side join flow:
 - resolves joined `AARPlayerStateBase`
-- adds it to `AARGameStateBase::Players` via `AddTrackedPlayer`
-- if `bIsSetup==false`, assigns slot (`P1` first-free, else `P2`) and marks setup complete
+- if `bIsSetup==false` (first session join, not seamless-travel copy), runs C++ first-join setup:
+- assigns slot (`P1` first-free, else `P2`)
+- attempts save hydration from server `UARSaveSubsystem::CurrentSaveGame` via `TryHydratePlayerStateFromCurrentSave`
+- if no matching save identity row exists, initializes defaults via `InitializeForFirstSessionJoin()`
+- preserves assigned join-time slot for session consistency after hydration
+- resolves character choice conflicts (if hydrated choice is already taken by the other player, auto-switch to alternate `Brother/Sister`; fallback `None` if needed)
+- marks setup complete
 - then emits BP extension hook `BP_OnPlayerJoined`
-- `AARGameModeBase::Logout` removes leaving player from tracked players and emits `BP_OnPlayerLeft`.
-- `AARGameStateBase` now maintains replicated tracked players array (`Players`) with authority mutators (`AddTrackedPlayer`, `RemoveTrackedPlayer`) and change signal `OnTrackedPlayersChanged` (server + client via RepNotify).
+- `AARGameModeBase::Logout` emits `BP_OnPlayerLeft`; player membership itself is maintained by built-in `PlayerArray` lifecycle.
+- `AARGameStateBase` player tracking uses built-in `AGameStateBase::PlayerArray` as the authoritative source (no parallel replicated custom `Players` array and no tracked-player wrapper APIs).
+- `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` overrides.
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
-- `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from tracked players)
+- `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from `PlayerArray` player slots)
 - `GetOtherPlayerStateFromPlayerState(...)`
 - `GetOtherPlayerStateFromController(...)`
 - `GetOtherPlayerStateFromPawn(...)`
-- `GetOtherPlayerStateFromContext(...)` (accepts PlayerState/Controller/Pawn/UObject and resolves other tracked player)
+- `GetOtherPlayerStateFromContext(...)` (accepts PlayerState/Controller/Pawn/UObject and resolves other player)
 
 ## Enemy/Invader Runtime
 

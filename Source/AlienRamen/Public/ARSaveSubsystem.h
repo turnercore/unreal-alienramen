@@ -22,7 +22,6 @@ class ALIENRAMEN_API UARSaveSubsystem : public UGameInstanceSubsystem
 
 public:
 	static constexpr int32 DefaultUserIndex = 0;
-	static constexpr int32 SaveSchemaVersion = 1;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult);
@@ -35,6 +34,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	bool ListDebugSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool DeleteSave(FName SlotBaseName, FARSaveResult& OutResult);
@@ -73,8 +75,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool HasPendingTravelGameStateData() const { return PendingTravelGameStateData.IsValid(); }
 
+	// Applies player-specific save payload onto Requester if identity (or optional slot fallback) is found in CurrentSaveGame.
+	// Returns true when a matching player row was found and applied.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	void RequestPlayerStateHydration(AARPlayerStateBase* Requester);
+	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = true);
 
 	// Server-authoritative helper: sends current canonical snapshot to a specific player controller.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -106,6 +110,8 @@ private:
 	static FName BuildRevisionSlotName(FName SlotBaseName, int32 SlotNumber);
 	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber);
 
+	bool LoadOrCreateIndexForSlot(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
+	bool SaveIndexForSlot(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
 	bool LoadOrCreateIndex(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult) const;
 	bool SaveIndex(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult) const;
 	bool SaveSaveObject(UARSaveGame* SaveObject, FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult) const;
