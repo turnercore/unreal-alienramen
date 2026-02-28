@@ -15,6 +15,7 @@ class UWorld;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationCompleted, const FARSaveResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationFailed, const FARSaveResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnGameLoaded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnSaveOperationStarted);
 
 UCLASS()
 class ALIENRAMEN_API UARSaveSubsystem : public UGameInstanceSubsystem
@@ -67,6 +68,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool GetTimeSinceLastSave(FTimespan& OutElapsed) const;
 
+	// Whether a save is currently running (authority only, sync path).
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool IsSaveInProgress() const { return bSaveInProgress; }
+
 	// Increments the canonical save's cycle counter. Authority only; can optionally persist immediately.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult);
@@ -112,6 +117,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnSaveOperationCompleted OnSaveCompleted;
+
+	// Fires when a save starts (before disk write).
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnSaveOperationStarted OnSaveStarted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnSaveOperationCompleted OnLoadCompleted;
@@ -166,4 +175,7 @@ private:
 
 	UPROPERTY(Transient)
 	FInstancedStruct PendingTravelGameStateData;
+
+	UPROPERTY(Transient)
+	bool bSaveInProgress = false;
 };

@@ -6,6 +6,19 @@
 #include "StructUtils/InstancedStruct.h"
 #include "ARSaveTypes.generated.h"
 
+UENUM(BlueprintType)
+enum class EARSaveResultCode : uint8
+{
+	Success = 0,
+	AuthorityRequired,
+	NoWorld,
+	InProgress,
+	Throttled,
+	ValidationFailed,
+	NotFound,
+	Unknown
+};
+
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARMeatState
 {
@@ -145,4 +158,7 @@ struct ALIENRAMEN_API FARSaveResult
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 SlotNumber = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
+	EARSaveResultCode ResultCode = EARSaveResultCode::Unknown;
 };
