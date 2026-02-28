@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "Net/UnrealNetwork.h"
 
 AARGameStateBase::AARGameStateBase()
 {
@@ -28,6 +29,13 @@ void AARGameStateBase::BeginPlay()
 			SaveSubsystem->RequestGameStateHydration(this);
 		}
 	}
+}
+
+void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AARGameStateBase, Players);
+	DOREPLIFETIME(AARGameStateBase, CyclesForUI);
 }
 
 AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
@@ -102,13 +110,28 @@ AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromContext(const UObje
 void AARGameStateBase::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
-	OnTrackedPlayersChanged.Broadcast();
+	AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
+	const int32 Before = Players.Num();
+	if (ARPS)
+	{
+		Players.AddUnique(ARPS);
+	}
+	if (Players.Num() != Before)
+	{
+		OnTrackedPlayersChanged.Broadcast();
+		ForceNetUpdate();
+	}
 }
 
 void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 {
 	Super::RemovePlayerState(PlayerState);
-	OnTrackedPlayersChanged.Broadcast();
+	const int32 Removed = Players.Remove(Cast<AARPlayerStateBase>(PlayerState));
+	if (Removed > 0)
+	{
+		OnTrackedPlayersChanged.Broadcast();
+		ForceNetUpdate();
+	}
 }
 
 bool AARGameStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -130,4 +153,37 @@ bool AARGameStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruc
 void AARGameStateBase::ServerApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
 {
 	IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
+}
+
+void AARGameStateBase::SyncCyclesFromSave(int32 NewCycles)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 Clamped = FMath::Max(0, NewCycles);
+	if (CyclesForUI == Clamped)
+	{
+		return;
+	}
+
+	CyclesForUI = Clamped;
+	OnRep_CyclesForUI();
+	ForceNetUpdate();
+}
+
+void AARGameStateBase::NotifyHydratedFromSave()
+{
+	OnHydratedFromSave.Broadcast();
+}
+
+void AARGameStateBase::OnRep_Players()
+{
+	OnTrackedPlayersChanged.Broadcast();
+}
+
+void AARGameStateBase::OnRep_CyclesForUI()
+{
+	// Hook for UI; currently no extra logic.
 }
