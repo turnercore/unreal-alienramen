@@ -11,6 +11,23 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
+	static constexpr int32 CurrentSchemaVersion = 1;
+	static constexpr int32 MinSupportedSchemaVersion = 1;
+
+	UARSaveGame();
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
+	static int32 GetCurrentSchemaVersion() { return CurrentSchemaVersion; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
+	static int32 GetMinSupportedSchemaVersion() { return MinSupportedSchemaVersion; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
+	static bool IsSchemaVersionSupported(int32 InSchemaVersion)
+	{
+		return InSchemaVersion >= MinSupportedSchemaVersion && InSchemaVersion <= CurrentSchemaVersion;
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Dialogue")
 	FGameplayTagContainer SeenDialogue;
 
@@ -39,7 +56,7 @@ public:
 	FName SaveSlot = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Meta")
-	int32 SaveGameVersion = 1;
+	int32 SaveGameVersion = CurrentSchemaVersion;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Meta")
 	int32 SaveSlotNumber = 0;
@@ -67,4 +84,3 @@ public:
 
 	int32 ValidateAndSanitize(TArray<FString>* OutWarnings);
 };
-

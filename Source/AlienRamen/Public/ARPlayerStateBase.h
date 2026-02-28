@@ -202,6 +202,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void SetIsSetupComplete(bool bNewIsSetup);
 
+	// First-join initialization path for non-travel PlayerStates when no saved identity row was found.
+	// Intentionally keeps display name untouched and resets character choice to None.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
+	void InitializeForFirstSessionJoin();
+
 	// UI-friendly slot index for local co-op style displays (0-based, from GameState PlayerArray order).
 	// Returns INDEX_NONE if not currently resolvable.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")

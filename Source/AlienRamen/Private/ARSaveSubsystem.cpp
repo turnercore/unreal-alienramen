@@ -13,6 +13,7 @@
 namespace ARSaveInternal
 {
 	static const TCHAR* SaveIndexSlot = TEXT("SaveIndex");
+	static const TCHAR* DebugSaveIndexSlot = TEXT("SaveIndexDebug");
 	static const TCHAR* SlotAdj[] = {
 		TEXT("Spicy"), TEXT("Neon"), TEXT("Corporate"), TEXT("Fermented"), TEXT("Unpaid"), TEXT("Galactic"),
 		TEXT("Suspicious"), TEXT("Nuclear"), TEXT("Chaotic"), TEXT("Certified"), TEXT("Questionable"), TEXT("Overclocked")
@@ -195,16 +196,16 @@ bool UARSaveSubsystem::TrySplitRevisionSlotName(const FString& InSlotName, FStri
 	return true;
 }
 
-bool UARSaveSubsystem::LoadOrCreateIndex(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult) const
+bool UARSaveSubsystem::LoadOrCreateIndexForSlot(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const
 {
 	OutIndex = nullptr;
-	const FString SlotName = ARSaveInternal::SaveIndexSlot;
+	const FString SlotName = IndexSlotName;
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, DefaultUserIndex))
 	{
 		OutIndex = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(SlotName, DefaultUserIndex));
 		if (!OutIndex)
 		{
-			OutResult.Error = TEXT("Failed to load C++ save index.");
+			OutResult.Error = FString::Printf(TEXT("Failed to load C++ save index '%s'."), *SlotName);
 			return false;
 		}
 		return true;
@@ -213,25 +214,35 @@ bool UARSaveSubsystem::LoadOrCreateIndex(UARSaveIndexGame*& OutIndex, FARSaveRes
 	OutIndex = Cast<UARSaveIndexGame>(UGameplayStatics::CreateSaveGameObject(UARSaveIndexGame::StaticClass()));
 	if (!OutIndex)
 	{
-		OutResult.Error = TEXT("Failed to create C++ save index object.");
+		OutResult.Error = FString::Printf(TEXT("Failed to create C++ save index object '%s'."), *SlotName);
 		return false;
 	}
-	return SaveIndex(OutIndex, OutResult);
+	return SaveIndexForSlot(OutIndex, OutResult, IndexSlotName);
 }
 
-bool UARSaveSubsystem::SaveIndex(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult) const
+bool UARSaveSubsystem::SaveIndexForSlot(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const
 {
 	if (!IndexObj)
 	{
 		OutResult.Error = TEXT("Save index is null.");
 		return false;
 	}
-	if (!UGameplayStatics::SaveGameToSlot(IndexObj, ARSaveInternal::SaveIndexSlot, DefaultUserIndex))
+	if (!UGameplayStatics::SaveGameToSlot(IndexObj, IndexSlotName, DefaultUserIndex))
 	{
-		OutResult.Error = TEXT("Failed to save C++ save index.");
+		OutResult.Error = FString::Printf(TEXT("Failed to save C++ save index '%s'."), IndexSlotName);
 		return false;
 	}
 	return true;
+}
+
+bool UARSaveSubsystem::LoadOrCreateIndex(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult) const
+{
+	return LoadOrCreateIndexForSlot(OutIndex, OutResult, ARSaveInternal::SaveIndexSlot);
+}
+
+bool UARSaveSubsystem::SaveIndex(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult) const
+{
+	return SaveIndexForSlot(IndexObj, OutResult, ARSaveInternal::SaveIndexSlot);
 }
 
 bool UARSaveSubsystem::SaveSaveObject(UARSaveGame* SaveObject, FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult) const
@@ -448,7 +459,7 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	GatherRuntimeData(NewSave);
 	NewSave->SaveSlot = SlotBase;
 	NewSave->SaveSlotNumber = 0;
-	NewSave->SaveGameVersion = SaveSchemaVersion;
+	NewSave->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
 	NewSave->LastSaved = FDateTime::UtcNow();
 	OutResult.ClampedFieldCount = NewSave->ValidateAndSanitize(nullptr);
 
@@ -595,7 +606,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	GatherRuntimeData(SaveObject);
 	SaveObject->SaveSlot = SlotBase;
 	SaveObject->SaveSlotNumber = NewSlotNumber;
-	SaveObject->SaveGameVersion = SaveSchemaVersion;
+	SaveObject->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
 	SaveObject->LastSaved = FDateTime::UtcNow();
 
 	TArray<FString> Warnings;
@@ -666,6 +677,27 @@ bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARS
 		return false;
 	}
 
+	if (!UARSaveGame::IsSchemaVersionSupported(LoadedSave->SaveGameVersion))
+	{
+		OutResult.Error = FString::Printf(
+			TEXT("Save schema version %d is unsupported (supported range: %d..%d)."),
+			LoadedSave->SaveGameVersion,
+			UARSaveGame::GetMinSupportedSchemaVersion(),
+			UARSaveGame::GetCurrentSchemaVersion());
+		BroadcastLoadFailure(OutResult);
+		return false;
+	}
+
+	if (LoadedSave->SaveGameVersion < UARSaveGame::GetCurrentSchemaVersion())
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[SaveSubsystem] Loaded older save schema version %d (current %d). Migration path not implemented yet."),
+			LoadedSave->SaveGameVersion,
+			UARSaveGame::GetCurrentSchemaVersion());
+	}
+
 	OutResult.bSuccess = true;
 	OutResult.SlotName = SlotBase;
 	OutResult.SlotNumber = ResolvedRevision;
@@ -682,6 +714,22 @@ bool UARSaveSubsystem::ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSav
 
 	UARSaveIndexGame* IndexObj = nullptr;
 	if (!LoadOrCreateIndex(IndexObj, OutResult))
+	{
+		return false;
+	}
+
+	OutSlots = IndexObj->SlotNames;
+	OutResult.bSuccess = true;
+	return true;
+}
+
+bool UARSaveSubsystem::ListDebugSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const
+{
+	OutSlots.Reset();
+	OutResult = FARSaveResult();
+
+	UARSaveIndexGame* IndexObj = nullptr;
+	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, ARSaveInternal::DebugSaveIndexSlot))
 	{
 		return false;
 	}
@@ -861,17 +909,17 @@ void UARSaveSubsystem::ClearPendingTravelGameStateData()
 	PendingTravelGameStateData.Reset();
 }
 
-void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester)
+bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, const bool bAllowSlotFallback)
 {
 	if (!Requester || !CurrentSaveGame)
 	{
-		return;
+		return false;
 	}
 
 	if (!Requester->HasAuthority())
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[SaveSubsystem] RequestPlayerStateHydration ignored on non-authority requester '%s'."), *GetNameSafe(Requester));
-		return;
+		return false;
 	}
 
 	FARPlayerIdentity QueryIdentity;
@@ -885,12 +933,18 @@ void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester
 
 	FARPlayerStateSaveData PlayerData;
 	int32 Index = INDEX_NONE;
-	if (!CurrentSaveGame->FindPlayerStateDataByIdentity(QueryIdentity, PlayerData, Index))
+	bool bFound = CurrentSaveGame->FindPlayerStateDataByIdentity(QueryIdentity, PlayerData, Index);
+	if (!bFound && bAllowSlotFallback)
 	{
-		CurrentSaveGame->FindPlayerStateDataBySlot(Requester->GetPlayerSlot(), PlayerData, Index);
+		bFound = CurrentSaveGame->FindPlayerStateDataBySlot(Requester->GetPlayerSlot(), PlayerData, Index);
 	}
 
-	if (Index != INDEX_NONE && PlayerData.PlayerStateData.IsValid())
+	if (!bFound || Index == INDEX_NONE)
+	{
+		return false;
+	}
+
+	if (PlayerData.PlayerStateData.IsValid())
 	{
 		IStructSerializable::Execute_ApplyStateFromStruct(Requester, PlayerData.PlayerStateData);
 	}
@@ -899,6 +953,7 @@ void UARSaveSubsystem::RequestPlayerStateHydration(AARPlayerStateBase* Requester
 	Requester->SetCharacterPicked(PlayerData.CharacterPicked);
 	Requester->SetDisplayNameValue(PlayerData.Identity.DisplayName.ToString());
 	Requester->SetLoadoutTags(PlayerData.LoadoutTags);
+	return true;
 }
 
 void UARSaveSubsystem::BroadcastSaveFailure(const FARSaveResult& Result)
