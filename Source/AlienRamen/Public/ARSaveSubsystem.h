@@ -10,6 +10,7 @@ class UARSaveIndexGame;
 class AARGameStateBase;
 class AARPlayerStateBase;
 class AARPlayerController;
+class UWorld;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationCompleted, const FARSaveResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationFailed, const FARSaveResult&, Result);
@@ -62,8 +63,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void SetMaxBackupRevisions(int32 NewMaxBackups);
 
+	// Returns true and fills OutElapsed when a save exists; false when no current save/timestamp.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool GetTimeSinceLastSave(FTimespan& OutElapsed) const;
+
+	// Increments the canonical save's cycle counter. Authority only; can optionally persist immediately.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestGameStateHydration(AARGameStateBase* Requester);
+
+	/**
+	 * Authority-only travel helper used by UI/Blueprints.
+	 *
+	 * Flow: optional readiness gate -> capture GameState travel snapshot -> save (create if missing) -> ServerTravel with enforced listen option.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
+	bool RequestServerTravel(const FString& URL, bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+
+	/**
+	 * Authority-only non-networked level open. Enforces listen option so host remains authoritative.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
+	bool RequestOpenLevel(const FString& LevelName, bool bSkipReadyChecks = false, bool bAbsolute = false);
 
 	// Sets travel-transient GameState data to be applied first on next RequestGameStateHydration call.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -103,9 +126,14 @@ public:
 	FAROnGameLoaded OnGameLoaded;
 
 protected:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
 private:
+	bool ArePlayersReadyForTravel(bool bSkipReadyChecks, FString& OutError) const;
+	bool CaptureGameStateForTravel(UWorld* World);
+	static FString EnsureListenOption(const FString& InURLOrOptions);
+
 	static FName NormalizeSlotBaseName(FName SlotBaseName);
 	static FName BuildRevisionSlotName(FName SlotBaseName, int32 SlotNumber);
 	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber);
