@@ -160,6 +160,7 @@
 - Save conveniences:
     - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (authority) updates the canonical progression counter; cycles are save-owned.
     - `GetTimeSinceLastSave(FTimespan& OutElapsed)` returns elapsed time since last saved, or false if no save/timestamp.
+    - Saves are now guarded by `bSaveInProgress`; `OnSaveStarted` fires before disk write. Concurrent save requests log/return failure (`SaveCurrentGame`), so UI can safely gate spinners/buttons via `IsSaveInProgress`.
 - Save hydration entrypoints enforce authority on requesters:
 - `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
 - `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied (identity first, optional slot fallback).
