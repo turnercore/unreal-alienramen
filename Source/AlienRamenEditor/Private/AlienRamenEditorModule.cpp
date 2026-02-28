@@ -231,7 +231,7 @@ namespace ARDebugSaveEditor
 			}
 
 			CurrentSlotName = NewSlot.SlotName;
-			CurrentSaveObject = Subsystem->GetCurrentSaveGame();
+			CurrentSaveObject.Reset(Subsystem->GetCurrentSaveGame());
 			SlotNameTextBox->SetText(FText::GetEmpty());
 			BindCurrentSaveToDetails();
 			RefreshSlots();
@@ -264,7 +264,7 @@ namespace ARDebugSaveEditor
 			}
 
 			CurrentSlotName = Selected[0]->SlotName;
-			CurrentSaveObject = Subsystem->GetCurrentSaveGame();
+			CurrentSaveObject.Reset(Subsystem->GetCurrentSaveGame());
 			BindCurrentSaveToDetails();
 			SetStatus(FString::Printf(TEXT("Loaded slot '%s'."), *CurrentSlotName.ToString()));
 			return FReply::Handled();
@@ -326,7 +326,7 @@ namespace ARDebugSaveEditor
 			if (CurrentSlotName == SlotToDelete)
 			{
 				CurrentSlotName = NAME_None;
-				CurrentSaveObject = nullptr;
+				CurrentSaveObject.Reset();
 				BindCurrentSaveToDetails();
 			}
 
@@ -345,12 +345,13 @@ namespace ARDebugSaveEditor
 
 			// Gather all unlock tags and apply directly.
 			FGameplayTagContainer UnlockTags;
-			const FGameplayTagContainer& AllTags = UGameplayTagsManager::Get().GetCompleteTagTree().GetAllGameplayTags();
-			for (const FGameplayTag& Tag : AllTags)
+			FGameplayTagContainer AllTags;
+			UGameplayTagsManager::Get().RequestAllGameplayTags(AllTags, /*OnlyIncludeDictionaryTags*/ false);
+			for (const FGameplayTag& GameplayTag : AllTags)
 			{
-				if (Tag.ToString().StartsWith(TEXT("Unlock."), ESearchCase::IgnoreCase))
+				if (GameplayTag.ToString().StartsWith(TEXT("Unlock."), ESearchCase::IgnoreCase))
 				{
-					UnlockTags.AddTag(Tag);
+					UnlockTags.AddTag(GameplayTag);
 				}
 			}
 
