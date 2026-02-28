@@ -73,6 +73,7 @@
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
+- Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
 - Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
@@ -225,6 +226,7 @@
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
 - default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once it has remained offscreen for `OffscreenReleaseDelay` seconds.
+- `EvaluateOffscreenRelease()` (BlueprintCallable) advances offscreen time using world delta seconds, so manual/BP calls preserve the same delay semantics as tick-driven evaluation.
 - projectile cull delay defaults to project settings value `UARInvaderDirectorSettings::ProjectileOffscreenCullSeconds` (default `0.1s`) when `bUseProjectSettingsOffscreenCullSeconds` is true.
 - offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for purely local/projectile cases.
 - `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
@@ -356,11 +358,13 @@
 
 ## Debug Save Tool (Current)
 
-- Still active and used by runtime widget + editor tab, but expected to be replaced during upcoming C++ save-system refactor.
-- Keep only currently necessary integration notes here; avoid expanding detailed schema/behavior docs for this legacy path unless needed for active work.
-- Native meat save schema now exists in C++ as `FARMeatState` (`Source/AlienRamen/Public/ARSaveTypes.h`) with per-color buckets (`RedAmount`, `BlueAmount`, `WhiteAmount`), `UnspecifiedAmount`, and extensible `AdditionalAmountsByType` (`TMap<FGameplayTag,int32>`).
-- `FARMeatState::GetTotalAmount()` computes total meat as the sum of all buckets (colors + unspecified + additional typed entries).
-- Debug save edits (`bSetMeatAmount`) now prefer typed write into native `FARMeatState` (`SetTotalAsUnspecified`) and keep legacy fallback for BP `ST_Meat.Amount` during migration.
+- Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
+- Requires an active world/GameInstance (run PIE or a Play session); otherwise the tab reports that a subsystem is unavailable.
+- Slot listing/creation/loading/deletion uses `UARSaveSubsystem::ListSaves/CreateNewSave/LoadGame/DeleteSave` and filters slots ending with `"_debug"`.
+- New debug slot bases auto-append `"_debug"`; random names use `GenerateRandomSlotBaseName` when empty.
+- Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
+- Unlock-all action now writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager (no legacy library helper).
+- Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
 
 ## Invader Authoring Editor Tool (Current)
 
