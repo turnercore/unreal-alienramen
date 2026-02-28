@@ -40,6 +40,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Net Compatibility")
 	static bool GetARProtocolFromSession(const FOnlineSessionSearchResult& SearchResult, int32& OutProtocol);
 
+	// ---- Build/version helpers ----
+	// Project version from DefaultGame.ini (ProjectVersion). Use this on main menu/UI.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Build")
+	static FString GetARProjectVersion();
+
+	// Composite fingerprint: "<ProjectVersion> | NetProto:<proto> | SaveSchema:<schema>".
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Build")
+	static FString GetARBuildFingerprint();
+
 private:
 	static constexpr int32 ARProtocolVersion = 1; // bump when a breaking network change ships
 	static constexpr int32 ARMinCompatibleProtocol = 1; // oldest protocol accepted by this build

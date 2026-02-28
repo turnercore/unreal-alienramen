@@ -2,6 +2,7 @@
 
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
+#include "Misc/App.h"
 #include "OnlineSessionSettings.h"
 
 void UARGameInstance::Init()
@@ -53,6 +54,22 @@ bool UARGameInstance::GetARProtocolFromSession(const FOnlineSessionSearchResult&
 	}
 
 	return false;
+}
+
+// ---- Build/version helpers ----
+
+FString UARGameInstance::GetARProjectVersion()
+{
+	return FApp::GetProjectVersion();
+}
+
+FString UARGameInstance::GetARBuildFingerprint()
+{
+	const FString ProjectVersion = FApp::GetProjectVersion();
+	return FString::Printf(TEXT("%s | NetProto:%d | SaveSchema:%d"),
+		*ProjectVersion,
+		ARProtocolVersion,
+		UARSaveGame::GetCurrentSchemaVersion());
 }
 
 void UARGameInstance::BP_OnARGameInstanceInitialized_Implementation()
