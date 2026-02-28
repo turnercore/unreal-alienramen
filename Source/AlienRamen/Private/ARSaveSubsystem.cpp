@@ -540,6 +540,17 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 		return false;
 	}
 
+	if (!UARSaveGame::IsSchemaVersionSupported(SaveObject->SaveGameVersion))
+	{
+		OutResult.Error = FString::Printf(
+			TEXT("Canonical save schema %d unsupported on this build (supported %d..%d)."),
+			SaveObject->SaveGameVersion,
+			UARSaveGame::GetMinSupportedSchemaVersion(),
+			UARSaveGame::GetCurrentSchemaVersion());
+		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] %s"), *OutResult.Error);
+		return false;
+	}
+
 	if (!SaveSaveObject(SaveObject, SlotBaseName, SlotNumber, OutResult))
 	{
 		return false;
