@@ -6,6 +6,13 @@
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/GameStateBase.h"
+
+AARGameModeBase::AARGameModeBase()
+{
+	bUseSeamlessTravel = true;
+	DefaultPlayerName = TEXT("Tenshu");
+}
 
 EARPlayerSlot AARGameModeBase::DetermineNextPlayerSlot(const AARGameStateBase* GameState)
 {
@@ -170,6 +177,57 @@ void AARGameModeBase::Logout(AController* Exiting)
 	UE_LOG(ARLog, Log, TEXT("[GameMode] Player left: %s"), *GetNameSafe(LeavingPS));
 
 	Super::Logout(Exiting);
+}
+
+bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel ignored: not authority."));
+		return false;
+	}
+
+	TArray<FString> NotReadyPlayers;
+	if (!bSkipReadyChecks)
+	{
+		for (APlayerState* PS : GameState->PlayerArray)
+		{
+			if (const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PS))
+			{
+				if (!ARPS->IsTravelReady())
+				{
+					NotReadyPlayers.Add(GetNameSafe(ARPS));
+				}
+			}
+		}
+	}
+
+	if (!bSkipReadyChecks && NotReadyPlayers.Num() > 0)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel blocked; not ready: %s"), *FString::Join(NotReadyPlayers, TEXT(", ")));
+		return false;
+	}
+
+	FString TravelURL = URL;
+	if (!Options.IsEmpty())
+	{
+		TravelURL += Options;
+	}
+
+	UARSaveSubsystem* SaveSubsystem = nullptr;
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
+	}
+
+	if (!SaveSubsystem)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel failed: SaveSubsystem missing."));
+		return false;
+	}
+
+	UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel -> URL='%s' Options='%s' SkipReady=%s"), *URL, *Options, bSkipReadyChecks ? TEXT("true") : TEXT("false"));
+	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify);
 }
 
 void AARGameModeBase::BP_OnPlayerJoined_Implementation(AARPlayerStateBase* JoinedPlayerState)

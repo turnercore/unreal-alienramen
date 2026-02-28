@@ -143,6 +143,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	const FGameplayTagContainer&,
 	OldLoadoutTags);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature, bool, bIsReadyForTravel);
+
 UCLASS()
 class ALIENRAMEN_API AARPlayerStateBase : public APlayerState, public IAbilitySystemInterface, public IStructSerializable
 {
@@ -189,6 +191,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	bool IsReadyForRun() const { return bIsReady; }
+
+	// Composite readiness for travel: requires slot, character choice, and ready flag.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	bool IsTravelReady() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
 	void SetReadyForRun(bool bNewReady);
@@ -271,6 +277,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnLoadoutTagsChangedSignature OnLoadoutTagsChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnTravelReadinessChangedSignature OnTravelReadinessChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
@@ -308,6 +317,7 @@ protected:
 	void HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
+	void EvaluateTravelReadinessAndBroadcast();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -326,6 +336,10 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsSetup = false;
+
+	// Cached travel readiness for change detection.
+	UPROPERTY(Transient)
+	bool bCachedTravelReady = false;
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MaxHealthChangedDelegateHandle;
