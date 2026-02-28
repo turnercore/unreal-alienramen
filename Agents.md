@@ -148,8 +148,18 @@
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
 - GameState hydration precedence:
 - `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
-- If no pending travel state exists, hydration falls back to `CurrentSaveGame` game-state struct.
+- When pending travel data exists, it now applies the current save's GameState struct first as a baseline, then overlays travel data to avoid zeroing unrelated fields. If no pending travel exists, hydration falls back to `CurrentSaveGame` game-state struct.
 - `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
+- Cycles progression is now save-owned (not GameState-owned). `GatherRuntimeData` copies cycles from the current save, not from GameState. Authority helper `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` lives on `UARSaveSubsystem` for run-complete increments and optional immediate persistence.
+- Travel/save flow is now C++-owned in `UARSaveSubsystem`:
+    - Authority-only `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` and `RequestOpenLevel(LevelName, bSkipReadyChecks, bAbsolute)` are callable from Blueprints.
+    - Optional readiness gate (default on) requires every `AARPlayerStateBase` to have a non-`Unknown` `PlayerSlot`, a non-`None` `CharacterPicked`, and `bIsReady=true`. Use `bSkipReadyChecks` for menus/debug.
+    - Before travel, subsystem captures `AARGameStateBase` into `PendingTravelGameStateData` (via `IStructSerializable::ExtractStateToStruct`) so it hydrates first on the next map.
+    - Travel always saves via `SaveCurrentGame(..., bCreateNewRevision=true)`; if no slot exists it will auto-create one.
+    - Travel/open enforce listen hosting by auto-appending `?listen` to URLs/options; both paths require authority (server/standalone) and log a warning instead of traveling on failure.
+- Save conveniences:
+    - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (authority) updates the canonical progression counter; cycles are save-owned.
+    - `GetTimeSinceLastSave(FTimespan& OutElapsed)` returns elapsed time since last saved, or false if no save/timestamp.
 - Save hydration entrypoints enforce authority on requesters:
 - `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
 - `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied (identity first, optional slot fallback).
