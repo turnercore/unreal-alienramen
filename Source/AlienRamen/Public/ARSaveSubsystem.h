@@ -202,10 +202,10 @@ private:
 	FDateTime LastSaveTimestampUtc;
 
 	// Minimum interval between saves (seconds). Clamp to >0 to enable throttling; 0 disables throttle.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save", meta = (AllowPrivateAccess = "true"))
 	float MinSaveIntervalSeconds = 1.0f;
 
 	// When true, successful saves emit an Info log with slot/revision/time (useful for audit during debug).
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save", meta = (AllowPrivateAccess = "true"))
 	bool bLogSaveSuccess = false;
 };
