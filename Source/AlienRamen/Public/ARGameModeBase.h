@@ -22,9 +22,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Mode")
 	FGameplayTag GetModeTag() const { return ModeTag; }
 
-	// Authority helper: readiness + save + travel in one call.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool TryStartTravel(const FString& URL, const FString& Options = FString(), bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+	// Authority helper: readiness + save + travel in one call (C++ entrypoint; Blueprint should use AARPlayerController::TryStartTravel).
+	bool TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
 
 protected:
 	// Authoritative mode identity tag for this GameMode class/instance.
