@@ -13,7 +13,7 @@
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/ScopeExit.h"
-#include "Templates/GuardValue.h"
+#include "Templates/UnrealTemplate.h"
 #include "StructSerializable.h"
 
 namespace ARSaveInternal
@@ -36,7 +36,7 @@ static const TCHAR* SlotTail[] = {
 static void EnablePIESeamlessTravelIfNeeded()
 {
 #if !UE_BUILD_SHIPPING
-	if (GIsEditor && IsRunningPIE())
+	if (GIsEditor)
 	{
 		if (IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("net.AllowPIESeamlessTravel")))
 		{
@@ -116,7 +116,7 @@ void UARSaveSubsystem::Deinitialize()
 void UARSaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	EnablePIESeamlessTravelIfNeeded();
+	ARSaveInternal::EnablePIESeamlessTravelIfNeeded();
 }
 
 FName UARSaveSubsystem::NormalizeSlotBaseName(FName SlotBaseName)
@@ -1203,7 +1203,8 @@ bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, bool bSkipRead
 	}
 
 	const FString ListenOptions = EnsureListenOption(TEXT(""));
-	return UGameplayStatics::OpenLevel(World, FName(*LevelName), bAbsolute, ListenOptions);
+	UGameplayStatics::OpenLevel(World, FName(*LevelName), bAbsolute, ListenOptions);
+	return true;
 }
 
 bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)

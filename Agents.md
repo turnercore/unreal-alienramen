@@ -31,6 +31,7 @@
 - `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
   - `BP_OnARGameInstanceInitialized`
   - `BP_OnARGameInstanceShutdown`
+- `UARGameInstance` network protocol session helpers that take online session structs (`ApplyARProtocolSessionSetting`, `GetARProtocolFromSession`) are C++-only (not Blueprint-reflected) because their parameter types are not UHT-reflectable.
 - Native authoritative lobby/runtime bases:
 - `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
 - `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
@@ -173,6 +174,9 @@
 - server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
 - target client persists snapshot via `ClientPersistCanonicalSave(...)` -> `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
 - if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
+- Player-controller session leave API is native on `AARPlayerController`:
+- `LeaveSession()` is BP-callable (`Alien Ramen|Session`) and routes client calls to `ServerLeaveSession()`
+- server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
 - Save listing supports parallel namespaces:
 - `ListSaves(...)` reads/writes the canonical save index slot (`SaveIndex`).
@@ -195,11 +199,16 @@
 - marks setup complete
 - then emits BP extension hook `BP_OnPlayerJoined`
 - `AARGameModeBase::Logout` emits `BP_OnPlayerLeft`; player membership itself is maintained by built-in `PlayerArray` lifecycle.
-- `AARGameStateBase` player tracking mirrors `PlayerArray` into replicated `Players`; `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` and on repnotify.
+- `AARGameStateBase` player tracking uses built-in `AGameStateBase::PlayerArray` as the authoritative source (no parallel replicated custom `Players` array and no tracked-player wrapper arrays).
+- `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` when `AARPlayerStateBase` entries are added/removed.
 - GameState UI hooks: replicated `CyclesForUI` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
 - PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
 - GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness, save, and travel; logs blocking players and delegates travel to SaveSubsystem (listen enforced).
+- Player-controller travel API is native on `AARPlayerController`:
+- `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` is BP-callable (`Alien Ramen|Travel`) and routes client calls to `ServerTryStartTravel(...)`.
+- Server controller travel handling forwards to authoritative `AARGameModeBase::TryStartTravel(...)`.
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
+- `GetPlayerStates()` (returns filtered `AARPlayerStateBase` array from `PlayerArray` for BP iteration)
 - `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from `PlayerArray` player slots)
 - `GetOtherPlayerStateFromPlayerState(...)`
 - `GetOtherPlayerStateFromController(...)`

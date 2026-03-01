@@ -30,10 +30,29 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestCanonicalSaveSync();
 
+	// Session leave entrypoint for UI/BP. Routes to server when called by clients.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
+	void LeaveSession();
+
+	// Server-side leave request handler.
+	UFUNCTION(Server, Reliable)
+	void ServerLeaveSession();
+
+	// Controller travel entrypoint for UI/BP. Routes to server when called by clients.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
+	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+
+	// Server-side travel request handler.
+	UFUNCTION(Server, Reliable)
+	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	void LeaveSessionInternal();
+	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify);
+
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
 };

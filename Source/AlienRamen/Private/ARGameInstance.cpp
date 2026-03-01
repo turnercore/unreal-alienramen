@@ -1,8 +1,10 @@
 #include "ARGameInstance.h"
 
 #include "ARLog.h"
+#include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
 #include "Misc/App.h"
+#include "Misc/ConfigCacheIni.h"
 #include "OnlineSessionSettings.h"
 
 void UARGameInstance::Init()
@@ -60,12 +62,22 @@ bool UARGameInstance::GetARProtocolFromSession(const FOnlineSessionSearchResult&
 
 FString UARGameInstance::GetARProjectVersion()
 {
-	return FApp::GetProjectVersion();
+	FString ProjectVersion;
+	if (GConfig)
+	{
+		GConfig->GetString(
+			TEXT("/Script/EngineSettings.GeneralProjectSettings"),
+			TEXT("ProjectVersion"),
+			ProjectVersion,
+			GGameIni);
+	}
+
+	return ProjectVersion;
 }
 
 FString UARGameInstance::GetARBuildFingerprint()
 {
-	const FString ProjectVersion = FApp::GetProjectVersion();
+	const FString ProjectVersion = GetARProjectVersion();
 	return FString::Printf(TEXT("%s | NetProto:%d | SaveSchema:%d"),
 		*ProjectVersion,
 		ARProtocolVersion,

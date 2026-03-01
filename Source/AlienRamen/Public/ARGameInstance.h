@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "OnlineSessionSettings.h"
 #include "ARGameInstance.generated.h"
 
 class UARSaveSubsystem;
+class FOnlineSessionSettings;
+class FOnlineSessionSearchResult;
 
 UCLASS(BlueprintType, Blueprintable)
 class ALIENRAMEN_API UARGameInstance : public UGameInstance
@@ -32,12 +33,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Net Compatibility")
 	static bool IsARProtocolCompatible(int32 OtherProtocol);
 
-	// Host helper: stamp session settings so clients can prefilter incompatible sessions (works with Advanced Sessions/Steam/LAN).
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Net Compatibility")
+	// C++ host helper: stamp session settings so clients can prefilter incompatible sessions (works with Advanced Sessions/Steam/LAN).
 	static void ApplyARProtocolSessionSetting(UPARAM(ref) FOnlineSessionSettings& SessionSettings);
 
-	// Client helper: read protocol value from a session search result and compare to local compatibility.
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Net Compatibility")
+	// C++ client helper: read protocol value from a session search result and compare to local compatibility.
 	static bool GetARProtocolFromSession(const FOnlineSessionSearchResult& SearchResult, int32& OutProtocol);
 
 	// ---- Build/version helpers ----

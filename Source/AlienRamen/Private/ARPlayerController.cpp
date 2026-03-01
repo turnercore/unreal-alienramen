@@ -1,4 +1,5 @@
 #include "ARPlayerController.h"
+#include "ARGameModeBase.h"
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -48,4 +49,63 @@ void AARPlayerController::ServerRequestCanonicalSaveSync_Implementation()
 			}
 		}
 	}
+}
+
+void AARPlayerController::LeaveSession()
+{
+	if (HasAuthority())
+	{
+		LeaveSessionInternal();
+		return;
+	}
+
+	ServerLeaveSession();
+}
+
+void AARPlayerController::ServerLeaveSession_Implementation()
+{
+	LeaveSessionInternal();
+}
+
+void AARPlayerController::LeaveSessionInternal()
+{
+	UE_LOG(ARLog, Log, TEXT("[Session] LeaveSession requested by controller '%s' (Authority=%d)."), *GetNameSafe(this), HasAuthority() ? 1 : 0);
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		GI->ReturnToMainMenu();
+		return;
+	}
+
+	ClientReturnToMainMenuWithTextReason(FText::FromString(TEXT("Leaving session")));
+}
+
+void AARPlayerController::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+{
+	if (HasAuthority())
+	{
+		TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify);
+		return;
+	}
+
+	ServerTryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify);
+}
+
+void AARPlayerController::ServerTryStartTravel_Implementation(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+{
+	TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify);
+}
+
+void AARPlayerController::TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+{
+	if (AARGameModeBase* ARGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AARGameModeBase>() : nullptr)
+	{
+		if (!ARGameMode->TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel failed. URL='%s' Options='%s'"), *GetNameSafe(this), *URL, *Options);
+		}
+		return;
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel ignored: no authoritative AARGameModeBase."), *GetNameSafe(this));
 }

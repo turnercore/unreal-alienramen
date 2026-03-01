@@ -28,6 +28,9 @@ public:
 	AARPlayerStateBase* GetPlayerBySlot(EARPlayerSlot Slot) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	TArray<AARPlayerStateBase*> GetPlayerStates() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
@@ -68,13 +71,7 @@ protected:
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
 	UFUNCTION()
-	void OnRep_Players();
-
-	UFUNCTION()
 	void OnRep_CyclesForUI();
-
-	UPROPERTY(ReplicatedUsing = OnRep_Players, BlueprintReadOnly, Category = "Alien Ramen|Players")
-	TArray<TObjectPtr<AARPlayerStateBase>> Players;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CyclesForUI, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 CyclesForUI = 0;

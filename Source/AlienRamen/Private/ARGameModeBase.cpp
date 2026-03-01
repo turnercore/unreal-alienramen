@@ -11,7 +11,7 @@
 AARGameModeBase::AARGameModeBase()
 {
 	bUseSeamlessTravel = true;
-	DefaultPlayerName = TEXT("Tenshu");
+	DefaultPlayerName = FText::FromString(TEXT("Tenshu"));
 }
 
 EARPlayerSlot AARGameModeBase::DetermineNextPlayerSlot(const AARGameStateBase* GameState)

@@ -34,7 +34,6 @@ void AARGameStateBase::BeginPlay()
 void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AARGameStateBase, Players);
 	DOREPLIFETIME(AARGameStateBase, CyclesForUI);
 }
 
@@ -50,6 +49,22 @@ AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
 	}
 
 	return nullptr;
+}
+
+TArray<AARPlayerStateBase*> AARGameStateBase::GetPlayerStates() const
+{
+	TArray<AARPlayerStateBase*> Result;
+	Result.Reserve(PlayerArray.Num());
+
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		if (AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState))
+		{
+			Result.Add(ARPlayerState);
+		}
+	}
+
+	return Result;
 }
 
 AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const
@@ -110,27 +125,18 @@ AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromContext(const UObje
 void AARGameStateBase::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
-	AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
-	const int32 Before = Players.Num();
-	if (ARPS)
-	{
-		Players.AddUnique(ARPS);
-	}
-	if (Players.Num() != Before)
+	if (Cast<AARPlayerStateBase>(PlayerState))
 	{
 		OnTrackedPlayersChanged.Broadcast();
-		ForceNetUpdate();
 	}
 }
 
 void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 {
 	Super::RemovePlayerState(PlayerState);
-	const int32 Removed = Players.Remove(Cast<AARPlayerStateBase>(PlayerState));
-	if (Removed > 0)
+	if (Cast<AARPlayerStateBase>(PlayerState))
 	{
 		OnTrackedPlayersChanged.Broadcast();
-		ForceNetUpdate();
 	}
 }
 
@@ -176,11 +182,6 @@ void AARGameStateBase::SyncCyclesFromSave(int32 NewCycles)
 void AARGameStateBase::NotifyHydratedFromSave()
 {
 	OnHydratedFromSave.Broadcast();
-}
-
-void AARGameStateBase::OnRep_Players()
-{
-	OnTrackedPlayersChanged.Broadcast();
 }
 
 void AARGameStateBase::OnRep_CyclesForUI()
