@@ -27,7 +27,7 @@
 #include "Widgets/Layout/SScrollBar.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SSplitter.h"
-#include "Widgets/Layout/SWrapBox.h"
+#include "Widgets/Layout/SUniformWrapPanel.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/SNullWidget.h"
 #include "Widgets/Text/STextBlock.h"
@@ -101,32 +101,12 @@ namespace ARDebugSaveEditor
 
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
 							[
-								SNew(SWrapBox)
-								.InnerSlotPadding(FVector2D(6.f, 6.f))
-
-								+ SWrapBox::Slot()
+								SNew(SUniformWrapPanel)
+								.SlotPadding(FVector2D(6.f, 6.f))
+								.MinDesiredSlotWidth(96.f)
+								+ SUniformWrapPanel::Slot()
 								[
-									SNew(SBox).MinDesiredWidth(120.f)
-									[
-										SNew(SButton)
-										.Text(FText::FromString("Save"))
-										.OnClicked(this, &SPanel::OnSaveCurrent)
-									]
-								]
-
-								+ SWrapBox::Slot()
-								[
-									SNew(SBox).MinDesiredWidth(120.f)
-									[
-										SNew(SButton)
-										.Text(FText::FromString("Refresh"))
-										.OnClicked(this, &SPanel::OnRefreshSlots)
-									]
-								]
-
-								+ SWrapBox::Slot()
-								[
-									SNew(SBox).MinDesiredWidth(120.f)
+									SNew(SBox).MinDesiredWidth(96.f)
 									[
 										SNew(SButton)
 										.Text(FText::FromString("Create"))
@@ -134,9 +114,19 @@ namespace ARDebugSaveEditor
 									]
 								]
 
-								+ SWrapBox::Slot()
+								+ SUniformWrapPanel::Slot()
 								[
-									SNew(SBox).MinDesiredWidth(120.f)
+									SNew(SBox).MinDesiredWidth(96.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Refresh"))
+										.OnClicked(this, &SPanel::OnRefreshSlots)
+									]
+								]
+
+								+ SUniformWrapPanel::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(96.f)
 									[
 										SNew(SButton)
 										.Text(FText::FromString("Load"))
@@ -144,9 +134,9 @@ namespace ARDebugSaveEditor
 									]
 								]
 
-								+ SWrapBox::Slot()
+								+ SUniformWrapPanel::Slot()
 								[
-									SNew(SBox).MinDesiredWidth(120.f)
+									SNew(SBox).MinDesiredWidth(96.f)
 									[
 										SNew(SButton)
 										.Text(FText::FromString("Delete"))
@@ -154,9 +144,9 @@ namespace ARDebugSaveEditor
 									]
 								]
 
-								+ SWrapBox::Slot()
+								+ SUniformWrapPanel::Slot()
 								[
-									SNew(SBox).MinDesiredWidth(120.f)
+									SNew(SBox).MinDesiredWidth(96.f)
 									[
 										SNew(SButton)
 										.Text(FText::FromString("Rename"))
@@ -164,9 +154,9 @@ namespace ARDebugSaveEditor
 									]
 								]
 
-								+ SWrapBox::Slot()
+								+ SUniformWrapPanel::Slot()
 								[
-									SNew(SBox).MinDesiredWidth(120.f)
+									SNew(SBox).MinDesiredWidth(96.f)
 									[
 										SNew(SButton)
 										.Text(FText::FromString("Duplicate"))
@@ -225,20 +215,28 @@ namespace ARDebugSaveEditor
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 							[
-								SNew(SHorizontalBox)
-								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(0.f, 0.f, 3.f, 0.f)
+								SNew(SUniformWrapPanel)
+								.SlotPadding(FVector2D(6.f, 6.f))
+								.MinDesiredSlotWidth(120.f)
+								+ SUniformWrapPanel::Slot()
+								[
+									SNew(SButton)
+									.Text(FText::FromString("Save"))
+									.OnClicked(this, &SPanel::OnSaveCurrent)
+								]
+								+ SUniformWrapPanel::Slot()
 								[
 									SNew(SButton)
 									.Text(FText::FromString("Add All Unlocks"))
 									.OnClicked(this, &SPanel::OnUnlockAllCurrent)
 								]
-								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(3.f, 0.f, 3.f, 0.f)
+								+ SUniformWrapPanel::Slot()
 								[
 									SNew(SButton)
 									.Text(FText::FromString("Set Default Loadout (All Players)"))
 									.OnClicked(this, &SPanel::OnDefaultLoadoutAllPlayersCurrent)
 								]
-								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(3.f, 0.f, 0.f, 0.f)
+								+ SUniformWrapPanel::Slot()
 								[
 									SNew(SButton)
 									.Text(FText::FromString("Revert"))
@@ -358,6 +356,16 @@ namespace ARDebugSaveEditor
 				FARSaveResult Result;
 				if (!Subsystem->LoadGame(SlotName, -1, Result, bUseDebugSaves))
 				{
+					CurrentSlotName = NAME_None;
+					CurrentSaveObject.Reset();
+					LoadedSnapshotBytes.Reset();
+					LoadedSnapshotSlotName = NAME_None;
+					BindCurrentSaveToDetails();
+					const bool bPruned = PruneSlotFromIndexOffline(SlotName, bUseDebugSaves);
+					if (bPruned)
+					{
+						RefreshSlots();
+					}
 					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Result.Error));
 					return FReply::Handled();
 				}
@@ -370,6 +378,16 @@ namespace ARDebugSaveEditor
 				FString Error;
 				if (!LoadSlotOffline(SlotName, bUseDebugSaves, Error))
 				{
+					CurrentSlotName = NAME_None;
+					CurrentSaveObject.Reset();
+					LoadedSnapshotBytes.Reset();
+					LoadedSnapshotSlotName = NAME_None;
+					BindCurrentSaveToDetails();
+					const bool bPruned = PruneSlotFromIndexOffline(SlotName, bUseDebugSaves);
+					if (bPruned)
+					{
+						RefreshSlots();
+					}
 					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Error));
 					return FReply::Handled();
 				}
@@ -377,7 +395,7 @@ namespace ARDebugSaveEditor
 
 			CaptureLoadedSnapshot();
 			BindCurrentSaveToDetails();
-			SetStatus(FString::Printf(TEXT("Loaded slot '%s'."), *CurrentSlotName.ToString()));
+			SetStatus(FString::Printf(TEXT("Loaded slot '%s'."), *GetDisplaySlotName(CurrentSlotName).ToString()));
 			return FReply::Handled();
 		}
 
@@ -489,7 +507,7 @@ namespace ARDebugSaveEditor
 			CaptureLoadedSnapshot();
 			BindCurrentSaveToDetails();
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Created slot base '%s'."), *CurrentSlotName.ToString()));
+			SetStatus(FString::Printf(TEXT("Created slot base '%s'."), *GetDisplaySlotName(CurrentSlotName).ToString()));
 			return FReply::Handled();
 		}
 
@@ -548,7 +566,7 @@ namespace ARDebugSaveEditor
 			}
 
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Saved slot '%s'."), *CurrentSlotName.ToString()));
+			SetStatus(FString::Printf(TEXT("Saved slot '%s'."), *GetDisplaySlotName(CurrentSlotName).ToString()));
 			return FReply::Handled();
 		}
 
@@ -583,8 +601,11 @@ namespace ARDebugSaveEditor
 					FARSaveResult Result;
 					if (!Subsystem->DeleteSave(SlotToDelete, Result, bUseDebugSaves))
 					{
-						SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Result.Error));
-						return FReply::Handled();
+						if (!PruneSlotFromIndexOffline(SlotToDelete, bUseDebugSaves))
+						{
+							SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Result.Error));
+							return FReply::Handled();
+						}
 					}
 				}
 				else
@@ -592,8 +613,11 @@ namespace ARDebugSaveEditor
 					FString Error;
 					if (!DeleteSlotOffline(SlotToDelete, bUseDebugSaves, Error))
 					{
-						SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Error));
-						return FReply::Handled();
+						if (!PruneSlotFromIndexOffline(SlotToDelete, bUseDebugSaves))
+						{
+							SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Error));
+							return FReply::Handled();
+						}
 					}
 				}
 
@@ -781,7 +805,7 @@ namespace ARDebugSaveEditor
 			CurrentSaveObject->Modify();
 			CurrentSaveObject.Reset(Reverted);
 			BindCurrentSaveToDetails();
-			SetStatus(FString::Printf(TEXT("Reverted slot '%s' to loaded snapshot."), *CurrentSlotName.ToString()));
+			SetStatus(FString::Printf(TEXT("Reverted slot '%s' to loaded snapshot."), *GetDisplaySlotName(CurrentSlotName).ToString()));
 			return FReply::Handled();
 		}
 
@@ -937,6 +961,13 @@ namespace ARDebugSaveEditor
 			}
 
 			return true;
+		}
+
+		bool PruneSlotFromIndexOffline(FName InSlotBase, bool bDebugMode)
+		{
+			FString Error;
+			DeleteSlotOffline(InSlotBase, bDebugMode, Error);
+			return Error.IsEmpty();
 		}
 
 		bool SaveIndexOffline(bool bDebugMode, UARSaveIndexGame* IndexObj, FString& OutError) const

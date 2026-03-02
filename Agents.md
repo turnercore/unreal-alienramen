@@ -415,11 +415,12 @@
 - Tool now has namespace toggle (`Use Debug Namespace`) and drives unified save APIs with `bUseDebugSaves`.
 - Slot create/load/save/delete/list all use the same core functions (`CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave/ListSaves`) with namespace selected by toggle.
 - Tool includes slot maintenance actions: `Duplicate Selected` and `Rename Selected` (target base from textbox), implemented in editor tooling by index/file copy+rewrite for the active namespace.
-- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Save`, `Rename`, `Duplicate`; loaded-save actions live on the right/details side.
-- Left-panel actions are presented as compact labels (`Save`, `Refresh`, `Create`, `Load`, `Delete`, `Rename`, `Duplicate`) in a responsive wrap layout that flows into multiple columns based on panel width.
-- Loaded-save utility row includes `Add All Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
+- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Rename`, `Duplicate`; loaded-save actions live on the right/details side.
+- Left-panel actions are presented in a uniform adaptive wrap/grid layout that flows into multiple columns based on panel width.
+- Loaded-save utility row includes `Save`, `Add All Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
 - Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
 - Save-slot list supports double-click to load a slot; if a different slot is already loaded, current loaded save is auto-saved before switching.
+- Failed load/delete against stale index entries in the editor tool can self-heal by pruning the slot from the active namespace index.
 - Slot list selection mode is multi-select for delete operations; non-delete actions (`Load`, `Rename`, `Duplicate`) collapse to the first selected slot.
 - Delete action prompts `Delete?` confirmation and supports deleting all selected slots in one operation.
 - Revert uses an in-memory snapshot captured when a slot is loaded/created to restore the loaded save object to its last loaded state.
