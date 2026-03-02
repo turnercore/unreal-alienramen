@@ -88,6 +88,7 @@
 - Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
+- `AARShipCharacterBase` no longer auto-invokes legacy BP `_Init` from C++; ship initialization should come from explicit gameplay flow (for example possess/lifecycle/interface scripts) and C++ loadout/apply paths.
 - Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
 - PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
 - Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
@@ -190,6 +191,7 @@
 - `LeaveSession()` is BP-callable (`Alien Ramen|Session`) and routes client calls to `ServerLeaveSession()`
 - server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
+- Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` (save + `OpenLevel`) instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
 - Save listing supports parallel namespaces:
 - Unified save API now uses explicit debug toggle on core ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `ListSaves`, `DeleteSave`) via `bUseDebugSaves`.
 - `bUseDebugSaves=true` appends/uses `"_debug"` slot-base naming and routes index IO to debug index slot (`SaveIndexDebug`); `false` routes to canonical index slot (`SaveIndex`).

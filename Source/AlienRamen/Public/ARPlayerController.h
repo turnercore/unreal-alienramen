@@ -41,11 +41,11 @@ public:
 
 	// Controller travel entrypoint for UI/BP. Routes to server when called by clients.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
-	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
 	// Server-side travel request handler.
 	UFUNCTION(Server, Reliable)
-	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
 	// Unlock mutation entrypoints for UI/BP. Route to server when called by clients.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -65,7 +65,7 @@ protected:
 
 private:
 	void LeaveSessionInternal();
-	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify);
+	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
 

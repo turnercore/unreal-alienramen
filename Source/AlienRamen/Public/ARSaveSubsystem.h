@@ -104,7 +104,7 @@ public:
 	 * Authority-only non-networked level open. Enforces listen option so host remains authoritative.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool RequestOpenLevel(const FString& LevelName, bool bSkipReadyChecks = false, bool bAbsolute = false);
+	bool RequestOpenLevel(const FString& LevelName, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false);
 
 	// Sets travel-transient GameState data to be applied first on next RequestGameStateHydration call.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")

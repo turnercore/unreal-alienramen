@@ -169,10 +169,6 @@ protected:
 	UPROPERTY(Transient)
 	int32 LoadoutInitRetryCount = 0;
 
-	// BP compatibility: call legacy BP _Init once ASC is actually ready.
-	UPROPERTY(Transient)
-	bool bLegacyBPInitInvoked = false;
-
 	FTimerHandle LoadoutInitRetryTimer;
 
 	// Runtime weapon tuning effect (formerly applied from BP _Init).
