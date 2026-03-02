@@ -64,6 +64,7 @@
 - `CharacterPicked` (`EARCharacterChoice`: `None`, `Brother`, `Sister`) is native replicated state on `AARPlayerStateBase` with server setter path (`SetCharacterPicked` / `ServerPickCharacter`) and change signal `OnCharacterPickedChanged`.
 - `DisplayName` is native replicated state on `AARPlayerStateBase` with server setter path (`SetDisplayNameValue` / `ServerUpdateDisplayName`), mirrored into `PlayerName` (`SetPlayerName`), and change signal `OnDisplayNameChanged`.
 - `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
+- `bIsDowned` and `bIsDeadState` are native replicated transient runtime states on `AARPlayerStateBase` (not save-persistent) with server setter paths (`SetDownedState`/`ServerUpdateDownedState`, `SetDeadState`/`ServerUpdateDeadState`) and change signals (`OnDownedStateChanged`, `OnDeadStateChanged`).
 - Ready-set normalization contract: when server processes `SetReadyForRun(true)`, PlayerState auto-normalizes missing prerequisites before setting ready:
 - if `PlayerSlot` is `Unknown`, assign first-free `P1/P2` (fallback `P1` if both occupied)
 - if `CharacterPicked` is `None`, assign slot-biased preferred choice (`P1->Brother`, `P2->Sister`) with alternate fallback when needed.
@@ -281,7 +282,7 @@
 - Director runtime no longer requires/loading the enemy DataTable to start runs; enemy definitions are resolved through `ContentLookupSubsystem` (registry asset) and cached per identifier tag. Enemy class preloading still uses the resolved definition.
 - Director keeps an enemy definition cache keyed by identifier tag and preloads likely enemy classes ahead of time (`EnemyPreloadWaveLookahead`).
 - Disabled enemy rows are hard-rejected from runtime spawn.
-- Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
+- Player-down evaluation contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false positives on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
 - default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once it has remained offscreen for `OffscreenReleaseDelay` seconds.
@@ -346,7 +347,21 @@
 - Leak detection ownership:
 - leak detection/reporting is enemy-owned (BP/C++ enemy logic decides leak timing and calls director report API)
 - Blueprint/manual trigger path should call `UARInvaderDirectorSubsystem::ReportEnemyLeaked(Enemy)` directly (for example from Earth trigger overlap).
-- Director no longer performs boundary leak polling/destruction; it owns aggregate leak progression/loss rules and increments run `LeakCount` only via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
+- Director no longer performs boundary leak polling/destruction; it increments run `LeakCount` only via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
+- Director is now observer/reporter for run-loss signals, not arbiter:
+- it does **not** auto-stop the run for leak count or all-players-down
+- it broadcasts `OnEnemyLeaked(NewLeakCount, Delta)` and `OnAllPlayersDownChanged(bAllPlayersDown)` for external arbitration (for example GameMode deciding game-over and calling `StopInvaderRun`)
+- leak-threshold ownership was removed from `UARInvaderDirectorSettings`; threshold policy now belongs to game-mode/rules logic
+- Director now tracks player status snapshots (evaluated/downed/dead) and emits change-only signals:
+- `OnPlayerDownedChanged(PlayerState, bIsDowned)`
+- `OnPlayerDeadChanged(PlayerState, bIsDead)`
+- `OnAllPlayersDownChanged(bAllPlayersDown)`
+- `OnAllPlayersDeadChanged(bAllPlayersDead)`
+- Query helpers exposed on director for gameplay logic/targeting:
+- `IsPlayerDowned(PlayerState)`, `IsPlayerDead(PlayerState)`
+- `GetEvaluatedPlayerCount()`, `GetDownedPlayerCount()`, `GetDeadPlayerCount()`
+- `AreAllPlayersDowned()`, `AreAllPlayersDead()`
+- Director player-status updates are event-driven (not tick-driven): it rebuilds/binds on run start and tracked-player changes, subscribes to PlayerState runtime-state signals (`OnDownedStateChanged`, `OnDeadStateChanged`) plus health/max-health signals for initialization edge cases, and emits director change signals/query-cache updates only when values change.
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
 - `AAREnemyBase::HasReachedFormationSlot()`
