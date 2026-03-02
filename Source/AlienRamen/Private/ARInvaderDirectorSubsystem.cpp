@@ -26,8 +26,15 @@
 namespace ARInvaderInternal
 {
 	static constexpr float WaveColorSwapChance = 0.30f;
-	static const FGameplayTag StateDownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
-	static const FGameplayTag StateDeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
+	static FGameplayTag GetStateDownedTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
+	}
+
+	static FGameplayTag GetStateDeadTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
+	}
 
 	static EAREnemyColor SwapEnemyColor(EAREnemyColor InColor)
 	{
@@ -912,7 +919,7 @@ void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings()
 		if (UAbilitySystemComponent* ASC = Binding.ASC.Get())
 		{
 			TWeakObjectPtr<UARInvaderDirectorSubsystem> WeakThis(this);
-			Binding.DownedTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::StateDownedTag, EGameplayTagEventType::NewOrRemoved)
+			Binding.DownedTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDownedTag(), EGameplayTagEventType::NewOrRemoved)
 				.AddLambda([WeakThis](const FGameplayTag, int32)
 				{
 					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
@@ -920,7 +927,7 @@ void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings()
 						StrongThis->RefreshPlayerStatusSignals();
 					}
 				});
-			Binding.DeadTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::StateDeadTag, EGameplayTagEventType::NewOrRemoved)
+			Binding.DeadTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDeadTag(), EGameplayTagEventType::NewOrRemoved)
 				.AddLambda([WeakThis](const FGameplayTag, int32)
 				{
 					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
@@ -950,11 +957,11 @@ void UARInvaderDirectorSubsystem::ClearPlayerStatusBindings()
 		{
 			if (Pair.Value.DownedTagChangedHandle.IsValid())
 			{
-				ASC->RegisterGameplayTagEvent(ARInvaderInternal::StateDownedTag, EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DownedTagChangedHandle);
+				ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDownedTag(), EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DownedTagChangedHandle);
 			}
 			if (Pair.Value.DeadTagChangedHandle.IsValid())
 			{
-				ASC->RegisterGameplayTagEvent(ARInvaderInternal::StateDeadTag, EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DeadTagChangedHandle);
+				ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDeadTag(), EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DeadTagChangedHandle);
 			}
 		}
 	}

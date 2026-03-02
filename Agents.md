@@ -11,6 +11,7 @@
 - Blueprint-only facts are first-class documentation requirements. If critical behavior/shape only exists in BP assets (for example struct variable contracts), record it here clearly.
 - Record decisions, not guesses. If uncertain, verify in code before writing; if still uncertain, add a clearly labeled open question.
 - Preserve intent and constraints for future work (what must stay true), not just what exists today.
+- HIGH PRIORITY: never initialize Unreal/engine-dependent values at namespace/global static initialization time (for example `FGameplayTag::RequestGameplayTag`, `FPaths::*`, subsystem access, asset loads in static/global constructors). Resolve these at runtime via functions/instance lifecycle (`Initialize`, `BeginPlay`, constructor body, function-local static accessor) to avoid packaged `CrashDuringStaticInit` (`777006`) failures.
 - Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
 - API exposure default: prefer Blueprint exposure for gameplay-facing utilities unless told otherwise.
 - If exposure choice is unclear, ask before locking API surface.
@@ -26,6 +27,7 @@
 
 ## High-Level Architecture
 
+- Unreal Engine version contract: this project is on Unreal Engine `5.7` (`AlienRamen.uproject` `EngineAssociation` is `5.7`). Use UE 5.7 toolchain/Build scripts for compile/package commands.
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
 - Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.

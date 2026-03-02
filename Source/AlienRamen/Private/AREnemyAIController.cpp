@@ -29,16 +29,32 @@ AAREnemyAIController::AAREnemyAIController()
 	{
 		StateTreeComponent->SetStartLogicAutomatically(false);
 	}
+}
 
-	ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Active")), false);
-	BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Berserk")), false);
-	EnteredScreenEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Enemy.EnteredScreen")), false);
-	InFormationEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Enemy.InFormation")), false);
+void AAREnemyAIController::EnsureEventTagsInitialized()
+{
+	if (!ActivePhaseEventTag.IsValid())
+	{
+		ActivePhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Active")), false);
+	}
+	if (!BerserkPhaseEventTag.IsValid())
+	{
+		BerserkPhaseEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Wave.Phase.Berserk")), false);
+	}
+	if (!EnteredScreenEventTag.IsValid())
+	{
+		EnteredScreenEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Enemy.EnteredScreen")), false);
+	}
+	if (!InFormationEventTag.IsValid())
+	{
+		InFormationEventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Enemy.InFormation")), false);
+	}
 }
 
 void AAREnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+	EnsureEventTagsInitialized();
 	UnbindStateTreeTagBridge(/*bPopAppliedTags=*/false);
 	DeferredStartAttemptCounter = 0;
 	bStateTreeInitializedForPossession = false;
@@ -547,6 +563,8 @@ void AAREnemyAIController::StopStateTree(const FString& Reason)
 
 void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase)
 {
+	EnsureEventTagsInitialized();
+
 	if (!HasAuthority())
 	{
 		return;
@@ -595,6 +613,8 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 
 void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 {
+	EnsureEventTagsInitialized();
+
 	if (!HasAuthority())
 	{
 		return;
@@ -655,6 +675,8 @@ void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 
 void AAREnemyAIController::NotifyEnemyInFormation(int32 WaveInstanceId)
 {
+	EnsureEventTagsInitialized();
+
 	if (!HasAuthority())
 	{
 		return;

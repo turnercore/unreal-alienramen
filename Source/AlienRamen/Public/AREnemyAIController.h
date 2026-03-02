@@ -66,6 +66,7 @@ protected:
 	virtual void OnUnPossess() override;
 
 private:
+	void EnsureEventTagsInitialized();
 	void StartStateTreeForPawn(APawn* InPawn, const TCHAR* Reason);
 	void StartStateTreeForPawn_Deferred(APawn* InPawn, const TCHAR* Reason);
 	void StopStateTree(const FString& Reason);

@@ -191,8 +191,8 @@ protected:
 	// ---- PlayerState field name (must match your BP variable name) ----
 	static const FName NAME_LoadoutTags;
 
-	// ---- Tag roots ----
-	static const FGameplayTag TAGROOT_Ships;
-	static const FGameplayTag TAGROOT_Secondaries;
-	static const FGameplayTag TAGROOT_Gadgets;
+	// ---- Tag roots (runtime-resolved; avoid static init order issues) ----
+	static FGameplayTag GetTagRootShips();
+	static FGameplayTag GetTagRootSecondaries();
+	static FGameplayTag GetTagRootGadgets();
 };
