@@ -1178,7 +1178,7 @@ bool UARSaveSubsystem::RequestServerTravel(const FString& URL, bool bSkipReadyCh
 	return World->ServerTravel(TravelURL, bAbsolute, bSkipGameNotify);
 }
 
-bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, bool bSkipReadyChecks, bool bAbsolute)
+bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, const FString& Options, bool bSkipReadyChecks, bool bAbsolute)
 {
 	FString Error;
 	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
@@ -1202,7 +1202,7 @@ bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, bool bSkipRead
 		return false;
 	}
 
-	const FString ListenOptions = EnsureListenOption(TEXT(""));
+	const FString ListenOptions = EnsureListenOption(Options);
 	UGameplayStatics::OpenLevel(World, FName(*LevelName), bAbsolute, ListenOptions);
 	return true;
 }

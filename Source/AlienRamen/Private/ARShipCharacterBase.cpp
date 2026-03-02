@@ -38,7 +38,6 @@ const FName AARShipCharacterBase::NAME_Stats(TEXT("Stats"));
 const FName AARShipCharacterBase::NAME_MovementType(TEXT("MovementType"));
 const FName AARShipCharacterBase::NAME_LoadoutTags(TEXT("LoadoutTags"));
 static const FName NAME_LegacyASC(TEXT("ASC"));
-static const FName NAME_LegacyBPInit(TEXT("_Init"));
 static const FName NAME_LegacyBasePrimaryFireRateEffect(TEXT("BasePrimaryFireRateEffect"));
 
 // --------------------
@@ -556,7 +555,6 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	}
 
 	bServerLoadoutApplied = false;
-	bLegacyBPInitInvoked = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
 	{
@@ -611,15 +609,6 @@ void AARShipCharacterBase::InitAbilityActorInfo()
 	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, ASC);
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 
-	// BP compatibility: many existing pawn blueprints expect _Init to run after ASC is valid.
-	if (!bLegacyBPInitInvoked)
-	{
-		if (UFunction* LegacyInitFn = FindFunction(NAME_LegacyBPInit))
-		{
-			ProcessEvent(LegacyInitFn, nullptr);
-			bLegacyBPInitInvoked = true;
-		}
-	}
 }
 
 void AARShipCharacterBase::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
@@ -681,7 +670,6 @@ void AARShipCharacterBase::UnPossessed()
 	CachedASC = nullptr;
 	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
 	bServerLoadoutApplied = false;
-	bLegacyBPInitInvoked = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
 	{
