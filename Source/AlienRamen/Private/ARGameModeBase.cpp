@@ -179,7 +179,7 @@ void AARGameModeBase::Logout(AController* Exiting)
 	Super::Logout(Exiting);
 }
 
-bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
 {
 	if (!HasAuthority())
 	{
@@ -225,6 +225,26 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel failed: SaveSubsystem missing."));
 		return false;
 	}
+
+#if WITH_EDITOR
+	if (bUseOpenLevelInPIE && GetWorld() && GetWorld()->WorldType == EWorldType::PIE)
+	{
+		FString LevelName = URL;
+		FString OpenLevelOptions = Options;
+		int32 QueryIndex = INDEX_NONE;
+		if (URL.FindChar(TEXT('?'), QueryIndex))
+		{
+			LevelName = URL.Left(QueryIndex);
+			if (OpenLevelOptions.IsEmpty())
+			{
+				OpenLevelOptions = URL.Mid(QueryIndex + 1);
+			}
+		}
+
+		UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel PIE fallback -> OpenLevel Level='%s' Options='%s'"), *LevelName, *OpenLevelOptions);
+		return SaveSubsystem->RequestOpenLevel(LevelName, OpenLevelOptions, bSkipReadyChecks, bAbsolute);
+	}
+#endif
 
 	UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel -> URL='%s' Options='%s' SkipReady=%s"), *URL, *Options, bSkipReadyChecks ? TEXT("true") : TEXT("false"));
 	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify);
