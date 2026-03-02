@@ -916,6 +916,7 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	WavePhaseStartServerTime = InPhaseStartServerTime;
 	bFormationLockEnter = bInFormationLockEnter;
 	bFormationLockActive = bInFormationLockActive;
+	bHasEnteredScreen = false;
 	bHasEnteredGameplayScreen = false;
 	bReachedFormationSlot = false;
 	bHasDispatchedEnteredScreenEvent = false;
@@ -942,7 +943,7 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	// Context assignment is the authoritative signal that AI can start safely.
 	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
 	{
-		EnemyAI->TryStartStateTreeForCurrentPawn();
+		EnemyAI->TryStartStateTreeForCurrentPawn(TEXT("WaveRuntimeContextAssigned"));
 	}
 	else
 	{
@@ -984,6 +985,7 @@ void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
 	}
 
 	bHasEnteredGameplayScreen = true;
+	bHasEnteredScreen = true;
 	EnteredGameplayScreenServerTime = InServerTime;
 	TryDispatchEnteredScreenEvent();
 	TryDispatchInFormationEvent();
