@@ -63,8 +63,18 @@
 - `CharacterPicked` (`EARCharacterChoice`: `None`, `Brother`, `Sister`) is native replicated state on `AARPlayerStateBase` with server setter path (`SetCharacterPicked` / `ServerPickCharacter`) and change signal `OnCharacterPickedChanged`.
 - `DisplayName` is native replicated state on `AARPlayerStateBase` with server setter path (`SetDisplayNameValue` / `ServerUpdateDisplayName`), mirrored into `PlayerName` (`SetPlayerName`), and change signal `OnDisplayNameChanged`.
 - `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
+- Ready-set normalization contract: when server processes `SetReadyForRun(true)`, PlayerState auto-normalizes missing prerequisites before setting ready:
+- if `PlayerSlot` is `Unknown`, assign first-free `P1/P2` (fallback `P1` if both occupied)
+- if `CharacterPicked` is `None`, assign slot-biased preferred choice (`P1->Brother`, `P2->Sister`) with alternate fallback when needed.
 - `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
 - `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
+- PlayerState loadout convenience API: `UpdateLoadoutWithTag(FGameplayTag)` is server-authoritative (client calls route through `ServerUpdateLoadoutWithTag`) and still commits via `SetLoadoutTags(...)` so replication/save-dirty side effects remain intact.
+- PlayerState loadout removal API: `RemoveTagFromLoadout(FGameplayTag)` is server-authoritative (client calls route through `ServerRemoveTagFromLoadout`) and commits through `SetLoadoutTags(...)` so normalization/replication/save-dirty side effects remain intact.
+- PlayerState loadout query API: `GetTagsInLoadoutSlot(FGameplayTag SlotTag)` returns current loadout tags in that slot subtree (descendants of `SlotTag`, excluding the slot root itself).
+- Loadout slot policy is project-settings-driven via `UARLoadoutSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Loadout`):
+- `MultiSlotLoadoutRoots` is an explicit allowlist of slot roots that can keep multiple tags.
+- Any loadout root not in `MultiSlotLoadoutRoots` is treated as single-slot by default.
+- Loadout slot normalization is enforced inside `SetLoadoutTags_Internal(...)` on server: single-slot roots are canonicalized to one descendant tag per root (last tag wins) whenever loadout is updated.
 - `AARPlayerStateBase::InitializeForFirstSessionJoin()` (authority-only) is the first-join default initializer (non-seamless-travel path): resets `CharacterPicked` to `None` and ensures default loadout tags are present.
 - `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
 - `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
@@ -181,6 +191,7 @@
 - Save listing supports parallel namespaces:
 - `ListSaves(...)` reads/writes the canonical save index slot (`SaveIndex`).
 - `ListDebugSaves(...)` reads/writes a separate debug index slot (`SaveIndexDebug`) so debug-save slot discovery is isolated from canonical runtime saves.
+- Slot-base routing rule: save ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `DeleteSave`) route to debug-vs-canonical index by slot base suffix; names ending `"_debug"` use debug index, all others use canonical index.
 - Multiplayer persistence parity seam added:
 - server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
 - clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
@@ -201,6 +212,10 @@
 - `AARGameModeBase::Logout` emits `BP_OnPlayerLeft`; player membership itself is maintained by built-in `PlayerArray` lifecycle.
 - `AARGameStateBase` player tracking uses built-in `AGameStateBase::PlayerArray` as the authoritative source (no parallel replicated custom `Players` array and no tracked-player wrapper arrays).
 - `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` when `AARPlayerStateBase` entries are added/removed.
+- GameState ready signaling is centralized on `AARGameStateBase`:
+- `OnPlayerReadyChanged` relays each player's `OnReadyStatusChanged` (server + clients via replicated PlayerState ready updates).
+- `bAllPlayersTravelReady` is server-authoritative replicated aggregate state; `OnAllPlayersTravelReadyChanged` fires on server updates and client repnotify.
+- aggregate all-ready recompute runs on authoritative player add/remove and on player ready/slot/character change events.
 - GameState UI hooks: replicated `CyclesForUI` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
 - PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
 - GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness, save, and travel; logs blocking players and delegates travel to SaveSubsystem (listen enforced).
@@ -209,6 +224,7 @@
 - Server controller travel handling forwards to authoritative `AARGameModeBase::TryStartTravel(...)`.
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
 - `GetPlayerStates()` (returns filtered `AARPlayerStateBase` array from `PlayerArray` for BP iteration)
+- `AreAllPlayersTravelReady()` (true only when at least one AR player exists and every AR player passes `IsTravelReady()`)
 - `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from `PlayerArray` player slots)
 - `GetOtherPlayerStateFromPlayerState(...)`
 - `GetOtherPlayerStateFromController(...)`
@@ -385,8 +401,9 @@
 
 - Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
 - Requires an active world/GameInstance (run PIE or a Play session); otherwise the tab reports that a subsystem is unavailable.
-- Slot listing/creation/loading/deletion uses `UARSaveSubsystem::ListSaves/CreateNewSave/LoadGame/DeleteSave` and filters slots ending with `"_debug"`.
-- New debug slot bases auto-append `"_debug"`; random names use `GenerateRandomSlotBaseName` when empty.
+- Tool now has namespace toggle (`Debug Saves` vs `Real Saves`) and lists via `ListDebugSaves` or `ListSaves` accordingly.
+- Slot create/load/save/delete continue using `CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave`; subsystem routes index namespace by slot-base suffix (`"_debug"` => debug index).
+- In Debug mode, new slot bases auto-append `"_debug"`; in Real mode, that suffix is removed if entered.
 - Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
 - Unlock-all action now writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager (no legacy library helper).
 - Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.

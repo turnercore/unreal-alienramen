@@ -20,6 +20,7 @@ namespace ARSaveInternal
 {
 	static const TCHAR* SaveIndexSlot = TEXT("SaveIndex");
 	static const TCHAR* DebugSaveIndexSlot = TEXT("SaveIndexDebug");
+	static const TCHAR* DebugSlotSuffix = TEXT("_debug");
 	static const TCHAR* SlotAdj[] = {
 		TEXT("Spicy"), TEXT("Neon"), TEXT("Corporate"), TEXT("Fermented"), TEXT("Unpaid"), TEXT("Galactic"),
 		TEXT("Suspicious"), TEXT("Nuclear"), TEXT("Chaotic"), TEXT("Certified"), TEXT("Questionable"), TEXT("Overclocked")
@@ -32,6 +33,34 @@ static const TCHAR* SlotTail[] = {
 	TEXT("Incident"), TEXT("Ledger"), TEXT("Catastrophe"), TEXT("Protocol"), TEXT("Shift"), TEXT("Experiment"),
 	TEXT("Merger"), TEXT("Lunch"), TEXT("Outbreak"), TEXT("Heist"), TEXT("Audit"), TEXT("Expansion")
 };
+
+static FName NormalizeSlotBaseForNamespace(FName SlotBaseName, bool bUseDebugSaves)
+{
+	FString Base = SlotBaseName.ToString().TrimStartAndEnd();
+	if (Base.IsEmpty())
+	{
+		return NAME_None;
+	}
+
+	if (bUseDebugSaves)
+	{
+		if (!Base.EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase))
+		{
+			Base += DebugSlotSuffix;
+		}
+	}
+	else if (Base.EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase))
+	{
+		Base.LeftChopInline(FCString::Strlen(DebugSlotSuffix), EAllowShrinking::No);
+	}
+
+	return FName(*Base);
+}
+
+static const TCHAR* GetIndexSlotNameForNamespace(bool bUseDebugSaves)
+{
+	return bUseDebugSaves ? DebugSaveIndexSlot : SaveIndexSlot;
+}
 
 static void EnablePIESeamlessTravelIfNeeded()
 {
@@ -404,13 +433,13 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 	}
 }
 
-UARSaveGame* UARSaveSubsystem::LoadSaveObjectWithRollback(FName SlotBaseName, int32 RevisionOrLatest, int32& OutResolvedSlotNumber, FARSaveResult& OutResult) const
+UARSaveGame* UARSaveSubsystem::LoadSaveObjectWithRollback(FName SlotBaseName, int32 RevisionOrLatest, int32& OutResolvedSlotNumber, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const
 {
 	OutResolvedSlotNumber = INDEX_NONE;
 
 	UARSaveIndexGame* IndexObj = nullptr;
 	FARSaveResult IndexResult;
-	if (!LoadOrCreateIndex(IndexObj, IndexResult))
+	if (!LoadOrCreateIndexForSlot(IndexObj, IndexResult, IndexSlotName))
 	{
 		OutResult = IndexResult;
 		return nullptr;
@@ -456,18 +485,21 @@ UARSaveGame* UARSaveSubsystem::LoadSaveObjectWithRollback(FName SlotBaseName, in
 	return nullptr;
 }
 
-bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult)
+bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
 	OutResult = FARSaveResult();
 
+	FName SlotBase = DesiredSlotBase.IsNone() ? GenerateRandomSlotBaseName(true) : NormalizeSlotBaseName(DesiredSlotBase);
+	SlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(SlotBase, bUseDebugSaves);
+	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
+
 	UARSaveIndexGame* IndexObj = nullptr;
-	if (!LoadOrCreateIndex(IndexObj, OutResult))
+	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, IndexSlotName))
 	{
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
 
-	const FName SlotBase = DesiredSlotBase.IsNone() ? GenerateRandomSlotBaseName(true) : NormalizeSlotBaseName(DesiredSlotBase);
 	for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
 	{
 		if (Entry.SlotName == SlotBase)
@@ -508,7 +540,7 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	Descriptor.Money = NewSave->Money;
 	UpsertIndexEntry(IndexObj, Descriptor);
 
-	if (!SaveIndex(IndexObj, OutResult))
+	if (!SaveIndexForSlot(IndexObj, OutResult, IndexSlotName))
 	{
 		BroadcastSaveFailure(OutResult);
 		return false;
@@ -584,7 +616,7 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 	return true;
 }
 
-bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult)
+bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
 	OutResult = FARSaveResult();
 
@@ -629,14 +661,6 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 		}
 	}
 
-	UARSaveIndexGame* IndexObj = nullptr;
-	if (!LoadOrCreateIndex(IndexObj, OutResult))
-	{
-		OutResult.ResultCode = EARSaveResultCode::Unknown;
-		BroadcastSaveFailure(OutResult);
-		return false;
-	}
-
 	FName SlotBase = SlotBaseName.IsNone() ? NAME_None : NormalizeSlotBaseName(SlotBaseName);
 	if (SlotBase.IsNone())
 	{
@@ -646,8 +670,19 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	{
 		SlotBase = GenerateRandomSlotBaseName(true);
 	}
+	SlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(SlotBase, bUseDebugSaves);
+
+	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
 
 	int32 ExistingLatest = -1;
+	UARSaveIndexGame* IndexObj = nullptr;
+	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, IndexSlotName))
+	{
+		OutResult.ResultCode = EARSaveResultCode::Unknown;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
 	for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
 	{
 		if (Entry.SlotName == SlotBase)
@@ -701,7 +736,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	Descriptor.Money = SaveObject->Money;
 	UpsertIndexEntry(IndexObj, Descriptor);
 
-	if (!SaveIndex(IndexObj, OutResult))
+	if (!SaveIndexForSlot(IndexObj, OutResult, IndexSlotName))
 	{
 		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		BroadcastSaveFailure(OutResult);
@@ -748,13 +783,14 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	return true;
 }
 
-bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult)
+bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
 	OutResult = FARSaveResult();
-	const FName SlotBase = NormalizeSlotBaseName(SlotBaseName);
+	const FName SlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(NormalizeSlotBaseName(SlotBaseName), bUseDebugSaves);
+	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
 
 	int32 ResolvedRevision = INDEX_NONE;
-	UARSaveGame* LoadedSave = LoadSaveObjectWithRollback(SlotBase, RevisionOrLatest, ResolvedRevision, OutResult);
+	UARSaveGame* LoadedSave = LoadSaveObjectWithRollback(SlotBase, RevisionOrLatest, ResolvedRevision, OutResult, IndexSlotName);
 	if (!LoadedSave)
 	{
 		BroadcastLoadFailure(OutResult);
@@ -791,13 +827,13 @@ bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARS
 	return true;
 }
 
-bool UARSaveSubsystem::ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const
+bool UARSaveSubsystem::ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult, bool bUseDebugSaves) const
 {
 	OutSlots.Reset();
 	OutResult = FARSaveResult();
 
 	UARSaveIndexGame* IndexObj = nullptr;
-	if (!LoadOrCreateIndex(IndexObj, OutResult))
+	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves)))
 	{
 		return false;
 	}
@@ -807,29 +843,14 @@ bool UARSaveSubsystem::ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSav
 	return true;
 }
 
-bool UARSaveSubsystem::ListDebugSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const
-{
-	OutSlots.Reset();
-	OutResult = FARSaveResult();
-
-	UARSaveIndexGame* IndexObj = nullptr;
-	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, ARSaveInternal::DebugSaveIndexSlot))
-	{
-		return false;
-	}
-
-	OutSlots = IndexObj->SlotNames;
-	OutResult.bSuccess = true;
-	return true;
-}
-
-bool UARSaveSubsystem::DeleteSave(FName SlotBaseName, FARSaveResult& OutResult)
+bool UARSaveSubsystem::DeleteSave(FName SlotBaseName, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
 	OutResult = FARSaveResult();
-	const FName SlotBase = NormalizeSlotBaseName(SlotBaseName);
+	const FName SlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(NormalizeSlotBaseName(SlotBaseName), bUseDebugSaves);
+	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
 
 	UARSaveIndexGame* IndexObj = nullptr;
-	if (!LoadOrCreateIndex(IndexObj, OutResult))
+	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, IndexSlotName))
 	{
 		BroadcastSaveFailure(OutResult);
 		return false;
@@ -858,7 +879,7 @@ bool UARSaveSubsystem::DeleteSave(FName SlotBaseName, FARSaveResult& OutResult)
 	}
 
 	RemoveIndexEntry(IndexObj, SlotBase);
-	if (!SaveIndex(IndexObj, OutResult))
+	if (!SaveIndexForSlot(IndexObj, OutResult, IndexSlotName))
 	{
 		BroadcastSaveFailure(OutResult);
 		return false;
