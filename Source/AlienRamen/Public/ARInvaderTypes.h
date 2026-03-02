@@ -36,6 +36,15 @@ enum class EARInvaderFlowState : uint8
 };
 
 UENUM(BlueprintType)
+enum class EARInvaderRunEndReason : uint8
+{
+	None = 0,
+	ManualStop = 1,
+	LossLeaks = 2,
+	LossAllPlayersDown = 3
+};
+
+UENUM(BlueprintType)
 enum class EARSpawnEdge : uint8
 {
 	Top = 0,
@@ -319,6 +328,12 @@ struct FARInvaderRuntimeSnapshot
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	int32 RewardEventId = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	int32 RunEndEventId = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
+	EARInvaderRunEndReason LastRunEndReason = EARInvaderRunEndReason::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	FName LastRewardStageRowName = NAME_None;

@@ -607,10 +607,6 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				Enemy->GetFormationTargetWorldLocation().X,
 				Enemy->GetFormationTargetWorldLocation().Y,
 				Enemy->GetFormationTargetWorldLocation().Z);
-			if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(Enemy->GetController()))
-			{
-				EnemyAI->TryStartStateTreeForCurrentPawn();
-			}
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);

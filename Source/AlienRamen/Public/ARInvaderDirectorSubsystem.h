@@ -11,6 +11,8 @@ class IConsoleObject;
 class AAREnemyBase;
 struct FStreamableHandle;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderRunEndedSignature, EARInvaderRunEndReason, Reason);
+
 UCLASS()
 class ALIENRAMEN_API UARInvaderDirectorSubsystem : public UTickableWorldSubsystem
 {
@@ -53,11 +55,26 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
 	EARInvaderFlowState GetFlowState() const { return FlowState; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
+	EARInvaderRunEndReason GetLastRunEndReason() const { return LastRunEndReason; }
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
 	FString DumpRuntimeState() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "Alien Ramen|Invader",
+		meta = (
+			DisplayName = "Report Enemy Leaked",
+			ToolTip = "Server-side leak report for an enemy actor. Returns true only when the leak is newly accepted and counted; returns false if ignored (invalid/run inactive/non-authority) or already reported."
+		))
 	bool ReportEnemyLeaked(AAREnemyBase* Enemy);
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
+	FAROnInvaderRunEndedSignature OnRunEnded;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
+	FAROnInvaderRunEndedSignature OnGameOver;
 
 private:
 	struct FWaveRuntimeInternal
@@ -94,6 +111,7 @@ private:
 	bool BuildStageChoiceOptions(FName& OutLeftRow, FARStageDefRow& OutLeftDef, FName& OutRightRow, FARStageDefRow& OutRightDef);
 	void TickStageChoice(float DeltaTime);
 	void TickTransition(float DeltaTime);
+	void StopInvaderRunWithReason(EARInvaderRunEndReason EndReason);
 
 	bool SpawnWaveFromDefinition(FName WaveRowName, const FARWaveDefRow& WaveDef, bool bColorSwap);
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
@@ -142,8 +160,10 @@ private:
 	int32 LeakCount = 0;
 	int32 StageSequence = 0;
 	int32 RewardEventId = 0;
+	int32 RunEndEventId = 0;
 
 	EARInvaderFlowState FlowState = EARInvaderFlowState::Stopped;
+	EARInvaderRunEndReason LastRunEndReason = EARInvaderRunEndReason::None;
 	float StageChoiceElapsed = 0.f;
 	float StageTransitionRemaining = 0.f;
 

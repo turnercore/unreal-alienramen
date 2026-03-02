@@ -75,6 +75,7 @@
 - Loadout slot policy is project-settings-driven via `UARLoadoutSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Loadout`):
 - `MultiSlotLoadoutRoots` is an explicit allowlist of slot roots that can keep multiple tags.
 - Any loadout root not in `MultiSlotLoadoutRoots` is treated as single-slot by default.
+- `DefaultStartingUnlocks` is automatically kept consistent with `DefaultPlayerLoadoutTags` (missing loadout tags are auto-added in settings edit flow), and runtime uses `GetEffectiveDefaultStartingUnlocks()` as a safety net.
 - Loadout slot normalization is enforced inside `SetLoadoutTags_Internal(...)` on server: single-slot roots are canonicalized to one descendant tag per root (last tag wins) whenever loadout is updated.
 - `AARPlayerStateBase::InitializeForFirstSessionJoin()` (authority-only) is the first-join default initializer (non-seamless-travel path): resets `CharacterPicked` to `None` and ensures default loadout tags are present.
 - `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
@@ -311,6 +312,7 @@
 - Enemy AI emits one-shot enemy entry events for StateTree:
 - `Event.Enemy.EnteredScreen` fires first time enemy is inside entered-screen bounds.
 - `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
+- Enemy runtime also exposes a persistent StateTree/Blueprint-readable bool `AAREnemyBase::bHasEnteredScreen` (set/reset with entered-screen lifecycle) for condition-based transitions when event timing is not desired.
 - Added dedicated StateTree schema class `UARStateTreeAIComponentSchema` (`AR StateTree AI Schema`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
@@ -327,6 +329,7 @@
 - controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`) and defers one tick while `WaveInstanceId == INDEX_NONE`
 - StateTree start always defers at least one tick after a valid context to allow enemy definition/effects/tags to finish applying before logic runs.
 - Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
+- Enemy AI startup now hard-guards duplicate init per possession (`bStateTreeInitializedForPossession`): once initialized for a possession, repeated `TryStartStateTreeForCurrentPawn(...)`/`StartStateTreeForPawn(...)` calls are ignored until unpossess resets state.
 - Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
 - After StateTree startup, controller resends the pawn's current runtime context (`WavePhase`, entered-screen, in-formation) so dropped pre-start events do not leave StateTree out of sync (for example missing Berserk transition).
 - Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetWaveRuntimeContext(...)` and remain readable from actor context in StateTree.
@@ -383,6 +386,7 @@
 - `AAREnemyAIController::BP_OnPawnSignal(...)` (optional BP hook)
 - Enemy AI now uses `UARStateTreeAIComponent` (subclass of `UStateTreeAIComponent`) which computes active StateTree state-tag set and emits tag deltas.
 - `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
+- `UARStateTreeAIComponent` preserves previous active-tag snapshot when the tree is running but read-only execution context is transiently unreadable; this avoids false empty-tag remove/add churn in the ASC mirror bridge.
 - Active-path semantics apply: if both parent and child states are active and tagged, both tags are present on ASC.
 - Avoid double-wiring: if using this automatic bridge, do not also push/pop the same tags manually in StateTree tasks.
 - Automation coverage exists for the mirror bridge in `Source/AlienRamen/Private/Tests/AREnemyAIStateTagBridgeTest.cpp` (`AlienRamen.AI.StateTree.ASCStateTagBridge`), validating add/dedupe/remove behavior from StateTree active-tag deltas to enemy ASC loose tags.

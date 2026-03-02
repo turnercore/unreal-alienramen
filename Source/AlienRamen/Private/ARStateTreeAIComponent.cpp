@@ -58,6 +58,7 @@ void UARStateTreeAIComponent::Cleanup()
 void UARStateTreeAIComponent::RefreshActiveStateTags()
 {
 	FGameplayTagContainer NewTags;
+	bool bCouldReadContext = false;
 
 	if (IsRunning())
 	{
@@ -68,6 +69,7 @@ void UARStateTreeAIComponent::RefreshActiveStateTags()
 			FStateTreeReadOnlyExecutionContext Context(OwnerObject, RootStateTree, InstanceData);
 			if (Context.IsValid())
 			{
+				bCouldReadContext = true;
 				const TConstArrayView<FStateTreeExecutionFrame> ActiveFrames = Context.GetActiveFrames();
 				for (const FStateTreeExecutionFrame& ActiveFrame : ActiveFrames)
 				{
@@ -87,6 +89,13 @@ void UARStateTreeAIComponent::RefreshActiveStateTags()
 					}
 				}
 			}
+		}
+
+		// When the tree is running but context is transiently unreadable, keep previous tags.
+		// Treating this as empty causes false remove/add churn and can destabilize tag-driven conditions.
+		if (!bCouldReadContext)
+		{
+			return;
 		}
 	}
 

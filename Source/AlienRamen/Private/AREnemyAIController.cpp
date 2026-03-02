@@ -40,8 +40,12 @@ void AAREnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 	UnbindStateTreeTagBridge(/*bPopAppliedTags=*/false);
-	BindStateTreeTagBridge();
 	DeferredStartAttemptCounter = 0;
+	bStateTreeInitializedForPossession = false;
+	LastSentWavePhaseWaveId = INDEX_NONE;
+	LastSentWavePhase = EARWavePhase::Berserk;
+	LastSentEnteredScreenWaveId = INDEX_NONE;
+	LastSentInFormationWaveId = INDEX_NONE;
 
 	// Enforce context-driven startup even if BP defaults accidentally re-enable auto-start.
 	if (StateTreeComponent)
@@ -56,6 +60,9 @@ void AAREnemyAIController::OnPossess(APawn* InPawn)
 	{
 		UE_LOG(ARLog, Error, TEXT("[EnemyAI] OnPossess '%s': missing StateTreeComponent."), *GetNameSafe(this));
 	}
+
+	// Bind after enforcing the stopped/pre-context state so we don't mirror transient pre-possess tags.
+	BindStateTreeTagBridge();
 
 	if (!DefaultStateTree)
 	{
@@ -73,22 +80,36 @@ void AAREnemyAIController::OnUnPossess()
 		World->GetTimerManager().ClearTimer(DeferredStartTimerHandle);
 	}
 	bPendingStateTreeStart = false;
+	bStateTreeInitializedForPossession = false;
 	DeferredStartAttemptCounter = 0;
+	LastSentWavePhaseWaveId = INDEX_NONE;
+	LastSentWavePhase = EARWavePhase::Berserk;
+	LastSentEnteredScreenWaveId = INDEX_NONE;
+	LastSentInFormationWaveId = INDEX_NONE;
 
 	Super::OnUnPossess();
 }
 
-void AAREnemyAIController::TryStartStateTreeForCurrentPawn()
+void AAREnemyAIController::TryStartStateTreeForCurrentPawn(const TCHAR* Reason)
 {
+	if (bStateTreeInitializedForPossession)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] TryStartStateTreeForCurrentPawn skipped '%s': already initialized for current possession (reason=%s running=%d)."),
+			*GetNameSafe(this),
+			Reason ? Reason : TEXT("Unknown"),
+			IsStateTreeRunning() ? 1 : 0);
+		return;
+	}
+
 	if (!GetPawn())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[EnemyAI] TryStartStateTreeForCurrentPawn '%s': no possessed pawn."), *GetNameSafe(this));
 	}
 
-	StartStateTreeForPawn(GetPawn());
+	StartStateTreeForPawn(GetPawn(), Reason ? Reason : TEXT("Unknown"));
 }
 
-void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
+void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn, const TCHAR* Reason)
 {
 	if (!HasAuthority())
 	{
@@ -108,6 +129,15 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 		return;
 	}
 
+	if (bStateTreeInitializedForPossession)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Start skipped '%s': already initialized for current possession (reason=%s running=%d)."),
+			*GetNameSafe(this),
+			Reason ? Reason : TEXT("Unknown"),
+			IsStateTreeRunning() ? 1 : 0);
+		return;
+	}
+
 	// Don't start until director has applied wave runtime context.
 	if (const AAREnemyBase* Enemy = Cast<AAREnemyBase>(InPawn))
 	{
@@ -115,10 +145,10 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 		{
 			if (DeferredStartAttemptCounter == 0 || (DeferredStartAttemptCounter % 30) == 0)
 			{
-				UE_LOG(ARLog, Warning, TEXT("[EnemyAI] Start deferred '%s' Pawn='%s': WaveInstanceId not set yet (attempt=%d)."),
-					*GetNameSafe(this), *GetNameSafe(InPawn), DeferredStartAttemptCounter + 1);
+				UE_LOG(ARLog, Warning, TEXT("[EnemyAI] Start deferred '%s' Pawn='%s': WaveInstanceId not set yet (attempt=%d reason=%s)."),
+					*GetNameSafe(this), *GetNameSafe(InPawn), DeferredStartAttemptCounter + 1, Reason ? Reason : TEXT("Unknown"));
 			}
-			StartStateTreeForPawn_Deferred(InPawn);
+			StartStateTreeForPawn_Deferred(InPawn, Reason);
 			return;
 		}
 	}
@@ -128,7 +158,7 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[EnemyAI] Start deferred '%s': input pawn '%s' is not current pawn '%s'."),
 			*GetNameSafe(this), *GetNameSafe(InPawn), *GetNameSafe(GetPawn()));
-		StartStateTreeForPawn_Deferred(InPawn);
+		StartStateTreeForPawn_Deferred(InPawn, Reason);
 		return;
 	}
 
@@ -136,22 +166,21 @@ void AAREnemyAIController::StartStateTreeForPawn(APawn* InPawn)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[EnemyAI] Start deferred '%s': pawn '%s' controller is '%s', expected this."),
 			*GetNameSafe(this), *GetNameSafe(InPawn), *GetNameSafe(InPawn->GetController()));
-		StartStateTreeForPawn_Deferred(InPawn);
+		StartStateTreeForPawn_Deferred(InPawn, Reason);
 		return;
 	}
 
 	if (IsStateTreeRunning())
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Start skipped '%s': StateTree already running for pawn '%s'."),
-			*GetNameSafe(this), *GetNameSafe(InPawn));
-		StartStateTreeForPawn_Deferred(InPawn);
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Start skipped '%s': StateTree already running for pawn '%s' (reason=%s initialized=%d)."),
+			*GetNameSafe(this), *GetNameSafe(InPawn), Reason ? Reason : TEXT("Unknown"), bStateTreeInitializedForPossession ? 1 : 0);
 		return;
 	}
 
-	StartStateTreeForPawn_Deferred(InPawn);
+	StartStateTreeForPawn_Deferred(InPawn, Reason);
 }
 
-void AAREnemyAIController::StartStateTreeForPawn_Deferred(APawn* InPawn)
+void AAREnemyAIController::StartStateTreeForPawn_Deferred(APawn* InPawn, const TCHAR* Reason)
 {
 	if (bPendingStateTreeStart)
 	{
@@ -164,8 +193,8 @@ void AAREnemyAIController::StartStateTreeForPawn_Deferred(APawn* InPawn)
 
 	if (UWorld* World = GetWorld())
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Queue deferred start for '%s' (attempt=%d pawn='%s')."),
-			*GetNameSafe(this), DeferredStartAttemptCounter, *GetNameSafe(InPawn));
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Queue deferred start for '%s' (attempt=%d pawn='%s' reason=%s)."),
+			*GetNameSafe(this), DeferredStartAttemptCounter, *GetNameSafe(InPawn), Reason ? Reason : TEXT("Unknown"));
 
 		TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
 		TWeakObjectPtr<APawn> WeakPawn(InPawn);
@@ -208,7 +237,7 @@ void AAREnemyAIController::StartStateTreeForPawn_Deferred(APawn* InPawn)
 							StrongThis->DeferredStartAttemptCounter,
 							*GetNameSafe(StrongPawn));
 					}
-					StrongThis->StartStateTreeForPawn(StrongPawn);
+					StrongThis->StartStateTreeForPawn(StrongPawn, TEXT("DeferredRetryWaveContext"));
 					return;
 				}
 
@@ -232,25 +261,36 @@ void AAREnemyAIController::StartStateTreeForPawn_Deferred(APawn* InPawn)
 				return;
 			}
 
-			if (StrongThis->DefaultStateTree && !StrongThis->IsStateTreeRunning())
+			const bool bWasRunning = StrongThis->IsStateTreeRunning();
+			if (!bWasRunning && StrongThis->DefaultStateTree)
 			{
 				StrongThis->StateTreeComponent->SetStateTree(StrongThis->DefaultStateTree);
 			}
 
-			StrongThis->StateTreeComponent->StartLogic();
-			if (!StrongThis->IsStateTreeRunning())
+			if (!bWasRunning)
 			{
-				UE_LOG(ARLog, Error, TEXT("[EnemyAI] Deferred start failed '%s': StartLogic did not transition to running state (attempt=%d pawn='%s' stateTree='%s')."),
-					*GetNameSafe(StrongThis),
-					StrongThis->DeferredStartAttemptCounter,
-					*GetNameSafe(StrongPawn),
-					*GetNameSafe(StrongThis->DefaultStateTree));
-				return;
-			}
+				StrongThis->StateTreeComponent->StartLogic();
+				if (!StrongThis->IsStateTreeRunning())
+				{
+					UE_LOG(ARLog, Error, TEXT("[EnemyAI] Deferred start failed '%s': StartLogic did not transition to running state (attempt=%d pawn='%s' stateTree='%s')."),
+						*GetNameSafe(StrongThis),
+						StrongThis->DeferredStartAttemptCounter,
+						*GetNameSafe(StrongPawn),
+						*GetNameSafe(StrongThis->DefaultStateTree));
+					return;
+				}
 
-			UE_LOG(ARLog, Log, TEXT("[EnemyAI] Started StateTree for controller '%s' on pawn '%s' (attempt=%d)."),
-				*GetNameSafe(StrongThis), *GetNameSafe(StrongPawn), StrongThis->DeferredStartAttemptCounter);
-			StrongThis->DeferredStartAttemptCounter = 0;
+				UE_LOG(ARLog, Log, TEXT("[EnemyAI] Started StateTree for controller '%s' on pawn '%s' (attempt=%d)."),
+					*GetNameSafe(StrongThis), *GetNameSafe(StrongPawn), StrongThis->DeferredStartAttemptCounter);
+				StrongThis->DeferredStartAttemptCounter = 0;
+				StrongThis->bStateTreeInitializedForPossession = true;
+			}
+			else
+			{
+				UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Deferred start skipped '%s': StateTree already running for pawn '%s'."),
+					*GetNameSafe(StrongThis),
+					*GetNameSafe(StrongPawn));
+			}
 
 			if (AAREnemyBase* Enemy = Cast<AAREnemyBase>(StrongPawn))
 			{
@@ -315,6 +355,16 @@ void AAREnemyAIController::HandleStateTreeActiveTagsChanged(const FGameplayTagCo
 	if (!HasAuthority())
 	{
 		return;
+	}
+
+	if (StateTreeComponent)
+	{
+		const FGameplayTagContainer CurrentTags = StateTreeComponent->GetCurrentActiveStateTags();
+		UE_LOG(ARLog, Log, TEXT("[EnemyAI|StateTags] '%s' Added={%s} Removed={%s} Current={%s}"),
+			*GetNameSafe(this),
+			*AddedTags.ToStringSimple(),
+			*RemovedTags.ToStringSimple(),
+			*CurrentTags.ToStringSimple());
 	}
 
 	FGameplayTagContainer EffectiveRemovedTags;
@@ -515,6 +565,13 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 		return;
 	}
 
+	if (LastSentWavePhaseWaveId == WaveInstanceId && LastSentWavePhase == NewPhase)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Wave phase event deduped on '%s' (WaveId=%d Phase=%s)."),
+			*GetNameSafe(this), WaveInstanceId, AREnemyAIControllerInternal::ToPhaseName(NewPhase));
+		return;
+	}
+
 	FGameplayTag EventTag;
 	switch (NewPhase)
 	{
@@ -530,6 +587,8 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 
 	const FStateTreeEvent Event(EventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
 	StateTreeComponent->SendStateTreeEvent(Event);
+	LastSentWavePhaseWaveId = WaveInstanceId;
+	LastSentWavePhase = NewPhase;
 	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Entered wave phase '%s' for WaveId=%d on '%s' (Event=%s)."),
 		AREnemyAIControllerInternal::ToPhaseName(NewPhase), WaveInstanceId, *GetNameSafe(this), *EventTag.ToString());
 }
@@ -554,6 +613,13 @@ void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 		return;
 	}
 
+	if (LastSentEnteredScreenWaveId == WaveInstanceId)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Entered-screen event deduped on '%s' (WaveId=%d)."),
+			*GetNameSafe(this), WaveInstanceId);
+		return;
+	}
+
 	if (!EnteredScreenEventTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[EnemyAI] Entered-screen event skipped on '%s': EnteredScreenEventTag is invalid."), *GetNameSafe(this));
@@ -562,8 +628,29 @@ void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
 
 	const FStateTreeEvent Event(EnteredScreenEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
 	StateTreeComponent->SendStateTreeEvent(Event);
-	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent entered-screen event for WaveId=%d on '%s' (Event=%s)."),
-		WaveInstanceId, *GetNameSafe(this), *EnteredScreenEventTag.ToString());
+	LastSentEnteredScreenWaveId = WaveInstanceId;
+	const FGameplayTagContainer CurrentTags = StateTreeComponent->GetCurrentActiveStateTags();
+	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent entered-screen event for WaveId=%d on '%s' (Event=%s CurrentTags=%s)."),
+		WaveInstanceId, *GetNameSafe(this), *EnteredScreenEventTag.ToString(), *CurrentTags.ToStringSimple());
+
+	if (UWorld* World = GetWorld())
+	{
+		TWeakObjectPtr<AAREnemyAIController> WeakThis(this);
+		World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakThis, WaveInstanceId]()
+		{
+			if (AAREnemyAIController* StrongThis = WeakThis.Get())
+			{
+				if (StrongThis->StateTreeComponent)
+				{
+					const FGameplayTagContainer PostTickTags = StrongThis->StateTreeComponent->GetCurrentActiveStateTags();
+					UE_LOG(ARLog, Log, TEXT("[EnemyAI] PostTick after entered-screen WaveId=%d on '%s' CurrentTags=%s."),
+						WaveInstanceId,
+						*GetNameSafe(StrongThis),
+						*PostTickTags.ToStringSimple());
+				}
+			}
+		}));
+	}
 }
 
 void AAREnemyAIController::NotifyEnemyInFormation(int32 WaveInstanceId)
@@ -586,6 +673,13 @@ void AAREnemyAIController::NotifyEnemyInFormation(int32 WaveInstanceId)
 		return;
 	}
 
+	if (LastSentInFormationWaveId == WaveInstanceId)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] In-formation event deduped on '%s' (WaveId=%d)."),
+			*GetNameSafe(this), WaveInstanceId);
+		return;
+	}
+
 	if (!InFormationEventTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[EnemyAI] In-formation event skipped on '%s': InFormationEventTag is invalid."), *GetNameSafe(this));
@@ -594,6 +688,7 @@ void AAREnemyAIController::NotifyEnemyInFormation(int32 WaveInstanceId)
 
 	const FStateTreeEvent Event(InFormationEventTag, FConstStructView(), FName(*FString::Printf(TEXT("Wave%d"), WaveInstanceId)));
 	StateTreeComponent->SendStateTreeEvent(Event);
+	LastSentInFormationWaveId = WaveInstanceId;
 	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Sent in-formation event for WaveId=%d on '%s' (Event=%s)."),
 		WaveInstanceId, *GetNameSafe(this), *InFormationEventTag.ToString());
 }
