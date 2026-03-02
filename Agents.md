@@ -80,7 +80,7 @@
 - `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
 - `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
 - PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
-- Server applies a default debug-safe loadout when `LoadoutTags` is empty (`Unlock.Ship.Sammy`, `Unlock.Gadget.Vac`, `Unlock.Secondary.Mine`) during `BeginPlay` and after server struct-state apply.
+- Server applies default loadout tags from project settings (`UARLoadoutSettings::DefaultPlayerLoadoutTags`) when `LoadoutTags` is empty during join/setup and after server struct-state apply.
 - Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
@@ -159,6 +159,10 @@
 - Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
 - Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- Default unlock baseline is project-settings driven via `UARLoadoutSettings::DefaultStartingUnlocks`:
+- when runtime save gather produces empty unlocks, save payload is seeded from settings
+- when game-state hydration has no current save, `AARGameStateBase` unlocks are seeded from settings
+- when loading a save with empty unlocks, runtime apply path falls back to settings defaults
 - GameState hydration precedence:
 - `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
 - Persisted GameState-facing fields (`Money`, `Unlocks`, `Scrap`, `Cycles`) are restored from `CurrentSaveGame` onto runtime GameState on authority hydration.
@@ -419,9 +423,10 @@
 - Tool includes slot maintenance actions: `Duplicate Selected` and `Rename Selected` (target base from textbox), implemented in editor tooling by index/file copy+rewrite for the active namespace.
 - Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Rename`, `Duplicate`; loaded-save actions live on the right/details side.
 - Left-panel actions are presented in a uniform adaptive wrap/grid layout that flows into multiple columns based on panel width.
-- Loaded-save utility row includes `Save`, `Add All Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
+- Loaded-save utility row includes `Save`, `Set Default Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; defaults come from project settings (`UARLoadoutSettings::DefaultStartingUnlocks` and `UARLoadoutSettings::DefaultPlayerLoadoutTags`) and are applied to the loaded save object.
 - Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
 - Save-slot list context menu also includes `Heal Missing` to remove stale index entries when no physical revision files remain.
+- Debug save tool supports `Ctrl+S` keyboard shortcut to run `Save` on the currently loaded slot from the panel.
 - Save-slot list supports double-click to load a slot; if a different slot is already loaded, current loaded save is auto-saved before switching.
 - Failed load/delete against stale index entries in the editor tool can self-heal by pruning stale slot entries (active namespace first, then exact/other-namespace fallback); when auto-heal cannot resolve load failures and no revisions exist on disk, the tool prompts to remove the stale index entry.
 - Slot list selection mode is multi-select for delete operations; non-delete actions (`Load`, `Rename`, `Duplicate`) collapse to the first selected slot.

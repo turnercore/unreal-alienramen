@@ -655,29 +655,17 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 		return;
 	}
 
-	FGameplayTagContainer NewTags;
-	auto TryAddTag = [&NewTags](const TCHAR* TagName)
-	{
-		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TagName), false);
-		if (Tag.IsValid())
-		{
-			NewTags.AddTag(Tag);
-		}
-		else
-		{
-			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Default loadout tag is missing: %s"), TagName);
-		}
-	};
-
-	TryAddTag(TEXT("Unlock.Ship.Sammy"));
-	TryAddTag(TEXT("Unlock.Gadget.Vac"));
-	TryAddTag(TEXT("Unlock.Secondary.Mine"));
+	const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
+	const FGameplayTagContainer NewTags = LoadoutSettings ? LoadoutSettings->DefaultPlayerLoadoutTags : FGameplayTagContainer();
 
 	if (!NewTags.IsEmpty())
 	{
 		SetLoadoutTags_Internal(NewTags);
 		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *NewTags.ToStringSimple());
+		return;
 	}
+
+	UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Default loadout is empty in project settings (Alien Ramen Loadout -> Default Player Loadout Tags)."));
 }
 
 void AARPlayerStateBase::BindTrackedAttributeDelegates()
