@@ -25,14 +25,10 @@ namespace ARSaveInternal
 		TEXT("Spicy"), TEXT("Neon"), TEXT("Corporate"), TEXT("Fermented"), TEXT("Unpaid"), TEXT("Galactic"),
 		TEXT("Suspicious"), TEXT("Nuclear"), TEXT("Chaotic"), TEXT("Certified"), TEXT("Questionable"), TEXT("Overclocked")
 	};
-	static const TCHAR* SlotNoun[] = {
-		TEXT("Ramen"), TEXT("Invader"), TEXT("Noodle"), TEXT("Colony"), TEXT("Dumpling"), TEXT("Broth"),
-		TEXT("MegaCorp"), TEXT("Franchise"), TEXT("Saucer"), TEXT("Payroll"), TEXT("Kiosk"), TEXT("Meatball")
+static const TCHAR* SlotNoun[] = {
+	TEXT("Ramen"), TEXT("Invader"), TEXT("Noodle"), TEXT("Colony"), TEXT("Dumpling"), TEXT("Broth"),
+	TEXT("MegaCorp"), TEXT("Franchise"), TEXT("Saucer"), TEXT("Payroll"), TEXT("Kiosk"), TEXT("Meatball")
 	};
-static const TCHAR* SlotTail[] = {
-	TEXT("Incident"), TEXT("Ledger"), TEXT("Catastrophe"), TEXT("Protocol"), TEXT("Shift"), TEXT("Experiment"),
-	TEXT("Merger"), TEXT("Lunch"), TEXT("Outbreak"), TEXT("Heist"), TEXT("Audit"), TEXT("Expansion")
-};
 
 static FName NormalizeSlotBaseForNamespace(FName SlotBaseName, bool bUseDebugSaves)
 {
@@ -132,36 +128,72 @@ FName UARSaveSubsystem::NormalizeSlotBaseName(FName SlotBaseName)
 
 FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 {
-	constexpr int32 MaxAttempts = 64;
-	TSet<FName> ExistingNames;
-	TSet<FName> ExistingRevisionZeroSlots;
+	auto BuildBaseCandidate = []() -> FName
+	{
+		const TCHAR* Adj = ARSaveInternal::SlotAdj[FMath::RandRange(0, UE_ARRAY_COUNT(ARSaveInternal::SlotAdj) - 1)];
+		const TCHAR* Noun = ARSaveInternal::SlotNoun[FMath::RandRange(0, UE_ARRAY_COUNT(ARSaveInternal::SlotNoun) - 1)];
+		return FName(*FString::Printf(TEXT("%s_%s"), Adj, Noun));
+	};
+
+	auto IsLogicalNameTaken = [this](const FName CandidateLogicalName, const TSet<FName>& ExistingLogicalNames) -> bool
+	{
+		if (ExistingLogicalNames.Contains(CandidateLogicalName))
+		{
+			return true;
+		}
+
+		const FName CanonicalRevisionZero = BuildRevisionSlotName(CandidateLogicalName, 0);
+		if (UGameplayStatics::DoesSaveGameExist(CanonicalRevisionZero.ToString(), DefaultUserIndex))
+		{
+			return true;
+		}
+
+		const FName DebugSlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(CandidateLogicalName, true);
+		const FName DebugRevisionZero = BuildRevisionSlotName(DebugSlotBase, 0);
+		return UGameplayStatics::DoesSaveGameExist(DebugRevisionZero.ToString(), DefaultUserIndex);
+	};
+
+	constexpr int32 MaxBaseAttempts = 128;
+	constexpr int32 MaxNumericFallbackAttempts = 128;
+	TSet<FName> ExistingLogicalNames;
 
 	if (bEnsureUnique)
 	{
 		FARSaveResult IndexResult;
-		UARSaveIndexGame* IndexObj = nullptr;
-		if (LoadOrCreateIndex(IndexObj, IndexResult) && IndexObj)
+		UARSaveIndexGame* CanonicalIndex = nullptr;
+		if (LoadOrCreateIndexForSlot(CanonicalIndex, IndexResult, ARSaveInternal::SaveIndexSlot) && CanonicalIndex)
 		{
-			for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
+			for (const FARSaveSlotDescriptor& Entry : CanonicalIndex->SlotNames)
 			{
-				ExistingNames.Add(Entry.SlotName);
-				ExistingRevisionZeroSlots.Add(BuildRevisionSlotName(Entry.SlotName, 0));
+				ExistingLogicalNames.Add(ARSaveInternal::GetLogicalSlotBaseForNamespace(Entry.SlotName, false));
+			}
+		}
+
+		UARSaveIndexGame* DebugIndex = nullptr;
+		if (LoadOrCreateIndexForSlot(DebugIndex, IndexResult, ARSaveInternal::DebugSaveIndexSlot) && DebugIndex)
+		{
+			for (const FARSaveSlotDescriptor& Entry : DebugIndex->SlotNames)
+			{
+				ExistingLogicalNames.Add(ARSaveInternal::GetLogicalSlotBaseForNamespace(Entry.SlotName, true));
 			}
 		}
 	}
 
-	for (int32 Attempt = 0; Attempt < MaxAttempts; ++Attempt)
+	for (int32 Attempt = 0; Attempt < MaxBaseAttempts; ++Attempt)
 	{
-		const TCHAR* Adj = ARSaveInternal::SlotAdj[FMath::RandRange(0, UE_ARRAY_COUNT(ARSaveInternal::SlotAdj) - 1)];
-		const TCHAR* Noun = ARSaveInternal::SlotNoun[FMath::RandRange(0, UE_ARRAY_COUNT(ARSaveInternal::SlotNoun) - 1)];
-		const TCHAR* Tail = ARSaveInternal::SlotTail[FMath::RandRange(0, UE_ARRAY_COUNT(ARSaveInternal::SlotTail) - 1)];
-		const int32 Ticket = FMath::RandRange(10, 9999);
-		const FName Candidate = FName(*FString::Printf(TEXT("%s_%s_%s_%d"), Adj, Noun, Tail, Ticket));
-		const FName CandidateRevisionZero = BuildRevisionSlotName(Candidate, 0);
-		const bool bNameTaken = ExistingNames.Contains(Candidate);
-		const bool bPhysicalSlotTaken = ExistingRevisionZeroSlots.Contains(CandidateRevisionZero)
-			|| UGameplayStatics::DoesSaveGameExist(CandidateRevisionZero.ToString(), DefaultUserIndex);
-		if (!bEnsureUnique || (!bNameTaken && !bPhysicalSlotTaken))
+		const FName Candidate = BuildBaseCandidate();
+		if (!bEnsureUnique || !IsLogicalNameTaken(Candidate, ExistingLogicalNames))
+		{
+			return Candidate;
+		}
+	}
+
+	for (int32 Attempt = 0; Attempt < MaxNumericFallbackAttempts; ++Attempt)
+	{
+		const FName BaseCandidate = BuildBaseCandidate();
+		const int32 Suffix = FMath::RandRange(10, 9999);
+		const FName Candidate = FName(*FString::Printf(TEXT("%s_%d"), *BaseCandidate.ToString(), Suffix));
+		if (!bEnsureUnique || !IsLogicalNameTaken(Candidate, ExistingLogicalNames))
 		{
 			return Candidate;
 		}

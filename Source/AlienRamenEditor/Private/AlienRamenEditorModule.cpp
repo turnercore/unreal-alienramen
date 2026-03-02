@@ -366,6 +366,10 @@ namespace ARDebugSaveEditor
 					{
 						RefreshSlots();
 					}
+					else
+					{
+						PromptRemoveBrokenSlotEntry(SlotName, Result.Error);
+					}
 					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Result.Error));
 					return FReply::Handled();
 				}
@@ -387,6 +391,10 @@ namespace ARDebugSaveEditor
 					if (bPruned)
 					{
 						RefreshSlots();
+					}
+					else
+					{
+						PromptRemoveBrokenSlotEntry(SlotName, Error);
 					}
 					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Error));
 					return FReply::Handled();
@@ -428,6 +436,11 @@ namespace ARDebugSaveEditor
 				FText::FromString("Duplicate selected slot to the textbox value."),
 				FSlateIcon(),
 				FUIAction(FExecuteAction::CreateSP(this, &SPanel::HandleContextDuplicate)));
+			MenuBuilder.AddMenuEntry(
+				FText::FromString("Heal Missing"),
+				FText::FromString("If selected slot data is missing on disk, remove stale index entry."),
+				FSlateIcon(),
+				FUIAction(FExecuteAction::CreateSP(this, &SPanel::HandleContextHealMissing)));
 			return MenuBuilder.MakeWidget();
 		}
 
@@ -435,6 +448,23 @@ namespace ARDebugSaveEditor
 		void HandleContextDelete() { OnDeleteSelected(); }
 		void HandleContextRename() { OnRenameSelected(); }
 		void HandleContextDuplicate() { OnDuplicateSelected(); }
+		void HandleContextHealMissing()
+		{
+			TSharedPtr<FARSaveSlotDescriptor> SelectedPrimary;
+			if (!GetPrimarySelectionForSingleAction(SelectedPrimary))
+			{
+				SetStatus(TEXT("No slot selected."));
+				return;
+			}
+
+			if (HasAnyPhysicalRevisionForSlot(SelectedPrimary->SlotName, bUseDebugSaves))
+			{
+				SetStatus(TEXT("Selected slot has at least one revision on disk; nothing to heal."));
+				return;
+			}
+
+			PromptRemoveBrokenSlotEntry(SelectedPrimary->SlotName, TEXT("No revision files found on disk."));
+		}
 
 		void RefreshSlots()
 		{
@@ -966,8 +996,92 @@ namespace ARDebugSaveEditor
 		bool PruneSlotFromIndexOffline(FName InSlotBase, bool bDebugMode)
 		{
 			FString Error;
-			DeleteSlotOffline(InSlotBase, bDebugMode, Error);
-			return Error.IsEmpty();
+			if (DeleteSlotOffline(InSlotBase, bDebugMode, Error))
+			{
+				return true;
+			}
+
+			if (RemoveIndexEntryExactOffline(InSlotBase, bDebugMode, Error))
+			{
+				return true;
+			}
+
+			if (DeleteSlotOffline(InSlotBase, !bDebugMode, Error))
+			{
+				return true;
+			}
+
+			if (RemoveIndexEntryExactOffline(InSlotBase, !bDebugMode, Error))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		bool HasAnyPhysicalRevisionForSlot(FName InSlotBase, bool bDebugMode) const
+		{
+			UARSaveIndexGame* IndexObj = nullptr;
+			FString Error;
+			if (!LoadOrCreateIndexOffline(bDebugMode, IndexObj, Error))
+			{
+				return false;
+			}
+
+			const FName SlotBase = NormalizeSlotBaseForMode(InSlotBase, bDebugMode);
+			int32 MaxRevision = -1;
+			for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
+			{
+				if (Entry.SlotName == SlotBase)
+				{
+					MaxRevision = Entry.SlotNumber;
+					break;
+				}
+			}
+
+			if (MaxRevision < 0)
+			{
+				return false;
+			}
+
+			for (int32 Revision = MaxRevision; Revision >= 0; --Revision)
+			{
+				const FName PhysicalName = BuildRevisionSlotName(SlotBase, Revision);
+				if (UGameplayStatics::DoesSaveGameExist(PhysicalName.ToString(), UARSaveSubsystem::DefaultUserIndex))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		void PromptRemoveBrokenSlotEntry(FName SlotName, const FString& FailureReason)
+		{
+			if (HasAnyPhysicalRevisionForSlot(SlotName, bUseDebugSaves))
+			{
+				return;
+			}
+
+			const FText Prompt = FText::FromString(FString::Printf(
+				TEXT("Could not find any revision files for '%s'.\n\nReason: %s\n\nRemove this stale entry from the save index?"),
+				*GetDisplaySlotName(SlotName).ToString(),
+				*FailureReason));
+			const EAppReturnType::Type Confirm = FMessageDialog::Open(EAppMsgType::YesNo, Prompt);
+			if (Confirm != EAppReturnType::Yes)
+			{
+				return;
+			}
+
+			if (PruneSlotFromIndexOffline(SlotName, bUseDebugSaves))
+			{
+				RefreshSlots();
+				SetStatus(FString::Printf(TEXT("Removed stale slot index entry '%s'."), *GetDisplaySlotName(SlotName).ToString()));
+			}
+			else
+			{
+				SetStatus(FString::Printf(TEXT("Failed to remove stale slot index entry '%s'."), *GetDisplaySlotName(SlotName).ToString()));
+			}
 		}
 
 		bool SaveIndexOffline(bool bDebugMode, UARSaveIndexGame* IndexObj, FString& OutError) const
@@ -1178,13 +1292,20 @@ namespace ARDebugSaveEditor
 
 			const FName SlotBase = NormalizeSlotBaseForMode(InSlotBase, bDebugMode);
 			int32 MaxRevision = -1;
+			bool bFoundInIndex = false;
 			for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
 			{
 				if (Entry.SlotName == SlotBase)
 				{
 					MaxRevision = Entry.SlotNumber;
+					bFoundInIndex = true;
 					break;
 				}
+			}
+			if (!bFoundInIndex)
+			{
+				OutError = FString::Printf(TEXT("Slot '%s' not found in index."), *SlotBase.ToString());
+				return false;
 			}
 
 			for (int32 Revision = 0; Revision <= MaxRevision; ++Revision)
@@ -1206,6 +1327,31 @@ namespace ARDebugSaveEditor
 				return false;
 			}
 
+			return true;
+		}
+
+		bool RemoveIndexEntryExactOffline(FName ExactSlotBase, bool bDebugMode, FString& OutError)
+		{
+			UARSaveIndexGame* IndexObj = nullptr;
+			if (!LoadOrCreateIndexOffline(bDebugMode, IndexObj, OutError))
+			{
+				return false;
+			}
+
+			const int32 RemovedCount = IndexObj->SlotNames.RemoveAll([ExactSlotBase](const FARSaveSlotDescriptor& Entry)
+			{
+				return Entry.SlotName == ExactSlotBase;
+			});
+			if (RemovedCount <= 0)
+			{
+				OutError = FString::Printf(TEXT("Slot '%s' not found in index."), *ExactSlotBase.ToString());
+				return false;
+			}
+
+			if (!SaveIndexOffline(bDebugMode, IndexObj, OutError))
+			{
+				return false;
+			}
 			return true;
 		}
 
