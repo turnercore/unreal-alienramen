@@ -4,6 +4,7 @@
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
+#include "ARLoadoutSettings.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
@@ -87,17 +88,26 @@ static void EnablePIESeamlessTravelIfNeeded()
 #endif
 }
 
-	static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, const UARSaveGame* SaveGame)
+static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, const UARSaveGame* SaveGame)
+{
+	if (!GameState || !SaveGame)
 	{
-		if (!GameState || !SaveGame)
-		{
-			return;
-		}
-
-		GameState->SetUnlocksFromSave(SaveGame->Unlocks);
-		GameState->SetMoneyFromSave(SaveGame->Money);
-		GameState->SetScrapFromSave(SaveGame->Scrap);
+		return;
 	}
+
+	FGameplayTagContainer UnlocksToApply = SaveGame->Unlocks;
+	if (UnlocksToApply.IsEmpty())
+	{
+		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
+		{
+			UnlocksToApply = LoadoutSettings->DefaultStartingUnlocks;
+		}
+	}
+
+	GameState->SetUnlocksFromSave(UnlocksToApply);
+	GameState->SetMoneyFromSave(SaveGame->Money);
+	GameState->SetScrapFromSave(SaveGame->Scrap);
+}
 
 }
 
@@ -388,6 +398,14 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->Unlocks = GS->GetUnlocks();
 		SaveObject->Money = GS->GetMoney();
 		SaveObject->Scrap = GS->GetScrap();
+	}
+
+	if (SaveObject->Unlocks.IsEmpty())
+	{
+		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
+		{
+			SaveObject->Unlocks = LoadoutSettings->DefaultStartingUnlocks;
+		}
 	}
 
 	// Persist cycles from current save as authoritative progression counter (not GameState-owned).
@@ -988,6 +1006,10 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 
 	if (!CurrentSaveGame)
 	{
+		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
+		{
+			Requester->SetUnlocksFromSave(LoadoutSettings->DefaultStartingUnlocks);
+		}
 		return;
 	}
 
