@@ -761,7 +761,7 @@ namespace ARDebugSaveEditor
 			CurrentSaveObject->Modify();
 
 			const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
-			const FGameplayTagContainer UnlockTags = LoadoutSettings ? LoadoutSettings->DefaultStartingUnlocks : FGameplayTagContainer();
+			const FGameplayTagContainer UnlockTags = LoadoutSettings ? LoadoutSettings->GetEffectiveDefaultStartingUnlocks() : FGameplayTagContainer();
 
 			if (UnlockTags.Num() == 0)
 			{
@@ -1145,7 +1145,7 @@ namespace ARDebugSaveEditor
 			SaveObject->LastSaved = FDateTime::UtcNow();
 			if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 			{
-				SaveObject->Unlocks = LoadoutSettings->DefaultStartingUnlocks;
+				SaveObject->Unlocks = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
 			}
 			SaveObject->ValidateAndSanitize(nullptr);
 
