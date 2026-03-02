@@ -321,9 +321,6 @@ struct FARInvaderRuntimeSnapshot
 	int32 LeakCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
-	int32 LeakLossThreshold = 20;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
 	int32 Seed = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AR|Invader|Runtime")
