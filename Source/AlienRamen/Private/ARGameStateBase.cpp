@@ -17,6 +17,21 @@ void AARGameStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		BindPlayerStateSignals(Cast<AARPlayerStateBase>(PlayerState));
+	}
+
+	if (HasAuthority())
+	{
+		RefreshAllPlayersTravelReady();
+	}
+	else
+	{
+		// Client-side listeners can still query immediately; replicated value remains authoritative.
+		bAllPlayersTravelReady = ComputeAllPlayersTravelReady();
+	}
+
 	if (!HasAuthority())
 	{
 		return;
@@ -34,6 +49,7 @@ void AARGameStateBase::BeginPlay()
 void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AARGameStateBase, bAllPlayersTravelReady);
 	DOREPLIFETIME(AARGameStateBase, CyclesForUI);
 }
 
@@ -65,6 +81,11 @@ TArray<AARPlayerStateBase*> AARGameStateBase::GetPlayerStates() const
 	}
 
 	return Result;
+}
+
+bool AARGameStateBase::AreAllPlayersTravelReady() const
+{
+	return bAllPlayersTravelReady;
 }
 
 AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const
@@ -125,19 +146,66 @@ AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromContext(const UObje
 void AARGameStateBase::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
-	if (Cast<AARPlayerStateBase>(PlayerState))
+	if (AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState))
 	{
+		BindPlayerStateSignals(ARPlayerState);
 		OnTrackedPlayersChanged.Broadcast();
+
+		if (HasAuthority())
+		{
+			RefreshAllPlayersTravelReady();
+		}
 	}
 }
 
 void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 {
+	if (AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState))
+	{
+		UnbindPlayerStateSignals(ARPlayerState);
+	}
+
 	Super::RemovePlayerState(PlayerState);
 	if (Cast<AARPlayerStateBase>(PlayerState))
 	{
 		OnTrackedPlayersChanged.Broadcast();
+
+		if (HasAuthority())
+		{
+			RefreshAllPlayersTravelReady();
+		}
 	}
+}
+
+void AARGameStateBase::HandlePlayerReadyStatusChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewReady, bool bOldReady)
+{
+	OnPlayerReadyChanged.Broadcast(SourcePlayerState, SourcePlayerSlot, bNewReady, bOldReady);
+
+	if (HasAuthority())
+	{
+		RefreshAllPlayersTravelReady();
+	}
+}
+
+void AARGameStateBase::HandlePlayerSlotChanged(EARPlayerSlot NewSlot, EARPlayerSlot OldSlot)
+{
+	if (HasAuthority() && NewSlot != OldSlot)
+	{
+		RefreshAllPlayersTravelReady();
+	}
+}
+
+void AARGameStateBase::HandlePlayerCharacterPickedChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter)
+{
+	if (HasAuthority() && NewCharacter != OldCharacter)
+	{
+		RefreshAllPlayersTravelReady();
+	}
+}
+
+void AARGameStateBase::OnRep_AllPlayersTravelReady(bool bOldAllPlayersTravelReady)
+{
+	OnAllPlayersTravelReadyChanged.Broadcast(bAllPlayersTravelReady, bOldAllPlayersTravelReady);
 }
 
 bool AARGameStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -187,4 +255,69 @@ void AARGameStateBase::NotifyHydratedFromSave()
 void AARGameStateBase::OnRep_CyclesForUI()
 {
 	// Hook for UI; currently no extra logic.
+}
+
+void AARGameStateBase::BindPlayerStateSignals(AARPlayerStateBase* PlayerState)
+{
+	if (!PlayerState)
+	{
+		return;
+	}
+
+	PlayerState->OnReadyStatusChanged.AddUniqueDynamic(this, &AARGameStateBase::HandlePlayerReadyStatusChanged);
+	PlayerState->OnPlayerSlotChanged.AddUniqueDynamic(this, &AARGameStateBase::HandlePlayerSlotChanged);
+	PlayerState->OnCharacterPickedChanged.AddUniqueDynamic(this, &AARGameStateBase::HandlePlayerCharacterPickedChanged);
+}
+
+void AARGameStateBase::UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState)
+{
+	if (!PlayerState)
+	{
+		return;
+	}
+
+	PlayerState->OnReadyStatusChanged.RemoveDynamic(this, &AARGameStateBase::HandlePlayerReadyStatusChanged);
+	PlayerState->OnPlayerSlotChanged.RemoveDynamic(this, &AARGameStateBase::HandlePlayerSlotChanged);
+	PlayerState->OnCharacterPickedChanged.RemoveDynamic(this, &AARGameStateBase::HandlePlayerCharacterPickedChanged);
+}
+
+bool AARGameStateBase::ComputeAllPlayersTravelReady() const
+{
+	bool bFoundAnyPlayer = false;
+
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		const AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState);
+		if (!ARPlayerState)
+		{
+			continue;
+		}
+
+		bFoundAnyPlayer = true;
+		if (!ARPlayerState->IsTravelReady())
+		{
+			return false;
+		}
+	}
+
+	return bFoundAnyPlayer;
+}
+
+void AARGameStateBase::RefreshAllPlayersTravelReady()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const bool bOldAllPlayersTravelReady = bAllPlayersTravelReady;
+	const bool bNewAllPlayersTravelReady = ComputeAllPlayersTravelReady();
+	if (bOldAllPlayersTravelReady == bNewAllPlayersTravelReady)
+	{
+		return;
+	}
+
+	bAllPlayersTravelReady = bNewAllPlayersTravelReady;
+	OnRep_AllPlayersTravelReady(bOldAllPlayersTravelReady);
+	ForceNetUpdate();
 }

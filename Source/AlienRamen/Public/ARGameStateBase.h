@@ -12,6 +12,22 @@ class APawn;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnTrackedPlayersChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnGameStateHydratedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnPlayerReadyChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	bool,
+	bNewReady,
+	bool,
+	bOldReady);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnAllPlayersTravelReadyChangedSignature,
+	bool,
+	bNewAllPlayersTravelReady,
+	bool,
+	bOldAllPlayersTravelReady);
 
 UCLASS()
 class ALIENRAMEN_API AARGameStateBase : public AGameStateBase, public IStructSerializable
@@ -31,6 +47,9 @@ public:
 	TArray<AARPlayerStateBase*> GetPlayerStates() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	bool AreAllPlayersTravelReady() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
@@ -44,6 +63,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Players")
 	FAROnTrackedPlayersChangedSignature OnTrackedPlayersChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Players")
+	FAROnPlayerReadyChangedSignature OnPlayerReadyChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Players")
+	FAROnAllPlayersTravelReadyChangedSignature OnAllPlayersTravelReadyChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnGameStateHydratedSignature OnHydratedFromSave;
@@ -71,7 +96,27 @@ protected:
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
 	UFUNCTION()
+	void HandlePlayerReadyStatusChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewReady, bool bOldReady);
+
+	UFUNCTION()
+	void HandlePlayerSlotChanged(EARPlayerSlot NewSlot, EARPlayerSlot OldSlot);
+
+	UFUNCTION()
+	void HandlePlayerCharacterPickedChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter);
+
+	UFUNCTION()
+	void OnRep_AllPlayersTravelReady(bool bOldAllPlayersTravelReady);
+
+	UFUNCTION()
 	void OnRep_CyclesForUI();
+
+	void BindPlayerStateSignals(AARPlayerStateBase* PlayerState);
+	void UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState);
+	bool ComputeAllPlayersTravelReady() const;
+	void RefreshAllPlayersTravelReady();
+
+	UPROPERTY(ReplicatedUsing = OnRep_AllPlayersTravelReady, BlueprintReadOnly, Category = "Alien Ramen|Players")
+	bool bAllPlayersTravelReady = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CyclesForUI, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 CyclesForUI = 0;

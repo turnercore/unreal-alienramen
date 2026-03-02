@@ -235,6 +235,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
 	void SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags);
 
+	// Convenience update: routes through server authority and applies slot-aware replacement/add semantics.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
+	void UpdateLoadoutWithTag(FGameplayTag NewTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateLoadoutWithTag(FGameplayTag NewTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
+	void RemoveTagFromLoadout(FGameplayTag TagToRemove);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRemoveTagFromLoadout(FGameplayTag TagToRemove);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Loadout")
+	TArray<FGameplayTag> GetTagsInLoadoutSlot(FGameplayTag SlotTag) const;
+
 	UFUNCTION()
 	void OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags);
 
@@ -306,6 +322,10 @@ protected:
 	void SetDisplayName_Internal(const FString& NewDisplayName);
 	void SetReady_Internal(bool bNewReady);
 	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags);
+	void UpdateLoadoutWithTag_Internal(FGameplayTag NewTag);
+	void RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove);
+	void NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const;
+	bool IsSingleSlotLoadoutRootTag(FGameplayTag RootTag) const;
 	void EnsureDefaultLoadoutIfEmpty();
 	void BindTrackedAttributeDelegates();
 	void UnbindTrackedAttributeDelegates();
@@ -317,6 +337,7 @@ protected:
 	void HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
+	void EnsureReadyPrerequisitesForRun();
 	void EvaluateTravelReadinessAndBroadcast();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
