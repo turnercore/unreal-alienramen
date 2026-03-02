@@ -5,6 +5,7 @@
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveTypes.h"
+#include "ARLoadoutSettings.h"
 
 #include "IDetailsView.h"
 #include "Editor.h"
@@ -14,7 +15,6 @@
 #include "ScopedTransaction.h"
 #include "ToolMenus.h"
 #include "Styling/AppStyle.h"
-#include "GameplayTagsManager.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/MessageDialog.h"
@@ -33,6 +33,7 @@
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Views/SListView.h"
 #include "GameFramework/SaveGame.h"
+#include "InputCoreTypes.h"
 
 namespace ARDebugSaveEditor
 {
@@ -44,6 +45,21 @@ namespace ARDebugSaveEditor
 	public:
 		SLATE_BEGIN_ARGS(SPanel) {}
 		SLATE_END_ARGS()
+
+		virtual bool SupportsKeyboardFocus() const override
+		{
+			return true;
+		}
+
+		virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override
+		{
+			if (InKeyEvent.IsControlDown() && InKeyEvent.GetKey() == EKeys::S)
+			{
+				return OnSaveCurrent();
+			}
+
+			return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
+		}
 
 		void Construct(const FArguments&)
 		{
@@ -227,8 +243,8 @@ namespace ARDebugSaveEditor
 								+ SUniformWrapPanel::Slot()
 								[
 									SNew(SButton)
-									.Text(FText::FromString("Add All Unlocks"))
-									.OnClicked(this, &SPanel::OnUnlockAllCurrent)
+									.Text(FText::FromString("Set Default Unlocks"))
+									.OnClicked(this, &SPanel::OnSetDefaultUnlocksCurrent)
 								]
 								+ SUniformWrapPanel::Slot()
 								[
@@ -734,31 +750,22 @@ namespace ARDebugSaveEditor
 			return FReply::Handled();
 		}
 
-		FReply OnUnlockAllCurrent()
+		FReply OnSetDefaultUnlocksCurrent()
 		{
 			if (!CurrentSaveObject)
 			{
 				SetStatus(TEXT("No save object loaded."));
 				return FReply::Handled();
 			}
-			const FScopedTransaction Transaction(FText::FromString(TEXT("Debug Save: Add All Unlocks")));
+			const FScopedTransaction Transaction(FText::FromString(TEXT("Debug Save: Set Default Unlocks")));
 			CurrentSaveObject->Modify();
 
-			// Gather all unlock tags and apply directly.
-			FGameplayTagContainer UnlockTags;
-			FGameplayTagContainer AllTags;
-			UGameplayTagsManager::Get().RequestAllGameplayTags(AllTags, /*OnlyIncludeDictionaryTags*/ false);
-			for (const FGameplayTag& GameplayTag : AllTags)
-			{
-				if (GameplayTag.ToString().StartsWith(TEXT("Unlock."), ESearchCase::IgnoreCase))
-				{
-					UnlockTags.AddTag(GameplayTag);
-				}
-			}
+			const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
+			const FGameplayTagContainer UnlockTags = LoadoutSettings ? LoadoutSettings->DefaultStartingUnlocks : FGameplayTagContainer();
 
 			if (UnlockTags.Num() == 0)
 			{
-				SetStatus(TEXT("Unlock All failed: no Unlock.* tags found."));
+				SetStatus(TEXT("Set default unlocks failed: Default Starting Unlocks is empty in project settings."));
 				return FReply::Handled();
 			}
 
@@ -769,7 +776,7 @@ namespace ARDebugSaveEditor
 				SaveDetailsView->ForceRefresh();
 			}
 
-			SetStatus(FString::Printf(TEXT("Unlocks set to all known unlock tags (%d). Press Save Current to persist."), UnlockTags.Num()));
+			SetStatus(FString::Printf(TEXT("Applied default unlocks (%d). Press Save to persist."), UnlockTags.Num()));
 			return FReply::Handled();
 		}
 
@@ -783,19 +790,13 @@ namespace ARDebugSaveEditor
 			const FScopedTransaction Transaction(FText::FromString(TEXT("Debug Save: Set Default Loadout")));
 			CurrentSaveObject->Modify();
 
-			const FGameplayTag ShipTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship.Sammy"), false);
-			const FGameplayTag SecondaryTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary.Mine"), false);
-			const FGameplayTag GadgetTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget.Vac"), false);
-			if (!ShipTag.IsValid() || !SecondaryTag.IsValid() || !GadgetTag.IsValid())
+			const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
+			const FGameplayTagContainer DefaultLoadout = LoadoutSettings ? LoadoutSettings->DefaultPlayerLoadoutTags : FGameplayTagContainer();
+			if (DefaultLoadout.IsEmpty())
 			{
-				SetStatus(TEXT("Default loadout failed: required tags missing (Unlock.Ship.Sammy / Unlock.Secondary.Mine / Unlock.Gadget.Vac)."));
+				SetStatus(TEXT("Default loadout failed: Default Player Loadout Tags is empty in project settings."));
 				return FReply::Handled();
 			}
-
-			FGameplayTagContainer DefaultLoadout;
-			DefaultLoadout.AddTag(ShipTag);
-			DefaultLoadout.AddTag(SecondaryTag);
-			DefaultLoadout.AddTag(GadgetTag);
 
 			for (FARPlayerStateSaveData& PlayerData : CurrentSaveObject->PlayerStates)
 			{
@@ -1142,6 +1143,10 @@ namespace ARDebugSaveEditor
 			SaveObject->SaveSlotNumber = 0;
 			SaveObject->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
 			SaveObject->LastSaved = FDateTime::UtcNow();
+			if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
+			{
+				SaveObject->Unlocks = LoadoutSettings->DefaultStartingUnlocks;
+			}
 			SaveObject->ValidateAndSanitize(nullptr);
 
 			const FName PhysicalName = BuildRevisionSlotName(SlotBase, 0);
