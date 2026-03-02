@@ -100,7 +100,7 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	{
 		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 		{
-			UnlocksToApply = LoadoutSettings->DefaultStartingUnlocks;
+			UnlocksToApply = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
 		}
 	}
 
@@ -404,7 +404,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 	{
 		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 		{
-			SaveObject->Unlocks = LoadoutSettings->DefaultStartingUnlocks;
+			SaveObject->Unlocks = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
 		}
 	}
 
@@ -1008,7 +1008,7 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 	{
 		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 		{
-			Requester->SetUnlocksFromSave(LoadoutSettings->DefaultStartingUnlocks);
+			Requester->SetUnlocksFromSave(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 		}
 		return;
 	}
