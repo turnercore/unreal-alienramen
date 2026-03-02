@@ -25,7 +25,7 @@
 
 namespace
 {
-	const FGameplayTag DataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	const FName DataDamageName(TEXT("Data.Damage"));
 
 	static bool ApplyDamageToActorViaGAS(AActor* Target, float Damage, AActor* Offender)
 	{
@@ -812,7 +812,7 @@ bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutC
 		return false;
 	}
 
-	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
+	Spec.Data->SetSetByCallerMagnitude(DataDamageName, Damage);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 
 	OutCurrentHealth = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());

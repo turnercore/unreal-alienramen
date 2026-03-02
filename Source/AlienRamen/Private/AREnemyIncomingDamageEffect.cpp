@@ -12,6 +12,6 @@ UAREnemyIncomingDamageEffect::UAREnemyIncomingDamageEffect()
 	DamageMod.ModifierOp = EGameplayModOp::Additive;
 
 	FSetByCallerFloat SetByCaller;
-	SetByCaller.DataTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	SetByCaller.DataName = FName(TEXT("Data.Damage"));
 	DamageMod.ModifierMagnitude = FGameplayEffectModifierMagnitude(SetByCaller);
 }
