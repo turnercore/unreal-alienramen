@@ -1,9 +1,11 @@
 #include "ARPlayerStateBase.h"
 
 #include "ARAttributeSetCore.h"
+#include "ARLoadoutSettings.h"
 #include "ARLog.h"
 #include "AbilitySystemComponent.h"
 #include "ARSaveSubsystem.h"
+#include "GameplayTagUtilities.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
@@ -198,6 +200,65 @@ void AARPlayerStateBase::SetLoadoutTags(const FGameplayTagContainer& NewLoadoutT
 	UE_LOG(ARLog, Warning, TEXT("[PlayerState] SetLoadoutTags ignored on non-authority for '%s'."), *GetNameSafe(this));
 }
 
+void AARPlayerStateBase::UpdateLoadoutWithTag(FGameplayTag NewTag)
+{
+	if (HasAuthority())
+	{
+		UpdateLoadoutWithTag_Internal(NewTag);
+		return;
+	}
+
+	ServerUpdateLoadoutWithTag(NewTag);
+}
+
+void AARPlayerStateBase::ServerUpdateLoadoutWithTag_Implementation(FGameplayTag NewTag)
+{
+	UpdateLoadoutWithTag_Internal(NewTag);
+}
+
+void AARPlayerStateBase::RemoveTagFromLoadout(FGameplayTag TagToRemove)
+{
+	if (HasAuthority())
+	{
+		RemoveTagFromLoadout_Internal(TagToRemove);
+		return;
+	}
+
+	ServerRemoveTagFromLoadout(TagToRemove);
+}
+
+void AARPlayerStateBase::ServerRemoveTagFromLoadout_Implementation(FGameplayTag TagToRemove)
+{
+	RemoveTagFromLoadout_Internal(TagToRemove);
+}
+
+TArray<FGameplayTag> AARPlayerStateBase::GetTagsInLoadoutSlot(FGameplayTag SlotTag) const
+{
+	TArray<FGameplayTag> Result;
+	if (!SlotTag.IsValid())
+	{
+		return Result;
+	}
+
+	TArray<FGameplayTag> ExistingTags;
+	LoadoutTags.GetGameplayTagArray(ExistingTags);
+	for (const FGameplayTag& ExistingTag : ExistingTags)
+	{
+		if (!ExistingTag.IsValid())
+		{
+			continue;
+		}
+
+		// Include tags in the slot subtree, excluding the slot root itself.
+		if (ExistingTag != SlotTag && ExistingTag.MatchesTag(SlotTag))
+		{
+			Result.Add(ExistingTag);
+		}
+	}
+
+	return Result;
+}
+
 void AARPlayerStateBase::SetSpiceMeter(float NewSpiceValue)
 {
 	if (HasAuthority())
@@ -298,7 +359,17 @@ void AARPlayerStateBase::SetDisplayName_Internal(const FString& NewDisplayName)
 
 void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 {
-	if (!HasAuthority() || bIsReady == bNewReady)
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (bNewReady)
+	{
+		EnsureReadyPrerequisitesForRun();
+	}
+
+	if (bIsReady == bNewReady)
 	{
 		return;
 	}
@@ -310,15 +381,108 @@ void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 	EvaluateTravelReadinessAndBroadcast();
 }
 
+void AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
+	if (!GS)
+	{
+		return;
+	}
+
+	if (PlayerSlot == EARPlayerSlot::Unknown)
+	{
+		bool bP1Taken = false;
+		bool bP2Taken = false;
+		for (APlayerState* PS : GS->PlayerArray)
+		{
+			const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
+			if (!OtherPlayer || OtherPlayer == this)
+			{
+				continue;
+			}
+
+			if (OtherPlayer->GetPlayerSlot() == EARPlayerSlot::P1)
+			{
+				bP1Taken = true;
+			}
+			else if (OtherPlayer->GetPlayerSlot() == EARPlayerSlot::P2)
+			{
+				bP2Taken = true;
+			}
+		}
+
+		const EARPlayerSlot ResolvedSlot = !bP1Taken ? EARPlayerSlot::P1 : (!bP2Taken ? EARPlayerSlot::P2 : EARPlayerSlot::P1);
+		SetPlayerSlot(ResolvedSlot);
+	}
+
+	if (CharacterPicked == EARCharacterChoice::None)
+	{
+		const auto IsCharacterTakenByOther = [this, GS](EARCharacterChoice Choice) -> bool
+		{
+			if (Choice == EARCharacterChoice::None)
+			{
+				return false;
+			}
+
+			for (APlayerState* PS : GS->PlayerArray)
+			{
+				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
+				if (!OtherPlayer || OtherPlayer == this)
+				{
+					continue;
+				}
+
+				if (OtherPlayer->GetCharacterPicked() == Choice)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		const EARCharacterChoice PreferredChoice =
+			(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		const EARCharacterChoice AlternateChoice =
+			(PreferredChoice == EARCharacterChoice::Brother) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+
+		if (!IsCharacterTakenByOther(PreferredChoice))
+		{
+			SetCharacterPicked_Internal(PreferredChoice);
+		}
+		else if (!IsCharacterTakenByOther(AlternateChoice))
+		{
+			SetCharacterPicked_Internal(AlternateChoice);
+		}
+		else
+		{
+			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Ready prerequisites could not auto-assign character for '%s'."), *GetNameSafe(this));
+		}
+	}
+}
+
 void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags)
 {
-	if (!HasAuthority() || LoadoutTags == NewLoadoutTags)
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FGameplayTagContainer NormalizedTags = NewLoadoutTags;
+	NormalizeLoadoutTagsForSlotRules(NormalizedTags);
+
+	if (LoadoutTags == NormalizedTags)
 	{
 		return;
 	}
 
 	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
-	LoadoutTags = NewLoadoutTags;
+	LoadoutTags = NormalizedTags;
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
@@ -330,6 +494,108 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 			SaveSubsystem->MarkSaveDirty();
 		}
 	}
+}
+
+void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!NewTag.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag ignored invalid tag for '%s'."), *GetNameSafe(this));
+		return;
+	}
+
+	FGameplayTag SlotRootTag;
+	const bool bHasSlotRoot = UGameplayTagUtilities::TryGetTagAtDepth(NewTag, 2, SlotRootTag);
+
+	FGameplayTagContainer NewLoadout = LoadoutTags;
+	if (bHasSlotRoot && IsSingleSlotLoadoutRootTag(SlotRootTag))
+	{
+		if (!UGameplayTagUtilities::ReplaceTagInSlot(NewLoadout, NewTag))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag failed to replace single-slot tag '%s' for '%s'."), *NewTag.ToString(), *GetNameSafe(this));
+			return;
+		}
+	}
+	else
+	{
+		NewLoadout.AddTag(NewTag);
+	}
+
+	SetLoadoutTags_Internal(NewLoadout);
+}
+
+void AARPlayerStateBase::RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!TagToRemove.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[PlayerState] RemoveTagFromLoadout ignored invalid tag for '%s'."), *GetNameSafe(this));
+		return;
+	}
+
+	if (!LoadoutTags.HasTagExact(TagToRemove))
+	{
+		return;
+	}
+
+	FGameplayTagContainer NewLoadout = LoadoutTags;
+	NewLoadout.RemoveTag(TagToRemove);
+	SetLoadoutTags_Internal(NewLoadout);
+}
+
+void AARPlayerStateBase::NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const
+{
+	TArray<FGameplayTag> ExistingTags;
+	InOutTags.GetGameplayTagArray(ExistingTags);
+
+	TMap<FGameplayTag, FGameplayTag> LastTagBySingleSlotRoot;
+	for (const FGameplayTag& ExistingTag : ExistingTags)
+	{
+		FGameplayTag SlotRootTag;
+		if (!UGameplayTagUtilities::TryGetTagAtDepth(ExistingTag, 2, SlotRootTag))
+		{
+			continue;
+		}
+
+		if (!IsSingleSlotLoadoutRootTag(SlotRootTag))
+		{
+			continue;
+		}
+
+		LastTagBySingleSlotRoot.FindOrAdd(SlotRootTag) = ExistingTag;
+	}
+
+	for (const TPair<FGameplayTag, FGameplayTag>& Entry : LastTagBySingleSlotRoot)
+	{
+		UGameplayTagUtilities::ReplaceTagInSlot(InOutTags, Entry.Value);
+	}
+}
+
+bool AARPlayerStateBase::IsSingleSlotLoadoutRootTag(FGameplayTag RootTag) const
+{
+	if (!RootTag.IsValid())
+	{
+		return false;
+	}
+
+	const UARLoadoutSettings* Settings = GetDefault<UARLoadoutSettings>();
+	if (!Settings)
+	{
+		// Fail-safe to preserve deterministic behavior if settings are unavailable.
+		return true;
+	}
+
+	// Single-slot by default; explicitly configured roots are multi-slot.
+	return !Settings->MultiSlotLoadoutRoots.HasTagExact(RootTag);
 }
 
 void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)

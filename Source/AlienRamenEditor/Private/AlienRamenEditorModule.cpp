@@ -15,6 +15,7 @@
 #include "GameplayTagsManager.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SCheckBox.h"
 #include "Widgets/Input/SEditableTextBox.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SBorder.h"
@@ -27,7 +28,6 @@
 namespace ARDebugSaveEditor
 {
 	static const FName TabName(TEXT("AR_DebugSaveTool"));
-	static const FString DebugSlotSuffix = TEXT("_debug");
 
 	class SPanel final : public SCompoundWidget
 	{
@@ -63,6 +63,21 @@ namespace ARDebugSaveEditor
 						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
 						[
 							SNew(STextBlock).Text(FText::FromString("Debug Slot Base Name"))
+						]
+
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
+						[
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.f, 0.f, 6.f, 0.f)
+							[
+								SNew(SCheckBox)
+								.IsChecked(this, &SPanel::GetDebugNamespaceCheckState)
+								.OnCheckStateChanged(this, &SPanel::OnSaveNamespaceToggled)
+							]
+							+ SHorizontalBox::Slot().FillWidth(1.f).VAlign(VAlign_Center)
+							[
+								SNew(STextBlock).Text(this, &SPanel::GetSaveNamespaceLabel)
+							]
 						]
 
 						+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
@@ -184,7 +199,8 @@ namespace ARDebugSaveEditor
 
 			TArray<FARSaveSlotDescriptor> Slots;
 			FARSaveResult Result;
-			if (!Subsystem->ListSaves(Slots, Result))
+			const bool bListed = Subsystem->ListSaves(Slots, Result, bUseDebugSaves);
+			if (!bListed)
 			{
 				SetStatus(FString::Printf(TEXT("Refresh failed: %s"), *Result.Error));
 				return;
@@ -193,14 +209,10 @@ namespace ARDebugSaveEditor
 			SlotItems.Reset();
 			for (const FARSaveSlotDescriptor& Entry : Slots)
 			{
-				if (!IsDebugSlot(Entry.SlotName))
-				{
-					continue;
-				}
 				SlotItems.Add(MakeShared<FARSaveSlotDescriptor>(Entry));
 			}
 			SlotListView->RequestListRefresh();
-			SetStatus(FString::Printf(TEXT("Loaded %d debug slots."), SlotItems.Num()));
+			SetStatus(FString::Printf(TEXT("Loaded %d %s slots."), SlotItems.Num(), bUseDebugSaves ? TEXT("debug") : TEXT("real")));
 		}
 
 		FReply OnRefreshSlots()
@@ -220,11 +232,11 @@ namespace ARDebugSaveEditor
 			}
 
 			FName BaseName(*SlotNameTextBox->GetText().ToString());
-			BaseName = NormalizeDebugSlot(BaseName, Subsystem);
+			BaseName = NormalizeSlotBase(BaseName, Subsystem);
 
 			FARSaveSlotDescriptor NewSlot;
 			FARSaveResult Result;
-			if (!Subsystem->CreateNewSave(BaseName, NewSlot, Result))
+			if (!Subsystem->CreateNewSave(BaseName, NewSlot, Result, bUseDebugSaves))
 			{
 				SetStatus(FString::Printf(TEXT("Create failed: %s"), *Result.Error));
 				return FReply::Handled();
@@ -237,6 +249,24 @@ namespace ARDebugSaveEditor
 			RefreshSlots();
 			SetStatus(FString::Printf(TEXT("Created slot base '%s' at revision %d."), *NewSlot.SlotName.ToString(), NewSlot.SlotNumber));
 			return FReply::Handled();
+		}
+
+		ECheckBoxState GetDebugNamespaceCheckState() const
+		{
+			return bUseDebugSaves ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+		}
+
+		void OnSaveNamespaceToggled(ECheckBoxState NewState)
+		{
+			bUseDebugSaves = (NewState == ECheckBoxState::Checked);
+			RefreshSlots();
+		}
+
+		FText GetSaveNamespaceLabel() const
+		{
+			return bUseDebugSaves
+				? FText::FromString("Use Debug Saves Namespace")
+				: FText::FromString("Use Real Saves Namespace");
 		}
 
 		FReply OnLoadSelected()
@@ -257,7 +287,7 @@ namespace ARDebugSaveEditor
 			}
 
 			FARSaveResult Result;
-			if (!Subsystem->LoadGame(Selected[0]->SlotName, -1, Result))
+			if (!Subsystem->LoadGame(Selected[0]->SlotName, -1, Result, bUseDebugSaves))
 			{
 				SetStatus(FString::Printf(TEXT("Load failed: %s"), *Result.Error));
 				return FReply::Handled();
@@ -287,7 +317,7 @@ namespace ARDebugSaveEditor
 			}
 
 			FARSaveResult Result;
-			if (!Subsystem->SaveCurrentGame(CurrentSlotName, true, Result))
+			if (!Subsystem->SaveCurrentGame(CurrentSlotName, true, Result, bUseDebugSaves))
 			{
 				SetStatus(FString::Printf(TEXT("Save failed: %s"), *Result.Error));
 				return FReply::Handled();
@@ -317,7 +347,7 @@ namespace ARDebugSaveEditor
 			}
 
 			FARSaveResult Result;
-			if (!Subsystem->DeleteSave(SlotToDelete, Result))
+			if (!Subsystem->DeleteSave(SlotToDelete, Result, bUseDebugSaves))
 			{
 				SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Result.Error));
 				return FReply::Handled();
@@ -443,21 +473,12 @@ namespace ARDebugSaveEditor
 			return Subsystem;
 		}
 
-		static bool IsDebugSlot(FName SlotName)
-		{
-			return SlotName.ToString().EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase);
-		}
-
-		static FName NormalizeDebugSlot(FName InName, UARSaveSubsystem* Subsystem)
+		static FName NormalizeSlotBase(FName InName, UARSaveSubsystem* Subsystem)
 		{
 			FString Base = InName.ToString().TrimStartAndEnd();
 			if (Base.IsEmpty() && Subsystem)
 			{
 				Base = Subsystem->GenerateRandomSlotBaseName(true).ToString();
-			}
-			if (!Base.EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase))
-			{
-				Base += DebugSlotSuffix;
 			}
 			return FName(*Base);
 		}
@@ -473,6 +494,7 @@ namespace ARDebugSaveEditor
 
 		FName CurrentSlotName = NAME_None;
 		TStrongObjectPtr<UARSaveGame> CurrentSaveObject;
+		bool bUseDebugSaves = true;
 	};
 }
 
