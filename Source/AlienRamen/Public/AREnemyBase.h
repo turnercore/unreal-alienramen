@@ -335,6 +335,8 @@ private:
 	FDelegateHandle MoveSpeedChangedDelegateHandle;
 	bool bStartupSetApplied = false;
 	bool bCountedAsLeak = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|Invader", meta = (AllowPrivateAccess = "true"))
+	bool bHasEnteredScreen = false;
 	bool bHasEnteredGameplayScreen = false;
 	bool bReachedFormationSlot = false;
 	bool bHasDispatchedEnteredScreenEvent = false;
