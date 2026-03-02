@@ -1,4 +1,5 @@
 #include "ARPlayerController.h"
+#include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
@@ -108,4 +109,64 @@ void AARPlayerController::TryStartTravelInternal(const FString& URL, const FStri
 	}
 
 	UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel ignored: no authoritative AARGameModeBase."), *GetNameSafe(this));
+}
+
+void AARPlayerController::RequestAddUnlock(const FGameplayTag& UnlockTag)
+{
+	if (HasAuthority())
+	{
+		RequestAddUnlockInternal(UnlockTag);
+		return;
+	}
+
+	ServerRequestAddUnlock(UnlockTag);
+}
+
+void AARPlayerController::RequestRemoveUnlock(const FGameplayTag& UnlockTag)
+{
+	if (HasAuthority())
+	{
+		RequestRemoveUnlockInternal(UnlockTag);
+		return;
+	}
+
+	ServerRequestRemoveUnlock(UnlockTag);
+}
+
+void AARPlayerController::ServerRequestAddUnlock_Implementation(const FGameplayTag& UnlockTag)
+{
+	RequestAddUnlockInternal(UnlockTag);
+}
+
+void AARPlayerController::ServerRequestRemoveUnlock_Implementation(const FGameplayTag& UnlockTag)
+{
+	RequestRemoveUnlockInternal(UnlockTag);
+}
+
+void AARPlayerController::RequestAddUnlockInternal(const FGameplayTag& UnlockTag)
+{
+	if (AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+	{
+		if (!ARGameState->AddUnlockTag(UnlockTag))
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Save] RequestAddUnlock ignored for '%s' tag '%s'."), *GetNameSafe(this), *UnlockTag.ToString());
+		}
+		return;
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[Save] RequestAddUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
+}
+
+void AARPlayerController::RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag)
+{
+	if (AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+	{
+		if (!ARGameState->RemoveUnlockTag(UnlockTag))
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Save] RequestRemoveUnlock ignored for '%s' tag '%s'."), *GetNameSafe(this), *UnlockTag.ToString());
+		}
+		return;
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[Save] RequestRemoveUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
 }

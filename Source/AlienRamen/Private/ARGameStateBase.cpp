@@ -50,6 +50,9 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AARGameStateBase, bAllPlayersTravelReady);
+	DOREPLIFETIME(AARGameStateBase, Unlocks);
+	DOREPLIFETIME(AARGameStateBase, Money);
+	DOREPLIFETIME(AARGameStateBase, Scrap);
 	DOREPLIFETIME(AARGameStateBase, CyclesForUI);
 }
 
@@ -242,8 +245,108 @@ void AARGameStateBase::SyncCyclesFromSave(int32 NewCycles)
 		return;
 	}
 
+	const int32 OldCycles = CyclesForUI;
 	CyclesForUI = Clamped;
-	OnRep_CyclesForUI();
+	OnRep_CyclesForUI(OldCycles);
+	ForceNetUpdate();
+}
+
+void AARGameStateBase::SetUnlocksFromSave(const FGameplayTagContainer& NewUnlocks)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (Unlocks == NewUnlocks)
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldUnlocks = Unlocks;
+	Unlocks = NewUnlocks;
+	OnRep_Unlocks(OldUnlocks);
+	ForceNetUpdate();
+}
+
+bool AARGameStateBase::AddUnlockTag(const FGameplayTag& UnlockTag)
+{
+	if (!HasAuthority() || !UnlockTag.IsValid())
+	{
+		return false;
+	}
+
+	if (Unlocks.HasTagExact(UnlockTag))
+	{
+		return false;
+	}
+
+	const FGameplayTagContainer OldUnlocks = Unlocks;
+	Unlocks.AddTag(UnlockTag);
+	OnRep_Unlocks(OldUnlocks);
+	ForceNetUpdate();
+	return true;
+}
+
+bool AARGameStateBase::RemoveUnlockTag(const FGameplayTag& UnlockTag)
+{
+	if (!HasAuthority() || !UnlockTag.IsValid())
+	{
+		return false;
+	}
+
+	if (!Unlocks.HasTagExact(UnlockTag))
+	{
+		return false;
+	}
+
+	const FGameplayTagContainer OldUnlocks = Unlocks;
+	Unlocks.RemoveTag(UnlockTag);
+	OnRep_Unlocks(OldUnlocks);
+	ForceNetUpdate();
+	return true;
+}
+
+bool AARGameStateBase::HasUnlockTag(const FGameplayTag& UnlockTag) const
+{
+	return UnlockTag.IsValid() && Unlocks.HasTag(UnlockTag);
+}
+
+void AARGameStateBase::SetMoneyFromSave(int32 NewMoney)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 Clamped = FMath::Max(0, NewMoney);
+	if (Money == Clamped)
+	{
+		return;
+	}
+
+	const int32 OldMoney = Money;
+	Money = Clamped;
+	OnRep_Money(OldMoney);
+	ForceNetUpdate();
+}
+
+void AARGameStateBase::SetScrapFromSave(int32 NewScrap)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 Clamped = FMath::Max(0, NewScrap);
+	if (Scrap == Clamped)
+	{
+		return;
+	}
+
+	const int32 OldScrap = Scrap;
+	Scrap = Clamped;
+	OnRep_Scrap(OldScrap);
 	ForceNetUpdate();
 }
 
@@ -252,9 +355,24 @@ void AARGameStateBase::NotifyHydratedFromSave()
 	OnHydratedFromSave.Broadcast();
 }
 
-void AARGameStateBase::OnRep_CyclesForUI()
+void AARGameStateBase::OnRep_CyclesForUI(int32 OldCyclesForUI)
 {
-	// Hook for UI; currently no extra logic.
+	OnCyclesChanged.Broadcast(CyclesForUI, OldCyclesForUI);
+}
+
+void AARGameStateBase::OnRep_Unlocks(FGameplayTagContainer OldUnlocks)
+{
+	OnUnlocksChanged.Broadcast(Unlocks, OldUnlocks);
+}
+
+void AARGameStateBase::OnRep_Money(int32 OldMoney)
+{
+	OnMoneyChanged.Broadcast(Money, OldMoney);
+}
+
+void AARGameStateBase::OnRep_Scrap(int32 OldScrap)
+{
+	OnScrapChanged.Broadcast(Scrap, OldScrap);
 }
 
 void AARGameStateBase::BindPlayerStateSignals(AARPlayerStateBase* PlayerState)
