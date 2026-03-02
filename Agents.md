@@ -154,7 +154,7 @@
 - Save player payload now stores native `CharacterPicked` enum (`EARCharacterChoice`) in `FARPlayerStateSaveData` (not string/name reflection).
 - Player save payload is explicit-only (no embedded player `FInstancedStruct` blob): `Identity`, `CharacterPicked`, and `LoadoutTags` are the canonical persisted player fields.
 - Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
-- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) using thematic word pools plus a numeric ticket; when uniqueness is requested, candidates are checked against existing index entries before selection.
+- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) and now prefers short thematic `Adj_Noun` names; uniqueness checks run against both canonical/debug save indexes (logical names) with physical revision-0 existence fallback, and only after repeated collisions does it append a numeric suffix before final GUID fallback.
 - Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
 - Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
@@ -419,8 +419,9 @@
 - Left-panel actions are presented in a uniform adaptive wrap/grid layout that flows into multiple columns based on panel width.
 - Loaded-save utility row includes `Save`, `Add All Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
 - Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
+- Save-slot list context menu also includes `Heal Missing` to remove stale index entries when no physical revision files remain.
 - Save-slot list supports double-click to load a slot; if a different slot is already loaded, current loaded save is auto-saved before switching.
-- Failed load/delete against stale index entries in the editor tool can self-heal by pruning the slot from the active namespace index.
+- Failed load/delete against stale index entries in the editor tool can self-heal by pruning stale slot entries (active namespace first, then exact/other-namespace fallback); when auto-heal cannot resolve load failures and no revisions exist on disk, the tool prompts to remove the stale index entry.
 - Slot list selection mode is multi-select for delete operations; non-delete actions (`Load`, `Rename`, `Duplicate`) collapse to the first selected slot.
 - Delete action prompts `Delete?` confirmation and supports deleting all selected slots in one operation.
 - Revert uses an in-memory snapshot captured when a slot is loaded/created to restore the loaded save object to its last loaded state.
