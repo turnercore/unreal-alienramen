@@ -11,6 +11,7 @@
 - Blueprint-only facts are first-class documentation requirements. If critical behavior/shape only exists in BP assets (for example struct variable contracts), record it here clearly.
 - Record decisions, not guesses. If uncertain, verify in code before writing; if still uncertain, add a clearly labeled open question.
 - Preserve intent and constraints for future work (what must stay true), not just what exists today.
+- Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
 - API exposure default: prefer Blueprint exposure for gameplay-facing utilities unless told otherwise.
 - If exposure choice is unclear, ask before locking API surface.
 - Blueprint API categories should be under `Alien Ramen|...` (or existing subsystem category path following that prefix).
@@ -189,9 +190,8 @@
 - server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
 - Save listing supports parallel namespaces:
-- `ListSaves(...)` reads/writes the canonical save index slot (`SaveIndex`).
-- `ListDebugSaves(...)` reads/writes a separate debug index slot (`SaveIndexDebug`) so debug-save slot discovery is isolated from canonical runtime saves.
-- Slot-base routing rule: save ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `DeleteSave`) route to debug-vs-canonical index by slot base suffix; names ending `"_debug"` use debug index, all others use canonical index.
+- Unified save API now uses explicit debug toggle on core ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `ListSaves`, `DeleteSave`) via `bUseDebugSaves`.
+- `bUseDebugSaves=true` appends/uses `"_debug"` slot-base naming and routes index IO to debug index slot (`SaveIndexDebug`); `false` routes to canonical index slot (`SaveIndex`).
 - Multiplayer persistence parity seam added:
 - server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
 - clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
@@ -401,9 +401,9 @@
 
 - Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
 - Requires an active world/GameInstance (run PIE or a Play session); otherwise the tab reports that a subsystem is unavailable.
-- Tool now has namespace toggle (`Debug Saves` vs `Real Saves`) and lists via `ListDebugSaves` or `ListSaves` accordingly.
-- Slot create/load/save/delete continue using `CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave`; subsystem routes index namespace by slot-base suffix (`"_debug"` => debug index).
-- In Debug mode, new slot bases auto-append `"_debug"`; in Real mode, that suffix is removed if entered.
+- Tool now has namespace toggle (`Debug Saves` vs `Real Saves`) and drives unified save APIs with `bUseDebugSaves`.
+- Slot create/load/save/delete/list all use the same core functions (`CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave/ListSaves`) with namespace selected by toggle.
+- In Debug mode, subsystem appends/uses `"_debug"` slot bases and debug index automatically.
 - Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
 - Unlock-all action now writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager (no legacy library helper).
 - Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
