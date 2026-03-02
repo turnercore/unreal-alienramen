@@ -57,6 +57,22 @@ static FName NormalizeSlotBaseForNamespace(FName SlotBaseName, bool bUseDebugSav
 	return FName(*Base);
 }
 
+static FName GetLogicalSlotBaseForNamespace(FName SlotBaseName, bool bUseDebugSaves)
+{
+	FString Base = SlotBaseName.ToString().TrimStartAndEnd();
+	if (Base.IsEmpty())
+	{
+		return NAME_None;
+	}
+
+	if (bUseDebugSaves && Base.EndsWith(DebugSlotSuffix, ESearchCase::IgnoreCase))
+	{
+		Base.LeftChopInline(FCString::Strlen(DebugSlotSuffix), EAllowShrinking::No);
+	}
+
+	return FName(*Base);
+}
+
 static const TCHAR* GetIndexSlotNameForNamespace(bool bUseDebugSaves)
 {
 	return bUseDebugSaves ? DebugSaveIndexSlot : SaveIndexSlot;
@@ -75,60 +91,16 @@ static void EnablePIESeamlessTravelIfNeeded()
 #endif
 }
 
-static bool TryReadGameplayTagContainerField(const UObject* Object, const TCHAR* FieldPrefix, FGameplayTagContainer& OutValue)
-{
-		if (!Object)
-		{
-			return false;
-		}
-
-		for (TFieldIterator<FProperty> It(Object->GetClass()); It; ++It)
-		{
-			if (const FStructProperty* StructProp = CastField<FStructProperty>(*It))
-			{
-				if (!StructProp->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase))
-				{
-					continue;
-				}
-				if (StructProp->Struct != FGameplayTagContainer::StaticStruct())
-				{
-					continue;
-				}
-
-				if (const FGameplayTagContainer* ValuePtr = StructProp->ContainerPtrToValuePtr<FGameplayTagContainer>(Object))
-				{
-					OutValue = *ValuePtr;
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	static bool TryReadIntField(const UObject* Object, const TCHAR* FieldPrefix, int32& OutValue)
+	static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, const UARSaveGame* SaveGame)
 	{
-		if (!Object)
+		if (!GameState || !SaveGame)
 		{
-			return false;
+			return;
 		}
 
-		for (TFieldIterator<FProperty> It(Object->GetClass()); It; ++It)
-		{
-			if (const FIntProperty* IntProp = CastField<FIntProperty>(*It))
-			{
-				if (!IntProp->GetName().StartsWith(FieldPrefix, ESearchCase::IgnoreCase))
-				{
-					continue;
-				}
-				if (const int32* ValuePtr = IntProp->ContainerPtrToValuePtr<int32>(Object))
-				{
-					OutValue = *ValuePtr;
-					return true;
-				}
-			}
-		}
-		return false;
+		GameState->SetUnlocksFromSave(SaveGame->Unlocks);
+		GameState->SetMoneyFromSave(SaveGame->Money);
+		GameState->SetScrapFromSave(SaveGame->Scrap);
 	}
 
 }
@@ -259,10 +231,13 @@ bool UARSaveSubsystem::LoadOrCreateIndexForSlot(UARSaveIndexGame*& OutIndex, FAR
 		OutIndex = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(SlotName, DefaultUserIndex));
 		if (!OutIndex)
 		{
-			OutResult.Error = FString::Printf(TEXT("Failed to load C++ save index '%s'."), *SlotName);
-			return false;
+			UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] Recreating incompatible save index '%s'."), *SlotName);
+			UGameplayStatics::DeleteGameInSlot(SlotName, DefaultUserIndex);
 		}
-		return true;
+		else
+		{
+			return true;
+		}
 	}
 
 	OutIndex = Cast<UARSaveIndexGame>(UGameplayStatics::CreateSaveGameObject(UARSaveIndexGame::StaticClass()));
@@ -378,16 +353,9 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 	AARGameStateBase* GS = World->GetGameState<AARGameStateBase>();
 	if (GS && GS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
 	{
-		FInstancedStruct GSState;
-		IStructSerializable::Execute_ExtractStateToStruct(GS, GSState);
-		SaveObject->GameStateStruct.GameStateData = GSState;
-
-		ARSaveInternal::TryReadGameplayTagContainerField(GS, TEXT("SeenDialogue"), SaveObject->SeenDialogue);
-		ARSaveInternal::TryReadGameplayTagContainerField(GS, TEXT("DialogueFlags"), SaveObject->DialogueFlags);
-		ARSaveInternal::TryReadGameplayTagContainerField(GS, TEXT("Unlocks"), SaveObject->Unlocks);
-		ARSaveInternal::TryReadGameplayTagContainerField(GS, TEXT("Choices"), SaveObject->Choices);
-		ARSaveInternal::TryReadIntField(GS, TEXT("Money"), SaveObject->Money);
-		ARSaveInternal::TryReadIntField(GS, TEXT("Material"), SaveObject->Material);
+		SaveObject->Unlocks = GS->GetUnlocks();
+		SaveObject->Money = GS->GetMoney();
+		SaveObject->Scrap = GS->GetScrap();
 	}
 
 	// Persist cycles from current save as authoritative progression counter (not GameState-owned).
@@ -421,13 +389,6 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		}
 		PlayerData.LoadoutTags = ARPS->LoadoutTags;
 		PlayerData.CharacterPicked = ARPS->GetCharacterPicked();
-
-		if (ARPS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
-		{
-			FInstancedStruct StateData;
-			IStructSerializable::Execute_ExtractStateToStruct(ARPS, StateData);
-			PlayerData.PlayerStateData = StateData;
-		}
 
 		SaveObject->PlayerStates.Add(MoveTemp(PlayerData));
 	}
@@ -519,7 +480,7 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	}
 
 	GatherRuntimeData(NewSave);
-	NewSave->SaveSlot = SlotBase;
+	NewSave->SaveSlot = ARSaveInternal::GetLogicalSlotBaseForNamespace(SlotBase, bUseDebugSaves);
 	NewSave->SaveSlotNumber = 0;
 	NewSave->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
 	NewSave->LastSaved = FDateTime::UtcNow();
@@ -708,7 +669,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	}
 
 	GatherRuntimeData(SaveObject);
-	SaveObject->SaveSlot = SlotBase;
+	SaveObject->SaveSlot = ARSaveInternal::GetLogicalSlotBaseForNamespace(SlotBase, bUseDebugSaves);
 	SaveObject->SaveSlotNumber = NewSlotNumber;
 	SaveObject->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
 	SaveObject->LastSaved = FDateTime::UtcNow();
@@ -981,14 +942,9 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 	// Travel-transient GameState data is authoritative for first hydration pass after travel.
 	if (PendingTravelGameStateData.IsValid())
 	{
-		// Use persisted save as baseline to avoid wiping unrelated fields with travel-local zeros.
 		if (CurrentSaveGame)
 		{
-			const FInstancedStruct SaveBaseline = CurrentSaveGame->GetGameStateDataInstancedStruct();
-			if (SaveBaseline.IsValid())
-			{
-				IStructSerializable::Execute_ApplyStateFromStruct(Requester, SaveBaseline);
-			}
+			ARSaveInternal::ApplySavedGameStateFieldsToRuntime(Requester, CurrentSaveGame);
 			Requester->SyncCyclesFromSave(CurrentSaveGame->Cycles);
 		}
 
@@ -1003,11 +959,7 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 		return;
 	}
 
-	const FInstancedStruct StructData = CurrentSaveGame->GetGameStateDataInstancedStruct();
-	if (StructData.IsValid())
-	{
-		IStructSerializable::Execute_ApplyStateFromStruct(Requester, StructData);
-	}
+	ARSaveInternal::ApplySavedGameStateFieldsToRuntime(Requester, CurrentSaveGame);
 	Requester->SyncCyclesFromSave(CurrentSaveGame->Cycles);
 	Requester->NotifyHydratedFromSave();
 }
@@ -1061,11 +1013,6 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 	if (!bFound || Index == INDEX_NONE)
 	{
 		return false;
-	}
-
-	if (PlayerData.PlayerStateData.IsValid())
-	{
-		IStructSerializable::Execute_ApplyStateFromStruct(Requester, PlayerData.PlayerStateData);
 	}
 
 	// Ensure canonical replicated player-facing fields are restored even if not part of struct schema.

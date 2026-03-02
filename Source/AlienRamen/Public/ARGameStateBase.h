@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "ARPlayerStateBase.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/GameStateBase.h"
 #include "StructSerializable.h"
 #include "ARGameStateBase.generated.h"
@@ -28,6 +29,30 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	bNewAllPlayersTravelReady,
 	bool,
 	bOldAllPlayersTravelReady);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnUnlocksChangedSignature,
+	FGameplayTagContainer,
+	NewUnlocks,
+	FGameplayTagContainer,
+	OldUnlocks);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnMoneyChangedSignature,
+	int32,
+	NewMoney,
+	int32,
+	OldMoney);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnScrapChangedSignature,
+	int32,
+	NewScrap,
+	int32,
+	OldScrap);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnCyclesChangedSignature,
+	int32,
+	NewCycles,
+	int32,
+	OldCycles);
 
 UCLASS()
 class ALIENRAMEN_API AARGameStateBase : public AGameStateBase, public IStructSerializable
@@ -73,12 +98,51 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnGameStateHydratedSignature OnHydratedFromSave;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnUnlocksChangedSignature OnUnlocksChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnMoneyChangedSignature OnMoneyChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnScrapChangedSignature OnScrapChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnCyclesChangedSignature OnCyclesChanged;
+
 	// Non-persistent UI mirror of save-owned cycles; authority-only setter.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SyncCyclesFromSave(int32 NewCycles);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	const FGameplayTagContainer& GetUnlocks() const { return Unlocks; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	int32 GetMoney() const { return Money; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	int32 GetScrap() const { return Scrap; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	int32 GetCyclesForUI() const { return CyclesForUI; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetUnlocksFromSave(const FGameplayTagContainer& NewUnlocks);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool AddUnlockTag(const FGameplayTag& UnlockTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool RemoveUnlockTag(const FGameplayTag& UnlockTag);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool HasUnlockTag(const FGameplayTag& UnlockTag) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetMoneyFromSave(int32 NewMoney);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetScrapFromSave(int32 NewScrap);
 
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
@@ -108,7 +172,16 @@ protected:
 	void OnRep_AllPlayersTravelReady(bool bOldAllPlayersTravelReady);
 
 	UFUNCTION()
-	void OnRep_CyclesForUI();
+	void OnRep_CyclesForUI(int32 OldCyclesForUI);
+
+	UFUNCTION()
+	void OnRep_Unlocks(FGameplayTagContainer OldUnlocks);
+
+	UFUNCTION()
+	void OnRep_Money(int32 OldMoney);
+
+	UFUNCTION()
+	void OnRep_Scrap(int32 OldScrap);
 
 	void BindPlayerStateSignals(AARPlayerStateBase* PlayerState);
 	void UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState);
@@ -117,6 +190,15 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_AllPlayersTravelReady, BlueprintReadOnly, Category = "Alien Ramen|Players")
 	bool bAllPlayersTravelReady = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Unlocks, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	FGameplayTagContainer Unlocks;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Money, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	int32 Money = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Scrap, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	int32 Scrap = 0;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CyclesForUI, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 CyclesForUI = 0;

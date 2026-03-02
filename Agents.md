@@ -145,14 +145,14 @@
 - `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
 - write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
 - load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
-- `UARSaveGame` preserves top-level save property names used by prior BP flow (`SeenDialogue`, `DialogueFlags`, `Unlocks`, `Choices`, `Money`, `Meat`, `Material`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`) to minimize hydration rewiring.
+- Current save schema is `v2`; minimum supported is also `v2` after removal of embedded GameState/PlayerState instanced-struct payloads from disk saves.
+- `UARSaveGame` persists only disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
-- `GetGameStateDataInstancedStruct()`
-- `GetPlayerStateDataInstancedStructByIndex(int32)`
 - `FindPlayerStateDataBySlot(...)`
 - `FindPlayerStateDataByIdentity(...)`
 - Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString`, with legacy id/display name fields).
 - Save player payload now stores native `CharacterPicked` enum (`EARCharacterChoice`) in `FARPlayerStateSaveData` (not string/name reflection).
+- Player save payload is explicit-only (no embedded player `FInstancedStruct` blob): `Identity`, `CharacterPicked`, and `LoadoutTags` are the canonical persisted player fields.
 - Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
 - Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) using thematic word pools plus a numeric ticket; when uniqueness is requested, candidates are checked against existing index entries before selection.
 - Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
@@ -160,7 +160,8 @@
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
 - GameState hydration precedence:
 - `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
-- When pending travel data exists, it now applies the current save's GameState struct first as a baseline, then overlays travel data to avoid zeroing unrelated fields. If no pending travel exists, hydration falls back to `CurrentSaveGame` game-state struct.
+- Persisted GameState-facing fields (`Money`, `Unlocks`, `Scrap`, `Cycles`) are restored from `CurrentSaveGame` onto runtime GameState on authority hydration.
+- When pending travel data exists, it overlays the restored persisted fields via `PendingTravelGameStateData` (in-memory only) and is consumed/reset after first application.
 - `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
 - Cycles progression is now save-owned (not GameState-owned). `GatherRuntimeData` copies cycles from the current save, not from GameState. Authority helper `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` lives on `UARSaveSubsystem` for run-complete increments and optional immediate persistence.
 - Travel/save flow is now C++-owned in `UARSaveSubsystem`:
@@ -196,6 +197,7 @@
 - server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
 - clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
 - C++ debug save tooling class resolution now targets native save classes (`UARSaveGame`/`UARSaveIndexGame`) rather than BP class-path loading.
+- Save/debug editor details categories for save structs/properties use `Save...` paths (not `Alien Ramen|Save...`) to avoid an extra wrapper category level in the details UI.
 
 ## GameMode/GameState Player Lifecycle
 
@@ -217,6 +219,15 @@
 - `bAllPlayersTravelReady` is server-authoritative replicated aggregate state; `OnAllPlayersTravelReadyChanged` fires on server updates and client repnotify.
 - aggregate all-ready recompute runs on authoritative player add/remove and on player ready/slot/character change events.
 - GameState UI hooks: replicated `CyclesForUI` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
+- Save-facing GameState fields are now native replicated on `AARGameStateBase` with change signals:
+- `Unlocks` (`FGameplayTagContainer`, `ReplicatedUsing=OnRep_Unlocks`) -> `OnUnlocksChanged`
+- `Money` (`int32`, `ReplicatedUsing=OnRep_Money`) -> `OnMoneyChanged`
+- `Scrap` (`int32`, `ReplicatedUsing=OnRep_Scrap`) -> `OnScrapChanged`
+- `CyclesForUI` (`int32`, `ReplicatedUsing=OnRep_CyclesForUI`) -> `OnCyclesChanged`
+- SaveSubsystem save/hydration path now reads/writes these fields via native GameState accessors/setters (`GetUnlocks/GetMoney/GetScrap`, `SetUnlocksFromSave/SetMoneyFromSave/SetScrapFromSave`) instead of reflection-name field scans.
+- Unlock mutation API is authority-owned on `AARGameStateBase`:
+- `AddUnlockTag(FGameplayTag)` / `RemoveUnlockTag(FGameplayTag)` / `HasUnlockTag(FGameplayTag)` plus bulk setter `SetUnlocksFromSave(...)`.
+- UI/client entrypoint is `AARPlayerController` RPC wrappers (`RequestAddUnlock`, `RequestRemoveUnlock`) which route through `ServerRequestAddUnlock/ServerRequestRemoveUnlock` to mutate authoritative GameState.
 - PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
 - GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness, save, and travel; logs blocking players and delegates travel to SaveSubsystem (listen enforced).
 - Player-controller travel API is native on `AARPlayerController`:
@@ -400,12 +411,16 @@
 ## Debug Save Tool (Current)
 
 - Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
-- Requires an active world/GameInstance (run PIE or a Play session); otherwise the tab reports that a subsystem is unavailable.
+- Tool supports editor-offline mode (no PIE required) for slot listing/creation/loading/saving/deletion by directly reading/writing `UARSaveGame` + `UARSaveIndexGame` slots; when PIE world/subsystem is available it uses `UARSaveSubsystem`.
 - Tool now has namespace toggle (`Debug Saves` vs `Real Saves`) and drives unified save APIs with `bUseDebugSaves`.
 - Slot create/load/save/delete/list all use the same core functions (`CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave/ListSaves`) with namespace selected by toggle.
+- Tool includes slot maintenance actions: `Duplicate Selected` and `Rename Selected` (target base from textbox), implemented in editor tooling by index/file copy+rewrite for the active namespace.
+- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Save`, `Rename`, `Duplicate`; `Unlock All (Current)` is on the loaded-save (details) side.
+- Loaded-save utility row includes `Unlock All (Current)` and `Default Loadout (All Players)`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
+- Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
 - In Debug mode, subsystem appends/uses `"_debug"` slot bases and debug index automatically.
 - Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
-- Unlock-all action now writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager (no legacy library helper).
+- Unlock-all action writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager.
 - Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
 
 ## Invader Authoring Editor Tool (Current)

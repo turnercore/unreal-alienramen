@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/PlayerController.h"
 #include "ARPlayerController.generated.h"
 
@@ -46,12 +47,27 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
 
+	// Unlock mutation entrypoints for UI/BP. Route to server when called by clients.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void RequestAddUnlock(const FGameplayTag& UnlockTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void RequestRemoveUnlock(const FGameplayTag& UnlockTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestAddUnlock(const FGameplayTag& UnlockTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestRemoveUnlock(const FGameplayTag& UnlockTag);
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	void LeaveSessionInternal();
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify);
+	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
+	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
 
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
