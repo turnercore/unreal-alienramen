@@ -412,15 +412,21 @@
 
 - Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
 - Tool supports editor-offline mode (no PIE required) for slot listing/creation/loading/saving/deletion by directly reading/writing `UARSaveGame` + `UARSaveIndexGame` slots; when PIE world/subsystem is available it uses `UARSaveSubsystem`.
-- Tool now has namespace toggle (`Debug Saves` vs `Real Saves`) and drives unified save APIs with `bUseDebugSaves`.
+- Tool now has namespace toggle (`Use Debug Namespace`) and drives unified save APIs with `bUseDebugSaves`.
 - Slot create/load/save/delete/list all use the same core functions (`CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave/ListSaves`) with namespace selected by toggle.
 - Tool includes slot maintenance actions: `Duplicate Selected` and `Rename Selected` (target base from textbox), implemented in editor tooling by index/file copy+rewrite for the active namespace.
-- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Save`, `Rename`, `Duplicate`; `Unlock All (Current)` is on the loaded-save (details) side.
-- Loaded-save utility row includes `Unlock All (Current)` and `Default Loadout (All Players)`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
+- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Save`, `Rename`, `Duplicate`; loaded-save actions live on the right/details side.
+- Left-panel actions are presented as compact labels (`Save`, `Refresh`, `Create`, `Load`, `Delete`, `Rename`, `Duplicate`) in a responsive wrap layout that flows into multiple columns based on panel width.
+- Loaded-save utility row includes `Add All Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; default loadout applies `Unlock.Ship.Sammy`, `Unlock.Secondary.Mine`, `Unlock.Gadget.Vac` to each saved player-state entry.
 - Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
+- Save-slot list supports double-click to load a slot; if a different slot is already loaded, current loaded save is auto-saved before switching.
+- Slot list selection mode is multi-select for delete operations; non-delete actions (`Load`, `Rename`, `Duplicate`) collapse to the first selected slot.
+- Delete action prompts `Delete?` confirmation and supports deleting all selected slots in one operation.
+- Revert uses an in-memory snapshot captured when a slot is loaded/created to restore the loaded save object to its last loaded state.
 - In Debug mode, subsystem appends/uses `"_debug"` slot bases and debug index automatically.
 - Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
 - Unlock-all action writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager.
+- Right-side loaded object header is `Loaded Save` (no `Auto Property Editor` suffix).
 - Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
 
 ## Invader Authoring Editor Tool (Current)
