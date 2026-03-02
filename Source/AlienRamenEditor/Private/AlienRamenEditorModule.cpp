@@ -11,11 +11,13 @@
 #include "LevelEditor.h"
 #include "Modules/ModuleManager.h"
 #include "PropertyEditorModule.h"
+#include "ScopedTransaction.h"
 #include "ToolMenus.h"
 #include "Styling/AppStyle.h"
 #include "GameplayTagsManager.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/MessageDialog.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SCheckBox.h"
@@ -25,6 +27,7 @@
 #include "Widgets/Layout/SScrollBar.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SSplitter.h"
+#include "Widgets/Layout/SWrapBox.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/SNullWidget.h"
 #include "Widgets/Text/STextBlock.h"
@@ -96,53 +99,80 @@ namespace ARDebugSaveEditor
 								.HintText(FText::FromString("example: sammy_test"))
 							]
 
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Create Slot"))
-								.OnClicked(this, &SPanel::OnCreateSlot)
-							]
-
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Refresh Slots"))
-								.OnClicked(this, &SPanel::OnRefreshSlots)
-							]
-
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Load Selected"))
-								.OnClicked(this, &SPanel::OnLoadSelected)
-							]
-
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Delete Selected"))
-								.OnClicked(this, &SPanel::OnDeleteSelected)
-							]
-
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Save Current"))
-								.OnClicked(this, &SPanel::OnSaveCurrent)
-							]
-
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Rename Selected"))
-								.OnClicked(this, &SPanel::OnRenameSelected)
-							]
-
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
 							[
-								SNew(SButton)
-								.Text(FText::FromString("Duplicate Selected"))
-								.OnClicked(this, &SPanel::OnDuplicateSelected)
+								SNew(SWrapBox)
+								.InnerSlotPadding(FVector2D(6.f, 6.f))
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Save"))
+										.OnClicked(this, &SPanel::OnSaveCurrent)
+									]
+								]
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Refresh"))
+										.OnClicked(this, &SPanel::OnRefreshSlots)
+									]
+								]
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Create"))
+										.OnClicked(this, &SPanel::OnCreateSlot)
+									]
+								]
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Load"))
+										.OnClicked(this, &SPanel::OnLoadSelected)
+									]
+								]
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Delete"))
+										.OnClicked(this, &SPanel::OnDeleteSelected)
+									]
+								]
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Rename"))
+										.OnClicked(this, &SPanel::OnRenameSelected)
+									]
+								]
+
+								+ SWrapBox::Slot()
+								[
+									SNew(SBox).MinDesiredWidth(120.f)
+									[
+										SNew(SButton)
+										.Text(FText::FromString("Duplicate"))
+										.OnClicked(this, &SPanel::OnDuplicateSelected)
+									]
+								]
 							]
 
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 8.f)
@@ -164,7 +194,9 @@ namespace ARDebugSaveEditor
 								[
 									SAssignNew(SlotListView, SListView<TSharedPtr<FARSaveSlotDescriptor>>)
 									.ListItemsSource(&SlotItems)
+									.SelectionMode(ESelectionMode::Multi)
 									.OnGenerateRow(this, &SPanel::OnGenerateRow)
+									.OnMouseButtonDoubleClick(this, &SPanel::OnSlotDoubleClicked)
 									.OnContextMenuOpening(this, &SPanel::OnSlotListContextMenuOpening)
 									.ExternalScrollbar(SlotListScrollbar)
 								]
@@ -189,22 +221,28 @@ namespace ARDebugSaveEditor
 							SNew(SVerticalBox)
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 							[
-								SNew(STextBlock).Text(FText::FromString("Loaded Save (Auto Property Editor)"))
+								SNew(STextBlock).Text(FText::FromString("Loaded Save"))
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.f, 0.f, 0.f, 6.f)
 							[
 								SNew(SHorizontalBox)
-								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(0.f, 0.f, 4.f, 0.f)
+								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(0.f, 0.f, 3.f, 0.f)
 								[
 									SNew(SButton)
-									.Text(FText::FromString("Unlock All (Current)"))
+									.Text(FText::FromString("Add All Unlocks"))
 									.OnClicked(this, &SPanel::OnUnlockAllCurrent)
 								]
-								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(4.f, 0.f, 0.f, 0.f)
+								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(3.f, 0.f, 3.f, 0.f)
 								[
 									SNew(SButton)
-									.Text(FText::FromString("Default Loadout (All Players)"))
+									.Text(FText::FromString("Set Default Loadout (All Players)"))
 									.OnClicked(this, &SPanel::OnDefaultLoadoutAllPlayersCurrent)
+								]
+								+ SHorizontalBox::Slot().FillWidth(1.f).Padding(3.f, 0.f, 0.f, 0.f)
+								[
+									SNew(SButton)
+									.Text(FText::FromString("Revert"))
+									.OnClicked(this, &SPanel::OnRevertCurrent)
 								]
 							]
 							+ SVerticalBox::Slot().FillHeight(1.f)
@@ -223,11 +261,124 @@ namespace ARDebugSaveEditor
 		TSharedRef<ITableRow> OnGenerateRow(TSharedPtr<FARSaveSlotDescriptor> Item, const TSharedRef<STableViewBase>& OwnerTable) const
 		{
 			const FString Label = FString::Printf(TEXT("%s  |  # %d  |  Money %d"),
-				*Item->SlotName.ToString(), Item->SlotNumber, Item->Money);
+				*GetDisplaySlotName(Item->SlotName).ToString(), Item->SlotNumber, Item->Money);
 			return SNew(STableRow<TSharedPtr<FARSaveSlotDescriptor>>, OwnerTable)
 				[
 					SNew(STextBlock).Text(FText::FromString(Label))
 				];
+		}
+
+		void OnSlotDoubleClicked(TSharedPtr<FARSaveSlotDescriptor> Item)
+		{
+			if (!Item.IsValid())
+			{
+				return;
+			}
+
+			SlotListView->ClearSelection();
+			SlotListView->SetSelection(Item);
+			LoadSlotByName(Item->SlotName, /*bAutoSaveCurrentFirst=*/ true);
+		}
+
+		bool GetPrimarySelectionForSingleAction(TSharedPtr<FARSaveSlotDescriptor>& OutPrimarySelected)
+		{
+			OutPrimarySelected.Reset();
+			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
+			if (Selected.IsEmpty() || !Selected[0].IsValid())
+			{
+				return false;
+			}
+
+			OutPrimarySelected = Selected[0];
+			if (Selected.Num() > 1)
+			{
+				SlotListView->ClearSelection();
+				SlotListView->SetSelection(OutPrimarySelected);
+				SlotListView->RequestListRefresh();
+			}
+			return true;
+		}
+
+		bool SaveCurrentLoadedForSwitch(const FName TargetSlotName)
+		{
+			if (!CurrentSaveObject || CurrentSlotName.IsNone() || CurrentSlotName == TargetSlotName)
+			{
+				return true;
+			}
+
+			FString Error;
+			if (UARSaveSubsystem* Subsystem = TryGetSaveSubsystem())
+			{
+				FARSaveResult Result;
+				if (!Subsystem->SaveCurrentGame(CurrentSlotName, true, Result, bUseDebugSaves))
+				{
+					SetStatus(FString::Printf(TEXT("Autosave-before-load failed: %s"), *Result.Error));
+					return false;
+				}
+			}
+			else if (!SaveCurrentOffline(bUseDebugSaves, Error))
+			{
+				SetStatus(FString::Printf(TEXT("Autosave-before-load failed: %s"), *Error));
+				return false;
+			}
+
+			return true;
+		}
+
+		void CaptureLoadedSnapshot()
+		{
+			LoadedSnapshotBytes.Reset();
+			LoadedSnapshotSlotName = NAME_None;
+			if (!CurrentSaveObject || CurrentSlotName.IsNone())
+			{
+				return;
+			}
+
+			if (UGameplayStatics::SaveGameToMemory(CurrentSaveObject.Get(), LoadedSnapshotBytes) && LoadedSnapshotBytes.Num() > 0)
+			{
+				LoadedSnapshotSlotName = CurrentSlotName;
+			}
+		}
+
+		FReply LoadSlotByName(const FName SlotName, const bool bAutoSaveCurrentFirst)
+		{
+			if (SlotName.IsNone())
+			{
+				SetStatus(TEXT("No slot selected."));
+				return FReply::Handled();
+			}
+
+			if (bAutoSaveCurrentFirst && !SaveCurrentLoadedForSwitch(SlotName))
+			{
+				return FReply::Handled();
+			}
+
+			if (UARSaveSubsystem* Subsystem = TryGetSaveSubsystem())
+			{
+				FARSaveResult Result;
+				if (!Subsystem->LoadGame(SlotName, -1, Result, bUseDebugSaves))
+				{
+					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Result.Error));
+					return FReply::Handled();
+				}
+
+				CurrentSlotName = SlotName;
+				CurrentSaveObject.Reset(Subsystem->GetCurrentSaveGame());
+			}
+			else
+			{
+				FString Error;
+				if (!LoadSlotOffline(SlotName, bUseDebugSaves, Error))
+				{
+					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Error));
+					return FReply::Handled();
+				}
+			}
+
+			CaptureLoadedSnapshot();
+			BindCurrentSaveToDetails();
+			SetStatus(FString::Printf(TEXT("Loaded slot '%s'."), *CurrentSlotName.ToString()));
+			return FReply::Handled();
 		}
 
 		TSharedPtr<SWidget> OnSlotListContextMenuOpening()
@@ -335,6 +486,7 @@ namespace ARDebugSaveEditor
 			}
 
 			SlotNameTextBox->SetText(FText::GetEmpty());
+			CaptureLoadedSnapshot();
 			BindCurrentSaveToDetails();
 			RefreshSlots();
 			SetStatus(FString::Printf(TEXT("Created slot base '%s'."), *CurrentSlotName.ToString()));
@@ -354,44 +506,18 @@ namespace ARDebugSaveEditor
 
 		FText GetSaveNamespaceLabel() const
 		{
-			return bUseDebugSaves
-				? FText::FromString("Use Debug Saves Namespace")
-				: FText::FromString("Use Real Saves Namespace");
+			return FText::FromString("Use Debug Namespace");
 		}
 
 		FReply OnLoadSelected()
 		{
-			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
-			if (Selected.IsEmpty() || !Selected[0].IsValid())
+			TSharedPtr<FARSaveSlotDescriptor> SelectedPrimary;
+			if (!GetPrimarySelectionForSingleAction(SelectedPrimary))
 			{
 				SetStatus(TEXT("No slot selected."));
 				return FReply::Handled();
 			}
-
-			if (UARSaveSubsystem* Subsystem = TryGetSaveSubsystem())
-			{
-				FARSaveResult Result;
-				if (!Subsystem->LoadGame(Selected[0]->SlotName, -1, Result, bUseDebugSaves))
-				{
-					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Result.Error));
-					return FReply::Handled();
-				}
-
-				CurrentSlotName = Selected[0]->SlotName;
-				CurrentSaveObject.Reset(Subsystem->GetCurrentSaveGame());
-			}
-			else
-			{
-				FString Error;
-				if (!LoadSlotOffline(Selected[0]->SlotName, bUseDebugSaves, Error))
-				{
-					SetStatus(FString::Printf(TEXT("Load failed: %s"), *Error));
-					return FReply::Handled();
-				}
-			}
-			BindCurrentSaveToDetails();
-			SetStatus(FString::Printf(TEXT("Loaded slot '%s'."), *CurrentSlotName.ToString()));
-			return FReply::Handled();
+			return LoadSlotByName(SelectedPrimary->SlotName, /*bAutoSaveCurrentFirst=*/ false);
 		}
 
 		FReply OnSaveCurrent()
@@ -429,48 +555,68 @@ namespace ARDebugSaveEditor
 		FReply OnDeleteSelected()
 		{
 			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
-			if (Selected.IsEmpty() || !Selected[0].IsValid())
+			if (Selected.IsEmpty())
 			{
 				SetStatus(TEXT("No slot selected."));
 				return FReply::Handled();
 			}
 
-			const FName SlotToDelete = Selected[0]->SlotName;
-			if (UARSaveSubsystem* Subsystem = TryGetSaveSubsystem())
+			const EAppReturnType::Type Confirm = FMessageDialog::Open(
+				EAppMsgType::YesNo,
+				FText::FromString(TEXT("Delete?")));
+			if (Confirm != EAppReturnType::Yes)
 			{
-				FARSaveResult Result;
-				if (!Subsystem->DeleteSave(SlotToDelete, Result, bUseDebugSaves))
-				{
-					SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Result.Error));
-					return FReply::Handled();
-				}
-			}
-			else
-			{
-				FString Error;
-				if (!DeleteSlotOffline(SlotToDelete, bUseDebugSaves, Error))
-				{
-					SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Error));
-					return FReply::Handled();
-				}
+				return FReply::Handled();
 			}
 
-			if (CurrentSlotName == SlotToDelete)
+			int32 DeletedCount = 0;
+			for (const TSharedPtr<FARSaveSlotDescriptor>& Item : Selected)
 			{
-				CurrentSlotName = NAME_None;
-				CurrentSaveObject.Reset();
-				BindCurrentSaveToDetails();
+				if (!Item.IsValid())
+				{
+					continue;
+				}
+
+				const FName SlotToDelete = Item->SlotName;
+				if (UARSaveSubsystem* Subsystem = TryGetSaveSubsystem())
+				{
+					FARSaveResult Result;
+					if (!Subsystem->DeleteSave(SlotToDelete, Result, bUseDebugSaves))
+					{
+						SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Result.Error));
+						return FReply::Handled();
+					}
+				}
+				else
+				{
+					FString Error;
+					if (!DeleteSlotOffline(SlotToDelete, bUseDebugSaves, Error))
+					{
+						SetStatus(FString::Printf(TEXT("Delete failed: %s"), *Error));
+						return FReply::Handled();
+					}
+				}
+
+				if (CurrentSlotName == SlotToDelete)
+				{
+					CurrentSlotName = NAME_None;
+					CurrentSaveObject.Reset();
+					LoadedSnapshotBytes.Reset();
+					LoadedSnapshotSlotName = NAME_None;
+					BindCurrentSaveToDetails();
+				}
+				++DeletedCount;
 			}
 
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Deleted slot '%s'."), *SlotToDelete.ToString()));
+			SetStatus(FString::Printf(TEXT("Deleted %d slot(s)."), DeletedCount));
 			return FReply::Handled();
 		}
 
 		FReply OnDuplicateSelected()
 		{
-			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
-			if (Selected.IsEmpty() || !Selected[0].IsValid())
+			TSharedPtr<FARSaveSlotDescriptor> SelectedPrimary;
+			if (!GetPrimarySelectionForSingleAction(SelectedPrimary))
 			{
 				SetStatus(TEXT("No slot selected."));
 				return FReply::Handled();
@@ -485,21 +631,21 @@ namespace ARDebugSaveEditor
 			}
 
 			FString Error;
-			if (!DuplicateOrRenameSlotOffline(Selected[0]->SlotName, TargetBase, bUseDebugSaves, /*bRename*/ false, Error))
+			if (!DuplicateOrRenameSlotOffline(SelectedPrimary->SlotName, TargetBase, bUseDebugSaves, /*bRename*/ false, Error))
 			{
 				SetStatus(FString::Printf(TEXT("Duplicate failed: %s"), *Error));
 				return FReply::Handled();
 			}
 
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Duplicated '%s' -> '%s'."), *Selected[0]->SlotName.ToString(), *TargetBase.ToString()));
+			SetStatus(FString::Printf(TEXT("Duplicated '%s' -> '%s'."), *SelectedPrimary->SlotName.ToString(), *TargetBase.ToString()));
 			return FReply::Handled();
 		}
 
 		FReply OnRenameSelected()
 		{
-			const TArray<TSharedPtr<FARSaveSlotDescriptor>> Selected = SlotListView->GetSelectedItems();
-			if (Selected.IsEmpty() || !Selected[0].IsValid())
+			TSharedPtr<FARSaveSlotDescriptor> SelectedPrimary;
+			if (!GetPrimarySelectionForSingleAction(SelectedPrimary))
 			{
 				SetStatus(TEXT("No slot selected."));
 				return FReply::Handled();
@@ -514,17 +660,23 @@ namespace ARDebugSaveEditor
 			}
 
 			FString Error;
-			if (!DuplicateOrRenameSlotOffline(Selected[0]->SlotName, TargetBase, bUseDebugSaves, /*bRename*/ true, Error))
+			if (!DuplicateOrRenameSlotOffline(SelectedPrimary->SlotName, TargetBase, bUseDebugSaves, /*bRename*/ true, Error))
 			{
 				SetStatus(FString::Printf(TEXT("Rename failed: %s"), *Error));
 				return FReply::Handled();
 			}
 
 			CurrentSlotName = NormalizeSlotBaseForMode(TargetBase, bUseDebugSaves);
-			LoadSlotOffline(CurrentSlotName, bUseDebugSaves, Error);
+			if (!LoadSlotOffline(CurrentSlotName, bUseDebugSaves, Error))
+			{
+				SetStatus(FString::Printf(TEXT("Rename succeeded but reload failed: %s"), *Error));
+				RefreshSlots();
+				return FReply::Handled();
+			}
+			CaptureLoadedSnapshot();
 			BindCurrentSaveToDetails();
 			RefreshSlots();
-			SetStatus(FString::Printf(TEXT("Renamed '%s' -> '%s'."), *Selected[0]->SlotName.ToString(), *TargetBase.ToString()));
+			SetStatus(FString::Printf(TEXT("Renamed '%s' -> '%s'."), *SelectedPrimary->SlotName.ToString(), *TargetBase.ToString()));
 			return FReply::Handled();
 		}
 
@@ -535,6 +687,8 @@ namespace ARDebugSaveEditor
 				SetStatus(TEXT("No save object loaded."));
 				return FReply::Handled();
 			}
+			const FScopedTransaction Transaction(FText::FromString(TEXT("Debug Save: Add All Unlocks")));
+			CurrentSaveObject->Modify();
 
 			// Gather all unlock tags and apply directly.
 			FGameplayTagContainer UnlockTags;
@@ -572,6 +726,8 @@ namespace ARDebugSaveEditor
 				SetStatus(TEXT("No save object loaded."));
 				return FReply::Handled();
 			}
+			const FScopedTransaction Transaction(FText::FromString(TEXT("Debug Save: Set Default Loadout")));
+			CurrentSaveObject->Modify();
 
 			const FGameplayTag ShipTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship.Sammy"), false);
 			const FGameplayTag SecondaryTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary.Mine"), false);
@@ -601,6 +757,34 @@ namespace ARDebugSaveEditor
 			return FReply::Handled();
 		}
 
+		FReply OnRevertCurrent()
+		{
+			if (!CurrentSaveObject || CurrentSlotName.IsNone())
+			{
+				SetStatus(TEXT("No save object loaded."));
+				return FReply::Handled();
+			}
+			if (LoadedSnapshotBytes.Num() == 0 || LoadedSnapshotSlotName != CurrentSlotName)
+			{
+				SetStatus(TEXT("No revert snapshot available for current slot."));
+				return FReply::Handled();
+			}
+
+			UARSaveGame* Reverted = Cast<UARSaveGame>(UGameplayStatics::LoadGameFromMemory(LoadedSnapshotBytes));
+			if (!Reverted)
+			{
+				SetStatus(TEXT("Revert failed: snapshot deserialize failed."));
+				return FReply::Handled();
+			}
+
+			const FScopedTransaction Transaction(FText::FromString(TEXT("Debug Save: Revert Loaded Save")));
+			CurrentSaveObject->Modify();
+			CurrentSaveObject.Reset(Reverted);
+			BindCurrentSaveToDetails();
+			SetStatus(FString::Printf(TEXT("Reverted slot '%s' to loaded snapshot."), *CurrentSlotName.ToString()));
+			return FReply::Handled();
+		}
+
 		void BindCurrentSaveToDetails()
 		{
 			if (CurrentSlotText.IsValid())
@@ -608,7 +792,7 @@ namespace ARDebugSaveEditor
 				CurrentSlotText->SetText(FText::FromString(
 					CurrentSlotName.IsNone()
 						? TEXT("Current Slot: <none>")
-						: FString::Printf(TEXT("Current Slot: %s"), *CurrentSlotName.ToString())));
+						: FString::Printf(TEXT("Current Slot: %s"), *GetDisplaySlotName(CurrentSlotName).ToString())));
 			}
 
 			if (!SaveDetailsView.IsValid())
@@ -622,6 +806,7 @@ namespace ARDebugSaveEditor
 				SaveDetailsView->SetObjects(EmptyObjects);
 				return;
 			}
+			CurrentSaveObject->SetFlags(RF_Transactional);
 
 			TArray<UObject*> Objects;
 			Objects.Add(CurrentSaveObject.Get());
@@ -707,6 +892,11 @@ namespace ARDebugSaveEditor
 				Base.LeftChopInline(DebugSlotSuffix.Len(), EAllowShrinking::No);
 			}
 			return FName(*Base);
+		}
+
+		FName GetDisplaySlotName(FName SlotBase) const
+		{
+			return LogicalSlotBaseForMode(SlotBase, bUseDebugSaves);
 		}
 
 		static FName BuildRevisionSlotName(FName SlotBase, int32 Revision)
@@ -1138,6 +1328,8 @@ namespace ARDebugSaveEditor
 
 		FName CurrentSlotName = NAME_None;
 		TStrongObjectPtr<UARSaveGame> CurrentSaveObject;
+		TArray<uint8> LoadedSnapshotBytes;
+		FName LoadedSnapshotSlotName = NAME_None;
 		bool bUseDebugSaves = true;
 	};
 }
