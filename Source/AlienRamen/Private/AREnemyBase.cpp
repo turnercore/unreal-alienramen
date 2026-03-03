@@ -25,7 +25,7 @@
 
 namespace
 {
-	const FGameplayTag DataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	const FName DataDamageName(TEXT("Data.Damage"));
 
 	static bool ApplyDamageToActorViaGAS(AActor* Target, float Damage, AActor* Offender)
 	{
@@ -812,7 +812,7 @@ bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutC
 		return false;
 	}
 
-	Spec.Data->SetSetByCallerMagnitude(DataDamageTag, Damage);
+	Spec.Data->SetSetByCallerMagnitude(DataDamageName, Damage);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 
 	OutCurrentHealth = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
@@ -916,6 +916,7 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	WavePhaseStartServerTime = InPhaseStartServerTime;
 	bFormationLockEnter = bInFormationLockEnter;
 	bFormationLockActive = bInFormationLockActive;
+	bHasEnteredScreen = false;
 	bHasEnteredGameplayScreen = false;
 	bReachedFormationSlot = false;
 	bHasDispatchedEnteredScreenEvent = false;
@@ -942,7 +943,7 @@ void AAREnemyBase::SetWaveRuntimeContext(
 	// Context assignment is the authoritative signal that AI can start safely.
 	if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(GetController()))
 	{
-		EnemyAI->TryStartStateTreeForCurrentPawn();
+		EnemyAI->TryStartStateTreeForCurrentPawn(TEXT("WaveRuntimeContextAssigned"));
 	}
 	else
 	{
@@ -984,6 +985,7 @@ void AAREnemyBase::NotifyEnteredGameplayScreen(float InServerTime)
 	}
 
 	bHasEnteredGameplayScreen = true;
+	bHasEnteredScreen = true;
 	EnteredGameplayScreenServerTime = InServerTime;
 	TryDispatchEnteredScreenEvent();
 	TryDispatchInFormationEvent();

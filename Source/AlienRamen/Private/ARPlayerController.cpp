@@ -1,4 +1,6 @@
 #include "ARPlayerController.h"
+#include "ARGameStateBase.h"
+#include "ARGameModeBase.h"
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -48,4 +50,123 @@ void AARPlayerController::ServerRequestCanonicalSaveSync_Implementation()
 			}
 		}
 	}
+}
+
+void AARPlayerController::LeaveSession()
+{
+	if (HasAuthority())
+	{
+		LeaveSessionInternal();
+		return;
+	}
+
+	ServerLeaveSession();
+}
+
+void AARPlayerController::ServerLeaveSession_Implementation()
+{
+	LeaveSessionInternal();
+}
+
+void AARPlayerController::LeaveSessionInternal()
+{
+	UE_LOG(ARLog, Log, TEXT("[Session] LeaveSession requested by controller '%s' (Authority=%d)."), *GetNameSafe(this), HasAuthority() ? 1 : 0);
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		GI->ReturnToMainMenu();
+		return;
+	}
+
+	ClientReturnToMainMenuWithTextReason(FText::FromString(TEXT("Leaving session")));
+}
+
+void AARPlayerController::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+{
+	if (HasAuthority())
+	{
+		TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE);
+		return;
+	}
+
+	ServerTryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE);
+}
+
+void AARPlayerController::ServerTryStartTravel_Implementation(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+{
+	TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE);
+}
+
+void AARPlayerController::TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+{
+	if (AARGameModeBase* ARGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AARGameModeBase>() : nullptr)
+	{
+		if (!ARGameMode->TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel failed. URL='%s' Options='%s'"), *GetNameSafe(this), *URL, *Options);
+		}
+		return;
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel ignored: no authoritative AARGameModeBase."), *GetNameSafe(this));
+}
+
+void AARPlayerController::RequestAddUnlock(const FGameplayTag& UnlockTag)
+{
+	if (HasAuthority())
+	{
+		RequestAddUnlockInternal(UnlockTag);
+		return;
+	}
+
+	ServerRequestAddUnlock(UnlockTag);
+}
+
+void AARPlayerController::RequestRemoveUnlock(const FGameplayTag& UnlockTag)
+{
+	if (HasAuthority())
+	{
+		RequestRemoveUnlockInternal(UnlockTag);
+		return;
+	}
+
+	ServerRequestRemoveUnlock(UnlockTag);
+}
+
+void AARPlayerController::ServerRequestAddUnlock_Implementation(const FGameplayTag& UnlockTag)
+{
+	RequestAddUnlockInternal(UnlockTag);
+}
+
+void AARPlayerController::ServerRequestRemoveUnlock_Implementation(const FGameplayTag& UnlockTag)
+{
+	RequestRemoveUnlockInternal(UnlockTag);
+}
+
+void AARPlayerController::RequestAddUnlockInternal(const FGameplayTag& UnlockTag)
+{
+	if (AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+	{
+		if (!ARGameState->AddUnlockTag(UnlockTag))
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Save] RequestAddUnlock ignored for '%s' tag '%s'."), *GetNameSafe(this), *UnlockTag.ToString());
+		}
+		return;
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[Save] RequestAddUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
+}
+
+void AARPlayerController::RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag)
+{
+	if (AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+	{
+		if (!ARGameState->RemoveUnlockTag(UnlockTag))
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Save] RequestRemoveUnlock ignored for '%s' tag '%s'."), *GetNameSafe(this), *UnlockTag.ToString());
+		}
+		return;
+	}
+
+	UE_LOG(ARLog, Warning, TEXT("[Save] RequestRemoveUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
 }

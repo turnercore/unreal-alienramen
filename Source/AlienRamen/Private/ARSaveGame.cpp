@@ -5,15 +5,6 @@ UARSaveGame::UARSaveGame()
 	SaveGameVersion = CurrentSchemaVersion;
 }
 
-FInstancedStruct UARSaveGame::GetPlayerStateDataInstancedStructByIndex(const int32 Index) const
-{
-	if (!PlayerStates.IsValidIndex(Index))
-	{
-		return FInstancedStruct();
-	}
-	return PlayerStates[Index].PlayerStateData;
-}
-
 bool UARSaveGame::FindPlayerStateDataBySlot(const EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const
 {
 	OutIndex = INDEX_NONE;
@@ -61,7 +52,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	};
 
 	ClampNonNegative(Money, TEXT("Money"));
-	ClampNonNegative(Material, TEXT("Material"));
+	ClampNonNegative(Scrap, TEXT("Scrap"));
 	ClampNonNegative(Cycles, TEXT("Cycles"));
 	ClampNonNegative(Meat.RedAmount, TEXT("Meat.RedAmount"));
 	ClampNonNegative(Meat.BlueAmount, TEXT("Meat.BlueAmount"));

@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "ARPlayerStateBase.h"
-#include "StructUtils/InstancedStruct.h"
 #include "ARSaveTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -24,21 +23,21 @@ struct ALIENRAMEN_API FARMeatState
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 RedAmount = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 BlueAmount = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 WhiteAmount = 0;
 
 	// Bucket used when callers only know an aggregate value.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 UnspecifiedAmount = 0;
 
 	// Extensible typed buckets for future meat variants without schema churn.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	TMap<FGameplayTag, int32> AdditionalAmountsByType;
 
 	int32 GetTotalAmount() const
@@ -66,16 +65,16 @@ struct ALIENRAMEN_API FARPlayerIdentity
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 LegacyId = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FString UniqueNetIdString;
 
 	bool Matches(const FARPlayerIdentity& Other) const
@@ -93,26 +92,14 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FARPlayerIdentity Identity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	EARCharacterChoice CharacterPicked = EARCharacterChoice::None;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FGameplayTagContainer LoadoutTags;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
-	FInstancedStruct PlayerStateData;
-};
-
-USTRUCT(BlueprintType)
-struct ALIENRAMEN_API FARGameStateSaveData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
-	FInstancedStruct GameStateData;
 };
 
 USTRUCT(BlueprintType)
@@ -120,22 +107,22 @@ struct ALIENRAMEN_API FARSaveSlotDescriptor
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FName SlotName = NAME_None;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 SlotNumber = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 SaveVersion = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 CyclesPlayed = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FDateTime LastSavedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Money = 0;
 };
 

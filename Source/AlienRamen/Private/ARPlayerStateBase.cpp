@@ -1,9 +1,11 @@
 #include "ARPlayerStateBase.h"
 
 #include "ARAttributeSetCore.h"
+#include "ARLoadoutSettings.h"
 #include "ARLog.h"
 #include "AbilitySystemComponent.h"
 #include "ARSaveSubsystem.h"
+#include "GameplayTagUtilities.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
@@ -17,6 +19,8 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
 	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
 	DOREPLIFETIME(AARPlayerStateBase, bIsReady);
+	DOREPLIFETIME(AARPlayerStateBase, bIsDowned);
+	DOREPLIFETIME(AARPlayerStateBase, bIsDeadState);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
 }
 
@@ -198,6 +202,97 @@ void AARPlayerStateBase::SetLoadoutTags(const FGameplayTagContainer& NewLoadoutT
 	UE_LOG(ARLog, Warning, TEXT("[PlayerState] SetLoadoutTags ignored on non-authority for '%s'."), *GetNameSafe(this));
 }
 
+void AARPlayerStateBase::SetDownedState(bool bNewDowned)
+{
+	if (HasAuthority())
+	{
+		SetDowned_Internal(bNewDowned);
+		return;
+	}
+
+	ServerUpdateDownedState(bNewDowned);
+}
+
+void AARPlayerStateBase::ServerUpdateDownedState_Implementation(bool bNewDowned)
+{
+	SetDowned_Internal(bNewDowned);
+}
+
+void AARPlayerStateBase::SetDeadState(bool bNewDead)
+{
+	if (HasAuthority())
+	{
+		SetDead_Internal(bNewDead);
+		return;
+	}
+
+	ServerUpdateDeadState(bNewDead);
+}
+
+void AARPlayerStateBase::ServerUpdateDeadState_Implementation(bool bNewDead)
+{
+	SetDead_Internal(bNewDead);
+}
+
+void AARPlayerStateBase::UpdateLoadoutWithTag(FGameplayTag NewTag)
+{
+	if (HasAuthority())
+	{
+		UpdateLoadoutWithTag_Internal(NewTag);
+		return;
+	}
+
+	ServerUpdateLoadoutWithTag(NewTag);
+}
+
+void AARPlayerStateBase::ServerUpdateLoadoutWithTag_Implementation(FGameplayTag NewTag)
+{
+	UpdateLoadoutWithTag_Internal(NewTag);
+}
+
+void AARPlayerStateBase::RemoveTagFromLoadout(FGameplayTag TagToRemove)
+{
+	if (HasAuthority())
+	{
+		RemoveTagFromLoadout_Internal(TagToRemove);
+		return;
+	}
+
+	ServerRemoveTagFromLoadout(TagToRemove);
+}
+
+void AARPlayerStateBase::ServerRemoveTagFromLoadout_Implementation(FGameplayTag TagToRemove)
+{
+	RemoveTagFromLoadout_Internal(TagToRemove);
+}
+
+TArray<FGameplayTag> AARPlayerStateBase::GetTagsInLoadoutSlot(FGameplayTag SlotTag) const
+{
+	TArray<FGameplayTag> Result;
+	if (!SlotTag.IsValid())
+	{
+		return Result;
+	}
+
+	TArray<FGameplayTag> ExistingTags;
+	LoadoutTags.GetGameplayTagArray(ExistingTags);
+	for (const FGameplayTag& ExistingTag : ExistingTags)
+	{
+		if (!ExistingTag.IsValid())
+		{
+			continue;
+		}
+
+		// Include tags in the slot subtree, excluding the slot root itself.
+		if (ExistingTag != SlotTag && ExistingTag.MatchesTag(SlotTag))
+		{
+			Result.Add(ExistingTag);
+		}
+	}
+
+	return Result;
+}
+
 void AARPlayerStateBase::SetSpiceMeter(float NewSpiceValue)
 {
 	if (HasAuthority())
@@ -225,6 +320,7 @@ void AARPlayerStateBase::BeginPlay()
 	EnsureDefaultLoadoutIfEmpty();
 	BindTrackedAttributeDelegates();
 	BroadcastTrackedAttributeSnapshot();
+	EvaluateLifeStateFromASC();
 	EvaluateTravelReadinessAndBroadcast();
 }
 
@@ -255,6 +351,16 @@ void AARPlayerStateBase::OnRep_IsReady(bool bOldReady)
 {
 	OnReadyStatusChanged.Broadcast(this, PlayerSlot, bIsReady, bOldReady);
 	EvaluateTravelReadinessAndBroadcast();
+}
+
+void AARPlayerStateBase::OnRep_IsDowned(bool bOldDowned)
+{
+	OnDownedStateChanged.Broadcast(this, PlayerSlot, bIsDowned, bOldDowned);
+}
+
+void AARPlayerStateBase::OnRep_IsDeadState(bool bOldDeadState)
+{
+	OnDeadStateChanged.Broadcast(this, PlayerSlot, bIsDeadState, bOldDeadState);
 }
 
 void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
@@ -298,7 +404,17 @@ void AARPlayerStateBase::SetDisplayName_Internal(const FString& NewDisplayName)
 
 void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 {
-	if (!HasAuthority() || bIsReady == bNewReady)
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (bNewReady)
+	{
+		EnsureReadyPrerequisitesForRun();
+	}
+
+	if (bIsReady == bNewReady)
 	{
 		return;
 	}
@@ -310,15 +426,150 @@ void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 	EvaluateTravelReadinessAndBroadcast();
 }
 
+void AARPlayerStateBase::SetDowned_Internal(bool bNewDowned)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const bool bResolvedDowned = bIsDeadState ? false : bNewDowned;
+	if (bIsDowned == bResolvedDowned)
+	{
+		return;
+	}
+
+	const bool bOldDowned = bIsDowned;
+	bIsDowned = bResolvedDowned;
+	OnRep_IsDowned(bOldDowned);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::SetDead_Internal(bool bNewDead)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (bIsDeadState == bNewDead)
+	{
+		return;
+	}
+
+	const bool bOldDead = bIsDeadState;
+	bIsDeadState = bNewDead;
+	OnRep_IsDeadState(bOldDead);
+	ForceNetUpdate();
+
+	if (bIsDeadState && bIsDowned)
+	{
+		SetDowned_Internal(false);
+	}
+}
+
+void AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
+	if (!GS)
+	{
+		return;
+	}
+
+	if (PlayerSlot == EARPlayerSlot::Unknown)
+	{
+		bool bP1Taken = false;
+		bool bP2Taken = false;
+		for (APlayerState* PS : GS->PlayerArray)
+		{
+			const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
+			if (!OtherPlayer || OtherPlayer == this)
+			{
+				continue;
+			}
+
+			if (OtherPlayer->GetPlayerSlot() == EARPlayerSlot::P1)
+			{
+				bP1Taken = true;
+			}
+			else if (OtherPlayer->GetPlayerSlot() == EARPlayerSlot::P2)
+			{
+				bP2Taken = true;
+			}
+		}
+
+		const EARPlayerSlot ResolvedSlot = !bP1Taken ? EARPlayerSlot::P1 : (!bP2Taken ? EARPlayerSlot::P2 : EARPlayerSlot::P1);
+		SetPlayerSlot(ResolvedSlot);
+	}
+
+	if (CharacterPicked == EARCharacterChoice::None)
+	{
+		const auto IsCharacterTakenByOther = [this, GS](EARCharacterChoice Choice) -> bool
+		{
+			if (Choice == EARCharacterChoice::None)
+			{
+				return false;
+			}
+
+			for (APlayerState* PS : GS->PlayerArray)
+			{
+				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
+				if (!OtherPlayer || OtherPlayer == this)
+				{
+					continue;
+				}
+
+				if (OtherPlayer->GetCharacterPicked() == Choice)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		const EARCharacterChoice PreferredChoice =
+			(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		const EARCharacterChoice AlternateChoice =
+			(PreferredChoice == EARCharacterChoice::Brother) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+
+		if (!IsCharacterTakenByOther(PreferredChoice))
+		{
+			SetCharacterPicked_Internal(PreferredChoice);
+		}
+		else if (!IsCharacterTakenByOther(AlternateChoice))
+		{
+			SetCharacterPicked_Internal(AlternateChoice);
+		}
+		else
+		{
+			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Ready prerequisites could not auto-assign character for '%s'."), *GetNameSafe(this));
+		}
+	}
+}
+
 void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags)
 {
-	if (!HasAuthority() || LoadoutTags == NewLoadoutTags)
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FGameplayTagContainer NormalizedTags = NewLoadoutTags;
+	NormalizeLoadoutTagsForSlotRules(NormalizedTags);
+
+	if (LoadoutTags == NormalizedTags)
 	{
 		return;
 	}
 
 	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
-	LoadoutTags = NewLoadoutTags;
+	LoadoutTags = NormalizedTags;
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
@@ -330,6 +581,108 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 			SaveSubsystem->MarkSaveDirty();
 		}
 	}
+}
+
+void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!NewTag.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag ignored invalid tag for '%s'."), *GetNameSafe(this));
+		return;
+	}
+
+	FGameplayTag SlotRootTag;
+	const bool bHasSlotRoot = UGameplayTagUtilities::TryGetTagAtDepth(NewTag, 2, SlotRootTag);
+
+	FGameplayTagContainer NewLoadout = LoadoutTags;
+	if (bHasSlotRoot && IsSingleSlotLoadoutRootTag(SlotRootTag))
+	{
+		if (!UGameplayTagUtilities::ReplaceTagInSlot(NewLoadout, NewTag))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag failed to replace single-slot tag '%s' for '%s'."), *NewTag.ToString(), *GetNameSafe(this));
+			return;
+		}
+	}
+	else
+	{
+		NewLoadout.AddTag(NewTag);
+	}
+
+	SetLoadoutTags_Internal(NewLoadout);
+}
+
+void AARPlayerStateBase::RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!TagToRemove.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[PlayerState] RemoveTagFromLoadout ignored invalid tag for '%s'."), *GetNameSafe(this));
+		return;
+	}
+
+	if (!LoadoutTags.HasTagExact(TagToRemove))
+	{
+		return;
+	}
+
+	FGameplayTagContainer NewLoadout = LoadoutTags;
+	NewLoadout.RemoveTag(TagToRemove);
+	SetLoadoutTags_Internal(NewLoadout);
+}
+
+void AARPlayerStateBase::NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const
+{
+	TArray<FGameplayTag> ExistingTags;
+	InOutTags.GetGameplayTagArray(ExistingTags);
+
+	TMap<FGameplayTag, FGameplayTag> LastTagBySingleSlotRoot;
+	for (const FGameplayTag& ExistingTag : ExistingTags)
+	{
+		FGameplayTag SlotRootTag;
+		if (!UGameplayTagUtilities::TryGetTagAtDepth(ExistingTag, 2, SlotRootTag))
+		{
+			continue;
+		}
+
+		if (!IsSingleSlotLoadoutRootTag(SlotRootTag))
+		{
+			continue;
+		}
+
+		LastTagBySingleSlotRoot.FindOrAdd(SlotRootTag) = ExistingTag;
+	}
+
+	for (const TPair<FGameplayTag, FGameplayTag>& Entry : LastTagBySingleSlotRoot)
+	{
+		UGameplayTagUtilities::ReplaceTagInSlot(InOutTags, Entry.Value);
+	}
+}
+
+bool AARPlayerStateBase::IsSingleSlotLoadoutRootTag(FGameplayTag RootTag) const
+{
+	if (!RootTag.IsValid())
+	{
+		return false;
+	}
+
+	const UARLoadoutSettings* Settings = GetDefault<UARLoadoutSettings>();
+	if (!Settings)
+	{
+		// Fail-safe to preserve deterministic behavior if settings are unavailable.
+		return true;
+	}
+
+	// Single-slot by default; explicitly configured roots are multi-slot.
+	return !Settings->MultiSlotLoadoutRoots.HasTagExact(RootTag);
 }
 
 void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
@@ -389,29 +742,17 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 		return;
 	}
 
-	FGameplayTagContainer NewTags;
-	auto TryAddTag = [&NewTags](const TCHAR* TagName)
-	{
-		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TagName), false);
-		if (Tag.IsValid())
-		{
-			NewTags.AddTag(Tag);
-		}
-		else
-		{
-			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Default loadout tag is missing: %s"), TagName);
-		}
-	};
-
-	TryAddTag(TEXT("Unlock.Ship.Sammy"));
-	TryAddTag(TEXT("Unlock.Gadget.Vac"));
-	TryAddTag(TEXT("Unlock.Secondary.Mine"));
+	const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
+	const FGameplayTagContainer NewTags = LoadoutSettings ? LoadoutSettings->DefaultPlayerLoadoutTags : FGameplayTagContainer();
 
 	if (!NewTags.IsEmpty())
 	{
 		SetLoadoutTags_Internal(NewTags);
 		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *NewTags.ToStringSimple());
+		return;
 	}
+
+	UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Default loadout is empty in project settings (Alien Ramen Loadout -> Default Player Loadout Tags)."));
 }
 
 void AARPlayerStateBase::BindTrackedAttributeDelegates()
@@ -450,6 +791,26 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		MoveSpeedChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleMoveSpeedAttributeChanged);
 	}
+
+	if (!DownedTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
+		if (DownedTag.IsValid())
+		{
+			DownedTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(DownedTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleDownedTagChanged);
+		}
+	}
+
+	if (!DeadTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
+		if (DeadTag.IsValid())
+		{
+			DeadTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleDeadTagChanged);
+		}
+	}
 }
 
 void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
@@ -461,6 +822,8 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		SpiceChangedDelegateHandle.Reset();
 		MaxSpiceChangedDelegateHandle.Reset();
 		MoveSpeedChangedDelegateHandle.Reset();
+		DownedTagChangedDelegateHandle.Reset();
+		DeadTagChangedDelegateHandle.Reset();
 		return;
 	}
 
@@ -493,6 +856,20 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute()).Remove(MoveSpeedChangedDelegateHandle);
 		MoveSpeedChangedDelegateHandle.Reset();
 	}
+
+	const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
+	if (DownedTag.IsValid() && DownedTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(DownedTag, EGameplayTagEventType::NewOrRemoved).Remove(DownedTagChangedDelegateHandle);
+		DownedTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
+	if (DeadTag.IsValid() && DeadTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved).Remove(DeadTagChangedDelegateHandle);
+		DeadTagChangedDelegateHandle.Reset();
+	}
 }
 
 void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
@@ -515,12 +892,14 @@ void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeDa
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Health, ChangeData.NewValue, ChangeData.OldValue);
 	OnHealthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	EvaluateLifeStateFromASC();
 }
 
 void AARPlayerStateBase::HandleMaxHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxHealth, ChangeData.NewValue, ChangeData.OldValue);
 	OnMaxHealthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	EvaluateLifeStateFromASC();
 }
 
 void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -539,6 +918,36 @@ void AARPlayerStateBase::HandleMoveSpeedAttributeChanged(const FOnAttributeChang
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, ChangeData.NewValue, ChangeData.OldValue);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::HandleDownedTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
+{
+	EvaluateLifeStateFromASC();
+}
+
+void AARPlayerStateBase::HandleDeadTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
+{
+	EvaluateLifeStateFromASC();
+}
+
+void AARPlayerStateBase::EvaluateLifeStateFromASC()
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
+	const FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
+	const bool bDeadFromTag = DeadTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(DeadTag);
+	const bool bDownedFromTag = DownedTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(DownedTag);
+
+	const float MaxHealth = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
+	const float Health = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+	const bool bDownedFromHealth = (MaxHealth > 0.f && Health <= 0.f);
+
+	SetDead_Internal(bDeadFromTag);
+	SetDowned_Internal(!bDeadFromTag && (bDownedFromTag || bDownedFromHealth));
 }
 
 void AARPlayerStateBase::BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue)

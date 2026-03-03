@@ -67,9 +67,6 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
 	bool bStageChoiceAutoSelectLeft = true;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Run")
-	int32 LeakLossThreshold = 20;
-
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	FVector SpawnOrigin = FVector::ZeroVector;
 
