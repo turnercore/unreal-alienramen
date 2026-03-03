@@ -20,7 +20,7 @@ public:
 	void NotifyWavePhaseChanged(int32 WaveInstanceId, EARWavePhase NewPhase);
 	void NotifyEnemyEnteredScreen(int32 WaveInstanceId);
 	void NotifyEnemyInFormation(int32 WaveInstanceId);
-	void TryStartStateTreeForCurrentPawn();
+	void TryStartStateTreeForCurrentPawn(const TCHAR* Reason = TEXT("Unknown"));
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Enemy|AI|State", meta = (BlueprintAuthorityOnly))
 	void PushPawnASCStateTag(FGameplayTag StateTag);
@@ -66,8 +66,9 @@ protected:
 	virtual void OnUnPossess() override;
 
 private:
-	void StartStateTreeForPawn(APawn* InPawn);
-	void StartStateTreeForPawn_Deferred(APawn* InPawn);
+	void EnsureEventTagsInitialized();
+	void StartStateTreeForPawn(APawn* InPawn, const TCHAR* Reason);
+	void StartStateTreeForPawn_Deferred(APawn* InPawn, const TCHAR* Reason);
 	void StopStateTree(const FString& Reason);
 	bool IsStateTreeRunning() const;
 	void BindStateTreeTagBridge();
@@ -76,6 +77,7 @@ private:
 
 private:
 	bool bPendingStateTreeStart = false;
+	bool bStateTreeInitializedForPossession = false;
 	FTimerHandle DeferredStartTimerHandle;
 	FGameplayTagContainer AppliedStateTreeTags;
 	int32 DeferredStartAttemptCounter = 0;
@@ -98,5 +100,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Enemy|AI|Events")
 	FGameplayTag InFormationEventTag;
+
+	int32 LastSentWavePhaseWaveId = INDEX_NONE;
+	EARWavePhase LastSentWavePhase = EARWavePhase::Berserk;
+	int32 LastSentEnteredScreenWaveId = INDEX_NONE;
+	int32 LastSentInFormationWaveId = INDEX_NONE;
 
 };

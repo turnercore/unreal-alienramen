@@ -6,6 +6,7 @@
 #include "ContentLookupSubsystem.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
+#include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 
@@ -25,6 +26,15 @@
 namespace ARInvaderInternal
 {
 	static constexpr float WaveColorSwapChance = 0.30f;
+	static FGameplayTag GetStateDownedTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
+	}
+
+	static FGameplayTag GetStateDeadTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
+	}
 
 	static EAREnemyColor SwapEnemyColor(EAREnemyColor InColor)
 	{
@@ -69,10 +79,13 @@ void UARInvaderDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collectio
 {
 	Super::Initialize(Collection);
 	RegisterConsoleCommands();
+	RebuildPlayerStatusBindings();
+	RefreshPlayerStatusSignals();
 }
 
 void UARInvaderDirectorSubsystem::Deinitialize()
 {
+	ClearPlayerStatusBindings();
 	UnregisterConsoleCommands();
 	Super::Deinitialize();
 }
@@ -118,6 +131,9 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 		return;
 	}
 
+	RebuildPlayerStatusBindings();
+	RefreshPlayerStatusSignals();
+
 	if (!EnsureDataTables())
 	{
 		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Could not start run: wave/stage DataTables are unavailable."));
@@ -137,11 +153,19 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 	LeakCount = 0;
 	StageSequence = 0;
 	RewardEventId = 0;
+	LastRunEndReason = EARInvaderRunEndReason::None;
 	FlowState = EARInvaderFlowState::Stopped;
 	ActiveWaves.Reset();
 	OneTimeWaveRowsUsed.Reset();
 	LastWaveRowName = NAME_None;
 	ReportedLeakedEnemies.Reset();
+	bAllPlayersDownCached = false;
+	bAllPlayersDeadCached = false;
+	EvaluatedPlayerCountCached = 0;
+	DownedPlayerCountCached = 0;
+	DeadPlayerCountCached = 0;
+	PlayerDownedCache.Reset();
+	PlayerDeadCache.Reset();
 	EnemyDefinitionCache.Reset();
 	EnemyClassPreloadHandles.Reset();
 	OffscreenDurationByEnemy.Reset();
@@ -188,6 +212,11 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 
 void UARInvaderDirectorSubsystem::StopInvaderRun()
 {
+	StopInvaderRunWithReason(EARInvaderRunEndReason::ManualStop);
+}
+
+void UARInvaderDirectorSubsystem::StopInvaderRunWithReason(EARInvaderRunEndReason EndReason)
+{
 	if (!bRunActive)
 	{
 		return;
@@ -195,8 +224,12 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 
 	DestroyManagedInvaderEnemies();
 
+	const bool bWasAllPlayersDown = bAllPlayersDownCached;
+	const bool bWasAllPlayersDead = bAllPlayersDeadCached;
 	bRunActive = false;
 	FlowState = EARInvaderFlowState::Stopped;
+	LastRunEndReason = EndReason;
+	RunEndEventId++;
 	RunSeed = 0;
 	Threat = 0.f;
 	RunElapsed = 0.f;
@@ -212,6 +245,13 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 	OneTimeWaveRowsUsed.Reset();
 	LastWaveRowName = NAME_None;
 	ReportedLeakedEnemies.Reset();
+	bAllPlayersDownCached = false;
+	bAllPlayersDeadCached = false;
+	EvaluatedPlayerCountCached = 0;
+	DownedPlayerCountCached = 0;
+	DeadPlayerCountCached = 0;
+	PlayerDownedCache.Reset();
+	PlayerDeadCache.Reset();
 	EnemyDefinitionCache.Reset();
 	EnemyClassPreloadHandles.Reset();
 	OffscreenDurationByEnemy.Reset();
@@ -226,7 +266,44 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 	LastRewardStageRow = NAME_None;
 	LastRewardDescriptor.Reset();
 	PushSnapshotToGameState();
-	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stopped run."));
+	OnRunEnded.Broadcast(EndReason);
+	if (bWasAllPlayersDown)
+	{
+		OnAllPlayersDownChanged.Broadcast(false);
+	}
+	if (bWasAllPlayersDead)
+	{
+		OnAllPlayersDeadChanged.Broadcast(false);
+	}
+	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stopped run. Reason=%d"), static_cast<int32>(EndReason));
+}
+
+bool UARInvaderDirectorSubsystem::IsPlayerDowned(const AARPlayerStateBase* PlayerState) const
+{
+	if (!PlayerState)
+	{
+		return false;
+	}
+
+	if (const uint8* Cached = PlayerDownedCache.Find(PlayerState))
+	{
+		return *Cached != 0;
+	}
+	return PlayerState->IsDowned() && !PlayerState->IsDeadState();
+}
+
+bool UARInvaderDirectorSubsystem::IsPlayerDead(const AARPlayerStateBase* PlayerState) const
+{
+	if (!PlayerState)
+	{
+		return false;
+	}
+
+	if (const uint8* Cached = PlayerDeadCache.Find(PlayerState))
+	{
+		return *Cached != 0;
+	}
+	return PlayerState->IsDeadState();
 }
 
 void UARInvaderDirectorSubsystem::DestroyManagedInvaderEnemies()
@@ -347,6 +424,7 @@ bool UARInvaderDirectorSubsystem::ReportEnemyLeaked(AAREnemyBase* Enemy)
 
 	ReportedLeakedEnemies.Add(WeakEnemy);
 	LeakCount++;
+	OnEnemyLeaked.Broadcast(LeakCount, 1);
 	UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Enemy leaked '%s'. LeakCount=%d"), *GetNameSafe(Enemy), LeakCount);
 	PushSnapshotToGameState();
 	return true;
@@ -406,7 +484,7 @@ bool UARInvaderDirectorSubsystem::SubmitStageChoice(bool bChooseLeft)
 FString UARInvaderDirectorSubsystem::DumpRuntimeState() const
 {
 	FString Out = FString::Printf(
-		TEXT("InvaderRun Active=%d Flow=%d Seed=%d Threat=%.2f Run=%.2fs Stage='%s' StageTime=%.2fs Leak=%d/%d Waves=%d Choice(L='%s',R='%s',t=%.2f)"),
+		TEXT("InvaderRun Active=%d Flow=%d Seed=%d Threat=%.2f Run=%.2fs Stage='%s' StageTime=%.2fs Leak=%d Players(Eval=%d Down=%d Dead=%d AllDown=%d AllDead=%d) Waves=%d Choice(L='%s',R='%s',t=%.2f)"),
 		bRunActive ? 1 : 0,
 		static_cast<int32>(FlowState),
 		RunSeed,
@@ -415,7 +493,11 @@ FString UARInvaderDirectorSubsystem::DumpRuntimeState() const
 		*CurrentStageRow.ToString(),
 		StageElapsed,
 		LeakCount,
-		GetDefault<UARInvaderDirectorSettings>()->LeakLossThreshold,
+		EvaluatedPlayerCountCached,
+		DownedPlayerCountCached,
+		DeadPlayerCountCached,
+		bAllPlayersDownCached ? 1 : 0,
+		bAllPlayersDeadCached ? 1 : 0,
 		ActiveWaves.Num(),
 		*ChoiceLeftStageRow.ToString(),
 		*ChoiceRightStageRow.ToString(),
@@ -450,12 +532,10 @@ void UARInvaderDirectorSubsystem::TickDirector(float DeltaTime)
 		UpdateWaves(DeltaTime);
 		SpawnWavesIfNeeded();
 		UpdateStage(DeltaTime);
-		EvaluateLossConditions();
 		break;
 	case EARInvaderFlowState::AwaitStageClear:
 		RecountAliveAndHandleLeaks();
 		UpdateWaves(DeltaTime);
-		EvaluateLossConditions();
 		UpdateStage(DeltaTime);
 		break;
 	case EARInvaderFlowState::StageChoice:
@@ -607,10 +687,6 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				Enemy->GetFormationTargetWorldLocation().X,
 				Enemy->GetFormationTargetWorldLocation().Y,
 				Enemy->GetFormationTargetWorldLocation().Z);
-			if (AAREnemyAIController* EnemyAI = Cast<AAREnemyAIController>(Enemy->GetController()))
-			{
-				EnemyAI->TryStartStateTreeForCurrentPawn();
-			}
 			ApplyEnemyGameplayEffects(Enemy, Wave.Def, SpawnDef);
 
 			Wave.SpawnedEnemies.Add(Enemy);
@@ -808,19 +884,116 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 
 void UARInvaderDirectorSubsystem::EvaluateLossConditions()
 {
-	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	if (LeakCount >= Settings->LeakLossThreshold)
+	// Player status is event-driven; this is intentionally a no-op.
+}
+
+void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings()
+{
+	ClearPlayerStatusBindings();
+
+	const UWorld* World = GetWorld();
+	AARGameStateBase* GS = World ? Cast<AARGameStateBase>(World->GetGameState()) : nullptr;
+	if (!GS)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Loss condition reached: leaks (%d/%d)."), LeakCount, Settings->LeakLossThreshold);
-		StopInvaderRun();
 		return;
 	}
 
-	if (AreAllPlayersDown())
+	GS->OnTrackedPlayersChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged);
+	BoundTrackedPlayersGameState = GS;
+
+	for (APlayerState* PSBase : GS->PlayerArray)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderDirector] Loss condition reached: all evaluated players are down."));
-		StopInvaderRun();
+		AARPlayerStateBase* PS = Cast<AARPlayerStateBase>(PSBase);
+		if (!PS || PS->IsOnlyASpectator())
+		{
+			continue;
+		}
+
+		PS->OnHealthChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
+		PS->OnMaxHealthChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
+		PS->OnDownedStateChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDownedSignal);
+		PS->OnDeadStateChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDeadSignal);
+
+		FPlayerStatusBinding Binding;
+		Binding.ASC = PS->GetASC();
+		if (UAbilitySystemComponent* ASC = Binding.ASC.Get())
+		{
+			TWeakObjectPtr<UARInvaderDirectorSubsystem> WeakThis(this);
+			Binding.DownedTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDownedTag(), EGameplayTagEventType::NewOrRemoved)
+				.AddLambda([WeakThis](const FGameplayTag, int32)
+				{
+					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
+					{
+						StrongThis->RefreshPlayerStatusSignals();
+					}
+				});
+			Binding.DeadTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDeadTag(), EGameplayTagEventType::NewOrRemoved)
+				.AddLambda([WeakThis](const FGameplayTag, int32)
+				{
+					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
+					{
+						StrongThis->RefreshPlayerStatusSignals();
+					}
+				});
+		}
+
+		PlayerStatusBindings.Add(PS, MoveTemp(Binding));
 	}
+}
+
+void UARInvaderDirectorSubsystem::ClearPlayerStatusBindings()
+{
+	for (TPair<TWeakObjectPtr<AARPlayerStateBase>, FPlayerStatusBinding>& Pair : PlayerStatusBindings)
+	{
+		if (AARPlayerStateBase* PS = Pair.Key.Get())
+		{
+			PS->OnHealthChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
+			PS->OnMaxHealthChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
+			PS->OnDownedStateChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDownedSignal);
+			PS->OnDeadStateChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDeadSignal);
+		}
+
+		if (UAbilitySystemComponent* ASC = Pair.Value.ASC.Get())
+		{
+			if (Pair.Value.DownedTagChangedHandle.IsValid())
+			{
+				ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDownedTag(), EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DownedTagChangedHandle);
+			}
+			if (Pair.Value.DeadTagChangedHandle.IsValid())
+			{
+				ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDeadTag(), EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DeadTagChangedHandle);
+			}
+		}
+	}
+
+	PlayerStatusBindings.Reset();
+
+	if (AARGameStateBase* GS = BoundTrackedPlayersGameState.Get())
+	{
+		GS->OnTrackedPlayersChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged);
+	}
+	BoundTrackedPlayersGameState = nullptr;
+}
+
+void UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged()
+{
+	RebuildPlayerStatusBindings();
+	RefreshPlayerStatusSignals();
+}
+
+void UARInvaderDirectorSubsystem::HandlePlayerHealthSignal(AARPlayerStateBase* /*SourcePlayerState*/, EARPlayerSlot /*SourcePlayerSlot*/, float /*NewValue*/, float /*OldValue*/)
+{
+	RefreshPlayerStatusSignals();
+}
+
+void UARInvaderDirectorSubsystem::HandlePlayerDownedSignal(AARPlayerStateBase* /*SourcePlayerState*/, EARPlayerSlot /*SourcePlayerSlot*/, bool /*bNewDowned*/, bool /*bOldDowned*/)
+{
+	RefreshPlayerStatusSignals();
+}
+
+void UARInvaderDirectorSubsystem::HandlePlayerDeadSignal(AARPlayerStateBase* /*SourcePlayerState*/, EARPlayerSlot /*SourcePlayerSlot*/, bool /*bNewDead*/, bool /*bOldDead*/)
+{
+	RefreshPlayerStatusSignals();
 }
 
 void UARInvaderDirectorSubsystem::PushSnapshotToGameState()
@@ -850,9 +1023,10 @@ void UARInvaderDirectorSubsystem::PushSnapshotToGameState()
 	Snapshot.StageChoiceElapsedTime = StageChoiceElapsed;
 	Snapshot.StageSequence = StageSequence;
 	Snapshot.LeakCount = LeakCount;
-	Snapshot.LeakLossThreshold = Settings->LeakLossThreshold;
 	Snapshot.Seed = RunSeed;
 	Snapshot.RewardEventId = RewardEventId;
+	Snapshot.RunEndEventId = RunEndEventId;
+	Snapshot.LastRunEndReason = LastRunEndReason;
 	Snapshot.LastRewardStageRowName = LastRewardStageRow;
 	Snapshot.LastRewardDescriptor = LastRewardDescriptor;
 	Snapshot.SoftCapAliveEnemies = Settings->SoftCapAliveEnemies;
@@ -1676,15 +1850,42 @@ int32 UARInvaderDirectorSubsystem::GetActivePlayerCount() const
 
 bool UARInvaderDirectorSubsystem::AreAllPlayersDown() const
 {
+	return bAllPlayersDownCached;
+}
+
+void UARInvaderDirectorSubsystem::RefreshPlayerStatusSignals()
+{
 	const UWorld* World = GetWorld();
 	const AGameStateBase* GS = World ? World->GetGameState() : nullptr;
 	if (!GS)
 	{
-		return false;
+		if (EvaluatedPlayerCountCached != 0 || DownedPlayerCountCached != 0 || DeadPlayerCountCached != 0 || bAllPlayersDownCached || bAllPlayersDeadCached)
+		{
+			EvaluatedPlayerCountCached = 0;
+			DownedPlayerCountCached = 0;
+			DeadPlayerCountCached = 0;
+			PlayerDownedCache.Reset();
+			PlayerDeadCache.Reset();
+			if (bAllPlayersDownCached)
+			{
+				bAllPlayersDownCached = false;
+				OnAllPlayersDownChanged.Broadcast(false);
+			}
+			if (bAllPlayersDeadCached)
+			{
+				bAllPlayersDeadCached = false;
+				OnAllPlayersDeadChanged.Broadcast(false);
+			}
+		}
+		return;
 	}
 
-	int32 NumEvaluatedPlayers = 0;
-	int32 NumDown = 0;
+	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> NewDownedCache;
+	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> NewDeadCache;
+	int32 NewEvaluated = 0;
+	int32 NewDowned = 0;
+	int32 NewDead = 0;
+
 	for (APlayerState* PSBase : GS->PlayerArray)
 	{
 		AARPlayerStateBase* PS = Cast<AARPlayerStateBase>(PSBase);
@@ -1700,21 +1901,62 @@ bool UARInvaderDirectorSubsystem::AreAllPlayersDown() const
 		}
 
 		const float MaxHealth = ASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
-		const float Health = ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
 		if (MaxHealth <= 0.f)
 		{
-			// Player state/attributes are not initialized yet; do not treat as down.
 			continue;
 		}
 
-		NumEvaluatedPlayers++;
-		if (Health <= 0.f)
+		NewEvaluated++;
+		const bool bIsDead = PS->IsDeadState();
+		const bool bIsDowned = !bIsDead && PS->IsDowned();
+
+		NewDeadCache.Add(PS, bIsDead ? 1 : 0);
+		NewDownedCache.Add(PS, bIsDowned ? 1 : 0);
+		if (bIsDead)
 		{
-			NumDown++;
+			NewDead++;
+		}
+		if (bIsDowned)
+		{
+			NewDowned++;
 		}
 	}
 
-	return NumEvaluatedPlayers > 0 && NumEvaluatedPlayers == NumDown;
+	for (const TPair<TWeakObjectPtr<AARPlayerStateBase>, uint8>& Entry : NewDownedCache)
+	{
+		const uint8 OldValue = PlayerDownedCache.FindRef(Entry.Key);
+		if (OldValue != Entry.Value && Entry.Key.IsValid())
+		{
+			OnPlayerDownedChanged.Broadcast(Entry.Key.Get(), Entry.Value != 0);
+		}
+	}
+	for (const TPair<TWeakObjectPtr<AARPlayerStateBase>, uint8>& Entry : NewDeadCache)
+	{
+		const uint8 OldValue = PlayerDeadCache.FindRef(Entry.Key);
+		if (OldValue != Entry.Value && Entry.Key.IsValid())
+		{
+			OnPlayerDeadChanged.Broadcast(Entry.Key.Get(), Entry.Value != 0);
+		}
+	}
+
+	EvaluatedPlayerCountCached = NewEvaluated;
+	DownedPlayerCountCached = NewDowned;
+	DeadPlayerCountCached = NewDead;
+	PlayerDownedCache = MoveTemp(NewDownedCache);
+	PlayerDeadCache = MoveTemp(NewDeadCache);
+
+	const bool bAllDownNow = (EvaluatedPlayerCountCached > 0) && (DownedPlayerCountCached == EvaluatedPlayerCountCached);
+	const bool bAllDeadNow = (EvaluatedPlayerCountCached > 0) && (DeadPlayerCountCached == EvaluatedPlayerCountCached);
+	if (bAllDownNow != bAllPlayersDownCached)
+	{
+		bAllPlayersDownCached = bAllDownNow;
+		OnAllPlayersDownChanged.Broadcast(bAllPlayersDownCached);
+	}
+	if (bAllDeadNow != bAllPlayersDeadCached)
+	{
+		bAllPlayersDeadCached = bAllDeadNow;
+		OnAllPlayersDeadChanged.Broadcast(bAllPlayersDeadCached);
+	}
 }
 
 void UARInvaderDirectorSubsystem::SetCurrentStage(FName StageRowName, const FARStageDefRow& StageDef)

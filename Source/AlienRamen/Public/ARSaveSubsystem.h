@@ -26,22 +26,19 @@ public:
 	static constexpr int32 DefaultUserIndex = 0;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult);
+	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult);
+	bool SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult);
+	bool LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const;
+	bool ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult, bool bUseDebugSaves = false) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool ListDebugSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool DeleteSave(FName SlotBaseName, FARSaveResult& OutResult);
+	bool DeleteSave(FName SlotBaseName, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	UARSaveGame* GetCurrentSaveGame() const { return CurrentSaveGame; }
@@ -107,7 +104,7 @@ public:
 	 * Authority-only non-networked level open. Enforces listen option so host remains authoritative.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool RequestOpenLevel(const FString& LevelName, bool bSkipReadyChecks = false, bool bAbsolute = false);
+	bool RequestOpenLevel(const FString& LevelName, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false);
 
 	// Sets travel-transient GameState data to be applied first on next RequestGameStateHydration call.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -168,7 +165,7 @@ private:
 	bool LoadOrCreateIndex(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult) const;
 	bool SaveIndex(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult) const;
 	bool SaveSaveObject(UARSaveGame* SaveObject, FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult) const;
-	UARSaveGame* LoadSaveObjectWithRollback(FName SlotBaseName, int32 RevisionOrLatest, int32& OutResolvedSlotNumber, FARSaveResult& OutResult) const;
+	UARSaveGame* LoadSaveObjectWithRollback(FName SlotBaseName, int32 RevisionOrLatest, int32& OutResolvedSlotNumber, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
 	void PruneOldRevisions(FName SlotBaseName, int32 LatestRevision) const;
 	void GatherRuntimeData(UARSaveGame* SaveObject);
 	void BroadcastSaveFailure(const FARSaveResult& Result);

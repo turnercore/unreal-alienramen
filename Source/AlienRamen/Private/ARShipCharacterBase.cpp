@@ -38,21 +38,22 @@ const FName AARShipCharacterBase::NAME_Stats(TEXT("Stats"));
 const FName AARShipCharacterBase::NAME_MovementType(TEXT("MovementType"));
 const FName AARShipCharacterBase::NAME_LoadoutTags(TEXT("LoadoutTags"));
 static const FName NAME_LegacyASC(TEXT("ASC"));
-static const FName NAME_LegacyBPInit(TEXT("_Init"));
 static const FName NAME_LegacyBasePrimaryFireRateEffect(TEXT("BasePrimaryFireRateEffect"));
 
-// --------------------
-// Tag roots
-// --------------------
+FGameplayTag AARShipCharacterBase::GetTagRootShips()
+{
+	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"));
+}
 
-const FGameplayTag AARShipCharacterBase::TAGROOT_Ships =
-FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"));
+FGameplayTag AARShipCharacterBase::GetTagRootSecondaries()
+{
+	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"));
+}
 
-const FGameplayTag AARShipCharacterBase::TAGROOT_Secondaries =
-FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"));
-
-const FGameplayTag AARShipCharacterBase::TAGROOT_Gadgets =
-FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget"));
+FGameplayTag AARShipCharacterBase::GetTagRootGadgets()
+{
+	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget"));
+}
 
 AARShipCharacterBase::AARShipCharacterBase()
 {
@@ -89,7 +90,7 @@ const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() co
 	}
 
 	FGameplayTag ShipTag;
-	if (!FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag))
+	if (!FindFirstTagUnderRoot(LoadoutTags, GetTagRootShips(), ShipTag))
 	{
 		return nullptr;
 	}
@@ -235,7 +236,7 @@ bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender, flo
 		return false;
 	}
 
-	static const FGameplayTag ShipDataDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Damage"), false);
+	static const FName ShipDataDamageName(TEXT("Data.Damage"));
 	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
 	if (Offender)
 	{
@@ -248,7 +249,7 @@ bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender, flo
 		return false;
 	}
 
-	Spec.Data->SetSetByCallerMagnitude(ShipDataDamageTag, Damage);
+	Spec.Data->SetSetByCallerMagnitude(ShipDataDamageName, Damage);
 	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 	OutCurrentHealth = ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
 	return true;
@@ -556,7 +557,6 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	}
 
 	bServerLoadoutApplied = false;
-	bLegacyBPInitInvoked = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
 	{
@@ -611,15 +611,6 @@ void AARShipCharacterBase::InitAbilityActorInfo()
 	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, ASC);
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 
-	// BP compatibility: many existing pawn blueprints expect _Init to run after ASC is valid.
-	if (!bLegacyBPInitInvoked)
-	{
-		if (UFunction* LegacyInitFn = FindFunction(NAME_LegacyBPInit))
-		{
-			ProcessEvent(LegacyInitFn, nullptr);
-			bLegacyBPInitInvoked = true;
-		}
-	}
 }
 
 void AARShipCharacterBase::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
@@ -681,7 +672,6 @@ void AARShipCharacterBase::UnPossessed()
 	CachedASC = nullptr;
 	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
 	bServerLoadoutApplied = false;
-	bLegacyBPInitInvoked = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
 	{
@@ -765,7 +755,7 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 
 	// Ship baseline is required.
 	FGameplayTag ShipTag;
-	bool bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Ships, ShipTag);
+	bool bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootShips(), ShipTag);
 	if (!bFoundShipTag)
 	{
 		static const FGameplayTag LegacyShipRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Ships"), false);
@@ -778,7 +768,7 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 	{
 		if (bLogErrors)
 		{
-			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: no ship tag found under root '%s'; tags=%s"), *TAGROOT_Ships.ToString(), *LoadoutTags.ToStringSimple());
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: no ship tag found under root '%s'; tags=%s"), *GetTagRootShips().ToString(), *LoadoutTags.ToStringSimple());
 		}
 		return false;
 	}
@@ -797,7 +787,7 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 
 	// Secondary (optional)
 	FGameplayTag SecondaryTag;
-	bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Secondaries, SecondaryTag);
+	bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootSecondaries(), SecondaryTag);
 	if (!bFoundSecondaryTag)
 	{
 		static const FGameplayTag LegacySecondaryRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Secondaries"), false);
@@ -818,7 +808,7 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 
 	// Gadget (optional)
 	FGameplayTag GadgetTag;
-	bool bFoundGadgetTag = FindFirstTagUnderRoot(LoadoutTags, TAGROOT_Gadgets, GadgetTag);
+	bool bFoundGadgetTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootGadgets(), GadgetTag);
 	if (!bFoundGadgetTag)
 	{
 		static const FGameplayTag LegacyGadgetRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Gadgets"), false);

@@ -7,7 +7,10 @@ This document explains how to use the C++ save system from Blueprints, what happ
 - Primary runtime API: `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`)
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
-- Save types/structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARGameStateSaveData`, `FARMeatState`
+- Save types/structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`
+- Active schema version is `2` and minimum supported is `2` (pre-v2 saves are intentionally unsupported).
+- Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `CyclesForUI` (all replicated with change dispatchers).
+- Runtime unlock writes should go through authority GameState APIs (`AddUnlockTag`, `RemoveUnlockTag`) or client-facing controller RPC wrappers (`AARPlayerController::RequestAddUnlock`, `RequestRemoveUnlock`).
 
 The subsystem is a `UGameInstanceSubsystem`, so access it from BP via:
 - `Get Game Instance Subsystem` -> class `ARSaveSubsystem`
@@ -67,8 +70,6 @@ The subsystem is a `UGameInstanceSubsystem`, so access it from BP via:
 - `RequestPlayerStateHydration(Requester)`
 
 `UARSaveGame` BP-compatible readers:
-- `GetGameStateDataInstancedStruct()`
-- `GetPlayerStateDataInstancedStructByIndex(Index)`
 - `FindPlayerStateDataBySlot(Slot, OutData, OutIndex)`
 - `FindPlayerStateDataByIdentity(Identity, OutData, OutIndex)`
 
@@ -110,7 +111,7 @@ The subsystem is a `UGameInstanceSubsystem`, so access it from BP via:
 
 ## If you need to save another variable
 
-1. Add field to `UARSaveGame` (for top-level persisted data), or to `FARPlayerStateSaveData` / `FARGameStateSaveData` for typed grouping.
+1. Add field to `UARSaveGame` (for top-level persisted data), or to `FARPlayerStateSaveData` for player-scoped grouping.
 2. Populate it in `UARSaveSubsystem::GatherRuntimeData(...)`.
 3. Read/apply it during hydration path (or keep using instanced-struct apply if already covered by serializable state).
 4. If it must be BP-visible, mark `UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=...)`.

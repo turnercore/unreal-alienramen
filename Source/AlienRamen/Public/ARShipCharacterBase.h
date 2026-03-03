@@ -169,10 +169,6 @@ protected:
 	UPROPERTY(Transient)
 	int32 LoadoutInitRetryCount = 0;
 
-	// BP compatibility: call legacy BP _Init once ASC is actually ready.
-	UPROPERTY(Transient)
-	bool bLegacyBPInitInvoked = false;
-
 	FTimerHandle LoadoutInitRetryTimer;
 
 	// Runtime weapon tuning effect (formerly applied from BP _Init).
@@ -195,8 +191,8 @@ protected:
 	// ---- PlayerState field name (must match your BP variable name) ----
 	static const FName NAME_LoadoutTags;
 
-	// ---- Tag roots ----
-	static const FGameplayTag TAGROOT_Ships;
-	static const FGameplayTag TAGROOT_Secondaries;
-	static const FGameplayTag TAGROOT_Gadgets;
+	// ---- Tag roots (runtime-resolved; avoid static init order issues) ----
+	static FGameplayTag GetTagRootShips();
+	static FGameplayTag GetTagRootSecondaries();
+	static FGameplayTag GetTagRootGadgets();
 };

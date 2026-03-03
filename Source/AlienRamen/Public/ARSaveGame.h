@@ -11,8 +11,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 1;
-	static constexpr int32 MinSupportedSchemaVersion = 1;
+	static constexpr int32 CurrentSchemaVersion = 2;
+	static constexpr int32 MinSupportedSchemaVersion = 2;
 
 	UARSaveGame();
 
@@ -28,53 +28,35 @@ public:
 		return InSchemaVersion >= MinSupportedSchemaVersion && InSchemaVersion <= CurrentSchemaVersion;
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Dialogue")
-	FGameplayTagContainer SeenDialogue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Dialogue")
-	FGameplayTagContainer DialogueFlags;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Progression")
-	FGameplayTagContainer Unlocks;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Progression")
-	FGameplayTagContainer Choices;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Progression")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
 	int32 Money = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Progression")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	FGameplayTagContainer Unlocks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
 	FARMeatState Meat;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Progression")
-	int32 Material = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	int32 Scrap = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Progression")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
 	int32 Cycles = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Meta")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FName SaveSlot = NAME_None;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Meta")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	int32 SaveGameVersion = CurrentSchemaVersion;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Meta")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	int32 SaveSlotNumber = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save|Meta")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FDateTime LastSaved;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
-	FARGameStateSaveData GameStateStruct;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	TArray<FARPlayerStateSaveData> PlayerStates;
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
-	FInstancedStruct GetGameStateDataInstancedStruct() const { return GameStateStruct.GameStateData; }
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
-	FInstancedStruct GetPlayerStateDataInstancedStructByIndex(int32 Index) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataBySlot(EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const;

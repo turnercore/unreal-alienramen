@@ -125,6 +125,28 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	bool,
 	bOldReady);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnDownedStateChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	bool,
+	bNewDowned,
+	bool,
+	bOldDowned);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FAROnDeadStateChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	EARPlayerSlot,
+	SourcePlayerSlot,
+	bool,
+	bNewDead,
+	bool,
+	bOldDead);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnSetupStateChangedSignature,
 	bool,
@@ -192,6 +214,24 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	bool IsReadyForRun() const { return bIsReady; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	bool IsDowned() const { return bIsDowned; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	bool IsDeadState() const { return bIsDeadState; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void SetDownedState(bool bNewDowned);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateDownedState(bool bNewDowned);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void SetDeadState(bool bNewDead);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateDeadState(bool bNewDead);
+
 	// Composite readiness for travel: requires slot, character choice, and ready flag.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	bool IsTravelReady() const;
@@ -235,6 +275,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
 	void SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags);
 
+	// Convenience update: routes through server authority and applies slot-aware replacement/add semantics.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
+	void UpdateLoadoutWithTag(FGameplayTag NewTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateLoadoutWithTag(FGameplayTag NewTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
+	void RemoveTagFromLoadout(FGameplayTag TagToRemove);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRemoveTagFromLoadout(FGameplayTag TagToRemove);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Loadout")
+	TArray<FGameplayTag> GetTagsInLoadoutSlot(FGameplayTag SlotTag) const;
+
 	UFUNCTION()
 	void OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags);
 
@@ -272,6 +328,12 @@ public:
 	FAROnReadyStatusChangedSignature OnReadyStatusChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnDownedStateChangedSignature OnDownedStateChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnDeadStateChangedSignature OnDeadStateChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnSetupStateChangedSignature OnSetupStateChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
@@ -300,12 +362,25 @@ protected:
 	void OnRep_DisplayName(const FString& OldDisplayName);
 	UFUNCTION()
 	void OnRep_IsReady(bool bOldReady);
+
+	UFUNCTION()
+	void OnRep_IsDowned(bool bOldDowned);
+
+	UFUNCTION()
+	void OnRep_IsDeadState(bool bOldDeadState);
+
 	UFUNCTION()
 	void OnRep_IsSetup(bool bOldIsSetup);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
 	void SetDisplayName_Internal(const FString& NewDisplayName);
 	void SetReady_Internal(bool bNewReady);
+	void SetDowned_Internal(bool bNewDowned);
+	void SetDead_Internal(bool bNewDead);
 	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags);
+	void UpdateLoadoutWithTag_Internal(FGameplayTag NewTag);
+	void RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove);
+	void NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const;
+	bool IsSingleSlotLoadoutRootTag(FGameplayTag RootTag) const;
 	void EnsureDefaultLoadoutIfEmpty();
 	void BindTrackedAttributeDelegates();
 	void UnbindTrackedAttributeDelegates();
@@ -315,8 +390,12 @@ protected:
 	void HandleSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData);
+	void HandleDownedTagChanged(const FGameplayTag Tag, int32 NewCount);
+	void HandleDeadTagChanged(const FGameplayTag Tag, int32 NewCount);
+	void EvaluateLifeStateFromASC();
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
+	void EnsureReadyPrerequisitesForRun();
 	void EvaluateTravelReadinessAndBroadcast();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
@@ -334,6 +413,12 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_IsReady, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsReady = false;
 
+	UPROPERTY(ReplicatedUsing=OnRep_IsDowned, Transient, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	bool bIsDowned = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_IsDeadState, Transient, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	bool bIsDeadState = false;
+
 	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsSetup = false;
 
@@ -346,6 +431,8 @@ protected:
 	FDelegateHandle SpiceChangedDelegateHandle;
 	FDelegateHandle MaxSpiceChangedDelegateHandle;
 	FDelegateHandle MoveSpeedChangedDelegateHandle;
+	FDelegateHandle DownedTagChangedDelegateHandle;
+	FDelegateHandle DeadTagChangedDelegateHandle;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
