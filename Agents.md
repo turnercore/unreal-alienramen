@@ -11,6 +11,8 @@
 - Blueprint-only facts are first-class documentation requirements. If critical behavior/shape only exists in BP assets (for example struct variable contracts), record it here clearly.
 - Record decisions, not guesses. If uncertain, verify in code before writing; if still uncertain, add a clearly labeled open question.
 - Preserve intent and constraints for future work (what must stay true), not just what exists today.
+- HIGH PRIORITY: never initialize Unreal/engine-dependent values at namespace/global static initialization time (for example `FGameplayTag::RequestGameplayTag`, `FPaths::*`, subsystem access, asset loads in static/global constructors). Resolve these at runtime via functions/instance lifecycle (`Initialize`, `BeginPlay`, constructor body, function-local static accessor) to avoid packaged `CrashDuringStaticInit` (`777006`) failures.
+- Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
 - API exposure default: prefer Blueprint exposure for gameplay-facing utilities unless told otherwise.
 - If exposure choice is unclear, ask before locking API surface.
 - Blueprint API categories should be under `Alien Ramen|...` (or existing subsystem category path following that prefix).
@@ -25,12 +27,14 @@
 
 ## High-Level Architecture
 
+- Unreal Engine version contract: this project is on Unreal Engine `5.7` (`AlienRamen.uproject` `EngineAssociation` is `5.7`). Use UE 5.7 toolchain/Build scripts for compile/package commands.
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
 - Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.
 - `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
   - `BP_OnARGameInstanceInitialized`
   - `BP_OnARGameInstanceShutdown`
+- `UARGameInstance` network protocol session helpers that take online session structs (`ApplyARProtocolSessionSetting`, `GetARProtocolFromSession`) are C++-only (not Blueprint-reflected) because their parameter types are not UHT-reflectable.
 - Native authoritative lobby/runtime bases:
 - `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
 - `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
@@ -62,13 +66,25 @@
 - `CharacterPicked` (`EARCharacterChoice`: `None`, `Brother`, `Sister`) is native replicated state on `AARPlayerStateBase` with server setter path (`SetCharacterPicked` / `ServerPickCharacter`) and change signal `OnCharacterPickedChanged`.
 - `DisplayName` is native replicated state on `AARPlayerStateBase` with server setter path (`SetDisplayNameValue` / `ServerUpdateDisplayName`), mirrored into `PlayerName` (`SetPlayerName`), and change signal `OnDisplayNameChanged`.
 - `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
+- `bIsDowned` and `bIsDeadState` are native replicated transient runtime states on `AARPlayerStateBase` (not save-persistent) with server setter paths (`SetDownedState`/`ServerUpdateDownedState`, `SetDeadState`/`ServerUpdateDeadState`) and change signals (`OnDownedStateChanged`, `OnDeadStateChanged`).
+- Ready-set normalization contract: when server processes `SetReadyForRun(true)`, PlayerState auto-normalizes missing prerequisites before setting ready:
+- if `PlayerSlot` is `Unknown`, assign first-free `P1/P2` (fallback `P1` if both occupied)
+- if `CharacterPicked` is `None`, assign slot-biased preferred choice (`P1->Brother`, `P2->Sister`) with alternate fallback when needed.
 - `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
 - `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
+- PlayerState loadout convenience API: `UpdateLoadoutWithTag(FGameplayTag)` is server-authoritative (client calls route through `ServerUpdateLoadoutWithTag`) and still commits via `SetLoadoutTags(...)` so replication/save-dirty side effects remain intact.
+- PlayerState loadout removal API: `RemoveTagFromLoadout(FGameplayTag)` is server-authoritative (client calls route through `ServerRemoveTagFromLoadout`) and commits through `SetLoadoutTags(...)` so normalization/replication/save-dirty side effects remain intact.
+- PlayerState loadout query API: `GetTagsInLoadoutSlot(FGameplayTag SlotTag)` returns current loadout tags in that slot subtree (descendants of `SlotTag`, excluding the slot root itself).
+- Loadout slot policy is project-settings-driven via `UARLoadoutSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Loadout`):
+- `MultiSlotLoadoutRoots` is an explicit allowlist of slot roots that can keep multiple tags.
+- Any loadout root not in `MultiSlotLoadoutRoots` is treated as single-slot by default.
+- `DefaultStartingUnlocks` is automatically kept consistent with `DefaultPlayerLoadoutTags` (missing loadout tags are auto-added in settings edit flow), and runtime uses `GetEffectiveDefaultStartingUnlocks()` as a safety net.
+- Loadout slot normalization is enforced inside `SetLoadoutTags_Internal(...)` on server: single-slot roots are canonicalized to one descendant tag per root (last tag wins) whenever loadout is updated.
 - `AARPlayerStateBase::InitializeForFirstSessionJoin()` (authority-only) is the first-join default initializer (non-seamless-travel path): resets `CharacterPicked` to `None` and ensures default loadout tags are present.
 - `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
 - `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
 - PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
-- Server applies a default debug-safe loadout when `LoadoutTags` is empty (`Unlock.Ship.Sammy`, `Unlock.Gadget.Vac`, `Unlock.Secondary.Mine`) during `BeginPlay` and after server struct-state apply.
+- Server applies default loadout tags from project settings (`UARLoadoutSettings::DefaultPlayerLoadoutTags`) when `LoadoutTags` is empty during join/setup and after server struct-state apply.
 - Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
@@ -76,6 +92,7 @@
 - Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
+- `AARShipCharacterBase` no longer auto-invokes legacy BP `_Init` from C++; ship initialization should come from explicit gameplay flow (for example possess/lifecycle/interface scripts) and C++ loadout/apply paths.
 - Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
 - PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
 - Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
@@ -133,22 +150,27 @@
 - `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
 - write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
 - load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
-- `UARSaveGame` preserves top-level save property names used by prior BP flow (`SeenDialogue`, `DialogueFlags`, `Unlocks`, `Choices`, `Money`, `Meat`, `Material`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`) to minimize hydration rewiring.
+- Current save schema is `v2`; minimum supported is also `v2` after removal of embedded GameState/PlayerState instanced-struct payloads from disk saves.
+- `UARSaveGame` persists only disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
-- `GetGameStateDataInstancedStruct()`
-- `GetPlayerStateDataInstancedStructByIndex(int32)`
 - `FindPlayerStateDataBySlot(...)`
 - `FindPlayerStateDataByIdentity(...)`
 - Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString`, with legacy id/display name fields).
 - Save player payload now stores native `CharacterPicked` enum (`EARCharacterChoice`) in `FARPlayerStateSaveData` (not string/name reflection).
+- Player save payload is explicit-only (no embedded player `FInstancedStruct` blob): `Identity`, `CharacterPicked`, and `LoadoutTags` are the canonical persisted player fields.
 - Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
-- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) using thematic word pools plus a numeric ticket; when uniqueness is requested, candidates are checked against existing index entries before selection.
+- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) and now prefers short thematic `Adj_Noun` names; uniqueness checks run against both canonical/debug save indexes (logical names) with physical revision-0 existence fallback, and only after repeated collisions does it append a numeric suffix before final GUID fallback.
 - Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
 - Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- Default unlock baseline is project-settings driven via `UARLoadoutSettings::DefaultStartingUnlocks`:
+- when runtime save gather produces empty unlocks, save payload is seeded from settings
+- when game-state hydration has no current save, `AARGameStateBase` unlocks are seeded from settings
+- when loading a save with empty unlocks, runtime apply path falls back to settings defaults
 - GameState hydration precedence:
 - `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
-- When pending travel data exists, it now applies the current save's GameState struct first as a baseline, then overlays travel data to avoid zeroing unrelated fields. If no pending travel exists, hydration falls back to `CurrentSaveGame` game-state struct.
+- Persisted GameState-facing fields (`Money`, `Unlocks`, `Scrap`, `Cycles`) are restored from `CurrentSaveGame` onto runtime GameState on authority hydration.
+- When pending travel data exists, it overlays the restored persisted fields via `PendingTravelGameStateData` (in-memory only) and is consumed/reset after first application.
 - `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
 - Cycles progression is now save-owned (not GameState-owned). `GatherRuntimeData` copies cycles from the current save, not from GameState. Authority helper `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` lives on `UARSaveSubsystem` for run-complete increments and optional immediate persistence.
 - Travel/save flow is now C++-owned in `UARSaveSubsystem`:
@@ -173,14 +195,19 @@
 - server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
 - target client persists snapshot via `ClientPersistCanonicalSave(...)` -> `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
 - if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
+- Player-controller session leave API is native on `AARPlayerController`:
+- `LeaveSession()` is BP-callable (`Alien Ramen|Session`) and routes client calls to `ServerLeaveSession()`
+- server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
+- Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` (save + `OpenLevel`) instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
 - Save listing supports parallel namespaces:
-- `ListSaves(...)` reads/writes the canonical save index slot (`SaveIndex`).
-- `ListDebugSaves(...)` reads/writes a separate debug index slot (`SaveIndexDebug`) so debug-save slot discovery is isolated from canonical runtime saves.
+- Unified save API now uses explicit debug toggle on core ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `ListSaves`, `DeleteSave`) via `bUseDebugSaves`.
+- `bUseDebugSaves=true` appends/uses `"_debug"` slot-base naming and routes index IO to debug index slot (`SaveIndexDebug`); `false` routes to canonical index slot (`SaveIndex`).
 - Multiplayer persistence parity seam added:
 - server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
 - clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
 - C++ debug save tooling class resolution now targets native save classes (`UARSaveGame`/`UARSaveIndexGame`) rather than BP class-path loading.
+- Save/debug editor details categories for save structs/properties use `Save...` paths (not `Alien Ramen|Save...`) to avoid an extra wrapper category level in the details UI.
 
 ## GameMode/GameState Player Lifecycle
 
@@ -195,11 +222,30 @@
 - marks setup complete
 - then emits BP extension hook `BP_OnPlayerJoined`
 - `AARGameModeBase::Logout` emits `BP_OnPlayerLeft`; player membership itself is maintained by built-in `PlayerArray` lifecycle.
-- `AARGameStateBase` player tracking mirrors `PlayerArray` into replicated `Players`; `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` and on repnotify.
+- `AARGameStateBase` player tracking uses built-in `AGameStateBase::PlayerArray` as the authoritative source (no parallel replicated custom `Players` array and no tracked-player wrapper arrays).
+- `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` when `AARPlayerStateBase` entries are added/removed.
+- GameState ready signaling is centralized on `AARGameStateBase`:
+- `OnPlayerReadyChanged` relays each player's `OnReadyStatusChanged` (server + clients via replicated PlayerState ready updates).
+- `bAllPlayersTravelReady` is server-authoritative replicated aggregate state; `OnAllPlayersTravelReadyChanged` fires on server updates and client repnotify.
+- aggregate all-ready recompute runs on authoritative player add/remove and on player ready/slot/character change events.
 - GameState UI hooks: replicated `CyclesForUI` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
+- Save-facing GameState fields are now native replicated on `AARGameStateBase` with change signals:
+- `Unlocks` (`FGameplayTagContainer`, `ReplicatedUsing=OnRep_Unlocks`) -> `OnUnlocksChanged`
+- `Money` (`int32`, `ReplicatedUsing=OnRep_Money`) -> `OnMoneyChanged`
+- `Scrap` (`int32`, `ReplicatedUsing=OnRep_Scrap`) -> `OnScrapChanged`
+- `CyclesForUI` (`int32`, `ReplicatedUsing=OnRep_CyclesForUI`) -> `OnCyclesChanged`
+- SaveSubsystem save/hydration path now reads/writes these fields via native GameState accessors/setters (`GetUnlocks/GetMoney/GetScrap`, `SetUnlocksFromSave/SetMoneyFromSave/SetScrapFromSave`) instead of reflection-name field scans.
+- Unlock mutation API is authority-owned on `AARGameStateBase`:
+- `AddUnlockTag(FGameplayTag)` / `RemoveUnlockTag(FGameplayTag)` / `HasUnlockTag(FGameplayTag)` plus bulk setter `SetUnlocksFromSave(...)`.
+- UI/client entrypoint is `AARPlayerController` RPC wrappers (`RequestAddUnlock`, `RequestRemoveUnlock`) which route through `ServerRequestAddUnlock/ServerRequestRemoveUnlock` to mutate authoritative GameState.
 - PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
 - GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness, save, and travel; logs blocking players and delegates travel to SaveSubsystem (listen enforced).
+- Player-controller travel API is native on `AARPlayerController`:
+- `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` is BP-callable (`Alien Ramen|Travel`) and routes client calls to `ServerTryStartTravel(...)`.
+- Server controller travel handling forwards to authoritative `AARGameModeBase::TryStartTravel(...)`.
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
+- `GetPlayerStates()` (returns filtered `AARPlayerStateBase` array from `PlayerArray` for BP iteration)
+- `AreAllPlayersTravelReady()` (true only when at least one AR player exists and every AR player passes `IsTravelReady()`)
 - `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from `PlayerArray` player slots)
 - `GetOtherPlayerStateFromPlayerState(...)`
 - `GetOtherPlayerStateFromController(...)`
@@ -238,7 +284,7 @@
 - Director runtime no longer requires/loading the enemy DataTable to start runs; enemy definitions are resolved through `ContentLookupSubsystem` (registry asset) and cached per identifier tag. Enemy class preloading still uses the resolved definition.
 - Director keeps an enemy definition cache keyed by identifier tag and preloads likely enemy classes ahead of time (`EnemyPreloadWaveLookahead`).
 - Disabled enemy rows are hard-rejected from runtime spawn.
-- Player-down loss condition contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false loss on startup/load transitions.
+- Player-down evaluation contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false positives on startup/load transitions.
 - Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
 - Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
 - default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once it has remained offscreen for `OffscreenReleaseDelay` seconds.
@@ -269,6 +315,7 @@
 - Enemy AI emits one-shot enemy entry events for StateTree:
 - `Event.Enemy.EnteredScreen` fires first time enemy is inside entered-screen bounds.
 - `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
+- Enemy runtime also exposes a persistent StateTree/Blueprint-readable bool `AAREnemyBase::bHasEnteredScreen` (set/reset with entered-screen lifecycle) for condition-based transitions when event timing is not desired.
 - Added dedicated StateTree schema class `UARStateTreeAIComponentSchema` (`AR StateTree AI Schema`) for enemy AI authoring defaults:
 - defaults `AIControllerClass` to `AAREnemyAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
@@ -285,6 +332,7 @@
 - controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`) and defers one tick while `WaveInstanceId == INDEX_NONE`
 - StateTree start always defers at least one tick after a valid context to allow enemy definition/effects/tags to finish applying before logic runs.
 - Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
+- Enemy AI startup now hard-guards duplicate init per possession (`bStateTreeInitializedForPossession`): once initialized for a possession, repeated `TryStartStateTreeForCurrentPawn(...)`/`StartStateTreeForPawn(...)` calls are ignored until unpossess resets state.
 - Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
 - After StateTree startup, controller resends the pawn's current runtime context (`WavePhase`, entered-screen, in-formation) so dropped pre-start events do not leave StateTree out of sync (for example missing Berserk transition).
 - Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetWaveRuntimeContext(...)` and remain readable from actor context in StateTree.
@@ -301,7 +349,21 @@
 - Leak detection ownership:
 - leak detection/reporting is enemy-owned (BP/C++ enemy logic decides leak timing and calls director report API)
 - Blueprint/manual trigger path should call `UARInvaderDirectorSubsystem::ReportEnemyLeaked(Enemy)` directly (for example from Earth trigger overlap).
-- Director no longer performs boundary leak polling/destruction; it owns aggregate leak progression/loss rules and increments run `LeakCount` only via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
+- Director no longer performs boundary leak polling/destruction; it increments run `LeakCount` only via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
+- Director is now observer/reporter for run-loss signals, not arbiter:
+- it does **not** auto-stop the run for leak count or all-players-down
+- it broadcasts `OnEnemyLeaked(NewLeakCount, Delta)` and `OnAllPlayersDownChanged(bAllPlayersDown)` for external arbitration (for example GameMode deciding game-over and calling `StopInvaderRun`)
+- leak-threshold ownership was removed from `UARInvaderDirectorSettings`; threshold policy now belongs to game-mode/rules logic
+- Director now tracks player status snapshots (evaluated/downed/dead) and emits change-only signals:
+- `OnPlayerDownedChanged(PlayerState, bIsDowned)`
+- `OnPlayerDeadChanged(PlayerState, bIsDead)`
+- `OnAllPlayersDownChanged(bAllPlayersDown)`
+- `OnAllPlayersDeadChanged(bAllPlayersDead)`
+- Query helpers exposed on director for gameplay logic/targeting:
+- `IsPlayerDowned(PlayerState)`, `IsPlayerDead(PlayerState)`
+- `GetEvaluatedPlayerCount()`, `GetDownedPlayerCount()`, `GetDeadPlayerCount()`
+- `AreAllPlayersDowned()`, `AreAllPlayersDead()`
+- Director player-status updates are event-driven (not tick-driven): it rebuilds/binds on run start and tracked-player changes, subscribes to PlayerState runtime-state signals (`OnDownedStateChanged`, `OnDeadStateChanged`) plus health/max-health signals for initialization edge cases, and emits director change signals/query-cache updates only when values change.
 - Enemy runtime exposes entry-completion hook:
 - `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
 - `AAREnemyBase::HasReachedFormationSlot()`
@@ -341,6 +403,7 @@
 - `AAREnemyAIController::BP_OnPawnSignal(...)` (optional BP hook)
 - Enemy AI now uses `UARStateTreeAIComponent` (subclass of `UStateTreeAIComponent`) which computes active StateTree state-tag set and emits tag deltas.
 - `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
+- `UARStateTreeAIComponent` preserves previous active-tag snapshot when the tree is running but read-only execution context is transiently unreadable; this avoids false empty-tag remove/add churn in the ASC mirror bridge.
 - Active-path semantics apply: if both parent and child states are active and tagged, both tags are present on ASC.
 - Avoid double-wiring: if using this automatic bridge, do not also push/pop the same tags manually in StateTree tasks.
 - Automation coverage exists for the mirror bridge in `Source/AlienRamen/Private/Tests/AREnemyAIStateTagBridgeTest.cpp` (`AlienRamen.AI.StateTree.ASCStateTagBridge`), validating add/dedupe/remove behavior from StateTree active-tag deltas to enemy ASC loose tags.
@@ -375,11 +438,25 @@
 ## Debug Save Tool (Current)
 
 - Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
-- Requires an active world/GameInstance (run PIE or a Play session); otherwise the tab reports that a subsystem is unavailable.
-- Slot listing/creation/loading/deletion uses `UARSaveSubsystem::ListSaves/CreateNewSave/LoadGame/DeleteSave` and filters slots ending with `"_debug"`.
-- New debug slot bases auto-append `"_debug"`; random names use `GenerateRandomSlotBaseName` when empty.
+- Tool supports editor-offline mode (no PIE required) for slot listing/creation/loading/saving/deletion by directly reading/writing `UARSaveGame` + `UARSaveIndexGame` slots; when PIE world/subsystem is available it uses `UARSaveSubsystem`.
+- Tool now has namespace toggle (`Use Debug Namespace`) and drives unified save APIs with `bUseDebugSaves`.
+- Slot create/load/save/delete/list all use the same core functions (`CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave/ListSaves`) with namespace selected by toggle.
+- Tool includes slot maintenance actions: `Duplicate Selected` and `Rename Selected` (target base from textbox), implemented in editor tooling by index/file copy+rewrite for the active namespace.
+- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Rename`, `Duplicate`; loaded-save actions live on the right/details side.
+- Left-panel actions are presented in a uniform adaptive wrap/grid layout that flows into multiple columns based on panel width.
+- Loaded-save utility row includes `Save`, `Set Default Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; defaults come from project settings (`UARLoadoutSettings::DefaultStartingUnlocks` and `UARLoadoutSettings::DefaultPlayerLoadoutTags`) and are applied to the loaded save object.
+- Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
+- Save-slot list context menu also includes `Heal Missing` to remove stale index entries when no physical revision files remain.
+- Debug save tool supports `Ctrl+S` keyboard shortcut to run `Save` on the currently loaded slot from the panel.
+- Save-slot list supports double-click to load a slot; if a different slot is already loaded, current loaded save is auto-saved before switching.
+- Failed load/delete against stale index entries in the editor tool can self-heal by pruning stale slot entries (active namespace first, then exact/other-namespace fallback); when auto-heal cannot resolve load failures and no revisions exist on disk, the tool prompts to remove the stale index entry.
+- Slot list selection mode is multi-select for delete operations; non-delete actions (`Load`, `Rename`, `Duplicate`) collapse to the first selected slot.
+- Delete action prompts `Delete?` confirmation and supports deleting all selected slots in one operation.
+- Revert uses an in-memory snapshot captured when a slot is loaded/created to restore the loaded save object to its last loaded state.
+- In Debug mode, subsystem appends/uses `"_debug"` slot bases and debug index automatically.
 - Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
-- Unlock-all action now writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager (no legacy library helper).
+- Unlock-all action writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager.
+- Right-side loaded object header is `Loaded Save` (no `Auto Property Editor` suffix).
 - Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
 
 ## Invader Authoring Editor Tool (Current)
