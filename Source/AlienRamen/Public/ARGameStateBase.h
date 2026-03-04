@@ -69,7 +69,7 @@ class ALIENRAMEN_API AARGameStateBase : public AGameStateBase, public IStructSer
 public:
 	AARGameStateBase();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
