@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "ARPlayerStateBase.h"
+#include "ARSaveTypes.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameStateBase.h"
 #include "StructSerializable.h"
@@ -48,6 +49,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	int32,
 	OldScrap);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnMeatChangedSignature,
+	FARMeatState,
+	NewMeat,
+	FARMeatState,
+	OldMeat);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnCyclesChangedSignature,
 	int32,
 	NewCycles,
@@ -83,9 +90,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetOtherPlayerStateFromPawn(const APawn* CurrentPlayerPawn) const;
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
-	AARPlayerStateBase* GetOtherPlayerStateFromContext(const UObject* CurrentPlayerContext) const;
-
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Players")
 	FAROnTrackedPlayersChangedSignature OnTrackedPlayersChanged;
 
@@ -108,9 +112,12 @@ public:
 	FAROnScrapChangedSignature OnScrapChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnMeatChangedSignature OnMeatChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnCyclesChangedSignature OnCyclesChanged;
 
-	// Non-persistent UI mirror of save-owned cycles; authority-only setter.
+	// Runtime mirror of save-owned cycles; authority-only setter.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SyncCyclesFromSave(int32 NewCycles);
 
@@ -124,7 +131,10 @@ public:
 	int32 GetScrap() const { return Scrap; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
-	int32 GetCyclesForUI() const { return CyclesForUI; }
+	const FARMeatState& GetMeat() const { return Meat; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	int32 GetCycles() const { return Cycles; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetUnlocksFromSave(const FGameplayTagContainer& NewUnlocks);
@@ -143,6 +153,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetScrapFromSave(int32 NewScrap);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetMeatFromSave(const FARMeatState& NewMeat);
 
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
@@ -172,7 +185,7 @@ protected:
 	void OnRep_AllPlayersTravelReady(bool bOldAllPlayersTravelReady);
 
 	UFUNCTION()
-	void OnRep_CyclesForUI(int32 OldCyclesForUI);
+	void OnRep_Cycles(int32 OldCycles);
 
 	UFUNCTION()
 	void OnRep_Unlocks(FGameplayTagContainer OldUnlocks);
@@ -182,6 +195,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_Scrap(int32 OldScrap);
+
+	UFUNCTION()
+	void OnRep_Meat(FARMeatState OldMeat);
 
 	void BindPlayerStateSignals(AARPlayerStateBase* PlayerState);
 	void UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState);
@@ -200,6 +216,9 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_Scrap, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 Scrap = 0;
 
-	UPROPERTY(ReplicatedUsing = OnRep_CyclesForUI, BlueprintReadOnly, Category = "Alien Ramen|Save")
-	int32 CyclesForUI = 0;
+	UPROPERTY(ReplicatedUsing = OnRep_Meat, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	FARMeatState Meat;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Cycles, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	int32 Cycles = 0;
 };
