@@ -41,6 +41,7 @@
 - Native mode-layer subclasses now exist for GameMode and PlayerController:
 - Canonical mode naming is now: `Invader`, `Scrapyard`, `Shop`, `Lobby`.
 - GameModes: `AARInvaderGameMode`, `AARScrapyardGameMode`, `AARShopGameMode`, `AARLobbyGameMode` (all inherit `AARGameModeBase`)
+- GameStates: `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, `AARLobbyGameState` (all inherit `AARGameStateBase`)
 - PlayerControllers: `AARInvaderPlayerController`, `AARScrapyardPlayerController`, `AARShopPlayerController`, `AARLobbyPlayerController` (all inherit `AARPlayerController`)
 - Native AI-controller hierarchy now includes:
 - `AARAIControllerBase` (shared signal base)
@@ -148,6 +149,12 @@
 - `AARPlayerStateBase`
 - `AARGameStateBase`
 - Implementers expose `ClassStateStruct` (`UScriptStruct*`) to declare persisted schema.
+- Mode-specific GameState persisted schemas are now native C++ structs in `Source/AlienRamen/Public/ARGameStateModeStructs.h`:
+- `FARInvaderGameStateData`
+- `FARScrapyardGameStateData`
+- `FARShopGameStateData`
+- `FARLobbyGameStateData`
+- `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, and `AARLobbyGameState` override `GetStateStruct_Implementation()` to hard-return their native struct type; this prevents stale Blueprint defaults (`ClassStateStruct`) from reintroducing deleted BP `ST_*GSData` dependencies.
 - Hydration is server-authoritative:
 - interface default blocks non-authority actor execution
 - PlayerState/GameState override forwards client calls via `ServerApplyStateFromStruct` RPC
