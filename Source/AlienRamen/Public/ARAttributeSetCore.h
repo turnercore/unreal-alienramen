@@ -254,23 +254,23 @@ public:
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpiceShareRatio)
 
 		// -----------------------
-		// Gadget system
+		// Hat system
 		// -----------------------
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_GadgetEnergy, Category = "AR|Gadget")
-	FGameplayAttributeData GadgetEnergy;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, GadgetEnergy)
+		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_HatEnergy, Category = "AR|Hat")
+	FGameplayAttributeData HatEnergy;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, HatEnergy)
 
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxGadgetEnergy, Category = "AR|Gadget")
-	FGameplayAttributeData MaxGadgetEnergy;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, MaxGadgetEnergy)
+		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHatEnergy, Category = "AR|Hat")
+	FGameplayAttributeData MaxHatEnergy;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, MaxHatEnergy)
 
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_GadgetEnergyRegenRate, Category = "AR|Gadget")
-	FGameplayAttributeData GadgetEnergyRegenRate;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, GadgetEnergyRegenRate)
+		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_HatEnergyRegenRate, Category = "AR|Hat")
+	FGameplayAttributeData HatEnergyRegenRate;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, HatEnergyRegenRate)
 
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_GadgetPower, Category = "AR|Gadget")
-	FGameplayAttributeData GadgetPower;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, GadgetPower)
+		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_HatPower, Category = "AR|Hat")
+	FGameplayAttributeData HatPower;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, HatPower)
 
 		// -----------------------
 		// Co-op / Interaction
@@ -342,10 +342,10 @@ protected:
 	UFUNCTION() void OnRep_SpiceDrainRate(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_SpiceShareRatio(const FGameplayAttributeData& OldValue);
 
-	UFUNCTION() void OnRep_GadgetEnergy(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_MaxGadgetEnergy(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_GadgetEnergyRegenRate(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_GadgetPower(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_HatEnergy(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_MaxHatEnergy(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_HatEnergyRegenRate(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_HatPower(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION() void OnRep_ReviveSpeed(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_PickupRadius(const FGameplayAttributeData& OldValue);

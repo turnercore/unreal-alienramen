@@ -1,4 +1,4 @@
-// ARShipCharacterBase.h
+// ARPlayerCharacterInvader.h
 
 #pragma once
 /**
@@ -14,7 +14,7 @@
 #include "StructUtils/InstancedStruct.h"
 #include "Templates/UnrealTemplate.h"
 
-#include "ARShipCharacterBase.generated.h"
+#include "ARPlayerCharacterInvader.generated.h"
 
 class UAbilitySystemComponent;
 class UGameplayAbility;
@@ -36,12 +36,12 @@ struct FOnAttributeChangeData;
  * - Exposes generic tag-based activation/cancel API for PlayerController / Blueprint.
  */
 UCLASS()
-class ALIENRAMEN_API AARShipCharacterBase : public AARPlayerCharacterBase
+class ALIENRAMEN_API AARPlayerCharacterInvader : public AARPlayerCharacterBase
 {
 	GENERATED_BODY()
 
 public:
-	AARShipCharacterBase();
+	AARPlayerCharacterInvader();
 
 	// IAbilitySystemInterface (forward to PlayerState ASC)
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -200,6 +200,4 @@ protected:
 	// Secondary lane remains optional/deprecated; never required for loadout initialization.
 	static FGameplayTag GetTagRootSecondaries();
 	static FGameplayTag GetTagRootHats();
-	// Legacy alias while code/content migrates terminology from Gadget -> Hat.
-	static FGameplayTag GetTagRootGadgets();
 };
