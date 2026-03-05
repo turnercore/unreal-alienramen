@@ -5,6 +5,7 @@
  */
 
 #include "CoreMinimal.h"
+#include "ARPlayerTypes.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "ARInvaderTypes.h"
 #include "ARInvaderDirectorSubsystem.generated.h"
