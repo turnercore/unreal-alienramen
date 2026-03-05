@@ -991,7 +991,7 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 		return;
 	}
 
-	// Travel-transient GameState data is authoritative for first hydration pass after travel.
+	// Travel-transient GameState data overlays persisted/default fields on first hydration pass after travel.
 	if (PendingTravelGameStateData.IsValid())
 	{
 		if (CurrentSaveGame)
@@ -1175,7 +1175,12 @@ FString UARSaveSubsystem::EnsureListenOption(const FString& InURLOrOptions)
 	return InURLOrOptions.IsEmpty() ? FString(TEXT("listen")) : InURLOrOptions + TEXT("?listen");
 }
 
-bool UARSaveSubsystem::RequestServerTravel(const FString& URL, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify)
+bool UARSaveSubsystem::RequestServerTravel(
+	const FString& URL,
+	bool bSkipReadyChecks,
+	bool bAbsolute,
+	bool bSkipGameNotify,
+	bool bPersistSaveBeforeTravel)
 {
 	FString Error;
 	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
@@ -1192,18 +1197,29 @@ bool UARSaveSubsystem::RequestServerTravel(const FString& URL, bool bSkipReadyCh
 
 	CaptureGameStateForTravel(World);
 
-	FARSaveResult SaveResult;
-	if (!SaveCurrentGame(NAME_None, true, SaveResult))
+	if (bPersistSaveBeforeTravel)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] ServerTravel blocked: save failed: %s"), *SaveResult.Error);
-		return false;
+		FARSaveResult SaveResult;
+		if (!SaveCurrentGame(NAME_None, true, SaveResult))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] ServerTravel blocked: save failed: %s"), *SaveResult.Error);
+			return false;
+		}
+
+		// Persisted save supersedes travel-transient overlay.
+		ClearPendingTravelGameStateData();
 	}
 
 	const FString TravelURL = EnsureListenOption(URL);
 	return World->ServerTravel(TravelURL, bAbsolute, bSkipGameNotify);
 }
 
-bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, const FString& Options, bool bSkipReadyChecks, bool bAbsolute)
+bool UARSaveSubsystem::RequestOpenLevel(
+	const FString& LevelName,
+	const FString& Options,
+	bool bSkipReadyChecks,
+	bool bAbsolute,
+	bool bPersistSaveBeforeTravel)
 {
 	FString Error;
 	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
@@ -1220,11 +1236,17 @@ bool UARSaveSubsystem::RequestOpenLevel(const FString& LevelName, const FString&
 
 	CaptureGameStateForTravel(World);
 
-	FARSaveResult SaveResult;
-	if (!SaveCurrentGame(NAME_None, true, SaveResult))
+	if (bPersistSaveBeforeTravel)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] OpenLevel blocked: save failed: %s"), *SaveResult.Error);
-		return false;
+		FARSaveResult SaveResult;
+		if (!SaveCurrentGame(NAME_None, true, SaveResult))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] OpenLevel blocked: save failed: %s"), *SaveResult.Error);
+			return false;
+		}
+
+		// Persisted save supersedes travel-transient overlay.
+		ClearPendingTravelGameStateData();
 	}
 
 	const FString ListenOptions = EnsureListenOption(Options);

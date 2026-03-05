@@ -179,6 +179,30 @@ void AARGameModeBase::Logout(AController* Exiting)
 	Super::Logout(Exiting);
 }
 
+void AARGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (HasAuthority() && EndPlayReason == EEndPlayReason::Quit && bAutosaveOnQuit)
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr)
+		{
+			FARSaveResult SaveResult;
+			const bool bSaved = SaveSubsystem->RequestAutosaveIfDirty(true, SaveResult);
+			if (bSaved)
+			{
+				UE_LOG(ARLog, Log, TEXT("[GameMode] Autosave-on-quit succeeded for '%s' (Slot=%s Rev=%d)."),
+					*GetNameSafe(this), *SaveResult.SlotName.ToString(), SaveResult.SlotNumber);
+			}
+			else if (!SaveResult.Error.IsEmpty())
+			{
+				UE_LOG(ARLog, Warning, TEXT("[GameMode] Autosave-on-quit failed for '%s': %s"),
+					*GetNameSafe(this), *SaveResult.Error);
+			}
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
 {
 	if (!HasAuthority())
@@ -242,12 +266,19 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		}
 
 		UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel PIE fallback -> OpenLevel Level='%s' Options='%s'"), *LevelName, *OpenLevelOptions);
-		return SaveSubsystem->RequestOpenLevel(LevelName, OpenLevelOptions, bSkipReadyChecks, bAbsolute);
+		return SaveSubsystem->RequestOpenLevel(LevelName, OpenLevelOptions, bSkipReadyChecks, bAbsolute, bSaveOnModeExit);
 	}
 #endif
 
-	UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel -> URL='%s' Options='%s' SkipReady=%s"), *URL, *Options, bSkipReadyChecks ? TEXT("true") : TEXT("false"));
-	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[GameMode] TryStartTravel -> URL='%s' Options='%s' SkipReady=%s SaveOnExit=%s"),
+		*URL,
+		*Options,
+		bSkipReadyChecks ? TEXT("true") : TEXT("false"),
+		bSaveOnModeExit ? TEXT("true") : TEXT("false"));
+	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bSaveOnModeExit);
 }
 
 void AARGameModeBase::BP_OnPlayerJoined_Implementation(AARPlayerStateBase* JoinedPlayerState)

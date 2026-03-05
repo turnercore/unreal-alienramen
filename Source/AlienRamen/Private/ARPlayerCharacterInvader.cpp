@@ -1,6 +1,6 @@
-// ARShipCharacterBase.cpp
+// ARPlayerCharacterInvader.cpp
 
-#include "ARShipCharacterBase.h"
+#include "ARPlayerCharacterInvader.h"
 #include "ARLog.h"
 
 #include "ARPlayerStateBase.h"
@@ -30,43 +30,32 @@ static UARWeaponDefinition* ExtractWeaponDef(const UScriptStruct* StructType, co
 // Static names (row struct fields)
 // --------------------
 
-const FName AARShipCharacterBase::NAME_PrimaryWeapon(TEXT("PrimaryWeapon"));
-const FName AARShipCharacterBase::NAME_StartupAbilities(TEXT("StartupAbilities"));
-const FName AARShipCharacterBase::NAME_StartupEffects(TEXT("StartupEffects"));
-const FName AARShipCharacterBase::NAME_ShipTags(TEXT("ShipTags"));
-const FName AARShipCharacterBase::NAME_Stats(TEXT("Stats"));
-const FName AARShipCharacterBase::NAME_MovementType(TEXT("MovementType"));
-const FName AARShipCharacterBase::NAME_LoadoutTags(TEXT("LoadoutTags"));
+const FName AARPlayerCharacterInvader::NAME_PrimaryWeapon(TEXT("PrimaryWeapon"));
+const FName AARPlayerCharacterInvader::NAME_StartupAbilities(TEXT("StartupAbilities"));
+const FName AARPlayerCharacterInvader::NAME_StartupEffects(TEXT("StartupEffects"));
+const FName AARPlayerCharacterInvader::NAME_ShipTags(TEXT("ShipTags"));
+const FName AARPlayerCharacterInvader::NAME_Stats(TEXT("Stats"));
+const FName AARPlayerCharacterInvader::NAME_MovementType(TEXT("MovementType"));
+const FName AARPlayerCharacterInvader::NAME_LoadoutTags(TEXT("LoadoutTags"));
 static const FName NAME_LegacyASC(TEXT("ASC"));
 static const FName NAME_LegacyBasePrimaryFireRateEffect(TEXT("BasePrimaryFireRateEffect"));
 
-FGameplayTag AARShipCharacterBase::GetTagRootShips()
+FGameplayTag AARPlayerCharacterInvader::GetTagRootShips()
 {
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"));
 }
 
-FGameplayTag AARShipCharacterBase::GetTagRootSecondaries()
+FGameplayTag AARPlayerCharacterInvader::GetTagRootSecondaries()
 {
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"));
 }
 
-FGameplayTag AARShipCharacterBase::GetTagRootHats()
+FGameplayTag AARPlayerCharacterInvader::GetTagRootHats()
 {
-	FGameplayTag HatRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"), false);
-	if (!HatRoot.IsValid())
-	{
-		// Legacy fallback while gameplay tags migrate to Unlock.Hat.
-		HatRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget"), false);
-	}
-	return HatRoot;
+	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"));
 }
 
-FGameplayTag AARShipCharacterBase::GetTagRootGadgets()
-{
-	return GetTagRootHats();
-}
-
-AARShipCharacterBase::AARShipCharacterBase()
+AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 {
 	bReplicates = true;
 
@@ -78,7 +67,7 @@ AARShipCharacterBase::AARShipCharacterBase()
 	}
 }
 
-UAbilitySystemComponent* AARShipCharacterBase::GetAbilitySystemComponent() const
+UAbilitySystemComponent* AARPlayerCharacterInvader::GetAbilitySystemComponent() const
 {
 	if (CachedASC) return CachedASC;
 
@@ -86,7 +75,7 @@ UAbilitySystemComponent* AARShipCharacterBase::GetAbilitySystemComponent() const
 	return PS ? PS->GetAbilitySystemComponent() : nullptr;
 }
 
-const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() const
+const UARWeaponDefinition* AARPlayerCharacterInvader::GetPrimaryWeaponDefinition() const
 {
 	if (CurrentPrimaryWeapon)
 	{
@@ -123,14 +112,14 @@ const UARWeaponDefinition* AARShipCharacterBase::GetPrimaryWeaponDefinition() co
 	if (UARWeaponDefinition* ResolvedWeapon = ExtractWeaponDef(StructType, StructData, NAME_PrimaryWeapon))
 	{
 		// Cache for subsequent calls.
-		const_cast<AARShipCharacterBase*>(this)->CurrentPrimaryWeapon = ResolvedWeapon;
+		const_cast<AARPlayerCharacterInvader*>(this)->CurrentPrimaryWeapon = ResolvedWeapon;
 		return ResolvedWeapon;
 	}
 
 	return nullptr;
 }
 
-namespace ARShipCharacterBaseLocal
+namespace ARPlayerCharacterInvaderLocal
 {
 	static void AddRuntimeTags(UAbilitySystemComponent* ASC, const FGameplayTagContainer& Tags, bool bAuthority)
 	{
@@ -166,7 +155,7 @@ namespace ARShipCharacterBaseLocal
 		}
 	}
 
-	static void SyncLegacyASCProperty(AARShipCharacterBase* Ship, UAbilitySystemComponent* InASC)
+	static void SyncLegacyASCProperty(AARPlayerCharacterInvader* Ship, UAbilitySystemComponent* InASC)
 	{
 		if (!Ship)
 		{
@@ -184,7 +173,7 @@ namespace ARShipCharacterBaseLocal
 	}
 
 	static void SyncLegacyBasePrimaryFireRateHandle(
-		AARShipCharacterBase* Ship,
+		AARPlayerCharacterInvader* Ship,
 		const FActiveGameplayEffectHandle& InHandle)
 	{
 		if (!Ship)
@@ -221,7 +210,7 @@ namespace ARShipCharacterBaseLocal
 			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 		}
 
-		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
+		if (AARPlayerCharacterInvader* ShipTarget = Cast<AARPlayerCharacterInvader>(Target))
 		{
 			float IgnoredCurrentHealth = 0.f;
 			return ShipTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
@@ -231,7 +220,7 @@ namespace ARShipCharacterBaseLocal
 	}
 }
 
-bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth)
+bool AARPlayerCharacterInvader::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutCurrentHealth)
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	OutCurrentHealth = ASC ? ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute()) : 0.f;
@@ -266,13 +255,13 @@ bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender, flo
 	return true;
 }
 
-bool AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)
+bool AARPlayerCharacterInvader::ApplyDamageViaGAS(float Damage, AActor* Offender)
 {
 	float IgnoredCurrentHealth = 0.f;
 	return ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 }
 
-float AARShipCharacterBase::GetCurrentDamageFromGAS() const
+float AARPlayerCharacterInvader::GetCurrentDamageFromGAS() const
 {
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC)
@@ -283,7 +272,7 @@ float AARShipCharacterBase::GetCurrentDamageFromGAS() const
 	return ASC->GetNumericAttribute(UARAttributeSetCore::GetDamageAttribute());
 }
 
-bool AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride)
+bool AARPlayerCharacterInvader::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride)
 {
 	if (!HasAuthority())
 	{
@@ -291,7 +280,7 @@ bool AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float Damag
 	}
 
 	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentDamageFromGAS();
-	return ARShipCharacterBaseLocal::ApplyDamageToActorViaGAS_Local(Target, DamageToApply, this);
+	return ARPlayerCharacterInvaderLocal::ApplyDamageToActorViaGAS_Local(Target, DamageToApply, this);
 }
 
 // --------------------
@@ -299,7 +288,7 @@ bool AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float Damag
 // --------------------
 
 // Helper: Find a property by name prefix (handles Unreal's auto-generated suffixes like Stats_39_xxxx)
-FProperty* AARShipCharacterBase::FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix)
+FProperty* AARPlayerCharacterInvader::FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix)
 {
 	if (!StructType) return nullptr;
 
@@ -318,7 +307,7 @@ static TSubclassOf<UGameplayEffect> ExtractEffectClass(const UScriptStruct* Stru
 {
 	if (!StructType || !StructData) return nullptr;
 
-	FProperty* P = AARShipCharacterBase::FindPropertyByNamePrefix(StructType, PropName.ToString());
+	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, PropName.ToString());
 	if (!P) return nullptr;
 
 	if (const FClassProperty* ClassProp = CastField<FClassProperty>(P))
@@ -341,7 +330,7 @@ static UARWeaponDefinition* ExtractWeaponDef(const UScriptStruct* StructType, co
 {
 	if (!StructType || !StructData) return nullptr;
 
-	FProperty* P = AARShipCharacterBase::FindPropertyByNamePrefix(StructType, PropName.ToString());
+	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, PropName.ToString());
 	if (!P) return nullptr;
 
 	if (const FObjectProperty* ObjProp = CastField<FObjectProperty>(P))
@@ -370,7 +359,7 @@ static void GrantAbilityArrayFromStruct(
 {
 	if (!ASC || !StructType || !StructData) return;
 
-	FProperty* P = AARShipCharacterBase::FindPropertyByNamePrefix(StructType, ArrayPropName.ToString());
+	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, ArrayPropName.ToString());
 	FArrayProperty* ArrayProp = CastField<FArrayProperty>(P);
 	if (!ArrayProp) return;
 
@@ -414,7 +403,7 @@ static void ApplyEffectArrayFromStruct(
 {
 	if (!ASC || !StructType || !StructData) return;
 
-	FProperty* P = AARShipCharacterBase::FindPropertyByNamePrefix(StructType, ArrayPropName.ToString());
+	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, ArrayPropName.ToString());
 	FArrayProperty* ArrayProp = CastField<FArrayProperty>(P);
 	if (!ArrayProp) return;
 
@@ -457,7 +446,7 @@ static void AppendTagContainerFromStruct(const UScriptStruct* StructType, const 
 {
 	if (!StructType || !StructData) return;
 
-	FProperty* P = AARShipCharacterBase::FindPropertyByNamePrefix(StructType, PropName.ToString());
+	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, PropName.ToString());
 	FStructProperty* SP = CastField<FStructProperty>(P);
 	if (!SP) return;
 
@@ -480,7 +469,7 @@ static bool ExtractGameplayTagFromStruct(const UScriptStruct* StructType, const 
 
 	if (!StructType || !StructData) return false;
 
-	FProperty* P = AARShipCharacterBase::FindPropertyByNamePrefix(StructType, PropName.ToString());
+	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, PropName.ToString());
 	FStructProperty* SP = CastField<FStructProperty>(P);
 	if (!SP) return false;
 
@@ -546,7 +535,7 @@ static void GrantAbilitySet(
 // Possession / initialization
 // --------------------
 
-void AARShipCharacterBase::PossessedBy(AController* NewController)
+void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
@@ -582,20 +571,20 @@ void AARShipCharacterBase::PossessedBy(AController* NewController)
 	}
 }
 
-void AARShipCharacterBase::OnRep_PlayerState()
+void AARPlayerCharacterInvader::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	InitAbilityActorInfo();
 }
 
-void AARShipCharacterBase::InitAbilityActorInfo()
+void AARPlayerCharacterInvader::InitAbilityActorInfo()
 {
 	AARPlayerStateBase* PS = GetPlayerState<AARPlayerStateBase>();
 	if (!PS)
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
-		ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
+		ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, nullptr);
 		return;
 	}
 
@@ -604,7 +593,7 @@ void AARShipCharacterBase::InitAbilityActorInfo()
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
-		ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
+		ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, nullptr);
 		return;
 	}
 
@@ -619,12 +608,12 @@ void AARShipCharacterBase::InitAbilityActorInfo()
 	ASC->InitAbilityActorInfo(PS, this);
 	BindMoveSpeedChangeDelegate(ASC);
 	RefreshCharacterMovementSpeedFromAttributes();
-	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, ASC);
+	ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, ASC);
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 
 }
 
-void AARShipCharacterBase::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
+void AARPlayerCharacterInvader::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
 {
 	if (!HasAuthority())
 	{
@@ -658,10 +647,10 @@ void AARShipCharacterBase::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
 	}
 
 	BasePrimaryFireRateEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
-	ARShipCharacterBaseLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
+	ARPlayerCharacterInvaderLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
 }
 
-void AARShipCharacterBase::ClearPrimaryWeaponRuntimeEffects()
+void AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects()
 {
 	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
 	{
@@ -672,16 +661,16 @@ void AARShipCharacterBase::ClearPrimaryWeaponRuntimeEffects()
 	}
 
 	BasePrimaryFireRateEffectHandle.Invalidate();
-	ARShipCharacterBaseLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
+	ARPlayerCharacterInvaderLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
 }
 
-void AARShipCharacterBase::UnPossessed()
+void AARPlayerCharacterInvader::UnPossessed()
 {
 	Super::UnPossessed();
 	ClearPrimaryWeaponRuntimeEffects();
 	UnbindMoveSpeedChangeDelegate(CachedASC);
 	CachedASC = nullptr;
-	ARShipCharacterBaseLocal::SyncLegacyASCProperty(this, nullptr);
+	ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, nullptr);
 	bServerLoadoutApplied = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
@@ -695,7 +684,7 @@ void AARShipCharacterBase::UnPossessed()
 	}
 }
 
-void AARShipCharacterBase::BindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC)
+void AARPlayerCharacterInvader::BindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC)
 {
 	if (!ASC || MoveSpeedChangedDelegateHandle.IsValid())
 	{
@@ -703,10 +692,10 @@ void AARShipCharacterBase::BindMoveSpeedChangeDelegate(UAbilitySystemComponent* 
 	}
 
 	MoveSpeedChangedDelegateHandle = ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
-		.AddUObject(this, &AARShipCharacterBase::OnMoveSpeedChanged);
+		.AddUObject(this, &AARPlayerCharacterInvader::OnMoveSpeedChanged);
 }
 
-void AARShipCharacterBase::UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC)
+void AARPlayerCharacterInvader::UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC)
 {
 	if (!ASC || !MoveSpeedChangedDelegateHandle.IsValid())
 	{
@@ -719,13 +708,13 @@ void AARShipCharacterBase::UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent
 	MoveSpeedChangedDelegateHandle.Reset();
 }
 
-void AARShipCharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData)
+void AARPlayerCharacterInvader::OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData)
 {
 	(void)ChangeData;
 	RefreshCharacterMovementSpeedFromAttributes();
 }
 
-void AARShipCharacterBase::RefreshCharacterMovementSpeedFromAttributes()
+void AARPlayerCharacterInvader::RefreshCharacterMovementSpeedFromAttributes()
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC)
@@ -744,7 +733,7 @@ void AARShipCharacterBase::RefreshCharacterMovementSpeedFromAttributes()
 	MoveComp->MaxFlySpeed = MoveSpeed;
 }
 
-bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
+bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 {
 	if (!HasAuthority() || bServerLoadoutApplied)
 	{
@@ -817,27 +806,9 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 		}
 	}
 
-	// Hat (optional; supports legacy Gadget tags).
+	// Hat (optional).
 	FGameplayTag HatTag;
-	bool bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootHats(), HatTag);
-	if (!bFoundHatTag)
-	{
-		static const FGameplayTag LegacyHatRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"), false);
-		static const FGameplayTag LegacyGadgetRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Gadgets"), false);
-		static const FGameplayTag LegacyHatsRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Hats"), false);
-		if (LegacyHatRoot.IsValid())
-		{
-			bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, LegacyHatRoot, HatTag);
-		}
-		if (!bFoundHatTag && LegacyHatsRoot.IsValid())
-		{
-			bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, LegacyHatsRoot, HatTag);
-		}
-		if (!bFoundHatTag && LegacyGadgetRoot.IsValid())
-		{
-			bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, LegacyGadgetRoot, HatTag);
-		}
-	}
+	const bool bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootHats(), HatTag);
 	if (bFoundHatTag)
 	{
 		FInstancedStruct HatRow;
@@ -857,7 +828,7 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 	return true;
 }
 
-void AARShipCharacterBase::RetryServerLoadoutInit()
+void AARPlayerCharacterInvader::RetryServerLoadoutInit()
 {
 	if (!HasAuthority())
 	{
@@ -886,7 +857,7 @@ void AARShipCharacterBase::RetryServerLoadoutInit()
 	}
 }
 
-void AARShipCharacterBase::GrantCommonAbilitySetFromController(AController* NewController)
+void AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController* NewController)
 {
 	AARPlayerController* ARPC = Cast<AARPlayerController>(NewController);
 	if (!ARPC) return;
@@ -905,7 +876,7 @@ void AARShipCharacterBase::GrantCommonAbilitySetFromController(AController* NewC
 // Stats, StartupAbilities, StartupEffects, ShipTags, MovementType, PrimaryWeapon(optional)
 // --------------------
 
-void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct)
+void AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct)
 {
 	if (!HasAuthority()) return;
 
@@ -953,7 +924,7 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 
 		if (!LooseTags.IsEmpty())
 		{
-			ARShipCharacterBaseLocal::AddRuntimeTags(ASC, LooseTags, HasAuthority());
+			ARPlayerCharacterInvaderLocal::AddRuntimeTags(ASC, LooseTags, HasAuthority());
 			AppliedLooseTags.AppendTags(LooseTags);
 		}
 	}
@@ -965,7 +936,7 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 		{
 			FGameplayTagContainer MoveTags;
 			MoveTags.AddTag(MovementTag);
-			ARShipCharacterBaseLocal::AddRuntimeTags(ASC, MoveTags, HasAuthority());
+			ARPlayerCharacterInvaderLocal::AddRuntimeTags(ASC, MoveTags, HasAuthority());
 			AppliedLooseTags.AppendTags(MoveTags);
 		}
 	}
@@ -975,7 +946,7 @@ void AARShipCharacterBase::ApplyResolvedRowBaseline(const FInstancedStruct& RowS
 // Cleanup
 // --------------------
 
-void AARShipCharacterBase::ClearAppliedLoadout()
+void AARPlayerCharacterInvader::ClearAppliedLoadout()
 {
 	if (!HasAuthority()) return;
 
@@ -1002,7 +973,7 @@ void AARShipCharacterBase::ClearAppliedLoadout()
 
 	if (!AppliedLooseTags.IsEmpty())
 	{
-		ARShipCharacterBaseLocal::RemoveRuntimeTags(ASC, AppliedLooseTags, HasAuthority());
+		ARPlayerCharacterInvaderLocal::RemoveRuntimeTags(ASC, AppliedLooseTags, HasAuthority());
 		AppliedLooseTags.Reset();
 	}
 
@@ -1013,7 +984,7 @@ void AARShipCharacterBase::ClearAppliedLoadout()
 // PlayerState loadout tags
 // --------------------
 
-bool AARShipCharacterBase::GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadoutTags) const
+bool AARPlayerCharacterInvader::GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadoutTags) const
 {
 	OutLoadoutTags.Reset();
 
@@ -1045,7 +1016,7 @@ bool AARShipCharacterBase::GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadou
 	return true;
 }
 
-bool AARShipCharacterBase::FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& Root, FGameplayTag& OutTag) const
+bool AARPlayerCharacterInvader::FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& Root, FGameplayTag& OutTag) const
 {
 	OutTag = FGameplayTag();
 	if (!Root.IsValid()) return false;
@@ -1061,7 +1032,7 @@ bool AARShipCharacterBase::FindFirstTagUnderRoot(const FGameplayTagContainer& In
 	return false;
 }
 
-bool AARShipCharacterBase::ResolveRowFromTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) const
+bool AARPlayerCharacterInvader::ResolveRowFromTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) const
 {
 	OutRow.Reset();
 	OutError.Reset();
@@ -1087,7 +1058,7 @@ bool AARShipCharacterBase::ResolveRowFromTag(FGameplayTag Tag, FInstancedStruct&
 // Activation: pick ONE ability deterministically
 // --------------------
 
-bool AARShipCharacterBase::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, const FGameplayTagContainer& InTagsToMatch, int32& OutBestScore)
+bool AARPlayerCharacterInvader::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, const FGameplayTagContainer& InTagsToMatch, int32& OutBestScore)
 {
 	OutBestScore = 0;
 
@@ -1131,7 +1102,7 @@ bool AARShipCharacterBase::SpecMatchesAnyTag(const FGameplayAbilitySpec& Spec, c
 	return bAny;
 }
 
-bool AARShipCharacterBase::PickBestMatchingAbilityHandle(
+bool AARPlayerCharacterInvader::PickBestMatchingAbilityHandle(
 	UAbilitySystemComponent* ASC,
 	const FGameplayTagContainer& InTagsToMatch,
 	FGameplayAbilitySpecHandle& OutHandle
@@ -1181,7 +1152,7 @@ bool AARShipCharacterBase::PickBestMatchingAbilityHandle(
 	return OutHandle.IsValid();
 }
 
-bool AARShipCharacterBase::ActivateAbilityByTag(FGameplayTag Tag, bool bAllowRemoteActivation)
+bool AARPlayerCharacterInvader::ActivateAbilityByTag(FGameplayTag Tag, bool bAllowRemoteActivation)
 {
 	FGameplayTagContainer TagsToActivate;
 	if (Tag.IsValid())
@@ -1191,7 +1162,7 @@ bool AARShipCharacterBase::ActivateAbilityByTag(FGameplayTag Tag, bool bAllowRem
 	return ActivateAbilityByTags(TagsToActivate, bAllowRemoteActivation);
 }
 
-bool AARShipCharacterBase::ActivateAbilityByTags(const FGameplayTagContainer& InTagsToActivate, bool bAllowRemoteActivation)
+bool AARPlayerCharacterInvader::ActivateAbilityByTags(const FGameplayTagContainer& InTagsToActivate, bool bAllowRemoteActivation)
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) 
@@ -1215,7 +1186,7 @@ bool AARShipCharacterBase::ActivateAbilityByTags(const FGameplayTagContainer& In
 	return ASC->TryActivateAbility(Handle, bAllowRemoteActivation);
 }
 
-int32 AARShipCharacterBase::ActivateAllAbilitiesByTag(FGameplayTag Tag, bool bAllowRemoteActivation)
+int32 AARPlayerCharacterInvader::ActivateAllAbilitiesByTag(FGameplayTag Tag, bool bAllowRemoteActivation)
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) return 0;
@@ -1244,7 +1215,7 @@ int32 AARShipCharacterBase::ActivateAllAbilitiesByTag(FGameplayTag Tag, bool bAl
 	return ActivatedCount;
 }
 
-void AARShipCharacterBase::CancelAbilityByTag(FGameplayTag Tag)
+void AARPlayerCharacterInvader::CancelAbilityByTag(FGameplayTag Tag)
 {
 	FGameplayTagContainer TagsToCancel;
 	if (Tag.IsValid())
@@ -1254,7 +1225,7 @@ void AARShipCharacterBase::CancelAbilityByTag(FGameplayTag Tag)
 	CancelAbilityByTags(TagsToCancel);
 }
 
-void AARShipCharacterBase::CancelAbilityByTags(const FGameplayTagContainer& InTagsToCancel)
+void AARPlayerCharacterInvader::CancelAbilityByTags(const FGameplayTagContainer& InTagsToCancel)
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) return;
@@ -1266,7 +1237,7 @@ void AARShipCharacterBase::CancelAbilityByTags(const FGameplayTagContainer& InTa
 }
 
 // Debug helper: logs all properties on a struct
-void AARShipCharacterBase::LogAllPropertiesOnStruct(const UScriptStruct* StructType)
+void AARPlayerCharacterInvader::LogAllPropertiesOnStruct(const UScriptStruct* StructType)
 {
 	if (!StructType) return;
 
@@ -1281,7 +1252,7 @@ void AARShipCharacterBase::LogAllPropertiesOnStruct(const UScriptStruct* StructT
 	}
 }
 
-void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags)
+void AARPlayerCharacterInvader::ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags)
 {
 	if (!HasAuthority()) return;
 	if (InLoadoutTags.IsEmpty()) return;
@@ -1293,7 +1264,7 @@ void AARShipCharacterBase::ApplyLoadoutTagsToASC(const FGameplayTagContainer& In
 		return;
 	}
 
-	ARShipCharacterBaseLocal::AddRuntimeTags(ASC, InLoadoutTags, HasAuthority());
+	ARPlayerCharacterInvaderLocal::AddRuntimeTags(ASC, InLoadoutTags, HasAuthority());
 	AppliedLooseTags.AppendTags(InLoadoutTags);
 
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());

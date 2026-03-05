@@ -59,9 +59,9 @@
 - `AARScrapyardAIController` and `AARShopAIController` (mode scaffolds)
 - Native player-pawn hierarchy now includes:
 - `AARPlayerCharacterBase` (shared root)
-- `AARShipCharacterBase` (invader ship gameplay subclass)
-- `AARScrapyardCharacterBase` and `AARShopCharacterBase` (mode scaffolds)
-- Legacy wrappers remain temporarily for compatibility: `AARRamenShopGameMode`, `AARRamenShopPlayerController`, `AARRamenShopAIController`, `AARRamenShopCharacterBase` now inherit their `Shop` counterparts.
+- `AARPlayerCharacterInvader` (invader ship gameplay subclass)
+- `AARPlayerCharacterScrapyard` and `AARPlayerCharacterShop` (mode scaffolds)
+- Legacy `AARRamenShop*` C++ wrapper classes were removed; `Shop` is the canonical mode naming for code paths.
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
@@ -109,22 +109,30 @@
 - PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
 - Server applies default loadout tags from project settings (`UARLoadoutSettings::DefaultPlayerLoadoutTags`) when `LoadoutTags` is empty during join/setup and after server struct-state apply.
 - `AARPlayerCharacterBase` is the shared player pawn root (`IAbilitySystemInterface` default returns null).
-- Invader pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
+- Invader pawn (`AARPlayerCharacterInvader`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
 - Loadout naming convention migrated from `Gadget` to `Hat`:
 - preferred tags/root naming is `Unlock.Hat` / `Unlocks.Hats`
-- ship loadout apply still accepts legacy gadget tags (`Unlock.Gadget`, `Unlocks.Gadgets`) as fallback while content migrates
+- ship loadout apply now resolves hats strictly from `Unlock.Hat` (legacy gadget root acceptance removed from runtime loadout lookup)
+- gameplay-tag redirects in config preserve compatibility for legacy gadget tag assets/data
+- gameplay ability/input/state tag naming also migrated to hat:
+- `Ability.Hat.Activate.*`
+- `Input.Ability.HatActivate`
+- `State.UsingHat`
 - Secondary lane is currently deprecated: secondary rows can still be present/applied when tagged, but loadout initialization/readiness must never require secondary selection.
+- `UARAttributeSetCore` gadget resources were renamed to hat resources:
+- `HatEnergy`, `MaxHatEnergy`, `HatEnergyRegenRate`, `HatPower`
+- replication notify functions and replication registration were renamed accordingly, and `CoreRedirects` property redirects map old gadget attribute names to the new hat names for asset compatibility.
 - Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
-- Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
-- `AARShipCharacterBase` no longer auto-invokes legacy BP `_Init` from C++; ship initialization should come from explicit gameplay flow (for example possess/lifecycle/interface scripts) and C++ loadout/apply paths.
+- Ship runtime weapon tuning setup is C++-owned in `AARPlayerCharacterInvader` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
+- `AARPlayerCharacterInvader` no longer auto-invokes legacy BP `_Init` from C++; ship initialization should come from explicit gameplay flow (for example possess/lifecycle/interface scripts) and C++ loadout/apply paths.
 - Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
 - PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
 - Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
-- Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARShipCharacterBase` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
+- Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARPlayerCharacterInvader` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
 - tie-break by ability level then stable order
@@ -203,16 +211,17 @@
 - when game-state hydration has no current save, `AARGameStateBase` unlocks are seeded from settings
 - when loading a save with empty unlocks, runtime apply path falls back to settings defaults
 - GameState hydration precedence:
-- `UARSaveSubsystem::RequestGameStateHydration` consumes one-shot `PendingTravelGameStateData` first when available.
-- Persisted GameState-facing fields (`Money`, `Unlocks`, `Scrap`, `Cycles`) are restored from `CurrentSaveGame` onto runtime GameState on authority hydration.
-- When pending travel data exists, it overlays the restored persisted fields via `PendingTravelGameStateData` (in-memory only) and is consumed/reset after first application.
+- Runtime GameState starts from class/default values first, then hydration applies persisted state.
+- Persisted GameState-facing fields (`Money`, `Unlocks`, `Scrap`, `Meat`, `Cycles`) are restored from `CurrentSaveGame` onto runtime GameState on authority hydration when a current save exists.
+- When one-shot `PendingTravelGameStateData` exists, it overlays the restored persisted fields (or defaults when no save exists), then is consumed/reset after first application.
 - `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
 - Cycles progression is now save-owned (not GameState-owned). `GatherRuntimeData` copies cycles from the current save, not from GameState. Authority helper `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` lives on `UARSaveSubsystem` for run-complete increments and optional immediate persistence.
 - Travel/save flow is now C++-owned in `UARSaveSubsystem`:
-    - Authority-only `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` and `RequestOpenLevel(LevelName, bSkipReadyChecks, bAbsolute)` are callable from Blueprints.
+    - Authority-only `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bPersistSaveBeforeTravel)` and `RequestOpenLevel(LevelName, Options, bSkipReadyChecks, bAbsolute, bPersistSaveBeforeTravel)` are callable from Blueprints.
     - Optional readiness gate (default on) requires every `AARPlayerStateBase` to have a non-`Unknown` `PlayerSlot`, a non-`None` `CharacterPicked`, and `bIsReady=true`. Use `bSkipReadyChecks` for menus/debug.
-    - Before travel, subsystem captures `AARGameStateBase` into `PendingTravelGameStateData` (via `IStructSerializable::ExtractStateToStruct`) so it hydrates first on the next map.
-    - Travel always saves via `SaveCurrentGame(..., bCreateNewRevision=true)`; if no slot exists it will auto-create one.
+    - Before travel, subsystem captures `AARGameStateBase` into `PendingTravelGameStateData` (via `IStructSerializable::ExtractStateToStruct`).
+    - If `bPersistSaveBeforeTravel=true`, travel writes disk save via `SaveCurrentGame(..., bCreateNewRevision=true)` and then clears pending-travel overlay because persisted data is authoritative.
+    - If `bPersistSaveBeforeTravel=false`, no disk save is performed and pending-travel overlay carries runtime state into the next mode.
     - Travel/open enforce listen hosting by auto-appending `?listen` to URLs/options; both paths require authority (server/standalone) and log a warning instead of traveling on failure.
 - Save conveniences:
     - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (authority) updates the canonical progression counter; cycles are save-owned.
@@ -234,7 +243,7 @@
 - `LeaveSession()` is BP-callable (`Alien Ramen|Session`) and routes client calls to `ServerLeaveSession()`
 - server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
-- Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` (save + `OpenLevel`) instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
+- Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
 - Save listing supports parallel namespaces:
 - Unified save API now uses explicit debug toggle on core ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `ListSaves`, `DeleteSave`) via `bUseDebugSaves`.
 - `bUseDebugSaves=true` appends/uses `"_debug"` slot-base naming and routes index IO to debug index slot (`SaveIndexDebug`); `false` routes to canonical index slot (`SaveIndex`).
@@ -275,10 +284,17 @@
 - `AddUnlockTag(FGameplayTag)` / `RemoveUnlockTag(FGameplayTag)` / `HasUnlockTag(FGameplayTag)` plus bulk setter `SetUnlocksFromSave(...)`.
 - UI/client entrypoint is `AARPlayerController` RPC wrappers (`RequestAddUnlock`, `RequestRemoveUnlock`) which route through `ServerRequestAddUnlock/ServerRequestRemoveUnlock` to mutate authoritative GameState.
 - PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
-- GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness, save, and travel; logs blocking players and delegates travel to SaveSubsystem (listen enforced).
+- `AARGameModeBase` travel/save policy flags:
+- `bSaveOnModeExit` controls whether `TryStartTravel` persists disk save before travel.
+- `bAutosaveOnQuit` controls authority autosave-if-dirty on `EndPlay` when end reason is `Quit`.
+- Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` (carry via pending travel state without forced disk save), `AARInvaderGameMode` sets `bAutosaveOnQuit=false` (no quit autosave by default for invader runs).
+- GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness and travel plus optional save (via `bSaveOnModeExit`), logs blocking players, and delegates travel to SaveSubsystem (listen enforced).
 - Player-controller travel API is native on `AARPlayerController`:
 - `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` is BP-callable (`Alien Ramen|Travel`) and routes client calls to `ServerTryStartTravel(...)`.
 - Server controller travel handling forwards to authoritative `AARGameModeBase::TryStartTravel(...)`.
+- Player-controller cursor init seam is native on `AARPlayerController`:
+- local-only `InitializeCustomCursor()` is BP-callable (`Alien Ramen|UI|Cursor`) and auto-runs from `BeginPlay`.
+- cursor init is gated by `bEnableCustomCursorInit` and uses `CursorDefaultWidgetClass` to create/store `Cursor`, then applies it to `EMouseCursor::Default` via `SetMouseCursorWidget`.
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
 - `GetPlayerStates()` (returns filtered `AARPlayerStateBase` array from `PlayerArray` for BP iteration)
 - `AreAllPlayersTravelReady()` (true only when at least one AR player exists and every AR player passes `IsTravelReady()`)
@@ -444,13 +460,13 @@
 - Automation coverage exists for the mirror bridge in `Source/AlienRamen/Private/Tests/AREnemyAIStateTagBridgeTest.cpp` (`AlienRamen.AI.StateTree.ASCStateTagBridge`), validating add/dedupe/remove behavior from StateTree active-tag deltas to enemy ASC loose tags.
 - Damage helper APIs exposed for BP/gameplay wiring:
 - `AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
-- `AARShipCharacterBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
+- `AARPlayerCharacterInvader::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
 - `AAREnemyBase::GetCurrentDamageFromGAS()`
 - `AAREnemyBase::GetCurrentCollisionDamageFromGAS()`
-- `AARShipCharacterBase::GetCurrentDamageFromGAS()`
+- `AARPlayerCharacterInvader::GetCurrentDamageFromGAS()`
 - `AAREnemyBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
 - `AAREnemyBase::ApplyCollisionDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current CollisionDamage)
-- `AARShipCharacterBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
+- `AARPlayerCharacterInvader::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
 - Both `GetCurrentDamageFromGAS` helpers read `UARAttributeSetCore::Damage` from ASC so callers can pass attacker-authored damage into the corresponding `ApplyDamageViaGAS`.
 - GameState replicated leak read model:
 - `UARInvaderRuntimeStateComponent::LeakCount` is replicated with RepNotify.
