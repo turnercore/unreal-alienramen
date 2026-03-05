@@ -10,6 +10,7 @@
 #include "ARPlayerController.generated.h"
 
 class UARAbilitySet;
+class UUserWidget;
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
@@ -65,8 +66,24 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestRemoveUnlock(const FGameplayTag& UnlockTag);
 
+	// Initializes a custom default cursor widget on local controllers only.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
+	void InitializeCustomCursor();
+
 protected:
 	virtual void BeginPlay() override;
+
+	// Enables local-only custom cursor initialization from BeginPlay.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
+	bool bEnableCustomCursorInit = false;
+
+	// Widget class to create and assign as the default mouse cursor when enabled.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor", meta = (EditCondition = "bEnableCustomCursorInit"))
+	TSubclassOf<UUserWidget> CursorDefaultWidgetClass;
+
+	// Runtime cursor widget instance used for EMouseCursor::Default.
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
+	TObjectPtr<UUserWidget> Cursor = nullptr;
 
 private:
 	void LeaveSessionInternal();

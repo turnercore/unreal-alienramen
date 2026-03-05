@@ -45,7 +45,7 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 		Attribute == GetMaxShieldAttribute() ||
 		Attribute == GetMaxJetpackFuelAttribute() ||
 		Attribute == GetMaxSpiceAttribute() ||
-		Attribute == GetMaxGadgetEnergyAttribute() ||
+		Attribute == GetMaxHatEnergyAttribute() ||
 		Attribute == GetMaxAmmoAttribute() ||
 		Attribute == GetSecondaryMaxAmmoAttribute() ||
 		Attribute == GetSpecialMaxAmmoAttribute())
@@ -86,9 +86,9 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 	{
 		SetSpice(FMath::Clamp(GetSpice(), 0.0f, NewValue));
 	}
-	else if (Attribute == GetMaxGadgetEnergyAttribute())
+	else if (Attribute == GetMaxHatEnergyAttribute())
 	{
-		SetGadgetEnergy(FMath::Clamp(GetGadgetEnergy(), 0.0f, NewValue));
+		SetHatEnergy(FMath::Clamp(GetHatEnergy(), 0.0f, NewValue));
 	}
 	else if (Attribute == GetMaxAmmoAttribute())
 	{
@@ -151,9 +151,9 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 	{
 		SetSpice(FMath::Clamp(GetSpice(), 0.0f, GetMaxSpice()));
 	}
-	else if (Attr == GetGadgetEnergyAttribute())
+	else if (Attr == GetHatEnergyAttribute())
 	{
-		SetGadgetEnergy(FMath::Clamp(GetGadgetEnergy(), 0.0f, GetMaxGadgetEnergy()));
+		SetHatEnergy(FMath::Clamp(GetHatEnergy(), 0.0f, GetMaxHatEnergy()));
 	}
 	else if (Attr == GetAmmoAttribute())
 	{
@@ -264,10 +264,10 @@ void UARAttributeSetCore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpiceDrainRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpiceShareRatio, COND_None, REPNOTIFY_Always);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, GadgetEnergy, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxGadgetEnergy, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, GadgetEnergyRegenRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, GadgetPower, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HatEnergy, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxHatEnergy, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HatEnergyRegenRate, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HatPower, COND_None, REPNOTIFY_Always);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ReviveSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, PickupRadius, COND_None, REPNOTIFY_Always);
@@ -336,10 +336,10 @@ AR_REP_NOTIFY(SpiceGainMultiplier)
 AR_REP_NOTIFY(SpiceDrainRate)
 AR_REP_NOTIFY(SpiceShareRatio)
 
-AR_REP_NOTIFY(GadgetEnergy)
-AR_REP_NOTIFY(MaxGadgetEnergy)
-AR_REP_NOTIFY(GadgetEnergyRegenRate)
-AR_REP_NOTIFY(GadgetPower)
+AR_REP_NOTIFY(HatEnergy)
+AR_REP_NOTIFY(MaxHatEnergy)
+AR_REP_NOTIFY(HatEnergyRegenRate)
+AR_REP_NOTIFY(HatPower)
 
 AR_REP_NOTIFY(ReviveSpeed)
 AR_REP_NOTIFY(PickupRadius)

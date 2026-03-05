@@ -6,7 +6,7 @@
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
 #include "ARInvaderAIController.h"
-#include "ARShipCharacterBase.h"
+#include "ARPlayerCharacterInvader.h"
 #include "ARLog.h"
 
 #include "AbilitySystemComponent.h"
@@ -41,7 +41,7 @@ namespace
 			return EnemyTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
 		}
 
-		if (AARShipCharacterBase* ShipTarget = Cast<AARShipCharacterBase>(Target))
+		if (AARPlayerCharacterInvader* ShipTarget = Cast<AARPlayerCharacterInvader>(Target))
 		{
 			float IgnoredCurrentHealth = 0.f;
 			return ShipTarget->ApplyDamageViaGAS(Damage, Offender, IgnoredCurrentHealth);
