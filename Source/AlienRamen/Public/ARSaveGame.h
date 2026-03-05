@@ -1,10 +1,15 @@
 #pragma once
+/**
+ * @file ARSaveGame.h
+ * @brief ARSaveGame header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
 
+/** Canonical save payload persisted to disk; schema is versioned manually via CurrentSchemaVersion. */
 UCLASS(BlueprintType)
 class ALIENRAMEN_API UARSaveGame : public USaveGame
 {

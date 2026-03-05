@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARGameStateBase.h
+ * @brief ARGameStateBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARPlayerStateBase.h"
@@ -61,6 +65,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	int32,
 	OldCycles);
 
+/**
+ * Server-authoritative game state for Alien Ramen.
+ *
+ * - Tracks replicated progression fields (unlock tags, money, scrap, meat, cycles).
+ * - Owns travel readiness aggregation for the two-player coop model.
+ * - Implements IStructSerializable so SaveSubsystem can persist/restore state across travel.
+ * - Emits Blueprint events for UI when replicated values change.
+ */
 UCLASS()
 class ALIENRAMEN_API AARGameStateBase : public AGameStateBase, public IStructSerializable
 {
@@ -72,12 +84,15 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
+	/** Returns the AR player occupying a specific coop slot (P1/P2), or nullptr if empty. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetPlayerBySlot(EARPlayerSlot Slot) const;
 
+	/** Returns all AR player states (filtered view of PlayerArray). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	TArray<AARPlayerStateBase*> GetPlayerStates() const;
 
+	/** True when at least one AR player exists and both players are travel-ready. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	bool AreAllPlayersTravelReady() const;
 
@@ -117,7 +132,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnCyclesChangedSignature OnCyclesChanged;
 
-	// Runtime mirror of save-owned cycles; authority-only setter.
+	/** Runtime mirror of save-owned cycles; authority-only setter. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SyncCyclesFromSave(int32 NewCycles);
 
@@ -136,33 +151,36 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	int32 GetCycles() const { return Cycles; }
 
+	/** Replaces unlock container from save data and broadcasts change. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetUnlocksFromSave(const FGameplayTagContainer& NewUnlocks);
 
+	/** Adds a single unlock tag; returns true if added. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool AddUnlockTag(const FGameplayTag& UnlockTag);
 
+	/** Removes a single unlock tag; returns true if removed. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool RemoveUnlockTag(const FGameplayTag& UnlockTag);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool HasUnlockTag(const FGameplayTag& UnlockTag) const;
 
+	/** Writes money value from save/runtime and notifies listeners. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetMoneyFromSave(int32 NewMoney);
 
+	/** Writes scrap value from save/runtime and notifies listeners. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetScrapFromSave(int32 NewScrap);
 
+	/** Writes meat state from save/runtime and notifies listeners. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetMeatFromSave(const FARMeatState& NewMeat);
 
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerApplyStateFromStruct(const FInstancedStruct& SavedState);
-
-	// Called by SaveSubsystem after hydration completes to inform UI.
+	/** Called by SaveSubsystem after hydration completes to inform UI widgets. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void NotifyHydratedFromSave();
 
