@@ -27,6 +27,7 @@
     6. Keep wording specific enough that a new agent can act without rediscovery.
 - Always try to compile after making changes. Compile before updating Agents.md and other documentation.
 - When changing runtime/editor systems, update documentation in the same pass: add/refresh Doxygen comments on public APIs and keep MkDocs pages/nav accurate; delete or rewrite stale docs rather than leaving contradictions.
+- Header include hygiene for large subsystems (ContentLookupSubsystem, editor tools, etc.): prefer the order `CoreMinimal.h` -> needed engine headers -> project headers -> generated.h. Avoid blanket includes; keep dependency graphs thin for faster builds.
 
 ## Documentation & Tooling
 

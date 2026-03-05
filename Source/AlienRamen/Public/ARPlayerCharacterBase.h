@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARPlayerCharacterBase.h
  * @brief ARPlayerCharacterBase header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"

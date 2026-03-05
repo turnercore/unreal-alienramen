@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file StructSerializable.h
  * @brief StructSerializable header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"

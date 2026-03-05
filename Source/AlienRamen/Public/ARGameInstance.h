@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARGameInstance.h
  * @brief ARGameInstance header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"

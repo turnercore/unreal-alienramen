@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARInvaderTypes.h
  * @brief ARInvaderTypes header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"

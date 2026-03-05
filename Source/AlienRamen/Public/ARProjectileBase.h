@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARProjectileBase.h
  * @brief ARProjectileBase header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"

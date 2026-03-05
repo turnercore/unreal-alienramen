@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file AREnemyAttributeSet.h
  * @brief AREnemyAttributeSet header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"

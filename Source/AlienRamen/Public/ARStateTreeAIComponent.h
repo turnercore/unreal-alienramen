@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARStateTreeAIComponent.h
  * @brief ARStateTreeAIComponent header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
