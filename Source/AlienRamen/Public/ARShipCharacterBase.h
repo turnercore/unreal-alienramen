@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "AbilitySystemInterface.h"
+#include "ARPlayerCharacterBase.h"
 #include "GameplayTagContainer.h"
 #include "GameplayAbilitySpec.h"
 #include "GameplayEffectTypes.h"
@@ -28,11 +27,12 @@ struct FOnAttributeChangeData;
 /**
  * Base ship character for Alien Ramen.
  * - ASC is owned by PlayerState, Avatar is this pawn.
- * - On server possession: clears loadout, grants common ability set, then resolves ship/secondary/gadget rows from LoadoutTags and applies baseline.
+ * - On server possession: clears loadout, grants common ability set, then resolves ship/hat rows from LoadoutTags and applies baseline.
+ *   Secondary lane is legacy/deprecated and optional.
  * - Exposes generic tag-based activation/cancel API for PlayerController / Blueprint.
  */
 UCLASS()
-class ALIENRAMEN_API AARShipCharacterBase : public ACharacter, public IAbilitySystemInterface
+class ALIENRAMEN_API AARShipCharacterBase : public AARPlayerCharacterBase
 {
 	GENERATED_BODY()
 
@@ -193,6 +193,9 @@ protected:
 
 	// ---- Tag roots (runtime-resolved; avoid static init order issues) ----
 	static FGameplayTag GetTagRootShips();
+	// Secondary lane remains optional/deprecated; never required for loadout initialization.
 	static FGameplayTag GetTagRootSecondaries();
+	static FGameplayTag GetTagRootHats();
+	// Legacy alias while code/content migrates terminology from Gadget -> Hat.
 	static FGameplayTag GetTagRootGadgets();
 };

@@ -521,21 +521,10 @@ bool AAREnemyAIController::ReceivePawnSignal(
 	float ScalarValue,
 	bool bForwardToStateTree)
 {
-	if (!HasAuthority())
+	if (!Super::ReceivePawnSignal(SignalTag, RelatedActor, WorldLocation, ScalarValue, bForwardToStateTree))
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Ignored pawn signal on non-authority controller '%s' (Tag=%s)."),
-			*GetNameSafe(this), *SignalTag.ToString());
 		return false;
 	}
-
-	if (!SignalTag.IsValid())
-	{
-		UE_LOG(ARLog, Warning, TEXT("[EnemyAI] Ignored pawn signal on '%s': invalid signal tag."), *GetNameSafe(this));
-		return false;
-	}
-
-	// Controller remains the decision owner; pawn only reports facts.
-	BP_OnPawnSignal(SignalTag, RelatedActor, WorldLocation, ScalarValue);
 
 	if (bForwardToStateTree)
 	{
