@@ -5,6 +5,7 @@
 #include "AREnemyAIController.h"
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
+#include "ARInvaderAIController.h"
 #include "ARShipCharacterBase.h"
 #include "ARLog.h"
 
@@ -238,7 +239,7 @@ AAREnemyBase::AAREnemyBase()
 	bReplicates = true;
 	bUseControllerRotationYaw = false;
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	AIControllerClass = AAREnemyAIController::StaticClass();
+	AIControllerClass = AARInvaderAIController::StaticClass();
 
 	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
 	{

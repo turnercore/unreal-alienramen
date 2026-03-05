@@ -38,6 +38,20 @@
 - Native authoritative lobby/runtime bases:
 - `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
 - `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
+- Native mode-layer subclasses now exist for GameMode and PlayerController:
+- Canonical mode naming is now: `Invader`, `Scrapyard`, `Shop`, `Lobby`.
+- GameModes: `AARInvaderGameMode`, `AARScrapyardGameMode`, `AARShopGameMode`, `AARLobbyGameMode` (all inherit `AARGameModeBase`)
+- GameStates: `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, `AARLobbyGameState` (all inherit `AARGameStateBase`)
+- PlayerControllers: `AARInvaderPlayerController`, `AARScrapyardPlayerController`, `AARShopPlayerController`, `AARLobbyPlayerController` (all inherit `AARPlayerController`)
+- Native AI-controller hierarchy now includes:
+- `AARAIControllerBase` (shared signal base)
+- `AAREnemyAIController` (invader enemy behavior) and `AARInvaderAIController` (invader-mode subclass/default)
+- `AARScrapyardAIController` and `AARShopAIController` (mode scaffolds)
+- Native player-pawn hierarchy now includes:
+- `AARPlayerCharacterBase` (shared root)
+- `AARShipCharacterBase` (invader ship gameplay subclass)
+- `AARScrapyardCharacterBase` and `AARShopCharacterBase` (mode scaffolds)
+- Legacy wrappers remain temporarily for compatibility: `AARRamenShopGameMode`, `AARRamenShopPlayerController`, `AARRamenShopAIController`, `AARRamenShopCharacterBase` now inherit their `Shop` counterparts.
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Gameplay/content is Blueprint-heavy in `Content/CodeAlong/Blueprints`
@@ -85,10 +99,15 @@
 - `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
 - PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
 - Server applies default loadout tags from project settings (`UARLoadoutSettings::DefaultPlayerLoadoutTags`) when `LoadoutTags` is empty during join/setup and after server struct-state apply.
-- Pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
+- `AARPlayerCharacterBase` is the shared player pawn root (`IAbilitySystemInterface` default returns null).
+- Invader pawn (`AARShipCharacterBase`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
+- Loadout naming convention migrated from `Gadget` to `Hat`:
+- preferred tags/root naming is `Unlock.Hat` / `Unlocks.Hats`
+- ship loadout apply still accepts legacy gadget tags (`Unlock.Gadget`, `Unlocks.Gadgets`) as fallback while content migrates
+- Secondary lane is currently deprecated: secondary rows can still be present/applied when tagged, but loadout initialization/readiness must never require secondary selection.
 - Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
 - Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
 - Ship runtime weapon tuning setup is C++-owned in `AARShipCharacterBase` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
@@ -130,6 +149,12 @@
 - `AARPlayerStateBase`
 - `AARGameStateBase`
 - Implementers expose `ClassStateStruct` (`UScriptStruct*`) to declare persisted schema.
+- Mode-specific GameState persisted schemas are now native C++ structs in `Source/AlienRamen/Public/ARGameStateModeStructs.h`:
+- `FARInvaderGameStateData`
+- `FARScrapyardGameStateData`
+- `FARShopGameStateData`
+- `FARLobbyGameStateData`
+- `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, and `AARLobbyGameState` override `GetStateStruct_Implementation()` to hard-return their native struct type; this prevents stale Blueprint defaults (`ClassStateStruct`) from reintroducing deleted BP `ST_*GSData` dependencies.
 - Hydration is server-authoritative:
 - interface default blocks non-authority actor execution
 - PlayerState/GameState override forwards client calls via `ServerApplyStateFromStruct` RPC
@@ -150,8 +175,9 @@
 - `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
 - write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
 - load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
-- Current save schema is `v2`; minimum supported is also `v2` after removal of embedded GameState/PlayerState instanced-struct payloads from disk saves.
+- Current save schema is `v3`; minimum supported is also `v3` (no legacy migration path kept in pre-production).
 - `UARSaveGame` persists only disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
+- `FARMeatState` uses replication-safe typed entries (`TArray<FARMeatTypeAmount>`) for extensible meat types instead of a `TMap`; normalization merges duplicate tags, drops invalid/zero entries, and keeps deterministic tag-sort order.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
 - `FindPlayerStateDataBySlot(...)`
 - `FindPlayerStateDataByIdentity(...)`
@@ -228,13 +254,14 @@
 - `OnPlayerReadyChanged` relays each player's `OnReadyStatusChanged` (server + clients via replicated PlayerState ready updates).
 - `bAllPlayersTravelReady` is server-authoritative replicated aggregate state; `OnAllPlayersTravelReadyChanged` fires on server updates and client repnotify.
 - aggregate all-ready recompute runs on authoritative player add/remove and on player ready/slot/character change events.
-- GameState UI hooks: replicated `CyclesForUI` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
+- GameState UI hooks: replicated `Cycles` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
 - Save-facing GameState fields are now native replicated on `AARGameStateBase` with change signals:
 - `Unlocks` (`FGameplayTagContainer`, `ReplicatedUsing=OnRep_Unlocks`) -> `OnUnlocksChanged`
 - `Money` (`int32`, `ReplicatedUsing=OnRep_Money`) -> `OnMoneyChanged`
 - `Scrap` (`int32`, `ReplicatedUsing=OnRep_Scrap`) -> `OnScrapChanged`
-- `CyclesForUI` (`int32`, `ReplicatedUsing=OnRep_CyclesForUI`) -> `OnCyclesChanged`
-- SaveSubsystem save/hydration path now reads/writes these fields via native GameState accessors/setters (`GetUnlocks/GetMoney/GetScrap`, `SetUnlocksFromSave/SetMoneyFromSave/SetScrapFromSave`) instead of reflection-name field scans.
+- `Meat` (`FARMeatState`, `ReplicatedUsing=OnRep_Meat`) -> `OnMeatChanged`
+- `Cycles` (`int32`, `ReplicatedUsing=OnRep_Cycles`) -> `OnCyclesChanged`
+- SaveSubsystem save/hydration path now reads/writes these fields via native GameState accessors/setters (`GetUnlocks/GetMoney/GetScrap/GetMeat`, `SetUnlocksFromSave/SetMoneyFromSave/SetScrapFromSave/SetMeatFromSave`) instead of reflection-name field scans.
 - Unlock mutation API is authority-owned on `AARGameStateBase`:
 - `AddUnlockTag(FGameplayTag)` / `RemoveUnlockTag(FGameplayTag)` / `HasUnlockTag(FGameplayTag)` plus bulk setter `SetUnlocksFromSave(...)`.
 - UI/client entrypoint is `AARPlayerController` RPC wrappers (`RequestAddUnlock`, `RequestRemoveUnlock`) which route through `ServerRequestAddUnlock/ServerRequestRemoveUnlock` to mutate authoritative GameState.
@@ -250,7 +277,6 @@
 - `GetOtherPlayerStateFromPlayerState(...)`
 - `GetOtherPlayerStateFromController(...)`
 - `GetOtherPlayerStateFromPawn(...)`
-- `GetOtherPlayerStateFromContext(...)` (accepts PlayerState/Controller/Pawn/UObject and resolves other player)
 
 ## Enemy/Invader Runtime
 
@@ -317,7 +343,7 @@
 - `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
 - Enemy runtime also exposes a persistent StateTree/Blueprint-readable bool `AAREnemyBase::bHasEnteredScreen` (set/reset with entered-screen lifecycle) for condition-based transitions when event timing is not desired.
 - Added dedicated StateTree schema class `UARStateTreeAIComponentSchema` (`AR StateTree AI Schema`) for enemy AI authoring defaults:
-- defaults `AIControllerClass` to `AAREnemyAIController`
+- defaults `AIControllerClass` to `AARInvaderAIController`
 - defaults `ContextActorClass` to `AAREnemyBase`
 - `UARStateTreeAIComponent` now returns `UARStateTreeAIComponentSchema` from `GetSchema()`, so StateTree assets assigned for enemy AI must compile against that schema.
 - Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`) or `FormationMode`; formation behavior is driven by runtime AI/state + wave lock flags.
@@ -400,7 +426,7 @@
 - pawn->controller signal bridge (fact reporting; controller remains decision owner):
 - `AAREnemyBase::SendEnemySignalToController(FGameplayTag SignalTag, AActor* RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true)`
 - `AAREnemyAIController::ReceivePawnSignal(...)`
-- `AAREnemyAIController::BP_OnPawnSignal(...)` (optional BP hook)
+- `AARAIControllerBase::BP_OnPawnSignal(...)` (optional shared BP hook used by enemy AI and other mode controllers)
 - Enemy AI now uses `UARStateTreeAIComponent` (subclass of `UStateTreeAIComponent`) which computes active StateTree state-tag set and emits tag deltas.
 - `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
 - `UARStateTreeAIComponent` preserves previous active-tag snapshot when the tree is running but read-only execution context is transiently unreadable; this avoids false empty-tag remove/add churn in the ASC mirror bridge.
@@ -457,7 +483,7 @@
 - Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
 - Unlock-all action writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager.
 - Right-side loaded object header is `Loaded Save` (no `Auto Property Editor` suffix).
-- Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor.
+- Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor (typed entry array, no map).
 
 ## Invader Authoring Editor Tool (Current)
 
