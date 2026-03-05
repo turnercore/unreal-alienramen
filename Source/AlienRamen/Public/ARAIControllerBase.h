@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARAIControllerBase.h
  * @brief ARAIControllerBase header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "AIController.h"

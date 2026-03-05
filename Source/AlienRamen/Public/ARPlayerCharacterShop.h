@@ -1,3 +1,7 @@
+/**
+ * @file ARPlayerCharacterShop.h
+ * @brief ARPlayerCharacterShop header for Alien Ramen.
+ */
 #pragma once
 
 #include "CoreMinimal.h"

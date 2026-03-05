@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARContentLookupSettings.h
  * @brief ARContentLookupSettings header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"

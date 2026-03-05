@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARLoadoutSettings.h
  * @brief ARLoadoutSettings header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
