@@ -8,6 +8,53 @@
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
 
+namespace
+{
+	static FARMeatState SanitizeMeatState(const FARMeatState& InMeat)
+	{
+		FARMeatState OutMeat = InMeat;
+		OutMeat.RedAmount = FMath::Max(0, OutMeat.RedAmount);
+		OutMeat.BlueAmount = FMath::Max(0, OutMeat.BlueAmount);
+		OutMeat.WhiteAmount = FMath::Max(0, OutMeat.WhiteAmount);
+		OutMeat.UnspecifiedAmount = FMath::Max(0, OutMeat.UnspecifiedAmount);
+
+		for (FARMeatTypeAmount& Entry : OutMeat.AdditionalAmountsByType)
+		{
+			Entry.Amount = FMath::Max(0, Entry.Amount);
+		}
+		OutMeat.NormalizeAdditionalAmounts();
+
+		return OutMeat;
+	}
+
+	static bool AreMeatStatesEqual(const FARMeatState& A, const FARMeatState& B)
+	{
+		const FARMeatState Left = SanitizeMeatState(A);
+		const FARMeatState Right = SanitizeMeatState(B);
+
+		if (Left.RedAmount != Right.RedAmount
+			|| Left.BlueAmount != Right.BlueAmount
+			|| Left.WhiteAmount != Right.WhiteAmount
+			|| Left.UnspecifiedAmount != Right.UnspecifiedAmount
+			|| Left.AdditionalAmountsByType.Num() != Right.AdditionalAmountsByType.Num())
+		{
+			return false;
+		}
+
+		for (int32 Index = 0; Index < Left.AdditionalAmountsByType.Num(); ++Index)
+		{
+			const FARMeatTypeAmount& LeftEntry = Left.AdditionalAmountsByType[Index];
+			const FARMeatTypeAmount& RightEntry = Right.AdditionalAmountsByType[Index];
+			if (LeftEntry.MeatType != RightEntry.MeatType || LeftEntry.Amount != RightEntry.Amount)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+}
+
 AARGameStateBase::AARGameStateBase()
 {
 	bReplicates = true;
@@ -53,7 +100,8 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, Unlocks);
 	DOREPLIFETIME(AARGameStateBase, Money);
 	DOREPLIFETIME(AARGameStateBase, Scrap);
-	DOREPLIFETIME(AARGameStateBase, CyclesForUI);
+	DOREPLIFETIME(AARGameStateBase, Meat);
+	DOREPLIFETIME(AARGameStateBase, Cycles);
 }
 
 AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
@@ -124,26 +172,6 @@ AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromPawn(const APawn* C
 	}
 
 	return GetOtherPlayerStateFromPlayerState(CurrentPlayerPawn->GetPlayerState<AARPlayerStateBase>());
-}
-
-AARPlayerStateBase* AARGameStateBase::GetOtherPlayerStateFromContext(const UObject* CurrentPlayerContext) const
-{
-	if (const AARPlayerStateBase* AsPS = Cast<AARPlayerStateBase>(CurrentPlayerContext))
-	{
-		return GetOtherPlayerStateFromPlayerState(AsPS);
-	}
-
-	if (const APlayerController* AsPC = Cast<APlayerController>(CurrentPlayerContext))
-	{
-		return GetOtherPlayerStateFromController(AsPC);
-	}
-
-	if (const APawn* AsPawn = Cast<APawn>(CurrentPlayerContext))
-	{
-		return GetOtherPlayerStateFromPawn(AsPawn);
-	}
-
-	return GetOtherPlayerStateFromPlayerState(nullptr);
 }
 
 void AARGameStateBase::AddPlayerState(APlayerState* PlayerState)
@@ -240,14 +268,14 @@ void AARGameStateBase::SyncCyclesFromSave(int32 NewCycles)
 	}
 
 	const int32 Clamped = FMath::Max(0, NewCycles);
-	if (CyclesForUI == Clamped)
+	if (Cycles == Clamped)
 	{
 		return;
 	}
 
-	const int32 OldCycles = CyclesForUI;
-	CyclesForUI = Clamped;
-	OnRep_CyclesForUI(OldCycles);
+	const int32 OldCycles = Cycles;
+	Cycles = Clamped;
+	OnRep_Cycles(OldCycles);
 	ForceNetUpdate();
 }
 
@@ -350,14 +378,33 @@ void AARGameStateBase::SetScrapFromSave(int32 NewScrap)
 	ForceNetUpdate();
 }
 
+void AARGameStateBase::SetMeatFromSave(const FARMeatState& NewMeat)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FARMeatState Sanitized = SanitizeMeatState(NewMeat);
+	if (AreMeatStatesEqual(Meat, Sanitized))
+	{
+		return;
+	}
+
+	const FARMeatState OldMeat = Meat;
+	Meat = Sanitized;
+	OnRep_Meat(OldMeat);
+	ForceNetUpdate();
+}
+
 void AARGameStateBase::NotifyHydratedFromSave()
 {
 	OnHydratedFromSave.Broadcast();
 }
 
-void AARGameStateBase::OnRep_CyclesForUI(int32 OldCyclesForUI)
+void AARGameStateBase::OnRep_Cycles(int32 OldCycles)
 {
-	OnCyclesChanged.Broadcast(CyclesForUI, OldCyclesForUI);
+	OnCyclesChanged.Broadcast(Cycles, OldCycles);
 }
 
 void AARGameStateBase::OnRep_Unlocks(FGameplayTagContainer OldUnlocks)
@@ -373,6 +420,11 @@ void AARGameStateBase::OnRep_Money(int32 OldMoney)
 void AARGameStateBase::OnRep_Scrap(int32 OldScrap)
 {
 	OnScrapChanged.Broadcast(Scrap, OldScrap);
+}
+
+void AARGameStateBase::OnRep_Meat(FARMeatState OldMeat)
+{
+	OnMeatChanged.Broadcast(Meat, OldMeat);
 }
 
 void AARGameStateBase::BindPlayerStateSignals(AARPlayerStateBase* PlayerState)
