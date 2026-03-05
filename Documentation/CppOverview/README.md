@@ -5,7 +5,7 @@ This folder is a quick API inventory for Invader runtime/authoring C++ types. Ea
 ## How to read
 
 - Look up a class page to see entry points, replication/authority rules, and BP exposure.
-- Pair with [Doxygen](../doxygen/index.html) for signatures and member-level details.
+- Pair with [Doxygen](../doxygen/html/index.html) for signatures and member-level details.
 - If you edit a class, update its page to keep contracts accurate.
 
 ## Index
