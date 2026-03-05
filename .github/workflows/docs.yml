@@ -15,6 +15,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Clean prior doc artifacts
+        run: |
+          rm -rf site Documentation/doxygen
+
       - name: Configure Git credentials
         run: |
           git config user.name "github-actions[bot]"
