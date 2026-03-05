@@ -1,71 +1,45 @@
-# AlienRamen
+# Alien Ramen Docs (UE 5.7)
 
-Developed with Unreal Engine 5.7
+This site is built with MkDocs Material + Doxygen. Everything under `Documentation/` is rendered as-is; C++ API reference is generated from `Source/` via `Doxyfile`.
 
-## Documentation
+## Quick links
 
-- GAS overview and attributes: `README_GAS.md`
-- Save system/runtime flow: `README_SaveSubsystem.md`
+- Gameplay Ability System: [GAS overview](README_GAS.md) · [GAS Blueprint attributes](README_GAS_Blueprint_Attributes.md)
+- Save system: [Save subsystem](README_SaveSubsystem.md)
+- C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
+- API reference: [Doxygen HTML](doxygen/html/index.html)
 
-## Debug Console Commands
+## Build / preview docs locally
 
-Use Unreal in-game console (`~`) and run:
+```bash
+source .venv-docs/bin/activate
+mkdocs serve
+```
+(This runs Doxygen via the MkDocs plugin and serves on 127.0.0.1:8000 by default.)
 
-- `ar.invader.start [Seed]`
-- `ar.invader.stop`
-- `ar.invader.dump_state`
-- `ar.invader.force_wave <WaveRowName>`
-- `ar.invader.force_phase <WaveId> <Active|Berserk>`
-- `ar.invader.force_threat <Value>`
-- `ar.invader.force_stage <StageRowName>`
-- `ar.invader.choose_stage <left|right>`
-- `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
+## Debug console commands (Invader)
 
-### Expected Behavior
+Use the in-game console (`~`).
 
-1. `ar.invader.start [Seed]`
+??? note "Command list"
+    - `ar.invader.start [Seed]`
+    - `ar.invader.stop`
+    - `ar.invader.dump_state`
+    - `ar.invader.force_wave <WaveRowName>`
+    - `ar.invader.force_phase <WaveId> <Active|Berserk>`
+    - `ar.invader.force_threat <Value>`
+    - `ar.invader.force_stage <StageRowName>`
+    - `ar.invader.choose_stage <left|right>`
+    - `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
 
-- Starts an invader run on authority/server.
-- Rejected if a run is already active.
-- If `Seed` is omitted, defaults to `1337`.
+### Expected behavior (authoritative server)
 
-2. `ar.invader.stop`
-
-- Stops the run and performs full director cleanup.
-- Managed enemies are cleaned up and runtime counters/snapshots reset.
-
-3. `ar.invader.dump_state`
-
-- Logs a compact runtime snapshot to `ARLog`.
-
-4. `ar.invader.force_wave <WaveRowName>`
-
-- Attempts to spawn that wave immediately.
-- Requires active run and valid wave row.
-
-5. `ar.invader.force_phase <WaveId> <Active|Berserk>`
-
-- Forces phase on an active wave instance.
-- Invalid phase values are rejected.
-
-6. `ar.invader.force_threat <Value>`
-
-- Sets threat immediately (clamped to `>= 0`).
-- Affects future weighted wave selection.
-
-7. `ar.invader.force_stage <StageRowName>`
-
-- Switches current stage definition immediately (if valid row exists).
-- Does not automatically despawn currently alive enemies.
-
-8. `ar.invader.choose_stage <left|right>`
-
-- Submits stage choice when flow state is `StageChoice`.
-- Outside `StageChoice`, this is a no-op.
-
-9. `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
-
-- Deprojects viewport corners onto a horizontal plane (default `SpawnOrigin.Z`).
-- Logs suggested `GameplayBoundsMin/Max`.
-- Pass `apply` to write+save into director settings.
-- Optional numeric args: custom `PlaneZ` and XY margin.
+1. **`ar.invader.start [Seed]`** — starts a fresh run if none active; default seed `1337`.
+2. **`ar.invader.stop`** — stops the run, cleans managed enemies, resets runtime counters/snapshots.
+3. **`ar.invader.dump_state`** — logs a compact snapshot to `ARLog`.
+4. **`ar.invader.force_wave <WaveRowName>`** — spawns wave immediately (requires active run + valid row).
+5. **`ar.invader.force_phase <WaveId> <Active|Berserk>`** — forces phase on an active wave instance; invalid phases rejected.
+6. **`ar.invader.force_threat <Value>`** — sets threat (>=0) affecting future weighted selection.
+7. **`ar.invader.force_stage <StageRowName>`** — switches stage immediately if row exists; does not despawn current enemies.
+8. **`ar.invader.choose_stage <left|right>`** — submits choice only during `StageChoice`; otherwise no-op.
+9. **`ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`** — logs suggested bounds; `apply` writes+saves into director settings; optional PlaneZ and XY margin.

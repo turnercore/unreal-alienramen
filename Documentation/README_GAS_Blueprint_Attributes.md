@@ -5,7 +5,7 @@ This doc explains the practical Blueprint flow for reading and reacting to GAS a
 ## Source of Truth
 
 - Player attributes live on `AARPlayerStateBase` (ASC owner).
-- Ship pawn (`AARPlayerCharacterInvader`) is the ASC avatar.
+- Ship pawn (`AARShipCharacterBase`) is the ASC avatar.
 - Attributes replicate through GAS/AttributeSet replication.
 - UI should read from PlayerState, not from the pawn.
 
@@ -54,7 +54,7 @@ Use `GameState.PlayerArray` and cast entries to `AARPlayerStateBase`.
 - For local panel: bind to local player's PlayerState.
 - For teammate panel: bind to the other replicated PlayerState.
 
-Because the attributes are replicated on ASC/AttributeSet, both players can see each other's values through PlayerState.
+Because the attributes are replicated on ASC/AttributeSet, both players can see each other’s values through PlayerState.
 
 ## Writing Attribute Values
 
@@ -78,7 +78,7 @@ These are server-authoritative:
 
 `MoveSpeed` is a GAS attribute and is now synced into pawn movement:
 
-- `AARPlayerCharacterInvader` updates `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` whenever `MoveSpeed` changes.
+- `AARShipCharacterBase` updates `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` whenever `MoveSpeed` changes.
 - `AAREnemyBase` already does the same.
 
 So GE-based slow/haste effects on `MoveSpeed` are reflected in actual movement for players and enemies.

@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARInvaderRuntimeStateComponent.h
+ * @brief ARInvaderRuntimeStateComponent header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -11,6 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnStageChoiceChangedSignature,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnStageRewardGrantedSignature, FName, StageRowName, const FString&, RewardDescriptor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnEnemyLeakedSignature, int32, NewLeakCount, int32, Delta);
 
+/** Replicated component that exposes Invader runtime snapshot + signals to UI/other systems. */
 UCLASS(ClassGroup=(AR), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class ALIENRAMEN_API UARInvaderRuntimeStateComponent : public UActorComponent
 {

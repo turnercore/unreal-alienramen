@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARStateTreeAIComponentSchema.h
+ * @brief ARStateTreeAIComponentSchema header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Components/StateTreeAIComponentSchema.h"
