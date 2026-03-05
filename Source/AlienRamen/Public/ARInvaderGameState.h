@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARInvaderGameState.h
  * @brief ARInvaderGameState header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "ARGameStateBase.h"
