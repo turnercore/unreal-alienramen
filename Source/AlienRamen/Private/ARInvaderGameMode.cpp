@@ -3,4 +3,5 @@
 AARInvaderGameMode::AARInvaderGameMode()
 {
 	ModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Invader"), false);
+	bAutosaveOnQuit = false;
 }

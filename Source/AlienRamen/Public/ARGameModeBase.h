@@ -18,17 +18,26 @@ public:
 	AARGameModeBase();
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Mode")
 	FGameplayTag GetModeTag() const { return ModeTag; }
 
-	// Authority helper: readiness + save + travel in one call (C++ entrypoint; Blueprint should use AARPlayerController::TryStartTravel).
+	// Authority helper: readiness + optional save + travel in one call (C++ entrypoint; Blueprint should use AARPlayerController::TryStartTravel).
 	bool TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
 protected:
 	// Authoritative mode identity tag for this GameMode class/instance.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Game Mode")
 	FGameplayTag ModeTag;
+
+	// When true, mode exits via TryStartTravel persist a disk save before travel.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	bool bSaveOnModeExit = true;
+
+	// When true, authority performs an autosave-if-dirty on quit (EndPlay reason = Quit).
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	bool bAutosaveOnQuit = true;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Players")
 	void BP_OnPlayerJoined(AARPlayerStateBase* JoinedPlayerState);
