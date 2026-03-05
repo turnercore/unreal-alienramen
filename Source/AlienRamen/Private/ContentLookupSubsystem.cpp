@@ -3,6 +3,7 @@
 #include "ContentLookupSubsystem.h"
 #include "ARContentLookupSettings.h"
 #include "ARLog.h"
+#include "Engine/DataTable.h"
 #include "UObject/SoftObjectPtr.h"
 #include "StructUtils/InstancedStruct.h"
 

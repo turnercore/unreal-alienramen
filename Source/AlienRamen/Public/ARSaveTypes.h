@@ -6,7 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "ARPlayerStateBase.h"
+#include "ARPlayerTypes.h"
 #include "ARSaveTypes.generated.h"
 
 UENUM(BlueprintType)

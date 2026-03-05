@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSaveTypes.h"
+#include "StructUtils/InstancedStruct.h"
 #include "ARSaveSubsystem.generated.h"
 
 class UARSaveGame;
