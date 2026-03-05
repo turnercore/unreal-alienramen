@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AIController.h"
+#include "ARAIControllerBase.h"
 #include "GameplayTagContainer.h"
 #include "StateTreeEvents.h"
 #include "ARInvaderTypes.h"
@@ -11,7 +11,7 @@ class UStateTree;
 class UARStateTreeAIComponent;
 
 UCLASS()
-class ALIENRAMEN_API AAREnemyAIController : public AAIController
+class ALIENRAMEN_API AAREnemyAIController : public AARAIControllerBase
 {
 	GENERATED_BODY()
 
@@ -46,20 +46,12 @@ public:
 	bool SendStateTreeEventByTag(FGameplayTag EventTag, FName Origin = NAME_None);
 
 	// Pawn -> controller fact signal. Pawn reports observations; controller decides routing/behavior.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Enemy|AI|Signal", meta = (BlueprintAuthorityOnly))
-	bool ReceivePawnSignal(
+	virtual bool ReceivePawnSignal(
 		FGameplayTag SignalTag,
 		AActor* RelatedActor = nullptr,
 		FVector WorldLocation = FVector::ZeroVector,
 		float ScalarValue = 0.f,
-		bool bForwardToStateTree = true);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Enemy|AI|Signal")
-	void BP_OnPawnSignal(
-		FGameplayTag SignalTag,
-		AActor* RelatedActor,
-		FVector WorldLocation,
-		float ScalarValue);
+		bool bForwardToStateTree = true) override;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

@@ -19,6 +19,18 @@ enum class EARSaveResultCode : uint8
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARMeatTypeAmount
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTag MeatType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 Amount = 0;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARMeatState
 {
 	GENERATED_BODY()
@@ -37,15 +49,16 @@ struct ALIENRAMEN_API FARMeatState
 	int32 UnspecifiedAmount = 0;
 
 	// Extensible typed buckets for future meat variants without schema churn.
+	// Array shape is replication-friendly; entries are normalized/sorted by MeatType.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	TMap<FGameplayTag, int32> AdditionalAmountsByType;
+	TArray<FARMeatTypeAmount> AdditionalAmountsByType;
 
 	int32 GetTotalAmount() const
 	{
 		int32 Total = FMath::Max(0, RedAmount) + FMath::Max(0, BlueAmount) + FMath::Max(0, WhiteAmount) + FMath::Max(0, UnspecifiedAmount);
-		for (const TPair<FGameplayTag, int32>& Pair : AdditionalAmountsByType)
+		for (const FARMeatTypeAmount& Entry : AdditionalAmountsByType)
 		{
-			Total += FMath::Max(0, Pair.Value);
+			Total += FMath::Max(0, Entry.Amount);
 		}
 		return Total;
 	}
@@ -57,6 +70,40 @@ struct ALIENRAMEN_API FARMeatState
 		WhiteAmount = 0;
 		AdditionalAmountsByType.Reset();
 		UnspecifiedAmount = FMath::Max(0, InTotalAmount);
+	}
+
+	void NormalizeAdditionalAmounts()
+	{
+		TMap<FGameplayTag, int32> Aggregated;
+		for (const FARMeatTypeAmount& Entry : AdditionalAmountsByType)
+		{
+			if (!Entry.MeatType.IsValid())
+			{
+				continue;
+			}
+
+			const int32 SanitizedAmount = FMath::Max(0, Entry.Amount);
+			if (SanitizedAmount <= 0)
+			{
+				continue;
+			}
+
+			Aggregated.FindOrAdd(Entry.MeatType) += SanitizedAmount;
+		}
+
+		AdditionalAmountsByType.Reset(Aggregated.Num());
+		for (const TPair<FGameplayTag, int32>& Pair : Aggregated)
+		{
+			FARMeatTypeAmount Entry;
+			Entry.MeatType = Pair.Key;
+			Entry.Amount = Pair.Value;
+			AdditionalAmountsByType.Add(Entry);
+		}
+
+		AdditionalAmountsByType.Sort([](const FARMeatTypeAmount& A, const FARMeatTypeAmount& B)
+		{
+			return A.MeatType.ToString() < B.MeatType.ToString();
+		});
 	}
 };
 

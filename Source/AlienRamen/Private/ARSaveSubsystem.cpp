@@ -107,6 +107,7 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	GameState->SetUnlocksFromSave(UnlocksToApply);
 	GameState->SetMoneyFromSave(SaveGame->Money);
 	GameState->SetScrapFromSave(SaveGame->Scrap);
+	GameState->SetMeatFromSave(SaveGame->Meat);
 }
 
 }
@@ -398,6 +399,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->Unlocks = GS->GetUnlocks();
 		SaveObject->Money = GS->GetMoney();
 		SaveObject->Scrap = GS->GetScrap();
+		SaveObject->Meat = GS->GetMeat();
 	}
 
 	if (SaveObject->Unlocks.IsEmpty())

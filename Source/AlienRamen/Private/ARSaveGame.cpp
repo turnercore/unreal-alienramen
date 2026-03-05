@@ -59,10 +59,11 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	ClampNonNegative(Meat.WhiteAmount, TEXT("Meat.WhiteAmount"));
 	ClampNonNegative(Meat.UnspecifiedAmount, TEXT("Meat.UnspecifiedAmount"));
 
-	for (TPair<FGameplayTag, int32>& Pair : Meat.AdditionalAmountsByType)
+	for (FARMeatTypeAmount& Entry : Meat.AdditionalAmountsByType)
 	{
-		ClampNonNegative(Pair.Value, TEXT("Meat.AdditionalAmountsByType"));
+		ClampNonNegative(Entry.Amount, TEXT("Meat.AdditionalAmountsByType.Amount"));
 	}
+	Meat.NormalizeAdditionalAmounts();
 
 	for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 	{
