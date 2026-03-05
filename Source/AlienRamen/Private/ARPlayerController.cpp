@@ -4,6 +4,7 @@
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
+#include "Blueprint/UserWidget.h"
 
 AARPlayerController::AARPlayerController()
 {
@@ -15,11 +16,45 @@ void AARPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitializeCustomCursor();
+
 	if (IsLocalController() && !HasAuthority() && !bRequestedInitialCanonicalSaveSync)
 	{
 		bRequestedInitialCanonicalSaveSync = true;
 		ServerRequestCanonicalSaveSync();
 	}
+}
+
+void AARPlayerController::InitializeCustomCursor()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (!bEnableCustomCursorInit)
+	{
+		return;
+	}
+
+	if (!CursorDefaultWidgetClass)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[UI] Custom cursor init skipped on '%s': CursorDefaultWidgetClass is not set."), *GetNameSafe(this));
+		return;
+	}
+
+	if (!Cursor)
+	{
+		Cursor = CreateWidget<UUserWidget>(this, CursorDefaultWidgetClass);
+	}
+
+	if (!Cursor)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[UI] Custom cursor init failed on '%s': could not create cursor widget."), *GetNameSafe(this));
+		return;
+	}
+
+	SetMouseCursorWidget(EMouseCursor::Default, Cursor);
 }
 
 void AARPlayerController::ClientPersistCanonicalSave_Implementation(const TArray<uint8>& SaveBytes, FName SlotBaseName, int32 SlotNumber)
