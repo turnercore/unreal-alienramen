@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARRamenShopAIController.h
+ * @brief ARRamenShopAIController header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARShopAIController.h"

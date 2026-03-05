@@ -1,6 +1,10 @@
 // ARShipCharacterBase.h
 
 #pragma once
+/**
+ * @file ARShipCharacterBase.h
+ * @brief ARShipCharacterBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARPlayerCharacterBase.h"

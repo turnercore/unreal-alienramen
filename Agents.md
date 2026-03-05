@@ -24,6 +24,16 @@
     5. If you remove or deprecate a system, explicitly note current status and replacement direction.
     6. Keep wording specific enough that a new agent can act without rediscovery.
 - Always try to compile after making changes. Compile before updating Agents.md and other documentation.
+- When changing runtime/editor systems, update documentation in the same pass: add/refresh Doxygen comments on public APIs and keep MkDocs pages/nav accurate; delete or rewrite stale docs rather than leaving contradictions.
+
+## Documentation & Tooling
+
+- MkDocs + Material lives at root `mkdocs.yml` with `docs_dir=Documentation`; existing Markdown in `Documentation/` is the site content.
+- Doxygen config is `Doxyfile` (Unreal macro predefs; INPUT=Source; OUTPUT_DIRECTORY=Documentation/doxygen); plugin-run Doxygen is expected to be available on docs builds.
+- Docs Python deps are pinned in `requirements-docs.txt` (includes `mkdocs-doxygen-plugin` installed from `pieterdavid/mkdocs-doxygen-plugin` GitHub).
+- CI publishes docs to `gh-pages` via `.github/workflows/docs.yml` (runs on push to `main`/`master` and `workflow_dispatch`; installs `doxygen` + `graphviz`, then `mkdocs gh-deploy --force` with `GITHUB_TOKEN`).
+- `.gitignore` ignores doc build artifacts (`site/`, `Documentation/doxygen/`, warning log) and local Python envs.
+- Local preview: create a venv (e.g. `.venv-docs`), `pip install -r requirements-docs.txt` (requires Xcode CLT acceptance for watchdog on macOS) then run `doxygen Doxyfile` followed by `mkdocs serve`. Ensure Doxygen is installed on PATH (brew install doxygen graphviz).
 
 ## High-Level Architecture
 
@@ -54,7 +64,6 @@
 - Legacy wrappers remain temporarily for compatibility: `AARRamenShopGameMode`, `AARRamenShopPlayerController`, `AARRamenShopAIController`, `AARRamenShopCharacterBase` now inherit their `Shop` counterparts.
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
-- Gameplay/content is Blueprint-heavy in `Content/CodeAlong/Blueprints`
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
 
 ## Multiplayer Architecture Assumptions
@@ -82,8 +91,8 @@
 - `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
 - `bIsDowned` and `bIsDeadState` are native replicated transient runtime states on `AARPlayerStateBase` (not save-persistent) with server setter paths (`SetDownedState`/`ServerUpdateDownedState`, `SetDeadState`/`ServerUpdateDeadState`) and change signals (`OnDownedStateChanged`, `OnDeadStateChanged`).
 - Ready-set normalization contract: when server processes `SetReadyForRun(true)`, PlayerState auto-normalizes missing prerequisites before setting ready:
-- if `PlayerSlot` is `Unknown`, assign first-free `P1/P2` (fallback `P1` if both occupied)
-- if `CharacterPicked` is `None`, assign slot-biased preferred choice (`P1->Brother`, `P2->Sister`) with alternate fallback when needed.
+- if `PlayerSlot` is `Unknown`, assign the first free slot (`P1` then `P2`); if both are occupied, readiness is rejected and a warning is logged (no duplicate slots are assigned).
+- if `CharacterPicked` is `None`, assign slot-biased preferred choice (`P1->Brother`, `P2->Sister`) with alternate fallback when needed; if both choices are taken, readiness is rejected with a warning.
 - `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
 - `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
 - PlayerState loadout convenience API: `UpdateLoadoutWithTag(FGameplayTag)` is server-authoritative (client calls route through `ServerUpdateLoadoutWithTag`) and still commits via `SetLoadoutTags(...)` so replication/save-dirty side effects remain intact.
@@ -157,7 +166,7 @@
 - `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, and `AARLobbyGameState` override `GetStateStruct_Implementation()` to hard-return their native struct type; this prevents stale Blueprint defaults (`ClassStateStruct`) from reintroducing deleted BP `ST_*GSData` dependencies.
 - Hydration is server-authoritative:
 - interface default blocks non-authority actor execution
-- PlayerState/GameState override forwards client calls via `ServerApplyStateFromStruct` RPC
+- State struct application is authority-only; client requests to apply state are rejected (no RPC path).
 - Seamless travel handoff for PlayerState is C++-owned via `AARPlayerStateBase::CopyProperties`:
 - extracts/applies struct state through `IStructSerializable`
 - then explicitly carries critical replicated fields (`PlayerSlot`, `LoadoutTags`, `CharacterPicked`, `DisplayName`)

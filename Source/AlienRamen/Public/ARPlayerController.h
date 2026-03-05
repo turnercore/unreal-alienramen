@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARPlayerController.h
+ * @brief ARPlayerController header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
@@ -7,6 +11,7 @@
 
 class UARAbilitySet;
 
+/** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
 class ALIENRAMEN_API AARPlayerController : public APlayerController
 {

@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARRamenShopGameMode.h
+ * @brief ARRamenShopGameMode header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARShopGameMode.h"

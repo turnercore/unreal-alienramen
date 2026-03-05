@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARRamenShopCharacterBase.h
+ * @brief ARRamenShopCharacterBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARShopCharacterBase.h"

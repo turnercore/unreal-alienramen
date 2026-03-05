@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARWeaponDefinition.h
+ * @brief ARWeaponDefinition header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
