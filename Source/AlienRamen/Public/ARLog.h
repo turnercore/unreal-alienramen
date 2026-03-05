@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARLog.h
+ * @brief ARLog header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 

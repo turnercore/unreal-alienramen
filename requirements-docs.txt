@@ -1,0 +1,5 @@
+mkdocs>=1.6
+# Official theme from squidfunk/mkdocs-material
+mkdocs-material>=9.7
+pymdown-extensions>=10
+mkdocs-doxygen-plugin @ git+https://github.com/pieterdavid/mkdocs-doxygen-plugin

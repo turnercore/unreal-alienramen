@@ -32,3 +32,83 @@ Content/Vefects/
 **/Backups/
 
 Packaged
+
+# Documentation build artifacts
+site/
+site*/
+Documentation/doxygen/
+Documentation/doxygen.warnings
+
+# Python / MkDocs
+.venv
+.env
+__pycache__/
+*.egg-info
+*.py[cod]
+*$py.class
+.python-version
+env/
+venv/
+ENV/
+
+# Packaging / build junk
+build/
+dist/
+downloads/
+develop-eggs/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+.cache/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.installed.cfg
+
+# Node / frontend
+node_modules/
+package*.json
+
+# Tests / coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.hypothesis/
+nosetests.xml
+coverage.xml
+*,cover
+
+# Notebooks / data
+.ipynb_checkpoints
+.scrapy
+target/
+
+# Editors / IDE
+.idea
+cmake-build-debug/
+cmake-build-debug-event-trace/
+
+# Misc
+*~
+.*sw?
+#*
+.rej
+.orig
+tags
+*.mo
+*.pro
+*.idb
+*.pdb
+/doxygen_docs
+/doxygen.tag
+/build*
+/qtools_docs
+/warnings.log
+/examples/html/*
+/examples/latex/*

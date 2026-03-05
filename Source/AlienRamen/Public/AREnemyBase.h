@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
+/**
+ * @file AREnemyBase.h
+ * @brief AREnemyBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"

@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARScrapyardPlayerController.h
+ * @brief ARScrapyardPlayerController header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARPlayerController.h"

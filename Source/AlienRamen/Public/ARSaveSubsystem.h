@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARSaveSubsystem.h
+ * @brief ARSaveSubsystem header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
@@ -17,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationFailed, const FARS
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnGameLoaded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnSaveOperationStarted);
 
+/** GameInstance subsystem that owns save/load/list/delete plus travel-save orchestration. */
 UCLASS()
 class ALIENRAMEN_API UARSaveSubsystem : public UGameInstanceSubsystem
 {

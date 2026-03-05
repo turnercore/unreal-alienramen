@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARInvaderDirectorSubsystem.h
+ * @brief ARInvaderDirectorSubsystem header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
@@ -21,6 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllPlayersDeadChangedSig
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerDownedChangedSignature, AARPlayerStateBase*, PlayerState, bool, bIsDowned);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerDeadChangedSignature, AARPlayerStateBase*, PlayerState, bool, bIsDead);
 
+/** World subsystem that orchestrates Invader runs: wave spawning, stage progression, leaks/death tracking, and console debug hooks. */
 UCLASS()
 class ALIENRAMEN_API UARInvaderDirectorSubsystem : public UTickableWorldSubsystem
 {

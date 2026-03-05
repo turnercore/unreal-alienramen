@@ -411,7 +411,11 @@ void AARPlayerStateBase::SetReady_Internal(bool bNewReady)
 
 	if (bNewReady)
 	{
-		EnsureReadyPrerequisitesForRun();
+		if (!EnsureReadyPrerequisitesForRun())
+		{
+			UE_LOG(ARLog, Warning, TEXT("[PlayerState] SetReadyForRun blocked: prerequisites unresolved for '%s'."), *GetNameSafe(this));
+			return;
+		}
 	}
 
 	if (bIsReady == bNewReady)
@@ -468,17 +472,17 @@ void AARPlayerStateBase::SetDead_Internal(bool bNewDead)
 	}
 }
 
-void AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
+bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 {
 	if (!HasAuthority())
 	{
-		return;
+		return false;
 	}
 
 	AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	if (!GS)
 	{
-		return;
+		return false;
 	}
 
 	if (PlayerSlot == EARPlayerSlot::Unknown)
@@ -503,7 +507,13 @@ void AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 			}
 		}
 
-		const EARPlayerSlot ResolvedSlot = !bP1Taken ? EARPlayerSlot::P1 : (!bP2Taken ? EARPlayerSlot::P2 : EARPlayerSlot::P1);
+		if (bP1Taken && bP2Taken)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Could not auto-assign player slot for '%s': P1 and P2 already taken."), *GetNameSafe(this));
+			return false;
+		}
+
+		const EARPlayerSlot ResolvedSlot = !bP1Taken ? EARPlayerSlot::P1 : EARPlayerSlot::P2;
 		SetPlayerSlot(ResolvedSlot);
 	}
 
@@ -549,8 +559,11 @@ void AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		else
 		{
 			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Ready prerequisites could not auto-assign character for '%s'."), *GetNameSafe(this));
+			return false;
 		}
 	}
+
+	return true;
 }
 
 void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags)
@@ -722,17 +735,16 @@ bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStr
 
 	if (!HasAuthority())
 	{
-		ServerApplyStateFromStruct(SavedState);
-		return true;
+		UE_LOG(ARLog, Warning, TEXT("[PlayerState] ApplyStateFromStruct rejected on non-authority '%s'."), *GetNameSafe(this));
+		return false;
 	}
 
-	return IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
-}
-
-void AARPlayerStateBase::ServerApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
-{
-	IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
-	EnsureDefaultLoadoutIfEmpty();
+	const bool bApplied = IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
+	if (bApplied)
+	{
+		EnsureDefaultLoadoutIfEmpty();
+	}
+	return bApplied;
 }
 
 void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()

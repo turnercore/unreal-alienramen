@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARGameModeBase.h
+ * @brief ARGameModeBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -9,6 +13,7 @@
 class AARGameStateBase;
 class UARSaveSubsystem;
 
+/** Shared authoritative GameMode: join/setup flow, travel gating, and mode identity tag. */
 UCLASS()
 class ALIENRAMEN_API AARGameModeBase : public AGameModeBase
 {

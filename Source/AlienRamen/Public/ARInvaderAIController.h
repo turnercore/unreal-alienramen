@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARInvaderAIController.h
+ * @brief ARInvaderAIController header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "AREnemyAIController.h"
