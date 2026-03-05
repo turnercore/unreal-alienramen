@@ -50,9 +50,20 @@ FGameplayTag AARShipCharacterBase::GetTagRootSecondaries()
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"));
 }
 
+FGameplayTag AARShipCharacterBase::GetTagRootHats()
+{
+	FGameplayTag HatRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"), false);
+	if (!HatRoot.IsValid())
+	{
+		// Legacy fallback while gameplay tags migrate to Unlock.Hat.
+		HatRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget"), false);
+	}
+	return HatRoot;
+}
+
 FGameplayTag AARShipCharacterBase::GetTagRootGadgets()
 {
-	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Gadget"));
+	return GetTagRootHats();
 }
 
 AARShipCharacterBase::AARShipCharacterBase()
@@ -785,7 +796,7 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 	}
 	ApplyResolvedRowBaseline(ShipRow);
 
-	// Secondary (optional)
+	// Secondary (optional legacy lane; never required for loadout init).
 	FGameplayTag SecondaryTag;
 	bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootSecondaries(), SecondaryTag);
 	if (!bFoundSecondaryTag)
@@ -806,24 +817,34 @@ bool AARShipCharacterBase::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
 		}
 	}
 
-	// Gadget (optional)
-	FGameplayTag GadgetTag;
-	bool bFoundGadgetTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootGadgets(), GadgetTag);
-	if (!bFoundGadgetTag)
+	// Hat (optional; supports legacy Gadget tags).
+	FGameplayTag HatTag;
+	bool bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootHats(), HatTag);
+	if (!bFoundHatTag)
 	{
+		static const FGameplayTag LegacyHatRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"), false);
 		static const FGameplayTag LegacyGadgetRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Gadgets"), false);
-		if (LegacyGadgetRoot.IsValid())
+		static const FGameplayTag LegacyHatsRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Hats"), false);
+		if (LegacyHatRoot.IsValid())
 		{
-			bFoundGadgetTag = FindFirstTagUnderRoot(LoadoutTags, LegacyGadgetRoot, GadgetTag);
+			bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, LegacyHatRoot, HatTag);
+		}
+		if (!bFoundHatTag && LegacyHatsRoot.IsValid())
+		{
+			bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, LegacyHatsRoot, HatTag);
+		}
+		if (!bFoundHatTag && LegacyGadgetRoot.IsValid())
+		{
+			bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, LegacyGadgetRoot, HatTag);
 		}
 	}
-	if (bFoundGadgetTag)
+	if (bFoundHatTag)
 	{
-		FInstancedStruct GadgetRow;
-		FString GadgetError;
-		if (ResolveRowFromTag(GadgetTag, GadgetRow, GadgetError))
+		FInstancedStruct HatRow;
+		FString HatError;
+		if (ResolveRowFromTag(HatTag, HatRow, HatError))
 		{
-			ApplyResolvedRowBaseline(GadgetRow);
+			ApplyResolvedRowBaseline(HatRow);
 		}
 	}
 
