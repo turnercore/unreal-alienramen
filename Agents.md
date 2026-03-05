@@ -244,6 +244,7 @@
 - server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
 - Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
+- Travel save policy is now opt-in per mode via `bSaveOnModeExit` (default true; Lobby overrides to false). `TryStartTravel` threads that flag into `RequestServerTravel`/`RequestOpenLevel`; when a disk save executes, the pending travel overlay is cleared, otherwise the overlay carries forward into the next map hydration.
 - Save listing supports parallel namespaces:
 - Unified save API now uses explicit debug toggle on core ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `ListSaves`, `DeleteSave`) via `bUseDebugSaves`.
 - `bUseDebugSaves=true` appends/uses `"_debug"` slot-base naming and routes index IO to debug index slot (`SaveIndexDebug`); `false` routes to canonical index slot (`SaveIndex`).
@@ -288,6 +289,10 @@
 - `bSaveOnModeExit` controls whether `TryStartTravel` persists disk save before travel.
 - `bAutosaveOnQuit` controls authority autosave-if-dirty on `EndPlay` when end reason is `Quit`.
 - Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` (carry via pending travel state without forced disk save), `AARInvaderGameMode` sets `bAutosaveOnQuit=false` (no quit autosave by default for invader runs).
+
+## Player Controller UI
+
+- `AARPlayerController` supports optional custom cursor initialization on local controllers at `BeginPlay` when `bEnableCustomCursorInit` is true and `CursorDefaultWidgetClass` is set; it creates the widget once (`Cursor`) and assigns it to `EMouseCursor::Default`. Defaults keep this off to avoid unintended UI overrides.
 - GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness and travel plus optional save (via `bSaveOnModeExit`), logs blocking players, and delegates travel to SaveSubsystem (listen enforced).
 - Player-controller travel API is native on `AARPlayerController`:
 - `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` is BP-callable (`Alien Ramen|Travel`) and routes client calls to `ServerTryStartTravel(...)`.
