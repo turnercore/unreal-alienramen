@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARGameStateModeStructs.h
  * @brief ARGameStateModeStructs header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "ARSaveTypes.h"

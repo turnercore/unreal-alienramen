@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARPickupBase.h
  * @brief ARPickupBase header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"

@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARGameModeBase.h
  * @brief ARGameModeBase header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "ARPlayerTypes.h"

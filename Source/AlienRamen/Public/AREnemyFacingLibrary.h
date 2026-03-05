@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file AREnemyFacingLibrary.h
  * @brief AREnemyFacingLibrary header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"

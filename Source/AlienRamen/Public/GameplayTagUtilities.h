@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file GameplayTagUtilities.h
  * @brief GameplayTagUtilities header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"

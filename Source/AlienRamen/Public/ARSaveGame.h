@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARSaveGame.h
  * @brief ARSaveGame header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
