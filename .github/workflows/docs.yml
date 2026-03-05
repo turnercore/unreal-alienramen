@@ -23,8 +23,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          # mkdocs-doxygen-plugin is not yet Python 3.14+ safe (uses collections.Sequence)
-          python-version: '3.12'
+          # mkdocs-doxygen-plugin still imports collections.Sequence; Python 3.9 retains the alias
+          python-version: '3.9'
 
       - name: Prime cache key
         run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
