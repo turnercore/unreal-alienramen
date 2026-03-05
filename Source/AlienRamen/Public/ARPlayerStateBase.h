@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARPlayerStateBase.h
+ * @brief ARPlayerStateBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
@@ -167,6 +171,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature, bool, bIsReadyForTravel);
 
+/**
+ * PlayerState backbone for Alien Ramen.
+ *
+ * - Owns the authoritative ASC + shared attribute set.
+ * - Replicates identity (slot, display name, picked character) and lobby readiness.
+ * - Carries loadout tags that drive ability/equipment initialization.
+ * - Implements IStructSerializable for save/load handoff across travel.
+ */
 UCLASS()
 class ALIENRAMEN_API AARPlayerStateBase : public APlayerState, public IAbilitySystemInterface, public IStructSerializable
 {
@@ -178,24 +190,29 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAbilitySystemComponent* GetASC() const { return AbilitySystemComponent; }
 
+	/** Returns the current value of a core attribute (health/spice/move speed). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	float GetCoreAttributeValue(EARCoreAttributeType AttributeType) const;
 
+	/** Snapshot of core attributes for UI polling on remote/local players. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	FARPlayerCoreAttributeSnapshot GetCoreAttributeSnapshot() const;
 
+	/** Normalized spice meter (0..1) derived from GAS attributes. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	float GetSpiceNormalized() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARPlayerSlot GetPlayerSlot() const { return PlayerSlot; }
 
+	/** Sets the authoritative player slot (P1/P2). Server only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void SetPlayerSlot(EARPlayerSlot NewSlot);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
 
+	/** Sets picked character; client calls route to server. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
 	void SetCharacterPicked(EARCharacterChoice NewCharacter);
 
@@ -348,9 +365,6 @@ public:
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerApplyStateFromStruct(const FInstancedStruct& SavedState);
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -395,7 +409,7 @@ protected:
 	void EvaluateLifeStateFromASC();
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
-	void EnsureReadyPrerequisitesForRun();
+	bool EnsureReadyPrerequisitesForRun();
 	void EvaluateTravelReadinessAndBroadcast();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")

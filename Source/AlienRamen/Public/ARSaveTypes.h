@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARSaveTypes.h
+ * @brief ARSaveTypes header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"

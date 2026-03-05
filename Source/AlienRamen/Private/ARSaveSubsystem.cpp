@@ -1012,6 +1012,7 @@ void UARSaveSubsystem::RequestGameStateHydration(AARGameStateBase* Requester)
 		{
 			Requester->SetUnlocksFromSave(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 		}
+		Requester->NotifyHydratedFromSave();
 		return;
 	}
 

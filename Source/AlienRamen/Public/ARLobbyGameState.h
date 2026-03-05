@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARLobbyGameState.h
+ * @brief ARLobbyGameState header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARGameStateBase.h"

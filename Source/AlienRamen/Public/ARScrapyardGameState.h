@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARScrapyardGameState.h
+ * @brief ARScrapyardGameState header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARGameStateBase.h"

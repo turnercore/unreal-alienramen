@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARPlayerCharacterBase.h
+ * @brief ARPlayerCharacterBase header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -7,6 +11,7 @@
 
 class UAbilitySystemComponent;
 
+/** Root player pawn base; implements ASC interface stub for mode-specific subclasses. */
 UCLASS()
 class ALIENRAMEN_API AARPlayerCharacterBase : public ACharacter, public IAbilitySystemInterface
 {

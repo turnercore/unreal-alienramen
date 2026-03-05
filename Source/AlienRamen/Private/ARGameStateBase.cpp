@@ -248,16 +248,11 @@ bool AARGameStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruc
 
 	if (!HasAuthority())
 	{
-		ServerApplyStateFromStruct(SavedState);
-		return true;
+		UE_LOG(ARLog, Warning, TEXT("[GameState] ApplyStateFromStruct rejected on non-authority '%s'."), *GetNameSafe(this));
+		return false;
 	}
 
 	return IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
-}
-
-void AARGameStateBase::ServerApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
-{
-	IStructSerializable::ApplyStateFromStruct_Implementation(SavedState);
 }
 
 void AARGameStateBase::SyncCyclesFromSave(int32 NewCycles)

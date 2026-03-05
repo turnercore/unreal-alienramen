@@ -1,5 +1,9 @@
 // MMC_FireCooldownDuration.h
 #pragma once
+/**
+ * @file MMC_FireCooldownDuration.h
+ * @brief MMC FireCooldownDuration header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameplayModMagnitudeCalculation.h"

@@ -1,6 +1,10 @@
 // ARAttributeSetCore.h
 
 #pragma once
+/**
+ * @file ARAttributeSetCore.h
+ * @brief ARAttributeSetCore header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"

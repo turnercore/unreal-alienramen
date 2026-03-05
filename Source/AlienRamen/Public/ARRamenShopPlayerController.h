@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARRamenShopPlayerController.h
+ * @brief ARRamenShopPlayerController header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARShopPlayerController.h"

@@ -1,86 +1,47 @@
-# AlienRamen
+# Alien Ramen Docs (UE 5.7)
 
-Developed with Unreal Engine 5.7
+This site is built with MkDocs Material + Doxygen. Everything under `Documentation/` is rendered as-is; C++ API reference is generated from `Source/` via `Doxyfile`.
 
-## Documentation
+## Quick links
 
-- GAS overview and attributes: `README_GAS.md`
+- Gameplay Ability System: [GAS overview](README_GAS.md) · [GAS Blueprint attributes](README_GAS_Blueprint_Attributes.md)
+- Save system: [Save subsystem](README_SaveSubsystem.md)
+- C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
+- API reference: [Doxygen output](doxygen/index.html)
 
-## Debug Console Commands
+## Build / preview docs locally
 
-Use Unreal in-game console (`~`) and run:
+```bash
+python3 -m pip install -r requirements-docs.txt
+doxygen Doxyfile
+mkdocs serve
+```
 
-- `ar.invader.start [Seed]`
-- `ar.invader.stop`
-- `ar.invader.dump_state`
-- `ar.invader.force_wave <WaveRowName>`
-- `ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`
-- `ar.invader.force_threat <Value>`
-- `ar.invader.force_stage <StageRowName>`
-- `ar.invader.choose_stage <left|right>`
-- `ar.invader.force_intro <Seconds|clear>`
-- `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
+## Debug console commands (Invader)
 
-### Expected Behavior
+Use the in-game console (`~`).
 
-1. `ar.invader.start [Seed]`
+??? note "Command list"
+    - `ar.invader.start [Seed]`
+    - `ar.invader.stop`
+    - `ar.invader.dump_state`
+    - `ar.invader.force_wave <WaveRowName>`
+    - `ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`
+    - `ar.invader.force_threat <Value>`
+    - `ar.invader.force_stage <StageRowName>`
+    - `ar.invader.choose_stage <left|right>`
+    - `ar.invader.force_intro <Seconds|clear>`
+    - `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
 
-- Starts a fresh invader run on authority/server.
-- Resets director runtime state (threat, timers, stage sequence, waves tracked, leaks, one-time usage history).
-- Picks initial stage from settings (`InitialStageRow`) or weighted fallback.
-- Enters stage intro before normal wave spawning.
-- If `Seed` is omitted, defaults to `1337`.
+### Expected behavior
 
-2. `ar.invader.stop`
-
-- Stops the invader run and sets flow state to `Stopped`.
-- Stops further director-driven spawning/phase progression.
-- Clears director runtime tracking/snapshot state.
-
-3. `ar.invader.dump_state`
-
-- Logs a compact runtime snapshot to `ARLog`.
-- Includes flow state, stage, threat, leak counters, active waves, stage choice data, and intro remaining time.
-
-4. `ar.invader.force_wave <WaveRowName>`
-
-- Attempts to spawn that wave definition immediately.
-- Works only while run is active and wave row exists.
-- Uses repeat color-swap logic if forcing the same wave again and that wave allows swap.
-
-5. `ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`
-
-- Forces the phase for one active wave instance ID.
-- If the wave ID is missing/not active, nothing changes.
-- Triggers enemy wave-phase update hooks for spawned enemies in that wave.
-
-6. `ar.invader.force_threat <Value>`
-
-- Sets threat immediately (clamped to `>= 0`).
-- Affects future weighted wave selection.
-
-7. `ar.invader.force_stage <StageRowName>`
-
-- Switches current stage definition immediately (if row exists).
-- Starts stage intro for that stage (or enters combat immediately if intro resolves to `0`).
-- Clears pending/choice stage selection state.
-- Does not automatically despawn already alive enemies.
-
-8. `ar.invader.choose_stage <left|right>`
-
-- Submits stage choice when flow state is `StageChoice`.
-- Outside `StageChoice`, this is a no-op.
-- Starts stage transition delay, then enters chosen stage intro.
-
-9. `ar.invader.force_intro <Seconds|clear>`
-
-- Sets runtime intro override seconds used when resolving stage intro duration.
-- If currently in `StageIntro`, updates remaining intro time immediately.
-- `clear` removes runtime override and returns intro resolution to normal policy:
-  runtime override -> settings debug override -> stage row override -> settings default.
-
-10. `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
-
-- Deprojects viewport corners onto a horizontal plane (defaults to `SpawnOrigin.Z`).
-- Logs suggested `GameplayBoundsMin/Max`; pass `apply` to write+save into director settings.
-- Optional args: custom PlaneZ and XY margin padding before applying.
+1. **`ar.invader.start [Seed]`** — fresh run on authority, resets director state, seeds intro; default seed `1337`.
+2. **`ar.invader.stop`** — ends run, halts spawning and phase progression, clears tracking.
+3. **`ar.invader.dump_state`** — logs snapshot: flow state, stage, threat, leaks, waves, choices, intro time.
+4. **`ar.invader.force_wave <WaveRowName>`** — spawns wave immediately if active + row exists; color-swap repeats respected.
+5. **`ar.invader.force_phase <WaveId> <Entering|Active|Berserk|Expired>`** — forces phase for one active wave ID; no-op if missing.
+6. **`ar.invader.force_threat <Value>`** — sets threat (>=0) for future weighted selection.
+7. **`ar.invader.force_stage <StageRowName>`** — switches stage, enters intro, clears pending choices; does not despawn living enemies.
+8. **`ar.invader.choose_stage <left|right>`** — submits choice only during `StageChoice`; then runs transition + intro.
+9. **`ar.invader.force_intro <Seconds|clear>`** — overrides intro duration (or clears to normal resolution order: runtime > settings debug > stage row > default).
+10. **`ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`** — logs suggested bounds; `apply` writes + saves into director settings; optional PlaneZ/Margin.

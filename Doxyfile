@@ -1,0 +1,115 @@
+# Doxygen configuration for Alien Ramen (Unreal Engine 5.7)
+# Generated to pair with MkDocs + mkdocs-doxygen-plugin
+
+PROJECT_NAME           = "Alien Ramen"
+PROJECT_BRIEF          = "Unreal Engine 5.7 C++ runtime, editor tools, and gameplay systems"
+OUTPUT_DIRECTORY       = Documentation/doxygen
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ALWAYS_DETAILED_SEC    = YES
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = Source
+STRIP_FROM_INC_PATH    = Source
+
+INPUT                  = Source
+FILE_PATTERNS          = *.h \
+                         *.hpp \
+                         *.cpp
+RECURSIVE              = YES
+EXCLUDE                = Binaries \
+                         DerivedDataCache \
+                         Intermediate \
+                         Plugins \
+                         Content \
+                         Sources \
+                         Documentation/doxygen \
+                         .git \
+                         .github
+EXCLUDE_PATTERNS       = */ThirdParty/* \
+                         */Developers/* \
+                         */Build/*
+
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_PACKAGE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_METHODS  = NO
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+HIDE_FRIEND_COMPOUNDS  = YES
+HIDE_IN_BODY_DOCS      = NO
+
+SORT_MEMBER_DOCS       = YES
+SORT_BRIEF_DOCS        = YES
+SORT_BY_SCOPE_NAME     = YES
+
+QUIET                  = NO
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_LOGFILE           = Documentation/doxygen/doxygen.warnings
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+ALPHABETICAL_INDEX     = YES
+
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+MULTILINE_CPP_IS_BRIEF = YES
+
+TAB_SIZE               = 4
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+EXTENSION_MAPPING      = h=C++
+
+# Unreal macro handling to reduce noise in parsing
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = \
+    UCLASS(...)= \
+    USTRUCT(...)= \
+    UENUM(...)= \
+    UINTERFACE(...)= \
+    GENERATED_BODY(...)= \
+    GENERATED_UCLASS_BODY(...)= \
+    GENERATED_USTRUCT_BODY(...)= \
+    GENERATED_IINTERFACE_BODY(...)= \
+    GENERATED_MESH_BODY(...)= \
+    UPROPERTY(...)= \
+    UFUNCTION(...)= \
+    UDELEGATE(...)= \
+    UENUM_CLASS(...)= \
+    UINTERFACE_BODY(...)= \
+    FORCEINLINE=inline \
+    UE_API= \
+    ALIENRAMEN_API= \
+    ALIENRAMENEDITOR_API=
+SKIP_FUNCTION_MACROS   = YES
+
+# Diagrams
+HAVE_DOT               = YES
+DOT_IMAGE_FORMAT       = svg
+DOT_TRANSPARENT        = YES
+INTERACTIVE_SVG        = YES
+CLASS_GRAPH            = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+# Use a stable timestamp so incremental builds do not churn
+HTML_TIMESTAMP         = NO
+

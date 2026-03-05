@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARInvaderDirectorSettings.h
+ * @brief ARInvaderDirectorSettings header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
