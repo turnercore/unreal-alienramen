@@ -3,6 +3,7 @@ site_description: "Alien Ramen UE5.7 C++ and gameplay docs"
 docs_dir: Documentation
 site_dir: site
 repo_name: alienramen
+site_url: https://turnercore.github.io/unreal-alienramen/
 # repo_url can be set later; left blank intentionally to avoid guessing
 
 nav:
