@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ContentLookupSubsystem.h
  * @brief ContentLookupSubsystem header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"

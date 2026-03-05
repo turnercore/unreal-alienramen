@@ -1,10 +1,11 @@
+/**
+ * @file ARPlayerCharacterInvader.h
+ * @brief ARPlayerCharacterInvader header for Alien Ramen.
+ */
+#pragma once
+
 // ARPlayerCharacterInvader.h
 
-#pragma once
-/**
- * @file ARShipCharacterBase.h
- * @brief ARShipCharacterBase header for Alien Ramen.
- */
 
 #include "CoreMinimal.h"
 #include "ARPlayerCharacterBase.h"

@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARSaveUserSettings.h
  * @brief ARSaveUserSettings header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"

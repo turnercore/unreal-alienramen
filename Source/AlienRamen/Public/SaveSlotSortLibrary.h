@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file SaveSlotSortLibrary.h
  * @brief SaveSlotSortLibrary header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"

@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARInvaderDirectorSubsystem.h
  * @brief ARInvaderDirectorSubsystem header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"

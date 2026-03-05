@@ -1,8 +1,8 @@
-#pragma once
 /**
  * @file ARInvaderRuntimeStateComponent.h
  * @brief ARInvaderRuntimeStateComponent header for Alien Ramen.
  */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
