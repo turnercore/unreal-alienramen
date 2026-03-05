@@ -13,6 +13,8 @@
 - Preserve intent and constraints for future work (what must stay true), not just what exists today.
 - HIGH PRIORITY: never initialize Unreal/engine-dependent values at namespace/global static initialization time (for example `FGameplayTag::RequestGameplayTag`, `FPaths::*`, subsystem access, asset loads in static/global constructors). Resolve these at runtime via functions/instance lifecycle (`Initialize`, `BeginPlay`, constructor body, function-local static accessor) to avoid packaged `CrashDuringStaticInit` (`777006`) failures.
 - Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
+- Include hygiene rule: prefer forward declarations in headers and move concrete `#include` dependencies to `.cpp` files wherever UHT/type requirements allow.
+- Type-surface hygiene rule: when multiple systems consume the same enums/structs, extract them into focused shared type headers (for example `*Types.h`) to avoid dragging large owner headers across module boundaries.
 - API exposure default: prefer Blueprint exposure for gameplay-facing utilities unless told otherwise.
 - If exposure choice is unclear, ask before locking API surface.
 - Blueprint API categories should be under `Alien Ramen|...` (or existing subsystem category path following that prefix).
@@ -41,6 +43,7 @@
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
 - Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.
+- Shared player enum surface (`EARPlayerSlot`, `EARCharacterChoice`, `EARCoreAttributeType`) now lives in `Source/AlienRamen/Public/ARPlayerTypes.h`; this decouples save/core headers from `ARPlayerStateBase.h` include dependency.
 - `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
   - `BP_OnARGameInstanceInitialized`
   - `BP_OnARGameInstanceShutdown`
