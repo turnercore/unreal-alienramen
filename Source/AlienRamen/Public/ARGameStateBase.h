@@ -5,7 +5,7 @@
  */
 
 #include "CoreMinimal.h"
-#include "ARPlayerStateBase.h"
+#include "ARPlayerTypes.h"
 #include "ARSaveTypes.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameStateBase.h"

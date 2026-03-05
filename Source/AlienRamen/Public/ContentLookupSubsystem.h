@@ -7,10 +7,12 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GameplayTagContainer.h"
-#include "Engine/DataTable.h"
 #include "Engine/DataAsset.h"
 #include "StructUtils/InstancedStruct.h"
+#include "UObject/SoftObjectPtr.h"
 #include "ContentLookupSubsystem.generated.h"
+
+class UDataTable;
 
 USTRUCT(BlueprintType)
 struct FContentLookupRoute
