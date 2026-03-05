@@ -5,8 +5,9 @@ This document summarizes the current Gameplay Ability System (GAS) attribute mod
 ## Current GAS Setup (Quick Context)
 
 - Ability System Component (ASC) is owned by PlayerState (`AARPlayerStateBase`).
-- Pawn (`AARShipCharacterBase`) initializes ASC actor info and applies loadout-driven abilities/effects/tags.
+- Pawn (`AARPlayerCharacterInvader`) initializes ASC actor info and applies loadout-driven abilities/effects/tags.
 - A single shared attribute set is used today: `UARAttributeSetCore`.
+- Loadout terminology uses `Hat` (`Unlock.Hat`).
 
 ## Current Attributes In `UARAttributeSetCore`
 
@@ -80,12 +81,12 @@ This document summarizes the current Gameplay Ability System (GAS) attribute mod
 - `SpiceDrainRate`
 - `SpiceShareRatio`
 
-### Gadget System
+### Hat System
 
-- `GadgetEnergy`
-- `MaxGadgetEnergy`
-- `GadgetEnergyRegenRate`
-- `GadgetPower`
+- `HatEnergy`
+- `MaxHatEnergy`
+- `HatEnergyRegenRate`
+- `HatPower`
 
 ## Attributes That Are Commonly Missing (Candidates)
 

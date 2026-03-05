@@ -1,33 +1,30 @@
 # Save Subsystem Guide (`UARSaveSubsystem`)
 
-This document explains how to use the C++ save system from Blueprints, what happens automatically, and how to extend/migrate it safely.
+This document describes the current C++ save/travel/hydration contracts used by runtime and Blueprints.
 
 ## Runtime Ownership
 
 - Primary runtime API: `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`)
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
-- Save types/structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`
-- Active schema version is `2` and minimum supported is `2` (pre-v2 saves are intentionally unsupported).
-- Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `CyclesForUI` (all replicated with change dispatchers).
-- Runtime unlock writes should go through authority GameState APIs (`AddUnlockTag`, `RemoveUnlockTag`) or client-facing controller RPC wrappers (`AARPlayerController::RequestAddUnlock`, `RequestRemoveUnlock`).
+- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`
+- Save schema version is `v3`; minimum supported is also `v3`.
+- Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 
-The subsystem is a `UGameInstanceSubsystem`, so access it from BP via:
-- `Get Game Instance Subsystem` -> class `ARSaveSubsystem`
+The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
+- `Get Game Instance Subsystem` -> `ARSaveSubsystem`
 
 ## What Happens Automatically
 
 ## 1) Revisioned saves and rollback load
 
-- Physical save files use: `<SlotBase>__<Revision>`
-- Example: `Spicy_Ramen_Audit_108__3`
-- `LoadGame(SlotBase, RevisionOrLatest, Result)` supports rollback:
-  - if requested/latest revision fails to deserialize, older revisions are tried in descending order.
+- Physical save files use `<SlotBase>__<Revision>`.
+- `LoadGame(SlotBase, RevisionOrLatest, Result)` supports rollback: if requested/latest revision fails, older revisions are tried in descending order.
 
 ## 2) Backup retention and pruning
 
 - Max backup revisions comes from `UARSaveUserSettings::MaxBackupRevisions` (default `5`).
-- Save paths prune older revisions beyond retention:
+- Successful writes prune older revisions beyond retention:
   - `SaveCurrentGame(...)`
   - `PersistCanonicalSaveFromBytes(...)`
 
@@ -35,24 +32,23 @@ The subsystem is a `UGameInstanceSubsystem`, so access it from BP via:
 
 - Server save builds one canonical `UARSaveGame` snapshot.
 - Server serializes snapshot and sends to remote clients.
-- Clients persist the same snapshot locally.
-- This keeps host/client save parity for host-switch workflows.
+- Clients persist equivalent snapshot locally.
 
 ## 4) Client join sync
 
-- Local non-authority `AARPlayerController` auto-requests sync in `BeginPlay` (`ServerRequestCanonicalSaveSync`).
-- Server pushes current canonical save to that client via subsystem.
-- If no current save is available yet, request is queued and auto-flushed once a save becomes available.
+- Local non-authority `AARPlayerController` requests sync in `BeginPlay` (`ServerRequestCanonicalSaveSync`).
+- Server pushes current canonical save via `PushCurrentSaveToPlayer`.
+- If no current save is loaded yet, request is queued and flushed after next successful load/save.
 
 ## Blueprint API Surface
 
 ## Core save operations
 
-- `CreateNewSave(DesiredSlotBase, OutSlot, OutResult)`
-- `SaveCurrentGame(SlotBaseName, bCreateNewRevision, OutResult)`
-- `LoadGame(SlotBaseName, RevisionOrLatest, OutResult)`
-- `ListSaves(OutSlots, OutResult)`
-- `DeleteSave(SlotBaseName, OutResult)`
+- `CreateNewSave(DesiredSlotBase, OutSlot, OutResult, bUseDebugSaves)`
+- `SaveCurrentGame(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves)`
+- `LoadGame(SlotBaseName, RevisionOrLatest, OutResult, bUseDebugSaves)`
+- `ListSaves(OutSlots, OutResult, bUseDebugSaves)`
+- `DeleteSave(SlotBaseName, OutResult, bUseDebugSaves)`
 
 ## Utility helpers
 
@@ -63,98 +59,92 @@ The subsystem is a `UGameInstanceSubsystem`, so access it from BP via:
 - `GenerateRandomSlotBaseName(bEnsureUnique)`
 - `GetMaxBackupRevisions()`
 - `SetMaxBackupRevisions(NewMaxBackups)`
+- `MarkSaveDirty()`
+- `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)`
+- `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)`
 
 ## Hydration helpers
 
 - `RequestGameStateHydration(Requester)`
-- `RequestPlayerStateHydration(Requester)`
+- `TryHydratePlayerStateFromCurrentSave(Requester, bAllowSlotFallback)`
+- `SetPendingTravelGameStateData(PendingStateData)`
+- `ClearPendingTravelGameStateData()`
+- `HasPendingTravelGameStateData()`
 
-`UARSaveGame` BP-compatible readers:
+`UARSaveGame` BP readers:
 - `FindPlayerStateDataBySlot(Slot, OutData, OutIndex)`
 - `FindPlayerStateDataByIdentity(Identity, OutData, OutIndex)`
 
-## BP Events (bind from UI/GameInstance/etc.)
+## Travel helpers
 
+- `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bPersistSaveBeforeTravel)`
+- `RequestOpenLevel(LevelName, Options, bSkipReadyChecks, bAbsolute, bPersistSaveBeforeTravel)`
+
+Both capture one-shot `PendingTravelGameStateData` before map travel:
+- If `bPersistSaveBeforeTravel=true`, travel saves to disk first, then clears pending travel data.
+- If `bPersistSaveBeforeTravel=false`, travel skips disk save and carries pending travel data to next map hydration.
+
+## BP Events
+
+- `OnSaveStarted`
 - `OnSaveCompleted`
 - `OnLoadCompleted`
 - `OnSaveFailed`
 - `OnLoadFailed`
 - `OnGameLoaded`
 
+## Hydration Order (Current Contract)
+
+GameState hydration (`RequestGameStateHydration`) is authority-only and runs at `AARGameStateBase::BeginPlay`:
+1. Runtime starts from class/default values.
+2. If a current save exists, persisted GameState fields are applied.
+3. If pending travel GameState data exists, it overlays the current runtime values and is consumed/reset.
+
+PlayerState hydration is split by lifecycle:
+- First join path (GameMode): `TryHydratePlayerStateFromCurrentSave(...)` if possible, else `InitializeForFirstSessionJoin()`.
+- Seamless travel path: `AARPlayerStateBase::CopyProperties(...)` copies runtime struct + key replicated fields.
+
 ## Typical Blueprint Flows
 
 ## New game / new save
 
-1. Get subsystem
-2. Call `CreateNewSave(NAME_None or custom slot base, OutSlot, OutResult)`
-3. On success, optionally call hydration or open next map
+1. Get subsystem.
+2. Call `CreateNewSave(NAME_None or custom base, OutSlot, OutResult, bUseDebugSaves)`.
+3. On success, travel/start flow as needed.
 
 ## Save current run
 
-1. Get subsystem
-2. Call `SaveCurrentGame(CurrentSlotBaseName or None, true, OutResult)` for new revision
-3. Use `OutResult` + `OnSaveCompleted/OnSaveFailed` for UI feedback
+1. Get subsystem.
+2. Call `SaveCurrentGame(CurrentSlotBaseName or None, true, OutResult, bUseDebugSaves)`.
+3. Use `OutResult` and save events for UI feedback.
 
 ## Load save
 
-1. Get subsystem
-2. Call `LoadGame(SlotBaseName, -1, OutResult)` for latest revision
-3. On `OnGameLoaded`, run map/gameplay flow that depends on loaded state
+1. Get subsystem.
+2. Call `LoadGame(SlotBaseName, -1, OutResult, bUseDebugSaves)` for latest revision.
+3. On `OnGameLoaded`, continue map/gameplay flow.
 
-## Hydrate world state after load
+## Extend Save Data
 
-1. GameState calls `RequestGameStateHydration(self)`
-2. PlayerState calls `RequestPlayerStateHydration(self)`
-3. Existing `IStructSerializable`-based apply flow executes
+When adding new persisted data:
+1. Add field to `UARSaveGame` (or `FARPlayerStateSaveData` for player-scoped values).
+2. Populate in `UARSaveSubsystem::GatherRuntimeData(...)`.
+3. Apply in hydration flow.
+4. If BP-facing, add reflected `UPROPERTY`.
+5. Extend `UARSaveGame::ValidateAndSanitize(...)` for validation/clamping.
 
-## Adding New Save Data
+## Schema Versioning
 
-## If you need to save another variable
-
-1. Add field to `UARSaveGame` (for top-level persisted data), or to `FARPlayerStateSaveData` for player-scoped grouping.
-2. Populate it in `UARSaveSubsystem::GatherRuntimeData(...)`.
-3. Read/apply it during hydration path (or keep using instanced-struct apply if already covered by serializable state).
-4. If it must be BP-visible, mark `UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=...)`.
-5. If data needs validation, extend `UARSaveGame::ValidateAndSanitize(...)`.
-
-## If you need a new save operation utility
-
-- Add function to `UARSaveSubsystem` as `UFUNCTION(BlueprintCallable/Pure)` under category `Alien Ramen|Save`.
-- Keep authority-sensitive logic server-gated in subsystem.
-
-## Renaming / Migrating Fields Safely
-
-Renaming save fields can break old saves if not handled deliberately.
-
-Recommended approach:
-1. Add new field first, keep old field for one migration cycle.
-2. During load/apply, if new field is unset, derive from old field.
-3. Save writes only the new field after migration code runs.
-4. Remove old field in a later version bump.
-
-For larger schema changes:
-1. Bump `UARSaveSubsystem::SaveSchemaVersion`.
-2. Add compatibility migration in load/apply path.
-3. Keep behavior deterministic and logged (warnings for fallback paths).
-
-## Naming/Slot Rules
-
-- Slot base names are logical identifiers (no revision suffix).
-- Revision suffix is managed by subsystem only (`__N`).
-- Do not handcraft physical revision names in BP; use subsystem APIs.
-
-## Where to Extend by Responsibility
-
-- `UARSaveSubsystem`: orchestration, authority flow, index, revisioning, network sync, hydration requests
-- `UARSaveGame`: persisted schema + validation/sanitization
-- `UARSaveUserSettings`: user-configurable save behavior (retention)
-- `AARPlayerController`: join-time sync request/receive endpoints
+When changing schema in a breaking way:
+1. Bump `UARSaveGame::CurrentSchemaVersion`.
+2. Update `UARSaveGame::MinSupportedSchemaVersion` policy as needed.
+3. Add migration behavior only if supporting older schema versions.
 
 ## Troubleshooting
 
 - Save fails with authority error:
-  - Ensure `SaveCurrentGame` is called on server in networked mode.
-- Client joins but no save appears:
-  - Expected if server has no current save loaded yet; request is queued.
-- Hydration appears stale:
-  - Verify `CurrentSaveGame` is set (`HasCurrentSave`) and hydrators are called after load events.
+  - Ensure save/travel save calls run on server in networked sessions.
+- Join sync does not push immediately:
+  - Expected when server has no current save yet; request stays queued.
+- Hydration looks stale:
+  - Verify `CurrentSaveGame` exists (`HasCurrentSave`) and GameState hydration is being called on authority.

@@ -95,18 +95,29 @@ public:
 	/**
 	 * Authority-only travel helper used by UI/Blueprints.
 	 *
-	 * Flow: optional readiness gate -> capture GameState travel snapshot -> save (create if missing) -> ServerTravel with enforced listen option.
+	 * Flow: optional readiness gate -> capture GameState travel snapshot -> optional disk save -> ServerTravel with enforced listen option.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool RequestServerTravel(const FString& URL, bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false);
+	bool RequestServerTravel(
+		const FString& URL,
+		bool bSkipReadyChecks = false,
+		bool bAbsolute = false,
+		bool bSkipGameNotify = false,
+		bool bPersistSaveBeforeTravel = true);
 
 	/**
 	 * Authority-only non-networked level open. Enforces listen option so host remains authoritative.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool RequestOpenLevel(const FString& LevelName, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false);
+	bool RequestOpenLevel(
+		const FString& LevelName,
+		const FString& Options = "",
+		bool bSkipReadyChecks = false,
+		bool bAbsolute = false,
+		bool bPersistSaveBeforeTravel = true);
 
-	// Sets travel-transient GameState data to be applied first on next RequestGameStateHydration call.
+	// Sets travel-transient GameState data to be overlaid on next RequestGameStateHydration call
+	// (after persisted save fields when a current save exists).
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void SetPendingTravelGameStateData(const FInstancedStruct& PendingStateData);
 
