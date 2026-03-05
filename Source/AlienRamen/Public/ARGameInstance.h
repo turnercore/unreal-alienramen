@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARGameInstance.h
+ * @brief ARGameInstance header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
@@ -8,6 +12,7 @@ class UARSaveSubsystem;
 class FOnlineSessionSettings;
 class FOnlineSessionSearchResult;
 
+/** GameInstance root that owns the save subsystem and build/network compatibility helpers. */
 UCLASS(BlueprintType, Blueprintable)
 class ALIENRAMEN_API UARGameInstance : public UGameInstance
 {

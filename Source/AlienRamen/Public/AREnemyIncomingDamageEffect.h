@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file AREnemyIncomingDamageEffect.h
+ * @brief AREnemyIncomingDamageEffect header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "GameplayEffect.h"

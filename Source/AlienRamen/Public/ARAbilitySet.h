@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARAbilitySet.h
+ * @brief ARAbilitySet header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"

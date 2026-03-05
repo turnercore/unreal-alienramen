@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ARShopAIController.h
+ * @brief ARShopAIController header for Alien Ramen.
+ */
 
 #include "CoreMinimal.h"
 #include "ARAIControllerBase.h"
