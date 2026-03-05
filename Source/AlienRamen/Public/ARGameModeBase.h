@@ -5,12 +5,13 @@
  */
 
 #include "CoreMinimal.h"
+#include "ARPlayerTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameplayTagContainer.h"
-#include "ARPlayerStateBase.h"
 #include "ARGameModeBase.generated.h"
 
 class AARGameStateBase;
+class AARPlayerStateBase;
 class UARSaveSubsystem;
 
 /** Shared authoritative GameMode: join/setup flow, travel gating, and mode identity tag. */

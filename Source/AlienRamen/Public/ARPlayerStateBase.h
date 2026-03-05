@@ -5,44 +5,17 @@
  */
 
 #include "CoreMinimal.h"
+#include "ARPlayerTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
-#include "GameplayEffect.h"
 #include "GameplayEffectTypes.h"
 #include "StructSerializable.h"
 #include "ARPlayerStateBase.generated.h"
 
 class UAbilitySystemComponent;
-class UAttributeSet;
 class UARAttributeSetCore;
 class AARPlayerStateBase;
-
-UENUM(BlueprintType)
-enum class EARPlayerSlot : uint8
-{
-	Unknown = 0,
-	P1,
-	P2
-};
-
-UENUM(BlueprintType)
-enum class EARCharacterChoice : uint8
-{
-	None = 0,
-	Brother,
-	Sister
-};
-
-UENUM(BlueprintType)
-enum class EARCoreAttributeType : uint8
-{
-	Health,
-	MaxHealth,
-	Spice,
-	MaxSpice,
-	MoveSpeed
-};
 
 USTRUCT(BlueprintType)
 struct FARPlayerCoreAttributeSnapshot
