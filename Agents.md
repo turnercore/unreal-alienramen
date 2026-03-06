@@ -157,6 +157,20 @@
 - replicated combo count (`InvaderComboCount`) + `LastInvaderKillCreditServerTime`; server kill-credit path uses timeout-aware updates and signal `OnInvaderComboChanged`.
 - replicated activated-upgrade ledger (`ActivatedInvaderUpgradeTags`) with server mutation helpers (`MarkInvaderUpgradeActivated`, `ClearActivatedInvaderUpgrades`) and signal `OnInvaderActivatedUpgradesChanged`.
 - local-only HUD prediction overlay hooks exist on PlayerState (`SetPredictedSpiceValue`, `ClearPredictedSpiceValue`, `OnPredictedSpiceChanged`) and never mutate authoritative spice values.
+- PlayerState now owns spicy-track activation cursor runtime state (non-save/non-hydrated):
+- replicated authoritative `SpicyTrackCursorTier` (`0` = no slotted tier selected; `>=1` = selected track tier) with server setter path (`SetSpicyTrackCursorTier` / `ServerSetSpicyTrackCursorTier`) and signal `OnSpicyTrackCursorChanged`.
+- local prediction overlay for cursor exists on PlayerState (`SetPredictedSpicyTrackCursorTier`, `ClearPredictedSpicyTrackCursorTier`, `OnPredictedSpicyTrackCursorChanged`) and never mutates authoritative cursor state.
+- cursor clamping is centralized against Invader shared-track/spice constraints via `AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(...)` (sufficient spice + valid slotted upgrade; tier `0` always valid fallback).
+- spicy-track cursor delta input loops across selectable tiers only (`1..MaxSelectableTier`) and skips empty tier `0` whenever at least one tier is selectable; tier `0` is only used when no selectable slotted tier exists.
+- server auto-snap behavior: when a player crosses into a higher spice tier bucket (`floor(Spice / SpicePerTier)`), PlayerState snaps cursor to highest currently selectable tier; on spice/track reductions cursor is clamped back into valid range.
+- Invader controller exposes BP-callable input helpers for Enhanced Input wiring:
+- `HandleSpiceTrackDeltaInput(float AxisValue)` applies +/- cursor delta (with local prediction + server authority reconciliation).
+- `HandleSpiceTrackActivateFromCursor()` activates selected tier (`RequestActivateTrackUpgrade(CursorTier)`) or attempts Full Blast when cursor tier is `0`.
+- Invader upgrades now support multi-use slot activation in native upgrade row schema:
+- `FARInvaderUpgradeDefRow::MaxActivationUses` (finite, clamped minimum 1) and `bInfiniteActivationUses`.
+- slotted runtime state tracks `RemainingActivationUses` and `bInfiniteUses` on `FARInvaderTrackSlotState`.
+- track activation consumes one charge for finite slots and only collapses/removes the slot when charges are exhausted; infinite-use slots never auto-remove from activation count.
+- spicy meter reset still occurs on every track activation; shared tier drop/collapse now occurs only when the activated slot is consumed/removed.
 - Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARPlayerCharacterInvader` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
