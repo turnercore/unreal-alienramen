@@ -22,6 +22,9 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, bIsDowned);
 	DOREPLIFETIME(AARPlayerStateBase, bIsDeadState);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
+	DOREPLIFETIME(AARPlayerStateBase, InvaderPlayerColor);
+	DOREPLIFETIME(AARPlayerStateBase, InvaderComboCount);
+	DOREPLIFETIME(AARPlayerStateBase, ActivatedInvaderUpgradeTags);
 }
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
@@ -186,7 +189,12 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 		return;
 	}
 
-	SetCharacterPicked(EARCharacterChoice::None);
+	const EARCharacterChoice DefaultCharacter =
+		(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+	SetCharacterPicked(DefaultCharacter);
+	ResetInvaderCombo();
+	ClearActivatedInvaderUpgrades();
+	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(DefaultCharacter), true);
 	EnsureDefaultLoadoutIfEmpty();
 }
 
@@ -314,10 +322,130 @@ void AARPlayerStateBase::ServerSetSpiceMeter_Implementation(float NewSpiceValue)
 	SetSpiceMeter_Internal(NewSpiceValue);
 }
 
+void AARPlayerStateBase::SetInvaderPlayerColor(EARAffinityColor NewColor)
+{
+	if (HasAuthority())
+	{
+		SetInvaderPlayerColor_Internal(NewColor);
+		return;
+	}
+
+	ServerSetInvaderPlayerColor(NewColor);
+}
+
+void AARPlayerStateBase::ServerSetInvaderPlayerColor_Implementation(EARAffinityColor NewColor)
+{
+	SetInvaderPlayerColor_Internal(NewColor);
+}
+
+void AARPlayerStateBase::ResetInvaderCombo()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (InvaderComboCount == 0)
+	{
+		LastInvaderKillCreditServerTime = -1.0f;
+		return;
+	}
+
+	const int32 OldComboCount = InvaderComboCount;
+	InvaderComboCount = 0;
+	LastInvaderKillCreditServerTime = -1.0f;
+	OnRep_InvaderComboCount(OldComboCount);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::ReportInvaderKillCredit(EARAffinityColor EnemyColor, const float ServerTimeSeconds, const float ComboTimeoutSeconds)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const bool bHasPriorCredit = LastInvaderKillCreditServerTime >= 0.0f;
+	const bool bTimedOut = bHasPriorCredit
+		&& ComboTimeoutSeconds > 0.0f
+		&& (ServerTimeSeconds - LastInvaderKillCreditServerTime) > ComboTimeoutSeconds;
+
+	const bool bMatchedColor = DoesInvaderColorMatch(InvaderPlayerColor, EnemyColor);
+	const int32 OldComboCount = InvaderComboCount;
+	const int32 NewComboCount = bMatchedColor ? ((bTimedOut ? 0 : OldComboCount) + 1) : 0;
+
+	InvaderComboCount = FMath::Max(0, NewComboCount);
+	LastInvaderKillCreditServerTime = ServerTimeSeconds;
+	if (InvaderComboCount != OldComboCount)
+	{
+		OnRep_InvaderComboCount(OldComboCount);
+		ForceNetUpdate();
+	}
+}
+
+void AARPlayerStateBase::MarkInvaderUpgradeActivated(FGameplayTag UpgradeTag)
+{
+	if (!HasAuthority() || !UpgradeTag.IsValid())
+	{
+		return;
+	}
+
+	if (ActivatedInvaderUpgradeTags.HasTagExact(UpgradeTag))
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldTags = ActivatedInvaderUpgradeTags;
+	ActivatedInvaderUpgradeTags.AddTag(UpgradeTag);
+	OnRep_ActivatedInvaderUpgrades(OldTags);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::ClearActivatedInvaderUpgrades()
+{
+	if (!HasAuthority() || ActivatedInvaderUpgradeTags.IsEmpty())
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldTags = ActivatedInvaderUpgradeTags;
+	ActivatedInvaderUpgradeTags.Reset();
+	OnRep_ActivatedInvaderUpgrades(OldTags);
+	ForceNetUpdate();
+}
+
+bool AARPlayerStateBase::HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) const
+{
+	return UpgradeTag.IsValid() && ActivatedInvaderUpgradeTags.HasTagExact(UpgradeTag);
+}
+
+void AARPlayerStateBase::SetPredictedSpiceValue(const float NewPredictedSpice)
+{
+	PredictedSpiceValue = FMath::Max(0.0f, NewPredictedSpice);
+	bHasPredictedSpiceValue = true;
+	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+}
+
+void AARPlayerStateBase::ClearPredictedSpiceValue()
+{
+	if (!bHasPredictedSpiceValue)
+	{
+		return;
+	}
+
+	bHasPredictedSpiceValue = false;
+	PredictedSpiceValue = 0.0f;
+	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+}
+
 void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	EnsureDefaultLoadoutIfEmpty();
+	if (HasAuthority() && InvaderPlayerColor == EARAffinityColor::None)
+	{
+		SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked), true);
+	}
 	BindTrackedAttributeDelegates();
 	BroadcastTrackedAttributeSnapshot();
 	EvaluateLifeStateFromASC();
@@ -368,6 +496,21 @@ void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
 	OnSetupStateChanged.Broadcast(bIsSetup, bOldIsSetup);
 }
 
+void AARPlayerStateBase::OnRep_InvaderPlayerColor(EARAffinityColor OldColor)
+{
+	OnInvaderPlayerColorChanged.Broadcast(InvaderPlayerColor, OldColor);
+}
+
+void AARPlayerStateBase::OnRep_InvaderComboCount(int32 OldComboCount)
+{
+	OnInvaderComboChanged.Broadcast(this, PlayerSlot, InvaderComboCount, OldComboCount);
+}
+
+void AARPlayerStateBase::OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags)
+{
+	OnInvaderActivatedUpgradesChanged.Broadcast(this, PlayerSlot, ActivatedInvaderUpgradeTags, OldActivatedTags);
+}
+
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
 {
 	if (!HasAuthority() || CharacterPicked == NewCharacter)
@@ -377,9 +520,80 @@ void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewChara
 
 	const EARCharacterChoice OldCharacter = CharacterPicked;
 	CharacterPicked = NewCharacter;
+	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(NewCharacter));
 	OnRep_CharacterPicked(OldCharacter);
 	ForceNetUpdate();
 	EvaluateTravelReadinessAndBroadcast();
+}
+
+void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, const bool bForceBroadcast)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (NewColor == EARAffinityColor::Unknown)
+	{
+		NewColor = EARAffinityColor::None;
+	}
+
+	if (!bUpdatingInvaderColorFromTags)
+	{
+		ApplyInvaderColorGameplayTags(NewColor);
+	}
+
+	if (!bForceBroadcast && InvaderPlayerColor == NewColor)
+	{
+		return;
+	}
+
+	const EARAffinityColor OldColor = InvaderPlayerColor;
+	InvaderPlayerColor = NewColor;
+	OnRep_InvaderPlayerColor(OldColor);
+	ForceNetUpdate();
+
+	if (NewColor == EARAffinityColor::None || NewColor == EARAffinityColor::White)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[InvaderSpice|Color] Player '%s' entered non-baseline color %d (Old=%d Slot=%d Character=%d)."),
+			*GetNameSafe(this),
+			static_cast<int32>(NewColor),
+			static_cast<int32>(OldColor),
+			static_cast<int32>(PlayerSlot),
+			static_cast<int32>(CharacterPicked));
+	}
+}
+
+EARAffinityColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharacter(const EARCharacterChoice InCharacterChoice) const
+{
+	switch (InCharacterChoice)
+	{
+	case EARCharacterChoice::Brother:
+		return EARAffinityColor::Blue;
+	case EARCharacterChoice::Sister:
+		return EARAffinityColor::Red;
+	default:
+		// Keep a deterministic non-white baseline even when character is not yet assigned.
+		return (PlayerSlot == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
+	}
+}
+
+bool AARPlayerStateBase::DoesInvaderColorMatch(const EARAffinityColor PlayerColor, const EARAffinityColor EnemyColor)
+{
+	if (PlayerColor == EARAffinityColor::None || EnemyColor == EARAffinityColor::None)
+	{
+		return false;
+	}
+
+	if (PlayerColor == EARAffinityColor::White || EnemyColor == EARAffinityColor::White)
+	{
+		return true;
+	}
+
+	return PlayerColor == EnemyColor;
 }
 
 void AARPlayerStateBase::SetDisplayName_Internal(const FString& NewDisplayName)
@@ -558,8 +772,14 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		}
 		else
 		{
-			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Ready prerequisites could not auto-assign character for '%s'."), *GetNameSafe(this));
-			return false;
+			// Never leave character unset; fall back to slot-biased default even if non-unique.
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[PlayerState] Ready prerequisites found both character choices already taken for '%s'; assigning slot-biased fallback %d."),
+				*GetNameSafe(this),
+				static_cast<int32>(PreferredChoice));
+			SetCharacterPicked_Internal(PreferredChoice);
 		}
 	}
 
@@ -724,6 +944,8 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	// Mark copied/traveled state as setup-complete; ready remains transient.
 	TargetPS->SetIsSetupComplete(true);
 	TargetPS->SetReadyForRun(false);
+	TargetPS->ResetInvaderCombo();
+	TargetPS->ClearActivatedInvaderUpgrades();
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -823,6 +1045,48 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 				.AddUObject(this, &AARPlayerStateBase::HandleDeadTagChanged);
 		}
 	}
+
+	if (!ColorNoneTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+		if (ColorNoneTag.IsValid())
+		{
+			ColorNoneTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorRedTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+		if (ColorRedTag.IsValid())
+		{
+			ColorRedTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorWhiteTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+		if (ColorWhiteTag.IsValid())
+		{
+			ColorWhiteTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorBlueTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+		if (ColorBlueTag.IsValid())
+		{
+			ColorBlueTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	EvaluateInvaderColorFromASCOverrideTags();
 }
 
 void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
@@ -836,6 +1100,10 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		MoveSpeedChangedDelegateHandle.Reset();
 		DownedTagChangedDelegateHandle.Reset();
 		DeadTagChangedDelegateHandle.Reset();
+		ColorNoneTagChangedDelegateHandle.Reset();
+		ColorRedTagChangedDelegateHandle.Reset();
+		ColorWhiteTagChangedDelegateHandle.Reset();
+		ColorBlueTagChangedDelegateHandle.Reset();
 		return;
 	}
 
@@ -882,6 +1150,34 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		AbilitySystemComponent->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved).Remove(DeadTagChangedDelegateHandle);
 		DeadTagChangedDelegateHandle.Reset();
 	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	if (ColorNoneTag.IsValid() && ColorNoneTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorNoneTagChangedDelegateHandle);
+		ColorNoneTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	if (ColorRedTag.IsValid() && ColorRedTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorRedTagChangedDelegateHandle);
+		ColorRedTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	if (ColorWhiteTag.IsValid() && ColorWhiteTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorWhiteTagChangedDelegateHandle);
+		ColorWhiteTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+	if (ColorBlueTag.IsValid() && ColorBlueTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorBlueTagChangedDelegateHandle);
+		ColorBlueTagChangedDelegateHandle.Reset();
+	}
 }
 
 void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
@@ -898,6 +1194,10 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	OnSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.Spice, Snapshot.Spice);
 	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+	if (bHasPredictedSpiceValue)
+	{
+		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, Snapshot.Spice, true);
+	}
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -918,6 +1218,10 @@ void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeDat
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
 	OnSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	if (bHasPredictedSpiceValue)
+	{
+		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, ChangeData.NewValue, true);
+	}
 }
 
 void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -940,6 +1244,110 @@ void AARPlayerStateBase::HandleDownedTagChanged(const FGameplayTag /*Tag*/, int3
 void AARPlayerStateBase::HandleDeadTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
 {
 	EvaluateLifeStateFromASC();
+}
+
+void AARPlayerStateBase::HandleInvaderColorOverrideTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
+{
+	EvaluateInvaderColorFromASCOverrideTags();
+}
+
+void AARPlayerStateBase::EvaluateInvaderColorFromASCOverrideTags()
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	const EARAffinityColor ResolvedColor = ResolveInvaderColorFromASCOverrideTags();
+	bUpdatingInvaderColorFromTags = true;
+	SetInvaderPlayerColor_Internal(ResolvedColor);
+	bUpdatingInvaderColorFromTags = false;
+}
+
+EARAffinityColor AARPlayerStateBase::ResolveInvaderColorFromASCOverrideTags() const
+{
+	if (!AbilitySystemComponent)
+	{
+		return ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked);
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+
+	// Override precedence: None > White > Red > Blue.
+	if (ColorNoneTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorNoneTag))
+	{
+		return EARAffinityColor::None;
+	}
+
+	if (ColorWhiteTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorWhiteTag))
+	{
+		return EARAffinityColor::White;
+	}
+
+	if (ColorRedTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorRedTag))
+	{
+		return EARAffinityColor::Red;
+	}
+
+	if (ColorBlueTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorBlueTag))
+	{
+		return EARAffinityColor::Blue;
+	}
+
+	return ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked);
+}
+
+void AARPlayerStateBase::ApplyInvaderColorGameplayTags(const EARAffinityColor NewColor)
+{
+	if (!HasAuthority() || !AbilitySystemComponent || bApplyingInvaderColorTags)
+	{
+		return;
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+
+	FGameplayTagContainer AllColorTags;
+	if (ColorNoneTag.IsValid()) { AllColorTags.AddTag(ColorNoneTag); }
+	if (ColorWhiteTag.IsValid()) { AllColorTags.AddTag(ColorWhiteTag); }
+	if (ColorRedTag.IsValid()) { AllColorTags.AddTag(ColorRedTag); }
+	if (ColorBlueTag.IsValid()) { AllColorTags.AddTag(ColorBlueTag); }
+
+	if (!AllColorTags.IsEmpty())
+	{
+		bApplyingInvaderColorTags = true;
+		AbilitySystemComponent->RemoveLooseGameplayTags(AllColorTags, 1, EGameplayTagReplicationState::TagOnly);
+
+		FGameplayTagContainer ActiveColorTag;
+		switch (NewColor)
+		{
+		case EARAffinityColor::None:
+			if (ColorNoneTag.IsValid()) { ActiveColorTag.AddTag(ColorNoneTag); }
+			break;
+		case EARAffinityColor::White:
+			if (ColorWhiteTag.IsValid()) { ActiveColorTag.AddTag(ColorWhiteTag); }
+			break;
+		case EARAffinityColor::Red:
+			if (ColorRedTag.IsValid()) { ActiveColorTag.AddTag(ColorRedTag); }
+			break;
+		case EARAffinityColor::Blue:
+			if (ColorBlueTag.IsValid()) { ActiveColorTag.AddTag(ColorBlueTag); }
+			break;
+		default:
+			break;
+		}
+
+		if (!ActiveColorTag.IsEmpty())
+		{
+			AbilitySystemComponent->AddLooseGameplayTags(ActiveColorTag, 1, EGameplayTagReplicationState::TagOnly);
+		}
+		bApplyingInvaderColorTags = false;
+	}
 }
 
 void AARPlayerStateBase::EvaluateLifeStateFromASC()

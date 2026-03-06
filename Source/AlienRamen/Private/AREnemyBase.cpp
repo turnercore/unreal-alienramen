@@ -6,6 +6,7 @@
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
 #include "ARInvaderAIController.h"
+#include "ARInvaderGameState.h"
 #include "ARPlayerCharacterInvader.h"
 #include "ARLog.h"
 
@@ -27,6 +28,7 @@
 namespace
 {
 	const FName DataDamageName(TEXT("Data.Damage"));
+	constexpr float KillCreditInstigatorFallbackWindowSeconds = 3.0f;
 
 	static bool ApplyDamageToActorViaGAS(AActor* Target, float Damage, AActor* Offender)
 	{
@@ -267,6 +269,7 @@ void AAREnemyBase::BeginPlay()
 	Super::BeginPlay();
 	BindHealthChangeDelegate();
 	BindMoveSpeedChangeDelegate();
+	BindEnemyColorTagDelegates();
 	RefreshCharacterMovementSpeedFromAttributes();
 }
 
@@ -274,6 +277,7 @@ void AAREnemyBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UnbindHealthChangeDelegate();
 	UnbindMoveSpeedChangeDelegate();
+	UnbindEnemyColorTagDelegates();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -332,6 +336,11 @@ void AAREnemyBase::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	BindHealthChangeDelegate();
 	BindMoveSpeedChangeDelegate();
+	BindEnemyColorTagDelegates();
+	if (HasAuthority())
+	{
+		ApplyEnemyColorGameplayTags(EnemyColor);
+	}
 	RefreshCharacterMovementSpeedFromAttributes();
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] ASC initialized for '%s'."), *GetNameSafe(this));
 }
@@ -658,9 +667,20 @@ void AAREnemyBase::OnHealthChanged(const FOnAttributeChangeData& ChangeData)
 		AActor* DamageInstigator = nullptr;
 		if (ChangeData.GEModData)
 		{
-			DamageInstigator = ChangeData.GEModData->EffectSpec.GetContext().GetOriginalInstigator();
+			const FGameplayEffectContextHandle EffectContext = ChangeData.GEModData->EffectSpec.GetContext();
+			DamageInstigator = EffectContext.GetOriginalInstigator();
+			if (!DamageInstigator)
+			{
+				DamageInstigator = EffectContext.GetEffectCauser();
+			}
+		}
+		if (!DamageInstigator)
+		{
+			DamageInstigator = ResolveRecentDamageInstigatorForKillCredit(KillCreditInstigatorFallbackWindowSeconds);
 		}
 
+		UE_LOG(ARLog, Verbose, TEXT("[EnemyBase] Health reached zero for '%s'. Resolved damage instigator '%s' (recentFallback=%d)."),
+			*GetNameSafe(this), *GetNameSafe(DamageInstigator), DamageInstigator ? 1 : 0);
 		HandleDeath(DamageInstigator);
 	}
 }
@@ -694,6 +714,207 @@ void AAREnemyBase::OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData)
 	RefreshCharacterMovementSpeedFromAttributes();
 }
 
+void AAREnemyBase::BindEnemyColorTagDelegates()
+{
+	if (!AbilitySystemComponent)
+	{
+		return;
+	}
+
+	if (!ColorNoneTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+		if (ColorNoneTag.IsValid())
+		{
+			ColorNoneTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AAREnemyBase::HandleEnemyColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorRedTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+		if (ColorRedTag.IsValid())
+		{
+			ColorRedTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AAREnemyBase::HandleEnemyColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorWhiteTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+		if (ColorWhiteTag.IsValid())
+		{
+			ColorWhiteTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AAREnemyBase::HandleEnemyColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorBlueTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+		if (ColorBlueTag.IsValid())
+		{
+			ColorBlueTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AAREnemyBase::HandleEnemyColorOverrideTagChanged);
+		}
+	}
+
+	EvaluateEnemyColorFromASCOverrideTags();
+}
+
+void AAREnemyBase::UnbindEnemyColorTagDelegates()
+{
+	if (!AbilitySystemComponent)
+	{
+		ColorNoneTagChangedDelegateHandle.Reset();
+		ColorRedTagChangedDelegateHandle.Reset();
+		ColorWhiteTagChangedDelegateHandle.Reset();
+		ColorBlueTagChangedDelegateHandle.Reset();
+		return;
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	if (ColorNoneTag.IsValid() && ColorNoneTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorNoneTagChangedDelegateHandle);
+		ColorNoneTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	if (ColorRedTag.IsValid() && ColorRedTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorRedTagChangedDelegateHandle);
+		ColorRedTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	if (ColorWhiteTag.IsValid() && ColorWhiteTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorWhiteTagChangedDelegateHandle);
+		ColorWhiteTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+	if (ColorBlueTag.IsValid() && ColorBlueTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorBlueTagChangedDelegateHandle);
+		ColorBlueTagChangedDelegateHandle.Reset();
+	}
+}
+
+void AAREnemyBase::HandleEnemyColorOverrideTagChanged(const FGameplayTag /*Tag*/, const int32 /*NewCount*/)
+{
+	if (bApplyingEnemyColorTags)
+	{
+		return;
+	}
+
+	EvaluateEnemyColorFromASCOverrideTags();
+}
+
+void AAREnemyBase::EvaluateEnemyColorFromASCOverrideTags()
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	const EARAffinityColor ResolvedColor = ResolveEnemyColorFromASCOverrideTags();
+	bUpdatingEnemyColorFromTags = true;
+	SetEnemyColor(ResolvedColor);
+	bUpdatingEnemyColorFromTags = false;
+}
+
+EARAffinityColor AAREnemyBase::ResolveEnemyColorFromASCOverrideTags() const
+{
+	if (!AbilitySystemComponent)
+	{
+		return EnemyColor;
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+
+	// Override precedence matches player logic.
+	if (ColorNoneTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorNoneTag))
+	{
+		return EARAffinityColor::None;
+	}
+
+	if (ColorWhiteTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorWhiteTag))
+	{
+		return EARAffinityColor::White;
+	}
+
+	if (ColorRedTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorRedTag))
+	{
+		return EARAffinityColor::Red;
+	}
+
+	if (ColorBlueTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorBlueTag))
+	{
+		return EARAffinityColor::Blue;
+	}
+
+	return EnemyColor;
+}
+
+void AAREnemyBase::ApplyEnemyColorGameplayTags(const EARAffinityColor NewColor)
+{
+	if (!HasAuthority() || !AbilitySystemComponent || bApplyingEnemyColorTags)
+	{
+		return;
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+
+	FGameplayTagContainer AllColorTags;
+	if (ColorNoneTag.IsValid()) { AllColorTags.AddTag(ColorNoneTag); }
+	if (ColorWhiteTag.IsValid()) { AllColorTags.AddTag(ColorWhiteTag); }
+	if (ColorRedTag.IsValid()) { AllColorTags.AddTag(ColorRedTag); }
+	if (ColorBlueTag.IsValid()) { AllColorTags.AddTag(ColorBlueTag); }
+
+	if (AllColorTags.IsEmpty())
+	{
+		return;
+	}
+
+	bApplyingEnemyColorTags = true;
+	AbilitySystemComponent->RemoveLooseGameplayTags(AllColorTags, 1, EGameplayTagReplicationState::TagOnly);
+
+	FGameplayTagContainer ActiveColorTag;
+	switch (NewColor)
+	{
+	case EARAffinityColor::None:
+		if (ColorNoneTag.IsValid()) { ActiveColorTag.AddTag(ColorNoneTag); }
+		break;
+	case EARAffinityColor::White:
+		if (ColorWhiteTag.IsValid()) { ActiveColorTag.AddTag(ColorWhiteTag); }
+		break;
+	case EARAffinityColor::Red:
+		if (ColorRedTag.IsValid()) { ActiveColorTag.AddTag(ColorRedTag); }
+		break;
+	case EARAffinityColor::Blue:
+		if (ColorBlueTag.IsValid()) { ActiveColorTag.AddTag(ColorBlueTag); }
+		break;
+	default:
+		break;
+	}
+
+	if (!ActiveColorTag.IsEmpty())
+	{
+		AbilitySystemComponent->AddLooseGameplayTags(ActiveColorTag, 1, EGameplayTagReplicationState::TagOnly);
+	}
+	bApplyingEnemyColorTags = false;
+}
+
 void AAREnemyBase::RefreshCharacterMovementSpeedFromAttributes()
 {
 	if (!AbilitySystemComponent)
@@ -719,6 +940,11 @@ void AAREnemyBase::HandleDeath_Implementation(AActor* InstigatorActor)
 		return;
 	}
 
+	if (!InstigatorActor)
+	{
+		InstigatorActor = ResolveRecentDamageInstigatorForKillCredit(KillCreditInstigatorFallbackWindowSeconds);
+	}
+
 	bIsDead = true;
 	ForceNetUpdate();
 
@@ -739,8 +965,21 @@ void AAREnemyBase::HandleDeath_Implementation(AActor* InstigatorActor)
 		}
 	}
 
-	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Death handled for '%s'. Instigator='%s'."),
-		*GetNameSafe(this), *GetNameSafe(InstigatorActor));
+	if (InstigatorActor)
+	{
+		UE_LOG(ARLog, Log, TEXT("[EnemyBase] Death handled for '%s'. Instigator='%s'."),
+			*GetNameSafe(this), *GetNameSafe(InstigatorActor));
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[EnemyBase] Death handled for '%s' with missing instigator."),
+			*GetNameSafe(this));
+	}
+
+	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
+	{
+		InvaderGameState->NotifyEnemyKilled(this, InstigatorActor);
+	}
 
 	BP_OnEnemyDied(InstigatorActor);
 	BP_OnEnemyPreRelease(InstigatorActor);
@@ -760,11 +999,21 @@ void AAREnemyBase::OnRep_IsDead()
 	}
 }
 
-void AAREnemyBase::SetEnemyColor(EAREnemyColor InColor)
+void AAREnemyBase::SetEnemyColor(EARAffinityColor InColor)
 {
 	if (!HasAuthority())
 	{
 		return;
+	}
+
+	if (InColor == EARAffinityColor::Unknown)
+	{
+		InColor = EARAffinityColor::None;
+	}
+
+	if (!bUpdatingEnemyColorFromTags)
+	{
+		ApplyEnemyColorGameplayTags(InColor);
 	}
 
 	if (EnemyColor == InColor)
@@ -772,10 +1021,23 @@ void AAREnemyBase::SetEnemyColor(EAREnemyColor InColor)
 		return;
 	}
 
+	const EARAffinityColor OldColor = EnemyColor;
 	EnemyColor = InColor;
 	ForceNetUpdate();
 	UE_LOG(ARLog, Verbose, TEXT("[EnemyBase] Set enemy color for '%s' -> %d."), *GetNameSafe(this), static_cast<int32>(EnemyColor));
 	BP_OnEnemyColorChanged(EnemyColor);
+
+	if (EnemyColor == EARAffinityColor::None || EnemyColor == EARAffinityColor::White)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[EnemyBase|Color] Enemy '%s' entered non-baseline color %d (Old=%d Identifier=%s)."),
+			*GetNameSafe(this),
+			static_cast<int32>(EnemyColor),
+			static_cast<int32>(OldColor),
+			*EnemyIdentifierTag.ToString());
+	}
 }
 
 void AAREnemyBase::SetEnemyIdentifierTag(FGameplayTag InIdentifierTag)
@@ -800,6 +1062,8 @@ bool AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender, float& OutC
 	{
 		return false;
 	}
+
+	RememberDamageInstigatorForKillCredit(Offender);
 
 	FGameplayEffectContextHandle Context = AbilitySystemComponent->MakeEffectContext();
 	if (Offender)
@@ -880,10 +1144,59 @@ float AAREnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	if (!EffectiveOffender && EventInstigator)
 	{
 		EffectiveOffender = EventInstigator->GetPawn();
+		if (!EffectiveOffender)
+		{
+			EffectiveOffender = EventInstigator;
+		}
 	}
 
 	float IgnoredCurrentHealth = 0.f;
 	return ApplyDamageViaGAS(DamageAmount, EffectiveOffender, IgnoredCurrentHealth) ? DamageAmount : 0.f;
+}
+
+AActor* AAREnemyBase::ResolveRecentDamageInstigatorForKillCredit(const float MaxAgeSeconds) const
+{
+	if (!HasAuthority())
+	{
+		return nullptr;
+	}
+
+	AActor* Candidate = LastDamageInstigatorActor.Get();
+	if (!Candidate)
+	{
+		return nullptr;
+	}
+
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	const float AgeSeconds = World->GetTimeSeconds() - LastDamageInstigatorServerTime;
+	if (AgeSeconds > FMath::Max(0.0f, MaxAgeSeconds))
+	{
+		return nullptr;
+	}
+
+	return Candidate;
+}
+
+void AAREnemyBase::RememberDamageInstigatorForKillCredit(AActor* Offender)
+{
+	if (!HasAuthority() || !Offender)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	LastDamageInstigatorActor = Offender;
+	LastDamageInstigatorServerTime = World->GetTimeSeconds();
 }
 
 void AAREnemyBase::OnRep_EnemyColor()
