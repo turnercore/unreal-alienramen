@@ -69,7 +69,7 @@ private:
 	struct FPaletteEntry
 	{
 		FSoftClassPath EnemyClassPath;
-		EAREnemyColor Color = EAREnemyColor::Red;
+		EARAffinityColor Color = EARAffinityColor::Red;
 		FText Label;
 		bool bFavorite = false;
 		int32 ShapeCycle = 0;
@@ -90,7 +90,7 @@ private:
 	{
 		int32 SpawnIndex = INDEX_NONE;
 		float Delay = 0.f;
-		EAREnemyColor Color = EAREnemyColor::Red;
+		EARAffinityColor Color = EARAffinityColor::Red;
 		FString EnemyClassName;
 	};
 
@@ -164,7 +164,7 @@ private:
 	FReply OnDeleteSelectedSpawn();
 	FReply OnCopySelectedSpawns();
 	FReply OnPasteSpawns();
-	void SetSelectedSpawnColor(EAREnemyColor NewColor);
+	void SetSelectedSpawnColor(EARAffinityColor NewColor);
 	FReply OnMoveSpawnUp();
 	FReply OnMoveSpawnDown();
 	void ReorderSpawnByDrop(int32 SourceSpawnIndex, int32 TargetSpawnIndex, EItemDropZone DropZone);
