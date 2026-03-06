@@ -2,8 +2,10 @@
 
 #include "ARGameStateBase.h"
 #include "ARLog.h"
+#include "ARNetworkUserSettings.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
+#include "ARSessionSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/GameStateBase.h"
@@ -14,6 +16,11 @@ AARGameModeBase::AARGameModeBase()
 	DefaultPlayerName = FText::FromString(TEXT("Tenshu"));
 }
 
+void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+
+	if (!ErrorMessage.IsEmpty())
 void AARGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -23,6 +30,43 @@ void AARGameModeBase::BeginPlay()
 		return;
 	}
 
+	if (const UARNetworkUserSettings* NetworkSettings = GetDefault<UARNetworkUserSettings>())
+	{
+		if (NetworkSettings->bStayOffline && UniqueId.IsValid())
+		{
+			const FString NetIdType = UniqueId->GetType().ToString();
+			const bool bIsLocalStyleId = NetIdType.Equals(TEXT("NULL"), ESearchCase::IgnoreCase)
+				|| NetIdType.Equals(TEXT("INVALID"), ESearchCase::IgnoreCase)
+				|| NetIdType.Equals(TEXT("UNSET"), ESearchCase::IgnoreCase);
+
+			if (!bIsLocalStyleId)
+			{
+				ErrorMessage = TEXT("Server is offline.");
+				UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': Stay Offline is enabled (NetIdType=%s)."), *Address, *NetIdType);
+				return;
+			}
+		}
+	}
+
+	const AARGameStateBase* GS = GetGameState<AARGameStateBase>();
+	if (!GS)
+	{
+		return;
+	}
+
+	int32 PlayerCount = 0;
+	for (APlayerState* PS : GS->PlayerArray)
+	{
+		if (Cast<AARPlayerStateBase>(PS))
+		{
+			++PlayerCount;
+		}
+	}
+
+	if (PlayerCount >= 2)
+	{
+		ErrorMessage = TEXT("Server full.");
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': player cap reached (%d)."), *Address, PlayerCount);
 	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
 	{
 		NormalizeConnectedPlayersIdentity(GS);
@@ -415,6 +459,18 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 
 	BP_OnPlayerJoined(JoinedPS);
 	UE_LOG(ARLog, Log, TEXT("[GameMode] Player joined: %s (Slot=%d, Setup=%s)"), *GetNameSafe(JoinedPS), static_cast<int32>(JoinedPS->GetPlayerSlot()), JoinedPS->IsSetupComplete() ? TEXT("true") : TEXT("false"));
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARSessionSubsystem* SessionSubsystem = GI->GetSubsystem<UARSessionSubsystem>())
+		{
+			FARSessionResult SessionResult;
+			if (!SessionSubsystem->RefreshJoinability(SessionResult) && SessionResult.ResultCode != EARSessionResultCode::SessionNotFound)
+			{
+				UE_LOG(ARLog, Verbose, TEXT("[GameMode] Session joinability refresh after join failed: %s"), *SessionResult.Error);
+			}
+		}
+	}
 }
 
 void AARGameModeBase::Logout(AController* Exiting)
@@ -425,6 +481,18 @@ void AARGameModeBase::Logout(AController* Exiting)
 	UE_LOG(ARLog, Log, TEXT("[GameMode] Player left: %s"), *GetNameSafe(LeavingPS));
 
 	Super::Logout(Exiting);
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARSessionSubsystem* SessionSubsystem = GI->GetSubsystem<UARSessionSubsystem>())
+		{
+			FARSessionResult SessionResult;
+			if (!SessionSubsystem->RefreshJoinability(SessionResult) && SessionResult.ResultCode != EARSessionResultCode::SessionNotFound)
+			{
+				UE_LOG(ARLog, Verbose, TEXT("[GameMode] Session joinability refresh after leave failed: %s"), *SessionResult.Error);
+			}
+		}
+	}
 }
 
 void AARGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)

@@ -3,6 +3,7 @@
 #include "ARLog.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
+#include "ARSessionSubsystem.h"
 #include "Misc/App.h"
 #include "Misc/ConfigCacheIni.h"
 #include "OnlineSessionSettings.h"
@@ -24,6 +25,11 @@ void UARGameInstance::Shutdown()
 UARSaveSubsystem* UARGameInstance::GetARSaveSubsystem() const
 {
 	return GetSubsystem<UARSaveSubsystem>();
+}
+
+UARSessionSubsystem* UARGameInstance::GetARSessionSubsystem() const
+{
+	return GetSubsystem<UARSessionSubsystem>();
 }
 
 // ---- Network compatibility helpers ----

@@ -128,10 +128,31 @@ struct ALIENRAMEN_API FARPlayerIdentity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FString UniqueNetIdString;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FString UniqueNetIdType;
+
+	bool HasStrictOnlineIdentity() const
+	{
+		if (UniqueNetIdString.IsEmpty() || UniqueNetIdType.IsEmpty())
+		{
+			return false;
+		}
+
+		return !UniqueNetIdType.Equals(TEXT("NULL"), ESearchCase::IgnoreCase)
+			&& !UniqueNetIdType.Equals(TEXT("INVALID"), ESearchCase::IgnoreCase)
+			&& !UniqueNetIdType.Equals(TEXT("UNSET"), ESearchCase::IgnoreCase);
+	}
+
 	bool Matches(const FARPlayerIdentity& Other) const
 	{
 		if (!UniqueNetIdString.IsEmpty() && !Other.UniqueNetIdString.IsEmpty())
 		{
+			if (!UniqueNetIdType.IsEmpty() && !Other.UniqueNetIdType.IsEmpty()
+				&& !UniqueNetIdType.Equals(Other.UniqueNetIdType, ESearchCase::CaseSensitive))
+			{
+				return false;
+			}
+
 			return UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive);
 		}
 		return PlayerSlot != EARPlayerSlot::Unknown && PlayerSlot == Other.PlayerSlot;

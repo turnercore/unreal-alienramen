@@ -23,15 +23,36 @@ bool UARSaveGame::FindPlayerStateDataBySlot(const EARPlayerSlot Slot, FARPlayerS
 bool UARSaveGame::FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const
 {
 	OutIndex = INDEX_NONE;
+	int32 FirstIdentityMatchIndex = INDEX_NONE;
+
 	for (int32 i = 0; i < PlayerStates.Num(); ++i)
 	{
 		if (PlayerStates[i].Identity.Matches(Identity))
 		{
-			OutData = PlayerStates[i];
-			OutIndex = i;
-			return true;
+			if (FirstIdentityMatchIndex == INDEX_NONE)
+			{
+				FirstIdentityMatchIndex = i;
+			}
+
+			// Prefer slot-consistent match when multiple rows share the same online identity
+			// (for example couch coop players on one Steam account).
+			if (Identity.PlayerSlot != EARPlayerSlot::Unknown
+				&& PlayerStates[i].Identity.PlayerSlot == Identity.PlayerSlot)
+			{
+				OutData = PlayerStates[i];
+				OutIndex = i;
+				return true;
+			}
 		}
 	}
+
+	if (FirstIdentityMatchIndex != INDEX_NONE)
+	{
+		OutData = PlayerStates[FirstIdentityMatchIndex];
+		OutIndex = FirstIdentityMatchIndex;
+		return true;
+	}
+
 	return false;
 }
 
