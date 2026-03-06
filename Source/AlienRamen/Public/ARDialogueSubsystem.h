@@ -20,6 +20,7 @@ class ALIENRAMEN_API UARDialogueSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	virtual ~UARDialogueSubsystem() override;
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
@@ -50,25 +51,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
 	FAROnDialogueSessionEnded OnDialogueSessionEnded;
 
-	struct FARActiveDialogueSession
-	{
-		FString SessionId;
-		FGameplayTag NpcTag;
-		FGameplayTag CurrentNodeTag;
-		EARPlayerSlot InitiatorSlot = EARPlayerSlot::Unknown;
-		EARPlayerSlot OwnerSlot = EARPlayerSlot::Unknown;
-		bool bIsSharedSession = false;
-		bool bWaitingForChoice = false;
-		EARDialogueChoiceParticipation ChoiceParticipation = EARDialogueChoiceParticipation::InitiatorOnly;
-		bool bForceEavesdropForImportantDecision = false;
-		TArray<FARDialogueChoiceDef> CurrentChoices;
-		TMap<EARPlayerSlot, FGameplayTag> ChoiceVotes;
-		TSet<EARPlayerSlot> Participants;
-		FARDialogueNodeRow ActiveRow;
-	};
-
 private:
-	TArray<FARActiveDialogueSession> ActiveSessions;
+	struct FARDialogueRuntimeState;
+	FARDialogueRuntimeState& GetRuntimeState();
+	const FARDialogueRuntimeState& GetRuntimeState() const;
 
-	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
+	mutable TUniquePtr<FARDialogueRuntimeState> RuntimeState;
 };
