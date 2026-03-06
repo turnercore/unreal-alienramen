@@ -455,13 +455,6 @@ bool UARFactionSubsystem::ApplyWinner(UARSaveSubsystem* SaveSubsystem, const FGa
 		return false;
 	}
 
-	UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame();
-	if (!SaveGame)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[Faction] ApplyWinner skipped: no current save loaded."));
-		return false;
-	}
-
 	FGameplayTagContainer EffectTags;
 	if (WinnerFactionTag.IsValid())
 	{
@@ -476,9 +469,16 @@ bool UARFactionSubsystem::ApplyWinner(UARSaveSubsystem* SaveSubsystem, const FGa
 		EffectTags = WinnerRow.EffectTags;
 	}
 
-	SaveGame->ActiveFactionTag = WinnerFactionTag;
-	SaveGame->ActiveFactionEffectTags = EffectTags;
-	SaveSubsystem->MarkSaveDirty();
+	if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+	{
+		SaveGame->ActiveFactionTag = WinnerFactionTag;
+		SaveGame->ActiveFactionEffectTags = EffectTags;
+		SaveSubsystem->MarkSaveDirty();
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Faction] ApplyWinner continuing without current save; applying runtime GameState only."));
+	}
 
 	if (UWorld* World = GetWorld())
 	{
