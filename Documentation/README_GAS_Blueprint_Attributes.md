@@ -18,6 +18,12 @@ This doc explains the practical Blueprint flow for reading and reacting to GAS a
 - `GetSpiceNormalized()`
 - `SetSpiceMeter(float)`
 - `ClearSpiceMeter()`
+- `GetInvaderPlayerColor()`
+- `GetInvaderComboCount()`
+- `HasActivatedInvaderUpgrade(Tag)`
+- `GetActivatedInvaderUpgrades()`
+- `SetPredictedSpiceValue(float)` (local UI prediction only)
+- `ClearPredictedSpiceValue()`
 
 Blueprint-assignable events:
 
@@ -27,6 +33,22 @@ Blueprint-assignable events:
 - `OnSpiceChanged(NewValue, OldValue)`
 - `OnMaxSpiceChanged(NewValue, OldValue)`
 - `OnMoveSpeedChanged(NewValue, OldValue)`
+- `OnInvaderPlayerColorChanged(NewColor, OldColor)`
+- `OnInvaderComboChanged(SourcePlayerState, SourcePlayerSlot, NewCombo, OldCombo)`
+- `OnInvaderActivatedUpgradesChanged(...)`
+- `OnPredictedSpiceChanged(PredictedSpice, AuthoritativeSpice, bHasPrediction)`
+
+## Invader Spicy Track Runtime
+
+- Shared track/full-blast runtime is owned by `AARInvaderGameState` (server-authoritative).
+- UI/gameplay should treat PlayerState as per-player data and InvaderGameState as shared-track data.
+- Core Invader GameState BP entry points:
+- `RequestActivateFullBlast(PlayerState)`
+- `ResolveFullBlastSelection(PlayerState, UpgradeTag, DestinationSlot)`
+- `ResolveFullBlastSkip(PlayerState)`
+- `ActivateTrackUpgrade(PlayerState, SlotIndex)`
+- `StartSharingSpice(PlayerState)` / `StopSharingSpice(PlayerState)`
+- Multiplayer client flow is available via `AARInvaderPlayerController` request RPC wrappers for the same actions.
 
 Core enum:
 
