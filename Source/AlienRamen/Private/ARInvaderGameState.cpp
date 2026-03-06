@@ -177,40 +177,48 @@ bool AARInvaderGameState::ResolveUpgradeTagForDebugInject(const FString& TagToke
 
 void AARInvaderGameState::HandleConsoleSetSpice(const TArray<FString>& Args, UWorld* /*World*/)
 {
-	if (!HasAuthority() || Args.Num() < 2)
+	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetSpice <p1|p2> <value>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetSpice [p1|p2] <value>"));
 		return;
 	}
 
-	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(Args[0]);
+	const bool bHasExplicitPlayer = Args.Num() >= 2;
+	const FString PlayerToken = bHasExplicitPlayer ? Args[0] : TEXT("p1");
+	const FString ValueToken = bHasExplicitPlayer ? Args[1] : Args[0];
+
+	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(PlayerToken);
 	if (!PlayerState)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] SetSpice failed: could not resolve player token '%s'."), *Args[0]);
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] SetSpice failed: could not resolve player token '%s'."), *PlayerToken);
 		return;
 	}
 
-	const float Value = FCString::Atof(*Args[1]);
+	const float Value = FCString::Atof(*ValueToken);
 	PlayerState->SetSpiceMeter(Value);
 	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] SetSpice '%s' -> %.2f"), *GetNameSafe(PlayerState), Value);
 }
 
 void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWorld* /*World*/)
 {
-	if (!HasAuthority() || Args.Num() < 2)
+	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.AddSpice <p1|p2> <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.AddSpice [p1|p2] <delta>"));
 		return;
 	}
 
-	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(Args[0]);
+	const bool bHasExplicitPlayer = Args.Num() >= 2;
+	const FString PlayerToken = bHasExplicitPlayer ? Args[0] : TEXT("p1");
+	const FString DeltaToken = bHasExplicitPlayer ? Args[1] : Args[0];
+
+	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(PlayerToken);
 	if (!PlayerState)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] AddSpice failed: could not resolve player token '%s'."), *Args[0]);
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] AddSpice failed: could not resolve player token '%s'."), *PlayerToken);
 		return;
 	}
 
-	const float Delta = FCString::Atof(*Args[1]);
+	const float Delta = FCString::Atof(*DeltaToken);
 	const float Current = PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	PlayerState->SetSpiceMeter(Current + Delta);
 	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] AddSpice '%s' %+0.2f -> %.2f"), *GetNameSafe(PlayerState), Delta, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
@@ -218,20 +226,24 @@ void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWo
 
 void AARInvaderGameState::HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* /*World*/)
 {
-	if (!HasAuthority() || Args.Num() < 2)
+	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetCursor <p1|p2> <tier>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetCursor [p1|p2] <tier>"));
 		return;
 	}
 
-	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(Args[0]);
+	const bool bHasExplicitPlayer = Args.Num() >= 2;
+	const FString PlayerToken = bHasExplicitPlayer ? Args[0] : TEXT("p1");
+	const FString TierToken = bHasExplicitPlayer ? Args[1] : Args[0];
+
+	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(PlayerToken);
 	if (!PlayerState)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] SetCursor failed: could not resolve player token '%s'."), *Args[0]);
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] SetCursor failed: could not resolve player token '%s'."), *PlayerToken);
 		return;
 	}
 
-	const int32 RequestedTier = FCString::Atoi(*Args[1]);
+	const int32 RequestedTier = FCString::Atoi(*TierToken);
 	PlayerState->SetSpicyTrackCursorTier(RequestedTier);
 	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] SetCursor '%s' -> %d"), *GetNameSafe(PlayerState), PlayerState->GetSpicyTrackCursorTier());
 }
