@@ -1447,8 +1447,17 @@ void AARInvaderGameState::NotifyEnemyKilled(AAREnemyBase* Enemy, AActor* Instiga
 	AARPlayerStateBase* KillerPlayerState = ResolvePlayerStateFromInstigatorActor(InstigatorActor);
 	if (!KillerPlayerState)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] NotifyEnemyKilled could not resolve killer PS. Enemy='%s' InstigatorActor='%s'"),
-			*GetNameSafe(Enemy), *GetNameSafe(InstigatorActor));
+		const bool bExpectedEnemyOwnedDeath = InstigatorActor == Enemy || Cast<AAREnemyBase>(InstigatorActor) != nullptr;
+		if (bExpectedEnemyOwnedDeath)
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] NotifyEnemyKilled no killer PS (expected enemy-owned death). Enemy='%s' InstigatorActor='%s'"),
+				*GetNameSafe(Enemy), *GetNameSafe(InstigatorActor));
+		}
+		else
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] NotifyEnemyKilled could not resolve killer PS. Enemy='%s' InstigatorActor='%s'"),
+				*GetNameSafe(Enemy), *GetNameSafe(InstigatorActor));
+		}
 		return;
 	}
 
