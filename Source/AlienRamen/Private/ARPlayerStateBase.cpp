@@ -189,10 +189,12 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 		return;
 	}
 
-	SetCharacterPicked(EARCharacterChoice::None);
+	const EARCharacterChoice DefaultCharacter =
+		(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+	SetCharacterPicked(DefaultCharacter);
 	ResetInvaderCombo();
 	ClearActivatedInvaderUpgrades();
-	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice::None), true);
+	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(DefaultCharacter), true);
 	EnsureDefaultLoadoutIfEmpty();
 }
 
@@ -320,7 +322,7 @@ void AARPlayerStateBase::ServerSetSpiceMeter_Implementation(float NewSpiceValue)
 	SetSpiceMeter_Internal(NewSpiceValue);
 }
 
-void AARPlayerStateBase::SetInvaderPlayerColor(EARInvaderPlayerColor NewColor)
+void AARPlayerStateBase::SetInvaderPlayerColor(EARAffinityColor NewColor)
 {
 	if (HasAuthority())
 	{
@@ -331,7 +333,7 @@ void AARPlayerStateBase::SetInvaderPlayerColor(EARInvaderPlayerColor NewColor)
 	ServerSetInvaderPlayerColor(NewColor);
 }
 
-void AARPlayerStateBase::ServerSetInvaderPlayerColor_Implementation(EARInvaderPlayerColor NewColor)
+void AARPlayerStateBase::ServerSetInvaderPlayerColor_Implementation(EARAffinityColor NewColor)
 {
 	SetInvaderPlayerColor_Internal(NewColor);
 }
@@ -356,7 +358,7 @@ void AARPlayerStateBase::ResetInvaderCombo()
 	ForceNetUpdate();
 }
 
-void AARPlayerStateBase::ReportInvaderKillCredit(EARInvaderPlayerColor EnemyColor, const float ServerTimeSeconds, const float ComboTimeoutSeconds)
+void AARPlayerStateBase::ReportInvaderKillCredit(EARAffinityColor EnemyColor, const float ServerTimeSeconds, const float ComboTimeoutSeconds)
 {
 	if (!HasAuthority())
 	{
@@ -440,7 +442,7 @@ void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	EnsureDefaultLoadoutIfEmpty();
-	if (HasAuthority() && InvaderPlayerColor == EARInvaderPlayerColor::Unknown)
+	if (HasAuthority() && InvaderPlayerColor == EARAffinityColor::None)
 	{
 		SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked), true);
 	}
@@ -494,7 +496,7 @@ void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
 	OnSetupStateChanged.Broadcast(bIsSetup, bOldIsSetup);
 }
 
-void AARPlayerStateBase::OnRep_InvaderPlayerColor(EARInvaderPlayerColor OldColor)
+void AARPlayerStateBase::OnRep_InvaderPlayerColor(EARAffinityColor OldColor)
 {
 	OnInvaderPlayerColorChanged.Broadcast(InvaderPlayerColor, OldColor);
 }
@@ -524,11 +526,21 @@ void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewChara
 	EvaluateTravelReadinessAndBroadcast();
 }
 
-void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARInvaderPlayerColor NewColor, const bool bForceBroadcast)
+void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, const bool bForceBroadcast)
 {
 	if (!HasAuthority())
 	{
 		return;
+	}
+
+	if (NewColor == EARAffinityColor::Unknown)
+	{
+		NewColor = EARAffinityColor::None;
+	}
+
+	if (!bUpdatingInvaderColorFromTags)
+	{
+		ApplyInvaderColorGameplayTags(NewColor);
 	}
 
 	if (!bForceBroadcast && InvaderPlayerColor == NewColor)
@@ -536,28 +548,47 @@ void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARInvaderPlayerColor Ne
 		return;
 	}
 
-	const EARInvaderPlayerColor OldColor = InvaderPlayerColor;
+	const EARAffinityColor OldColor = InvaderPlayerColor;
 	InvaderPlayerColor = NewColor;
 	OnRep_InvaderPlayerColor(OldColor);
 	ForceNetUpdate();
+
+	if (NewColor == EARAffinityColor::None || NewColor == EARAffinityColor::White)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[InvaderSpice|Color] Player '%s' entered non-baseline color %d (Old=%d Slot=%d Character=%d)."),
+			*GetNameSafe(this),
+			static_cast<int32>(NewColor),
+			static_cast<int32>(OldColor),
+			static_cast<int32>(PlayerSlot),
+			static_cast<int32>(CharacterPicked));
+	}
 }
 
-EARInvaderPlayerColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharacter(const EARCharacterChoice InCharacterChoice) const
+EARAffinityColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharacter(const EARCharacterChoice InCharacterChoice) const
 {
 	switch (InCharacterChoice)
 	{
 	case EARCharacterChoice::Brother:
-		return EARInvaderPlayerColor::Red;
+		return EARAffinityColor::Blue;
 	case EARCharacterChoice::Sister:
-		return EARInvaderPlayerColor::Blue;
+		return EARAffinityColor::Red;
 	default:
-		return EARInvaderPlayerColor::White;
+		// Keep a deterministic non-white baseline even when character is not yet assigned.
+		return (PlayerSlot == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
 	}
 }
 
-bool AARPlayerStateBase::DoesInvaderColorMatch(const EARInvaderPlayerColor PlayerColor, const EARInvaderPlayerColor EnemyColor)
+bool AARPlayerStateBase::DoesInvaderColorMatch(const EARAffinityColor PlayerColor, const EARAffinityColor EnemyColor)
 {
-	if (PlayerColor == EARInvaderPlayerColor::White || EnemyColor == EARInvaderPlayerColor::White)
+	if (PlayerColor == EARAffinityColor::None || EnemyColor == EARAffinityColor::None)
+	{
+		return false;
+	}
+
+	if (PlayerColor == EARAffinityColor::White || EnemyColor == EARAffinityColor::White)
 	{
 		return true;
 	}
@@ -741,8 +772,14 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		}
 		else
 		{
-			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Ready prerequisites could not auto-assign character for '%s'."), *GetNameSafe(this));
-			return false;
+			// Never leave character unset; fall back to slot-biased default even if non-unique.
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[PlayerState] Ready prerequisites found both character choices already taken for '%s'; assigning slot-biased fallback %d."),
+				*GetNameSafe(this),
+				static_cast<int32>(PreferredChoice));
+			SetCharacterPicked_Internal(PreferredChoice);
 		}
 	}
 
@@ -1008,6 +1045,48 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 				.AddUObject(this, &AARPlayerStateBase::HandleDeadTagChanged);
 		}
 	}
+
+	if (!ColorNoneTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+		if (ColorNoneTag.IsValid())
+		{
+			ColorNoneTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorRedTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+		if (ColorRedTag.IsValid())
+		{
+			ColorRedTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorWhiteTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+		if (ColorWhiteTag.IsValid())
+		{
+			ColorWhiteTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	if (!ColorBlueTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+		if (ColorBlueTag.IsValid())
+		{
+			ColorBlueTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
+		}
+	}
+
+	EvaluateInvaderColorFromASCOverrideTags();
 }
 
 void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
@@ -1021,6 +1100,10 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		MoveSpeedChangedDelegateHandle.Reset();
 		DownedTagChangedDelegateHandle.Reset();
 		DeadTagChangedDelegateHandle.Reset();
+		ColorNoneTagChangedDelegateHandle.Reset();
+		ColorRedTagChangedDelegateHandle.Reset();
+		ColorWhiteTagChangedDelegateHandle.Reset();
+		ColorBlueTagChangedDelegateHandle.Reset();
 		return;
 	}
 
@@ -1066,6 +1149,34 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 	{
 		AbilitySystemComponent->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved).Remove(DeadTagChangedDelegateHandle);
 		DeadTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	if (ColorNoneTag.IsValid() && ColorNoneTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorNoneTagChangedDelegateHandle);
+		ColorNoneTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	if (ColorRedTag.IsValid() && ColorRedTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorRedTagChangedDelegateHandle);
+		ColorRedTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	if (ColorWhiteTag.IsValid() && ColorWhiteTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorWhiteTagChangedDelegateHandle);
+		ColorWhiteTagChangedDelegateHandle.Reset();
+	}
+
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+	if (ColorBlueTag.IsValid() && ColorBlueTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorBlueTagChangedDelegateHandle);
+		ColorBlueTagChangedDelegateHandle.Reset();
 	}
 }
 
@@ -1133,6 +1244,110 @@ void AARPlayerStateBase::HandleDownedTagChanged(const FGameplayTag /*Tag*/, int3
 void AARPlayerStateBase::HandleDeadTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
 {
 	EvaluateLifeStateFromASC();
+}
+
+void AARPlayerStateBase::HandleInvaderColorOverrideTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
+{
+	EvaluateInvaderColorFromASCOverrideTags();
+}
+
+void AARPlayerStateBase::EvaluateInvaderColorFromASCOverrideTags()
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	const EARAffinityColor ResolvedColor = ResolveInvaderColorFromASCOverrideTags();
+	bUpdatingInvaderColorFromTags = true;
+	SetInvaderPlayerColor_Internal(ResolvedColor);
+	bUpdatingInvaderColorFromTags = false;
+}
+
+EARAffinityColor AARPlayerStateBase::ResolveInvaderColorFromASCOverrideTags() const
+{
+	if (!AbilitySystemComponent)
+	{
+		return ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked);
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+
+	// Override precedence: None > White > Red > Blue.
+	if (ColorNoneTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorNoneTag))
+	{
+		return EARAffinityColor::None;
+	}
+
+	if (ColorWhiteTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorWhiteTag))
+	{
+		return EARAffinityColor::White;
+	}
+
+	if (ColorRedTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorRedTag))
+	{
+		return EARAffinityColor::Red;
+	}
+
+	if (ColorBlueTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorBlueTag))
+	{
+		return EARAffinityColor::Blue;
+	}
+
+	return ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked);
+}
+
+void AARPlayerStateBase::ApplyInvaderColorGameplayTags(const EARAffinityColor NewColor)
+{
+	if (!HasAuthority() || !AbilitySystemComponent || bApplyingInvaderColorTags)
+	{
+		return;
+	}
+
+	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
+	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
+	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
+	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
+
+	FGameplayTagContainer AllColorTags;
+	if (ColorNoneTag.IsValid()) { AllColorTags.AddTag(ColorNoneTag); }
+	if (ColorWhiteTag.IsValid()) { AllColorTags.AddTag(ColorWhiteTag); }
+	if (ColorRedTag.IsValid()) { AllColorTags.AddTag(ColorRedTag); }
+	if (ColorBlueTag.IsValid()) { AllColorTags.AddTag(ColorBlueTag); }
+
+	if (!AllColorTags.IsEmpty())
+	{
+		bApplyingInvaderColorTags = true;
+		AbilitySystemComponent->RemoveLooseGameplayTags(AllColorTags, 1, EGameplayTagReplicationState::TagOnly);
+
+		FGameplayTagContainer ActiveColorTag;
+		switch (NewColor)
+		{
+		case EARAffinityColor::None:
+			if (ColorNoneTag.IsValid()) { ActiveColorTag.AddTag(ColorNoneTag); }
+			break;
+		case EARAffinityColor::White:
+			if (ColorWhiteTag.IsValid()) { ActiveColorTag.AddTag(ColorWhiteTag); }
+			break;
+		case EARAffinityColor::Red:
+			if (ColorRedTag.IsValid()) { ActiveColorTag.AddTag(ColorRedTag); }
+			break;
+		case EARAffinityColor::Blue:
+			if (ColorBlueTag.IsValid()) { ActiveColorTag.AddTag(ColorBlueTag); }
+			break;
+		default:
+			break;
+		}
+
+		if (!ActiveColorTag.IsEmpty())
+		{
+			AbilitySystemComponent->AddLooseGameplayTags(ActiveColorTag, 1, EGameplayTagReplicationState::TagOnly);
+		}
+		bApplyingInvaderColorTags = false;
+	}
 }
 
 void AARPlayerStateBase::EvaluateLifeStateFromASC()

@@ -52,7 +52,7 @@ public:
 
 	// Enemy definition fallback value when a per-enemy row value is unavailable.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data", meta = (ClampMin = "0.0"))
-	float DefaultBaseKillSpiceValue = 10.0f;
+	float DefaultBaseKillSpiceValue = 1.0f;
 
 	// Actor tag name to identify enemy projectiles for full-blast clear.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Effects")
@@ -65,4 +65,3 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	int32 GetSkipScrapRewardForTier(int32 Tier) const;
 };
-

@@ -144,7 +144,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	OldLoadoutTags);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature, bool, bIsReadyForTravel);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSignature, EARInvaderPlayerColor, NewColor, EARInvaderPlayerColor, OldColor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSignature, EARAffinityColor, NewColor, EARAffinityColor, OldColor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCombo, int32, OldCombo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnPredictedSpiceChangedSignature, float, PredictedSpiceValue, float, AuthoritativeSpiceValue, bool, bHasPrediction);
@@ -265,13 +265,13 @@ public:
 	// ---- INVADER SPICY TRACK RUNTIME (non-persistent) ----
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
-	EARInvaderPlayerColor GetInvaderPlayerColor() const { return InvaderPlayerColor; }
+	EARAffinityColor GetInvaderPlayerColor() const { return InvaderPlayerColor; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
-	void SetInvaderPlayerColor(EARInvaderPlayerColor NewColor);
+	void SetInvaderPlayerColor(EARAffinityColor NewColor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerSetInvaderPlayerColor(EARInvaderPlayerColor NewColor);
+	void ServerSetInvaderPlayerColor(EARAffinityColor NewColor);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	int32 GetInvaderComboCount() const { return InvaderComboCount; }
@@ -283,7 +283,7 @@ public:
 	void ResetInvaderCombo();
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
-	void ReportInvaderKillCredit(EARInvaderPlayerColor EnemyColor, float ServerTimeSeconds, float ComboTimeoutSeconds);
+	void ReportInvaderKillCredit(EARAffinityColor EnemyColor, float ServerTimeSeconds, float ComboTimeoutSeconds);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
 	void MarkInvaderUpgradeActivated(FGameplayTag UpgradeTag);
@@ -421,15 +421,15 @@ protected:
 	UFUNCTION()
 	void OnRep_IsSetup(bool bOldIsSetup);
 	UFUNCTION()
-	void OnRep_InvaderPlayerColor(EARInvaderPlayerColor OldColor);
+	void OnRep_InvaderPlayerColor(EARAffinityColor OldColor);
 	UFUNCTION()
 	void OnRep_InvaderComboCount(int32 OldComboCount);
 	UFUNCTION()
 	void OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
-	void SetInvaderPlayerColor_Internal(EARInvaderPlayerColor NewColor, bool bForceBroadcast = false);
-	EARInvaderPlayerColor ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice InCharacterChoice) const;
-	static bool DoesInvaderColorMatch(EARInvaderPlayerColor PlayerColor, EARInvaderPlayerColor EnemyColor);
+	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
+	EARAffinityColor ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice InCharacterChoice) const;
+	static bool DoesInvaderColorMatch(EARAffinityColor PlayerColor, EARAffinityColor EnemyColor);
 	void SetDisplayName_Internal(const FString& NewDisplayName);
 	void SetReady_Internal(bool bNewReady);
 	void SetDowned_Internal(bool bNewDowned);
@@ -450,6 +450,10 @@ protected:
 	void HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void HandleDownedTagChanged(const FGameplayTag Tag, int32 NewCount);
 	void HandleDeadTagChanged(const FGameplayTag Tag, int32 NewCount);
+	void HandleInvaderColorOverrideTagChanged(const FGameplayTag Tag, int32 NewCount);
+	void EvaluateInvaderColorFromASCOverrideTags();
+	void ApplyInvaderColorGameplayTags(EARAffinityColor NewColor);
+	EARAffinityColor ResolveInvaderColorFromASCOverrideTags() const;
 	void EvaluateLifeStateFromASC();
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
@@ -481,7 +485,7 @@ protected:
 	bool bIsSetup = false;
 
 	UPROPERTY(ReplicatedUsing=OnRep_InvaderPlayerColor, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
-	EARInvaderPlayerColor InvaderPlayerColor = EARInvaderPlayerColor::Unknown;
+	EARAffinityColor InvaderPlayerColor = EARAffinityColor::None;
 
 	UPROPERTY(ReplicatedUsing=OnRep_InvaderComboCount, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
 	int32 InvaderComboCount = 0;
@@ -509,6 +513,12 @@ protected:
 	FDelegateHandle MoveSpeedChangedDelegateHandle;
 	FDelegateHandle DownedTagChangedDelegateHandle;
 	FDelegateHandle DeadTagChangedDelegateHandle;
+	FDelegateHandle ColorNoneTagChangedDelegateHandle;
+	FDelegateHandle ColorRedTagChangedDelegateHandle;
+	FDelegateHandle ColorWhiteTagChangedDelegateHandle;
+	FDelegateHandle ColorBlueTagChangedDelegateHandle;
+	bool bUpdatingInvaderColorFromTags = false;
+	bool bApplyingInvaderColorTags = false;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

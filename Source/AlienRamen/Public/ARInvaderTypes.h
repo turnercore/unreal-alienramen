@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARColorTypes.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPtr.h"
@@ -13,14 +14,6 @@
 
 class AAREnemyBase;
 class UGameplayEffect;
-
-UENUM(BlueprintType)
-enum class EAREnemyColor : uint8
-{
-	Red = 0,
-	White = 1,
-	Blue = 2,
-};
 
 UENUM(BlueprintType)
 enum class EARWavePhase : uint8
@@ -70,7 +63,7 @@ struct FARWaveEnemySpawnDef
 	TSubclassOf<AAREnemyBase> EnemyClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	EAREnemyColor EnemyColor = EAREnemyColor::Red;
+	EARAffinityColor EnemyColor = EARAffinityColor::Red;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	EARSpawnEdge SpawnEdge = EARSpawnEdge::Top;
@@ -145,7 +138,7 @@ struct FARInvaderEnemyDefRow : public FTableRowBase
 
 	// Base spicy-track credit granted for killing this enemy (before player multipliers).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Rewards", meta = (ClampMin = "0.0"))
-	float BaseSpiceKillValue = 10.0f;
+	float BaseSpiceKillValue = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
 	FARInvaderEnemyRuntimeInitData RuntimeInit;
