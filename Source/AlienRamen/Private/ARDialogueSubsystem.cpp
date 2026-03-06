@@ -92,13 +92,17 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 
 UARDialogueSubsystem::UARDialogueSubsystem() = default;
 
-UARDialogueSubsystem::~UARDialogueSubsystem() = default;
+UARDialogueSubsystem::~UARDialogueSubsystem()
+{
+	delete RuntimeState;
+	RuntimeState = nullptr;
+}
 
 UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState()
 {
-	if (!RuntimeState.IsValid())
+	if (!RuntimeState)
 	{
-		RuntimeState = MakeUnique<FARDialogueRuntimeState>();
+		RuntimeState = new FARDialogueRuntimeState();
 	}
 	return *RuntimeState;
 }
@@ -106,12 +110,13 @@ UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeS
 const UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState() const
 {
 	static const FARDialogueRuntimeState EmptyState;
-	return RuntimeState.IsValid() ? *RuntimeState : EmptyState;
+	return RuntimeState ? *RuntimeState : EmptyState;
 }
 
 void UARDialogueSubsystem::Deinitialize()
 {
-	RuntimeState.Reset();
+	delete RuntimeState;
+	RuntimeState = nullptr;
 	Super::Deinitialize();
 }
 
