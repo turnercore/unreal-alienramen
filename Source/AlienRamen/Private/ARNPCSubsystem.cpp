@@ -14,7 +14,7 @@
 
 namespace
 {
-	static bool IsAuthorityWorld(const UWorld* World)
+	static bool IsAuthorityWorld_NPC(const UWorld* World)
 	{
 		if (!World)
 		{
@@ -147,7 +147,7 @@ bool UARNPCSubsystem::SubmitNpcRamenDelivery(FGameplayTag NpcTag, FGameplayTag D
 {
 	bOutAccepted = false;
 
-	if (!IsAuthorityWorld(GetWorld()) || !NpcTag.IsValid() || !DeliveredRamenTag.IsValid())
+	if (!IsAuthorityWorld_NPC(GetWorld()) || !NpcTag.IsValid() || !DeliveredRamenTag.IsValid())
 	{
 		return false;
 	}

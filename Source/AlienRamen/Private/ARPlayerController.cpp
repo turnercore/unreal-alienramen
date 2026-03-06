@@ -305,6 +305,8 @@ void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FARD
 void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FString& SessionId)
 {
 	BP_OnDialogueSessionEnded(SessionId);
+}
+
 void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroadcast)
 {
 	if (!IsLocalController())

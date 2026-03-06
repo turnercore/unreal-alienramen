@@ -13,6 +13,7 @@
 
 class AAREnemyBase;
 class UARInvaderSpicyTrackSettings;
+class IConsoleObject;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderSharedTrackChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderFullBlastSessionChangedSignature, bool, bIsActive);
@@ -135,6 +136,16 @@ protected:
 	void HandleTrackedPlayersChanged();
 
 private:
+	void RegisterDebugConsoleCommands();
+	void UnregisterDebugConsoleCommands();
+	void HandleConsoleSetSpice(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleAddSpice(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleInjectTopSlot(const TArray<FString>& Args, UWorld* World);
+	AARPlayerStateBase* ResolvePlayerStateFromDebugToken(const FString& Token) const;
+	bool ResolveUpgradeTagForDebugInject(const FString& TagToken, FGameplayTag& OutUpgradeTag) const;
+	void ReconcilePlayerCursorSelection();
+
 	const UARInvaderSpicyTrackSettings* GetSpicyTrackSettings() const;
 	void InitializeSpicyTrackState();
 	void EnsureTrackSlotCount(int32 RequiredSlots);
@@ -194,4 +205,9 @@ private:
 
 	UPROPERTY(Transient)
 	FRandomStream OfferRng;
+
+	IConsoleObject* CmdDebugSetSpice = nullptr;
+	IConsoleObject* CmdDebugAddSpice = nullptr;
+	IConsoleObject* CmdDebugSetCursor = nullptr;
+	IConsoleObject* CmdDebugInjectTopSlot = nullptr;
 };
