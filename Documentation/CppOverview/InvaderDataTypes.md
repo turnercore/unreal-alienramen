@@ -1,11 +1,15 @@
-# Invader Data Types (`ARInvaderTypes.h`)
-Path: `Source/AlienRamen/Public/ARInvaderTypes.h`
+# Invader Data Types (`ARInvaderTypes.h`, `ARInvaderSpicyTrackTypes.h`)
+Paths:
+- `Source/AlienRamen/Public/ARInvaderTypes.h`
+- `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`
 
 ## Core Enums
 - `EAREnemyColor`: Red, White, Blue
 - `EARWavePhase`: Active, Berserk
 - `EARInvaderFlowState`: Combat, AwaitStageClear, StageChoice, Transition, Stopped
 - `EARSpawnEdge`: Top, Left, Right
+- `EARInvaderPlayerColor`: Unknown, Red, White, Blue
+- `EARInvaderUpgradeClaimPolicy`: `SingleTeamClaim`, `PerPlayerClaim`, `Repeatable`
 
 ## Authoring Rows
 - `FARWaveEnemySpawnDef`
@@ -15,7 +19,6 @@ Path: `Source/AlienRamen/Public/ARInvaderTypes.h`
 - Threat/player/selection fields
 - Formation lock + flip flags
 - `WaveDuration`
-- Berserk profile
 - Spawn array, wave tags, wave-level enemy effects
 - `FARStageDefRow`
 - `bEnabled`
@@ -23,6 +26,14 @@ Path: `Source/AlienRamen/Public/ARInvaderTypes.h`
 - Required/blocked/banned tags
 - Stage-level enemy effects
 - Reward descriptor
+- `FARInvaderEnemyDefRow`
+- Enemy identifier, class/runtime init, `BaseSpiceKillValue`
+- `FARInvaderUpgradeDefRow`
+- Upgrade identity tag + display fields
+- On-activate and while-slotted gameplay effects
+- Tier locks, unlock requirements, team claim policy
+- Offer prerequisites (team activated upgrades)
+- Activation prerequisites (activating-player upgrade history)
 
 ## Runtime Snapshot Types
 - `FARWaveInstanceState`
@@ -32,7 +43,14 @@ Path: `Source/AlienRamen/Public/ARInvaderTypes.h`
 - stage choice + reward fields
 - leak values and soft caps
 - active wave array
+- `FARInvaderTrackSlotState`
+- Shared spicy-track slot state (`SlotIndex`, `UpgradeTag`, `UpgradeLevel`, activation flag)
+- `FARInvaderUpgradeOffer`
+- Offer item for a full-blast choice set (`UpgradeTag`, rolled level)
+- `FARInvaderFullBlastSessionState`
+- Active full-blast offering session (requesting slot, activation tier, 3 offers)
+- `FARInvaderLevelOffsetWeight`
+- Data-driven weight entry for level-roll offset (`Offset`, `Weight`)
 
 ## Blueprint Exposure
 - Rows/snapshots are `BlueprintType` and fields are `EditAnywhere, BlueprintReadWrite`.
-

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARInvaderSpicyTrackTypes.h"
 #include "ARPlayerTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameplayTagContainer.h"
@@ -22,6 +23,7 @@ class ALIENRAMEN_API AARGameModeBase : public AGameModeBase
 
 public:
 	AARGameModeBase();
+	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -55,8 +57,12 @@ protected:
 
 private:
 	static EARPlayerSlot DetermineNextPlayerSlot(const AARGameStateBase* GameState);
+	static EARPlayerSlot FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState = nullptr);
+	static EARAffinityColor ResolveExpectedInvaderPlayerColor(EARCharacterChoice CharacterChoice, EARPlayerSlot PlayerSlot);
 	static EARCharacterChoice GetAlternateCharacterChoice(EARCharacterChoice CurrentChoice);
 	static bool IsCharacterChoiceTakenByOther(const AARGameStateBase* InGameState, const AARPlayerStateBase* CurrentPlayerState, EARCharacterChoice CharacterChoice);
 	void ResolveCharacterChoiceConflict(const AARGameStateBase* InGameState, AARPlayerStateBase* CurrentPlayerState) const;
 	void HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const;
+	void EnsureJoinedPlayerHasUniqueSlot(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
+	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
 };
