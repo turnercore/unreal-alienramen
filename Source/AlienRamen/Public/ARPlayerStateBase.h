@@ -5,11 +5,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ARPlayerTypes.h"
-#include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
-#include "GameplayTagContainer.h"
 #include "GameplayEffectTypes.h"
+#include "GameplayTagContainer.h"
+#include "GameFramework/PlayerState.h"
+#include "ARInvaderSpicyTrackTypes.h"
+#include "ARPlayerTypes.h"
 #include "StructSerializable.h"
 #include "ARPlayerStateBase.generated.h"
 
@@ -143,6 +144,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	OldLoadoutTags);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature, bool, bIsReadyForTravel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSignature, EARInvaderPlayerColor, NewColor, EARInvaderPlayerColor, OldColor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCombo, int32, OldCombo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnPredictedSpiceChangedSignature, float, PredictedSpiceValue, float, AuthoritativeSpiceValue, bool, bHasPrediction);
 
 /**
  * PlayerState backbone for Alien Ramen.
@@ -257,6 +262,51 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSetSpiceMeter(float NewSpiceValue);
 
+	// ---- INVADER SPICY TRACK RUNTIME (non-persistent) ----
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	EARInvaderPlayerColor GetInvaderPlayerColor() const { return InvaderPlayerColor; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
+	void SetInvaderPlayerColor(EARInvaderPlayerColor NewColor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetInvaderPlayerColor(EARInvaderPlayerColor NewColor);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	int32 GetInvaderComboCount() const { return InvaderComboCount; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	float GetInvaderLastKillCreditServerTime() const { return LastInvaderKillCreditServerTime; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
+	void ResetInvaderCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
+	void ReportInvaderKillCredit(EARInvaderPlayerColor EnemyColor, float ServerTimeSeconds, float ComboTimeoutSeconds);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
+	void MarkInvaderUpgradeActivated(FGameplayTag UpgradeTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
+	void ClearActivatedInvaderUpgrades();
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	bool HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	const FGameplayTagContainer& GetActivatedInvaderUpgrades() const { return ActivatedInvaderUpgradeTags; }
+
+	// Local HUD prediction overlay; does not affect authoritative spice state.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
+	void SetPredictedSpiceValue(float NewPredictedSpice);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
+	void ClearPredictedSpiceValue();
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Prediction")
+	bool HasPredictedSpiceValue() const { return bHasPredictedSpiceValue; }
+
 	// ---- LOADOUT (GameplayTag driven) ----
 
 	UPROPERTY(ReplicatedUsing = OnRep_Loadout, BlueprintReadWrite, Category = "Loadout")
@@ -332,6 +382,18 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnTravelReadinessChangedSignature OnTravelReadinessChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
+	FAROnInvaderPlayerColorChangedSignature OnInvaderPlayerColorChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
+	FAROnInvaderComboChangedSignature OnInvaderComboChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
+	FAROnInvaderActivatedUpgradesChangedSignature OnInvaderActivatedUpgradesChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
+	FAROnPredictedSpiceChangedSignature OnPredictedSpiceChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
@@ -358,7 +420,16 @@ protected:
 
 	UFUNCTION()
 	void OnRep_IsSetup(bool bOldIsSetup);
+	UFUNCTION()
+	void OnRep_InvaderPlayerColor(EARInvaderPlayerColor OldColor);
+	UFUNCTION()
+	void OnRep_InvaderComboCount(int32 OldComboCount);
+	UFUNCTION()
+	void OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
+	void SetInvaderPlayerColor_Internal(EARInvaderPlayerColor NewColor, bool bForceBroadcast = false);
+	EARInvaderPlayerColor ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice InCharacterChoice) const;
+	static bool DoesInvaderColorMatch(EARInvaderPlayerColor PlayerColor, EARInvaderPlayerColor EnemyColor);
 	void SetDisplayName_Internal(const FString& NewDisplayName);
 	void SetReady_Internal(bool bNewReady);
 	void SetDowned_Internal(bool bNewDowned);
@@ -408,6 +479,24 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsSetup = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_InvaderPlayerColor, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
+	EARInvaderPlayerColor InvaderPlayerColor = EARInvaderPlayerColor::Unknown;
+
+	UPROPERTY(ReplicatedUsing=OnRep_InvaderComboCount, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
+	int32 InvaderComboCount = 0;
+
+	UPROPERTY(ReplicatedUsing=OnRep_ActivatedInvaderUpgrades, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
+	FGameplayTagContainer ActivatedInvaderUpgradeTags;
+
+	UPROPERTY(Transient)
+	float LastInvaderKillCreditServerTime = -1.0f;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Prediction")
+	float PredictedSpiceValue = 0.0f;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Prediction")
+	bool bHasPredictedSpiceValue = false;
 
 	// Cached travel readiness for change detection.
 	UPROPERTY(Transient)

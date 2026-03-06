@@ -6,6 +6,7 @@
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
 #include "ARInvaderAIController.h"
+#include "ARInvaderGameState.h"
 #include "ARPlayerCharacterInvader.h"
 #include "ARLog.h"
 
@@ -741,6 +742,11 @@ void AAREnemyBase::HandleDeath_Implementation(AActor* InstigatorActor)
 
 	UE_LOG(ARLog, Log, TEXT("[EnemyBase] Death handled for '%s'. Instigator='%s'."),
 		*GetNameSafe(this), *GetNameSafe(InstigatorActor));
+
+	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
+	{
+		InvaderGameState->NotifyEnemyKilled(this, InstigatorActor);
+	}
 
 	BP_OnEnemyDied(InstigatorActor);
 	BP_OnEnemyPreRelease(InstigatorActor);

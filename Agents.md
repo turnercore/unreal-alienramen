@@ -28,6 +28,7 @@
 - Always try to compile after making changes. Compile before updating Agents.md and other documentation.
 - When changing runtime/editor systems, update documentation in the same pass: add/refresh Doxygen comments on public APIs and keep MkDocs pages/nav accurate; delete or rewrite stale docs rather than leaving contradictions.
 - Header include hygiene for large subsystems (ContentLookupSubsystem, editor tools, etc.): prefer the order `CoreMinimal.h` -> needed engine headers -> project headers -> generated.h. Avoid blanket includes; keep dependency graphs thin for faster builds.
+- When able and needed, use the MCP server to look up Unreal 5.7 documentation. Perfer Unreal 5.7 documentation specifically.
 
 ## Documentation & Tooling
 
@@ -46,8 +47,8 @@
 - Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.
 - Shared player enum surface (`EARPlayerSlot`, `EARCharacterChoice`, `EARCoreAttributeType`) now lives in `Source/AlienRamen/Public/ARPlayerTypes.h`; this decouples save/core headers from `ARPlayerStateBase.h` include dependency.
 - `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
-  - `BP_OnARGameInstanceInitialized`
-  - `BP_OnARGameInstanceShutdown`
+    - `BP_OnARGameInstanceInitialized`
+    - `BP_OnARGameInstanceShutdown`
 - `UARGameInstance` network protocol session helpers that take online session structs (`ApplyARProtocolSessionSetting`, `GetARProtocolFromSession`) are C++-only (not Blueprint-reflected) because their parameter types are not UHT-reflectable.
 - Native authoritative lobby/runtime bases:
 - `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
@@ -69,6 +70,8 @@
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
+- Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
+- Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
 
 ## Multiplayer Architecture Assumptions
 
@@ -136,6 +139,11 @@
 - Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
 - PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
 - Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
+- PlayerState now carries Invader runtime-only spicy metadata (non-save/non-hydrated):
+- replicated `InvaderPlayerColor` (`EARInvaderPlayerColor`) with server setter path (`SetInvaderPlayerColor` / `ServerSetInvaderPlayerColor`) and signal `OnInvaderPlayerColorChanged`.
+- replicated combo count (`InvaderComboCount`) + `LastInvaderKillCreditServerTime`; server kill-credit path uses timeout-aware updates and signal `OnInvaderComboChanged`.
+- replicated activated-upgrade ledger (`ActivatedInvaderUpgradeTags`) with server mutation helpers (`MarkInvaderUpgradeActivated`, `ClearActivatedInvaderUpgrades`) and signal `OnInvaderActivatedUpgradesChanged`.
+- local-only HUD prediction overlay hooks exist on PlayerState (`SetPredictedSpiceValue`, `ClearPredictedSpiceValue`, `OnPredictedSpiceChanged`) and never mutate authoritative spice values.
 - Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARPlayerCharacterInvader` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
 - Ability selection/matching is deterministic:
 - exact tag match preferred over hierarchy match
@@ -480,6 +488,43 @@
 - GameState replicated leak read model:
 - `UARInvaderRuntimeStateComponent::LeakCount` is replicated with RepNotify.
 - `UARInvaderRuntimeStateComponent::OnEnemyLeaked` broadcasts on both server updates and client RepNotify updates with `(NewLeakCount, Delta)`.
+- Invader spicy-track runtime is now C++-owned on `AARInvaderGameState` (server-authoritative, runtime-only, non-save/non-hydrated):
+- shared replicated state: `SharedTrackSlots`, `SharedFullBlastTier`, `FullBlastSession`, `OfferPresenceStates`.
+- full-blast flow APIs: `RequestActivateFullBlast`, `ResolveFullBlastSelection`, `ResolveFullBlastSkip`.
+- track-use API: `ActivateTrackUpgrade` (uses selected slot, drops one tier, resets all player spice to zero).
+- hold-share APIs: `StartSharingSpice` / `StopSharingSpice` with server tick transfer using source `SpiceDrainRate` and `SpiceShareRatio`.
+- explicit/manual kill-credit API: `AwardKillCredit`; automatic death bridge path: `AAREnemyBase::HandleDeath` calls `AARInvaderGameState::NotifyEnemyKilled`.
+- kill-credit FX multicast hook: `OnInvaderKillCreditFxEvent` (payload `FARInvaderKillCreditFxEvent`) fires when spice is actually awarded; includes target slot + spice + combo + enemy metadata + optional world origin for client cosmetic routing.
+- offer-presence APIs: `SetOfferPresence` / `ClearOfferPresence` support replicated UI cursor/highlight presence during active full-blast sessions.
+- full-blast resolve side effects in C++: unpause, execute configured gameplay cue, and clear enemy projectiles by configured actor tag.
+- Automation coverage exists for spicy-track session/presence seams in `Source/AlienRamen/Private/Tests/ARInvaderSpicyTrackOfferSessionTest.cpp`:
+- `AlienRamen.Invader.SpiceTrack.OfferPresenceLifecycle`
+- `AlienRamen.Invader.SpiceTrack.OfferChooserRestriction`
+- tests are currently PIE/Game-context based (world-required), matching existing project automation style.
+- Detailed spicy-track ownership/authority matrix is documented in `Documentation/CppOverview/InvaderSpicyTrack.md` and is the source-of-truth for where state lives and whether it replicates.
+- Offer-session lifecycle contract is documented in `Documentation/CppOverview/InvaderSpicyTrack.md`:
+- single active session (`FullBlastSession.bIsActive` gate), chooser-slot ownership, replicated offer snapshot for late-join reconstruction.
+- current runtime has no session id, timeout auto-skip, or disconnect auto-skip; those are documented as open hardening work.
+- Pause model contract:
+- current implementation uses `UGameplayStatics::SetGamePaused(true/false)` for full-blast choose flow.
+- recommended multiplayer-safe direction is a replicated gameplay suspension state (do not assume true pause is long-term contract).
+- Invader spicy-track configuration source is project settings `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`):
+- combo timeout, spice-per-tier, max full-blast tier, offer count
+- skip scrap reward per tier
+- data-driven level-roll offset weights (`-3..+3`)
+- upgrade DataTable reference (`FARInvaderUpgradeDefRow`)
+- enemy projectile clear tag + full-blast gameplay cue tag.
+- Invader upgrade type surface now lives in native `ARInvaderSpicyTrackTypes.h`:
+- `FARInvaderUpgradeDefRow` (upgrade identity/display/effects/locked tiers/unlock prerequisites/offer+activation prerequisites/claim policy)
+- `EARInvaderUpgradeClaimPolicy`: `SingleTeamClaim`, `PerPlayerClaim`, `Repeatable`
+- `FARInvaderTrackSlotState`, `FARInvaderUpgradeOffer`, `FARInvaderFullBlastSessionState`, `FARInvaderLevelOffsetWeight`.
+- Enemy definition rows now include spicy credit scalar `FARInvaderEnemyDefRow::BaseSpiceKillValue` (fallback uses `UARInvaderSpicyTrackSettings::DefaultBaseKillSpiceValue`).
+- Invader PlayerController now exposes server-routed spicy-track request entrypoints for clients/UI:
+- `RequestActivateFullBlast`
+- `RequestResolveFullBlastSelection`
+- `RequestResolveFullBlastSkip`
+- `RequestActivateTrackUpgrade`
+- `RequestStartSharingSpice` / `RequestStopSharingSpice`.
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - `UARInvaderDirectorSubsystem::RegisterConsoleCommands()` now clears existing `ar.invader.*` registrations first, so PIE map travel cannot double-register global command names across overlapping world/subsystem lifetimes.
@@ -493,7 +538,7 @@
 - `ar.invader.force_stage <RowName>`
 - `ar.invader.dump_state`
 - `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
-  - deprojects viewport corners at runtime, intersects with horizontal plane `Z=PlaneZ` (default `SpawnOrigin.Z`), logs suggested `GameplayBoundsMin/Max`, and optionally applies+saves when `apply` is provided
+    - deprojects viewport corners at runtime, intersects with horizontal plane `Z=PlaneZ` (default `SpawnOrigin.Z`), logs suggested `GameplayBoundsMin/Max`, and optionally applies+saves when `apply` is provided
 
 ## Debug Save Tool (Current)
 
