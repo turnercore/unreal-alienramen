@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARSaveTypes.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSessionSubsystem.generated.h"
 

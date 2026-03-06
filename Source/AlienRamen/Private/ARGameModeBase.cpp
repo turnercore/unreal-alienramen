@@ -21,11 +21,6 @@ void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, c
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 
 	if (!ErrorMessage.IsEmpty())
-void AARGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (!HasAuthority())
 	{
 		return;
 	}
@@ -67,6 +62,19 @@ void AARGameModeBase::BeginPlay()
 	{
 		ErrorMessage = TEXT("Server full.");
 		UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': player cap reached (%d)."), *Address, PlayerCount);
+		return;
+	}
+}
+
+void AARGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
 	{
 		NormalizeConnectedPlayersIdentity(GS);
