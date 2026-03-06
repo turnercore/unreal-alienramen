@@ -148,6 +148,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSigna
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCombo, int32, OldCombo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnPredictedSpiceChangedSignature, float, PredictedSpiceValue, float, AuthoritativeSpiceValue, bool, bHasPrediction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpiceSharingStateChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, bool, bIsSharingNow, bool, bWasSharingBefore);
 
 /**
  * PlayerState backbone for Alien Ramen.
@@ -297,6 +298,20 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	const FGameplayTagContainer& GetActivatedInvaderUpgrades() const { return ActivatedInvaderUpgradeTags; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	bool IsSpiceSharingActive() const { return bIsSharingSpice; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
+	void SetSpiceSharingActive(bool bNewIsSharing);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetSpiceSharingActive(bool bNewIsSharing);
+
+	// Applies one authoritative share tick from this player into TargetPlayer.
+	// If both players are sharing simultaneously, transfer is canceled (no drain/no grant).
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
+	void ApplySpiceShareTick(float DeltaSeconds, AARPlayerStateBase* TargetPlayer, float& OutSourceDrained, float& OutTargetGranted);
+
 	// Local HUD prediction overlay; does not affect authoritative spice state.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
 	void SetPredictedSpiceValue(float NewPredictedSpice);
@@ -391,6 +406,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
 	FAROnInvaderActivatedUpgradesChangedSignature OnInvaderActivatedUpgradesChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
+	FAROnSpiceSharingStateChangedSignature OnSpiceSharingStateChanged;
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
 	FAROnPredictedSpiceChangedSignature OnPredictedSpiceChanged;
 
@@ -426,8 +444,11 @@ protected:
 	void OnRep_InvaderComboCount(int32 OldComboCount);
 	UFUNCTION()
 	void OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags);
+	UFUNCTION()
+	void OnRep_IsSharingSpice(bool bOldIsSharingSpice);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
 	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
+	void SetSpiceSharingActive_Internal(bool bNewIsSharing, bool bForceBroadcast = false);
 	EARAffinityColor ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice InCharacterChoice) const;
 	static bool DoesInvaderColorMatch(EARAffinityColor PlayerColor, EARAffinityColor EnemyColor);
 	void SetDisplayName_Internal(const FString& NewDisplayName);
@@ -451,6 +472,7 @@ protected:
 	void HandleDownedTagChanged(const FGameplayTag Tag, int32 NewCount);
 	void HandleDeadTagChanged(const FGameplayTag Tag, int32 NewCount);
 	void HandleInvaderColorOverrideTagChanged(const FGameplayTag Tag, int32 NewCount);
+	void HandleSpiceSharingTagChanged(const FGameplayTag Tag, int32 NewCount);
 	void EvaluateInvaderColorFromASCOverrideTags();
 	void ApplyInvaderColorGameplayTags(EARAffinityColor NewColor);
 	EARAffinityColor ResolveInvaderColorFromASCOverrideTags() const;
@@ -493,6 +515,9 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_ActivatedInvaderUpgrades, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
 	FGameplayTagContainer ActivatedInvaderUpgradeTags;
 
+	UPROPERTY(ReplicatedUsing=OnRep_IsSharingSpice, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
+	bool bIsSharingSpice = false;
+
 	UPROPERTY(Transient)
 	float LastInvaderKillCreditServerTime = -1.0f;
 
@@ -517,6 +542,7 @@ protected:
 	FDelegateHandle ColorRedTagChangedDelegateHandle;
 	FDelegateHandle ColorWhiteTagChangedDelegateHandle;
 	FDelegateHandle ColorBlueTagChangedDelegateHandle;
+	FDelegateHandle SharingSpiceTagChangedDelegateHandle;
 	bool bUpdatingInvaderColorFromTags = false;
 	bool bApplyingInvaderColorTags = false;
 
