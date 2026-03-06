@@ -8,8 +8,41 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
 - Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`, `FARNpcRelationshipState`, `FARDialogueCanonicalChoiceState`, `FARPlayerDialogueHistoryState`
-- Save schema version is `v5`; minimum supported is also `v5`.
+- Save schema version is `v6`; minimum supported is also `v6`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
+
+## Persisted Payload Contract (`UARSaveGame`)
+
+Authoritative persisted fields currently include:
+
+- Economy/resources:
+  - `Money`
+  - `Scrap`
+  - `Meat`
+  - `Cycles`
+- Progression + unlocks:
+  - `ProgressionTags`
+  - `Unlocks`
+  - `FactionClout`
+  - `ActiveFactionTag`
+  - `ActiveFactionEffectTags`
+  - `FactionPopularityStates`
+- Player payload:
+  - `PlayerStates[]`:
+    - `Identity` (`PlayerSlot`, optional online id/type, legacy id/name)
+    - `CharacterPicked`
+    - `LoadoutTags`
+- Dialogue/NPC payload:
+  - `NpcRelationshipStates`
+  - `DialogueCanonicalChoiceStates`
+  - `PlayerDialogueHistoryStates`
+- Save metadata:
+  - `SaveSlot`
+  - `SaveGameVersion`
+  - `SaveSlotNumber`
+  - `LastSaved`
+
+For progression/unlock usage details, see [Progression + Unlocks Guide](README_ProgressionUnlocks.md).
 
 The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `Get Game Instance Subsystem` -> `ARSaveSubsystem`
@@ -68,6 +101,11 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `RequestGameStateHydration(Requester)`
 - `TryHydratePlayerStateFromCurrentSave(Requester, bAllowSlotFallback)`
 - `SetPendingTravelGameStateData(PendingStateData)`
+
+Hydration identity policy:
+- If requester has a strict online identity (`UniqueNetIdString` + non-null provider type), hydration requires identity match and does not slot-fallback.
+- Slot fallback is only used for local-only identities (PIE/offline/null subsystem style flows).
+- When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup prefers the row matching requester `PlayerSlot`.
 - `ClearPendingTravelGameStateData()`
 - `HasPendingTravelGameStateData()`
 

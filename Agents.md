@@ -1,176 +1,758 @@
-# Alien Ramen — Agent Guide
+# Alien Ramen Project Notes
 
-This file is the top-level operating contract for coding agents. Keep it short, current, and actionable.
+## Non-Negotiable Agent Rules
 
-## 1) Core Rules
-
-- Treat this file as the primary handoff contract for future agents.
-- Update this file immediately after meaningful architecture, authority/replication, ownership, lifecycle, API-surface, or tooling changes.
-- Do not leave stale statements. If behavior changed, update or remove the old statement in the same change.
+- Treat this file as the handoff contract for future agents. Keep it accurate, concise, and actionable.
+- Update this file immediately after meaningful architecture, system-behavior, ownership, replication, API-surface, or tooling changes.
+- Do not leave stale entries. If behavior changed, either update or remove the old statement in the same change.
 - Prefer durable contracts over implementation noise:
-    - keep invariants, authority/replication rules, config sources, lifecycle entry points, and cross-system dependencies
-    - avoid temporary details, obvious framework behavior, and verbose per-field dumps likely to rot
-- Blueprint-only facts are first-class documentation requirements. If critical behavior only exists in BP assets, document the minimum required contract here or in linked docs.
-- Record decisions, not guesses. If uncertain, verify in code before writing. If still uncertain, add a clearly labeled open question.
-- Favor lean current-state code over backward compatibility unless explicitly requested. Remove obsolete paths instead of maintaining dual systems during pre-production.
-- Always try to compile after meaningful changes. Compile before updating docs.
-- When changing runtime/editor systems, update docs in the same pass. Delete or rewrite stale docs rather than leaving contradictions.
-
-## 2) High-Priority Unreal / Code Hygiene Rules
-
-- Never initialize Unreal/engine-dependent values at namespace/global static init time.
-    - Do not do things like `FGameplayTag::RequestGameplayTag`, `FPaths::*`, subsystem access, or asset loads in global/static initialization.
-    - Resolve these at runtime via functions, subsystem/component initialization, constructor body, or function-local static accessors.
-    - Reason: avoid packaged `CrashDuringStaticInit` (`777006`) failures.
-- Prefer forward declarations in headers and move concrete `#include` dependencies to `.cpp` files wherever UHT/type requirements allow.
-- When multiple systems consume the same enums/structs, extract them into focused shared type headers (for example `*Types.h`) instead of dragging large owner headers across module boundaries.
-- Header include hygiene for larger subsystems: prefer `CoreMinimal.h` -> required engine headers -> project headers -> generated.h.
-- Avoid blanket includes. Keep dependency graphs thin for faster builds.
+- keep invariants, authority/replication rules, data/config sources, and cross-system dependencies
+- avoid listing temporary details, obvious framework behavior, or verbose per-field dumps likely to rot
+- Blueprint-only facts are first-class documentation requirements. If critical behavior/shape only exists in BP assets (for example struct variable contracts), record it here clearly.
+- Record decisions, not guesses. If uncertain, verify in code before writing; if still uncertain, add a clearly labeled open question.
+- Preserve intent and constraints for future work (what must stay true), not just what exists today.
+- HIGH PRIORITY: never initialize Unreal/engine-dependent values at namespace/global static initialization time (for example `FGameplayTag::RequestGameplayTag`, `FPaths::*`, subsystem access, asset loads in static/global constructors). Resolve these at runtime via functions/instance lifecycle (`Initialize`, `BeginPlay`, constructor body, function-local static accessor) to avoid packaged `CrashDuringStaticInit` (`777006`) failures.
+- Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
+- Include hygiene rule: prefer forward declarations in headers and move concrete `#include` dependencies to `.cpp` files wherever UHT/type requirements allow.
+- Type-surface hygiene rule: when multiple systems consume the same enums/structs, extract them into focused shared type headers (for example `*Types.h`) to avoid dragging large owner headers across module boundaries.
 - API exposure default: prefer Blueprint exposure for gameplay-facing utilities unless told otherwise.
-- Blueprint API categories should be under `Alien Ramen|...` or an existing subsystem category path using that prefix.
-- Avoid parameter/local names `Tags` on `AActor`-derived classes; this can shadow `AActor::Tags`. Prefer `InTags` or `TagContainer`.
+- If exposure choice is unclear, ask before locking API surface.
+- Blueprint API categories should be under `Alien Ramen|...` (or existing subsystem category path following that prefix).
+- When you add a new subsystem or major flow, include:
+    1. ownership/authority model
+    2. configuration source (settings/data assets/tables)
+    3. runtime entry points and expected lifecycle
+    4. integration touchpoints with existing systems
+    5. If you remove or deprecate a system, explicitly note current status and replacement direction.
+    6. Keep wording specific enough that a new agent can act without rediscovery.
+- Always try to compile after making changes. Compile before updating Agents.md and other documentation.
+- When changing runtime/editor systems, update documentation in the same pass: add/refresh Doxygen comments on public APIs and keep MkDocs pages/nav accurate; delete or rewrite stale docs rather than leaving contradictions.
+- Header include hygiene for large subsystems (ContentLookupSubsystem, editor tools, etc.): prefer the order `CoreMinimal.h` -> needed engine headers -> project headers -> generated.h. Avoid blanket includes; keep dependency graphs thin for faster builds.
+- When able and needed, use the MCP server to look up Unreal 5.7 documentation. Perfer Unreal 5.7 documentation specifically.
 
-## 3) Engine / Tooling Baseline
+## Documentation & Tooling
 
-- Unreal Engine version contract: **UE 5.7**.
-- When needed, use the MCP/doc lookup path to check **Unreal Engine 5.7** documentation specifically.
+- MkDocs + Material lives at root `mkdocs.yml` with `docs_dir=Documentation`; existing Markdown in `Documentation/` is the site content.
+- Runtime subsystem docs now include:
+  - `Documentation/README_SessionSubsystem.md` (session/online subsystem runtime contracts)
+  - `Documentation/README_FactionSubsystem.md` (faction election runtime contracts)
+  - `Documentation/README_DialogueNPC.md` (dialogue + NPC runtime contracts)
+  - `Documentation/README_ProgressionUnlocks.md` (progression-tag vs unlock-tag ownership/mutation/integration contracts)
+- Doxygen config is `Doxyfile` (Unreal macro predefs; INPUT=Source; OUTPUT_DIRECTORY=Documentation/doxygen); plugin-run Doxygen is expected to be available on docs builds.
+- Docs Python deps are pinned in `requirements-docs.txt` (includes `mkdocs-doxygen-plugin` installed from `pieterdavid/mkdocs-doxygen-plugin` GitHub).
+- CI publishes docs to `gh-pages` via `.github/workflows/docs.yml` (runs on push to `main`/`master` and `workflow_dispatch`; installs `doxygen` + `graphviz`, then `mkdocs gh-deploy --force` with `GITHUB_TOKEN`).
+- `.gitignore` ignores doc build artifacts (`site/`, `Documentation/doxygen/`, warning log) and local Python envs.
+- Local preview: create a venv (e.g. `.venv-docs`), `pip install -r requirements-docs.txt` (requires Xcode CLT acceptance for watchdog on macOS) then run `doxygen Doxyfile` followed by `mkdocs serve`. Ensure Doxygen is installed on PATH (brew install doxygen graphviz).
+
+## High-Level Architecture
+
+- Unreal Engine version contract: this project is on Unreal Engine `5.7` (`AlienRamen.uproject` `EngineAssociation` is `5.7`). Use UE 5.7 toolchain/Build scripts for compile/package commands.
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
+- Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.
+- Shared player enum surface (`EARPlayerSlot`, `EARCharacterChoice`, `EARCoreAttributeType`) now lives in `Source/AlienRamen/Public/ARPlayerTypes.h`; this decouples save/core headers from `ARPlayerStateBase.h` include dependency.
+- Shared gameplay color enum surface now lives in `Source/AlienRamen/Public/ARColorTypes.h` as `EARAffinityColor` (single source used by enemy/player/spicy systems).
+- `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
+  - `BP_OnARGameInstanceInitialized`
+  - `BP_OnARGameInstanceShutdown`
+- `UARGameInstance` also exposes `GetARSessionSubsystem()`; `UARSessionSubsystem` (`Source/AlienRamen/Public/ARSessionSubsystem.h`) is the runtime owner for native OSS session lifecycle (ensure host/find/join/destroy/refresh) and local couch-coop join requests.
+- `UARSessionSubsystem` backend selection is config-driven for non-LAN flow: it prefers the current default online subsystem when that backend is non-null (for example Steam/EOS/Xbox), falls back to Steam when default is null but Steam is available, and finally uses default/null fallback.
+- Blueprint contract for networking should remain subsystem-based (`UARSessionSubsystem`) so backend expansion (Steam/EOS/Xbox/etc.) is primarily config/plugin/auth work; avoid backend-specific BP session node dependencies in gameplay/menu flows.
+- Network user preference settings now include `UARNetworkUserSettings` (`Config=GameUserSettings`) with `bStayOffline` runtime gate; when enabled it blocks host/find/join/advertise and best-effort destroys active advertised sessions. Full Steam deactivation may still require restart.
+- `UARNetworkUserSettings` defaults are seeded in `Config/DefaultGameUserSettings.ini`; per-user runtime overrides persist to platform Saved config (`Saved/Config/<Platform>/GameUserSettings.ini`).
+    - `BP_OnARGameInstanceInitialized`
+    - `BP_OnARGameInstanceShutdown`
+- `UARGameInstance` network protocol session helpers that take online session structs (`ApplyARProtocolSessionSetting`, `GetARProtocolFromSession`) are C++-only (not Blueprint-reflected) because their parameter types are not UHT-reflectable.
+- Native authoritative lobby/runtime bases:
+- `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
+- `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
+- Native mode-layer subclasses now exist for GameMode and PlayerController:
+- Canonical mode naming is now: `Invader`, `Scrapyard`, `Shop`, `Lobby`.
+- GameModes: `AARInvaderGameMode`, `AARScrapyardGameMode`, `AARShopGameMode`, `AARLobbyGameMode` (all inherit `AARGameModeBase`)
+- GameStates: `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, `AARLobbyGameState` (all inherit `AARGameStateBase`)
+- PlayerControllers: `AARInvaderPlayerController`, `AARScrapyardPlayerController`, `AARShopPlayerController`, `AARLobbyPlayerController` (all inherit `AARPlayerController`)
+- Native AI-controller hierarchy now includes:
+- `AARAIControllerBase` (shared signal base)
+- `AAREnemyAIController` (invader enemy behavior) and `AARInvaderAIController` (invader-mode subclass/default)
+- `AARScrapyardAIController` and `AARShopAIController` (mode scaffolds)
+- Native player-pawn hierarchy now includes:
+- `AARPlayerCharacterBase` (shared root)
+- `AARPlayerCharacterInvader` (invader ship gameplay subclass)
+- `AARPlayerCharacterScrapyard` and `AARPlayerCharacterShop` (mode scaffolds)
+- Legacy `AARRamenShop*` C++ wrapper classes were removed; `Shop` is the canonical mode naming for code paths.
+- Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
+- Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
+- GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
+- Native faction election runtime now exists:
+- shared type surface: `Source/AlienRamen/Public/ARFactionTypes.h`
+- settings: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Factions`) with `FactionDefinitionRootTag` (default config now `Faction.Definition`)
+- subsystem: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`) for candidate generation, transient vote capture, and travel-time winner finalization.
+- Native dialogue + NPC runtime now exists:
+- shared dialogue/NPC types: `Source/AlienRamen/Public/ARDialogueTypes.h`
+- dialogue settings: `UARDialogueSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Dialogue`) with root/policy tags (defaults: `Dialogue.Node`, shared modes `Mode.Invader`+`Mode.Scrapyard`, per-player mode `Mode.Shop`, pause-on-dialogue mode `Mode.Invader`)
+- NPC settings: `UARNPCSettings` (`Project Settings -> Alien Ramen -> Alien Ramen NPC`) with `NpcDefinitionRootTag` (default `Npc.Definition`)
+- dialogue subsystem: `UARDialogueSubsystem` (`Source/AlienRamen/Public/ARDialogueSubsystem.h`) owns authoritative dialogue sessions, choice resolution, Shop eavesdrop, and mode-specific shared vs per-player policy.
+- NPC subsystem: `UARNPCSubsystem` (`Source/AlienRamen/Public/ARNPCSubsystem.h`) owns persistent NPC relationship/want state and talkable-state refresh.
+- native NPC world actor base: `AARNPCCharacterBase` (`Source/AlienRamen/Public/ARNPCCharacterBase.h`) exposes server interaction entrypoint and replicated `bIsTalkable`.
+- Runtime isolation contract: dialogue session/eavesdrop caches and NPC talkable caches are subsystem-instance-owned (no translation-unit static shared runtime state), so multi-PIE/multi-GameInstance runs do not leak state across instances.
+- Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
+- Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
 
-## 4) Project Architecture Defaults
+## Multiplayer Architecture Assumptions
 
 - Game model is cooperative multiplayer.
-- Networking model is **server-authoritative**.
-- Primary host model is **listen server**.
-- Local coop is a first-class requirement.
-- Internet multiplayer is also a first-class requirement; default to multiplayer-safe patterns even when a feature looks single-player at first.
+- Networking model is server-authoritative.
+- Primary host model is listen server.
+- Local coop means couch coop (split screen and/or same screen) and should always be supported.
+- LAN sessions and internet sessions are separate targets and both should be supported.
+- Internet multiplayer should be treated as a first-class requirement: replication behavior and server-authoritative flow should be robust, predictable, and production-ready.
+- Architecture decisions should default to multiplayer-safe patterns (authority checks, replication correctness, deterministic server-owned state flow) even for features that appear single-player at first.
 
-### Canonical mode naming
+## Blueprint-Only Contracts (Keep Updated)
 
-- `Invader`
-- `Scrapyard`
-- `Shop`
-- `Lobby`
+- Use this section for critical contracts that are only visible in Blueprint assets (for example required struct variables, tag containers, save schema expectations, or BP-only lifecycle dependencies).
+- If a C++ system depends on BP-only data shape, document the minimum required fields here.
 
-### Native base classes
+## Dialogue + NPC Runtime Contract
 
-- `UARGameInstance`
-- `AARGameModeBase`
-- `AARGameStateBase`
-- `AARPlayerController`
+- Authority model: dialogue session creation/advance/choice/eavesdrop mutations are server-authoritative via `UARDialogueSubsystem`; client UI submits through `AARPlayerController` server RPC entrypoints (`RequestStartDialogue`, `RequestAdvanceDialogue`, `RequestSubmitDialogueChoice`, `RequestSetDialogueEavesdrop`).
+- Mode policy:
+- `Mode.Invader` and `Mode.Scrapyard` use one shared global dialogue session (single active shared session).
+- `Mode.Shop` uses per-player sessions; eavesdrop can subscribe a partner as mirrored co-pilot.
+- Pause policy: shared dialogue pauses the world only in modes tagged by `UARDialogueSettings::PauseOnDialogueModeTags` (default `Mode.Invader`), and unpauses on session end.
+- Seen-history policy: only the active speaker (session initiator driving node progression) gets seen-node credit; passive viewers/eavesdroppers do not.
+- Choice policy:
+- node-level participation mode is `InitiatorOnly` or `GroupChoice`.
+- canonical branch outcome is global-per-node and persisted once.
+- group-choice conflict tie-break is currently initiator-wins.
+- important decision hook: node flag `bForceEavesdropForImportantDecision` forces partner view subscription in Shop and server-locks choice submission until all slotted players are viewing.
+- NPC progression policy: relationship/love and want satisfaction are global per save (not per-player). `SubmitNpcRamenDelivery(...)` only applies when delivered ramen tag matches current want.
+- Talkable policy: NPC talkable state is computed from dialogue unlock availability (`HasUnlockedDialogueForNpcForAnyPlayer`) and replicated to world NPC actors via `AARNPCCharacterBase::bIsTalkable`.
+- Content authoring source: dialogue and NPC definitions are tag-keyed DataTable rows resolved through `UContentLookupSubsystem` roots (`Dialogue.Node`, `Npc.Definition`).
+
+## GAS Runtime Contract
+
+- `AARPlayerStateBase` owns the authoritative ASC (`UAbilitySystemComponent`) and `UARAttributeSetCore`.
+- `AARPlayerStateBase::LoadoutTags` is the source-of-truth loadout container. Do not create/shadow a Blueprint variable named `LoadoutTags` on derived PlayerState BPs.
+- PlayerState ownership migrated to C++ for lobby/runtime identity flags:
+- `CharacterPicked` (`EARCharacterChoice`: `None`, `Brother`, `Sister`) is native replicated state on `AARPlayerStateBase` with server setter path (`SetCharacterPicked` / `ServerPickCharacter`) and change signal `OnCharacterPickedChanged`.
+- `DisplayName` is native replicated state on `AARPlayerStateBase` with server setter path (`SetDisplayNameValue` / `ServerUpdateDisplayName`), mirrored into `PlayerName` (`SetPlayerName`), and change signal `OnDisplayNameChanged`.
+- `bIsReady` is native replicated transient state on `AARPlayerStateBase` with server setter path (`SetReadyForRun` / `ServerUpdateReady`) and change signal `OnReadyStatusChanged`.
+- `bIsDowned` and `bIsDeadState` are native replicated transient runtime states on `AARPlayerStateBase` (not save-persistent) with server setter paths (`SetDownedState`/`ServerUpdateDownedState`, `SetDeadState`/`ServerUpdateDeadState`) and change signals (`OnDownedStateChanged`, `OnDeadStateChanged`).
+- Ready-set normalization contract: when server processes `SetReadyForRun(true)`, PlayerState auto-normalizes missing prerequisites before setting ready:
+- if `PlayerSlot` is `Unknown`, assign the first free slot (`P1` then `P2`); if both are occupied, readiness is rejected and a warning is logged (no duplicate slots are assigned).
+- if `CharacterPicked` is `None`, assign slot-biased preferred choice (`P1->Brother`, `P2->Sister`) with alternate fallback when needed; if both choices are taken, readiness is rejected with a warning.
+- `bIsSetup` is native replicated setup gate on `AARPlayerStateBase` with authority setter `SetIsSetupComplete(...)` and signal `OnSetupStateChanged`.
+- `LoadoutTags` replicated change signaling is explicit: `OnRep_Loadout` now broadcasts `OnLoadoutTagsChanged`; server-side writes in C++ save/setup paths route through `SetLoadoutTags(...)` so server-local listeners also receive change notifications.
+- PlayerState loadout convenience API: `UpdateLoadoutWithTag(FGameplayTag)` is server-authoritative (client calls route through `ServerUpdateLoadoutWithTag`) and still commits via `SetLoadoutTags(...)` so replication/save-dirty side effects remain intact.
+- PlayerState loadout removal API: `RemoveTagFromLoadout(FGameplayTag)` is server-authoritative (client calls route through `ServerRemoveTagFromLoadout`) and commits through `SetLoadoutTags(...)` so normalization/replication/save-dirty side effects remain intact.
+- PlayerState loadout query API: `GetTagsInLoadoutSlot(FGameplayTag SlotTag)` returns current loadout tags in that slot subtree (descendants of `SlotTag`, excluding the slot root itself).
+- Loadout slot policy is project-settings-driven via `UARLoadoutSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Loadout`):
+- `MultiSlotLoadoutRoots` is an explicit allowlist of slot roots that can keep multiple tags.
+- Any loadout root not in `MultiSlotLoadoutRoots` is treated as single-slot by default.
+- `DefaultStartingUnlocks` is automatically kept consistent with `DefaultPlayerLoadoutTags` (missing loadout tags are auto-added in settings edit flow), and runtime uses `GetEffectiveDefaultStartingUnlocks()` as a safety net.
+- Loadout slot normalization is enforced inside `SetLoadoutTags_Internal(...)` on server: single-slot roots are canonicalized to one descendant tag per root (last tag wins) whenever loadout is updated.
+- `AARPlayerStateBase::InitializeForFirstSessionJoin()` (authority-only) is the first-join default initializer (non-seamless-travel path): resets `CharacterPicked` to `None` and ensures default loadout tags are present.
+- `AARPlayerStateBase::InitializeForFirstSessionJoin()` (authority-only) now always assigns a concrete default character from slot (`P1->Brother`, `P2->Sister`) and does not leave `CharacterPicked` unset.
+- `bIsReady` is explicitly non-persistent/transient across seamless travel handoff (resets false on `CopyProperties` target).
+- `AARPlayerStateBase` now owns replicated player slot identity (`EARPlayerSlot`: `Unknown`, `P1`, `P2`) with authority setter `SetPlayerSlot(...)` and RepNotify signal `OnPlayerSlotChanged`.
+- PlayerState attribute UI delegates (`OnCoreAttributeChanged`, `OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) include both `SourcePlayerState` and `SourcePlayerSlot` directly (no separate `...WithSource`/`...WithSlot` variants).
+- Server applies default loadout tags from project settings (`UARLoadoutSettings::DefaultPlayerLoadoutTags`) when `LoadoutTags` is empty during join/setup and after server struct-state apply.
+- `AARPlayerCharacterBase` is the shared player pawn root (`IAbilitySystemInterface` default returns null).
+- Invader pawn (`AARPlayerCharacterInvader`) binds as ASC avatar (owner/avatar split, Lyra-style).
+- `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
+- Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
+- Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
+- Loadout naming convention migrated from `Gadget` to `Hat`:
+- preferred tags/root naming is `Unlock.Hat` / `Unlocks.Hats`
+- ship loadout apply now resolves hats strictly from `Unlock.Hat` (legacy gadget root acceptance removed from runtime loadout lookup)
+- gameplay-tag redirects in config preserve compatibility for legacy gadget tag assets/data
+- gameplay ability/input/state tag naming also migrated to hat:
+- `Ability.Hat.Activate.*`
+- `Input.Ability.HatActivate`
+- `State.UsingHat`
+- Secondary lane is currently deprecated: secondary rows can still be present/applied when tagged, but loadout initialization/readiness must never require secondary selection.
+- `UARAttributeSetCore` gadget resources were renamed to hat resources:
+- `HatEnergy`, `MaxHatEnergy`, `HatEnergyRegenRate`, `HatPower`
+- replication notify functions and replication registration were renamed accordingly, and `CoreRedirects` property redirects map old gadget attribute names to the new hat names for asset compatibility.
+- Ship loadout application only runs when possessed by a gameplay `AARPlayerController`; possession by any other controller logs an error (loud) and skips init, leaving abilities/stats absent until a proper gameplay controller possesses the pawn.
+- Ship loadout application is server-deferred with short retries after possess when `LoadoutTags` are not yet available, to handle network/order races (remote joiners and late server loadout assignment).
+- Ship runtime weapon tuning setup is C++-owned in `AARPlayerCharacterInvader` (no required BP `_Init`): it applies/refreshes a primary fire-rate gameplay effect from `PrimaryWeaponFireRateEffectClass` using SetByCaller tag `Data.FireRate` from `UARWeaponDefinition::FireRate`, and tracks the active handle for cleanup/refresh.
+- `AARPlayerCharacterInvader` no longer auto-invokes legacy BP `_Init` from C++; ship initialization should come from explicit gameplay flow (for example possess/lifecycle/interface scripts) and C++ loadout/apply paths.
+- Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
+- PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
+- Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
+- PlayerState exposes replicated spice-sharing runtime state (`bIsSharingSpice`) with event hook `OnSpiceSharingStateChanged`; server mutation path is `SetSpiceSharingActive` / `ServerSetSpiceSharingActive`.
+- PlayerState share transfer helper `ApplySpiceShareTick(...)` is authority-only and enforces mutual-share cancelation: if both players are sharing simultaneously, no drain and no grant are applied.
+- PlayerState now carries Invader runtime-only spicy metadata (non-save/non-hydrated):
+- replicated `InvaderPlayerColor` (`EARAffinityColor`) with server setter path (`SetInvaderPlayerColor` / `ServerSetInvaderPlayerColor`) and signal `OnInvaderPlayerColorChanged`.
+- default character-to-color mapping is `Brother -> Blue`, `Sister -> Red`; when character is temporarily unset at mode load, baseline color is slot-biased (`P1 -> Blue`, `P2 -> Red`) to avoid unintended `White/None` defaults.
+- color domain is `None`, `Red`, `Blue`, `White`; matching semantics are `None` matches nothing and `White` matches everything.
+- server PlayerState supports gameplay-effect/tag-driven color overrides via ASC loose/effect tags `Color.None`, `Color.Red`, `Color.Blue`, `Color.White` (override precedence: `None > White > Red > Blue`; absent override tags falls back to character default mapping).
+- PlayerState color is enum/tag lockstep on server: `SetInvaderPlayerColor` synchronizes ASC color tags, and ASC color tag changes re-resolve/update the replicated enum; clients consume replicated enum (`OnRep_InvaderPlayerColor`) plus replicated ASC tags.
+- whenever player color resolves to `White` or `None`, PlayerState emits a verbose diagnostic log (`[InvaderSpice|Color]`) so unexpected non-baseline states are visible in testing.
+- replicated combo count (`InvaderComboCount`) + `LastInvaderKillCreditServerTime`; server kill-credit path uses timeout-aware updates and signal `OnInvaderComboChanged`.
+- replicated activated-upgrade ledger (`ActivatedInvaderUpgradeTags`) with server mutation helpers (`MarkInvaderUpgradeActivated`, `ClearActivatedInvaderUpgrades`) and signal `OnInvaderActivatedUpgradesChanged`.
+- local-only HUD prediction overlay hooks exist on PlayerState (`SetPredictedSpiceValue`, `ClearPredictedSpiceValue`, `OnPredictedSpiceChanged`) and never mutate authoritative spice values.
+- Player move-speed runtime flow is now C++/GAS-driven like enemies: `AARPlayerCharacterInvader` binds to core `MoveSpeed` attribute changes and syncs `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed` from GAS on init and on every replicated/runtime update.
+- Ability selection/matching is deterministic:
+- exact tag match preferred over hierarchy match
+- tie-break by ability level then stable order
+- `DynamicSpecSourceTags` considered with asset tags
+- Enemy damage routing is GAS-first:
+- `AAREnemyBase::ApplyDamageViaGAS(...)` builds/apply instant `UAREnemyIncomingDamageEffect` with SetByCaller `Data.Damage`
+- `UARAttributeSetCore::PostGameplayEffectExecute(...)` consumes `IncomingDamage` into shield/health using `DamageTakenMultiplier`
+- `AAREnemyBase::TakeDamage(...)` now forwards into this GAS damage path (authority), rather than direct health subtraction.
+- Loose-tag replication rule: when server mutates ASC loose gameplay tags that clients must read (mode/runtime/state tags), use replication-state-aware loose-tag APIs (`Add/RemoveLooseGameplayTags(..., EGameplayTagReplicationState::TagOnly)`) rather than non-replicated loose-tag mutation paths.
+
+## Content Lookup System
+
+- `UContentLookupSubsystem` resolves gameplay tags to DataTable rows via `UContentLookupRegistry` routes.
+- Route resolution uses best root-prefix match; row name uses tag leaf segment.
+- Registry source is Project Settings, not subsystem config:
+- `Project Settings -> Alien Ramen -> Alien Ramen Content Lookup`
+- settings class: `UARContentLookupSettings`
+- property: `RegistryAsset` (default: `/Game/Data/DA_ContentLookupReg.DA_ContentLookupReg`)
+- Runtime override still supported via `UContentLookupSubsystem::SetRegistry(...)` (takes priority).
+- BP-facing subsystem APIs should stay under `Alien Ramen|Content Lookup`.
+- `UContentLookupSubsystem` now exposes `GetAllRowNamesForRootTag(...)` so gameplay systems can enumerate route-backed tables (used by faction ranking).
+
+## State Serialization Contract
+
+- Interface: `IStructSerializable` (`StructSerializable.h/.cpp`).
+- Core methods:
+- `ExtractStateToStruct`
+- `ApplyStateFromStruct`
+- `GetStateStruct`
+- Default implementation uses `UHelperLibrary` reflection helpers (`ExtractObjectToStructByName`, `ApplyStructToObjectByName`).
+- Implementers currently include:
 - `AARPlayerStateBase`
-- `AARPlayerCharacterBase`
+- `AARGameStateBase`
+- Implementers expose `ClassStateStruct` (`UScriptStruct*`) to declare persisted schema.
+- Mode-specific GameState persisted schemas are now native C++ structs in `Source/AlienRamen/Public/ARGameStateModeStructs.h`:
+- `FARInvaderGameStateData`
+- `FARScrapyardGameStateData`
+- `FARShopGameStateData`
+- `FARLobbyGameStateData`
+- `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, and `AARLobbyGameState` override `GetStateStruct_Implementation()` to hard-return their native struct type; this prevents stale Blueprint defaults (`ClassStateStruct`) from reintroducing deleted BP `ST_*GSData` dependencies.
+- Hydration is server-authoritative:
+- interface default blocks non-authority actor execution
+- State struct application is authority-only; client requests to apply state are rejected (no RPC path).
+- Seamless travel handoff for PlayerState is C++-owned via `AARPlayerStateBase::CopyProperties`:
+- extracts/applies struct state through `IStructSerializable`
+- then explicitly carries critical replicated fields (`PlayerSlot`, `LoadoutTags`, `CharacterPicked`, `DisplayName`)
+- marks destination setup complete (`bIsSetup=true`) for copied/continued players
+- and explicitly resets transient readiness (`bIsReady=false`) on the destination PlayerState.
 
-## 5) Ownership / Authority Defaults
+## Save Runtime Contract (C++ Cutover In Progress)
 
-Use these defaults unless a subsystem contract explicitly says otherwise.
+- Runtime save objects now exist in C++:
+- `UARSaveGame` (`Source/AlienRamen/Public/ARSaveGame.h`)
+- `UARSaveIndexGame` (`Source/AlienRamen/Public/ARSaveIndexGame.h`)
+- `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`) is the new `UGameInstanceSubsystem` entrypoint for save/load/list/create/delete and hydration requests.
+- Save schema version is now manually controlled from a single native source:
+- `UARSaveGame::CurrentSchemaVersion` (manual bump point)
+- `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
+- write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
+- load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
+- Current save schema is `v6`; minimum supported is also `v6` (no legacy migration path kept in pre-production).
+- `UARSaveGame` persists disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `ProgressionTags`, `FactionClout`, `ActiveFactionTag`, `ActiveFactionEffectTags`, `FactionPopularityStates`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`, `NpcRelationshipStates`, `DialogueCanonicalChoiceStates`, `PlayerDialogueHistoryStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
+- `FARMeatState` uses replication-safe typed entries (`TArray<FARMeatTypeAmount>`) for extensible meat types instead of a `TMap`; normalization merges duplicate tags, drops invalid/zero entries, and keeps deterministic tag-sort order.
+- BP hydration compatibility helpers are exposed on `UARSaveGame`:
+- `FindPlayerStateDataBySlot(...)`
+- `FindPlayerStateDataByIdentity(...)`
+- Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString` + optional `UniqueNetIdType`, with legacy id/display name fields).
+- Identity lookup preference: when multiple saved rows share the same online identity (for example local couch players under one Steam account), `FindPlayerStateDataByIdentity(...)` prefers the row matching the requester's `PlayerSlot`.
+- Save player payload now stores native `CharacterPicked` enum (`EARCharacterChoice`) in `FARPlayerStateSaveData` (not string/name reflection).
+- Player save payload is explicit-only (no embedded player `FInstancedStruct` blob): `Identity`, `CharacterPicked`, and `LoadoutTags` are the canonical persisted player fields.
+- Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
+- Save slot base-name generation is C++/subsystem-owned (`UARSaveSubsystem::GenerateRandomSlotBaseName`) and now prefers short thematic `Adj_Noun` names; uniqueness checks run against both canonical/debug save indexes (logical names) with physical revision-0 existence fallback, and only after repeated collisions does it append a numeric suffix before final GUID fallback.
+- Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
+- Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
+- Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- Save validation now also sanitizes faction payload shape: non-negative `FactionClout`, removes invalid/duplicate faction popularity entries, and ensures active faction can be represented in popularity state.
+- Default unlock baseline is project-settings driven via `UARLoadoutSettings::DefaultStartingUnlocks`:
+- when runtime save gather produces empty unlocks, save payload is seeded from settings
+- when game-state hydration has no current save, `AARGameStateBase` unlocks are seeded from settings
+- when loading a save with empty unlocks, runtime apply path falls back to settings defaults
+- GameState hydration precedence:
+- Runtime GameState starts from class/default values first, then hydration applies persisted state.
+- Persisted GameState-facing fields (`Money`, `Unlocks`, `Scrap`, `Meat`, `Cycles`) are restored from `CurrentSaveGame` onto runtime GameState on authority hydration when a current save exists.
+- When one-shot `PendingTravelGameStateData` exists, it overlays the restored persisted fields (or defaults when no save exists), then is consumed/reset after first application.
+- `AARGameStateBase::BeginPlay` (authority only) calls `RequestGameStateHydration(this)` automatically.
+- Cycles progression is now save-owned (not GameState-owned). `GatherRuntimeData` copies cycles from the current save, not from GameState. Authority helper `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` lives on `UARSaveSubsystem` for run-complete increments and optional immediate persistence.
+- Travel/save flow is now C++-owned in `UARSaveSubsystem`:
+    - Authority-only `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bPersistSaveBeforeTravel)` and `RequestOpenLevel(LevelName, Options, bSkipReadyChecks, bAbsolute, bPersistSaveBeforeTravel)` are callable from Blueprints.
+    - Optional readiness gate (default on) requires every `AARPlayerStateBase` to have a non-`Unknown` `PlayerSlot`, a non-`None` `CharacterPicked`, and `bIsReady=true`. Use `bSkipReadyChecks` for menus/debug.
+    - Before travel, subsystem captures `AARGameStateBase` into `PendingTravelGameStateData` (via `IStructSerializable::ExtractStateToStruct`).
+    - If `bPersistSaveBeforeTravel=true`, travel writes disk save via `SaveCurrentGame(..., bCreateNewRevision=true)` and then clears pending-travel overlay because persisted data is authoritative.
+    - If `bPersistSaveBeforeTravel=false`, no disk save is performed and pending-travel overlay carries runtime state into the next mode.
+    - Travel/open enforce listen hosting by auto-appending `?listen` to URLs/options; both paths require authority (server/standalone) and log a warning instead of traveling on failure.
+- Save conveniences:
+    - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (authority) updates the canonical progression counter; cycles are save-owned.
+    - `GetTimeSinceLastSave(FTimespan& OutElapsed)`, `FormatTimeSinceLastSave(FText&)`, `GetLastSaveTimestamp(FDateTime&)` for UI-friendly timestamps.
+    - Saves are guarded by `bSaveInProgress`; `OnSaveStarted` fires before disk write. Concurrent save requests log/return failure (`SaveCurrentGame`), so UI can safely gate spinners/buttons via `IsSaveInProgress`.
+    - Save throttling via `MinSaveIntervalSeconds` (default 1s). Throttled attempts return `EARSaveResultCode::Throttled`.
+    - Save result codes now surface in `FARSaveResult.ResultCode` (`Success`, `AuthorityRequired`, `NoWorld`, `InProgress`, `Throttled`, `ValidationFailed`, `NotFound`, `Unknown`) for cheaper BP error handling.
+    - Autosave helper `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)` only runs when `bSaveDirty` is true; `MarkSaveDirty` is exposed. Cycle increments and loadout writes set `bSaveDirty`; successful saves clear it.
+- Save subsystem now exposes persistent progression/faction helpers:
+    - `GetProgressionTags`, `HasProgressionTag`, `AddProgressionTag`, `RemoveProgressionTag` (shared long-term modifier surface; faction rules read `Progression.Faction.*` from here)
+    - `GetFactionClout`, `SetFactionClout`
+- Save hydration entrypoints enforce authority on requesters:
+- `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
+- `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied.
+- Hydration identity policy: strict online identities (non-null provider + unique id, e.g. Steam) require exact identity match and do not slot-fallback; slot fallback is only allowed for local-only identities (PIE/offline/null-style).
+- PlayerState hydration no longer applies blank/default `FARPlayerStateSaveData` when no match exists (no accidental clobber of character/display/loadout on misses).
+- Client-join save parity handshake is controller-initiated and subsystem-served:
+- local non-authority `AARPlayerController::BeginPlay` sends `ServerRequestCanonicalSaveSync()`
+- server routes through `UARSaveSubsystem::PushCurrentSaveToPlayer(...)`
+- target client persists snapshot via `ClientPersistCanonicalSave(...)` -> `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
+- if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
+- Player-controller session leave API is native on `AARPlayerController`:
+- `LeaveSession()` is BP-callable (`Alien Ramen|Session`) and routes client calls to `ServerLeaveSession()`
+- remote-client leave requests now only return that specific client to main menu (`ClientReturnToMainMenuWithTextReason`) and do not collapse the host session.
+- host/standalone leave path performs best-effort autosave-if-dirty except while active mode tag is `Mode.Invader`, then calls `UGameInstance::ReturnToMainMenu()`.
+- Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
+- Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
+- Travel save policy is now opt-in per mode via `bSaveOnModeExit` (default true; Lobby overrides to false). `TryStartTravel` threads that flag into `RequestServerTravel`/`RequestOpenLevel`; when a disk save executes, the pending travel overlay is cleared, otherwise the overlay carries forward into the next map hydration.
+- Save listing supports parallel namespaces:
+- Unified save API now uses explicit debug toggle on core ops (`CreateNewSave`, `SaveCurrentGame`, `LoadGame`, `ListSaves`, `DeleteSave`) via `bUseDebugSaves`.
+- `bUseDebugSaves=true` appends/uses `"_debug"` slot-base naming and routes index IO to debug index slot (`SaveIndexDebug`); `false` routes to canonical index slot (`SaveIndex`).
+- Multiplayer persistence parity seam added:
+- server save path serializes canonical save bytes and sends to remote clients via `AARPlayerController::ClientPersistCanonicalSave(...)`
+- clients persist received canonical bytes through `UARSaveSubsystem::PersistCanonicalSaveFromBytes(...)`
+- C++ debug save tooling class resolution now targets native save classes (`UARSaveGame`/`UARSaveIndexGame`) rather than BP class-path loading.
+- Save/debug editor details categories for save structs/properties use `Save...` paths (not `Alien Ramen|Save...`) to avoid an extra wrapper category level in the details UI.
 
-### PlayerState
+## GameMode/GameState Player Lifecycle
 
-Use `AARPlayerStateBase` for:
+- `AARGameModeBase::PreLogin(...)` enforces the global 2-player cap server-authoritatively; when two AR player states already exist, additional incoming connections are rejected (`Server full.`).
+- `AARGameModeBase::PreLogin(...)` also enforces runtime offline policy: when `UARNetworkUserSettings::bStayOffline` is true, online-identity joins are rejected (`Server is offline.`) while local/null-id couch join flow remains allowed.
+- `AARGameModeBase` refreshes advertised session joinability on player join/leave through `UARSessionSubsystem::RefreshJoinability(...)`, so open online seats stay aligned with authoritative `PlayerArray` occupancy.
+- `AARGameModeBase::HandleStartingNewPlayer_Implementation` owns authority-side join flow:
+- resolves joined `AARPlayerStateBase`
+- if `bIsSetup==false` (first session join, not seamless-travel copy), runs C++ first-join setup:
+- assigns slot (`P1` first-free, else `P2`)
+- attempts save hydration from server `UARSaveSubsystem::CurrentSaveGame` via `TryHydratePlayerStateFromCurrentSave`
+- if no matching save identity row exists, initializes defaults via `InitializeForFirstSessionJoin()`
+- preserves assigned join-time slot for session consistency after hydration
+- resolves character choice conflicts (if hydrated choice is already taken by the other player, auto-switch to alternate `Brother/Sister`; fallback `None` if needed)
+- marks setup complete
+- then emits BP extension hook `BP_OnPlayerJoined`
+- post-setup slot normalization always runs for the joined PlayerState (including seamless-travel/setup-complete paths): preserves valid unique slot assignments, assigns first free slot when missing, and resolves duplicates by reassigning only the newly joined player to avoid slot churn.
+- authoritative identity normalization now runs on `AARGameModeBase::BeginPlay` and after each player join: enforces unique slot occupancy (`P1/P2`), resolves duplicate/missing character picks where possible (slot-biased preference with alternate fallback), and re-syncs `InvaderPlayerColor` from `CharacterPicked` so slot/character/color remain coherent across mode load and travel.
+- invariant: after server join/load normalization, `CharacterPicked` should never remain `None`; if both character choices are already occupied, normalization uses slot-biased fallback assignment instead of unsetting.
+- `AARGameModeBase::Logout` emits `BP_OnPlayerLeft`; player membership itself is maintained by built-in `PlayerArray` lifecycle.
+- `AARGameStateBase` player tracking uses built-in `AGameStateBase::PlayerArray` as the authoritative source (no parallel replicated custom `Players` array and no tracked-player wrapper arrays).
+- `OnTrackedPlayersChanged` is emitted from `AddPlayerState` / `RemovePlayerState` when `AARPlayerStateBase` entries are added/removed.
+- GameState ready signaling is centralized on `AARGameStateBase`:
+- `OnPlayerReadyChanged` relays each player's `OnReadyStatusChanged` (server + clients via replicated PlayerState ready updates).
+- `bAllPlayersTravelReady` is server-authoritative replicated aggregate state; `OnAllPlayersTravelReadyChanged` fires on server updates and client repnotify.
+- aggregate all-ready recompute runs on authoritative player add/remove and on player ready/slot/character change events.
+- GameState UI hooks: replicated `Cycles` set via authority-only `SyncCyclesFromSave(int32)`; hydration completion fires `OnHydratedFromSave`.
+- Save-facing GameState fields are now native replicated on `AARGameStateBase` with change signals:
+- `Unlocks` (`FGameplayTagContainer`, `ReplicatedUsing=OnRep_Unlocks`) -> `OnUnlocksChanged`
+- `Money` (`int32`, `ReplicatedUsing=OnRep_Money`) -> `OnMoneyChanged`
+- `Scrap` (`int32`, `ReplicatedUsing=OnRep_Scrap`) -> `OnScrapChanged`
+- `Meat` (`FARMeatState`, `ReplicatedUsing=OnRep_Meat`) -> `OnMeatChanged`
+- `Cycles` (`int32`, `ReplicatedUsing=OnRep_Cycles`) -> `OnCyclesChanged`
+- `ActiveFactionTag` (`FGameplayTag`, `ReplicatedUsing=OnRep_ActiveFactionTag`) -> `OnActiveFactionTagChanged`
+- `ActiveFactionEffectTags` (`FGameplayTagContainer`, `ReplicatedUsing=OnRep_ActiveFactionEffectTags`) -> `OnActiveFactionEffectTagsChanged`
+- SaveSubsystem save/hydration path now reads/writes these fields via native GameState accessors/setters (`GetUnlocks/GetMoney/GetScrap/GetMeat`, `SetUnlocksFromSave/SetMoneyFromSave/SetScrapFromSave/SetMeatFromSave`) instead of reflection-name field scans.
+- SaveSubsystem save/hydration path now also reads/writes elected faction fields via native GameState accessors/setters (`GetActiveFactionTag/GetActiveFactionEffectTags`, `SetActiveFactionTagFromSave/SetActiveFactionEffectTagsFromSave`).
+- Unlock mutation API is authority-owned on `AARGameStateBase`:
+- `AddUnlockTag(FGameplayTag)` / `RemoveUnlockTag(FGameplayTag)` / `HasUnlockTag(FGameplayTag)` plus bulk setter `SetUnlocksFromSave(...)`.
+- UI/client entrypoint is `AARPlayerController` RPC wrappers (`RequestAddUnlock`, `RequestRemoveUnlock`) which route through `ServerRequestAddUnlock/ServerRequestRemoveUnlock` to mutate authoritative GameState.
+- PlayerState UI hooks: `IsTravelReady()` (slot + character + ready) and `OnTravelReadinessChanged` multicast fire on slot/character/ready changes (server + clients).
+- `AARGameModeBase` travel/save policy flags:
+- `bSaveOnModeExit` controls whether `TryStartTravel` persists disk save before travel.
+- `bAutosaveOnQuit` controls authority autosave-if-dirty on `EndPlay` when end reason is `Quit`.
+- Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` (carry via pending travel state without forced disk save), `AARInvaderGameMode` sets `bAutosaveOnQuit=false` (no quit autosave by default for invader runs).
+- `AARGameModeBase::TryStartTravel(...)` now has `PreStartTravel(...)` hook seam for mode-specific authority work before save/travel.
+- `AARShopGameMode::PreStartTravel(...)` finalizes faction election through `UARFactionSubsystem` before travel; travel is blocked if finalization fails.
 
-- replicated per-player runtime state
-- replicated player identity/setup state
-- player-owned ASC / core attributes
-- player HUD-facing replicated state
-- per-player Invader runtime state
+## Player Controller UI
 
-### GameState
+- `AARPlayerController` supports optional custom cursor initialization on local controllers at `BeginPlay` when `bEnableCustomCursorInit` is true and `CursorDefaultWidgetClass` is set; it creates the widget once (`Cursor`) and assigns it to `EMouseCursor::Default`. Defaults keep this off to avoid unintended UI overrides.
+- HUD class ownership is Blueprint/GameMode-authored: mode GameMode Blueprints define `HUDClass`; C++ mode constructors do not hard-assign HUD classes.
+- Native HUD base hierarchy exists for mode-specific BP inheritance:
+- `AARHUDBase` (shared) and `AARInvaderHUD` / `AARScrapyardHUD` / `AARShopHUD` / `AARLobbyHUD` (mode bases).
+- HUD init flow is local-only and non-replicated: `AARPlayerController::BeginPlay` (and manual `RequestHUDInitialization`) call local helper `RequestHUDInitializationInternal(...)`, which no-ops unless `IsLocalController()` and then dispatches to spawned HUD instance (`AARHUDBase::RequestHUDInitialization`) plus local controller BP hook.
+- Travel-safe HUD init retry: if local controller init runs before `GetHUD()` is valid (common during map transitions), controller starts a short local timer retry loop and dispatches init once HUD exists; no server RPC/replication is involved.
+- GameMode helper: `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` wraps readiness and travel plus optional save (via `bSaveOnModeExit`), logs blocking players, and delegates travel to SaveSubsystem (listen enforced).
+- Player-controller travel API is native on `AARPlayerController`:
+- `TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify)` is BP-callable (`Alien Ramen|Travel`) and routes client calls to `ServerTryStartTravel(...)`.
+- Server controller travel handling forwards to authoritative `AARGameModeBase::TryStartTravel(...)`.
+- Player-controller cursor init seam is native on `AARPlayerController`:
+- local-only `InitializeCustomCursor()` is BP-callable (`Alien Ramen|UI|Cursor`) and auto-runs from `BeginPlay`.
+- cursor init is gated by `bEnableCustomCursorInit` and uses `CursorDefaultWidgetClass` to create/store `Cursor`, then applies it to `EMouseCursor::Default` via `SetMouseCursorWidget`.
+- `AARGameStateBase` provides BP convenience lookups for coop player access:
+- `GetPlayerStates()` (returns filtered `AARPlayerStateBase` array from `PlayerArray` for BP iteration)
+- `AreAllPlayersTravelReady()` (true only when at least one AR player exists and every AR player passes `IsTravelReady()`)
+- `GetPlayerBySlot(EARPlayerSlot)` (direct P1/P2 resolution from `PlayerArray` player slots)
+- `GetOtherPlayerStateFromPlayerState(...)`
+- `GetOtherPlayerStateFromController(...)`
+- `GetOtherPlayerStateFromPawn(...)`
 
-Use `AARGameStateBase` / mode GameState for:
+## Enemy/Invader Runtime
 
-- replicated shared match state
-- shared mode-level runtime state
-- save-facing shared runtime fields
-- team/shared Invader systems
+- Enemies are `ACharacter`-based for movement/nav reliability (even if visuals are flying).
+- `AAREnemyBase` is actor-owned ASC (owner/avatar = enemy), server-authoritative.
+- Enemy definition schema is `FARInvaderEnemyDefRow` + nested `FARInvaderEnemyRuntimeInitData` (no `StartingHealth`; health initializes from `MaxHealth` via attributes).
+- `AAREnemyBase` defaults `CharacterMovement.bOrientRotationToMovement=false`; per-enemy child Blueprints can opt in when pilot-style steering rotation is desired.
+- Enemy death is one-shot and server-gated (`bIsDead`), with BP hooks:
+- `BP_OnEnemyInitialized`
+- `BP_OnEnemyDied`
+- Death release contract: after C++ death cleanup, enemy fires `BP_OnEnemyDied`, then `BP_OnEnemyPreRelease`, then calls `ReleaseEnemyActor()`; default `ReleaseEnemyActor` destroys actor and is the pool-replacement seam.
+- Enemy spawn identity is tag-first: `FARWaveEnemySpawnDef::EnemyIdentifierTag` is authoritative at runtime; `EnemyClass` in spawn rows is legacy/migration-only.
+- On possess (authority), enemy resolves definition from content lookup by identifier tag and applies base stats via `SetNumericAttributeBase`:
+- core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
+- enemy set: `CollisionDamage`
+- Enemy move-speed runtime flow is C++/GAS-driven: after init and on MoveSpeed attribute changes, `AAREnemyBase` syncs core `MoveSpeed` to `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed`.
+- Enemy startup ability/effect layering on possess (authority) is deterministic and deduped:
+-   1. `UARInvaderDirectorSettings::EnemyCommonAbilitySet` (global)
+-   2. best archetype match from `UARInvaderDirectorSettings::EnemyArchetypeAbilitySets` using `RuntimeInit.EnemyArchetypeTag` (exact match preferred, then closest parent tag)
+-   3. row `RuntimeInit.EnemySpecificAbilities` (non-DA per-enemy ability entries)
+- `RuntimeInit.StartupAbilitySet` has been removed from enemy row schema/runtime.
+- Startup loose tags/effects still come from enemy row runtime-init payload.
+- Enemy identifier tag is replicated with notify (`OnRep_EnemyIdentifierTag`) and forwards to BP hook `BP_OnEnemyIdentifierTagChanged`; server `SetEnemyIdentifierTag` fires the same hook immediately.
+- Enemy definition application flag `bEnemyDefinitionApplied` was removed; rely on BP hook `BP_OnEnemyDefinitionApplied` if you need lifecycle notifications.
+- Enemy archetype is row-authored runtime data (`RuntimeInit.EnemyArchetypeTag`) replicated on `AAREnemyBase` (not hand-authored per enemy BP).
+- Invader authority brain: `UARInvaderDirectorSubsystem` (server-only `UTickableWorldSubsystem`).
+- Run control contract: `StartInvaderRun` is rejected when a run is already active (must stop first).
+- Run stop contract: `StopInvaderRun` performs full cleanup (destroys managed run enemies, clears runtime wave/choice/cache state, resets run/stage/leak/threat counters, and pushes stopped snapshot).
+- Replicated read model: `UARInvaderRuntimeStateComponent` on `GameState`.
+- Invader data/config from DataTables and `UARInvaderDirectorSettings`.
+- Director runtime no longer requires/loading the enemy DataTable to start runs; enemy definitions are resolved through `ContentLookupSubsystem` (registry asset) and cached per identifier tag. Enemy class preloading still uses the resolved definition.
+- Director keeps an enemy definition cache keyed by identifier tag and preloads likely enemy classes ahead of time (`EnemyPreloadWaveLookahead`).
+- Disabled enemy rows are hard-rejected from runtime spawn.
+- Player-down evaluation contract: `AreAllPlayersDown()` only evaluates non-spectator players whose ASC survivability state is initialized (`MaxHealth > 0`); players without initialized health are excluded (not treated as down) to avoid false positives on startup/load transitions.
+- Offscreen cull contract: enemies are only eligible for offscreen culling after first gameplay entry (`AAREnemyBase::HasEnteredGameplayScreen()`), preventing false culls during valid offscreen entering trajectories.
+- Projectile runtime base exists in C++: `AARProjectileBase` (`Source/AlienRamen/Public/ARProjectileBase.h`).
+- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, projectile evaluates XY gameplay bounds (`UARInvaderDirectorSettings::GameplayBoundsMin/Max`) and calls `ReleaseProjectile()` once it has remained offscreen for `OffscreenReleaseDelay` seconds.
+- `EvaluateOffscreenRelease()` (BlueprintCallable) advances offscreen time using world delta seconds, so manual/BP calls preserve the same delay semantics as tick-driven evaluation.
+- projectile cull delay defaults to project settings value `UARInvaderDirectorSettings::ProjectileOffscreenCullSeconds` (default `0.1s`) when `bUseProjectSettingsOffscreenCullSeconds` is true.
+- offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for purely local/projectile cases.
+- `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
+- release path is override-friendly for pooling via `ReleaseProjectile` (`BlueprintNativeEvent`); default implementation destroys actor.
+- Pickup runtime base exists in C++: `AARPickupBase` (`Source/AlienRamen/Public/ARPickupBase.h`).
+- default behavior: if `bReleaseWhenOutsideGameplayBounds` is true, pickup evaluates XY gameplay bounds each tick and tracks offscreen time; once offscreen for `OffscreenReleaseDelay` seconds, it calls `ReleasePickup()`.
+- pickup cull delay defaults to project settings value `UARInvaderDirectorSettings::PickupOffscreenCullSeconds` (default `0.1s`) when `bUseProjectSettingsOffscreenCullSeconds` is true.
+- offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for client-only pickups.
+- `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
+- pickup release path is override-friendly for pooling via `ReleasePickup` (`BlueprintNativeEvent`); default implementation destroys actor.
+- Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
+- Director sets explicit per-enemy formation target world location at spawn (`AAREnemyBase::SetFormationTargetWorldLocation(...)`) derived from authored offset (+ optional flips) before offscreen edge translation.
+- Wave phases in runtime flow: `Active`, `Berserk` (waves start `Active`, then time-transition to `Berserk`; waves clear when spawned enemies are dead and fully spawned).
+- Entering behavior is per-enemy movement/state logic (on-screen/formation arrival), not a wave phase.
+- `FARWaveDefRow::WaveDuration` controls `Active -> Berserk` timing.
+- Wave color-swap contract: if `FARWaveDefRow::bAllowColorSwap` is true, each spawned wave instance rolls an independent 30% chance to swap Red<->Blue spawn colors (White unchanged); this is no longer tied to repeating the same wave row.
+- `FARWaveDefRow` no longer contains `BerserkProfile` tuning fields (move-speed multiplier, fire-rate multiplier, behavior tags); berserk behavior is currently state/logic driven only.
+- stage rows no longer include/use a berserk/wave-time multiplier; stage timing knobs do not scale per-wave active duration
+- Stage intro timing is no longer owned by invader stage data/director flow; startup/intro pacing should be driven externally (for example GameMode/state orchestration) before calling `StartInvaderRun`.
+- Wave/stage rows include authored enable toggles (`FARWaveDefRow::bEnabled`, `FARStageDefRow::bEnabled`); director selection skips disabled rows.
+- Enemy AI wave phase StateTree events use gameplay tags under `Event.Wave.Phase.*`:
+- `Event.Wave.Phase.Active`
+- `Event.Wave.Phase.Berserk`
+- Enemy AI emits one-shot enemy entry events for StateTree:
+- `Event.Enemy.EnteredScreen` fires first time enemy is inside entered-screen bounds.
+- `Event.Enemy.InFormation` fires first time enemy has reached authored formation slot while on screen.
+- Enemy runtime also exposes a persistent StateTree/Blueprint-readable bool `AAREnemyBase::bHasEnteredScreen` (set/reset with entered-screen lifecycle) for condition-based transitions when event timing is not desired.
+- Added dedicated StateTree schema class `UARStateTreeAIComponentSchema` (`AR StateTree AI Schema`) for enemy AI authoring defaults:
+- defaults `AIControllerClass` to `AARInvaderAIController`
+- defaults `ContextActorClass` to `AAREnemyBase`
+- `UARStateTreeAIComponent` now returns `UARStateTreeAIComponentSchema` from `GetSchema()`, so StateTree assets assigned for enemy AI must compile against that schema.
+- Wave schema no longer includes formation-node graph data (`FormationNodes`, `FormationNodeId`) or `FormationMode`; formation behavior is driven by runtime AI/state + wave lock flags.
+- Wave runtime spawn ordering is deterministic by `SpawnDelay`; equal-delay entries preserve authored `EnemySpawns` array order.
+- Formation lock flags are authored at wave level (`FARWaveDefRow`), not per-spawn:
+- `bFormationLockEnter` (lock during `Entering`)
+- `bFormationLockActive` (lock during `Active`)
+- Director applies these flags atomically with wave runtime context via `AAREnemyBase::SetWaveRuntimeContext(...)`.
+- StateTree startup/initialization order is wave-context-driven:
+- enemy AI controller enforces no auto-start on possess (stops running logic if needed) to avoid pre-context evaluation
+- enemy runtime context assignment (`SetWaveRuntimeContext`) triggers `TryStartStateTreeForCurrentPawn()` once lock flags/slot/phase are already set
+- controller start remains idempotent/ownership-guarded (`GetPawn()==InPawn && InPawn->GetController()==this`) and defers one tick while `WaveInstanceId == INDEX_NONE`
+- StateTree start always defers at least one tick after a valid context to allow enemy definition/effects/tags to finish applying before logic runs.
+- Enemy AI StateTree startup is idempotent per possession: controller skips redundant `StartStateTreeForPawn(...)` calls when pawn changed or logic is already running, preventing `SetStateTree` on running-instance warnings.
+- Enemy AI startup now hard-guards duplicate init per possession (`bStateTreeInitializedForPossession`): once initialized for a possession, repeated `TryStartStateTreeForCurrentPawn(...)`/`StartStateTreeForPawn(...)` calls are ignored until unpossess resets state.
+- Enemy AI controller only forwards wave/entry StateTree events once logic is running; pre-start events are dropped to avoid `SendStateTreeEvent`-before-start warnings.
+- After StateTree startup, controller resends the pawn's current runtime context (`WavePhase`, entered-screen, in-formation) so dropped pre-start events do not leave StateTree out of sync (for example missing Berserk transition).
+- Formation lock flags (`bFormationLockEnter`, `bFormationLockActive`) are set by director at spawn via `AAREnemyBase::SetWaveRuntimeContext(...)` and remain readable from actor context in StateTree.
+- `FARWaveDefRow` no longer carries `EntryMode`, `BerserkDuration`, `StageTags`, or wave-level `BannedArchetypeTags`.
+- `FARWaveEnemySpawnDef` no longer carries `SlotIndex` or per-spawn formation lock flags.
+- Formation slot index is runtime-only context on `AAREnemyBase` (`FormationSlotIndex`), assigned from deterministic spawn ordinal when the director spawns enemies.
+- Spawn edge behavior contract:
+- `Top` translates authored formation offscreen on `+X` while preserving formation geometry
+- `Left`/`Right` translate authored formation offscreen on `Y` edges while preserving formation geometry
+- wave-level random mirror options `bAllowFlipX`/`bAllowFlipY` can mirror authored offsets around gameplay-bounds center before offscreen translation
+- Runtime enemy spawn facing is fixed to straight-down gameplay progression (toward low-X/player side) at spawn in `UARInvaderDirectorSubsystem`, with configurable `UARInvaderDirectorSettings::SpawnFacingYawOffset` for mesh-forward correction.
+- default gameplay bounds are tuned for current invader debug camera extents: `X=[0,1400]`, `Y=[-1350,1550]`; default `SpawnOffscreenDistance=350`
+- entered-screen detection uses inset bounds (`UARInvaderDirectorSettings::EnteredScreenInset`, default `40`) to avoid firing on first edge contact
+- Leak detection ownership:
+- leak detection/reporting is enemy-owned (BP/C++ enemy logic decides leak timing and calls director report API)
+- Blueprint/manual trigger path should call `UARInvaderDirectorSubsystem::ReportEnemyLeaked(Enemy)` directly (for example from Earth trigger overlap).
+- Director no longer performs boundary leak polling/destruction; it increments run `LeakCount` only via `UARInvaderDirectorSubsystem::ReportEnemyLeaked(...)` with per-enemy dedupe.
+- Director is now observer/reporter for run-loss signals, not arbiter:
+- it does **not** auto-stop the run for leak count or all-players-down
+- it broadcasts `OnEnemyLeaked(NewLeakCount, Delta)` and `OnAllPlayersDownChanged(bAllPlayersDown)` for external arbitration (for example GameMode deciding game-over and calling `StopInvaderRun`)
+- leak-threshold ownership was removed from `UARInvaderDirectorSettings`; threshold policy now belongs to game-mode/rules logic
+- Director now tracks player status snapshots (evaluated/downed/dead) and emits change-only signals:
+- `OnPlayerDownedChanged(PlayerState, bIsDowned)`
+- `OnPlayerDeadChanged(PlayerState, bIsDead)`
+- `OnAllPlayersDownChanged(bAllPlayersDown)`
+- `OnAllPlayersDeadChanged(bAllPlayersDead)`
+- Query helpers exposed on director for gameplay logic/targeting:
+- `IsPlayerDowned(PlayerState)`, `IsPlayerDead(PlayerState)`
+- `GetEvaluatedPlayerCount()`, `GetDownedPlayerCount()`, `GetDeadPlayerCount()`
+- `AreAllPlayersDowned()`, `AreAllPlayersDead()`
+- Director player-status updates are event-driven (not tick-driven): it rebuilds/binds on run start and tracked-player changes, subscribes to PlayerState runtime-state signals (`OnDownedStateChanged`, `OnDeadStateChanged`) plus health/max-health signals for initialization edge cases, and emits director change signals/query-cache updates only when values change.
+- Enemy runtime exposes entry-completion hook:
+- `AAREnemyBase::SetReachedFormationSlot(bool)` (authority)
+- `AAREnemyBase::HasReachedFormationSlot()`
+- Enemy runtime exposes formation target context from director:
+- `AAREnemyBase::SetFormationTargetWorldLocation(FVector)` (authority)
+- `AAREnemyBase::GetFormationTargetWorldLocation()`
+- `AAREnemyBase::HasFormationTargetWorldLocation()`
+- Enemy runtime exposes replicated lock state for AI/StateTree reads:
+- `AAREnemyBase.bFormationLockEnter`
+- `AAREnemyBase.bFormationLockActive`
+- Enemy color is replicated with notify (`OnRep_EnemyColor`) and forwards to BP hook `BP_OnEnemyColorChanged(EARAffinityColor)`; server-side `SetEnemyColor(...)` also triggers the same BP hook immediately.
+- Enemy color now follows the same enum/tag lockstep model as players: server `SetEnemyColor` synchronizes ASC `Color.*` tags, and server ASC color tag changes (for example from gameplay effects) re-resolve/update the replicated `EnemyColor` enum (`None > White > Red > Blue` precedence).
+- Enemy exposes Blueprint/StateTree-friendly ASC tag query helpers on actor context:
+- `AAREnemyBase::HasASCGameplayTag(FGameplayTag)`
+- `AAREnemyBase::HasAnyASCGameplayTags(FGameplayTagContainer)`
+- Runtime loose-tag application/removal on server (ship + enemy init/runtime paths) uses ASC replication-state-aware loose-tag APIs (`EGameplayTagReplicationState::TagOnly`) so client-side ASC tag checks see the same mode/runtime tags.
+- Damage helper API contract: `ApplyDamageViaGAS(...)` on enemy/ship outputs current Health after application (same function, no separate result variant).
+- Enemy facing helper API:
+- `UAREnemyFacingLibrary::ReorientEnemyFacingDown(...)` (`Alien Ramen|Enemy|Facing`) can be called from BP movement/collision responses to snap an enemy back to straight-down progression yaw (with optional settings offset).
+- Enemy ASC state-tag bridge helpers exist (authority only, ref-counted):
+- `AAREnemyBase::PushASCStateTag` / `PopASCStateTag`
+- `AAREnemyBase::PushASCStateTags` / `PopASCStateTags`
+- controller forwarding helpers (useful for explicit StateTree task wiring):
+- `AAREnemyAIController::PushPawnASCStateTag` / `PopPawnASCStateTag`
+- `AAREnemyAIController::PushPawnASCStateTags` / `PopPawnASCStateTags`
+- controller event forwarding helpers for BP/runtime:
+- `AAREnemyAIController::SendStateTreeEvent(const FStateTreeEvent&)`
+- `AAREnemyAIController::SendStateTreeEventByTag(FGameplayTag, FName Origin=NAME_None)`
+- `AAREnemyAIController::GetEnemyStateTreeComponent()`
+- enemy-side BP convenience wrappers:
+- `AAREnemyBase::GetEnemyAIController()`
+- `AAREnemyBase::GetEnemyStateTreeComponent()`
+- `AAREnemyBase::SendEnemyStateTreeEvent(const FStateTreeEvent&)`
+- `AAREnemyBase::SendEnemyStateTreeEventByTag(FGameplayTag, FName Origin=NAME_None)`
+- pawn->controller signal bridge (fact reporting; controller remains decision owner):
+- `AAREnemyBase::SendEnemySignalToController(FGameplayTag SignalTag, AActor* RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true)`
+- `AAREnemyAIController::ReceivePawnSignal(...)`
+- `AARAIControllerBase::BP_OnPawnSignal(...)` (optional shared BP hook used by enemy AI and other mode controllers)
+- Enemy AI now uses `UARStateTreeAIComponent` (subclass of `UStateTreeAIComponent`) which computes active StateTree state-tag set and emits tag deltas.
+- `AAREnemyAIController` subscribes to those deltas and automatically mirrors active StateTree state tags onto pawn ASC loose tags (pop removed, push added).
+- `UARStateTreeAIComponent` preserves previous active-tag snapshot when the tree is running but read-only execution context is transiently unreadable; this avoids false empty-tag remove/add churn in the ASC mirror bridge.
+- Active-path semantics apply: if both parent and child states are active and tagged, both tags are present on ASC.
+- Avoid double-wiring: if using this automatic bridge, do not also push/pop the same tags manually in StateTree tasks.
+- Automation coverage exists for the mirror bridge in `Source/AlienRamen/Private/Tests/AREnemyAIStateTagBridgeTest.cpp` (`AlienRamen.AI.StateTree.ASCStateTagBridge`), validating add/dedupe/remove behavior from StateTree active-tag deltas to enemy ASC loose tags.
+- Damage helper APIs exposed for BP/gameplay wiring:
+- `AAREnemyBase::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
+- `AARPlayerCharacterInvader::ApplyDamageViaGAS(float Damage, AActor* Offender)` (authority)
+- `AAREnemyBase::GetCurrentDamageFromGAS()`
+- `AAREnemyBase::GetCurrentCollisionDamageFromGAS()`
+- `AARPlayerCharacterInvader::GetCurrentDamageFromGAS()`
+- `AAREnemyBase::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
+- `AAREnemyBase::ApplyCollisionDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current CollisionDamage)
+- `AARPlayerCharacterInvader::ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride=-1)` (authority; override < 0 uses current Damage)
+- Both `GetCurrentDamageFromGAS` helpers read `UARAttributeSetCore::Damage` from ASC so callers can pass attacker-authored damage into the corresponding `ApplyDamageViaGAS`.
+- GameState replicated leak read model:
+- `UARInvaderRuntimeStateComponent::LeakCount` is replicated with RepNotify.
+- `UARInvaderRuntimeStateComponent::OnEnemyLeaked` broadcasts on both server updates and client RepNotify updates with `(NewLeakCount, Delta)`.
+- Invader spicy-track runtime is now C++-owned on `AARInvaderGameState` (server-authoritative, runtime-only, non-save/non-hydrated):
+- shared replicated state: `SharedTrackSlots`, `SharedFullBlastTier`, `FullBlastSession`, `OfferPresenceStates`.
+- full-blast flow APIs: `RequestActivateFullBlast`, `ResolveFullBlastSelection`, `ResolveFullBlastSkip`.
+- track-use API: `ActivateTrackUpgrade` (uses selected slot, drops one tier, resets all player spice to zero).
+- hold-share APIs: `StartSharingSpice` / `StopSharingSpice` with server tick transfer using source `SpiceDrainRate` and `SpiceShareRatio`.
+- explicit/manual kill-credit API: `AwardKillCredit`; automatic death bridge path: `AAREnemyBase::HandleDeath` calls `AARInvaderGameState::NotifyEnemyKilled`.
+- spicy gain is color-gated: kills only award spice when killer player color matches enemy color, with enemy `White` acting as wildcard; kill events still update combo state so mismatched colors reset combo as expected.
+- enemy death instigator resolution for kill-credit now prefers GAS effect-context `OriginalInstigator` and falls back to `EffectCauser` before `NotifyEnemyKilled`, improving attribution when projectile/effect chains omit original instigator.
+- enemy kill-credit attribution now also tracks a short-lived server-side recent damage instigator on `AAREnemyBase` and uses it as a fallback when death context arrives with null instigator; this reduces `NotifyEnemyKilled` attribution misses from context-loss race cases.
+- kill-credit FX multicast hook: `OnInvaderKillCreditFxEvent` (payload `FARInvaderKillCreditFxEvent`) fires when spice is actually awarded; includes target slot + spice + combo + enemy metadata + optional world origin for client cosmetic routing.
+- offer-presence APIs: `SetOfferPresence` / `ClearOfferPresence` support replicated UI cursor/highlight presence during active full-blast sessions.
+- full-blast resolve side effects in C++: unpause, execute configured gameplay cue, and clear enemy projectiles by configured actor tag.
+- Automation coverage exists for spicy-track session/presence seams in `Source/AlienRamen/Private/Tests/ARInvaderSpicyTrackOfferSessionTest.cpp`:
+- `AlienRamen.Invader.SpiceTrack.OfferPresenceLifecycle`
+- `AlienRamen.Invader.SpiceTrack.OfferChooserRestriction`
+- tests are currently PIE/Game-context based (world-required), matching existing project automation style.
+- Detailed spicy-track ownership/authority matrix is documented in `Documentation/CppOverview/InvaderSpicyTrack.md` and is the source-of-truth for where state lives and whether it replicates.
+- Offer-session lifecycle contract is documented in `Documentation/CppOverview/InvaderSpicyTrack.md`:
+- single active session (`FullBlastSession.bIsActive` gate), chooser-slot ownership, replicated offer snapshot for late-join reconstruction.
+- current runtime has no session id, timeout auto-skip, or disconnect auto-skip; those are documented as open hardening work.
+- Pause model contract:
+- current implementation uses `UGameplayStatics::SetGamePaused(true/false)` for full-blast choose flow.
+- recommended multiplayer-safe direction is a replicated gameplay suspension state (do not assume true pause is long-term contract).
+- Invader spicy-track configuration source is project settings `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`):
+- combo timeout, spice-per-tier, max full-blast tier, offer count
+- skip scrap reward per tier
+- data-driven level-roll offset weights (`-3..+3`)
+- upgrade DataTable reference (`FARInvaderUpgradeDefRow`)
+- enemy projectile clear tag + full-blast gameplay cue tag.
+- Invader upgrade type surface now lives in native `ARInvaderSpicyTrackTypes.h`:
+- `FARInvaderUpgradeDefRow` (upgrade identity/display/effects/locked tiers/unlock prerequisites/offer+activation prerequisites/claim policy)
+- `EARInvaderUpgradeClaimPolicy`: `SingleTeamClaim`, `PerPlayerClaim`, `Repeatable`
+- `FARInvaderTrackSlotState`, `FARInvaderUpgradeOffer`, `FARInvaderFullBlastSessionState`, `FARInvaderLevelOffsetWeight`.
+- Enemy definition rows now include spicy credit scalar `FARInvaderEnemyDefRow::BaseSpiceKillValue` (fallback uses `UARInvaderSpicyTrackSettings::DefaultBaseKillSpiceValue`).
+- Invader PlayerController now exposes server-routed spicy-track request entrypoints for clients/UI:
+- `RequestActivateFullBlast`
+- `RequestResolveFullBlastSelection`
+- `RequestResolveFullBlastSkip`
+- `RequestActivateTrackUpgrade`
+- `RequestStartSharingSpice` / `RequestStopSharingSpice`.
+- Director has stage-choice loop and overlap/early-clear spawning rules.
+- Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
+- `UARInvaderDirectorSubsystem::RegisterConsoleCommands()` now clears existing `ar.invader.*` registrations first, so PIE map travel cannot double-register global command names across overlapping world/subsystem lifetimes.
+- Console controls implemented:
+- `ar.invader.start [Seed]`
+- `ar.invader.stop`
+- `ar.invader.choose_stage <left|right>`
+- `ar.invader.force_wave <RowName>`
+- `ar.invader.force_phase <WaveId> <Active|Berserk>`
+- `ar.invader.force_threat <Value>`
+- `ar.invader.force_stage <RowName>`
+- `ar.invader.dump_state`
+- `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
+    - deprojects viewport corners at runtime, intersects with horizontal plane `Z=PlaneZ` (default `SpawnOrigin.Z`), logs suggested `GameplayBoundsMin/Max`, and optionally applies+saves when `apply` is provided
 
-### GameMode
+## Debug Save Tool (Current)
 
-Use GameMode for:
+- Editor tab `AR_DebugSaveTool` now drives the C++ save system directly (`UARSaveSubsystem`) instead of the legacy `UARDebugSaveToolLibrary/Widget` (removed).
+- Tool supports editor-offline mode (no PIE required) for slot listing/creation/loading/saving/deletion by directly reading/writing `UARSaveGame` + `UARSaveIndexGame` slots; when PIE world/subsystem is available it uses `UARSaveSubsystem`.
+- Tool now has namespace toggle (`Use Debug Namespace`) and drives unified save APIs with `bUseDebugSaves`.
+- Slot create/load/save/delete/list all use the same core functions (`CreateNewSave/LoadGame/SaveCurrentGame/DeleteSave/ListSaves`) with namespace selected by toggle.
+- Tool includes slot maintenance actions: `Duplicate Selected` and `Rename Selected` (target base from textbox), implemented in editor tooling by index/file copy+rewrite for the active namespace.
+- Left-panel action order is standardized: `Create`, `Refresh`, `Load`, `Delete`, `Rename`, `Duplicate`; loaded-save actions live on the right/details side.
+- Left-panel actions are presented in a uniform adaptive wrap/grid layout that flows into multiple columns based on panel width.
+- Loaded-save utility row includes `Save`, `Set Default Unlocks`, `Set Default Loadout (All Players)`, and `Revert`; defaults come from project settings (`UARLoadoutSettings::DefaultStartingUnlocks` and `UARLoadoutSettings::DefaultPlayerLoadoutTags`) and are applied to the loaded save object.
+- Save-slot list supports right-click context menu actions: `Load`, `Delete`, `Rename`, `Duplicate` (rename/duplicate use textbox target base).
+- Save-slot list context menu also includes `Heal Missing` to remove stale index entries when no physical revision files remain.
+- Debug save tool supports `Ctrl+S` keyboard shortcut to run `Save` on the currently loaded slot from the panel.
+- Save-slot list supports double-click to load a slot; if a different slot is already loaded, current loaded save is auto-saved before switching.
+- Failed load/delete against stale index entries in the editor tool can self-heal by pruning stale slot entries (active namespace first, then exact/other-namespace fallback); when auto-heal cannot resolve load failures and no revisions exist on disk, the tool prompts to remove the stale index entry.
+- Slot list selection mode is multi-select for delete operations; non-delete actions (`Load`, `Rename`, `Duplicate`) collapse to the first selected slot.
+- Delete action prompts `Delete?` confirmation and supports deleting all selected slots in one operation.
+- Revert uses an in-memory snapshot captured when a slot is loaded/created to restore the loaded save object to its last loaded state.
+- In Debug mode, subsystem appends/uses `"_debug"` slot bases and debug index automatically.
+- Saving uses `SaveCurrentGame(CurrentSlotName, /*bCreateNewRevision=*/true)` to keep revision history aligned with runtime saves.
+- Unlock-all action writes directly to the loaded `UARSaveGame::Unlocks` with every `Unlock.*` gameplay tag discovered from the tag manager.
+- Right-side loaded object header is `Loaded Save` (no `Auto Property Editor` suffix).
+- Native meat save schema remains `FARMeatState` (`ARSaveTypes.h`) for meat edits/inspection via the property editor (typed entry array, no map).
 
-- authority-only orchestration
-- joins/leaves/setup normalization
-- travel gating / pre-travel hooks
-- server-only mode rules
+## Invader Authoring Editor Tool (Current)
 
-### GameInstance / Subsystems
+- Tab name: `AR_InvaderAuthoringTool`, display name `Invader Authoring Tool`.
+- Main menu entry: `Window -> Alien Ramen Invader Authoring`.
+- Data source is direct DataTable authoring (no intermediate asset format):
+- preferred source: `UARInvaderToolingSettings` (`Project Settings -> Alien Ramen -> Tooling`)
+- fallback source: `UARInvaderDirectorSettings` when tooling table refs are unset
+- wave rows: `FARWaveDefRow`
+- stage rows: `FARStageDefRow`
+- enemy table is also loaded for wave-spawn validation/summary resolution
+- Tool supports row CRUD + save for both tables, with transaction-based edits and package dirtying.
+- Row list supports multi-select duplicate/delete for wave/stage rows.
+- Row list supports right-click context menu actions (`Rename`, `Duplicate`, `Delete`) for selected wave/stage rows.
+- Row list right-click context menu includes `Enable`/`Disable` toggle for selected wave/stage rows; disabled rows render grayed with `[Disabled]` tag in the row list.
+- New-row creation uses rename textbox content as base name when present (with `_N` uniqueness suffix as needed).
+- Table persistence now follows standard editor dirty-package flow by default: edits mark wave/stage DataTable packages dirty and rely on Unreal save prompts/manual save actions (no per-edit autosave churn).
+- PIE save bootstrap settings are in `UARInvaderToolingSettings` (`Project Settings -> Alien Ramen -> Tooling -> Invader Authoring|PIE Save Bootstrap`):
+- `bEnablePIESaveBootstrap`
+- `PIEBootstrapLoadingMap`
+- `PIELoadSlotName` (default `Debug`)
+- `PIELoadSlotNumber` (default `0`)
+- `PIEBootstrapDebugMap`
+- When enabled, PIE harness launches from the destination/debug map first (so PIE exit returns to that map), then performs a one-time runtime hop to the configured loading map before running save bootstrap and deferred travel back to destination/debug map.
+- Before tool-driven PIE launch, the panel prompts save/checkout for a dirty currently loaded editor map package (even if already on startup map); cancelling save aborts launch.
+- Deferred debug travel subscribes to GameInstance dispatcher `SignalOnGameLoaded` (when present) and opens the debug level on signal; fallback path uses load-complete bool function/property detection and short-delay timeout protection before `OpenLevel` to debug map (or editor default test map fallback).
+- First tool-open backup snapshot support:
+- when enabled (`bCreateBackupOnToolOpen`), the panel duplicates currently loaded wave/stage DataTables into `UARInvaderToolingSettings::BackupsFolder` (default `/Game/Data/Backups`) on first panel initialization
+- backup creation is deferred briefly via ticker after panel construct to avoid early editor-startup validator registration warnings
+- backup package saves use autosave-style save flags (`SAVE_FromAutosave`) to reduce validator churn/noise during automatic backup writes
+- retention is capped per source table by `BackupRetentionCount` (oldest backups are pruned beyond the cap)
+- backup assets are suffixed with timestamp (`<SourceAsset>__YYYYMMDD_HHMMSS`)
+- Wave spawn selection is multi-select aware and synchronized between canvas + spawn list:
+- list uses multi-selection
+- canvas supports click select, ctrl-toggle, shift range-select (same layer), and drag-rectangle selection
+- clicking empty canvas clears selection when not using additive modifiers
+- canvas drag on a selected spawn moves the full selected group
+- canvas supports spawn copy/paste (`Ctrl+C` / `Ctrl+V`) and spawn context-menu copy/paste; pasted spawns are offset and become the active selection
+- spawn context actions (delete, color set) apply to the current spawn selection set.
+- Enemy palette rows are click-select only (palette drag/drop spawning is disabled); canvas add-spawn uses the currently active palette class/color selection.
+- Keyboard `Delete/Backspace` in wave mode only deletes selected spawn(s); it does not fall through to deleting the selected wave row when no spawns are selected.
+- The panel listens to object transaction events for authored wave/stage/enemy tables and refreshes row/layer/spawn/details/issue views after undo/redo or other table transactions to keep UI state in sync.
+- Enemy-table transactions now also force a palette rebuild (including compatibility cache reset) so newly authored enemy classes appear immediately.
+- Wave authoring model is delay-layered:
+- layers are unique `EnemySpawns[*].SpawnDelay` buckets (no extra persisted layer metadata)
+- same-layer ordering is authored array order and should be treated as deterministic tie-break behavior
+- Wave spawn identity authoring is tag-first (`EnemyIdentifierTag`); class path remains visible only as migration support.
+- Selected wave spawn details include resolved enemy summary text only (no inline `Open Enemy Row` button).
+- Wave panel UX:
+- top toolbar actions (`Reload Tables`, `Validate Selected`, `Validate All`) have explicit tooltips and separated layout
+- `Reload Tables` now also refreshes the enemy palette immediately.
+- `Add Layer` moved into `Wave Layers` header; `Add Spawn`/`Delete` moved into `Layer Spawns` header
+- layer spawn list supports drag-drop reordering within a layer (same delay bucket)
+- wave canvas exposes authoring controls for `Snap To Grid` and `Grid Size`
+- wave panel shows computed clear metrics for selected wave (`Damage to Clear` and required `DPS` over `WaveDuration`), using enemy row `MaxHealth`, optional reflected `MaxShield` when present, and `DamageTakenMultiplier` for approximation
+- wave panel layout keeps `Snap To Grid` / `Grid Size` above the canvas; preview timeline + phase text + computed clear metrics render below the canvas
+- wave panel visually groups summary/timeline and layer-spawn table regions with bordered section containers and subtle background tinting to improve section separation
+- wave canvas glyphs are intentionally larger for readability (approx 2x prior size), and authored spawn offsets are clamped to gameplay bounds during add/drag/paste/details-edit so spawns cannot drift outside canvas bounds
+- stages mode hides enemy palette + spawn details panels
+- validation issues are in a collapsible panel and auto-collapse when empty
+- Wave/stage/spawn authoring detail categories are flattened to `Wave`, `Stage`, and `Spawn` (no `AR|Invader|...` category-path nesting in the authoring details panels).
+- Palette contract:
+- derives enemy classes from authored enemy DataTable rows (`EnemyDataTable -> FARInvaderEnemyDefRow::EnemyClass`), not folder-based asset discovery
+- excludes base class `AAREnemyBase` and transient skeleton/reinst classes
+- palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
+- applies class+color chips (Red/Blue/White) to spawned entries
+- favorites persist in editor-per-project settings (`FavoriteEnemyClasses`)
+- class-level preview shape cycle persists in editor-per-project settings (`EnemyClassShapeCycles`) and is used by wave-canvas glyph rendering (Square/Circle/Triangle/Diamond)
+- palette uses star toggle glyphs for favorites (`★`/`☆`)
+- palette row right-click opens a context menu with `Find in Content Browser` and `Edit Enemy Data` (opens Enemy Authoring for the resolved identifier tag)
+- active palette selection has explicit visual feedback: selected enemy class row is highlighted and selected color chip (`R/B/W`) shows a highlight outline
+- Editor settings source: `UARInvaderAuthoringEditorSettings` (`Config=EditorPerProjectUserSettings`):
+- `DefaultTestMap` (default `/Game/Maps/Lvl_InvaderDebug`)
+- `LastSeed`
+- `FavoriteEnemyClasses`
+- preview flags (`bHideOtherLayersInWavePreview`, `bShowApproximatePreviewBanner`, `bSnapCanvasToGrid`, `CanvasGridSize`)
+- Validation is author-time only and currently checks missing references, wave/stage range issues, missing/invalid spawn enemy identifier tags, enemy-row resolution/disabled rows, incompatible stage-wave tag constraints, and warns on non-enforced archetype tags.
+- PIE harness uses existing runtime console commands (`ar.invader.*`) and is intended to run as listen-server single-player by default.
 
-Use `GameInstance` or subsystems for:
+## Enemy Authoring Editor Tool (Current)
 
-- cross-map systems
-- save/load orchestration
-- global registries / lookups / long-lived services
+- Tab name: `AR_EnemyAuthoringTool`, display name `Enemy Authoring Tool`.
+- Main menu entry: `Window -> Alien Ramen Enemy Authoring`.
+- Data source is direct DataTable authoring of enemy rows:
+- preferred source: `UARInvaderToolingSettings::EnemyDataTable`
+- fallback source: `UARInvaderDirectorSettings::EnemyDataTable`
+- Enemy authoring panel treats row-struct mismatch as a hard guardrail: if the selected enemy DataTable row struct is not `FARInvaderEnemyDefRow`, the panel reports a status error and skips row parsing/population (prevents invalid row-memory reinterpret crashes).
+- Supports row CRUD + duplicate + rename + delete + enable/disable + save, with transactions + dirty package flow.
+- Enemy identifier tag is editor-normalized as source-of-truth key: every row must have `EnemyIdentifierTag`, and its leaf segment must exactly equal the DataTable row name.
+- Enemy tool auto-syncs identifier tags on tool open/reload and row create/duplicate/rename/detail-edit by preserving existing tag parent path (or defaulting to `Enemy.Identifier`) and forcing leaf to row name.
+- Enemy row list supports multi-select operations and right-click context menu actions (`Rename`, `Enable/Disable`, `Duplicate`, `Delete`), matching invader row-list interaction patterns.
+- Enemy row list supports sortable columns (only): `Enabled`, `DisplayName`, `EnemyClass`, `MaxHealth`, `ArchetypeTag` (no row-name or identifier-tag sortable columns).
+- Disabled enemy rows render visually muted and include `[Disabled]` in row display text.
+- Includes details editor + validation issues panel with duplicate identifier-tag checks and runtime-init stat sanity checks.
+- Exposes deep-link open/select by enemy identifier tag for wave-tool integration (`Open Enemy Row` from selected spawn summary).
 
-### Clients
+## Logging
 
-- clients may request actions through controller/server RPC entrypoints
-- clients must not directly own authoritative gameplay mutation
+- Global category: `ARLog`
+- Keep logs concise and decision-focused; avoid frame spam.
+- Debug save prefixes in use:
+- `[DebugSaveTool]`
+- `[DebugSaveTool|IO]`
+- `[DebugSaveTool|Validation]`
 
-## 6) Key Runtime Contracts
+## Integration Notes (Keep in Mind)
 
-### GAS
-
-- `AARPlayerStateBase` owns the authoritative player ASC and `UARAttributeSetCore`.
-- Player HUD-facing attribute state is PlayerState-owned.
-- Use replication-aware loose gameplay-tag APIs when server-side ASC loose tags must be visible to clients.
-
-### Save / Hydration
-
-- Save/load/hydration entrypoint is `UARSaveSubsystem`.
-- Hydration is **server-authoritative**.
-- PlayerState and GameState state application must not mutate runtime state from non-authority paths.
-- Travel/save flow is C++-owned in the save subsystem.
-
-### Content Lookup
-
-- `UContentLookupSubsystem` resolves gameplay tags to DataTable rows via registry routes.
-- Registry source is project settings via `UARContentLookupSettings`.
-- Prefer tag-driven lookup over hard-coded table references when the subsystem already uses Content Lookup.
-
-### Invader
-
-- Invader director authority brain is `UARInvaderDirectorSubsystem`.
-- Shared Invader spicy-track runtime is owned by `AARInvaderGameState`.
-- Per-player Invader spicy runtime metadata lives on `AARPlayerStateBase`.
-- Enemy kill-credit and spicy-track mutation are server-authoritative.
-
-## 7) Source-of-Truth Docs
-
-Read the corresponding systems documentation for the current source-of-truth on each subsystem. If you see contradictions between those docs and this file, verify in code and update the docs to match the current code behavior. Do not leave contradictions. You can find documentation in /Documentation/CppOverview or linked from the relevant subsystem header.
-
-## 8) What to Document When Adding or Changing a System
-
-When adding a new subsystem or major gameplay flow, document:
-
-1. ownership / authority model
-2. replication model
-3. configuration source
-4. runtime entry points and lifecycle
-5. integration touchpoints with other systems
-6. current status if replacing or deprecating something
-
-Keep this specific enough that a new agent can act without rediscovery.
-
-## 9) Agent Workflow Expectations
-
-Before making non-trivial changes:
-
-- inspect existing patterns in nearby code first
-- prefer extending current architecture over inventing a parallel pattern
-- check whether a shared type header already exists or should exist
-- check docs for the subsystem you are modifying
-
-After making non-trivial changes:
-
-- compile if possible
-- update public API comments / Doxygen where relevant
-- update the subsystem doc
-- update this file only if the top-level contract changed
-
-## 10) Current High-Value Invariants
-
-- Do not reintroduce legacy `RamenShop` naming in C++; `Shop` is canonical.
-- Do not create parallel replicated player arrays when built-in `PlayerArray` is the authoritative source.
-- Do not bypass server authority for save hydration, shared match state, or Invader spicy-track mutation.
-- Do not shadow native PlayerState/GameState fields with duplicate Blueprint variables.
-- Do not use true engine pause casually for multiplayer gameplay flows; prefer documented gameplay suspension models where appropriate.
+- `ARLog` is exported for cross-module use: `ALIENRAMEN_API DECLARE_LOG_CATEGORY_EXTERN(...)`.
+- Use `UToolMenus::TryGet()` pattern (not `UToolMenus::IsToolMenusAvailable()` in this engine branch).
+- `AlienRamen.cpp` include order must keep `AlienRamen.h` first.
+- Avoid parameter/local names `Tags` on `AActor`-derived classes and related helpers; this shadows `AActor::Tags` and can fail builds under warning-as-error settings. Prefer names like `InTags` / `TagContainer`.
+- UE 5.7 editor API compatibility for `ARInvaderAuthoringPanel`:
+- include `FileHelpers.h` for both `FEditorFileUtils` and `UEditorLoadingAndSavingUtils`
+- use `ULevelEditorPlaySettings` setters (`SetPlayNetMode`, `SetPlayNumberOfClients`, `SetRunUnderOneProcess`) instead of direct member access
+- `AlienRamenEditor.Build.cs` must include `GameplayTags` and `GameplayAbilities` because authoring code reflects/copies row structs containing gameplay tags and `FARAbilitySet_AbilityEntry` (`TSubclassOf<UGameplayAbility>`).
