@@ -27,6 +27,7 @@
 #include "Styling/AppStyle.h"
 #include "Engine/DataTable.h"
 #include "InputCoreTypes.h"
+#include "Abilities/GameplayAbility.h"
 #include "UObject/UObjectGlobals.h"
 
 namespace
