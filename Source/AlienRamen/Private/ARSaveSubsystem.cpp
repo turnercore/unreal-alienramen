@@ -418,6 +418,12 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 	if (CurrentSaveGame)
 	{
 		SaveObject->Cycles = CurrentSaveGame->Cycles;
+		SaveObject->ProgressionTags = CurrentSaveGame->ProgressionTags;
+		SaveObject->FactionClout = CurrentSaveGame->FactionClout;
+		SaveObject->FactionPopularityStates = CurrentSaveGame->FactionPopularityStates;
+		SaveObject->NpcRelationshipStates = CurrentSaveGame->NpcRelationshipStates;
+		SaveObject->DialogueCanonicalChoiceStates = CurrentSaveGame->DialogueCanonicalChoiceStates;
+		SaveObject->PlayerDialogueHistoryStates = CurrentSaveGame->PlayerDialogueHistoryStates;
 	}
 
 	SaveObject->PlayerStates.Reset();
