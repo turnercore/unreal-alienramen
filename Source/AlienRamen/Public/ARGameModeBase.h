@@ -55,6 +55,9 @@ protected:
 	void BP_OnPlayerLeft(AARPlayerStateBase* LeftPlayerState);
 	virtual void BP_OnPlayerLeft_Implementation(AARPlayerStateBase* LeftPlayerState);
 
+	// Authority pre-travel hook for mode-specific transition logic.
+	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks);
+
 private:
 	static EARPlayerSlot DetermineNextPlayerSlot(const AARGameStateBase* GameState);
 	static EARPlayerSlot FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState = nullptr);
