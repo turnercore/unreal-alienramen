@@ -14,6 +14,7 @@
 #include "EngineUtils.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
+#include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -37,6 +38,7 @@ void AARInvaderGameState::BeginPlay()
 	OfferRng.Initialize(FMath::Rand());
 	if (HasAuthority())
 	{
+		RegisterDebugConsoleCommands();
 		InitializeSpicyTrackState();
 		OnTrackedPlayersChanged.AddUniqueDynamic(this, &AARInvaderGameState::HandleTrackedPlayersChanged);
 		HandleTrackedPlayersChanged();
@@ -48,7 +50,259 @@ void AARInvaderGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	OnTrackedPlayersChanged.RemoveDynamic(this, &AARInvaderGameState::HandleTrackedPlayersChanged);
 	ClearWhileSlottedEffects();
 	ActiveSpiceSharers.Reset();
+	UnregisterDebugConsoleCommands();
 	Super::EndPlay(EndPlayReason);
+}
+
+void AARInvaderGameState::RegisterDebugConsoleCommands()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	UnregisterDebugConsoleCommands();
+
+	CmdDebugSetSpice = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.SetSpice"),
+		TEXT("Usage: AR.Invader.Debug.SetSpice <p1|p2> <value>"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetSpice),
+		ECVF_Cheat);
+
+	CmdDebugAddSpice = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.AddSpice"),
+		TEXT("Usage: AR.Invader.Debug.AddSpice <p1|p2> <delta>"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddSpice),
+		ECVF_Cheat);
+
+	CmdDebugSetCursor = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.SetCursor"),
+		TEXT("Usage: AR.Invader.Debug.SetCursor <p1|p2> <tier>"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetCursor),
+		ECVF_Cheat);
+
+	CmdDebugInjectTopSlot = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.InjectTopSlot"),
+		TEXT("Usage: AR.Invader.Debug.InjectTopSlot [UpgradeTag] [Level] [Uses|-1 for infinite]"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleInjectTopSlot),
+		ECVF_Cheat);
+}
+
+void AARInvaderGameState::UnregisterDebugConsoleCommands()
+{
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	if (CmdDebugSetSpice)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugSetSpice, false);
+		CmdDebugSetSpice = nullptr;
+	}
+	if (CmdDebugAddSpice)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugAddSpice, false);
+		CmdDebugAddSpice = nullptr;
+	}
+	if (CmdDebugSetCursor)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugSetCursor, false);
+		CmdDebugSetCursor = nullptr;
+	}
+	if (CmdDebugInjectTopSlot)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugInjectTopSlot, false);
+		CmdDebugInjectTopSlot = nullptr;
+	}
+}
+
+AARPlayerStateBase* AARInvaderGameState::ResolvePlayerStateFromDebugToken(const FString& Token) const
+{
+	const FString Normalized = Token.TrimStartAndEnd().ToLower();
+	if (Normalized.IsEmpty())
+	{
+		return nullptr;
+	}
+
+	EARPlayerSlot DesiredSlot = EARPlayerSlot::Unknown;
+	if (Normalized == TEXT("p1") || Normalized == TEXT("1"))
+	{
+		DesiredSlot = EARPlayerSlot::P1;
+	}
+	else if (Normalized == TEXT("p2") || Normalized == TEXT("2"))
+	{
+		DesiredSlot = EARPlayerSlot::P2;
+	}
+
+	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
+	{
+		if (!PlayerState)
+		{
+			continue;
+		}
+
+		if (DesiredSlot != EARPlayerSlot::Unknown && PlayerState->GetPlayerSlot() == DesiredSlot)
+		{
+			return PlayerState;
+		}
+	}
+
+	return nullptr;
+}
+
+bool AARInvaderGameState::ResolveUpgradeTagForDebugInject(const FString& TagToken, FGameplayTag& OutUpgradeTag) const
+{
+	OutUpgradeTag = FGameplayTag();
+
+	const FString Trimmed = TagToken.TrimStartAndEnd();
+	if (!Trimmed.IsEmpty())
+	{
+		OutUpgradeTag = FGameplayTag::RequestGameplayTag(FName(*Trimmed), false);
+		return OutUpgradeTag.IsValid();
+	}
+
+	TMap<FGameplayTag, FARInvaderUpgradeDefRow> UpgradeDefinitions;
+	if (!BuildUpgradeDefinitionMap(UpgradeDefinitions) || UpgradeDefinitions.IsEmpty())
+	{
+		return false;
+	}
+
+	TArray<FGameplayTag> UpgradeTags;
+	UpgradeDefinitions.GetKeys(UpgradeTags);
+	UpgradeTags.Sort([](const FGameplayTag& A, const FGameplayTag& B)
+		{
+			return A.ToString() < B.ToString();
+		});
+	OutUpgradeTag = UpgradeTags[0];
+	return OutUpgradeTag.IsValid();
+}
+
+void AARInvaderGameState::HandleConsoleSetSpice(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 2)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetSpice <p1|p2> <value>"));
+		return;
+	}
+
+	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(Args[0]);
+	if (!PlayerState)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] SetSpice failed: could not resolve player token '%s'."), *Args[0]);
+		return;
+	}
+
+	const float Value = FCString::Atof(*Args[1]);
+	PlayerState->SetSpiceMeter(Value);
+	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] SetSpice '%s' -> %.2f"), *GetNameSafe(PlayerState), Value);
+}
+
+void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 2)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.AddSpice <p1|p2> <delta>"));
+		return;
+	}
+
+	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(Args[0]);
+	if (!PlayerState)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] AddSpice failed: could not resolve player token '%s'."), *Args[0]);
+		return;
+	}
+
+	const float Delta = FCString::Atof(*Args[1]);
+	const float Current = PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	PlayerState->SetSpiceMeter(Current + Delta);
+	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] AddSpice '%s' %+0.2f -> %.2f"), *GetNameSafe(PlayerState), Delta, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+}
+
+void AARInvaderGameState::HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 2)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetCursor <p1|p2> <tier>"));
+		return;
+	}
+
+	AARPlayerStateBase* PlayerState = ResolvePlayerStateFromDebugToken(Args[0]);
+	if (!PlayerState)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] SetCursor failed: could not resolve player token '%s'."), *Args[0]);
+		return;
+	}
+
+	const int32 RequestedTier = FCString::Atoi(*Args[1]);
+	PlayerState->SetSpicyTrackCursorTier(RequestedTier);
+	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] SetCursor '%s' -> %d"), *GetNameSafe(PlayerState), PlayerState->GetSpicyTrackCursorTier());
+}
+
+void AARInvaderGameState::HandleConsoleInjectTopSlot(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FGameplayTag UpgradeTag;
+	const FString TagToken = Args.Num() > 0 ? Args[0] : FString();
+	if (!ResolveUpgradeTagForDebugInject(TagToken, UpgradeTag))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectTopSlot failed: no valid upgrade tag resolved. Provide tag or ensure UpgradeDataTable has rows."));
+		return;
+	}
+
+	const int32 Level = Args.Num() > 1 ? FMath::Max(1, FCString::Atoi(*Args[1])) : 1;
+	const int32 UsesArg = Args.Num() > 2 ? FCString::Atoi(*Args[2]) : 1;
+	const bool bInfiniteUses = UsesArg < 0;
+	const int32 RemainingUses = bInfiniteUses ? INDEX_NONE : FMath::Max(1, UsesArg);
+
+	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
+	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	if (MaxTrackSlots <= 0)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectTopSlot failed: MaxTrackSlots resolved to 0."));
+		return;
+	}
+
+	const int32 TargetSlotIndex = FMath::Clamp(FMath::Max(1, SharedFullBlastTier - 1), 1, MaxTrackSlots);
+	const TArray<FARInvaderTrackSlotState> OldSlots = SharedTrackSlots;
+	const int32 OldTier = SharedFullBlastTier;
+
+	EnsureTrackSlotCount(TargetSlotIndex);
+	FARInvaderTrackSlotState& Slot = SharedTrackSlots[TargetSlotIndex - 1];
+	Slot.SlotIndex = TargetSlotIndex;
+	Slot.UpgradeTag = UpgradeTag;
+	Slot.UpgradeLevel = Level;
+	Slot.bHasBeenActivated = false;
+	Slot.bInfiniteUses = bInfiniteUses;
+	Slot.RemainingActivationUses = RemainingUses;
+
+	SharedFullBlastTier = FMath::Max(SharedFullBlastTier, TargetSlotIndex + 1);
+	if (Settings)
+	{
+		SharedFullBlastTier = FMath::Clamp(SharedFullBlastTier, 1, Settings->MaxFullBlastTier);
+	}
+
+	TrimTrackToTierLimit();
+	SyncSharedMaxSpiceToPlayers();
+	RefreshWhileSlottedEffects();
+	ReconcilePlayerCursorSelection();
+
+	OnRep_SharedTrackSlots(OldSlots);
+	if (OldTier != SharedFullBlastTier)
+	{
+		OnRep_SharedFullBlastTier(OldTier);
+	}
+	ForceNetUpdate();
+
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderSpice|Debug] InjectTopSlot slot=%d tag=%s level=%d uses=%s"),
+		TargetSlotIndex,
+		*UpgradeTag.ToString(),
+		Level,
+		bInfiniteUses ? TEXT("INF") : *LexToString(RemainingUses));
 }
 
 void AARInvaderGameState::Tick(const float DeltaSeconds)
@@ -299,6 +553,23 @@ void AARInvaderGameState::HandleTrackedPlayersChanged()
 
 	SyncSharedMaxSpiceToPlayers();
 	RefreshWhileSlottedEffects();
+	ReconcilePlayerCursorSelection();
+}
+
+void AARInvaderGameState::ReconcilePlayerCursorSelection()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
+	{
+		if (PlayerState)
+		{
+			PlayerState->SetSpicyTrackCursorTier(PlayerState->GetSpicyTrackCursorTier());
+		}
+	}
 }
 
 bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvaderUpgradeDefRow>& OutDefinitions) const
@@ -624,13 +895,7 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 	ResetAllPlayerSpiceMeters();
 	SyncSharedMaxSpiceToPlayers();
 	RefreshWhileSlottedEffects();
-	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
-	{
-		if (PlayerState)
-		{
-			PlayerState->SetSpicyTrackCursorTier(PlayerState->GetSpicyTrackCursorTier());
-		}
-	}
+	ReconcilePlayerCursorSelection();
 
 	OnRep_SharedTrackSlots(OldSlots);
 	OnRep_FullBlastSession(OldSession);
@@ -905,13 +1170,7 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 	{
 		RefreshWhileSlottedEffects();
 	}
-	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
-	{
-		if (PlayerState)
-		{
-			PlayerState->SetSpicyTrackCursorTier(PlayerState->GetSpicyTrackCursorTier());
-		}
-	}
+	ReconcilePlayerCursorSelection();
 
 	OnRep_SharedTrackSlots(OldSlots);
 	if (bConsumedSlotThisActivation && OldTier != SharedFullBlastTier)

@@ -12,7 +12,7 @@
 
 namespace
 {
-	static bool IsAuthorityWorld(const UWorld* World)
+	static bool IsAuthorityWorld_Faction(const UWorld* World)
 	{
 		if (!World)
 		{
@@ -55,7 +55,7 @@ void UARFactionSubsystem::Deinitialize()
 
 bool UARFactionSubsystem::RefreshElectionSnapshot()
 {
-	if (!IsAuthorityWorld(GetWorld()))
+	if (!IsAuthorityWorld_Faction(GetWorld()))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Faction] RefreshElectionSnapshot ignored on non-authority."));
 		return false;
@@ -71,7 +71,7 @@ bool UARFactionSubsystem::RefreshElectionSnapshot()
 
 bool UARFactionSubsystem::SubmitVote(EARPlayerSlot PlayerSlot, FGameplayTag SelectedFactionTag)
 {
-	if (!IsAuthorityWorld(GetWorld()))
+	if (!IsAuthorityWorld_Faction(GetWorld()))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Faction] SubmitVote ignored on non-authority."));
 		return false;
@@ -116,7 +116,7 @@ void UARFactionSubsystem::ClearVotes()
 
 bool UARFactionSubsystem::FinalizeElectionForTravel(FGameplayTag& OutWinnerFactionTag, EARFactionWinnerReason& OutReason)
 {
-	if (!IsAuthorityWorld(GetWorld()))
+	if (!IsAuthorityWorld_Faction(GetWorld()))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Faction] FinalizeElectionForTravel ignored on non-authority."));
 		return false;
