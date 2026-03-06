@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "ARFactionTypes.h"
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
 
@@ -16,8 +17,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 3;
-	static constexpr int32 MinSupportedSchemaVersion = 3;
+	static constexpr int32 CurrentSchemaVersion = 4;
+	static constexpr int32 MinSupportedSchemaVersion = 4;
 
 	UARSaveGame();
 
@@ -47,6 +48,25 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
 	int32 Cycles = 0;
+
+	// Persistent long-term modifiers and progression state (non-unlock progression).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	FGameplayTagContainer ProgressionTags;
+
+	// Persistent clout progression controlling number of faction vote candidates.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	int32 FactionClout = 0;
+
+	// Current elected faction identity and active effect tags.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	FGameplayTagContainer ActiveFactionEffectTags;
+
+	// Persistent background popularity state for faction ranking/drift.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	TArray<FARFactionRuntimeState> FactionPopularityStates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FName SaveSlot = NAME_None;

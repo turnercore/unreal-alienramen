@@ -87,6 +87,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void MarkSaveDirty();
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
+	FGameplayTagContainer GetProgressionTags() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
+	bool HasProgressionTag(FGameplayTag ProgressionTag) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool AddProgressionTag(FGameplayTag ProgressionTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool RemoveProgressionTag(FGameplayTag ProgressionTag);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
+	int32 GetFactionClout() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
+	void SetFactionClout(int32 NewFactionClout);
+
 	// Attempts an autosave only if dirty; returns true if a save was executed.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool RequestAutosaveIfDirty(bool bCreateNewRevision, FARSaveResult& OutResult);

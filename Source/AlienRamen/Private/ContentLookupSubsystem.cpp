@@ -196,6 +196,56 @@ bool UContentLookupSubsystem::ValidateRegistry(FString& OutError)
 	return true;
 }
 
+bool UContentLookupSubsystem::GetAllRowNamesForRootTag(FGameplayTag RootTag, TArray<FName>& OutRowNames, FString& OutError)
+{
+	OutRowNames.Reset();
+	OutError.Reset();
+
+	if (!RootTag.IsValid())
+	{
+		OutError = TEXT("RootTag is invalid.");
+		return false;
+	}
+
+	UContentLookupRegistry* Active = GetActiveRegistry();
+	if (!Active)
+	{
+		OutError = TEXT("No active registry.");
+		return false;
+	}
+
+	const FContentLookupRoute* FoundRoute = nullptr;
+	for (const FContentLookupRoute& Route : Active->Routes)
+	{
+		if (Route.RootTag == RootTag)
+		{
+			FoundRoute = &Route;
+			break;
+		}
+	}
+
+	if (!FoundRoute)
+	{
+		OutError = FString::Printf(TEXT("No route found for root tag '%s'."), *RootTag.ToString());
+		return false;
+	}
+
+	FString LoadError;
+	UDataTable* Table = LoadAndCacheTable(RootTag, FoundRoute->DataTable, LoadError);
+	if (!Table)
+	{
+		OutError = FString::Printf(TEXT("Failed to load table for root '%s': %s"), *RootTag.ToString(), *LoadError);
+		return false;
+	}
+
+	OutRowNames = Table->GetRowNames();
+	OutRowNames.Sort([](const FName& A, const FName& B)
+	{
+		return A.ToString() < B.ToString();
+	});
+	return true;
+}
+
 UContentLookupRegistry* UContentLookupSubsystem::GetActiveRegistry()
 {
 	// Runtime override wins

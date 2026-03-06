@@ -211,6 +211,12 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		return false;
 	}
 
+	if (!PreStartTravel(URL, Options, bSkipReadyChecks))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel blocked by PreStartTravel hook."));
+		return false;
+	}
+
 	TArray<FString> NotReadyPlayers;
 	if (!bSkipReadyChecks)
 	{
@@ -279,6 +285,14 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		bSkipReadyChecks ? TEXT("true") : TEXT("false"),
 		bSaveOnModeExit ? TEXT("true") : TEXT("false"));
 	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bSaveOnModeExit);
+}
+
+bool AARGameModeBase::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)
+{
+	(void)URL;
+	(void)Options;
+	(void)bSkipReadyChecks;
+	return true;
 }
 
 void AARGameModeBase::BP_OnPlayerJoined_Implementation(AARPlayerStateBase* JoinedPlayerState)
