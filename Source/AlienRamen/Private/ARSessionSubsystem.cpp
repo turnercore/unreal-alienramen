@@ -209,7 +209,7 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	ActiveSessionSearch->MaxSearchResults = FMath::Max(1, MaxResults);
 	if (!bLANQuery)
 	{
-		ActiveSessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+		ActiveSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
 	}
 
 	bOperationInFlight = true;
@@ -426,7 +426,7 @@ IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface(const bool bPrefe
 
 	if (bPreferLAN)
 	{
-		if (IOnlineSubsystem* NullSubsystem = IOnlineSubsystem::Get(NAME_NULL))
+		if (IOnlineSubsystem* NullSubsystem = IOnlineSubsystem::Get(NULL_SUBSYSTEM))
 		{
 			OutSubsystemName = NullSubsystem->GetSubsystemName();
 			return NullSubsystem->GetSessionInterface();
