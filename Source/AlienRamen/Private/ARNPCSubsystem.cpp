@@ -14,8 +14,6 @@
 
 namespace
 {
-	TMap<FGameplayTag, bool> GNpcTalkableCache;
-
 	static bool IsAuthorityWorld(const UWorld* World)
 	{
 		if (!World)
@@ -68,7 +66,7 @@ namespace
 
 void UARNPCSubsystem::Deinitialize()
 {
-	GNpcTalkableCache.Reset();
+	NpcTalkableCache.Reset();
 	Super::Deinitialize();
 }
 
@@ -221,7 +219,7 @@ bool UARNPCSubsystem::IsNpcTalkable(FGameplayTag NpcTag) const
 		return false;
 	}
 
-	if (const bool* Cached = GNpcTalkableCache.Find(NpcTag))
+	if (const bool* Cached = NpcTalkableCache.Find(NpcTag))
 	{
 		return *Cached;
 	}
@@ -243,9 +241,9 @@ bool UARNPCSubsystem::RefreshNpcTalkableState(FGameplayTag NpcTag)
 	}
 
 	const bool bNewTalkable = DialogueSubsystem->HasUnlockedDialogueForNpcForAnyPlayer(NpcTag);
-	const bool bHadExisting = GNpcTalkableCache.Contains(NpcTag);
-	const bool bOldTalkable = GNpcTalkableCache.FindRef(NpcTag);
-	GNpcTalkableCache.Add(NpcTag, bNewTalkable);
+	const bool bHadExisting = NpcTalkableCache.Contains(NpcTag);
+	const bool bOldTalkable = NpcTalkableCache.FindRef(NpcTag);
+	NpcTalkableCache.Add(NpcTag, bNewTalkable);
 
 	if (!bHadExisting || bOldTalkable != bNewTalkable)
 	{

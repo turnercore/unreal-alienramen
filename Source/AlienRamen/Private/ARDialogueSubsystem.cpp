@@ -18,22 +18,7 @@
 
 namespace
 {
-	struct FARActiveDialogueSession
-	{
-		FString SessionId;
-		FGameplayTag NpcTag;
-		FGameplayTag CurrentNodeTag;
-		EARPlayerSlot InitiatorSlot = EARPlayerSlot::Unknown;
-		EARPlayerSlot OwnerSlot = EARPlayerSlot::Unknown;
-		bool bIsSharedSession = false;
-		bool bWaitingForChoice = false;
-		EARDialogueChoiceParticipation ChoiceParticipation = EARDialogueChoiceParticipation::InitiatorOnly;
-		bool bForceEavesdropForImportantDecision = false;
-		TArray<FARDialogueChoiceDef> CurrentChoices;
-		TMap<EARPlayerSlot, FGameplayTag> ChoiceVotes;
-		TSet<EARPlayerSlot> Participants;
-		FARDialogueNodeRow ActiveRow;
-	};
+	using FARActiveDialogueSession = UARDialogueSubsystem::FARActiveDialogueSession;
 
 	static bool IsAuthorityWorld(const UWorld* World)
 	{
@@ -84,19 +69,10 @@ namespace
 	}
 }
 
-class FARDialogueRuntimeState
-{
-public:
-	TArray<FARActiveDialogueSession> Sessions;
-	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
-};
-
-static FARDialogueRuntimeState GDialogueRuntimeState;
-
 void UARDialogueSubsystem::Deinitialize()
 {
-	GDialogueRuntimeState.Sessions.Reset();
-	GDialogueRuntimeState.ShopEavesdropTargetByViewer.Reset();
+	ActiveSessions.Reset();
+	ShopEavesdropTargetByViewer.Reset();
 	Super::Deinitialize();
 }
 
@@ -524,9 +500,9 @@ static void NotifyNpcSubsystemTalkableRefresh(const UARDialogueSubsystem* Subsys
 	}
 }
 
-static FARActiveDialogueSession* FindSessionByOwnerSlot(const EARPlayerSlot Slot)
+static FARActiveDialogueSession* FindSessionByOwnerSlot(TArray<FARActiveDialogueSession>& Sessions, const EARPlayerSlot Slot)
 {
-	for (FARActiveDialogueSession& Session : GDialogueRuntimeState.Sessions)
+	for (FARActiveDialogueSession& Session : Sessions)
 	{
 		if (!Session.bIsSharedSession && Session.OwnerSlot == Slot)
 		{
@@ -536,9 +512,9 @@ static FARActiveDialogueSession* FindSessionByOwnerSlot(const EARPlayerSlot Slot
 	return nullptr;
 }
 
-static FARActiveDialogueSession* FindSharedSession()
+static FARActiveDialogueSession* FindSharedSession(TArray<FARActiveDialogueSession>& Sessions)
 {
-	for (FARActiveDialogueSession& Session : GDialogueRuntimeState.Sessions)
+	for (FARActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.bIsSharedSession)
 		{
@@ -548,9 +524,21 @@ static FARActiveDialogueSession* FindSharedSession()
 	return nullptr;
 }
 
-static FARActiveDialogueSession* FindSessionForSlot(const EARPlayerSlot Slot)
+static FARActiveDialogueSession* FindSessionForSlot(TArray<FARActiveDialogueSession>& Sessions, const EARPlayerSlot Slot)
 {
-	for (FARActiveDialogueSession& Session : GDialogueRuntimeState.Sessions)
+	for (FARActiveDialogueSession& Session : Sessions)
+	{
+		if (Session.Participants.Contains(Slot))
+		{
+			return &Session;
+		}
+	}
+	return nullptr;
+}
+
+static const FARActiveDialogueSession* FindSessionForSlot(const TArray<FARActiveDialogueSession>& Sessions, const EARPlayerSlot Slot)
+{
+	for (const FARActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.Participants.Contains(Slot))
 		{
@@ -633,7 +621,7 @@ static FARDialogueClientView BuildViewForSlot(const FARActiveDialogueSession& Se
 	return View;
 }
 
-void DispatchSessionUpdate(UARDialogueSubsystem* Subsystem, FARActiveDialogueSession& Session)
+static void DispatchSessionUpdate(UARDialogueSubsystem* Subsystem, FARActiveDialogueSession& Session)
 {
 	if (!Subsystem)
 	{
@@ -672,7 +660,7 @@ void DispatchSessionUpdate(UARDialogueSubsystem* Subsystem, FARActiveDialogueSes
 	}
 }
 
-void EndSession(UARDialogueSubsystem* Subsystem, FARActiveDialogueSession& Session)
+static void EndSession(UARDialogueSubsystem* Subsystem, FARActiveDialogueSession& Session)
 {
 	if (!Subsystem)
 	{
@@ -773,7 +761,7 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 
 	if (bSharedMode)
 	{
-		if (FARActiveDialogueSession* ExistingShared = FindSharedSession())
+		if (FARActiveDialogueSession* ExistingShared = FindSharedSession(ActiveSessions))
 		{
 			if (ExistingShared->NpcTag.MatchesTagExact(NpcTag))
 			{
@@ -784,7 +772,7 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 			return false;
 		}
 	}
-	else if (FindSessionByOwnerSlot(RequesterSlot))
+	else if (FindSessionByOwnerSlot(ActiveSessions, RequesterSlot))
 	{
 		return false;
 	}
@@ -832,7 +820,7 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 	}
 	else
 	{
-		if (const EARPlayerSlot* ExistingTarget = GDialogueRuntimeState.ShopEavesdropTargetByViewer.Find(RequesterSlot))
+		if (const EARPlayerSlot* ExistingTarget = ShopEavesdropTargetByViewer.Find(RequesterSlot))
 		{
 			Session.Participants.Add(*ExistingTarget);
 		}
@@ -842,15 +830,15 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 		{
 			const EARPlayerSlot PartnerSlot = RequesterSlot == EARPlayerSlot::P1 ? EARPlayerSlot::P2 : EARPlayerSlot::P1;
 			Session.Participants.Add(PartnerSlot);
-			GDialogueRuntimeState.ShopEavesdropTargetByViewer.Add(PartnerSlot, RequesterSlot);
+			ShopEavesdropTargetByViewer.Add(PartnerSlot, RequesterSlot);
 		}
 	}
 
 	MarkNodeSeenForSpeaker(this, RequesterPS, SelectedRow.NodeTag);
 	ApplyProgressionGrants(this, SelectedRow.GrantProgressionTagsOnEnter);
 
-	GDialogueRuntimeState.Sessions.Add(MoveTemp(Session));
-	DispatchSessionUpdate(this, GDialogueRuntimeState.Sessions.Last());
+	ActiveSessions.Add(MoveTemp(Session));
+	DispatchSessionUpdate(this, ActiveSessions.Last());
 	NotifyNpcSubsystemTalkableRefresh(this, NpcTag);
 	return true;
 }
@@ -870,7 +858,7 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 	}
 
 	const EARPlayerSlot Slot = RequesterPS->GetPlayerSlot();
-	FARActiveDialogueSession* Session = FindSessionForSlot(Slot);
+	FARActiveDialogueSession* Session = FindSessionForSlot(ActiveSessions, Slot);
 	if (!Session)
 	{
 		return false;
@@ -906,7 +894,7 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 	{
 		FARActiveDialogueSession EndCopy = *Session;
 		EndSession(this, EndCopy);
-		GDialogueRuntimeState.Sessions.RemoveAll([&EndCopy](const FARActiveDialogueSession& Item)
+		ActiveSessions.RemoveAll([&EndCopy](const FARActiveDialogueSession& Item)
 		{
 			return Item.SessionId == EndCopy.SessionId;
 		});
@@ -936,7 +924,7 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 	{
 		const EARPlayerSlot PartnerSlot = Session->OwnerSlot == EARPlayerSlot::P1 ? EARPlayerSlot::P2 : EARPlayerSlot::P1;
 		Session->Participants.Add(PartnerSlot);
-		GDialogueRuntimeState.ShopEavesdropTargetByViewer.Add(PartnerSlot, Session->OwnerSlot);
+		ShopEavesdropTargetByViewer.Add(PartnerSlot, Session->OwnerSlot);
 	}
 
 	Session->bWaitingForChoice = NextRow.Choices.Num() > 0 && FindCanonicalChoice(GetMutableCurrentSave(this), NextRow.NodeTag) == nullptr;
@@ -963,7 +951,7 @@ bool UARDialogueSubsystem::SubmitDialogueChoice(AARPlayerController* RequestingC
 	}
 
 	const EARPlayerSlot Slot = RequesterPS->GetPlayerSlot();
-	FARActiveDialogueSession* Session = FindSessionForSlot(Slot);
+	FARActiveDialogueSession* Session = FindSessionForSlot(ActiveSessions, Slot);
 	if (!Session || !Session->bWaitingForChoice)
 	{
 		return false;
@@ -1091,8 +1079,8 @@ bool UARDialogueSubsystem::SetShopEavesdropTarget(AARPlayerController* Requestin
 			return false;
 		}
 
-		GDialogueRuntimeState.ShopEavesdropTargetByViewer.Add(ViewerSlot, TargetSlot);
-		if (FARActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(TargetSlot))
+		ShopEavesdropTargetByViewer.Add(ViewerSlot, TargetSlot);
+		if (FARActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(ActiveSessions, TargetSlot))
 		{
 			TargetSession->Participants.Add(ViewerSlot);
 			DispatchSessionUpdate(this, *TargetSession);
@@ -1100,8 +1088,8 @@ bool UARDialogueSubsystem::SetShopEavesdropTarget(AARPlayerController* Requestin
 		return true;
 	}
 
-	GDialogueRuntimeState.ShopEavesdropTargetByViewer.Remove(ViewerSlot);
-	for (FARActiveDialogueSession& Session : GDialogueRuntimeState.Sessions)
+	ShopEavesdropTargetByViewer.Remove(ViewerSlot);
+	for (FARActiveDialogueSession& Session : ActiveSessions)
 	{
 		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot)
 		{
@@ -1176,7 +1164,7 @@ bool UARDialogueSubsystem::GetLocalViewForController(const AARPlayerController* 
 		return false;
 	}
 
-	const FARActiveDialogueSession* Session = FindSessionForSlot(Slot);
+	const FARActiveDialogueSession* Session = FindSessionForSlot(ActiveSessions, Slot);
 	if (!Session)
 	{
 		return false;
