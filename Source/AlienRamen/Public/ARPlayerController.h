@@ -6,8 +6,11 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "ARDialogueTypes.h"
+#include "GameFramework/PlayerState.h"
+#include "TimerManager.h"
 #include "ARPlayerController.generated.h"
 
 class UARAbilitySet;
@@ -107,8 +110,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
 	void InitializeCustomCursor();
 
+	// Requests HUD initialization/rebind for the local controller context.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD")
+	void RequestHUDInitialization();
+
+	// BP hook to create/rebind HUD widgets when local controller context is ready or refreshed.
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
+	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	// Enables local-only custom cursor initialization from BeginPlay.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
@@ -127,7 +139,22 @@ private:
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
+	void RequestHUDInitializationInternal(bool bForceBroadcast);
+	void StartHUDInitializationRetry();
+	void StopHUDInitializationRetry();
+	void HandleHUDInitializationRetry();
 
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
+
+	UPROPERTY(Transient)
+	bool bHasBroadcastHUDInitialization = false;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<APlayerState> LastHUDInitPlayerState;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<AGameStateBase> LastHUDInitGameState;
+
+	FTimerHandle HUDInitializationRetryTimer;
 };
