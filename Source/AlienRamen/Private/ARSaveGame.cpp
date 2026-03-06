@@ -71,6 +71,55 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
 	}
 
+	for (FARNpcRelationshipState& NpcState : NpcRelationshipStates)
+	{
+		ClampNonNegative(NpcState.LoveRating, TEXT("NpcRelationshipStates.LoveRating"));
+	}
+
+	for (int32 Index = NpcRelationshipStates.Num() - 1; Index >= 0; --Index)
+	{
+		if (!NpcRelationshipStates[Index].NpcTag.IsValid())
+		{
+			NpcRelationshipStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(TEXT("NpcRelationshipStates contained an invalid NpcTag and was removed."));
+			}
+		}
+	}
+
+	for (int32 Index = DialogueCanonicalChoiceStates.Num() - 1; Index >= 0; --Index)
+	{
+		const FARDialogueCanonicalChoiceState& Entry = DialogueCanonicalChoiceStates[Index];
+		if (!Entry.NodeTag.IsValid() || !Entry.ChoiceTag.IsValid())
+		{
+			DialogueCanonicalChoiceStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(TEXT("DialogueCanonicalChoiceStates contained invalid tags and was removed."));
+			}
+		}
+	}
+
+	TSet<FGameplayTag> SeenChoiceNodes;
+	for (int32 Index = DialogueCanonicalChoiceStates.Num() - 1; Index >= 0; --Index)
+	{
+		const FGameplayTag NodeTag = DialogueCanonicalChoiceStates[Index].NodeTag;
+		if (SeenChoiceNodes.Contains(NodeTag))
+		{
+			DialogueCanonicalChoiceStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(TEXT("DialogueCanonicalChoiceStates contained duplicate NodeTag entries and extras were removed."));
+			}
+			continue;
+		}
+		SeenChoiceNodes.Add(NodeTag);
+	}
+
 	TSet<FGameplayTag> SeenFactions;
 	for (int32 Index = FactionPopularityStates.Num() - 1; Index >= 0; --Index)
 	{

@@ -1,4 +1,5 @@
 #include "ARPlayerController.h"
+#include "ARDialogueSubsystem.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARLog.h"
@@ -204,4 +205,90 @@ void AARPlayerController::RequestRemoveUnlockInternal(const FGameplayTag& Unlock
 	}
 
 	UE_LOG(ARLog, Warning, TEXT("[Save] RequestRemoveUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
+}
+
+void AARPlayerController::RequestStartDialogue(FGameplayTag NpcTag)
+{
+	if (HasAuthority())
+	{
+		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		{
+			DialogueSubsystem->TryStartDialogueWithNpc(this, NpcTag);
+		}
+		return;
+	}
+
+	ServerRequestStartDialogue(NpcTag);
+}
+
+void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag NpcTag)
+{
+	RequestStartDialogue(NpcTag);
+}
+
+void AARPlayerController::RequestAdvanceDialogue()
+{
+	if (HasAuthority())
+	{
+		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		{
+			DialogueSubsystem->AdvanceDialogue(this);
+		}
+		return;
+	}
+
+	ServerRequestAdvanceDialogue();
+}
+
+void AARPlayerController::ServerRequestAdvanceDialogue_Implementation()
+{
+	RequestAdvanceDialogue();
+}
+
+void AARPlayerController::RequestSubmitDialogueChoice(FGameplayTag ChoiceTag)
+{
+	if (HasAuthority())
+	{
+		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		{
+			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceTag);
+		}
+		return;
+	}
+
+	ServerRequestSubmitDialogueChoice(ChoiceTag);
+}
+
+void AARPlayerController::ServerRequestSubmitDialogueChoice_Implementation(FGameplayTag ChoiceTag)
+{
+	RequestSubmitDialogueChoice(ChoiceTag);
+}
+
+void AARPlayerController::RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)
+{
+	if (HasAuthority())
+	{
+		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		{
+			DialogueSubsystem->SetShopEavesdropTarget(this, TargetSlot, bEnable);
+		}
+		return;
+	}
+
+	ServerRequestSetDialogueEavesdrop(bEnable, TargetSlot);
+}
+
+void AARPlayerController::ServerRequestSetDialogueEavesdrop_Implementation(bool bEnable, EARPlayerSlot TargetSlot)
+{
+	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
+}
+
+void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FARDialogueClientView& View)
+{
+	BP_OnDialogueSessionUpdated(View);
+}
+
+void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FString& SessionId)
+{
+	BP_OnDialogueSessionEnded(SessionId);
 }
