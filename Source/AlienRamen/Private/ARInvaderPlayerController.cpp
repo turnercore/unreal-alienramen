@@ -88,6 +88,45 @@ void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade_Implementatio
 	}
 }
 
+void AARInvaderPlayerController::HandleSpiceTrackDeltaInput(const float AxisValue)
+{
+	if (AARPlayerStateBase* InvaderPlayerState = GetInvaderPlayerState())
+	{
+		int32 DeltaTier = 0;
+		if (AxisValue > 0.5f)
+		{
+			DeltaTier = 1;
+		}
+		else if (AxisValue < -0.5f)
+		{
+			DeltaTier = -1;
+		}
+
+		if (DeltaTier != 0)
+		{
+			InvaderPlayerState->AdjustSpicyTrackCursorTier(DeltaTier);
+		}
+	}
+}
+
+void AARInvaderPlayerController::HandleSpiceTrackActivateFromCursor()
+{
+	AARPlayerStateBase* InvaderPlayerState = GetInvaderPlayerState();
+	if (!InvaderPlayerState)
+	{
+		return;
+	}
+
+	const int32 CursorTier = InvaderPlayerState->GetEffectiveSpicyTrackCursorTier();
+	if (CursorTier <= 0)
+	{
+		RequestActivateFullBlast();
+		return;
+	}
+
+	RequestActivateTrackUpgrade(CursorTier);
+}
+
 void AARInvaderPlayerController::RequestStartSharingSpice()
 {
 	if (HasAuthority())

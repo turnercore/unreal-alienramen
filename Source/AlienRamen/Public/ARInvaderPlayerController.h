@@ -42,6 +42,16 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestActivateTrackUpgrade(int32 SlotIndex);
 
+	// Convenience entrypoint for IA_SpiceTrackDelta axis input.
+	// Positive values move cursor up one tier, negative values move down one tier.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Input")
+	void HandleSpiceTrackDeltaInput(float AxisValue);
+
+	// Convenience entrypoint for IA_SpiceTrackActivate trigger:
+	// activates the selected cursor tier, or Full Blast when cursor tier is 0.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Input")
+	void HandleSpiceTrackActivateFromCursor();
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
 	void RequestStartSharingSpice();
 

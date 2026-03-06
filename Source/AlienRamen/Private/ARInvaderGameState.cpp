@@ -137,6 +137,46 @@ int32 AARInvaderGameState::GetSharedMaxSpice() const
 	return FMath::Max(1, SharedFullBlastTier) * SpicePerTier;
 }
 
+int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(const AARPlayerStateBase* PlayerState) const
+{
+	if (!PlayerState)
+	{
+		return 0;
+	}
+
+	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
+	const int32 SpicePerTier = Settings ? FMath::Max(1, Settings->SpicePerTier) : 100;
+	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxUnlockedTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
+
+	const float CurrentSpice = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+	const int32 AffordableTier = FMath::Max(0, FMath::FloorToInt(CurrentSpice / static_cast<float>(SpicePerTier)));
+	const int32 HighestCandidateTier = FMath::Min(MaxUnlockedTier, AffordableTier);
+	if (HighestCandidateTier <= 0)
+	{
+		return 0;
+	}
+
+	// Prefer highest currently slotted/valid tier so activation is always meaningful.
+	for (int32 Tier = HighestCandidateTier; Tier >= 1; --Tier)
+	{
+		const int32 SlotIndex = Tier - 1;
+		if (!SharedTrackSlots.IsValidIndex(SlotIndex))
+		{
+			continue;
+		}
+
+		const FARInvaderTrackSlotState& SlotState = SharedTrackSlots[SlotIndex];
+		const bool bHasUsableFiniteCharges = SlotState.RemainingActivationUses > 0;
+		if (SlotState.UpgradeTag.IsValid() && (SlotState.bInfiniteUses || bHasUsableFiniteCharges))
+		{
+			return Tier;
+		}
+	}
+
+	return 0;
+}
+
 void AARInvaderGameState::InitializeSpicyTrackState()
 {
 	if (!HasAuthority())
@@ -164,6 +204,7 @@ void AARInvaderGameState::InitializeSpicyTrackState()
 
 		PlayerState->ResetInvaderCombo();
 		PlayerState->ClearActivatedInvaderUpgrades();
+		PlayerState->ResetSpicyTrackCursor();
 	}
 
 	SyncSharedMaxSpiceToPlayers();
@@ -545,6 +586,13 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 		return false;
 	}
 
+	TMap<FGameplayTag, FARInvaderUpgradeDefRow> UpgradeDefinitions;
+	const FARInvaderUpgradeDefRow* SelectedOfferDef = nullptr;
+	if (BuildUpgradeDefinitionMap(UpgradeDefinitions))
+	{
+		SelectedOfferDef = UpgradeDefinitions.Find(SelectedOffer->UpgradeTag);
+	}
+
 	const TArray<FARInvaderTrackSlotState> OldSlots = SharedTrackSlots;
 	const int32 OldTier = SharedFullBlastTier;
 	const FARInvaderFullBlastSessionState OldSession = FullBlastSession;
@@ -556,6 +604,9 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 	Slot.UpgradeTag = SelectedOffer->UpgradeTag;
 	Slot.UpgradeLevel = FMath::Max(1, SelectedOffer->OfferedLevel);
 	Slot.bHasBeenActivated = false;
+	Slot.bInfiniteUses = SelectedOfferDef ? SelectedOfferDef->bInfiniteActivationUses : false;
+	const int32 AuthoredMaxUses = SelectedOfferDef ? FMath::Max(1, SelectedOfferDef->MaxActivationUses) : 1;
+	Slot.RemainingActivationUses = Slot.bInfiniteUses ? INDEX_NONE : AuthoredMaxUses;
 
 	if (Settings)
 	{
@@ -573,6 +624,13 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 	ResetAllPlayerSpiceMeters();
 	SyncSharedMaxSpiceToPlayers();
 	RefreshWhileSlottedEffects();
+	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
+	{
+		if (PlayerState)
+		{
+			PlayerState->SetSpicyTrackCursorTier(PlayerState->GetSpicyTrackCursorTier());
+		}
+	}
 
 	OnRep_SharedTrackSlots(OldSlots);
 	OnRep_FullBlastSession(OldSession);
@@ -819,19 +877,44 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 	}
 
 	const TArray<FARInvaderTrackSlotState> OldSlots = SharedTrackSlots;
-	const int32 OldTier = SharedFullBlastTier;
+	int32 OldTier = SharedFullBlastTier;
+	bool bConsumedSlotThisActivation = false;
 
-	SharedTrackSlots.RemoveAt(SlotIndex - 1);
-	SharedFullBlastTier = FMath::Max(1, SharedFullBlastTier - 1);
-	TrimTrackToTierLimit();
-	NormalizeTrackSlotIndices();
+	if (FARInvaderTrackSlotState* MutableSlot = SharedTrackSlots.IsValidIndex(SlotIndex - 1) ? &SharedTrackSlots[SlotIndex - 1] : nullptr)
+	{
+		MutableSlot->bHasBeenActivated = true;
+
+		if (!MutableSlot->bInfiniteUses)
+		{
+			MutableSlot->RemainingActivationUses = FMath::Max(0, MutableSlot->RemainingActivationUses - 1);
+			bConsumedSlotThisActivation = (MutableSlot->RemainingActivationUses <= 0);
+		}
+	}
+
+	if (bConsumedSlotThisActivation)
+	{
+		SharedTrackSlots.RemoveAt(SlotIndex - 1);
+		SharedFullBlastTier = FMath::Max(1, SharedFullBlastTier - 1);
+		TrimTrackToTierLimit();
+		NormalizeTrackSlotIndices();
+	}
 
 	ResetAllPlayerSpiceMeters();
 	SyncSharedMaxSpiceToPlayers();
-	RefreshWhileSlottedEffects();
+	if (bConsumedSlotThisActivation)
+	{
+		RefreshWhileSlottedEffects();
+	}
+	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
+	{
+		if (PlayerState)
+		{
+			PlayerState->SetSpicyTrackCursorTier(PlayerState->GetSpicyTrackCursorTier());
+		}
+	}
 
 	OnRep_SharedTrackSlots(OldSlots);
-	if (OldTier != SharedFullBlastTier)
+	if (bConsumedSlotThisActivation && OldTier != SharedFullBlastTier)
 	{
 		OnRep_SharedFullBlastTier(OldTier);
 	}
