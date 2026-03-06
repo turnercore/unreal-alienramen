@@ -964,7 +964,7 @@ void AARInvaderGameState::TickComboTimeouts(const float ServerTimeSeconds)
 	}
 }
 
-bool AARInvaderGameState::AwardKillCredit(AARPlayerStateBase* KillerPlayerState, const EAREnemyColor EnemyColor, const float BaseSpiceValueOverride)
+bool AARInvaderGameState::AwardKillCredit(AARPlayerStateBase* KillerPlayerState, const EARAffinityColor EnemyColor, const float BaseSpiceValueOverride)
 {
 	return AwardKillCreditInternal(
 		KillerPlayerState,
@@ -977,7 +977,7 @@ bool AARInvaderGameState::AwardKillCredit(AARPlayerStateBase* KillerPlayerState,
 
 bool AARInvaderGameState::AwardKillCreditInternal(
 	AARPlayerStateBase* KillerPlayerState,
-	const EAREnemyColor EnemyColor,
+	const EARAffinityColor EnemyColor,
 	const float BaseSpiceValueOverride,
 	const FVector EffectOrigin,
 	const bool bHasEffectOrigin,
@@ -985,6 +985,33 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 {
 	if (!HasAuthority() || !KillerPlayerState)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] AwardKillCreditInternal rejected (HasAuthority=%d KillerPS=%s)."),
+			HasAuthority() ? 1 : 0, *GetNameSafe(KillerPlayerState));
+		return false;
+	}
+
+	const EARAffinityColor EnemyAsPlayerColor = ToPlayerColor(EnemyColor);
+	const EARAffinityColor KillerColor = KillerPlayerState->GetInvaderPlayerColor();
+	const bool bColorMatched =
+		KillerColor != EARAffinityColor::None
+		&& EnemyAsPlayerColor != EARAffinityColor::None
+		&& (KillerColor == EARAffinityColor::White
+			|| EnemyAsPlayerColor == EARAffinityColor::White
+			|| KillerColor == EnemyAsPlayerColor);
+
+	// Combo should still update/reset on every credited kill, even when no spice is awarded.
+	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
+	KillerPlayerState->ReportInvaderKillCredit(
+		EnemyAsPlayerColor,
+		GetServerWorldTimeSeconds(),
+		Settings ? Settings->ComboTimeoutSeconds : 0.0f);
+
+	if (!bColorMatched)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] Kill credit awarded no spice due to color mismatch. Player='%s' PlayerColor=%d EnemyColor=%d"),
+			*KillerPlayerState->GetName(),
+			static_cast<int32>(KillerColor),
+			static_cast<int32>(EnemyAsPlayerColor));
 		return false;
 	}
 
@@ -993,6 +1020,8 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 		: (GetSpicyTrackSettings() ? GetSpicyTrackSettings()->DefaultBaseKillSpiceValue : 0.0f);
 	if (BaseSpiceValue <= 0.0f)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] AwardKillCreditInternal rejected for '%s': BaseSpiceValue=%.2f (Override=%.2f)."),
+			*KillerPlayerState->GetName(), BaseSpiceValue, BaseSpiceValueOverride);
 		return false;
 	}
 
@@ -1005,17 +1034,15 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 	const float SpiceGained = BaseSpiceValue * GainMultiplier;
 	if (SpiceGained <= 0.0f)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] AwardKillCreditInternal rejected for '%s': SpiceGained=%.2f (Base=%.2f Multiplier=%.2f)."),
+			*KillerPlayerState->GetName(), SpiceGained, BaseSpiceValue, GainMultiplier);
 		return false;
 	}
 
 	const float CurrentSpice = KillerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	KillerPlayerState->SetSpiceMeter(CurrentSpice + SpiceGained);
-
-	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	KillerPlayerState->ReportInvaderKillCredit(
-		ToPlayerColor(EnemyColor),
-		GetServerWorldTimeSeconds(),
-		Settings ? Settings->ComboTimeoutSeconds : 0.0f);
+	const float NewSpice = KillerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float MaxSpice = KillerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
 
 	OnInvaderKillCreditAwarded.Broadcast(
 		KillerPlayerState,
@@ -1044,6 +1071,15 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 	}
 
 	MulticastNotifyKillCreditFxEvent(FxEventData);
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] Kill credit awarded to '%s' Slot=%d EnemyColor=%d Gained=%.2f Spice %.2f -> %.2f / %.2f Combo=%d"),
+		*KillerPlayerState->GetName(),
+		static_cast<int32>(KillerPlayerState->GetPlayerSlot()),
+		static_cast<int32>(EnemyColor),
+		SpiceGained,
+		CurrentSpice,
+		NewSpice,
+		MaxSpice,
+		KillerPlayerState->GetInvaderComboCount());
 	return true;
 }
 
@@ -1057,6 +1093,8 @@ void AARInvaderGameState::NotifyEnemyKilled(AAREnemyBase* Enemy, AActor* Instiga
 	AARPlayerStateBase* KillerPlayerState = ResolvePlayerStateFromInstigatorActor(InstigatorActor);
 	if (!KillerPlayerState)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] NotifyEnemyKilled could not resolve killer PS. Enemy='%s' InstigatorActor='%s'"),
+			*GetNameSafe(Enemy), *GetNameSafe(InstigatorActor));
 		return;
 	}
 
@@ -1082,18 +1120,22 @@ float AARInvaderGameState::ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy)
 	const FGameplayTag EnemyIdentifier = Enemy->GetEnemyIdentifierTag();
 	if (!EnemyIdentifier.IsValid())
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: enemy '%s' has invalid EnemyIdentifierTag. Fallback=%.2f"),
+			*GetNameSafe(Enemy), FallbackValue);
 		return FallbackValue;
 	}
 
 	const UARInvaderDirectorSettings* DirectorSettings = GetDefault<UARInvaderDirectorSettings>();
 	if (!DirectorSettings)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: missing DirectorSettings. Fallback=%.2f"), FallbackValue);
 		return FallbackValue;
 	}
 
 	UDataTable* EnemyTable = DirectorSettings->EnemyDataTable.LoadSynchronous();
 	if (!EnemyTable)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: EnemyDataTable missing. Fallback=%.2f"), FallbackValue);
 		return FallbackValue;
 	}
 
@@ -1103,10 +1145,15 @@ float AARInvaderGameState::ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy)
 	{
 		if (Row && Row->EnemyIdentifierTag == EnemyIdentifier)
 		{
-			return FMath::Max(0.0f, Row->BaseSpiceKillValue);
+			const float Resolved = FMath::Max(0.0f, Row->BaseSpiceKillValue);
+			UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue '%s' -> %.2f"),
+				*EnemyIdentifier.ToString(), Resolved);
+			return Resolved;
 		}
 	}
 
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: no row for '%s'. Fallback=%.2f"),
+		*EnemyIdentifier.ToString(), FallbackValue);
 	return FallbackValue;
 }
 
@@ -1153,17 +1200,17 @@ AARPlayerStateBase* AARInvaderGameState::ResolvePlayerStateFromInstigatorActor(A
 	return nullptr;
 }
 
-EARInvaderPlayerColor AARInvaderGameState::ToPlayerColor(const EAREnemyColor EnemyColor)
+EARAffinityColor AARInvaderGameState::ToPlayerColor(const EARAffinityColor EnemyColor)
 {
 	switch (EnemyColor)
 	{
-	case EAREnemyColor::Red:
-		return EARInvaderPlayerColor::Red;
-	case EAREnemyColor::Blue:
-		return EARInvaderPlayerColor::Blue;
-	case EAREnemyColor::White:
+	case EARAffinityColor::Red:
+		return EARAffinityColor::Red;
+	case EARAffinityColor::Blue:
+		return EARAffinityColor::Blue;
+	case EARAffinityColor::White:
 	default:
-		return EARInvaderPlayerColor::White;
+		return EARAffinityColor::White;
 	}
 }
 

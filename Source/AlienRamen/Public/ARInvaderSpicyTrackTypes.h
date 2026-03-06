@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARColorTypes.h"
 #include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
 #include "UObject/SoftObjectPtr.h"
@@ -14,15 +15,6 @@
 
 class UGameplayEffect;
 class UTexture2D;
-
-UENUM(BlueprintType)
-enum class EARInvaderPlayerColor : uint8
-{
-	Unknown = 0,
-	Red,
-	White,
-	Blue
-};
 
 UENUM(BlueprintType)
 enum class EARInvaderUpgradeClaimPolicy : uint8
@@ -160,7 +152,7 @@ struct ALIENRAMEN_API FARInvaderKillCreditFxEvent
 
 	// Enemy color used when resolving combo wildcard/match behavior.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kill Credit")
-	EAREnemyColor EnemyColor = EAREnemyColor::White;
+	EARAffinityColor EnemyColor = EARAffinityColor::White;
 
 	// Optional enemy identifier for data-driven VFX selection.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kill Credit")

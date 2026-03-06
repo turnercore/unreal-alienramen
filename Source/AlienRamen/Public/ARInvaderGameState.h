@@ -67,7 +67,7 @@ public:
 
 	// Explicit/manual kill-credit path for scripted or non-standard kill attribution.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
-	bool AwardKillCredit(AARPlayerStateBase* KillerPlayerState, EAREnemyColor EnemyColor, float BaseSpiceValueOverride = -1.0f);
+	bool AwardKillCredit(AARPlayerStateBase* KillerPlayerState, EARAffinityColor EnemyColor, float BaseSpiceValueOverride = -1.0f);
 
 	// Automatic ingestion path called by enemies on death.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
@@ -158,14 +158,14 @@ private:
 	bool ApplyUpgradeActivation(AARPlayerStateBase* RequestingPlayerState, const FARInvaderUpgradeDefRow& UpgradeDef);
 	bool AwardKillCreditInternal(
 		AARPlayerStateBase* KillerPlayerState,
-		EAREnemyColor EnemyColor,
+		EARAffinityColor EnemyColor,
 		float BaseSpiceValueOverride,
 		FVector EffectOrigin,
 		bool bHasEffectOrigin,
 		FGameplayTag EnemyIdentifierTag);
 	float ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy) const;
 	AARPlayerStateBase* ResolvePlayerStateFromInstigatorActor(AActor* InstigatorActor) const;
-	static EARInvaderPlayerColor ToPlayerColor(EAREnemyColor EnemyColor);
+	static EARAffinityColor ToPlayerColor(EARAffinityColor EnemyColor);
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastNotifyKillCreditFxEvent(const FARInvaderKillCreditFxEvent& EventData);
