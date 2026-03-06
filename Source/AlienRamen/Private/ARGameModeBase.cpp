@@ -21,6 +21,11 @@ void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, c
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 
 	if (!ErrorMessage.IsEmpty())
+void AARGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!HasAuthority())
 	{
 		return;
 	}
@@ -62,6 +67,9 @@ void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, c
 	{
 		ErrorMessage = TEXT("Server full.");
 		UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': player cap reached (%d)."), *Address, PlayerCount);
+	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
+	{
+		NormalizeConnectedPlayersIdentity(GS);
 	}
 }
 
@@ -98,6 +106,60 @@ EARPlayerSlot AARGameModeBase::DetermineNextPlayerSlot(const AARGameStateBase* G
 	}
 
 	return EARPlayerSlot::P2;
+}
+
+EARPlayerSlot AARGameModeBase::FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState)
+{
+	if (!GameState)
+	{
+		return EARPlayerSlot::P1;
+	}
+
+	bool bHasP1 = false;
+	bool bHasP2 = false;
+	for (APlayerState* PS : GameState->PlayerArray)
+	{
+		AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
+		if (!Player || Player == IgnorePlayerState)
+		{
+			continue;
+		}
+
+		if (Player->GetPlayerSlot() == EARPlayerSlot::P1)
+		{
+			bHasP1 = true;
+		}
+		else if (Player->GetPlayerSlot() == EARPlayerSlot::P2)
+		{
+			bHasP2 = true;
+		}
+	}
+
+	if (!bHasP1)
+	{
+		return EARPlayerSlot::P1;
+	}
+
+	if (!bHasP2)
+	{
+		return EARPlayerSlot::P2;
+	}
+
+	return EARPlayerSlot::Unknown;
+}
+
+EARAffinityColor AARGameModeBase::ResolveExpectedInvaderPlayerColor(const EARCharacterChoice CharacterChoice, const EARPlayerSlot PlayerSlot)
+{
+	switch (CharacterChoice)
+	{
+	case EARCharacterChoice::Brother:
+		return EARAffinityColor::Blue;
+	case EARCharacterChoice::Sister:
+		return EARAffinityColor::Red;
+	default:
+		// Mode-load baseline should still be a valid team color even if character is temporarily unset.
+		return (PlayerSlot == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
+	}
 }
 
 EARCharacterChoice AARGameModeBase::GetAlternateCharacterChoice(const EARCharacterChoice CurrentChoice)
@@ -158,8 +220,9 @@ void AARGameModeBase::ResolveCharacterChoiceConflict(const AARGameStateBase* InG
 		return;
 	}
 
-	CurrentPlayerState->SetCharacterPicked(EARCharacterChoice::None);
-	UE_LOG(ARLog, Warning, TEXT("[GameMode] Character conflict unresolved for '%s'; falling back to None."), *GetNameSafe(CurrentPlayerState));
+	// Never force unset; keep current assignment if both choices are occupied.
+	UE_LOG(ARLog, Warning, TEXT("[GameMode] Character conflict unresolved for '%s'; keeping current assignment %d."),
+		*GetNameSafe(CurrentPlayerState), static_cast<int32>(CurrentChoice));
 }
 
 void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const
@@ -189,6 +252,180 @@ void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState,
 	JoinedPlayerState->SetIsSetupComplete(true);
 }
 
+void AARGameModeBase::EnsureJoinedPlayerHasUniqueSlot(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const
+{
+	if (!InGameState || !JoinedPlayerState)
+	{
+		return;
+	}
+
+	const EARPlayerSlot CurrentSlot = JoinedPlayerState->GetPlayerSlot();
+	bool bSlotConflict = false;
+
+	if (CurrentSlot != EARPlayerSlot::Unknown)
+	{
+		for (APlayerState* PS : InGameState->PlayerArray)
+		{
+			const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
+			if (!OtherPlayer || OtherPlayer == JoinedPlayerState)
+			{
+				continue;
+			}
+
+			if (OtherPlayer->GetPlayerSlot() == CurrentSlot)
+			{
+				bSlotConflict = true;
+				break;
+			}
+		}
+	}
+
+	if (CurrentSlot != EARPlayerSlot::Unknown && !bSlotConflict)
+	{
+		return;
+	}
+
+	const EARPlayerSlot ResolvedSlot = FindFirstFreePlayerSlot(InGameState, JoinedPlayerState);
+	if (ResolvedSlot == EARPlayerSlot::Unknown)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] Could not resolve unique slot for '%s' (CurrentSlot=%d Conflict=%d)."),
+			*GetNameSafe(JoinedPlayerState), static_cast<int32>(CurrentSlot), bSlotConflict ? 1 : 0);
+		return;
+	}
+
+	if (ResolvedSlot != CurrentSlot)
+	{
+		JoinedPlayerState->SetPlayerSlot(ResolvedSlot);
+		UE_LOG(ARLog, Log, TEXT("[GameMode] Normalized player slot for '%s': %d -> %d"),
+			*GetNameSafe(JoinedPlayerState), static_cast<int32>(CurrentSlot), static_cast<int32>(ResolvedSlot));
+	}
+}
+
+void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const
+{
+	if (!InGameState)
+	{
+		return;
+	}
+
+	TArray<AARPlayerStateBase*> Players;
+	for (APlayerState* PS : InGameState->PlayerArray)
+	{
+		if (AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS))
+		{
+			Players.Add(Player);
+		}
+	}
+
+	if (Players.IsEmpty())
+	{
+		return;
+	}
+
+	// Slot normalization: preserve first valid occupant, reassign only invalid/conflicting slots.
+	bool bP1Taken = false;
+	bool bP2Taken = false;
+	for (AARPlayerStateBase* Player : Players)
+	{
+		if (!Player)
+		{
+			continue;
+		}
+
+		EARPlayerSlot CurrentSlot = Player->GetPlayerSlot();
+		const bool bCurrentIsP1 = CurrentSlot == EARPlayerSlot::P1;
+		const bool bCurrentIsP2 = CurrentSlot == EARPlayerSlot::P2;
+		const bool bCurrentTaken = (bCurrentIsP1 && bP1Taken) || (bCurrentIsP2 && bP2Taken);
+		const bool bCurrentValid = bCurrentIsP1 || bCurrentIsP2;
+
+		if (!bCurrentValid || bCurrentTaken)
+		{
+			EARPlayerSlot NewSlot = EARPlayerSlot::Unknown;
+			if (!bP1Taken)
+			{
+				NewSlot = EARPlayerSlot::P1;
+			}
+			else if (!bP2Taken)
+			{
+				NewSlot = EARPlayerSlot::P2;
+			}
+
+			if (NewSlot != EARPlayerSlot::Unknown && NewSlot != CurrentSlot)
+			{
+				Player->SetPlayerSlot(NewSlot);
+				UE_LOG(ARLog, Log, TEXT("[GameMode] Identity normalize slot for '%s': %d -> %d"),
+					*GetNameSafe(Player), static_cast<int32>(CurrentSlot), static_cast<int32>(NewSlot));
+				CurrentSlot = NewSlot;
+			}
+		}
+
+		if (CurrentSlot == EARPlayerSlot::P1)
+		{
+			bP1Taken = true;
+		}
+		else if (CurrentSlot == EARPlayerSlot::P2)
+		{
+			bP2Taken = true;
+		}
+	}
+
+	// Character normalization: fill None from slot preference where possible, then resolve conflicts.
+	for (AARPlayerStateBase* Player : Players)
+	{
+		if (!Player || Player->GetCharacterPicked() != EARCharacterChoice::None)
+		{
+			continue;
+		}
+
+		const EARCharacterChoice PreferredChoice =
+			(Player->GetPlayerSlot() == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		const EARCharacterChoice AlternateChoice = GetAlternateCharacterChoice(PreferredChoice);
+
+		if (!IsCharacterChoiceTakenByOther(InGameState, Player, PreferredChoice))
+		{
+			Player->SetCharacterPicked(PreferredChoice);
+		}
+		else if (AlternateChoice != EARCharacterChoice::None && !IsCharacterChoiceTakenByOther(InGameState, Player, AlternateChoice))
+		{
+			Player->SetCharacterPicked(AlternateChoice);
+		}
+		else
+		{
+			// Never leave character unset after load/join normalization.
+			Player->SetCharacterPicked(PreferredChoice);
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[GameMode] Character normalize fallback for '%s': both choices occupied, assigning slot-biased %d."),
+				*GetNameSafe(Player),
+				static_cast<int32>(PreferredChoice));
+		}
+	}
+
+	for (AARPlayerStateBase* Player : Players)
+	{
+		ResolveCharacterChoiceConflict(InGameState, Player);
+	}
+
+	// Color normalization: keep player color synchronized with character assignment.
+	for (AARPlayerStateBase* Player : Players)
+	{
+		if (!Player)
+		{
+			continue;
+		}
+
+		const EARAffinityColor ExpectedColor = ResolveExpectedInvaderPlayerColor(Player->GetCharacterPicked(), Player->GetPlayerSlot());
+		const EARAffinityColor CurrentColor = Player->GetInvaderPlayerColor();
+		if (CurrentColor != ExpectedColor)
+		{
+			Player->SetInvaderPlayerColor(ExpectedColor);
+			UE_LOG(ARLog, Verbose, TEXT("[GameMode] Identity normalize color for '%s': %d -> %d"),
+				*GetNameSafe(Player), static_cast<int32>(CurrentColor), static_cast<int32>(ExpectedColor));
+		}
+	}
+}
+
 void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
@@ -215,6 +452,10 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	{
 		HandleFirstSessionJoinSetup(GS, JoinedPS, SaveSubsystem);
 	}
+
+	// Enforce stable unique slot occupancy even when setup is already complete (for example seamless travel/copy paths).
+	EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+	NormalizeConnectedPlayersIdentity(GS);
 
 	BP_OnPlayerJoined(JoinedPS);
 	UE_LOG(ARLog, Log, TEXT("[GameMode] Player joined: %s (Slot=%d, Setup=%s)"), *GetNameSafe(JoinedPS), static_cast<int32>(JoinedPS->GetPlayerSlot()), JoinedPS->IsSetupComplete() ? TEXT("true") : TEXT("false"));

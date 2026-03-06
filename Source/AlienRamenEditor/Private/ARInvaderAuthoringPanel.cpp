@@ -97,29 +97,29 @@ public:
 	}
 };
 
-	static FLinearColor GetEnemyColor(EAREnemyColor Color)
+	static FLinearColor GetEnemyColor(EARAffinityColor Color)
 	{
 		switch (Color)
 		{
-		case EAREnemyColor::Red:
+		case EARAffinityColor::Red:
 			return FLinearColor(0.95f, 0.2f, 0.2f, 1.f);
-		case EAREnemyColor::Blue:
+		case EARAffinityColor::Blue:
 			return FLinearColor(0.2f, 0.35f, 0.95f, 1.f);
-		case EAREnemyColor::White:
+		case EARAffinityColor::White:
 		default:
 			return FLinearColor(0.9f, 0.9f, 0.9f, 1.f);
 		}
 	}
 
-	static FString EnemyColorToName(EAREnemyColor Color)
+	static FString EnemyColorToName(EARAffinityColor Color)
 	{
 		switch (Color)
 		{
-		case EAREnemyColor::Red:
+		case EARAffinityColor::Red:
 			return TEXT("Red");
-		case EAREnemyColor::Blue:
+		case EARAffinityColor::Blue:
 			return TEXT("Blue");
-		case EAREnemyColor::White:
+		case EARAffinityColor::White:
 		default:
 			return TEXT("White");
 		}
@@ -3079,7 +3079,7 @@ FReply SInvaderAuthoringPanel::OnPasteSpawns()
 	return FReply::Handled();
 }
 
-void SInvaderAuthoringPanel::SetSelectedSpawnColor(EAREnemyColor NewColor)
+void SInvaderAuthoringPanel::SetSelectedSpawnColor(EARAffinityColor NewColor)
 {
 	FARWaveDefRow* Row = GetSelectedWaveRow();
 	if (!Row || !WaveTable || SelectedSpawnIndices.IsEmpty())
@@ -3179,17 +3179,17 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildSpawnContextMenu()
 		FText::FromString("Set Color: Red"),
 		FText::FromString("Set selected spawn enemy color to Red."),
 		FSlateIcon(),
-		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EAREnemyColor::Red)));
+		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EARAffinityColor::Red)));
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Set Color: Blue"),
 		FText::FromString("Set selected spawn enemy color to Blue."),
 		FSlateIcon(),
-		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EAREnemyColor::Blue)));
+		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EARAffinityColor::Blue)));
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Set Color: White"),
 		FText::FromString("Set selected spawn enemy color to White."),
 		FSlateIcon(),
-		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EAREnemyColor::White)));
+		FUIAction(FExecuteAction::CreateSP(this, &SInvaderAuthoringPanel::SetSelectedSpawnColor, EARAffinityColor::White)));
 	MenuBuilder.AddMenuSeparator();
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Delete Spawn"),
@@ -3701,7 +3701,7 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	if (ActiveEntry)
 	{
 		const FSoftClassPath ClassPath = ActiveEntry->EnemyClassPath;
-		EAREnemyColor Color = ActiveEntry->Color;
+		EARAffinityColor Color = ActiveEntry->Color;
 		UClass* ResolvedClass = ClassPath.ResolveClass();
 		if (!ResolvedClass)
 		{
@@ -4326,7 +4326,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		return A.ClassPath.ToString() < B.ClassPath.ToString();
 	});
 
-	auto SelectPalette = [this](const FSoftClassPath& ClassPath, EAREnemyColor Color)
+	auto SelectPalette = [this](const FSoftClassPath& ClassPath, EARAffinityColor Color)
 	{
 		if (const FPaletteEntry* FoundEntry = PaletteEntries.FindByPredicate(
 			[&ClassPath, Color](const FPaletteEntry& Entry)
@@ -4356,7 +4356,7 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 		const int32 ShapeCycle = Row.ShapeCycle;
 		const bool bClassSelected = ActivePaletteEntry.IsSet() && ActivePaletteEntry->EnemyClassPath == ClassPath;
 
-		auto MakeColorButton = [this, ClassPath, SelectPalette](EAREnemyColor InColor, const TCHAR* Label) -> TSharedRef<SWidget>
+		auto MakeColorButton = [this, ClassPath, SelectPalette](EARAffinityColor InColor, const TCHAR* Label) -> TSharedRef<SWidget>
 		{
 			const bool bSelectedColor = ActivePaletteEntry.IsSet()
 				&& ActivePaletteEntry->EnemyClassPath == ClassPath
@@ -4457,15 +4457,15 @@ TSharedRef<SWidget> SInvaderAuthoringPanel::BuildPaletteWidget()
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
-				MakeColorButton(EAREnemyColor::Red, TEXT("R"))
+				MakeColorButton(EARAffinityColor::Red, TEXT("R"))
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
-				MakeColorButton(EAREnemyColor::Blue, TEXT("B"))
+				MakeColorButton(EARAffinityColor::Blue, TEXT("B"))
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(4.f, 0.f, 0.f, 0.f)
 			[
-				MakeColorButton(EAREnemyColor::White, TEXT("W"))
+				MakeColorButton(EARAffinityColor::White, TEXT("W"))
 			]
 			]
 		];
@@ -4533,7 +4533,7 @@ void SInvaderAuthoringPanel::RefreshPalette()
 	const TSet<FSoftClassPath> Favorites(GetDefault<UARInvaderAuthoringEditorSettings>()->FavoriteEnemyClasses);
 	for (const FSoftClassPath& ClassPath : SortedClasses)
 	{
-		for (EAREnemyColor Color : { EAREnemyColor::Red, EAREnemyColor::Blue, EAREnemyColor::White })
+		for (EARAffinityColor Color : { EARAffinityColor::Red, EARAffinityColor::Blue, EARAffinityColor::White })
 		{
 			FPaletteEntry Entry;
 			Entry.EnemyClassPath = ClassPath;
