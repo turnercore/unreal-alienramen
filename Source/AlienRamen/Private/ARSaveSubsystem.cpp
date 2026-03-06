@@ -112,6 +112,28 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	GameState->SetActiveFactionEffectTagsFromSave(SaveGame->ActiveFactionEffectTags);
 }
 
+static FARPlayerIdentity BuildPlayerIdentityFromPlayerState(const APlayerState* PlayerState)
+{
+	FARPlayerIdentity Identity;
+	const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
+	if (!ARPS)
+	{
+		return Identity;
+	}
+
+	Identity.LegacyId = ARPS->GetPlayerId();
+	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
+	Identity.PlayerSlot = ARPS->GetPlayerSlot();
+
+	if (PlayerState->GetUniqueId().IsValid())
+	{
+		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+	}
+
+	return Identity;
+}
+
 }
 
 void UARSaveSubsystem::Deinitialize()
@@ -442,13 +464,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		}
 
 		FARPlayerStateSaveData PlayerData;
-		PlayerData.Identity.LegacyId = ARPS->GetPlayerId();
-		PlayerData.Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-		PlayerData.Identity.PlayerSlot = ARPS->GetPlayerSlot();
-		if (PS->GetUniqueId().IsValid())
-		{
-			PlayerData.Identity.UniqueNetIdString = PS->GetUniqueId()->ToString();
-		}
+		PlayerData.Identity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(PS);
 		PlayerData.LoadoutTags = ARPS->LoadoutTags;
 		PlayerData.CharacterPicked = ARPS->GetCharacterPicked();
 
@@ -1060,19 +1076,13 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 		return false;
 	}
 
-	FARPlayerIdentity QueryIdentity;
-	QueryIdentity.LegacyId = Requester->GetPlayerId();
-	QueryIdentity.DisplayName = FText::FromString(Requester->GetDisplayNameValue());
-	QueryIdentity.PlayerSlot = Requester->GetPlayerSlot();
-	if (Requester->GetUniqueId().IsValid())
-	{
-		QueryIdentity.UniqueNetIdString = Requester->GetUniqueId()->ToString();
-	}
+	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const bool bRequireIdentityMatch = QueryIdentity.HasStrictOnlineIdentity();
 
 	FARPlayerStateSaveData PlayerData;
 	int32 Index = INDEX_NONE;
 	bool bFound = CurrentSaveGame->FindPlayerStateDataByIdentity(QueryIdentity, PlayerData, Index);
-	if (!bFound && bAllowSlotFallback)
+	if (!bFound && bAllowSlotFallback && !bRequireIdentityMatch)
 	{
 		bFound = CurrentSaveGame->FindPlayerStateDataBySlot(Requester->GetPlayerSlot(), PlayerData, Index);
 	}
