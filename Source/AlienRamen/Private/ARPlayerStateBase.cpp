@@ -22,6 +22,9 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, bIsDowned);
 	DOREPLIFETIME(AARPlayerStateBase, bIsDeadState);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
+	DOREPLIFETIME(AARPlayerStateBase, InvaderPlayerColor);
+	DOREPLIFETIME(AARPlayerStateBase, InvaderComboCount);
+	DOREPLIFETIME(AARPlayerStateBase, ActivatedInvaderUpgradeTags);
 }
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
@@ -187,6 +190,9 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 	}
 
 	SetCharacterPicked(EARCharacterChoice::None);
+	ResetInvaderCombo();
+	ClearActivatedInvaderUpgrades();
+	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice::None), true);
 	EnsureDefaultLoadoutIfEmpty();
 }
 
@@ -314,10 +320,130 @@ void AARPlayerStateBase::ServerSetSpiceMeter_Implementation(float NewSpiceValue)
 	SetSpiceMeter_Internal(NewSpiceValue);
 }
 
+void AARPlayerStateBase::SetInvaderPlayerColor(EARInvaderPlayerColor NewColor)
+{
+	if (HasAuthority())
+	{
+		SetInvaderPlayerColor_Internal(NewColor);
+		return;
+	}
+
+	ServerSetInvaderPlayerColor(NewColor);
+}
+
+void AARPlayerStateBase::ServerSetInvaderPlayerColor_Implementation(EARInvaderPlayerColor NewColor)
+{
+	SetInvaderPlayerColor_Internal(NewColor);
+}
+
+void AARPlayerStateBase::ResetInvaderCombo()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (InvaderComboCount == 0)
+	{
+		LastInvaderKillCreditServerTime = -1.0f;
+		return;
+	}
+
+	const int32 OldComboCount = InvaderComboCount;
+	InvaderComboCount = 0;
+	LastInvaderKillCreditServerTime = -1.0f;
+	OnRep_InvaderComboCount(OldComboCount);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::ReportInvaderKillCredit(EARInvaderPlayerColor EnemyColor, const float ServerTimeSeconds, const float ComboTimeoutSeconds)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const bool bHasPriorCredit = LastInvaderKillCreditServerTime >= 0.0f;
+	const bool bTimedOut = bHasPriorCredit
+		&& ComboTimeoutSeconds > 0.0f
+		&& (ServerTimeSeconds - LastInvaderKillCreditServerTime) > ComboTimeoutSeconds;
+
+	const bool bMatchedColor = DoesInvaderColorMatch(InvaderPlayerColor, EnemyColor);
+	const int32 OldComboCount = InvaderComboCount;
+	const int32 NewComboCount = bMatchedColor ? ((bTimedOut ? 0 : OldComboCount) + 1) : 0;
+
+	InvaderComboCount = FMath::Max(0, NewComboCount);
+	LastInvaderKillCreditServerTime = ServerTimeSeconds;
+	if (InvaderComboCount != OldComboCount)
+	{
+		OnRep_InvaderComboCount(OldComboCount);
+		ForceNetUpdate();
+	}
+}
+
+void AARPlayerStateBase::MarkInvaderUpgradeActivated(FGameplayTag UpgradeTag)
+{
+	if (!HasAuthority() || !UpgradeTag.IsValid())
+	{
+		return;
+	}
+
+	if (ActivatedInvaderUpgradeTags.HasTagExact(UpgradeTag))
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldTags = ActivatedInvaderUpgradeTags;
+	ActivatedInvaderUpgradeTags.AddTag(UpgradeTag);
+	OnRep_ActivatedInvaderUpgrades(OldTags);
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::ClearActivatedInvaderUpgrades()
+{
+	if (!HasAuthority() || ActivatedInvaderUpgradeTags.IsEmpty())
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldTags = ActivatedInvaderUpgradeTags;
+	ActivatedInvaderUpgradeTags.Reset();
+	OnRep_ActivatedInvaderUpgrades(OldTags);
+	ForceNetUpdate();
+}
+
+bool AARPlayerStateBase::HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) const
+{
+	return UpgradeTag.IsValid() && ActivatedInvaderUpgradeTags.HasTagExact(UpgradeTag);
+}
+
+void AARPlayerStateBase::SetPredictedSpiceValue(const float NewPredictedSpice)
+{
+	PredictedSpiceValue = FMath::Max(0.0f, NewPredictedSpice);
+	bHasPredictedSpiceValue = true;
+	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+}
+
+void AARPlayerStateBase::ClearPredictedSpiceValue()
+{
+	if (!bHasPredictedSpiceValue)
+	{
+		return;
+	}
+
+	bHasPredictedSpiceValue = false;
+	PredictedSpiceValue = 0.0f;
+	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+}
+
 void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	EnsureDefaultLoadoutIfEmpty();
+	if (HasAuthority() && InvaderPlayerColor == EARInvaderPlayerColor::Unknown)
+	{
+		SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked), true);
+	}
 	BindTrackedAttributeDelegates();
 	BroadcastTrackedAttributeSnapshot();
 	EvaluateLifeStateFromASC();
@@ -368,6 +494,21 @@ void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
 	OnSetupStateChanged.Broadcast(bIsSetup, bOldIsSetup);
 }
 
+void AARPlayerStateBase::OnRep_InvaderPlayerColor(EARInvaderPlayerColor OldColor)
+{
+	OnInvaderPlayerColorChanged.Broadcast(InvaderPlayerColor, OldColor);
+}
+
+void AARPlayerStateBase::OnRep_InvaderComboCount(int32 OldComboCount)
+{
+	OnInvaderComboChanged.Broadcast(this, PlayerSlot, InvaderComboCount, OldComboCount);
+}
+
+void AARPlayerStateBase::OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags)
+{
+	OnInvaderActivatedUpgradesChanged.Broadcast(this, PlayerSlot, ActivatedInvaderUpgradeTags, OldActivatedTags);
+}
+
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
 {
 	if (!HasAuthority() || CharacterPicked == NewCharacter)
@@ -377,9 +518,51 @@ void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewChara
 
 	const EARCharacterChoice OldCharacter = CharacterPicked;
 	CharacterPicked = NewCharacter;
+	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(NewCharacter));
 	OnRep_CharacterPicked(OldCharacter);
 	ForceNetUpdate();
 	EvaluateTravelReadinessAndBroadcast();
+}
+
+void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARInvaderPlayerColor NewColor, const bool bForceBroadcast)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!bForceBroadcast && InvaderPlayerColor == NewColor)
+	{
+		return;
+	}
+
+	const EARInvaderPlayerColor OldColor = InvaderPlayerColor;
+	InvaderPlayerColor = NewColor;
+	OnRep_InvaderPlayerColor(OldColor);
+	ForceNetUpdate();
+}
+
+EARInvaderPlayerColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharacter(const EARCharacterChoice InCharacterChoice) const
+{
+	switch (InCharacterChoice)
+	{
+	case EARCharacterChoice::Brother:
+		return EARInvaderPlayerColor::Red;
+	case EARCharacterChoice::Sister:
+		return EARInvaderPlayerColor::Blue;
+	default:
+		return EARInvaderPlayerColor::White;
+	}
+}
+
+bool AARPlayerStateBase::DoesInvaderColorMatch(const EARInvaderPlayerColor PlayerColor, const EARInvaderPlayerColor EnemyColor)
+{
+	if (PlayerColor == EARInvaderPlayerColor::White || EnemyColor == EARInvaderPlayerColor::White)
+	{
+		return true;
+	}
+
+	return PlayerColor == EnemyColor;
 }
 
 void AARPlayerStateBase::SetDisplayName_Internal(const FString& NewDisplayName)
@@ -724,6 +907,8 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	// Mark copied/traveled state as setup-complete; ready remains transient.
 	TargetPS->SetIsSetupComplete(true);
 	TargetPS->SetReadyForRun(false);
+	TargetPS->ResetInvaderCombo();
+	TargetPS->ClearActivatedInvaderUpgrades();
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -898,6 +1083,10 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	OnSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.Spice, Snapshot.Spice);
 	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+	if (bHasPredictedSpiceValue)
+	{
+		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, Snapshot.Spice, true);
+	}
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -918,6 +1107,10 @@ void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeDat
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
 	OnSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	if (bHasPredictedSpiceValue)
+	{
+		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, ChangeData.NewValue, true);
+	}
 }
 
 void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)

@@ -17,6 +17,7 @@ nav:
       - Enemy Base: CppOverview/AAREnemyBase.md
       - Enemy AI Controller: CppOverview/AAREnemyAIController.md
       - Invader Data Types: CppOverview/InvaderDataTypes.md
+      - Invader Spicy Track: CppOverview/InvaderSpicyTrack.md
       - Invader Director Settings: CppOverview/UARInvaderDirectorSettings.md
       - Invader Director Subsystem: CppOverview/UARInvaderDirectorSubsystem.md
       - Invader Runtime State Component: CppOverview/UARInvaderRuntimeStateComponent.md

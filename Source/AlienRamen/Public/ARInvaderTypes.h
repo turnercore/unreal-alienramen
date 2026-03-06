@@ -143,6 +143,10 @@ struct FARInvaderEnemyDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
 	FGameplayTag EnemyIdentifierTag;
 
+	// Base spicy-track credit granted for killing this enemy (before player multipliers).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Rewards", meta = (ClampMin = "0.0"))
+	float BaseSpiceKillValue = 10.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
 	FARInvaderEnemyRuntimeInitData RuntimeInit;
 };

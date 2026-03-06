@@ -121,6 +121,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
 	void SetEnemyColor(EAREnemyColor InColor);
 
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Gameplay")
+	EAREnemyColor GetEnemyColor() const { return EnemyColor; }
+
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
 	void SetEnemyIdentifierTag(FGameplayTag InIdentifierTag);
 
