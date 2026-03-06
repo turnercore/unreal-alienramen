@@ -90,6 +90,8 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
 };
 
+UARDialogueSubsystem::UARDialogueSubsystem() = default;
+
 UARDialogueSubsystem::~UARDialogueSubsystem() = default;
 
 UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState()
