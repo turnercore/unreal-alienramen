@@ -141,6 +141,8 @@
 - Player HUD-facing attribute contract is PlayerState-owned: `AARPlayerStateBase` exposes Blueprint-assignable signals for core attributes (`OnHealthChanged`, `OnMaxHealthChanged`, `OnSpiceChanged`, `OnMaxSpiceChanged`, `OnMoveSpeedChanged`) plus generic `OnCoreAttributeChanged(EARCoreAttributeType, NewValue, OldValue)`.
 - PlayerState exposes Blueprint getters for HUD polling/snapshot (`GetCoreAttributeValue`, `GetCoreAttributeSnapshot`, `GetSpiceNormalized`) so HUD can read local and remote teammate stats from each replicated PlayerState.
 - Spice meter control is PlayerState-owned and server-authoritative via `SetSpiceMeter` / `ClearSpiceMeter` (client calls route through `ServerSetSpiceMeter`); current spice is clamped to `[0, MaxSpice]` and written to GAS `Spice` attribute base.
+- PlayerState exposes replicated spice-sharing runtime state (`bIsSharingSpice`) with event hook `OnSpiceSharingStateChanged`; server mutation path is `SetSpiceSharingActive` / `ServerSetSpiceSharingActive`.
+- PlayerState share transfer helper `ApplySpiceShareTick(...)` is authority-only and enforces mutual-share cancelation: if both players are sharing simultaneously, no drain and no grant are applied.
 - PlayerState now carries Invader runtime-only spicy metadata (non-save/non-hydrated):
 - replicated `InvaderPlayerColor` (`EARAffinityColor`) with server setter path (`SetInvaderPlayerColor` / `ServerSetInvaderPlayerColor`) and signal `OnInvaderPlayerColorChanged`.
 - default character-to-color mapping is `Brother -> Blue`, `Sister -> Red`; when character is temporarily unset at mode load, baseline color is slot-biased (`P1 -> Blue`, `P2 -> Red`) to avoid unintended `White/None` defaults.

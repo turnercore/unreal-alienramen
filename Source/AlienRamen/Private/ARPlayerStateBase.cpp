@@ -25,6 +25,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, InvaderPlayerColor);
 	DOREPLIFETIME(AARPlayerStateBase, InvaderComboCount);
 	DOREPLIFETIME(AARPlayerStateBase, ActivatedInvaderUpgradeTags);
+	DOREPLIFETIME(AARPlayerStateBase, bIsSharingSpice);
 }
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
@@ -322,6 +323,84 @@ void AARPlayerStateBase::ServerSetSpiceMeter_Implementation(float NewSpiceValue)
 	SetSpiceMeter_Internal(NewSpiceValue);
 }
 
+void AARPlayerStateBase::SetSpiceSharingActive(bool bNewIsSharing)
+{
+	if (HasAuthority())
+	{
+		SetSpiceSharingActive_Internal(bNewIsSharing);
+		return;
+	}
+
+	ServerSetSpiceSharingActive(bNewIsSharing);
+}
+
+void AARPlayerStateBase::ServerSetSpiceSharingActive_Implementation(bool bNewIsSharing)
+{
+	SetSpiceSharingActive_Internal(bNewIsSharing);
+}
+
+void AARPlayerStateBase::ApplySpiceShareTick(const float DeltaSeconds, AARPlayerStateBase* TargetPlayer, float& OutSourceDrained, float& OutTargetGranted)
+{
+	OutSourceDrained = 0.0f;
+	OutTargetGranted = 0.0f;
+
+	if (!HasAuthority() || !AbilitySystemComponent || !TargetPlayer || TargetPlayer == this || DeltaSeconds <= 0.0f)
+	{
+		return;
+	}
+
+	// Mutual sharing cancels transfer entirely (prevents both players draining to nowhere).
+	if (bIsSharingSpice && TargetPlayer->IsSpiceSharingActive())
+	{
+		return;
+	}
+
+	if (!bIsSharingSpice)
+	{
+		return;
+	}
+
+	const float SourceSpice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float TargetSpice = TargetPlayer->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float TargetMaxSpice = TargetPlayer->GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+	const float TargetCapacity = FMath::Max(0.0f, TargetMaxSpice - TargetSpice);
+	if (SourceSpice <= KINDA_SMALL_NUMBER || TargetCapacity <= KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	const float DrainRate = FMath::Max(0.0f, AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceDrainRateAttribute()));
+	const float ShareRatio = FMath::Max(0.0f, AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceShareRatioAttribute()));
+	if (DrainRate <= KINDA_SMALL_NUMBER || ShareRatio <= KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	const float DrainBudget = FMath::Min(SourceSpice, DrainRate * DeltaSeconds);
+	if (DrainBudget <= KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	const float GrantedBeforeCap = DrainBudget * ShareRatio;
+	const float GrantedAmount = FMath::Min(GrantedBeforeCap, TargetCapacity);
+	if (GrantedAmount <= KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	const float DrainedAmount = FMath::Min(DrainBudget, GrantedAmount / ShareRatio);
+	if (DrainedAmount <= KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	SetSpiceMeter_Internal(SourceSpice - DrainedAmount);
+	TargetPlayer->SetSpiceMeter(TargetSpice + GrantedAmount);
+	OutSourceDrained = DrainedAmount;
+	OutTargetGranted = GrantedAmount;
+}
+
 void AARPlayerStateBase::SetInvaderPlayerColor(EARAffinityColor NewColor)
 {
 	if (HasAuthority())
@@ -511,6 +590,11 @@ void AARPlayerStateBase::OnRep_ActivatedInvaderUpgrades(const FGameplayTagContai
 	OnInvaderActivatedUpgradesChanged.Broadcast(this, PlayerSlot, ActivatedInvaderUpgradeTags, OldActivatedTags);
 }
 
+void AARPlayerStateBase::OnRep_IsSharingSpice(bool bOldIsSharingSpice)
+{
+	OnSpiceSharingStateChanged.Broadcast(this, PlayerSlot, bIsSharingSpice, bOldIsSharingSpice);
+}
+
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
 {
 	if (!HasAuthority() || CharacterPicked == NewCharacter)
@@ -565,6 +649,24 @@ void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARAffinityColor NewColo
 			static_cast<int32>(PlayerSlot),
 			static_cast<int32>(CharacterPicked));
 	}
+}
+
+void AARPlayerStateBase::SetSpiceSharingActive_Internal(const bool bNewIsSharing, const bool bForceBroadcast)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!bForceBroadcast && bIsSharingSpice == bNewIsSharing)
+	{
+		return;
+	}
+
+	const bool bOldIsSharing = bIsSharingSpice;
+	bIsSharingSpice = bNewIsSharing;
+	OnRep_IsSharingSpice(bOldIsSharing);
+	ForceNetUpdate();
 }
 
 EARAffinityColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharacter(const EARCharacterChoice InCharacterChoice) const
@@ -1086,6 +1188,17 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		}
 	}
 
+	if (!SharingSpiceTagChangedDelegateHandle.IsValid())
+	{
+		const FGameplayTag SharingSpiceTag = FGameplayTag::RequestGameplayTag(TEXT("State.Sharing"), false);
+		if (SharingSpiceTag.IsValid())
+		{
+			SharingSpiceTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(SharingSpiceTag, EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AARPlayerStateBase::HandleSpiceSharingTagChanged);
+			SetSpiceSharingActive_Internal(AbilitySystemComponent->HasMatchingGameplayTag(SharingSpiceTag), true);
+		}
+	}
+
 	EvaluateInvaderColorFromASCOverrideTags();
 }
 
@@ -1104,6 +1217,7 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		ColorRedTagChangedDelegateHandle.Reset();
 		ColorWhiteTagChangedDelegateHandle.Reset();
 		ColorBlueTagChangedDelegateHandle.Reset();
+		SharingSpiceTagChangedDelegateHandle.Reset();
 		return;
 	}
 
@@ -1178,6 +1292,13 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorBlueTagChangedDelegateHandle);
 		ColorBlueTagChangedDelegateHandle.Reset();
 	}
+
+	const FGameplayTag SharingSpiceTag = FGameplayTag::RequestGameplayTag(TEXT("State.Sharing"), false);
+	if (SharingSpiceTag.IsValid() && SharingSpiceTagChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(SharingSpiceTag, EGameplayTagEventType::NewOrRemoved).Remove(SharingSpiceTagChangedDelegateHandle);
+		SharingSpiceTagChangedDelegateHandle.Reset();
+	}
 }
 
 void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
@@ -1249,6 +1370,18 @@ void AARPlayerStateBase::HandleDeadTagChanged(const FGameplayTag /*Tag*/, int32 
 void AARPlayerStateBase::HandleInvaderColorOverrideTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
 {
 	EvaluateInvaderColorFromASCOverrideTags();
+}
+
+void AARPlayerStateBase::HandleSpiceSharingTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	const FGameplayTag SharingSpiceTag = FGameplayTag::RequestGameplayTag(TEXT("State.Sharing"), false);
+	const bool bSharingNow = SharingSpiceTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(SharingSpiceTag);
+	SetSpiceSharingActive_Internal(bSharingNow);
 }
 
 void AARPlayerStateBase::EvaluateInvaderColorFromASCOverrideTags()
