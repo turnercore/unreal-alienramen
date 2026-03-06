@@ -12,6 +12,7 @@ nav:
       - GAS Overview: README_GAS.md
       - GAS Blueprint Attributes: README_GAS_Blueprint_Attributes.md
   - Save System: README_SaveSubsystem.md
+  - Dialogue & NPC: README_DialogueNPC.md
   - C++ Overview:
       - Overview: CppOverview/README.md
       - Enemy Base: CppOverview/AAREnemyBase.md

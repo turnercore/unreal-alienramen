@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/PlayerController.h"
+#include "ARDialogueTypes.h"
 #include "ARPlayerController.generated.h"
 
 class UARAbilitySet;
@@ -65,6 +66,42 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestRemoveUnlock(const FGameplayTag& UnlockTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void RequestStartDialogue(FGameplayTag NpcTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestStartDialogue(FGameplayTag NpcTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void RequestAdvanceDialogue();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestAdvanceDialogue();
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void RequestSubmitDialogueChoice(FGameplayTag ChoiceTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSubmitDialogueChoice(FGameplayTag ChoiceTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSessionUpdated(const FARDialogueClientView& View);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSessionEnded(const FString& SessionId);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
+	void BP_OnDialogueSessionUpdated(const FARDialogueClientView& View);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
+	void BP_OnDialogueSessionEnded(const FString& SessionId);
 
 	// Initializes a custom default cursor widget on local controllers only.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
