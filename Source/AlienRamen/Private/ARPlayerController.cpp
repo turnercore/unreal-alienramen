@@ -1,10 +1,12 @@
 #include "ARPlayerController.h"
+#include "ARHUDBase.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Blueprint/UserWidget.h"
+#include "TimerManager.h"
 
 AARPlayerController::AARPlayerController()
 {
@@ -17,12 +19,19 @@ void AARPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeCustomCursor();
+	RequestHUDInitializationInternal(false);
 
 	if (IsLocalController() && !HasAuthority() && !bRequestedInitialCanonicalSaveSync)
 	{
 		bRequestedInitialCanonicalSaveSync = true;
 		ServerRequestCanonicalSaveSync();
 	}
+}
+
+void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	StopHUDInitializationRetry();
+	Super::EndPlay(EndPlayReason);
 }
 
 void AARPlayerController::InitializeCustomCursor()
@@ -55,6 +64,11 @@ void AARPlayerController::InitializeCustomCursor()
 	}
 
 	SetMouseCursorWidget(EMouseCursor::Default, Cursor);
+}
+
+void AARPlayerController::RequestHUDInitialization()
+{
+	RequestHUDInitializationInternal(true);
 }
 
 void AARPlayerController::ClientPersistCanonicalSave_Implementation(const TArray<uint8>& SaveBytes, FName SlotBaseName, int32 SlotNumber)
@@ -204,4 +218,83 @@ void AARPlayerController::RequestRemoveUnlockInternal(const FGameplayTag& Unlock
 	}
 
 	UE_LOG(ARLog, Warning, TEXT("[Save] RequestRemoveUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
+}
+
+void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroadcast)
+{
+	if (!IsLocalController())
+	{
+		StopHUDInitializationRetry();
+		return;
+	}
+
+	AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD());
+	if (!ARHUD)
+	{
+		StartHUDInitializationRetry();
+		if (!bForceBroadcast)
+		{
+			return;
+		}
+	}
+
+	APlayerState* CurrentPlayerState = PlayerState;
+	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
+	const bool bContextChanged = LastHUDInitPlayerState.Get() != CurrentPlayerState
+		|| LastHUDInitGameState.Get() != CurrentGameState;
+	if (!bForceBroadcast && bHasBroadcastHUDInitialization && !bContextChanged)
+	{
+		return;
+	}
+
+	bHasBroadcastHUDInitialization = true;
+	LastHUDInitPlayerState = CurrentPlayerState;
+	LastHUDInitGameState = CurrentGameState;
+	StopHUDInitializationRetry();
+
+	if (ARHUD)
+	{
+		ARHUD->RequestHUDInitialization(this, CurrentPlayerState, CurrentGameState);
+	}
+
+	BP_OnHUDInitializationRequested(this, CurrentPlayerState, CurrentGameState);
+}
+
+void AARPlayerController::StartHUDInitializationRetry()
+{
+	if (!IsLocalController())
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	if (World->GetTimerManager().IsTimerActive(HUDInitializationRetryTimer))
+	{
+		return;
+	}
+
+	World->GetTimerManager().SetTimer(
+		HUDInitializationRetryTimer,
+		this,
+		&AARPlayerController::HandleHUDInitializationRetry,
+		0.1f,
+		true);
+}
+
+void AARPlayerController::StopHUDInitializationRetry()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(HUDInitializationRetryTimer);
+	}
+}
+
+void AARPlayerController::HandleHUDInitializationRetry()
+{
+	RequestHUDInitializationInternal(false);
 }

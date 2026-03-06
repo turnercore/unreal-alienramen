@@ -119,10 +119,10 @@ public:
 	bool IsDead() const { return bIsDead; }
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
-	void SetEnemyColor(EAREnemyColor InColor);
+	void SetEnemyColor(EARAffinityColor InColor);
 
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Gameplay")
-	EAREnemyColor GetEnemyColor() const { return EnemyColor; }
+	EARAffinityColor GetEnemyColor() const { return EnemyColor; }
 
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Gameplay", meta = (BlueprintAuthorityOnly))
 	void SetEnemyIdentifierTag(FGameplayTag InIdentifierTag);
@@ -247,6 +247,12 @@ protected:
 	void BindMoveSpeedChangeDelegate();
 	void UnbindMoveSpeedChangeDelegate();
 	void OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData);
+	void BindEnemyColorTagDelegates();
+	void UnbindEnemyColorTagDelegates();
+	void HandleEnemyColorOverrideTagChanged(const FGameplayTag Tag, int32 NewCount);
+	void EvaluateEnemyColorFromASCOverrideTags();
+	EARAffinityColor ResolveEnemyColorFromASCOverrideTags() const;
+	void ApplyEnemyColorGameplayTags(EARAffinityColor NewColor);
 	void RefreshCharacterMovementSpeedFromAttributes();
 
 public:	
@@ -270,13 +276,13 @@ protected:
 	TObjectPtr<UAREnemyAttributeSet> EnemyAttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyColor, Category = "AR|Enemy|Gameplay")
-	EAREnemyColor EnemyColor = EAREnemyColor::Red;
+	EARAffinityColor EnemyColor = EARAffinityColor::Red;
 
 	UFUNCTION()
 	void OnRep_EnemyColor();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
-	void BP_OnEnemyColorChanged(EAREnemyColor NewColor);
+	void BP_OnEnemyColorChanged(EARAffinityColor NewColor);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyArchetypeTag;
@@ -324,6 +330,9 @@ protected:
 	void BP_OnWavePhaseChanged(EARWavePhase NewPhase);
 
 private:
+	AActor* ResolveRecentDamageInstigatorForKillCredit(float MaxAgeSeconds = 3.0f) const;
+	void RememberDamageInstigatorForKillCredit(AActor* Offender);
+
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> StartupGrantedAbilityHandles;
 
@@ -341,7 +350,13 @@ private:
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MoveSpeedChangedDelegateHandle;
+	FDelegateHandle ColorNoneTagChangedDelegateHandle;
+	FDelegateHandle ColorRedTagChangedDelegateHandle;
+	FDelegateHandle ColorWhiteTagChangedDelegateHandle;
+	FDelegateHandle ColorBlueTagChangedDelegateHandle;
 	bool bStartupSetApplied = false;
+	bool bUpdatingEnemyColorFromTags = false;
+	bool bApplyingEnemyColorTags = false;
 	bool bCountedAsLeak = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|Invader", meta = (AllowPrivateAccess = "true"))
 	bool bHasEnteredScreen = false;
@@ -352,6 +367,10 @@ private:
 	int32 LastDispatchedWavePhaseWaveId = INDEX_NONE;
 	EARWavePhase LastDispatchedWavePhase = EARWavePhase::Berserk;
 	float EnteredGameplayScreenServerTime = 0.f;
+
+	TWeakObjectPtr<AActor> LastDamageInstigatorActor;
+	float LastDamageInstigatorServerTime = -1.0f;
+
 	TMap<FGameplayTag, int32> ASCStateTagRefCounts;
 
 	void TryDispatchWavePhaseEvent();

@@ -36,10 +36,10 @@ namespace ARInvaderInternal
 		return FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
 	}
 
-	static EAREnemyColor SwapEnemyColor(EAREnemyColor InColor)
+	static EARAffinityColor SwapEnemyColor(EARAffinityColor InColor)
 	{
-		if (InColor == EAREnemyColor::Red) return EAREnemyColor::Blue;
-		if (InColor == EAREnemyColor::Blue) return EAREnemyColor::Red;
+		if (InColor == EARAffinityColor::Red) return EARAffinityColor::Blue;
+		if (InColor == EARAffinityColor::Blue) return EARAffinityColor::Red;
 		return InColor;
 	}
 
@@ -661,7 +661,7 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 			Enemy->SetEnemyIdentifierTag(SpawnDef.EnemyIdentifierTag);
 			UGameplayStatics::FinishSpawningActor(Enemy, SpawnTransform);
 
-			EAREnemyColor EffectiveColor = SpawnDef.EnemyColor;
+			EARAffinityColor EffectiveColor = SpawnDef.EnemyColor;
 			if (Wave.bColorSwap)
 			{
 				EffectiveColor = ARInvaderInternal::SwapEnemyColor(EffectiveColor);
