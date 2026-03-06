@@ -57,5 +57,5 @@ private:
 	FARDialogueRuntimeState& GetRuntimeState();
 	const FARDialogueRuntimeState& GetRuntimeState() const;
 
-	mutable TUniquePtr<FARDialogueRuntimeState> RuntimeState;
+	mutable FARDialogueRuntimeState* RuntimeState = nullptr;
 };
