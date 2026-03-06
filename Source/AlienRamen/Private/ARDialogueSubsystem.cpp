@@ -90,6 +90,8 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
 };
 
+UARDialogueSubsystem::~UARDialogueSubsystem() = default;
+
 UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState()
 {
 	if (!RuntimeState.IsValid())
@@ -101,11 +103,8 @@ UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeS
 
 const UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState() const
 {
-	if (!RuntimeState.IsValid())
-	{
-		RuntimeState = MakeUnique<FARDialogueRuntimeState>();
-	}
-	return *RuntimeState;
+	static const FARDialogueRuntimeState EmptyState;
+	return RuntimeState.IsValid() ? *RuntimeState : EmptyState;
 }
 
 void UARDialogueSubsystem::Deinitialize()

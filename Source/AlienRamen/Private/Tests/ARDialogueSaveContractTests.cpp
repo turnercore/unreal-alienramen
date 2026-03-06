@@ -21,6 +21,7 @@ bool FARDialogueSchemaVersionTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Current schema version is positive"), CurrentSchemaVersion > 0);
 	TestTrue(TEXT("Min supported schema version is positive"), MinSupportedSchemaVersion > 0);
 	TestTrue(TEXT("Current schema version is >= min supported schema"), CurrentSchemaVersion >= MinSupportedSchemaVersion);
+	TestEqual(TEXT("Without migrations, current schema equals min supported schema"), CurrentSchemaVersion, MinSupportedSchemaVersion);
 	TestTrue(TEXT("Current schema is supported"), UARSaveGame::IsSchemaVersionSupported(CurrentSchemaVersion));
 	return true;
 }

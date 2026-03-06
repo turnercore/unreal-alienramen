@@ -20,6 +20,7 @@ class ALIENRAMEN_API UARDialogueSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	virtual ~UARDialogueSubsystem() override;
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
