@@ -15,4 +15,7 @@ class ALIENRAMEN_API AARShopGameMode : public AARGameModeBase
 
 public:
 	AARShopGameMode();
+
+protected:
+	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks) override;
 };

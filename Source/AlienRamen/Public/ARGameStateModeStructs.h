@@ -28,6 +28,12 @@ struct ALIENRAMEN_API FARInvaderGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTagContainer ActiveFactionEffectTags;
 };
 
 USTRUCT(BlueprintType)
@@ -49,6 +55,12 @@ struct ALIENRAMEN_API FARScrapyardGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTagContainer ActiveFactionEffectTags;
 };
 
 USTRUCT(BlueprintType)
@@ -70,6 +82,12 @@ struct ALIENRAMEN_API FARShopGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTagContainer ActiveFactionEffectTags;
 };
 
 USTRUCT(BlueprintType)
@@ -91,4 +109,10 @@ struct ALIENRAMEN_API FARLobbyGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTagContainer ActiveFactionEffectTags;
 };

@@ -97,6 +97,15 @@ public:
 		FString& OutError
 	);
 
+	// Returns all row names for the DataTable routed by RootTag.
+	// Useful for systems that need to rank/select across an entire content family.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
+	bool GetAllRowNamesForRootTag(
+		FGameplayTag RootTag,
+		TArray<FName>& OutRowNames,
+		FString& OutError
+	);
+
 
 private:
 	// Returns the leaf segment used as RowName (Unlocks.Ships.Sammy -> Sammy).

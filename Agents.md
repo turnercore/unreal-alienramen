@@ -71,6 +71,10 @@
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
+- Native faction election runtime now exists:
+- shared type surface: `Source/AlienRamen/Public/ARFactionTypes.h`
+- settings: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Factions`) with `FactionDefinitionRootTag` (default config now `Faction.Definition`)
+- subsystem: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`) for candidate generation, transient vote capture, and travel-time winner finalization.
 - Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
 - Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
 
@@ -174,6 +178,7 @@
 - property: `RegistryAsset` (default: `/Game/Data/DA_ContentLookupReg.DA_ContentLookupReg`)
 - Runtime override still supported via `UContentLookupSubsystem::SetRegistry(...)` (takes priority).
 - BP-facing subsystem APIs should stay under `Alien Ramen|Content Lookup`.
+- `UContentLookupSubsystem` now exposes `GetAllRowNamesForRootTag(...)` so gameplay systems can enumerate route-backed tables (used by faction ranking).
 
 ## State Serialization Contract
 
@@ -213,8 +218,8 @@
 - `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
 - write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
 - load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
-- Current save schema is `v3`; minimum supported is also `v3` (no legacy migration path kept in pre-production).
-- `UARSaveGame` persists only disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
+- Current save schema is `v4`; minimum supported is also `v4` (no legacy migration path kept in pre-production).
+- `UARSaveGame` persists disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `ProgressionTags`, `FactionClout`, `ActiveFactionTag`, `ActiveFactionEffectTags`, `FactionPopularityStates`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
 - `FARMeatState` uses replication-safe typed entries (`TArray<FARMeatTypeAmount>`) for extensible meat types instead of a `TMap`; normalization merges duplicate tags, drops invalid/zero entries, and keeps deterministic tag-sort order.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
 - `FindPlayerStateDataBySlot(...)`
@@ -227,6 +232,7 @@
 - Save backup retention is user-configured via `UARSaveUserSettings` (`Config=GameUserSettings`, `MaxBackupRevisions`, default `5`, clamped `1..100`) and can be read/updated at runtime through `UARSaveSubsystem::GetMaxBackupRevisions` / `SetMaxBackupRevisions`.
 - Save write paths prune old revision files per slot base after successful save (`SaveCurrentGame`) and canonical-client persist (`PersistCanonicalSaveFromBytes`) using the configured max backup count.
 - Save validation policy is clamp-and-warn (`UARSaveGame::ValidateAndSanitize`), currently clamping negative scalar resource fields.
+- Save validation now also sanitizes faction payload shape: non-negative `FactionClout`, removes invalid/duplicate faction popularity entries, and ensures active faction can be represented in popularity state.
 - Default unlock baseline is project-settings driven via `UARLoadoutSettings::DefaultStartingUnlocks`:
 - when runtime save gather produces empty unlocks, save payload is seeded from settings
 - when game-state hydration has no current save, `AARGameStateBase` unlocks are seeded from settings
@@ -251,6 +257,9 @@
     - Save throttling via `MinSaveIntervalSeconds` (default 1s). Throttled attempts return `EARSaveResultCode::Throttled`.
     - Save result codes now surface in `FARSaveResult.ResultCode` (`Success`, `AuthorityRequired`, `NoWorld`, `InProgress`, `Throttled`, `ValidationFailed`, `NotFound`, `Unknown`) for cheaper BP error handling.
     - Autosave helper `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)` only runs when `bSaveDirty` is true; `MarkSaveDirty` is exposed. Cycle increments and loadout writes set `bSaveDirty`; successful saves clear it.
+- Save subsystem now exposes persistent progression/faction helpers:
+    - `GetProgressionTags`, `HasProgressionTag`, `AddProgressionTag`, `RemoveProgressionTag` (shared long-term modifier surface; faction rules read `Progression.Faction.*` from here)
+    - `GetFactionClout`, `SetFactionClout`
 - Save hydration entrypoints enforce authority on requesters:
 - `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
 - `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied (identity first, optional slot fallback).
@@ -304,7 +313,10 @@
 - `Scrap` (`int32`, `ReplicatedUsing=OnRep_Scrap`) -> `OnScrapChanged`
 - `Meat` (`FARMeatState`, `ReplicatedUsing=OnRep_Meat`) -> `OnMeatChanged`
 - `Cycles` (`int32`, `ReplicatedUsing=OnRep_Cycles`) -> `OnCyclesChanged`
+- `ActiveFactionTag` (`FGameplayTag`, `ReplicatedUsing=OnRep_ActiveFactionTag`) -> `OnActiveFactionTagChanged`
+- `ActiveFactionEffectTags` (`FGameplayTagContainer`, `ReplicatedUsing=OnRep_ActiveFactionEffectTags`) -> `OnActiveFactionEffectTagsChanged`
 - SaveSubsystem save/hydration path now reads/writes these fields via native GameState accessors/setters (`GetUnlocks/GetMoney/GetScrap/GetMeat`, `SetUnlocksFromSave/SetMoneyFromSave/SetScrapFromSave/SetMeatFromSave`) instead of reflection-name field scans.
+- SaveSubsystem save/hydration path now also reads/writes elected faction fields via native GameState accessors/setters (`GetActiveFactionTag/GetActiveFactionEffectTags`, `SetActiveFactionTagFromSave/SetActiveFactionEffectTagsFromSave`).
 - Unlock mutation API is authority-owned on `AARGameStateBase`:
 - `AddUnlockTag(FGameplayTag)` / `RemoveUnlockTag(FGameplayTag)` / `HasUnlockTag(FGameplayTag)` plus bulk setter `SetUnlocksFromSave(...)`.
 - UI/client entrypoint is `AARPlayerController` RPC wrappers (`RequestAddUnlock`, `RequestRemoveUnlock`) which route through `ServerRequestAddUnlock/ServerRequestRemoveUnlock` to mutate authoritative GameState.
@@ -313,6 +325,8 @@
 - `bSaveOnModeExit` controls whether `TryStartTravel` persists disk save before travel.
 - `bAutosaveOnQuit` controls authority autosave-if-dirty on `EndPlay` when end reason is `Quit`.
 - Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` (carry via pending travel state without forced disk save), `AARInvaderGameMode` sets `bAutosaveOnQuit=false` (no quit autosave by default for invader runs).
+- `AARGameModeBase::TryStartTravel(...)` now has `PreStartTravel(...)` hook seam for mode-specific authority work before save/travel.
+- `AARShopGameMode::PreStartTravel(...)` finalizes faction election through `UARFactionSubsystem` before travel; travel is blocked if finalization fails.
 
 ## Player Controller UI
 

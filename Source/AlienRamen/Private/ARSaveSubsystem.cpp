@@ -108,6 +108,8 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	GameState->SetMoneyFromSave(SaveGame->Money);
 	GameState->SetScrapFromSave(SaveGame->Scrap);
 	GameState->SetMeatFromSave(SaveGame->Meat);
+	GameState->SetActiveFactionTagFromSave(SaveGame->ActiveFactionTag);
+	GameState->SetActiveFactionEffectTagsFromSave(SaveGame->ActiveFactionEffectTags);
 }
 
 }
@@ -400,6 +402,8 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->Money = GS->GetMoney();
 		SaveObject->Scrap = GS->GetScrap();
 		SaveObject->Meat = GS->GetMeat();
+		SaveObject->ActiveFactionTag = GS->GetActiveFactionTag();
+		SaveObject->ActiveFactionEffectTags = GS->GetActiveFactionEffectTags();
 	}
 
 	if (SaveObject->Unlocks.IsEmpty())
@@ -1339,6 +1343,77 @@ bool UARSaveSubsystem::FormatTimeSinceLastSave(FText& OutText) const
 void UARSaveSubsystem::MarkSaveDirty()
 {
 	bSaveDirty = true;
+}
+
+FGameplayTagContainer UARSaveSubsystem::GetProgressionTags() const
+{
+	if (!CurrentSaveGame)
+	{
+		return FGameplayTagContainer();
+	}
+
+	return CurrentSaveGame->ProgressionTags;
+}
+
+bool UARSaveSubsystem::HasProgressionTag(FGameplayTag ProgressionTag) const
+{
+	return CurrentSaveGame && ProgressionTag.IsValid() && CurrentSaveGame->ProgressionTags.HasTag(ProgressionTag);
+}
+
+bool UARSaveSubsystem::AddProgressionTag(FGameplayTag ProgressionTag)
+{
+	if (!CurrentSaveGame || !ProgressionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (CurrentSaveGame->ProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	CurrentSaveGame->ProgressionTags.AddTag(ProgressionTag);
+	MarkSaveDirty();
+	return true;
+}
+
+bool UARSaveSubsystem::RemoveProgressionTag(FGameplayTag ProgressionTag)
+{
+	if (!CurrentSaveGame || !ProgressionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (!CurrentSaveGame->ProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	CurrentSaveGame->ProgressionTags.RemoveTag(ProgressionTag);
+	MarkSaveDirty();
+	return true;
+}
+
+int32 UARSaveSubsystem::GetFactionClout() const
+{
+	return CurrentSaveGame ? FMath::Max(0, CurrentSaveGame->FactionClout) : 0;
+}
+
+void UARSaveSubsystem::SetFactionClout(int32 NewFactionClout)
+{
+	if (!CurrentSaveGame)
+	{
+		return;
+	}
+
+	const int32 Clamped = FMath::Max(0, NewFactionClout);
+	if (CurrentSaveGame->FactionClout == Clamped)
+	{
+		return;
+	}
+
+	CurrentSaveGame->FactionClout = Clamped;
+	MarkSaveDirty();
 }
 
 bool UARSaveSubsystem::RequestAutosaveIfDirty(bool bCreateNewRevision, FARSaveResult& OutResult)

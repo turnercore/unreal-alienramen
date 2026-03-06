@@ -102,6 +102,8 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, Scrap);
 	DOREPLIFETIME(AARGameStateBase, Meat);
 	DOREPLIFETIME(AARGameStateBase, Cycles);
+	DOREPLIFETIME(AARGameStateBase, ActiveFactionTag);
+	DOREPLIFETIME(AARGameStateBase, ActiveFactionEffectTags);
 }
 
 AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
@@ -392,6 +394,42 @@ void AARGameStateBase::SetMeatFromSave(const FARMeatState& NewMeat)
 	ForceNetUpdate();
 }
 
+void AARGameStateBase::SetActiveFactionTagFromSave(FGameplayTag NewActiveFactionTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (ActiveFactionTag == NewActiveFactionTag)
+	{
+		return;
+	}
+
+	const FGameplayTag OldTag = ActiveFactionTag;
+	ActiveFactionTag = NewActiveFactionTag;
+	OnRep_ActiveFactionTag(OldTag);
+	ForceNetUpdate();
+}
+
+void AARGameStateBase::SetActiveFactionEffectTagsFromSave(const FGameplayTagContainer& NewActiveFactionEffectTags)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (ActiveFactionEffectTags == NewActiveFactionEffectTags)
+	{
+		return;
+	}
+
+	const FGameplayTagContainer OldTags = ActiveFactionEffectTags;
+	ActiveFactionEffectTags = NewActiveFactionEffectTags;
+	OnRep_ActiveFactionEffectTags(OldTags);
+	ForceNetUpdate();
+}
+
 void AARGameStateBase::NotifyHydratedFromSave()
 {
 	OnHydratedFromSave.Broadcast();
@@ -420,6 +458,16 @@ void AARGameStateBase::OnRep_Scrap(int32 OldScrap)
 void AARGameStateBase::OnRep_Meat(FARMeatState OldMeat)
 {
 	OnMeatChanged.Broadcast(Meat, OldMeat);
+}
+
+void AARGameStateBase::OnRep_ActiveFactionTag(FGameplayTag OldActiveFactionTag)
+{
+	OnActiveFactionTagChanged.Broadcast(ActiveFactionTag, OldActiveFactionTag);
+}
+
+void AARGameStateBase::OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldActiveFactionEffectTags)
+{
+	OnActiveFactionEffectTagsChanged.Broadcast(ActiveFactionEffectTags, OldActiveFactionEffectTags);
 }
 
 void AARGameStateBase::BindPlayerStateSignals(AARPlayerStateBase* PlayerState)

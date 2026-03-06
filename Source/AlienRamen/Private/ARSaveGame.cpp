@@ -54,6 +54,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	ClampNonNegative(Money, TEXT("Money"));
 	ClampNonNegative(Scrap, TEXT("Scrap"));
 	ClampNonNegative(Cycles, TEXT("Cycles"));
+	ClampNonNegative(FactionClout, TEXT("FactionClout"));
 	ClampNonNegative(Meat.RedAmount, TEXT("Meat.RedAmount"));
 	ClampNonNegative(Meat.BlueAmount, TEXT("Meat.BlueAmount"));
 	ClampNonNegative(Meat.WhiteAmount, TEXT("Meat.WhiteAmount"));
@@ -68,6 +69,47 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 	{
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
+	}
+
+	TSet<FGameplayTag> SeenFactions;
+	for (int32 Index = FactionPopularityStates.Num() - 1; Index >= 0; --Index)
+	{
+		FARFactionRuntimeState& State = FactionPopularityStates[Index];
+		if (!State.FactionTag.IsValid())
+		{
+			FactionPopularityStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(TEXT("FactionPopularityStates contained an invalid FactionTag and was removed."));
+			}
+			continue;
+		}
+
+		if (SeenFactions.Contains(State.FactionTag))
+		{
+			FactionPopularityStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(TEXT("FactionPopularityStates contained duplicate FactionTag entries and extras were removed."));
+			}
+			continue;
+		}
+
+		SeenFactions.Add(State.FactionTag);
+	}
+
+	if (ActiveFactionTag.IsValid() && !SeenFactions.Contains(ActiveFactionTag))
+	{
+		FARFactionRuntimeState ActiveEntry;
+		ActiveEntry.FactionTag = ActiveFactionTag;
+		FactionPopularityStates.Add(ActiveEntry);
+		++ClampedCount;
+		if (OutWarnings)
+		{
+			OutWarnings->Add(TEXT("ActiveFactionTag was missing from FactionPopularityStates and was auto-added."));
+		}
 	}
 
 	if (SaveSlotNumber < 0)
