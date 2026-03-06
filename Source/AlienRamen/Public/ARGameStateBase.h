@@ -64,6 +64,18 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	NewCycles,
 	int32,
 	OldCycles);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnActiveFactionTagChangedSignature,
+	FGameplayTag,
+	NewActiveFactionTag,
+	FGameplayTag,
+	OldActiveFactionTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnActiveFactionEffectTagsChangedSignature,
+	FGameplayTagContainer,
+	NewActiveFactionEffectTags,
+	FGameplayTagContainer,
+	OldActiveFactionEffectTags);
 
 /**
  * Server-authoritative game state for Alien Ramen.
@@ -132,6 +144,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnCyclesChangedSignature OnCyclesChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Faction")
+	FAROnActiveFactionTagChangedSignature OnActiveFactionTagChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Faction")
+	FAROnActiveFactionEffectTagsChangedSignature OnActiveFactionEffectTagsChanged;
+
 	/** Runtime mirror of save-owned cycles; authority-only setter. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SyncCyclesFromSave(int32 NewCycles);
@@ -150,6 +168,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	int32 GetCycles() const { return Cycles; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
+	FGameplayTag GetActiveFactionTag() const { return ActiveFactionTag; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
+	const FGameplayTagContainer& GetActiveFactionEffectTags() const { return ActiveFactionEffectTags; }
 
 	/** Replaces unlock container from save data and broadcasts change. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
@@ -177,6 +201,14 @@ public:
 	/** Writes meat state from save/runtime and notifies listeners. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetMeatFromSave(const FARMeatState& NewMeat);
+
+	/** Writes elected faction identity from save/runtime and notifies listeners. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction", meta = (BlueprintAuthorityOnly))
+	void SetActiveFactionTagFromSave(FGameplayTag NewActiveFactionTag);
+
+	/** Writes elected faction effect tags from save/runtime and notifies listeners. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction", meta = (BlueprintAuthorityOnly))
+	void SetActiveFactionEffectTagsFromSave(const FGameplayTagContainer& NewActiveFactionEffectTags);
 
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
@@ -217,6 +249,12 @@ protected:
 	UFUNCTION()
 	void OnRep_Meat(FARMeatState OldMeat);
 
+	UFUNCTION()
+	void OnRep_ActiveFactionTag(FGameplayTag OldActiveFactionTag);
+
+	UFUNCTION()
+	void OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldActiveFactionEffectTags);
+
 	void BindPlayerStateSignals(AARPlayerStateBase* PlayerState);
 	void UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState);
 	bool ComputeAllPlayersTravelReady() const;
@@ -239,4 +277,10 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Cycles, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 Cycles = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ActiveFactionTag, BlueprintReadOnly, Category = "Alien Ramen|Faction")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ActiveFactionEffectTags, BlueprintReadOnly, Category = "Alien Ramen|Faction")
+	FGameplayTagContainer ActiveFactionEffectTags;
 };
