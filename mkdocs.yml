@@ -11,7 +11,10 @@ nav:
   - GAS:
       - GAS Overview: README_GAS.md
       - GAS Blueprint Attributes: README_GAS_Blueprint_Attributes.md
+  - Session System: README_SessionSubsystem.md
+  - Faction System: README_FactionSubsystem.md
   - Save System: README_SaveSubsystem.md
+  - Progression & Unlocks: README_ProgressionUnlocks.md
   - Dialogue & NPC: README_DialogueNPC.md
   - C++ Overview:
       - Overview: CppOverview/README.md

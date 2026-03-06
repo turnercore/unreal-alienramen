@@ -33,6 +33,11 @@
 ## Documentation & Tooling
 
 - MkDocs + Material lives at root `mkdocs.yml` with `docs_dir=Documentation`; existing Markdown in `Documentation/` is the site content.
+- Runtime subsystem docs now include:
+  - `Documentation/README_SessionSubsystem.md` (session/online subsystem runtime contracts)
+  - `Documentation/README_FactionSubsystem.md` (faction election runtime contracts)
+  - `Documentation/README_DialogueNPC.md` (dialogue + NPC runtime contracts)
+  - `Documentation/README_ProgressionUnlocks.md` (progression-tag vs unlock-tag ownership/mutation/integration contracts)
 - Doxygen config is `Doxyfile` (Unreal macro predefs; INPUT=Source; OUTPUT_DIRECTORY=Documentation/doxygen); plugin-run Doxygen is expected to be available on docs builds.
 - Docs Python deps are pinned in `requirements-docs.txt` (includes `mkdocs-doxygen-plugin` installed from `pieterdavid/mkdocs-doxygen-plugin` GitHub).
 - CI publishes docs to `gh-pages` via `.github/workflows/docs.yml` (runs on push to `main`/`master` and `workflow_dispatch`; installs `doxygen` + `graphviz`, then `mkdocs gh-deploy --force` with `GITHUB_TOKEN`).
@@ -48,6 +53,13 @@
 - Shared player enum surface (`EARPlayerSlot`, `EARCharacterChoice`, `EARCoreAttributeType`) now lives in `Source/AlienRamen/Public/ARPlayerTypes.h`; this decouples save/core headers from `ARPlayerStateBase.h` include dependency.
 - Shared gameplay color enum surface now lives in `Source/AlienRamen/Public/ARColorTypes.h` as `EARAffinityColor` (single source used by enemy/player/spicy systems).
 - `UARGameInstance` exposes `GetARSaveSubsystem()` and Blueprint lifecycle extension hooks:
+  - `BP_OnARGameInstanceInitialized`
+  - `BP_OnARGameInstanceShutdown`
+- `UARGameInstance` also exposes `GetARSessionSubsystem()`; `UARSessionSubsystem` (`Source/AlienRamen/Public/ARSessionSubsystem.h`) is the runtime owner for native OSS session lifecycle (ensure host/find/join/destroy/refresh) and local couch-coop join requests.
+- `UARSessionSubsystem` backend selection is config-driven for non-LAN flow: it prefers the current default online subsystem when that backend is non-null (for example Steam/EOS/Xbox), falls back to Steam when default is null but Steam is available, and finally uses default/null fallback.
+- Blueprint contract for networking should remain subsystem-based (`UARSessionSubsystem`) so backend expansion (Steam/EOS/Xbox/etc.) is primarily config/plugin/auth work; avoid backend-specific BP session node dependencies in gameplay/menu flows.
+- Network user preference settings now include `UARNetworkUserSettings` (`Config=GameUserSettings`) with `bStayOffline` runtime gate; when enabled it blocks host/find/join/advertise and best-effort destroys active advertised sessions. Full Steam deactivation may still require restart.
+- `UARNetworkUserSettings` defaults are seeded in `Config/DefaultGameUserSettings.ini`; per-user runtime overrides persist to platform Saved config (`Saved/Config/<Platform>/GameUserSettings.ini`).
     - `BP_OnARGameInstanceInitialized`
     - `BP_OnARGameInstanceShutdown`
 - `UARGameInstance` network protocol session helpers that take online session structs (`ApplyARProtocolSessionSetting`, `GetARProtocolFromSession`) are C++-only (not Blueprint-reflected) because their parameter types are not UHT-reflectable.
@@ -243,13 +255,14 @@
 - `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
 - write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
 - load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
-- Current save schema is `v5`; minimum supported is also `v5` (no legacy migration path kept in pre-production).
+- Current save schema is `v6`; minimum supported is also `v6` (no legacy migration path kept in pre-production).
 - `UARSaveGame` persists disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `ProgressionTags`, `FactionClout`, `ActiveFactionTag`, `ActiveFactionEffectTags`, `FactionPopularityStates`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`, `NpcRelationshipStates`, `DialogueCanonicalChoiceStates`, `PlayerDialogueHistoryStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
 - `FARMeatState` uses replication-safe typed entries (`TArray<FARMeatTypeAmount>`) for extensible meat types instead of a `TMap`; normalization merges duplicate tags, drops invalid/zero entries, and keeps deterministic tag-sort order.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
 - `FindPlayerStateDataBySlot(...)`
 - `FindPlayerStateDataByIdentity(...)`
-- Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString`, with legacy id/display name fields).
+- Save identity is hybrid via `FARPlayerIdentity` (`PlayerSlot` + optional `UniqueNetIdString` + optional `UniqueNetIdType`, with legacy id/display name fields).
+- Identity lookup preference: when multiple saved rows share the same online identity (for example local couch players under one Steam account), `FindPlayerStateDataByIdentity(...)` prefers the row matching the requester's `PlayerSlot`.
 - Save player payload now stores native `CharacterPicked` enum (`EARCharacterChoice`) in `FARPlayerStateSaveData` (not string/name reflection).
 - Player save payload is explicit-only (no embedded player `FInstancedStruct` blob): `Identity`, `CharacterPicked`, and `LoadoutTags` are the canonical persisted player fields.
 - Save runtime keeps revisioned physical slot naming (`<SlotBase>__<Revision>`). Load path includes rollback behavior: if requested/latest revision fails to deserialize, older revisions are attempted in descending order.
@@ -287,7 +300,8 @@
     - `GetFactionClout`, `SetFactionClout`
 - Save hydration entrypoints enforce authority on requesters:
 - `RequestGameStateHydration` ignores non-authority requesters (verbose log) to preserve server-authoritative state mutation.
-- `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied (identity first, optional slot fallback).
+- `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)` returns whether a matching player row was found/applied.
+- Hydration identity policy: strict online identities (non-null provider + unique id, e.g. Steam) require exact identity match and do not slot-fallback; slot fallback is only allowed for local-only identities (PIE/offline/null-style).
 - PlayerState hydration no longer applies blank/default `FARPlayerStateSaveData` when no match exists (no accidental clobber of character/display/loadout on misses).
 - Client-join save parity handshake is controller-initiated and subsystem-served:
 - local non-authority `AARPlayerController::BeginPlay` sends `ServerRequestCanonicalSaveSync()`
@@ -296,7 +310,8 @@
 - if a join request arrives before the server has a current save, subsystem queues that controller request and flushes it automatically after the next successful load/save sets `CurrentSaveGame`
 - Player-controller session leave API is native on `AARPlayerController`:
 - `LeaveSession()` is BP-callable (`Alien Ramen|Session`) and routes client calls to `ServerLeaveSession()`
-- server leave handling calls `UGameInstance::ReturnToMainMenu()` through the requesting controller context.
+- remote-client leave requests now only return that specific client to main menu (`ClientReturnToMainMenuWithTextReason`) and do not collapse the host session.
+- host/standalone leave path performs best-effort autosave-if-dirty except while active mode tag is `Mode.Invader`, then calls `UGameInstance::ReturnToMainMenu()`.
 - Save subsystem utility accessors now expose current runtime save identity without BP class-casting: `HasCurrentSave()`, `GetCurrentSlotBaseName()`, `GetCurrentSlotRevision()`.
 - Travel API now supports PIE-specific isolation on the controller/GameMode travel call chain: `AARPlayerController::TryStartTravel(..., bUseOpenLevelInPIE)` forwards to `AARGameModeBase::TryStartTravel(..., bUseOpenLevelInPIE)`. When enabled and running in `EWorldType::PIE`, travel uses `UARSaveSubsystem::RequestOpenLevel` instead of `RequestServerTravel`, avoiding PIE server-travel behavior for this call path while preserving normal runtime server-travel semantics when the flag is false.
 - Travel save policy is now opt-in per mode via `bSaveOnModeExit` (default true; Lobby overrides to false). `TryStartTravel` threads that flag into `RequestServerTravel`/`RequestOpenLevel`; when a disk save executes, the pending travel overlay is cleared, otherwise the overlay carries forward into the next map hydration.
@@ -311,6 +326,9 @@
 
 ## GameMode/GameState Player Lifecycle
 
+- `AARGameModeBase::PreLogin(...)` enforces the global 2-player cap server-authoritatively; when two AR player states already exist, additional incoming connections are rejected (`Server full.`).
+- `AARGameModeBase::PreLogin(...)` also enforces runtime offline policy: when `UARNetworkUserSettings::bStayOffline` is true, online-identity joins are rejected (`Server is offline.`) while local/null-id couch join flow remains allowed.
+- `AARGameModeBase` refreshes advertised session joinability on player join/leave through `UARSessionSubsystem::RefreshJoinability(...)`, so open online seats stay aligned with authoritative `PlayerArray` occupancy.
 - `AARGameModeBase::HandleStartingNewPlayer_Implementation` owns authority-side join flow:
 - resolves joined `AARPlayerStateBase`
 - if `bIsSetup==false` (first session join, not seamless-travel copy), runs C++ first-join setup:

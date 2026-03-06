@@ -23,6 +23,7 @@ class ALIENRAMEN_API AARGameModeBase : public AGameModeBase
 
 public:
 	AARGameModeBase();
+	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
 	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
