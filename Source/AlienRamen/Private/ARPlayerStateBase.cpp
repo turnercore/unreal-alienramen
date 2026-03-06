@@ -504,9 +504,10 @@ bool AARPlayerStateBase::HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) con
 
 void AARPlayerStateBase::SetPredictedSpiceValue(const float NewPredictedSpice)
 {
+	const float OldDisplayed = bHasPredictedSpiceValue ? PredictedSpiceValue : GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	PredictedSpiceValue = FMath::Max(0.0f, NewPredictedSpice);
 	bHasPredictedSpiceValue = true;
-	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+	OnSpiceChanged.Broadcast(this, PlayerSlot, PredictedSpiceValue, OldDisplayed);
 }
 
 void AARPlayerStateBase::ClearPredictedSpiceValue()
@@ -516,9 +517,11 @@ void AARPlayerStateBase::ClearPredictedSpiceValue()
 		return;
 	}
 
+	const float OldPredicted = PredictedSpiceValue;
+	const float AuthoritativeSpice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	bHasPredictedSpiceValue = false;
-	PredictedSpiceValue = 0.0f;
-	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+	PredictedSpiceValue = AuthoritativeSpice;
+	OnSpiceChanged.Broadcast(this, PlayerSlot, AuthoritativeSpice, OldPredicted);
 }
 
 int32 AARPlayerStateBase::GetEffectiveSpicyTrackCursorTier() const
@@ -592,12 +595,10 @@ void AARPlayerStateBase::ResetSpicyTrackCursor()
 
 void AARPlayerStateBase::SetPredictedSpicyTrackCursorTier(const int32 NewPredictedCursorTier)
 {
+	const int32 OldDisplayedCursorTier = bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : SpicyTrackCursorTier;
 	PredictedSpicyTrackCursorTier = ClampSpicyTrackCursorTier(NewPredictedCursorTier);
 	bHasPredictedSpicyTrackCursorTier = true;
-	OnPredictedSpicyTrackCursorChanged.Broadcast(
-		PredictedSpicyTrackCursorTier,
-		SpicyTrackCursorTier,
-		bHasPredictedSpicyTrackCursorTier);
+	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, PredictedSpicyTrackCursorTier, OldDisplayedCursorTier);
 }
 
 void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
@@ -608,11 +609,7 @@ void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
 	}
 
 	bHasPredictedSpicyTrackCursorTier = false;
-	PredictedSpicyTrackCursorTier = 0;
-	OnPredictedSpicyTrackCursorChanged.Broadcast(
-		PredictedSpicyTrackCursorTier,
-		SpicyTrackCursorTier,
-		bHasPredictedSpicyTrackCursorTier);
+	PredictedSpicyTrackCursorTier = SpicyTrackCursorTier;
 }
 
 void AARPlayerStateBase::BeginPlay()
@@ -695,12 +692,18 @@ void AARPlayerStateBase::OnRep_IsSharingSpice(bool bOldIsSharingSpice)
 
 void AARPlayerStateBase::OnRep_SpicyTrackCursorTier(int32 OldCursorTier)
 {
-	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldCursorTier);
 	if (bHasPredictedSpicyTrackCursorTier)
 	{
-		// Authoritative value arrived; clear local prediction to avoid stale cursor overlays.
+		const int32 OldPredictedCursorTier = PredictedSpicyTrackCursorTier;
 		ClearPredictedSpicyTrackCursorTier();
+		if (OldPredictedCursorTier != SpicyTrackCursorTier)
+		{
+			OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldPredictedCursorTier);
+		}
+		return;
 	}
+
+	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldCursorTier);
 }
 
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
@@ -1472,14 +1475,6 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
 	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, SpicyTrackCursorTier);
-	if (bHasPredictedSpiceValue)
-	{
-		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, Snapshot.Spice, true);
-	}
-	if (bHasPredictedSpicyTrackCursorTier)
-	{
-		OnPredictedSpicyTrackCursorChanged.Broadcast(PredictedSpicyTrackCursorTier, SpicyTrackCursorTier, true);
-	}
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -1500,10 +1495,8 @@ void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeDat
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
 	OnSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
-	if (bHasPredictedSpiceValue)
-	{
-		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, ChangeData.NewValue, true);
-	}
+	bHasPredictedSpiceValue = false;
+	PredictedSpiceValue = ChangeData.NewValue;
 
 	if (HasAuthority())
 	{

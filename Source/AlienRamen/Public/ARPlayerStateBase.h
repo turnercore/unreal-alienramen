@@ -147,10 +147,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSignature, EARAffinityColor, NewColor, EARAffinityColor, OldColor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCombo, int32, OldCombo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnPredictedSpiceChangedSignature, float, PredictedSpiceValue, float, AuthoritativeSpiceValue, bool, bHasPrediction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpiceSharingStateChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, bool, bIsSharingNow, bool, bWasSharingBefore);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpicyTrackCursorChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCursorTier, int32, OldCursorTier);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnPredictedSpicyTrackCursorChangedSignature, int32, PredictedCursorTier, int32, AuthoritativeCursorTier, bool, bHasPrediction);
 
 /**
  * PlayerState backbone for Alien Ramen.
@@ -454,14 +452,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
 	FAROnSpiceSharingStateChangedSignature OnSpiceSharingStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
-	FAROnPredictedSpiceChangedSignature OnPredictedSpiceChanged;
-
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Cursor")
 	FAROnSpicyTrackCursorChangedSignature OnSpicyTrackCursorChanged;
-
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
-	FAROnPredictedSpicyTrackCursorChangedSignature OnPredictedSpicyTrackCursorChanged;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
