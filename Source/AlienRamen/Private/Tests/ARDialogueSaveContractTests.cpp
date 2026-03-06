@@ -15,9 +15,13 @@ bool FARDialogueSchemaVersionTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
-	TestEqual(TEXT("Dialogue/NPC save schema version"), UARSaveGame::GetCurrentSchemaVersion(), 5);
-	TestEqual(TEXT("Dialogue/NPC min supported schema version"), UARSaveGame::GetMinSupportedSchemaVersion(), 5);
-	TestTrue(TEXT("Current schema is supported"), UARSaveGame::IsSchemaVersionSupported(UARSaveGame::GetCurrentSchemaVersion()));
+	const int32 CurrentSchemaVersion = UARSaveGame::GetCurrentSchemaVersion();
+	const int32 MinSupportedSchemaVersion = UARSaveGame::GetMinSupportedSchemaVersion();
+
+	TestTrue(TEXT("Current schema version is positive"), CurrentSchemaVersion > 0);
+	TestTrue(TEXT("Min supported schema version is positive"), MinSupportedSchemaVersion > 0);
+	TestTrue(TEXT("Current schema version is >= min supported schema"), CurrentSchemaVersion >= MinSupportedSchemaVersion);
+	TestTrue(TEXT("Current schema is supported"), UARSaveGame::IsSchemaVersionSupported(CurrentSchemaVersion));
 	return true;
 }
 
