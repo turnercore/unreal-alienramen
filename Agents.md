@@ -82,6 +82,7 @@
 - dialogue subsystem: `UARDialogueSubsystem` (`Source/AlienRamen/Public/ARDialogueSubsystem.h`) owns authoritative dialogue sessions, choice resolution, Shop eavesdrop, and mode-specific shared vs per-player policy.
 - NPC subsystem: `UARNPCSubsystem` (`Source/AlienRamen/Public/ARNPCSubsystem.h`) owns persistent NPC relationship/want state and talkable-state refresh.
 - native NPC world actor base: `AARNPCCharacterBase` (`Source/AlienRamen/Public/ARNPCCharacterBase.h`) exposes server interaction entrypoint and replicated `bIsTalkable`.
+- Runtime isolation contract: dialogue session/eavesdrop caches and NPC talkable caches are subsystem-instance-owned (no translation-unit static shared runtime state), so multi-PIE/multi-GameInstance runs do not leak state across instances.
 - Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
 - Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
 
