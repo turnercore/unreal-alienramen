@@ -108,6 +108,40 @@ void AARPlayerController::LeaveSessionInternal()
 {
 	UE_LOG(ARLog, Log, TEXT("[Session] LeaveSession requested by controller '%s' (Authority=%d)."), *GetNameSafe(this), HasAuthority() ? 1 : 0);
 
+	// Remote client leave requests are executed on the server controller instance for that client.
+	// Only return that specific client to menu; do not collapse the host session.
+	if (HasAuthority() && !IsLocalController())
+	{
+		ClientReturnToMainMenuWithTextReason(FText::FromString(TEXT("Leaving session")));
+		return;
+	}
+
+	// Host/standalone leave path: best-effort autosave if dirty, except while actively in invader mode.
+	if (HasAuthority())
+	{
+		if (AARGameModeBase* ARGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AARGameModeBase>() : nullptr)
+		{
+			const FGameplayTag InvaderModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Invader"), false);
+			const bool bInInvaderMode = InvaderModeTag.IsValid() && ARGameMode->GetModeTag().MatchesTagExact(InvaderModeTag);
+			if (!bInInvaderMode)
+			{
+				if (UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr)
+				{
+					FARSaveResult SaveResult;
+					const bool bSaved = SaveSubsystem->RequestAutosaveIfDirty(true, SaveResult);
+					if (bSaved)
+					{
+						UE_LOG(ARLog, Log, TEXT("[Session] LeaveSession autosave succeeded (Slot=%s Rev=%d)."), *SaveResult.SlotName.ToString(), SaveResult.SlotNumber);
+					}
+					else if (!SaveResult.Error.IsEmpty())
+					{
+						UE_LOG(ARLog, Verbose, TEXT("[Session] LeaveSession autosave skipped/failed: %s"), *SaveResult.Error);
+					}
+				}
+			}
+		}
+	}
+
 	if (UGameInstance* GI = GetGameInstance())
 	{
 		GI->ReturnToMainMenu();

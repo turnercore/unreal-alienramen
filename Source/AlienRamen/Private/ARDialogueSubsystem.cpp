@@ -250,6 +250,7 @@ static FARPlayerIdentity BuildPlayerIdentityFromState(const AARPlayerStateBase* 
 	if (PS->GetUniqueId().IsValid())
 	{
 		Identity.UniqueNetIdString = PS->GetUniqueId()->ToString();
+		Identity.UniqueNetIdType = PS->GetUniqueId()->GetType().ToString();
 	}
 	return Identity;
 }

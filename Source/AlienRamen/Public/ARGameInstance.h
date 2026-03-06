@@ -9,6 +9,7 @@
 #include "ARGameInstance.generated.h"
 
 class UARSaveSubsystem;
+class UARSessionSubsystem;
 class FOnlineSessionSettings;
 class FOnlineSessionSearchResult;
 
@@ -24,6 +25,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
 	UARSaveSubsystem* GetARSaveSubsystem() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
+	UARSessionSubsystem* GetARSessionSubsystem() const;
 
 	// ---- Network compatibility helpers ----
 
