@@ -75,6 +75,13 @@
 - shared type surface: `Source/AlienRamen/Public/ARFactionTypes.h`
 - settings: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Factions`) with `FactionDefinitionRootTag` (default config now `Faction.Definition`)
 - subsystem: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`) for candidate generation, transient vote capture, and travel-time winner finalization.
+- Native dialogue + NPC runtime now exists:
+- shared dialogue/NPC types: `Source/AlienRamen/Public/ARDialogueTypes.h`
+- dialogue settings: `UARDialogueSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Dialogue`) with root/policy tags (defaults: `Dialogue.Node`, shared modes `Mode.Invader`+`Mode.Scrapyard`, per-player mode `Mode.Shop`, pause-on-dialogue mode `Mode.Invader`)
+- NPC settings: `UARNPCSettings` (`Project Settings -> Alien Ramen -> Alien Ramen NPC`) with `NpcDefinitionRootTag` (default `Npc.Definition`)
+- dialogue subsystem: `UARDialogueSubsystem` (`Source/AlienRamen/Public/ARDialogueSubsystem.h`) owns authoritative dialogue sessions, choice resolution, Shop eavesdrop, and mode-specific shared vs per-player policy.
+- NPC subsystem: `UARNPCSubsystem` (`Source/AlienRamen/Public/ARNPCSubsystem.h`) owns persistent NPC relationship/want state and talkable-state refresh.
+- native NPC world actor base: `AARNPCCharacterBase` (`Source/AlienRamen/Public/ARNPCCharacterBase.h`) exposes server interaction entrypoint and replicated `bIsTalkable`.
 - Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
 - Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
 
@@ -92,6 +99,23 @@
 
 - Use this section for critical contracts that are only visible in Blueprint assets (for example required struct variables, tag containers, save schema expectations, or BP-only lifecycle dependencies).
 - If a C++ system depends on BP-only data shape, document the minimum required fields here.
+
+## Dialogue + NPC Runtime Contract
+
+- Authority model: dialogue session creation/advance/choice/eavesdrop mutations are server-authoritative via `UARDialogueSubsystem`; client UI submits through `AARPlayerController` server RPC entrypoints (`RequestStartDialogue`, `RequestAdvanceDialogue`, `RequestSubmitDialogueChoice`, `RequestSetDialogueEavesdrop`).
+- Mode policy:
+- `Mode.Invader` and `Mode.Scrapyard` use one shared global dialogue session (single active shared session).
+- `Mode.Shop` uses per-player sessions; eavesdrop can subscribe a partner as mirrored co-pilot.
+- Pause policy: shared dialogue pauses the world only in modes tagged by `UARDialogueSettings::PauseOnDialogueModeTags` (default `Mode.Invader`), and unpauses on session end.
+- Seen-history policy: only the active speaker (session initiator driving node progression) gets seen-node credit; passive viewers/eavesdroppers do not.
+- Choice policy:
+- node-level participation mode is `InitiatorOnly` or `GroupChoice`.
+- canonical branch outcome is global-per-node and persisted once.
+- group-choice conflict tie-break is currently initiator-wins.
+- important decision hook: node flag `bForceEavesdropForImportantDecision` forces partner view subscription in Shop and server-locks choice submission until all slotted players are viewing.
+- NPC progression policy: relationship/love and want satisfaction are global per save (not per-player). `SubmitNpcRamenDelivery(...)` only applies when delivered ramen tag matches current want.
+- Talkable policy: NPC talkable state is computed from dialogue unlock availability (`HasUnlockedDialogueForNpcForAnyPlayer`) and replicated to world NPC actors via `AARNPCCharacterBase::bIsTalkable`.
+- Content authoring source: dialogue and NPC definitions are tag-keyed DataTable rows resolved through `UContentLookupSubsystem` roots (`Dialogue.Node`, `Npc.Definition`).
 
 ## GAS Runtime Contract
 
@@ -218,8 +242,8 @@
 - `UARSaveGame::MinSupportedSchemaVersion` (manual support floor for migrations)
 - write paths stamp `SaveGameVersion` from `UARSaveGame::GetCurrentSchemaVersion()`.
 - load path rejects unsupported versions and warns when loading older-but-supported versions (migration hook point).
-- Current save schema is `v4`; minimum supported is also `v4` (no legacy migration path kept in pre-production).
-- `UARSaveGame` persists disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `ProgressionTags`, `FactionClout`, `ActiveFactionTag`, `ActiveFactionEffectTags`, `FactionPopularityStates`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
+- Current save schema is `v5`; minimum supported is also `v5` (no legacy migration path kept in pre-production).
+- `UARSaveGame` persists disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `ProgressionTags`, `FactionClout`, `ActiveFactionTag`, `ActiveFactionEffectTags`, `FactionPopularityStates`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`, `NpcRelationshipStates`, `DialogueCanonicalChoiceStates`, `PlayerDialogueHistoryStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
 - `FARMeatState` uses replication-safe typed entries (`TArray<FARMeatTypeAmount>`) for extensible meat types instead of a `TMap`; normalization merges duplicate tags, drops invalid/zero entries, and keeps deterministic tag-sort order.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
 - `FindPlayerStateDataBySlot(...)`

@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "ARDialogueTypes.h"
 #include "ARFactionTypes.h"
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
@@ -17,8 +18,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 4;
-	static constexpr int32 MinSupportedSchemaVersion = 4;
+	static constexpr int32 CurrentSchemaVersion = 5;
+	static constexpr int32 MinSupportedSchemaVersion = 5;
 
 	UARSaveGame();
 
@@ -82,6 +83,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	TArray<FARPlayerStateSaveData> PlayerStates;
+
+	// Global per-NPC relationship state and wants.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|NPC")
+	TArray<FARNpcRelationshipState> NpcRelationshipStates;
+
+	// Canonical branch outcomes for choice nodes.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
+	TArray<FARDialogueCanonicalChoiceState> DialogueCanonicalChoiceStates;
+
+	// Per-player node seen history.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
+	TArray<FARPlayerDialogueHistoryState> PlayerDialogueHistoryStates;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataBySlot(EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const;
