@@ -7,8 +7,8 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Primary runtime API: `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`)
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
-- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`
-- Save schema version is `v3`; minimum supported is also `v3`.
+- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`, `FARNpcRelationshipState`, `FARDialogueCanonicalChoiceState`, `FARPlayerDialogueHistoryState`
+- Save schema version is `v5`; minimum supported is also `v5`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 
 The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
