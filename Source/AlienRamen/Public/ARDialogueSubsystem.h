@@ -49,4 +49,26 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
 	FAROnDialogueSessionEnded OnDialogueSessionEnded;
+
+	struct FARActiveDialogueSession
+	{
+		FString SessionId;
+		FGameplayTag NpcTag;
+		FGameplayTag CurrentNodeTag;
+		EARPlayerSlot InitiatorSlot = EARPlayerSlot::Unknown;
+		EARPlayerSlot OwnerSlot = EARPlayerSlot::Unknown;
+		bool bIsSharedSession = false;
+		bool bWaitingForChoice = false;
+		EARDialogueChoiceParticipation ChoiceParticipation = EARDialogueChoiceParticipation::InitiatorOnly;
+		bool bForceEavesdropForImportantDecision = false;
+		TArray<FARDialogueChoiceDef> CurrentChoices;
+		TMap<EARPlayerSlot, FGameplayTag> ChoiceVotes;
+		TSet<EARPlayerSlot> Participants;
+		FARDialogueNodeRow ActiveRow;
+	};
+
+private:
+	TArray<FARActiveDialogueSession> ActiveSessions;
+
+	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
 };

@@ -36,4 +36,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC")
 	FAROnNpcTalkableChanged OnNpcTalkableChanged;
+
+private:
+	UPROPERTY(Transient)
+	TMap<FGameplayTag, bool> NpcTalkableCache;
 };
