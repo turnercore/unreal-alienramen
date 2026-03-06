@@ -74,6 +74,15 @@ struct ALIENRAMEN_API FARInvaderUpgradeDefRow : public FTableRowBase
 	// Player-level prerequisites for activation eligibility.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Eligibility")
 	FGameplayTagContainer RequiredActivatedUpgradesForActivation;
+
+	// Finite number of times this slotted upgrade can be activated before it is consumed.
+	// Ignored when bInfiniteActivationUses is true.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation", meta = (ClampMin = "1"))
+	int32 MaxActivationUses = 1;
+
+	// When true, slot activations never consume/remove this upgrade from the track.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation")
+	bool bInfiniteActivationUses = false;
 };
 
 USTRUCT(BlueprintType)
@@ -93,6 +102,14 @@ struct ALIENRAMEN_API FARInvaderTrackSlotState
 	// True once a player has actually activated this slotted upgrade.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
 	bool bHasBeenActivated = false;
+
+	// Remaining finite activations for this slot. Ignored when bInfiniteUses is true.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	int32 RemainingActivationUses = 1;
+
+	// If true, this slot never consumes activations and never auto-removes from use count.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	bool bInfiniteUses = false;
 };
 
 USTRUCT(BlueprintType)

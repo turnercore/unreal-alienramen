@@ -40,6 +40,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	int32 GetSharedMaxSpice() const;
 
+	// Returns the highest currently selectable spicy-track cursor tier for the player.
+	// Tier 0 is always valid (no slotted upgrade selected); tiers >=1 require both
+	// sufficient spice and a valid slotted upgrade at that tier.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	int32 GetMaxSelectableTrackCursorTierForPlayer(const AARPlayerStateBase* PlayerState) const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	const FARInvaderFullBlastSessionState& GetFullBlastSession() const { return FullBlastSession; }
 
