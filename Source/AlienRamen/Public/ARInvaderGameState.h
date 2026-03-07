@@ -37,6 +37,24 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	const TArray<FARInvaderTrackSlotState>& GetSharedTrackSlots() const { return SharedTrackSlots; }
 
+	// Returns localized upgrade display names in slot order (index 0 = slot 1).
+	// Empty text indicates an unoccupied slot or unresolved upgrade definition.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	void GetSharedTrackUpgradeDisplayNames(TArray<FText>& OutDisplayNames) const;
+
+	// Returns localized display name for one slot (1-based index). Returns empty text when unresolved.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	FText GetSharedTrackUpgradeDisplayNameAtSlot(int32 SlotIndex) const;
+
+	// Returns convenience UI data in slot order.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	void GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrackSlotDisplayState>& OutSlots) const;
+
+	// Returns 0-based index for placing "Full Blast" text in tier UI lanes (excluding the 0-99 empty lane).
+	// Example: tier 1 -> index 0, tier 3 -> index 2.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	int32 GetFullBlastDisplayIndex() const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	int32 GetSharedFullBlastTier() const { return SharedFullBlastTier; }
 
@@ -44,8 +62,9 @@ public:
 	int32 GetSharedMaxSpice() const;
 
 	// Returns the highest currently selectable spicy-track cursor tier for the player.
-	// Tier 0 is always valid (no slotted upgrade selected); tiers >=1 require both
-	// sufficient spice and a valid slotted upgrade at that tier.
+	// Tier 0 is always valid (no selection). Tiers >=1 require sufficient spice and:
+	// - track upgrade tiers (1..SharedFullBlastTier-1): a valid slotted upgrade at that tier
+	// - full blast tier (SharedFullBlastTier): full blast activation is affordable
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	int32 GetMaxSelectableTrackCursorTierForPlayer(const AARPlayerStateBase* PlayerState) const;
 
@@ -201,7 +220,6 @@ private:
 	void TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateBase* KillerPlayerState);
 	float RollDropAmountWithVariance(float BaseDropAmount, EARInvaderDropType DropType) const;
 	float ResolveKillerDropMultiplier(const AARPlayerStateBase* KillerPlayerState, EARInvaderDropType DropType) const;
-	TSubclassOf<AARInvaderDropBase> ResolveDropClass(EARInvaderDropType DropType) const;
 	void ResolveDropStackDefinitions(EARInvaderDropType DropType, TArray<FResolvedDropStackEntry>& OutDefinitions) const;
 	bool BuildDropSpawnPlan(EARInvaderDropType DropType, int32 TotalAmount, TArray<FDropSpawnPlanEntry>& OutPlan) const;
 	float ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy) const;

@@ -1,15 +1,247 @@
 #include "ARInvaderPlayerController.h"
 
+#include "ARInvaderFullBlastMenuWidget.h"
 #include "ARInvaderGameState.h"
+#include "ARInvaderSpicyTrackSettings.h"
+#include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ContentLookupSubsystem.h"
+#include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
+#include "TimerManager.h"
 
 AARInvaderPlayerController::AARInvaderPlayerController()
 {
 }
 
+void AARInvaderPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	TryBindInvaderGameState();
+}
+
+void AARInvaderPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	StopBindInvaderGameStateRetry();
+
+	if (AARInvaderGameState* BoundGameState = BoundInvaderGameState.Get())
+	{
+		BoundGameState->OnInvaderFullBlastSessionChanged.RemoveDynamic(this, &AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged);
+	}
+	BoundInvaderGameState.Reset();
+
+	CloseFullBlastMenu();
+	Super::EndPlay(EndPlayReason);
+}
+
 AARPlayerStateBase* AARInvaderPlayerController::GetInvaderPlayerState() const
 {
 	return GetPlayerState<AARPlayerStateBase>();
+}
+
+void AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged(const bool /*bIsActive*/)
+{
+	SyncFullBlastMenuFromGameState();
+}
+
+void AARInvaderPlayerController::TryBindInvaderGameState()
+{
+	AARInvaderGameState* CurrentGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr;
+	if (!CurrentGameState)
+	{
+		if (!BindInvaderGameStateRetryTimer.IsValid())
+		{
+			GetWorldTimerManager().SetTimer(
+				BindInvaderGameStateRetryTimer,
+				this,
+				&AARInvaderPlayerController::TryBindInvaderGameState,
+				0.25f,
+				true);
+		}
+		return;
+	}
+
+	if (BoundInvaderGameState.Get() == CurrentGameState)
+	{
+		StopBindInvaderGameStateRetry();
+		SyncFullBlastMenuFromGameState();
+		return;
+	}
+
+	if (AARInvaderGameState* PreviousGameState = BoundInvaderGameState.Get())
+	{
+		PreviousGameState->OnInvaderFullBlastSessionChanged.RemoveDynamic(this, &AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged);
+	}
+
+	BoundInvaderGameState = CurrentGameState;
+	CurrentGameState->OnInvaderFullBlastSessionChanged.AddDynamic(this, &AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged);
+	StopBindInvaderGameStateRetry();
+	SyncFullBlastMenuFromGameState();
+}
+
+void AARInvaderPlayerController::StopBindInvaderGameStateRetry()
+{
+	if (BindInvaderGameStateRetryTimer.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(BindInvaderGameStateRetryTimer);
+	}
+}
+
+void AARInvaderPlayerController::SyncFullBlastMenuFromGameState()
+{
+	AARInvaderGameState* InvaderGameState = BoundInvaderGameState.Get();
+	if (!InvaderGameState)
+	{
+		CloseFullBlastMenu();
+		return;
+	}
+
+	const FARInvaderFullBlastSessionState& Session = InvaderGameState->GetFullBlastSession();
+	TArray<FARInvaderUpgradeDefRow> OfferDefinitions;
+	BuildOfferDefinitionsForSession(Session, OfferDefinitions);
+	OnInvaderFullBlastMenuSessionUpdated.Broadcast(Session.bIsActive, Session, OfferDefinitions);
+
+	if (!Session.bIsActive || !ShouldDisplayFullBlastMenuForSession(Session))
+	{
+		CloseFullBlastMenu();
+		return;
+	}
+
+	ShowOrUpdateFullBlastMenu(Session, OfferDefinitions);
+}
+
+void AARInvaderPlayerController::BuildOfferDefinitionsForSession(
+	const FARInvaderFullBlastSessionState& Session,
+	TArray<FARInvaderUpgradeDefRow>& OutDefinitions) const
+{
+	OutDefinitions.Reset();
+	if (!Session.bIsActive || Session.Offers.IsEmpty())
+	{
+		return;
+	}
+
+	const UARInvaderSpicyTrackSettings* Settings = GetDefault<UARInvaderSpicyTrackSettings>();
+	if (!Settings || !Settings->UpgradeDefinitionRootTag.IsValid())
+	{
+		return;
+	}
+
+	UContentLookupSubsystem* ContentLookup = GetGameInstance() ? GetGameInstance()->GetSubsystem<UContentLookupSubsystem>() : nullptr;
+	if (!ContentLookup)
+	{
+		return;
+	}
+
+	UDataTable* UpgradeTable = nullptr;
+	FString LookupError;
+	if (!ContentLookup->GetDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError) || !UpgradeTable)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|UI] Could not resolve upgrade table for full-blast menu: %s"), *LookupError);
+		return;
+	}
+
+	TMap<FGameplayTag, FARInvaderUpgradeDefRow> DefinitionMap;
+	TArray<FARInvaderUpgradeDefRow*> Rows;
+	UpgradeTable->GetAllRows(TEXT("AARInvaderPlayerController::BuildOfferDefinitionsForSession"), Rows);
+	for (const FARInvaderUpgradeDefRow* Row : Rows)
+	{
+		if (Row && Row->UpgradeTag.IsValid())
+		{
+			DefinitionMap.Add(Row->UpgradeTag, *Row);
+		}
+	}
+
+	OutDefinitions.Reserve(Session.Offers.Num());
+	for (const FARInvaderUpgradeOffer& Offer : Session.Offers)
+	{
+		if (const FARInvaderUpgradeDefRow* Def = DefinitionMap.Find(Offer.UpgradeTag))
+		{
+			OutDefinitions.Add(*Def);
+		}
+		else
+		{
+			FARInvaderUpgradeDefRow FallbackDef;
+			FallbackDef.UpgradeTag = Offer.UpgradeTag;
+			FallbackDef.DisplayName = FText::FromString(Offer.UpgradeTag.ToString());
+			OutDefinitions.Add(MoveTemp(FallbackDef));
+		}
+	}
+}
+
+bool AARInvaderPlayerController::ShouldDisplayFullBlastMenuForSession(const FARInvaderFullBlastSessionState& Session) const
+{
+	if (!IsLocalPlayerController() || !Session.bIsActive)
+	{
+		return false;
+	}
+
+	AARPlayerStateBase* InvaderPlayerState = GetInvaderPlayerState();
+	if (!InvaderPlayerState)
+	{
+		return false;
+	}
+
+	const EARPlayerSlot LocalSlot = InvaderPlayerState->GetPlayerSlot();
+	if (Session.RequestingPlayerSlot == EARPlayerSlot::Unknown)
+	{
+		return true;
+	}
+
+	return LocalSlot == Session.RequestingPlayerSlot;
+}
+
+void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(
+	const FARInvaderFullBlastSessionState& Session,
+	const TArray<FARInvaderUpgradeDefRow>& OfferDefinitions)
+{
+	const UARInvaderSpicyTrackSettings* Settings = GetDefault<UARInvaderSpicyTrackSettings>();
+	if (!Settings || Settings->FullBlastMenuWidgetClass.IsNull())
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|UI] Full blast menu class not configured; using delegate-only flow."));
+		return;
+	}
+
+	if (!FullBlastMenuWidget)
+	{
+		TSubclassOf<UARInvaderFullBlastMenuWidget> MenuClass = Settings->FullBlastMenuWidgetClass.LoadSynchronous();
+		if (!MenuClass)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|UI] Failed to load FullBlastMenuWidgetClass from settings."));
+			return;
+		}
+
+		FullBlastMenuWidget = CreateWidget<UARInvaderFullBlastMenuWidget>(this, MenuClass);
+		if (!FullBlastMenuWidget)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|UI] Failed to create full blast menu widget."));
+			return;
+		}
+	}
+
+	if (!FullBlastMenuWidget->IsInViewport())
+	{
+		FullBlastMenuWidget->AddToViewport(100);
+		bCachedShowMouseCursorForFullBlast = bShowMouseCursor;
+		bShowMouseCursor = true;
+		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus(FullBlastMenuWidget->TakeWidget());
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		SetInputMode(InputMode);
+	}
+
+	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, ShouldDisplayFullBlastMenuForSession(Session));
+}
+
+void AARInvaderPlayerController::CloseFullBlastMenu()
+{
+	if (FullBlastMenuWidget && FullBlastMenuWidget->IsInViewport())
+	{
+		FullBlastMenuWidget->NotifyMenuClosed();
+		FullBlastMenuWidget->RemoveFromParent();
+		FInputModeGameOnly InputMode;
+		SetInputMode(InputMode);
+		bShowMouseCursor = bCachedShowMouseCursorForFullBlast;
+	}
 }
 
 void AARInvaderPlayerController::RequestActivateFullBlast()
@@ -120,8 +352,17 @@ void AARInvaderPlayerController::HandleSpiceTrackActivateFromCursor()
 	const int32 CursorTier = InvaderPlayerState->GetEffectiveSpicyTrackCursorTier();
 	if (CursorTier <= 0)
 	{
-		RequestActivateFullBlast();
 		return;
+	}
+
+	if (const AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
+	{
+		const int32 FullBlastTier = FMath::Max(1, InvaderGameState->GetSharedFullBlastTier());
+		if (CursorTier >= FullBlastTier)
+		{
+			RequestActivateFullBlast();
+			return;
+		}
 	}
 
 	RequestActivateTrackUpgrade(CursorTier);
