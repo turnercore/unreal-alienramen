@@ -78,6 +78,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FGameplayTagContainer,
 	OldActiveFactionEffectTags);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnManualSaveAllowedChangedSignature,
+	bool,
+	bNewManualSaveAllowed,
+	bool,
+	bOldManualSaveAllowed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnAllPlayersPausedByMenuChangedSignature,
 	bool,
 	bNewAllPlayersPausedByMenu,
@@ -169,6 +175,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Faction")
 	FAROnActiveFactionEffectTagsChangedSignature OnActiveFactionEffectTagsChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnManualSaveAllowedChangedSignature OnManualSaveAllowedChanged;
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
 	FAROnAllPlayersPausedByMenuChangedSignature OnAllPlayersPausedByMenuChanged;
 
@@ -193,6 +202,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	const FARMeatState& GetMeat() const { return Meat; }
+
+	/** Returns whether manual save actions (for example pause-menu save) are allowed in the current mode. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool IsManualSaveAllowed() const { return bManualSaveAllowed; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	int32 GetCycles() const { return Cycles; }
@@ -266,6 +279,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction", meta = (BlueprintAuthorityOnly))
 	void SetActiveFactionEffectTagsFromSave(const FGameplayTagContainer& NewActiveFactionEffectTags);
 
+	/** Writes mode-driven manual-save policy and notifies listeners. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetManualSaveAllowed(bool bAllowed);
+
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
 	/** Called by SaveSubsystem after hydration completes to inform UI widgets. */
@@ -310,6 +327,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldActiveFactionEffectTags);
+
+	UFUNCTION()
+	void OnRep_ManualSaveAllowed(bool bOldManualSaveAllowed);
 
 	UFUNCTION()
 	void OnRep_PauseMenuVoteMask(uint8 OldPauseMenuVoteMask);
@@ -357,6 +377,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_ActiveFactionEffectTags, BlueprintReadOnly, Category = "Alien Ramen|Faction")
 	FGameplayTagContainer ActiveFactionEffectTags;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ManualSaveAllowed, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	bool bManualSaveAllowed = true;
 
 	UPROPERTY(ReplicatedUsing = OnRep_PauseMenuVoteMask, BlueprintReadOnly, Category = "Alien Ramen|Pause")
 	uint8 PauseMenuVoteMask = 0;
