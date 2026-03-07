@@ -52,7 +52,6 @@ Paths:
 - `ScrapDropAmountVarianceFraction` + optional `ScrapDropAmountVarianceCurve`
 - `MeatDropAmountVarianceFraction` + optional `MeatDropAmountVarianceCurve`
 - `ScrapDropStacks` / `MeatDropStacks` arrays (`Denomination` + `DropClass`) for stack-based spawn decomposition
-- `ScrapDropClass` / `MeatDropClass` as fallback class hooks when stack arrays are empty/invalid
 - `DropInitialLinearSpeedMin/Max` for spawned drop XY scatter velocity
 - `DropPawnCollisionMode` (`CollideWithPawns` or `IgnoreAllPawns`) for drift bumping behavior
 - `bUseCapsuleDerivedPlayerPickupRadius` enables capsule-derived initialization (`Radius + Diameter`)
@@ -72,7 +71,7 @@ Paths:
 7. Build spawn plan:
 - if stack definitions are configured, decompose amount into an optimal set (fewest pickups; ties prefer larger denominations)
 - if exact decomposition is not possible, emit largest denomination pickups plus one remainder pickup using the lowest-denomination class
-- if stack definitions are empty/invalid, fall back to one pickup using the legacy per-type class
+- if stack definitions are empty/invalid, no drop actor is spawned
 8. Spawn one pickup actor per planned denomination amount.
 
 ## Pickup / Reward Contract
