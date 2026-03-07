@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARPauseTypes.h"
 #include "ARPlayerTypes.h"
 #include "ARSaveTypes.h"
 #include "GameplayTagContainer.h"
@@ -76,6 +77,24 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	NewActiveFactionEffectTags,
 	FGameplayTagContainer,
 	OldActiveFactionEffectTags);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnAllPlayersPausedByMenuChangedSignature,
+	bool,
+	bNewAllPlayersPausedByMenu,
+	bool,
+	bOldAllPlayersPausedByMenu);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnAnyExternalPauseActiveChangedSignature,
+	bool,
+	bNewAnyExternalPauseActive,
+	bool,
+	bOldAnyExternalPauseActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnEffectivePauseStateChangedSignature,
+	bool,
+	bNewEffectivePauseState,
+	bool,
+	bOldEffectivePauseState);
 
 /**
  * Server-authoritative game state for Alien Ramen.
@@ -150,6 +169,15 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Faction")
 	FAROnActiveFactionEffectTagsChangedSignature OnActiveFactionEffectTagsChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
+	FAROnAllPlayersPausedByMenuChangedSignature OnAllPlayersPausedByMenuChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
+	FAROnAnyExternalPauseActiveChangedSignature OnAnyExternalPauseActiveChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
+	FAROnEffectivePauseStateChangedSignature OnEffectivePauseStateChanged;
+
 	/** Runtime mirror of save-owned cycles; authority-only setter. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SyncCyclesFromSave(int32 NewCycles);
@@ -174,6 +202,34 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
 	const FGameplayTagContainer& GetActiveFactionEffectTags() const { return ActiveFactionEffectTags; }
+
+	/** Returns true when all currently slotted players have an active pause-menu vote. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
+	bool AreAllPlayersPausedByMenu() const { return bAllPlayersPausedByMenu; }
+
+	/** Returns true when any non-menu pause reason is currently active (dialogue/full-blast/etc). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
+	bool IsAnyExternalPauseReasonActive() const { return bAnyExternalPauseActive; }
+
+	/** Returns effective pause state resolved by quorum + external reasons. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
+	bool IsEffectivePauseStateActive() const { return bEffectivePauseStateActive; }
+
+	/** Returns whether a specific player slot currently has an active pause-menu vote. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
+	bool IsPlayerPauseMenuVoteActive(EARPlayerSlot PlayerSlot) const;
+
+	/** Returns whether a specific external pause reason is currently active. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
+	bool IsExternalPauseReasonActive(EARPauseExternalReason Reason) const;
+
+	/** Authority-only mutation for per-slot pause-menu vote. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Pause", meta = (BlueprintAuthorityOnly))
+	void SetPlayerPauseMenuVote(EARPlayerSlot PlayerSlot, bool bPaused);
+
+	/** Authority-only mutation for external pause reasons (dialogue/full-blast/etc). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Pause", meta = (BlueprintAuthorityOnly))
+	void SetExternalPauseReasonActive(EARPauseExternalReason Reason, bool bActive);
 
 	/** Replaces unlock container from save data and broadcasts change. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
@@ -255,10 +311,28 @@ protected:
 	UFUNCTION()
 	void OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldActiveFactionEffectTags);
 
+	UFUNCTION()
+	void OnRep_PauseMenuVoteMask(uint8 OldPauseMenuVoteMask);
+
+	UFUNCTION()
+	void OnRep_ExternalPauseReasonMask(uint8 OldExternalPauseReasonMask);
+
+	UFUNCTION()
+	void OnRep_AllPlayersPausedByMenu(bool bOldAllPlayersPausedByMenu);
+
+	UFUNCTION()
+	void OnRep_AnyExternalPauseActive(bool bOldAnyExternalPauseActive);
+
+	UFUNCTION()
+	void OnRep_EffectivePauseStateActive(bool bOldEffectivePauseStateActive);
+
 	void BindPlayerStateSignals(AARPlayerStateBase* PlayerState);
 	void UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState);
 	bool ComputeAllPlayersTravelReady() const;
 	void RefreshAllPlayersTravelReady();
+	bool ComputeAllPlayersPausedByMenu() const;
+	void RefreshPauseResolution();
+	void ClearPauseVoteForSlot(EARPlayerSlot PlayerSlot);
 
 	UPROPERTY(ReplicatedUsing = OnRep_AllPlayersTravelReady, BlueprintReadOnly, Category = "Alien Ramen|Players")
 	bool bAllPlayersTravelReady = false;
@@ -283,4 +357,19 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_ActiveFactionEffectTags, BlueprintReadOnly, Category = "Alien Ramen|Faction")
 	FGameplayTagContainer ActiveFactionEffectTags;
+
+	UPROPERTY(ReplicatedUsing = OnRep_PauseMenuVoteMask, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	uint8 PauseMenuVoteMask = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ExternalPauseReasonMask, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	uint8 ExternalPauseReasonMask = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_AllPlayersPausedByMenu, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	bool bAllPlayersPausedByMenu = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_AnyExternalPauseActive, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	bool bAnyExternalPauseActive = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_EffectivePauseStateActive, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	bool bEffectivePauseStateActive = false;
 };
