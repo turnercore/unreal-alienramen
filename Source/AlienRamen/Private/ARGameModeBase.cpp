@@ -595,6 +595,28 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 			}
 		}
 
+		bool bHasListenOption = false;
+		if (!OpenLevelOptions.IsEmpty())
+		{
+			TArray<FString> OptionTokens;
+			OpenLevelOptions.ParseIntoArray(OptionTokens, TEXT("?"), true);
+			for (const FString& Token : OptionTokens)
+			{
+				if (Token.TrimStartAndEnd().Equals(TEXT("listen"), ESearchCase::IgnoreCase))
+				{
+					bHasListenOption = true;
+					break;
+				}
+			}
+		}
+
+		if (!bHasListenOption)
+		{
+			OpenLevelOptions = OpenLevelOptions.IsEmpty()
+				? FString(TEXT("listen"))
+				: FString::Printf(TEXT("%s?listen"), *OpenLevelOptions);
+		}
+
 		UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel PIE fallback -> OpenLevel Level='%s' Options='%s'"), *LevelName, *OpenLevelOptions);
 		return SaveSubsystem->RequestOpenLevel(LevelName, OpenLevelOptions, bSkipReadyChecks, bAbsolute, bSaveOnModeExit);
 	}
