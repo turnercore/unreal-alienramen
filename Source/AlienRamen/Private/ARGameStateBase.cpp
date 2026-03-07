@@ -452,7 +452,7 @@ void AARGameStateBase::OnRep_Money(int32 OldMoney)
 
 void AARGameStateBase::OnRep_Scrap(int32 OldScrap)
 {
-	UE_LOG(ARLog, Log, TEXT("[Save|Currency] Scrap changed old=%d new=%d"), OldScrap, Scrap);
+	UE_LOG(ARLog, Verbose, TEXT("[Save|Currency] Scrap changed old=%d new=%d"), OldScrap, Scrap);
 	OnScrapChanged.Broadcast(Scrap, OldScrap);
 }
 
@@ -460,7 +460,7 @@ void AARGameStateBase::OnRep_Meat(FARMeatState OldMeat)
 {
 	UE_LOG(
 		ARLog,
-		Log,
+		Verbose,
 		TEXT("[Save|Currency] Meat changed oldTotal=%d newTotal=%d"),
 		OldMeat.GetTotalAmount(),
 		Meat.GetTotalAmount());
