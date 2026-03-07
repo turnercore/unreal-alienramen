@@ -20,6 +20,9 @@ namespace
 {
 	static const FName GameSessionName = NAME_GameSession;
 
+	// Maximum number of players in a co-op session. Referenced by session capacity and local-join cap.
+	static constexpr int32 MaxCoopPlayers = 2;
+
 	static bool IsNullLikeSubsystemName(const FName InName)
 	{
 		if (InName == NAME_None)
@@ -50,6 +53,7 @@ void UARSessionSubsystem::Deinitialize()
 	SearchResultsSubsystemName = NAME_None;
 	bOperationInFlight = false;
 	CurrentOperation = ESessionOperation::None;
+	HostedSessionSubsystemName = NAME_None;
 	Super::Deinitialize();
 }
 
@@ -288,8 +292,22 @@ bool UARSessionSubsystem::DestroySession(FARSessionResult& OutResult)
 		return false;
 	}
 
+	// Prefer the subsystem that originally hosted the session (e.g., NULL for LAN, Steam for online).
+	// Falling back to default non-LAN resolution handles orphaned sessions without a tracked subsystem.
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session;
+	if (!HostedSessionSubsystemName.IsNone())
+	{
+		if (IOnlineSubsystem* Sub = IOnlineSubsystem::Get(HostedSessionSubsystemName))
+		{
+			SubsystemName = HostedSessionSubsystemName;
+			Session = Sub->GetSessionInterface();
+		}
+	}
+	if (!Session.IsValid())
+	{
+		Session = ResolveSessionInterface(false, SubsystemName);
+	}
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -299,6 +317,8 @@ bool UARSessionSubsystem::DestroySession(FARSessionResult& OutResult)
 
 	if (!Session->GetNamedSession(GameSessionName))
 	{
+		// No session exists on the preferred interface; clear the potentially stale tracking name.
+		HostedSessionSubsystemName = NAME_None;
 		FillResult(OutResult, true, EARSessionResultCode::Success);
 		OnDestroySessionCompleted.Broadcast(OutResult);
 		return true;
@@ -334,8 +354,21 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 		return false;
 	}
 
+	// Prefer the subsystem that originally hosted the session (e.g., NULL for LAN, Steam for online).
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session;
+	if (!HostedSessionSubsystemName.IsNone())
+	{
+		if (IOnlineSubsystem* Sub = IOnlineSubsystem::Get(HostedSessionSubsystemName))
+		{
+			SubsystemName = HostedSessionSubsystemName;
+			Session = Sub->GetSessionInterface();
+		}
+	}
+	if (!Session.IsValid())
+	{
+		Session = ResolveSessionInterface(false, SubsystemName);
+	}
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -351,11 +384,12 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 		return false;
 	}
 
-	const int32 OpenConnections = ComputeOpenPublicConnections();
-	const bool bCanJoin = !IsStayOfflineEnabled() && OpenConnections > 0;
+	const bool bCanJoin = !IsStayOfflineEnabled() && ComputeOpenPublicConnections() > 0;
 
 	FOnlineSessionSettings NewSettings = Existing->SessionSettings;
-	NewSettings.NumPublicConnections = FMath::Clamp(OpenConnections, 0, 2);
+	// NumPublicConnections is the total max capacity; bShouldAdvertise/bAllowJoinInProgress
+	// control whether new players can join. Do not shrink NumPublicConnections to open slots.
+	NewSettings.NumPublicConnections = MaxCoopPlayers;
 	NewSettings.bShouldAdvertise = bCanJoin;
 	NewSettings.bAllowJoinInProgress = bCanJoin;
 	NewSettings.bAllowJoinViaPresence = bCanJoin;
@@ -385,9 +419,9 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 
 bool UARSessionSubsystem::RequestLocalPlayerJoin(FARSessionResult& OutResult)
 {
-	if (CountCurrentARPlayers() >= 2)
+	if (CountCurrentARPlayers() >= MaxCoopPlayers)
 	{
-		FillResult(OutResult, false, EARSessionResultCode::SessionFull, TEXT("Player cap reached (2)."));
+		FillResult(OutResult, false, EARSessionResultCode::SessionFull, FString::Printf(TEXT("Player cap reached (%d)."), MaxCoopPlayers));
 		OnLocalJoinCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -577,7 +611,7 @@ int32 UARSessionSubsystem::CountCurrentARPlayers() const
 
 int32 UARSessionSubsystem::ComputeOpenPublicConnections() const
 {
-	return FMath::Clamp(2 - CountCurrentARPlayers(), 0, 2);
+	return FMath::Clamp(MaxCoopPlayers - CountCurrentARPlayers(), 0, MaxCoopPlayers);
 }
 
 bool UARSessionSubsystem::BuildDesiredSessionSettings(const bool bPreferLAN, FOnlineSessionSettings& OutSettings, FARSessionResult& OutResult) const
@@ -594,7 +628,9 @@ bool UARSessionSubsystem::BuildDesiredSessionSettings(const bool bPreferLAN, FOn
 
 	OutSettings = FOnlineSessionSettings();
 	OutSettings.bIsLANMatch = bPreferLAN;
-	OutSettings.NumPublicConnections = FMath::Clamp(OpenConnections, 0, 2);
+	// NumPublicConnections is the total max capacity (always MaxCoopPlayers for this co-op game).
+	// Joinability is gated by bShouldAdvertise / bAllowJoinInProgress, not by shrinking the slot count.
+	OutSettings.NumPublicConnections = MaxCoopPlayers;
 	OutSettings.NumPrivateConnections = 0;
 	OutSettings.bShouldAdvertise = bCanJoin;
 	OutSettings.bAllowJoinInProgress = bCanJoin;
@@ -677,6 +713,17 @@ void UARSessionSubsystem::HandleCreateSessionComplete(FName SessionName, bool bW
 		}
 	}
 
+	if (bWasSuccessful)
+	{
+		// Record which subsystem owns this session so Destroy/Refresh use the correct interface.
+		HostedSessionSubsystemName = ActiveSubsystemName;
+		UE_LOG(ARLog, Log, TEXT("[Session] Session '%s' created on subsystem '%s'."), *SessionName.ToString(), *ActiveSubsystemName.ToString());
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Session] CreateSession failed for '%s' on subsystem '%s'."), *SessionName.ToString(), *ActiveSubsystemName.ToString());
+	}
+
 	bOperationInFlight = false;
 	CurrentOperation = ESessionOperation::None;
 	ActiveSubsystemName = NAME_None;
@@ -730,6 +777,17 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		}
 	}
 
+	if (bWasSuccessful)
+	{
+		// Clear the hosted session tracking now that the session is gone.
+		HostedSessionSubsystemName = NAME_None;
+		UE_LOG(ARLog, Log, TEXT("[Session] Session '%s' destroyed."), *SessionName.ToString());
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Session] DestroySession failed for '%s'."), *SessionName.ToString());
+	}
+
 	bOperationInFlight = false;
 	CurrentOperation = ESessionOperation::None;
 	ActiveSubsystemName = NAME_None;
@@ -757,6 +815,15 @@ void UARSessionSubsystem::HandleFindSessionsComplete(bool bWasSuccessful)
 	CachedNativeSearchResults = (ActiveSessionSearch.IsValid() ? ActiveSessionSearch->SearchResults : TArray<FOnlineSessionSearchResult>());
 	RebuildLastFindResults();
 
+	if (bWasSuccessful)
+	{
+		UE_LOG(ARLog, Log, TEXT("[Session] FindSessions complete on '%s': %d result(s)."), *CompletedSubsystemName.ToString(), CachedNativeSearchResults.Num());
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Session] FindSessions failed on '%s'."), *CompletedSubsystemName.ToString());
+	}
+
 	FillResult(Result, bWasSuccessful, bWasSuccessful ? EARSessionResultCode::Success : EARSessionResultCode::FindFailed,
 		bWasSuccessful ? FString() : TEXT("FindSessions failed."));
 	BroadcastFindCompleted(Result);
@@ -776,7 +843,7 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteHandle);
 		JoinSessionCompleteHandle.Reset();
 	}
-
+	const FName CompletedSubsystemName = ActiveSubsystemName;
 	bOperationInFlight = false;
 	CurrentOperation = ESessionOperation::None;
 	ActiveSubsystemName = NAME_None;
@@ -820,6 +887,7 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 	}
 
 	PC->ClientTravel(ConnectString, TRAVEL_Absolute);
+	UE_LOG(ARLog, Log, TEXT("[Session] Joining session '%s' via '%s' - travelling to: %s"), *SessionName.ToString(), *CompletedSubsystemName.ToString(), *ConnectString);
 	FillResult(Result, true, EARSessionResultCode::Success);
 	OnJoinSessionCompleted.Broadcast(Result);
 }

@@ -181,6 +181,8 @@ private:
 	UPROPERTY(Transient)
 	TArray<FARSessionSearchResultData> LastFindResults;
 
+	/** Subsystem that owns the currently hosted (created) session. Set on successful CreateSession and cleared on successful DestroySession. */
+	FName HostedSessionSubsystemName = NAME_None;
 	FName ActiveSubsystemName = NAME_None;
 	FName SearchResultsSubsystemName = NAME_None;
 	bool bOperationInFlight = false;
