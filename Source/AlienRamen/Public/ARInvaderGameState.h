@@ -7,11 +7,13 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "ARGameStateBase.h"
+#include "ARInvaderDropTypes.h"
 #include "ARInvaderSpicyTrackTypes.h"
 #include "ARInvaderTypes.h"
 #include "ARInvaderGameState.generated.h"
 
 class AAREnemyBase;
+class AARInvaderDropBase;
 class UARInvaderSpicyTrackSettings;
 class IConsoleObject;
 
@@ -136,10 +138,26 @@ protected:
 	void HandleTrackedPlayersChanged();
 
 private:
+	struct FResolvedDropStackEntry
+	{
+		int32 Denomination = 1;
+		TSubclassOf<AARInvaderDropBase> DropClass;
+	};
+
+	struct FDropSpawnPlanEntry
+	{
+		int32 Amount = 0;
+		TSubclassOf<AARInvaderDropBase> DropClass;
+	};
+
 	void RegisterDebugConsoleCommands();
 	void UnregisterDebugConsoleCommands();
 	void HandleConsoleSetSpice(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleAddSpice(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleAddScrap(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleAddMoney(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleInjectTopSlot(const TArray<FString>& Args, UWorld* World);
 	AARPlayerStateBase* ResolvePlayerStateFromDebugToken(const FString& Token) const;
@@ -180,9 +198,16 @@ private:
 		FVector EffectOrigin,
 		bool bHasEffectOrigin,
 		FGameplayTag EnemyIdentifierTag);
+	void TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateBase* KillerPlayerState);
+	float RollDropAmountWithVariance(float BaseDropAmount, EARInvaderDropType DropType) const;
+	float ResolveKillerDropMultiplier(const AARPlayerStateBase* KillerPlayerState, EARInvaderDropType DropType) const;
+	TSubclassOf<AARInvaderDropBase> ResolveDropClass(EARInvaderDropType DropType) const;
+	void ResolveDropStackDefinitions(EARInvaderDropType DropType, TArray<FResolvedDropStackEntry>& OutDefinitions) const;
+	bool BuildDropSpawnPlan(EARInvaderDropType DropType, int32 TotalAmount, TArray<FDropSpawnPlanEntry>& OutPlan) const;
 	float ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy) const;
 	AARPlayerStateBase* ResolvePlayerStateFromInstigatorActor(AActor* InstigatorActor) const;
 	static EARAffinityColor ToPlayerColor(EARAffinityColor EnemyColor);
+	void SetDropEarthGravityEnabledForAll(bool bEnabled);
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastNotifyKillCreditFxEvent(const FARInvaderKillCreditFxEvent& EventData);
@@ -208,6 +233,12 @@ private:
 
 	IConsoleObject* CmdDebugSetSpice = nullptr;
 	IConsoleObject* CmdDebugAddSpice = nullptr;
+	IConsoleObject* CmdDebugAddScrap = nullptr;
+	IConsoleObject* CmdDebugAddMoney = nullptr;
+	IConsoleObject* CmdDebugAddMeat = nullptr;
+	IConsoleObject* CmdDebugSetDropEarthGravity = nullptr;
 	IConsoleObject* CmdDebugSetCursor = nullptr;
 	IConsoleObject* CmdDebugInjectTopSlot = nullptr;
+
+	bool bDebugDropEarthGravityEnabled = false;
 };
