@@ -670,6 +670,8 @@
 - `GetSharedTrackUpgradeDisplayNameAtSlot(...)` (1-based slot lookup)
 - `GetSharedTrackSlotDisplayStates(...)` (fixed-length slot list for UI refresh on `OnInvaderSharedTrackChanged`; `bHasUpgrade=false` when slot has no active upgrade)
 - `GetFullBlastDisplayIndex()` (0-based lane index for full-blast label placement, excluding the base 0-99 empty lane).
+- `GetMaxSelectableTrackCursorTierAcrossPlayers()` (team-level convenience for shared HUD affordance styling; returns max selectable cursor tier over all tracked player states).
+- Full blast offer generation remains rule-strict (no fallback override when none are eligible); activation failure now logs an `Error` with rejection diagnostics (slotted/tier-lock/unlock/prereq/claim buckets + samples).
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - `UARInvaderDirectorSubsystem::RegisterConsoleCommands()` now clears existing `ar.invader.*` registrations first, so PIE map travel cannot double-register global command names across overlapping world/subsystem lifetimes.

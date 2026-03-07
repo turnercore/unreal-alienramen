@@ -68,6 +68,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	int32 GetMaxSelectableTrackCursorTierForPlayer(const AARPlayerStateBase* PlayerState) const;
 
+	// Returns the highest currently selectable spicy-track cursor tier across all tracked players.
+	// Useful for shared UI lane styling (for example highlighting which tiers are currently selectable by anyone).
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
+	int32 GetMaxSelectableTrackCursorTierAcrossPlayers() const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
 	const FARInvaderFullBlastSessionState& GetFullBlastSession() const { return FullBlastSession; }
 
@@ -178,7 +183,7 @@ private:
 	void HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* World);
-	void HandleConsoleInjectTopSlot(const TArray<FString>& Args, UWorld* World);
+	void HandleConsoleInjectUpgrade(const TArray<FString>& Args, UWorld* World);
 	AARPlayerStateBase* ResolvePlayerStateFromDebugToken(const FString& Token) const;
 	bool ResolveUpgradeTagForDebugInject(const FString& TagToken, FGameplayTag& OutUpgradeTag) const;
 	void ReconcilePlayerCursorSelection();
@@ -256,7 +261,7 @@ private:
 	IConsoleObject* CmdDebugAddMeat = nullptr;
 	IConsoleObject* CmdDebugSetDropEarthGravity = nullptr;
 	IConsoleObject* CmdDebugSetCursor = nullptr;
-	IConsoleObject* CmdDebugInjectTopSlot = nullptr;
+	IConsoleObject* CmdDebugInjectUpgrade = nullptr;
 
 	bool bDebugDropEarthGravityEnabled = false;
 };

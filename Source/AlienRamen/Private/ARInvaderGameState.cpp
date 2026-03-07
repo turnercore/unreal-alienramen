@@ -223,10 +223,10 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetCursor),
 		ECVF_Cheat);
 
-	CmdDebugInjectTopSlot = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.InjectTopSlot"),
-		TEXT("Usage: AR.Invader.Debug.InjectTopSlot [UpgradeTag] [Level] [Uses|-1 for infinite]"),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleInjectTopSlot),
+	CmdDebugInjectUpgrade = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.InjectUpgrade"),
+		TEXT("Usage: AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleInjectUpgrade),
 		ECVF_Cheat);
 }
 
@@ -268,10 +268,10 @@ void AARInvaderGameState::UnregisterDebugConsoleCommands()
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetCursor, false);
 		CmdDebugSetCursor = nullptr;
 	}
-	if (CmdDebugInjectTopSlot)
+	if (CmdDebugInjectUpgrade)
 	{
-		ConsoleManager.UnregisterConsoleObject(CmdDebugInjectTopSlot, false);
-		CmdDebugInjectTopSlot = nullptr;
+		ConsoleManager.UnregisterConsoleObject(CmdDebugInjectUpgrade, false);
+		CmdDebugInjectUpgrade = nullptr;
 	}
 }
 
@@ -313,15 +313,106 @@ bool AARInvaderGameState::ResolveUpgradeTagForDebugInject(const FString& TagToke
 {
 	OutUpgradeTag = FGameplayTag();
 
+	const auto ResolveUpgradeTable = [this](UDataTable*& OutTable) -> bool
+	{
+		OutTable = nullptr;
+		const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
+		UContentLookupSubsystem* ContentLookup = GetGameInstance() ? GetGameInstance()->GetSubsystem<UContentLookupSubsystem>() : nullptr;
+		if (!Settings || !Settings->UpgradeDefinitionRootTag.IsValid() || !ContentLookup)
+		{
+			return false;
+		}
+
+		FString LookupError;
+		return ContentLookup->GetDataTableForRootTag(Settings->UpgradeDefinitionRootTag, OutTable, LookupError) && OutTable;
+	};
+
+	const auto ResolveByRowName = [](UDataTable* UpgradeTable, const FString& RowToken, FGameplayTag& OutTag) -> bool
+	{
+		if (!UpgradeTable || RowToken.IsEmpty())
+		{
+			return false;
+		}
+
+		if (const FARInvaderUpgradeDefRow* ExactRow = UpgradeTable->FindRow<FARInvaderUpgradeDefRow>(FName(*RowToken), TEXT("ResolveUpgradeTagForDebugInject"), false))
+		{
+			if (ExactRow->UpgradeTag.IsValid())
+			{
+				OutTag = ExactRow->UpgradeTag;
+				return true;
+			}
+		}
+
+		for (const FName RowName : UpgradeTable->GetRowNames())
+		{
+			if (!RowName.ToString().Equals(RowToken, ESearchCase::IgnoreCase))
+			{
+				continue;
+			}
+
+			if (const FARInvaderUpgradeDefRow* Row = UpgradeTable->FindRow<FARInvaderUpgradeDefRow>(RowName, TEXT("ResolveUpgradeTagForDebugInject"), false))
+			{
+				if (Row->UpgradeTag.IsValid())
+				{
+					OutTag = Row->UpgradeTag;
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	TMap<FGameplayTag, FARInvaderUpgradeDefRow> UpgradeDefinitions;
+	const bool bHasUpgradeDefinitions = BuildUpgradeDefinitionMap(UpgradeDefinitions) && !UpgradeDefinitions.IsEmpty();
+
 	const FString Trimmed = TagToken.TrimStartAndEnd();
 	if (!Trimmed.IsEmpty())
 	{
-		OutUpgradeTag = FGameplayTag::RequestGameplayTag(FName(*Trimmed), false);
-		return OutUpgradeTag.IsValid();
+		// 1) Prefer row-name resolution first (avoids collisions with broad tags like "Debug").
+		UDataTable* UpgradeTable = nullptr;
+		if (ResolveUpgradeTable(UpgradeTable) && ResolveByRowName(UpgradeTable, Trimmed, OutUpgradeTag))
+		{
+			return true;
+		}
+
+		// 2) Direct gameplay-tag token.
+		const FGameplayTag RequestedTag = FGameplayTag::RequestGameplayTag(FName(*Trimmed), false);
+		if (RequestedTag.IsValid())
+		{
+			// Prefer tags that actually exist in the upgrade definition map.
+			if (!bHasUpgradeDefinitions || UpgradeDefinitions.Contains(RequestedTag))
+			{
+				OutUpgradeTag = RequestedTag;
+				return true;
+			}
+		}
+
+		// 3) Fuzzy fallback: match by full tag string or leaf segment (case-insensitive).
+		if (bHasUpgradeDefinitions)
+		{
+			for (const TPair<FGameplayTag, FARInvaderUpgradeDefRow>& Pair : UpgradeDefinitions)
+			{
+				const FString TagString = Pair.Key.ToString();
+				if (TagString.Equals(Trimmed, ESearchCase::IgnoreCase) || TagString.EndsWith(FString::Printf(TEXT(".%s"), *Trimmed), ESearchCase::IgnoreCase))
+				{
+					OutUpgradeTag = Pair.Key;
+					return true;
+				}
+			}
+		}
+
+		// 4) Last-resort direct tag injection, even if unknown to upgrade defs.
+		if (RequestedTag.IsValid())
+		{
+			OutUpgradeTag = RequestedTag;
+			return true;
+		}
+
+		return false;
 	}
 
-	TMap<FGameplayTag, FARInvaderUpgradeDefRow> UpgradeDefinitions;
-	if (!BuildUpgradeDefinitionMap(UpgradeDefinitions) || UpgradeDefinitions.IsEmpty())
+	if (!bHasUpgradeDefinitions)
 	{
 		return false;
 	}
@@ -529,7 +620,7 @@ void AARInvaderGameState::HandleConsoleSetCursor(const TArray<FString>& Args, UW
 	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] SetCursor '%s' -> %d"), *GetNameSafe(PlayerState), PlayerState->GetSpicyTrackCursorTier());
 }
 
-void AARInvaderGameState::HandleConsoleInjectTopSlot(const TArray<FString>& Args, UWorld* /*World*/)
+void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args, UWorld* /*World*/)
 {
 	if (!HasAuthority())
 	{
@@ -540,7 +631,7 @@ void AARInvaderGameState::HandleConsoleInjectTopSlot(const TArray<FString>& Args
 	const FString TagToken = Args.Num() > 0 ? Args[0] : FString();
 	if (!ResolveUpgradeTagForDebugInject(TagToken, UpgradeTag))
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectTopSlot failed: no valid upgrade tag resolved. Provide tag or ensure the ContentLookup root for upgrades has rows."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: no valid upgrade tag resolved. Provide gameplay tag or row name, or ensure the ContentLookup root for upgrades has rows."));
 		return;
 	}
 
@@ -553,49 +644,102 @@ void AARInvaderGameState::HandleConsoleInjectTopSlot(const TArray<FString>& Args
 	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
 	if (MaxTrackSlots <= 0)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectTopSlot failed: MaxTrackSlots resolved to 0."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: MaxTrackSlots resolved to 0."));
 		return;
 	}
 
-	const int32 TargetSlotIndex = FMath::Clamp(FMath::Max(1, SharedFullBlastTier - 1), 1, MaxTrackSlots);
-	const TArray<FARInvaderTrackSlotState> OldSlots = SharedTrackSlots;
+	if (FullBlastSession.bIsActive)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: full-blast session already active."));
+		return;
+	}
+
+	AARPlayerStateBase* RequestingPlayerState = nullptr;
+	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
+	{
+		if (!PlayerState)
+		{
+			continue;
+		}
+
+		if (PlayerState->GetPlayerSlot() == EARPlayerSlot::P1)
+		{
+			RequestingPlayerState = PlayerState;
+			break;
+		}
+
+		if (!RequestingPlayerState)
+		{
+			RequestingPlayerState = PlayerState;
+		}
+	}
+
+	if (!RequestingPlayerState)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: no player state available for chooser context."));
+		return;
+	}
+
 	const int32 OldTier = SharedFullBlastTier;
+	const int32 ActivationTier = FMath::Max(1, SharedFullBlastTier);
+	const bool bAtTopTier = Settings && SharedFullBlastTier >= Settings->MaxFullBlastTier;
+	const int32 DesiredDestinationSlot = bAtTopTier ? MaxTrackSlots : -1;
 
-	EnsureTrackSlotCount(TargetSlotIndex);
-	FARInvaderTrackSlotState& Slot = SharedTrackSlots[TargetSlotIndex - 1];
-	Slot.SlotIndex = TargetSlotIndex;
-	Slot.UpgradeTag = UpgradeTag;
-	Slot.UpgradeLevel = Level;
-	Slot.bHasBeenActivated = false;
-	Slot.bInfiniteUses = bInfiniteUses;
-	Slot.RemainingActivationUses = RemainingUses;
+	const FARInvaderFullBlastSessionState PreviousSession = FullBlastSession;
+	const TArray<FARInvaderOfferPresenceState> PreviousPresence = OfferPresenceStates;
+	const FARInvaderFullBlastSessionState SessionBeforeInject = FullBlastSession;
+	const TArray<FARInvaderOfferPresenceState> PresenceBeforeInject = OfferPresenceStates;
 
-	SharedFullBlastTier = FMath::Max(SharedFullBlastTier, TargetSlotIndex + 1);
-	if (Settings)
-	{
-		SharedFullBlastTier = FMath::Clamp(SharedFullBlastTier, 1, Settings->MaxFullBlastTier);
-	}
-
-	TrimTrackToTierLimit();
-	SyncSharedMaxSpiceToPlayers();
-	RefreshWhileSlottedEffects();
-	ReconcilePlayerCursorSelection();
-
-	OnRep_SharedTrackSlots(OldSlots);
-	if (OldTier != SharedFullBlastTier)
-	{
-		OnRep_SharedFullBlastTier(OldTier);
-	}
+	FullBlastSession = FARInvaderFullBlastSessionState();
+	FullBlastSession.bIsActive = true;
+	FullBlastSession.RequestingPlayerSlot = RequestingPlayerState->GetPlayerSlot();
+	FullBlastSession.ActivationTier = ActivationTier;
+	FARInvaderUpgradeOffer InjectOffer;
+	InjectOffer.UpgradeTag = UpgradeTag;
+	InjectOffer.OfferedLevel = Level;
+	FullBlastSession.Offers.Add(InjectOffer);
+	OfferPresenceStates.Reset();
+	OnRep_FullBlastSession(SessionBeforeInject);
+	OnRep_OfferPresenceStates(PresenceBeforeInject);
 	ForceNetUpdate();
+
+	if (!ResolveFullBlastSelection(RequestingPlayerState, UpgradeTag, DesiredDestinationSlot))
+	{
+		const FARInvaderFullBlastSessionState FailedSession = FullBlastSession;
+		const TArray<FARInvaderOfferPresenceState> FailedPresence = OfferPresenceStates;
+		FullBlastSession = PreviousSession;
+		OfferPresenceStates = PreviousPresence;
+		OnRep_FullBlastSession(FailedSession);
+		OnRep_OfferPresenceStates(FailedPresence);
+		ForceNetUpdate();
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: resolve-selection path rejected tag '%s'."), *UpgradeTag.ToString());
+		return;
+	}
+
+	// Optional debug override for uses/infinite-use after normal selection path.
+	const int32 InjectedSlotIndex = bAtTopTier
+		? MaxTrackSlots
+		: FMath::Clamp(ActivationTier, 1, MaxTrackSlots);
+	if (SharedTrackSlots.IsValidIndex(InjectedSlotIndex - 1))
+	{
+		FARInvaderTrackSlotState& InjectedSlot = SharedTrackSlots[InjectedSlotIndex - 1];
+		InjectedSlot.bInfiniteUses = bInfiniteUses;
+		InjectedSlot.RemainingActivationUses = bInfiniteUses ? INDEX_NONE : RemainingUses;
+		const TArray<FARInvaderTrackSlotState> OldSlotsAfterResolve = SharedTrackSlots;
+		OnRep_SharedTrackSlots(OldSlotsAfterResolve);
+		ForceNetUpdate();
+	}
 
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderSpice|Debug] InjectTopSlot slot=%d tag=%s level=%d uses=%s"),
-		TargetSlotIndex,
+		TEXT("[InvaderSpice|Debug] InjectUpgrade slot=%d tag=%s level=%d uses=%s fullBlastTier %d->%d"),
+		InjectedSlotIndex,
 		*UpgradeTag.ToString(),
 		Level,
-		bInfiniteUses ? TEXT("INF") : *LexToString(RemainingUses));
+		bInfiniteUses ? TEXT("INF") : *LexToString(RemainingUses),
+		OldTier,
+		SharedFullBlastTier);
 }
 
 void AARInvaderGameState::Tick(const float DeltaSeconds)
@@ -703,6 +847,12 @@ int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(const AARPla
 	const int32 MaxUnlockedTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
 
 	const float CurrentSpice = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+	if (CurrentSpice + KINDA_SMALL_NUMBER < static_cast<float>(SpicePerTier))
+	{
+		// 0..(SpicePerTier-1) always means no selectable cursor tier.
+		return 0;
+	}
+
 	const int32 AffordableTier = FMath::Max(0, FMath::FloorToInt(CurrentSpice / static_cast<float>(SpicePerTier)));
 
 	// Full Blast is always the top selectable tier when affordable.
@@ -736,6 +886,23 @@ int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(const AARPla
 	}
 
 	return 0;
+}
+
+int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierAcrossPlayers() const
+{
+	int32 HighestSelectableTier = 0;
+
+	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
+	{
+		if (!PlayerState)
+		{
+			continue;
+		}
+
+		HighestSelectableTier = FMath::Max(HighestSelectableTier, GetMaxSelectableTrackCursorTierForPlayer(PlayerState));
+	}
+
+	return HighestSelectableTier;
 }
 
 void AARInvaderGameState::InitializeSpicyTrackState()
@@ -1072,6 +1239,8 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 {
 	if (!HasAuthority() || !RequestingPlayerState || FullBlastSession.bIsActive)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] RequestActivateFullBlast rejected authority=%d requester='%s' sessionActive=%d"),
+			HasAuthority() ? 1 : 0, *GetNameSafe(RequestingPlayerState), FullBlastSession.bIsActive ? 1 : 0);
 		return false;
 	}
 
@@ -1079,6 +1248,8 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 	const float CurrentSpice = RequestingPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	if (CurrentSpice + KINDA_SMALL_NUMBER < RequiredSpice)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] RequestActivateFullBlast rejected requester='%s' spice=%.2f required=%.2f"),
+			*GetNameSafe(RequestingPlayerState), CurrentSpice, RequiredSpice);
 		return false;
 	}
 
@@ -1113,7 +1284,103 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 
 	if (Candidates.IsEmpty())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] Full blast has no eligible upgrade candidates."));
+		int32 RejectedInvalidTag = 0;
+		int32 RejectedSlotted = 0;
+		int32 RejectedTierLocked = 0;
+		int32 RejectedMissingUnlocks = 0;
+		int32 RejectedMissingActivatedPrereqs = 0;
+		int32 RejectedSingleTeamClaim = 0;
+		int32 RejectedPerPlayerClaim = 0;
+		int32 RejectedUnknown = 0;
+		TArray<FString> RejectionSamples;
+		RejectionSamples.Reserve(6);
+
+		for (const TPair<FGameplayTag, FARInvaderUpgradeDefRow>& Pair : UpgradeDefinitions)
+		{
+			const FARInvaderUpgradeDefRow& UpgradeDef = Pair.Value;
+			FString Reason = TEXT("Unknown");
+
+			if (!UpgradeDef.UpgradeTag.IsValid())
+			{
+				++RejectedInvalidTag;
+				Reason = TEXT("InvalidTag");
+			}
+			else if (SlottedUpgradeTags.HasTagExact(UpgradeDef.UpgradeTag))
+			{
+				++RejectedSlotted;
+				Reason = TEXT("AlreadySlotted");
+			}
+			else if (UpgradeDef.LockedOfferTiers.Contains(SharedFullBlastTier))
+			{
+				++RejectedTierLocked;
+				Reason = TEXT("TierLocked");
+			}
+			else if (!UpgradeDef.RequiredUnlockTags.IsEmpty() && !GetUnlocks().HasAll(UpgradeDef.RequiredUnlockTags))
+			{
+				++RejectedMissingUnlocks;
+				Reason = TEXT("MissingUnlockTags");
+			}
+			else if (!UpgradeDef.RequiredActivatedUpgradesForOffer.IsEmpty() && !TeamActivatedTags.HasAll(UpgradeDef.RequiredActivatedUpgradesForOffer))
+			{
+				++RejectedMissingActivatedPrereqs;
+				Reason = TEXT("MissingOfferPrereqs");
+			}
+			else
+			{
+				switch (UpgradeDef.ClaimPolicy)
+				{
+				case EARInvaderUpgradeClaimPolicy::SingleTeamClaim:
+					if (TeamActivatedTags.HasTagExact(UpgradeDef.UpgradeTag))
+					{
+						++RejectedSingleTeamClaim;
+						Reason = TEXT("SingleTeamClaimed");
+					}
+					break;
+				case EARInvaderUpgradeClaimPolicy::PerPlayerClaim:
+					if (GetTeamActivationCount(TeamActivationCounts, UpgradeDef.UpgradeTag) >= 2)
+					{
+						++RejectedPerPlayerClaim;
+						Reason = TEXT("PerPlayerClaimedByBoth");
+					}
+					break;
+				case EARInvaderUpgradeClaimPolicy::Repeatable:
+				default:
+					break;
+				}
+			}
+
+			if (Reason == TEXT("Unknown"))
+			{
+				++RejectedUnknown;
+			}
+
+			if (RejectionSamples.Num() < 6)
+			{
+				const FString TagString = UpgradeDef.UpgradeTag.IsValid() ? UpgradeDef.UpgradeTag.ToString() : TEXT("<InvalidTag>");
+				RejectionSamples.Add(FString::Printf(TEXT("%s(%s)"), *TagString, *Reason));
+			}
+		}
+
+		const FString RejectionsString = RejectionSamples.Num() > 0 ? FString::Join(RejectionSamples, TEXT(", ")) : TEXT("none");
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[InvaderSpice] RequestActivateFullBlast failed: no eligible upgrade offers. Requester='%s' Tier=%d Spice=%.2f Required=%.2f Defs=%d SlottedCount=%d Rejects{Invalid=%d,Slotted=%d,TierLocked=%d,Unlock=%d,Prereq=%d,SingleClaim=%d,PerPlayerClaim=%d,Unknown=%d} Samples=[%s]"),
+			*GetNameSafe(RequestingPlayerState),
+			SharedFullBlastTier,
+			CurrentSpice,
+			RequiredSpice,
+			UpgradeDefinitions.Num(),
+			SlottedUpgradeTags.Num(),
+			RejectedInvalidTag,
+			RejectedSlotted,
+			RejectedTierLocked,
+			RejectedMissingUnlocks,
+			RejectedMissingActivatedPrereqs,
+			RejectedSingleTeamClaim,
+			RejectedPerPlayerClaim,
+			RejectedUnknown,
+			*RejectionsString);
 		return false;
 	}
 
@@ -1146,6 +1413,8 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 	OnRep_OfferPresenceStates(OldPresenceStates);
 	ForceNetUpdate();
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] RequestActivateFullBlast accepted requester='%s' activationTier=%d offers=%d"),
+		*GetNameSafe(RequestingPlayerState), FullBlastSession.ActivationTier, FullBlastSession.Offers.Num());
 	return true;
 }
 
@@ -1153,12 +1422,16 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 {
 	if (!HasAuthority() || !RequestingPlayerState || !FullBlastSession.bIsActive || !SelectedUpgradeTag.IsValid())
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected authority=%d requester='%s' sessionActive=%d tagValid=%d"),
+			HasAuthority() ? 1 : 0, *GetNameSafe(RequestingPlayerState), FullBlastSession.bIsActive ? 1 : 0, SelectedUpgradeTag.IsValid() ? 1 : 0);
 		return false;
 	}
 
 	if (FullBlastSession.RequestingPlayerSlot != EARPlayerSlot::Unknown
 		&& RequestingPlayerState->GetPlayerSlot() != FullBlastSession.RequestingPlayerSlot)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected requester='%s' slot=%d expectedSlot=%d"),
+			*GetNameSafe(RequestingPlayerState), static_cast<int32>(RequestingPlayerState->GetPlayerSlot()), static_cast<int32>(FullBlastSession.RequestingPlayerSlot));
 		return false;
 	}
 
@@ -1169,6 +1442,8 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 		});
 	if (!SelectedOffer)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected requester='%s' tag='%s' not in offers"),
+			*GetNameSafe(RequestingPlayerState), *SelectedUpgradeTag.ToString());
 		return false;
 	}
 
@@ -1181,11 +1456,15 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 
 	if (DestinationSlot <= 0 || DestinationSlot > MaxTrackSlots)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected requester='%s' destinationSlot=%d maxTrackSlots=%d"),
+			*GetNameSafe(RequestingPlayerState), DestinationSlot, MaxTrackSlots);
 		return false;
 	}
 
 	if (bAtTopTier && (DestinationSlot < 2 || DestinationSlot > 4))
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected requester='%s' topTier destinationSlot=%d"),
+			*GetNameSafe(RequestingPlayerState), DestinationSlot);
 		return false;
 	}
 
@@ -1239,6 +1518,8 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 
 	ResolveFullBlastCommonPostChoice(false, OldSession.RequestingPlayerSlot, OldSession.ActivationTier);
 	ForceNetUpdate();
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection accepted requester='%s' tag='%s' destinationSlot=%d newTier=%d"),
+		*GetNameSafe(RequestingPlayerState), *SelectedUpgradeTag.ToString(), DestinationSlot, SharedFullBlastTier);
 	return true;
 }
 
@@ -1246,12 +1527,16 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 {
 	if (!HasAuthority() || !RequestingPlayerState || !FullBlastSession.bIsActive)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSkip rejected authority=%d requester='%s' sessionActive=%d"),
+			HasAuthority() ? 1 : 0, *GetNameSafe(RequestingPlayerState), FullBlastSession.bIsActive ? 1 : 0);
 		return false;
 	}
 
 	if (FullBlastSession.RequestingPlayerSlot != EARPlayerSlot::Unknown
 		&& RequestingPlayerState->GetPlayerSlot() != FullBlastSession.RequestingPlayerSlot)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSkip rejected requester='%s' slot=%d expectedSlot=%d"),
+			*GetNameSafe(RequestingPlayerState), static_cast<int32>(RequestingPlayerState->GetPlayerSlot()), static_cast<int32>(FullBlastSession.RequestingPlayerSlot));
 		return false;
 	}
 
@@ -1272,6 +1557,8 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 	OnRep_OfferPresenceStates(OldPresenceStates);
 	ResolveFullBlastCommonPostChoice(true, OldSession.RequestingPlayerSlot, OldSession.ActivationTier);
 	ForceNetUpdate();
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSkip accepted requester='%s' activationTier=%d scrapReward=%d"),
+		*GetNameSafe(RequestingPlayerState), OldSession.ActivationTier, SkipReward);
 	return true;
 }
 
@@ -1439,24 +1726,32 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 {
 	if (!HasAuthority() || !RequestingPlayerState || SlotIndex <= 0 || SlotIndex > SharedTrackSlots.Num())
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected authority=%d requester='%s' slot=%d sharedSlots=%d"),
+			HasAuthority() ? 1 : 0, *GetNameSafe(RequestingPlayerState), SlotIndex, SharedTrackSlots.Num());
 		return false;
 	}
 
 	const FARInvaderTrackSlotState SelectedSlot = SharedTrackSlots[SlotIndex - 1];
 	if (!SelectedSlot.UpgradeTag.IsValid())
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected requester='%s' slot=%d no upgrade"),
+			*GetNameSafe(RequestingPlayerState), SlotIndex);
 		return false;
 	}
 
 	TMap<FGameplayTag, FARInvaderUpgradeDefRow> UpgradeDefinitions;
 	if (!BuildUpgradeDefinitionMap(UpgradeDefinitions))
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected requester='%s' upgrade map unavailable"),
+			*GetNameSafe(RequestingPlayerState));
 		return false;
 	}
 
 	const FARInvaderUpgradeDefRow* UpgradeDef = UpgradeDefinitions.Find(SelectedSlot.UpgradeTag);
 	if (!UpgradeDef)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected requester='%s' slot=%d tag='%s' missing def"),
+			*GetNameSafe(RequestingPlayerState), SlotIndex, *SelectedSlot.UpgradeTag.ToString());
 		return false;
 	}
 
@@ -1465,11 +1760,15 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 	BuildTeamActivationState(TeamActivatedTags, TeamActivationCounts);
 	if (!CanPlayerActivateUpgrade(*UpgradeDef, RequestingPlayerState, TeamActivatedTags, TeamActivationCounts))
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected requester='%s' slot=%d tag='%s' eligibility failed"),
+			*GetNameSafe(RequestingPlayerState), SlotIndex, *SelectedSlot.UpgradeTag.ToString());
 		return false;
 	}
 
 	if (!ApplyUpgradeActivation(RequestingPlayerState, *UpgradeDef))
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected requester='%s' slot=%d tag='%s' apply failed"),
+			*GetNameSafe(RequestingPlayerState), SlotIndex, *SelectedSlot.UpgradeTag.ToString());
 		return false;
 	}
 
@@ -1511,6 +1810,8 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 	}
 
 	ForceNetUpdate();
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade accepted requester='%s' slot=%d tag='%s' consumed=%d newTier=%d"),
+		*GetNameSafe(RequestingPlayerState), SlotIndex, *SelectedSlot.UpgradeTag.ToString(), bConsumedSlotThisActivation ? 1 : 0, SharedFullBlastTier);
 	return true;
 }
 
