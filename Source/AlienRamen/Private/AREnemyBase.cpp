@@ -6,6 +6,7 @@
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
 #include "ARInvaderAIController.h"
+#include "ARInvaderCollisionChannels.h"
 #include "ARInvaderGameState.h"
 #include "ARPlayerCharacterInvader.h"
 #include "ARLog.h"
@@ -20,6 +21,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
+#include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "StructUtils/InstancedStruct.h"
 #include "UObject/SoftObjectPtr.h"
@@ -248,6 +250,11 @@ AAREnemyBase::AAREnemyBase()
 		MoveComp->bOrientRotationToMovement = false;
 		MoveComp->RotationRate = FRotator(0.f, 640.f, 0.f);
 		MoveComp->GravityScale = 0.f;
+	}
+
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Enemy);
 	}
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
@@ -564,16 +571,60 @@ void AAREnemyBase::ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitDat
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetMoveSpeedAttribute(), RuntimeInit.MoveSpeed);
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetFireRateAttribute(), RuntimeInit.FireRate);
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDamageTakenMultiplierAttribute(), RuntimeInit.DamageTakenMultiplier);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDropAmountAttribute(), FMath::Max(0.0f, RuntimeInit.DropAmount));
 	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetCollisionDamageAttribute(), RuntimeInit.CollisionDamage);
+
+	const UARInvaderDirectorSettings* DirectorSettings = GetDefault<UARInvaderDirectorSettings>();
+	float DefaultDropChance = DirectorSettings
+		? DirectorSettings->DefaultEnemyDropChance
+		: 0.5f;
+	if (DirectorSettings)
+	{
+		if (RuntimeInit.DropType == EARInvaderDropType::Scrap)
+		{
+			DefaultDropChance = DirectorSettings->DefaultEnemyScrapDropChance;
+		}
+		else if (RuntimeInit.DropType == EARInvaderDropType::Meat)
+		{
+			DefaultDropChance = DirectorSettings->DefaultEnemyMeatDropChance;
+		}
+	}
+	DefaultDropChance = FMath::Clamp(DefaultDropChance, 0.0f, 1.0f);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDropChanceAttribute(), DefaultDropChance);
+
 	RefreshCharacterMovementSpeedFromAttributes();
+	ApplyInvaderCollisionResponses(RuntimeInit);
 
 	EnemyArchetypeTag = RuntimeInit.EnemyArchetypeTag;
+	EnemyDropType = RuntimeInit.DropType;
 	RuntimeSpecificAbilities = RuntimeInit.EnemySpecificAbilities;
 
 	ClearRuntimeEnemyEffects();
 	ClearRuntimeEnemyTags();
 	ApplyRuntimeEnemyEffects(RuntimeInit.StartupGameplayEffects);
 	ApplyRuntimeEnemyTags(RuntimeInit.StartupLooseTags);
+}
+
+void AAREnemyBase::ApplyInvaderCollisionResponses(const FARInvaderEnemyRuntimeInitData& RuntimeInit)
+{
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (!Capsule)
+	{
+		return;
+	}
+
+	Capsule->SetCollisionResponseToChannel(
+		ARInvaderCollisionChannels::Enemy,
+		RuntimeInit.bCollideWithEnemies ? ECR_Block : ECR_Ignore);
+	Capsule->SetCollisionResponseToChannel(
+		ARInvaderCollisionChannels::Player,
+		RuntimeInit.bCollideWithPlayers ? ECR_Block : ECR_Ignore);
+	Capsule->SetCollisionResponseToChannel(
+		ARInvaderCollisionChannels::Projectile,
+		RuntimeInit.bCollideWithProjectiles ? ECR_Block : ECR_Ignore);
+	Capsule->SetCollisionResponseToChannel(
+		ARInvaderCollisionChannels::Drop,
+		RuntimeInit.bCollideWithDrops ? ECR_Block : ECR_Ignore);
 }
 
 bool AAREnemyBase::InitializeFromEnemyDefinitionTag()

@@ -82,7 +82,7 @@ Related saved-tag contracts:
 Dialogue and NPC definitions are DataTable rows resolved via `UContentLookupSubsystem`.
 
 - Dialogue root tag: `Dialogue.Node`
-- NPC root tag: `Npc.Definition`
+- NPC root tag: `NPC.Identity`
 
 Dialogue row type: `FARDialogueNodeRow`
 NPC row type: `FARNpcDefinitionRow`

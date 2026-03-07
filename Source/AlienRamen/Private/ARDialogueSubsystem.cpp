@@ -35,7 +35,7 @@ namespace
 		FARDialogueNodeRow ActiveRow;
 	};
 
-	static bool IsAuthorityWorld(const UWorld* World)
+	static bool IsAuthorityWorld_Dialogue(const UWorld* World)
 	{
 		if (!World)
 		{
@@ -66,13 +66,19 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
 };
 
-UARDialogueSubsystem::~UARDialogueSubsystem() = default;
+UARDialogueSubsystem::UARDialogueSubsystem() = default;
+
+UARDialogueSubsystem::~UARDialogueSubsystem()
+{
+	delete RuntimeState;
+	RuntimeState = nullptr;
+}
 
 UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState()
 {
-	if (!RuntimeState.IsValid())
+	if (!RuntimeState)
 	{
-		RuntimeState = MakeUnique<FARDialogueRuntimeState>();
+		RuntimeState = new FARDialogueRuntimeState();
 	}
 	return *RuntimeState;
 }
@@ -80,12 +86,13 @@ UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeS
 const UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState() const
 {
 	static const FARDialogueRuntimeState EmptyState;
-	return RuntimeState.IsValid() ? *RuntimeState : EmptyState;
+	return RuntimeState ? *RuntimeState : EmptyState;
 }
 
 void UARDialogueSubsystem::Deinitialize()
 {
-	RuntimeState.Reset();
+	delete RuntimeState;
+	RuntimeState = nullptr;
 	Super::Deinitialize();
 }
 
@@ -752,7 +759,7 @@ static bool TrySelectBestRowForSpeaker(const UARDialogueSubsystem* Subsystem, co
 bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag NpcTag)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController || !NpcTag.IsValid())
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController || !NpcTag.IsValid())
 	{
 		return false;
 	}
@@ -861,7 +868,7 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingController)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController)
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController)
 	{
 		return false;
 	}
@@ -961,7 +968,7 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 bool UARDialogueSubsystem::SubmitDialogueChoice(AARPlayerController* RequestingController, FGameplayTag ChoiceTag)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController || !ChoiceTag.IsValid())
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController || !ChoiceTag.IsValid())
 	{
 		return false;
 	}
@@ -1071,7 +1078,7 @@ bool UARDialogueSubsystem::SubmitDialogueChoice(AARPlayerController* RequestingC
 bool UARDialogueSubsystem::SetShopEavesdropTarget(AARPlayerController* RequestingController, EARPlayerSlot TargetSlot, bool bEnable)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController)
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController)
 	{
 		return false;
 	}

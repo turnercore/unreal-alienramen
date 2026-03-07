@@ -26,6 +26,8 @@ class AARPlayerController;
 
 class UARWeaponDefinition;
 class UARAbilitySet;
+class UARPickupCollectorComponent;
+class AARInvaderDropBase;
 struct FTimerHandle;
 struct FOnAttributeChangeData;
 
@@ -72,6 +74,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Ship|GAS", meta = (BlueprintAuthorityOnly))
 	bool ApplyDamageToTargetViaGAS(AActor* Target, float DamageOverride = -1.f);
 
+	/** Client request path for pickup collection; server validates range and collection state. */
+	UFUNCTION(Server, Reliable)
+	void ServerRequestCollectInvaderDrop(AARInvaderDropBase* Drop);
+
 	/** Activates ONE ability that matches ANY of the tags (deterministic pick). */
 	UFUNCTION(BlueprintCallable, Category = "AR|Abilities")
 	bool ActivateAbilityByTags(const FGameplayTagContainer& InTagsToActivate, bool bAllowRemoteActivation = true);
@@ -95,6 +101,8 @@ public:
 	static void LogAllPropertiesOnStruct(const UScriptStruct* StructType);
 
 protected:
+	virtual void BeginPlay() override;
+
 	// Server: possession
 	virtual void PossessedBy(AController* NewController) override;
 
@@ -110,6 +118,8 @@ protected:
 	void UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
 	void OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData);
 	void RefreshCharacterMovementSpeedFromAttributes();
+	void ApplyInvaderGravityFrameFromSettings();
+	void EnsureDefaultPickupRadiusOnASC(UAbilitySystemComponent* ASC);
 	void ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 	void ClearPrimaryWeaponRuntimeEffects();
 
@@ -179,6 +189,10 @@ protected:
 	// Runtime weapon tuning effect (formerly applied from BP _Init).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Ship|Weapon")
 	TSubclassOf<UGameplayEffect> PrimaryWeaponFireRateEffectClass;
+
+	// Player-side detector that drives pickup range checks, prediction, and server collect requests.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Ship|Pickup", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UARPickupCollectorComponent> PickupCollectorComponent;
 
 	UPROPERTY(Transient)
 	FActiveGameplayEffectHandle BasePrimaryFireRateEffectHandle;

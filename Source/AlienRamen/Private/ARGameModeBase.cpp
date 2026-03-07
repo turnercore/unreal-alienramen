@@ -21,11 +21,6 @@ void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, c
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 
 	if (!ErrorMessage.IsEmpty())
-void AARGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (!HasAuthority())
 	{
 		return;
 	}
@@ -67,6 +62,19 @@ void AARGameModeBase::BeginPlay()
 	{
 		ErrorMessage = TEXT("Server full.");
 		UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': player cap reached (%d)."), *Address, PlayerCount);
+		return;
+	}
+}
+
+void AARGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
 	{
 		NormalizeConnectedPlayersIdentity(GS);
@@ -585,6 +593,28 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 			{
 				OpenLevelOptions = URL.Mid(QueryIndex + 1);
 			}
+		}
+
+		bool bHasListenOption = false;
+		if (!OpenLevelOptions.IsEmpty())
+		{
+			TArray<FString> OptionTokens;
+			OpenLevelOptions.ParseIntoArray(OptionTokens, TEXT("?"), true);
+			for (const FString& Token : OptionTokens)
+			{
+				if (Token.TrimStartAndEnd().Equals(TEXT("listen"), ESearchCase::IgnoreCase))
+				{
+					bHasListenOption = true;
+					break;
+				}
+			}
+		}
+
+		if (!bHasListenOption)
+		{
+			OpenLevelOptions = OpenLevelOptions.IsEmpty()
+				? FString(TEXT("listen"))
+				: FString::Printf(TEXT("%s?listen"), *OpenLevelOptions);
 		}
 
 		UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel PIE fallback -> OpenLevel Level='%s' Options='%s'"), *LevelName, *OpenLevelOptions);

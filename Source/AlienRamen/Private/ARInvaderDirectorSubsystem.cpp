@@ -9,11 +9,13 @@
 #include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ContentLookupSubsystem.h"
 
 #include "AbilitySystemComponent.h"
 #include "Algo/StableSort.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "EngineUtils.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
@@ -1780,19 +1782,63 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 	{
 		return false;
 	}
+
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	UContentLookupSubsystem* ContentLookup = GameInstance ? GameInstance->GetSubsystem<UContentLookupSubsystem>() : nullptr;
+	if (!ContentLookup)
+	{
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] ContentLookupSubsystem unavailable while resolving wave/stage tables."));
+		return false;
+	}
+
 	if (!WaveTable)
 	{
-		WaveTable = Settings->WaveDataTable.LoadSynchronous();
+		FString LookupError;
+		if (Settings->WaveDefinitionRootTag.IsValid())
+		{
+			UDataTable* ResolvedWaveTable = nullptr;
+			if (!ContentLookup->GetDataTableForRootTag(Settings->WaveDefinitionRootTag, ResolvedWaveTable, LookupError))
+			{
+				FGameplayTag MatchedRoot;
+				ContentLookup->GetDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
+			}
+			WaveTable = ResolvedWaveTable;
+		}
+		else
+		{
+			UDataTable* ResolvedWaveTable = nullptr;
+			FGameplayTag MatchedRoot;
+			ContentLookup->GetDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
+			WaveTable = ResolvedWaveTable;
+		}
 	}
 	if (!StageTable)
 	{
-		StageTable = Settings->StageDataTable.LoadSynchronous();
+		FString LookupError;
+		if (Settings->StageDefinitionRootTag.IsValid())
+		{
+			UDataTable* ResolvedStageTable = nullptr;
+			if (!ContentLookup->GetDataTableForRootTag(Settings->StageDefinitionRootTag, ResolvedStageTable, LookupError))
+			{
+				FGameplayTag MatchedRoot;
+				ContentLookup->GetDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
+			}
+			StageTable = ResolvedStageTable;
+		}
+		else
+		{
+			UDataTable* ResolvedStageTable = nullptr;
+			FGameplayTag MatchedRoot;
+			ContentLookup->GetDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
+			StageTable = ResolvedStageTable;
+		}
 	}
 
 	if (!WaveTable || !StageTable)
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Missing data tables. Wave='%s' Stage='%s'"),
-			*Settings->WaveDataTable.ToString(), *Settings->StageDataTable.ToString());
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] Missing data tables. WaveRoot='%s' StageRoot='%s'"),
+			*Settings->WaveDefinitionRootTag.ToString(), *Settings->StageDefinitionRootTag.ToString());
 		return false;
 	}
 	return true;

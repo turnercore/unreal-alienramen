@@ -1,6 +1,8 @@
 #include "ARPlayerStateBase.h"
 
 #include "ARAttributeSetCore.h"
+#include "ARInvaderGameState.h"
+#include "ARInvaderSpicyTrackSettings.h"
 #include "ARLoadoutSettings.h"
 #include "ARLog.h"
 #include "AbilitySystemComponent.h"
@@ -26,6 +28,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, InvaderComboCount);
 	DOREPLIFETIME(AARPlayerStateBase, ActivatedInvaderUpgradeTags);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSharingSpice);
+	DOREPLIFETIME(AARPlayerStateBase, SpicyTrackCursorTier);
 }
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
@@ -195,6 +198,7 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 	SetCharacterPicked(DefaultCharacter);
 	ResetInvaderCombo();
 	ClearActivatedInvaderUpgrades();
+	ResetSpicyTrackCursor();
 	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(DefaultCharacter), true);
 	EnsureDefaultLoadoutIfEmpty();
 }
@@ -500,9 +504,10 @@ bool AARPlayerStateBase::HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) con
 
 void AARPlayerStateBase::SetPredictedSpiceValue(const float NewPredictedSpice)
 {
+	const float OldDisplayed = bHasPredictedSpiceValue ? PredictedSpiceValue : GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	PredictedSpiceValue = FMath::Max(0.0f, NewPredictedSpice);
 	bHasPredictedSpiceValue = true;
-	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+	OnSpiceChanged.Broadcast(this, PlayerSlot, PredictedSpiceValue, OldDisplayed);
 }
 
 void AARPlayerStateBase::ClearPredictedSpiceValue()
@@ -512,9 +517,99 @@ void AARPlayerStateBase::ClearPredictedSpiceValue()
 		return;
 	}
 
+	const float OldPredicted = PredictedSpiceValue;
+	const float AuthoritativeSpice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	bHasPredictedSpiceValue = false;
-	PredictedSpiceValue = 0.0f;
-	OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, GetCoreAttributeValue(EARCoreAttributeType::Spice), bHasPredictedSpiceValue);
+	PredictedSpiceValue = AuthoritativeSpice;
+	OnSpiceChanged.Broadcast(this, PlayerSlot, AuthoritativeSpice, OldPredicted);
+}
+
+int32 AARPlayerStateBase::GetEffectiveSpicyTrackCursorTier() const
+{
+	return bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : SpicyTrackCursorTier;
+}
+
+void AARPlayerStateBase::SetSpicyTrackCursorTier(int32 NewCursorTier)
+{
+	if (HasAuthority())
+	{
+		SetSpicyTrackCursorTier_Internal(NewCursorTier);
+		return;
+	}
+
+	SetPredictedSpicyTrackCursorTier(NewCursorTier);
+	ServerSetSpicyTrackCursorTier(NewCursorTier);
+}
+
+void AARPlayerStateBase::ServerSetSpicyTrackCursorTier_Implementation(int32 NewCursorTier)
+{
+	SetSpicyTrackCursorTier_Internal(NewCursorTier);
+}
+
+void AARPlayerStateBase::AdjustSpicyTrackCursorTier(const int32 DeltaTier)
+{
+	if (DeltaTier == 0)
+	{
+		return;
+	}
+
+	const int32 MaxSelectableTier = ResolveMaxSelectableSpicyTrackCursorTier();
+	if (MaxSelectableTier <= 0)
+	{
+		SetSpicyTrackCursorTier(0);
+		return;
+	}
+
+	// Track input should loop across valid selectable tiers only (1..MaxSelectableTier)
+	// and never land on empty tier 0 when at least one tier is selectable.
+	const int32 CurrentTier = FMath::Clamp(GetEffectiveSpicyTrackCursorTier(), 1, MaxSelectableTier);
+	const int32 MinTier = 1;
+	const int32 RangeSize = MaxSelectableTier - MinTier + 1;
+	const int32 ZeroBasedCurrent = CurrentTier - MinTier;
+	const int32 ZeroBasedWrapped = ((ZeroBasedCurrent + DeltaTier) % RangeSize + RangeSize) % RangeSize;
+	const int32 WrappedTier = ZeroBasedWrapped + MinTier;
+
+	SetSpicyTrackCursorTier(WrappedTier);
+}
+
+void AARPlayerStateBase::SnapSpicyTrackCursorToHighestSelectable()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetSpicyTrackCursorTier_Internal(ResolveMaxSelectableSpicyTrackCursorTier());
+}
+
+void AARPlayerStateBase::ResetSpicyTrackCursor()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetSpicyTrackCursorTier_Internal(0);
+	ClearPredictedSpicyTrackCursorTier();
+}
+
+void AARPlayerStateBase::SetPredictedSpicyTrackCursorTier(const int32 NewPredictedCursorTier)
+{
+	const int32 OldDisplayedCursorTier = bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : SpicyTrackCursorTier;
+	PredictedSpicyTrackCursorTier = ClampSpicyTrackCursorTier(NewPredictedCursorTier);
+	bHasPredictedSpicyTrackCursorTier = true;
+	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, PredictedSpicyTrackCursorTier, OldDisplayedCursorTier);
+}
+
+void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
+{
+	if (!bHasPredictedSpicyTrackCursorTier)
+	{
+		return;
+	}
+
+	bHasPredictedSpicyTrackCursorTier = false;
+	PredictedSpicyTrackCursorTier = SpicyTrackCursorTier;
 }
 
 void AARPlayerStateBase::BeginPlay()
@@ -595,6 +690,22 @@ void AARPlayerStateBase::OnRep_IsSharingSpice(bool bOldIsSharingSpice)
 	OnSpiceSharingStateChanged.Broadcast(this, PlayerSlot, bIsSharingSpice, bOldIsSharingSpice);
 }
 
+void AARPlayerStateBase::OnRep_SpicyTrackCursorTier(int32 OldCursorTier)
+{
+	if (bHasPredictedSpicyTrackCursorTier)
+	{
+		const int32 OldPredictedCursorTier = PredictedSpicyTrackCursorTier;
+		ClearPredictedSpicyTrackCursorTier();
+		if (OldPredictedCursorTier != SpicyTrackCursorTier)
+		{
+			OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldPredictedCursorTier);
+		}
+		return;
+	}
+
+	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldCursorTier);
+}
+
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
 {
 	if (!HasAuthority() || CharacterPicked == NewCharacter)
@@ -667,6 +778,53 @@ void AARPlayerStateBase::SetSpiceSharingActive_Internal(const bool bNewIsSharing
 	bIsSharingSpice = bNewIsSharing;
 	OnRep_IsSharingSpice(bOldIsSharing);
 	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::SetSpicyTrackCursorTier_Internal(int32 NewCursorTier, const bool bForceBroadcast)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 ClampedCursor = ClampSpicyTrackCursorTier(NewCursorTier);
+	if (!bForceBroadcast && SpicyTrackCursorTier == ClampedCursor)
+	{
+		return;
+	}
+
+	const int32 OldCursorTier = SpicyTrackCursorTier;
+	SpicyTrackCursorTier = ClampedCursor;
+	OnRep_SpicyTrackCursorTier(OldCursorTier);
+	ForceNetUpdate();
+}
+
+int32 AARPlayerStateBase::ClampSpicyTrackCursorTier(const int32 RequestedCursorTier) const
+{
+	const int32 MaxSelectableTier = ResolveMaxSelectableSpicyTrackCursorTier();
+	return FMath::Clamp(RequestedCursorTier, 0, FMath::Max(0, MaxSelectableTier));
+}
+
+int32 AARPlayerStateBase::ResolveMaxSelectableSpicyTrackCursorTier() const
+{
+	if (const UWorld* World = GetWorld())
+	{
+		if (const AARInvaderGameState* InvaderGameState = World->GetGameState<AARInvaderGameState>())
+		{
+			return InvaderGameState->GetMaxSelectableTrackCursorTierForPlayer(this);
+		}
+	}
+
+	// Safe fallback when not in Invader mode/runtime context.
+	return 0;
+}
+
+int32 AARPlayerStateBase::ResolveSpiceTierFromValue(const float SpiceValue) const
+{
+	const UARInvaderSpicyTrackSettings* Settings = GetDefault<UARInvaderSpicyTrackSettings>();
+	const int32 SpicePerTier = Settings ? FMath::Max(1, Settings->SpicePerTier) : 100;
+	const float SanitizedSpice = FMath::Max(0.0f, SpiceValue);
+	return FMath::Max(0, FMath::FloorToInt(SanitizedSpice / static_cast<float>(SpicePerTier)));
 }
 
 EARAffinityColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharacter(const EARCharacterChoice InCharacterChoice) const
@@ -1048,6 +1206,7 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	TargetPS->SetReadyForRun(false);
 	TargetPS->ResetInvaderCombo();
 	TargetPS->ClearActivatedInvaderUpgrades();
+	TargetPS->ResetSpicyTrackCursor();
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)
@@ -1315,10 +1474,7 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	OnSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.Spice, Snapshot.Spice);
 	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
-	if (bHasPredictedSpiceValue)
-	{
-		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, Snapshot.Spice, true);
-	}
+	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, SpicyTrackCursorTier);
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -1339,9 +1495,22 @@ void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeDat
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
 	OnSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
-	if (bHasPredictedSpiceValue)
+	bHasPredictedSpiceValue = false;
+	PredictedSpiceValue = ChangeData.NewValue;
+
+	if (HasAuthority())
 	{
-		OnPredictedSpiceChanged.Broadcast(PredictedSpiceValue, ChangeData.NewValue, true);
+		const int32 OldSpiceTier = ResolveSpiceTierFromValue(ChangeData.OldValue);
+		const int32 NewSpiceTier = ResolveSpiceTierFromValue(ChangeData.NewValue);
+		if (NewSpiceTier > OldSpiceTier)
+		{
+			SnapSpicyTrackCursorToHighestSelectable();
+		}
+		else
+		{
+			// Keep cursor valid if spice dropped below current selection.
+			SetSpicyTrackCursorTier_Internal(SpicyTrackCursorTier);
+		}
 	}
 }
 
@@ -1349,6 +1518,11 @@ void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChange
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, ChangeData.NewValue, ChangeData.OldValue);
 	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+
+	if (HasAuthority())
+	{
+		SetSpicyTrackCursorTier_Internal(SpicyTrackCursorTier);
+	}
 }
 
 void AARPlayerStateBase::HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData)

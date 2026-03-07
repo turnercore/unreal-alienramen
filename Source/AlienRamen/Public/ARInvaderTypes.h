@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
+#include "ARInvaderDropTypes.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPtr.h"
@@ -102,6 +103,27 @@ struct FARInvaderEnemyRuntimeInitData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
 	float DamageTakenMultiplier = 1.f;
 
+	// Which currency family this enemy can drop on death.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime|Drops")
+	EARInvaderDropType DropType = EARInvaderDropType::None;
+
+	// Baseline drop amount before probabilistic variance and killer multipliers.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime|Drops", meta = (ClampMin = "0.0"))
+	float DropAmount = 0.f;
+
+	// Invader-mode collision toggles against core runtime groups.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime|Collision")
+	bool bCollideWithEnemies = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime|Collision")
+	bool bCollideWithPlayers = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime|Collision")
+	bool bCollideWithProjectiles = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime|Collision")
+	bool bCollideWithDrops = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Runtime")
 	FGameplayTag EnemyArchetypeTag;
 
@@ -137,7 +159,7 @@ struct FARInvaderEnemyDefRow : public FTableRowBase
 	FGameplayTag EnemyIdentifierTag;
 
 	// Base spicy-track credit granted for killing this enemy (before player multipliers).
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Rewards", meta = (ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Rewards", meta = (ClampMin = "1.0"))
 	float BaseSpiceKillValue = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")

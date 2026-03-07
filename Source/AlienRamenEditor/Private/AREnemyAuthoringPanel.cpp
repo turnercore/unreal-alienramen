@@ -1,9 +1,11 @@
 #include "AREnemyAuthoringPanel.h"
 
 #include "ARInvaderAuthoringEditorProxies.h"
-#include "ARInvaderDirectorSettings.h"
+#include "ARContentLookupSettings.h"
+#include "ARInvaderSpicyTrackSettings.h"
 #include "ARInvaderToolingSettings.h"
 #include "ARLog.h"
+#include "ContentLookupSubsystem.h"
 
 #include "FileHelpers.h"
 #include "Framework/Docking/TabManager.h"
@@ -41,6 +43,49 @@ namespace
 		return EnemyTable && EnemyTable->GetRowStruct() == FARInvaderEnemyDefRow::StaticStruct();
 	}
 
+	UDataTable* LoadTableByRowStructFromContentLookup(UScriptStruct* DesiredRowStruct)
+	{
+		if (!DesiredRowStruct)
+		{
+			return nullptr;
+		}
+
+		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
+		if (!LookupSettings || LookupSettings->RegistryAsset.IsNull())
+		{
+			return nullptr;
+		}
+
+		UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
+		if (!Registry)
+		{
+			return nullptr;
+		}
+
+		UDataTable* Found = nullptr;
+		for (const FContentLookupRoute& Route : Registry->Routes)
+		{
+			if (Route.DataTable.IsNull())
+			{
+				continue;
+			}
+
+			UDataTable* Table = Route.DataTable.LoadSynchronous();
+			if (!Table || Table->GetRowStruct() != DesiredRowStruct)
+			{
+				continue;
+			}
+
+			if (Found && Found != Table)
+			{
+				return nullptr;
+			}
+			Found = Table;
+		}
+
+		return Found;
+	}
+
 	UDataTable* LoadEnemyTableFromSettings()
 	{
 		if (const UARInvaderToolingSettings* ToolingSettings = GetDefault<UARInvaderToolingSettings>())
@@ -51,12 +96,7 @@ namespace
 			}
 		}
 
-		if (const UARInvaderDirectorSettings* RuntimeSettings = GetDefault<UARInvaderDirectorSettings>())
-		{
-			return RuntimeSettings->EnemyDataTable.LoadSynchronous();
-		}
-
-		return nullptr;
+		return LoadTableByRowStructFromContentLookup(FARInvaderEnemyDefRow::StaticStruct());
 	}
 
 	FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& EnemyClassRef)
@@ -216,6 +256,11 @@ SEnemyAuthoringPanel::~SEnemyAuthoringPanel()
 FReply SEnemyAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
 	(void)MyGeometry;
+	if (InKeyEvent.IsControlDown() && !InKeyEvent.IsAltDown() && InKeyEvent.GetKey() == EKeys::S)
+	{
+		return OnSaveTable();
+	}
+
 	if (InKeyEvent.GetKey() == EKeys::Delete || InKeyEvent.GetKey() == EKeys::BackSpace)
 	{
 		return OnDeleteRow();
@@ -374,7 +419,13 @@ void SEnemyAuthoringPanel::BuildLayout()
 							.Text(this, &SEnemyAuthoringPanel::GetSortLabel, FName(TEXT("MaxHealth")), FString(TEXT("MaxHealth")))
 							.OnClicked_Lambda([this]() { ToggleSortByColumn(TEXT("MaxHealth")); return FReply::Handled(); })
 						]
-						+ SHorizontalBox::Slot().FillWidth(0.25f).Padding(4.f, 0.f, 0.f, 0.f)
+						+ SHorizontalBox::Slot().FillWidth(0.16f).Padding(4.f, 0.f, 0.f, 0.f)
+						[
+							SNew(SButton)
+							.Text(this, &SEnemyAuthoringPanel::GetSortLabel, FName(TEXT("BaseSpice")), FString(TEXT("BaseSpice")))
+							.OnClicked_Lambda([this]() { ToggleSortByColumn(TEXT("BaseSpice")); return FReply::Handled(); })
+						]
+						+ SHorizontalBox::Slot().FillWidth(0.19f).Padding(4.f, 0.f, 0.f, 0.f)
 						[
 							SNew(SButton)
 							.Text(this, &SEnemyAuthoringPanel::GetSortLabel, FName(TEXT("ArchetypeTag")), FString(TEXT("ArchetypeTag")))
@@ -495,6 +546,7 @@ void SEnemyAuthoringPanel::RefreshRows()
 			: Row->DisplayName;
 		Item->EnemyClassPath = ToSoftClassPath(Row->EnemyClass);
 		Item->MaxHealth = Row->RuntimeInit.MaxHealth;
+		Item->BaseSpiceKillValue = Row->BaseSpiceKillValue;
 		Item->ArchetypeTag = Row->RuntimeInit.EnemyArchetypeTag;
 		Item->IdentifierTag = Row->EnemyIdentifierTag;
 		RowItems.Add(Item);
@@ -537,6 +589,10 @@ void SEnemyAuthoringPanel::RefreshRows()
 		if (SortColumn == TEXT("MaxHealth") && !FMath::IsNearlyEqual(A->MaxHealth, B->MaxHealth))
 		{
 			return CompareFloats(A->MaxHealth, B->MaxHealth);
+		}
+		if (SortColumn == TEXT("BaseSpice") && !FMath::IsNearlyEqual(A->BaseSpiceKillValue, B->BaseSpiceKillValue))
+		{
+			return CompareFloats(A->BaseSpiceKillValue, B->BaseSpiceKillValue);
 		}
 		if (SortColumn == TEXT("ArchetypeTag") && A->ArchetypeTag != B->ArchetypeTag)
 		{
@@ -708,6 +764,10 @@ FReply SEnemyAuthoringPanel::OnCreateRow()
 	EnemyTable->Modify();
 
 	FARInvaderEnemyDefRow NewRow;
+	if (const UARInvaderSpicyTrackSettings* SpicySettings = GetDefault<UARInvaderSpicyTrackSettings>())
+	{
+		NewRow.BaseSpiceKillValue = FMath::Max(1.0f, SpicySettings->DefaultBaseKillSpiceValue);
+	}
 	EnemyTable->AddRow(NewRowName, NewRow);
 	NormalizeIdentifierTagsForRows({ NewRowName }, false, nullptr);
 	EnemyTable->MarkPackageDirty();
@@ -1096,6 +1156,10 @@ void SEnemyAuthoringPanel::ValidateSingleRow(const FName RowName, const FARInvad
 	{
 		OutIssues.Add({ true, RowName, TEXT("MaxHealth must be > 0.") });
 	}
+	if (Row.BaseSpiceKillValue < 1.f)
+	{
+		OutIssues.Add({ true, RowName, TEXT("BaseSpiceKillValue must be >= 1.0.") });
+	}
 	if (Row.RuntimeInit.Damage < 0.f)
 	{
 		OutIssues.Add({ true, RowName, TEXT("Damage must be >= 0.") });
@@ -1115,6 +1179,18 @@ void SEnemyAuthoringPanel::ValidateSingleRow(const FName RowName, const FARInvad
 	if (Row.RuntimeInit.DamageTakenMultiplier < 0.f)
 	{
 		OutIssues.Add({ true, RowName, TEXT("DamageTakenMultiplier must be >= 0.") });
+	}
+	if (Row.RuntimeInit.DropAmount < 0.f)
+	{
+		OutIssues.Add({ true, RowName, TEXT("DropAmount must be >= 0.") });
+	}
+	if (Row.RuntimeInit.DropType != EARInvaderDropType::None && Row.RuntimeInit.DropAmount <= 0.f)
+	{
+		OutIssues.Add({ true, RowName, TEXT("DropAmount must be > 0 when DropType is Scrap or Meat.") });
+	}
+	if (Row.RuntimeInit.DropType == EARInvaderDropType::None && Row.RuntimeInit.DropAmount > 0.f)
+	{
+		OutIssues.Add({ false, RowName, TEXT("DropAmount is set but DropType is None; no drops will spawn.") });
 	}
 	for (int32 AbilityIndex = 0; AbilityIndex < Row.RuntimeInit.EnemySpecificAbilities.Num(); ++AbilityIndex)
 	{
@@ -1150,6 +1226,7 @@ TSharedRef<ITableRow> SEnemyAuthoringPanel::HandleGenerateRow(TSharedPtr<FEnemyR
 		: TEXT("<invalid>");
 	const FString EnemyClass = Item.IsValid() ? GetEnemyClassLabel(Item->EnemyClassPath) : TEXT("<invalid>");
 	const FString MaxHealth = Item.IsValid() ? FString::Printf(TEXT("%.1f"), Item->MaxHealth) : TEXT("-");
+	const FString BaseSpice = Item.IsValid() ? FString::Printf(TEXT("%.2f"), Item->BaseSpiceKillValue) : TEXT("-");
 	const FString Archetype = (Item.IsValid() && Item->ArchetypeTag.IsValid()) ? Item->ArchetypeTag.ToString() : TEXT("<None>");
 	const FLinearColor RowTint = (Item.IsValid() && !Item->bEnabled)
 		? FLinearColor(0.5f, 0.5f, 0.5f, 1.f)
@@ -1185,7 +1262,11 @@ TSharedRef<ITableRow> SEnemyAuthoringPanel::HandleGenerateRow(TSharedPtr<FEnemyR
 		[
 			SNew(STextBlock).Text(FText::FromString(MaxHealth)).ColorAndOpacity(RowTint)
 		]
-		+ SHorizontalBox::Slot().FillWidth(0.25f).Padding(4.f, 0.f, 0.f, 0.f)
+		+ SHorizontalBox::Slot().FillWidth(0.16f).Padding(4.f, 0.f, 0.f, 0.f)
+		[
+			SNew(STextBlock).Text(FText::FromString(BaseSpice)).ColorAndOpacity(RowTint)
+		]
+		+ SHorizontalBox::Slot().FillWidth(0.19f).Padding(4.f, 0.f, 0.f, 0.f)
 		[
 			SNew(STextBlock).Text(FText::FromString(Archetype)).ColorAndOpacity(RowTint)
 		]

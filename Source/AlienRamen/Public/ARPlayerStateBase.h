@@ -147,8 +147,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSignature, EARAffinityColor, NewColor, EARAffinityColor, OldColor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCombo, int32, OldCombo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnPredictedSpiceChangedSignature, float, PredictedSpiceValue, float, AuthoritativeSpiceValue, bool, bHasPrediction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpiceSharingStateChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, bool, bIsSharingNow, bool, bWasSharingBefore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpicyTrackCursorChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCursorTier, int32, OldCursorTier);
 
 /**
  * PlayerState backbone for Alien Ramen.
@@ -322,6 +322,49 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Prediction")
 	bool HasPredictedSpiceValue() const { return bHasPredictedSpiceValue; }
 
+	// ---- INVADER SPICY TRACK CURSOR ----
+
+	// Server-authoritative spicy-track cursor tier for this player.
+	// 0 = no slotted tier selected, 1..N = track tier selected.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Cursor")
+	int32 GetSpicyTrackCursorTier() const { return SpicyTrackCursorTier; }
+
+	// Local predicted cursor tier for responsive HUD input feedback.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
+	int32 GetPredictedSpicyTrackCursorTier() const { return PredictedSpicyTrackCursorTier; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
+	bool HasPredictedSpicyTrackCursorTier() const { return bHasPredictedSpicyTrackCursorTier; }
+
+	// HUD helper: local prediction when available, authoritative value otherwise.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Cursor")
+	int32 GetEffectiveSpicyTrackCursorTier() const;
+
+	// Request absolute cursor tier set (client routes to server).
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Cursor")
+	void SetSpicyTrackCursorTier(int32 NewCursorTier);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetSpicyTrackCursorTier(int32 NewCursorTier);
+
+	// Request cursor tier delta (+1/-1 etc), with local prediction on owning client.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Cursor")
+	void AdjustSpicyTrackCursorTier(int32 DeltaTier);
+
+	// Server-only: snap cursor to current highest selectable tier.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Cursor", meta = (BlueprintAuthorityOnly))
+	void SnapSpicyTrackCursorToHighestSelectable();
+
+	// Server-only runtime reset for new invader run/session initialization.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Cursor", meta = (BlueprintAuthorityOnly))
+	void ResetSpicyTrackCursor();
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
+	void SetPredictedSpicyTrackCursorTier(int32 NewPredictedCursorTier);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
+	void ClearPredictedSpicyTrackCursorTier();
+
 	// ---- LOADOUT (GameplayTag driven) ----
 
 	UPROPERTY(ReplicatedUsing = OnRep_Loadout, BlueprintReadWrite, Category = "Loadout")
@@ -409,8 +452,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track")
 	FAROnSpiceSharingStateChangedSignature OnSpiceSharingStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Prediction")
-	FAROnPredictedSpiceChangedSignature OnPredictedSpiceChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Cursor")
+	FAROnSpicyTrackCursorChangedSignature OnSpicyTrackCursorChanged;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
@@ -446,9 +489,15 @@ protected:
 	void OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags);
 	UFUNCTION()
 	void OnRep_IsSharingSpice(bool bOldIsSharingSpice);
+	UFUNCTION()
+	void OnRep_SpicyTrackCursorTier(int32 OldCursorTier);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
 	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
 	void SetSpiceSharingActive_Internal(bool bNewIsSharing, bool bForceBroadcast = false);
+	void SetSpicyTrackCursorTier_Internal(int32 NewCursorTier, bool bForceBroadcast = false);
+	int32 ClampSpicyTrackCursorTier(int32 RequestedCursorTier) const;
+	int32 ResolveMaxSelectableSpicyTrackCursorTier() const;
+	int32 ResolveSpiceTierFromValue(float SpiceValue) const;
 	EARAffinityColor ResolveDefaultInvaderPlayerColorFromCharacter(EARCharacterChoice InCharacterChoice) const;
 	static bool DoesInvaderColorMatch(EARAffinityColor PlayerColor, EARAffinityColor EnemyColor);
 	void SetDisplayName_Internal(const FString& NewDisplayName);
@@ -518,6 +567,9 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_IsSharingSpice, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
 	bool bIsSharingSpice = false;
 
+	UPROPERTY(ReplicatedUsing=OnRep_SpicyTrackCursorTier, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Cursor")
+	int32 SpicyTrackCursorTier = 0;
+
 	UPROPERTY(Transient)
 	float LastInvaderKillCreditServerTime = -1.0f;
 
@@ -526,6 +578,12 @@ protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Prediction")
 	bool bHasPredictedSpiceValue = false;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
+	int32 PredictedSpicyTrackCursorTier = 0;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
+	bool bHasPredictedSpicyTrackCursorTier = false;
 
 	// Cached travel readiness for change detection.
 	UPROPERTY(Transient)
