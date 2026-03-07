@@ -41,7 +41,7 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	const FGameplayTag ValidNpcTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Npc.Definition")), false);
+	const FGameplayTag ValidNpcTag = FGameplayTag::RequestGameplayTag(FName(TEXT("NPC.Identity")), false);
 	const FGameplayTag ValidNodeTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Node")), false);
 	const FGameplayTag ValidChoiceTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue.Choice")), false);
 
