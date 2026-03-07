@@ -177,8 +177,6 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 
 	if (bOperationInFlight)
 	{
-		CachedNativeSearchResults.Reset();
-		LastFindResults.Reset();
 		FillResult(OutResult, false, EARSessionResultCode::Busy, TEXT("A session operation is already in flight."));
 		BroadcastFindCompleted(OutResult);
 		return false;
@@ -204,7 +202,6 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	bOperationInFlight = true;
 	CurrentOperation = ESessionOperation::Find;
 	ActiveSubsystemName = SubsystemName;
-	SearchResultsSubsystemName = SubsystemName;
 	FOnFindSessionsCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleFindSessionsComplete);
 	FindSessionsCompleteHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(Delegate);
@@ -214,6 +211,8 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
 		FindSessionsCompleteHandle.Reset();
 		bOperationInFlight = false;
+		CurrentOperation = ESessionOperation::None;
+		ActiveSubsystemName = NAME_None;
 		FillResult(OutResult, false, EARSessionResultCode::FindFailed, TEXT("FindSessions failed to start."));
 		BroadcastFindCompleted(OutResult);
 		return false;
@@ -488,7 +487,6 @@ IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterfaceForSubsystem(FName
 	{
 		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 		{
-			InSubsystemName = DefaultSubsystem->GetSubsystemName();
 			return DefaultSubsystem->GetSessionInterface();
 		}
 		return nullptr;
