@@ -79,6 +79,7 @@ void AARGameModeBase::BeginPlay()
 	{
 		NormalizeConnectedPlayersIdentity(GS);
 		GS->SetManualSaveAllowed(bAllowManualSaveInMode);
+		GS->SetShareLocalPauseAcrossControllers(bShareLocalPauseAcrossControllersInMode);
 	}
 }
 
