@@ -4,7 +4,6 @@
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARInvaderGameState.h"
-#include "ARInvaderPlayerController.h"
 #include "ARLobbyPlayerController.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -446,6 +445,17 @@ void AARPlayerController::RequestOpenPauseMenu()
 		return;
 	}
 
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		if (IsPauseMenuBlockedLocal())
+		{
+			return;
+		}
+
+		SetPauseMenuOpenLocal(true);
+		return;
+	}
+
 	TArray<AARPlayerController*> LocalControllers;
 	GatherLocalARPlayerControllers(GetWorld(), LocalControllers);
 	if (LocalControllers.IsEmpty())
@@ -477,6 +487,12 @@ void AARPlayerController::RequestClosePauseMenu()
 		return;
 	}
 
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		SetPauseMenuOpenLocal(false);
+		return;
+	}
+
 	TArray<AARPlayerController*> LocalControllers;
 	GatherLocalARPlayerControllers(GetWorld(), LocalControllers);
 	for (AARPlayerController* LocalController : LocalControllers)
@@ -497,6 +513,19 @@ void AARPlayerController::RequestTogglePauseMenu()
 {
 	if (!IsLocalPlayerController())
 	{
+		return;
+	}
+
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		if (IsPauseMenuOpenLocal())
+		{
+			RequestClosePauseMenu();
+		}
+		else
+		{
+			RequestOpenPauseMenu();
+		}
 		return;
 	}
 
@@ -589,15 +618,19 @@ void AARPlayerController::SetPauseMenuOpenLocal(const bool bOpen)
 	if (bOpen)
 	{
 		ApplyPauseInputContexts(true);
-		ApplyPauseInputMode(true);
-		SubmitPauseMenuVote(true);
-
 		const bool bShouldDisplayOverlay = ShouldDisplayPauseOverlayForLocalController();
 		bPauseMenuOverlayVisibleLocal = bShouldDisplayOverlay ? ShowPauseOverlayWidget() : false;
 		if (!bShouldDisplayOverlay)
 		{
 			HidePauseOverlayWidget();
 		}
+
+		if (bPauseMenuOverlayVisibleLocal)
+		{
+			ApplyPauseInputMode(true);
+		}
+
+		SubmitPauseMenuVote(true);
 		OnPauseMenuOverlayVisibilityChanged.Broadcast(bPauseMenuOverlayVisibleLocal);
 		OnPauseMenuStateChanged.Broadcast(true);
 		BP_OnPauseMenuOpened(bPauseMenuOverlayVisibleLocal);
@@ -615,7 +648,10 @@ void AARPlayerController::SetPauseMenuOpenLocal(const bool bOpen)
 	}
 
 	ApplyPauseInputContexts(false);
-	ApplyPauseInputMode(false);
+	if (bPauseInputModeApplied)
+	{
+		ApplyPauseInputMode(false);
+	}
 	OnPauseMenuStateChanged.Broadcast(false);
 	BP_OnPauseMenuClosed();
 }
@@ -744,12 +780,14 @@ void AARPlayerController::ApplyPauseInputMode(const bool bEnable)
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		InputMode.SetHideCursorDuringCapture(false);
 		SetInputMode(InputMode);
+		bPauseInputModeApplied = true;
 		return;
 	}
 
 	FInputModeGameOnly InputMode;
 	SetInputMode(InputMode);
 	bShowMouseCursor = bCachedShowMouseCursorForPause;
+	bPauseInputModeApplied = false;
 }
 
 bool AARPlayerController::ShowPauseOverlayWidget()
@@ -819,12 +857,24 @@ bool AARPlayerController::ShouldDisplayPauseOverlayForLocalController() const
 		return false;
 	}
 
-	if (!IsA<AARInvaderPlayerController>())
+	if (!ShouldShareLocalPauseAcrossControllers())
 	{
 		return true;
 	}
 
-	return ResolveInvaderSharedOverlayOwner(GetWorld()) == this;
+	return ResolveSharedPauseOverlayOwner(GetWorld()) == this;
+}
+
+bool AARPlayerController::ShouldShareLocalPauseAcrossControllers() const
+{
+	const AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr;
+	if (ARGameState)
+	{
+		return ARGameState->ShouldShareLocalPauseAcrossControllers();
+	}
+
+	// Safe default before GameState initialization: do not fan out.
+	return false;
 }
 
 bool AARPlayerController::IsLobbyControllerMode() const
@@ -873,35 +923,25 @@ void AARPlayerController::GatherLocalARPlayerControllers(UWorld* World, TArray<A
 	}
 }
 
-AARPlayerController* AARPlayerController::ResolveInvaderSharedOverlayOwner(UWorld* World)
+AARPlayerController* AARPlayerController::ResolveSharedPauseOverlayOwner(UWorld* World)
 {
 	TArray<AARPlayerController*> LocalControllers;
 	GatherLocalARPlayerControllers(World, LocalControllers);
-
-	TArray<AARPlayerController*> LocalInvaderControllers;
-	for (AARPlayerController* LocalController : LocalControllers)
-	{
-		if (LocalController && LocalController->IsA<AARInvaderPlayerController>())
-		{
-			LocalInvaderControllers.Add(LocalController);
-		}
-	}
-
-	if (LocalInvaderControllers.IsEmpty())
+	if (LocalControllers.IsEmpty())
 	{
 		return nullptr;
 	}
 
-	for (AARPlayerController* LocalInvaderController : LocalInvaderControllers)
+	for (AARPlayerController* LocalController : LocalControllers)
 	{
-		if (const AARPlayerStateBase* ARPlayerState = LocalInvaderController->GetPlayerState<AARPlayerStateBase>())
+		if (const AARPlayerStateBase* ARPlayerState = LocalController->GetPlayerState<AARPlayerStateBase>())
 		{
 			if (ARPlayerState->GetPlayerSlot() == EARPlayerSlot::P1)
 			{
-				return LocalInvaderController;
+				return LocalController;
 			}
 		}
 	}
 
-	return LocalInvaderControllers[0];
+	return LocalControllers[0];
 }

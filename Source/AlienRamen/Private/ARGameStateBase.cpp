@@ -136,6 +136,7 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionTag);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionEffectTags);
 	DOREPLIFETIME(AARGameStateBase, bManualSaveAllowed);
+	DOREPLIFETIME(AARGameStateBase, bShareLocalPauseAcrossControllers);
 	DOREPLIFETIME(AARGameStateBase, PauseMenuVoteMask);
 	DOREPLIFETIME(AARGameStateBase, ExternalPauseReasonMask);
 	DOREPLIFETIME(AARGameStateBase, bAllPlayersPausedByMenu);
@@ -501,6 +502,24 @@ void AARGameStateBase::SetManualSaveAllowed(const bool bAllowed)
 	ForceNetUpdate();
 }
 
+void AARGameStateBase::SetShareLocalPauseAcrossControllers(const bool bShareAcrossControllers)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (bShareLocalPauseAcrossControllers == bShareAcrossControllers)
+	{
+		return;
+	}
+
+	const bool bOldValue = bShareLocalPauseAcrossControllers;
+	bShareLocalPauseAcrossControllers = bShareAcrossControllers;
+	OnRep_ShareLocalPauseAcrossControllers(bOldValue);
+	ForceNetUpdate();
+}
+
 void AARGameStateBase::NotifyHydratedFromSave()
 {
 	OnHydratedFromSave.Broadcast();
@@ -551,6 +570,11 @@ void AARGameStateBase::OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldAc
 void AARGameStateBase::OnRep_ManualSaveAllowed(const bool bOldManualSaveAllowed)
 {
 	OnManualSaveAllowedChanged.Broadcast(bManualSaveAllowed, bOldManualSaveAllowed);
+}
+
+void AARGameStateBase::OnRep_ShareLocalPauseAcrossControllers(const bool bOldShareLocalPauseAcrossControllers)
+{
+	OnShareLocalPauseAcrossControllersChanged.Broadcast(bShareLocalPauseAcrossControllers, bOldShareLocalPauseAcrossControllers);
 }
 
 void AARGameStateBase::OnRep_PauseMenuVoteMask(const uint8 /*OldPauseMenuVoteMask*/)
@@ -804,4 +828,6 @@ void AARGameStateBase::ClearPauseVoteForSlot(const EARPlayerSlot PlayerSlot)
 	const uint8 OldMask = PauseMenuVoteMask;
 	PauseMenuVoteMask &= ~VoteBit;
 	OnRep_PauseMenuVoteMask(OldMask);
+	ForceNetUpdate();
+	RefreshPauseResolution();
 }

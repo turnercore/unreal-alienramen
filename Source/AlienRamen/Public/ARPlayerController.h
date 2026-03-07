@@ -257,11 +257,12 @@ private:
 	void HidePauseOverlayWidget();
 	void SubmitPauseMenuVote(bool bPaused);
 	bool ShouldDisplayPauseOverlayForLocalController() const;
+	bool ShouldShareLocalPauseAcrossControllers() const;
 	bool IsLobbyControllerMode() const;
 	bool IsDialogueSessionActiveLocal() const;
 	bool IsInvaderFullBlastSessionActiveLocal() const;
 	static void GatherLocalARPlayerControllers(UWorld* World, TArray<AARPlayerController*>& OutControllers);
-	static AARPlayerController* ResolveInvaderSharedOverlayOwner(UWorld* World);
+	static AARPlayerController* ResolveSharedPauseOverlayOwner(UWorld* World);
 
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
@@ -288,6 +289,9 @@ private:
 
 	UPROPERTY(Transient)
 	bool bDefaultInputMappingsApplied = false;
+
+	UPROPERTY(Transient)
+	bool bPauseInputModeApplied = false;
 
 	UPROPERTY(Transient)
 	bool bCachedShowMouseCursorForPause = false;
