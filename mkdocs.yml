@@ -14,6 +14,7 @@ nav:
   - Session System: README_SessionSubsystem.md
   - Faction System: README_FactionSubsystem.md
   - Save System: README_SaveSubsystem.md
+  - Invader Drops: README_InvaderDrops.md
   - Progression & Unlocks: README_ProgressionUnlocks.md
   - Dialogue & NPC: README_DialogueNPC.md
   - C++ Overview:
@@ -26,6 +27,7 @@ nav:
       - Invader Director Subsystem: CppOverview/UARInvaderDirectorSubsystem.md
       - Invader Runtime State Component: CppOverview/UARInvaderRuntimeStateComponent.md
       - Enemy Utilities: CppOverview/EnemyUtilities.md
+      - Invader Drop Base: CppOverview/AARInvaderDropBase.md
       - Invader Authoring Panel: CppOverview/Editor_SInvaderAuthoringPanel.md
       - Editor Settings: CppOverview/Editor_Settings.md
   - API Reference (Doxygen): API-Reference.md

@@ -71,7 +71,8 @@ Paths:
 6. Round to integer.
 7. Build spawn plan:
 - if stack definitions are configured, decompose amount into an optimal set (fewest pickups; ties prefer larger denominations)
-- if no valid stack decomposition exists, fall back to one pickup using the legacy per-type class
+- if exact decomposition is not possible, emit largest denomination pickups plus one remainder pickup using the lowest-denomination class
+- if stack definitions are empty/invalid, fall back to one pickup using the legacy per-type class
 8. Spawn one pickup actor per planned denomination amount.
 
 ## Pickup / Reward Contract
