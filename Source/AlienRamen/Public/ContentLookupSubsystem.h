@@ -106,6 +106,24 @@ public:
 		FString& OutError
 	);
 
+	// Resolves and loads the DataTable routed by an exact RootTag.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
+	bool GetDataTableForRootTag(
+		FGameplayTag RootTag,
+		UDataTable*& OutDataTable,
+		FString& OutError
+	);
+
+	// Resolves and loads a DataTable route by row-struct type.
+	// If multiple routes share the same row struct, resolution fails and reports an ambiguity error.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Content Lookup")
+	bool GetDataTableForRowStruct(
+		UScriptStruct* DesiredRowStruct,
+		UDataTable*& OutDataTable,
+		FGameplayTag& OutMatchedRootTag,
+		FString& OutError
+	);
+
 
 private:
 	// Returns the leaf segment used as RowName (Unlocks.Ships.Sammy -> Sammy).

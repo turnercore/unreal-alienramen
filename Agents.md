@@ -92,6 +92,7 @@
 - Legacy `AARRamenShop*` C++ wrapper classes were removed; `Shop` is the canonical mode naming for code paths.
 - Invader authoring editor tab is implemented in `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
 - Enemy authoring editor tab is implemented in `Source/AlienRamenEditor/Private/AREnemyAuthoringPanel.*` and registered from `AlienRamenEditorModule.cpp`.
+- Authoring editor save shortcut contract: `Ctrl+S` in `SInvaderAuthoringPanel` and `SEnemyAuthoringPanel` triggers the same per-panel table save path as the `Save Table` button (active table for invader panel, enemy table for enemy panel).
 - GAS modules enabled in `AlienRamen.Build.cs`: `GameplayAbilities`, `GameplayTags`, `GameplayTasks`
 - Native faction election runtime now exists:
 - shared type surface: `Source/AlienRamen/Public/ARFactionTypes.h`
@@ -117,8 +118,8 @@
 - `AARProjectileBase` now exposes native init ingestion `InitializeProjectileFromData(const FInstancedStruct&)`; it applies payload fields by name to the projectile actor and any attached `UProjectileMovementComponent`s, so lifecycle/BP init can forward `FInstancedStruct` directly without per-projectile manual struct unpack nodes.
 - Invader drop actor base is native in `Source/AlienRamen/Public/ARInvaderDropBase.h` (`AARInvaderDropBase`) and is intended for BP visual subclasses.
 - Player pickup detector component is native in `Source/AlienRamen/Public/ARPickupCollectorComponent.h` (`UARPickupCollectorComponent`) and is attached by default to `AARPlayerCharacterInvader`.
-- Invader drop tuning/class routing is project-settings-driven via `UARInvaderDirectorSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Director`) using global and per-type chance/variance fields (`DefaultEnemyDropChance`, `DefaultEnemyScrapDropChance`, `DefaultEnemyMeatDropChance`, `DropAmountVarianceFraction`, `ScrapDropAmountVarianceFraction`, `MeatDropAmountVarianceFraction`, and optional matching variance curves), `DropInitialLinearSpeedMin/Max`, stack-definition arrays (`ScrapDropStacks` / `MeatDropStacks`: denomination + class), legacy fallback class hooks (`ScrapDropClass`/`MeatDropClass`), `DropPawnCollisionMode`, and pickup-radius seed settings (`bUseCapsuleDerivedPlayerPickupRadius`, `DefaultPlayerPickupRadius`).
-- Invader drop spawn decomposition is server-side in `AARInvaderGameState`: final integer drop amount is decomposed into configured denominations using an optimal plan (fewest pickups, then larger denominations). If exact decomposition is impossible, runtime emits largest-denomination pickups plus one remainder pickup using the lowest-denomination class; only empty/invalid stack definitions fall back to one legacy per-type pickup class.
+- Invader drop tuning/class routing is project-settings-driven via `UARInvaderDirectorSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Director`) using global and per-type chance/variance fields (`DefaultEnemyDropChance`, `DefaultEnemyScrapDropChance`, `DefaultEnemyMeatDropChance`, `DropAmountVarianceFraction`, `ScrapDropAmountVarianceFraction`, `MeatDropAmountVarianceFraction`, and optional matching variance curves), `DropInitialLinearSpeedMin/Max`, stack-definition arrays (`ScrapDropStacks` / `MeatDropStacks`: denomination + class), `DropPawnCollisionMode`, and pickup-radius seed settings (`bUseCapsuleDerivedPlayerPickupRadius`, `DefaultPlayerPickupRadius`).
+- Invader drop spawn decomposition is server-side in `AARInvaderGameState`: final integer drop amount is decomposed into configured denominations using an optimal plan (fewest pickups, then larger denominations). If exact decomposition is impossible, runtime emits largest-denomination pickups plus one remainder pickup using the lowest-denomination class. Empty/invalid stack definitions now produce no spawn (no legacy single-class fallback path).
 - Invader gravity frame source is project-settings-driven via `UARInvaderDirectorSettings::InvaderDesiredUpDirection`; both invader drops and `AARPlayerCharacterInvader` consume this vector at runtime (`GravityDir = -Normalized(DesiredUp)` with safe fallback) so player/drop gravity orientation stays in sync.
 
 ## Multiplayer Architecture Assumptions
@@ -259,6 +260,7 @@
 - `FARShopGameStateData`
 - `FARLobbyGameStateData`
 - `AARInvaderGameState`, `AARScrapyardGameState`, `AARShopGameState`, and `AARLobbyGameState` override `GetStateStruct_Implementation()` to hard-return their native struct type; this prevents stale Blueprint defaults (`ClassStateStruct`) from reintroducing deleted BP `ST_*GSData` dependencies.
+- Cross-mode GameState travel overlay contract: `IStructSerializable::ApplyStateFromStruct` now tolerates struct-type mismatch for `AARGameStateBase` only (Lobby<->Invader<->Scrapyard<->Shop). On mismatch it applies by-name overlapping fields via `UHelperLibrary` and logs an overlay message; non-GameState mismatch remains a hard failure.
 - Hydration is server-authoritative:
 - interface default blocks non-authority actor execution
 - State struct application is authority-only; client requests to apply state are rejected (no RPC path).
@@ -603,6 +605,8 @@
 - `UARInvaderRuntimeStateComponent::OnEnemyLeaked` broadcasts on both server updates and client RepNotify updates with `(NewLeakCount, Delta)`.
 - Invader spicy-track runtime is now C++-owned on `AARInvaderGameState` (server-authoritative, runtime-only, non-save/non-hydrated):
 - shared replicated state: `SharedTrackSlots`, `SharedFullBlastTier`, `FullBlastSession`, `OfferPresenceStates`.
+- cursor-tier contract: full blast is represented as the top cursor tier (`SharedFullBlastTier`), not tier `0`; selectable track upgrade tiers remain `1..SharedFullBlastTier-1`, and tier `0` is no-selection.
+- full-blast pause gate: while `FullBlastSession.bIsActive`, invader spicy runtime tick processing is hard-gated (`TickShareTransfers`/`TickComboTimeouts`), and kill-credit ingestion (`AwardKillCreditInternal`/`NotifyEnemyKilled`) is ignored.
 - full-blast flow APIs: `RequestActivateFullBlast`, `ResolveFullBlastSelection`, `ResolveFullBlastSkip`.
 - track-use API: `ActivateTrackUpgrade` (uses selected slot, drops one tier, resets all player spice to zero).
 - hold-share APIs: `StartSharingSpice` / `StopSharingSpice` with server tick transfer using source `SpiceDrainRate` and `SpiceShareRatio`.
@@ -639,19 +643,33 @@
 - combo timeout, spice-per-tier, max full-blast tier, offer count
 - skip scrap reward per tier
 - data-driven level-roll offset weights (`-3..+3`)
-- upgrade DataTable reference (`FARInvaderUpgradeDefRow`)
+- upgrade definition root gameplay tag (default `Progression.InvaderUpgrade`) resolved through `UContentLookupSubsystem` (`FARInvaderUpgradeDefRow`)
 - enemy projectile clear tag + full-blast gameplay cue tag.
 - Invader upgrade type surface now lives in native `ARInvaderSpicyTrackTypes.h`:
 - `FARInvaderUpgradeDefRow` (upgrade identity/display/effects/locked tiers/unlock prerequisites/offer+activation prerequisites/claim policy)
 - `EARInvaderUpgradeClaimPolicy`: `SingleTeamClaim`, `PerPlayerClaim`, `Repeatable`
 - `FARInvaderTrackSlotState`, `FARInvaderUpgradeOffer`, `FARInvaderFullBlastSessionState`, `FARInvaderLevelOffsetWeight`.
-- Enemy definition rows now include spicy credit scalar `FARInvaderEnemyDefRow::BaseSpiceKillValue` (fallback uses `UARInvaderSpicyTrackSettings::DefaultBaseKillSpiceValue`).
+- Enemy definition rows now include spicy credit scalar `FARInvaderEnemyDefRow::BaseSpiceKillValue` with enforced minimum `1.0` (fallback uses `UARInvaderSpicyTrackSettings::DefaultBaseKillSpiceValue`, also enforced minimum `1.0`).
+- Invader runtime DataTable sourcing is content-lookup-first:
+- `UARInvaderDirectorSettings` now stores root tags (`WaveDefinitionRootTag`, `StageDefinitionRootTag`) instead of direct DataTable soft pointers.
+- `UARInvaderDirectorSubsystem::EnsureDataTables` resolves wave/stage tables through `UContentLookupSubsystem` root-tag lookup, with row-struct fallback (`FARWaveDefRow` / `FARStageDefRow`) when roots are unset or unresolved.
+- `AARInvaderGameState::ResolveEnemyBaseSpiceValue` resolves enemy rows via `UContentLookupSubsystem::LookupWithGameplayTag(EnemyIdentifierTag, ...)` (no direct enemy table pointer path).
 - Invader PlayerController now exposes server-routed spicy-track request entrypoints for clients/UI:
 - `RequestActivateFullBlast`
 - `RequestResolveFullBlastSelection`
 - `RequestResolveFullBlastSkip`
 - `RequestActivateTrackUpgrade`
 - `RequestStartSharingSpice` / `RequestStopSharingSpice`.
+- Full-blast menu UI bridge is now native:
+- base widget class `UARInvaderFullBlastMenuWidget` (`Source/AlienRamen/Public/ARInvaderFullBlastMenuWidget.h`) with BP hooks `BP_OnFullBlastMenuUpdated(...)` and `BP_OnFullBlastMenuClosed()`, plus BP-callable actions (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
+- settings-driven widget class source: `UARInvaderSpicyTrackSettings::FullBlastMenuWidgetClass`.
+- local `AARInvaderPlayerController` binds to `AARInvaderGameState::OnInvaderFullBlastSessionChanged`, resolves offer defs via content lookup, and auto shows/hides the configured full-blast widget for the requesting player slot.
+- controller signal for HUD/UI sync: `OnInvaderFullBlastMenuSessionUpdated(bIsActive, SessionState, OfferDefinitions)`.
+- Invader GameState exposes localized UI convenience getters for shared track upgrade names:
+- `GetSharedTrackUpgradeDisplayNames(...)` (fixed-length, max-track-slot-order array of localized `FText`; empty entries for unavailable/unresolved slots)
+- `GetSharedTrackUpgradeDisplayNameAtSlot(...)` (1-based slot lookup)
+- `GetSharedTrackSlotDisplayStates(...)` (fixed-length slot list for UI refresh on `OnInvaderSharedTrackChanged`; `bHasUpgrade=false` when slot has no active upgrade)
+- `GetFullBlastDisplayIndex()` (0-based lane index for full-blast label placement, excluding the base 0-99 empty lane).
 - Director has stage-choice loop and overlap/early-clear spawning rules.
 - Invader console commands are registered via `IConsoleManager::RegisterConsoleCommand(...)` and stored as `IConsoleObject*` handles in the subsystem; deinit must `UnregisterConsoleObject(...)` with null guards (no `FAutoConsoleCommand...` ownership) to avoid map-transition teardown crashes.
 - `UARInvaderDirectorSubsystem::RegisterConsoleCommands()` now clears existing `ar.invader.*` registrations first, so PIE map travel cannot double-register global command names across overlapping world/subsystem lifetimes.
@@ -754,7 +772,7 @@
 - validation issues are in a collapsible panel and auto-collapse when empty
 - Wave/stage/spawn authoring detail categories are flattened to `Wave`, `Stage`, and `Spawn` (no `AR|Invader|...` category-path nesting in the authoring details panels).
 - Palette contract:
-- derives enemy classes from authored enemy DataTable rows (`EnemyDataTable -> FARInvaderEnemyDefRow::EnemyClass`), not folder-based asset discovery
+- derives enemy classes from authored enemy DataTable rows (`FARInvaderEnemyDefRow::EnemyClass`), not folder-based asset discovery
 - excludes base class `AAREnemyBase` and transient skeleton/reinst classes
 - palette/list display names strip blueprint class noise (`BP_EnemyBase_` / `_C`) and render underscores as spaces
 - applies class+color chips (Red/Blue/White) to spawned entries
@@ -777,7 +795,7 @@
 - Main menu entry: `Window -> Alien Ramen Enemy Authoring`.
 - Data source is direct DataTable authoring of enemy rows:
 - preferred source: `UARInvaderToolingSettings::EnemyDataTable`
-- fallback source: `UARInvaderDirectorSettings::EnemyDataTable`
+- fallback source: content-lookup registry route whose row struct is `FARInvaderEnemyDefRow`
 - Enemy authoring panel treats row-struct mismatch as a hard guardrail: if the selected enemy DataTable row struct is not `FARInvaderEnemyDefRow`, the panel reports a status error and skips row parsing/population (prevents invalid row-memory reinterpret crashes).
 - Supports row CRUD + duplicate + rename + delete + enable/disable + save, with transactions + dirty package flow.
 - Enemy identifier tag is editor-normalized as source-of-truth key: every row must have `EnemyIdentifierTag`, and its leaf segment must exactly equal the DataTable row name.

@@ -52,6 +52,7 @@ private:
 		FText DisplayName;
 		FSoftClassPath EnemyClassPath;
 		float MaxHealth = 0.f;
+		float BaseSpiceKillValue = 0.f;
 		FGameplayTag ArchetypeTag;
 		FGameplayTag IdentifierTag;
 	};

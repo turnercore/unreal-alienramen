@@ -1,5 +1,6 @@
 #include "StructSerializable.h"
 
+#include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "HelperLibrary.h"
 #include "GameFramework/Actor.h"
@@ -61,6 +62,20 @@ bool IStructSerializable::ApplyStateFromStruct_Implementation(const FInstancedSt
 	const UScriptStruct* IncomingStruct = SavedState.GetScriptStruct();
 	if (IncomingStruct != ExpectedStruct)
 	{
+		if (SelfObject->IsA(AARGameStateBase::StaticClass()))
+		{
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[StructSerializable] ApplyStateFromStruct overlay for GameState '%s': struct mismatch tolerated (Expected=%s, Incoming=%s). Applying by-name overlap."),
+				*GetNameSafe(SelfObject),
+				*GetNameSafe(ExpectedStruct),
+				*GetNameSafe(IncomingStruct));
+
+			UHelperLibrary::ApplyStructToObjectByName(SelfObject, SavedState);
+			return true;
+		}
+
 		UE_LOG(ARLog, Warning,
 			TEXT("[StructSerializable] ApplyStateFromStruct failed for '%s': struct mismatch (Expected=%s, Incoming=%s)."),
 			*GetNameSafe(SelfObject),

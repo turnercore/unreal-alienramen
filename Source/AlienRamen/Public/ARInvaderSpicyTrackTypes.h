@@ -113,6 +113,27 @@ struct ALIENRAMEN_API FARInvaderTrackSlotState
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARInvaderTrackSlotDisplayState
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	int32 SlotIndex = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	FGameplayTag UpgradeTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	int32 UpgradeLevel = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	bool bHasUpgrade = false;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARInvaderUpgradeOffer
 {
 	GENERATED_BODY()

@@ -201,6 +201,34 @@ bool UContentLookupSubsystem::GetAllRowNamesForRootTag(FGameplayTag RootTag, TAr
 	OutRowNames.Reset();
 	OutError.Reset();
 
+	UDataTable* Table = nullptr;
+	if (!GetDataTableForRootTag(RootTag, Table, OutError))
+	{
+		return false;
+	}
+
+	if (!Table)
+	{
+		OutError = FString::Printf(TEXT("Resolved null table for root '%s'."), *RootTag.ToString());
+		return false;
+	}
+
+	OutRowNames = Table->GetRowNames();
+	OutRowNames.Sort([](const FName& A, const FName& B)
+	{
+		return A.ToString() < B.ToString();
+	});
+	return true;
+}
+
+bool UContentLookupSubsystem::GetDataTableForRootTag(
+	FGameplayTag RootTag,
+	UDataTable*& OutDataTable,
+	FString& OutError)
+{
+	OutDataTable = nullptr;
+	OutError.Reset();
+
 	if (!RootTag.IsValid())
 	{
 		OutError = TEXT("RootTag is invalid.");
@@ -231,18 +259,78 @@ bool UContentLookupSubsystem::GetAllRowNamesForRootTag(FGameplayTag RootTag, TAr
 	}
 
 	FString LoadError;
-	UDataTable* Table = LoadAndCacheTable(RootTag, FoundRoute->DataTable, LoadError);
-	if (!Table)
+	OutDataTable = LoadAndCacheTable(RootTag, FoundRoute->DataTable, LoadError);
+	if (!OutDataTable)
 	{
 		OutError = FString::Printf(TEXT("Failed to load table for root '%s': %s"), *RootTag.ToString(), *LoadError);
 		return false;
 	}
 
-	OutRowNames = Table->GetRowNames();
-	OutRowNames.Sort([](const FName& A, const FName& B)
+	return true;
+}
+
+bool UContentLookupSubsystem::GetDataTableForRowStruct(
+	UScriptStruct* DesiredRowStruct,
+	UDataTable*& OutDataTable,
+	FGameplayTag& OutMatchedRootTag,
+	FString& OutError)
+{
+	OutDataTable = nullptr;
+	OutMatchedRootTag = FGameplayTag();
+	OutError.Reset();
+
+	if (!DesiredRowStruct)
 	{
-		return A.ToString() < B.ToString();
-	});
+		OutError = TEXT("DesiredRowStruct is null.");
+		return false;
+	}
+
+	UContentLookupRegistry* Active = GetActiveRegistry();
+	if (!Active)
+	{
+		OutError = TEXT("No active registry.");
+		return false;
+	}
+
+	UDataTable* FoundTable = nullptr;
+	FGameplayTag FoundRootTag;
+	int32 MatchCount = 0;
+	for (const FContentLookupRoute& Route : Active->Routes)
+	{
+		if (!Route.RootTag.IsValid() || Route.DataTable.IsNull())
+		{
+			continue;
+		}
+
+		FString LoadError;
+		UDataTable* Table = LoadAndCacheTable(Route.RootTag, Route.DataTable, LoadError);
+		if (!Table)
+		{
+			continue;
+		}
+
+		if (Table->GetRowStruct() == DesiredRowStruct)
+		{
+			FoundTable = Table;
+			FoundRootTag = Route.RootTag;
+			++MatchCount;
+		}
+	}
+
+	if (MatchCount == 0 || !FoundTable)
+	{
+		OutError = FString::Printf(TEXT("No route found for row struct '%s'."), *GetNameSafe(DesiredRowStruct));
+		return false;
+	}
+
+	if (MatchCount > 1)
+	{
+		OutError = FString::Printf(TEXT("Ambiguous routes for row struct '%s' (matches=%d)."), *GetNameSafe(DesiredRowStruct), MatchCount);
+		return false;
+	}
+
+	OutDataTable = FoundTable;
+	OutMatchedRootTag = FoundRootTag;
 	return true;
 }
 
