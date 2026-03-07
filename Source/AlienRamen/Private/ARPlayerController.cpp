@@ -3,9 +3,14 @@
 #include "ARHUDBase.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
+#include "ARInvaderGameState.h"
+#include "ARLobbyPlayerController.h"
 #include "ARLog.h"
+#include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
+#include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
+#include "Engine/LocalPlayer.h"
 #include "Blueprint/UserWidget.h"
 #include "TimerManager.h"
 
@@ -19,6 +24,7 @@ void AARPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ApplyDefaultInputMappings(true);
 	InitializeCustomCursor();
 	RequestHUDInitializationInternal(false);
 
@@ -31,8 +37,20 @@ void AARPlayerController::BeginPlay()
 
 void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	SetPauseMenuOpenLocal(false);
+	ApplyDefaultInputMappings(false);
 	StopHUDInitializationRetry();
 	Super::EndPlay(EndPlayReason);
+}
+
+void AARPlayerController::PlayerTick(const float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	if (bPauseMenuOpenLocal && IsPauseMenuBlockedLocal())
+	{
+		RequestClosePauseMenu();
+	}
 }
 
 void AARPlayerController::InitializeCustomCursor()
@@ -418,4 +436,512 @@ void AARPlayerController::StopHUDInitializationRetry()
 void AARPlayerController::HandleHUDInitializationRetry()
 {
 	RequestHUDInitializationInternal(false);
+}
+
+void AARPlayerController::RequestOpenPauseMenu()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		if (IsPauseMenuBlockedLocal())
+		{
+			return;
+		}
+
+		SetPauseMenuOpenLocal(true);
+		return;
+	}
+
+	TArray<AARPlayerController*> LocalControllers;
+	GatherLocalARPlayerControllers(GetWorld(), LocalControllers);
+	if (LocalControllers.IsEmpty())
+	{
+		return;
+	}
+
+	for (AARPlayerController* LocalController : LocalControllers)
+	{
+		if (!LocalController || LocalController->IsPauseMenuBlockedLocal())
+		{
+			return;
+		}
+	}
+
+	for (AARPlayerController* LocalController : LocalControllers)
+	{
+		if (LocalController)
+		{
+			LocalController->SetPauseMenuOpenLocal(true);
+		}
+	}
+}
+
+void AARPlayerController::RequestClosePauseMenu()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		SetPauseMenuOpenLocal(false);
+		return;
+	}
+
+	TArray<AARPlayerController*> LocalControllers;
+	GatherLocalARPlayerControllers(GetWorld(), LocalControllers);
+	for (AARPlayerController* LocalController : LocalControllers)
+	{
+		if (LocalController)
+		{
+			LocalController->SetPauseMenuOpenLocal(false);
+		}
+	}
+}
+
+void AARPlayerController::ClosePause()
+{
+	RequestClosePauseMenu();
+}
+
+void AARPlayerController::RequestTogglePauseMenu()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		if (IsPauseMenuOpenLocal())
+		{
+			RequestClosePauseMenu();
+		}
+		else
+		{
+			RequestOpenPauseMenu();
+		}
+		return;
+	}
+
+	TArray<AARPlayerController*> LocalControllers;
+	GatherLocalARPlayerControllers(GetWorld(), LocalControllers);
+	if (LocalControllers.IsEmpty())
+	{
+		return;
+	}
+
+	const bool bAnyOpen = LocalControllers.ContainsByPredicate(
+		[](const AARPlayerController* LocalController)
+		{
+			return LocalController && LocalController->IsPauseMenuOpenLocal();
+		});
+
+	if (bAnyOpen)
+	{
+		RequestClosePauseMenu();
+		return;
+	}
+
+	RequestOpenPauseMenu();
+}
+
+bool AARPlayerController::IsPauseMenuBlockedLocal() const
+{
+	if (!IsLocalPlayerController())
+	{
+		return true;
+	}
+
+	if (!PauseMenuBlockerReasons.IsEmpty())
+	{
+		return true;
+	}
+
+	return IsLobbyControllerMode() || IsDialogueSessionActiveLocal() || IsInvaderFullBlastSessionActiveLocal();
+}
+
+void AARPlayerController::SetPauseMenuBlocked(const bool bBlocked, FName Reason)
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (Reason.IsNone())
+	{
+		Reason = TEXT("Generic");
+	}
+
+	if (bBlocked)
+	{
+		PauseMenuBlockerReasons.Add(Reason);
+		if (bPauseMenuOpenLocal)
+		{
+			RequestClosePauseMenu();
+		}
+		return;
+	}
+
+	PauseMenuBlockerReasons.Remove(Reason);
+}
+
+void AARPlayerController::ServerSetPauseMenuVote_Implementation(const bool bPaused)
+{
+	SubmitPauseMenuVote(bPaused);
+}
+
+void AARPlayerController::SetPauseMenuOpenLocal(const bool bOpen)
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (bOpen && IsPauseMenuBlockedLocal())
+	{
+		return;
+	}
+
+	if (bPauseMenuOpenLocal == bOpen)
+	{
+		return;
+	}
+
+	bPauseMenuOpenLocal = bOpen;
+
+	if (bOpen)
+	{
+		ApplyPauseInputContexts(true);
+		const bool bShouldDisplayOverlay = ShouldDisplayPauseOverlayForLocalController();
+		bPauseMenuOverlayVisibleLocal = bShouldDisplayOverlay ? ShowPauseOverlayWidget() : false;
+		if (!bShouldDisplayOverlay)
+		{
+			HidePauseOverlayWidget();
+		}
+
+		if (bPauseMenuOverlayVisibleLocal)
+		{
+			ApplyPauseInputMode(true);
+		}
+
+		SubmitPauseMenuVote(true);
+		OnPauseMenuOverlayVisibilityChanged.Broadcast(bPauseMenuOverlayVisibleLocal);
+		OnPauseMenuStateChanged.Broadcast(true);
+		BP_OnPauseMenuOpened(bPauseMenuOverlayVisibleLocal);
+		return;
+	}
+
+	SubmitPauseMenuVote(false);
+	HidePauseOverlayWidget();
+
+	const bool bWasShowingOverlay = bPauseMenuOverlayVisibleLocal;
+	bPauseMenuOverlayVisibleLocal = false;
+	if (bWasShowingOverlay)
+	{
+		OnPauseMenuOverlayVisibilityChanged.Broadcast(false);
+	}
+
+	ApplyPauseInputContexts(false);
+	if (bPauseInputModeApplied)
+	{
+		ApplyPauseInputMode(false);
+	}
+	OnPauseMenuStateChanged.Broadcast(false);
+	BP_OnPauseMenuClosed();
+}
+
+void AARPlayerController::ApplyDefaultInputMappings(const bool bEnable)
+{
+	if (!bAutoApplyDefaultInputMappings || !IsLocalPlayerController())
+	{
+		return;
+	}
+
+	ULocalPlayer* LocalPlayer = GetLocalPlayer();
+	if (!LocalPlayer)
+	{
+		return;
+	}
+
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (!InputSubsystem)
+	{
+		return;
+	}
+
+	if (bEnable)
+	{
+		if (bDefaultInputMappingsApplied)
+		{
+			return;
+		}
+
+		for (const FARControllerInputMapping& Mapping : DefaultInputMappings)
+		{
+			if (Mapping.MappingContext)
+			{
+				InputSubsystem->AddMappingContext(Mapping.MappingContext, Mapping.Priority);
+			}
+		}
+
+		bDefaultInputMappingsApplied = true;
+		return;
+	}
+
+	if (!bDefaultInputMappingsApplied)
+	{
+		return;
+	}
+
+	for (const FARControllerInputMapping& Mapping : DefaultInputMappings)
+	{
+		if (Mapping.MappingContext)
+		{
+			InputSubsystem->RemoveMappingContext(Mapping.MappingContext);
+		}
+	}
+
+	bDefaultInputMappingsApplied = false;
+}
+
+void AARPlayerController::ApplyPauseInputContexts(const bool bEnable)
+{
+	if (!bAutoManagePauseInputContexts || !IsLocalPlayerController())
+	{
+		return;
+	}
+
+	ULocalPlayer* LocalPlayer = GetLocalPlayer();
+	if (!LocalPlayer)
+	{
+		return;
+	}
+
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (!InputSubsystem)
+	{
+		return;
+	}
+
+	if (bEnable)
+	{
+		if (bPauseInputContextsApplied)
+		{
+			return;
+		}
+		ApplyDefaultInputMappings(false);
+
+		if (PauseMenuInputMappingContext)
+		{
+			InputSubsystem->AddMappingContext(PauseMenuInputMappingContext, PauseMenuInputPriority);
+		}
+
+		bPauseInputContextsApplied = true;
+		return;
+	}
+
+	if (!bPauseInputContextsApplied)
+	{
+		return;
+	}
+
+	if (PauseMenuInputMappingContext)
+	{
+		InputSubsystem->RemoveMappingContext(PauseMenuInputMappingContext);
+	}
+	ApplyDefaultInputMappings(true);
+
+	bPauseInputContextsApplied = false;
+}
+
+void AARPlayerController::ApplyPauseInputMode(const bool bEnable)
+{
+	if (!bAutoManagePauseInputMode || !IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (bEnable)
+	{
+		bCachedShowMouseCursorForPause = bShowMouseCursor;
+		bShowMouseCursor = true;
+
+		FInputModeGameAndUI InputMode;
+		if (PauseOverlayWidget)
+		{
+			InputMode.SetWidgetToFocus(PauseOverlayWidget->TakeWidget());
+		}
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		InputMode.SetHideCursorDuringCapture(false);
+		SetInputMode(InputMode);
+		bPauseInputModeApplied = true;
+		return;
+	}
+
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = bCachedShowMouseCursorForPause;
+	bPauseInputModeApplied = false;
+}
+
+bool AARPlayerController::ShowPauseOverlayWidget()
+{
+	if (!PauseOverlayWidgetClass)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[UI|Pause] PauseOverlayWidgetClass is not configured for '%s'."), *GetNameSafe(this));
+		return false;
+	}
+
+	if (!PauseOverlayWidget || PauseOverlayWidget->GetClass() != PauseOverlayWidgetClass)
+	{
+		HidePauseOverlayWidget();
+		PauseOverlayWidget = CreateWidget<UUserWidget>(this, PauseOverlayWidgetClass);
+	}
+
+	if (!PauseOverlayWidget)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[UI|Pause] Failed to create pause overlay widget for '%s'."), *GetNameSafe(this));
+		return false;
+	}
+
+	if (!PauseOverlayWidget->IsInViewport())
+	{
+		PauseOverlayWidget->AddToViewport(PauseOverlayWidgetZOrder);
+	}
+
+	return PauseOverlayWidget->IsInViewport();
+}
+
+void AARPlayerController::HidePauseOverlayWidget()
+{
+	if (PauseOverlayWidget && PauseOverlayWidget->IsInViewport())
+	{
+		PauseOverlayWidget->RemoveFromParent();
+	}
+}
+
+void AARPlayerController::SubmitPauseMenuVote(const bool bPaused)
+{
+	AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr;
+	AARPlayerStateBase* ARPlayerState = GetPlayerState<AARPlayerStateBase>();
+	if (!ARGameState || !ARPlayerState)
+	{
+		return;
+	}
+
+	const EARPlayerSlot PlayerSlot = ARPlayerState->GetPlayerSlot();
+	if (PlayerSlot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		ARGameState->SetPlayerPauseMenuVote(PlayerSlot, bPaused);
+		return;
+	}
+
+	ServerSetPauseMenuVote(bPaused);
+}
+
+bool AARPlayerController::ShouldDisplayPauseOverlayForLocalController() const
+{
+	if (!IsLocalPlayerController())
+	{
+		return false;
+	}
+
+	if (!ShouldShareLocalPauseAcrossControllers())
+	{
+		return true;
+	}
+
+	return ResolveSharedPauseOverlayOwner(GetWorld()) == this;
+}
+
+bool AARPlayerController::ShouldShareLocalPauseAcrossControllers() const
+{
+	const AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr;
+	if (ARGameState)
+	{
+		return ARGameState->ShouldShareLocalPauseAcrossControllers();
+	}
+
+	// Safe default before GameState initialization: do not fan out.
+	return false;
+}
+
+bool AARPlayerController::IsLobbyControllerMode() const
+{
+	return IsA<AARLobbyPlayerController>();
+}
+
+bool AARPlayerController::IsDialogueSessionActiveLocal() const
+{
+	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+	{
+		FARDialogueClientView View;
+		return DialogueSubsystem->GetLocalViewForController(this, View);
+	}
+
+	return false;
+}
+
+bool AARPlayerController::IsInvaderFullBlastSessionActiveLocal() const
+{
+	if (const AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
+	{
+		return InvaderGameState->GetFullBlastSession().bIsActive;
+	}
+
+	return false;
+}
+
+void AARPlayerController::GatherLocalARPlayerControllers(UWorld* World, TArray<AARPlayerController*>& OutControllers)
+{
+	OutControllers.Reset();
+	if (!World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (AARPlayerController* ARController = Cast<AARPlayerController>(It->Get()))
+		{
+			if (ARController->IsLocalPlayerController())
+			{
+				OutControllers.Add(ARController);
+			}
+		}
+	}
+}
+
+AARPlayerController* AARPlayerController::ResolveSharedPauseOverlayOwner(UWorld* World)
+{
+	TArray<AARPlayerController*> LocalControllers;
+	GatherLocalARPlayerControllers(World, LocalControllers);
+	if (LocalControllers.IsEmpty())
+	{
+		return nullptr;
+	}
+
+	for (AARPlayerController* LocalController : LocalControllers)
+	{
+		if (const AARPlayerStateBase* ARPlayerState = LocalController->GetPlayerState<AARPlayerStateBase>())
+		{
+			if (ARPlayerState->GetPlayerSlot() == EARPlayerSlot::P1)
+			{
+				return LocalController;
+			}
+		}
+	}
+
+	return LocalControllers[0];
 }
