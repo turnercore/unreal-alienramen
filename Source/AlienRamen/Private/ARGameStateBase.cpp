@@ -6,10 +6,40 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 namespace
 {
+	static constexpr uint8 PauseVoteBitP1 = 1 << 0;
+	static constexpr uint8 PauseVoteBitP2 = 1 << 1;
+
+	static uint8 GetPauseVoteBit(const EARPlayerSlot Slot)
+	{
+		switch (Slot)
+		{
+		case EARPlayerSlot::P1:
+			return PauseVoteBitP1;
+		case EARPlayerSlot::P2:
+			return PauseVoteBitP2;
+		default:
+			return 0;
+		}
+	}
+
+	static uint8 GetExternalPauseReasonBit(const EARPauseExternalReason Reason)
+	{
+		switch (Reason)
+		{
+		case EARPauseExternalReason::DialogueShared:
+			return 1 << 0;
+		case EARPauseExternalReason::InvaderFullBlast:
+			return 1 << 1;
+		default:
+			return 0;
+		}
+	}
+
 	static FARMeatState SanitizeMeatState(const FARMeatState& InMeat)
 	{
 		FARMeatState OutMeat = InMeat;
@@ -72,6 +102,7 @@ void AARGameStateBase::BeginPlay()
 	if (HasAuthority())
 	{
 		RefreshAllPlayersTravelReady();
+		RefreshPauseResolution();
 	}
 	else
 	{
@@ -104,6 +135,11 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, Cycles);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionTag);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionEffectTags);
+	DOREPLIFETIME(AARGameStateBase, PauseMenuVoteMask);
+	DOREPLIFETIME(AARGameStateBase, ExternalPauseReasonMask);
+	DOREPLIFETIME(AARGameStateBase, bAllPlayersPausedByMenu);
+	DOREPLIFETIME(AARGameStateBase, bAnyExternalPauseActive);
+	DOREPLIFETIME(AARGameStateBase, bEffectivePauseStateActive);
 }
 
 AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
@@ -187,12 +223,21 @@ void AARGameStateBase::AddPlayerState(APlayerState* PlayerState)
 		if (HasAuthority())
 		{
 			RefreshAllPlayersTravelReady();
+			RefreshPauseResolution();
 		}
 	}
 }
 
 void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 {
+	if (HasAuthority())
+	{
+		if (const AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState))
+		{
+			ClearPauseVoteForSlot(ARPlayerState->GetPlayerSlot());
+		}
+	}
+
 	if (AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState))
 	{
 		UnbindPlayerStateSignals(ARPlayerState);
@@ -206,6 +251,7 @@ void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 		if (HasAuthority())
 		{
 			RefreshAllPlayersTravelReady();
+			RefreshPauseResolution();
 		}
 	}
 }
@@ -224,7 +270,13 @@ void AARGameStateBase::HandlePlayerSlotChanged(EARPlayerSlot NewSlot, EARPlayerS
 {
 	if (HasAuthority() && NewSlot != OldSlot)
 	{
+		if (OldSlot != EARPlayerSlot::Unknown)
+		{
+			ClearPauseVoteForSlot(OldSlot);
+		}
+
 		RefreshAllPlayersTravelReady();
+		RefreshPauseResolution();
 	}
 }
 
@@ -477,6 +529,97 @@ void AARGameStateBase::OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldAc
 	OnActiveFactionEffectTagsChanged.Broadcast(ActiveFactionEffectTags, OldActiveFactionEffectTags);
 }
 
+void AARGameStateBase::OnRep_PauseMenuVoteMask(const uint8 /*OldPauseMenuVoteMask*/)
+{
+	// Intentionally no-op; aggregate pause delegates are emitted from replicated aggregate fields.
+}
+
+void AARGameStateBase::OnRep_ExternalPauseReasonMask(const uint8 /*OldExternalPauseReasonMask*/)
+{
+	// Intentionally no-op; aggregate pause delegates are emitted from replicated aggregate fields.
+}
+
+void AARGameStateBase::OnRep_AllPlayersPausedByMenu(const bool bOldAllPlayersPausedByMenu)
+{
+	OnAllPlayersPausedByMenuChanged.Broadcast(bAllPlayersPausedByMenu, bOldAllPlayersPausedByMenu);
+}
+
+void AARGameStateBase::OnRep_AnyExternalPauseActive(const bool bOldAnyExternalPauseActive)
+{
+	OnAnyExternalPauseActiveChanged.Broadcast(bAnyExternalPauseActive, bOldAnyExternalPauseActive);
+}
+
+void AARGameStateBase::OnRep_EffectivePauseStateActive(const bool bOldEffectivePauseStateActive)
+{
+	OnEffectivePauseStateChanged.Broadcast(bEffectivePauseStateActive, bOldEffectivePauseStateActive);
+}
+
+bool AARGameStateBase::IsPlayerPauseMenuVoteActive(const EARPlayerSlot PlayerSlot) const
+{
+	const uint8 VoteBit = GetPauseVoteBit(PlayerSlot);
+	return VoteBit != 0 && (PauseMenuVoteMask & VoteBit) != 0;
+}
+
+bool AARGameStateBase::IsExternalPauseReasonActive(const EARPauseExternalReason Reason) const
+{
+	const uint8 ReasonBit = GetExternalPauseReasonBit(Reason);
+	return ReasonBit != 0 && (ExternalPauseReasonMask & ReasonBit) != 0;
+}
+
+void AARGameStateBase::SetPlayerPauseMenuVote(const EARPlayerSlot PlayerSlot, const bool bPaused)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const uint8 VoteBit = GetPauseVoteBit(PlayerSlot);
+	if (VoteBit == 0)
+	{
+		return;
+	}
+
+	const uint8 NewMask = bPaused ? (PauseMenuVoteMask | VoteBit) : (PauseMenuVoteMask & ~VoteBit);
+	if (NewMask == PauseMenuVoteMask)
+	{
+		RefreshPauseResolution();
+		return;
+	}
+
+	const uint8 OldMask = PauseMenuVoteMask;
+	PauseMenuVoteMask = NewMask;
+	OnRep_PauseMenuVoteMask(OldMask);
+	ForceNetUpdate();
+	RefreshPauseResolution();
+}
+
+void AARGameStateBase::SetExternalPauseReasonActive(const EARPauseExternalReason Reason, const bool bActive)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const uint8 ReasonBit = GetExternalPauseReasonBit(Reason);
+	if (ReasonBit == 0)
+	{
+		return;
+	}
+
+	const uint8 NewMask = bActive ? (ExternalPauseReasonMask | ReasonBit) : (ExternalPauseReasonMask & ~ReasonBit);
+	if (NewMask == ExternalPauseReasonMask)
+	{
+		RefreshPauseResolution();
+		return;
+	}
+
+	const uint8 OldMask = ExternalPauseReasonMask;
+	ExternalPauseReasonMask = NewMask;
+	OnRep_ExternalPauseReasonMask(OldMask);
+	ForceNetUpdate();
+	RefreshPauseResolution();
+}
+
 void AARGameStateBase::BindPlayerStateSignals(AARPlayerStateBase* PlayerState)
 {
 	if (!PlayerState)
@@ -540,4 +683,101 @@ void AARGameStateBase::RefreshAllPlayersTravelReady()
 	bAllPlayersTravelReady = bNewAllPlayersTravelReady;
 	OnRep_AllPlayersTravelReady(bOldAllPlayersTravelReady);
 	ForceNetUpdate();
+}
+
+bool AARGameStateBase::ComputeAllPlayersPausedByMenu() const
+{
+	bool bFoundAnySlottedPlayer = false;
+
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		const AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState);
+		if (!ARPlayerState)
+		{
+			continue;
+		}
+
+		const EARPlayerSlot Slot = ARPlayerState->GetPlayerSlot();
+		if (Slot == EARPlayerSlot::Unknown)
+		{
+			continue;
+		}
+
+		bFoundAnySlottedPlayer = true;
+		if (!IsPlayerPauseMenuVoteActive(Slot))
+		{
+			return false;
+		}
+	}
+
+	return bFoundAnySlottedPlayer;
+}
+
+void AARGameStateBase::RefreshPauseResolution()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bool bShouldForceNetUpdate = false;
+
+	const bool bOldAllPlayersPausedByMenu = bAllPlayersPausedByMenu;
+	const bool bNewAllPlayersPausedByMenu = ComputeAllPlayersPausedByMenu();
+	if (bOldAllPlayersPausedByMenu != bNewAllPlayersPausedByMenu)
+	{
+		bAllPlayersPausedByMenu = bNewAllPlayersPausedByMenu;
+		OnRep_AllPlayersPausedByMenu(bOldAllPlayersPausedByMenu);
+		bShouldForceNetUpdate = true;
+	}
+
+	const bool bOldAnyExternalPauseActive = bAnyExternalPauseActive;
+	const bool bNewAnyExternalPauseActive = ExternalPauseReasonMask != 0;
+	if (bOldAnyExternalPauseActive != bNewAnyExternalPauseActive)
+	{
+		bAnyExternalPauseActive = bNewAnyExternalPauseActive;
+		OnRep_AnyExternalPauseActive(bOldAnyExternalPauseActive);
+		bShouldForceNetUpdate = true;
+	}
+
+	const bool bOldEffectivePauseStateActive = bEffectivePauseStateActive;
+	const bool bNewEffectivePauseStateActive = bAnyExternalPauseActive || bAllPlayersPausedByMenu;
+	if (bOldEffectivePauseStateActive != bNewEffectivePauseStateActive)
+	{
+		bEffectivePauseStateActive = bNewEffectivePauseStateActive;
+		OnRep_EffectivePauseStateActive(bOldEffectivePauseStateActive);
+		bShouldForceNetUpdate = true;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		const bool bCurrentlyPaused = UGameplayStatics::IsGamePaused(World);
+		if (bCurrentlyPaused != bEffectivePauseStateActive)
+		{
+			UGameplayStatics::SetGamePaused(World, bEffectivePauseStateActive);
+		}
+	}
+
+	if (bShouldForceNetUpdate)
+	{
+		ForceNetUpdate();
+	}
+}
+
+void AARGameStateBase::ClearPauseVoteForSlot(const EARPlayerSlot PlayerSlot)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const uint8 VoteBit = GetPauseVoteBit(PlayerSlot);
+	if (VoteBit == 0 || (PauseMenuVoteMask & VoteBit) == 0)
+	{
+		return;
+	}
+
+	const uint8 OldMask = PauseMenuVoteMask;
+	PauseMenuVoteMask &= ~VoteBit;
+	OnRep_PauseMenuVoteMask(OldMask);
 }
