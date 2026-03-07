@@ -44,30 +44,6 @@ namespace
 		return World->GetNetMode() == NM_Standalone || World->GetAuthGameMode() != nullptr;
 	}
 
-	static bool IsGameplayTagContainerExactSuperset(const FGameplayTagContainer& Container, const FGameplayTagContainer& Required)
-	{
-		for (const FGameplayTag Tag : Required)
-		{
-			if (!Container.HasTag(Tag))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	static bool HasAnyBlockedTag(const FGameplayTagContainer& Container, const FGameplayTagContainer& Blocked)
-	{
-		for (const FGameplayTag Tag : Blocked)
-		{
-			if (Container.HasTag(Tag))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	static FString BuildSessionId()
 	{
 		return FGuid::NewGuid().ToString(EGuidFormats::DigitsWithHyphensInBraces);
@@ -380,23 +356,23 @@ static bool EvaluateRowUnlocked(const UARDialogueSubsystem* Subsystem, const FAR
 	GetSaveSubsystem(Subsystem, SaveSubsystem);
 
 	const FGameplayTagContainer ProgressionTags = SaveSubsystem ? SaveSubsystem->GetProgressionTags() : FGameplayTagContainer();
-	if (!IsGameplayTagContainerExactSuperset(ProgressionTags, Row.RequiredProgressionTags))
+	if (!ProgressionTags.HasAll(Row.RequiredProgressionTags))
 	{
 		return false;
 	}
 
-	if (HasAnyBlockedTag(ProgressionTags, Row.BlockedProgressionTags))
+	if (ProgressionTags.HasAny(Row.BlockedProgressionTags))
 	{
 		return false;
 	}
 
 	const FGameplayTagContainer Unlocks = GS ? GS->GetUnlocks() : FGameplayTagContainer();
-	if (!IsGameplayTagContainerExactSuperset(Unlocks, Row.RequiredUnlockTags))
+	if (!Unlocks.HasAll(Row.RequiredUnlockTags))
 	{
 		return false;
 	}
 
-	if (HasAnyBlockedTag(Unlocks, Row.BlockedUnlockTags))
+	if (Unlocks.HasAny(Row.BlockedUnlockTags))
 	{
 		return false;
 	}
@@ -904,6 +880,12 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 		return false;
 	}
 
+	// Per-player sessions are owned by a single speaker; eavesdroppers may not drive progression.
+	if (!Session->bIsSharedSession && Slot != Session->OwnerSlot)
+	{
+		return false;
+	}
+
 	if (Session->bWaitingForChoice)
 	{
 		return false;
@@ -1132,10 +1114,16 @@ bool UARDialogueSubsystem::SetShopEavesdropTarget(AARPlayerController* Requestin
 	}
 
 	Runtime.ShopEavesdropTargetByViewer.Remove(ViewerSlot);
+	AARPlayerController* ViewerPC = FindPlayerControllerBySlot(GetWorld(), ViewerSlot);
 	for (FARActiveDialogueSession& Session : Runtime.ActiveSessions)
 	{
-		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot)
+		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot && Session.Participants.Contains(ViewerSlot))
 		{
+			// Notify the viewer that the eavesdropped session is no longer visible to them.
+			if (ViewerPC)
+			{
+				ViewerPC->ClientDialogueSessionEnded(Session.SessionId);
+			}
 			Session.Participants.Remove(ViewerSlot);
 			DispatchSessionUpdate(this, Session);
 		}
