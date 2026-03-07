@@ -1,0 +1,1772 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARGameStateBase" kind="class" language="C++" prot="public">
+    <compoundname>AARGameStateBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AGameStateBase</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">IStructSerializable</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderGameState" prot="public" virt="non-virtual">AARInvaderGameState</derivedcompoundref>
+    <derivedcompoundref refid="classAARLobbyGameState" prot="public" virt="non-virtual">AARLobbyGameState</derivedcompoundref>
+    <derivedcompoundref refid="classAARScrapyardGameState" prot="public" virt="non-virtual">AARScrapyardGameState</derivedcompoundref>
+    <derivedcompoundref refid="classAARShopGameState" prot="public" virt="non-virtual">AARShopGameState</derivedcompoundref>
+    <includes refid="ARGameStateBase_8h" local="no">AlienRamen/Public/ARGameStateBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARGameStateBase_1a28f70d724354706d31320af517296bb0" prot="public" static="no" mutable="no">
+        <type>TObjectPtr&lt; UScriptStruct &gt;</type>
+        <definition>TObjectPtr&lt;UScriptStruct&gt; AARGameStateBase::ClassStateStruct</definition>
+        <argsstring></argsstring>
+        <name>ClassStateStruct</name>
+        <qualifiedname>AARGameStateBase::ClassStateStruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="128" column="12" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a30e6144386c6fc123215292b3a211bba" prot="public" static="no" mutable="no">
+        <type>FAROnActiveFactionEffectTagsChangedSignature</type>
+        <definition>FAROnActiveFactionEffectTagsChangedSignature AARGameStateBase::OnActiveFactionEffectTagsChanged</definition>
+        <argsstring></argsstring>
+        <name>OnActiveFactionEffectTagsChanged</name>
+        <qualifiedname>AARGameStateBase::OnActiveFactionEffectTagsChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="182" column="46" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1ad205f3969127f8900be5ee0358d674f4" prot="public" static="no" mutable="no">
+        <type>FAROnActiveFactionTagChangedSignature</type>
+        <definition>FAROnActiveFactionTagChangedSignature AARGameStateBase::OnActiveFactionTagChanged</definition>
+        <argsstring></argsstring>
+        <name>OnActiveFactionTagChanged</name>
+        <qualifiedname>AARGameStateBase::OnActiveFactionTagChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="179" column="39" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1ae46a1fa8e2d0dbcfdd8b192841c5111b" prot="public" static="no" mutable="no">
+        <type>FAROnAllPlayersPausedByMenuChangedSignature</type>
+        <definition>FAROnAllPlayersPausedByMenuChangedSignature AARGameStateBase::OnAllPlayersPausedByMenuChanged</definition>
+        <argsstring></argsstring>
+        <name>OnAllPlayersPausedByMenuChanged</name>
+        <qualifiedname>AARGameStateBase::OnAllPlayersPausedByMenuChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="191" column="45" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="191" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a5110fd5ba97187778b7488e2b0f54330" prot="public" static="no" mutable="no">
+        <type>FAROnAllPlayersTravelReadyChangedSignature</type>
+        <definition>FAROnAllPlayersTravelReadyChangedSignature AARGameStateBase::OnAllPlayersTravelReadyChanged</definition>
+        <argsstring></argsstring>
+        <name>OnAllPlayersTravelReadyChanged</name>
+        <qualifiedname>AARGameStateBase::OnAllPlayersTravelReadyChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="158" column="44" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a731990345f051ccd300635efa1d32035" prot="public" static="no" mutable="no">
+        <type>FAROnAnyExternalPauseActiveChangedSignature</type>
+        <definition>FAROnAnyExternalPauseActiveChangedSignature AARGameStateBase::OnAnyExternalPauseActiveChanged</definition>
+        <argsstring></argsstring>
+        <name>OnAnyExternalPauseActiveChanged</name>
+        <qualifiedname>AARGameStateBase::OnAnyExternalPauseActiveChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="194" column="45" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a4851ad372c6441d3e6f4ec8f10c3f296" prot="public" static="no" mutable="no">
+        <type>FAROnCyclesChangedSignature</type>
+        <definition>FAROnCyclesChangedSignature AARGameStateBase::OnCyclesChanged</definition>
+        <argsstring></argsstring>
+        <name>OnCyclesChanged</name>
+        <qualifiedname>AARGameStateBase::OnCyclesChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="176" column="29" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a2f99856ac736a6d806fe7d6dec117534" prot="public" static="no" mutable="no">
+        <type>FAROnEffectivePauseStateChangedSignature</type>
+        <definition>FAROnEffectivePauseStateChangedSignature AARGameStateBase::OnEffectivePauseStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnEffectivePauseStateChanged</name>
+        <qualifiedname>AARGameStateBase::OnEffectivePauseStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="197" column="42" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a2fcd40ead3c9ba87e2edd91e4523bab0" prot="public" static="no" mutable="no">
+        <type>FAROnGameStateHydratedSignature</type>
+        <definition>FAROnGameStateHydratedSignature AARGameStateBase::OnHydratedFromSave</definition>
+        <argsstring></argsstring>
+        <name>OnHydratedFromSave</name>
+        <qualifiedname>AARGameStateBase::OnHydratedFromSave</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="161" column="33" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1acdfc8feb6eb016518dc4bb96b92dfd73" prot="public" static="no" mutable="no">
+        <type>FAROnManualSaveAllowedChangedSignature</type>
+        <definition>FAROnManualSaveAllowedChangedSignature AARGameStateBase::OnManualSaveAllowedChanged</definition>
+        <argsstring></argsstring>
+        <name>OnManualSaveAllowedChanged</name>
+        <qualifiedname>AARGameStateBase::OnManualSaveAllowedChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="185" column="40" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1addd5b4c481f098a51e01fd0fd16cd019" prot="public" static="no" mutable="no">
+        <type>FAROnMeatChangedSignature</type>
+        <definition>FAROnMeatChangedSignature AARGameStateBase::OnMeatChanged</definition>
+        <argsstring></argsstring>
+        <name>OnMeatChanged</name>
+        <qualifiedname>AARGameStateBase::OnMeatChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="173" column="27" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a46e3534ee0ac720f301875f8472bdfe7" prot="public" static="no" mutable="no">
+        <type>FAROnMoneyChangedSignature</type>
+        <definition>FAROnMoneyChangedSignature AARGameStateBase::OnMoneyChanged</definition>
+        <argsstring></argsstring>
+        <name>OnMoneyChanged</name>
+        <qualifiedname>AARGameStateBase::OnMoneyChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="167" column="28" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1abd06e553fd70ff727a98ed195a12c648" prot="public" static="no" mutable="no">
+        <type>FAROnPlayerReadyChangedSignature</type>
+        <definition>FAROnPlayerReadyChangedSignature AARGameStateBase::OnPlayerReadyChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerReadyChanged</name>
+        <qualifiedname>AARGameStateBase::OnPlayerReadyChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="155" column="34" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1aa3f46281043137acfd4fb854c5ae0f52" prot="public" static="no" mutable="no">
+        <type>FAROnScrapChangedSignature</type>
+        <definition>FAROnScrapChangedSignature AARGameStateBase::OnScrapChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapChanged</name>
+        <qualifiedname>AARGameStateBase::OnScrapChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="170" column="28" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1aa5e92119ac8691217e87cb76346c44c0" prot="public" static="no" mutable="no">
+        <type>FAROnShareLocalPauseAcrossControllersChangedSignature</type>
+        <definition>FAROnShareLocalPauseAcrossControllersChangedSignature AARGameStateBase::OnShareLocalPauseAcrossControllersChanged</definition>
+        <argsstring></argsstring>
+        <name>OnShareLocalPauseAcrossControllersChanged</name>
+        <qualifiedname>AARGameStateBase::OnShareLocalPauseAcrossControllersChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="188" column="55" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="188" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1af2e2b810aa56069d54beb9bcfb15bf62" prot="public" static="no" mutable="no">
+        <type>FAROnTrackedPlayersChangedSignature</type>
+        <definition>FAROnTrackedPlayersChangedSignature AARGameStateBase::OnTrackedPlayersChanged</definition>
+        <argsstring></argsstring>
+        <name>OnTrackedPlayersChanged</name>
+        <qualifiedname>AARGameStateBase::OnTrackedPlayersChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="152" column="37" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1ae66430986826af34b1d9f93aac2592dc" prot="public" static="no" mutable="no">
+        <type>FAROnUnlocksChangedSignature</type>
+        <definition>FAROnUnlocksChangedSignature AARGameStateBase::OnUnlocksChanged</definition>
+        <argsstring></argsstring>
+        <name>OnUnlocksChanged</name>
+        <qualifiedname>AARGameStateBase::OnUnlocksChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="164" column="30" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARGameStateBase_1ac3c595bf88ef3279899a61c59f340f59" prot="protected" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARGameStateBase::ActiveFactionEffectTags</definition>
+        <argsstring></argsstring>
+        <name>ActiveFactionEffectTags</name>
+        <qualifiedname>AARGameStateBase::ActiveFactionEffectTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="399" column="23" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a4f9eeac63add5bb963d55fef0df21172" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARGameStateBase::ActiveFactionTag</definition>
+        <argsstring></argsstring>
+        <name>ActiveFactionTag</name>
+        <qualifiedname>AARGameStateBase::ActiveFactionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="396" column="14" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="396" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a1a57b65251f946f165730b72cf890e2d" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::bAllPlayersPausedByMenu</definition>
+        <argsstring></argsstring>
+        <name>bAllPlayersPausedByMenu</name>
+        <qualifiedname>AARGameStateBase::bAllPlayersPausedByMenu</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="414" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="414" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a74f19aea0886c5a68ab330c6f3d74151" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::bAllPlayersTravelReady</definition>
+        <argsstring></argsstring>
+        <name>bAllPlayersTravelReady</name>
+        <qualifiedname>AARGameStateBase::bAllPlayersTravelReady</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="378" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1aa1c3182de242762baca56e42f7285c29" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::bAnyExternalPauseActive</definition>
+        <argsstring></argsstring>
+        <name>bAnyExternalPauseActive</name>
+        <qualifiedname>AARGameStateBase::bAnyExternalPauseActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="417" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="417" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a4300971b1bde8d6bef07cdf599349fd9" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::bEffectivePauseStateActive</definition>
+        <argsstring></argsstring>
+        <name>bEffectivePauseStateActive</name>
+        <qualifiedname>AARGameStateBase::bEffectivePauseStateActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="420" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="420" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a3fee2dbe665c8f711797a09f629f7bbd" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::bManualSaveAllowed</definition>
+        <argsstring></argsstring>
+        <name>bManualSaveAllowed</name>
+        <qualifiedname>AARGameStateBase::bManualSaveAllowed</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="402" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="402" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a79936aeadbad02a32253599cef0a41cc" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::bShareLocalPauseAcrossControllers</definition>
+        <argsstring></argsstring>
+        <name>bShareLocalPauseAcrossControllers</name>
+        <qualifiedname>AARGameStateBase::bShareLocalPauseAcrossControllers</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="405" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="405" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1ae47905652463c24d916e92ab7fb74247" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARGameStateBase::Cycles</definition>
+        <argsstring></argsstring>
+        <name>Cycles</name>
+        <qualifiedname>AARGameStateBase::Cycles</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="393" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="393" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1aadd232c74253c849299fab21b9f04ece" prot="protected" static="no" mutable="no">
+        <type>uint8</type>
+        <definition>uint8 AARGameStateBase::ExternalPauseReasonMask</definition>
+        <argsstring></argsstring>
+        <name>ExternalPauseReasonMask</name>
+        <qualifiedname>AARGameStateBase::ExternalPauseReasonMask</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="411" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="411" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a7a349542d919082ced3a125c761bebca" prot="protected" static="no" mutable="no">
+        <type>FARMeatState</type>
+        <definition>FARMeatState AARGameStateBase::Meat</definition>
+        <argsstring></argsstring>
+        <name>Meat</name>
+        <qualifiedname>AARGameStateBase::Meat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="390" column="14" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="390" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a442dc8416751eadecf72558eff782052" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARGameStateBase::Money</definition>
+        <argsstring></argsstring>
+        <name>Money</name>
+        <qualifiedname>AARGameStateBase::Money</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="384" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="384" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a5e5cb3cf006a121355b217d4e813e6a0" prot="protected" static="no" mutable="no">
+        <type>uint8</type>
+        <definition>uint8 AARGameStateBase::PauseMenuVoteMask</definition>
+        <argsstring></argsstring>
+        <name>PauseMenuVoteMask</name>
+        <qualifiedname>AARGameStateBase::PauseMenuVoteMask</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="408" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="408" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1ab69bf036d85c775fb161bde42576b0aa" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARGameStateBase::Scrap</definition>
+        <argsstring></argsstring>
+        <name>Scrap</name>
+        <qualifiedname>AARGameStateBase::Scrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="387" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameStateBase_1a469c83eca2b9fd7d9ea8dce9b65c2263" prot="protected" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARGameStateBase::Unlocks</definition>
+        <argsstring></argsstring>
+        <name>Unlocks</name>
+        <qualifiedname>AARGameStateBase::Unlocks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="381" column="23" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="381" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARGameStateBase_1a075d2e7860ca9b6d9e41803014a5f072" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARGameStateBase::AARGameStateBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARGameStateBase</name>
+        <qualifiedname>AARGameStateBase::AARGameStateBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="125" column="1" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="88" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a3142310d4651cf45d640e2638cd912a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::AddUnlockTag</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>AddUnlockTag</name>
+        <qualifiedname>AARGameStateBase::AddUnlockTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+<para>Adds a single unlock tag; returns true if added. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="266" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="351" bodyend="368"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1aa471347f77c963a09ae318a143c12732" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::ApplyStateFromStruct_Implementation</definition>
+        <argsstring>(const FInstancedStruct &amp;SavedState) override</argsstring>
+        <name>ApplyStateFromStruct_Implementation</name>
+        <qualifiedname>AARGameStateBase::ApplyStateFromStruct_Implementation</qualifiedname>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>SavedState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="303" column="14" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="298" bodyend="312"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a2e8366ad493f04834aa69d4cb813ce8f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::AreAllPlayersPausedByMenu</definition>
+        <argsstring>() const</argsstring>
+        <name>AreAllPlayersPausedByMenu</name>
+        <qualifiedname>AARGameStateBase::AreAllPlayersPausedByMenu</qualifiedname>
+        <briefdescription>
+<para>Returns true when all currently slotted players have an active pause-menu vote. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="234" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="234" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a458fbf3efa089eac2f3adf7d8feead65" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::AreAllPlayersTravelReady</definition>
+        <argsstring>() const</argsstring>
+        <name>AreAllPlayersTravelReady</name>
+        <qualifiedname>AARGameStateBase::AreAllPlayersTravelReady</qualifiedname>
+        <briefdescription>
+<para>True when at least one AR player exists and both players are travel-ready. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="140" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="177" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a009a9eedff64d4f8021bd0ae421f65ca" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FGameplayTagContainer &amp;</type>
+        <definition>const FGameplayTagContainer &amp; AARGameStateBase::GetActiveFactionEffectTags</definition>
+        <argsstring>() const</argsstring>
+        <name>GetActiveFactionEffectTags</name>
+        <qualifiedname>AARGameStateBase::GetActiveFactionEffectTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="230" column="29" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="230" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a21a45a638e09f757ba92595a6b26469d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARGameStateBase::GetActiveFactionTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetActiveFactionTag</name>
+        <qualifiedname>AARGameStateBase::GetActiveFactionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="227" column="14" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="227" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a46a0e3f68240d1dec873068410a93363" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARGameStateBase::GetCycles</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCycles</name>
+        <qualifiedname>AARGameStateBase::GetCycles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="224" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="224" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a027a2c55154ed94ecd2c2db2d9554895" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARMeatState &amp;</type>
+        <definition>const FARMeatState &amp; AARGameStateBase::GetMeat</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMeat</name>
+        <qualifiedname>AARGameStateBase::GetMeat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="213" column="20" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="213" bodyend="213"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ae0847d14761ecb8e091930796bf5e501" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARGameStateBase::GetMoney</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMoney</name>
+        <qualifiedname>AARGameStateBase::GetMoney</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="207" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="207" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a2de9ad63ecf4a0ad956143b7d2e9565e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARGameStateBase::GetOtherPlayerStateFromController</definition>
+        <argsstring>(const APlayerController *CurrentPlayerController) const</argsstring>
+        <name>GetOtherPlayerStateFromController</name>
+        <qualifiedname>AARGameStateBase::GetOtherPlayerStateFromController</qualifiedname>
+        <param>
+          <type>const APlayerController *</type>
+          <declname>CurrentPlayerController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="146" column="20" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="197" bodyend="205"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a7d4c230b489a5a38905fb1d25238d34c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARGameStateBase::GetOtherPlayerStateFromPawn</definition>
+        <argsstring>(const APawn *CurrentPlayerPawn) const</argsstring>
+        <name>GetOtherPlayerStateFromPawn</name>
+        <qualifiedname>AARGameStateBase::GetOtherPlayerStateFromPawn</qualifiedname>
+        <param>
+          <type>const APawn *</type>
+          <declname>CurrentPlayerPawn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="149" column="20" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="207" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ac77455e773703e215fe8bd97fda9dbe7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARGameStateBase::GetOtherPlayerStateFromPlayerState</definition>
+        <argsstring>(const AARPlayerStateBase *CurrentPlayerState) const</argsstring>
+        <name>GetOtherPlayerStateFromPlayerState</name>
+        <qualifiedname>AARGameStateBase::GetOtherPlayerStateFromPlayerState</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="143" column="20" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="182" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a438b115bc2318ca87350cc1e8b825024" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARGameStateBase::GetPlayerBySlot</definition>
+        <argsstring>(EARPlayerSlot Slot) const</argsstring>
+        <name>GetPlayerBySlot</name>
+        <qualifiedname>AARGameStateBase::GetPlayerBySlot</qualifiedname>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>Slot</declname>
+        </param>
+        <briefdescription>
+<para>Returns the AR player occupying a specific coop slot (P1/P2), or nullptr if empty. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="132" column="20" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="147" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a4c0dea6eb9d7ce975abcca6075728a2f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>TArray&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> * &gt;</type>
+        <definition>TArray&lt; AARPlayerStateBase * &gt; AARGameStateBase::GetPlayerStates</definition>
+        <argsstring>() const</argsstring>
+        <name>GetPlayerStates</name>
+        <qualifiedname>AARGameStateBase::GetPlayerStates</qualifiedname>
+        <briefdescription>
+<para>Returns all AR player states (filtered view of PlayerArray). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="136" column="8" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="161" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1aece8a828e66197d67d2ec627df01e84e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARGameStateBase::GetScrap</definition>
+        <argsstring>() const</argsstring>
+        <name>GetScrap</name>
+        <qualifiedname>AARGameStateBase::GetScrap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="210" column="7" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="210" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a9fbab75cc0a111c4dc7deb8d146d3e2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FGameplayTagContainer &amp;</type>
+        <definition>const FGameplayTagContainer &amp; AARGameStateBase::GetUnlocks</definition>
+        <argsstring>() const</argsstring>
+        <name>GetUnlocks</name>
+        <qualifiedname>AARGameStateBase::GetUnlocks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="204" column="29" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="204" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ac4bd1069b17bcbd65178549ebc7faf11" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::HasUnlockTag</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag) const</argsstring>
+        <name>HasUnlockTag</name>
+        <qualifiedname>AARGameStateBase::HasUnlockTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="273" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="389" bodyend="392"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a5abd01e68411bc0bfc2e6c64e40b3e1f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::IsAnyExternalPauseReasonActive</definition>
+        <argsstring>() const</argsstring>
+        <name>IsAnyExternalPauseReasonActive</name>
+        <qualifiedname>AARGameStateBase::IsAnyExternalPauseReasonActive</qualifiedname>
+        <briefdescription>
+<para>Returns true when any non-menu pause reason is currently active (dialogue/full-blast/etc). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="238" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="238" bodyend="238"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a6ab73dce18095e5b8cafb33781827d80" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::IsEffectivePauseStateActive</definition>
+        <argsstring>() const</argsstring>
+        <name>IsEffectivePauseStateActive</name>
+        <qualifiedname>AARGameStateBase::IsEffectivePauseStateActive</qualifiedname>
+        <briefdescription>
+<para>Returns effective pause state resolved by quorum + external reasons. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="242" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="242" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ada5db26e0b39316aade1df26cc27faa3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::IsExternalPauseReasonActive</definition>
+        <argsstring>(EARPauseExternalReason Reason) const</argsstring>
+        <name>IsExternalPauseReasonActive</name>
+        <qualifiedname>AARGameStateBase::IsExternalPauseReasonActive</qualifiedname>
+        <param>
+          <type>EARPauseExternalReason</type>
+          <declname>Reason</declname>
+        </param>
+        <briefdescription>
+<para>Returns whether a specific external pause reason is currently active. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="250" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="611" bodyend="615"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a6fbd01da8838c0c32d357baec15a2797" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::IsManualSaveAllowed</definition>
+        <argsstring>() const</argsstring>
+        <name>IsManualSaveAllowed</name>
+        <qualifiedname>AARGameStateBase::IsManualSaveAllowed</qualifiedname>
+        <briefdescription>
+<para>Returns whether manual save actions (for example pause-menu save) are allowed in the current mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="217" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="217" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a7d1e86340e1edaefb7a2463be876ee6f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::IsPlayerPauseMenuVoteActive</definition>
+        <argsstring>(EARPlayerSlot PlayerSlot) const</argsstring>
+        <name>IsPlayerPauseMenuVoteActive</name>
+        <qualifiedname>AARGameStateBase::IsPlayerPauseMenuVoteActive</qualifiedname>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <briefdescription>
+<para>Returns whether a specific player slot currently has an active pause-menu vote. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="246" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="605" bodyend="609"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a7a8adfb6bad0029a5fd0eabf21346b41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::NotifyHydratedFromSave</definition>
+        <argsstring>()</argsstring>
+        <name>NotifyHydratedFromSave</name>
+        <qualifiedname>AARGameStateBase::NotifyHydratedFromSave</qualifiedname>
+        <briefdescription>
+<para>Called by SaveSubsystem after hydration completes to inform UI widgets. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="307" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="523" bodyend="526"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a8472fce2100ea5ee6cacdf61cd59f1be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::RemoveUnlockTag</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>RemoveUnlockTag</name>
+        <qualifiedname>AARGameStateBase::RemoveUnlockTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+<para>Removes a single unlock tag; returns true if removed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="270" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="370" bodyend="387"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1adfc4ac0f41d0053fe75ff55f1aca94a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetActiveFactionEffectTagsFromSave</definition>
+        <argsstring>(const FGameplayTagContainer &amp;NewActiveFactionEffectTags)</argsstring>
+        <name>SetActiveFactionEffectTagsFromSave</name>
+        <qualifiedname>AARGameStateBase::SetActiveFactionEffectTagsFromSave</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>NewActiveFactionEffectTags</declname>
+        </param>
+        <briefdescription>
+<para>Writes elected faction effect tags from save/runtime and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="293" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="469" bodyend="485"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a5d1c9bd1234cd707e1bdca2462bd56db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetActiveFactionTagFromSave</definition>
+        <argsstring>(FGameplayTag NewActiveFactionTag)</argsstring>
+        <name>SetActiveFactionTagFromSave</name>
+        <qualifiedname>AARGameStateBase::SetActiveFactionTagFromSave</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewActiveFactionTag</declname>
+        </param>
+        <briefdescription>
+<para>Writes elected faction identity from save/runtime and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="289" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="451" bodyend="467"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1abce6f4fb638bf288d72c4048888a464f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetExternalPauseReasonActive</definition>
+        <argsstring>(EARPauseExternalReason Reason, bool bActive)</argsstring>
+        <name>SetExternalPauseReasonActive</name>
+        <qualifiedname>AARGameStateBase::SetExternalPauseReasonActive</qualifiedname>
+        <param>
+          <type>EARPauseExternalReason</type>
+          <declname>Reason</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bActive</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only mutation for external pause reasons (dialogue/full-blast/etc). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="258" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="644" bodyend="669"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1afa471d8f2aff0c3aa53997469ccc0220" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetManualSaveAllowed</definition>
+        <argsstring>(bool bAllowed)</argsstring>
+        <name>SetManualSaveAllowed</name>
+        <qualifiedname>AARGameStateBase::SetManualSaveAllowed</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bAllowed</declname>
+        </param>
+        <briefdescription>
+<para>Writes mode-driven manual-save policy and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="297" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="487" bodyend="503"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a3016a06ba7f36bae4fa922258e741203" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetMeatFromSave</definition>
+        <argsstring>(const FARMeatState &amp;NewMeat)</argsstring>
+        <name>SetMeatFromSave</name>
+        <qualifiedname>AARGameStateBase::SetMeatFromSave</qualifiedname>
+        <param>
+          <type>const FARMeatState &amp;</type>
+          <declname>NewMeat</declname>
+        </param>
+        <briefdescription>
+<para>Writes meat state from save/runtime and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="285" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="432" bodyend="449"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ab6a657eb22e23e00b9494f387628d13b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetMoneyFromSave</definition>
+        <argsstring>(int32 NewMoney)</argsstring>
+        <name>SetMoneyFromSave</name>
+        <qualifiedname>AARGameStateBase::SetMoneyFromSave</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewMoney</declname>
+        </param>
+        <briefdescription>
+<para>Writes money value from save/runtime and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="277" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="394" bodyend="411"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1aaf0d1915cf380e7cda1da6b85e742292" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetPlayerPauseMenuVote</definition>
+        <argsstring>(EARPlayerSlot PlayerSlot, bool bPaused)</argsstring>
+        <name>SetPlayerPauseMenuVote</name>
+        <qualifiedname>AARGameStateBase::SetPlayerPauseMenuVote</qualifiedname>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bPaused</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only mutation for per-slot pause-menu vote. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="254" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="617" bodyend="642"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ae1fde584bd2f9cb964328a882e71da8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetScrapFromSave</definition>
+        <argsstring>(int32 NewScrap)</argsstring>
+        <name>SetScrapFromSave</name>
+        <qualifiedname>AARGameStateBase::SetScrapFromSave</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewScrap</declname>
+        </param>
+        <briefdescription>
+<para>Writes scrap value from save/runtime and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="281" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="413" bodyend="430"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a1d143301a5cbf6d5d125b34425c62499" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetShareLocalPauseAcrossControllers</definition>
+        <argsstring>(bool bShareAcrossControllers)</argsstring>
+        <name>SetShareLocalPauseAcrossControllers</name>
+        <qualifiedname>AARGameStateBase::SetShareLocalPauseAcrossControllers</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bShareAcrossControllers</declname>
+        </param>
+        <briefdescription>
+<para>Writes mode-driven local pause fanout policy and notifies listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="301" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="505" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a94b7f9b5f0d805ee597c8a3743a5a912" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SetUnlocksFromSave</definition>
+        <argsstring>(const FGameplayTagContainer &amp;NewUnlocks)</argsstring>
+        <name>SetUnlocksFromSave</name>
+        <qualifiedname>AARGameStateBase::SetUnlocksFromSave</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>NewUnlocks</declname>
+        </param>
+        <briefdescription>
+<para>Replaces unlock container from save data and broadcasts change. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Authority only. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="262" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="333" bodyend="349"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a145cda01f8384fcf05b3b392d50d60ba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::ShouldShareLocalPauseAcrossControllers</definition>
+        <argsstring>() const</argsstring>
+        <name>ShouldShareLocalPauseAcrossControllers</name>
+        <qualifiedname>AARGameStateBase::ShouldShareLocalPauseAcrossControllers</qualifiedname>
+        <briefdescription>
+<para>Returns whether local pause open/close should fan out across all local controllers on the same machine. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="221" column="6" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="221" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ab127eb7fd6891837d677a4fd9e148075" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::SyncCyclesFromSave</definition>
+        <argsstring>(int32 NewCycles)</argsstring>
+        <name>SyncCyclesFromSave</name>
+        <qualifiedname>AARGameStateBase::SyncCyclesFromSave</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewCycles</declname>
+        </param>
+        <briefdescription>
+<para>Runtime mirror of save-owned cycles; authority-only setter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="201" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="314" bodyend="331"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARGameStateBase_1ab3a84a76705f5d7dc077044656fd08fe" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::AddPlayerState</definition>
+        <argsstring>(APlayerState *PlayerState) override</argsstring>
+        <name>AddPlayerState</name>
+        <qualifiedname>AARGameStateBase::AddPlayerState</qualifiedname>
+        <param>
+          <type>APlayerState *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="312" column="14" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="217" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1aee79662aeb2cfd32b0c1dda0a3cda567" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARGameStateBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="310" column="14" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="93" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a04e7aff20c49a14df781d86a73af317b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::BindPlayerStateSignals</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState)</argsstring>
+        <name>BindPlayerStateSignals</name>
+        <qualifiedname>AARGameStateBase::BindPlayerStateSignals</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="369" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="671" bodyend="681"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1abc3bda9fa177fc0f4d66d6ef67b7fe42" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::ClearPauseVoteForSlot</definition>
+        <argsstring>(EARPlayerSlot PlayerSlot)</argsstring>
+        <name>ClearPauseVoteForSlot</name>
+        <qualifiedname>AARGameStateBase::ClearPauseVoteForSlot</qualifiedname>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="375" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="815" bodyend="833"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a056e759fee01d8b35415552005668a92" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::ComputeAllPlayersPausedByMenu</definition>
+        <argsstring>() const</argsstring>
+        <name>ComputeAllPlayersPausedByMenu</name>
+        <qualifiedname>AARGameStateBase::ComputeAllPlayersPausedByMenu</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="373" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="736" bodyend="762"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ae2a199b73553ffac05000574b98f49ad" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameStateBase::ComputeAllPlayersTravelReady</definition>
+        <argsstring>() const</argsstring>
+        <name>ComputeAllPlayersTravelReady</name>
+        <qualifiedname>AARGameStateBase::ComputeAllPlayersTravelReady</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="371" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="695" bodyend="715"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a3e6ef9f72a28e3e45b9fb998ab44d99b" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARGameStateBase::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="311" column="14" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="127" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a601342795e4752fe8f9fbc8c6770ffb6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::HandlePlayerCharacterPickedChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, EARPlayerSlot SourcePlayerSlot, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter)</argsstring>
+        <name>HandlePlayerCharacterPickedChanged</name>
+        <qualifiedname>AARGameStateBase::HandlePlayerCharacterPickedChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>SourcePlayerSlot</declname>
+        </param>
+        <param>
+          <type>EARCharacterChoice</type>
+          <declname>NewCharacter</declname>
+        </param>
+        <param>
+          <type>EARCharacterChoice</type>
+          <declname>OldCharacter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="322" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="285" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a3609bf620cf5224e49a2ac3f227b9581" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::HandlePlayerReadyStatusChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewReady, bool bOldReady)</argsstring>
+        <name>HandlePlayerReadyStatusChanged</name>
+        <qualifiedname>AARGameStateBase::HandlePlayerReadyStatusChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>SourcePlayerSlot</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bNewReady</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bOldReady</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="316" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="261" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a991f5e8d139ae9fb17ffe87f50d44540" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::HandlePlayerSlotChanged</definition>
+        <argsstring>(EARPlayerSlot NewSlot, EARPlayerSlot OldSlot)</argsstring>
+        <name>HandlePlayerSlotChanged</name>
+        <qualifiedname>AARGameStateBase::HandlePlayerSlotChanged</qualifiedname>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>NewSlot</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>OldSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="319" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="271" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a6851cdf641848bb6286ba6eb724764d9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_ActiveFactionEffectTags</definition>
+        <argsstring>(FGameplayTagContainer OldActiveFactionEffectTags)</argsstring>
+        <name>OnRep_ActiveFactionEffectTags</name>
+        <qualifiedname>AARGameStateBase::OnRep_ActiveFactionEffectTags</qualifiedname>
+        <param>
+          <type>FGameplayTagContainer</type>
+          <declname>OldActiveFactionEffectTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="346" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="565" bodyend="568"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a986d0395e034ebeb2e989afa76e56941" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_ActiveFactionTag</definition>
+        <argsstring>(FGameplayTag OldActiveFactionTag)</argsstring>
+        <name>OnRep_ActiveFactionTag</name>
+        <qualifiedname>AARGameStateBase::OnRep_ActiveFactionTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OldActiveFactionTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="343" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="560" bodyend="563"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a4d3f2c5a19f416ca1b56c76eb062a2c8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_AllPlayersPausedByMenu</definition>
+        <argsstring>(bool bOldAllPlayersPausedByMenu)</argsstring>
+        <name>OnRep_AllPlayersPausedByMenu</name>
+        <qualifiedname>AARGameStateBase::OnRep_AllPlayersPausedByMenu</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldAllPlayersPausedByMenu</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="361" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="590" bodyend="593"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ae8903ae3a9a825a8f33d711e75453c0f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_AllPlayersTravelReady</definition>
+        <argsstring>(bool bOldAllPlayersTravelReady)</argsstring>
+        <name>OnRep_AllPlayersTravelReady</name>
+        <qualifiedname>AARGameStateBase::OnRep_AllPlayersTravelReady</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldAllPlayersTravelReady</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="325" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="293" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1aa5a26bb111dde1795d3414d4d8b1a039" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_AnyExternalPauseActive</definition>
+        <argsstring>(bool bOldAnyExternalPauseActive)</argsstring>
+        <name>OnRep_AnyExternalPauseActive</name>
+        <qualifiedname>AARGameStateBase::OnRep_AnyExternalPauseActive</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldAnyExternalPauseActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="364" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="595" bodyend="598"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a0e1f86c173441f8b74d27b8ae1706356" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_Cycles</definition>
+        <argsstring>(int32 OldCycles)</argsstring>
+        <name>OnRep_Cycles</name>
+        <qualifiedname>AARGameStateBase::OnRep_Cycles</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldCycles</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="328" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="528" bodyend="531"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a873c021a8bdf4700cc014164fb7ec6f5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_EffectivePauseStateActive</definition>
+        <argsstring>(bool bOldEffectivePauseStateActive)</argsstring>
+        <name>OnRep_EffectivePauseStateActive</name>
+        <qualifiedname>AARGameStateBase::OnRep_EffectivePauseStateActive</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldEffectivePauseStateActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="367" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="600" bodyend="603"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1ac45c1f7645dcff95d28d5c630e649849" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_ExternalPauseReasonMask</definition>
+        <argsstring>(uint8 OldExternalPauseReasonMask)</argsstring>
+        <name>OnRep_ExternalPauseReasonMask</name>
+        <qualifiedname>AARGameStateBase::OnRep_ExternalPauseReasonMask</qualifiedname>
+        <param>
+          <type>uint8</type>
+          <declname>OldExternalPauseReasonMask</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="358" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="585" bodyend="588"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1acba89994af0144560f208af08360f4bb" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_ManualSaveAllowed</definition>
+        <argsstring>(bool bOldManualSaveAllowed)</argsstring>
+        <name>OnRep_ManualSaveAllowed</name>
+        <qualifiedname>AARGameStateBase::OnRep_ManualSaveAllowed</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldManualSaveAllowed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="349" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="570" bodyend="573"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a78efbe8387f51b38e0855028f0cb17eb" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_Meat</definition>
+        <argsstring>(FARMeatState OldMeat)</argsstring>
+        <name>OnRep_Meat</name>
+        <qualifiedname>AARGameStateBase::OnRep_Meat</qualifiedname>
+        <param>
+          <type>FARMeatState</type>
+          <declname>OldMeat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="340" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="549" bodyend="558"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a699cf5444487ec30ded742c8b611b1c8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_Money</definition>
+        <argsstring>(int32 OldMoney)</argsstring>
+        <name>OnRep_Money</name>
+        <qualifiedname>AARGameStateBase::OnRep_Money</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldMoney</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="334" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="538" bodyend="541"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a0b10f1fdc0d7985e593970965f3def4c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_PauseMenuVoteMask</definition>
+        <argsstring>(uint8 OldPauseMenuVoteMask)</argsstring>
+        <name>OnRep_PauseMenuVoteMask</name>
+        <qualifiedname>AARGameStateBase::OnRep_PauseMenuVoteMask</qualifiedname>
+        <param>
+          <type>uint8</type>
+          <declname>OldPauseMenuVoteMask</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="355" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="580" bodyend="583"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a84870c8430f7e20378fbcf3d77bfe0a4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_Scrap</definition>
+        <argsstring>(int32 OldScrap)</argsstring>
+        <name>OnRep_Scrap</name>
+        <qualifiedname>AARGameStateBase::OnRep_Scrap</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldScrap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="337" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="543" bodyend="547"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a13d47c4b3edc74ed0cdfcf31e939f3d0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_ShareLocalPauseAcrossControllers</definition>
+        <argsstring>(bool bOldShareLocalPauseAcrossControllers)</argsstring>
+        <name>OnRep_ShareLocalPauseAcrossControllers</name>
+        <qualifiedname>AARGameStateBase::OnRep_ShareLocalPauseAcrossControllers</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldShareLocalPauseAcrossControllers</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="352" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="575" bodyend="578"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a197dc84e6ae0931dd5dc1476a091dab8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::OnRep_Unlocks</definition>
+        <argsstring>(FGameplayTagContainer OldUnlocks)</argsstring>
+        <name>OnRep_Unlocks</name>
+        <qualifiedname>AARGameStateBase::OnRep_Unlocks</qualifiedname>
+        <param>
+          <type>FGameplayTagContainer</type>
+          <declname>OldUnlocks</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="331" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="533" bodyend="536"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a0dcb69cb41accbd4e79b868e7f230746" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::RefreshAllPlayersTravelReady</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshAllPlayersTravelReady</name>
+        <qualifiedname>AARGameStateBase::RefreshAllPlayersTravelReady</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="372" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="717" bodyend="734"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a3a83ac28a7af26b6ef10e317658df549" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::RefreshPauseResolution</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshPauseResolution</name>
+        <qualifiedname>AARGameStateBase::RefreshPauseResolution</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="374" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="764" bodyend="813"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a78b25fada365a31798ea799e17db06a6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::RemovePlayerState</definition>
+        <argsstring>(APlayerState *PlayerState) override</argsstring>
+        <name>RemovePlayerState</name>
+        <qualifiedname>AARGameStateBase::RemovePlayerState</qualifiedname>
+        <param>
+          <type>APlayerState *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="313" column="14" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="233" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameStateBase_1a1325b2693628582e60043bf8cd754215" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameStateBase::UnbindPlayerStateSignals</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState)</argsstring>
+        <name>UnbindPlayerStateSignals</name>
+        <qualifiedname>AARGameStateBase::UnbindPlayerStateSignals</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateBase.h" line="370" column="6" bodyfile="AlienRamen/Private/ARGameStateBase.cpp" bodystart="683" bodyend="693"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Server-authoritative game state for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Tracks replicated progression fields (unlock tags, money, scrap, meat, cycles).</para>
+</listitem><listitem><para>Owns travel readiness aggregation for the two-player coop model.</para>
+</listitem><listitem><para>Implements IStructSerializable so SaveSubsystem can persist/restore state across travel.</para>
+</listitem><listitem><para>Emits Blueprint events for UI when replicated values change. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARGameStateBase.h" line="120" column="1" bodyfile="AlienRamen/Public/ARGameStateBase.h" bodystart="121" bodyend="421"/>
+    <listofallmembers>
+      <member refid="classAARGameStateBase_1a075d2e7860ca9b6d9e41803014a5f072" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>AARGameStateBase</name></member>
+      <member refid="classAARGameStateBase_1ac3c595bf88ef3279899a61c59f340f59" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>ActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a4f9eeac63add5bb963d55fef0df21172" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>ActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1ab3a84a76705f5d7dc077044656fd08fe" prot="protected" virt="virtual"><scope>AARGameStateBase</scope><name>AddPlayerState</name></member>
+      <member refid="classAARGameStateBase_1a3142310d4651cf45d640e2638cd912a1" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>AddUnlockTag</name></member>
+      <member refid="classIStructSerializable_1adcaa30117468380311076dd5b9eed468" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>ApplyStateFromStruct</name></member>
+      <member refid="classAARGameStateBase_1aa471347f77c963a09ae318a143c12732" prot="public" virt="virtual"><scope>AARGameStateBase</scope><name>ApplyStateFromStruct_Implementation</name></member>
+      <member refid="classAARGameStateBase_1a2e8366ad493f04834aa69d4cb813ce8f" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>AreAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1a458fbf3efa089eac2f3adf7d8feead65" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>AreAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1a1a57b65251f946f165730b72cf890e2d" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>bAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1a74f19aea0886c5a68ab330c6f3d74151" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>bAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1aa1c3182de242762baca56e42f7285c29" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>bAnyExternalPauseActive</name></member>
+      <member refid="classAARGameStateBase_1a4300971b1bde8d6bef07cdf599349fd9" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>bEffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1aee79662aeb2cfd32b0c1dda0a3cda567" prot="protected" virt="virtual"><scope>AARGameStateBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameStateBase_1a04e7aff20c49a14df781d86a73af317b" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>BindPlayerStateSignals</name></member>
+      <member refid="classAARGameStateBase_1a3fee2dbe665c8f711797a09f629f7bbd" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>bManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a79936aeadbad02a32253599cef0a41cc" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>bShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a28f70d724354706d31320af517296bb0" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>ClassStateStruct</name></member>
+      <member refid="classAARGameStateBase_1abc3bda9fa177fc0f4d66d6ef67b7fe42" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>ClearPauseVoteForSlot</name></member>
+      <member refid="classAARGameStateBase_1a056e759fee01d8b35415552005668a92" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>ComputeAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1ae2a199b73553ffac05000574b98f49ad" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>ComputeAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1ae47905652463c24d916e92ab7fb74247" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>Cycles</name></member>
+      <member refid="classAARGameStateBase_1aadd232c74253c849299fab21b9f04ece" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>ExternalPauseReasonMask</name></member>
+      <member refid="classIStructSerializable_1afad3e17bff2bf8fec0d10189ec899165" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>ExtractStateToStruct</name></member>
+      <member refid="classIStructSerializable_1a15418826f08d93f52741bb6c57dc7ae7" prot="public" virt="virtual"><scope>AARGameStateBase</scope><name>ExtractStateToStruct_Implementation</name></member>
+      <member refid="classAARGameStateBase_1a009a9eedff64d4f8021bd0ae421f65ca" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a21a45a638e09f757ba92595a6b26469d" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1a46a0e3f68240d1dec873068410a93363" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetCycles</name></member>
+      <member refid="classAARGameStateBase_1a3e6ef9f72a28e3e45b9fb998ab44d99b" prot="protected" virt="virtual"><scope>AARGameStateBase</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARGameStateBase_1a027a2c55154ed94ecd2c2db2d9554895" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetMeat</name></member>
+      <member refid="classAARGameStateBase_1ae0847d14761ecb8e091930796bf5e501" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetMoney</name></member>
+      <member refid="classAARGameStateBase_1a2de9ad63ecf4a0ad956143b7d2e9565e" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetOtherPlayerStateFromController</name></member>
+      <member refid="classAARGameStateBase_1a7d4c230b489a5a38905fb1d25238d34c" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetOtherPlayerStateFromPawn</name></member>
+      <member refid="classAARGameStateBase_1ac77455e773703e215fe8bd97fda9dbe7" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetOtherPlayerStateFromPlayerState</name></member>
+      <member refid="classAARGameStateBase_1a438b115bc2318ca87350cc1e8b825024" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetPlayerBySlot</name></member>
+      <member refid="classAARGameStateBase_1a4c0dea6eb9d7ce975abcca6075728a2f" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetPlayerStates</name></member>
+      <member refid="classAARGameStateBase_1aece8a828e66197d67d2ec627df01e84e" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetScrap</name></member>
+      <member refid="classIStructSerializable_1a9075619a58d98d67f61949d1a93d62c7" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetStateStruct</name></member>
+      <member refid="classIStructSerializable_1acaca475c3c7a833d77eebd7a7aadb61f" prot="public" virt="virtual"><scope>AARGameStateBase</scope><name>GetStateStruct_Implementation</name></member>
+      <member refid="classAARGameStateBase_1a9fbab75cc0a111c4dc7deb8d146d3e2e" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>GetUnlocks</name></member>
+      <member refid="classAARGameStateBase_1a601342795e4752fe8f9fbc8c6770ffb6" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>HandlePlayerCharacterPickedChanged</name></member>
+      <member refid="classAARGameStateBase_1a3609bf620cf5224e49a2ac3f227b9581" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>HandlePlayerReadyStatusChanged</name></member>
+      <member refid="classAARGameStateBase_1a991f5e8d139ae9fb17ffe87f50d44540" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>HandlePlayerSlotChanged</name></member>
+      <member refid="classAARGameStateBase_1ac4bd1069b17bcbd65178549ebc7faf11" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>HasUnlockTag</name></member>
+      <member refid="classAARGameStateBase_1a5abd01e68411bc0bfc2e6c64e40b3e1f" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>IsAnyExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1a6ab73dce18095e5b8cafb33781827d80" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>IsEffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1ada5db26e0b39316aade1df26cc27faa3" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>IsExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1a6fbd01da8838c0c32d357baec15a2797" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>IsManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a7d1e86340e1edaefb7a2463be876ee6f" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>IsPlayerPauseMenuVoteActive</name></member>
+      <member refid="classAARGameStateBase_1a7a349542d919082ced3a125c761bebca" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>Meat</name></member>
+      <member refid="classAARGameStateBase_1a442dc8416751eadecf72558eff782052" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>Money</name></member>
+      <member refid="classAARGameStateBase_1a7a8adfb6bad0029a5fd0eabf21346b41" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>NotifyHydratedFromSave</name></member>
+      <member refid="classAARGameStateBase_1a30e6144386c6fc123215292b3a211bba" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnActiveFactionEffectTagsChanged</name></member>
+      <member refid="classAARGameStateBase_1ad205f3969127f8900be5ee0358d674f4" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnActiveFactionTagChanged</name></member>
+      <member refid="classAARGameStateBase_1ae46a1fa8e2d0dbcfdd8b192841c5111b" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnAllPlayersPausedByMenuChanged</name></member>
+      <member refid="classAARGameStateBase_1a5110fd5ba97187778b7488e2b0f54330" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnAllPlayersTravelReadyChanged</name></member>
+      <member refid="classAARGameStateBase_1a731990345f051ccd300635efa1d32035" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnAnyExternalPauseActiveChanged</name></member>
+      <member refid="classAARGameStateBase_1a4851ad372c6441d3e6f4ec8f10c3f296" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnCyclesChanged</name></member>
+      <member refid="classAARGameStateBase_1a2f99856ac736a6d806fe7d6dec117534" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnEffectivePauseStateChanged</name></member>
+      <member refid="classAARGameStateBase_1a2fcd40ead3c9ba87e2edd91e4523bab0" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnHydratedFromSave</name></member>
+      <member refid="classAARGameStateBase_1acdfc8feb6eb016518dc4bb96b92dfd73" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnManualSaveAllowedChanged</name></member>
+      <member refid="classAARGameStateBase_1addd5b4c481f098a51e01fd0fd16cd019" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnMeatChanged</name></member>
+      <member refid="classAARGameStateBase_1a46e3534ee0ac720f301875f8472bdfe7" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnMoneyChanged</name></member>
+      <member refid="classAARGameStateBase_1abd06e553fd70ff727a98ed195a12c648" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnPlayerReadyChanged</name></member>
+      <member refid="classAARGameStateBase_1a6851cdf641848bb6286ba6eb724764d9" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_ActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a986d0395e034ebeb2e989afa76e56941" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_ActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1a4d3f2c5a19f416ca1b56c76eb062a2c8" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_AllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1ae8903ae3a9a825a8f33d711e75453c0f" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_AllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1aa5a26bb111dde1795d3414d4d8b1a039" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_AnyExternalPauseActive</name></member>
+      <member refid="classAARGameStateBase_1a0e1f86c173441f8b74d27b8ae1706356" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_Cycles</name></member>
+      <member refid="classAARGameStateBase_1a873c021a8bdf4700cc014164fb7ec6f5" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_EffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1ac45c1f7645dcff95d28d5c630e649849" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_ExternalPauseReasonMask</name></member>
+      <member refid="classAARGameStateBase_1acba89994af0144560f208af08360f4bb" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_ManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a78efbe8387f51b38e0855028f0cb17eb" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_Meat</name></member>
+      <member refid="classAARGameStateBase_1a699cf5444487ec30ded742c8b611b1c8" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_Money</name></member>
+      <member refid="classAARGameStateBase_1a0b10f1fdc0d7985e593970965f3def4c" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_PauseMenuVoteMask</name></member>
+      <member refid="classAARGameStateBase_1a84870c8430f7e20378fbcf3d77bfe0a4" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_Scrap</name></member>
+      <member refid="classAARGameStateBase_1a13d47c4b3edc74ed0cdfcf31e939f3d0" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_ShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a197dc84e6ae0931dd5dc1476a091dab8" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnRep_Unlocks</name></member>
+      <member refid="classAARGameStateBase_1aa3f46281043137acfd4fb854c5ae0f52" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnScrapChanged</name></member>
+      <member refid="classAARGameStateBase_1aa5e92119ac8691217e87cb76346c44c0" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnShareLocalPauseAcrossControllersChanged</name></member>
+      <member refid="classAARGameStateBase_1af2e2b810aa56069d54beb9bcfb15bf62" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnTrackedPlayersChanged</name></member>
+      <member refid="classAARGameStateBase_1ae66430986826af34b1d9f93aac2592dc" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>OnUnlocksChanged</name></member>
+      <member refid="classAARGameStateBase_1a5e5cb3cf006a121355b217d4e813e6a0" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>PauseMenuVoteMask</name></member>
+      <member refid="classAARGameStateBase_1a0dcb69cb41accbd4e79b868e7f230746" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>RefreshAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1a3a83ac28a7af26b6ef10e317658df549" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>RefreshPauseResolution</name></member>
+      <member refid="classAARGameStateBase_1a78b25fada365a31798ea799e17db06a6" prot="protected" virt="virtual"><scope>AARGameStateBase</scope><name>RemovePlayerState</name></member>
+      <member refid="classAARGameStateBase_1a8472fce2100ea5ee6cacdf61cd59f1be" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>RemoveUnlockTag</name></member>
+      <member refid="classAARGameStateBase_1ab69bf036d85c775fb161bde42576b0aa" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>Scrap</name></member>
+      <member refid="classAARGameStateBase_1adfc4ac0f41d0053fe75ff55f1aca94a2" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetActiveFactionEffectTagsFromSave</name></member>
+      <member refid="classAARGameStateBase_1a5d1c9bd1234cd707e1bdca2462bd56db" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetActiveFactionTagFromSave</name></member>
+      <member refid="classAARGameStateBase_1abce6f4fb638bf288d72c4048888a464f" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1afa471d8f2aff0c3aa53997469ccc0220" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a3016a06ba7f36bae4fa922258e741203" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetMeatFromSave</name></member>
+      <member refid="classAARGameStateBase_1ab6a657eb22e23e00b9494f387628d13b" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetMoneyFromSave</name></member>
+      <member refid="classAARGameStateBase_1aaf0d1915cf380e7cda1da6b85e742292" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetPlayerPauseMenuVote</name></member>
+      <member refid="classAARGameStateBase_1ae1fde584bd2f9cb964328a882e71da8d" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetScrapFromSave</name></member>
+      <member refid="classAARGameStateBase_1a1d143301a5cbf6d5d125b34425c62499" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a94b7f9b5f0d805ee597c8a3743a5a912" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SetUnlocksFromSave</name></member>
+      <member refid="classAARGameStateBase_1a145cda01f8384fcf05b3b392d50d60ba" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>ShouldShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1ab127eb7fd6891837d677a4fd9e148075" prot="public" virt="non-virtual"><scope>AARGameStateBase</scope><name>SyncCyclesFromSave</name></member>
+      <member refid="classAARGameStateBase_1a1325b2693628582e60043bf8cd754215" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>UnbindPlayerStateSignals</name></member>
+      <member refid="classAARGameStateBase_1a469c83eca2b9fd7d9ea8dce9b65c2263" prot="protected" virt="non-virtual"><scope>AARGameStateBase</scope><name>Unlocks</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

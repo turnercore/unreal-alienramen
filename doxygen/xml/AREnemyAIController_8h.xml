@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="AREnemyAIController_8h" kind="file" language="C++">
+    <compoundname>AREnemyAIController.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARAIControllerBase_8h" local="yes">ARAIControllerBase.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">StateTreeEvents.h</includes>
+    <includes refid="ARInvaderTypes_8h" local="yes">ARInvaderTypes.h</includes>
+    <includes local="yes">AREnemyAIController.generated.h</includes>
+    <includedby refid="AREnemyAIController_8cpp" local="yes">AREnemyAIController.cpp</includedby>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <includedby refid="ARInvaderAIController_8h" local="yes">ARInvaderAIController.h</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>ARAIControllerBase.h</label>
+        <link refid="ARAIControllerBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>AREnemyAIController.h</label>
+        <link refid="AREnemyAIController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>AIController.h</label>
+      </node>
+      <node id="6">
+        <label>ARAIControllerBase.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="10">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="19">
+        <label>AREnemyAIController.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="18">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="16">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="13">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="7">
+        <label>StateTreeEvents.h</label>
+      </node>
+      <node id="14">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>AREnemyAIController.cpp</label>
+        <link refid="AREnemyAIController_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARInvaderAIController.cpp</label>
+        <link refid="ARInvaderAIController_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARStateTreeAIComponentSchema_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>AREnemyAIController.h</label>
+        <link refid="AREnemyAIController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARInvaderAIController.h</label>
+        <link refid="ARInvaderAIController_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAAREnemyAIController" prot="public">AAREnemyAIController</innerclass>
+    <briefdescription>
+<para>AREnemyAIController header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARAIControllerBase_8h" kindref="compound">ARAIControllerBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;StateTreeEvents.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderTypes_8h" kindref="compound">ARInvaderTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AREnemyAIController.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UStateTree;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classUARStateTreeAIComponent" kindref="compound">UARStateTreeAIComponent</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AAREnemyAIController<sp/>:<sp/>public<sp/>AARAIControllerBase</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>AAREnemyAIController();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NotifyWavePhaseChanged(int32<sp/>WaveInstanceId,<sp/>EARWavePhase<sp/>NewPhase);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NotifyEnemyEnteredScreen(int32<sp/>WaveInstanceId);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NotifyEnemyInFormation(int32<sp/>WaveInstanceId);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TryStartStateTreeForCurrentPawn(const<sp/>TCHAR*<sp/>Reason<sp/>=<sp/>TEXT(&quot;Unknown&quot;));</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PushPawnASCStateTag(FGameplayTag<sp/>StateTag);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PopPawnASCStateTag(FGameplayTag<sp/>StateTag);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PushPawnASCStateTags(const<sp/>FGameplayTagContainer&amp;<sp/>StateTags);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PopPawnASCStateTags(const<sp/>FGameplayTagContainer&amp;<sp/>StateTags);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARStateTreeAIComponent" kindref="compound">UARStateTreeAIComponent</ref>*<sp/>GetEnemyStateTreeComponent()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>StateTreeComponent;<sp/>}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sends<sp/>a<sp/>fully-authored<sp/>StateTree<sp/>event<sp/>to<sp/>this<sp/>controller&apos;s<sp/>state<sp/>tree<sp/>(authority<sp/>only).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SendStateTreeEvent(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FStateTreeEvent&amp;<sp/>Event);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Convenience<sp/>helper<sp/>for<sp/>tag-only<sp/>events<sp/>with<sp/>optional<sp/>origin.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Enemy|AI|State&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SendStateTreeEventByTag(FGameplayTag<sp/>EventTag,<sp/>FName<sp/>Origin<sp/>=<sp/>NAME_None);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pawn<sp/>-&gt;<sp/>controller<sp/>fact<sp/>signal.<sp/>Pawn<sp/>reports<sp/>observations;<sp/>controller<sp/>decides<sp/>routing/behavior.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ReceivePawnSignal(</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>SignalTag,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AActor*<sp/>RelatedActor<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FVector<sp/>WorldLocation<sp/>=<sp/>FVector::ZeroVector,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ScalarValue<sp/>=<sp/>0.f,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bForwardToStateTree<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnPossess(APawn*<sp/>InPawn)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnUnPossess()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnsureEventTagsInitialized();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StartStateTreeForPawn(APawn*<sp/>InPawn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>Reason);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StartStateTreeForPawn_Deferred(APawn*<sp/>InPawn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>Reason);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StopStateTree(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Reason);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsStateTreeRunning()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BindStateTreeTagBridge();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UnbindStateTreeTagBridge(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bPopAppliedTags);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleStateTreeActiveTagsChanged(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer&amp;<sp/>AddedTags,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer&amp;<sp/>RemovedTags);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bPendingStateTreeStart<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bStateTreeInitializedForPossession<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>FTimerHandle<sp/>DeferredStartTimerHandle;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>AppliedStateTreeTags;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>DeferredStartAttemptCounter<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Enemy|AI&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;<ref refid="classUARStateTreeAIComponent" kindref="compound">UARStateTreeAIComponent</ref>&gt;<sp/>StateTreeComponent;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;AR|Enemy|AI&quot;)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UStateTree&gt;<sp/>DefaultStateTree;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;AR|Enemy|AI|Events&quot;)</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ActivePhaseEventTag;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;AR|Enemy|AI|Events&quot;)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>BerserkPhaseEventTag;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;AR|Enemy|AI|Events&quot;)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>EnteredScreenEventTag;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;AR|Enemy|AI|Events&quot;)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>InFormationEventTag;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>LastSentWavePhaseWaveId<sp/>=<sp/>INDEX_NONE;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>EARWavePhase<sp/>LastSentWavePhase<sp/>=<sp/>EARWavePhase::Berserk;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>LastSentEnteredScreenWaveId<sp/>=<sp/>INDEX_NONE;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>LastSentInFormationWaveId<sp/>=<sp/>INDEX_NONE;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/AREnemyAIController.h"/>
+  </compounddef>
+</doxygen>

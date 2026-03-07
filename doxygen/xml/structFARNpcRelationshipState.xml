@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARNpcRelationshipState" kind="struct" language="C++" prot="public">
+    <compoundname>FARNpcRelationshipState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARNpcRelationshipState_1a8067e7f03e47d9510ab6ccde6a48fb59" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARNpcRelationshipState::bCurrentWantSatisfied</definition>
+        <argsstring></argsstring>
+        <name>bCurrentWantSatisfied</name>
+        <qualifiedname>FARNpcRelationshipState::bCurrentWantSatisfied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="138" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARNpcRelationshipState_1a99609658fcb1fe7a3d7854877db2548d" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARNpcRelationshipState::CurrentWantTag</definition>
+        <argsstring></argsstring>
+        <name>CurrentWantTag</name>
+        <qualifiedname>FARNpcRelationshipState::CurrentWantTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="135" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARNpcRelationshipState_1adda1e5969ba409793f8e065aaba8c333" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARNpcRelationshipState::LoveRating</definition>
+        <argsstring></argsstring>
+        <name>LoveRating</name>
+        <qualifiedname>FARNpcRelationshipState::LoveRating</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="132" column="7" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARNpcRelationshipState_1ac2ab13675c6ef44b109acdcab5924884" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARNpcRelationshipState::NpcTag</definition>
+        <argsstring></argsstring>
+        <name>NpcTag</name>
+        <qualifiedname>FARNpcRelationshipState::NpcTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="129" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueTypes.h" line="124" column="1" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="125" bodyend="139"/>
+    <listofallmembers>
+      <member refid="structFARNpcRelationshipState_1a8067e7f03e47d9510ab6ccde6a48fb59" prot="public" virt="non-virtual"><scope>FARNpcRelationshipState</scope><name>bCurrentWantSatisfied</name></member>
+      <member refid="structFARNpcRelationshipState_1a99609658fcb1fe7a3d7854877db2548d" prot="public" virt="non-virtual"><scope>FARNpcRelationshipState</scope><name>CurrentWantTag</name></member>
+      <member refid="structFARNpcRelationshipState_1adda1e5969ba409793f8e065aaba8c333" prot="public" virt="non-virtual"><scope>FARNpcRelationshipState</scope><name>LoveRating</name></member>
+      <member refid="structFARNpcRelationshipState_1ac2ab13675c6ef44b109acdcab5924884" prot="public" virt="non-virtual"><scope>FARNpcRelationshipState</scope><name>NpcTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

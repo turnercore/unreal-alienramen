@@ -1,0 +1,13 @@
+<map id="ARInvaderCollisionChannels.h" name="ARInvaderCollisionChannels.h">
+<area shape="rect" id="Node000001" title="Shared collision&#45;channel helpers for invader runtime actors." alt="" coords="389,5,606,31"/>
+<area shape="rect" id="Node000002" href="$AREnemyBase_8cpp_source.html" title=" " alt="" coords="5,79,149,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="417,36,145,81,145,76,416,30"/>
+<area shape="rect" id="Node000003" href="$ARInvaderDropBase_8cpp_source.html" title=" " alt="" coords="173,79,352,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="447,37,301,81,300,76,446,32"/>
+<area shape="rect" id="Node000004" href="$ARPickupCollectorComponent_8cpp_source.html" title=" " alt="" coords="376,79,619,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="500,44,500,79,495,79,495,44"/>
+<area shape="rect" id="Node000005" href="$ARPlayerCharacterInvader_8cpp_source.html" title=" " alt="" coords="643,79,861,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="552,32,711,76,710,81,551,37"/>
+<area shape="rect" id="Node000006" href="$ARProjectileBase_8cpp_source.html" title=" " alt="" coords="885,79,1045,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="587,30,890,76,890,81,586,35"/>
+</map>

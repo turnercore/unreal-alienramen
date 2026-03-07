@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARInvaderAuthoringEditor" kind="namespace" language="C++">
+    <compoundname>ARInvaderAuthoringEditor</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="ARInvaderAuthoringPanel_8h_1aa91c96e60f8a468b88e77274dc76ff5c" prot="public" static="no" extern="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName ARInvaderAuthoringEditor::TabName</definition>
+        <argsstring></argsstring>
+        <name>TabName</name>
+        <qualifiedname>ARInvaderAuthoringEditor::TabName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="47" column="20" declfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" declline="47" declcolumn="20"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARInvaderAuthoringPanel_8h_1a20deffd38468e5fa4e0e14602a6e54ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TSharedRef&lt; SDockTab &gt;</type>
+        <definition>TSharedRef&lt; SDockTab &gt; ARInvaderAuthoringEditor::SpawnTab</definition>
+        <argsstring>(const FSpawnTabArgs &amp;Args)</argsstring>
+        <name>SpawnTab</name>
+        <qualifiedname>ARInvaderAuthoringEditor::SpawnTab</qualifiedname>
+        <param>
+          <type>const FSpawnTabArgs &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="48" column="12" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1110" bodyend="1118" declfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" declline="48" declcolumn="12"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="45" column="1"/>
+  </compounddef>
+</doxygen>

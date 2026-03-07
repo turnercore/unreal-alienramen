@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structAARInvaderGameState_1_1FDropSpawnPlanEntry" kind="struct" language="C++" prot="private">
+    <compoundname>AARInvaderGameState::FDropSpawnPlanEntry</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structAARInvaderGameState_1_1FDropSpawnPlanEntry_1a4e7ea72c813a68f0397584e0e80e0072" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::FDropSpawnPlanEntry::Amount</definition>
+        <argsstring></argsstring>
+        <name>Amount</name>
+        <qualifiedname>AARInvaderGameState::FDropSpawnPlanEntry::Amount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="173" column="7" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAARInvaderGameState_1_1FDropSpawnPlanEntry_1a696572bf9380e3516a682f7aa06d0173" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> &gt;</type>
+        <definition>TSubclassOf&lt;AARInvaderDropBase&gt; AARInvaderGameState::FDropSpawnPlanEntry::DropClass</definition>
+        <argsstring></argsstring>
+        <name>DropClass</name>
+        <qualifiedname>AARInvaderGameState::FDropSpawnPlanEntry::DropClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="174" column="13" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderGameState.h" line="171" column="1" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="172" bodyend="175"/>
+    <listofallmembers>
+      <member refid="structAARInvaderGameState_1_1FDropSpawnPlanEntry_1a4e7ea72c813a68f0397584e0e80e0072" prot="public" virt="non-virtual"><scope>AARInvaderGameState::FDropSpawnPlanEntry</scope><name>Amount</name></member>
+      <member refid="structAARInvaderGameState_1_1FDropSpawnPlanEntry_1a696572bf9380e3516a682f7aa06d0173" prot="public" virt="non-virtual"><scope>AARInvaderGameState::FDropSpawnPlanEntry</scope><name>DropClass</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

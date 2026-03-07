@@ -1,0 +1,981 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classSEnemyAuthoringPanel" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>SEnemyAuthoringPanel</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SCompoundWidget</basecompoundref>
+    <innerclass refid="structSEnemyAuthoringPanel_1_1FEnemyIssue" prot="private">SEnemyAuthoringPanel::FEnemyIssue</innerclass>
+    <innerclass refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem" prot="private">SEnemyAuthoringPanel::FEnemyRowItem</innerclass>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1abe4200d4ae98d12f37355235d8aad2f1" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SEnemyAuthoringPanel::bApplyingProxyToModel</definition>
+        <argsstring></argsstring>
+        <name>bApplyingProxyToModel</name>
+        <qualifiedname>SEnemyAuthoringPanel::bApplyingProxyToModel</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="122" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1a9170a7b85a3a088d3737a2c1994e03e1" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; IDetailsView &gt;</type>
+        <definition>TSharedPtr&lt;IDetailsView&gt; SEnemyAuthoringPanel::DetailsView</definition>
+        <argsstring></argsstring>
+        <name>DetailsView</name>
+        <qualifiedname>SEnemyAuthoringPanel::DetailsView</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="118" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1aac4e7735f86a9e3d7d0bab7b772b3a7a" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TObjectPtr&lt;UDataTable&gt; SEnemyAuthoringPanel::EnemyTable</definition>
+        <argsstring></argsstring>
+        <name>EnemyTable</name>
+        <qualifiedname>SEnemyAuthoringPanel::EnemyTable</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="108" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1ac49d8e5df17b0226c1b2ffd531f0abfd" prot="private" static="no" mutable="no">
+        <type>TArray&lt; TSharedPtr&lt; FEnemyIssue &gt; &gt;</type>
+        <definition>TArray&lt;TSharedPtr&lt;FEnemyIssue&gt; &gt; SEnemyAuthoringPanel::IssueItems</definition>
+        <argsstring></argsstring>
+        <name>IssueItems</name>
+        <qualifiedname>SEnemyAuthoringPanel::IssueItems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="112" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1aaaa6854b55c003cc8299e889776fe2fb" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SListView&lt; TSharedPtr&lt; FEnemyIssue &gt; &gt; &gt;</type>
+        <definition>TSharedPtr&lt;SListView&lt;TSharedPtr&lt;FEnemyIssue&gt; &gt; &gt; SEnemyAuthoringPanel::IssueListView</definition>
+        <argsstring></argsstring>
+        <name>IssueListView</name>
+        <qualifiedname>SEnemyAuthoringPanel::IssueListView</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="115" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1ab76b102113ae077b2d5c760aa7430276" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SExpandableArea &gt;</type>
+        <definition>TSharedPtr&lt;SExpandableArea&gt; SEnemyAuthoringPanel::IssuesArea</definition>
+        <argsstring></argsstring>
+        <name>IssuesArea</name>
+        <qualifiedname>SEnemyAuthoringPanel::IssuesArea</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="119" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1ad05996618cb3b509371234c90ef50f6d" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle SEnemyAuthoringPanel::ObjectTransactedHandle</definition>
+        <argsstring></argsstring>
+        <name>ObjectTransactedHandle</name>
+        <qualifiedname>SEnemyAuthoringPanel::ObjectTransactedHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="123" column="17" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1aaff5f5a4178b82a2c253ff187907919d" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SEditableTextBox &gt;</type>
+        <definition>TSharedPtr&lt;SEditableTextBox&gt; SEnemyAuthoringPanel::RenameTextBox</definition>
+        <argsstring></argsstring>
+        <name>RenameTextBox</name>
+        <qualifiedname>SEnemyAuthoringPanel::RenameTextBox</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="116" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1a325737fe9e7abe5cc5947e90947cb3b4" prot="private" static="no" mutable="no">
+        <type>TArray&lt; TSharedPtr&lt; FEnemyRowItem &gt; &gt;</type>
+        <definition>TArray&lt;TSharedPtr&lt;FEnemyRowItem&gt; &gt; SEnemyAuthoringPanel::RowItems</definition>
+        <argsstring></argsstring>
+        <name>RowItems</name>
+        <qualifiedname>SEnemyAuthoringPanel::RowItems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="111" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1ae5c08455f3bea0740b1b99643592f781" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SListView&lt; TSharedPtr&lt; FEnemyRowItem &gt; &gt; &gt;</type>
+        <definition>TSharedPtr&lt;SListView&lt;TSharedPtr&lt;FEnemyRowItem&gt; &gt; &gt; SEnemyAuthoringPanel::RowListView</definition>
+        <argsstring></argsstring>
+        <name>RowListView</name>
+        <qualifiedname>SEnemyAuthoringPanel::RowListView</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="114" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1a19e8bd449d1577c9731d76cfbf19ac3d" prot="private" static="no" mutable="no">
+        <type>TStrongObjectPtr&lt; UARInvaderEnemyRowProxy &gt;</type>
+        <definition>TStrongObjectPtr&lt;UARInvaderEnemyRowProxy&gt; SEnemyAuthoringPanel::RowProxy</definition>
+        <argsstring></argsstring>
+        <name>RowProxy</name>
+        <qualifiedname>SEnemyAuthoringPanel::RowProxy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="121" column="18" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1a6288df5dc7befd6f8f347903134e7082" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName SEnemyAuthoringPanel::SelectedRowName</definition>
+        <argsstring></argsstring>
+        <name>SelectedRowName</name>
+        <qualifiedname>SEnemyAuthoringPanel::SelectedRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="109" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1a19b8715fa6222552aec0f1c3cc732f72" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName SEnemyAuthoringPanel::SortColumn</definition>
+        <argsstring></argsstring>
+        <name>SortColumn</name>
+        <qualifiedname>SEnemyAuthoringPanel::SortColumn</qualifiedname>
+        <initializer>= TEXT(&quot;DisplayName&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="125" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1a45823ccf835c8ecdfc081ae0812f7f4d" prot="private" static="no" mutable="no">
+        <type>EColumnSortMode::Type</type>
+        <definition>EColumnSortMode::Type SEnemyAuthoringPanel::SortMode</definition>
+        <argsstring></argsstring>
+        <name>SortMode</name>
+        <qualifiedname>SEnemyAuthoringPanel::SortMode</qualifiedname>
+        <initializer>= EColumnSortMode::Ascending</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="126" column="23" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSEnemyAuthoringPanel_1ad70fbfc2cad49f5c4c0c73d602ef3252" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; STextBlock &gt;</type>
+        <definition>TSharedPtr&lt;STextBlock&gt; SEnemyAuthoringPanel::StatusText</definition>
+        <argsstring></argsstring>
+        <name>StatusText</name>
+        <qualifiedname>SEnemyAuthoringPanel::StatusText</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="117" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a77eb3a9bbd987de4be3b8347298b1e70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::Construct</definition>
+        <argsstring>(const FArguments &amp;InArgs)</argsstring>
+        <name>Construct</name>
+        <qualifiedname>SEnemyAuthoringPanel::Construct</qualifiedname>
+        <param>
+          <type>const FArguments &amp;</type>
+          <declname>InArgs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="40" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="201" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1af4f78adce8607394a2399cb9b53cd23f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::FocusByIdentifierTag</definition>
+        <argsstring>(FGameplayTag EnemyIdentifierTag)</argsstring>
+        <name>FocusByIdentifierTag</name>
+        <qualifiedname>SEnemyAuthoringPanel::FocusByIdentifierTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EnemyIdentifierTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="45" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="271" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1af77ab2e852398054892c9d4d8ad8b87c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnKeyDown</definition>
+        <argsstring>(const FGeometry &amp;MyGeometry, const FKeyEvent &amp;InKeyEvent) override</argsstring>
+        <name>OnKeyDown</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnKeyDown</qualifiedname>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FKeyEvent &amp;</type>
+          <declname>InKeyEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="43" column="16" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="256" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a7238e644ad70cfc01b20972093ae7bf9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SEnemyAuthoringPanel::SLATE_BEGIN_ARGS</definition>
+        <argsstring>(SEnemyAuthoringPanel)</argsstring>
+        <name>SLATE_BEGIN_ARGS</name>
+        <qualifiedname>SEnemyAuthoringPanel::SLATE_BEGIN_ARGS</qualifiedname>
+        <param>
+          <type>SEnemyAuthoringPanel</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="37" column="1" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ab156dc996062661d1febea9e1960a264" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool SEnemyAuthoringPanel::SupportsKeyboardFocus</definition>
+        <argsstring>() const override</argsstring>
+        <name>SupportsKeyboardFocus</name>
+        <qualifiedname>SEnemyAuthoringPanel::SupportsKeyboardFocus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="42" column="14" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ae416d3496b62ed358837ac9c836bdcf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SEnemyAuthoringPanel::~SEnemyAuthoringPanel</definition>
+        <argsstring>()</argsstring>
+        <name>~SEnemyAuthoringPanel</name>
+        <qualifiedname>SEnemyAuthoringPanel::~SEnemyAuthoringPanel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="41" column="1" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="239" bodyend="254"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1aff06b6f14bbf9beacbf308fb57ee7113" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::BuildLayout</definition>
+        <argsstring>()</argsstring>
+        <name>BuildLayout</name>
+        <qualifiedname>SEnemyAuthoringPanel::BuildLayout</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="67" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="297" bodyend="498"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a6685d97e9ae59d82ae10ef8524a3da55" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TSharedRef&lt; SWidget &gt;</type>
+        <definition>TSharedRef&lt; SWidget &gt; SEnemyAuthoringPanel::BuildRowContextMenu</definition>
+        <argsstring>()</argsstring>
+        <name>BuildRowContextMenu</name>
+        <qualifiedname>SEnemyAuthoringPanel::BuildRowContextMenu</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="99" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1287" bodyend="1333"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1abc789bce93e6866ce9a9d6b0a9b30221" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool SEnemyAuthoringPanel::EnsureIdentifierTagMatchesRowName</definition>
+        <argsstring>(FName RowName, FARInvaderEnemyDefRow &amp;Row, FString *OutFailureReason=nullptr) const</argsstring>
+        <name>EnsureIdentifierTagMatchesRowName</name>
+        <qualifiedname>SEnemyAuthoringPanel::EnsureIdentifierTagMatchesRowName</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>RowName</declname>
+        </param>
+        <param>
+          <type>FARInvaderEnemyDefRow &amp;</type>
+          <declname>Row</declname>
+        </param>
+        <param>
+          <type>FString *</type>
+          <declname>OutFailureReason</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="93" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1007" bodyend="1022"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ad71bd3664d8aeb6117a6f75b1e365633" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARInvaderEnemyDefRow *</type>
+        <definition>FARInvaderEnemyDefRow * SEnemyAuthoringPanel::GetMutableRow</definition>
+        <argsstring>(FName RowName)</argsstring>
+        <name>GetMutableRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::GetMutableRow</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>RowName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="77" column="23" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="704" bodyend="711"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ae2ecf32a8bdd911a4c733a8e3f3665b7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName SEnemyAuthoringPanel::GetPrimarySelectedRowName</definition>
+        <argsstring>() const</argsstring>
+        <name>GetPrimarySelectedRowName</name>
+        <qualifiedname>SEnemyAuthoringPanel::GetPrimarySelectedRowName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="79" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="732" bodyend="736"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ac5fa89b944c00be2863f3ad6018937f9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const FARInvaderEnemyDefRow *</type>
+        <definition>const FARInvaderEnemyDefRow * SEnemyAuthoringPanel::GetRow</definition>
+        <argsstring>(FName RowName) const</argsstring>
+        <name>GetRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::GetRow</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>RowName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="76" column="29" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="695" bodyend="702"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1aee896ffd15be19197ddecd457e22f036" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>TArray&lt; FName &gt;</type>
+        <definition>TArray&lt; FName &gt; SEnemyAuthoringPanel::GetSelectedRowNames</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSelectedRowNames</name>
+        <qualifiedname>SEnemyAuthoringPanel::GetSelectedRowNames</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="78" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="713" bodyend="730"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ac183a314385ea2f5bee2aaf98400c335" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FText</type>
+        <definition>FText SEnemyAuthoringPanel::GetSortLabel</definition>
+        <argsstring>(FName ColumnId, FString BaseLabel) const</argsstring>
+        <name>GetSortLabel</name>
+        <qualifiedname>SEnemyAuthoringPanel::GetSortLabel</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>ColumnId</declname>
+        </param>
+        <param>
+          <type>FString</type>
+          <declname>BaseLabel</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="102" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1386" bodyend="1395"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ac4279b89efceae1c61997c6ad924b248" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TSharedRef&lt; ITableRow &gt;</type>
+        <definition>TSharedRef&lt; ITableRow &gt; SEnemyAuthoringPanel::HandleGenerateRow</definition>
+        <argsstring>(TSharedPtr&lt; FEnemyRowItem &gt; Item, const TSharedRef&lt; STableViewBase &gt; &amp;OwnerTable)</argsstring>
+        <name>HandleGenerateRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::HandleGenerateRow</qualifiedname>
+        <param>
+          <type>TSharedPtr&lt; FEnemyRowItem &gt;</type>
+          <declname>Item</declname>
+        </param>
+        <param>
+          <type>const TSharedRef&lt; STableViewBase &gt; &amp;</type>
+          <declname>OwnerTable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="97" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1221" bodyend="1275"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1acc203216752041e748d1e704b067262c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::HandleObjectTransacted</definition>
+        <argsstring>(UObject *Object, const FTransactionObjectEvent &amp;Event)</argsstring>
+        <name>HandleObjectTransacted</name>
+        <qualifiedname>SEnemyAuthoringPanel::HandleObjectTransacted</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>Object</declname>
+        </param>
+        <param>
+          <type>const FTransactionObjectEvent &amp;</type>
+          <declname>Event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="105" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1421" bodyend="1432"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1afda87b812d99250d495e3498351278e9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::HandlePropertiesChanged</definition>
+        <argsstring>(const FPropertyChangedEvent &amp;Event)</argsstring>
+        <name>HandlePropertiesChanged</name>
+        <qualifiedname>SEnemyAuthoringPanel::HandlePropertiesChanged</qualifiedname>
+        <param>
+          <type>const FPropertyChangedEvent &amp;</type>
+          <declname>Event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="104" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1397" bodyend="1419"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1abb5d1ede752a1e854d94235dfe8d0506" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::HandleRowSelectionChanged</definition>
+        <argsstring>(TSharedPtr&lt; FEnemyRowItem &gt; Item, ESelectInfo::Type SelectInfo)</argsstring>
+        <name>HandleRowSelectionChanged</name>
+        <qualifiedname>SEnemyAuthoringPanel::HandleRowSelectionChanged</qualifiedname>
+        <param>
+          <type>TSharedPtr&lt; FEnemyRowItem &gt;</type>
+          <declname>Item</declname>
+        </param>
+        <param>
+          <type>ESelectInfo::Type</type>
+          <declname>SelectInfo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="96" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1205" bodyend="1219"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ae7f7f39c1508ec603b98909ca73ebc53" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName SEnemyAuthoringPanel::MakeUniqueRowName</definition>
+        <argsstring>(const FString &amp;BaseName) const</argsstring>
+        <name>MakeUniqueRowName</name>
+        <qualifiedname>SEnemyAuthoringPanel::MakeUniqueRowName</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>BaseName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="74" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="679" bodyend="693"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a4a003a038cdf2f18adf2044075252256" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::NormalizeIdentifierTagsForRows</definition>
+        <argsstring>(const TArray&lt; FName &gt; &amp;TargetRows, bool bUseTransaction, bool *bOutAnyChanged=nullptr)</argsstring>
+        <name>NormalizeIdentifierTagsForRows</name>
+        <qualifiedname>SEnemyAuthoringPanel::NormalizeIdentifierTagsForRows</qualifiedname>
+        <param>
+          <type>const TArray&lt; FName &gt; &amp;</type>
+          <declname>TargetRows</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseTransaction</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>bOutAnyChanged</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="94" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1024" bodyend="1079"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a9ba412d4290537b005560e47b0c14ed4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnCreateRow</definition>
+        <argsstring>()</argsstring>
+        <name>OnCreateRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnCreateRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="82" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="752" bodyend="779"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1aa89cc2898f5db0736364816c278316a7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnDeleteRow</definition>
+        <argsstring>()</argsstring>
+        <name>OnDeleteRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnDeleteRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="85" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="882" bodyend="910"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a0326a8a7896acdf489decdcabb003b84" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnDuplicateRow</definition>
+        <argsstring>()</argsstring>
+        <name>OnDuplicateRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnDuplicateRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="83" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="781" bodyend="824"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a9be808894fc7c364191972c8bab9af2c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TSharedPtr&lt; SWidget &gt;</type>
+        <definition>TSharedPtr&lt; SWidget &gt; SEnemyAuthoringPanel::OnOpenRowContextMenu</definition>
+        <argsstring>()</argsstring>
+        <name>OnOpenRowContextMenu</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnOpenRowContextMenu</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="98" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1277" bodyend="1285"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1aa7f6ba4e21380e403b6bcb467775d03b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnReloadTable</definition>
+        <argsstring>()</argsstring>
+        <name>OnReloadTable</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnReloadTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="81" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="738" bodyend="750"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ac420b1b402fcc0b91491ad52ab131f2c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnRenameRow</definition>
+        <argsstring>()</argsstring>
+        <name>OnRenameRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnRenameRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="84" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="826" bodyend="880"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a7a0b6735eee273e1ddc0d31db748fd5c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnSaveTable</definition>
+        <argsstring>()</argsstring>
+        <name>OnSaveTable</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnSaveTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="87" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="961" bodyend="974"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a71742908faca485c364d91ec3fe9d989" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnSetSelectedRowsEnabled</definition>
+        <argsstring>(bool bEnable)</argsstring>
+        <name>OnSetSelectedRowsEnabled</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnSetSelectedRowsEnabled</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="100" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1335" bodyend="1369"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1aace6c85ad8e47ab8889ba0d51000439c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnToggleSelectedEnabled</definition>
+        <argsstring>()</argsstring>
+        <name>OnToggleSelectedEnabled</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnToggleSelectedEnabled</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="86" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="912" bodyend="959"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a26d0708051560c2ed5f1f7d15ad60339" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnValidateAll</definition>
+        <argsstring>()</argsstring>
+        <name>OnValidateAll</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnValidateAll</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="89" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="992" bodyend="1005"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ac00983cbcb2e34e11a5176a90fb81626" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply SEnemyAuthoringPanel::OnValidateSelected</definition>
+        <argsstring>()</argsstring>
+        <name>OnValidateSelected</name>
+        <qualifiedname>SEnemyAuthoringPanel::OnValidateSelected</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="88" column="8" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="976" bodyend="990"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ac16f1fcd73ab3a32a819e61779a072c7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::RefreshDetails</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshDetails</name>
+        <qualifiedname>SEnemyAuthoringPanel::RefreshDetails</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="70" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="619" bodyend="635"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a0e040e2f3d06feba484cef6d5de1259d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::RefreshIssues</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshIssues</name>
+        <qualifiedname>SEnemyAuthoringPanel::RefreshIssues</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="71" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="637" bodyend="647"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a00386adf4ad1ea8d78dcd3b51ed0b0b5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::RefreshRows</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshRows</name>
+        <qualifiedname>SEnemyAuthoringPanel::RefreshRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="69" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="520" bodyend="617"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a5d3016ce6687eb63149ab4d5905a986a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::RefreshTable</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshTable</name>
+        <qualifiedname>SEnemyAuthoringPanel::RefreshTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="68" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="500" bodyend="518"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1ae72593c7af118834933a7cff1f30cd7b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::SelectRow</definition>
+        <argsstring>(FName RowName)</argsstring>
+        <name>SelectRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::SelectRow</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>RowName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="73" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="658" bodyend="677"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1afe4d14db2dcc66e912c1f6b75e350a05" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::SetStatus</definition>
+        <argsstring>(const FString &amp;Message)</argsstring>
+        <name>SetStatus</name>
+        <qualifiedname>SEnemyAuthoringPanel::SetStatus</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Message</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="72" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="649" bodyend="656"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a18224f7281431da4d8236540e8d3dca0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::ToggleSortByColumn</definition>
+        <argsstring>(FName ColumnId)</argsstring>
+        <name>ToggleSortByColumn</name>
+        <qualifiedname>SEnemyAuthoringPanel::ToggleSortByColumn</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>ColumnId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="101" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1371" bodyend="1384"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a98c44675d241702a93cfc3caae7abbfa" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::ValidateRows</definition>
+        <argsstring>(const TArray&lt; FName &gt; &amp;TargetRows, TArray&lt; FEnemyIssue &gt; &amp;OutIssues) const</argsstring>
+        <name>ValidateRows</name>
+        <qualifiedname>SEnemyAuthoringPanel::ValidateRows</qualifiedname>
+        <param>
+          <type>const TArray&lt; FName &gt; &amp;</type>
+          <declname>TargetRows</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FEnemyIssue &gt; &amp;</type>
+          <declname>OutIssues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="91" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1081" bodyend="1134"/>
+      </memberdef>
+      <memberdef kind="function" id="classSEnemyAuthoringPanel_1a5235c10462355b90598cc40a63699b7a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SEnemyAuthoringPanel::ValidateSingleRow</definition>
+        <argsstring>(const FName RowName, const FARInvaderEnemyDefRow &amp;Row, TArray&lt; FEnemyIssue &gt; &amp;OutIssues) const</argsstring>
+        <name>ValidateSingleRow</name>
+        <qualifiedname>SEnemyAuthoringPanel::ValidateSingleRow</qualifiedname>
+        <param>
+          <type>const FName</type>
+          <declname>RowName</declname>
+        </param>
+        <param>
+          <type>const FARInvaderEnemyDefRow &amp;</type>
+          <declname>Row</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FEnemyIssue &gt; &amp;</type>
+          <declname>OutIssues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="92" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="1136" bodyend="1203"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="34" column="1" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="35" bodyend="127"/>
+    <listofallmembers>
+      <member refid="classSEnemyAuthoringPanel_1abe4200d4ae98d12f37355235d8aad2f1" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>bApplyingProxyToModel</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aff06b6f14bbf9beacbf308fb57ee7113" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>BuildLayout</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a6685d97e9ae59d82ae10ef8524a3da55" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>BuildRowContextMenu</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a77eb3a9bbd987de4be3b8347298b1e70" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>Construct</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a9170a7b85a3a088d3737a2c1994e03e1" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>DetailsView</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aac4e7735f86a9e3d7d0bab7b772b3a7a" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>EnemyTable</name></member>
+      <member refid="classSEnemyAuthoringPanel_1abc789bce93e6866ce9a9d6b0a9b30221" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>EnsureIdentifierTagMatchesRowName</name></member>
+      <member refid="classSEnemyAuthoringPanel_1af4f78adce8607394a2399cb9b53cd23f" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>FocusByIdentifierTag</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ad71bd3664d8aeb6117a6f75b1e365633" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>GetMutableRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ae2ecf32a8bdd911a4c733a8e3f3665b7" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>GetPrimarySelectedRowName</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac5fa89b944c00be2863f3ad6018937f9" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>GetRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aee896ffd15be19197ddecd457e22f036" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>GetSelectedRowNames</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac183a314385ea2f5bee2aaf98400c335" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>GetSortLabel</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac4279b89efceae1c61997c6ad924b248" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>HandleGenerateRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1acc203216752041e748d1e704b067262c" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>HandleObjectTransacted</name></member>
+      <member refid="classSEnemyAuthoringPanel_1afda87b812d99250d495e3498351278e9" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>HandlePropertiesChanged</name></member>
+      <member refid="classSEnemyAuthoringPanel_1abb5d1ede752a1e854d94235dfe8d0506" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>HandleRowSelectionChanged</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac49d8e5df17b0226c1b2ffd531f0abfd" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>IssueItems</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aaaa6854b55c003cc8299e889776fe2fb" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>IssueListView</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ab76b102113ae077b2d5c760aa7430276" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>IssuesArea</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ae7f7f39c1508ec603b98909ca73ebc53" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>MakeUniqueRowName</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a4a003a038cdf2f18adf2044075252256" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>NormalizeIdentifierTagsForRows</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ad05996618cb3b509371234c90ef50f6d" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>ObjectTransactedHandle</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a9ba412d4290537b005560e47b0c14ed4" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnCreateRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aa89cc2898f5db0736364816c278316a7" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnDeleteRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a0326a8a7896acdf489decdcabb003b84" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnDuplicateRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1af77ab2e852398054892c9d4d8ad8b87c" prot="public" virt="virtual"><scope>SEnemyAuthoringPanel</scope><name>OnKeyDown</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a9be808894fc7c364191972c8bab9af2c" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnOpenRowContextMenu</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aa7f6ba4e21380e403b6bcb467775d03b" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnReloadTable</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac420b1b402fcc0b91491ad52ab131f2c" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnRenameRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a7a0b6735eee273e1ddc0d31db748fd5c" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnSaveTable</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a71742908faca485c364d91ec3fe9d989" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnSetSelectedRowsEnabled</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aace6c85ad8e47ab8889ba0d51000439c" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnToggleSelectedEnabled</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a26d0708051560c2ed5f1f7d15ad60339" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnValidateAll</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac00983cbcb2e34e11a5176a90fb81626" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>OnValidateSelected</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ac16f1fcd73ab3a32a819e61779a072c7" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RefreshDetails</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a0e040e2f3d06feba484cef6d5de1259d" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RefreshIssues</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a00386adf4ad1ea8d78dcd3b51ed0b0b5" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RefreshRows</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a5d3016ce6687eb63149ab4d5905a986a" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RefreshTable</name></member>
+      <member refid="classSEnemyAuthoringPanel_1aaff5f5a4178b82a2c253ff187907919d" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RenameTextBox</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a325737fe9e7abe5cc5947e90947cb3b4" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RowItems</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ae5c08455f3bea0740b1b99643592f781" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RowListView</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a19e8bd449d1577c9731d76cfbf19ac3d" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>RowProxy</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a6288df5dc7befd6f8f347903134e7082" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>SelectedRowName</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ae72593c7af118834933a7cff1f30cd7b" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>SelectRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1afe4d14db2dcc66e912c1f6b75e350a05" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>SetStatus</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a7238e644ad70cfc01b20972093ae7bf9" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>SLATE_BEGIN_ARGS</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a19b8715fa6222552aec0f1c3cc732f72" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>SortColumn</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a45823ccf835c8ecdfc081ae0812f7f4d" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>SortMode</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ad70fbfc2cad49f5c4c0c73d602ef3252" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>StatusText</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ab156dc996062661d1febea9e1960a264" prot="public" virt="virtual"><scope>SEnemyAuthoringPanel</scope><name>SupportsKeyboardFocus</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a18224f7281431da4d8236540e8d3dca0" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>ToggleSortByColumn</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a98c44675d241702a93cfc3caae7abbfa" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>ValidateRows</name></member>
+      <member refid="classSEnemyAuthoringPanel_1a5235c10462355b90598cc40a63699b7a" prot="private" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>ValidateSingleRow</name></member>
+      <member refid="classSEnemyAuthoringPanel_1ae416d3496b62ed358837ac9c836bdcf9" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel</scope><name>~SEnemyAuthoringPanel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

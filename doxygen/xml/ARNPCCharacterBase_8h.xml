@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARNPCCharacterBase_8h" kind="file" language="C++">
+    <compoundname>ARNPCCharacterBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameFramework/Character.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ARNPCCharacterBase.generated.h</includes>
+    <includedby refid="ARNPCCharacterBase_8cpp" local="yes">ARNPCCharacterBase.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARNPCCharacterBase.h</label>
+        <link refid="ARNPCCharacterBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARNPCCharacterBase.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>GameFramework/Character.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARNPCCharacterBase.h</label>
+        <link refid="ARNPCCharacterBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARNPCCharacterBase" prot="public">AARNPCCharacterBase</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARNPCCharacterBase_8h_1a693bda360d622febd3c983306917ce2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnNpcTalkableStateChanged, bool, bNewTalkable)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnNpcTalkableStateChanged</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bNewTalkable</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="14" column="1" declfile="AlienRamen/Public/ARNPCCharacterBase.h" declline="14" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>World NPC actor base for dialogue interactions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Character.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARNPCCharacterBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnNpcTalkableStateChanged,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bNewTalkable);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARNPCCharacterBase<sp/>:<sp/>public<sp/>ACharacter</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>AARNPCCharacterBase();</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|NPC&quot;)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InteractByController(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>InteractingController);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|NPC&quot;)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>GetNpcTag()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>NpcTag;<sp/>}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|NPC&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>bool<sp/>IsTalkable()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bIsTalkable;<sp/>}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|NPC&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnNpcTalkableStateChanged<sp/>OnNpcTalkableStateChanged;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BeginPlay()<sp/>override;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EndPlay(const<sp/>EEndPlayReason::Type<sp/>EndPlayReason)<sp/>override;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp;<sp/>OutLifetimeProps)<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_IsTalkable(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bOldTalkable);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleNpcTalkableChanged(FGameplayTag<sp/>ChangedNpcTag,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bNewTalkable);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|NPC&quot;)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RefreshTalkableFromSubsystem();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|NPC&quot;)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>NpcTag;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(ReplicatedUsing=OnRep_IsTalkable,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|NPC&quot;)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bIsTalkable<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARNPCCharacterBase.h"/>
+  </compounddef>
+</doxygen>

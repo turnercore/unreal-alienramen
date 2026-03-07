@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARPlayerCoreAttributeSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARPlayerCoreAttributeSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARPlayerCoreAttributeSnapshot_1a3878a1ba052830674f78a430d366bca7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerCoreAttributeSnapshot::Health</definition>
+        <argsstring></argsstring>
+        <name>Health</name>
+        <qualifiedname>FARPlayerCoreAttributeSnapshot::Health</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="27" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerCoreAttributeSnapshot_1a298007d0b7a58f0f0e7718561340200c" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerCoreAttributeSnapshot::MaxHealth</definition>
+        <argsstring></argsstring>
+        <name>MaxHealth</name>
+        <qualifiedname>FARPlayerCoreAttributeSnapshot::MaxHealth</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="30" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerCoreAttributeSnapshot_1a3cda28a40bdbf9ad5efdc36bfa8eb6b1" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerCoreAttributeSnapshot::MaxSpice</definition>
+        <argsstring></argsstring>
+        <name>MaxSpice</name>
+        <qualifiedname>FARPlayerCoreAttributeSnapshot::MaxSpice</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="36" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerCoreAttributeSnapshot_1a1985077f7274ebca18363c8d24d46f51" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerCoreAttributeSnapshot::MoveSpeed</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeed</name>
+        <qualifiedname>FARPlayerCoreAttributeSnapshot::MoveSpeed</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="39" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerCoreAttributeSnapshot_1ace913328d309e3aab754fd00c1c3c4d5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerCoreAttributeSnapshot::Spice</definition>
+        <argsstring></argsstring>
+        <name>Spice</name>
+        <qualifiedname>FARPlayerCoreAttributeSnapshot::Spice</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="33" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARPlayerStateBase.h" line="22" column="1" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="23" bodyend="40"/>
+    <listofallmembers>
+      <member refid="structFARPlayerCoreAttributeSnapshot_1a3878a1ba052830674f78a430d366bca7" prot="public" virt="non-virtual"><scope>FARPlayerCoreAttributeSnapshot</scope><name>Health</name></member>
+      <member refid="structFARPlayerCoreAttributeSnapshot_1a298007d0b7a58f0f0e7718561340200c" prot="public" virt="non-virtual"><scope>FARPlayerCoreAttributeSnapshot</scope><name>MaxHealth</name></member>
+      <member refid="structFARPlayerCoreAttributeSnapshot_1a3cda28a40bdbf9ad5efdc36bfa8eb6b1" prot="public" virt="non-virtual"><scope>FARPlayerCoreAttributeSnapshot</scope><name>MaxSpice</name></member>
+      <member refid="structFARPlayerCoreAttributeSnapshot_1a1985077f7274ebca18363c8d24d46f51" prot="public" virt="non-virtual"><scope>FARPlayerCoreAttributeSnapshot</scope><name>MoveSpeed</name></member>
+      <member refid="structFARPlayerCoreAttributeSnapshot_1ace913328d309e3aab754fd00c1c3c4d5" prot="public" virt="non-virtual"><scope>FARPlayerCoreAttributeSnapshot</scope><name>Spice</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

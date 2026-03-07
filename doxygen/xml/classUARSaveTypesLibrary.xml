@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSaveTypesLibrary" kind="class" language="C++" prot="public">
+    <compoundname>UARSaveTypesLibrary</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintFunctionLibrary</basecompoundref>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARSaveTypesLibrary_1a2240bfeefe02e5917715161e1af6d03d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSaveTypesLibrary::GetTotalMeatAmount</definition>
+        <argsstring>(const FARMeatState &amp;MeatState)</argsstring>
+        <name>GetTotalMeatAmount</name>
+        <qualifiedname>UARSaveTypesLibrary::GetTotalMeatAmount</qualifiedname>
+        <param>
+          <type>const FARMeatState &amp;</type>
+          <declname>MeatState</declname>
+        </param>
+        <briefdescription>
+<para>Returns the total meat amount across all FARMeatState buckets. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypesLibrary.h" line="20" column="14" bodyfile="AlienRamen/Private/ARSaveTypesLibrary.cpp" bodystart="3" bodyend="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypesLibrary.h" line="13" column="1" bodyfile="AlienRamen/Public/ARSaveTypesLibrary.h" bodystart="14" bodyend="21"/>
+    <listofallmembers>
+      <member refid="classUARSaveTypesLibrary_1a2240bfeefe02e5917715161e1af6d03d" prot="public" virt="non-virtual"><scope>UARSaveTypesLibrary</scope><name>GetTotalMeatAmount</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

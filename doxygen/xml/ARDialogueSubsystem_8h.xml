@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARDialogueSubsystem_8h" kind="file" language="C++">
+    <compoundname>ARDialogueSubsystem.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Subsystems/GameInstanceSubsystem.h</includes>
+    <includes refid="ARDialogueTypes_8h" local="yes">ARDialogueTypes.h</includes>
+    <includes local="yes">ARDialogueSubsystem.generated.h</includes>
+    <includedby refid="ARDialogueSubsystem_8cpp" local="yes">ARDialogueSubsystem.cpp</includedby>
+    <includedby refid="ARNPCCharacterBase_8cpp" local="yes">ARNPCCharacterBase.cpp</includedby>
+    <includedby refid="ARNPCSubsystem_8cpp" local="yes">ARNPCSubsystem.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARDialogueSubsystem.h</label>
+        <link refid="ARDialogueSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARDialogueTypes.h</label>
+        <link refid="ARDialogueTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>ARDialogueSubsystem.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARDialogueTypes.generated.h</label>
+      </node>
+      <node id="8">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="10">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="5">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="6">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="3">
+        <label>Subsystems/GameInstanceSubsystem.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARDialogueSubsystem.cpp</label>
+        <link refid="ARDialogueSubsystem_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARNPCSubsystem.cpp</label>
+        <link refid="ARNPCSubsystem_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARDialogueSubsystem.h</label>
+        <link refid="ARDialogueSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARDialogueSubsystem" prot="public">UARDialogueSubsystem</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARDialogueSubsystem_8h_1a51390c6b1093905860f31a559aa4ee61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnDialogueSessionEnded, const FString &amp;, SessionId)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnDialogueSessionEnded</type>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+        </param>
+        <param>
+          <type>SessionId</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="15" column="1" declfile="AlienRamen/Public/ARDialogueSubsystem.h" declline="15" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARDialogueSubsystem_8h_1a370ed9bb9b4f6ca50c1389773c909924" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnDialogueSessionUpdated, const FARDialogueClientView &amp;, View)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnDialogueSessionUpdated</type>
+        </param>
+        <param>
+          <type>const FARDialogueClientView &amp;</type>
+        </param>
+        <param>
+          <type>View</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="14" column="1" declfile="AlienRamen/Public/ARDialogueSubsystem.h" declline="14" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Server-authoritative dialogue runtime for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Subsystems/GameInstanceSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARDialogueTypes_8h" kindref="compound">ARDialogueTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARDialogueSubsystem.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionUpdated,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARDialogueClientView&amp;,<sp/>View);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionEnded,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;,<sp/>SessionId);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARDialogueSubsystem<sp/>:<sp/>public<sp/>UGameInstanceSubsystem</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>UARDialogueSubsystem();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>~UARDialogueSubsystem()<sp/>override;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Deinitialize()<sp/>override;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TryStartDialogueWithNpc(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController,<sp/>FGameplayTag<sp/>NpcTag);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AdvanceDialogue(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SubmitDialogueChoice(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController,<sp/>FGameplayTag<sp/>ChoiceTag);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shop-only<sp/>helper:<sp/>mirror<sp/>a<sp/>partner&apos;s<sp/>dialogue<sp/>session<sp/>as<sp/>a<sp/>co-pilot<sp/>viewer.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SetShopEavesdropTarget(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController,<sp/>EARPlayerSlot<sp/>TargetSlot,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bEnable);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HasUnlockedDialogueForNpcForSlot(FGameplayTag<sp/>NpcTag,<sp/>EARPlayerSlot<sp/>PlayerSlot)<sp/>const;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag<sp/>NpcTag)<sp/>const;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>GetLocalViewForController(const<sp/><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController,<sp/>FARDialogueClientView&amp;<sp/>OutView)<sp/>const;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnDialogueSessionUpdated<sp/>OnDialogueSessionUpdated;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnDialogueSessionEnded<sp/>OnDialogueSessionEnded;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>struct<sp/>FARDialogueRuntimeState;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>FARDialogueRuntimeState&amp;<sp/>GetRuntimeState();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>FARDialogueRuntimeState&amp;<sp/>GetRuntimeState()<sp/>const;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>mutable<sp/>FARDialogueRuntimeState*<sp/>RuntimeState<sp/>=<sp/></highlight><highlight class="keywordtype">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARDialogueSubsystem.h"/>
+  </compounddef>
+</doxygen>

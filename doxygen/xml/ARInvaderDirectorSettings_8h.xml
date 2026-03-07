@@ -1,0 +1,344 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARInvaderDirectorSettings_8h" kind="file" language="C++">
+    <compoundname>ARInvaderDirectorSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes refid="ARInvaderDropTypes_8h" local="yes">ARInvaderDropTypes.h</includes>
+    <includes local="yes">ARInvaderDirectorSettings.generated.h</includes>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <includedby refid="AREnemyFacingLibrary_8cpp" local="yes">AREnemyFacingLibrary.cpp</includedby>
+    <includedby refid="ARInvaderAuthoringPanel_8cpp" local="yes">ARInvaderAuthoringPanel.cpp</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <includedby refid="ARInvaderDropBase_8cpp" local="yes">ARInvaderDropBase.cpp</includedby>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARPickupBase_8cpp" local="yes">ARPickupBase.cpp</includedby>
+    <includedby refid="ARPlayerCharacterInvader_8cpp" local="yes">ARPlayerCharacterInvader.cpp</includedby>
+    <includedby refid="ARProjectileBase_8cpp" local="yes">ARProjectileBase.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARInvaderDirectorSettings.h</label>
+        <link refid="ARInvaderDirectorSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARInvaderDirectorSettings.generated.h</label>
+      </node>
+      <node id="6">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>AREnemyFacingLibrary.cpp</label>
+        <link refid="AREnemyFacingLibrary_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARPickupBase.cpp</label>
+        <link refid="ARPickupBase_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARProjectileBase.cpp</label>
+        <link refid="ARProjectileBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARInvaderDirectorSettings.h</label>
+        <link refid="ARInvaderDirectorSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFAREnemyArchetypeAbilitySetEntry" prot="public">FAREnemyArchetypeAbilitySetEntry</innerclass>
+    <innerclass refid="structFARInvaderDropStackDefinition" prot="public">FARInvaderDropStackDefinition</innerclass>
+    <innerclass refid="classUARInvaderDirectorSettings" prot="public">UARInvaderDirectorSettings</innerclass>
+    <briefdescription>
+<para>ARInvaderDirectorSettings header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderDropTypes_8h" kindref="compound">ARInvaderDropTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARInvaderDirectorSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AActor;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UARAbilitySet;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UCurveFloat;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FAREnemyArchetypeAbilitySetEntry</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Enemy|Abilities&quot;)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>EnemyArchetypeTag;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Enemy|Abilities&quot;)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UARAbilitySet&gt;<sp/>AbilitySet;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">struct<sp/>FARInvaderDropStackDefinition</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Currency<sp/>value<sp/>represented<sp/>by<sp/>one<sp/>pickup<sp/>spawn<sp/>for<sp/>this<sp/>entry.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta<sp/>=<sp/>(ClampMin<sp/>=<sp/>&quot;1&quot;))</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>Denomination<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pickup<sp/>class<sp/>spawned<sp/>for<sp/>this<sp/>denomination.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftClassPtr&lt;<ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref>&gt;<sp/>DropClass;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">UCLASS(Config=Game,<sp/>DefaultConfig,<sp/>meta=(DisplayName=&quot;Alien<sp/>Ramen<sp/>Invader<sp/>Director&quot;))</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARInvaderDirectorSettings<sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>FName<sp/>GetCategoryName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Data&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>WaveDefinitionRootTag;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Data&quot;)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>StageDefinitionRootTag;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Applied<sp/>to<sp/>all<sp/>enemies<sp/>before<sp/>archetype/specific<sp/>startup<sp/>abilities.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Enemy|Abilities&quot;)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UARAbilitySet&gt;<sp/>EnemyCommonAbilitySet;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>archetype-specific<sp/>startup<sp/>ability<sp/>sets.<sp/>Exact<sp/>archetype<sp/>tag<sp/>match<sp/>preferred.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Enemy|Abilities&quot;)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FAREnemyArchetypeAbilitySetEntry&gt;<sp/>EnemyArchetypeAbilitySets;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Data&quot;)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>InitialStageRow;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Run&quot;)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>BaseThreatGainPerSecond<sp/>=<sp/>1.f;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Run&quot;)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewWaveDelayAfterClear<sp/>=<sp/>1.5f;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Run&quot;)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewWaveDelayWhenOvertime<sp/>=<sp/>3.f;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Run&quot;)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>StageTransitionDelay<sp/>=<sp/>0.75f;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Run&quot;)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>StageChoiceAutoSelectSeconds<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Run&quot;)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bStageChoiceAutoSelectLeft<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Spawn&quot;)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>FVector<sp/>SpawnOrigin<sp/>=<sp/>FVector::ZeroVector;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Spawn&quot;)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>SpawnOffscreenDistance<sp/>=<sp/>350.f;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Spawn&quot;)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>SpawnLaneSpacing<sp/>=<sp/>220.f;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Additional<sp/>yaw<sp/>correction<sp/>applied<sp/>after<sp/>look-at<sp/>spawn<sp/>facing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Spawn&quot;)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>SpawnFacingYawOffset<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>World-space<sp/>gameplay<sp/>bounds.<sp/>Note<sp/>that<sp/>X<sp/>is<sp/>intentionally<sp/>asymmetric:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>player<sp/>side<sp/>is<sp/>at<sp/>the<sp/>low-X<sp/>boundary<sp/>(X<sp/>=<sp/>0),<sp/>and<sp/>positive<sp/>X<sp/>extends</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>into<sp/>the<sp/>playfield.<sp/>This<sp/>matches<sp/>the<sp/>coordinate<sp/>convention<sp/>documented<sp/>in</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Agents.md<sp/>(see<sp/>line<sp/>126)<sp/>and<sp/>replaces<sp/>the<sp/>older<sp/>symmetric<sp/>bounds.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Bounds&quot;)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>FVector2D<sp/>GameplayBoundsMin<sp/>=<sp/>FVector2D(0.f,<sp/>-1350.f);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Bounds&quot;)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>FVector2D<sp/>GameplayBoundsMax<sp/>=<sp/>FVector2D(1400.f,<sp/>1550.f);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Bounds&quot;)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>OffscreenCullSeconds<sp/>=<sp/>12.f;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Seconds<sp/>projectiles<sp/>can<sp/>remain<sp/>outside<sp/>gameplay<sp/>bounds<sp/>before<sp/>auto-release.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Bounds|Projectiles&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ProjectileOffscreenCullSeconds<sp/>=<sp/>0.1f;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Seconds<sp/>pickups<sp/>can<sp/>remain<sp/>outside<sp/>gameplay<sp/>bounds<sp/>before<sp/>auto-release.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Bounds|Pickups&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>PickupOffscreenCullSeconds<sp/>=<sp/>0.1f;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Baseline<sp/>chance<sp/>applied<sp/>to<sp/>enemy<sp/>DropChance<sp/>attribute<sp/>at<sp/>runtime.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>ClampMax=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DefaultEnemyDropChance<sp/>=<sp/>0.5f;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Baseline<sp/>chance<sp/>applied<sp/>to<sp/>enemy<sp/>DropChance<sp/>when<sp/>DropType<sp/>is<sp/>Scrap.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>ClampMax=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DefaultEnemyScrapDropChance<sp/>=<sp/>0.5f;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Baseline<sp/>chance<sp/>applied<sp/>to<sp/>enemy<sp/>DropChance<sp/>when<sp/>DropType<sp/>is<sp/>Meat.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>ClampMax=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DefaultEnemyMeatDropChance<sp/>=<sp/>0.2f;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Max<sp/>fractional<sp/>deviation<sp/>around<sp/>authored<sp/>drop<sp/>amount<sp/>(0.25<sp/>=&gt;<sp/>+/-25%).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>ClampMax=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DropAmountVarianceFraction<sp/>=<sp/>0.25f;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Max<sp/>fractional<sp/>deviation<sp/>for<sp/>scrap<sp/>drop<sp/>amount.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>ClampMax=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ScrapDropAmountVarianceFraction<sp/>=<sp/>0.25f;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Max<sp/>fractional<sp/>deviation<sp/>for<sp/>meat<sp/>drop<sp/>amount.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>ClampMax=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>MeatDropAmountVarianceFraction<sp/>=<sp/>0.25f;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>curve<sp/>sampled<sp/>with<sp/>random<sp/>[0..1],<sp/>expected<sp/>output<sp/>in<sp/>[-1..1]<sp/>to<sp/>bias<sp/>drop<sp/>amount<sp/>roll<sp/>around<sp/>center.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UCurveFloat&gt;<sp/>DropAmountVarianceCurve;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>variance<sp/>curve<sp/>for<sp/>scrap<sp/>amount<sp/>rolls.<sp/>Falls<sp/>back<sp/>to<sp/>DropAmountVarianceCurve<sp/>when<sp/>unset.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UCurveFloat&gt;<sp/>ScrapDropAmountVarianceCurve;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>variance<sp/>curve<sp/>for<sp/>meat<sp/>amount<sp/>rolls.<sp/>Falls<sp/>back<sp/>to<sp/>DropAmountVarianceCurve<sp/>when<sp/>unset.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UCurveFloat&gt;<sp/>MeatDropAmountVarianceCurve;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initial<sp/>random<sp/>XY<sp/>linear<sp/>speed<sp/>injected<sp/>into<sp/>spawned<sp/>drop<sp/>physics.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DropInitialLinearSpeedMin<sp/>=<sp/>120.0f;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initial<sp/>random<sp/>XY<sp/>linear<sp/>speed<sp/>injected<sp/>into<sp/>spawned<sp/>drop<sp/>physics.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DropInitialLinearSpeedMax<sp/>=<sp/>220.0f;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>denomination<sp/>definitions<sp/>for<sp/>scrap<sp/>drops.<sp/>Runtime<sp/>decomposes<sp/>the<sp/>final</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>drop<sp/>amount<sp/>into<sp/>an<sp/>optimal<sp/>pickup<sp/>set<sp/>(fewest<sp/>actors,<sp/>then<sp/>larger<sp/>denominations).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARInvaderDropStackDefinition&gt;<sp/>ScrapDropStacks;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>denomination<sp/>definitions<sp/>for<sp/>meat<sp/>drops.<sp/>Runtime<sp/>decomposes<sp/>the<sp/>final</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>drop<sp/>amount<sp/>into<sp/>an<sp/>optimal<sp/>pickup<sp/>set<sp/>(fewest<sp/>actors,<sp/>then<sp/>larger<sp/>denominations).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops&quot;)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARInvaderDropStackDefinition&gt;<sp/>MeatDropStacks;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Controls<sp/>whether<sp/>drifting<sp/>drops<sp/>collide<sp/>with<sp/>pawns<sp/>(enemy<sp/>bumping)<sp/>or<sp/>ignore<sp/>all<sp/>pawns.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops|Physics&quot;)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5" kindref="member">EARInvaderDropPawnCollisionMode</ref><sp/>DropPawnCollisionMode<sp/>=<sp/><ref refid="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5" kindref="member">EARInvaderDropPawnCollisionMode</ref>::CollideWithPawns;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Invader<sp/>&quot;up&quot;<sp/>direction<sp/>used<sp/>to<sp/>orient<sp/>custom<sp/>drop<sp/>gravity<sp/>frame.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Earth<sp/>gravity<sp/>direction<sp/>resolves<sp/>to<sp/>`-Normalized(InvaderDesiredUpDirection)`.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops|Physics&quot;)</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>FVector<sp/>InvaderDesiredUpDirection<sp/>=<sp/>FVector(1.0f,<sp/>0.0f,<sp/>0.0f);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Acceleration<sp/>magnitude<sp/>used<sp/>when<sp/>debug-enabling<sp/>drop<sp/>earth<sp/>gravity.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops|Physics&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DropEarthGravityAcceleration<sp/>=<sp/>980.0f;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>true,<sp/>runtime<sp/>derives<sp/>pickup<sp/>radius<sp/>from<sp/>pawn<sp/>capsule<sp/>as:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Radius<sp/>+<sp/>Diameter,<sp/>which<sp/>is<sp/>roughly<sp/>one<sp/>character-length<sp/>outside<sp/>the<sp/>ship<sp/>on<sp/>all<sp/>sides.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops|Pickup&quot;,<sp/>meta=(InlineEditConditionToggle))</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bUseCapsuleDerivedPlayerPickupRadius<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Default<sp/>player<sp/>pickup<sp/>radius<sp/>written<sp/>to<sp/>ASC<sp/>PickupRadius<sp/>at<sp/>spawn/init<sp/>when<sp/>capsule-derived<sp/>sizing<sp/>is<sp/>disabled.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Drops|Pickup&quot;,<sp/>meta=(ClampMin=&quot;0.0&quot;,<sp/>EditCondition=&quot;!bUseCapsuleDerivedPlayerPickupRadius&quot;))</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DefaultPlayerPickupRadius<sp/>=<sp/>150.0f;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Screen-entry<sp/>detection<sp/>inset<sp/>from<sp/>gameplay<sp/>bounds<sp/>used<sp/>for<sp/>first-visibility<sp/>events.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Positive<sp/>values<sp/>require<sp/>enemies<sp/>to<sp/>be<sp/>farther<sp/>inside<sp/>bounds<sp/>before<sp/>&quot;entered<sp/>screen&quot;<sp/>is<sp/>considered<sp/>true.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Bounds&quot;)</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>EnteredScreenInset<sp/>=<sp/>40.f;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;SoftCaps&quot;)</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>SoftCapAliveEnemies<sp/>=<sp/>120;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;SoftCaps&quot;)</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>SoftCapActiveProjectiles<sp/>=<sp/>500;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;SoftCaps&quot;)</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bBlockSpawnsWhenEnemySoftCapExceeded<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Number<sp/>of<sp/>eligible<sp/>wave<sp/>definitions<sp/>to<sp/>peek<sp/>ahead<sp/>when<sp/>preloading<sp/>enemy<sp/>classes.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;SoftCaps&quot;,<sp/>meta=(ClampMin=&quot;0&quot;,<sp/>UIMin=&quot;0&quot;))</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>EnemyPreloadWaveLookahead<sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Telemetry&quot;)</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftClassPtr&lt;AActor&gt;<sp/>ProjectileActorClass;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARInvaderDirectorSettings.h"/>
+  </compounddef>
+</doxygen>

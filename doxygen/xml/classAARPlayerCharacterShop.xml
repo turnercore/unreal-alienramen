@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARPlayerCharacterShop" kind="class" language="C++" prot="public">
+    <compoundname>AARPlayerCharacterShop</compoundname>
+    <basecompoundref refid="classAARPlayerCharacterBase" prot="public" virt="non-virtual">AARPlayerCharacterBase</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARPlayerCharacterShop_1ae5aed11dfd2096cd4add823b34e38f53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARPlayerCharacterShop::AARPlayerCharacterShop</definition>
+        <argsstring>()</argsstring>
+        <name>AARPlayerCharacterShop</name>
+        <qualifiedname>AARPlayerCharacterShop::AARPlayerCharacterShop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="17" column="1" bodyfile="AlienRamen/Private/ARPlayerCharacterShop.cpp" bodystart="3" bodyend="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="1">
+        <label>AARPlayerCharacterShop</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="1">
+        <label>AARPlayerCharacterShop</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="12" column="1" bodyfile="AlienRamen/Public/ARPlayerCharacterShop.h" bodystart="13" bodyend="18"/>
+    <listofallmembers>
+      <member refid="classAARPlayerCharacterBase_1a4f76b07cc2bd196db15ac75ec7e10d39" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>AARPlayerCharacterBase</name></member>
+      <member refid="classAARPlayerCharacterShop_1ae5aed11dfd2096cd4add823b34e38f53" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>AARPlayerCharacterShop</name></member>
+      <member refid="classAARPlayerCharacterBase_1a97c7a37b1faf44e4dd9ad80b8f9ba57e" prot="public" virt="virtual"><scope>AARPlayerCharacterShop</scope><name>GetAbilitySystemComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

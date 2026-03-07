@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARPlayerDialogueHistoryState" kind="struct" language="C++" prot="public">
+    <compoundname>FARPlayerDialogueHistoryState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARPlayerDialogueHistoryState_1a432477e222f2c4f06a3cec6e97e373f3" prot="public" static="no" mutable="no">
+        <type>FARPlayerIdentity</type>
+        <definition>FARPlayerIdentity FARPlayerDialogueHistoryState::Identity</definition>
+        <argsstring></argsstring>
+        <name>Identity</name>
+        <qualifiedname>FARPlayerDialogueHistoryState::Identity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="147" column="19" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerDialogueHistoryState_1a05ffd2e04de37659f14e4a252dcc96ae" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARPlayerDialogueHistoryState::SeenNodeTags</definition>
+        <argsstring></argsstring>
+        <name>SeenNodeTags</name>
+        <qualifiedname>FARPlayerDialogueHistoryState::SeenNodeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="150" column="23" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueTypes.h" line="142" column="1" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="143" bodyend="151"/>
+    <listofallmembers>
+      <member refid="structFARPlayerDialogueHistoryState_1a432477e222f2c4f06a3cec6e97e373f3" prot="public" virt="non-virtual"><scope>FARPlayerDialogueHistoryState</scope><name>Identity</name></member>
+      <member refid="structFARPlayerDialogueHistoryState_1a05ffd2e04de37659f14e4a252dcc96ae" prot="public" virt="non-virtual"><scope>FARPlayerDialogueHistoryState</scope><name>SeenNodeTags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

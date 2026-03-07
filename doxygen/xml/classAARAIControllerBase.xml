@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARAIControllerBase" kind="class" language="C++" prot="public">
+    <compoundname>AARAIControllerBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AAIController</basecompoundref>
+    <derivedcompoundref refid="classAAREnemyAIController" prot="public" virt="non-virtual">AAREnemyAIController</derivedcompoundref>
+    <derivedcompoundref refid="classAARScrapyardAIController" prot="public" virt="non-virtual">AARScrapyardAIController</derivedcompoundref>
+    <derivedcompoundref refid="classAARShopAIController" prot="public" virt="non-virtual">AARShopAIController</derivedcompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARAIControllerBase_1a17aa084bb46190ff330d3dedfe9a5fca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARAIControllerBase::BP_OnPawnSignal</definition>
+        <argsstring>(FGameplayTag SignalTag, AActor *RelatedActor, FVector WorldLocation, float ScalarValue)</argsstring>
+        <name>BP_OnPawnSignal</name>
+        <qualifiedname>AARAIControllerBase::BP_OnPawnSignal</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SignalTag</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>RelatedActor</declname>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>WorldLocation</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ScalarValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAIControllerBase.h" line="27" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARAIControllerBase_1a414320632ff8106b89d1a0adc2ea555e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARAIControllerBase::ReceivePawnSignal</definition>
+        <argsstring>(FGameplayTag SignalTag, AActor *RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true)</argsstring>
+        <name>ReceivePawnSignal</name>
+        <qualifiedname>AARAIControllerBase::ReceivePawnSignal</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SignalTag</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>RelatedActor</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>WorldLocation</declname>
+          <defval>FVector::ZeroVector</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ScalarValue</declname>
+          <defval>0.f</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bForwardToStateTree</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAIControllerBase.h" line="19" column="14" bodyfile="AlienRamen/Private/ARAIControllerBase.cpp" bodystart="5" bodyend="29"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARAIControllerBase.h" line="13" column="1" bodyfile="AlienRamen/Public/ARAIControllerBase.h" bodystart="14" bodyend="32"/>
+    <listofallmembers>
+      <member refid="classAARAIControllerBase_1a17aa084bb46190ff330d3dedfe9a5fca" prot="public" virt="non-virtual"><scope>AARAIControllerBase</scope><name>BP_OnPawnSignal</name></member>
+      <member refid="classAARAIControllerBase_1a414320632ff8106b89d1a0adc2ea555e" prot="public" virt="virtual"><scope>AARAIControllerBase</scope><name>ReceivePawnSignal</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

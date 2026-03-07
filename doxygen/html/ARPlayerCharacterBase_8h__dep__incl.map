@@ -1,0 +1,23 @@
+<map id="ARPlayerCharacterBase.h" name="ARPlayerCharacterBase.h">
+<area shape="rect" id="Node000001" title="ARPlayerCharacterBase header for Alien Ramen." alt="" coords="626,5,814,31"/>
+<area shape="rect" id="Node000002" href="$ARPlayerCharacterBase_8cpp_source.html" title=" " alt="" coords="205,79,408,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="640,36,374,81,373,76,640,30"/>
+<area shape="rect" id="Node000003" href="$ARPlayerCharacterInvader_8h.html" title="ARPlayerCharacterInvader header for Alien Ramen." alt="" coords="433,79,637,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="679,38,566,81,564,76,677,33"/>
+<area shape="rect" id="Node000008" href="$ARPlayerCharacterScrapyard_8h.html" title="ARPlayerCharacterScrapyard header for Alien Ramen." alt="" coords="796,79,1017,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="763,33,877,76,875,81,762,38"/>
+<area shape="rect" id="Node000010" href="$ARPlayerCharacterShop_8h.html" title="ARPlayerCharacterShop header for Alien Ramen." alt="" coords="1117,79,1305,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="812,30,1132,76,1131,81,812,35"/>
+<area shape="rect" id="Node000004" href="$AREnemyBase_8cpp_source.html" title=" " alt="" coords="5,152,149,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="448,109,150,155,149,150,447,103"/>
+<area shape="rect" id="Node000005" href="$ARInvaderDropBase_8cpp_source.html" title=" " alt="" coords="173,152,352,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="479,110,307,154,306,149,477,105"/>
+<area shape="rect" id="Node000006" href="$ARPickupCollectorComponent_8cpp_source.html" title=" " alt="" coords="376,152,619,177"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="525,117,506,153,501,151,520,115"/>
+<area shape="rect" id="Node000007" href="$ARPlayerCharacterInvader_8cpp_source.html" title=" " alt="" coords="643,152,861,177"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="583,106,718,149,716,154,582,111"/>
+<area shape="rect" id="Node000009" href="$ARPlayerCharacterScrapyard_8cpp_source.html" title=" " alt="" coords="886,152,1122,177"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="935,110,990,150,987,154,932,114"/>
+<area shape="rect" id="Node000011" href="$ARPlayerCharacterShop_8cpp_source.html" title=" " alt="" coords="1147,152,1349,177"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="1225,115,1244,151,1240,153,1221,117"/>
+</map>

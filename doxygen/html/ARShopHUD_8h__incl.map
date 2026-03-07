@@ -1,0 +1,14 @@
+<map id="ARShopHUD.h" name="ARShopHUD.h">
+<area shape="rect" id="Node000001" title="Shop HUD base class for Alien Ramen." alt="" coords="160,5,275,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,152,123,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,33,150,81,86,144,83,140,146,77,201,29"/>
+<area shape="rect" id="Node000003" href="$ARHUDBase_8h.html" title="ARHUDBase header for Alien Ramen." alt="" coords="160,79,275,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="220,31,220,65,215,65,215,31"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="299,79,483,104"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="246,28,351,71,349,76,244,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="194,106,102,149,100,144,192,102"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="147,152,327,177"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="223,104,233,138,228,140,218,105"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="352,152,536,177"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="255,101,395,145,393,150,253,107"/>
+</map>

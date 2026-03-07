@@ -1,0 +1,11 @@
+<map id="ARAttributeSetCore.h" name="ARAttributeSetCore.h">
+<area shape="rect" id="Node000001" title="ARAttributeSetCore header for Alien Ramen." alt="" coords="212,5,372,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="256,33,115,77,113,72,255,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,259,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="279,33,230,72,226,68,276,29"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="283,79,483,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="308,29,359,68,355,72,305,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="507,79,738,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="346,28,557,73,555,78,345,33"/>
+</map>

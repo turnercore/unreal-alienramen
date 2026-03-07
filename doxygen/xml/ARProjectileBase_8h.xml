@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARProjectileBase_8h" kind="file" language="C++">
+    <compoundname>ARProjectileBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameFramework/Actor.h</includes>
+    <includes local="yes">StructUtils/InstancedStruct.h</includes>
+    <includes local="yes">ARProjectileBase.generated.h</includes>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARProjectileBase_8cpp" local="yes">ARProjectileBase.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARProjectileBase.h</label>
+        <link refid="ARProjectileBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARProjectileBase.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>GameFramework/Actor.h</label>
+      </node>
+      <node id="4">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARProjectileBase.cpp</label>
+        <link refid="ARProjectileBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARProjectileBase.h</label>
+        <link refid="ARProjectileBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARProjectileBase" prot="public">AARProjectileBase</innerclass>
+    <briefdescription>
+<para>ARProjectileBase header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Actor.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;StructUtils/InstancedStruct.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARProjectileBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">UCLASS(Blueprintable)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>AARProjectileBase<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>AActor</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>AARProjectileBase();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Tick(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaSeconds)<sp/>override;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Applies<sp/>projectile<sp/>init<sp/>data<sp/>by<sp/>property-name<sp/>matching<sp/>to<sp/>this<sp/>actor<sp/>and<sp/>its<sp/>projectile-movement<sp/>components.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Intended<sp/>to<sp/>be<sp/>called<sp/>from<sp/>lifecycle<sp/>init<sp/>flows<sp/>that<sp/>provide<sp/>FInstancedStruct<sp/>payloads.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Init&quot;)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>InitializeProjectileFromData(const<sp/>FInstancedStruct&amp;<sp/>InitData);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Lifecycle&quot;)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EvaluateOffscreenRelease();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Lifecycle&quot;)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsOutsideGameplayBounds()<sp/>const;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Final<sp/>lifecycle<sp/>release<sp/>step<sp/>for<sp/>projectile<sp/>cleanup.<sp/>Override<sp/>for<sp/>pooling.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>BlueprintNativeEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Lifecycle&quot;)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ReleaseProjectile();</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintImplementableEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Lifecycle&quot;)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnProjectilePreRelease();</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BeginPlay()<sp/>override;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ReleaseProjectile_Implementation();</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>true,<sp/>BeginPlay<sp/>auto-wires<sp/>runtime<sp/>component<sp/>setup:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>picks<sp/>a<sp/>collision<sp/>primitive,<sp/>uses<sp/>it<sp/>as<sp/>root<sp/>when<sp/>root<sp/>is<sp/>missing,<sp/>and<sp/>assigns<sp/>projectile<sp/>movement<sp/>UpdatedComponent.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Collision&quot;)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAutoWireCollisionAndMovement<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>true,<sp/>BeginPlay<sp/>applies<sp/>invader-safe<sp/>default<sp/>collision<sp/>responses:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>projectile<sp/>ignores<sp/>other<sp/>projectiles<sp/>and<sp/>drops.<sp/>Disable<sp/>in<sp/>BP<sp/>to<sp/>fully<sp/>own<sp/>collision<sp/>setup.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Collision&quot;)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bApplyDefaultInvaderCollisionResponses<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>true,<sp/>this<sp/>projectile<sp/>releases<sp/>itself<sp/>the<sp/>moment<sp/>it<sp/>is<sp/>outside<sp/>gameplay<sp/>bounds.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Culling&quot;)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bReleaseWhenOutsideGameplayBounds<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>true,<sp/>OffscreenReleaseDelay<sp/>is<sp/>pulled<sp/>from<sp/>project<sp/>settings<sp/>at<sp/>BeginPlay.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Culling&quot;)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bUseProjectSettingsOffscreenCullSeconds<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Seconds<sp/>a<sp/>projectile<sp/>can<sp/>stay<sp/>offscreen<sp/>before<sp/>being<sp/>released.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Culling&quot;,<sp/>meta<sp/>=<sp/>(ClampMin<sp/>=<sp/>&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>OffscreenReleaseDelay<sp/>=<sp/>0.1f;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Additional<sp/>XY<sp/>margin<sp/>around<sp/>gameplay<sp/>bounds<sp/>before<sp/>offscreen<sp/>release<sp/>triggers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Culling&quot;,<sp/>meta<sp/>=<sp/>(ClampMin<sp/>=<sp/>&quot;0.0&quot;))</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>OffscreenReleaseMargin<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>true,<sp/>only<sp/>authority<sp/>performs<sp/>release<sp/>checks<sp/>(recommended<sp/>for<sp/>replicated<sp/>projectiles).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Projectile|Culling&quot;)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bOffscreenCheckAuthorityOnly<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EvaluateOffscreenReleaseInternal(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaSeconds);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bReleased<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>OffscreenSeconds<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARProjectileBase.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARDialogueSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARDialogueSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <innerclass refid="structUARDialogueSubsystem_1_1FARDialogueRuntimeState" prot="public">UARDialogueSubsystem::FARDialogueRuntimeState</innerclass>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARDialogueSubsystem_1a79a63a34aff1e101d58bae7f7652faf2" prot="public" static="no" mutable="no">
+        <type>FAROnDialogueSessionEnded</type>
+        <definition>FAROnDialogueSessionEnded UARDialogueSubsystem::OnDialogueSessionEnded</definition>
+        <argsstring></argsstring>
+        <name>OnDialogueSessionEnded</name>
+        <qualifiedname>UARDialogueSubsystem::OnDialogueSessionEnded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="53" column="27" bodyfile="AlienRamen/Public/ARDialogueSubsystem.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueSubsystem_1aec7c5ef42e88c839442ca7f5efd74227" prot="public" static="no" mutable="no">
+        <type>FAROnDialogueSessionUpdated</type>
+        <definition>FAROnDialogueSessionUpdated UARDialogueSubsystem::OnDialogueSessionUpdated</definition>
+        <argsstring></argsstring>
+        <name>OnDialogueSessionUpdated</name>
+        <qualifiedname>UARDialogueSubsystem::OnDialogueSessionUpdated</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="50" column="29" bodyfile="AlienRamen/Public/ARDialogueSubsystem.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARDialogueSubsystem_1acf2dd974d47063df66fcf68060d80869" prot="private" static="no" mutable="yes">
+        <type>FARDialogueRuntimeState *</type>
+        <definition>FARDialogueRuntimeState* UARDialogueSubsystem::RuntimeState</definition>
+        <argsstring></argsstring>
+        <name>RuntimeState</name>
+        <qualifiedname>UARDialogueSubsystem::RuntimeState</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="60" column="33" bodyfile="AlienRamen/Public/ARDialogueSubsystem.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARDialogueSubsystem_1aef2d0ab3e84c10c18316f62fabb09a42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::AdvanceDialogue</definition>
+        <argsstring>(AARPlayerController *RequestingController)</argsstring>
+        <name>AdvanceDialogue</name>
+        <qualifiedname>UARDialogueSubsystem::AdvanceDialogue</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="31" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="873" bodyend="971"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1a4db455705d368d56f4357694467b6865" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARDialogueSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARDialogueSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="25" column="14" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="91" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1ac4e8a63f6cd2c77239b32152ec8195d2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::GetLocalViewForController</definition>
+        <argsstring>(const AARPlayerController *RequestingController, FARDialogueClientView &amp;OutView) const</argsstring>
+        <name>GetLocalViewForController</name>
+        <qualifiedname>UARDialogueSubsystem::GetLocalViewForController</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FARDialogueClientView &amp;</type>
+          <declname>OutView</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="47" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="1196" bodyend="1219"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1ae4782cb4f45cbfe8b098963e9e9bab89" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer</definition>
+        <argsstring>(FGameplayTag NpcTag) const</argsstring>
+        <name>HasUnlockedDialogueForNpcForAnyPlayer</name>
+        <qualifiedname>UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="44" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="1164" bodyend="1194"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1af4a94a7c62ca6bb5e1189cd4098a5997" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForSlot</definition>
+        <argsstring>(FGameplayTag NpcTag, EARPlayerSlot PlayerSlot) const</argsstring>
+        <name>HasUnlockedDialogueForNpcForSlot</name>
+        <qualifiedname>UARDialogueSubsystem::HasUnlockedDialogueForNpcForSlot</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="41" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="1146" bodyend="1162"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1a3416eec92b8cda7cb3b1f818cbce4af6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::SetShopEavesdropTarget</definition>
+        <argsstring>(AARPlayerController *RequestingController, EARPlayerSlot TargetSlot, bool bEnable)</argsstring>
+        <name>SetShopEavesdropTarget</name>
+        <qualifiedname>UARDialogueSubsystem::SetShopEavesdropTarget</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>TargetSlot</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="38" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="1083" bodyend="1144"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1a81672a521fba4f3b7a65071a0b5d2807" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::SubmitDialogueChoice</definition>
+        <argsstring>(AARPlayerController *RequestingController, FGameplayTag ChoiceTag)</argsstring>
+        <name>SubmitDialogueChoice</name>
+        <qualifiedname>UARDialogueSubsystem::SubmitDialogueChoice</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ChoiceTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="34" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="973" bodyend="1081"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1a705cf7c8d9d7c6fd59ea9c6ca4065e92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueSubsystem::TryStartDialogueWithNpc</definition>
+        <argsstring>(AARPlayerController *RequestingController, FGameplayTag NpcTag)</argsstring>
+        <name>TryStartDialogueWithNpc</name>
+        <qualifiedname>UARDialogueSubsystem::TryStartDialogueWithNpc</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="28" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="761" bodyend="871"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1abae4612338d55bf2b14ade161d483005" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARDialogueSubsystem::UARDialogueSubsystem</definition>
+        <argsstring>()</argsstring>
+        <name>UARDialogueSubsystem</name>
+        <qualifiedname>UARDialogueSubsystem::UARDialogueSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="23" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1ac2a89eb5a6aecb7f9ede325faca50f41" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>UARDialogueSubsystem::~UARDialogueSubsystem</definition>
+        <argsstring>() override</argsstring>
+        <name>~UARDialogueSubsystem</name>
+        <qualifiedname>UARDialogueSubsystem::~UARDialogueSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="24" column="9" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="70" bodyend="74"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARDialogueSubsystem_1a15bc5c68a4d743b8c8d98bf9fbdd9545" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARDialogueRuntimeState &amp;</type>
+        <definition>UARDialogueSubsystem::FARDialogueRuntimeState &amp; UARDialogueSubsystem::GetRuntimeState</definition>
+        <argsstring>()</argsstring>
+        <name>GetRuntimeState</name>
+        <qualifiedname>UARDialogueSubsystem::GetRuntimeState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="57" column="25" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="76" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueSubsystem_1afda4ee56a7509ead2e835031141123dd" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const FARDialogueRuntimeState &amp;</type>
+        <definition>const UARDialogueSubsystem::FARDialogueRuntimeState &amp; UARDialogueSubsystem::GetRuntimeState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRuntimeState</name>
+        <qualifiedname>UARDialogueSubsystem::GetRuntimeState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="58" column="31" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="85" bodyend="89"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueSubsystem.h" line="18" column="1" bodyfile="AlienRamen/Public/ARDialogueSubsystem.h" bodystart="19" bodyend="61"/>
+    <listofallmembers>
+      <member refid="classUARDialogueSubsystem_1aef2d0ab3e84c10c18316f62fabb09a42" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>AdvanceDialogue</name></member>
+      <member refid="classUARDialogueSubsystem_1a4db455705d368d56f4357694467b6865" prot="public" virt="virtual"><scope>UARDialogueSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARDialogueSubsystem_1ac4e8a63f6cd2c77239b32152ec8195d2" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>GetLocalViewForController</name></member>
+      <member refid="classUARDialogueSubsystem_1a15bc5c68a4d743b8c8d98bf9fbdd9545" prot="private" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>GetRuntimeState</name></member>
+      <member refid="classUARDialogueSubsystem_1afda4ee56a7509ead2e835031141123dd" prot="private" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>GetRuntimeState</name></member>
+      <member refid="classUARDialogueSubsystem_1ae4782cb4f45cbfe8b098963e9e9bab89" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>HasUnlockedDialogueForNpcForAnyPlayer</name></member>
+      <member refid="classUARDialogueSubsystem_1af4a94a7c62ca6bb5e1189cd4098a5997" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>HasUnlockedDialogueForNpcForSlot</name></member>
+      <member refid="classUARDialogueSubsystem_1a79a63a34aff1e101d58bae7f7652faf2" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>OnDialogueSessionEnded</name></member>
+      <member refid="classUARDialogueSubsystem_1aec7c5ef42e88c839442ca7f5efd74227" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>OnDialogueSessionUpdated</name></member>
+      <member refid="classUARDialogueSubsystem_1acf2dd974d47063df66fcf68060d80869" prot="private" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>RuntimeState</name></member>
+      <member refid="classUARDialogueSubsystem_1a3416eec92b8cda7cb3b1f818cbce4af6" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>SetShopEavesdropTarget</name></member>
+      <member refid="classUARDialogueSubsystem_1a81672a521fba4f3b7a65071a0b5d2807" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>SubmitDialogueChoice</name></member>
+      <member refid="classUARDialogueSubsystem_1a705cf7c8d9d7c6fd59ea9c6ca4065e92" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>TryStartDialogueWithNpc</name></member>
+      <member refid="classUARDialogueSubsystem_1abae4612338d55bf2b14ade161d483005" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem</scope><name>UARDialogueSubsystem</name></member>
+      <member refid="classUARDialogueSubsystem_1ac2a89eb5a6aecb7f9ede325faca50f41" prot="public" virt="virtual"><scope>UARDialogueSubsystem</scope><name>~UARDialogueSubsystem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

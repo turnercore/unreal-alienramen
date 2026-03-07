@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARInvaderAIController" kind="class" language="C++" prot="public">
+    <compoundname>AARInvaderAIController</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AAREnemyAIController</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARInvaderAIController_1ac0840bafd373cafe404997b09b2b652f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARInvaderAIController::AARInvaderAIController</definition>
+        <argsstring>()</argsstring>
+        <name>AARInvaderAIController</name>
+        <qualifiedname>AARInvaderAIController::AARInvaderAIController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderAIController.h" line="17" column="1" bodyfile="AlienRamen/Private/ARInvaderAIController.cpp" bodystart="3" bodyend="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderAIController.h" line="12" column="1" bodyfile="AlienRamen/Public/ARInvaderAIController.h" bodystart="13" bodyend="18"/>
+    <listofallmembers>
+      <member refid="classAAREnemyAIController_1ab24d9705fa443ec335b268a2b1c71ec4" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>AAREnemyAIController</name></member>
+      <member refid="classAARInvaderAIController_1ac0840bafd373cafe404997b09b2b652f" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>AARInvaderAIController</name></member>
+      <member refid="classAAREnemyAIController_1a5b86d684d0741100ce6f88c3d94929d5" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>ActivePhaseEventTag</name></member>
+      <member refid="classAAREnemyAIController_1a1b1f17a1b002a15713311b9577991b82" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>BerserkPhaseEventTag</name></member>
+      <member refid="classAARAIControllerBase_1a17aa084bb46190ff330d3dedfe9a5fca" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>BP_OnPawnSignal</name></member>
+      <member refid="classAAREnemyAIController_1a3cce11bf2e36056a34641fd525efe9e0" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>DefaultStateTree</name></member>
+      <member refid="classAAREnemyAIController_1aee7ef7b388cff5e17a251643f3c878e9" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>EnteredScreenEventTag</name></member>
+      <member refid="classAAREnemyAIController_1a2647e491db82cab1afc7c2eaa171a333" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>GetEnemyStateTreeComponent</name></member>
+      <member refid="classAAREnemyAIController_1a6a2d1c35f256f6dd4c5672b8603b77ed" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>InFormationEventTag</name></member>
+      <member refid="classAAREnemyAIController_1a44788d1927f12fb64138f35db2a1d348" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>LastSentEnteredScreenWaveId</name></member>
+      <member refid="classAAREnemyAIController_1a83c081974bda8d61f975d89b976dfbfe" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>LastSentInFormationWaveId</name></member>
+      <member refid="classAAREnemyAIController_1a2527cb3d5e43d8287b56d2cc79c85765" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>LastSentWavePhase</name></member>
+      <member refid="classAAREnemyAIController_1a410ccc2728d404075f3037357902533f" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>LastSentWavePhaseWaveId</name></member>
+      <member refid="classAAREnemyAIController_1a391268c325d82998810df617300af70b" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>NotifyEnemyEnteredScreen</name></member>
+      <member refid="classAAREnemyAIController_1af787dd9f72323b71484fbe77a1506941" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>NotifyEnemyInFormation</name></member>
+      <member refid="classAAREnemyAIController_1a11fb759cfbe7c8d1267b1efcc9e76dd6" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>NotifyWavePhaseChanged</name></member>
+      <member refid="classAAREnemyAIController_1acf8603ec4fb30eab3d563ff936c85d59" prot="protected" virt="virtual"><scope>AARInvaderAIController</scope><name>OnPossess</name></member>
+      <member refid="classAAREnemyAIController_1a6182db7230391732f5353479bc1af242" prot="protected" virt="virtual"><scope>AARInvaderAIController</scope><name>OnUnPossess</name></member>
+      <member refid="classAAREnemyAIController_1a07c86d725e56db65486b1c6f44618d75" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>PopPawnASCStateTag</name></member>
+      <member refid="classAAREnemyAIController_1a0aa135a3dd6a2298b4c4c928716c14df" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>PopPawnASCStateTags</name></member>
+      <member refid="classAAREnemyAIController_1a3bb9da421a77e0fe1e73822c68c6acab" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>PushPawnASCStateTag</name></member>
+      <member refid="classAAREnemyAIController_1a8417277dc207959b7ce824c3708c445b" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>PushPawnASCStateTags</name></member>
+      <member refid="classAAREnemyAIController_1a1eb75a93fc3e1fe23e91dea5c4e7cb94" prot="public" virt="virtual"><scope>AARInvaderAIController</scope><name>ReceivePawnSignal</name></member>
+      <member refid="classAAREnemyAIController_1a5fcd7a3ed11c0007329765fe96448ac6" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>SendStateTreeEvent</name></member>
+      <member refid="classAAREnemyAIController_1a786787adcabf7909618de47aaa59efe3" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>SendStateTreeEventByTag</name></member>
+      <member refid="classAAREnemyAIController_1ac3904081de9d5ad064921b14741dbab4" prot="protected" virt="non-virtual"><scope>AARInvaderAIController</scope><name>StateTreeComponent</name></member>
+      <member refid="classAAREnemyAIController_1a17a78a9b7d8bf5f2a1ad32a7bdae1b2c" prot="public" virt="non-virtual"><scope>AARInvaderAIController</scope><name>TryStartStateTreeForCurrentPawn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

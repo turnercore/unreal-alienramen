@@ -1,0 +1,21 @@
+<map id="ARSaveIndexGame.h" name="ARSaveIndexGame.h">
+<area shape="rect" id="Node000001" title="ARSaveIndexGame header for Alien Ramen." alt="" coords="179,5,338,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,225,123,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="180,33,95,52,61,65,41,80,32,95,28,112,29,148,39,183,53,212,48,214,34,185,24,149,23,111,27,93,37,77,59,61,94,47,179,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="51,79,272,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="245,33,190,72,187,68,241,29"/>
+<area shape="rect" id="Node000004" href="$ARSaveTypes_8h.html" title="ARSaveTypes header for Alien Ramen." alt="" coords="297,79,418,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="276,29,332,68,329,73,273,33"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="443,79,672,104"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="307,28,496,73,495,78,306,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="297,105,171,130,118,143,91,154,81,166,74,181,68,212,62,211,69,179,77,164,88,150,117,138,170,124,296,100"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="102,152,287,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="332,106,235,149,233,144,330,102"/>
+<area shape="rect" id="Node000006" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="312,152,443,177"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="363,104,373,138,368,140,358,105"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="467,152,658,177"/>
+<area shape="poly" id="edge9_Node000004_Node000008" title=" " alt="" coords="391,101,517,145,516,150,389,107"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="328,180,129,225,127,220,326,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="277,225,477,251"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="380,178,380,212,375,212,375,178"/>
+</map>

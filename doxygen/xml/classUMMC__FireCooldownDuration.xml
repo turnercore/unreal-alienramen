@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUMMC__FireCooldownDuration" kind="class" language="C++" prot="public">
+    <compoundname>UMMC_FireCooldownDuration</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameplayModMagnitudeCalculation</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUMMC__FireCooldownDuration_1ab0f16d3cd1850803a69fa217c5ad0a1e" prot="private" static="no" mutable="no">
+        <type>FGameplayEffectAttributeCaptureDefinition</type>
+        <definition>FGameplayEffectAttributeCaptureDefinition UMMC_FireCooldownDuration::FireRateDef</definition>
+        <argsstring></argsstring>
+        <name>FireRateDef</name>
+        <qualifiedname>UMMC_FireCooldownDuration::FireRateDef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/MMC_FireCooldownDuration.h" line="24" column="43" bodyfile="AlienRamen/Public/MMC_FireCooldownDuration.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUMMC__FireCooldownDuration_1aa5ce9305b15c728fd783a2cfb2110dda" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>float</type>
+        <definition>float UMMC_FireCooldownDuration::CalculateBaseMagnitude_Implementation</definition>
+        <argsstring>(const FGameplayEffectSpec &amp;Spec) const override</argsstring>
+        <name>CalculateBaseMagnitude_Implementation</name>
+        <qualifiedname>UMMC_FireCooldownDuration::CalculateBaseMagnitude_Implementation</qualifiedname>
+        <param>
+          <type>const FGameplayEffectSpec &amp;</type>
+          <declname>Spec</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/MMC_FireCooldownDuration.h" line="21" column="15" bodyfile="AlienRamen/Private/MMC_FireCooldownDuration.cpp" bodystart="20" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classUMMC__FireCooldownDuration_1aac44417b25733852a7f4eb0184194038" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UMMC_FireCooldownDuration::UMMC_FireCooldownDuration</definition>
+        <argsstring>()</argsstring>
+        <name>UMMC_FireCooldownDuration</name>
+        <qualifiedname>UMMC_FireCooldownDuration::UMMC_FireCooldownDuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/MMC_FireCooldownDuration.h" line="19" column="1" bodyfile="AlienRamen/Private/MMC_FireCooldownDuration.cpp" bodystart="8" bodyend="18"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/MMC_FireCooldownDuration.h" line="14" column="1" bodyfile="AlienRamen/Public/MMC_FireCooldownDuration.h" bodystart="15" bodyend="25"/>
+    <listofallmembers>
+      <member refid="classUMMC__FireCooldownDuration_1aa5ce9305b15c728fd783a2cfb2110dda" prot="public" virt="virtual"><scope>UMMC_FireCooldownDuration</scope><name>CalculateBaseMagnitude_Implementation</name></member>
+      <member refid="classUMMC__FireCooldownDuration_1ab0f16d3cd1850803a69fa217c5ad0a1e" prot="private" virt="non-virtual"><scope>UMMC_FireCooldownDuration</scope><name>FireRateDef</name></member>
+      <member refid="classUMMC__FireCooldownDuration_1aac44417b25733852a7f4eb0184194038" prot="public" virt="non-virtual"><scope>UMMC_FireCooldownDuration</scope><name>UMMC_FireCooldownDuration</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

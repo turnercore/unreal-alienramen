@@ -1,0 +1,11 @@
+<map id="StructSerializable.h" name="StructSerializable.h">
+<area shape="rect" id="Node000001" title="StructSerializable header for Alien Ramen." alt="" coords="246,5,394,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="280,33,119,78,118,72,278,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="146,79,294,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="305,33,249,73,246,68,302,29"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="318,79,525,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="338,28,395,68,392,73,335,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="549,79,768,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="375,28,591,73,590,78,374,33"/>
+</map>

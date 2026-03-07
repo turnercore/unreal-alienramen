@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARContentLookupSettings_8h" kind="file" language="C++">
+    <compoundname>ARContentLookupSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">ARContentLookupSettings.generated.h</includes>
+    <includedby refid="AREnemyAuthoringPanel_8cpp" local="yes">AREnemyAuthoringPanel.cpp</includedby>
+    <includedby refid="ARInvaderAuthoringPanel_8cpp" local="yes">ARInvaderAuthoringPanel.cpp</includedby>
+    <includedby refid="ContentLookupSubsystem_8cpp" local="yes">ContentLookupSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARContentLookupSettings.h</label>
+        <link refid="ARContentLookupSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARContentLookupSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="4">
+        <label>ContentLookupSubsystem.cpp</label>
+        <link refid="ContentLookupSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARContentLookupSettings.h</label>
+        <link refid="ARContentLookupSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AREnemyAuthoringPanel.cpp</label>
+        <link refid="AREnemyAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARContentLookupSettings" prot="public">UARContentLookupSettings</innerclass>
+    <briefdescription>
+<para>ARContentLookupSettings header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARContentLookupSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UContentLookupRegistry;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">UCLASS(Config=Game,<sp/>DefaultConfig,<sp/>meta=(DisplayName=</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen<sp/>Content<sp/>Lookup&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARContentLookupSettings<sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>FName<sp/>GetCategoryName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Data&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UContentLookupRegistry&gt;<sp/>RegistryAsset;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARContentLookupSettings.h"/>
+  </compounddef>
+</doxygen>

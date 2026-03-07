@@ -1,0 +1,2081 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARInvaderGameState" kind="class" language="C++" prot="public">
+    <compoundname>AARInvaderGameState</compoundname>
+    <basecompoundref refid="classAARGameStateBase" prot="public" virt="non-virtual">AARGameStateBase</basecompoundref>
+    <innerclass refid="structAARInvaderGameState_1_1FDropSpawnPlanEntry" prot="private">AARInvaderGameState::FDropSpawnPlanEntry</innerclass>
+    <innerclass refid="structAARInvaderGameState_1_1FResolvedDropStackEntry" prot="private">AARInvaderGameState::FResolvedDropStackEntry</innerclass>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARInvaderGameState_1a967f6887493fe6e0c8a61133d5474dd4" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderFullBlastResolvedSignature</type>
+        <definition>FAROnInvaderFullBlastResolvedSignature AARInvaderGameState::OnInvaderFullBlastResolved</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderFullBlastResolved</name>
+        <qualifiedname>AARInvaderGameState::OnInvaderFullBlastResolved</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="128" column="40" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1aeebbd862148d585c681bf04913d0b28d" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderFullBlastSessionChangedSignature</type>
+        <definition>FAROnInvaderFullBlastSessionChangedSignature AARInvaderGameState::OnInvaderFullBlastSessionChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderFullBlastSessionChanged</name>
+        <qualifiedname>AARInvaderGameState::OnInvaderFullBlastSessionChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="125" column="46" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1acd19856a42625e05fa743d7d411b9302" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderKillCreditAwardedSignature</type>
+        <definition>FAROnInvaderKillCreditAwardedSignature AARInvaderGameState::OnInvaderKillCreditAwarded</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderKillCreditAwarded</name>
+        <qualifiedname>AARInvaderGameState::OnInvaderKillCreditAwarded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="131" column="40" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1ae56e593f4fb7b9cff7d867f9dcd28796" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderKillCreditFxEventSignature</type>
+        <definition>FAROnInvaderKillCreditFxEventSignature AARInvaderGameState::OnInvaderKillCreditFxEvent</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderKillCreditFxEvent</name>
+        <qualifiedname>AARInvaderGameState::OnInvaderKillCreditFxEvent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="139" column="40" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1ae8a69dede0bef0e0e970672ec2794e84" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderOfferPresenceChangedSignature</type>
+        <definition>FAROnInvaderOfferPresenceChangedSignature AARInvaderGameState::OnInvaderOfferPresenceChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderOfferPresenceChanged</name>
+        <qualifiedname>AARInvaderGameState::OnInvaderOfferPresenceChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="134" column="43" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a22af7d6d24fec6e4e16a2d73f1764c0d" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderSharedTrackChangedSignature</type>
+        <definition>FAROnInvaderSharedTrackChangedSignature AARInvaderGameState::OnInvaderSharedTrackChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderSharedTrackChanged</name>
+        <qualifiedname>AARInvaderGameState::OnInvaderSharedTrackChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="122" column="41" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARInvaderGameState_1abe31c4f8a3b56f7c4cd50fd38651c1e6" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt; &gt; AARInvaderGameState::ActiveSpiceSharers</definition>
+        <argsstring></argsstring>
+        <name>ActiveSpiceSharers</name>
+        <qualifiedname>AARInvaderGameState::ActiveSpiceSharers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="250" column="6" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a30d4495eabdd66c7772b097c15ee0bfc" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::bDebugDropEarthGravityEnabled</definition>
+        <argsstring></argsstring>
+        <name>bDebugDropEarthGravityEnabled</name>
+        <qualifiedname>AARInvaderGameState::bDebugDropEarthGravityEnabled</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="266" column="6" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a44dd83407253886298b137f8070c6025" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugAddMeat</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugAddMeat</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugAddMeat</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="261" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1ac842cb0a2ca8a2703247a5a4d8238516" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugAddMoney</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugAddMoney</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugAddMoney</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="260" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a75bc46b1a846aa869ac8061889a4ea57" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugAddScrap</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugAddScrap</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugAddScrap</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="259" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="259" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1aa28578c2dcfcbb96759b4b0f1ddc24d3" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugAddSpice</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugAddSpice</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugAddSpice</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="258" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a024ed88407175a06257ce88cf6d87b2a" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugInjectUpgrade</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugInjectUpgrade</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugInjectUpgrade</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="264" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a839239e0aa783e36aa2dcc7870ce46fc" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugSetCursor</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugSetCursor</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugSetCursor</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="263" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a8e84292c5b4c8aacc763003c5c199aaf" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugSetDropEarthGravity</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugSetDropEarthGravity</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugSetDropEarthGravity</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="262" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a9c72eba60932a942bf71355b196f6ea6" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* AARInvaderGameState::CmdDebugSetSpice</definition>
+        <argsstring></argsstring>
+        <name>CmdDebugSetSpice</name>
+        <qualifiedname>AARInvaderGameState::CmdDebugSetSpice</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="257" column="16" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a114cc588d0bcbf25f13c1af2dae871ba" prot="private" static="no" mutable="no">
+        <type>FARInvaderFullBlastSessionState</type>
+        <definition>FARInvaderFullBlastSessionState AARInvaderGameState::FullBlastSession</definition>
+        <argsstring></argsstring>
+        <name>FullBlastSession</name>
+        <qualifiedname>AARInvaderGameState::FullBlastSession</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="245" column="33" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="245" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a414b5bf7c2486325ce67d2af2fe6acb9" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderOfferPresenceState &gt;</type>
+        <definition>TArray&lt;FARInvaderOfferPresenceState&gt; AARInvaderGameState::OfferPresenceStates</definition>
+        <argsstring></argsstring>
+        <name>OfferPresenceStates</name>
+        <qualifiedname>AARInvaderGameState::OfferPresenceStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="248" column="8" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1abd092660b6b4589057b566b83801f528" prot="private" static="no" mutable="no">
+        <type>FRandomStream</type>
+        <definition>FRandomStream AARInvaderGameState::OfferRng</definition>
+        <argsstring></argsstring>
+        <name>OfferRng</name>
+        <qualifiedname>AARInvaderGameState::OfferRng</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="255" column="15" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="255" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1abaf37724606fa83f7e94cea919973c47" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::SharedFullBlastTier</definition>
+        <argsstring></argsstring>
+        <name>SharedFullBlastTier</name>
+        <qualifiedname>AARInvaderGameState::SharedFullBlastTier</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="242" column="7" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1a44ea04e76f9f8516a88ffc64996ec4d1" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderTrackSlotState &gt;</type>
+        <definition>TArray&lt;FARInvaderTrackSlotState&gt; AARInvaderGameState::SharedTrackSlots</definition>
+        <argsstring></argsstring>
+        <name>SharedTrackSlots</name>
+        <qualifiedname>AARInvaderGameState::SharedTrackSlots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="239" column="8" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameState_1adaea4f300918d4893631b8ea4a2b7b9d" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;, TArray&lt; FActiveGameplayEffectHandle &gt; &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;, TArray&lt;FActiveGameplayEffectHandle&gt; &gt; AARInvaderGameState::WhileSlottedEffectHandlesByPlayer</definition>
+        <argsstring></argsstring>
+        <name>WhileSlottedEffectHandlesByPlayer</name>
+        <qualifiedname>AARInvaderGameState::WhileSlottedEffectHandlesByPlayer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="252" column="6" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARInvaderGameState_1a6d428e4fab439cb0703551770745ea24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARInvaderGameState::AARInvaderGameState</definition>
+        <argsstring>()</argsstring>
+        <name>AARInvaderGameState</name>
+        <qualifiedname>AARInvaderGameState::AARInvaderGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="33" column="1" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="24" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1af1237504c8450367624e7006038da04a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::ActivateTrackUpgrade</definition>
+        <argsstring>(AARPlayerStateBase *RequestingPlayerState, int32 SlotIndex)</argsstring>
+        <name>ActivateTrackUpgrade</name>
+        <qualifiedname>AARInvaderGameState::ActivateTrackUpgrade</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>RequestingPlayerState</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>SlotIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="92" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1728" bodyend="1819"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a2fa567a00bac2530136f1e23561f5b8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::AwardKillCredit</definition>
+        <argsstring>(AARPlayerStateBase *KillerPlayerState, EARAffinityColor EnemyColor, float BaseSpiceValueOverride=-1.0f)</argsstring>
+        <name>AwardKillCredit</name>
+        <qualifiedname>AARInvaderGameState::AwardKillCredit</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>KillerPlayerState</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>EnemyColor</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>BaseSpiceValueOverride</declname>
+          <defval>-1.0f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="103" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1945" bodyend="1954"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a6bce4eef6c967d6374538be3e192f395" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::ClearOfferPresence</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState)</argsstring>
+        <name>ClearOfferPresence</name>
+        <qualifiedname>AARInvaderGameState::ClearOfferPresence</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="119" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1644" bodyend="1671"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a742f5507b1e5f1d9fa679f40d94db46a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::GetFullBlastDisplayIndex</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFullBlastDisplayIndex</name>
+        <qualifiedname>AARInvaderGameState::GetFullBlastDisplayIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="56" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="145" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a648d975aa08f33533ce2ea5bc6330030" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARInvaderFullBlastSessionState &amp;</type>
+        <definition>const FARInvaderFullBlastSessionState &amp; AARInvaderGameState::GetFullBlastSession</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFullBlastSession</name>
+        <qualifiedname>AARInvaderGameState::GetFullBlastSession</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="77" column="39" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="77" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a7d9a0b4516787ec0549509e639a64848" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierAcrossPlayers</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMaxSelectableTrackCursorTierAcrossPlayers</name>
+        <qualifiedname>AARInvaderGameState::GetMaxSelectableTrackCursorTierAcrossPlayers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="74" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="895" bodyend="910"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ac019bfee95d5d2571853236082277e15" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer</definition>
+        <argsstring>(const AARPlayerStateBase *PlayerState) const</argsstring>
+        <name>GetMaxSelectableTrackCursorTierForPlayer</name>
+        <qualifiedname>AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="69" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="841" bodyend="893"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a50eece9d4268c8687e46ffd2f5d9a04c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TArray&lt; FARInvaderOfferPresenceState &gt; &amp;</type>
+        <definition>const TArray&lt; FARInvaderOfferPresenceState &gt; &amp; AARInvaderGameState::GetOfferPresenceStates</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOfferPresenceStates</name>
+        <qualifiedname>AARInvaderGameState::GetOfferPresenceStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="80" column="14" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="80" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a285ae282a3828ca2949635eb788be061" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::GetSharedFullBlastTier</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSharedFullBlastTier</name>
+        <qualifiedname>AARInvaderGameState::GetSharedFullBlastTier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="59" column="7" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="59" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ad63d746cd830ed60e94fdd505fb0c622" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::GetSharedMaxSpice</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSharedMaxSpice</name>
+        <qualifiedname>AARInvaderGameState::GetSharedMaxSpice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="62" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="834" bodyend="839"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a1ef0b5d8ef941ac1fb66f679856a1d6d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::GetSharedTrackSlotDisplayStates</definition>
+        <argsstring>(TArray&lt; FARInvaderTrackSlotDisplayState &gt; &amp;OutSlots) const</argsstring>
+        <name>GetSharedTrackSlotDisplayStates</name>
+        <qualifiedname>AARInvaderGameState::GetSharedTrackSlotDisplayStates</qualifiedname>
+        <param>
+          <type>TArray&lt; FARInvaderTrackSlotDisplayState &gt; &amp;</type>
+          <declname>OutSlots</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="51" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="97" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1aeee09bedbda6f0b5a5616014608d67a2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TArray&lt; FARInvaderTrackSlotState &gt; &amp;</type>
+        <definition>const TArray&lt; FARInvaderTrackSlotState &gt; &amp; AARInvaderGameState::GetSharedTrackSlots</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSharedTrackSlots</name>
+        <qualifiedname>AARInvaderGameState::GetSharedTrackSlots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="38" column="14" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="38" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a29ec4be9929db195b2b2b324d9214db5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FText</type>
+        <definition>FText AARInvaderGameState::GetSharedTrackUpgradeDisplayNameAtSlot</definition>
+        <argsstring>(int32 SlotIndex) const</argsstring>
+        <name>GetSharedTrackUpgradeDisplayNameAtSlot</name>
+        <qualifiedname>AARInvaderGameState::GetSharedTrackUpgradeDisplayNameAtSlot</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>SlotIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="47" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="70" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a9838b36d41e77bde8e3bf5f4d943017d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::GetSharedTrackUpgradeDisplayNames</definition>
+        <argsstring>(TArray&lt; FText &gt; &amp;OutDisplayNames) const</argsstring>
+        <name>GetSharedTrackUpgradeDisplayNames</name>
+        <qualifiedname>AARInvaderGameState::GetSharedTrackUpgradeDisplayNames</qualifiedname>
+        <param>
+          <type>TArray&lt; FText &gt; &amp;</type>
+          <declname>OutDisplayNames</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="43" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="37" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a8d9aaf86926c194f79ec197abe418964" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UScriptStruct *</type>
+        <definition>UScriptStruct * AARInvaderGameState::GetStateStruct_Implementation</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetStateStruct_Implementation</name>
+        <qualifiedname>AARInvaderGameState::GetStateStruct_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="35" column="23" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="32" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a6db1244aa4f1b97f577b939b4829cf08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::NotifyEnemyKilled</definition>
+        <argsstring>(AAREnemyBase *Enemy, AActor *InstigatorActor)</argsstring>
+        <name>NotifyEnemyKilled</name>
+        <qualifiedname>AARInvaderGameState::NotifyEnemyKilled</qualifiedname>
+        <param>
+          <type>AAREnemyBase *</type>
+          <declname>Enemy</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>InstigatorActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="107" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2070" bodyend="2109"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1aa1514e1ca6a463233fef7ab576bbeab5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::RequestActivateFullBlast</definition>
+        <argsstring>(AARPlayerStateBase *RequestingPlayerState)</argsstring>
+        <name>RequestActivateFullBlast</name>
+        <qualifiedname>AARInvaderGameState::RequestActivateFullBlast</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>RequestingPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="83" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1242" bodyend="1422"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a86c905b15cf9c7050b9c1f88fb7031ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::ResolveFullBlastSelection</definition>
+        <argsstring>(AARPlayerStateBase *RequestingPlayerState, FGameplayTag SelectedUpgradeTag, int32 DesiredDestinationSlot)</argsstring>
+        <name>ResolveFullBlastSelection</name>
+        <qualifiedname>AARInvaderGameState::ResolveFullBlastSelection</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>RequestingPlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SelectedUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DesiredDestinationSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="86" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1424" bodyend="1527"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a6243283ee8700ba653ac3e40a2668d37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::ResolveFullBlastSkip</definition>
+        <argsstring>(AARPlayerStateBase *RequestingPlayerState)</argsstring>
+        <name>ResolveFullBlastSkip</name>
+        <qualifiedname>AARInvaderGameState::ResolveFullBlastSkip</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>RequestingPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="89" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1529" bodyend="1566"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ae2004335b984d6fed66d3b3bd496494c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::SetOfferPresence</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag HoveredUpgradeTag, int32 HoveredDestinationSlot, FVector2D CursorNormalized, bool bHasCursor)</argsstring>
+        <name>SetOfferPresence</name>
+        <qualifiedname>AARInvaderGameState::SetOfferPresence</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>HoveredUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>HoveredDestinationSlot</declname>
+        </param>
+        <param>
+          <type>FVector2D</type>
+          <declname>CursorNormalized</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bHasCursor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="111" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1568" bodyend="1642"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a08b91e86cc09d14ab226f3dcb18e781f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::StartSharingSpice</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState)</argsstring>
+        <name>StartSharingSpice</name>
+        <qualifiedname>AARInvaderGameState::StartSharingSpice</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="96" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1821" bodyend="1829"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a80638ad8363f8f1c3ef366f60a6dc8f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::StopSharingSpice</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState)</argsstring>
+        <name>StopSharingSpice</name>
+        <qualifiedname>AARInvaderGameState::StopSharingSpice</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="99" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1831" bodyend="1839"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARInvaderGameState_1a784169fa4d2aadf7f12e205be3d2360a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::AddPlayerState</definition>
+        <argsstring>(APlayerState *PlayerState) override</argsstring>
+        <name>AddPlayerState</name>
+        <qualifiedname>AARInvaderGameState::AddPlayerState</qualifiedname>
+        <param>
+          <type>APlayerState *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="146" column="14" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="773" bodyend="782"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1aa5304d899e6105f601e6bb8e91b2a3e0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARInvaderGameState::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="142" column="14" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="150" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a38711863ed27fd1be876758a0329bdb0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARInvaderGameState::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="143" column="14" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="164" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a9a59e2d77e23f05c4ad2c1b3703dadee" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARInvaderGameState::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="145" column="14" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="764" bodyend="771"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a9af4e23b7e6e6772500c6bf06b9d454f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleTrackedPlayersChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleTrackedPlayersChanged</name>
+        <qualifiedname>AARInvaderGameState::HandleTrackedPlayersChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="162" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1025" bodyend="1035"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ae72366e92d7a32d17f555ef143375a2b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::OnRep_FullBlastSession</definition>
+        <argsstring>(const FARInvaderFullBlastSessionState &amp;OldSession)</argsstring>
+        <name>OnRep_FullBlastSession</name>
+        <qualifiedname>AARInvaderGameState::OnRep_FullBlastSession</qualifiedname>
+        <param>
+          <type>const FARInvaderFullBlastSessionState &amp;</type>
+          <declname>OldSession</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="156" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="814" bodyend="822"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a971a4f6e7723d7d0057c7b98903804b8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::OnRep_OfferPresenceStates</definition>
+        <argsstring>(const TArray&lt; FARInvaderOfferPresenceState &gt; &amp;OldPresenceStates)</argsstring>
+        <name>OnRep_OfferPresenceStates</name>
+        <qualifiedname>AARInvaderGameState::OnRep_OfferPresenceStates</qualifiedname>
+        <param>
+          <type>const TArray&lt; FARInvaderOfferPresenceState &gt; &amp;</type>
+          <declname>OldPresenceStates</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="159" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="824" bodyend="827"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ae1098ddb9e3ef61a3ac790fd94f0c923" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::OnRep_SharedFullBlastTier</definition>
+        <argsstring>(int32 OldTier)</argsstring>
+        <name>OnRep_SharedFullBlastTier</name>
+        <qualifiedname>AARInvaderGameState::OnRep_SharedFullBlastTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="153" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="809" bodyend="812"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a5f7c33e66bf56555f3ebe11254c5ac0b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::OnRep_SharedTrackSlots</definition>
+        <argsstring>(const TArray&lt; FARInvaderTrackSlotState &gt; &amp;OldSlots)</argsstring>
+        <name>OnRep_SharedTrackSlots</name>
+        <qualifiedname>AARInvaderGameState::OnRep_SharedTrackSlots</qualifiedname>
+        <param>
+          <type>const TArray&lt; FARInvaderTrackSlotState &gt; &amp;</type>
+          <declname>OldSlots</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="150" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="804" bodyend="807"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a6dfa0049547340cb09279597771111a2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::RemovePlayerState</definition>
+        <argsstring>(APlayerState *PlayerState) override</argsstring>
+        <name>RemovePlayerState</name>
+        <qualifiedname>AARInvaderGameState::RemovePlayerState</qualifiedname>
+        <param>
+          <type>APlayerState *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="147" column="14" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="784" bodyend="802"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a4c34b8da346d45791a165053cfb3475a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARInvaderGameState::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="144" column="14" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="744" bodyend="762"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARInvaderGameState_1afda97496096002bb51d9eac8216ec215" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ApplyFullBlastGameplayCue</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyFullBlastGameplayCue</name>
+        <qualifiedname>AARInvaderGameState::ApplyFullBlastGameplayCue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="204" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2642" bodyend="2658"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1afe96356d27e021e4146ebd98f496649f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::ApplyUpgradeActivation</definition>
+        <argsstring>(AARPlayerStateBase *RequestingPlayerState, const FARInvaderUpgradeDefRow &amp;UpgradeDef)</argsstring>
+        <name>ApplyUpgradeActivation</name>
+        <qualifiedname>AARInvaderGameState::ApplyUpgradeActivation</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>RequestingPlayerState</declname>
+        </param>
+        <param>
+          <type>const FARInvaderUpgradeDefRow &amp;</type>
+          <declname>UpgradeDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="217" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1703" bodyend="1726"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1abcc132f62a5ee0703f4de381e69c14ef" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::AwardKillCreditInternal</definition>
+        <argsstring>(AARPlayerStateBase *KillerPlayerState, EARAffinityColor EnemyColor, float BaseSpiceValueOverride, FVector EffectOrigin, bool bHasEffectOrigin, FGameplayTag EnemyIdentifierTag)</argsstring>
+        <name>AwardKillCreditInternal</name>
+        <qualifiedname>AARInvaderGameState::AwardKillCreditInternal</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>KillerPlayerState</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>EnemyColor</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>BaseSpiceValueOverride</declname>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>EffectOrigin</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bHasEffectOrigin</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EnemyIdentifierTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="218" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1956" bodyend="2068"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a46b4f36f37df54da71731fc994038bf5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::BuildDropSpawnPlan</definition>
+        <argsstring>(EARInvaderDropType DropType, int32 TotalAmount, TArray&lt; FDropSpawnPlanEntry &gt; &amp;OutPlan) const</argsstring>
+        <name>BuildDropSpawnPlan</name>
+        <qualifiedname>AARInvaderGameState::BuildDropSpawnPlan</qualifiedname>
+        <param>
+          <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+          <declname>DropType</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>TotalAmount</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FDropSpawnPlanEntry &gt; &amp;</type>
+          <declname>OutPlan</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="229" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2366" bodyend="2530"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ae83c548457f7ea0e2e1082221fee44d6" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::BuildTeamActivationState</definition>
+        <argsstring>(FGameplayTagContainer &amp;OutTeamActivatedTags, TMap&lt; FGameplayTag, int32 &gt; &amp;OutTeamActivationCounts) const</argsstring>
+        <name>BuildTeamActivationState</name>
+        <qualifiedname>AARInvaderGameState::BuildTeamActivationState</qualifiedname>
+        <param>
+          <type>FGameplayTagContainer &amp;</type>
+          <declname>OutTeamActivatedTags</declname>
+        </param>
+        <param>
+          <type>TMap&lt; FGameplayTag, int32 &gt; &amp;</type>
+          <declname>OutTeamActivationCounts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="215" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1110" bodyend="1135"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a210cfe04b51469796241e46c23a9153c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::BuildUpgradeDefinitionMap</definition>
+        <argsstring>(TMap&lt; FGameplayTag, FARInvaderUpgradeDefRow &gt; &amp;OutDefinitions) const</argsstring>
+        <name>BuildUpgradeDefinitionMap</name>
+        <qualifiedname>AARInvaderGameState::BuildUpgradeDefinitionMap</qualifiedname>
+        <param>
+          <type>TMap&lt; FGameplayTag, FARInvaderUpgradeDefRow &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="206" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1053" bodyend="1108"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a076161202173123ec145ffa9ff516d0d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::CanPlayerActivateUpgrade</definition>
+        <argsstring>(const FARInvaderUpgradeDefRow &amp;UpgradeDef, AARPlayerStateBase *RequestingPlayerState, const FGameplayTagContainer &amp;TeamActivatedTags, const TMap&lt; FGameplayTag, int32 &gt; &amp;TeamActivationCounts) const</argsstring>
+        <name>CanPlayerActivateUpgrade</name>
+        <qualifiedname>AARInvaderGameState::CanPlayerActivateUpgrade</qualifiedname>
+        <param>
+          <type>const FARInvaderUpgradeDefRow &amp;</type>
+          <declname>UpgradeDef</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>RequestingPlayerState</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>TeamActivatedTags</declname>
+        </param>
+        <param>
+          <type>const TMap&lt; FGameplayTag, int32 &gt; &amp;</type>
+          <declname>TeamActivationCounts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="216" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1673" bodyend="1701"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ab68ff0d381e2aa13e00ce7eed4344f0d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ClearEnemyProjectilesByTag</definition>
+        <argsstring>()</argsstring>
+        <name>ClearEnemyProjectilesByTag</name>
+        <qualifiedname>AARInvaderGameState::ClearEnemyProjectilesByTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="205" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2660" bodyend="2679"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a78a5204b113494481bab82d305bc2cac" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ClearWhileSlottedEffects</definition>
+        <argsstring>()</argsstring>
+        <name>ClearWhileSlottedEffects</name>
+        <qualifiedname>AARInvaderGameState::ClearWhileSlottedEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="201" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2747" bodyend="2764"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a26ad03cba2b065db3c5246b61500c90b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ClearWhileSlottedEffectsForPlayer</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState)</argsstring>
+        <name>ClearWhileSlottedEffectsForPlayer</name>
+        <qualifiedname>AARInvaderGameState::ClearWhileSlottedEffectsForPlayer</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="202" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2766" bodyend="2787"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a3dd798ac17def7a100f80e9e7264d5f2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::EnsureTrackSlotCount</definition>
+        <argsstring>(int32 RequiredSlots)</argsstring>
+        <name>EnsureTrackSlotCount</name>
+        <qualifiedname>AARInvaderGameState::EnsureTrackSlotCount</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>RequiredSlots</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="193" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="951" bodyend="962"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a9bf7d7ccd15b49727e670f57cce3aaf4" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const UARInvaderSpicyTrackSettings *</type>
+        <definition>const UARInvaderSpicyTrackSettings * AARInvaderGameState::GetSpicyTrackSettings</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSpicyTrackSettings</name>
+        <qualifiedname>AARInvaderGameState::GetSpicyTrackSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="191" column="36" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="829" bodyend="832"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a2ef45495e52ef79a117950ff2fbd9b33" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::GetTeamActivationCount</definition>
+        <argsstring>(const TMap&lt; FGameplayTag, int32 &gt; &amp;TeamActivationCounts, const FGameplayTag &amp;UpgradeTag) const</argsstring>
+        <name>GetTeamActivationCount</name>
+        <qualifiedname>AARInvaderGameState::GetTeamActivationCount</qualifiedname>
+        <param>
+          <type>const TMap&lt; FGameplayTag, int32 &gt; &amp;</type>
+          <declname>TeamActivationCounts</declname>
+        </param>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UpgradeTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="214" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1137" bodyend="1145"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a411f51df23de3165f2d2fccf0ff33382" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleAddMeat</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleAddMeat</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleAddMeat</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="183" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="510" bodyend="581"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a5ecb55f18f44d1df1177acd0cb7aac9a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleAddMoney</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleAddMoney</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleAddMoney</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="182" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="494" bodyend="508"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1aa2a02e865b633c302884b0a863abe5b5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleAddScrap</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleAddScrap</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleAddScrap</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="181" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="478" bodyend="492"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a029b05a6c3351e9cef9f4d9a5ad9418a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleAddSpice</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleAddSpice</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleAddSpice</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="180" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="453" bodyend="476"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a2898e5f1a7afcba2255f3778d9c7d06a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleInjectUpgrade</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleInjectUpgrade</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleInjectUpgrade</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="186" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="622" bodyend="742"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a1a9896cafd72de223975269745403f16" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleSetCursor</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleSetCursor</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleSetCursor</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="185" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="598" bodyend="620"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a2fd20f63e27125d08f67719f92a92934" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleSetDropEarthGravity</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleSetDropEarthGravity</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleSetDropEarthGravity</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="184" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="583" bodyend="596"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a8f1fdf429f15c71478953a2981aca25c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::HandleConsoleSetSpice</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *World)</argsstring>
+        <name>HandleConsoleSetSpice</name>
+        <qualifiedname>AARInvaderGameState::HandleConsoleSetSpice</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="179" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="429" bodyend="451"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a27f607be11a1d3ae9b0a7d7fa1069a4a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::InitializeSpicyTrackState</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeSpicyTrackState</name>
+        <qualifiedname>AARInvaderGameState::InitializeSpicyTrackState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="192" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="912" bodyend="949"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a2c3b82eca760fce305e080f686fcf26a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::IsUpgradeEligibleForOffer</definition>
+        <argsstring>(const FARInvaderUpgradeDefRow &amp;UpgradeDef, int32 ActivationTier, const FGameplayTagContainer &amp;TeamActivatedTags, const TMap&lt; FGameplayTag, int32 &gt; &amp;TeamActivationCounts, const FGameplayTagContainer &amp;SlottedUpgradeTags) const</argsstring>
+        <name>IsUpgradeEligibleForOffer</name>
+        <qualifiedname>AARInvaderGameState::IsUpgradeEligibleForOffer</qualifiedname>
+        <param>
+          <type>const FARInvaderUpgradeDefRow &amp;</type>
+          <declname>UpgradeDef</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>ActivationTier</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>TeamActivatedTags</declname>
+        </param>
+        <param>
+          <type>const TMap&lt; FGameplayTag, int32 &gt; &amp;</type>
+          <declname>TeamActivationCounts</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>SlottedUpgradeTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="207" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1147" bodyend="1199"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a502bf6ad8078873629e088bd11c6a773" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::MulticastNotifyKillCreditFxEvent</definition>
+        <argsstring>(const FARInvaderKillCreditFxEvent &amp;EventData)</argsstring>
+        <name>MulticastNotifyKillCreditFxEvent</name>
+        <qualifiedname>AARInvaderGameState::MulticastNotifyKillCreditFxEvent</qualifiedname>
+        <param>
+          <type>const FARInvaderKillCreditFxEvent &amp;</type>
+          <declname>EventData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="236" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a01d3fdaf3ad550904e2a75b0bdfeb3b0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::NormalizeTrackSlotIndices</definition>
+        <argsstring>()</argsstring>
+        <name>NormalizeTrackSlotIndices</name>
+        <qualifiedname>AARInvaderGameState::NormalizeTrackSlotIndices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="194" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="964" bodyend="970"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1aeed970ab546181d870ff06719f73861d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ReconcilePlayerCursorSelection</definition>
+        <argsstring>()</argsstring>
+        <name>ReconcilePlayerCursorSelection</name>
+        <qualifiedname>AARInvaderGameState::ReconcilePlayerCursorSelection</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="189" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1037" bodyend="1051"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1acbff15197c12cc6379e2b004ea3b7b3e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::RefreshWhileSlottedEffects</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshWhileSlottedEffects</name>
+        <qualifiedname>AARInvaderGameState::RefreshWhileSlottedEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="200" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2686" bodyend="2745"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a9ba160aa768569e537d39689f7bdeb32" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::RegisterDebugConsoleCommands</definition>
+        <argsstring>()</argsstring>
+        <name>RegisterDebugConsoleCommands</name>
+        <qualifiedname>AARInvaderGameState::RegisterDebugConsoleCommands</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="177" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="173" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ad54eefb23dfed4aa0a072a0460455365" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ResetAllPlayerSpiceMeters</definition>
+        <argsstring>()</argsstring>
+        <name>ResetAllPlayerSpiceMeters</name>
+        <qualifiedname>AARInvaderGameState::ResetAllPlayerSpiceMeters</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="197" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1009" bodyend="1023"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a1f2b45fa588de0af2a617d63eafdc18e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ResolveDropStackDefinitions</definition>
+        <argsstring>(EARInvaderDropType DropType, TArray&lt; FResolvedDropStackEntry &gt; &amp;OutDefinitions) const</argsstring>
+        <name>ResolveDropStackDefinitions</name>
+        <qualifiedname>AARInvaderGameState::ResolveDropStackDefinitions</qualifiedname>
+        <param>
+          <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+          <declname>DropType</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FResolvedDropStackEntry &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="228" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2296" bodyend="2364"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a0adc644dda6d7696738d2d906bb2ee38" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARInvaderGameState::ResolveEnemyBaseSpiceValue</definition>
+        <argsstring>(const AAREnemyBase *Enemy) const</argsstring>
+        <name>ResolveEnemyBaseSpiceValue</name>
+        <qualifiedname>AARInvaderGameState::ResolveEnemyBaseSpiceValue</qualifiedname>
+        <param>
+          <type>const AAREnemyBase *</type>
+          <declname>Enemy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="230" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2532" bodyend="2576"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ab909b0c6616b2a4d52081876eb773913" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::ResolveFullBlastCommonPostChoice</definition>
+        <argsstring>(bool bSkipped, EARPlayerSlot RequestingSlot, int32 ActivationTier)</argsstring>
+        <name>ResolveFullBlastCommonPostChoice</name>
+        <qualifiedname>AARInvaderGameState::ResolveFullBlastCommonPostChoice</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bSkipped</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>RequestingSlot</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>ActivationTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="203" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2635" bodyend="2640"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ab4d64268535c333df1fe20955e61f007" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARInvaderGameState::ResolveKillerDropMultiplier</definition>
+        <argsstring>(const AARPlayerStateBase *KillerPlayerState, EARInvaderDropType DropType) const</argsstring>
+        <name>ResolveKillerDropMultiplier</name>
+        <qualifiedname>AARInvaderGameState::ResolveKillerDropMultiplier</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>KillerPlayerState</declname>
+        </param>
+        <param>
+          <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+          <declname>DropType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="227" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2270" bodyend="2294"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ad51a46f93c9123323cc0a4e821fd6ffa" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARInvaderGameState::ResolvePlayerStateFromDebugToken</definition>
+        <argsstring>(const FString &amp;Token) const</argsstring>
+        <name>ResolvePlayerStateFromDebugToken</name>
+        <qualifiedname>AARInvaderGameState::ResolvePlayerStateFromDebugToken</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Token</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="187" column="20" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="277" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ab1deca81597b0c1703af0ad1b328ecff" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARInvaderGameState::ResolvePlayerStateFromInstigatorActor</definition>
+        <argsstring>(AActor *InstigatorActor) const</argsstring>
+        <name>ResolvePlayerStateFromInstigatorActor</name>
+        <qualifiedname>AARInvaderGameState::ResolvePlayerStateFromInstigatorActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InstigatorActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="231" column="20" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2578" bodyend="2619"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a09035539772c7ee6d9d27e88e655d0bd" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameState::ResolveUpgradeTagForDebugInject</definition>
+        <argsstring>(const FString &amp;TagToken, FGameplayTag &amp;OutUpgradeTag) const</argsstring>
+        <name>ResolveUpgradeTagForDebugInject</name>
+        <qualifiedname>AARInvaderGameState::ResolveUpgradeTagForDebugInject</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>TagToken</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutUpgradeTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="188" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="311" bodyend="427"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a639f57d4fb99d8b96da6e2ab15e0f569" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARInvaderGameState::RollDropAmountWithVariance</definition>
+        <argsstring>(float BaseDropAmount, EARInvaderDropType DropType) const</argsstring>
+        <name>RollDropAmountWithVariance</name>
+        <qualifiedname>AARInvaderGameState::RollDropAmountWithVariance</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>BaseDropAmount</declname>
+        </param>
+        <param>
+          <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+          <declname>DropType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="226" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2219" bodyend="2268"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a8f95f8cedef02715e09f3e55ab96619c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::RollOfferLevelFromTier</definition>
+        <argsstring>(int32 BaseTier)</argsstring>
+        <name>RollOfferLevelFromTier</name>
+        <qualifiedname>AARInvaderGameState::RollOfferLevelFromTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>BaseTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="213" column="7" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1201" bodyend="1240"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ad4988ebb974763f990a8aa8eace5374f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::SetDropEarthGravityEnabledForAll</definition>
+        <argsstring>(bool bEnabled)</argsstring>
+        <name>SetDropEarthGravityEnabledForAll</name>
+        <qualifiedname>AARInvaderGameState::SetDropEarthGravityEnabledForAll</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnabled</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="233" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2200" bodyend="2217"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a1285ebf81d6f7ad098e63a93d7c2c05c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::SyncSharedMaxSpiceToPlayers</definition>
+        <argsstring>()</argsstring>
+        <name>SyncSharedMaxSpiceToPlayers</name>
+        <qualifiedname>AARInvaderGameState::SyncSharedMaxSpiceToPlayers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="196" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="985" bodyend="1007"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1ac47745ca7712c0d267e81dca69969ac2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::TickComboTimeouts</definition>
+        <argsstring>(float ServerTimeSeconds)</argsstring>
+        <name>TickComboTimeouts</name>
+        <qualifiedname>AARInvaderGameState::TickComboTimeouts</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>ServerTimeSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="199" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1911" bodyend="1943"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a09f56269eb39673a8920b36f5f178b8e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::TickShareTransfers</definition>
+        <argsstring>(float DeltaSeconds)</argsstring>
+        <name>TickShareTransfers</name>
+        <qualifiedname>AARInvaderGameState::TickShareTransfers</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="198" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="1841" bodyend="1909"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a0271b6f22293faa68f1e8d9609dbca99" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::TrimTrackToTierLimit</definition>
+        <argsstring>()</argsstring>
+        <name>TrimTrackToTierLimit</name>
+        <qualifiedname>AARInvaderGameState::TrimTrackToTierLimit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="195" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="972" bodyend="983"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1a6d3e5ab4271b5fa6700431b0ce6a243f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::TrySpawnEnemyDrop</definition>
+        <argsstring>(AAREnemyBase *Enemy, AARPlayerStateBase *KillerPlayerState)</argsstring>
+        <name>TrySpawnEnemyDrop</name>
+        <qualifiedname>AARInvaderGameState::TrySpawnEnemyDrop</qualifiedname>
+        <param>
+          <type>AAREnemyBase *</type>
+          <declname>Enemy</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>KillerPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="225" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2111" bodyend="2198"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameState_1adf2b7f2baf1da20419a984fd2638252b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameState::UnregisterDebugConsoleCommands</definition>
+        <argsstring>()</argsstring>
+        <name>UnregisterDebugConsoleCommands</name>
+        <qualifiedname>AARInvaderGameState::UnregisterDebugConsoleCommands</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="178" column="6" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="232" bodyend="275"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARInvaderGameState_1a78f6624bcadd18fbe7e7fc029fc4d0e2" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARInvaderGameState::ToPlayerColor</definition>
+        <argsstring>(EARAffinityColor EnemyColor)</argsstring>
+        <name>ToPlayerColor</name>
+        <qualifiedname>AARInvaderGameState::ToPlayerColor</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>EnemyColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="232" column="25" bodyfile="AlienRamen/Private/ARInvaderGameState.cpp" bodystart="2621" bodyend="2633"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameStateBase</label>
+        <link refid="classAARGameStateBase"/>
+      </node>
+      <node id="1">
+        <label>AARInvaderGameState</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARGameStateBase</label>
+        <link refid="classAARGameStateBase"/>
+      </node>
+      <node id="1">
+        <label>AARInvaderGameState</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARInvaderGameState.h" line="28" column="1" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="29" bodyend="267"/>
+    <listofallmembers>
+      <member refid="classAARGameStateBase_1a075d2e7860ca9b6d9e41803014a5f072" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AARGameStateBase</name></member>
+      <member refid="classAARInvaderGameState_1a6d428e4fab439cb0703551770745ea24" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AARInvaderGameState</name></member>
+      <member refid="classAARInvaderGameState_1af1237504c8450367624e7006038da04a" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ActivateTrackUpgrade</name></member>
+      <member refid="classAARGameStateBase_1ac3c595bf88ef3279899a61c59f340f59" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a4f9eeac63add5bb963d55fef0df21172" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ActiveFactionTag</name></member>
+      <member refid="classAARInvaderGameState_1abe31c4f8a3b56f7c4cd50fd38651c1e6" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ActiveSpiceSharers</name></member>
+      <member refid="classAARInvaderGameState_1a784169fa4d2aadf7f12e205be3d2360a" prot="protected" virt="virtual"><scope>AARInvaderGameState</scope><name>AddPlayerState</name></member>
+      <member refid="classAARGameStateBase_1a3142310d4651cf45d640e2638cd912a1" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AddUnlockTag</name></member>
+      <member refid="classAARInvaderGameState_1afda97496096002bb51d9eac8216ec215" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ApplyFullBlastGameplayCue</name></member>
+      <member refid="classIStructSerializable_1adcaa30117468380311076dd5b9eed468" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ApplyStateFromStruct</name></member>
+      <member refid="classAARGameStateBase_1aa471347f77c963a09ae318a143c12732" prot="public" virt="virtual"><scope>AARInvaderGameState</scope><name>ApplyStateFromStruct_Implementation</name></member>
+      <member refid="classAARInvaderGameState_1afe96356d27e021e4146ebd98f496649f" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ApplyUpgradeActivation</name></member>
+      <member refid="classAARGameStateBase_1a2e8366ad493f04834aa69d4cb813ce8f" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AreAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1a458fbf3efa089eac2f3adf7d8feead65" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AreAllPlayersTravelReady</name></member>
+      <member refid="classAARInvaderGameState_1a2fa567a00bac2530136f1e23561f5b8b" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AwardKillCredit</name></member>
+      <member refid="classAARInvaderGameState_1abcc132f62a5ee0703f4de381e69c14ef" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>AwardKillCreditInternal</name></member>
+      <member refid="classAARGameStateBase_1a1a57b65251f946f165730b72cf890e2d" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1a74f19aea0886c5a68ab330c6f3d74151" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1aa1c3182de242762baca56e42f7285c29" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bAnyExternalPauseActive</name></member>
+      <member refid="classAARInvaderGameState_1a30d4495eabdd66c7772b097c15ee0bfc" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bDebugDropEarthGravityEnabled</name></member>
+      <member refid="classAARGameStateBase_1a4300971b1bde8d6bef07cdf599349fd9" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bEffectivePauseStateActive</name></member>
+      <member refid="classAARInvaderGameState_1aa5304d899e6105f601e6bb8e91b2a3e0" prot="protected" virt="virtual"><scope>AARInvaderGameState</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameStateBase_1a04e7aff20c49a14df781d86a73af317b" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>BindPlayerStateSignals</name></member>
+      <member refid="classAARGameStateBase_1a3fee2dbe665c8f711797a09f629f7bbd" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a79936aeadbad02a32253599cef0a41cc" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>bShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARInvaderGameState_1a46b4f36f37df54da71731fc994038bf5" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>BuildDropSpawnPlan</name></member>
+      <member refid="classAARInvaderGameState_1ae83c548457f7ea0e2e1082221fee44d6" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>BuildTeamActivationState</name></member>
+      <member refid="classAARInvaderGameState_1a210cfe04b51469796241e46c23a9153c" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>BuildUpgradeDefinitionMap</name></member>
+      <member refid="classAARInvaderGameState_1a076161202173123ec145ffa9ff516d0d" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CanPlayerActivateUpgrade</name></member>
+      <member refid="classAARGameStateBase_1a28f70d724354706d31320af517296bb0" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ClassStateStruct</name></member>
+      <member refid="classAARInvaderGameState_1ab68ff0d381e2aa13e00ce7eed4344f0d" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ClearEnemyProjectilesByTag</name></member>
+      <member refid="classAARInvaderGameState_1a6bce4eef6c967d6374538be3e192f395" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ClearOfferPresence</name></member>
+      <member refid="classAARGameStateBase_1abc3bda9fa177fc0f4d66d6ef67b7fe42" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ClearPauseVoteForSlot</name></member>
+      <member refid="classAARInvaderGameState_1a78a5204b113494481bab82d305bc2cac" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ClearWhileSlottedEffects</name></member>
+      <member refid="classAARInvaderGameState_1a26ad03cba2b065db3c5246b61500c90b" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ClearWhileSlottedEffectsForPlayer</name></member>
+      <member refid="classAARInvaderGameState_1a44dd83407253886298b137f8070c6025" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugAddMeat</name></member>
+      <member refid="classAARInvaderGameState_1ac842cb0a2ca8a2703247a5a4d8238516" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugAddMoney</name></member>
+      <member refid="classAARInvaderGameState_1a75bc46b1a846aa869ac8061889a4ea57" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugAddScrap</name></member>
+      <member refid="classAARInvaderGameState_1aa28578c2dcfcbb96759b4b0f1ddc24d3" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugAddSpice</name></member>
+      <member refid="classAARInvaderGameState_1a024ed88407175a06257ce88cf6d87b2a" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugInjectUpgrade</name></member>
+      <member refid="classAARInvaderGameState_1a839239e0aa783e36aa2dcc7870ce46fc" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugSetCursor</name></member>
+      <member refid="classAARInvaderGameState_1a8e84292c5b4c8aacc763003c5c199aaf" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugSetDropEarthGravity</name></member>
+      <member refid="classAARInvaderGameState_1a9c72eba60932a942bf71355b196f6ea6" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>CmdDebugSetSpice</name></member>
+      <member refid="classAARGameStateBase_1a056e759fee01d8b35415552005668a92" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ComputeAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1ae2a199b73553ffac05000574b98f49ad" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ComputeAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1ae47905652463c24d916e92ab7fb74247" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>Cycles</name></member>
+      <member refid="classAARInvaderGameState_1a38711863ed27fd1be876758a0329bdb0" prot="protected" virt="virtual"><scope>AARInvaderGameState</scope><name>EndPlay</name></member>
+      <member refid="classAARInvaderGameState_1a3dd798ac17def7a100f80e9e7264d5f2" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>EnsureTrackSlotCount</name></member>
+      <member refid="classAARGameStateBase_1aadd232c74253c849299fab21b9f04ece" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ExternalPauseReasonMask</name></member>
+      <member refid="classIStructSerializable_1afad3e17bff2bf8fec0d10189ec899165" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ExtractStateToStruct</name></member>
+      <member refid="classIStructSerializable_1a15418826f08d93f52741bb6c57dc7ae7" prot="public" virt="virtual"><scope>AARInvaderGameState</scope><name>ExtractStateToStruct_Implementation</name></member>
+      <member refid="classAARInvaderGameState_1a114cc588d0bcbf25f13c1af2dae871ba" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>FullBlastSession</name></member>
+      <member refid="classAARGameStateBase_1a009a9eedff64d4f8021bd0ae421f65ca" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a21a45a638e09f757ba92595a6b26469d" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1a46a0e3f68240d1dec873068410a93363" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetCycles</name></member>
+      <member refid="classAARInvaderGameState_1a742f5507b1e5f1d9fa679f40d94db46a" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetFullBlastDisplayIndex</name></member>
+      <member refid="classAARInvaderGameState_1a648d975aa08f33533ce2ea5bc6330030" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetFullBlastSession</name></member>
+      <member refid="classAARInvaderGameState_1a9a59e2d77e23f05c4ad2c1b3703dadee" prot="protected" virt="virtual"><scope>AARInvaderGameState</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARInvaderGameState_1a7d9a0b4516787ec0549509e639a64848" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetMaxSelectableTrackCursorTierAcrossPlayers</name></member>
+      <member refid="classAARInvaderGameState_1ac019bfee95d5d2571853236082277e15" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetMaxSelectableTrackCursorTierForPlayer</name></member>
+      <member refid="classAARGameStateBase_1a027a2c55154ed94ecd2c2db2d9554895" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetMeat</name></member>
+      <member refid="classAARGameStateBase_1ae0847d14761ecb8e091930796bf5e501" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetMoney</name></member>
+      <member refid="classAARInvaderGameState_1a50eece9d4268c8687e46ffd2f5d9a04c" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetOfferPresenceStates</name></member>
+      <member refid="classAARGameStateBase_1a2de9ad63ecf4a0ad956143b7d2e9565e" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetOtherPlayerStateFromController</name></member>
+      <member refid="classAARGameStateBase_1a7d4c230b489a5a38905fb1d25238d34c" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetOtherPlayerStateFromPawn</name></member>
+      <member refid="classAARGameStateBase_1ac77455e773703e215fe8bd97fda9dbe7" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetOtherPlayerStateFromPlayerState</name></member>
+      <member refid="classAARGameStateBase_1a438b115bc2318ca87350cc1e8b825024" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetPlayerBySlot</name></member>
+      <member refid="classAARGameStateBase_1a4c0dea6eb9d7ce975abcca6075728a2f" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetPlayerStates</name></member>
+      <member refid="classAARGameStateBase_1aece8a828e66197d67d2ec627df01e84e" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetScrap</name></member>
+      <member refid="classAARInvaderGameState_1a285ae282a3828ca2949635eb788be061" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSharedFullBlastTier</name></member>
+      <member refid="classAARInvaderGameState_1ad63d746cd830ed60e94fdd505fb0c622" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSharedMaxSpice</name></member>
+      <member refid="classAARInvaderGameState_1a1ef0b5d8ef941ac1fb66f679856a1d6d" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSharedTrackSlotDisplayStates</name></member>
+      <member refid="classAARInvaderGameState_1aeee09bedbda6f0b5a5616014608d67a2" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSharedTrackSlots</name></member>
+      <member refid="classAARInvaderGameState_1a29ec4be9929db195b2b2b324d9214db5" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSharedTrackUpgradeDisplayNameAtSlot</name></member>
+      <member refid="classAARInvaderGameState_1a9838b36d41e77bde8e3bf5f4d943017d" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSharedTrackUpgradeDisplayNames</name></member>
+      <member refid="classAARInvaderGameState_1a9bf7d7ccd15b49727e670f57cce3aaf4" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetSpicyTrackSettings</name></member>
+      <member refid="classIStructSerializable_1a9075619a58d98d67f61949d1a93d62c7" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetStateStruct</name></member>
+      <member refid="classAARInvaderGameState_1a8d9aaf86926c194f79ec197abe418964" prot="public" virt="virtual"><scope>AARInvaderGameState</scope><name>GetStateStruct_Implementation</name></member>
+      <member refid="classAARInvaderGameState_1a2ef45495e52ef79a117950ff2fbd9b33" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetTeamActivationCount</name></member>
+      <member refid="classAARGameStateBase_1a9fbab75cc0a111c4dc7deb8d146d3e2e" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>GetUnlocks</name></member>
+      <member refid="classAARInvaderGameState_1a411f51df23de3165f2d2fccf0ff33382" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleAddMeat</name></member>
+      <member refid="classAARInvaderGameState_1a5ecb55f18f44d1df1177acd0cb7aac9a" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleAddMoney</name></member>
+      <member refid="classAARInvaderGameState_1aa2a02e865b633c302884b0a863abe5b5" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleAddScrap</name></member>
+      <member refid="classAARInvaderGameState_1a029b05a6c3351e9cef9f4d9a5ad9418a" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleAddSpice</name></member>
+      <member refid="classAARInvaderGameState_1a2898e5f1a7afcba2255f3778d9c7d06a" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleInjectUpgrade</name></member>
+      <member refid="classAARInvaderGameState_1a1a9896cafd72de223975269745403f16" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleSetCursor</name></member>
+      <member refid="classAARInvaderGameState_1a2fd20f63e27125d08f67719f92a92934" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleSetDropEarthGravity</name></member>
+      <member refid="classAARInvaderGameState_1a8f1fdf429f15c71478953a2981aca25c" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleConsoleSetSpice</name></member>
+      <member refid="classAARGameStateBase_1a601342795e4752fe8f9fbc8c6770ffb6" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandlePlayerCharacterPickedChanged</name></member>
+      <member refid="classAARGameStateBase_1a3609bf620cf5224e49a2ac3f227b9581" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandlePlayerReadyStatusChanged</name></member>
+      <member refid="classAARGameStateBase_1a991f5e8d139ae9fb17ffe87f50d44540" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandlePlayerSlotChanged</name></member>
+      <member refid="classAARInvaderGameState_1a9af4e23b7e6e6772500c6bf06b9d454f" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HandleTrackedPlayersChanged</name></member>
+      <member refid="classAARGameStateBase_1ac4bd1069b17bcbd65178549ebc7faf11" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>HasUnlockTag</name></member>
+      <member refid="classAARInvaderGameState_1a27f607be11a1d3ae9b0a7d7fa1069a4a" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>InitializeSpicyTrackState</name></member>
+      <member refid="classAARGameStateBase_1a5abd01e68411bc0bfc2e6c64e40b3e1f" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>IsAnyExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1a6ab73dce18095e5b8cafb33781827d80" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>IsEffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1ada5db26e0b39316aade1df26cc27faa3" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>IsExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1a6fbd01da8838c0c32d357baec15a2797" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>IsManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a7d1e86340e1edaefb7a2463be876ee6f" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>IsPlayerPauseMenuVoteActive</name></member>
+      <member refid="classAARInvaderGameState_1a2c3b82eca760fce305e080f686fcf26a" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>IsUpgradeEligibleForOffer</name></member>
+      <member refid="classAARGameStateBase_1a7a349542d919082ced3a125c761bebca" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>Meat</name></member>
+      <member refid="classAARGameStateBase_1a442dc8416751eadecf72558eff782052" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>Money</name></member>
+      <member refid="classAARInvaderGameState_1a502bf6ad8078873629e088bd11c6a773" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>MulticastNotifyKillCreditFxEvent</name></member>
+      <member refid="classAARInvaderGameState_1a01d3fdaf3ad550904e2a75b0bdfeb3b0" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>NormalizeTrackSlotIndices</name></member>
+      <member refid="classAARInvaderGameState_1a6db1244aa4f1b97f577b939b4829cf08" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>NotifyEnemyKilled</name></member>
+      <member refid="classAARGameStateBase_1a7a8adfb6bad0029a5fd0eabf21346b41" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>NotifyHydratedFromSave</name></member>
+      <member refid="classAARInvaderGameState_1a414b5bf7c2486325ce67d2af2fe6acb9" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OfferPresenceStates</name></member>
+      <member refid="classAARInvaderGameState_1abd092660b6b4589057b566b83801f528" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OfferRng</name></member>
+      <member refid="classAARGameStateBase_1a30e6144386c6fc123215292b3a211bba" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnActiveFactionEffectTagsChanged</name></member>
+      <member refid="classAARGameStateBase_1ad205f3969127f8900be5ee0358d674f4" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnActiveFactionTagChanged</name></member>
+      <member refid="classAARGameStateBase_1ae46a1fa8e2d0dbcfdd8b192841c5111b" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnAllPlayersPausedByMenuChanged</name></member>
+      <member refid="classAARGameStateBase_1a5110fd5ba97187778b7488e2b0f54330" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnAllPlayersTravelReadyChanged</name></member>
+      <member refid="classAARGameStateBase_1a731990345f051ccd300635efa1d32035" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnAnyExternalPauseActiveChanged</name></member>
+      <member refid="classAARGameStateBase_1a4851ad372c6441d3e6f4ec8f10c3f296" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnCyclesChanged</name></member>
+      <member refid="classAARGameStateBase_1a2f99856ac736a6d806fe7d6dec117534" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnEffectivePauseStateChanged</name></member>
+      <member refid="classAARGameStateBase_1a2fcd40ead3c9ba87e2edd91e4523bab0" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnHydratedFromSave</name></member>
+      <member refid="classAARInvaderGameState_1a967f6887493fe6e0c8a61133d5474dd4" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnInvaderFullBlastResolved</name></member>
+      <member refid="classAARInvaderGameState_1aeebbd862148d585c681bf04913d0b28d" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnInvaderFullBlastSessionChanged</name></member>
+      <member refid="classAARInvaderGameState_1acd19856a42625e05fa743d7d411b9302" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnInvaderKillCreditAwarded</name></member>
+      <member refid="classAARInvaderGameState_1ae56e593f4fb7b9cff7d867f9dcd28796" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnInvaderKillCreditFxEvent</name></member>
+      <member refid="classAARInvaderGameState_1ae8a69dede0bef0e0e970672ec2794e84" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnInvaderOfferPresenceChanged</name></member>
+      <member refid="classAARInvaderGameState_1a22af7d6d24fec6e4e16a2d73f1764c0d" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnInvaderSharedTrackChanged</name></member>
+      <member refid="classAARGameStateBase_1acdfc8feb6eb016518dc4bb96b92dfd73" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnManualSaveAllowedChanged</name></member>
+      <member refid="classAARGameStateBase_1addd5b4c481f098a51e01fd0fd16cd019" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnMeatChanged</name></member>
+      <member refid="classAARGameStateBase_1a46e3534ee0ac720f301875f8472bdfe7" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnMoneyChanged</name></member>
+      <member refid="classAARGameStateBase_1abd06e553fd70ff727a98ed195a12c648" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnPlayerReadyChanged</name></member>
+      <member refid="classAARGameStateBase_1a6851cdf641848bb6286ba6eb724764d9" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_ActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a986d0395e034ebeb2e989afa76e56941" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_ActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1a4d3f2c5a19f416ca1b56c76eb062a2c8" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_AllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1ae8903ae3a9a825a8f33d711e75453c0f" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_AllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1aa5a26bb111dde1795d3414d4d8b1a039" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_AnyExternalPauseActive</name></member>
+      <member refid="classAARGameStateBase_1a0e1f86c173441f8b74d27b8ae1706356" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_Cycles</name></member>
+      <member refid="classAARGameStateBase_1a873c021a8bdf4700cc014164fb7ec6f5" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_EffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1ac45c1f7645dcff95d28d5c630e649849" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_ExternalPauseReasonMask</name></member>
+      <member refid="classAARInvaderGameState_1ae72366e92d7a32d17f555ef143375a2b" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_FullBlastSession</name></member>
+      <member refid="classAARGameStateBase_1acba89994af0144560f208af08360f4bb" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_ManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a78efbe8387f51b38e0855028f0cb17eb" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_Meat</name></member>
+      <member refid="classAARGameStateBase_1a699cf5444487ec30ded742c8b611b1c8" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_Money</name></member>
+      <member refid="classAARInvaderGameState_1a971a4f6e7723d7d0057c7b98903804b8" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_OfferPresenceStates</name></member>
+      <member refid="classAARGameStateBase_1a0b10f1fdc0d7985e593970965f3def4c" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_PauseMenuVoteMask</name></member>
+      <member refid="classAARGameStateBase_1a84870c8430f7e20378fbcf3d77bfe0a4" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_Scrap</name></member>
+      <member refid="classAARInvaderGameState_1ae1098ddb9e3ef61a3ac790fd94f0c923" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_SharedFullBlastTier</name></member>
+      <member refid="classAARInvaderGameState_1a5f7c33e66bf56555f3ebe11254c5ac0b" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_SharedTrackSlots</name></member>
+      <member refid="classAARGameStateBase_1a13d47c4b3edc74ed0cdfcf31e939f3d0" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_ShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a197dc84e6ae0931dd5dc1476a091dab8" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnRep_Unlocks</name></member>
+      <member refid="classAARGameStateBase_1aa3f46281043137acfd4fb854c5ae0f52" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnScrapChanged</name></member>
+      <member refid="classAARGameStateBase_1aa5e92119ac8691217e87cb76346c44c0" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnShareLocalPauseAcrossControllersChanged</name></member>
+      <member refid="classAARGameStateBase_1af2e2b810aa56069d54beb9bcfb15bf62" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnTrackedPlayersChanged</name></member>
+      <member refid="classAARGameStateBase_1ae66430986826af34b1d9f93aac2592dc" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>OnUnlocksChanged</name></member>
+      <member refid="classAARGameStateBase_1a5e5cb3cf006a121355b217d4e813e6a0" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>PauseMenuVoteMask</name></member>
+      <member refid="classAARInvaderGameState_1aeed970ab546181d870ff06719f73861d" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ReconcilePlayerCursorSelection</name></member>
+      <member refid="classAARGameStateBase_1a0dcb69cb41accbd4e79b868e7f230746" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RefreshAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1a3a83ac28a7af26b6ef10e317658df549" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RefreshPauseResolution</name></member>
+      <member refid="classAARInvaderGameState_1acbff15197c12cc6379e2b004ea3b7b3e" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RefreshWhileSlottedEffects</name></member>
+      <member refid="classAARInvaderGameState_1a9ba160aa768569e537d39689f7bdeb32" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RegisterDebugConsoleCommands</name></member>
+      <member refid="classAARInvaderGameState_1a6dfa0049547340cb09279597771111a2" prot="protected" virt="virtual"><scope>AARInvaderGameState</scope><name>RemovePlayerState</name></member>
+      <member refid="classAARGameStateBase_1a8472fce2100ea5ee6cacdf61cd59f1be" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RemoveUnlockTag</name></member>
+      <member refid="classAARInvaderGameState_1aa1514e1ca6a463233fef7ab576bbeab5" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RequestActivateFullBlast</name></member>
+      <member refid="classAARInvaderGameState_1ad54eefb23dfed4aa0a072a0460455365" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResetAllPlayerSpiceMeters</name></member>
+      <member refid="classAARInvaderGameState_1a1f2b45fa588de0af2a617d63eafdc18e" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveDropStackDefinitions</name></member>
+      <member refid="classAARInvaderGameState_1a0adc644dda6d7696738d2d906bb2ee38" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveEnemyBaseSpiceValue</name></member>
+      <member refid="classAARInvaderGameState_1ab909b0c6616b2a4d52081876eb773913" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveFullBlastCommonPostChoice</name></member>
+      <member refid="classAARInvaderGameState_1a86c905b15cf9c7050b9c1f88fb7031ca" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveFullBlastSelection</name></member>
+      <member refid="classAARInvaderGameState_1a6243283ee8700ba653ac3e40a2668d37" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveFullBlastSkip</name></member>
+      <member refid="classAARInvaderGameState_1ab4d64268535c333df1fe20955e61f007" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveKillerDropMultiplier</name></member>
+      <member refid="classAARInvaderGameState_1ad51a46f93c9123323cc0a4e821fd6ffa" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolvePlayerStateFromDebugToken</name></member>
+      <member refid="classAARInvaderGameState_1ab1deca81597b0c1703af0ad1b328ecff" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolvePlayerStateFromInstigatorActor</name></member>
+      <member refid="classAARInvaderGameState_1a09035539772c7ee6d9d27e88e655d0bd" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ResolveUpgradeTagForDebugInject</name></member>
+      <member refid="classAARInvaderGameState_1a639f57d4fb99d8b96da6e2ab15e0f569" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RollDropAmountWithVariance</name></member>
+      <member refid="classAARInvaderGameState_1a8f95f8cedef02715e09f3e55ab96619c" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>RollOfferLevelFromTier</name></member>
+      <member refid="classAARGameStateBase_1ab69bf036d85c775fb161bde42576b0aa" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>Scrap</name></member>
+      <member refid="classAARGameStateBase_1adfc4ac0f41d0053fe75ff55f1aca94a2" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetActiveFactionEffectTagsFromSave</name></member>
+      <member refid="classAARGameStateBase_1a5d1c9bd1234cd707e1bdca2462bd56db" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetActiveFactionTagFromSave</name></member>
+      <member refid="classAARInvaderGameState_1ad4988ebb974763f990a8aa8eace5374f" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetDropEarthGravityEnabledForAll</name></member>
+      <member refid="classAARGameStateBase_1abce6f4fb638bf288d72c4048888a464f" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1afa471d8f2aff0c3aa53997469ccc0220" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a3016a06ba7f36bae4fa922258e741203" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetMeatFromSave</name></member>
+      <member refid="classAARGameStateBase_1ab6a657eb22e23e00b9494f387628d13b" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetMoneyFromSave</name></member>
+      <member refid="classAARInvaderGameState_1ae2004335b984d6fed66d3b3bd496494c" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetOfferPresence</name></member>
+      <member refid="classAARGameStateBase_1aaf0d1915cf380e7cda1da6b85e742292" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetPlayerPauseMenuVote</name></member>
+      <member refid="classAARGameStateBase_1ae1fde584bd2f9cb964328a882e71da8d" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetScrapFromSave</name></member>
+      <member refid="classAARGameStateBase_1a1d143301a5cbf6d5d125b34425c62499" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a94b7f9b5f0d805ee597c8a3743a5a912" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SetUnlocksFromSave</name></member>
+      <member refid="classAARInvaderGameState_1abaf37724606fa83f7e94cea919973c47" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SharedFullBlastTier</name></member>
+      <member refid="classAARInvaderGameState_1a44ea04e76f9f8516a88ffc64996ec4d1" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SharedTrackSlots</name></member>
+      <member refid="classAARGameStateBase_1a145cda01f8384fcf05b3b392d50d60ba" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ShouldShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARInvaderGameState_1a08b91e86cc09d14ab226f3dcb18e781f" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>StartSharingSpice</name></member>
+      <member refid="classAARInvaderGameState_1a80638ad8363f8f1c3ef366f60a6dc8f7" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>StopSharingSpice</name></member>
+      <member refid="classAARGameStateBase_1ab127eb7fd6891837d677a4fd9e148075" prot="public" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SyncCyclesFromSave</name></member>
+      <member refid="classAARInvaderGameState_1a1285ebf81d6f7ad098e63a93d7c2c05c" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>SyncSharedMaxSpiceToPlayers</name></member>
+      <member refid="classAARInvaderGameState_1a4c34b8da346d45791a165053cfb3475a" prot="protected" virt="virtual"><scope>AARInvaderGameState</scope><name>Tick</name></member>
+      <member refid="classAARInvaderGameState_1ac47745ca7712c0d267e81dca69969ac2" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>TickComboTimeouts</name></member>
+      <member refid="classAARInvaderGameState_1a09f56269eb39673a8920b36f5f178b8e" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>TickShareTransfers</name></member>
+      <member refid="classAARInvaderGameState_1a78f6624bcadd18fbe7e7fc029fc4d0e2" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>ToPlayerColor</name></member>
+      <member refid="classAARInvaderGameState_1a0271b6f22293faa68f1e8d9609dbca99" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>TrimTrackToTierLimit</name></member>
+      <member refid="classAARInvaderGameState_1a6d3e5ab4271b5fa6700431b0ce6a243f" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>TrySpawnEnemyDrop</name></member>
+      <member refid="classAARGameStateBase_1a1325b2693628582e60043bf8cd754215" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>UnbindPlayerStateSignals</name></member>
+      <member refid="classAARGameStateBase_1a469c83eca2b9fd7d9ea8dce9b65c2263" prot="protected" virt="non-virtual"><scope>AARInvaderGameState</scope><name>Unlocks</name></member>
+      <member refid="classAARInvaderGameState_1adf2b7f2baf1da20419a984fd2638252b" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>UnregisterDebugConsoleCommands</name></member>
+      <member refid="classAARInvaderGameState_1adaea4f300918d4893631b8ea4a2b7b9d" prot="private" virt="non-virtual"><scope>AARInvaderGameState</scope><name>WhileSlottedEffectHandlesByPlayer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

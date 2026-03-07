@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARInvaderAuthoringEditorSettings_8h" kind="file" language="C++">
+    <compoundname>ARInvaderAuthoringEditorSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">ARInvaderAuthoringEditorSettings.generated.h</includes>
+    <includedby refid="ARInvaderAuthoringEditorSettings_8cpp" local="yes">ARInvaderAuthoringEditorSettings.cpp</includedby>
+    <includedby refid="ARInvaderAuthoringPanel_8cpp" local="yes">ARInvaderAuthoringPanel.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARInvaderAuthoringEditorSettings.h</label>
+        <link refid="ARInvaderAuthoringEditorSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARInvaderAuthoringEditorSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARInvaderAuthoringEditorSettings.cpp</label>
+        <link refid="ARInvaderAuthoringEditorSettings_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARInvaderAuthoringEditorSettings.h</label>
+        <link refid="ARInvaderAuthoringEditorSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARInvaderAuthoringEditorSettings" prot="public">UARInvaderAuthoringEditorSettings</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARInvaderAuthoringEditorSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UWorld;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">UCLASS(Config=EditorPerProjectUserSettings,<sp/>DefaultConfig,<sp/>meta=(DisplayName=</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen<sp/>Invader<sp/>Authoring&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="10"><highlight class="normal">class<sp/>ALIENRAMENEDITOR_API<sp/>UARInvaderAuthoringEditorSettings<sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="11"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>UARInvaderAuthoringEditorSettings();</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>FName<sp/>GetCategoryName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Testing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UWorld&gt;<sp/>DefaultTestMap;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Testing&quot;,<sp/>meta=(ClampMin=&quot;0&quot;))</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>LastSeed<sp/>=<sp/>1337;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Palette&quot;)</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FSoftClassPath&gt;<sp/>FavoriteEnemyClasses;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Per-enemy-class<sp/>authoring<sp/>shape<sp/>used<sp/>by<sp/>the<sp/>palette/canvas<sp/>preview<sp/>(0-based<sp/>cycle<sp/>value).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Palette&quot;)</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;FSoftClassPath,<sp/>int32&gt;<sp/>EnemyClassShapeCycles;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Preview&quot;)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bHideOtherLayersInWavePreview<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Preview&quot;)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bShowApproximatePreviewBanner<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Snap<sp/>authored<sp/>spawn<sp/>offsets<sp/>to<sp/>a<sp/>configurable<sp/>grid<sp/>when<sp/>placing/dragging<sp/>in<sp/>canvas.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Preview&quot;)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSnapCanvasToGrid<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Grid<sp/>step<sp/>size<sp/>used<sp/>by<sp/>canvas<sp/>snap<sp/>and<sp/>copy/paste<sp/>offset<sp/>nudging.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>Category<sp/>=<sp/>&quot;Preview&quot;,<sp/>meta=(ClampMin=&quot;1.0&quot;,<sp/>UIMin=&quot;1.0&quot;))</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>CanvasGridSize<sp/>=<sp/>100.f;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h"/>
+  </compounddef>
+</doxygen>

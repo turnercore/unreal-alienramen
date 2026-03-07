@@ -1,0 +1,299 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARLog_8h" kind="file" language="C++">
+    <compoundname>ARLog.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includedby refid="ARAIControllerBase_8cpp" local="yes">ARAIControllerBase.cpp</includedby>
+    <includedby refid="ARDialogueSubsystem_8cpp" local="yes">ARDialogueSubsystem.cpp</includedby>
+    <includedby refid="AREnemyAIController_8cpp" local="yes">AREnemyAIController.cpp</includedby>
+    <includedby refid="AREnemyAuthoringPanel_8cpp" local="yes">AREnemyAuthoringPanel.cpp</includedby>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <includedby refid="ARFactionSubsystem_8cpp" local="yes">ARFactionSubsystem.cpp</includedby>
+    <includedby refid="ARGameInstance_8cpp" local="yes">ARGameInstance.cpp</includedby>
+    <includedby refid="ARGameModeBase_8cpp" local="yes">ARGameModeBase.cpp</includedby>
+    <includedby refid="ARGameStateBase_8cpp" local="yes">ARGameStateBase.cpp</includedby>
+    <includedby refid="ARInvaderAuthoringPanel_8cpp" local="yes">ARInvaderAuthoringPanel.cpp</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <includedby refid="ARInvaderDropBase_8cpp" local="yes">ARInvaderDropBase.cpp</includedby>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARInvaderPlayerController_8cpp" local="yes">ARInvaderPlayerController.cpp</includedby>
+    <includedby refid="ARInvaderRuntimeStateComponent_8cpp" local="yes">ARInvaderRuntimeStateComponent.cpp</includedby>
+    <includedby refid="ARLoadoutSettings_8cpp" local="yes">ARLoadoutSettings.cpp</includedby>
+    <includedby refid="ARNPCCharacterBase_8cpp" local="yes">ARNPCCharacterBase.cpp</includedby>
+    <includedby refid="ARNPCSubsystem_8cpp" local="yes">ARNPCSubsystem.cpp</includedby>
+    <includedby refid="ARPickupBase_8cpp" local="yes">ARPickupBase.cpp</includedby>
+    <includedby refid="ARPlayerCharacterInvader_8cpp" local="yes">ARPlayerCharacterInvader.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARPlayerStateBase_8cpp" local="yes">ARPlayerStateBase.cpp</includedby>
+    <includedby refid="ARProjectileBase_8cpp" local="yes">ARProjectileBase.cpp</includedby>
+    <includedby refid="ARSaveSubsystem_8cpp" local="yes">ARSaveSubsystem.cpp</includedby>
+    <includedby refid="ARSessionSubsystem_8cpp" local="yes">ARSessionSubsystem.cpp</includedby>
+    <includedby refid="ARShopGameMode_8cpp" local="yes">ARShopGameMode.cpp</includedby>
+    <includedby refid="ARStateTreeAIComponent_8cpp" local="yes">ARStateTreeAIComponent.cpp</includedby>
+    <includedby refid="AlienRamen_8h" local="yes">AlienRamen.h</includedby>
+    <includedby refid="AlienRamenEditorModule_8cpp" local="yes">AlienRamenEditorModule.cpp</includedby>
+    <includedby refid="ContentLookupSubsystem_8cpp" local="yes">ContentLookupSubsystem.cpp</includedby>
+    <includedby refid="HelperLibrary_8cpp" local="yes">HelperLibrary.cpp</includedby>
+    <includedby refid="SaveSlotSortLibrary_8cpp" local="yes">SaveSlotSortLibrary.cpp</includedby>
+    <includedby refid="StructSerializable_8cpp" local="yes">StructSerializable.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="30">
+        <label>AlienRamen.cpp</label>
+        <link refid="AlienRamen_8cpp_source"/>
+      </node>
+      <node id="29">
+        <label>AlienRamen.h</label>
+        <link refid="AlienRamen_8h_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARAIControllerBase.cpp</label>
+        <link refid="ARAIControllerBase_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARDialogueSubsystem.cpp</label>
+        <link refid="ARDialogueSubsystem_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>AREnemyAIController.cpp</label>
+        <link refid="AREnemyAIController_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARFactionSubsystem.cpp</label>
+        <link refid="ARFactionSubsystem_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARGameStateBase.cpp</label>
+        <link refid="ARGameStateBase_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="14">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="15">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="16">
+        <label>ARInvaderRuntimeStateComponent.cpp</label>
+        <link refid="ARInvaderRuntimeStateComponent_8cpp_source"/>
+      </node>
+      <node id="17">
+        <label>ARLoadoutSettings.cpp</label>
+        <link refid="ARLoadoutSettings_8cpp_source"/>
+      </node>
+      <node id="18">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="19">
+        <label>ARNPCSubsystem.cpp</label>
+        <link refid="ARNPCSubsystem_8cpp_source"/>
+      </node>
+      <node id="20">
+        <label>ARPickupBase.cpp</label>
+        <link refid="ARPickupBase_8cpp_source"/>
+      </node>
+      <node id="21">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="22">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="23">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="24">
+        <label>ARProjectileBase.cpp</label>
+        <link refid="ARProjectileBase_8cpp_source"/>
+      </node>
+      <node id="25">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="26">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="27">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="28">
+        <label>ARStateTreeAIComponent.cpp</label>
+        <link refid="ARStateTreeAIComponent_8cpp_source"/>
+      </node>
+      <node id="32">
+        <label>ContentLookupSubsystem.cpp</label>
+        <link refid="ContentLookupSubsystem_8cpp_source"/>
+      </node>
+      <node id="33">
+        <label>HelperLibrary.cpp</label>
+        <link refid="HelperLibrary_8cpp_source"/>
+      </node>
+      <node id="34">
+        <label>SaveSlotSortLibrary.cpp</label>
+        <link refid="SaveSlotSortLibrary_8cpp_source"/>
+      </node>
+      <node id="35">
+        <label>StructSerializable.cpp</label>
+        <link refid="StructSerializable_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>AREnemyAuthoringPanel.cpp</label>
+        <link refid="AREnemyAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="31">
+        <label>AlienRamenEditorModule.cpp</label>
+        <link refid="AlienRamenEditorModule_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARLog_8h_1a6d3d94401e9df1b11febd4054f631831" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_LOG_CATEGORY_EXTERN</definition>
+        <argsstring>(ARLog, Log, All)</argsstring>
+        <name>DECLARE_LOG_CATEGORY_EXTERN</name>
+        <param>
+          <type>ARLog</type>
+        </param>
+        <param>
+          <type>Log</type>
+        </param>
+        <param>
+          <type>All</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLog.h" line="9" column="2" declfile="AlienRamen/Public/ARLog.h" declline="9" declcolumn="2"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>ARLog header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">ALIENRAMEN_API<sp/>DECLARE_LOG_CATEGORY_EXTERN(ARLog,<sp/>Log,<sp/>All);</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARLog.h"/>
+  </compounddef>
+</doxygen>

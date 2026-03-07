@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARNPCSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARNPCSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARNPCSettings_1a61c7480b97cdd01b8b2b1a1ae37c019c" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARNPCSettings::NpcDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>NpcDefinitionRootTag</name>
+        <qualifiedname>UARNPCSettings::NpcDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSettings.h" line="22" column="14" bodyfile="AlienRamen/Public/ARNPCSettings.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARNPCSettings_1a7d21ce6a079de1d7a344e9ad6dbabdcf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARNPCSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARNPCSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSettings.h" line="18" column="15" bodyfile="AlienRamen/Public/ARNPCSettings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARNPCSettings.h" line="13" column="1" bodyfile="AlienRamen/Public/ARNPCSettings.h" bodystart="14" bodyend="23"/>
+    <listofallmembers>
+      <member refid="classUARNPCSettings_1a7d21ce6a079de1d7a344e9ad6dbabdcf" prot="public" virt="virtual"><scope>UARNPCSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARNPCSettings_1a61c7480b97cdd01b8b2b1a1ae37c019c" prot="public" virt="non-virtual"><scope>UARNPCSettings</scope><name>NpcDefinitionRootTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,561 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARSessionSubsystem_8h" kind="file" language="C++">
+    <compoundname>ARSessionSubsystem.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARSaveTypes_8h" local="yes">ARSaveTypes.h</includes>
+    <includes local="yes">BlueprintDataDefinitions.h</includes>
+    <includes local="yes">Interfaces/OnlineSessionInterface.h</includes>
+    <includes local="yes">OnlineSessionSettings.h</includes>
+    <includes local="yes">Subsystems/GameInstanceSubsystem.h</includes>
+    <includes local="yes">ARSessionSubsystem.generated.h</includes>
+    <includedby refid="ARGameInstance_8cpp" local="yes">ARGameInstance.cpp</includedby>
+    <includedby refid="ARGameModeBase_8cpp" local="yes">ARGameModeBase.cpp</includedby>
+    <includedby refid="ARSessionAsyncActions_8h" local="yes">ARSessionAsyncActions.h</includedby>
+    <includedby refid="ARSessionSubsystem_8cpp" local="yes">ARSessionSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="5">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARSessionSubsystem.h</label>
+        <link refid="ARSessionSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARSessionSubsystem.generated.h</label>
+      </node>
+      <node id="8">
+        <label>BlueprintDataDefinitions.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="9">
+        <label>Interfaces/OnlineSessionInterface.h</label>
+      </node>
+      <node id="10">
+        <label>OnlineSessionSettings.h</label>
+      </node>
+      <node id="11">
+        <label>Subsystems/GameInstanceSubsystem.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARSessionAsyncActions.cpp</label>
+        <link refid="ARSessionAsyncActions_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARSessionAsyncActions.h</label>
+        <link refid="ARSessionAsyncActions_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARSessionSubsystem.h</label>
+        <link refid="ARSessionSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFARSessionResult" prot="public">FARSessionResult</innerclass>
+    <innerclass refid="structFARSessionSearchResultData" prot="public">FARSessionSearchResultData</innerclass>
+    <innerclass refid="classUARSessionSubsystem" prot="public">UARSessionSubsystem</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARSessionResultCode</name>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a505a83f220c02df2f85c3810cd9ceb38" prot="public">
+          <name>Success</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a5e02d21ccad6fb4b4b5e3f1c4233335c" prot="public">
+          <name>OfflineBlocked</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a161112daabe6c2e5f99bd7e9d26d4f89" prot="public">
+          <name>NoWorld</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a51cec0af8b65ff818b559d8fe78907a2" prot="public">
+          <name>NoOnlineSubsystem</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9af42dfcd156a0c787f560e103577d27ec" prot="public">
+          <name>NoSessionInterface</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9ad8a942ef2b04672adfafef0ad817a407" prot="public">
+          <name>Busy</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a999a3e96785a44f4829c7e95f5497432" prot="public">
+          <name>SessionNotFound</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9aeab9f2762b7d1c235358f2400a18a05a" prot="public">
+          <name>SessionFull</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a077baa8bd7f0b939c3285c68efe34206" prot="public">
+          <name>CreateFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9aa81e43848319d35423e45f8909fa5ed3" prot="public">
+          <name>FindFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a51459ddc9c2686ce54538b5ff0c670c8" prot="public">
+          <name>CancelFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9ab80b0eb294f9826f57958ab903c3fffa" prot="public">
+          <name>JoinFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a6b57f491a51b79f40c61294276f96f23" prot="public">
+          <name>InviteFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9ab1b491cd25d137abe2eab5b633904478" prot="public">
+          <name>DestroyFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9ab1699d129532c7c6294a1f26fd4032d9" prot="public">
+          <name>UpdateFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9adbf909bf7faab32fabf8f1514452cc07" prot="public">
+          <name>LocalJoinFailed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARSessionSubsystem_8h_1ac70f1a2776ce6cebd94b6ea903f4c2d9a88183b946cc5f0e8c96b2e66e1c74a7e" prot="public">
+          <name>Unknown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="22" column="1" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="23" bodyend="41"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARSessionSubsystem_8h_1ae9893af0614687f6ae5c0807a374a23a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnSessionActionCompleted, const FARSessionResult &amp;, Result)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnSessionActionCompleted</type>
+        </param>
+        <param>
+          <type>const FARSessionResult &amp;</type>
+        </param>
+        <param>
+          <type>Result</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="94" column="1" declfile="AlienRamen/Public/ARSessionSubsystem.h" declline="94" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARSessionSubsystem_8h_1a91025016756c94b599405e45a78e3a03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</definition>
+        <argsstring>(FAROnSessionFindCompleted, const FARSessionResult &amp;, Result, const TArray&lt; FARSessionSearchResultData &gt; &amp;, Results)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</name>
+        <param>
+          <type>FAROnSessionFindCompleted</type>
+        </param>
+        <param>
+          <type>const FARSessionResult &amp;</type>
+        </param>
+        <param>
+          <type>Result</type>
+        </param>
+        <param>
+          <type>const TArray&lt; FARSessionSearchResultData &gt; &amp;</type>
+        </param>
+        <param>
+          <type>Results</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="95" column="1" declfile="AlienRamen/Public/ARSessionSubsystem.h" declline="95" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Session subsystem for Steam/LAN/local multiplayer flow. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSaveTypes_8h" kindref="compound">ARSaveTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;BlueprintDataDefinitions.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Interfaces/OnlineSessionInterface.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;OnlineSessionSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Subsystems/GameInstanceSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARSessionSubsystem.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">IOnlineSession;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">FOnlineSessionSearch;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">FOnlineSessionSettings;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UCreateSessionCallbackProxyAdvanced;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UFindSessionsCallbackProxyAdvanced;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARSessionResultCode<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>Success<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>OfflineBlocked,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>NoWorld,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>NoOnlineSubsystem,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>NoSessionInterface,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>Busy,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>SessionNotFound,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>SessionFull,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>CreateFailed,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>FindFailed,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>CancelFailed,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>JoinFailed,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>InviteFailed,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>DestroyFailed,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>UpdateFailed,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>LocalJoinFailed,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>Unknown</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>FARSessionResult</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSuccess<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>EARSessionResultCode<sp/>ResultCode<sp/>=<sp/>EARSessionResultCode::Unknown;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>Error;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/>FARSessionSearchResultData</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>SessionDisplayName;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>SessionId;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>OwningUserName;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>CurrentPlayers<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>MaxPlayers<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bIsLAN<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>PingInMs<sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bProtocolPresent<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ProtocolVersion<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Session&quot;)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bProtocolCompatible<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSessionActionCompleted,<sp/>const<sp/>FARSessionResult&amp;,<sp/>Result);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnSessionFindCompleted,<sp/>const<sp/>FARSessionResult&amp;,<sp/>Result,<sp/>const<sp/>TArray&lt;FARSessionSearchResultData&gt;&amp;,<sp/>Results);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="99" refid="classUARSessionSubsystem" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref><sp/>:<sp/>public<sp/>UGameInstanceSubsystem</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(FSubsystemCollectionBase&amp;<sp/>Collection)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Deinitialize()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsStayOfflineEnabled()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SetStayOfflineEnabled(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bEnabled,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>bOutRestartRecommended);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Creates/updates<sp/>a<sp/>host<sp/>session<sp/>for<sp/>this<sp/>runtime<sp/>flow.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CreateSession(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bUseLAN,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Creates/updates<sp/>a<sp/>host<sp/>session<sp/>and<sp/>advertises<sp/>a<sp/>friendly<sp/>lobby<sp/>name.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>SessionDisplayName<sp/>is<sp/>empty,<sp/>a<sp/>default<sp/>will<sp/>be<sp/>derived<sp/>(current<sp/>save<sp/>slot<sp/>base<sp/>name,<sp/>then<sp/>random<sp/>fallback).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CreateSessionNamed(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bUseLAN,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>SessionDisplayName,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FindSessions(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bLANQuery,<sp/>int32<sp/>MaxResults,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CancelFindSessions(FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>JoinSessionByIndex(int32<sp/>ResultIndex,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FindFriendSession(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FBPUniqueNetId&amp;<sp/>FriendUniqueNetId,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>InviteFriendToSession(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FBPUniqueNetId&amp;<sp/>FriendUniqueNetId,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>DestroySession(FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>RefreshJoinability(FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AddLocalPlayer(FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FARSessionSearchResultData&gt;&amp;<sp/>GetLastFindResults()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>LastFindResults;<sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnCreateSessionCompleted;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionFindCompleted<sp/>OnFindSessionsCompleted;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionFindCompleted<sp/>OnFindFriendSessionCompleted;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnInviteFriendCompleted;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnCancelFindSessionsCompleted;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnJoinSessionCompleted;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnDestroySessionCompleted;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnRefreshJoinabilityCompleted;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Session&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnSessionActionCompleted<sp/>OnLocalJoinCompleted;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>ESessionOperation<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>None<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Create,</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Find,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Join,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Destroy,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Refresh</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>IOnlineSessionPtr<sp/>ResolveSessionInterface(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bPreferLAN,<sp/>FName&amp;<sp/>OutSubsystemName)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BeginJoinSession(IOnlineSessionPtr<sp/>Session,<sp/>int32<sp/>LocalUserNum,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FOnlineSessionSearchResult&amp;<sp/>SearchResult,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BindInviteAcceptedDelegate();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearInviteAcceptedDelegate();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>CountCurrentARPlayers()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ComputeOpenPublicConnections()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BuildDesiredSessionSettings(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bPreferLAN,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>SessionDisplayName,<sp/>FOnlineSessionSettings&amp;<sp/>OutSettings,<sp/>FARSessionResult&amp;<sp/>OutResult);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>ResolveSessionDisplayName(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>RequestedSessionDisplayName);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>FillResult(FARSessionResult&amp;<sp/>OutResult,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSuccess,<sp/>EARSessionResultCode<sp/>Code,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Error<sp/>=<sp/>FString())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BroadcastFindCompleted(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARSessionResult&amp;<sp/>Result);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RebuildLastFindResults();</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DestroySessionBestEffort();</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleCreateSessionComplete(FName<sp/>SessionName,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleUpdateSessionComplete(FName<sp/>SessionName,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleDestroySessionComplete(FName<sp/>SessionName,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleFindSessionsComplete(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleCancelFindSessionsComplete(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleJoinSessionComplete(FName<sp/>SessionName,<sp/>EOnJoinSessionCompleteResult::Type<sp/>Result);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleSessionUserInviteAccepted(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful,<sp/>int32<sp/>ControllerId,<sp/>FUniqueNetIdPtr<sp/>UserId,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FOnlineSessionSearchResult&amp;<sp/>InviteResult);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleFindFriendSessionComplete(int32<sp/>LocalUserNum,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWasSuccessful,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FOnlineSessionSearchResult&gt;&amp;<sp/>SessionInfo);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleAdvancedCreateSuccess();</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleAdvancedCreateFailure();</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleAdvancedFindSuccess(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FBlueprintSessionResult&gt;&amp;<sp/>Results);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleAdvancedFindFailure(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FBlueprintSessionResult&gt;&amp;<sp/>Results);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>CreateSessionCompleteHandle;</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>UpdateSessionCompleteHandle;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>DestroySessionCompleteHandle;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>FindSessionsCompleteHandle;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>CancelFindSessionsCompleteHandle;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>JoinSessionCompleteHandle;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>FindFriendSessionCompleteHandle;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>SessionUserInviteAcceptedHandle;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>TSharedPtr&lt;FOnlineSessionSearch&gt;<sp/>ActiveSessionSearch;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FOnlineSessionSearchResult&gt;<sp/>CachedNativeSearchResults;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UCreateSessionCallbackProxyAdvanced&gt;<sp/>ActiveAdvancedCreateProxy<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UFindSessionsCallbackProxyAdvanced&gt;<sp/>ActiveAdvancedFindProxy<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARSessionSearchResultData&gt;<sp/>LastFindResults;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bLastFindWasLANQuery<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>LastFindMaxResults<sp/>=<sp/>50;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFindRetryWithoutFilters<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bPendingInviteJoinAfterDestroy<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>PendingInviteControllerId<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>FOnlineSessionSearchResult<sp/>PendingInviteSearchResult;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bPendingJoinAfterDestroy<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>PendingJoinControllerId<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>FOnlineSessionSearchResult<sp/>PendingJoinSearchResult;</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>InviteDelegateSubsystemName<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>ActiveSubsystemName<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bOperationInFlight<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>ESessionOperation<sp/>CurrentOperation<sp/>=<sp/>ESessionOperation::None;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARSessionSubsystem.h"/>
+  </compounddef>
+</doxygen>

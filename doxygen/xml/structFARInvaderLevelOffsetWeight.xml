@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderLevelOffsetWeight" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderLevelOffsetWeight</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderLevelOffsetWeight_1af505d95aa9ab6c4e4ed51e98f2dd1d08" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderLevelOffsetWeight::Offset</definition>
+        <argsstring></argsstring>
+        <name>Offset</name>
+        <qualifiedname>FARInvaderLevelOffsetWeight::Offset</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="233" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderLevelOffsetWeight_1af957877ee107b803f45087cc27059f54" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderLevelOffsetWeight::Weight</definition>
+        <argsstring></argsstring>
+        <name>Weight</name>
+        <qualifiedname>FARInvaderLevelOffsetWeight::Weight</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="236" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="227" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="228" bodyend="237"/>
+    <listofallmembers>
+      <member refid="structFARInvaderLevelOffsetWeight_1af505d95aa9ab6c4e4ed51e98f2dd1d08" prot="public" virt="non-virtual"><scope>FARInvaderLevelOffsetWeight</scope><name>Offset</name></member>
+      <member refid="structFARInvaderLevelOffsetWeight_1af957877ee107b803f45087cc27059f54" prot="public" virt="non-virtual"><scope>FARInvaderLevelOffsetWeight</scope><name>Weight</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

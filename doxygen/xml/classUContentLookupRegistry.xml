@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUContentLookupRegistry" kind="class" language="C++" prot="public">
+    <compoundname>UContentLookupRegistry</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDataAsset</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUContentLookupRegistry_1a48bd2e801bfa5390f02d9c9cce32fbfa" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FContentLookupRoute &gt;</type>
+        <definition>TArray&lt;FContentLookupRoute&gt; UContentLookupRegistry::Routes</definition>
+        <argsstring></argsstring>
+        <name>Routes</name>
+        <qualifiedname>UContentLookupRegistry::Routes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="39" column="8" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="32" column="1" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="33" bodyend="40"/>
+    <listofallmembers>
+      <member refid="classUContentLookupRegistry_1a48bd2e801bfa5390f02d9c9cce32fbfa" prot="public" virt="non-virtual"><scope>UContentLookupRegistry</scope><name>Routes</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

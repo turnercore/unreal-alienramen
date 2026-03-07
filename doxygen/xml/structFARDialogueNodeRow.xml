@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARDialogueNodeRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARDialogueNodeRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a6880cb6c3a8a259ed03641cd0e4846ab" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueNodeRow::bAllowRepeatAfterSeen</definition>
+        <argsstring></argsstring>
+        <name>bAllowRepeatAfterSeen</name>
+        <qualifiedname>FARDialogueNodeRow::bAllowRepeatAfterSeen</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="65" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a5dbf3d8a6fd0298818c19c57d95b964a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueNodeRow::bForceEavesdropForImportantDecision</definition>
+        <argsstring></argsstring>
+        <name>bForceEavesdropForImportantDecision</name>
+        <qualifiedname>FARDialogueNodeRow::bForceEavesdropForImportantDecision</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="96" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1af09bfbdfbba2fc0d489384cdc86c60b0" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARDialogueNodeRow::BlockedProgressionTags</definition>
+        <argsstring></argsstring>
+        <name>BlockedProgressionTags</name>
+        <qualifiedname>FARDialogueNodeRow::BlockedProgressionTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="77" column="23" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a26003f5fb0633be2e63cce6663c2f634" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARDialogueNodeRow::BlockedUnlockTags</definition>
+        <argsstring></argsstring>
+        <name>BlockedUnlockTags</name>
+        <qualifiedname>FARDialogueNodeRow::BlockedUnlockTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="83" column="23" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a07055f2eb02991415031b01cde30ddc3" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueNodeRow::bRequiresWantSatisfied</definition>
+        <argsstring></argsstring>
+        <name>bRequiresWantSatisfied</name>
+        <qualifiedname>FARDialogueNodeRow::bRequiresWantSatisfied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="71" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a6c013a480e01f7f9b448aac540cd9fd8" prot="public" static="no" mutable="no">
+        <type>EARDialogueChoiceParticipation</type>
+        <definition>EARDialogueChoiceParticipation FARDialogueNodeRow::ChoiceParticipation</definition>
+        <argsstring></argsstring>
+        <name>ChoiceParticipation</name>
+        <qualifiedname>FARDialogueNodeRow::ChoiceParticipation</qualifiedname>
+        <initializer>= EARDialogueChoiceParticipation::InitiatorOnly</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="92" column="32" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a2c1a3f32df841af80a3e5c3cb18d1b4d" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARDialogueChoiceDef &gt;</type>
+        <definition>TArray&lt;FARDialogueChoiceDef&gt; FARDialogueNodeRow::Choices</definition>
+        <argsstring></argsstring>
+        <name>Choices</name>
+        <qualifiedname>FARDialogueNodeRow::Choices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="99" column="8" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a63ea0cff5c83210faf8cc820b4340108" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARDialogueNodeRow::GrantProgressionTagsOnEnter</definition>
+        <argsstring></argsstring>
+        <name>GrantProgressionTagsOnEnter</name>
+        <qualifiedname>FARDialogueNodeRow::GrantProgressionTagsOnEnter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="86" column="23" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a5b60fb5863889aa3dc0539c640af9ef7" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARDialogueNodeRow::LineText</definition>
+        <argsstring></argsstring>
+        <name>LineText</name>
+        <qualifiedname>FARDialogueNodeRow::LineText</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="56" column="7" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a6e5aac9893722e0515c688dabf1bbc6e" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARDialogueNodeRow::MinLoveRating</definition>
+        <argsstring></argsstring>
+        <name>MinLoveRating</name>
+        <qualifiedname>FARDialogueNodeRow::MinLoveRating</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="68" column="7" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a27d00bc5fac6c38f29060b662bbbaf67" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueNodeRow::NextNodeTag</definition>
+        <argsstring></argsstring>
+        <name>NextNodeTag</name>
+        <qualifiedname>FARDialogueNodeRow::NextNodeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="89" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a0228d80cd04aa0b75869a72d7b7264e6" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueNodeRow::NodeTag</definition>
+        <argsstring></argsstring>
+        <name>NodeTag</name>
+        <qualifiedname>FARDialogueNodeRow::NodeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="50" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1aecf2ff9da40eabb315a2582873bc53c9" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueNodeRow::NpcTag</definition>
+        <argsstring></argsstring>
+        <name>NpcTag</name>
+        <qualifiedname>FARDialogueNodeRow::NpcTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="47" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a516d6ca5129cfd9e783fcee5850d3a7c" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARDialogueNodeRow::Priority</definition>
+        <argsstring></argsstring>
+        <name>Priority</name>
+        <qualifiedname>FARDialogueNodeRow::Priority</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="62" column="7" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1ac81cf1c24ea367689513d4be0344d3f6" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARDialogueNodeRow::RequiredProgressionTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredProgressionTags</name>
+        <qualifiedname>FARDialogueNodeRow::RequiredProgressionTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="74" column="23" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a201084e0050d8ac754c672eaac0a1f59" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARDialogueNodeRow::RequiredUnlockTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredUnlockTags</name>
+        <qualifiedname>FARDialogueNodeRow::RequiredUnlockTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="80" column="23" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a0b0f8a0e2d37d452596d2cefd74deb4f" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UTexture2D &gt;</type>
+        <definition>TSoftObjectPtr&lt;UTexture2D&gt; FARDialogueNodeRow::SpeakerPortrait</definition>
+        <argsstring></argsstring>
+        <name>SpeakerPortrait</name>
+        <qualifiedname>FARDialogueNodeRow::SpeakerPortrait</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="59" column="16" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueNodeRow_1a4d64b0da27d9fde3ba2bcabfbe3bcb72" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueNodeRow::SpeakerTag</definition>
+        <argsstring></argsstring>
+        <name>SpeakerTag</name>
+        <qualifiedname>FARDialogueNodeRow::SpeakerTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="53" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueTypes.h" line="42" column="1" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="43" bodyend="100"/>
+    <listofallmembers>
+      <member refid="structFARDialogueNodeRow_1a6880cb6c3a8a259ed03641cd0e4846ab" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>bAllowRepeatAfterSeen</name></member>
+      <member refid="structFARDialogueNodeRow_1a5dbf3d8a6fd0298818c19c57d95b964a" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>bForceEavesdropForImportantDecision</name></member>
+      <member refid="structFARDialogueNodeRow_1af09bfbdfbba2fc0d489384cdc86c60b0" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>BlockedProgressionTags</name></member>
+      <member refid="structFARDialogueNodeRow_1a26003f5fb0633be2e63cce6663c2f634" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>BlockedUnlockTags</name></member>
+      <member refid="structFARDialogueNodeRow_1a07055f2eb02991415031b01cde30ddc3" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>bRequiresWantSatisfied</name></member>
+      <member refid="structFARDialogueNodeRow_1a6c013a480e01f7f9b448aac540cd9fd8" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>ChoiceParticipation</name></member>
+      <member refid="structFARDialogueNodeRow_1a2c1a3f32df841af80a3e5c3cb18d1b4d" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>Choices</name></member>
+      <member refid="structFARDialogueNodeRow_1a63ea0cff5c83210faf8cc820b4340108" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>GrantProgressionTagsOnEnter</name></member>
+      <member refid="structFARDialogueNodeRow_1a5b60fb5863889aa3dc0539c640af9ef7" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>LineText</name></member>
+      <member refid="structFARDialogueNodeRow_1a6e5aac9893722e0515c688dabf1bbc6e" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>MinLoveRating</name></member>
+      <member refid="structFARDialogueNodeRow_1a27d00bc5fac6c38f29060b662bbbaf67" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>NextNodeTag</name></member>
+      <member refid="structFARDialogueNodeRow_1a0228d80cd04aa0b75869a72d7b7264e6" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>NodeTag</name></member>
+      <member refid="structFARDialogueNodeRow_1aecf2ff9da40eabb315a2582873bc53c9" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>NpcTag</name></member>
+      <member refid="structFARDialogueNodeRow_1a516d6ca5129cfd9e783fcee5850d3a7c" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>Priority</name></member>
+      <member refid="structFARDialogueNodeRow_1ac81cf1c24ea367689513d4be0344d3f6" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>RequiredProgressionTags</name></member>
+      <member refid="structFARDialogueNodeRow_1a201084e0050d8ac754c672eaac0a1f59" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>RequiredUnlockTags</name></member>
+      <member refid="structFARDialogueNodeRow_1a0b0f8a0e2d37d452596d2cefd74deb4f" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>SpeakerPortrait</name></member>
+      <member refid="structFARDialogueNodeRow_1a4d64b0da27d9fde3ba2bcabfbe3bcb72" prot="public" virt="non-virtual"><scope>FARDialogueNodeRow</scope><name>SpeakerTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

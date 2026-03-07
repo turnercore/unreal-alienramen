@@ -1,0 +1,689 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARInvaderGameState_8h" kind="file" language="C++">
+    <compoundname>ARInvaderGameState.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameplayEffectTypes.h</includes>
+    <includes refid="ARGameStateBase_8h" local="yes">ARGameStateBase.h</includes>
+    <includes refid="ARInvaderDropTypes_8h" local="yes">ARInvaderDropTypes.h</includes>
+    <includes refid="ARInvaderSpicyTrackTypes_8h" local="yes">ARInvaderSpicyTrackTypes.h</includes>
+    <includes refid="ARInvaderTypes_8h" local="yes">ARInvaderTypes.h</includes>
+    <includes local="yes">ARInvaderGameState.generated.h</includes>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARInvaderPlayerController_8cpp" local="yes">ARInvaderPlayerController.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARPlayerStateBase_8cpp" local="yes">ARPlayerStateBase.cpp</includedby>
+    <incdepgraph>
+      <node id="26">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARGameStateBase.h</label>
+        <link refid="ARGameStateBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARInvaderGameState.h</label>
+        <link refid="ARInvaderGameState_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARPauseTypes.h</label>
+        <link refid="ARPauseTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>StructSerializable.h</label>
+        <link refid="StructSerializable_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="22">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARGameStateBase.generated.h</label>
+      </node>
+      <node id="19">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="31">
+        <label>ARInvaderGameState.generated.h</label>
+      </node>
+      <node id="30">
+        <label>ARInvaderSpicyTrackTypes.generated.h</label>
+      </node>
+      <node id="29">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="6">
+        <label>ARPauseTypes.generated.h</label>
+      </node>
+      <node id="8">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="27">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="23">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="12">
+        <label>GameFramework/GameStateBase.h</label>
+      </node>
+      <node id="3">
+        <label>GameplayEffectTypes.h</label>
+      </node>
+      <node id="10">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="16">
+        <label>StructSerializable.generated.h</label>
+      </node>
+      <node id="15">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="14">
+        <label>UObject/Interface.h</label>
+      </node>
+      <node id="24">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARInvaderGameState.h</label>
+        <link refid="ARInvaderGameState_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARInvaderGameState" prot="public">AARInvaderGameState</innerclass>
+    <innerclass refid="structAARInvaderGameState_1_1FDropSpawnPlanEntry" prot="private">AARInvaderGameState::FDropSpawnPlanEntry</innerclass>
+    <innerclass refid="structAARInvaderGameState_1_1FResolvedDropStackEntry" prot="private">AARInvaderGameState::FResolvedDropStackEntry</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARInvaderGameState_8h_1a5b693fa3406c22f5f4c0551f33922b3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE</definition>
+        <argsstring>(FAROnInvaderOfferPresenceChangedSignature)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE</name>
+        <param>
+          <type>FAROnInvaderOfferPresenceChangedSignature</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="24" column="1" declfile="AlienRamen/Public/ARInvaderGameState.h" declline="24" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderGameState_8h_1a3de6b99a21f2566e514b06dbbd13df68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE</definition>
+        <argsstring>(FAROnInvaderSharedTrackChangedSignature)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE</name>
+        <param>
+          <type>FAROnInvaderSharedTrackChangedSignature</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="20" column="1" declfile="AlienRamen/Public/ARInvaderGameState.h" declline="20" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderGameState_8h_1aa1daad028a163c4238bd95781e18a9d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams</definition>
+        <argsstring>(FAROnInvaderKillCreditAwardedSignature, AARPlayerStateBase *, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, float, SpiceGained, int32, NewCombo)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams</name>
+        <param>
+          <type>FAROnInvaderKillCreditAwardedSignature</type>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        </param>
+        <param>
+          <type>SourcePlayerState</type>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+        </param>
+        <param>
+          <type>SourcePlayerSlot</type>
+        </param>
+        <param>
+          <type>float</type>
+        </param>
+        <param>
+          <type>SpiceGained</type>
+        </param>
+        <param>
+          <type>int32</type>
+        </param>
+        <param>
+          <type>NewCombo</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="23" column="1" declfile="AlienRamen/Public/ARInvaderGameState.h" declline="23" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderGameState_8h_1a05adfe3502ffcd17182ada8aa7fc09e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnInvaderFullBlastSessionChangedSignature, bool, bIsActive)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnInvaderFullBlastSessionChangedSignature</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bIsActive</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="21" column="1" declfile="AlienRamen/Public/ARInvaderGameState.h" declline="21" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderGameState_8h_1a346e600c0f424446e1dfc335fff7369a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnInvaderKillCreditFxEventSignature, const FARInvaderKillCreditFxEvent &amp;, EventData)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnInvaderKillCreditFxEventSignature</type>
+        </param>
+        <param>
+          <type>const FARInvaderKillCreditFxEvent &amp;</type>
+        </param>
+        <param>
+          <type>EventData</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="25" column="1" declfile="AlienRamen/Public/ARInvaderGameState.h" declline="25" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderGameState_8h_1ac66609a6c542eddb0e8cd17bb20a80d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams</definition>
+        <argsstring>(FAROnInvaderFullBlastResolvedSignature, bool, bSkipped, int32, ActivationTier, EARPlayerSlot, RequestingPlayerSlot)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams</name>
+        <param>
+          <type>FAROnInvaderFullBlastResolvedSignature</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bSkipped</type>
+        </param>
+        <param>
+          <type>int32</type>
+        </param>
+        <param>
+          <type>ActivationTier</type>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+        </param>
+        <param>
+          <type>RequestingPlayerSlot</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="22" column="1" declfile="AlienRamen/Public/ARInvaderGameState.h" declline="22" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>ARInvaderGameState header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayEffectTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARGameStateBase_8h" kindref="compound">ARGameStateBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderDropTypes_8h" kindref="compound">ARInvaderDropTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderSpicyTrackTypes_8h" kindref="compound">ARInvaderSpicyTrackTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderTypes_8h" kindref="compound">ARInvaderTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARInvaderGameState.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AAREnemyBase;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UARInvaderSpicyTrackSettings;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">IConsoleObject;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderSharedTrackChangedSignature);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderFullBlastSessionChangedSignature,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bIsActive);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnInvaderFullBlastResolvedSignature,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bSkipped,<sp/>int32,<sp/>ActivationTier,<sp/>EARPlayerSlot,<sp/>RequestingPlayerSlot);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderKillCreditAwardedSignature,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*,<sp/>SourcePlayerState,<sp/>EARPlayerSlot,<sp/>SourcePlayerSlot,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">,<sp/>SpiceGained,<sp/>int32,<sp/>NewCombo);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderOfferPresenceChangedSignature);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderKillCreditFxEventSignature,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARInvaderKillCreditFxEvent&amp;,<sp/>EventData);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARInvaderGameState<sp/>:<sp/>public<sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>AARInvaderGameState();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>UScriptStruct*<sp/>GetStateStruct_Implementation()<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>TArray&lt;FARInvaderTrackSlotState&gt;&amp;<sp/>GetSharedTrackSlots()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>SharedTrackSlots;<sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>localized<sp/>upgrade<sp/>display<sp/>names<sp/>in<sp/>slot<sp/>order<sp/>(index<sp/>0<sp/>=<sp/>slot<sp/>1).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Empty<sp/>text<sp/>indicates<sp/>an<sp/>unoccupied<sp/>slot<sp/>or<sp/>unresolved<sp/>upgrade<sp/>definition.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>GetSharedTrackUpgradeDisplayNames(TArray&lt;FText&gt;&amp;<sp/>OutDisplayNames)<sp/>const;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>localized<sp/>display<sp/>name<sp/>for<sp/>one<sp/>slot<sp/>(1-based<sp/>index).<sp/>Returns<sp/>empty<sp/>text<sp/>when<sp/>unresolved.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>FText<sp/>GetSharedTrackUpgradeDisplayNameAtSlot(int32<sp/>SlotIndex)<sp/>const;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>convenience<sp/>UI<sp/>data<sp/>in<sp/>slot<sp/>order.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetSharedTrackSlotDisplayStates(TArray&lt;FARInvaderTrackSlotDisplayState&gt;&amp;<sp/>OutSlots)<sp/>const;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>0-based<sp/>index<sp/>for<sp/>placing<sp/>&quot;Full<sp/>Blast&quot;<sp/>text<sp/>in<sp/>tier<sp/>UI<sp/>lanes<sp/>(excluding<sp/>the<sp/>0-99<sp/>empty<sp/>lane).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Example:<sp/>tier<sp/>1<sp/>-&gt;<sp/>index<sp/>0,<sp/>tier<sp/>3<sp/>-&gt;<sp/>index<sp/>2.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetFullBlastDisplayIndex()<sp/>const;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetSharedFullBlastTier()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>SharedFullBlastTier;<sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetSharedMaxSpice()<sp/>const;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>the<sp/>highest<sp/>currently<sp/>selectable<sp/>spicy-track<sp/>cursor<sp/>tier<sp/>for<sp/>the<sp/>player.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Tier<sp/>0<sp/>is<sp/>always<sp/>valid<sp/>(no<sp/>selection).<sp/>Tiers<sp/>&gt;=1<sp/>require<sp/>sufficient<sp/>spice<sp/>and:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>-<sp/>track<sp/>upgrade<sp/>tiers<sp/>(1..SharedFullBlastTier-1):<sp/>a<sp/>valid<sp/>slotted<sp/>upgrade<sp/>at<sp/>that<sp/>tier</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>-<sp/>full<sp/>blast<sp/>tier<sp/>(SharedFullBlastTier):<sp/>full<sp/>blast<sp/>activation<sp/>is<sp/>affordable</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetMaxSelectableTrackCursorTierForPlayer(const<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>PlayerState)<sp/>const;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>the<sp/>highest<sp/>currently<sp/>selectable<sp/>spicy-track<sp/>cursor<sp/>tier<sp/>across<sp/>all<sp/>tracked<sp/>players.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Useful<sp/>for<sp/>shared<sp/>UI<sp/>lane<sp/>styling<sp/>(for<sp/>example<sp/>highlighting<sp/>which<sp/>tiers<sp/>are<sp/>currently<sp/>selectable<sp/>by<sp/>anyone).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetMaxSelectableTrackCursorTierAcrossPlayers()<sp/>const;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>FARInvaderFullBlastSessionState&amp;<sp/>GetFullBlastSession()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>FullBlastSession;<sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>TArray&lt;FARInvaderOfferPresenceState&gt;&amp;<sp/>GetOfferPresenceStates()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>OfferPresenceStates;<sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>RequestActivateFullBlast(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>RequestingPlayerState);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ResolveFullBlastSelection(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>RequestingPlayerState,<sp/>FGameplayTag<sp/>SelectedUpgradeTag,<sp/>int32<sp/>DesiredDestinationSlot);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ResolveFullBlastSkip(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>RequestingPlayerState);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ActivateTrackUpgrade(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>RequestingPlayerState,<sp/>int32<sp/>SlotIndex);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Hold-to-share<sp/>API<sp/>(server<sp/>authoritative).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StartSharingSpice(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StopSharingSpice(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Explicit/manual<sp/>kill-credit<sp/>path<sp/>for<sp/>scripted<sp/>or<sp/>non-standard<sp/>kill<sp/>attribution.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AwardKillCredit(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>KillerPlayerState,<sp/>EARAffinityColor<sp/>EnemyColor,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>BaseSpiceValueOverride<sp/>=<sp/>-1.0f);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Automatic<sp/>ingestion<sp/>path<sp/>called<sp/>by<sp/>enemies<sp/>on<sp/>death.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NotifyEnemyKilled(AAREnemyBase*<sp/>Enemy,<sp/>AActor*<sp/>InstigatorActor);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Replicated<sp/>live<sp/>offer-presence<sp/>state<sp/>for<sp/>HUD<sp/>cursors/highlights<sp/>during<sp/>full-blast<sp/>selection.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SetOfferPresence(</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>HoveredUpgradeTag,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>HoveredDestinationSlot,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FVector2D<sp/>CursorNormalized,</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bHasCursor);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ClearOfferPresence(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderSharedTrackChangedSignature<sp/>OnInvaderSharedTrackChanged;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderFullBlastSessionChangedSignature<sp/>OnInvaderFullBlastSessionChanged;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderFullBlastResolvedSignature<sp/>OnInvaderFullBlastResolved;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderKillCreditAwardedSignature<sp/>OnInvaderKillCreditAwarded;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderOfferPresenceChangedSignature<sp/>OnInvaderOfferPresenceChanged;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Fires<sp/>on<sp/>server<sp/>+<sp/>clients<sp/>via<sp/>NetMulticast<sp/>when<sp/>spice<sp/>is<sp/>actually<sp/>awarded<sp/>from<sp/>kill<sp/>credit.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>for<sp/>cosmetic/UI<sp/>feedback<sp/>(for<sp/>example<sp/>enemy-&gt;meter<sp/>fly-in<sp/>particles).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Invader|Spice<sp/>Track&quot;)</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderKillCreditFxEventSignature<sp/>OnInvaderKillCreditFxEvent;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BeginPlay()<sp/>override;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EndPlay(const<sp/>EEndPlayReason::Type<sp/>EndPlayReason)<sp/>override;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Tick(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaSeconds)<sp/>override;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp;<sp/>OutLifetimeProps)<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>AddPlayerState(APlayerState*<sp/>PlayerState)<sp/>override;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RemovePlayerState(APlayerState*<sp/>PlayerState)<sp/>override;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SharedTrackSlots(const<sp/>TArray&lt;FARInvaderTrackSlotState&gt;&amp;<sp/>OldSlots);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SharedFullBlastTier(int32<sp/>OldTier);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_FullBlastSession(const<sp/>FARInvaderFullBlastSessionState&amp;<sp/>OldSession);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_OfferPresenceStates(const<sp/>TArray&lt;FARInvaderOfferPresenceState&gt;&amp;<sp/>OldPresenceStates);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleTrackedPlayersChanged();</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>struct<sp/>FResolvedDropStackEntry</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>Denomination<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TSubclassOf&lt;AARInvaderDropBase&gt;<sp/>DropClass;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FDropSpawnPlanEntry</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>Amount<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TSubclassOf&lt;AARInvaderDropBase&gt;<sp/>DropClass;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RegisterDebugConsoleCommands();</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UnregisterDebugConsoleCommands();</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleSetSpice(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleAddSpice(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleAddScrap(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleAddMoney(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleAddMeat(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleSetDropEarthGravity(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleSetCursor(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleInjectUpgrade(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>World);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>ResolvePlayerStateFromDebugToken(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Token)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ResolveUpgradeTagForDebugInject(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>TagToken,<sp/>FGameplayTag&amp;<sp/>OutUpgradeTag)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ReconcilePlayerCursorSelection();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UARInvaderSpicyTrackSettings*<sp/>GetSpicyTrackSettings()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InitializeSpicyTrackState();</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnsureTrackSlotCount(int32<sp/>RequiredSlots);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NormalizeTrackSlotIndices();</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TrimTrackToTierLimit();</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SyncSharedMaxSpiceToPlayers();</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ResetAllPlayerSpiceMeters();</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TickShareTransfers(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaSeconds);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TickComboTimeouts(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ServerTimeSeconds);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RefreshWhileSlottedEffects();</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearWhileSlottedEffects();</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearWhileSlottedEffectsForPlayer(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>PlayerState);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ResolveFullBlastCommonPostChoice(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSkipped,<sp/>EARPlayerSlot<sp/>RequestingSlot,<sp/>int32<sp/>ActivationTier);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ApplyFullBlastGameplayCue();</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearEnemyProjectilesByTag();</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BuildUpgradeDefinitionMap(TMap&lt;FGameplayTag,<sp/>FARInvaderUpgradeDefRow&gt;&amp;<sp/>OutDefinitions)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsUpgradeEligibleForOffer(</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARInvaderUpgradeDefRow&amp;<sp/>UpgradeDef,</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>ActivationTier,</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer&amp;<sp/>TeamActivatedTags,</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TMap&lt;FGameplayTag,<sp/>int32&gt;&amp;<sp/>TeamActivationCounts,</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer&amp;<sp/>SlottedUpgradeTags)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>RollOfferLevelFromTier(int32<sp/>BaseTier);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetTeamActivationCount(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TMap&lt;FGameplayTag,<sp/>int32&gt;&amp;<sp/>TeamActivationCounts,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag&amp;<sp/>UpgradeTag)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BuildTeamActivationState(FGameplayTagContainer&amp;<sp/>OutTeamActivatedTags,<sp/>TMap&lt;FGameplayTag,<sp/>int32&gt;&amp;<sp/>OutTeamActivationCounts)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CanPlayerActivateUpgrade(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARInvaderUpgradeDefRow&amp;<sp/>UpgradeDef,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>RequestingPlayerState,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer&amp;<sp/>TeamActivatedTags,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TMap&lt;FGameplayTag,<sp/>int32&gt;&amp;<sp/>TeamActivationCounts)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ApplyUpgradeActivation(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>RequestingPlayerState,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARInvaderUpgradeDefRow&amp;<sp/>UpgradeDef);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AwardKillCreditInternal(</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>KillerPlayerState,</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EARAffinityColor<sp/>EnemyColor,</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>BaseSpiceValueOverride,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FVector<sp/>EffectOrigin,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bHasEffectOrigin,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>EnemyIdentifierTag);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TrySpawnEnemyDrop(AAREnemyBase*<sp/>Enemy,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>KillerPlayerState);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>RollDropAmountWithVariance(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>BaseDropAmount,<sp/><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref><sp/>DropType)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ResolveKillerDropMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>KillerPlayerState,<sp/><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref><sp/>DropType)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ResolveDropStackDefinitions(<ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref><sp/>DropType,<sp/>TArray&lt;FResolvedDropStackEntry&gt;&amp;<sp/>OutDefinitions)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BuildDropSpawnPlan(<ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref><sp/>DropType,<sp/>int32<sp/>TotalAmount,<sp/>TArray&lt;FDropSpawnPlanEntry&gt;&amp;<sp/>OutPlan)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ResolveEnemyBaseSpiceValue(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AAREnemyBase*<sp/>Enemy)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>ResolvePlayerStateFromInstigatorActor(AActor*<sp/>InstigatorActor)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>EARAffinityColor<sp/>ToPlayerColor(EARAffinityColor<sp/>EnemyColor);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SetDropEarthGravityEnabledForAll(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bEnabled);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(NetMulticast,<sp/>Unreliable)</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>MulticastNotifyKillCreditFxEvent(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARInvaderKillCreditFxEvent&amp;<sp/>EventData);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(ReplicatedUsing<sp/>=<sp/>OnRep_SharedTrackSlots)</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARInvaderTrackSlotState&gt;<sp/>SharedTrackSlots;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(ReplicatedUsing<sp/>=<sp/>OnRep_SharedFullBlastTier)</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>SharedFullBlastTier<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(ReplicatedUsing<sp/>=<sp/>OnRep_FullBlastSession)</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>FARInvaderFullBlastSessionState<sp/>FullBlastSession;</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(ReplicatedUsing<sp/>=<sp/>OnRep_OfferPresenceStates)</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARInvaderOfferPresenceState&gt;<sp/>OfferPresenceStates;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>TSet&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;&gt;<sp/>ActiveSpiceSharers;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;,<sp/>TArray&lt;FActiveGameplayEffectHandle&gt;&gt;<sp/>WhileSlottedEffectHandlesByPlayer;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/>FRandomStream<sp/>OfferRng;</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugSetSpice<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugAddSpice<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugAddScrap<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugAddMoney<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugAddMeat<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugSetDropEarthGravity<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugSetCursor<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDebugInjectUpgrade<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bDebugDropEarthGravityEnabled<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARInvaderGameState.h"/>
+  </compounddef>
+</doxygen>

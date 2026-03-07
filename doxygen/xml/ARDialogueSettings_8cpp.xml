@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARDialogueSettings_8cpp" kind="file" language="C++">
+    <compoundname>ARDialogueSettings.cpp</compoundname>
+    <includes refid="ARDialogueSettings_8h" local="yes">ARDialogueSettings.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARDialogueSettings.cpp</label>
+        <link refid="ARDialogueSettings_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARDialogueSettings.h</label>
+        <link refid="ARDialogueSettings_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARDialogueSettings.generated.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARDialogueSettings_8h" kindref="compound">ARDialogueSettings.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARDialogueSettings.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,2524 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAAREnemyBase" kind="class" language="C++" prot="public">
+    <compoundname>AAREnemyBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">ACharacter</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">IAbilitySystemInterface</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAAREnemyBase_1a3143dcec7d84ea4fad85a3b1f6c898a5" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TObjectPtr&lt;UAbilitySystemComponent&gt; AAREnemyBase::AbilitySystemComponent</definition>
+        <argsstring></argsstring>
+        <name>AbilitySystemComponent</name>
+        <qualifiedname>AAREnemyBase::AbilitySystemComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="270" column="12" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a1e9fd7b63be5c3112de2d3f676622d07" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARAttributeSetCore" kindref="compound">UARAttributeSetCore</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARAttributeSetCore&gt; AAREnemyBase::AttributeSetCore</definition>
+        <argsstring></argsstring>
+        <name>AttributeSetCore</name>
+        <qualifiedname>AAREnemyBase::AttributeSetCore</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="277" column="12" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a48534c028d9f2db54ff4f2ae6380581b" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bFormationLockActive</definition>
+        <argsstring></argsstring>
+        <name>bFormationLockActive</name>
+        <qualifiedname>AAREnemyBase::bFormationLockActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="325" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="325" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1ab64196102d986edaac77118e1084b076" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bFormationLockEnter</definition>
+        <argsstring></argsstring>
+        <name>bFormationLockEnter</name>
+        <qualifiedname>AAREnemyBase::bFormationLockEnter</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="322" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="322" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a546054a4d77e3159a57269afee7445ee" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bHasFormationTargetWorldLocation</definition>
+        <argsstring></argsstring>
+        <name>bHasFormationTargetWorldLocation</name>
+        <qualifiedname>AAREnemyBase::bHasFormationTargetWorldLocation</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="331" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="331" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a7b1a020b43c07196cb091666b8003bd0" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bIsDead</definition>
+        <argsstring></argsstring>
+        <name>bIsDead</name>
+        <qualifiedname>AAREnemyBase::bIsDead</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="304" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1adb544691cebdb8a6de673637e4a8d272" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyBase::EnemyArchetypeTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyArchetypeTag</name>
+        <qualifiedname>AAREnemyBase::EnemyArchetypeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="292" column="14" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="292" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a1f78baaec88e42c2db6cb6b63d35f3c4" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UAREnemyAttributeSet &gt;</type>
+        <definition>TObjectPtr&lt;UAREnemyAttributeSet&gt; AAREnemyBase::EnemyAttributeSet</definition>
+        <argsstring></argsstring>
+        <name>EnemyAttributeSet</name>
+        <qualifiedname>AAREnemyBase::EnemyAttributeSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="280" column="12" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a11bbcde83bbd60a9371919018fac7c0a" prot="protected" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AAREnemyBase::EnemyColor</definition>
+        <argsstring></argsstring>
+        <name>EnemyColor</name>
+        <qualifiedname>AAREnemyBase::EnemyColor</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="283" column="18" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="283" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a3f031e6cb8f8b1c373b8b646b8bc512e" prot="protected" static="no" mutable="no">
+        <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+        <definition>EARInvaderDropType AAREnemyBase::EnemyDropType</definition>
+        <argsstring></argsstring>
+        <name>EnemyDropType</name>
+        <qualifiedname>AAREnemyBase::EnemyDropType</qualifiedname>
+        <initializer>= EARInvaderDropType::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="298" column="20" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a27a1cdac5b77a47e5d564de363acb37b" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyBase::EnemyIdentifierTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyIdentifierTag</name>
+        <qualifiedname>AAREnemyBase::EnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="295" column="14" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="295" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a588c4ff789e0ecef3b18406d4475dcda" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyBase::FormationSlotIndex</definition>
+        <argsstring></argsstring>
+        <name>FormationSlotIndex</name>
+        <qualifiedname>AAREnemyBase::FormationSlotIndex</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="313" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="313" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a37c1c9cbbca6d704dc8ba41f8056840b" prot="protected" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector AAREnemyBase::FormationTargetWorldLocation</definition>
+        <argsstring></argsstring>
+        <name>FormationTargetWorldLocation</name>
+        <qualifiedname>AAREnemyBase::FormationTargetWorldLocation</qualifiedname>
+        <initializer>= FVector::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="328" column="9" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="328" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a972ec780a04bd7df97c0afee51f60722" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TObjectPtr&lt;UAbilitySystemComponent&gt; AAREnemyBase::StateTreeASC</definition>
+        <argsstring></argsstring>
+        <name>StateTreeASC</name>
+        <qualifiedname>AAREnemyBase::StateTreeASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="274" column="12" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a778167e84e1786887890c7bf9ae5cb58" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyBase::WaveInstanceId</definition>
+        <argsstring></argsstring>
+        <name>WaveInstanceId</name>
+        <qualifiedname>AAREnemyBase::WaveInstanceId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="310" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="310" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1af66c7f22a81ef3a99aa1d4be8b2772ac" prot="protected" static="no" mutable="no">
+        <type>EARWavePhase</type>
+        <definition>EARWavePhase AAREnemyBase::WavePhase</definition>
+        <argsstring></argsstring>
+        <name>WavePhase</name>
+        <qualifiedname>AAREnemyBase::WavePhase</qualifiedname>
+        <initializer>= EARWavePhase::Active</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="316" column="14" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1ac81a7968860cd47d521494f548d669ef" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AAREnemyBase::WavePhaseStartServerTime</definition>
+        <argsstring></argsstring>
+        <name>WavePhaseStartServerTime</name>
+        <qualifiedname>AAREnemyBase::WavePhaseStartServerTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="319" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="319" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAAREnemyBase_1acfeb507bc9b996e3e6c45218af15bf7a" prot="private" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, int32 &gt;</type>
+        <definition>TMap&lt;FGameplayTag, int32&gt; AAREnemyBase::ASCStateTagRefCounts</definition>
+        <argsstring></argsstring>
+        <name>ASCStateTagRefCounts</name>
+        <qualifiedname>AAREnemyBase::ASCStateTagRefCounts</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="381" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="381" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a24b90530158c23255e29def30a9e0042" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bApplyingEnemyColorTags</definition>
+        <argsstring></argsstring>
+        <name>bApplyingEnemyColorTags</name>
+        <qualifiedname>AAREnemyBase::bApplyingEnemyColorTags</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="366" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="366" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a4c375a903f6d300018facd46cfff98d6" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bCountedAsLeak</definition>
+        <argsstring></argsstring>
+        <name>bCountedAsLeak</name>
+        <qualifiedname>AAREnemyBase::bCountedAsLeak</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="367" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="367" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1aeca0a54c4b6e9e5bcc538bf9e5870c98" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bHasDispatchedEnteredScreenEvent</definition>
+        <argsstring></argsstring>
+        <name>bHasDispatchedEnteredScreenEvent</name>
+        <qualifiedname>AAREnemyBase::bHasDispatchedEnteredScreenEvent</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="372" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="372" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1af30b68e4564af7684efe44eae532fcee" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bHasDispatchedInFormationEvent</definition>
+        <argsstring></argsstring>
+        <name>bHasDispatchedInFormationEvent</name>
+        <qualifiedname>AAREnemyBase::bHasDispatchedInFormationEvent</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="373" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="373" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a22344909613fbf5f372c2dc181bfd53d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bHasEnteredGameplayScreen</definition>
+        <argsstring></argsstring>
+        <name>bHasEnteredGameplayScreen</name>
+        <qualifiedname>AAREnemyBase::bHasEnteredGameplayScreen</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="370" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a67708af8f3c5f40ff528eb1f7a90e869" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bHasEnteredScreen</definition>
+        <argsstring></argsstring>
+        <name>bHasEnteredScreen</name>
+        <qualifiedname>AAREnemyBase::bHasEnteredScreen</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="369" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="369" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a1d750cd65bec90bdb2188aa4b8c17dc8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bReachedFormationSlot</definition>
+        <argsstring></argsstring>
+        <name>bReachedFormationSlot</name>
+        <qualifiedname>AAREnemyBase::bReachedFormationSlot</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="371" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="371" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a7eb4c2beb18181f5a9db07dbb56b5d90" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bStartupSetApplied</definition>
+        <argsstring></argsstring>
+        <name>bStartupSetApplied</name>
+        <qualifiedname>AAREnemyBase::bStartupSetApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="364" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="364" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a7e0a288cbd84b067131b2f558a8fde17" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::bUpdatingEnemyColorFromTags</definition>
+        <argsstring></argsstring>
+        <name>bUpdatingEnemyColorFromTags</name>
+        <qualifiedname>AAREnemyBase::bUpdatingEnemyColorFromTags</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="365" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="365" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a05c6d38122041642d39f254a3803b911" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AAREnemyBase::ColorBlueTagChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>ColorBlueTagChangedDelegateHandle</name>
+        <qualifiedname>AAREnemyBase::ColorBlueTagChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="363" column="17" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="363" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a3f8236a36f33f336e482996b120dd991" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AAREnemyBase::ColorNoneTagChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>ColorNoneTagChangedDelegateHandle</name>
+        <qualifiedname>AAREnemyBase::ColorNoneTagChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="360" column="17" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1ad3083210a903552bfe23e993fd908070" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AAREnemyBase::ColorRedTagChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>ColorRedTagChangedDelegateHandle</name>
+        <qualifiedname>AAREnemyBase::ColorRedTagChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="361" column="17" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="361" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a5bf1fb52d13428bec51345eb0f54ea36" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AAREnemyBase::ColorWhiteTagChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>ColorWhiteTagChangedDelegateHandle</name>
+        <qualifiedname>AAREnemyBase::ColorWhiteTagChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="362" column="17" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="362" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a33638d8b14eeeadb6854313c5288c1ed" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AAREnemyBase::EnteredGameplayScreenServerTime</definition>
+        <argsstring></argsstring>
+        <name>EnteredGameplayScreenServerTime</name>
+        <qualifiedname>AAREnemyBase::EnteredGameplayScreenServerTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="376" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="376" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a51a43f2caedb15febd3015ced6232ac5" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AAREnemyBase::HealthChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>HealthChangedDelegateHandle</name>
+        <qualifiedname>AAREnemyBase::HealthChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="358" column="17" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a946aff69a9f55858a55a3e035f2d9ca6" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AActor &gt;</type>
+        <definition>TWeakObjectPtr&lt;AActor&gt; AAREnemyBase::LastDamageInstigatorActor</definition>
+        <argsstring></argsstring>
+        <name>LastDamageInstigatorActor</name>
+        <qualifiedname>AAREnemyBase::LastDamageInstigatorActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="378" column="16" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1af5337b3143b89b3c09bfff22fa2275e8" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AAREnemyBase::LastDamageInstigatorServerTime</definition>
+        <argsstring></argsstring>
+        <name>LastDamageInstigatorServerTime</name>
+        <qualifiedname>AAREnemyBase::LastDamageInstigatorServerTime</qualifiedname>
+        <initializer>= -1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="379" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="379" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a6c6f6dc3eacf870e29427eec821073ba" prot="private" static="no" mutable="no">
+        <type>EARWavePhase</type>
+        <definition>EARWavePhase AAREnemyBase::LastDispatchedWavePhase</definition>
+        <argsstring></argsstring>
+        <name>LastDispatchedWavePhase</name>
+        <qualifiedname>AAREnemyBase::LastDispatchedWavePhase</qualifiedname>
+        <initializer>= EARWavePhase::Berserk</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="375" column="14" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="375" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a574caa9e8d368f15d39678d41aaf62e2" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyBase::LastDispatchedWavePhaseWaveId</definition>
+        <argsstring></argsstring>
+        <name>LastDispatchedWavePhaseWaveId</name>
+        <qualifiedname>AAREnemyBase::LastDispatchedWavePhaseWaveId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="374" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="374" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a56743a189ad6f6bb52324fcdbbc11a2a" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AAREnemyBase::MoveSpeedChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeedChangedDelegateHandle</name>
+        <qualifiedname>AAREnemyBase::MoveSpeedChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="359" column="17" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="359" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1ab74be70d6f310cdea2f0bbb89789bc97" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FActiveGameplayEffectHandle &gt;</type>
+        <definition>TArray&lt;FActiveGameplayEffectHandle&gt; AAREnemyBase::RuntimeAppliedEffectHandles</definition>
+        <argsstring></argsstring>
+        <name>RuntimeAppliedEffectHandles</name>
+        <qualifiedname>AAREnemyBase::RuntimeAppliedEffectHandles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="350" column="8" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="350" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1ad2c9043be71faf1bb2c13396ad681a53" prot="private" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AAREnemyBase::RuntimeAppliedLooseTags</definition>
+        <argsstring></argsstring>
+        <name>RuntimeAppliedLooseTags</name>
+        <qualifiedname>AAREnemyBase::RuntimeAppliedLooseTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="353" column="23" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a734be0ea8372730769b1c4a053a223c2" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FARAbilitySet_AbilityEntry &gt;</type>
+        <definition>TArray&lt;FARAbilitySet_AbilityEntry&gt; AAREnemyBase::RuntimeSpecificAbilities</definition>
+        <argsstring></argsstring>
+        <name>RuntimeSpecificAbilities</name>
+        <qualifiedname>AAREnemyBase::RuntimeSpecificAbilities</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="356" column="8" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a2bf8f9dc21055ee5d8f444d80fb7bef8" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FActiveGameplayEffectHandle &gt;</type>
+        <definition>TArray&lt;FActiveGameplayEffectHandle&gt; AAREnemyBase::StartupAppliedEffectHandles</definition>
+        <argsstring></argsstring>
+        <name>StartupAppliedEffectHandles</name>
+        <qualifiedname>AAREnemyBase::StartupAppliedEffectHandles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="347" column="8" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="347" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyBase_1a258e23d3e8fed6b410dc02a7d71fe439" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FGameplayAbilitySpecHandle &gt;</type>
+        <definition>TArray&lt;FGameplayAbilitySpecHandle&gt; AAREnemyBase::StartupGrantedAbilityHandles</definition>
+        <argsstring></argsstring>
+        <name>StartupGrantedAbilityHandles</name>
+        <qualifiedname>AAREnemyBase::StartupGrantedAbilityHandles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="344" column="8" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="344" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAAREnemyBase_1af176212200efa1a47407540db6b1d82d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AAREnemyBase::AAREnemyBase</definition>
+        <argsstring>()</argsstring>
+        <name>AAREnemyBase</name>
+        <qualifiedname>AAREnemyBase::AAREnemyBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="34" column="1" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="240" bodyend="267"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a0aa65758b7bc144d64183d2c1eab5abd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::ActivateAbilityByTag</definition>
+        <argsstring>(FGameplayTag AbilityTag, bool bAllowPartialMatch=false)</argsstring>
+        <name>ActivateAbilityByTag</name>
+        <qualifiedname>AAREnemyBase::ActivateAbilityByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>AbilityTag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAllowPartialMatch</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="73" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1573" bodyend="1594"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aacc35051984a8b60329bcd6a3034e985" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::ApplyCollisionDamageToTargetViaGAS</definition>
+        <argsstring>(AActor *Target, float DamageOverride=-1.f)</argsstring>
+        <name>ApplyCollisionDamageToTargetViaGAS</name>
+        <qualifiedname>AAREnemyBase::ApplyCollisionDamageToTargetViaGAS</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>Target</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>DamageOverride</declname>
+          <defval>-1.f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="64" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1179" bodyend="1188"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1acb11dafec6dc41e7af3d44eebef32f78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::ApplyDamageToTargetViaGAS</definition>
+        <argsstring>(AActor *Target, float DamageOverride=-1.f)</argsstring>
+        <name>ApplyDamageToTargetViaGAS</name>
+        <qualifiedname>AAREnemyBase::ApplyDamageToTargetViaGAS</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>Target</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>DamageOverride</declname>
+          <defval>-1.f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="60" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1168" bodyend="1177"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ab4b3f009c735e54db5dc9ec866d74f10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::ApplyDamageViaGAS</definition>
+        <argsstring>(float Damage, AActor *Offender)</argsstring>
+        <name>ApplyDamageViaGAS</name>
+        <qualifiedname>AAREnemyBase::ApplyDamageViaGAS</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Damage</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>Offender</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="50" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1142" bodyend="1146"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a7d6eae45e496a5d461ffbe34c9f999db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::ApplyDamageViaGAS</definition>
+        <argsstring>(float Damage, AActor *Offender, float &amp;OutCurrentHealth)</argsstring>
+        <name>ApplyDamageViaGAS</name>
+        <qualifiedname>AAREnemyBase::ApplyDamageViaGAS</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Damage</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>Offender</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>OutCurrentHealth</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="49" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1106" bodyend="1140"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ade80409e8d7b66eb8cfd472379749d4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnEnemyDefinitionApplied</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnEnemyDefinitionApplied</name>
+        <qualifiedname>AAREnemyBase::BP_OnEnemyDefinitionApplied</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="143" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a9be7a64e0f28f047013c577011349b15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnEnemyDied</definition>
+        <argsstring>(AActor *InstigatorActor)</argsstring>
+        <name>BP_OnEnemyDied</name>
+        <qualifiedname>AAREnemyBase::BP_OnEnemyDied</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InstigatorActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="112" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ab1ca9be02a3949c1ce12cb8cb5dc9427" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnEnemyIdentifierTagChanged</definition>
+        <argsstring>(FGameplayTag NewIdentifierTag)</argsstring>
+        <name>BP_OnEnemyIdentifierTagChanged</name>
+        <qualifiedname>AAREnemyBase::BP_OnEnemyIdentifierTagChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewIdentifierTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="137" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1adda67b72f4938cafa8881f8997814283" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnEnemyInitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnEnemyInitialized</name>
+        <qualifiedname>AAREnemyBase::BP_OnEnemyInitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="109" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a3c03a6d13baa2c409816ff1948ae2fd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnEnemyPreRelease</definition>
+        <argsstring>(AActor *InstigatorActor)</argsstring>
+        <name>BP_OnEnemyPreRelease</name>
+        <qualifiedname>AAREnemyBase::BP_OnEnemyPreRelease</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InstigatorActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="116" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a24553d17eaf34a40e6e521ddfd98252b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::CancelAbilitiesByTag</definition>
+        <argsstring>(FGameplayTag AbilityTag, bool bAllowPartialMatch=true)</argsstring>
+        <name>CancelAbilitiesByTag</name>
+        <qualifiedname>AAREnemyBase::CancelAbilitiesByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>AbilityTag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAllowPartialMatch</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="76" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1596" bodyend="1614"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a5d3c042e686359ce16cd53d94277cf37" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::CanFireByWaveRules</definition>
+        <argsstring>() const</argsstring>
+        <name>CanFireByWaveRules</name>
+        <qualifiedname>AAREnemyBase::CanFireByWaveRules</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="161" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1551" bodyend="1566"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a979615211aa1bd9723f2a4eeeb3cd23d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::CheckAndMarkLeaked</definition>
+        <argsstring>(float LeakBoundaryX)</argsstring>
+        <name>CheckAndMarkLeaked</name>
+        <qualifiedname>AAREnemyBase::CheckAndMarkLeaked</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>LeakBoundaryX</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="222" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1384" bodyend="1400"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a14c15eed1eb5a8b8e4fb188adf8ce5f4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * AAREnemyBase::GetAbilitySystemComponent</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetAbilitySystemComponent</name>
+        <qualifiedname>AAREnemyBase::GetAbilitySystemComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="37" column="33" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="269" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ab759e7d32514893202770a1aeb79fc1f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * AAREnemyBase::GetASC</definition>
+        <argsstring>() const</argsstring>
+        <name>GetASC</name>
+        <qualifiedname>AAREnemyBase::GetASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="40" column="25" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="40" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a405174f84dc3a0e2f39fb01fcd193a3d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AAREnemyBase::GetASCStateTagRefCount</definition>
+        <argsstring>(FGameplayTag StateTag) const</argsstring>
+        <name>GetASCStateTagRefCount</name>
+        <qualifiedname>AAREnemyBase::GetASCStateTagRefCount</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>StateTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="99" column="7" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1686" bodyend="1695"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1abb64de6af9d780b08fb4a613e247dbe2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classUARAttributeSetCore" kindref="compound">UARAttributeSetCore</ref> *</type>
+        <definition>UARAttributeSetCore * AAREnemyBase::GetCoreAttributes</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCoreAttributes</name>
+        <qualifiedname>AAREnemyBase::GetCoreAttributes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="43" column="21" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a383381bb8819535bb4eb86093554d11a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AAREnemyBase::GetCurrentCollisionDamageFromGAS</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentCollisionDamageFromGAS</name>
+        <qualifiedname>AAREnemyBase::GetCurrentCollisionDamageFromGAS</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="56" column="7" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1158" bodyend="1166"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a96d8c367e48e5e94b841bf29f278477e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AAREnemyBase::GetCurrentDamageFromGAS</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentDamageFromGAS</name>
+        <qualifiedname>AAREnemyBase::GetCurrentDamageFromGAS</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="53" column="7" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1148" bodyend="1156"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af0bcdb1a4ea20e5275d4e4920e3bd604" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AAREnemyAIController *</type>
+        <definition>AAREnemyAIController * AAREnemyBase::GetEnemyAIController</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyAIController</name>
+        <qualifiedname>AAREnemyBase::GetEnemyAIController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="198" column="22" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1402" bodyend="1405"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a4cda77f9439327b972c02a1dc1de6e14" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UAREnemyAttributeSet *</type>
+        <definition>UAREnemyAttributeSet * AAREnemyBase::GetEnemyAttributes</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyAttributes</name>
+        <qualifiedname>AAREnemyBase::GetEnemyAttributes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="46" column="22" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ab5e40ecba08ba379e743d12e99047703" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AAREnemyBase::GetEnemyColor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyColor</name>
+        <qualifiedname>AAREnemyBase::GetEnemyColor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="125" column="18" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a8540c19b9ab8d0deea2e2185c05111bc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+        <definition>EARInvaderDropType AAREnemyBase::GetEnemyDropType</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyDropType</name>
+        <qualifiedname>AAREnemyBase::GetEnemyDropType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="134" column="20" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af60d0941d9b095fb855598f27d2ca6db" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyBase::GetEnemyIdentifierTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyIdentifierTag</name>
+        <qualifiedname>AAREnemyBase::GetEnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="131" column="14" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="131" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a9702dcd6c61484e568e27584608ee656" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARStateTreeAIComponent" kindref="compound">UARStateTreeAIComponent</ref> *</type>
+        <definition>UARStateTreeAIComponent * AAREnemyBase::GetEnemyStateTreeComponent</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyStateTreeComponent</name>
+        <qualifiedname>AAREnemyBase::GetEnemyStateTreeComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="201" column="25" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1407" bodyend="1415"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af513f82e2c7f35b7cc1675e5f08676af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::GetFormationLockActive</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFormationLockActive</name>
+        <qualifiedname>AAREnemyBase::GetFormationLockActive</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="176" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="176" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a31831b9b6d764b8e00d61236faf3c743" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::GetFormationLockEnter</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFormationLockEnter</name>
+        <qualifiedname>AAREnemyBase::GetFormationLockEnter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="173" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="173" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1afc1605130f95795c49760fc7a153aeb6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FVector</type>
+        <definition>FVector AAREnemyBase::GetFormationTargetWorldLocation</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFormationTargetWorldLocation</name>
+        <qualifiedname>AAREnemyBase::GetFormationTargetWorldLocation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="191" column="9" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="191" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a56f4ddb6dbdd9554628cbc22f82b0433" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AAREnemyBase::GetWaveInstanceId</definition>
+        <argsstring>() const</argsstring>
+        <name>GetWaveInstanceId</name>
+        <qualifiedname>AAREnemyBase::GetWaveInstanceId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="167" column="7" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a7ab8da5e91701d79e8620b92a724a1e0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARWavePhase</type>
+        <definition>EARWavePhase AAREnemyBase::GetWavePhase</definition>
+        <argsstring>() const</argsstring>
+        <name>GetWavePhase</name>
+        <qualifiedname>AAREnemyBase::GetWavePhase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="170" column="14" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="170" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a8646000ec2730983438bfa24c89582a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::HandleDeath</definition>
+        <argsstring>(AActor *InstigatorActor)</argsstring>
+        <name>HandleDeath</name>
+        <qualifiedname>AAREnemyBase::HandleDeath</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InstigatorActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="102" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a636aa49eede82b390a01365cabf31bcf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::HasAnyASCGameplayTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;TagsToCheck) const</argsstring>
+        <name>HasAnyASCGameplayTags</name>
+        <qualifiedname>AAREnemyBase::HasAnyASCGameplayTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>TagsToCheck</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="82" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1707" bodyend="1715"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ad112650566db76f0c23e94a16a766684" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::HasASCGameplayTag</definition>
+        <argsstring>(FGameplayTag TagToCheck) const</argsstring>
+        <name>HasASCGameplayTag</name>
+        <qualifiedname>AAREnemyBase::HasASCGameplayTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>TagToCheck</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="79" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1697" bodyend="1705"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1adcbf9938ed5f6a9c2ea8e16377b4a0de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::HasBeenCountedAsLeak</definition>
+        <argsstring>() const</argsstring>
+        <name>HasBeenCountedAsLeak</name>
+        <qualifiedname>AAREnemyBase::HasBeenCountedAsLeak</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="227" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="227" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aa22bb0ebdd194dc75a8e774058e3172d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::HasEnteredGameplayScreen</definition>
+        <argsstring>() const</argsstring>
+        <name>HasEnteredGameplayScreen</name>
+        <qualifiedname>AAREnemyBase::HasEnteredGameplayScreen</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="179" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="179" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a047124d99f494971b98793414a42ccaa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::HasFormationTargetWorldLocation</definition>
+        <argsstring>() const</argsstring>
+        <name>HasFormationTargetWorldLocation</name>
+        <qualifiedname>AAREnemyBase::HasFormationTargetWorldLocation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="194" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="194" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1afe3417d6fe9a84e03f01bf463aca6628" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::HasReachedFormationSlot</definition>
+        <argsstring>() const</argsstring>
+        <name>HasReachedFormationSlot</name>
+        <qualifiedname>AAREnemyBase::HasReachedFormationSlot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="182" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="182" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a2cb2fddbe6ae9b66cdb7d860a3b67f5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::InitializeFromEnemyDefinitionTag</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeFromEnemyDefinitionTag</name>
+        <qualifiedname>AAREnemyBase::InitializeFromEnemyDefinitionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="140" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="630" bodyend="656"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1add7e474a9b5eba518bf03f24b67eebe9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::IsDead</definition>
+        <argsstring>() const</argsstring>
+        <name>IsDead</name>
+        <qualifiedname>AAREnemyBase::IsDead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="119" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a88f2a9a816294d703917e18734ab1a07" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::IsLeaked</definition>
+        <argsstring>() const</argsstring>
+        <name>IsLeaked</name>
+        <qualifiedname>AAREnemyBase::IsLeaked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="225" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="225" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a78f6580fd5e8bac727e13e9ce3d987dc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::MarkCountedAsLeak</definition>
+        <argsstring>()</argsstring>
+        <name>MarkCountedAsLeak</name>
+        <qualifiedname>AAREnemyBase::MarkCountedAsLeak</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="228" column="6" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="228" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a3519d2891c35ff892b1e3df8892d0c45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::NotifyEnteredGameplayScreen</definition>
+        <argsstring>(float InServerTime)</argsstring>
+        <name>NotifyEnteredGameplayScreen</name>
+        <qualifiedname>AAREnemyBase::NotifyEnteredGameplayScreen</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>InServerTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="158" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1345" bodyend="1357"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a630075123d97d37ecc5a23e67196f968" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::PopASCStateTag</definition>
+        <argsstring>(FGameplayTag StateTag)</argsstring>
+        <name>PopASCStateTag</name>
+        <qualifiedname>AAREnemyBase::PopASCStateTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>StateTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="90" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1635" bodyend="1658"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ac6b188064789e03bbd0cd9599c2c2e04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::PopASCStateTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;StateTags)</argsstring>
+        <name>PopASCStateTags</name>
+        <qualifiedname>AAREnemyBase::PopASCStateTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>StateTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="96" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1673" bodyend="1684"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1acac84d01d5c7067ae084a1f2931c27f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::PushASCStateTag</definition>
+        <argsstring>(FGameplayTag StateTag)</argsstring>
+        <name>PushASCStateTag</name>
+        <qualifiedname>AAREnemyBase::PushASCStateTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>StateTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="87" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1616" bodyend="1633"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1abde24a5a243b2d3d80172ae1a656ffd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::PushASCStateTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;StateTags)</argsstring>
+        <name>PushASCStateTags</name>
+        <qualifiedname>AAREnemyBase::PushASCStateTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>StateTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="93" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1660" bodyend="1671"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a1fbb2f5b093fb9b2594c773c553817b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ReleaseEnemyActor</definition>
+        <argsstring>()</argsstring>
+        <name>ReleaseEnemyActor</name>
+        <qualifiedname>AAREnemyBase::ReleaseEnemyActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="106" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a6b0d3d9fe7388051b540a0d7f40b95dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::SendEnemySignalToController</definition>
+        <argsstring>(FGameplayTag SignalTag, AActor *RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true)</argsstring>
+        <name>SendEnemySignalToController</name>
+        <qualifiedname>AAREnemyBase::SendEnemySignalToController</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SignalTag</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>RelatedActor</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>WorldLocation</declname>
+          <defval>FVector::ZeroVector</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ScalarValue</declname>
+          <defval>0.f</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bForwardToStateTree</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="213" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1455" bodyend="1489"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a68b72859addec4cc485ec59d998c0398" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::SendEnemyStateTreeEvent</definition>
+        <argsstring>(const FStateTreeEvent &amp;Event)</argsstring>
+        <name>SendEnemyStateTreeEvent</name>
+        <qualifiedname>AAREnemyBase::SendEnemyStateTreeEvent</qualifiedname>
+        <param>
+          <type>const FStateTreeEvent &amp;</type>
+          <declname>Event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="205" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1417" bodyend="1434"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a6d7e2496686a3c735891075a2f97a10d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::SendEnemyStateTreeEventByTag</definition>
+        <argsstring>(FGameplayTag EventTag, FName Origin=NAME_None)</argsstring>
+        <name>SendEnemyStateTreeEventByTag</name>
+        <qualifiedname>AAREnemyBase::SendEnemyStateTreeEventByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EventTag</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>Origin</declname>
+          <defval>NAME_None</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="209" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1436" bodyend="1453"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a8e674a3c957fb28d601b24e43651ca68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetEnemyColor</definition>
+        <argsstring>(EARAffinityColor InColor)</argsstring>
+        <name>SetEnemyColor</name>
+        <qualifiedname>AAREnemyBase::SetEnemyColor</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>InColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="122" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1053" bodyend="1092"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1afa3b13d0497637e39b1de94ccff960c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetEnemyIdentifierTag</definition>
+        <argsstring>(FGameplayTag InIdentifierTag)</argsstring>
+        <name>SetEnemyIdentifierTag</name>
+        <qualifiedname>AAREnemyBase::SetEnemyIdentifierTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>InIdentifierTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="128" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1094" bodyend="1104"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a5ce446972979e2cd93e8b257218a8fef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetFormationLockRules</definition>
+        <argsstring>(bool bInFormationLockEnter, bool bInFormationLockActive)</argsstring>
+        <name>SetFormationLockRules</name>
+        <qualifiedname>AAREnemyBase::SetFormationLockRules</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bInFormationLockEnter</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bInFormationLockActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="164" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1359" bodyend="1371"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af1b045a007b519fc668a7ae7ea26ad9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetFormationTargetWorldLocation</definition>
+        <argsstring>(const FVector &amp;InFormationTargetWorldLocation)</argsstring>
+        <name>SetFormationTargetWorldLocation</name>
+        <qualifiedname>AAREnemyBase::SetFormationTargetWorldLocation</qualifiedname>
+        <param>
+          <type>const FVector &amp;</type>
+          <declname>InFormationTargetWorldLocation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="188" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1333" bodyend="1343"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ae58a29ee682e6448d4012d52fdd52a94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetReachedFormationSlot</definition>
+        <argsstring>(bool bInReachedFormationSlot)</argsstring>
+        <name>SetReachedFormationSlot</name>
+        <qualifiedname>AAREnemyBase::SetReachedFormationSlot</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bInReachedFormationSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="185" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1373" bodyend="1382"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aae6b18499351aa13eb33b96ccd802a52" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetupPlayerInputComponent</definition>
+        <argsstring>(class UInputComponent *PlayerInputComponent) override</argsstring>
+        <name>SetupPlayerInputComponent</name>
+        <qualifiedname>AAREnemyBase::SetupPlayerInputComponent</qualifiedname>
+        <param>
+          <type>class UInputComponent *</type>
+          <declname>PlayerInputComponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="266" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1760" bodyend="1764"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a6fbda079d48f28d9c6d54fa49ab059f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetWavePhase</definition>
+        <argsstring>(EARWavePhase InWavePhase, float InPhaseStartServerTime)</argsstring>
+        <name>SetWavePhase</name>
+        <qualifiedname>AAREnemyBase::SetWavePhase</qualifiedname>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>InWavePhase</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>InPhaseStartServerTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="155" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1320" bodyend="1331"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a891273641a0a25144f0b7b3d6177b8f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::SetWaveRuntimeContext</definition>
+        <argsstring>(int32 InWaveInstanceId, int32 InFormationSlotIndex, EARWavePhase InWavePhase, float InPhaseStartServerTime, bool bInFormationLockEnter=false, bool bInFormationLockActive=false)</argsstring>
+        <name>SetWaveRuntimeContext</name>
+        <qualifiedname>AAREnemyBase::SetWaveRuntimeContext</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>InWaveInstanceId</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>InFormationSlotIndex</declname>
+        </param>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>InWavePhase</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>InPhaseStartServerTime</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bInFormationLockEnter</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bInFormationLockActive</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="146" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1263" bodyend="1318"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aa4239b42e2ec618fe73b13feb9a74bb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>float</type>
+        <definition>float AAREnemyBase::TakeDamage</definition>
+        <argsstring>(float DamageAmount, struct FDamageEvent const &amp;DamageEvent, class AController *EventInstigator, AActor *DamageCauser) override</argsstring>
+        <name>TakeDamage</name>
+        <qualifiedname>AAREnemyBase::TakeDamage</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DamageAmount</declname>
+        </param>
+        <param>
+          <type>struct FDamageEvent const &amp;</type>
+          <declname>DamageEvent</declname>
+        </param>
+        <param>
+          <type>class AController *</type>
+          <declname>EventInstigator</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>DamageCauser</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="66" column="15" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1190" bodyend="1206"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aa34f6ab7240e3d121c85defd7b3054b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::Tick</definition>
+        <argsstring>(float DeltaTime) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AAREnemyBase::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="264" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="291" bodyend="294"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAAREnemyBase_1a993225e941cf7f42db437f2d4744d4b6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ApplyEnemyColorGameplayTags</definition>
+        <argsstring>(EARAffinityColor NewColor)</argsstring>
+        <name>ApplyEnemyColorGameplayTags</name>
+        <qualifiedname>AAREnemyBase::ApplyEnemyColorGameplayTags</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>NewColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="258" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="917" bodyend="967"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a730d94f2234eed59a1f7efe0566007b6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ApplyEnemyRuntimeInitData</definition>
+        <argsstring>(const FARInvaderEnemyRuntimeInitData &amp;RuntimeInit)</argsstring>
+        <name>ApplyEnemyRuntimeInitData</name>
+        <qualifiedname>AAREnemyBase::ApplyEnemyRuntimeInitData</qualifiedname>
+        <param>
+          <type>const FARInvaderEnemyRuntimeInitData &amp;</type>
+          <declname>RuntimeInit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="246" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="561" bodyend="606"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aebad76f398d9d2708e3f1d7bde04dffe" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ApplyInvaderCollisionResponses</definition>
+        <argsstring>(const FARInvaderEnemyRuntimeInitData &amp;RuntimeInit)</argsstring>
+        <name>ApplyInvaderCollisionResponses</name>
+        <qualifiedname>AAREnemyBase::ApplyInvaderCollisionResponses</qualifiedname>
+        <param>
+          <type>const FARInvaderEnemyRuntimeInitData &amp;</type>
+          <declname>RuntimeInit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="259" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="608" bodyend="628"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a4bd74d5596ea395be499ee654baca812" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ApplyRuntimeEnemyEffects</definition>
+        <argsstring>(const TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt; &amp;Effects)</argsstring>
+        <name>ApplyRuntimeEnemyEffects</name>
+        <qualifiedname>AAREnemyBase::ApplyRuntimeEnemyEffects</qualifiedname>
+        <param>
+          <type>const TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt; &amp;</type>
+          <declname>Effects</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="241" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="405" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a8228fa7efe67a3d6b51e46fae540d77d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ApplyRuntimeEnemyTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;InTags)</argsstring>
+        <name>ApplyRuntimeEnemyTags</name>
+        <qualifiedname>AAREnemyBase::ApplyRuntimeEnemyTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="243" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="446" bodyend="455"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a1df3d203df4a06dca00f1ffde3ae3177" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ApplyStartupAbilitySet</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyStartupAbilitySet</name>
+        <qualifiedname>AAREnemyBase::ApplyStartupAbilitySet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="239" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="355" bodyend="403"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a03527f9ca268a79b3a5c47f5a9d9b586" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AAREnemyBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="234" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="274" bodyend="281"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a6b62b89906afed735797179f08f91bb0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BindEnemyColorTagDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>BindEnemyColorTagDelegates</name>
+        <qualifiedname>AAREnemyBase::BindEnemyColorTagDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="253" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="768" bodyend="816"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a0d12c29d3ab0d2cba27b690cc0b077ad" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BindHealthChangeDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>BindHealthChangeDelegate</name>
+        <qualifiedname>AAREnemyBase::BindHealthChangeDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="247" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="686" bodyend="695"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ae670430dd74cb41a7ecf7548499b6819" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BindMoveSpeedChangeDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>BindMoveSpeedChangeDelegate</name>
+        <qualifiedname>AAREnemyBase::BindMoveSpeedChangeDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="250" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="739" bodyend="748"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af704cd1e1943ec88b563a754ed962d6f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnEnemyColorChanged</definition>
+        <argsstring>(EARAffinityColor NewColor)</argsstring>
+        <name>BP_OnEnemyColorChanged</name>
+        <qualifiedname>AAREnemyBase::BP_OnEnemyColorChanged</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>NewColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="289" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1addf1efbc5e4d83c0a231656508bbe531" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::BP_OnWavePhaseChanged</definition>
+        <argsstring>(EARWavePhase NewPhase)</argsstring>
+        <name>BP_OnWavePhaseChanged</name>
+        <qualifiedname>AAREnemyBase::BP_OnWavePhaseChanged</qualifiedname>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>NewPhase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="337" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a3adc9cb5e47335f70032da507d04f346" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ClearRuntimeEnemyEffects</definition>
+        <argsstring>()</argsstring>
+        <name>ClearRuntimeEnemyEffects</name>
+        <qualifiedname>AAREnemyBase::ClearRuntimeEnemyEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="242" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="428" bodyend="444"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1adb0b007cfd28b95328c67a75893002da" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ClearRuntimeEnemyTags</definition>
+        <argsstring>()</argsstring>
+        <name>ClearRuntimeEnemyTags</name>
+        <qualifiedname>AAREnemyBase::ClearRuntimeEnemyTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="244" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="457" bodyend="466"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a1e885ec300d9ead5c7d637a482a0599c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ClearStartupAbilitySet</definition>
+        <argsstring>()</argsstring>
+        <name>ClearStartupAbilitySet</name>
+        <qualifiedname>AAREnemyBase::ClearStartupAbilitySet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="240" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="658" bodyend="684"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a9daa7a2401fa40b292d5b3b8b85de769" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AAREnemyBase::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="235" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="283" bodyend="289"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af884f49ddc2a774a36b53fcfbc2bcfdd" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::EvaluateEnemyColorFromASCOverrideTags</definition>
+        <argsstring>()</argsstring>
+        <name>EvaluateEnemyColorFromASCOverrideTags</name>
+        <qualifiedname>AAREnemyBase::EvaluateEnemyColorFromASCOverrideTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="256" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="868" bodyend="879"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1afaa612478137bd15a93d1fa370d10f07" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AAREnemyBase::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="236" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1742" bodyend="1758"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ab666e9407054d9bb2fa20b120513ed51" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::HandleEnemyColorOverrideTagChanged</definition>
+        <argsstring>(const FGameplayTag Tag, int32 NewCount)</argsstring>
+        <name>HandleEnemyColorOverrideTagChanged</name>
+        <qualifiedname>AAREnemyBase::HandleEnemyColorOverrideTagChanged</qualifiedname>
+        <param>
+          <type>const FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="255" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="858" bodyend="866"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ada2d8f45045ddadd883212b7593e46e4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::InitAbilityActorInfo</definition>
+        <argsstring>()</argsstring>
+        <name>InitAbilityActorInfo</name>
+        <qualifiedname>AAREnemyBase::InitAbilityActorInfo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="238" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="334" bodyend="353"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a5b568db820467872d5e8a3c9c6d440aa" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnHealthChanged</definition>
+        <argsstring>(const FOnAttributeChangeData &amp;ChangeData)</argsstring>
+        <name>OnHealthChanged</name>
+        <qualifiedname>AAREnemyBase::OnHealthChanged</qualifiedname>
+        <param>
+          <type>const FOnAttributeChangeData &amp;</type>
+          <declname>ChangeData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="249" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="709" bodyend="737"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a6a713a8f337cb26c4be6c373a540342b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnMoveSpeedChanged</definition>
+        <argsstring>(const FOnAttributeChangeData &amp;ChangeData)</argsstring>
+        <name>OnMoveSpeedChanged</name>
+        <qualifiedname>AAREnemyBase::OnMoveSpeedChanged</qualifiedname>
+        <param>
+          <type>const FOnAttributeChangeData &amp;</type>
+          <declname>ChangeData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="252" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="762" bodyend="766"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1afcafd665757ccae1c5821dbdf25f59b6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnRep_Controller</definition>
+        <argsstring>() override</argsstring>
+        <name>OnRep_Controller</name>
+        <qualifiedname>AAREnemyBase::OnRep_Controller</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="232" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="315" bodyend="319"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ad2e35f9e581f2b6925a04282b7a265ff" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnRep_EnemyColor</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_EnemyColor</name>
+        <qualifiedname>AAREnemyBase::OnRep_EnemyColor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="286" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1253" bodyend="1256"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a5956b69b61a98443b91c367710d70c41" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnRep_EnemyIdentifierTag</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_EnemyIdentifierTag</name>
+        <qualifiedname>AAREnemyBase::OnRep_EnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="301" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1258" bodyend="1261"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a9811a0ae4fa6ec38e12d481bc740e483" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnRep_IsDead</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_IsDead</name>
+        <qualifiedname>AAREnemyBase::OnRep_IsDead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="307" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1045" bodyend="1051"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a096e64895c992183018068c1bff9f0c0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::OnRep_WaveRuntimeContext</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_WaveRuntimeContext</name>
+        <qualifiedname>AAREnemyBase::OnRep_WaveRuntimeContext</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="334" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1568" bodyend="1571"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ae33c2803258409f63ea75acd45dcc213" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::PossessedBy</definition>
+        <argsstring>(AController *NewController) override</argsstring>
+        <name>PossessedBy</name>
+        <qualifiedname>AAREnemyBase::PossessedBy</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="231" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="296" bodyend="313"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a5c201511e8859fb352e01a371cb7f3f2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::RefreshCharacterMovementSpeedFromAttributes</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCharacterMovementSpeedFromAttributes</name>
+        <qualifiedname>AAREnemyBase::RefreshCharacterMovementSpeedFromAttributes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="260" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="969" bodyend="985"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ab2180a69159237ce523c17ff39a5c9e7" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AAREnemyBase::ResolveEnemyColorFromASCOverrideTags</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveEnemyColorFromASCOverrideTags</name>
+        <qualifiedname>AAREnemyBase::ResolveEnemyColorFromASCOverrideTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="257" column="18" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="881" bodyend="915"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a1c93fd0a816edec911d395c551859550" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyBase::ResolveEnemyDefinition</definition>
+        <argsstring>(FARInvaderEnemyDefRow &amp;OutRow, FString &amp;OutError) const</argsstring>
+        <name>ResolveEnemyDefinition</name>
+        <qualifiedname>AAREnemyBase::ResolveEnemyDefinition</qualifiedname>
+        <param>
+          <type>FARInvaderEnemyDefRow &amp;</type>
+          <declname>OutRow</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="245" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="468" bodyend="559"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a2ef90ffa51f9e406f9e3c52f4e869544" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::UnbindEnemyColorTagDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindEnemyColorTagDelegates</name>
+        <qualifiedname>AAREnemyBase::UnbindEnemyColorTagDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="254" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="818" bodyend="856"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1adbf60a5f770a2097d0cb806f1e7a7db8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::UnbindHealthChangeDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindHealthChangeDelegate</name>
+        <qualifiedname>AAREnemyBase::UnbindHealthChangeDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="248" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="697" bodyend="707"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a60f41297d74bcdac6444b7aedc188111" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::UnbindMoveSpeedChangeDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindMoveSpeedChangeDelegate</name>
+        <qualifiedname>AAREnemyBase::UnbindMoveSpeedChangeDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="251" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="750" bodyend="760"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1ac446ce2dde2d6eb93464f129bbf6270e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::UnPossessed</definition>
+        <argsstring>() override</argsstring>
+        <name>UnPossessed</name>
+        <qualifiedname>AAREnemyBase::UnPossessed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="233" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="321" bodyend="332"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAAREnemyBase_1a72cc18b958341be1361b54e239cd8d47" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::ClearASCStateTags</definition>
+        <argsstring>()</argsstring>
+        <name>ClearASCStateTags</name>
+        <qualifiedname>AAREnemyBase::ClearASCStateTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="386" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1717" bodyend="1740"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a239ada5ceb41f65fac6f9c061ff34c7b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::RememberDamageInstigatorForKillCredit</definition>
+        <argsstring>(AActor *Offender)</argsstring>
+        <name>RememberDamageInstigatorForKillCredit</name>
+        <qualifiedname>AAREnemyBase::RememberDamageInstigatorForKillCredit</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>Offender</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="341" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1236" bodyend="1251"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a64498ea33527b5d33ba2cce1beae60d6" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AActor *</type>
+        <definition>AActor * AAREnemyBase::ResolveRecentDamageInstigatorForKillCredit</definition>
+        <argsstring>(float MaxAgeSeconds=3.0f) const</argsstring>
+        <name>ResolveRecentDamageInstigatorForKillCredit</name>
+        <qualifiedname>AAREnemyBase::ResolveRecentDamageInstigatorForKillCredit</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>MaxAgeSeconds</declname>
+          <defval>3.0f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="340" column="8" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1208" bodyend="1234"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1aa9b0724416afeeee7cc3edb2fcfbaa8e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::TryDispatchEnteredScreenEvent</definition>
+        <argsstring>()</argsstring>
+        <name>TryDispatchEnteredScreenEvent</name>
+        <qualifiedname>AAREnemyBase::TryDispatchEnteredScreenEvent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="384" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1512" bodyend="1529"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1a031f98f94c05b09240da3a59c3b10a1a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::TryDispatchInFormationEvent</definition>
+        <argsstring>()</argsstring>
+        <name>TryDispatchInFormationEvent</name>
+        <qualifiedname>AAREnemyBase::TryDispatchInFormationEvent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="385" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1531" bodyend="1549"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyBase_1af361e25ae0367232cd0046d2685692da" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyBase::TryDispatchWavePhaseEvent</definition>
+        <argsstring>()</argsstring>
+        <name>TryDispatchWavePhaseEvent</name>
+        <qualifiedname>AAREnemyBase::TryDispatchWavePhaseEvent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyBase.h" line="383" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="1491" bodyend="1510"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREnemyBase.h" line="29" column="1" bodyfile="AlienRamen/Public/AREnemyBase.h" bodystart="30" bodyend="387"/>
+    <listofallmembers>
+      <member refid="classAAREnemyBase_1af176212200efa1a47407540db6b1d82d" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>AAREnemyBase</name></member>
+      <member refid="classAAREnemyBase_1a3143dcec7d84ea4fad85a3b1f6c898a5" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>AbilitySystemComponent</name></member>
+      <member refid="classAAREnemyBase_1a0aa65758b7bc144d64183d2c1eab5abd" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>ActivateAbilityByTag</name></member>
+      <member refid="classAAREnemyBase_1aacc35051984a8b60329bcd6a3034e985" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyCollisionDamageToTargetViaGAS</name></member>
+      <member refid="classAAREnemyBase_1acb11dafec6dc41e7af3d44eebef32f78" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyDamageToTargetViaGAS</name></member>
+      <member refid="classAAREnemyBase_1a7d6eae45e496a5d461ffbe34c9f999db" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyDamageViaGAS</name></member>
+      <member refid="classAAREnemyBase_1ab4b3f009c735e54db5dc9ec866d74f10" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyDamageViaGAS</name></member>
+      <member refid="classAAREnemyBase_1a993225e941cf7f42db437f2d4744d4b6" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyEnemyColorGameplayTags</name></member>
+      <member refid="classAAREnemyBase_1a730d94f2234eed59a1f7efe0566007b6" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyEnemyRuntimeInitData</name></member>
+      <member refid="classAAREnemyBase_1aebad76f398d9d2708e3f1d7bde04dffe" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyInvaderCollisionResponses</name></member>
+      <member refid="classAAREnemyBase_1a4bd74d5596ea395be499ee654baca812" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyRuntimeEnemyEffects</name></member>
+      <member refid="classAAREnemyBase_1a8228fa7efe67a3d6b51e46fae540d77d" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyRuntimeEnemyTags</name></member>
+      <member refid="classAAREnemyBase_1a1df3d203df4a06dca00f1ffde3ae3177" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ApplyStartupAbilitySet</name></member>
+      <member refid="classAAREnemyBase_1acfeb507bc9b996e3e6c45218af15bf7a" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ASCStateTagRefCounts</name></member>
+      <member refid="classAAREnemyBase_1a1e9fd7b63be5c3112de2d3f676622d07" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>AttributeSetCore</name></member>
+      <member refid="classAAREnemyBase_1a24b90530158c23255e29def30a9e0042" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bApplyingEnemyColorTags</name></member>
+      <member refid="classAAREnemyBase_1a4c375a903f6d300018facd46cfff98d6" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bCountedAsLeak</name></member>
+      <member refid="classAAREnemyBase_1a03527f9ca268a79b3a5c47f5a9d9b586" prot="protected" virt="virtual"><scope>AAREnemyBase</scope><name>BeginPlay</name></member>
+      <member refid="classAAREnemyBase_1a48534c028d9f2db54ff4f2ae6380581b" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>bFormationLockActive</name></member>
+      <member refid="classAAREnemyBase_1ab64196102d986edaac77118e1084b076" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>bFormationLockEnter</name></member>
+      <member refid="classAAREnemyBase_1aeca0a54c4b6e9e5bcc538bf9e5870c98" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bHasDispatchedEnteredScreenEvent</name></member>
+      <member refid="classAAREnemyBase_1af30b68e4564af7684efe44eae532fcee" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bHasDispatchedInFormationEvent</name></member>
+      <member refid="classAAREnemyBase_1a22344909613fbf5f372c2dc181bfd53d" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bHasEnteredGameplayScreen</name></member>
+      <member refid="classAAREnemyBase_1a67708af8f3c5f40ff528eb1f7a90e869" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bHasEnteredScreen</name></member>
+      <member refid="classAAREnemyBase_1a546054a4d77e3159a57269afee7445ee" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>bHasFormationTargetWorldLocation</name></member>
+      <member refid="classAAREnemyBase_1a6b62b89906afed735797179f08f91bb0" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>BindEnemyColorTagDelegates</name></member>
+      <member refid="classAAREnemyBase_1a0d12c29d3ab0d2cba27b690cc0b077ad" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>BindHealthChangeDelegate</name></member>
+      <member refid="classAAREnemyBase_1ae670430dd74cb41a7ecf7548499b6819" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>BindMoveSpeedChangeDelegate</name></member>
+      <member refid="classAAREnemyBase_1a7b1a020b43c07196cb091666b8003bd0" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>bIsDead</name></member>
+      <member refid="classAAREnemyBase_1af704cd1e1943ec88b563a754ed962d6f" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnEnemyColorChanged</name></member>
+      <member refid="classAAREnemyBase_1ade80409e8d7b66eb8cfd472379749d4b" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnEnemyDefinitionApplied</name></member>
+      <member refid="classAAREnemyBase_1a9be7a64e0f28f047013c577011349b15" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnEnemyDied</name></member>
+      <member refid="classAAREnemyBase_1ab1ca9be02a3949c1ce12cb8cb5dc9427" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnEnemyIdentifierTagChanged</name></member>
+      <member refid="classAAREnemyBase_1adda67b72f4938cafa8881f8997814283" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnEnemyInitialized</name></member>
+      <member refid="classAAREnemyBase_1a3c03a6d13baa2c409816ff1948ae2fd3" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnEnemyPreRelease</name></member>
+      <member refid="classAAREnemyBase_1addf1efbc5e4d83c0a231656508bbe531" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>BP_OnWavePhaseChanged</name></member>
+      <member refid="classAAREnemyBase_1a1d750cd65bec90bdb2188aa4b8c17dc8" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bReachedFormationSlot</name></member>
+      <member refid="classAAREnemyBase_1a7eb4c2beb18181f5a9db07dbb56b5d90" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bStartupSetApplied</name></member>
+      <member refid="classAAREnemyBase_1a7e0a288cbd84b067131b2f558a8fde17" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>bUpdatingEnemyColorFromTags</name></member>
+      <member refid="classAAREnemyBase_1a24553d17eaf34a40e6e521ddfd98252b" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>CancelAbilitiesByTag</name></member>
+      <member refid="classAAREnemyBase_1a5d3c042e686359ce16cd53d94277cf37" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>CanFireByWaveRules</name></member>
+      <member refid="classAAREnemyBase_1a979615211aa1bd9723f2a4eeeb3cd23d" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>CheckAndMarkLeaked</name></member>
+      <member refid="classAAREnemyBase_1a72cc18b958341be1361b54e239cd8d47" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ClearASCStateTags</name></member>
+      <member refid="classAAREnemyBase_1a3adc9cb5e47335f70032da507d04f346" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ClearRuntimeEnemyEffects</name></member>
+      <member refid="classAAREnemyBase_1adb0b007cfd28b95328c67a75893002da" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ClearRuntimeEnemyTags</name></member>
+      <member refid="classAAREnemyBase_1a1e885ec300d9ead5c7d637a482a0599c" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ClearStartupAbilitySet</name></member>
+      <member refid="classAAREnemyBase_1a05c6d38122041642d39f254a3803b911" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ColorBlueTagChangedDelegateHandle</name></member>
+      <member refid="classAAREnemyBase_1a3f8236a36f33f336e482996b120dd991" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ColorNoneTagChangedDelegateHandle</name></member>
+      <member refid="classAAREnemyBase_1ad3083210a903552bfe23e993fd908070" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ColorRedTagChangedDelegateHandle</name></member>
+      <member refid="classAAREnemyBase_1a5bf1fb52d13428bec51345eb0f54ea36" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ColorWhiteTagChangedDelegateHandle</name></member>
+      <member refid="classAAREnemyBase_1a9daa7a2401fa40b292d5b3b8b85de769" prot="protected" virt="virtual"><scope>AAREnemyBase</scope><name>EndPlay</name></member>
+      <member refid="classAAREnemyBase_1adb544691cebdb8a6de673637e4a8d272" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>EnemyArchetypeTag</name></member>
+      <member refid="classAAREnemyBase_1a1f78baaec88e42c2db6cb6b63d35f3c4" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>EnemyAttributeSet</name></member>
+      <member refid="classAAREnemyBase_1a11bbcde83bbd60a9371919018fac7c0a" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>EnemyColor</name></member>
+      <member refid="classAAREnemyBase_1a3f031e6cb8f8b1c373b8b646b8bc512e" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>EnemyDropType</name></member>
+      <member refid="classAAREnemyBase_1a27a1cdac5b77a47e5d564de363acb37b" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>EnemyIdentifierTag</name></member>
+      <member refid="classAAREnemyBase_1a33638d8b14eeeadb6854313c5288c1ed" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>EnteredGameplayScreenServerTime</name></member>
+      <member refid="classAAREnemyBase_1af884f49ddc2a774a36b53fcfbc2bcfdd" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>EvaluateEnemyColorFromASCOverrideTags</name></member>
+      <member refid="classAAREnemyBase_1a588c4ff789e0ecef3b18406d4475dcda" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>FormationSlotIndex</name></member>
+      <member refid="classAAREnemyBase_1a37c1c9cbbca6d704dc8ba41f8056840b" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>FormationTargetWorldLocation</name></member>
+      <member refid="classAAREnemyBase_1a14c15eed1eb5a8b8e4fb188adf8ce5f4" prot="public" virt="virtual"><scope>AAREnemyBase</scope><name>GetAbilitySystemComponent</name></member>
+      <member refid="classAAREnemyBase_1ab759e7d32514893202770a1aeb79fc1f" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetASC</name></member>
+      <member refid="classAAREnemyBase_1a405174f84dc3a0e2f39fb01fcd193a3d" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetASCStateTagRefCount</name></member>
+      <member refid="classAAREnemyBase_1abb64de6af9d780b08fb4a613e247dbe2" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetCoreAttributes</name></member>
+      <member refid="classAAREnemyBase_1a383381bb8819535bb4eb86093554d11a" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetCurrentCollisionDamageFromGAS</name></member>
+      <member refid="classAAREnemyBase_1a96d8c367e48e5e94b841bf29f278477e" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetCurrentDamageFromGAS</name></member>
+      <member refid="classAAREnemyBase_1af0bcdb1a4ea20e5275d4e4920e3bd604" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetEnemyAIController</name></member>
+      <member refid="classAAREnemyBase_1a4cda77f9439327b972c02a1dc1de6e14" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetEnemyAttributes</name></member>
+      <member refid="classAAREnemyBase_1ab5e40ecba08ba379e743d12e99047703" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetEnemyColor</name></member>
+      <member refid="classAAREnemyBase_1a8540c19b9ab8d0deea2e2185c05111bc" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetEnemyDropType</name></member>
+      <member refid="classAAREnemyBase_1af60d0941d9b095fb855598f27d2ca6db" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetEnemyIdentifierTag</name></member>
+      <member refid="classAAREnemyBase_1a9702dcd6c61484e568e27584608ee656" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetEnemyStateTreeComponent</name></member>
+      <member refid="classAAREnemyBase_1af513f82e2c7f35b7cc1675e5f08676af" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetFormationLockActive</name></member>
+      <member refid="classAAREnemyBase_1a31831b9b6d764b8e00d61236faf3c743" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetFormationLockEnter</name></member>
+      <member refid="classAAREnemyBase_1afc1605130f95795c49760fc7a153aeb6" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetFormationTargetWorldLocation</name></member>
+      <member refid="classAAREnemyBase_1afaa612478137bd15a93d1fa370d10f07" prot="protected" virt="virtual"><scope>AAREnemyBase</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAAREnemyBase_1a56f4ddb6dbdd9554628cbc22f82b0433" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetWaveInstanceId</name></member>
+      <member refid="classAAREnemyBase_1a7ab8da5e91701d79e8620b92a724a1e0" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>GetWavePhase</name></member>
+      <member refid="classAAREnemyBase_1a8646000ec2730983438bfa24c89582a4" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HandleDeath</name></member>
+      <member refid="classAAREnemyBase_1ab666e9407054d9bb2fa20b120513ed51" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>HandleEnemyColorOverrideTagChanged</name></member>
+      <member refid="classAAREnemyBase_1a636aa49eede82b390a01365cabf31bcf" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HasAnyASCGameplayTags</name></member>
+      <member refid="classAAREnemyBase_1ad112650566db76f0c23e94a16a766684" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HasASCGameplayTag</name></member>
+      <member refid="classAAREnemyBase_1adcbf9938ed5f6a9c2ea8e16377b4a0de" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HasBeenCountedAsLeak</name></member>
+      <member refid="classAAREnemyBase_1aa22bb0ebdd194dc75a8e774058e3172d" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HasEnteredGameplayScreen</name></member>
+      <member refid="classAAREnemyBase_1a047124d99f494971b98793414a42ccaa" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HasFormationTargetWorldLocation</name></member>
+      <member refid="classAAREnemyBase_1afe3417d6fe9a84e03f01bf463aca6628" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>HasReachedFormationSlot</name></member>
+      <member refid="classAAREnemyBase_1a51a43f2caedb15febd3015ced6232ac5" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>HealthChangedDelegateHandle</name></member>
+      <member refid="classAAREnemyBase_1ada2d8f45045ddadd883212b7593e46e4" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>InitAbilityActorInfo</name></member>
+      <member refid="classAAREnemyBase_1a2cb2fddbe6ae9b66cdb7d860a3b67f5d" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>InitializeFromEnemyDefinitionTag</name></member>
+      <member refid="classAAREnemyBase_1add7e474a9b5eba518bf03f24b67eebe9" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>IsDead</name></member>
+      <member refid="classAAREnemyBase_1a88f2a9a816294d703917e18734ab1a07" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>IsLeaked</name></member>
+      <member refid="classAAREnemyBase_1a946aff69a9f55858a55a3e035f2d9ca6" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>LastDamageInstigatorActor</name></member>
+      <member refid="classAAREnemyBase_1af5337b3143b89b3c09bfff22fa2275e8" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>LastDamageInstigatorServerTime</name></member>
+      <member refid="classAAREnemyBase_1a6c6f6dc3eacf870e29427eec821073ba" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>LastDispatchedWavePhase</name></member>
+      <member refid="classAAREnemyBase_1a574caa9e8d368f15d39678d41aaf62e2" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>LastDispatchedWavePhaseWaveId</name></member>
+      <member refid="classAAREnemyBase_1a78f6580fd5e8bac727e13e9ce3d987dc" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>MarkCountedAsLeak</name></member>
+      <member refid="classAAREnemyBase_1a56743a189ad6f6bb52324fcdbbc11a2a" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>MoveSpeedChangedDelegateHandle</name></member>
+      <member refid="classAAREnemyBase_1a3519d2891c35ff892b1e3df8892d0c45" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>NotifyEnteredGameplayScreen</name></member>
+      <member refid="classAAREnemyBase_1a5b568db820467872d5e8a3c9c6d440aa" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>OnHealthChanged</name></member>
+      <member refid="classAAREnemyBase_1a6a713a8f337cb26c4be6c373a540342b" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>OnMoveSpeedChanged</name></member>
+      <member refid="classAAREnemyBase_1afcafd665757ccae1c5821dbdf25f59b6" prot="protected" virt="virtual"><scope>AAREnemyBase</scope><name>OnRep_Controller</name></member>
+      <member refid="classAAREnemyBase_1ad2e35f9e581f2b6925a04282b7a265ff" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>OnRep_EnemyColor</name></member>
+      <member refid="classAAREnemyBase_1a5956b69b61a98443b91c367710d70c41" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>OnRep_EnemyIdentifierTag</name></member>
+      <member refid="classAAREnemyBase_1a9811a0ae4fa6ec38e12d481bc740e483" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>OnRep_IsDead</name></member>
+      <member refid="classAAREnemyBase_1a096e64895c992183018068c1bff9f0c0" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>OnRep_WaveRuntimeContext</name></member>
+      <member refid="classAAREnemyBase_1a630075123d97d37ecc5a23e67196f968" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>PopASCStateTag</name></member>
+      <member refid="classAAREnemyBase_1ac6b188064789e03bbd0cd9599c2c2e04" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>PopASCStateTags</name></member>
+      <member refid="classAAREnemyBase_1ae33c2803258409f63ea75acd45dcc213" prot="protected" virt="virtual"><scope>AAREnemyBase</scope><name>PossessedBy</name></member>
+      <member refid="classAAREnemyBase_1acac84d01d5c7067ae084a1f2931c27f1" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>PushASCStateTag</name></member>
+      <member refid="classAAREnemyBase_1abde24a5a243b2d3d80172ae1a656ffd3" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>PushASCStateTags</name></member>
+      <member refid="classAAREnemyBase_1a5c201511e8859fb352e01a371cb7f3f2" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>RefreshCharacterMovementSpeedFromAttributes</name></member>
+      <member refid="classAAREnemyBase_1a1fbb2f5b093fb9b2594c773c553817b6" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>ReleaseEnemyActor</name></member>
+      <member refid="classAAREnemyBase_1a239ada5ceb41f65fac6f9c061ff34c7b" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>RememberDamageInstigatorForKillCredit</name></member>
+      <member refid="classAAREnemyBase_1ab2180a69159237ce523c17ff39a5c9e7" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ResolveEnemyColorFromASCOverrideTags</name></member>
+      <member refid="classAAREnemyBase_1a1c93fd0a816edec911d395c551859550" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>ResolveEnemyDefinition</name></member>
+      <member refid="classAAREnemyBase_1a64498ea33527b5d33ba2cce1beae60d6" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>ResolveRecentDamageInstigatorForKillCredit</name></member>
+      <member refid="classAAREnemyBase_1ab74be70d6f310cdea2f0bbb89789bc97" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>RuntimeAppliedEffectHandles</name></member>
+      <member refid="classAAREnemyBase_1ad2c9043be71faf1bb2c13396ad681a53" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>RuntimeAppliedLooseTags</name></member>
+      <member refid="classAAREnemyBase_1a734be0ea8372730769b1c4a053a223c2" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>RuntimeSpecificAbilities</name></member>
+      <member refid="classAAREnemyBase_1a6b0d3d9fe7388051b540a0d7f40b95dd" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SendEnemySignalToController</name></member>
+      <member refid="classAAREnemyBase_1a68b72859addec4cc485ec59d998c0398" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SendEnemyStateTreeEvent</name></member>
+      <member refid="classAAREnemyBase_1a6d7e2496686a3c735891075a2f97a10d" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SendEnemyStateTreeEventByTag</name></member>
+      <member refid="classAAREnemyBase_1a8e674a3c957fb28d601b24e43651ca68" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetEnemyColor</name></member>
+      <member refid="classAAREnemyBase_1afa3b13d0497637e39b1de94ccff960c2" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetEnemyIdentifierTag</name></member>
+      <member refid="classAAREnemyBase_1a5ce446972979e2cd93e8b257218a8fef" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetFormationLockRules</name></member>
+      <member refid="classAAREnemyBase_1af1b045a007b519fc668a7ae7ea26ad9f" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetFormationTargetWorldLocation</name></member>
+      <member refid="classAAREnemyBase_1ae58a29ee682e6448d4012d52fdd52a94" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetReachedFormationSlot</name></member>
+      <member refid="classAAREnemyBase_1aae6b18499351aa13eb33b96ccd802a52" prot="public" virt="virtual"><scope>AAREnemyBase</scope><name>SetupPlayerInputComponent</name></member>
+      <member refid="classAAREnemyBase_1a6fbda079d48f28d9c6d54fa49ab059f4" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetWavePhase</name></member>
+      <member refid="classAAREnemyBase_1a891273641a0a25144f0b7b3d6177b8f4" prot="public" virt="non-virtual"><scope>AAREnemyBase</scope><name>SetWaveRuntimeContext</name></member>
+      <member refid="classAAREnemyBase_1a2bf8f9dc21055ee5d8f444d80fb7bef8" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>StartupAppliedEffectHandles</name></member>
+      <member refid="classAAREnemyBase_1a258e23d3e8fed6b410dc02a7d71fe439" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>StartupGrantedAbilityHandles</name></member>
+      <member refid="classAAREnemyBase_1a972ec780a04bd7df97c0afee51f60722" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>StateTreeASC</name></member>
+      <member refid="classAAREnemyBase_1aa4239b42e2ec618fe73b13feb9a74bb2" prot="public" virt="virtual"><scope>AAREnemyBase</scope><name>TakeDamage</name></member>
+      <member refid="classAAREnemyBase_1aa34f6ab7240e3d121c85defd7b3054b7" prot="public" virt="virtual"><scope>AAREnemyBase</scope><name>Tick</name></member>
+      <member refid="classAAREnemyBase_1aa9b0724416afeeee7cc3edb2fcfbaa8e" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>TryDispatchEnteredScreenEvent</name></member>
+      <member refid="classAAREnemyBase_1a031f98f94c05b09240da3a59c3b10a1a" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>TryDispatchInFormationEvent</name></member>
+      <member refid="classAAREnemyBase_1af361e25ae0367232cd0046d2685692da" prot="private" virt="non-virtual"><scope>AAREnemyBase</scope><name>TryDispatchWavePhaseEvent</name></member>
+      <member refid="classAAREnemyBase_1a2ef90ffa51f9e406f9e3c52f4e869544" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>UnbindEnemyColorTagDelegates</name></member>
+      <member refid="classAAREnemyBase_1adbf60a5f770a2097d0cb806f1e7a7db8" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>UnbindHealthChangeDelegate</name></member>
+      <member refid="classAAREnemyBase_1a60f41297d74bcdac6444b7aedc188111" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>UnbindMoveSpeedChangeDelegate</name></member>
+      <member refid="classAAREnemyBase_1ac446ce2dde2d6eb93464f129bbf6270e" prot="protected" virt="virtual"><scope>AAREnemyBase</scope><name>UnPossessed</name></member>
+      <member refid="classAAREnemyBase_1a778167e84e1786887890c7bf9ae5cb58" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>WaveInstanceId</name></member>
+      <member refid="classAAREnemyBase_1af66c7f22a81ef3a99aa1d4be8b2772ac" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>WavePhase</name></member>
+      <member refid="classAAREnemyBase_1ac81a7968860cd47d521494f548d669ef" prot="protected" virt="non-virtual"><scope>AAREnemyBase</scope><name>WavePhaseStartServerTime</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

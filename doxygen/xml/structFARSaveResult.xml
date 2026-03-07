@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARSaveResult" kind="struct" language="C++" prot="public">
+    <compoundname>FARSaveResult</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARSaveResult_1ac9a7233d8c1cca80a88a6840a6c45c19" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARSaveResult::bSuccess</definition>
+        <argsstring></argsstring>
+        <name>bSuccess</name>
+        <qualifiedname>FARSaveResult::bSuccess</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="207" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveResult_1ac071c06c0fb70b256f2c7d72285080db" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSaveResult::ClampedFieldCount</definition>
+        <argsstring></argsstring>
+        <name>ClampedFieldCount</name>
+        <qualifiedname>FARSaveResult::ClampedFieldCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="213" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveResult_1af1353f14e44297abb242619fbf0580b3" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARSaveResult::Error</definition>
+        <argsstring></argsstring>
+        <name>Error</name>
+        <qualifiedname>FARSaveResult::Error</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="210" column="9" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveResult_1a11f160e3d60bfbc7e772da2c94cdaaf0" prot="public" static="no" mutable="no">
+        <type>EARSaveResultCode</type>
+        <definition>EARSaveResultCode FARSaveResult::ResultCode</definition>
+        <argsstring></argsstring>
+        <name>ResultCode</name>
+        <qualifiedname>FARSaveResult::ResultCode</qualifiedname>
+        <initializer>= EARSaveResultCode::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="222" column="19" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveResult_1a2b0a0c50005aad39d3d667c98528607e" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARSaveResult::SlotName</definition>
+        <argsstring></argsstring>
+        <name>SlotName</name>
+        <qualifiedname>FARSaveResult::SlotName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="216" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveResult_1a8118991d5278cd0c887d2f2f7f7f5e0e" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSaveResult::SlotNumber</definition>
+        <argsstring></argsstring>
+        <name>SlotNumber</name>
+        <qualifiedname>FARSaveResult::SlotNumber</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="219" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="202" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="203" bodyend="223"/>
+    <listofallmembers>
+      <member refid="structFARSaveResult_1ac9a7233d8c1cca80a88a6840a6c45c19" prot="public" virt="non-virtual"><scope>FARSaveResult</scope><name>bSuccess</name></member>
+      <member refid="structFARSaveResult_1ac071c06c0fb70b256f2c7d72285080db" prot="public" virt="non-virtual"><scope>FARSaveResult</scope><name>ClampedFieldCount</name></member>
+      <member refid="structFARSaveResult_1af1353f14e44297abb242619fbf0580b3" prot="public" virt="non-virtual"><scope>FARSaveResult</scope><name>Error</name></member>
+      <member refid="structFARSaveResult_1a11f160e3d60bfbc7e772da2c94cdaaf0" prot="public" virt="non-virtual"><scope>FARSaveResult</scope><name>ResultCode</name></member>
+      <member refid="structFARSaveResult_1a2b0a0c50005aad39d3d667c98528607e" prot="public" virt="non-virtual"><scope>FARSaveResult</scope><name>SlotName</name></member>
+      <member refid="structFARSaveResult_1a8118991d5278cd0c887d2f2f7f7f5e0e" prot="public" virt="non-virtual"><scope>FARSaveResult</scope><name>SlotNumber</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

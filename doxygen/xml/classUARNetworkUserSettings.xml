@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARNetworkUserSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARNetworkUserSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UObject</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARNetworkUserSettings_1aab85dd7a41cd01bcee2219864ea18b4c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARNetworkUserSettings::bShowRestartRecommendedHint</definition>
+        <argsstring></argsstring>
+        <name>bShowRestartRecommendedHint</name>
+        <qualifiedname>UARNetworkUserSettings::bShowRestartRecommendedHint</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNetworkUserSettings.h" line="24" column="6" bodyfile="AlienRamen/Public/ARNetworkUserSettings.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARNetworkUserSettings_1ad362aefe8c1ddd7e162a92fce5d8041c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARNetworkUserSettings::bStayOffline</definition>
+        <argsstring></argsstring>
+        <name>bStayOffline</name>
+        <qualifiedname>UARNetworkUserSettings::bStayOffline</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNetworkUserSettings.h" line="20" column="6" bodyfile="AlienRamen/Public/ARNetworkUserSettings.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARNetworkUserSettings.h" line="12" column="1" bodyfile="AlienRamen/Public/ARNetworkUserSettings.h" bodystart="13" bodyend="25"/>
+    <listofallmembers>
+      <member refid="classUARNetworkUserSettings_1aab85dd7a41cd01bcee2219864ea18b4c" prot="public" virt="non-virtual"><scope>UARNetworkUserSettings</scope><name>bShowRestartRecommendedHint</name></member>
+      <member refid="classUARNetworkUserSettings_1ad362aefe8c1ddd7e162a92fce5d8041c" prot="public" virt="non-virtual"><scope>UARNetworkUserSettings</scope><name>bStayOffline</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

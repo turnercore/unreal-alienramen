@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUGameplayTagUtilities" kind="class" language="C++" prot="public">
+    <compoundname>UGameplayTagUtilities</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintFunctionLibrary</basecompoundref>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a2cf5b80e0651573b5295e8bd598e4413" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::GetDirectChildrenOfTag</definition>
+        <argsstring>(FGameplayTag ParentTag, TArray&lt; FGameplayTag &gt; &amp;OutDirectChildren, bool &amp;bFoundAny, FGameplayTag &amp;OutFirstChild)</argsstring>
+        <name>GetDirectChildrenOfTag</name>
+        <qualifiedname>UGameplayTagUtilities::GetDirectChildrenOfTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ParentTag</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FGameplayTag &gt; &amp;</type>
+          <declname>OutDirectChildren</declname>
+        </param>
+        <param>
+          <type>bool &amp;</type>
+          <declname>bFoundAny</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutFirstChild</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="24" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="152" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a614e942bc507f498f23881d8fbefe6b9" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UGameplayTagUtilities::GetTagDepth</definition>
+        <argsstring>(FGameplayTag Tag)</argsstring>
+        <name>GetTagDepth</name>
+        <qualifiedname>UGameplayTagUtilities::GetTagDepth</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="32" column="14" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="51" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a8e6ad9fc1dbe47c9d6f693ec58833ec3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::ReplaceTagInSlot</definition>
+        <argsstring>(UPARAM(ref) FGameplayTagContainer &amp;InOutContainer, FGameplayTag NewTag)</argsstring>
+        <name>ReplaceTagInSlot</name>
+        <qualifiedname>UGameplayTagUtilities::ReplaceTagInSlot</qualifiedname>
+        <param>
+          <type>UPARAM(ref) FGameplayTagContainer &amp;</type>
+          <declname>InOutContainer</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="72" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="117" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a05baf49174737a41fcb9af01c450bdd8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::TryGetAllPrefixTags</definition>
+        <argsstring>(FGameplayTag Tag, FGameplayTagContainer &amp;OutPrefixes)</argsstring>
+        <name>TryGetAllPrefixTags</name>
+        <qualifiedname>UGameplayTagUtilities::TryGetAllPrefixTags</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FGameplayTagContainer &amp;</type>
+          <declname>OutPrefixes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="54" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="98" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a32b29d2c358647db5a98b20b3901e2a0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::TryGetAncestorTag</definition>
+        <argsstring>(FGameplayTag Tag, int32 UpLevels, FGameplayTag &amp;OutAncestor)</argsstring>
+        <name>TryGetAncestorTag</name>
+        <qualifiedname>UGameplayTagUtilities::TryGetAncestorTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>UpLevels</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutAncestor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="40" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="67" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1ab3e2db7138f2a6c96125e8ee1ac99ab2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::TryGetParentTag</definition>
+        <argsstring>(FGameplayTag Tag, FGameplayTag &amp;OutParent)</argsstring>
+        <name>TryGetParentTag</name>
+        <qualifiedname>UGameplayTagUtilities::TryGetParentTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutParent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="36" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="58" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a6705d8055ccea5240c64c18ec9d11d94" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::TryGetTagAtDepth</definition>
+        <argsstring>(FGameplayTag Tag, int32 Depth, FGameplayTag &amp;OutTagAtDepth)</argsstring>
+        <name>TryGetTagAtDepth</name>
+        <qualifiedname>UGameplayTagUtilities::TryGetTagAtDepth</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Depth</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutTagAtDepth</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="49" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="87" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a7c87150e55af615535a8c08005561e13" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::TryGetTopLevelTag</definition>
+        <argsstring>(FGameplayTag Tag, FGameplayTag &amp;OutTopLevel)</argsstring>
+        <name>TryGetTopLevelTag</name>
+        <qualifiedname>UGameplayTagUtilities::TryGetTopLevelTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutTopLevel</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="44" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="79" bodyend="85"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUGameplayTagUtilities_1afaec3b1597c7d728f7d4bf47abe7603b" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::SplitTagToParts</definition>
+        <argsstring>(FGameplayTag Tag, TArray&lt; FString &gt; &amp;OutParts)</argsstring>
+        <name>SplitTagToParts</name>
+        <qualifiedname>UGameplayTagUtilities::SplitTagToParts</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FString &gt; &amp;</type>
+          <declname>OutParts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="75" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="15" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classUGameplayTagUtilities_1a7df66ab9f556d02a037b074206e7930e" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UGameplayTagUtilities::TryMakeTagFromParts</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Parts, int32 NumParts, FGameplayTag &amp;OutTag)</argsstring>
+        <name>TryMakeTagFromParts</name>
+        <qualifiedname>UGameplayTagUtilities::TryMakeTagFromParts</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Parts</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NumParts</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/GameplayTagUtilities.h" line="76" column="13" bodyfile="AlienRamen/Private/GameplayTagUtilities.cpp" bodystart="34" bodyend="49"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/GameplayTagUtilities.h" line="13" column="1" bodyfile="AlienRamen/Public/GameplayTagUtilities.h" bodystart="14" bodyend="77"/>
+    <listofallmembers>
+      <member refid="classUGameplayTagUtilities_1a2cf5b80e0651573b5295e8bd598e4413" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>GetDirectChildrenOfTag</name></member>
+      <member refid="classUGameplayTagUtilities_1a614e942bc507f498f23881d8fbefe6b9" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>GetTagDepth</name></member>
+      <member refid="classUGameplayTagUtilities_1a8e6ad9fc1dbe47c9d6f693ec58833ec3" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>ReplaceTagInSlot</name></member>
+      <member refid="classUGameplayTagUtilities_1afaec3b1597c7d728f7d4bf47abe7603b" prot="private" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>SplitTagToParts</name></member>
+      <member refid="classUGameplayTagUtilities_1a05baf49174737a41fcb9af01c450bdd8" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>TryGetAllPrefixTags</name></member>
+      <member refid="classUGameplayTagUtilities_1a32b29d2c358647db5a98b20b3901e2a0" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>TryGetAncestorTag</name></member>
+      <member refid="classUGameplayTagUtilities_1ab3e2db7138f2a6c96125e8ee1ac99ab2" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>TryGetParentTag</name></member>
+      <member refid="classUGameplayTagUtilities_1a6705d8055ccea5240c64c18ec9d11d94" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>TryGetTagAtDepth</name></member>
+      <member refid="classUGameplayTagUtilities_1a7c87150e55af615535a8c08005561e13" prot="public" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>TryGetTopLevelTag</name></member>
+      <member refid="classUGameplayTagUtilities_1a7df66ab9f556d02a037b074206e7930e" prot="private" virt="non-virtual"><scope>UGameplayTagUtilities</scope><name>TryMakeTagFromParts</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARSaveUserSettings_8h" kind="file" language="C++">
+    <compoundname>ARSaveUserSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">UObject/Object.h</includes>
+    <includes local="yes">ARSaveUserSettings.generated.h</includes>
+    <includedby refid="ARSaveSubsystem_8cpp" local="yes">ARSaveSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARSaveUserSettings.h</label>
+        <link refid="ARSaveUserSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARSaveUserSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>UObject/Object.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARSaveUserSettings.h</label>
+        <link refid="ARSaveUserSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARSaveUserSettings" prot="public">UARSaveUserSettings</innerclass>
+    <briefdescription>
+<para>ARSaveUserSettings header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/Object.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARSaveUserSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS(Config=GameUserSettings,<sp/>DefaultConfig,<sp/>BlueprintType)</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>UARSaveUserSettings<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>UObject</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Number<sp/>of<sp/>revisioned<sp/>backups<sp/>to<sp/>keep<sp/>per<sp/>save<sp/>slot<sp/>base.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Example:<sp/>with<sp/>5,<sp/>saving<sp/>revision<sp/>10<sp/>keeps<sp/>6..10<sp/>and<sp/>prunes<sp/>0..5.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Save&quot;,<sp/>meta=(ClampMin=&quot;1&quot;,<sp/>UIMin=&quot;1&quot;,<sp/>ClampMax=&quot;100&quot;,<sp/>UIMax=&quot;100&quot;))</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>MaxBackupRevisions<sp/>=<sp/>5;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARSaveUserSettings.h"/>
+  </compounddef>
+</doxygen>

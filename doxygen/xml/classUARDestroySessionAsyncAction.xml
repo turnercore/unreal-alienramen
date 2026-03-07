@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARDestroySessionAsyncAction" kind="class" language="C++" prot="public">
+    <compoundname>UARDestroySessionAsyncAction</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintAsyncActionBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARDestroySessionAsyncAction_1a28eb590c14e39aa6dd082884c48909ac" prot="public" static="no" mutable="no">
+        <type>FARSessionAsyncActionCompleted</type>
+        <definition>FARSessionAsyncActionCompleted UARDestroySessionAsyncAction::OnFailure</definition>
+        <argsstring></argsstring>
+        <name>OnFailure</name>
+        <qualifiedname>UARDestroySessionAsyncAction::OnFailure</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="129" column="32" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDestroySessionAsyncAction_1ac97035c5ee135db1f651c9accbb63a28" prot="public" static="no" mutable="no">
+        <type>FARSessionAsyncActionCompleted</type>
+        <definition>FARSessionAsyncActionCompleted UARDestroySessionAsyncAction::OnSuccess</definition>
+        <argsstring></argsstring>
+        <name>OnSuccess</name>
+        <qualifiedname>UARDestroySessionAsyncAction::OnSuccess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="126" column="32" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARDestroySessionAsyncAction_1a6d17f283d94a3507f374bb9cfb48cdaf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARDestroySessionAsyncAction::bCompleted</definition>
+        <argsstring></argsstring>
+        <name>bCompleted</name>
+        <qualifiedname>UARDestroySessionAsyncAction::bCompleted</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="141" column="6" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDestroySessionAsyncAction_1a1a93f72d69c8feeff16d104f8bdea856" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;UARSessionSubsystem&gt; UARDestroySessionAsyncAction::SessionSubsystem</definition>
+        <argsstring></argsstring>
+        <name>SessionSubsystem</name>
+        <qualifiedname>UARDestroySessionAsyncAction::SessionSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="140" column="16" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDestroySessionAsyncAction_1ad01d872869050e98d84199354c698acd" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UObject &gt;</type>
+        <definition>TWeakObjectPtr&lt;UObject&gt; UARDestroySessionAsyncAction::WorldContextObject</definition>
+        <argsstring></argsstring>
+        <name>WorldContextObject</name>
+        <qualifiedname>UARDestroySessionAsyncAction::WorldContextObject</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="139" column="16" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARDestroySessionAsyncAction_1a383b5bc008bc9d115c2d141006654941" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UARDestroySessionAsyncAction *</type>
+        <definition>UARDestroySessionAsyncAction * UARDestroySessionAsyncAction::DestroySessionAsync</definition>
+        <argsstring>(UObject *WorldContextObject)</argsstring>
+        <name>DestroySessionAsync</name>
+        <qualifiedname>UARDestroySessionAsyncAction::DestroySessionAsync</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>WorldContextObject</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="123" column="37" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="218" bodyend="224"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARDestroySessionAsyncAction_1ab55c046c8b7c7df2f96466e547b3d17d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARDestroySessionAsyncAction::Activate</definition>
+        <argsstring>() override</argsstring>
+        <name>Activate</name>
+        <qualifiedname>UARDestroySessionAsyncAction::Activate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="131" column="14" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="226" bodyend="244"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARDestroySessionAsyncAction_1a8dd06fa39ccb2e5ad1655ce870941406" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDestroySessionAsyncAction::CleanupBinding</definition>
+        <argsstring>()</argsstring>
+        <name>CleanupBinding</name>
+        <qualifiedname>UARDestroySessionAsyncAction::CleanupBinding</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="137" column="6" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="268" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDestroySessionAsyncAction_1a27428196eaa06bde1063c1a85c6ea58a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDestroySessionAsyncAction::HandleCompleted</definition>
+        <argsstring>(const FARSessionResult &amp;Result)</argsstring>
+        <name>HandleCompleted</name>
+        <qualifiedname>UARDestroySessionAsyncAction::HandleCompleted</qualifiedname>
+        <param>
+          <type>const FARSessionResult &amp;</type>
+          <declname>Result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="135" column="6" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="246" bodyend="266"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="114" column="1" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="115" bodyend="142"/>
+    <listofallmembers>
+      <member refid="classUARDestroySessionAsyncAction_1ab55c046c8b7c7df2f96466e547b3d17d" prot="public" virt="virtual"><scope>UARDestroySessionAsyncAction</scope><name>Activate</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1a6d17f283d94a3507f374bb9cfb48cdaf" prot="private" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>bCompleted</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1a8dd06fa39ccb2e5ad1655ce870941406" prot="private" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>CleanupBinding</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1a383b5bc008bc9d115c2d141006654941" prot="public" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>DestroySessionAsync</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1a27428196eaa06bde1063c1a85c6ea58a" prot="private" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>HandleCompleted</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1a28eb590c14e39aa6dd082884c48909ac" prot="public" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>OnFailure</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1ac97035c5ee135db1f651c9accbb63a28" prot="public" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>OnSuccess</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1a1a93f72d69c8feeff16d104f8bdea856" prot="private" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>SessionSubsystem</name></member>
+      <member refid="classUARDestroySessionAsyncAction_1ad01d872869050e98d84199354c698acd" prot="private" virt="non-virtual"><scope>UARDestroySessionAsyncAction</scope><name>WorldContextObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

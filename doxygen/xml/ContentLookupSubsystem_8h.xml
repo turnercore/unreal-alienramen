@@ -1,0 +1,282 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ContentLookupSubsystem_8h" kind="file" language="C++">
+    <compoundname>ContentLookupSubsystem.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Subsystems/GameInstanceSubsystem.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">Engine/DataAsset.h</includes>
+    <includes local="yes">StructUtils/InstancedStruct.h</includes>
+    <includes local="yes">UObject/SoftObjectPtr.h</includes>
+    <includes local="yes">ContentLookupSubsystem.generated.h</includes>
+    <includedby refid="ARDialogueSubsystem_8cpp" local="yes">ARDialogueSubsystem.cpp</includedby>
+    <includedby refid="AREnemyAuthoringPanel_8cpp" local="yes">AREnemyAuthoringPanel.cpp</includedby>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <includedby refid="ARFactionSubsystem_8cpp" local="yes">ARFactionSubsystem.cpp</includedby>
+    <includedby refid="ARInvaderAuthoringPanel_8cpp" local="yes">ARInvaderAuthoringPanel.cpp</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARInvaderPlayerController_8cpp" local="yes">ARInvaderPlayerController.cpp</includedby>
+    <includedby refid="ARNPCSubsystem_8cpp" local="yes">ARNPCSubsystem.cpp</includedby>
+    <includedby refid="ARPlayerCharacterInvader_8cpp" local="yes">ARPlayerCharacterInvader.cpp</includedby>
+    <includedby refid="ContentLookupSubsystem_8cpp" local="yes">ContentLookupSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ContentLookupSubsystem.h</label>
+        <link refid="ContentLookupSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ContentLookupSubsystem.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="5">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="6">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="3">
+        <label>Subsystems/GameInstanceSubsystem.h</label>
+      </node>
+      <node id="7">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARDialogueSubsystem.cpp</label>
+        <link refid="ARDialogueSubsystem_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARFactionSubsystem.cpp</label>
+        <link refid="ARFactionSubsystem_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARNPCSubsystem.cpp</label>
+        <link refid="ARNPCSubsystem_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ContentLookupSubsystem.cpp</label>
+        <link refid="ContentLookupSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ContentLookupSubsystem.h</label>
+        <link refid="ContentLookupSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>AREnemyAuthoringPanel.cpp</label>
+        <link refid="AREnemyAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFContentLookupRoute" prot="public">FContentLookupRoute</innerclass>
+    <innerclass refid="classUContentLookupRegistry" prot="public">UContentLookupRegistry</innerclass>
+    <innerclass refid="classUContentLookupSubsystem" prot="public">UContentLookupSubsystem</innerclass>
+    <briefdescription>
+<para>ContentLookupSubsystem header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Subsystems/GameInstanceSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DataAsset.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;StructUtils/InstancedStruct.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/SoftObjectPtr.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ContentLookupSubsystem.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UDataTable;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FContentLookupRoute</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Example:<sp/>Unlocks.Ships</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>RootTag;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Example:<sp/>DT_Unlocks_Ships</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UDataTable&gt;<sp/>DataTable;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">UCLASS(BlueprintType)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UContentLookupRegistry<sp/>:<sp/>public<sp/>UDataAsset</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>List<sp/>rather<sp/>than<sp/>map<sp/>for<sp/>editor<sp/>friendliness.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FContentLookupRoute&gt;<sp/>Routes;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="54" refid="classUContentLookupSubsystem" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUContentLookupSubsystem" kindref="compound">UContentLookupSubsystem</ref><sp/>:<sp/>public<sp/>UGameInstanceSubsystem</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>----<sp/>UGameInstanceSubsystem<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(FSubsystemCollectionBase&amp;<sp/>Collection)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Deinitialize()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>----<sp/>Registry<sp/>Source<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Runtime<sp/>override<sp/>(optional).<sp/>If<sp/>set,<sp/>this<sp/>takes<sp/>priority<sp/>over<sp/>project<sp/>settings<sp/>RegistryAsset.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UContentLookupRegistry&gt;<sp/>Registry;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>----<sp/>Cache<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;FGameplayTag,<sp/>TObjectPtr&lt;UDataTable&gt;&gt;<sp/>LoadedTables;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>----<sp/>Blueprint<sp/>Helpers<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Provide<sp/>a<sp/>registry<sp/>at<sp/>runtime<sp/>(e.g.,<sp/>from<sp/>GameInstance<sp/>or<sp/>during<sp/>testing).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SetRegistry(UContentLookupRegistry*<sp/>InRegistry);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Clears<sp/>cached<sp/>loaded<sp/>tables<sp/>(useful<sp/>during<sp/>PIE<sp/>iteration).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearCache();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Convenience:<sp/>checks<sp/>existence<sp/>without<sp/>returning<sp/>the<sp/>row<sp/>struct.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>DoesRowExistForTag(FGameplayTag<sp/>Tag,<sp/>FString&amp;<sp/>OutError);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Validates<sp/>registry<sp/>content<sp/>(duplicate<sp/>roots,<sp/>missing<sp/>tables,<sp/>etc.)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>true<sp/>if<sp/>it<sp/>looks<sp/>usable.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ValidateRegistry(FString&amp;<sp/>OutError);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Generic<sp/>lookup:<sp/>resolves<sp/>the<sp/>route,<sp/>finds<sp/>the<sp/>DataTable<sp/>row,<sp/>and<sp/>returns<sp/>the<sp/>row<sp/>as<sp/>an<sp/>InstancedStruct.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>OutRow<sp/>will<sp/>contain<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>row<sp/>struct<sp/>(type<sp/>depends<sp/>on<sp/>the<sp/>DataTable&apos;s<sp/>RowStruct).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>LookupWithGameplayTag(</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>Tag,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FInstancedStruct&amp;<sp/>OutRow,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FString&amp;<sp/>OutError</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>all<sp/>row<sp/>names<sp/>for<sp/>the<sp/>DataTable<sp/>routed<sp/>by<sp/>RootTag.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Useful<sp/>for<sp/>systems<sp/>that<sp/>need<sp/>to<sp/>rank/select<sp/>across<sp/>an<sp/>entire<sp/>content<sp/>family.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>GetAllRowNamesForRootTag(</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>RootTag,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TArray&lt;FName&gt;&amp;<sp/>OutRowNames,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FString&amp;<sp/>OutError</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Resolves<sp/>and<sp/>loads<sp/>the<sp/>DataTable<sp/>routed<sp/>by<sp/>an<sp/>exact<sp/>RootTag.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>GetDataTableForRootTag(</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>RootTag,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UDataTable*&amp;<sp/>OutDataTable,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FString&amp;<sp/>OutError</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Resolves<sp/>and<sp/>loads<sp/>a<sp/>DataTable<sp/>route<sp/>by<sp/>row-struct<sp/>type.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>multiple<sp/>routes<sp/>share<sp/>the<sp/>same<sp/>row<sp/>struct,<sp/>resolution<sp/>fails<sp/>and<sp/>reports<sp/>an<sp/>ambiguity<sp/>error.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Content<sp/>Lookup&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>GetDataTableForRowStruct(</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UScriptStruct*<sp/>DesiredRowStruct,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UDataTable*&amp;<sp/>OutDataTable,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag&amp;<sp/>OutMatchedRootTag,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FString&amp;<sp/>OutError</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>the<sp/>leaf<sp/>segment<sp/>used<sp/>as<sp/>RowName<sp/>(Unlocks.Ships.Sammy<sp/>-&gt;<sp/>Sammy).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>FName<sp/>GetLeafRowNameFromTag(FGameplayTag<sp/>Tag);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Core<sp/>internal<sp/>helper:<sp/>resolve<sp/>matching<sp/>DataTable<sp/>and<sp/>RowName<sp/>(leaf).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>GetTableAndRowNameFromTag(</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>Tag,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UDataTable*&amp;<sp/>OutDataTable,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FName&amp;<sp/>OutRowName,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FString&amp;<sp/>OutError</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Internal:<sp/>choose<sp/>active<sp/>registry<sp/>(runtime<sp/>override<sp/>first,<sp/>else<sp/>loaded<sp/>asset).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>UContentLookupRegistry*<sp/>GetActiveRegistry();</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Internal:<sp/>resolve<sp/>table<sp/>by<sp/>prefix<sp/>match.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>UDataTable*<sp/>ResolveTableForTag(FGameplayTag<sp/>Tag,<sp/>FGameplayTag&amp;<sp/>OutMatchedRoot,<sp/>FString&amp;<sp/>OutError);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Internal:<sp/>load<sp/>a<sp/>DT<sp/>(sync)<sp/>and<sp/>cache<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>UDataTable*<sp/>LoadAndCacheTable(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag&amp;<sp/>RootTag,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TSoftObjectPtr&lt;UDataTable&gt;&amp;<sp/>TableRef,<sp/>FString&amp;<sp/>OutError);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ContentLookupSubsystem.h"/>
+  </compounddef>
+</doxygen>

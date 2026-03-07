@@ -1,0 +1,714 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARInvaderPlayerController" kind="class" language="C++" prot="public">
+    <compoundname>AARInvaderPlayerController</compoundname>
+    <basecompoundref refid="classAARPlayerController" prot="public" virt="non-virtual">AARPlayerController</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARInvaderPlayerController_1a4843b74285c42d744d445b404ba8b589" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderFullBlastMenuSessionUpdatedSignature</type>
+        <definition>FAROnInvaderFullBlastMenuSessionUpdatedSignature AARInvaderPlayerController::OnInvaderFullBlastMenuSessionUpdated</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderFullBlastMenuSessionUpdated</name>
+        <qualifiedname>AARInvaderPlayerController::OnInvaderFullBlastMenuSessionUpdated</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="105" column="50" bodyfile="AlienRamen/Public/ARInvaderPlayerController.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARInvaderPlayerController_1a73896717931eabb05ebc428524787dda" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderPlayerController::bCachedShowMouseCursorForFullBlast</definition>
+        <argsstring></argsstring>
+        <name>bCachedShowMouseCursorForFullBlast</name>
+        <qualifiedname>AARInvaderPlayerController::bCachedShowMouseCursorForFullBlast</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="126" column="6" bodyfile="AlienRamen/Public/ARInvaderPlayerController.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPlayerController_1a2107dfe217ec58ce3d5e994d9684eb4b" prot="private" static="no" mutable="no">
+        <type>FTimerHandle</type>
+        <definition>FTimerHandle AARInvaderPlayerController::BindInvaderGameStateRetryTimer</definition>
+        <argsstring></argsstring>
+        <name>BindInvaderGameStateRetryTimer</name>
+        <qualifiedname>AARInvaderPlayerController::BindInvaderGameStateRetryTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="125" column="14" bodyfile="AlienRamen/Public/ARInvaderPlayerController.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPlayerController_1a7632a0ee53fe111260c0a16212f3da9a" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARInvaderGameState &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARInvaderGameState&gt; AARInvaderPlayerController::BoundInvaderGameState</definition>
+        <argsstring></argsstring>
+        <name>BoundInvaderGameState</name>
+        <qualifiedname>AARInvaderPlayerController::BoundInvaderGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="120" column="16" bodyfile="AlienRamen/Public/ARInvaderPlayerController.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPlayerController_1a46ca6aa47b9462fe5e28dfb4aaa1119a" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UARInvaderFullBlastMenuWidget &gt;</type>
+        <definition>TObjectPtr&lt;UARInvaderFullBlastMenuWidget&gt; AARInvaderPlayerController::FullBlastMenuWidget</definition>
+        <argsstring></argsstring>
+        <name>FullBlastMenuWidget</name>
+        <qualifiedname>AARInvaderPlayerController::FullBlastMenuWidget</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="123" column="12" bodyfile="AlienRamen/Public/ARInvaderPlayerController.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a3fe7e8d472ec5ab610aa8040bdf7bacc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARInvaderPlayerController::AARInvaderPlayerController</definition>
+        <argsstring>()</argsstring>
+        <name>AARInvaderPlayerController</name>
+        <qualifiedname>AARInvaderPlayerController::AARInvaderPlayerController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="31" column="1" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="13" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a8118508155c2828e31ac631d3e26dbfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARInvaderPlayerController::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="33" column="14" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="17" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1acd7f4bab6d36b54141a6797079a31589" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARInvaderPlayerController::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="34" column="14" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="23" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a8b8317842e36262037c6fc4f95b39ee5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::HandleSpiceTrackActivateFromCursor</definition>
+        <argsstring>()</argsstring>
+        <name>HandleSpiceTrackActivateFromCursor</name>
+        <qualifiedname>AARInvaderPlayerController::HandleSpiceTrackActivateFromCursor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="69" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="368" bodyend="396"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1aa5081eaea425a308373f603d77e31d4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::HandleSpiceTrackDeltaInput</definition>
+        <argsstring>(float AxisValue)</argsstring>
+        <name>HandleSpiceTrackDeltaInput</name>
+        <qualifiedname>AARInvaderPlayerController::HandleSpiceTrackDeltaInput</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>AxisValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="63" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="347" bodyend="366"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1afe4132f19b868d1efd0038e0f157a1da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestActivateFullBlast</definition>
+        <argsstring>()</argsstring>
+        <name>RequestActivateFullBlast</name>
+        <qualifiedname>AARInvaderPlayerController::RequestActivateFullBlast</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="37" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="247" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1aaa406b86597f74506caf76e6ba8e0e7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestActivateTrackUpgrade</definition>
+        <argsstring>(int32 SlotIndex)</argsstring>
+        <name>RequestActivateTrackUpgrade</name>
+        <qualifiedname>AARInvaderPlayerController::RequestActivateTrackUpgrade</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>SlotIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="55" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="322" bodyend="334"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1aef6feaf762c93437269803c763cbc63b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestClearOfferPresence</definition>
+        <argsstring>()</argsstring>
+        <name>RequestClearOfferPresence</name>
+        <qualifiedname>AARInvaderPlayerController::RequestClearOfferPresence</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="98" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="463" bodyend="472"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a88a4012f20d042a81dbc931bb2a8673f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestResolveFullBlastSelection</definition>
+        <argsstring>(FGameplayTag SelectedUpgradeTag, int32 DesiredDestinationSlot=-1)</argsstring>
+        <name>RequestResolveFullBlastSelection</name>
+        <qualifiedname>AARInvaderPlayerController::RequestResolveFullBlastSelection</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SelectedUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DesiredDestinationSlot</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="43" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="272" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a469c351b2854fa2ff189aaca8b3e8ff8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestResolveFullBlastSkip</definition>
+        <argsstring>()</argsstring>
+        <name>RequestResolveFullBlastSkip</name>
+        <qualifiedname>AARInvaderPlayerController::RequestResolveFullBlastSkip</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="49" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="297" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a7b01255a08345886dbbbcb0964936679" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestSetOfferPresence</definition>
+        <argsstring>(FGameplayTag HoveredUpgradeTag, int32 HoveredDestinationSlot, FVector2D CursorNormalized, bool bHasCursor)</argsstring>
+        <name>RequestSetOfferPresence</name>
+        <qualifiedname>AARInvaderPlayerController::RequestSetOfferPresence</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>HoveredUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>HoveredDestinationSlot</declname>
+        </param>
+        <param>
+          <type>FVector2D</type>
+          <declname>CursorNormalized</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bHasCursor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="84" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="436" bodyend="449"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1acc89a981d14488a3e510f3cd55f8f421" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestStartSharingSpice</definition>
+        <argsstring>()</argsstring>
+        <name>RequestStartSharingSpice</name>
+        <qualifiedname>AARInvaderPlayerController::RequestStartSharingSpice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="72" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="398" bodyend="407"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1ade756c4c9cddbf733abe21d0056cf1ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::RequestStopSharingSpice</definition>
+        <argsstring>()</argsstring>
+        <name>RequestStopSharingSpice</name>
+        <qualifiedname>AARInvaderPlayerController::RequestStopSharingSpice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="78" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="417" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a9ce7d0471989f6c4bfda9bdbd99a7e65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestActivateFullBlast</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestActivateFullBlast</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestActivateFullBlast</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="40" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1aa26e812ddb1dce0f2666b80a93ec9183" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade</definition>
+        <argsstring>(int32 SlotIndex)</argsstring>
+        <name>ServerRequestActivateTrackUpgrade</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestActivateTrackUpgrade</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>SlotIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="58" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1aa72eaf2f09061ccf48b632e838631699" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestClearOfferPresence</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestClearOfferPresence</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestClearOfferPresence</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="101" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a49babbcddc824018fbb3c0f80421d475" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestResolveFullBlastSelection</definition>
+        <argsstring>(FGameplayTag SelectedUpgradeTag, int32 DesiredDestinationSlot=-1)</argsstring>
+        <name>ServerRequestResolveFullBlastSelection</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestResolveFullBlastSelection</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SelectedUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DesiredDestinationSlot</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="46" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a79cb3d535cf7e7732517a8366291cf4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestResolveFullBlastSkip</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestResolveFullBlastSkip</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestResolveFullBlastSkip</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="52" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a9339ad1988513001c26996594b038b3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestSetOfferPresence</definition>
+        <argsstring>(FGameplayTag HoveredUpgradeTag, int32 HoveredDestinationSlot, FVector2D CursorNormalized, bool bHasCursor)</argsstring>
+        <name>ServerRequestSetOfferPresence</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestSetOfferPresence</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>HoveredUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>HoveredDestinationSlot</declname>
+        </param>
+        <param>
+          <type>FVector2D</type>
+          <declname>CursorNormalized</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bHasCursor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="91" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1ad31a9142fb19c59b8ead146cc15f43bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestStartSharingSpice</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestStartSharingSpice</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestStartSharingSpice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="75" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1adda7d75fbdf529981db86f8b099be157" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ServerRequestStopSharingSpice</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestStopSharingSpice</name>
+        <qualifiedname>AARInvaderPlayerController::ServerRequestStopSharingSpice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="81" column="6"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARInvaderPlayerController_1ac76b850a83b78c85c244c3a96dbbbde4" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::BuildOfferDefinitionsForSession</definition>
+        <argsstring>(const FARInvaderFullBlastSessionState &amp;Session, TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;OutDefinitions) const</argsstring>
+        <name>BuildOfferDefinitionsForSession</name>
+        <qualifiedname>AARInvaderPlayerController::BuildOfferDefinitionsForSession</qualifiedname>
+        <param>
+          <type>const FARInvaderFullBlastSessionState &amp;</type>
+          <declname>Session</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="114" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="113" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a3ba2c3cc9501070eae7f9f691b7eff68" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::CloseFullBlastMenu</definition>
+        <argsstring>()</argsstring>
+        <name>CloseFullBlastMenu</name>
+        <qualifiedname>AARInvaderPlayerController::CloseFullBlastMenu</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="117" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="235" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a8088691c511d2daadd853f8a25e3c6cb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARInvaderPlayerController::GetInvaderPlayerState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInvaderPlayerState</name>
+        <qualifiedname>AARInvaderPlayerController::GetInvaderPlayerState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="108" column="20" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1aece8e56f6227b87330ff82ff17c4117d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged</definition>
+        <argsstring>(bool bIsActive)</argsstring>
+        <name>HandleInvaderFullBlastSessionChanged</name>
+        <qualifiedname>AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bIsActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="110" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="42" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1ac587963f05bd643bffdf8b6469980e48" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderPlayerController::ShouldDisplayFullBlastMenuForSession</definition>
+        <argsstring>(const FARInvaderFullBlastSessionState &amp;Session) const</argsstring>
+        <name>ShouldDisplayFullBlastMenuForSession</name>
+        <qualifiedname>AARInvaderPlayerController::ShouldDisplayFullBlastMenuForSession</qualifiedname>
+        <param>
+          <type>const FARInvaderFullBlastSessionState &amp;</type>
+          <declname>Session</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="115" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="171" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1ad8dd08df0d6ae64980f527d733fcd55e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu</definition>
+        <argsstring>(const FARInvaderFullBlastSessionState &amp;Session, const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;OfferDefinitions)</argsstring>
+        <name>ShowOrUpdateFullBlastMenu</name>
+        <qualifiedname>AARInvaderPlayerController::ShowOrUpdateFullBlastMenu</qualifiedname>
+        <param>
+          <type>const FARInvaderFullBlastSessionState &amp;</type>
+          <declname>Session</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;</type>
+          <declname>OfferDefinitions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="116" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="193" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a897e3c74deb81cb5d4ac8ed2ff821c09" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::StopBindInvaderGameStateRetry</definition>
+        <argsstring>()</argsstring>
+        <name>StopBindInvaderGameStateRetry</name>
+        <qualifiedname>AARInvaderPlayerController::StopBindInvaderGameStateRetry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="112" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="82" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1a54638d43ac3d3895f4959882f7ae9a25" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::SyncFullBlastMenuFromGameState</definition>
+        <argsstring>()</argsstring>
+        <name>SyncFullBlastMenuFromGameState</name>
+        <qualifiedname>AARInvaderPlayerController::SyncFullBlastMenuFromGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="113" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="90" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPlayerController_1af9afdc1631649e1e7e91e78917d6a836" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPlayerController::TryBindInvaderGameState</definition>
+        <argsstring>()</argsstring>
+        <name>TryBindInvaderGameState</name>
+        <qualifiedname>AARInvaderPlayerController::TryBindInvaderGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="111" column="6" bodyfile="AlienRamen/Private/ARInvaderPlayerController.cpp" bodystart="47" bodyend="80"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>AARInvaderPlayerController</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AARPlayerController</label>
+        <link refid="classAARPlayerController"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>AARInvaderPlayerController</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AARPlayerController</label>
+        <link refid="classAARPlayerController"/>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARInvaderPlayerController.h" line="26" column="1" bodyfile="AlienRamen/Public/ARInvaderPlayerController.h" bodystart="27" bodyend="127"/>
+    <listofallmembers>
+      <member refid="classAARInvaderPlayerController_1a3fe7e8d472ec5ab610aa8040bdf7bacc" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>AARInvaderPlayerController</name></member>
+      <member refid="classAARPlayerController_1a852ec8f5070378d82e5fad9a854f90b2" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>AARPlayerController</name></member>
+      <member refid="classAARPlayerController_1a2a7ccd29574c80ad55747f7ec9fdb8e6" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>bAutoApplyDefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1aab6479d47faff2427e9f24bfd17229db" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>bAutoManagePauseInputContexts</name></member>
+      <member refid="classAARPlayerController_1a4ca6b00026d8104bc36eed14f8d579e6" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>bAutoManagePauseInputMode</name></member>
+      <member refid="classAARInvaderPlayerController_1a73896717931eabb05ebc428524787dda" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>bCachedShowMouseCursorForFullBlast</name></member>
+      <member refid="classAARInvaderPlayerController_1a8118508155c2828e31ac631d3e26dbfe" prot="public" virt="virtual"><scope>AARInvaderPlayerController</scope><name>BeginPlay</name></member>
+      <member refid="classAARPlayerController_1abafa617c8d51cb9e0042493b9832df69" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>bEnableCustomCursorInit</name></member>
+      <member refid="classAARInvaderPlayerController_1a2107dfe217ec58ce3d5e994d9684eb4b" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BindInvaderGameStateRetryTimer</name></member>
+      <member refid="classAARInvaderPlayerController_1a7632a0ee53fe111260c0a16212f3da9a" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BoundInvaderGameState</name></member>
+      <member refid="classAARPlayerController_1a5260952dcffa3e0c75bca32e952fca1b" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BP_OnDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a8662462182a3527d9a2981a5ad3fd6a9" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BP_OnDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1a731995a28993591f557b33b76ac7cfbd" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BP_OnHUDInitializationRequested</name></member>
+      <member refid="classAARPlayerController_1a4348f51608224438edc9145e67e18d9f" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BP_OnPauseMenuClosed</name></member>
+      <member refid="classAARPlayerController_1abe0db467ccd391175a928eb6346a7fed" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BP_OnPauseMenuOpened</name></member>
+      <member refid="classAARInvaderPlayerController_1ac76b850a83b78c85c244c3a96dbbbde4" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>BuildOfferDefinitionsForSession</name></member>
+      <member refid="classAARPlayerController_1a58c931aaf0bf7d311faf4fe754a21f98" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ClientDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a1f52120764dde137b9401f37100a0a0d" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ClientDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1afedffb7dc01187f4a3e92b3687c234ca" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ClientPersistCanonicalSave</name></member>
+      <member refid="classAARInvaderPlayerController_1a3ba2c3cc9501070eae7f9f691b7eff68" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>CloseFullBlastMenu</name></member>
+      <member refid="classAARPlayerController_1a555a83237d7fb05a0774e5b6d1c52ac8" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ClosePause</name></member>
+      <member refid="classAARPlayerController_1a5a43ecdccb3cdbf283c674c98b7db1bc" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>CommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1a23b1d27a49b2c59911433930653238bb" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>Cursor</name></member>
+      <member refid="classAARPlayerController_1a625bde322ba65ac6a9ec7f93c4a4695f" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>CursorDefaultWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a3a0faa7dcd71376138c6af7d1d10d6d7" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>DefaultInputMappings</name></member>
+      <member refid="classAARInvaderPlayerController_1acd7f4bab6d36b54141a6797079a31589" prot="public" virt="virtual"><scope>AARInvaderPlayerController</scope><name>EndPlay</name></member>
+      <member refid="classAARInvaderPlayerController_1a46ca6aa47b9462fe5e28dfb4aaa1119a" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>FullBlastMenuWidget</name></member>
+      <member refid="classAARPlayerController_1adfd1d6ed3e52490c4e8bc38c3c947db2" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>GetCommonAbilitySet</name></member>
+      <member refid="classAARInvaderPlayerController_1a8088691c511d2daadd853f8a25e3c6cb" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>GetInvaderPlayerState</name></member>
+      <member refid="classAARInvaderPlayerController_1aece8e56f6227b87330ff82ff17c4117d" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>HandleInvaderFullBlastSessionChanged</name></member>
+      <member refid="classAARInvaderPlayerController_1a8b8317842e36262037c6fc4f95b39ee5" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>HandleSpiceTrackActivateFromCursor</name></member>
+      <member refid="classAARInvaderPlayerController_1aa5081eaea425a308373f603d77e31d4f" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>HandleSpiceTrackDeltaInput</name></member>
+      <member refid="classAARPlayerController_1aa0036d9e86cb3d54a95c0fc70ee583e1" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>InitializeCustomCursor</name></member>
+      <member refid="classAARPlayerController_1afa6eb7aeb54460a8e8b72de3abf767bc" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>IsPauseMenuBlockedLocal</name></member>
+      <member refid="classAARPlayerController_1abdfec9ec181b8e1270fb4a1119fce07a" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>IsPauseMenuOpenLocal</name></member>
+      <member refid="classAARPlayerController_1ad2e671ae13782803683985045b707b2d" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>IsPauseMenuOverlayVisibleLocal</name></member>
+      <member refid="classAARPlayerController_1aae63616984248eb0fc4aed2650bbc264" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>LeaveSession</name></member>
+      <member refid="classAARInvaderPlayerController_1a4843b74285c42d744d445b404ba8b589" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>OnInvaderFullBlastMenuSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1aa2af5b3f3ccb30fb0f7bbeadac9effda" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>OnPauseMenuOverlayVisibilityChanged</name></member>
+      <member refid="classAARPlayerController_1aaffd2baddfc55193c377d89721ffb43d" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>OnPauseMenuStateChanged</name></member>
+      <member refid="classAARPlayerController_1abb940bb16a747e4f5206f2ecccadc8bd" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>PauseMenuInputMappingContext</name></member>
+      <member refid="classAARPlayerController_1a8445855f6a5983cd000c4dd4e86f6fff" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>PauseMenuInputPriority</name></member>
+      <member refid="classAARPlayerController_1ad0921d5e7bf0982307251ff33aa2bffc" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>PauseOverlayWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a57efd278ed2280d65a2e292f35b65bb2" prot="protected" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>PauseOverlayWidgetZOrder</name></member>
+      <member refid="classAARPlayerController_1aa222b72dc4c7def338275dffbdcd2f93" prot="protected" virt="virtual"><scope>AARInvaderPlayerController</scope><name>PlayerTick</name></member>
+      <member refid="classAARInvaderPlayerController_1afe4132f19b868d1efd0038e0f157a1da" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestActivateFullBlast</name></member>
+      <member refid="classAARInvaderPlayerController_1aaa406b86597f74506caf76e6ba8e0e7c" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestActivateTrackUpgrade</name></member>
+      <member refid="classAARPlayerController_1a9da33c122582cb6ae2358545bcb68515" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a643ca359c291725aab872a40e0a35bb6" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestAdvanceDialogue</name></member>
+      <member refid="classAARInvaderPlayerController_1aef6feaf762c93437269803c763cbc63b" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestClearOfferPresence</name></member>
+      <member refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestClosePauseMenu</name></member>
+      <member refid="classAARPlayerController_1a10a756a339dabee13256e43cd1509399" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestHUDInitialization</name></member>
+      <member refid="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestOpenPauseMenu</name></member>
+      <member refid="classAARPlayerController_1a031e7d812927df360dfe20c5598f7a35" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestRemoveUnlock</name></member>
+      <member refid="classAARInvaderPlayerController_1a88a4012f20d042a81dbc931bb2a8673f" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestResolveFullBlastSelection</name></member>
+      <member refid="classAARInvaderPlayerController_1a469c351b2854fa2ff189aaca8b3e8ff8" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestResolveFullBlastSkip</name></member>
+      <member refid="classAARPlayerController_1a1cbb3e3fdfd84fc83635f1291735fe0a" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestSetDialogueEavesdrop</name></member>
+      <member refid="classAARInvaderPlayerController_1a7b01255a08345886dbbbcb0964936679" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestSetOfferPresence</name></member>
+      <member refid="classAARPlayerController_1a70c9c812a6887c3f062ca55df1da64fe" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestStartDialogue</name></member>
+      <member refid="classAARInvaderPlayerController_1acc89a981d14488a3e510f3cd55f8f421" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestStartSharingSpice</name></member>
+      <member refid="classAARInvaderPlayerController_1ade756c4c9cddbf733abe21d0056cf1ae" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestStopSharingSpice</name></member>
+      <member refid="classAARPlayerController_1adf8d5ecc34ad162b878e366eaaec2d51" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>RequestTogglePauseMenu</name></member>
+      <member refid="classAARPlayerController_1a6c13654525fb6b4c81d53122996ac030" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerLeaveSession</name></member>
+      <member refid="classAARInvaderPlayerController_1a9ce7d0471989f6c4bfda9bdbd99a7e65" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestActivateFullBlast</name></member>
+      <member refid="classAARInvaderPlayerController_1aa26e812ddb1dce0f2666b80a93ec9183" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestActivateTrackUpgrade</name></member>
+      <member refid="classAARPlayerController_1a60b7eb92f87748d503f2994976b42dfc" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a3bf16683192dd60dac37f876a429215c" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1a4bebade6c01814b4d01e9f283a192e56" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestCanonicalSaveSync</name></member>
+      <member refid="classAARInvaderPlayerController_1aa72eaf2f09061ccf48b632e838631699" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestClearOfferPresence</name></member>
+      <member refid="classAARPlayerController_1a7d458860e51dfa57ed7e38a392f13ba3" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestRemoveUnlock</name></member>
+      <member refid="classAARInvaderPlayerController_1a49babbcddc824018fbb3c0f80421d475" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestResolveFullBlastSelection</name></member>
+      <member refid="classAARInvaderPlayerController_1a79cb3d535cf7e7732517a8366291cf4d" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestResolveFullBlastSkip</name></member>
+      <member refid="classAARPlayerController_1a1ea8c0441618e9d8102f44036d5636e2" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestSetDialogueEavesdrop</name></member>
+      <member refid="classAARInvaderPlayerController_1a9339ad1988513001c26996594b038b3c" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestSetOfferPresence</name></member>
+      <member refid="classAARPlayerController_1a10beeb36a44e94567ebe82e2f24384b7" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestStartDialogue</name></member>
+      <member refid="classAARInvaderPlayerController_1ad31a9142fb19c59b8ead146cc15f43bf" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestStartSharingSpice</name></member>
+      <member refid="classAARInvaderPlayerController_1adda7d75fbdf529981db86f8b099be157" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestStopSharingSpice</name></member>
+      <member refid="classAARPlayerController_1a5d97c63602d82c6e19cd17eb55e20e05" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerRequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1a374e49efbd19723235e3f8c6f91c0ca1" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerSetPauseMenuVote</name></member>
+      <member refid="classAARPlayerController_1aabc8f4fff6df37fd71c4045edc006f70" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ServerTryStartTravel</name></member>
+      <member refid="classAARPlayerController_1a90164b122bb092cbd6f66f3657233ab2" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>SetPauseMenuBlocked</name></member>
+      <member refid="classAARInvaderPlayerController_1ac587963f05bd643bffdf8b6469980e48" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ShouldDisplayFullBlastMenuForSession</name></member>
+      <member refid="classAARInvaderPlayerController_1ad8dd08df0d6ae64980f527d733fcd55e" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>ShowOrUpdateFullBlastMenu</name></member>
+      <member refid="classAARInvaderPlayerController_1a897e3c74deb81cb5d4ac8ed2ff821c09" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>StopBindInvaderGameStateRetry</name></member>
+      <member refid="classAARInvaderPlayerController_1a54638d43ac3d3895f4959882f7ae9a25" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>SyncFullBlastMenuFromGameState</name></member>
+      <member refid="classAARInvaderPlayerController_1af9afdc1631649e1e7e91e78917d6a836" prot="private" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>TryBindInvaderGameState</name></member>
+      <member refid="classAARPlayerController_1a952943a56da01091847280598b7ee8d6" prot="public" virt="non-virtual"><scope>AARInvaderPlayerController</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

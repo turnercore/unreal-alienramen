@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARNetworkUserSettings_8h" kind="file" language="C++">
+    <compoundname>ARNetworkUserSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">UObject/Object.h</includes>
+    <includes local="yes">ARNetworkUserSettings.generated.h</includes>
+    <includedby refid="ARGameModeBase_8cpp" local="yes">ARGameModeBase.cpp</includedby>
+    <includedby refid="ARSessionSubsystem_8cpp" local="yes">ARSessionSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARNetworkUserSettings.h</label>
+        <link refid="ARNetworkUserSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARNetworkUserSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>UObject/Object.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARNetworkUserSettings.h</label>
+        <link refid="ARNetworkUserSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARNetworkUserSettings" prot="public">UARNetworkUserSettings</innerclass>
+    <briefdescription>
+<para>Per-user network runtime settings for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/Object.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARNetworkUserSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS(Config=GameUserSettings,<sp/>DefaultConfig,<sp/>BlueprintType)</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>UARNetworkUserSettings<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>UObject</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>true,<sp/>runtime<sp/>networking<sp/>features<sp/>are<sp/>blocked<sp/>(no<sp/>host/find/join/advertise).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Full<sp/>Steam<sp/>deactivation<sp/>may<sp/>still<sp/>require<sp/>restart<sp/>when<sp/>Steam<sp/>was<sp/>already<sp/>initialized.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Network&quot;)</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bStayOffline<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>UI<sp/>hint:<sp/>when<sp/>true,<sp/>runtime<sp/>can<sp/>show<sp/>a<sp/>restart<sp/>recommendation<sp/>after<sp/>toggling<sp/>bStayOffline.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Network&quot;)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bShowRestartRecommendedHint<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARNetworkUserSettings.h"/>
+  </compounddef>
+</doxygen>

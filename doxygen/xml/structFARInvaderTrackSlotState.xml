@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderTrackSlotState" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderTrackSlotState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderTrackSlotState_1ad5480568e0ba66b2107972d1e1eb2607" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderTrackSlotState::bHasBeenActivated</definition>
+        <argsstring></argsstring>
+        <name>bHasBeenActivated</name>
+        <qualifiedname>FARInvaderTrackSlotState::bHasBeenActivated</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="104" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotState_1a05ae763755f510527b93848b08a4229d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderTrackSlotState::bInfiniteUses</definition>
+        <argsstring></argsstring>
+        <name>bInfiniteUses</name>
+        <qualifiedname>FARInvaderTrackSlotState::bInfiniteUses</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="112" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotState_1a344805d9b97f1fbd1830ac1a0aa3a277" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderTrackSlotState::RemainingActivationUses</definition>
+        <argsstring></argsstring>
+        <name>RemainingActivationUses</name>
+        <qualifiedname>FARInvaderTrackSlotState::RemainingActivationUses</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="108" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotState_1a277a4b58c9133303e41fc800c8817e31" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderTrackSlotState::SlotIndex</definition>
+        <argsstring></argsstring>
+        <name>SlotIndex</name>
+        <qualifiedname>FARInvaderTrackSlotState::SlotIndex</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="94" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotState_1a231bccb105bc5fdd4d2d55d691dc5880" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderTrackSlotState::UpgradeLevel</definition>
+        <argsstring></argsstring>
+        <name>UpgradeLevel</name>
+        <qualifiedname>FARInvaderTrackSlotState::UpgradeLevel</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="100" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotState_1a480613c7642ec6ffbebb8cc4654d98e8" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderTrackSlotState::UpgradeTag</definition>
+        <argsstring></argsstring>
+        <name>UpgradeTag</name>
+        <qualifiedname>FARInvaderTrackSlotState::UpgradeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="97" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="89" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="90" bodyend="113"/>
+    <listofallmembers>
+      <member refid="structFARInvaderTrackSlotState_1ad5480568e0ba66b2107972d1e1eb2607" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotState</scope><name>bHasBeenActivated</name></member>
+      <member refid="structFARInvaderTrackSlotState_1a05ae763755f510527b93848b08a4229d" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotState</scope><name>bInfiniteUses</name></member>
+      <member refid="structFARInvaderTrackSlotState_1a344805d9b97f1fbd1830ac1a0aa3a277" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotState</scope><name>RemainingActivationUses</name></member>
+      <member refid="structFARInvaderTrackSlotState_1a277a4b58c9133303e41fc800c8817e31" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotState</scope><name>SlotIndex</name></member>
+      <member refid="structFARInvaderTrackSlotState_1a231bccb105bc5fdd4d2d55d691dc5880" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotState</scope><name>UpgradeLevel</name></member>
+      <member refid="structFARInvaderTrackSlotState_1a480613c7642ec6ffbebb8cc4654d98e8" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotState</scope><name>UpgradeTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

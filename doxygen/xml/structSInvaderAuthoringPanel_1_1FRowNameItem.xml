@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structSInvaderAuthoringPanel_1_1FRowNameItem" kind="struct" language="C++" prot="private">
+    <compoundname>SInvaderAuthoringPanel::FRowNameItem</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FRowNameItem_1a2f2edd2cd8c2b863a50d57080a950370" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName SInvaderAuthoringPanel::FRowNameItem::RowName</definition>
+        <argsstring></argsstring>
+        <name>RowName</name>
+        <qualifiedname>SInvaderAuthoringPanel::FRowNameItem::RowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="80" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="78" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="79" bodyend="81"/>
+    <listofallmembers>
+      <member refid="structSInvaderAuthoringPanel_1_1FRowNameItem_1a2f2edd2cd8c2b863a50d57080a950370" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FRowNameItem</scope><name>RowName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

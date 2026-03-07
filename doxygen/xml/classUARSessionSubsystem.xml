@@ -1,0 +1,1430 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSessionSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARSessionSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <includes refid="ARSessionSubsystem_8h" local="no">AlienRamen/Public/ARSessionSubsystem.h</includes>
+    <sectiondef kind="private-type">
+      <memberdef kind="enum" id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871" prot="private" static="no" strong="yes">
+        <type>uint8</type>
+        <name>ESessionOperation</name>
+        <qualifiedname>UARSessionSubsystem::ESessionOperation</qualifiedname>
+        <enumvalue id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871a6adf97f83acf6453d4a6a4b1070f3754" prot="private">
+          <name>None</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871a686e697538050e4664636337cc3b834f" prot="private">
+          <name>Create</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871a4cfa6c981549e990fe2344e4c805405e" prot="private">
+          <name>Find</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871aa286d9991c6a547ae25a5f5216164b8f" prot="private">
+          <name>Join</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871a0e181f89f47654b86f3beb42f5cc08b8" prot="private">
+          <name>Destroy</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871a63a6a88c066880c5ac42394a22803ca6" prot="private">
+          <name>Refresh</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="177" column="1" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="178" bodyend="185"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a74247355804b8b0ef540f1f9635ecbd7" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnCancelFindSessionsCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnCancelFindSessionsCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnCancelFindSessionsCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="162" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1aed3fcbd7e8dcc7d13d84ddb730e5ba25" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnCreateSessionCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnCreateSessionCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnCreateSessionCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="150" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a48a0623dca2af11bf2ffa0f773e6eaaf" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnDestroySessionCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnDestroySessionCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnDestroySessionCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="168" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a9d7d37916b9df2e22eb357af20b4b05b" prot="public" static="no" mutable="no">
+        <type>FAROnSessionFindCompleted</type>
+        <definition>FAROnSessionFindCompleted UARSessionSubsystem::OnFindFriendSessionCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnFindFriendSessionCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnFindFriendSessionCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="156" column="27" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1adc133b89c54a428d9a3bafc047f6f80d" prot="public" static="no" mutable="no">
+        <type>FAROnSessionFindCompleted</type>
+        <definition>FAROnSessionFindCompleted UARSessionSubsystem::OnFindSessionsCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnFindSessionsCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnFindSessionsCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="153" column="27" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a528f2011c2a1f948a4c4f04a7b3a22c3" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnInviteFriendCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnInviteFriendCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnInviteFriendCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="159" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1acdfcc489320d7fadc65b41955095ea5e" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnJoinSessionCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnJoinSessionCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnJoinSessionCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="165" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1ab510538e725c8917232844bcee94e0a3" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnLocalJoinCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnLocalJoinCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnLocalJoinCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="174" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a0ad83cf070431f9ec52e030fdfe8950d" prot="public" static="no" mutable="no">
+        <type>FAROnSessionActionCompleted</type>
+        <definition>FAROnSessionActionCompleted UARSessionSubsystem::OnRefreshJoinabilityCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnRefreshJoinabilityCompleted</name>
+        <qualifiedname>UARSessionSubsystem::OnRefreshJoinabilityCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="171" column="29" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARSessionSubsystem_1ad0720435e1839b4602c9008283b7f200" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UCreateSessionCallbackProxyAdvanced &gt;</type>
+        <definition>TObjectPtr&lt;UCreateSessionCallbackProxyAdvanced&gt; UARSessionSubsystem::ActiveAdvancedCreateProxy</definition>
+        <argsstring></argsstring>
+        <name>ActiveAdvancedCreateProxy</name>
+        <qualifiedname>UARSessionSubsystem::ActiveAdvancedCreateProxy</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="229" column="12" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a318550bf3218398793469414086581ed" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UFindSessionsCallbackProxyAdvanced &gt;</type>
+        <definition>TObjectPtr&lt;UFindSessionsCallbackProxyAdvanced&gt; UARSessionSubsystem::ActiveAdvancedFindProxy</definition>
+        <argsstring></argsstring>
+        <name>ActiveAdvancedFindProxy</name>
+        <qualifiedname>UARSessionSubsystem::ActiveAdvancedFindProxy</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="231" column="12" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a629c695ea40159d796c7aeed9d73e6c4" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; FOnlineSessionSearch &gt;</type>
+        <definition>TSharedPtr&lt;FOnlineSessionSearch&gt; UARSessionSubsystem::ActiveSessionSearch</definition>
+        <argsstring></argsstring>
+        <name>ActiveSessionSearch</name>
+        <qualifiedname>UARSessionSubsystem::ActiveSessionSearch</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="226" column="12" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a3462f1839d72e07cfc726463ef56403d" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARSessionSubsystem::ActiveSubsystemName</definition>
+        <argsstring></argsstring>
+        <name>ActiveSubsystemName</name>
+        <qualifiedname>UARSessionSubsystem::ActiveSubsystemName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="246" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1ac13f025163b20401a40119c6fc98873a" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::bFindRetryWithoutFilters</definition>
+        <argsstring></argsstring>
+        <name>bFindRetryWithoutFilters</name>
+        <qualifiedname>UARSessionSubsystem::bFindRetryWithoutFilters</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="238" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1af96b6e5661613b088a7115fd0594b2ac" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::bLastFindWasLANQuery</definition>
+        <argsstring></argsstring>
+        <name>bLastFindWasLANQuery</name>
+        <qualifiedname>UARSessionSubsystem::bLastFindWasLANQuery</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="236" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a681decb766785225474465cf27d11f0c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::bOperationInFlight</definition>
+        <argsstring></argsstring>
+        <name>bOperationInFlight</name>
+        <qualifiedname>UARSessionSubsystem::bOperationInFlight</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="247" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a5422ff8330f177842ecf8a8fd3f50898" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::bPendingInviteJoinAfterDestroy</definition>
+        <argsstring></argsstring>
+        <name>bPendingInviteJoinAfterDestroy</name>
+        <qualifiedname>UARSessionSubsystem::bPendingInviteJoinAfterDestroy</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="239" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1afebab70f3bef0dc1df4c755e68f8ecc2" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::bPendingJoinAfterDestroy</definition>
+        <argsstring></argsstring>
+        <name>bPendingJoinAfterDestroy</name>
+        <qualifiedname>UARSessionSubsystem::bPendingJoinAfterDestroy</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="242" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a8ba1f0befa4abdcce870d3d38d31c03d" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FOnlineSessionSearchResult &gt;</type>
+        <definition>TArray&lt;FOnlineSessionSearchResult&gt; UARSessionSubsystem::CachedNativeSearchResults</definition>
+        <argsstring></argsstring>
+        <name>CachedNativeSearchResults</name>
+        <qualifiedname>UARSessionSubsystem::CachedNativeSearchResults</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="227" column="8" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1aff111622806f2004863e935e7993cf64" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::CancelFindSessionsCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>CancelFindSessionsCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::CancelFindSessionsCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="221" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a5355fbfd57458258b25597c9ab337468" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::CreateSessionCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>CreateSessionCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::CreateSessionCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="217" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a3a267f99afa1ba7da9c2c26494594fc5" prot="private" static="no" mutable="no">
+        <type>ESessionOperation</type>
+        <definition>ESessionOperation UARSessionSubsystem::CurrentOperation</definition>
+        <argsstring></argsstring>
+        <name>CurrentOperation</name>
+        <qualifiedname>UARSessionSubsystem::CurrentOperation</qualifiedname>
+        <initializer>= ESessionOperation::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="248" column="19" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a3c3744efbcf33f8e9d094d78bc391948" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::DestroySessionCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>DestroySessionCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::DestroySessionCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="219" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a7f16c83c9047b623bfa23eab2414c062" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::FindFriendSessionCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>FindFriendSessionCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::FindFriendSessionCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="223" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a5712718d64ea09e4dda1334f684302dd" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::FindSessionsCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>FindSessionsCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::FindSessionsCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="220" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a5ca9a3bfdb5bc5ce075ec07b813ea61f" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARSessionSubsystem::InviteDelegateSubsystemName</definition>
+        <argsstring></argsstring>
+        <name>InviteDelegateSubsystemName</name>
+        <qualifiedname>UARSessionSubsystem::InviteDelegateSubsystemName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="245" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="245" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a9edc208c9ebe975ff368bbe3543d9345" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::JoinSessionCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>JoinSessionCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::JoinSessionCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="222" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a7a317fb8924e94737e015d1e85dd1b24" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSessionSubsystem::LastFindMaxResults</definition>
+        <argsstring></argsstring>
+        <name>LastFindMaxResults</name>
+        <qualifiedname>UARSessionSubsystem::LastFindMaxResults</qualifiedname>
+        <initializer>= 50</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="237" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1aedd0f58c83894ea48e4e2c6cfb1fd175" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FARSessionSearchResultData &gt;</type>
+        <definition>TArray&lt;FARSessionSearchResultData&gt; UARSessionSubsystem::LastFindResults</definition>
+        <argsstring></argsstring>
+        <name>LastFindResults</name>
+        <qualifiedname>UARSessionSubsystem::LastFindResults</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="234" column="8" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a32c720373d9ecd16169b9975b6634536" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSessionSubsystem::PendingInviteControllerId</definition>
+        <argsstring></argsstring>
+        <name>PendingInviteControllerId</name>
+        <qualifiedname>UARSessionSubsystem::PendingInviteControllerId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="240" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a0962ddb7e9e597f5ee1b146ccfeec4be" prot="private" static="no" mutable="no">
+        <type>FOnlineSessionSearchResult</type>
+        <definition>FOnlineSessionSearchResult UARSessionSubsystem::PendingInviteSearchResult</definition>
+        <argsstring></argsstring>
+        <name>PendingInviteSearchResult</name>
+        <qualifiedname>UARSessionSubsystem::PendingInviteSearchResult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="241" column="28" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a0ddb2dbfba305cbbdcbd09257c39c7f3" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSessionSubsystem::PendingJoinControllerId</definition>
+        <argsstring></argsstring>
+        <name>PendingJoinControllerId</name>
+        <qualifiedname>UARSessionSubsystem::PendingJoinControllerId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="243" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1af252aaea103e9020d7d3414525a5dc00" prot="private" static="no" mutable="no">
+        <type>FOnlineSessionSearchResult</type>
+        <definition>FOnlineSessionSearchResult UARSessionSubsystem::PendingJoinSearchResult</definition>
+        <argsstring></argsstring>
+        <name>PendingJoinSearchResult</name>
+        <qualifiedname>UARSessionSubsystem::PendingJoinSearchResult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="244" column="28" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1acb74b53adb93093bc423a68bbaac83e1" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::SessionUserInviteAcceptedHandle</definition>
+        <argsstring></argsstring>
+        <name>SessionUserInviteAcceptedHandle</name>
+        <qualifiedname>UARSessionSubsystem::SessionUserInviteAcceptedHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="224" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSessionSubsystem_1a9d5477366114dfeb47dfe4946710ded9" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARSessionSubsystem::UpdateSessionCompleteHandle</definition>
+        <argsstring></argsstring>
+        <name>UpdateSessionCompleteHandle</name>
+        <qualifiedname>UARSessionSubsystem::UpdateSessionCompleteHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="218" column="17" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARSessionSubsystem_1a4a46216e182776fb6300f5bea6c60eed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::AddLocalPlayer</definition>
+        <argsstring>(FARSessionResult &amp;OutResult)</argsstring>
+        <name>AddLocalPlayer</name>
+        <qualifiedname>UARSessionSubsystem::AddLocalPlayer</qualifiedname>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="144" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="692" bodyend="723"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1ada8c78fc5c2421edb366cb520e1b27aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::CancelFindSessions</definition>
+        <argsstring>(FARSessionResult &amp;OutResult)</argsstring>
+        <name>CancelFindSessions</name>
+        <qualifiedname>UARSessionSubsystem::CancelFindSessions</qualifiedname>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="126" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="842" bodyend="876"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1ab41ce1ec7321e96a65c2fda454b43c7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::CreateSession</definition>
+        <argsstring>(bool bUseLAN, FARSessionResult &amp;OutResult)</argsstring>
+        <name>CreateSession</name>
+        <qualifiedname>UARSessionSubsystem::CreateSession</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bUseLAN</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="115" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="144" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a6637117834764eebbe4c46ccd5530bf7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::CreateSessionNamed</definition>
+        <argsstring>(bool bUseLAN, const FString &amp;SessionDisplayName, FARSessionResult &amp;OutResult)</argsstring>
+        <name>CreateSessionNamed</name>
+        <qualifiedname>UARSessionSubsystem::CreateSessionNamed</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bUseLAN</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>SessionDisplayName</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="120" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="149" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a2fbb0502d1bff2de0783e39539d8c2ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARSessionSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="105" column="14" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="54" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1afad1ad3f99135667ec0990fce770e135" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::DestroySession</definition>
+        <argsstring>(FARSessionResult &amp;OutResult)</argsstring>
+        <name>DestroySession</name>
+        <qualifiedname>UARSessionSubsystem::DestroySession</qualifiedname>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="138" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="590" bodyend="633"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a4bfc5c20604c83baf07f4014aca04673" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::FindFriendSession</definition>
+        <argsstring>(const FBPUniqueNetId &amp;FriendUniqueNetId, FARSessionResult &amp;OutResult)</argsstring>
+        <name>FindFriendSession</name>
+        <qualifiedname>UARSessionSubsystem::FindFriendSession</qualifiedname>
+        <param>
+          <type>const FBPUniqueNetId &amp;</type>
+          <declname>FriendUniqueNetId</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="132" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="486" bodyend="538"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a3ad4bf4412e2ca869f9a9e3b1162aca8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::FindSessions</definition>
+        <argsstring>(bool bLANQuery, int32 MaxResults, FARSessionResult &amp;OutResult)</argsstring>
+        <name>FindSessions</name>
+        <qualifiedname>UARSessionSubsystem::FindSessions</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bLANQuery</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>MaxResults</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="123" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="275" bodyend="374"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1abae2cdefeabe8e93d7e42b38f9fab202" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TArray&lt; FARSessionSearchResultData &gt; &amp;</type>
+        <definition>const TArray&lt; FARSessionSearchResultData &gt; &amp; UARSessionSubsystem::GetLastFindResults</definition>
+        <argsstring>() const</argsstring>
+        <name>GetLastFindResults</name>
+        <qualifiedname>UARSessionSubsystem::GetLastFindResults</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="147" column="14" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="147" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1abeb7d82c18cd33243b31b44b3bd43393" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::Initialize</definition>
+        <argsstring>(FSubsystemCollectionBase &amp;Collection) override</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UARSessionSubsystem::Initialize</qualifiedname>
+        <param>
+          <type>FSubsystemCollectionBase &amp;</type>
+          <declname>Collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="104" column="14" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="48" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a3b82d98dcbb43ff52a412fff9430b86e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::InviteFriendToSession</definition>
+        <argsstring>(const FBPUniqueNetId &amp;FriendUniqueNetId, FARSessionResult &amp;OutResult)</argsstring>
+        <name>InviteFriendToSession</name>
+        <qualifiedname>UARSessionSubsystem::InviteFriendToSession</qualifiedname>
+        <param>
+          <type>const FBPUniqueNetId &amp;</type>
+          <declname>FriendUniqueNetId</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="135" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="540" bodyend="588"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a4d9e1b01c69e6d629bf3f3ce912997ce" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::IsStayOfflineEnabled</definition>
+        <argsstring>() const</argsstring>
+        <name>IsStayOfflineEnabled</name>
+        <qualifiedname>UARSessionSubsystem::IsStayOfflineEnabled</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="108" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="109" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a37aba43a7152e9dba981949989f3da42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::JoinSessionByIndex</definition>
+        <argsstring>(int32 ResultIndex, FARSessionResult &amp;OutResult)</argsstring>
+        <name>JoinSessionByIndex</name>
+        <qualifiedname>UARSessionSubsystem::JoinSessionByIndex</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ResultIndex</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="129" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="376" bodyend="484"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1ae1d47970893d7738a369526bc7b34f1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::RefreshJoinability</definition>
+        <argsstring>(FARSessionResult &amp;OutResult)</argsstring>
+        <name>RefreshJoinability</name>
+        <qualifiedname>UARSessionSubsystem::RefreshJoinability</qualifiedname>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="141" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="635" bodyend="690"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a903ffe5d5d22f22499b10220d54c866e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::SetStayOfflineEnabled</definition>
+        <argsstring>(bool bEnabled, bool &amp;bOutRestartRecommended)</argsstring>
+        <name>SetStayOfflineEnabled</name>
+        <qualifiedname>UARSessionSubsystem::SetStayOfflineEnabled</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnabled</declname>
+        </param>
+        <param>
+          <type>bool &amp;</type>
+          <declname>bOutRestartRecommended</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="111" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="118" bodyend="142"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARSessionSubsystem_1a2e47233238daa473e6fc0381e34e555d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::BeginJoinSession</definition>
+        <argsstring>(IOnlineSessionPtr Session, int32 LocalUserNum, const FOnlineSessionSearchResult &amp;SearchResult, FARSessionResult &amp;OutResult)</argsstring>
+        <name>BeginJoinSession</name>
+        <qualifiedname>UARSessionSubsystem::BeginJoinSession</qualifiedname>
+        <param>
+          <type>IOnlineSessionPtr</type>
+          <declname>Session</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>LocalUserNum</declname>
+        </param>
+        <param>
+          <type>const FOnlineSessionSearchResult &amp;</type>
+          <declname>SearchResult</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="188" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="807" bodyend="840"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a238275a6b1f3229a3d369c9d416d4f1c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::BindInviteAcceptedDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>BindInviteAcceptedDelegate</name>
+        <qualifiedname>UARSessionSubsystem::BindInviteAcceptedDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="189" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="878" bodyend="906"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a2a897dd8e6e91b56ba405ff2ebf89c4e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::BroadcastFindCompleted</definition>
+        <argsstring>(const FARSessionResult &amp;Result)</argsstring>
+        <name>BroadcastFindCompleted</name>
+        <qualifiedname>UARSessionSubsystem::BroadcastFindCompleted</qualifiedname>
+        <param>
+          <type>const FARSessionResult &amp;</type>
+          <declname>Result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="196" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1047" bodyend="1050"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a03395e5f872484949330fe9ad0824828" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSessionSubsystem::BuildDesiredSessionSettings</definition>
+        <argsstring>(bool bPreferLAN, const FString &amp;SessionDisplayName, FOnlineSessionSettings &amp;OutSettings, FARSessionResult &amp;OutResult)</argsstring>
+        <name>BuildDesiredSessionSettings</name>
+        <qualifiedname>UARSessionSubsystem::BuildDesiredSessionSettings</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bPreferLAN</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>SessionDisplayName</declname>
+        </param>
+        <param>
+          <type>FOnlineSessionSettings &amp;</type>
+          <declname>OutSettings</declname>
+        </param>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="193" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="970" bodyend="1006"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a93aa948426a42d6058fc065d56105271" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::ClearInviteAcceptedDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>ClearInviteAcceptedDelegate</name>
+        <qualifiedname>UARSessionSubsystem::ClearInviteAcceptedDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="190" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="908" bodyend="938"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a305d94261491cf10b3e9498c5a0cb167" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSessionSubsystem::ComputeOpenPublicConnections</definition>
+        <argsstring>() const</argsstring>
+        <name>ComputeOpenPublicConnections</name>
+        <qualifiedname>UARSessionSubsystem::ComputeOpenPublicConnections</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="192" column="7" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="965" bodyend="968"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1aad4e747418b7b653866c815bb2aed85b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSessionSubsystem::CountCurrentARPlayers</definition>
+        <argsstring>() const</argsstring>
+        <name>CountCurrentARPlayers</name>
+        <qualifiedname>UARSessionSubsystem::CountCurrentARPlayers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="191" column="7" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="940" bodyend="963"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a71271061013438022dd8938f3a725c29" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::DestroySessionBestEffort</definition>
+        <argsstring>()</argsstring>
+        <name>DestroySessionBestEffort</name>
+        <qualifiedname>UARSessionSubsystem::DestroySessionBestEffort</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="198" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1113" bodyend="1122"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a971b99a619e71413888bbde6e71f9b39" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::FillResult</definition>
+        <argsstring>(FARSessionResult &amp;OutResult, bool bSuccess, EARSessionResultCode Code, const FString &amp;Error=FString()) const</argsstring>
+        <name>FillResult</name>
+        <qualifiedname>UARSessionSubsystem::FillResult</qualifiedname>
+        <param>
+          <type>FARSessionResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSuccess</declname>
+        </param>
+        <param>
+          <type>EARSessionResultCode</type>
+          <declname>Code</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Error</declname>
+          <defval>FString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="195" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1040" bodyend="1045"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a1fba9ee2d6fab143163bd07e6662cefc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleAdvancedCreateFailure</definition>
+        <argsstring>()</argsstring>
+        <name>HandleAdvancedCreateFailure</name>
+        <qualifiedname>UARSessionSubsystem::HandleAdvancedCreateFailure</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="211" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1135" bodyend="1144"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a527caf6098a9a97d660328c1c01d5cb5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleAdvancedCreateSuccess</definition>
+        <argsstring>()</argsstring>
+        <name>HandleAdvancedCreateSuccess</name>
+        <qualifiedname>UARSessionSubsystem::HandleAdvancedCreateSuccess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="209" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1124" bodyend="1133"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a0765a44a47f6dcaf6662de1792273c8d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleAdvancedFindFailure</definition>
+        <argsstring>(const TArray&lt; FBlueprintSessionResult &gt; &amp;Results)</argsstring>
+        <name>HandleAdvancedFindFailure</name>
+        <qualifiedname>UARSessionSubsystem::HandleAdvancedFindFailure</qualifiedname>
+        <param>
+          <type>const TArray&lt; FBlueprintSessionResult &gt; &amp;</type>
+          <declname>Results</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="215" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1169" bodyend="1182"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1ada8c05cbb5f8d2f4aacb14829fae26c1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleAdvancedFindSuccess</definition>
+        <argsstring>(const TArray&lt; FBlueprintSessionResult &gt; &amp;Results)</argsstring>
+        <name>HandleAdvancedFindSuccess</name>
+        <qualifiedname>UARSessionSubsystem::HandleAdvancedFindSuccess</qualifiedname>
+        <param>
+          <type>const TArray&lt; FBlueprintSessionResult &gt; &amp;</type>
+          <declname>Results</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="213" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1146" bodyend="1167"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a814c262988805b7f863345a6a110619d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleCancelFindSessionsComplete</definition>
+        <argsstring>(bool bWasSuccessful)</argsstring>
+        <name>HandleCancelFindSessionsComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleCancelFindSessionsComplete</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="204" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1388" bodyend="1420"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a9275827611204b8170f61cfb55fe5f29" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleCreateSessionComplete</definition>
+        <argsstring>(FName SessionName, bool bWasSuccessful)</argsstring>
+        <name>HandleCreateSessionComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleCreateSessionComplete</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SessionName</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="200" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1184" bodyend="1206"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a2be7497c14b7fadf60ec17605ba0e956" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleDestroySessionComplete</definition>
+        <argsstring>(FName SessionName, bool bWasSuccessful)</argsstring>
+        <name>HandleDestroySessionComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleDestroySessionComplete</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SessionName</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="202" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1239" bodyend="1308"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1af4667ce2d2dcf21fd21f0e5e03d4c74c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleFindFriendSessionComplete</definition>
+        <argsstring>(int32 LocalUserNum, bool bWasSuccessful, const TArray&lt; FOnlineSessionSearchResult &gt; &amp;SessionInfo)</argsstring>
+        <name>HandleFindFriendSessionComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleFindFriendSessionComplete</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>LocalUserNum</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FOnlineSessionSearchResult &gt; &amp;</type>
+          <declname>SessionInfo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="207" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1519" bodyend="1548"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1aca776144ec9c401d00dbc7816c9d8cca" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleFindSessionsComplete</definition>
+        <argsstring>(bool bWasSuccessful)</argsstring>
+        <name>HandleFindSessionsComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleFindSessionsComplete</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="203" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1310" bodyend="1386"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1ae1c2f0051b451a91c85a5e6f3ce61e85" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleJoinSessionComplete</definition>
+        <argsstring>(FName SessionName, EOnJoinSessionCompleteResult::Type Result)</argsstring>
+        <name>HandleJoinSessionComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleJoinSessionComplete</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SessionName</declname>
+        </param>
+        <param>
+          <type>EOnJoinSessionCompleteResult::Type</type>
+          <declname>Result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="205" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1422" bodyend="1517"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a890863cd9f4b7808877c5ed76868b0cb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleSessionUserInviteAccepted</definition>
+        <argsstring>(bool bWasSuccessful, int32 ControllerId, FUniqueNetIdPtr UserId, const FOnlineSessionSearchResult &amp;InviteResult)</argsstring>
+        <name>HandleSessionUserInviteAccepted</name>
+        <qualifiedname>UARSessionSubsystem::HandleSessionUserInviteAccepted</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>FUniqueNetIdPtr</type>
+          <declname>UserId</declname>
+        </param>
+        <param>
+          <type>const FOnlineSessionSearchResult &amp;</type>
+          <declname>InviteResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="206" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1550" bodyend="1639"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a364b0f4a32a9351b211b39b1fe105968" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::HandleUpdateSessionComplete</definition>
+        <argsstring>(FName SessionName, bool bWasSuccessful)</argsstring>
+        <name>HandleUpdateSessionComplete</name>
+        <qualifiedname>UARSessionSubsystem::HandleUpdateSessionComplete</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SessionName</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bWasSuccessful</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="201" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1208" bodyend="1237"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a32aa1c8eaf6debc1ce00d5757eccddd1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSessionSubsystem::RebuildLastFindResults</definition>
+        <argsstring>()</argsstring>
+        <name>RebuildLastFindResults</name>
+        <qualifiedname>UARSessionSubsystem::RebuildLastFindResults</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="197" column="6" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1052" bodyend="1111"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a5c18385da0a6bc5c481ff80ef253f972" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARSessionSubsystem::ResolveSessionDisplayName</definition>
+        <argsstring>(const FString &amp;RequestedSessionDisplayName)</argsstring>
+        <name>ResolveSessionDisplayName</name>
+        <qualifiedname>UARSessionSubsystem::ResolveSessionDisplayName</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>RequestedSessionDisplayName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="194" column="9" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="1008" bodyend="1038"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSessionSubsystem_1a56e390e18939e734438d5252bc61ed31" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>IOnlineSessionPtr</type>
+        <definition>IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface</definition>
+        <argsstring>(bool bPreferLAN, FName &amp;OutSubsystemName) const</argsstring>
+        <name>ResolveSessionInterface</name>
+        <qualifiedname>UARSessionSubsystem::ResolveSessionInterface</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bPreferLAN</declname>
+        </param>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutSubsystemName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="187" column="19" bodyfile="AlienRamen/Private/ARSessionSubsystem.cpp" bodystart="725" bodyend="805"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Server/client session orchestration surface for Steam/LAN/local multiplayer. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSessionSubsystem.h" line="99" column="1" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="100" bodyend="249"/>
+    <listofallmembers>
+      <member refid="classUARSessionSubsystem_1ad0720435e1839b4602c9008283b7f200" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ActiveAdvancedCreateProxy</name></member>
+      <member refid="classUARSessionSubsystem_1a318550bf3218398793469414086581ed" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ActiveAdvancedFindProxy</name></member>
+      <member refid="classUARSessionSubsystem_1a629c695ea40159d796c7aeed9d73e6c4" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ActiveSessionSearch</name></member>
+      <member refid="classUARSessionSubsystem_1a3462f1839d72e07cfc726463ef56403d" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ActiveSubsystemName</name></member>
+      <member refid="classUARSessionSubsystem_1a4a46216e182776fb6300f5bea6c60eed" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>AddLocalPlayer</name></member>
+      <member refid="classUARSessionSubsystem_1a2e47233238daa473e6fc0381e34e555d" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>BeginJoinSession</name></member>
+      <member refid="classUARSessionSubsystem_1ac13f025163b20401a40119c6fc98873a" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>bFindRetryWithoutFilters</name></member>
+      <member refid="classUARSessionSubsystem_1a238275a6b1f3229a3d369c9d416d4f1c" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>BindInviteAcceptedDelegate</name></member>
+      <member refid="classUARSessionSubsystem_1af96b6e5661613b088a7115fd0594b2ac" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>bLastFindWasLANQuery</name></member>
+      <member refid="classUARSessionSubsystem_1a681decb766785225474465cf27d11f0c" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>bOperationInFlight</name></member>
+      <member refid="classUARSessionSubsystem_1a5422ff8330f177842ecf8a8fd3f50898" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>bPendingInviteJoinAfterDestroy</name></member>
+      <member refid="classUARSessionSubsystem_1afebab70f3bef0dc1df4c755e68f8ecc2" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>bPendingJoinAfterDestroy</name></member>
+      <member refid="classUARSessionSubsystem_1a2a897dd8e6e91b56ba405ff2ebf89c4e" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>BroadcastFindCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1a03395e5f872484949330fe9ad0824828" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>BuildDesiredSessionSettings</name></member>
+      <member refid="classUARSessionSubsystem_1a8ba1f0befa4abdcce870d3d38d31c03d" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CachedNativeSearchResults</name></member>
+      <member refid="classUARSessionSubsystem_1ada8c78fc5c2421edb366cb520e1b27aa" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CancelFindSessions</name></member>
+      <member refid="classUARSessionSubsystem_1aff111622806f2004863e935e7993cf64" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CancelFindSessionsCompleteHandle</name></member>
+      <member refid="classUARSessionSubsystem_1a93aa948426a42d6058fc065d56105271" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ClearInviteAcceptedDelegate</name></member>
+      <member refid="classUARSessionSubsystem_1a305d94261491cf10b3e9498c5a0cb167" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ComputeOpenPublicConnections</name></member>
+      <member refid="classUARSessionSubsystem_1aad4e747418b7b653866c815bb2aed85b" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CountCurrentARPlayers</name></member>
+      <member refid="classUARSessionSubsystem_1ab41ce1ec7321e96a65c2fda454b43c7d" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CreateSession</name></member>
+      <member refid="classUARSessionSubsystem_1a5355fbfd57458258b25597c9ab337468" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CreateSessionCompleteHandle</name></member>
+      <member refid="classUARSessionSubsystem_1a6637117834764eebbe4c46ccd5530bf7" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CreateSessionNamed</name></member>
+      <member refid="classUARSessionSubsystem_1a3a267f99afa1ba7da9c2c26494594fc5" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>CurrentOperation</name></member>
+      <member refid="classUARSessionSubsystem_1a2fbb0502d1bff2de0783e39539d8c2ce" prot="public" virt="virtual"><scope>UARSessionSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARSessionSubsystem_1afad1ad3f99135667ec0990fce770e135" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>DestroySession</name></member>
+      <member refid="classUARSessionSubsystem_1a71271061013438022dd8938f3a725c29" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>DestroySessionBestEffort</name></member>
+      <member refid="classUARSessionSubsystem_1a3c3744efbcf33f8e9d094d78bc391948" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>DestroySessionCompleteHandle</name></member>
+      <member refid="classUARSessionSubsystem_1a6e565dd9925010fdf000a123f31b9871" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ESessionOperation</name></member>
+      <member refid="classUARSessionSubsystem_1a971b99a619e71413888bbde6e71f9b39" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>FillResult</name></member>
+      <member refid="classUARSessionSubsystem_1a4bfc5c20604c83baf07f4014aca04673" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>FindFriendSession</name></member>
+      <member refid="classUARSessionSubsystem_1a7f16c83c9047b623bfa23eab2414c062" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>FindFriendSessionCompleteHandle</name></member>
+      <member refid="classUARSessionSubsystem_1a3ad4bf4412e2ca869f9a9e3b1162aca8" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>FindSessions</name></member>
+      <member refid="classUARSessionSubsystem_1a5712718d64ea09e4dda1334f684302dd" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>FindSessionsCompleteHandle</name></member>
+      <member refid="classUARSessionSubsystem_1abae2cdefeabe8e93d7e42b38f9fab202" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>GetLastFindResults</name></member>
+      <member refid="classUARSessionSubsystem_1a1fba9ee2d6fab143163bd07e6662cefc" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleAdvancedCreateFailure</name></member>
+      <member refid="classUARSessionSubsystem_1a527caf6098a9a97d660328c1c01d5cb5" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleAdvancedCreateSuccess</name></member>
+      <member refid="classUARSessionSubsystem_1a0765a44a47f6dcaf6662de1792273c8d" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleAdvancedFindFailure</name></member>
+      <member refid="classUARSessionSubsystem_1ada8c05cbb5f8d2f4aacb14829fae26c1" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleAdvancedFindSuccess</name></member>
+      <member refid="classUARSessionSubsystem_1a814c262988805b7f863345a6a110619d" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleCancelFindSessionsComplete</name></member>
+      <member refid="classUARSessionSubsystem_1a9275827611204b8170f61cfb55fe5f29" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleCreateSessionComplete</name></member>
+      <member refid="classUARSessionSubsystem_1a2be7497c14b7fadf60ec17605ba0e956" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleDestroySessionComplete</name></member>
+      <member refid="classUARSessionSubsystem_1af4667ce2d2dcf21fd21f0e5e03d4c74c" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleFindFriendSessionComplete</name></member>
+      <member refid="classUARSessionSubsystem_1aca776144ec9c401d00dbc7816c9d8cca" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleFindSessionsComplete</name></member>
+      <member refid="classUARSessionSubsystem_1ae1c2f0051b451a91c85a5e6f3ce61e85" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleJoinSessionComplete</name></member>
+      <member refid="classUARSessionSubsystem_1a890863cd9f4b7808877c5ed76868b0cb" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleSessionUserInviteAccepted</name></member>
+      <member refid="classUARSessionSubsystem_1a364b0f4a32a9351b211b39b1fe105968" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>HandleUpdateSessionComplete</name></member>
+      <member refid="classUARSessionSubsystem_1abeb7d82c18cd33243b31b44b3bd43393" prot="public" virt="virtual"><scope>UARSessionSubsystem</scope><name>Initialize</name></member>
+      <member refid="classUARSessionSubsystem_1a5ca9a3bfdb5bc5ce075ec07b813ea61f" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>InviteDelegateSubsystemName</name></member>
+      <member refid="classUARSessionSubsystem_1a3b82d98dcbb43ff52a412fff9430b86e" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>InviteFriendToSession</name></member>
+      <member refid="classUARSessionSubsystem_1a4d9e1b01c69e6d629bf3f3ce912997ce" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>IsStayOfflineEnabled</name></member>
+      <member refid="classUARSessionSubsystem_1a37aba43a7152e9dba981949989f3da42" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>JoinSessionByIndex</name></member>
+      <member refid="classUARSessionSubsystem_1a9edc208c9ebe975ff368bbe3543d9345" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>JoinSessionCompleteHandle</name></member>
+      <member refid="classUARSessionSubsystem_1a7a317fb8924e94737e015d1e85dd1b24" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>LastFindMaxResults</name></member>
+      <member refid="classUARSessionSubsystem_1aedd0f58c83894ea48e4e2c6cfb1fd175" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>LastFindResults</name></member>
+      <member refid="classUARSessionSubsystem_1a74247355804b8b0ef540f1f9635ecbd7" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnCancelFindSessionsCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1aed3fcbd7e8dcc7d13d84ddb730e5ba25" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnCreateSessionCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1a48a0623dca2af11bf2ffa0f773e6eaaf" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnDestroySessionCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1a9d7d37916b9df2e22eb357af20b4b05b" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnFindFriendSessionCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1adc133b89c54a428d9a3bafc047f6f80d" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnFindSessionsCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1a528f2011c2a1f948a4c4f04a7b3a22c3" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnInviteFriendCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1acdfcc489320d7fadc65b41955095ea5e" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnJoinSessionCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1ab510538e725c8917232844bcee94e0a3" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnLocalJoinCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1a0ad83cf070431f9ec52e030fdfe8950d" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>OnRefreshJoinabilityCompleted</name></member>
+      <member refid="classUARSessionSubsystem_1a32c720373d9ecd16169b9975b6634536" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>PendingInviteControllerId</name></member>
+      <member refid="classUARSessionSubsystem_1a0962ddb7e9e597f5ee1b146ccfeec4be" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>PendingInviteSearchResult</name></member>
+      <member refid="classUARSessionSubsystem_1a0ddb2dbfba305cbbdcbd09257c39c7f3" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>PendingJoinControllerId</name></member>
+      <member refid="classUARSessionSubsystem_1af252aaea103e9020d7d3414525a5dc00" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>PendingJoinSearchResult</name></member>
+      <member refid="classUARSessionSubsystem_1a32aa1c8eaf6debc1ce00d5757eccddd1" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>RebuildLastFindResults</name></member>
+      <member refid="classUARSessionSubsystem_1ae1d47970893d7738a369526bc7b34f1a" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>RefreshJoinability</name></member>
+      <member refid="classUARSessionSubsystem_1a5c18385da0a6bc5c481ff80ef253f972" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ResolveSessionDisplayName</name></member>
+      <member refid="classUARSessionSubsystem_1a56e390e18939e734438d5252bc61ed31" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>ResolveSessionInterface</name></member>
+      <member refid="classUARSessionSubsystem_1acb74b53adb93093bc423a68bbaac83e1" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>SessionUserInviteAcceptedHandle</name></member>
+      <member refid="classUARSessionSubsystem_1a903ffe5d5d22f22499b10220d54c866e" prot="public" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>SetStayOfflineEnabled</name></member>
+      <member refid="classUARSessionSubsystem_1a9d5477366114dfeb47dfe4946710ded9" prot="private" virt="non-virtual"><scope>UARSessionSubsystem</scope><name>UpdateSessionCompleteHandle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

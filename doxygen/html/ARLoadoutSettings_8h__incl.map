@@ -1,0 +1,11 @@
+<map id="ARLoadoutSettings.h" name="ARLoadoutSettings.h">
+<area shape="rect" id="Node000001" title="ARLoadoutSettings header for Alien Ramen." alt="" coords="279,5,436,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="311,33,125,78,124,73,310,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,349,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="341,33,279,73,276,69,338,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="374,79,559,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="376,28,439,69,436,73,373,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="584,79,811,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="413,28,630,73,629,78,411,33"/>
+</map>

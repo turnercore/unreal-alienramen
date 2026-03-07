@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARFactionRuntimeState" kind="struct" language="C++" prot="public">
+    <compoundname>FARFactionRuntimeState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARFactionRuntimeState_1a4a7caf53894f2063e8ee42214aa4f041" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARFactionRuntimeState::FactionTag</definition>
+        <argsstring></argsstring>
+        <name>FactionTag</name>
+        <qualifiedname>FARFactionRuntimeState::FactionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="71" column="14" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionRuntimeState_1a4a2e8e388f2f90c175b6d7590255c058" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionRuntimeState::Popularity</definition>
+        <argsstring></argsstring>
+        <name>Popularity</name>
+        <qualifiedname>FARFactionRuntimeState::Popularity</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="74" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionTypes.h" line="66" column="1" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="67" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structFARFactionRuntimeState_1a4a7caf53894f2063e8ee42214aa4f041" prot="public" virt="non-virtual"><scope>FARFactionRuntimeState</scope><name>FactionTag</name></member>
+      <member refid="structFARFactionRuntimeState_1a4a2e8e388f2f90c175b6d7590255c058" prot="public" virt="non-virtual"><scope>FARFactionRuntimeState</scope><name>Popularity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

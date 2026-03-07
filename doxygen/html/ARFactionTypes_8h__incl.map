@@ -1,0 +1,16 @@
+<map id="ARFactionTypes.h" name="ARFactionTypes.h">
+<area shape="rect" id="Node000001" title="Shared faction election types for Alien Ramen." alt="" coords="221,5,356,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="79,152,196,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="221,27,161,34,99,45,47,60,27,70,14,80,9,91,9,100,13,109,22,117,48,133,81,146,79,150,46,138,19,122,9,112,4,101,4,89,10,77,24,65,45,55,98,40,161,29,221,22"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="24,79,171,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="259,33,143,76,141,71,257,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="196,79,381,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="291,31,291,65,286,65,286,31"/>
+<area shape="rect" id="Node000005" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="406,79,536,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="319,28,429,71,427,76,317,33"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="560,79,766,104"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="349,28,590,73,589,79,348,33"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="418,107,206,152,204,146,417,101"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="371,152,571,177"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="474,104,474,138,468,138,468,104"/>
+</map>

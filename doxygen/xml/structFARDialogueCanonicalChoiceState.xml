@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARDialogueCanonicalChoiceState" kind="struct" language="C++" prot="public">
+    <compoundname>FARDialogueCanonicalChoiceState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARDialogueCanonicalChoiceState_1a460306801f66ff0b60be40c1a45c934d" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueCanonicalChoiceState::ChoiceTag</definition>
+        <argsstring></argsstring>
+        <name>ChoiceTag</name>
+        <qualifiedname>FARDialogueCanonicalChoiceState::ChoiceTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="162" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueCanonicalChoiceState_1a9b812be225b312993497018c35724fa8" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueCanonicalChoiceState::NodeTag</definition>
+        <argsstring></argsstring>
+        <name>NodeTag</name>
+        <qualifiedname>FARDialogueCanonicalChoiceState::NodeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="159" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueTypes.h" line="154" column="1" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="155" bodyend="163"/>
+    <listofallmembers>
+      <member refid="structFARDialogueCanonicalChoiceState_1a460306801f66ff0b60be40c1a45c934d" prot="public" virt="non-virtual"><scope>FARDialogueCanonicalChoiceState</scope><name>ChoiceTag</name></member>
+      <member refid="structFARDialogueCanonicalChoiceState_1a9b812be225b312993497018c35724fa8" prot="public" virt="non-virtual"><scope>FARDialogueCanonicalChoiceState</scope><name>NodeTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

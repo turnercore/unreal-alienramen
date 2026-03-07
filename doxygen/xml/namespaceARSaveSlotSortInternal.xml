@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARSaveSlotSortInternal" kind="namespace" language="C++">
+    <compoundname>ARSaveSlotSortInternal</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="SaveSlotSortLibrary_8cpp_1a378161fe0b9ea3803113c30642942114" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>static FString ARSaveSlotSortInternal::NormalizeNameKey</definition>
+        <argsstring>(const FString &amp;InName)</argsstring>
+        <name>NormalizeNameKey</name>
+        <qualifiedname>ARSaveSlotSortInternal::NormalizeNameKey</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>InName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/SaveSlotSortLibrary.cpp" line="9" column="16" bodyfile="AlienRamen/Private/SaveSlotSortLibrary.cpp" bodystart="9" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="SaveSlotSortLibrary_8cpp_1a848ff6e8458a8e31fd0077bfac73dc22" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>static FString ARSaveSlotSortInternal::NormalizePropNameKey</definition>
+        <argsstring>(const FProperty *P)</argsstring>
+        <name>NormalizePropNameKey</name>
+        <qualifiedname>ARSaveSlotSortInternal::NormalizePropNameKey</qualifiedname>
+        <param>
+          <type>const FProperty *</type>
+          <declname>P</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/SaveSlotSortLibrary.cpp" line="14" column="16" bodyfile="AlienRamen/Private/SaveSlotSortLibrary.cpp" bodystart="14" bodyend="21"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/SaveSlotSortLibrary.cpp" line="7" column="1"/>
+  </compounddef>
+</doxygen>

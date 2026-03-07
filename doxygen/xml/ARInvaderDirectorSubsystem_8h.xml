@@ -1,0 +1,573 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARInvaderDirectorSubsystem_8h" kind="file" language="C++">
+    <compoundname>ARInvaderDirectorSubsystem.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARPlayerTypes_8h" local="yes">ARPlayerTypes.h</includes>
+    <includes local="yes">Subsystems/WorldSubsystem.h</includes>
+    <includes refid="ARInvaderTypes_8h" local="yes">ARInvaderTypes.h</includes>
+    <includes local="yes">ARInvaderDirectorSubsystem.generated.h</includes>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="14">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARInvaderDirectorSubsystem.h</label>
+        <link refid="ARInvaderDirectorSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="8">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="18">
+        <label>ARInvaderDirectorSubsystem.generated.h</label>
+      </node>
+      <node id="10">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="4">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="15">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="12">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="11">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="5">
+        <label>Subsystems/WorldSubsystem.h</label>
+      </node>
+      <node id="13">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARInvaderDirectorSubsystem.h</label>
+        <link refid="ARInvaderDirectorSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARInvaderDirectorSubsystem" prot="public">UARInvaderDirectorSubsystem</innerclass>
+    <innerclass refid="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding" prot="private">UARInvaderDirectorSubsystem::FPlayerStatusBinding</innerclass>
+    <innerclass refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal" prot="private">UARInvaderDirectorSubsystem::FWaveRuntimeInternal</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8h_1ab801fa10af18776274b407d6b88f130d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnInvaderAllPlayersDeadChangedSignature, bool, bAllPlayersDead)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnInvaderAllPlayersDeadChangedSignature</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bAllPlayersDead</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="25" column="1" declfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" declline="25" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8h_1ad2d95feeb66c4b3f75ef460e487e4590" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnInvaderAllPlayersDownChangedSignature, bool, bAllPlayersDown)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnInvaderAllPlayersDownChangedSignature</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bAllPlayersDown</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="24" column="1" declfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" declline="24" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8h_1a3867e6b471d7660ce24c2e7e03435826" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</definition>
+        <argsstring>(FAROnInvaderRunEndedSignature, EARInvaderRunEndReason, Reason)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</name>
+        <param>
+          <type>FAROnInvaderRunEndedSignature</type>
+        </param>
+        <param>
+          <type>EARInvaderRunEndReason</type>
+        </param>
+        <param>
+          <type>Reason</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="22" column="1" declfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" declline="22" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8h_1ac48e5a4e899be6106be07ce0c9d1df15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</definition>
+        <argsstring>(FAROnInvaderEnemyLeakedSignature, int32, NewLeakCount, int32, Delta)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</name>
+        <param>
+          <type>FAROnInvaderEnemyLeakedSignature</type>
+        </param>
+        <param>
+          <type>int32</type>
+        </param>
+        <param>
+          <type>NewLeakCount</type>
+        </param>
+        <param>
+          <type>int32</type>
+        </param>
+        <param>
+          <type>Delta</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="23" column="1" declfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" declline="23" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8h_1a70a4086490ccfe42d2a2d10fd4ed4323" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</definition>
+        <argsstring>(FAROnInvaderPlayerDeadChangedSignature, AARPlayerStateBase *, PlayerState, bool, bIsDead)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</name>
+        <param>
+          <type>FAROnInvaderPlayerDeadChangedSignature</type>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        </param>
+        <param>
+          <type>PlayerState</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bIsDead</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="27" column="1" declfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" declline="27" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8h_1af871952e4c4dfdb469f9fbbd3ea08fee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</definition>
+        <argsstring>(FAROnInvaderPlayerDownedChangedSignature, AARPlayerStateBase *, PlayerState, bool, bIsDowned)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams</name>
+        <param>
+          <type>FAROnInvaderPlayerDownedChangedSignature</type>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        </param>
+        <param>
+          <type>PlayerState</type>
+        </param>
+        <param>
+          <type>bool</type>
+        </param>
+        <param>
+          <type>bIsDowned</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="26" column="1" declfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" declline="26" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>ARInvaderDirectorSubsystem header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerTypes_8h" kindref="compound">ARPlayerTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Subsystems/WorldSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderTypes_8h" kindref="compound">ARInvaderTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARInvaderDirectorSubsystem.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classUARInvaderRuntimeStateComponent" kindref="compound">UARInvaderRuntimeStateComponent</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UDataTable;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">IConsoleObject;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AAREnemyBase;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UAbilitySystemComponent;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FStreamableHandle;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderRunEndedSignature,<sp/>EARInvaderRunEndReason,<sp/>Reason);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderEnemyLeakedSignature,<sp/>int32,<sp/>NewLeakCount,<sp/>int32,<sp/>Delta);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllPlayersDownChangedSignature,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bAllPlayersDown);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllPlayersDeadChangedSignature,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bAllPlayersDead);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerDownedChangedSignature,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*,<sp/>PlayerState,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bIsDowned);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerDeadChangedSignature,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*,<sp/>PlayerState,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">,<sp/>bIsDead);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="31" refid="classUARInvaderDirectorSubsystem" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARInvaderDirectorSubsystem" kindref="compound">UARInvaderDirectorSubsystem</ref><sp/>:<sp/>public<sp/>UTickableWorldSubsystem</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARInvaderDirectorSubsystem" kindref="compound">UARInvaderDirectorSubsystem</ref>();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>UTickableWorldSubsystem</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(FSubsystemCollectionBase&amp;<sp/>Collection)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Deinitialize()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Tick(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsTickable()<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>TStatId<sp/>GetStatId()<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StartInvaderRun(int32<sp/>Seed);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StopInvaderRun();</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsRunActive()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bRunActive;<sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ForceWaveByRow(FName<sp/>WaveRow);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ForceWavePhase(int32<sp/>WaveInstanceId,<sp/>EARWavePhase<sp/>NewPhase);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ForceThreat(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewThreat);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ForceStage(FName<sp/>StageRowName);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SubmitStageChoice(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bChooseLeft);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>EARInvaderFlowState<sp/>GetFlowState()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>FlowState;<sp/>}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>EARInvaderRunEndReason<sp/>GetLastRunEndReason()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>LastRunEndReason;<sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsPlayerDowned(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>PlayerState)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsPlayerDead(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>PlayerState)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetDownedPlayerCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DownedPlayerCountCached;<sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetDeadPlayerCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DeadPlayerCountCached;<sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetEvaluatedPlayerCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>EvaluatedPlayerCountCached;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AreAllPlayersDowned()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bAllPlayersDownCached;<sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AreAllPlayersDead()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bAllPlayersDeadCached;<sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>DumpRuntimeState()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BlueprintCallable,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>meta<sp/>=<sp/>(</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Report<sp/>Enemy<sp/>Leaked&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Server-side<sp/>leak<sp/>report<sp/>for<sp/>an<sp/>enemy<sp/>actor.<sp/>Returns<sp/>true<sp/>only<sp/>when<sp/>the<sp/>leak<sp/>is<sp/>newly<sp/>accepted<sp/>and<sp/>counted;<sp/>returns<sp/>false<sp/>if<sp/>ignored<sp/>(invalid/run<sp/>inactive/non-authority)<sp/>or<sp/>already<sp/>reported.&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>))</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ReportEnemyLeaked(AAREnemyBase*<sp/>Enemy);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderRunEndedSignature<sp/>OnRunEnded;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderEnemyLeakedSignature<sp/>OnEnemyLeaked;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderAllPlayersDownChangedSignature<sp/>OnAllPlayersDownChanged;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderAllPlayersDeadChangedSignature<sp/>OnAllPlayersDeadChanged;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderPlayerDownedChangedSignature<sp/>OnPlayerDownedChanged;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Invader&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnInvaderPlayerDeadChangedSignature<sp/>OnPlayerDeadChanged;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FWaveRuntimeInternal</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>WaveInstanceId<sp/>=<sp/>INDEX_NONE;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FARWaveDefRow<sp/>Def;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FName<sp/>RowName<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>WaveStartTime<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>PhaseStartTime<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NextSpawnTime<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>NextSpawnIndex<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>SpawnedCount<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>AliveCount<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bColorSwap<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFlipX<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFlipY<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FName<sp/>StageRowName<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EARWavePhase<sp/>Phase<sp/>=<sp/>EARWavePhase::Active;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TArray&lt;TWeakObjectPtr&lt;class<sp/>AAREnemyBase&gt;&gt;<sp/>SpawnedEnemies;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TickDirector(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UpdateThreat(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UpdateStage(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UpdateWaves(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SpawnWavesIfNeeded();</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RecountAliveAndHandleLeaks();</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EvaluateLossConditions();</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PushSnapshotToGameState();</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnterAwaitStageClear();</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnterStageChoice();</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnterTransition(FName<sp/>ChosenStageRow,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARStageDefRow&amp;<sp/>ChosenStageDef);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DispatchStageReward(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FName&amp;<sp/>CompletedStageRow,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARStageDefRow&amp;<sp/>CompletedStageDef);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BuildStageChoiceOptions(FName&amp;<sp/>OutLeftRow,<sp/>FARStageDefRow&amp;<sp/>OutLeftDef,<sp/>FName&amp;<sp/>OutRightRow,<sp/>FARStageDefRow&amp;<sp/>OutRightDef);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TickStageChoice(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TickTransition(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DeltaTime);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StopInvaderRunWithReason(EARInvaderRunEndReason<sp/>EndReason);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RefreshPlayerStatusSignals();</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RebuildPlayerStatusBindings();</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearPlayerStatusBindings();</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleTrackedPlayersChanged();</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandlePlayerHealthSignal(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState,<sp/>EARPlayerSlot<sp/>SourcePlayerSlot,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewValue,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>OldValue);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandlePlayerDownedSignal(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState,<sp/>EARPlayerSlot<sp/>SourcePlayerSlot,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bNewDowned,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bOldDowned);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandlePlayerDeadSignal(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>SourcePlayerState,<sp/>EARPlayerSlot<sp/>SourcePlayerSlot,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bNewDead,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bOldDead);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SpawnWaveFromDefinition(FName<sp/>WaveRowName,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARWaveDefRow&amp;<sp/>WaveDef,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bColorSwap);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TransitionWavePhase(FWaveRuntimeInternal&amp;<sp/>Wave,<sp/>EARWavePhase<sp/>NewPhase);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SelectWave(FName&amp;<sp/>OutWaveRow,<sp/>FARWaveDefRow&amp;<sp/>OutWaveDef,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>bOutColorSwap);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SelectStage(FName&amp;<sp/>OutStageRow,<sp/>FARStageDefRow&amp;<sp/>OutStageDef,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TSet&lt;FName&gt;*<sp/>ExcludedRows<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ResolveEnemyDefinitionByTag(FGameplayTag<sp/>EnemyIdentifierTag,<sp/>FARInvaderEnemyDefRow&amp;<sp/>OutDef,<sp/>FString&amp;<sp/>OutError);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PreloadEnemyClassesForWaveCandidates();</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PreloadEnemyClass(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TSoftClassPtr&lt;AAREnemyBase&gt;&amp;<sp/>EnemyClassRef);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>FVector<sp/>ComputeFormationTargetLocation(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARWaveEnemySpawnDef&amp;<sp/>SpawnDef,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFlipX,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFlipY)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>FVector<sp/>ComputeSpawnLocation(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARWaveEnemySpawnDef&amp;<sp/>SpawnDef,<sp/>int32<sp/>SpawnOrdinal,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFlipX,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFlipY)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ApplyEnemyGameplayEffects(</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>AAREnemyBase*<sp/>Enemy,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARWaveDefRow&amp;<sp/>WaveDef,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARWaveEnemySpawnDef&amp;<sp/>SpawnDef);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsInsideGameplayBounds(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FVector&amp;<sp/>Location)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsInsideEnteredScreenBounds(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FVector&amp;<sp/>Location)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARInvaderRuntimeStateComponent" kindref="compound">UARInvaderRuntimeStateComponent</ref>*<sp/>GetOrCreateRuntimeComponent();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>EnsureDataTables();</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetAliveEnemyCount()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetActiveProjectileCount()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>GetActivePlayerCount()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AreAllPlayersDown()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SetCurrentStage(FName<sp/>StageRowName,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARStageDefRow&amp;<sp/>StageDef);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RegisterConsoleCommands();</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UnregisterConsoleCommands();</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleForceWave(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleForcePhase(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleForceThreat(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleForceStage(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleDumpState(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleStart(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleStop(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleChooseStage(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConsoleCaptureBounds(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>UWorld*<sp/>InWorld);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DestroyManagedInvaderEnemies();</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bRunActive<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bWarnedMissingRuntimeComponent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>RunSeed<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>FRandomStream<sp/>RunRng;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Threat<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>RunElapsed<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>StageElapsed<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>TimeSinceLastWaveSpawn<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>NextWaveInstanceId<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>LeakCount<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>StageSequence<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>RewardEventId<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>RunEndEventId<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>EARInvaderFlowState<sp/>FlowState<sp/>=<sp/>EARInvaderFlowState::Stopped;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>EARInvaderRunEndReason<sp/>LastRunEndReason<sp/>=<sp/>EARInvaderRunEndReason::None;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>StageChoiceElapsed<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>StageTransitionRemaining<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>CurrentStageRow<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>FARStageDefRow<sp/>CurrentStageDef;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>PendingStageRow<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>FARStageDefRow<sp/>PendingStageDef;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>ChoiceLeftStageRow<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>FARStageDefRow<sp/>ChoiceLeftStageDef;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>ChoiceRightStageRow<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>FARStageDefRow<sp/>ChoiceRightStageDef;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>LastRewardStageRow<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>LastRewardDescriptor;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FWaveRuntimeInternal&gt;<sp/>ActiveWaves;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>TSet&lt;FName&gt;<sp/>OneTimeWaveRowsUsed;</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>LastWaveRowName<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/>TSet&lt;TWeakObjectPtr&lt;AAREnemyBase&gt;&gt;<sp/>ReportedLeakedEnemies;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAllPlayersDownCached<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAllPlayersDeadCached<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>EvaluatedPlayerCountCached<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>DownedPlayerCountCached<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>DeadPlayerCountCached<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;,<sp/>uint8&gt;<sp/>PlayerDownedCache;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;,<sp/>uint8&gt;<sp/>PlayerDeadCache;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FPlayerStatusBinding</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TWeakObjectPtr&lt;UAbilitySystemComponent&gt;<sp/>ASC;</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>HealthChangedHandle;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>DownedTagChangedHandle;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>DeadTagChangedHandle;</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;,<sp/>FPlayerStatusBinding&gt;<sp/>PlayerStatusBindings;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/>TWeakObjectPtr&lt;AARGameStateBase&gt;<sp/>BoundTrackedPlayersGameState;</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UDataTable&gt;<sp/>WaveTable<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UDataTable&gt;<sp/>StageTable<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;FGameplayTag,<sp/>FARInvaderEnemyDefRow&gt;<sp/>EnemyDefinitionCache;</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;FSoftObjectPath,<sp/>TSharedPtr&lt;FStreamableHandle&gt;&gt;<sp/>EnemyClassPreloadHandles;</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;TWeakObjectPtr&lt;class<sp/>AAREnemyBase&gt;,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">&gt;<sp/>OffscreenDurationByEnemy;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdForceWave<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdForcePhase<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdForceThreat<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdForceStage<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdDumpState<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdStart<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdStop<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdChooseStage<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleObject*<sp/>CmdCaptureBounds<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="282"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h"/>
+  </compounddef>
+</doxygen>

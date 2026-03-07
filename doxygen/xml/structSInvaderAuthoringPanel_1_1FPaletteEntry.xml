@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structSInvaderAuthoringPanel_1_1FPaletteEntry" kind="struct" language="C++" prot="private">
+    <compoundname>SInvaderAuthoringPanel::FPaletteEntry</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a1e78877d20d421febd4a6bf6f351185d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SInvaderAuthoringPanel::FPaletteEntry::bFavorite</definition>
+        <argsstring></argsstring>
+        <name>bFavorite</name>
+        <qualifiedname>SInvaderAuthoringPanel::FPaletteEntry::bFavorite</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="74" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a81a00834461e0b58e02e5527f857dcff" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor SInvaderAuthoringPanel::FPaletteEntry::Color</definition>
+        <argsstring></argsstring>
+        <name>Color</name>
+        <qualifiedname>SInvaderAuthoringPanel::FPaletteEntry::Color</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="72" column="18" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a027ac28f4898d963b764a94f6bc0e7cd" prot="public" static="no" mutable="no">
+        <type>FSoftClassPath</type>
+        <definition>FSoftClassPath SInvaderAuthoringPanel::FPaletteEntry::EnemyClassPath</definition>
+        <argsstring></argsstring>
+        <name>EnemyClassPath</name>
+        <qualifiedname>SInvaderAuthoringPanel::FPaletteEntry::EnemyClassPath</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="71" column="16" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a82df92c03aa659240a2b56ded6eeec59" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText SInvaderAuthoringPanel::FPaletteEntry::Label</definition>
+        <argsstring></argsstring>
+        <name>Label</name>
+        <qualifiedname>SInvaderAuthoringPanel::FPaletteEntry::Label</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="73" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FPaletteEntry_1ae7fe5c4e911f8afa5a3657bb1f45e3fe" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 SInvaderAuthoringPanel::FPaletteEntry::ShapeCycle</definition>
+        <argsstring></argsstring>
+        <name>ShapeCycle</name>
+        <qualifiedname>SInvaderAuthoringPanel::FPaletteEntry::ShapeCycle</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="75" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="69" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="70" bodyend="76"/>
+    <listofallmembers>
+      <member refid="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a1e78877d20d421febd4a6bf6f351185d" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FPaletteEntry</scope><name>bFavorite</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a81a00834461e0b58e02e5527f857dcff" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FPaletteEntry</scope><name>Color</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a027ac28f4898d963b764a94f6bc0e7cd" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FPaletteEntry</scope><name>EnemyClassPath</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FPaletteEntry_1a82df92c03aa659240a2b56ded6eeec59" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FPaletteEntry</scope><name>Label</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FPaletteEntry_1ae7fe5c4e911f8afa5a3657bb1f45e3fe" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FPaletteEntry</scope><name>ShapeCycle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

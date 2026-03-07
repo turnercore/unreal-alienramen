@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARContentLookupSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARContentLookupSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARContentLookupSettings_1aef931dd0111ea97717c3e72958b712cf" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UContentLookupRegistry &gt;</type>
+        <definition>TSoftObjectPtr&lt;UContentLookupRegistry&gt; UARContentLookupSettings::RegistryAsset</definition>
+        <argsstring></argsstring>
+        <name>RegistryAsset</name>
+        <qualifiedname>UARContentLookupSettings::RegistryAsset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARContentLookupSettings.h" line="22" column="16" bodyfile="AlienRamen/Public/ARContentLookupSettings.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARContentLookupSettings_1a9fa55b15785a40ed201b3b4e8ce63381" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARContentLookupSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARContentLookupSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARContentLookupSettings.h" line="19" column="15" bodyfile="AlienRamen/Public/ARContentLookupSettings.h" bodystart="19" bodyend="19"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARContentLookupSettings.h" line="14" column="1" bodyfile="AlienRamen/Public/ARContentLookupSettings.h" bodystart="15" bodyend="23"/>
+    <listofallmembers>
+      <member refid="classUARContentLookupSettings_1a9fa55b15785a40ed201b3b4e8ce63381" prot="public" virt="virtual"><scope>UARContentLookupSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARContentLookupSettings_1aef931dd0111ea97717c3e72958b712cf" prot="public" virt="non-virtual"><scope>UARContentLookupSettings</scope><name>RegistryAsset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

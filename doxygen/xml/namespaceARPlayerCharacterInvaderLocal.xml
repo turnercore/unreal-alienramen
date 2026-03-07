@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARPlayerCharacterInvaderLocal" kind="namespace" language="C++">
+    <compoundname>ARPlayerCharacterInvaderLocal</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARPlayerCharacterInvader_8cpp_1a603f1aab4848d464dc306a3aec8576b2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ARPlayerCharacterInvaderLocal::AddRuntimeTags</definition>
+        <argsstring>(UAbilitySystemComponent *ASC, const FGameplayTagContainer &amp;Tags, bool bAuthority)</argsstring>
+        <name>AddRuntimeTags</name>
+        <qualifiedname>ARPlayerCharacterInvaderLocal::AddRuntimeTags</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>Tags</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAuthority</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARPlayerCharacterInvader.cpp" line="134" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="134" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerCharacterInvader_8cpp_1adce990b7a806d34ff3f664b7caf1d5df" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool ARPlayerCharacterInvaderLocal::ApplyDamageToActorViaGAS_Local</definition>
+        <argsstring>(AActor *Target, float Damage, AActor *Offender)</argsstring>
+        <name>ApplyDamageToActorViaGAS_Local</name>
+        <qualifiedname>ARPlayerCharacterInvaderLocal::ApplyDamageToActorViaGAS_Local</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>Target</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>Damage</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>Offender</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARPlayerCharacterInvader.cpp" line="210" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="210" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerCharacterInvader_8cpp_1a772f8cad61272e847face830dc2fa110" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ARPlayerCharacterInvaderLocal::RemoveRuntimeTags</definition>
+        <argsstring>(UAbilitySystemComponent *ASC, const FGameplayTagContainer &amp;Tags, bool bAuthority)</argsstring>
+        <name>RemoveRuntimeTags</name>
+        <qualifiedname>ARPlayerCharacterInvaderLocal::RemoveRuntimeTags</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>Tags</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAuthority</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARPlayerCharacterInvader.cpp" line="151" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="151" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerCharacterInvader_8cpp_1aa230ac8607170637fd2a85f08add1e55" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty</definition>
+        <argsstring>(AARPlayerCharacterInvader *Ship, UAbilitySystemComponent *InASC)</argsstring>
+        <name>SyncLegacyASCProperty</name>
+        <qualifiedname>ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>Ship</declname>
+        </param>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>InASC</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARPlayerCharacterInvader.cpp" line="168" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="168" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerCharacterInvader_8cpp_1a8446015a14fe148e71796e3d099019fa" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ARPlayerCharacterInvaderLocal::SyncLegacyBasePrimaryFireRateHandle</definition>
+        <argsstring>(AARPlayerCharacterInvader *Ship, const FActiveGameplayEffectHandle &amp;InHandle)</argsstring>
+        <name>SyncLegacyBasePrimaryFireRateHandle</name>
+        <qualifiedname>ARPlayerCharacterInvaderLocal::SyncLegacyBasePrimaryFireRateHandle</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>Ship</declname>
+        </param>
+        <param>
+          <type>const FActiveGameplayEffectHandle &amp;</type>
+          <declname>InHandle</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARPlayerCharacterInvader.cpp" line="185" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="185" bodyend="208"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/ARPlayerCharacterInvader.cpp" line="132" column="1"/>
+  </compounddef>
+</doxygen>

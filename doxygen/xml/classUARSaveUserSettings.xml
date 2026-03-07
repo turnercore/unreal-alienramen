@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSaveUserSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARSaveUserSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UObject</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARSaveUserSettings_1ab4bbd8c5620c2e61de6aa1681cbb1fac" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveUserSettings::MaxBackupRevisions</definition>
+        <argsstring></argsstring>
+        <name>MaxBackupRevisions</name>
+        <qualifiedname>UARSaveUserSettings::MaxBackupRevisions</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveUserSettings.h" line="20" column="7" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveUserSettings.h" line="12" column="1" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="13" bodyend="21"/>
+    <listofallmembers>
+      <member refid="classUARSaveUserSettings_1ab4bbd8c5620c2e61de6aa1681cbb1fac" prot="public" virt="non-virtual"><scope>UARSaveUserSettings</scope><name>MaxBackupRevisions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

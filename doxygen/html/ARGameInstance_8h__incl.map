@@ -1,0 +1,9 @@
+<map id="ARGameInstance.h" name="ARGameInstance.h">
+<area shape="rect" id="Node000001" title="ARGameInstance header for Alien Ramen." alt="" coords="161,5,308,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,33,105,76,103,71,206,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,323,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="237,31,237,65,232,65,232,31"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="347,79,563,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="271,28,407,72,406,77,269,33"/>
+</map>

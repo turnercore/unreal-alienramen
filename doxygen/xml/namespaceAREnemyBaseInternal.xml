@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceAREnemyBaseInternal" kind="namespace" language="C++">
+    <compoundname>AREnemyBaseInternal</compoundname>
+    <innerclass refid="structAREnemyBaseInternal_1_1FAbilityEntryKey" prot="public">AREnemyBaseInternal::FAbilityEntryKey</innerclass>
+    <innerclass refid="structAREnemyBaseInternal_1_1FEffectEntryKey" prot="public">AREnemyBaseInternal::FEffectEntryKey</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="AREnemyBase_8cpp_1a432f18b1341ae7ba85d3e5aa6bd080c1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AREnemyBaseInternal::AppendUniqueAbilityEntries</definition>
+        <argsstring>(const TArray&lt; FARAbilitySet_AbilityEntry &gt; &amp;SourceEntries, TArray&lt; FARAbilitySet_AbilityEntry &gt; &amp;OutEntries, TSet&lt; FAbilityEntryKey &gt; &amp;InOutSeen)</argsstring>
+        <name>AppendUniqueAbilityEntries</name>
+        <qualifiedname>AREnemyBaseInternal::AppendUniqueAbilityEntries</qualifiedname>
+        <param>
+          <type>const TArray&lt; FARAbilitySet_AbilityEntry &gt; &amp;</type>
+          <declname>SourceEntries</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FARAbilitySet_AbilityEntry &gt; &amp;</type>
+          <declname>OutEntries</declname>
+        </param>
+        <param>
+          <type>TSet&lt; FAbilityEntryKey &gt; &amp;</type>
+          <declname>InOutSeen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="95" column="13" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="95" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyBase_8cpp_1a3b6cf8f86498788c4895fb1f7366a6c2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AREnemyBaseInternal::AppendUniqueEffectEntries</definition>
+        <argsstring>(const TArray&lt; FARAbilitySet_EffectEntry &gt; &amp;SourceEntries, TArray&lt; FARAbilitySet_EffectEntry &gt; &amp;OutEntries, TSet&lt; FEffectEntryKey &gt; &amp;InOutSeen)</argsstring>
+        <name>AppendUniqueEffectEntries</name>
+        <qualifiedname>AREnemyBaseInternal::AppendUniqueEffectEntries</qualifiedname>
+        <param>
+          <type>const TArray&lt; FARAbilitySet_EffectEntry &gt; &amp;</type>
+          <declname>SourceEntries</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FARAbilitySet_EffectEntry &gt; &amp;</type>
+          <declname>OutEntries</declname>
+        </param>
+        <param>
+          <type>TSet&lt; FEffectEntryKey &gt; &amp;</type>
+          <declname>InOutSeen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="118" column="13" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="118" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyBase_8cpp_1a840094d0d91ea64c79b72c355da0d721" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AREnemyBaseInternal::ApplyEffectEntries</definition>
+        <argsstring>(UAbilitySystemComponent *ASC, const TArray&lt; FARAbilitySet_EffectEntry &gt; &amp;Entries, TArray&lt; FActiveGameplayEffectHandle &gt; &amp;OutApplied)</argsstring>
+        <name>ApplyEffectEntries</name>
+        <qualifiedname>AREnemyBaseInternal::ApplyEffectEntries</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FARAbilitySet_EffectEntry &gt; &amp;</type>
+          <declname>Entries</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FActiveGameplayEffectHandle &gt; &amp;</type>
+          <declname>OutApplied</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="213" column="13" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="213" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyBase_8cpp_1a4c937806175d9a5d3dc8bb8a3bd6438d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AREnemyBaseInternal::GrantAbilityEntries</definition>
+        <argsstring>(UAbilitySystemComponent *ASC, const TArray&lt; FARAbilitySet_AbilityEntry &gt; &amp;Entries, TArray&lt; FGameplayAbilitySpecHandle &gt; &amp;OutGranted, TArray&lt; FActiveGameplayEffectHandle &gt; &amp;OutApplied)</argsstring>
+        <name>GrantAbilityEntries</name>
+        <qualifiedname>AREnemyBaseInternal::GrantAbilityEntries</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FARAbilitySet_AbilityEntry &gt; &amp;</type>
+          <declname>Entries</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FGameplayAbilitySpecHandle &gt; &amp;</type>
+          <declname>OutGranted</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FActiveGameplayEffectHandle &gt; &amp;</type>
+          <declname>OutApplied</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="183" column="13" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="183" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyBase_8cpp_1a4555e4da88f148e6f774be7723911015" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const FAREnemyArchetypeAbilitySetEntry *</type>
+        <definition>static const FAREnemyArchetypeAbilitySetEntry * AREnemyBaseInternal::ResolveBestArchetypeEntry</definition>
+        <argsstring>(const TArray&lt; FAREnemyArchetypeAbilitySetEntry &gt; &amp;Entries, const FGameplayTag &amp;EnemyArchetypeTag)</argsstring>
+        <name>ResolveBestArchetypeEntry</name>
+        <qualifiedname>AREnemyBaseInternal::ResolveBestArchetypeEntry</qualifiedname>
+        <param>
+          <type>const TArray&lt; FAREnemyArchetypeAbilitySetEntry &gt; &amp;</type>
+          <declname>Entries</declname>
+        </param>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>EnemyArchetypeTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="141" column="47" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="141" bodyend="181"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/AREnemyBase.cpp" line="58" column="1"/>
+  </compounddef>
+</doxygen>

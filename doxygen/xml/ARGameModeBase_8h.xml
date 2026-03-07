@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARGameModeBase_8h" kind="file" language="C++">
+    <compoundname>ARGameModeBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARInvaderSpicyTrackTypes_8h" local="yes">ARInvaderSpicyTrackTypes.h</includes>
+    <includes refid="ARPlayerTypes_8h" local="yes">ARPlayerTypes.h</includes>
+    <includes local="yes">GameFramework/GameModeBase.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ARGameModeBase.generated.h</includes>
+    <includedby refid="ARDialogueSubsystem_8cpp" local="yes">ARDialogueSubsystem.cpp</includedby>
+    <includedby refid="ARGameModeBase_8cpp" local="yes">ARGameModeBase.cpp</includedby>
+    <includedby refid="ARInvaderGameMode_8h" local="yes">ARInvaderGameMode.h</includedby>
+    <includedby refid="ARLobbyGameMode_8h" local="yes">ARLobbyGameMode.h</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARScrapyardGameMode_8h" local="yes">ARScrapyardGameMode.h</includedby>
+    <includedby refid="ARShopGameMode_8h" local="yes">ARShopGameMode.h</includedby>
+    <incdepgraph>
+      <node id="12">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARGameModeBase.h</label>
+        <link refid="ARGameModeBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="5">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="20">
+        <label>ARGameModeBase.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="18">
+        <label>ARInvaderSpicyTrackTypes.generated.h</label>
+      </node>
+      <node id="15">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="13">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="6">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="19">
+        <label>GameFramework/GameModeBase.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="8">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARDialogueSubsystem.cpp</label>
+        <link refid="ARDialogueSubsystem_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARInvaderGameMode.cpp</label>
+        <link refid="ARInvaderGameMode_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARLobbyGameMode.cpp</label>
+        <link refid="ARLobbyGameMode_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARScrapyardGameMode.cpp</label>
+        <link refid="ARScrapyardGameMode_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARGameModeBase.h</label>
+        <link refid="ARGameModeBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARInvaderGameMode.h</label>
+        <link refid="ARInvaderGameMode_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARLobbyGameMode.h</label>
+        <link refid="ARLobbyGameMode_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARScrapyardGameMode.h</label>
+        <link refid="ARScrapyardGameMode_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ARShopGameMode.h</label>
+        <link refid="ARShopGameMode_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARGameModeBase" prot="public">AARGameModeBase</innerclass>
+    <briefdescription>
+<para>ARGameModeBase header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARInvaderSpicyTrackTypes_8h" kindref="compound">ARInvaderSpicyTrackTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerTypes_8h" kindref="compound">ARPlayerTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/GameModeBase.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARGameModeBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="20" refid="classAARGameModeBase" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classAARGameModeBase" kindref="compound">AARGameModeBase</ref><sp/>:<sp/>public<sp/>AGameModeBase</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARGameModeBase" kindref="compound">AARGameModeBase</ref>();</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PreLogin(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Options,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Address,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FUniqueNetIdRepl&amp;<sp/>UniqueId,<sp/>FString&amp;<sp/>ErrorMessage)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BeginPlay()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleStartingNewPlayer_Implementation(APlayerController*<sp/>NewPlayer)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Logout(AController*<sp/>Exiting)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EndPlay(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>EEndPlayReason::Type<sp/>EndPlayReason)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Game<sp/>Mode&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>GetModeTag()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ModeTag;<sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Authority<sp/>helper:<sp/>readiness<sp/>+<sp/>optional<sp/>save<sp/>+<sp/>travel<sp/>in<sp/>one<sp/>call<sp/>(C++<sp/>entrypoint;<sp/>Blueprint<sp/>should<sp/>use<sp/>AARPlayerController::TryStartTravel).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TryStartTravel(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>URL,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Options<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSkipReadyChecks<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAbsolute<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSkipGameNotify<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bUseOpenLevelInPIE<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Authoritative<sp/>mode<sp/>identity<sp/>tag<sp/>for<sp/>this<sp/>GameMode<sp/>class/instance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Game<sp/>Mode&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ModeTag;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>true,<sp/>mode<sp/>exits<sp/>via<sp/>TryStartTravel<sp/>persist<sp/>a<sp/>disk<sp/>save<sp/>before<sp/>travel.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Save&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSaveOnModeExit<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>true,<sp/>authority<sp/>performs<sp/>an<sp/>autosave-if-dirty<sp/>on<sp/>quit<sp/>(EndPlay<sp/>reason<sp/>=<sp/>Quit).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Save&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAutosaveOnQuit<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>true,<sp/>mode<sp/>allows<sp/>manual<sp/>save<sp/>actions<sp/>(for<sp/>example<sp/>pause-menu<sp/>save).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Save&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAllowManualSaveInMode<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>true,<sp/>local<sp/>pause<sp/>open/close<sp/>requests<sp/>fan<sp/>out<sp/>across<sp/>all<sp/>local<sp/>controllers<sp/>on<sp/>the<sp/>same<sp/>machine.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Pause&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bShareLocalPauseAcrossControllersInMode<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintNativeEvent,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Players&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnPlayerJoined(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>JoinedPlayerState);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnPlayerJoined_Implementation(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>JoinedPlayerState);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintNativeEvent,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Players&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnPlayerLeft(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>LeftPlayerState);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnPlayerLeft_Implementation(<ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>LeftPlayerState);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Authority<sp/>pre-travel<sp/>hook<sp/>for<sp/>mode-specific<sp/>transition<sp/>logic.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>PreStartTravel(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>URL,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Options,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSkipReadyChecks);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>EARPlayerSlot<sp/>DetermineNextPlayerSlot(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>GameState);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>EARPlayerSlot<sp/>FindFirstFreePlayerSlot(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>GameState,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>IgnorePlayerState<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>EARAffinityColor<sp/>ResolveExpectedInvaderPlayerColor(EARCharacterChoice<sp/>CharacterChoice,<sp/>EARPlayerSlot<sp/>PlayerSlot);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>EARCharacterChoice<sp/>GetAlternateCharacterChoice(EARCharacterChoice<sp/>CurrentChoice);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsCharacterChoiceTakenByOther(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>InGameState,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>CurrentPlayerState,<sp/>EARCharacterChoice<sp/>CharacterChoice);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ResolveCharacterChoiceConflict(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>InGameState,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>CurrentPlayerState)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleFirstSessionJoinSetup(<ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>InGameState,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>JoinedPlayerState,<sp/><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>*<sp/>SaveSubsystem)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnsureJoinedPlayerHasUniqueSlot(<ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>InGameState,<sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>JoinedPlayerState)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NormalizeConnectedPlayersIdentity(<ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>InGameState)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARGameModeBase.h"/>
+  </compounddef>
+</doxygen>

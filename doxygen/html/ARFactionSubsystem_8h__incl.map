@@ -1,0 +1,23 @@
+<map id="ARFactionSubsystem.h" name="ARFactionSubsystem.h">
+<area shape="rect" id="Node000001" title="Server&#45;authoritative faction election runtime for Alien Ramen." alt="" coords="202,5,372,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="14,225,131,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="202,29,93,48,47,62,31,71,20,80,11,96,8,113,10,131,15,149,34,184,55,213,51,216,29,187,10,151,5,132,3,113,6,94,16,77,28,66,45,57,91,42,201,24"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="30,79,312,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="270,33,203,74,200,69,267,28"/>
+<area shape="rect" id="Node000004" href="$ARFactionTypes_8h.html" title="Shared faction election types for Alien Ramen." alt="" coords="337,79,472,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="307,28,375,69,372,74,305,33"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="496,79,736,104"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="341,28,550,73,549,78,339,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="337,107,188,133,127,146,99,154,89,166,83,181,76,212,71,211,78,179,85,163,96,150,126,141,187,128,337,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="110,152,256,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="370,107,233,150,231,145,368,101"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="281,152,466,177"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="402,105,386,141,382,139,397,103"/>
+<area shape="rect" id="Node000007" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="491,152,622,177"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="430,102,520,144,518,149,428,106"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="646,152,851,177"/>
+<area shape="poly" id="edge10_Node000004_Node000009" title=" " alt="" coords="460,101,680,147,679,152,459,107"/>
+<area shape="poly" id="edge8_Node000007_Node000002" title=" " alt="" coords="491,178,479,180,145,229,144,223,479,175,491,173"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="456,225,656,251"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="559,178,559,212,554,212,554,178"/>
+</map>

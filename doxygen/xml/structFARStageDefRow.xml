@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARStageDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARStageDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARStageDefRow_1aaa80d4a6cdf9dca40924b90228c60586" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARStageDefRow::BannedArchetypeTags</definition>
+        <argsstring></argsstring>
+        <name>BannedArchetypeTags</name>
+        <qualifiedname>FARStageDefRow::BannedArchetypeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="262" column="23" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1aa71d6534805adf3d0ab1079bee4e34bc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARStageDefRow::bEnabled</definition>
+        <argsstring></argsstring>
+        <name>bEnabled</name>
+        <qualifiedname>FARStageDefRow::bEnabled</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="241" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1a9f1ee49fef14210e20b0c2981b8b2d1f" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARStageDefRow::BlockedWaveTags</definition>
+        <argsstring></argsstring>
+        <name>BlockedWaveTags</name>
+        <qualifiedname>FARStageDefRow::BlockedWaveTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="259" column="23" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="259" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1aae24b764a32f42c0224f7dc6467a6b65" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt;</type>
+        <definition>TArray&lt;TSubclassOf&lt;UGameplayEffect&gt; &gt; FARStageDefRow::EnemyGameplayEffects</definition>
+        <argsstring></argsstring>
+        <name>EnemyGameplayEffects</name>
+        <qualifiedname>FARStageDefRow::EnemyGameplayEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="266" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1a17c44d4176b295d1e59b2fda8b9fea05" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARStageDefRow::EnemyHealthMultiplier</definition>
+        <argsstring></argsstring>
+        <name>EnemyHealthMultiplier</name>
+        <qualifiedname>FARStageDefRow::EnemyHealthMultiplier</qualifiedname>
+        <initializer>= 1.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="253" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1a497aba1815590e6b15b22581f2c9af6f" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARStageDefRow::RequiredWaveTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredWaveTags</name>
+        <qualifiedname>FARStageDefRow::RequiredWaveTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="256" column="23" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1a78dd51b3da48f9a7889756d1f3b4fa9a" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARStageDefRow::RewardDescriptor</definition>
+        <argsstring></argsstring>
+        <name>RewardDescriptor</name>
+        <qualifiedname>FARStageDefRow::RewardDescriptor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="269" column="9" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="269" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1ac858dcc625419398fd748bf356376fdb" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARStageDefRow::SelectionWeight</definition>
+        <argsstring></argsstring>
+        <name>SelectionWeight</name>
+        <qualifiedname>FARStageDefRow::SelectionWeight</qualifiedname>
+        <initializer>= 1.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="244" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1a134c5042fb2a1e1ce66b1077a816ea58" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARStageDefRow::StageDuration</definition>
+        <argsstring></argsstring>
+        <name>StageDuration</name>
+        <qualifiedname>FARStageDefRow::StageDuration</qualifiedname>
+        <initializer>= 55.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="247" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARStageDefRow_1aef130297ffc532283c03e35fcaef8749" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARStageDefRow::ThreatGainMultiplier</definition>
+        <argsstring></argsstring>
+        <name>ThreatGainMultiplier</name>
+        <qualifiedname>FARStageDefRow::ThreatGainMultiplier</qualifiedname>
+        <initializer>= 1.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="250" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="236" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="237" bodyend="270"/>
+    <listofallmembers>
+      <member refid="structFARStageDefRow_1aaa80d4a6cdf9dca40924b90228c60586" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>BannedArchetypeTags</name></member>
+      <member refid="structFARStageDefRow_1aa71d6534805adf3d0ab1079bee4e34bc" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>bEnabled</name></member>
+      <member refid="structFARStageDefRow_1a9f1ee49fef14210e20b0c2981b8b2d1f" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>BlockedWaveTags</name></member>
+      <member refid="structFARStageDefRow_1aae24b764a32f42c0224f7dc6467a6b65" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>EnemyGameplayEffects</name></member>
+      <member refid="structFARStageDefRow_1a17c44d4176b295d1e59b2fda8b9fea05" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>EnemyHealthMultiplier</name></member>
+      <member refid="structFARStageDefRow_1a497aba1815590e6b15b22581f2c9af6f" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>RequiredWaveTags</name></member>
+      <member refid="structFARStageDefRow_1a78dd51b3da48f9a7889756d1f3b4fa9a" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>RewardDescriptor</name></member>
+      <member refid="structFARStageDefRow_1ac858dcc625419398fd748bf356376fdb" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>SelectionWeight</name></member>
+      <member refid="structFARStageDefRow_1a134c5042fb2a1e1ce66b1077a816ea58" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>StageDuration</name></member>
+      <member refid="structFARStageDefRow_1aef130297ffc532283c03e35fcaef8749" prot="public" virt="non-virtual"><scope>FARStageDefRow</scope><name>ThreatGainMultiplier</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

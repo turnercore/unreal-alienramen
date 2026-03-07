@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUHelperLibrary" kind="class" language="C++" prot="public">
+    <compoundname>UHelperLibrary</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintFunctionLibrary</basecompoundref>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUHelperLibrary_1a5d520c2cbf8d05c920ccc2d46ee32e06" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UHelperLibrary::ApplyStructToObjectByName</definition>
+        <argsstring>(UObject *Target, const FInstancedStruct &amp;StructData)</argsstring>
+        <name>ApplyStructToObjectByName</name>
+        <qualifiedname>UHelperLibrary::ApplyStructToObjectByName</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>Target</declname>
+        </param>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>StructData</declname>
+        </param>
+        <briefdescription>
+<para>Apply matching struct properties to Target by name (case-insensitive). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/HelperLibrary.h" line="17" column="13" bodyfile="AlienRamen/Private/HelperLibrary.cpp" bodystart="161" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="classUHelperLibrary_1a432e9b6fa155e3f9e17e1b6dee8584a5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FInstancedStruct</type>
+        <definition>FInstancedStruct UHelperLibrary::ExtractObjectToStructByName</definition>
+        <argsstring>(UObject *Source, UScriptStruct *StructType)</argsstring>
+        <name>ExtractObjectToStructByName</name>
+        <qualifiedname>UHelperLibrary::ExtractObjectToStructByName</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>Source</declname>
+        </param>
+        <param>
+          <type>UScriptStruct *</type>
+          <declname>StructType</declname>
+        </param>
+        <briefdescription>
+<para>Create an instance of StructType, fill it from Source by matching property name (case-insensitive). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/HelperLibrary.h" line="25" column="25" bodyfile="AlienRamen/Private/HelperLibrary.cpp" bodystart="184" bodyend="202"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUHelperLibrary_1ae163c356ee4177026d3174257d1d0744" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UHelperLibrary::ApplyStructToObjectByName_Impl</definition>
+        <argsstring>(UObject *Target, const UStruct *StructType, const void *StructPtr, bool bEnableLog)</argsstring>
+        <name>ApplyStructToObjectByName_Impl</name>
+        <qualifiedname>UHelperLibrary::ApplyStructToObjectByName_Impl</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>Target</declname>
+        </param>
+        <param>
+          <type>const UStruct *</type>
+          <declname>StructType</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>StructPtr</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bEnableLog</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/HelperLibrary.h" line="31" column="13" bodyfile="AlienRamen/Private/HelperLibrary.cpp" bodystart="291" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="classUHelperLibrary_1a040dd297f14070443becdc641e305d99" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UHelperLibrary::ExtractObjectToStructByName_Impl</definition>
+        <argsstring>(UObject *Source, const UStruct *StructType, void *StructPtr, bool bEnableLog, bool bResetStructToDefaults)</argsstring>
+        <name>ExtractObjectToStructByName_Impl</name>
+        <qualifiedname>UHelperLibrary::ExtractObjectToStructByName_Impl</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>Source</declname>
+        </param>
+        <param>
+          <type>const UStruct *</type>
+          <declname>StructType</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>StructPtr</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bEnableLog</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bResetStructToDefaults</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/HelperLibrary.h" line="38" column="13" bodyfile="AlienRamen/Private/HelperLibrary.cpp" bodystart="208" bodyend="289"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/HelperLibrary.h" line="9" column="1" bodyfile="AlienRamen/Public/HelperLibrary.h" bodystart="10" bodyend="45"/>
+    <listofallmembers>
+      <member refid="classUHelperLibrary_1a5d520c2cbf8d05c920ccc2d46ee32e06" prot="public" virt="non-virtual"><scope>UHelperLibrary</scope><name>ApplyStructToObjectByName</name></member>
+      <member refid="classUHelperLibrary_1ae163c356ee4177026d3174257d1d0744" prot="private" virt="non-virtual"><scope>UHelperLibrary</scope><name>ApplyStructToObjectByName_Impl</name></member>
+      <member refid="classUHelperLibrary_1a432e9b6fa155e3f9e17e1b6dee8584a5" prot="public" virt="non-virtual"><scope>UHelperLibrary</scope><name>ExtractObjectToStructByName</name></member>
+      <member refid="classUHelperLibrary_1a040dd297f14070443becdc641e305d99" prot="private" virt="non-virtual"><scope>UHelperLibrary</scope><name>ExtractObjectToStructByName_Impl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

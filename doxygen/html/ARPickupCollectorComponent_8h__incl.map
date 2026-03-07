@@ -1,0 +1,9 @@
+<map id="ARPickupCollectorComponent.h" name="ARPickupCollectorComponent.h">
+<area shape="rect" id="Node000001" title="Player&#45;side invader pickup detection and collection requests." alt="" coords="148,5,375,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="231,33,110,76,108,71,229,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,376,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="264,31,264,65,259,65,259,31"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="401,79,698,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="308,28,490,73,489,78,307,33"/>
+</map>

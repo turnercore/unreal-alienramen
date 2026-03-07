@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARSaveInternal" kind="namespace" language="C++">
+    <compoundname>ARSaveInternal</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="ARSaveSubsystem_8cpp_1aedc824ccffbf9b0befd1d43f18de7853" prot="public" static="yes" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR* ARSaveInternal::DebugSaveIndexSlot</definition>
+        <argsstring></argsstring>
+        <name>DebugSaveIndexSlot</name>
+        <qualifiedname>ARSaveInternal::DebugSaveIndexSlot</qualifiedname>
+        <initializer>= TEXT(&quot;SaveIndexDebug&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="23" column="20" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARSaveSubsystem_8cpp_1a8c939f8835eb6b1457d0f684f3a5180f" prot="public" static="yes" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR* ARSaveInternal::DebugSlotSuffix</definition>
+        <argsstring></argsstring>
+        <name>DebugSlotSuffix</name>
+        <qualifiedname>ARSaveInternal::DebugSlotSuffix</qualifiedname>
+        <initializer>= TEXT(&quot;_debug&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="24" column="20" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARSaveSubsystem_8cpp_1a64a9b312ae40eecf8b3bf73998a2cc37" prot="public" static="yes" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR* ARSaveInternal::SaveIndexSlot</definition>
+        <argsstring></argsstring>
+        <name>SaveIndexSlot</name>
+        <qualifiedname>ARSaveInternal::SaveIndexSlot</qualifiedname>
+        <initializer>= TEXT(&quot;SaveIndex&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="22" column="20" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARSaveSubsystem_8cpp_1a5aa8928b93f3e52d8545b3421cb8d0b1" prot="public" static="yes" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR* ARSaveInternal::SlotAdj[]</definition>
+        <argsstring>[]</argsstring>
+        <name>SlotAdj</name>
+        <qualifiedname>ARSaveInternal::SlotAdj</qualifiedname>
+        <initializer>= {
+		TEXT(&quot;Spicy&quot;), TEXT(&quot;Neon&quot;), TEXT(&quot;Corporate&quot;), TEXT(&quot;Fermented&quot;), TEXT(&quot;Unpaid&quot;), TEXT(&quot;Galactic&quot;),
+		TEXT(&quot;Suspicious&quot;), TEXT(&quot;Nuclear&quot;), TEXT(&quot;Chaotic&quot;), TEXT(&quot;Certified&quot;), TEXT(&quot;Questionable&quot;), TEXT(&quot;Overclocked&quot;)
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="25" column="20" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="25" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARSaveSubsystem_8cpp_1a8ec6099d251b2a0f6afbc5a39c80740a" prot="public" static="yes" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR* ARSaveInternal::SlotNoun[]</definition>
+        <argsstring>[]</argsstring>
+        <name>SlotNoun</name>
+        <qualifiedname>ARSaveInternal::SlotNoun</qualifiedname>
+        <initializer>= {
+	TEXT(&quot;Ramen&quot;), TEXT(&quot;Invader&quot;), TEXT(&quot;Noodle&quot;), TEXT(&quot;Colony&quot;), TEXT(&quot;Dumpling&quot;), TEXT(&quot;Broth&quot;),
+	TEXT(&quot;MegaCorp&quot;), TEXT(&quot;Franchise&quot;), TEXT(&quot;Saucer&quot;), TEXT(&quot;Payroll&quot;), TEXT(&quot;Kiosk&quot;), TEXT(&quot;Meatball&quot;)
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="29" column="20" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="29" bodyend="32"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARSaveSubsystem_8cpp_1a7fc0ed7a00857548c6ebd33e395d1aee" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ARSaveInternal::ApplySavedGameStateFieldsToRuntime</definition>
+        <argsstring>(AARGameStateBase *GameState, const UARSaveGame *SaveGame)</argsstring>
+        <name>ApplySavedGameStateFieldsToRuntime</name>
+        <qualifiedname>ARSaveInternal::ApplySavedGameStateFieldsToRuntime</qualifiedname>
+        <param>
+          <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>GameState</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="91" column="13" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="91" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="ARSaveSubsystem_8cpp_1a8486b48fbff203b688abc72b5af788c3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARPlayerIdentity</type>
+        <definition>static FARPlayerIdentity ARSaveInternal::BuildPlayerIdentityFromPlayerState</definition>
+        <argsstring>(const APlayerState *PlayerState)</argsstring>
+        <name>BuildPlayerIdentityFromPlayerState</name>
+        <qualifiedname>ARSaveInternal::BuildPlayerIdentityFromPlayerState</qualifiedname>
+        <param>
+          <type>const APlayerState *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="115" column="26" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="115" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="ARSaveSubsystem_8cpp_1a84189cb41f3cf864733b3b8d0acc1c18" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ARSaveInternal::EnablePIESeamlessTravelIfNeeded</definition>
+        <argsstring>()</argsstring>
+        <name>EnablePIESeamlessTravelIfNeeded</name>
+        <qualifiedname>ARSaveInternal::EnablePIESeamlessTravelIfNeeded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="78" column="13" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="78" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="ARSaveSubsystem_8cpp_1aa6e7ee455921c9f7ba597fe13b51ab25" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const TCHAR *</type>
+        <definition>static const TCHAR * ARSaveInternal::GetIndexSlotNameForNamespace</definition>
+        <argsstring>(bool bUseDebugSaves)</argsstring>
+        <name>GetIndexSlotNameForNamespace</name>
+        <qualifiedname>ARSaveInternal::GetIndexSlotNameForNamespace</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="73" column="20" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="73" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="ARSaveSubsystem_8cpp_1a484c484b52271a0134e9071e18187d9b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>static FName ARSaveInternal::GetLogicalSlotBaseForNamespace</definition>
+        <argsstring>(FName SlotBaseName, bool bUseDebugSaves)</argsstring>
+        <name>GetLogicalSlotBaseForNamespace</name>
+        <qualifiedname>ARSaveInternal::GetLogicalSlotBaseForNamespace</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="57" column="14" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="57" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="ARSaveSubsystem_8cpp_1af1c9ef622ee58d4940b3a0b64ca8f83f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>static FName ARSaveInternal::NormalizeSlotBaseForNamespace</definition>
+        <argsstring>(FName SlotBaseName, bool bUseDebugSaves)</argsstring>
+        <name>NormalizeSlotBaseForNamespace</name>
+        <qualifiedname>ARSaveInternal::NormalizeSlotBaseForNamespace</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="34" column="14" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="34" bodyend="55"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/ARSaveSubsystem.cpp" line="20" column="1"/>
+  </compounddef>
+</doxygen>

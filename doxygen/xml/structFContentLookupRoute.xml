@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFContentLookupRoute" kind="struct" language="C++" prot="public">
+    <compoundname>FContentLookupRoute</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFContentLookupRoute_1af148cc4d9b4fe93bbdf3daba53abd0c9" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TSoftObjectPtr&lt;UDataTable&gt; FContentLookupRoute::DataTable</definition>
+        <argsstring></argsstring>
+        <name>DataTable</name>
+        <qualifiedname>FContentLookupRoute::DataTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="28" column="16" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFContentLookupRoute_1a1f70a9acebaa4e6d3f644002e6eb6387" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FContentLookupRoute::RootTag</definition>
+        <argsstring></argsstring>
+        <name>RootTag</name>
+        <qualifiedname>FContentLookupRoute::RootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="24" column="14" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="18" column="1" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="19" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structFContentLookupRoute_1af148cc4d9b4fe93bbdf3daba53abd0c9" prot="public" virt="non-virtual"><scope>FContentLookupRoute</scope><name>DataTable</name></member>
+      <member refid="structFContentLookupRoute_1a1f70a9acebaa4e6d3f644002e6eb6387" prot="public" virt="non-virtual"><scope>FContentLookupRoute</scope><name>RootTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

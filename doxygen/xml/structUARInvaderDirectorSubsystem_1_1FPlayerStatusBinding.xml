@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding" kind="struct" language="C++" prot="private">
+    <compoundname>UARInvaderDirectorSubsystem::FPlayerStatusBinding</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1ad3418f7f0ee0120d206678a12de722c1" prot="public" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TWeakObjectPtr&lt;UAbilitySystemComponent&gt; UARInvaderDirectorSubsystem::FPlayerStatusBinding::ASC</definition>
+        <argsstring></argsstring>
+        <name>ASC</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FPlayerStatusBinding::ASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="257" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1a026994e84316e129b25e204ef27085e1" prot="public" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARInvaderDirectorSubsystem::FPlayerStatusBinding::DeadTagChangedHandle</definition>
+        <argsstring></argsstring>
+        <name>DeadTagChangedHandle</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FPlayerStatusBinding::DeadTagChangedHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="260" column="17" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1a19ee82b6d7cc953b7c577d5b2c175de4" prot="public" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARInvaderDirectorSubsystem::FPlayerStatusBinding::DownedTagChangedHandle</definition>
+        <argsstring></argsstring>
+        <name>DownedTagChangedHandle</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FPlayerStatusBinding::DownedTagChangedHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="259" column="17" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="259" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1a651559ec9cf3f3932be3a9df24010acb" prot="public" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARInvaderDirectorSubsystem::FPlayerStatusBinding::HealthChangedHandle</definition>
+        <argsstring></argsstring>
+        <name>HealthChangedHandle</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FPlayerStatusBinding::HealthChangedHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="258" column="17" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="255" column="1" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="256" bodyend="261"/>
+    <listofallmembers>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1ad3418f7f0ee0120d206678a12de722c1" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FPlayerStatusBinding</scope><name>ASC</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1a026994e84316e129b25e204ef27085e1" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FPlayerStatusBinding</scope><name>DeadTagChangedHandle</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1a19ee82b6d7cc953b7c577d5b2c175de4" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FPlayerStatusBinding</scope><name>DownedTagChangedHandle</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding_1a651559ec9cf3f3932be3a9df24010acb" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FPlayerStatusBinding</scope><name>HealthChangedHandle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

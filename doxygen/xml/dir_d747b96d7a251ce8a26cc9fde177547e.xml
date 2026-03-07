@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_d747b96d7a251ce8a26cc9fde177547e" kind="dir">
+    <compoundname>Public</compoundname>
+    <innerfile refid="ARTestingSettings_8h">ARTestingSettings.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenTests/Public/"/>
+  </compounddef>
+</doxygen>

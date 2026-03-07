@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARScrapyardPlayerController_8h" kind="file" language="C++">
+    <compoundname>ARScrapyardPlayerController.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARPlayerController_8h" local="yes">ARPlayerController.h</includes>
+    <includes local="yes">ARScrapyardPlayerController.generated.h</includes>
+    <includedby refid="ARScrapyardPlayerController_8cpp" local="yes">ARScrapyardPlayerController.cpp</includedby>
+    <incdepgraph>
+      <node id="7">
+        <label>ARDialogueTypes.h</label>
+        <link refid="ARDialogueTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerController.h</label>
+        <link refid="ARPlayerController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARScrapyardPlayerController.h</label>
+        <link refid="ARScrapyardPlayerController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ARDialogueTypes.generated.h</label>
+      </node>
+      <node id="16">
+        <label>ARPlayerController.generated.h</label>
+      </node>
+      <node id="10">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARScrapyardPlayerController.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="8">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="5">
+        <label>GameFramework/GameStateBase.h</label>
+      </node>
+      <node id="6">
+        <label>GameFramework/PlayerController.h</label>
+      </node>
+      <node id="14">
+        <label>GameFramework/PlayerState.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="15">
+        <label>TimerManager.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARScrapyardPlayerController.cpp</label>
+        <link refid="ARScrapyardPlayerController_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARScrapyardPlayerController.h</label>
+        <link refid="ARScrapyardPlayerController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARScrapyardPlayerController" prot="public">AARScrapyardPlayerController</innerclass>
+    <briefdescription>
+<para>ARScrapyardPlayerController header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerController_8h" kindref="compound">ARPlayerController.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARScrapyardPlayerController.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARScrapyardPlayerController<sp/>:<sp/>public<sp/><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>AARScrapyardPlayerController();</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARScrapyardPlayerController.h"/>
+  </compounddef>
+</doxygen>

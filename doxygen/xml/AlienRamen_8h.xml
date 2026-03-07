@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="AlienRamen_8h" kind="file" language="C++">
+    <compoundname>AlienRamen.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARLog_8h" local="yes">ARLog.h</includes>
+    <includedby refid="AlienRamen_8cpp" local="yes">AlienRamen.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>AlienRamen.h</label>
+        <link refid="AlienRamen_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>AlienRamen.cpp</label>
+        <link refid="AlienRamen_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>AlienRamen.h</label>
+        <link refid="AlienRamen_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARLog_8h" kindref="compound">ARLog.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/AlienRamen.h"/>
+  </compounddef>
+</doxygen>

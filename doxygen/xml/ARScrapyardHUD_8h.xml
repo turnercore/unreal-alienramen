@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARScrapyardHUD_8h" kind="file" language="C++">
+    <compoundname>ARScrapyardHUD.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARHUDBase_8h" local="yes">ARHUDBase.h</includes>
+    <includes local="yes">ARScrapyardHUD.generated.h</includes>
+    <includedby refid="ARScrapyardHUD_8cpp" local="yes">ARScrapyardHUD.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>ARHUDBase.h</label>
+        <link refid="ARHUDBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARScrapyardHUD.h</label>
+        <link refid="ARScrapyardHUD_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARHUDBase.generated.h</label>
+      </node>
+      <node id="6">
+        <label>ARScrapyardHUD.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>GameFramework/HUD.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARScrapyardHUD.cpp</label>
+        <link refid="ARScrapyardHUD_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARScrapyardHUD.h</label>
+        <link refid="ARScrapyardHUD_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARScrapyardHUD" prot="public">AARScrapyardHUD</innerclass>
+    <briefdescription>
+<para>Scrapyard HUD base class for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARHUDBase_8h" kindref="compound">ARHUDBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARScrapyardHUD.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARScrapyardHUD<sp/>:<sp/>public<sp/>AARHUDBase</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARScrapyardHUD.h"/>
+  </compounddef>
+</doxygen>

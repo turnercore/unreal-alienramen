@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARPlayerIdentity" kind="struct" language="C++" prot="public">
+    <compoundname>FARPlayerIdentity</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARPlayerIdentity_1ae752fa345fd42ab12d7c1fc45d90c2a9" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARPlayerIdentity::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARPlayerIdentity::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="123" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerIdentity_1a1c22f5c0de179b3dfb105b9c83657b99" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARPlayerIdentity::LegacyId</definition>
+        <argsstring></argsstring>
+        <name>LegacyId</name>
+        <qualifiedname>FARPlayerIdentity::LegacyId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="120" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerIdentity_1a819aced5ef4c933e5aae66cebad332a2" prot="public" static="no" mutable="no">
+        <type>EARPlayerSlot</type>
+        <definition>EARPlayerSlot FARPlayerIdentity::PlayerSlot</definition>
+        <argsstring></argsstring>
+        <name>PlayerSlot</name>
+        <qualifiedname>FARPlayerIdentity::PlayerSlot</qualifiedname>
+        <initializer>= EARPlayerSlot::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="126" column="15" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerIdentity_1ad0b86fc0f144bc81b910c2eb61fbf71d" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARPlayerIdentity::UniqueNetIdString</definition>
+        <argsstring></argsstring>
+        <name>UniqueNetIdString</name>
+        <qualifiedname>FARPlayerIdentity::UniqueNetIdString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="129" column="9" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerIdentity_1a145fe7915d6acf4ee1ff3ea7f2eeeb34" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARPlayerIdentity::UniqueNetIdType</definition>
+        <argsstring></argsstring>
+        <name>UniqueNetIdType</name>
+        <qualifiedname>FARPlayerIdentity::UniqueNetIdType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="132" column="9" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structFARPlayerIdentity_1ae5d4ee76f7d7336a1838b49c6a8bbe33" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool FARPlayerIdentity::HasStrictOnlineIdentity</definition>
+        <argsstring>() const</argsstring>
+        <name>HasStrictOnlineIdentity</name>
+        <qualifiedname>FARPlayerIdentity::HasStrictOnlineIdentity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="134" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="134" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="structFARPlayerIdentity_1afe47ae72d4413bab60858b66b3c3f5fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool FARPlayerIdentity::Matches</definition>
+        <argsstring>(const FARPlayerIdentity &amp;Other) const</argsstring>
+        <name>Matches</name>
+        <qualifiedname>FARPlayerIdentity::Matches</qualifiedname>
+        <param>
+          <type>const FARPlayerIdentity &amp;</type>
+          <declname>Other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="146" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="146" bodyend="159"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="115" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="116" bodyend="160"/>
+    <listofallmembers>
+      <member refid="structFARPlayerIdentity_1ae752fa345fd42ab12d7c1fc45d90c2a9" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>DisplayName</name></member>
+      <member refid="structFARPlayerIdentity_1ae5d4ee76f7d7336a1838b49c6a8bbe33" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>HasStrictOnlineIdentity</name></member>
+      <member refid="structFARPlayerIdentity_1a1c22f5c0de179b3dfb105b9c83657b99" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>LegacyId</name></member>
+      <member refid="structFARPlayerIdentity_1afe47ae72d4413bab60858b66b3c3f5fb" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>Matches</name></member>
+      <member refid="structFARPlayerIdentity_1a819aced5ef4c933e5aae66cebad332a2" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>PlayerSlot</name></member>
+      <member refid="structFARPlayerIdentity_1ad0b86fc0f144bc81b910c2eb61fbf71d" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>UniqueNetIdString</name></member>
+      <member refid="structFARPlayerIdentity_1a145fe7915d6acf4ee1ff3ea7f2eeeb34" prot="public" virt="non-virtual"><scope>FARPlayerIdentity</scope><name>UniqueNetIdType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

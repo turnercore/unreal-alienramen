@@ -1,0 +1,816 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARInvaderDropBase" kind="class" language="C++" prot="public">
+    <compoundname>AARInvaderDropBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARPickupBase</basecompoundref>
+    <includes refid="ARInvaderDropBase_8h" local="no">AlienRamen/Public/ARInvaderDropBase.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a96dd62eaed857bfeb2d421bf511989cb" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::bEarthGravityEnabled</definition>
+        <argsstring></argsstring>
+        <name>bEarthGravityEnabled</name>
+        <qualifiedname>AARInvaderDropBase::bEarthGravityEnabled</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="132" column="6" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a1d98290a4407e1233241a38208897037" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::bIsCollecting</definition>
+        <argsstring></argsstring>
+        <name>bIsCollecting</name>
+        <qualifiedname>AARInvaderDropBase::bIsCollecting</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="119" column="6" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a6b16f79abbad96f8a28f40f8233b2a30" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::bPredictedLocalCollectionVisual</definition>
+        <argsstring></argsstring>
+        <name>bPredictedLocalCollectionVisual</name>
+        <qualifiedname>AARInvaderDropBase::bPredictedLocalCollectionVisual</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="126" column="6" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1aaaf516360fd86e337f988f004d47e7ed" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::bRewardApplied</definition>
+        <argsstring></argsstring>
+        <name>bRewardApplied</name>
+        <qualifiedname>AARInvaderDropBase::bRewardApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="121" column="6" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a8c3f92e5f17cb27a33514fb5a44ec13a" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARPlayerCharacterInvader&gt; AARInvaderDropBase::CollectingPlayerPtr</definition>
+        <argsstring></argsstring>
+        <name>CollectingPlayerPtr</name>
+        <qualifiedname>AARInvaderDropBase::CollectingPlayerPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="124" column="16" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1ac6fa5757398e861adff82f2e0cea800e" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::CollectionDuration</definition>
+        <argsstring></argsstring>
+        <name>CollectionDuration</name>
+        <qualifiedname>AARInvaderDropBase::CollectionDuration</qualifiedname>
+        <initializer>= 0.12f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="107" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1ad8073ae31d43e484b4ab2f699d1ff0ff" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::CollectionElapsed</definition>
+        <argsstring></argsstring>
+        <name>CollectionElapsed</name>
+        <qualifiedname>AARInvaderDropBase::CollectionElapsed</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="122" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1ae6c565e99093d8a9b9ae7dd440ffa36f" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARInvaderDropBase::CollectionGameplayCueTag</definition>
+        <argsstring></argsstring>
+        <name>CollectionGameplayCueTag</name>
+        <qualifiedname>AARInvaderDropBase::CollectionGameplayCueTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="113" column="14" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1aeab5d35dde0819d3b38184d31254c83a" prot="private" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector AARInvaderDropBase::CollectionStartLocation</definition>
+        <argsstring></argsstring>
+        <name>CollectionStartLocation</name>
+        <qualifiedname>AARInvaderDropBase::CollectionStartLocation</qualifiedname>
+        <initializer>= FVector::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="123" column="9" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1adf54c3465540fb2b7028be99dfe8ecf7" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::CollectionTargetZOffset</definition>
+        <argsstring></argsstring>
+        <name>CollectionTargetZOffset</name>
+        <qualifiedname>AARInvaderDropBase::CollectionTargetZOffset</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="116" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a50d1883a2493febe1a9dfe2871499ff6" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARInvaderDropBase::DropAmount</definition>
+        <argsstring></argsstring>
+        <name>DropAmount</name>
+        <qualifiedname>AARInvaderDropBase::DropAmount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="101" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a88342d7d7b7fa882be10a701400bdd36" prot="private" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARInvaderDropBase::DropColor</definition>
+        <argsstring></argsstring>
+        <name>DropColor</name>
+        <qualifiedname>AARInvaderDropBase::DropColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="104" column="18" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a88542e19ef82a4a7df39da0ef4ff0952" prot="private" static="no" mutable="no">
+        <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+        <definition>EARInvaderDropType AARInvaderDropBase::DropType</definition>
+        <argsstring></argsstring>
+        <name>DropType</name>
+        <qualifiedname>AARInvaderDropBase::DropType</qualifiedname>
+        <initializer>= EARInvaderDropType::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="98" column="20" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a1b9e53a693219b053b5dffd966ed9637" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::EarthGravityAcceleration</definition>
+        <argsstring></argsstring>
+        <name>EarthGravityAcceleration</name>
+        <qualifiedname>AARInvaderDropBase::EarthGravityAcceleration</qualifiedname>
+        <initializer>= 980.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="134" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1a82cb0bffc1a0ace6ccb683f4c3a2cffa" prot="private" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector AARInvaderDropBase::EarthGravityDirection</definition>
+        <argsstring></argsstring>
+        <name>EarthGravityDirection</name>
+        <qualifiedname>AARInvaderDropBase::EarthGravityDirection</qualifiedname>
+        <initializer>= FVector(-1.0f, 0.0f, 0.0f)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="133" column="9" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1aced50c0b5fea99c44b0170f36d92b70c" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::FallbackPickupRadius</definition>
+        <argsstring></argsstring>
+        <name>FallbackPickupRadius</name>
+        <qualifiedname>AARInvaderDropBase::FallbackPickupRadius</qualifiedname>
+        <initializer>= 150.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="110" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1aea5bbe343b05a8518c8998c256d66dd6" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; USphereComponent &gt;</type>
+        <definition>TObjectPtr&lt;USphereComponent&gt; AARInvaderDropBase::PhysicsSphere</definition>
+        <argsstring></argsstring>
+        <name>PhysicsSphere</name>
+        <qualifiedname>AARInvaderDropBase::PhysicsSphere</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="95" column="12" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1aaa2cb71a64a51314b3e279a00876c464" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::PredictedCollectionRollbackSeconds</definition>
+        <argsstring></argsstring>
+        <name>PredictedCollectionRollbackSeconds</name>
+        <qualifiedname>AARInvaderDropBase::PredictedCollectionRollbackSeconds</qualifiedname>
+        <initializer>= 0.35f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="130" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderDropBase_1af532b36418e04f4ea8817c50b74a4a36" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::PredictedLocalCollectionElapsed</definition>
+        <argsstring></argsstring>
+        <name>PredictedLocalCollectionElapsed</name>
+        <qualifiedname>AARInvaderDropBase::PredictedLocalCollectionElapsed</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="127" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARInvaderDropBase_1a85fab2f1a8da1678321e459580998c33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARInvaderDropBase::AARInvaderDropBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARInvaderDropBase</name>
+        <qualifiedname>AARInvaderDropBase::AARInvaderDropBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="29" column="1" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="14" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a5a44bec0ecebe0022eb8e17224ae4ee6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::ApplyDropReward</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyDropReward</name>
+        <qualifiedname>AARInvaderDropBase::ApplyDropReward</qualifiedname>
+        <briefdescription>
+<para>Final authority reward apply hook before the pickup is released. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="67" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a9b36c93a77c5e956097542852cfba377" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::BeginPredictedCollectionLocal</definition>
+        <argsstring>(AARPlayerCharacterInvader *InCollectingPlayer)</argsstring>
+        <name>BeginPredictedCollectionLocal</name>
+        <qualifiedname>AARInvaderDropBase::BeginPredictedCollectionLocal</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>InCollectingPlayer</declname>
+        </param>
+        <briefdescription>
+<para>Local cosmetic-only prediction path used by owning clients before server confirmation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="59" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="139" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a40b67100d546e98721a1983764c36852" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::BP_OnCollectionStarted</definition>
+        <argsstring>(AARPlayerCharacterInvader *CollectingPlayer)</argsstring>
+        <name>BP_OnCollectionStarted</name>
+        <qualifiedname>AARInvaderDropBase::BP_OnCollectionStarted</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>CollectingPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="70" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1af0a005246a7127d50dd9b5c667798afe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::BP_OnRewardApplied</definition>
+        <argsstring>(AARPlayerCharacterInvader *CollectingPlayer)</argsstring>
+        <name>BP_OnRewardApplied</name>
+        <qualifiedname>AARInvaderDropBase::BP_OnRewardApplied</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>CollectingPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="73" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1ac08e96e8870c6412255ae013f43ae39d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARInvaderDropBase::GetDropAmount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDropAmount</name>
+        <qualifiedname>AARInvaderDropBase::GetDropAmount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="42" column="7" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a5b02a6a7e7238e1470c9d9dc43136a45" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARInvaderDropBase::GetDropColor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDropColor</name>
+        <qualifiedname>AARInvaderDropBase::GetDropColor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="45" column="18" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a30fd83a7b392bba78c487a1f86540c01" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+        <definition>EARInvaderDropType AARInvaderDropBase::GetDropType</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDropType</name>
+        <qualifiedname>AARInvaderDropBase::GetDropType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="39" column="20" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a07eb95ac64ea60c09b301bc22ceab96f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARInvaderDropBase::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="32" column="14" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="383" bodyend="391"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1ad6647428e5132698ed35a8f3cf0ac71b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::InitializeDrop</definition>
+        <argsstring>(EARInvaderDropType InDropType, int32 InDropAmount, EARAffinityColor InDropColor)</argsstring>
+        <name>InitializeDrop</name>
+        <qualifiedname>AARInvaderDropBase::InitializeDrop</qualifiedname>
+        <param>
+          <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+          <declname>InDropType</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>InDropAmount</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>InDropColor</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only runtime setup called by invader kill/drop flow. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="36" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="89" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a77b21d2ccdade33094fd15a5d323b282" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::IsAvailableForCollection</definition>
+        <argsstring>() const</argsstring>
+        <name>IsAvailableForCollection</name>
+        <qualifiedname>AARInvaderDropBase::IsAvailableForCollection</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="48" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="102" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a5ab16d6fd8b28fe4ec04ac0c8439fcbf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::IsPlayerWithinPickupRange2D</definition>
+        <argsstring>(const AARPlayerCharacterInvader *Player) const</argsstring>
+        <name>IsPlayerWithinPickupRange2D</name>
+        <qualifiedname>AARInvaderDropBase::IsPlayerWithinPickupRange2D</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>Player</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="51" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="107" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1ab3991b483805a2068af6e6c628f4e8f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::SetEarthGravityEnabled</definition>
+        <argsstring>(bool bEnabled)</argsstring>
+        <name>SetEarthGravityEnabled</name>
+        <qualifiedname>AARInvaderDropBase::SetEarthGravityEnabled</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnabled</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="63" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="154" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a26fb02135588181ef67a9e8f396a5b93" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARInvaderDropBase::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="31" column="14" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="55" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a12daba40b8600ca1eb49158d76245c5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderDropBase::TryCollectByPlayer</definition>
+        <argsstring>(AARPlayerCharacterInvader *InCollectingPlayer)</argsstring>
+        <name>TryCollectByPlayer</name>
+        <qualifiedname>AARInvaderDropBase::TryCollectByPlayer</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>InCollectingPlayer</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only collection path. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if collection started. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="55" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="123" bodyend="137"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARInvaderDropBase_1ad78020affe0b547a2e90b0977bbca540" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::ApplyDropReward_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyDropReward_Implementation</name>
+        <qualifiedname>AARInvaderDropBase::ApplyDropReward_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="80" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="271" bodyend="328"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1adce6fb9d8ff10979d50781b3e929f02e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::ApplyEarthGravityForce</definition>
+        <argsstring>(float DeltaSeconds)</argsstring>
+        <name>ApplyEarthGravityForce</name>
+        <qualifiedname>AARInvaderDropBase::ApplyEarthGravityForce</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="84" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="370" bodyend="381"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1ad521a53ab919dde2e2d7a25025123189" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARInvaderDropBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="76" column="14" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="34" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1ac52aa4f64f81259a4dc6f5176d0982ce" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::DisablePhysicsAndCollisionForCollection</definition>
+        <argsstring>()</argsstring>
+        <name>DisablePhysicsAndCollisionForCollection</name>
+        <qualifiedname>AARInvaderDropBase::DisablePhysicsAndCollisionForCollection</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="81" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="330" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1afdabedf3cfa10ef9a5bf8564401a7a1b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::OnRep_IsCollecting</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_IsCollecting</name>
+        <qualifiedname>AARInvaderDropBase::OnRep_IsCollecting</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="78" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="245" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1aaacf4835c0b65bea0c0a8b1723331ac4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::ResolveInvaderGravityFrameFromSettings</definition>
+        <argsstring>()</argsstring>
+        <name>ResolveInvaderGravityFrameFromSettings</name>
+        <qualifiedname>AARInvaderDropBase::ResolveInvaderGravityFrameFromSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="83" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="360" bodyend="368"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a40292323c660f1460340df9a59447103" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::RestorePostPredictionVisualState</definition>
+        <argsstring>()</argsstring>
+        <name>RestorePostPredictionVisualState</name>
+        <qualifiedname>AARInvaderDropBase::RestorePostPredictionVisualState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="82" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="342" bodyend="358"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARInvaderDropBase_1afbc99b761bdd5fd20d77f3ef5ea235ad" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::ApplyCollectionGameplayCue</definition>
+        <argsstring>(AARPlayerCharacterInvader *InCollectingPlayer) const</argsstring>
+        <name>ApplyCollectionGameplayCue</name>
+        <qualifiedname>AARInvaderDropBase::ApplyCollectionGameplayCue</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>InCollectingPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="91" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="253" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a0c118821ef1fa52608e04c5e7a5d979e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::BeginCollection</definition>
+        <argsstring>(AARPlayerCharacterInvader *InCollectingPlayer)</argsstring>
+        <name>BeginCollection</name>
+        <qualifiedname>AARInvaderDropBase::BeginCollection</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>InCollectingPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="88" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="181" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1aa495cb8440d1c2cc66e86cde71743afa" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::FinalizeCollection</definition>
+        <argsstring>()</argsstring>
+        <name>FinalizeCollection</name>
+        <qualifiedname>AARInvaderDropBase::FinalizeCollection</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="90" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="223" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a93ad5322512c3c69f823823404dffb9a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARInvaderDropBase::ResolvePickupRadiusForPlayer</definition>
+        <argsstring>(const AARPlayerCharacterInvader *Player) const</argsstring>
+        <name>ResolvePickupRadiusForPlayer</name>
+        <qualifiedname>AARInvaderDropBase::ResolvePickupRadiusForPlayer</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+          <declname>Player</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="87" column="7" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="164" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderDropBase_1a8883520224538bf55724f8012116e413" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderDropBase::TickCollection</definition>
+        <argsstring>(float DeltaSeconds)</argsstring>
+        <name>TickCollection</name>
+        <qualifiedname>AARInvaderDropBase::TickCollection</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropBase.h" line="89" column="6" bodyfile="AlienRamen/Private/ARInvaderDropBase.cpp" bodystart="198" bodyend="221"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared invader drop actor used for scrap/meat currency pickups. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Authority owns collection and reward application.</para>
+</listitem><listitem><para>Actor stays in XY plane using physics until collection starts.</para>
+</listitem><listitem><para>Collection transitions to short homing lerp and then destroys. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDropBase.h" line="24" column="1" bodyfile="AlienRamen/Public/ARInvaderDropBase.h" bodystart="25" bodyend="135"/>
+    <listofallmembers>
+      <member refid="classAARInvaderDropBase_1a85fab2f1a8da1678321e459580998c33" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>AARInvaderDropBase</name></member>
+      <member refid="classAARPickupBase_1a2b079da992e3cf9bef90a7969d9aeac9" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>AARPickupBase</name></member>
+      <member refid="classAARInvaderDropBase_1afbc99b761bdd5fd20d77f3ef5ea235ad" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ApplyCollectionGameplayCue</name></member>
+      <member refid="classAARInvaderDropBase_1a5a44bec0ecebe0022eb8e17224ae4ee6" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ApplyDropReward</name></member>
+      <member refid="classAARInvaderDropBase_1ad78020affe0b547a2e90b0977bbca540" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ApplyDropReward_Implementation</name></member>
+      <member refid="classAARInvaderDropBase_1adce6fb9d8ff10979d50781b3e929f02e" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ApplyEarthGravityForce</name></member>
+      <member refid="classAARInvaderDropBase_1a96dd62eaed857bfeb2d421bf511989cb" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bEarthGravityEnabled</name></member>
+      <member refid="classAARInvaderDropBase_1a0c118821ef1fa52608e04c5e7a5d979e" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>BeginCollection</name></member>
+      <member refid="classAARInvaderDropBase_1ad521a53ab919dde2e2d7a25025123189" prot="protected" virt="virtual"><scope>AARInvaderDropBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARInvaderDropBase_1a9b36c93a77c5e956097542852cfba377" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>BeginPredictedCollectionLocal</name></member>
+      <member refid="classAARInvaderDropBase_1a1d98290a4407e1233241a38208897037" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bIsCollecting</name></member>
+      <member refid="classAARPickupBase_1ad2d91a8411ddd06ddbe38a7d32d1c624" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bOffscreenCheckAuthorityOnly</name></member>
+      <member refid="classAARInvaderDropBase_1a40b67100d546e98721a1983764c36852" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>BP_OnCollectionStarted</name></member>
+      <member refid="classAARPickupBase_1ab60f2c304d068f0c14702b34e27749e1" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>BP_OnPickupPreRelease</name></member>
+      <member refid="classAARInvaderDropBase_1af0a005246a7127d50dd9b5c667798afe" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>BP_OnRewardApplied</name></member>
+      <member refid="classAARInvaderDropBase_1a6b16f79abbad96f8a28f40f8233b2a30" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bPredictedLocalCollectionVisual</name></member>
+      <member refid="classAARPickupBase_1a244844d050f581a68ab57cc0ecabd762" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bReleaseWhenOutsideGameplayBounds</name></member>
+      <member refid="classAARInvaderDropBase_1aaaf516360fd86e337f988f004d47e7ed" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bRewardApplied</name></member>
+      <member refid="classAARPickupBase_1a64b56d20b911b0fd7395b1fb104a2468" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>bUseProjectSettingsOffscreenCullSeconds</name></member>
+      <member refid="classAARInvaderDropBase_1a8c3f92e5f17cb27a33514fb5a44ec13a" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>CollectingPlayerPtr</name></member>
+      <member refid="classAARInvaderDropBase_1ac6fa5757398e861adff82f2e0cea800e" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>CollectionDuration</name></member>
+      <member refid="classAARInvaderDropBase_1ad8073ae31d43e484b4ab2f699d1ff0ff" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>CollectionElapsed</name></member>
+      <member refid="classAARInvaderDropBase_1ae6c565e99093d8a9b9ae7dd440ffa36f" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>CollectionGameplayCueTag</name></member>
+      <member refid="classAARInvaderDropBase_1aeab5d35dde0819d3b38184d31254c83a" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>CollectionStartLocation</name></member>
+      <member refid="classAARInvaderDropBase_1adf54c3465540fb2b7028be99dfe8ecf7" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>CollectionTargetZOffset</name></member>
+      <member refid="classAARInvaderDropBase_1ac52aa4f64f81259a4dc6f5176d0982ce" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>DisablePhysicsAndCollisionForCollection</name></member>
+      <member refid="classAARInvaderDropBase_1a50d1883a2493febe1a9dfe2871499ff6" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>DropAmount</name></member>
+      <member refid="classAARInvaderDropBase_1a88342d7d7b7fa882be10a701400bdd36" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>DropColor</name></member>
+      <member refid="classAARInvaderDropBase_1a88542e19ef82a4a7df39da0ef4ff0952" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>DropType</name></member>
+      <member refid="classAARInvaderDropBase_1a1b9e53a693219b053b5dffd966ed9637" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>EarthGravityAcceleration</name></member>
+      <member refid="classAARInvaderDropBase_1a82cb0bffc1a0ace6ccb683f4c3a2cffa" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>EarthGravityDirection</name></member>
+      <member refid="classAARPickupBase_1aefede9297621562490a0cc788eeaf03b" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>EvaluateOffscreenRelease</name></member>
+      <member refid="classAARInvaderDropBase_1aced50c0b5fea99c44b0170f36d92b70c" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>FallbackPickupRadius</name></member>
+      <member refid="classAARInvaderDropBase_1aa495cb8440d1c2cc66e86cde71743afa" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>FinalizeCollection</name></member>
+      <member refid="classAARInvaderDropBase_1ac08e96e8870c6412255ae013f43ae39d" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>GetDropAmount</name></member>
+      <member refid="classAARInvaderDropBase_1a5b02a6a7e7238e1470c9d9dc43136a45" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>GetDropColor</name></member>
+      <member refid="classAARInvaderDropBase_1a30fd83a7b392bba78c487a1f86540c01" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>GetDropType</name></member>
+      <member refid="classAARInvaderDropBase_1a07eb95ac64ea60c09b301bc22ceab96f" prot="public" virt="virtual"><scope>AARInvaderDropBase</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARInvaderDropBase_1ad6647428e5132698ed35a8f3cf0ac71b" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>InitializeDrop</name></member>
+      <member refid="classAARInvaderDropBase_1a77b21d2ccdade33094fd15a5d323b282" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>IsAvailableForCollection</name></member>
+      <member refid="classAARPickupBase_1a8e1fbd02af87556fd0f122349251ae8d" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>IsOutsideGameplayBounds</name></member>
+      <member refid="classAARInvaderDropBase_1a5ab16d6fd8b28fe4ec04ac0c8439fcbf" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>IsPlayerWithinPickupRange2D</name></member>
+      <member refid="classAARPickupBase_1a6bbbc1157037206ff97a75633e639059" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>OffscreenReleaseDelay</name></member>
+      <member refid="classAARPickupBase_1a5514e79208adf329b8ccec7ecf2c0ea4" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>OffscreenReleaseMargin</name></member>
+      <member refid="classAARInvaderDropBase_1afdabedf3cfa10ef9a5bf8564401a7a1b" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>OnRep_IsCollecting</name></member>
+      <member refid="classAARInvaderDropBase_1aea5bbe343b05a8518c8998c256d66dd6" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>PhysicsSphere</name></member>
+      <member refid="classAARInvaderDropBase_1aaa2cb71a64a51314b3e279a00876c464" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>PredictedCollectionRollbackSeconds</name></member>
+      <member refid="classAARInvaderDropBase_1af532b36418e04f4ea8817c50b74a4a36" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>PredictedLocalCollectionElapsed</name></member>
+      <member refid="classAARPickupBase_1a0139376c1f2ab057a4f4e5230ef3c2ad" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ReleasePickup</name></member>
+      <member refid="classAARPickupBase_1a7bbccc790fbcc67908396e099ac7acfb" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ReleasePickup_Implementation</name></member>
+      <member refid="classAARInvaderDropBase_1aaacf4835c0b65bea0c0a8b1723331ac4" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ResolveInvaderGravityFrameFromSettings</name></member>
+      <member refid="classAARInvaderDropBase_1a93ad5322512c3c69f823823404dffb9a" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>ResolvePickupRadiusForPlayer</name></member>
+      <member refid="classAARInvaderDropBase_1a40292323c660f1460340df9a59447103" prot="protected" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>RestorePostPredictionVisualState</name></member>
+      <member refid="classAARInvaderDropBase_1ab3991b483805a2068af6e6c628f4e8f5" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>SetEarthGravityEnabled</name></member>
+      <member refid="classAARInvaderDropBase_1a26fb02135588181ef67a9e8f396a5b93" prot="public" virt="virtual"><scope>AARInvaderDropBase</scope><name>Tick</name></member>
+      <member refid="classAARInvaderDropBase_1a8883520224538bf55724f8012116e413" prot="private" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>TickCollection</name></member>
+      <member refid="classAARInvaderDropBase_1a12daba40b8600ca1eb49158d76245c5d" prot="public" virt="non-virtual"><scope>AARInvaderDropBase</scope><name>TryCollectByPlayer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

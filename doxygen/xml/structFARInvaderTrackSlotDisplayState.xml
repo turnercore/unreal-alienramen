@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderTrackSlotDisplayState" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderTrackSlotDisplayState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderTrackSlotDisplayState_1a7b92e3600a30a1298e4bc2bcfafea341" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderTrackSlotDisplayState::bHasUpgrade</definition>
+        <argsstring></argsstring>
+        <name>bHasUpgrade</name>
+        <qualifiedname>FARInvaderTrackSlotDisplayState::bHasUpgrade</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="133" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotDisplayState_1add15d1b35bbf462ba0119cf0a2e3bf71" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARInvaderTrackSlotDisplayState::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARInvaderTrackSlotDisplayState::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="127" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotDisplayState_1a4dd0868d79b200350147d2806f57c265" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderTrackSlotDisplayState::SlotIndex</definition>
+        <argsstring></argsstring>
+        <name>SlotIndex</name>
+        <qualifiedname>FARInvaderTrackSlotDisplayState::SlotIndex</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="121" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotDisplayState_1a9f465d279e99eedf2b2bdffb977bbc52" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderTrackSlotDisplayState::UpgradeLevel</definition>
+        <argsstring></argsstring>
+        <name>UpgradeLevel</name>
+        <qualifiedname>FARInvaderTrackSlotDisplayState::UpgradeLevel</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="130" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderTrackSlotDisplayState_1a0a5276b058faa7930dbd456ec6d8a3d1" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderTrackSlotDisplayState::UpgradeTag</definition>
+        <argsstring></argsstring>
+        <name>UpgradeTag</name>
+        <qualifiedname>FARInvaderTrackSlotDisplayState::UpgradeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="124" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="116" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="117" bodyend="134"/>
+    <listofallmembers>
+      <member refid="structFARInvaderTrackSlotDisplayState_1a7b92e3600a30a1298e4bc2bcfafea341" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotDisplayState</scope><name>bHasUpgrade</name></member>
+      <member refid="structFARInvaderTrackSlotDisplayState_1add15d1b35bbf462ba0119cf0a2e3bf71" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotDisplayState</scope><name>DisplayName</name></member>
+      <member refid="structFARInvaderTrackSlotDisplayState_1a4dd0868d79b200350147d2806f57c265" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotDisplayState</scope><name>SlotIndex</name></member>
+      <member refid="structFARInvaderTrackSlotDisplayState_1a9f465d279e99eedf2b2bdffb977bbc52" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotDisplayState</scope><name>UpgradeLevel</name></member>
+      <member refid="structFARInvaderTrackSlotDisplayState_1a0a5276b058faa7930dbd456ec6d8a3d1" prot="public" virt="non-virtual"><scope>FARInvaderTrackSlotDisplayState</scope><name>UpgradeTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

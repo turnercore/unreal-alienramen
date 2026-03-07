@@ -1,0 +1,7 @@
+<map id="ARInvaderDropTypes.h" name="ARInvaderDropTypes.h">
+<area shape="rect" id="Node000001" title="Shared invader drop type surface." alt="" coords="81,5,250,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,33,93,73,90,68,148,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,386,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="183,28,240,68,237,73,180,33"/>
+</map>

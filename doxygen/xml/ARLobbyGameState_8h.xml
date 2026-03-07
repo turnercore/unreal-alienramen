@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARLobbyGameState_8h" kind="file" language="C++">
+    <compoundname>ARLobbyGameState.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARGameStateBase_8h" local="yes">ARGameStateBase.h</includes>
+    <includes local="yes">ARLobbyGameState.generated.h</includes>
+    <includedby refid="ARLobbyGameState_8cpp" local="yes">ARLobbyGameState.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>ARGameStateBase.h</label>
+        <link refid="ARGameStateBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARLobbyGameState.h</label>
+        <link refid="ARLobbyGameState_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARPauseTypes.h</label>
+        <link refid="ARPauseTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>StructSerializable.h</label>
+        <link refid="StructSerializable_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>ARGameStateBase.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARLobbyGameState.generated.h</label>
+      </node>
+      <node id="5">
+        <label>ARPauseTypes.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="10">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="11">
+        <label>GameFramework/GameStateBase.h</label>
+      </node>
+      <node id="9">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="15">
+        <label>StructSerializable.generated.h</label>
+      </node>
+      <node id="14">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="13">
+        <label>UObject/Interface.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARLobbyGameState.cpp</label>
+        <link refid="ARLobbyGameState_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARLobbyGameState.h</label>
+        <link refid="ARLobbyGameState_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARLobbyGameState" prot="public">AARLobbyGameState</innerclass>
+    <briefdescription>
+<para>ARLobbyGameState header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARGameStateBase_8h" kindref="compound">ARGameStateBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARLobbyGameState.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARLobbyGameState<sp/>:<sp/>public<sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>AARLobbyGameState();</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>UScriptStruct*<sp/>GetStateStruct_Implementation()<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARLobbyGameState.h"/>
+  </compounddef>
+</doxygen>

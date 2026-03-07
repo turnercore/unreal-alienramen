@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARControllerInputMapping" kind="struct" language="C++" prot="public">
+    <compoundname>FARControllerInputMapping</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARControllerInputMapping_1ae963b980e3a7c03a04fd4edd1fcb29e7" prot="public" static="no" mutable="no">
+        <type>TObjectPtr&lt; UInputMappingContext &gt;</type>
+        <definition>TObjectPtr&lt;UInputMappingContext&gt; FARControllerInputMapping::MappingContext</definition>
+        <argsstring></argsstring>
+        <name>MappingContext</name>
+        <qualifiedname>FARControllerInputMapping::MappingContext</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="26" column="12" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerInputMapping_1a9be8ca91872f6e0433a0eef622978d15" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARControllerInputMapping::Priority</definition>
+        <argsstring></argsstring>
+        <name>Priority</name>
+        <qualifiedname>FARControllerInputMapping::Priority</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="29" column="7" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARPlayerController.h" line="21" column="1" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="22" bodyend="30"/>
+    <listofallmembers>
+      <member refid="structFARControllerInputMapping_1ae963b980e3a7c03a04fd4edd1fcb29e7" prot="public" virt="non-virtual"><scope>FARControllerInputMapping</scope><name>MappingContext</name></member>
+      <member refid="structFARControllerInputMapping_1a9be8ca91872f6e0433a0eef622978d15" prot="public" virt="non-virtual"><scope>FARControllerInputMapping</scope><name>Priority</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,2494 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderDirectorSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderDirectorSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UTickableWorldSubsystem</basecompoundref>
+    <includes refid="ARInvaderDirectorSubsystem_8h" local="no">AlienRamen/Public/ARInvaderDirectorSubsystem.h</includes>
+    <innerclass refid="structUARInvaderDirectorSubsystem_1_1FPlayerStatusBinding" prot="private">UARInvaderDirectorSubsystem::FPlayerStatusBinding</innerclass>
+    <innerclass refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal" prot="private">UARInvaderDirectorSubsystem::FWaveRuntimeInternal</innerclass>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1adc63ce18a0ef491151bb11f19af5235a" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderAllPlayersDeadChangedSignature</type>
+        <definition>FAROnInvaderAllPlayersDeadChangedSignature UARInvaderDirectorSubsystem::OnAllPlayersDeadChanged</definition>
+        <argsstring></argsstring>
+        <name>OnAllPlayersDeadChanged</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OnAllPlayersDeadChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="118" column="44" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1af08f0c0eaeb8f1845c83017cbbe360c9" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderAllPlayersDownChangedSignature</type>
+        <definition>FAROnInvaderAllPlayersDownChangedSignature UARInvaderDirectorSubsystem::OnAllPlayersDownChanged</definition>
+        <argsstring></argsstring>
+        <name>OnAllPlayersDownChanged</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OnAllPlayersDownChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="115" column="44" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a9b7cf613d93898ef4f8f22530eadfc26" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderEnemyLeakedSignature</type>
+        <definition>FAROnInvaderEnemyLeakedSignature UARInvaderDirectorSubsystem::OnEnemyLeaked</definition>
+        <argsstring></argsstring>
+        <name>OnEnemyLeaked</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OnEnemyLeaked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="112" column="34" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ac26857263a46816bf259db9c6b39c0ef" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderPlayerDeadChangedSignature</type>
+        <definition>FAROnInvaderPlayerDeadChangedSignature UARInvaderDirectorSubsystem::OnPlayerDeadChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerDeadChanged</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OnPlayerDeadChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="124" column="40" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a32d3b98e5de3a30e64438cc881ddc3e7" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderPlayerDownedChangedSignature</type>
+        <definition>FAROnInvaderPlayerDownedChangedSignature UARInvaderDirectorSubsystem::OnPlayerDownedChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerDownedChanged</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OnPlayerDownedChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="121" column="42" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1af6482a26ecf127d50f803be22a5be203" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderRunEndedSignature</type>
+        <definition>FAROnInvaderRunEndedSignature UARInvaderDirectorSubsystem::OnRunEnded</definition>
+        <argsstring></argsstring>
+        <name>OnRunEnded</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OnRunEnded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="109" column="31" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a93f2828e099b86ef4b9a557edd9359f8" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FWaveRuntimeInternal &gt;</type>
+        <definition>TArray&lt;FWaveRuntimeInternal&gt; UARInvaderDirectorSubsystem::ActiveWaves</definition>
+        <argsstring></argsstring>
+        <name>ActiveWaves</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ActiveWaves</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="243" column="8" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1abb31e4afaf2401f8554b9495f5692cf4" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::bAllPlayersDeadCached</definition>
+        <argsstring></argsstring>
+        <name>bAllPlayersDeadCached</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::bAllPlayersDeadCached</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="248" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a11c19dcd71ec5f0a5becfe7fe9a056bc" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::bAllPlayersDownCached</definition>
+        <argsstring></argsstring>
+        <name>bAllPlayersDownCached</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::bAllPlayersDownCached</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="247" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1abcb80208cc9459a23441ffecbeddcf23" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARGameStateBase&gt; UARInvaderDirectorSubsystem::BoundTrackedPlayersGameState</definition>
+        <argsstring></argsstring>
+        <name>BoundTrackedPlayersGameState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::BoundTrackedPlayersGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="263" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ab7bf61f6bd21c93cd18adb1095996cfa" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::bRunActive</definition>
+        <argsstring></argsstring>
+        <name>bRunActive</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::bRunActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="212" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a9adc09536143653cc10febf8d3a3c6f7" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::bWarnedMissingRuntimeComponent</definition>
+        <argsstring></argsstring>
+        <name>bWarnedMissingRuntimeComponent</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::bWarnedMissingRuntimeComponent</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="213" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a1f724b933d7fc96dc5a24490ec22281c" prot="private" static="no" mutable="no">
+        <type>FARStageDefRow</type>
+        <definition>FARStageDefRow UARInvaderDirectorSubsystem::ChoiceLeftStageDef</definition>
+        <argsstring></argsstring>
+        <name>ChoiceLeftStageDef</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ChoiceLeftStageDef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="237" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a124d227acca826a33d01512f486b5437" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::ChoiceLeftStageRow</definition>
+        <argsstring></argsstring>
+        <name>ChoiceLeftStageRow</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ChoiceLeftStageRow</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="236" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a9492f4ccc55fc94806d7a887bd928bf9" prot="private" static="no" mutable="no">
+        <type>FARStageDefRow</type>
+        <definition>FARStageDefRow UARInvaderDirectorSubsystem::ChoiceRightStageDef</definition>
+        <argsstring></argsstring>
+        <name>ChoiceRightStageDef</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ChoiceRightStageDef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="239" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a8d2c7a13b44fc8dca2ed0f3a843e2952" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::ChoiceRightStageRow</definition>
+        <argsstring></argsstring>
+        <name>ChoiceRightStageRow</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ChoiceRightStageRow</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="238" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a7dd454654e67c156f78253d62e57c8a6" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdCaptureBounds</definition>
+        <argsstring></argsstring>
+        <name>CmdCaptureBounds</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdCaptureBounds</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="281" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a9e487b0d0090a6681280a49daac49a91" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdChooseStage</definition>
+        <argsstring></argsstring>
+        <name>CmdChooseStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdChooseStage</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="280" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a6bebe3b6d555d12774f382c7fd148e73" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdDumpState</definition>
+        <argsstring></argsstring>
+        <name>CmdDumpState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdDumpState</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="277" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a3dd8d8ba39d6174603d9dac5f72449c3" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdForcePhase</definition>
+        <argsstring></argsstring>
+        <name>CmdForcePhase</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdForcePhase</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="274" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a603d24eae660fa52e0eb16a720861478" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdForceStage</definition>
+        <argsstring></argsstring>
+        <name>CmdForceStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdForceStage</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="276" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ad300b98d37ee88919e98e8db1ddb01b8" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdForceThreat</definition>
+        <argsstring></argsstring>
+        <name>CmdForceThreat</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdForceThreat</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="275" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="275" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1aca3af4c5f904a11bca9179873a2c8aaf" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdForceWave</definition>
+        <argsstring></argsstring>
+        <name>CmdForceWave</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdForceWave</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="273" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ae37a481049ff9833609071f879a5a954" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdStart</definition>
+        <argsstring></argsstring>
+        <name>CmdStart</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdStart</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="278" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a444975d8a08775578a61e51617918845" prot="private" static="no" mutable="no">
+        <type>IConsoleObject *</type>
+        <definition>IConsoleObject* UARInvaderDirectorSubsystem::CmdStop</definition>
+        <argsstring></argsstring>
+        <name>CmdStop</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CmdStop</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="279" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1aae1fb68cd16681c9b887f94b411ce5de" prot="private" static="no" mutable="no">
+        <type>FARStageDefRow</type>
+        <definition>FARStageDefRow UARInvaderDirectorSubsystem::CurrentStageDef</definition>
+        <argsstring></argsstring>
+        <name>CurrentStageDef</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CurrentStageDef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="233" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ab1316619497d0f03dc5f1965c4837c5d" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::CurrentStageRow</definition>
+        <argsstring></argsstring>
+        <name>CurrentStageRow</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::CurrentStageRow</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="232" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a27cd83d3221b9fd8dc7c9d0ce01436d4" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::DeadPlayerCountCached</definition>
+        <argsstring></argsstring>
+        <name>DeadPlayerCountCached</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::DeadPlayerCountCached</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="251" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a56a9944b130b600a679f1bb4f42a32d2" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::DownedPlayerCountCached</definition>
+        <argsstring></argsstring>
+        <name>DownedPlayerCountCached</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::DownedPlayerCountCached</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="250" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1aa62f3d39b8603bb7bd41566ab2104add" prot="private" static="no" mutable="no">
+        <type>TMap&lt; FSoftObjectPath, TSharedPtr&lt; FStreamableHandle &gt; &gt;</type>
+        <definition>TMap&lt;FSoftObjectPath, TSharedPtr&lt;FStreamableHandle&gt; &gt; UARInvaderDirectorSubsystem::EnemyClassPreloadHandles</definition>
+        <argsstring></argsstring>
+        <name>EnemyClassPreloadHandles</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EnemyClassPreloadHandles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="269" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="269" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a03da2758720026dcd608f1c3a55bcc61" prot="private" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, FARInvaderEnemyDefRow &gt;</type>
+        <definition>TMap&lt;FGameplayTag, FARInvaderEnemyDefRow&gt; UARInvaderDirectorSubsystem::EnemyDefinitionCache</definition>
+        <argsstring></argsstring>
+        <name>EnemyDefinitionCache</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EnemyDefinitionCache</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="268" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a739ce505632aef9cd9237de8f3165398" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::EvaluatedPlayerCountCached</definition>
+        <argsstring></argsstring>
+        <name>EvaluatedPlayerCountCached</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EvaluatedPlayerCountCached</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="249" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="249" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a3d8396db6fb86165454f2e65f727340c" prot="private" static="no" mutable="no">
+        <type>EARInvaderFlowState</type>
+        <definition>EARInvaderFlowState UARInvaderDirectorSubsystem::FlowState</definition>
+        <argsstring></argsstring>
+        <name>FlowState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FlowState</qualifiedname>
+        <initializer>= EARInvaderFlowState::Stopped</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="227" column="21" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a437ad5595aa811507a77917ddf62caf4" prot="private" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString UARInvaderDirectorSubsystem::LastRewardDescriptor</definition>
+        <argsstring></argsstring>
+        <name>LastRewardDescriptor</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::LastRewardDescriptor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="241" column="9" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a9dde1022e35a5b42e8d6d14a86ce9640" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::LastRewardStageRow</definition>
+        <argsstring></argsstring>
+        <name>LastRewardStageRow</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::LastRewardStageRow</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="240" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a9b1847df044c65739bcbcc5f41088d73" prot="private" static="no" mutable="no">
+        <type>EARInvaderRunEndReason</type>
+        <definition>EARInvaderRunEndReason UARInvaderDirectorSubsystem::LastRunEndReason</definition>
+        <argsstring></argsstring>
+        <name>LastRunEndReason</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::LastRunEndReason</qualifiedname>
+        <initializer>= EARInvaderRunEndReason::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="228" column="24" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ace67647099fafea7f8c8d35d4f60b9d6" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::LastWaveRowName</definition>
+        <argsstring></argsstring>
+        <name>LastWaveRowName</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::LastWaveRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="245" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="245" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a8fa73ab6b6eb2852a45831bae1f83ddb" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::LeakCount</definition>
+        <argsstring></argsstring>
+        <name>LeakCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::LeakCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="222" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1af7cdf3e7322ea3e896677d43ddf45966" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::NextWaveInstanceId</definition>
+        <argsstring></argsstring>
+        <name>NextWaveInstanceId</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::NextWaveInstanceId</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="221" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a6bc6c7d94e6a4a70b80db9db1f38d9b0" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; class AAREnemyBase &gt;, float &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;class AAREnemyBase&gt;, float&gt; UARInvaderDirectorSubsystem::OffscreenDurationByEnemy</definition>
+        <argsstring></argsstring>
+        <name>OffscreenDurationByEnemy</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OffscreenDurationByEnemy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="271" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="271" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a503cddacb2c6d342071a60d196af6b49" prot="private" static="no" mutable="no">
+        <type>TSet&lt; FName &gt;</type>
+        <definition>TSet&lt;FName&gt; UARInvaderDirectorSubsystem::OneTimeWaveRowsUsed</definition>
+        <argsstring></argsstring>
+        <name>OneTimeWaveRowsUsed</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::OneTimeWaveRowsUsed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="244" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1aadb1a57929ad3b1e3ad8ba54dcea1fd1" prot="private" static="no" mutable="no">
+        <type>FARStageDefRow</type>
+        <definition>FARStageDefRow UARInvaderDirectorSubsystem::PendingStageDef</definition>
+        <argsstring></argsstring>
+        <name>PendingStageDef</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PendingStageDef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="235" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a3bbf2c4ce6b6e6047bc64b49b5c8f882" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::PendingStageRow</definition>
+        <argsstring></argsstring>
+        <name>PendingStageRow</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PendingStageRow</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="234" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a3933e9135e56f2a4c7c8ebf6376fec81" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;, uint8 &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;, uint8&gt; UARInvaderDirectorSubsystem::PlayerDeadCache</definition>
+        <argsstring></argsstring>
+        <name>PlayerDeadCache</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PlayerDeadCache</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="253" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a2ffa462d913c41c69ed47ee428eb9fc0" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;, uint8 &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;, uint8&gt; UARInvaderDirectorSubsystem::PlayerDownedCache</definition>
+        <argsstring></argsstring>
+        <name>PlayerDownedCache</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PlayerDownedCache</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="252" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ac2e8e8d08c9668b107b9eaee47be0fa5" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;, FPlayerStatusBinding &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;, FPlayerStatusBinding&gt; UARInvaderDirectorSubsystem::PlayerStatusBindings</definition>
+        <argsstring></argsstring>
+        <name>PlayerStatusBindings</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PlayerStatusBindings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="262" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ab116904e8c9901d45010f0b4a218afcc" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; AAREnemyBase &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;AAREnemyBase&gt; &gt; UARInvaderDirectorSubsystem::ReportedLeakedEnemies</definition>
+        <argsstring></argsstring>
+        <name>ReportedLeakedEnemies</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ReportedLeakedEnemies</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="246" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1aeca50b72c8fecb39db2267a97acab6a7" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::RewardEventId</definition>
+        <argsstring></argsstring>
+        <name>RewardEventId</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RewardEventId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="224" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1aa32bb01a55dcec9dd990a2c6fc5eba5a" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::RunElapsed</definition>
+        <argsstring></argsstring>
+        <name>RunElapsed</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RunElapsed</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="218" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a5f47e8b60032acbcad12e56fec80daf9" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::RunEndEventId</definition>
+        <argsstring></argsstring>
+        <name>RunEndEventId</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RunEndEventId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="225" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1accd6fd983bec7f0eb7379e1aa0e9627d" prot="private" static="no" mutable="no">
+        <type>FRandomStream</type>
+        <definition>FRandomStream UARInvaderDirectorSubsystem::RunRng</definition>
+        <argsstring></argsstring>
+        <name>RunRng</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RunRng</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="216" column="15" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a8c3f64d24e7be464ce188fabc371d4df" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::RunSeed</definition>
+        <argsstring></argsstring>
+        <name>RunSeed</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RunSeed</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="215" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a7e0ec3a6991fd68d5e451ab2f5f4f2aa" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::StageChoiceElapsed</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceElapsed</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StageChoiceElapsed</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="229" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ac4956990828abf362035d9a1babccdc6" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::StageElapsed</definition>
+        <argsstring></argsstring>
+        <name>StageElapsed</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StageElapsed</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="219" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a55cd0cca24bd978664b8f5ebb09d6cd4" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::StageSequence</definition>
+        <argsstring></argsstring>
+        <name>StageSequence</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StageSequence</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="223" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1af7e74d8ac56dd754587973befad7c878" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TObjectPtr&lt;UDataTable&gt; UARInvaderDirectorSubsystem::StageTable</definition>
+        <argsstring></argsstring>
+        <name>StageTable</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StageTable</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="266" column="12" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1ace823ccdd92ecd2dd36a540d008e04b1" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::StageTransitionRemaining</definition>
+        <argsstring></argsstring>
+        <name>StageTransitionRemaining</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StageTransitionRemaining</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="230" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a4d890a68fde4e7a5ebc5be6a54d49735" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::Threat</definition>
+        <argsstring></argsstring>
+        <name>Threat</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::Threat</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="217" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a680e91baab5da6b8e2d04420d1b415be" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::TimeSinceLastWaveSpawn</definition>
+        <argsstring></argsstring>
+        <name>TimeSinceLastWaveSpawn</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::TimeSinceLastWaveSpawn</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="220" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSubsystem_1a80f1195682d8955f25813376fe320b11" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TObjectPtr&lt;UDataTable&gt; UARInvaderDirectorSubsystem::WaveTable</definition>
+        <argsstring></argsstring>
+        <name>WaveTable</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::WaveTable</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="265" column="12" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="265" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a0775c511c1f329bbe208469aefc4b0e6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::AreAllPlayersDead</definition>
+        <argsstring>() const</argsstring>
+        <name>AreAllPlayersDead</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::AreAllPlayersDead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="94" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab38e642c366f3ca05f3b26037a862a4f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::AreAllPlayersDowned</definition>
+        <argsstring>() const</argsstring>
+        <name>AreAllPlayersDowned</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::AreAllPlayersDowned</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="91" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a330ca0f739c4aed71267c4bd97cbbc88" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="40" column="14" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="88" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab848dd34d1f4b8388d9df46bcb76369b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARInvaderDirectorSubsystem::DumpRuntimeState</definition>
+        <argsstring>() const</argsstring>
+        <name>DumpRuntimeState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::DumpRuntimeState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="97" column="9" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="486" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1adf821042eca6cba362b74f80a49041e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::ForceStage</definition>
+        <argsstring>(FName StageRowName)</argsstring>
+        <name>ForceStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ForceStage</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>StageRowName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="64" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="442" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ae4dba5a41cdf6e03639425d15f83b35a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::ForceThreat</definition>
+        <argsstring>(float NewThreat)</argsstring>
+        <name>ForceThreat</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ForceThreat</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>NewThreat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="61" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="435" bodyend="440"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ad8f48c44e7904c5c60fe4ca7281754ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::ForceWaveByRow</definition>
+        <argsstring>(FName WaveRow)</argsstring>
+        <name>ForceWaveByRow</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ForceWaveByRow</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>WaveRow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="55" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="373" bodyend="394"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ae584021fd9cd5714dfdb82f3a508d9c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::ForceWavePhase</definition>
+        <argsstring>(int32 WaveInstanceId, EARWavePhase NewPhase)</argsstring>
+        <name>ForceWavePhase</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ForceWavePhase</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>WaveInstanceId</declname>
+        </param>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>NewPhase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="58" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="396" bodyend="412"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1abd1c65ec555142b5d8d422688fefd489" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::GetDeadPlayerCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDeadPlayerCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetDeadPlayerCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="85" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1acec5ed75aad849fa2bfdb01d5c6697b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::GetDownedPlayerCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDownedPlayerCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetDownedPlayerCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="82" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ae0215d9cda404171cc82671f8861712c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::GetEvaluatedPlayerCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEvaluatedPlayerCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetEvaluatedPlayerCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="88" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab5fe23a4feff8b45d248a2bbeaf3beb3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARInvaderFlowState</type>
+        <definition>EARInvaderFlowState UARInvaderDirectorSubsystem::GetFlowState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFlowState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetFlowState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="70" column="21" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a1658c8e6bfb2940d52cbf6727f89f592" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARInvaderRunEndReason</type>
+        <definition>EARInvaderRunEndReason UARInvaderDirectorSubsystem::GetLastRunEndReason</definition>
+        <argsstring>() const</argsstring>
+        <name>GetLastRunEndReason</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetLastRunEndReason</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="73" column="24" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a4bd77ccb200577ebfed950631c46bbcd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>TStatId</type>
+        <definition>TStatId UARInvaderDirectorSubsystem::GetStatId</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetStatId</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetStatId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="43" column="17" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="100" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aaf8760a827cf745137113bd635604a0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::Initialize</definition>
+        <argsstring>(FSubsystemCollectionBase &amp;Collection) override</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::Initialize</qualifiedname>
+        <param>
+          <type>FSubsystemCollectionBase &amp;</type>
+          <declname>Collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="39" column="14" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="80" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a523cfd496240e501359b19f329ca5ca6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::IsPlayerDead</definition>
+        <argsstring>(const AARPlayerStateBase *PlayerState) const</argsstring>
+        <name>IsPlayerDead</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::IsPlayerDead</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="79" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="297" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a8be888ba055d1fef2e88344819d0bcb3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::IsPlayerDowned</definition>
+        <argsstring>(const AARPlayerStateBase *PlayerState) const</argsstring>
+        <name>IsPlayerDowned</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::IsPlayerDowned</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="76" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="283" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a9cefde6db40ed6a79326e159ddc57ea2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::IsRunActive</definition>
+        <argsstring>() const</argsstring>
+        <name>IsRunActive</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::IsRunActive</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="52" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab080b8af5b7426417f02aafbf9477b2e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::IsTickable</definition>
+        <argsstring>() const override</argsstring>
+        <name>IsTickable</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::IsTickable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="42" column="14" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="95" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1af625cbfa43f3879204a8164c452eb226" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::ReportEnemyLeaked</definition>
+        <argsstring>(AAREnemyBase *Enemy)</argsstring>
+        <name>ReportEnemyLeaked</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ReportEnemyLeaked</qualifiedname>
+        <param>
+          <type>AAREnemyBase *</type>
+          <declname>Enemy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="106" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="414" bodyend="433"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a64b184a159ee9a3ba270390ba2a9ea80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::StartInvaderRun</definition>
+        <argsstring>(int32 Seed)</argsstring>
+        <name>StartInvaderRun</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StartInvaderRun</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>Seed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="46" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="123" bodyend="213"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a81db852e693234a131d6e867362f84a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::StopInvaderRun</definition>
+        <argsstring>()</argsstring>
+        <name>StopInvaderRun</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StopInvaderRun</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="49" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="215" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a8fb9ac75768c9a54b531f92f40d7ca8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::SubmitStageChoice</definition>
+        <argsstring>(bool bChooseLeft)</argsstring>
+        <name>SubmitStageChoice</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::SubmitStageChoice</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bChooseLeft</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="67" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="467" bodyend="484"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1adb891d5a41b1d052e5df098c05ad87c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::Tick</definition>
+        <argsstring>(float DeltaTime) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="41" column="14" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="105" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a8fb660bb630879c3b64d5b0e10e6b2ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARInvaderDirectorSubsystem::UARInvaderDirectorSubsystem</definition>
+        <argsstring>()</argsstring>
+        <name>UARInvaderDirectorSubsystem</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::UARInvaderDirectorSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="36" column="1" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="76" bodyend="78"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a97d423651903f8f40894e083637d1c78" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::ApplyEnemyGameplayEffects</definition>
+        <argsstring>(class AAREnemyBase *Enemy, const FARWaveDefRow &amp;WaveDef, const FARWaveEnemySpawnDef &amp;SpawnDef)</argsstring>
+        <name>ApplyEnemyGameplayEffects</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ApplyEnemyGameplayEffects</qualifiedname>
+        <param>
+          <type>class AAREnemyBase *</type>
+          <declname>Enemy</declname>
+        </param>
+        <param>
+          <type>const FARWaveDefRow &amp;</type>
+          <declname>WaveDef</declname>
+        </param>
+        <param>
+          <type>const FARWaveEnemySpawnDef &amp;</type>
+          <declname>SpawnDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="187" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1392" bodyend="1435"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ad32d207276e65b08122f692821c21c93" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::AreAllPlayersDown</definition>
+        <argsstring>() const</argsstring>
+        <name>AreAllPlayersDown</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::AreAllPlayersDown</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="195" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1897" bodyend="1900"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aa64623422bc0946eefae29233ff3125d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::BuildStageChoiceOptions</definition>
+        <argsstring>(FName &amp;OutLeftRow, FARStageDefRow &amp;OutLeftDef, FName &amp;OutRightRow, FARStageDefRow &amp;OutRightDef)</argsstring>
+        <name>BuildStageChoiceOptions</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::BuildStageChoiceOptions</qualifiedname>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutLeftRow</declname>
+        </param>
+        <param>
+          <type>FARStageDefRow &amp;</type>
+          <declname>OutLeftDef</declname>
+        </param>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutRightRow</declname>
+        </param>
+        <param>
+          <type>FARStageDefRow &amp;</type>
+          <declname>OutRightDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="158" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2076" bodyend="2104"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a580e06c4340d9a0347cd09534e898cc7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::ClearPlayerStatusBindings</definition>
+        <argsstring>()</argsstring>
+        <name>ClearPlayerStatusBindings</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ClearPlayerStatusBindings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="164" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="946" bodyend="978"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1afd2a9c6f8d31f7707d38d340aac8343d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FVector</type>
+        <definition>FVector UARInvaderDirectorSubsystem::ComputeFormationTargetLocation</definition>
+        <argsstring>(const FARWaveEnemySpawnDef &amp;SpawnDef, bool bFlipX, bool bFlipY) const</argsstring>
+        <name>ComputeFormationTargetLocation</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ComputeFormationTargetLocation</qualifiedname>
+        <param>
+          <type>const FARWaveEnemySpawnDef &amp;</type>
+          <declname>SpawnDef</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFlipX</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFlipY</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="185" column="9" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1309" bodyend="1327"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a40adbd0409776d7da1c4baa58ac764d9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FVector</type>
+        <definition>FVector UARInvaderDirectorSubsystem::ComputeSpawnLocation</definition>
+        <argsstring>(const FARWaveEnemySpawnDef &amp;SpawnDef, int32 SpawnOrdinal, bool bFlipX, bool bFlipY) const</argsstring>
+        <name>ComputeSpawnLocation</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ComputeSpawnLocation</qualifiedname>
+        <param>
+          <type>const FARWaveEnemySpawnDef &amp;</type>
+          <declname>SpawnDef</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>SpawnOrdinal</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFlipX</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFlipY</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="186" column="9" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1329" bodyend="1390"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a6e3c9ae0a7ce0b2782ccb08459f8cca8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::DestroyManagedInvaderEnemies</definition>
+        <argsstring>()</argsstring>
+        <name>DestroyManagedInvaderEnemies</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::DestroyManagedInvaderEnemies</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="209" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="311" bodyend="371"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a4984bab31320e27e3a6128d88d7b5e69" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::DispatchStageReward</definition>
+        <argsstring>(const FName &amp;CompletedStageRow, const FARStageDefRow &amp;CompletedStageDef)</argsstring>
+        <name>DispatchStageReward</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::DispatchStageReward</qualifiedname>
+        <param>
+          <type>const FName &amp;</type>
+          <declname>CompletedStageRow</declname>
+        </param>
+        <param>
+          <type>const FARStageDefRow &amp;</type>
+          <declname>CompletedStageDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="157" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2066" bodyend="2074"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ae66a5f2400f5e63ed0a2689607f28d8c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::EnsureDataTables</definition>
+        <argsstring>()</argsstring>
+        <name>EnsureDataTables</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EnsureDataTables</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="191" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1773" bodyend="1845"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a1774335be4c3ed1c4966569d5949bddf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::EnterAwaitStageClear</definition>
+        <argsstring>()</argsstring>
+        <name>EnterAwaitStageClear</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EnterAwaitStageClear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="154" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2017" bodyend="2026"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a95ad06173e28869ecc5d0eb91e90c08c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::EnterStageChoice</definition>
+        <argsstring>()</argsstring>
+        <name>EnterStageChoice</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EnterStageChoice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="155" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2028" bodyend="2053"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a5decbb8b8503c426b6a1810ce497c55b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::EnterTransition</definition>
+        <argsstring>(FName ChosenStageRow, const FARStageDefRow &amp;ChosenStageDef)</argsstring>
+        <name>EnterTransition</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EnterTransition</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>ChosenStageRow</declname>
+        </param>
+        <param>
+          <type>const FARStageDefRow &amp;</type>
+          <declname>ChosenStageDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="156" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2055" bodyend="2064"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a90d12c89a8976163087353dcbaaed7ba" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::EvaluateLossConditions</definition>
+        <argsstring>()</argsstring>
+        <name>EvaluateLossConditions</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::EvaluateLossConditions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="152" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="887" bodyend="890"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aab47843c8eb47ee18b46a4767adb567d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::GetActivePlayerCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetActivePlayerCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetActivePlayerCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="194" column="7" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1877" bodyend="1895"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a39cd53a85a929d9216b7ff65a1a16ac3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::GetActiveProjectileCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetActiveProjectileCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetActiveProjectileCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="193" column="7" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1857" bodyend="1875"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aaea68a3925033ce2c96041bf1e7e675f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::GetAliveEnemyCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetAliveEnemyCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetAliveEnemyCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="192" column="7" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1847" bodyend="1855"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab2f5c306329e374e74f50fa111a7ff0a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARInvaderRuntimeStateComponent" kindref="compound">UARInvaderRuntimeStateComponent</ref> *</type>
+        <definition>UARInvaderRuntimeStateComponent * UARInvaderDirectorSubsystem::GetOrCreateRuntimeComponent</definition>
+        <argsstring>()</argsstring>
+        <name>GetOrCreateRuntimeComponent</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::GetOrCreateRuntimeComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="190" column="33" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1737" bodyend="1771"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1af089af5fd203ca43fa5c7240fefed860" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleCaptureBounds</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleCaptureBounds</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleCaptureBounds</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="208" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2327" bodyend="2483"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a78b6bd10956bae046283613b44010548" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleChooseStage</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleChooseStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleChooseStage</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="207" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2312" bodyend="2325"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab3ae7d99de07e2c35c3010e50981849d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleDumpState</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleDumpState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleDumpState</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="204" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2286" bodyend="2291"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a0595aa5160774bec3293e10ef1810daf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleForcePhase</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleForcePhase</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleForcePhase</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="201" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2246" bodyend="2270"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a06e4b382f0149c55d918be766cb95e5d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleForceStage</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleForceStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleForceStage</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="203" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2280" bodyend="2284"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a250e59fc1172220a3382667e2bcec3b3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleForceThreat</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleForceThreat</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleForceThreat</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="202" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2272" bodyend="2278"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aa14b90bc7e1ec7c2bee3e761562b72ee" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleForceWave</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleForceWave</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleForceWave</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="200" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2240" bodyend="2244"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1adf1a327ae3d082c85154a65aa4f7dbf0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleStart</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleStart</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleStart</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="205" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2293" bodyend="2303"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1afa86bbb0d443ec2ea6d0b2b0fccafe31" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleConsoleStop</definition>
+        <argsstring>(const TArray&lt; FString &gt; &amp;Args, UWorld *InWorld)</argsstring>
+        <name>HandleConsoleStop</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleConsoleStop</qualifiedname>
+        <param>
+          <type>const TArray&lt; FString &gt; &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>UWorld *</type>
+          <declname>InWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="206" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2305" bodyend="2310"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a959959b0a3fe1d103ad28e1367467143" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandlePlayerDeadSignal</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewDead, bool bOldDead)</argsstring>
+        <name>HandlePlayerDeadSignal</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandlePlayerDeadSignal</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>SourcePlayerSlot</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bNewDead</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bOldDead</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="176" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="996" bodyend="999"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a25e6b9936357eeea34bb73327c397691" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandlePlayerDownedSignal</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewDowned, bool bOldDowned)</argsstring>
+        <name>HandlePlayerDownedSignal</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandlePlayerDownedSignal</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>SourcePlayerSlot</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bNewDowned</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bOldDowned</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="173" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="991" bodyend="994"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ae1c11e815739d6391db0e933e2b5cbc8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandlePlayerHealthSignal</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, EARPlayerSlot SourcePlayerSlot, float NewValue, float OldValue)</argsstring>
+        <name>HandlePlayerHealthSignal</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandlePlayerHealthSignal</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>SourcePlayerSlot</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="170" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="986" bodyend="989"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a6c1c2704073bd007925a45500c6055bf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleTrackedPlayersChanged</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="167" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="980" bodyend="984"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aad041a2ef343cf540f290b63639f9ec1" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::IsInsideEnteredScreenBounds</definition>
+        <argsstring>(const FVector &amp;Location) const</argsstring>
+        <name>IsInsideEnteredScreenBounds</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::IsInsideEnteredScreenBounds</qualifiedname>
+        <param>
+          <type>const FVector &amp;</type>
+          <declname>Location</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="189" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1715" bodyend="1735"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aa3c7cae06d288b68954525845043f396" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::IsInsideGameplayBounds</definition>
+        <argsstring>(const FVector &amp;Location) const</argsstring>
+        <name>IsInsideGameplayBounds</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::IsInsideGameplayBounds</qualifiedname>
+        <param>
+          <type>const FVector &amp;</type>
+          <declname>Location</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="188" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1706" bodyend="1713"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1aafbbae955d22bfbd8e2dc76748cb85a0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::PreloadEnemyClass</definition>
+        <argsstring>(const TSoftClassPtr&lt; AAREnemyBase &gt; &amp;EnemyClassRef)</argsstring>
+        <name>PreloadEnemyClass</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PreloadEnemyClass</qualifiedname>
+        <param>
+          <type>const TSoftClassPtr&lt; AAREnemyBase &gt; &amp;</type>
+          <declname>EnemyClassRef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="184" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1591" bodyend="1609"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a80d1f931a5b2ac96dcaad533326b5ad0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::PreloadEnemyClassesForWaveCandidates</definition>
+        <argsstring>()</argsstring>
+        <name>PreloadEnemyClassesForWaveCandidates</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PreloadEnemyClassesForWaveCandidates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="183" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1611" bodyend="1704"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a1822e5d58f5ca24e771511cbe9c79ada" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::PushSnapshotToGameState</definition>
+        <argsstring>()</argsstring>
+        <name>PushSnapshotToGameState</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::PushSnapshotToGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="153" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1001" bodyend="1054"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a9d571652745e164e40b4c80b5c3c55fc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings</definition>
+        <argsstring>()</argsstring>
+        <name>RebuildPlayerStatusBindings</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="163" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="892" bodyend="944"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ad7de6c3f76143338f4865218574b6fd1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks</definition>
+        <argsstring>()</argsstring>
+        <name>RecountAliveAndHandleLeaks</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="151" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="828" bodyend="885"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1addb4e073d9ded002924bbeab0470bc19" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::RefreshPlayerStatusSignals</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshPlayerStatusSignals</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RefreshPlayerStatusSignals</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="162" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1902" bodyend="2006"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1abd218dbf216163f0b868b0d514c2a519" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::RegisterConsoleCommands</definition>
+        <argsstring>()</argsstring>
+        <name>RegisterConsoleCommands</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::RegisterConsoleCommands</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="198" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2142" bodyend="2203"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ad80038c30319926dbc68f28e8c7f6095" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag</definition>
+        <argsstring>(FGameplayTag EnemyIdentifierTag, FARInvaderEnemyDefRow &amp;OutDef, FString &amp;OutError)</argsstring>
+        <name>ResolveEnemyDefinitionByTag</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EnemyIdentifierTag</declname>
+        </param>
+        <param>
+          <type>FARInvaderEnemyDefRow &amp;</type>
+          <declname>OutDef</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="182" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1437" bodyend="1589"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1add996c3ff1dcf7b6bad4ade5a60e975c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::SelectStage</definition>
+        <argsstring>(FName &amp;OutStageRow, FARStageDefRow &amp;OutStageDef, const TSet&lt; FName &gt; *ExcludedRows=nullptr)</argsstring>
+        <name>SelectStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::SelectStage</qualifiedname>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutStageRow</declname>
+        </param>
+        <param>
+          <type>FARStageDefRow &amp;</type>
+          <declname>OutStageDef</declname>
+        </param>
+        <param>
+          <type>const TSet&lt; FName &gt; *</type>
+          <declname>ExcludedRows</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="181" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1246" bodyend="1307"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a24bdd692f9a9551a6308e32a7425c4fe" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::SelectWave</definition>
+        <argsstring>(FName &amp;OutWaveRow, FARWaveDefRow &amp;OutWaveDef, bool &amp;bOutColorSwap)</argsstring>
+        <name>SelectWave</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::SelectWave</qualifiedname>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutWaveRow</declname>
+        </param>
+        <param>
+          <type>FARWaveDefRow &amp;</type>
+          <declname>OutWaveDef</declname>
+        </param>
+        <param>
+          <type>bool &amp;</type>
+          <declname>bOutColorSwap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="180" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1143" bodyend="1244"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ae3110c45d491c535080244ab314cbf0f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::SetCurrentStage</definition>
+        <argsstring>(FName StageRowName, const FARStageDefRow &amp;StageDef)</argsstring>
+        <name>SetCurrentStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::SetCurrentStage</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>StageRowName</declname>
+        </param>
+        <param>
+          <type>const FARStageDefRow &amp;</type>
+          <declname>StageDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="196" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2008" bodyend="2015"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1af4325bdf29af24add857cef2a9b9ff32" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::SpawnWaveFromDefinition</definition>
+        <argsstring>(FName WaveRowName, const FARWaveDefRow &amp;WaveDef, bool bColorSwap)</argsstring>
+        <name>SpawnWaveFromDefinition</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::SpawnWaveFromDefinition</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>WaveRowName</declname>
+        </param>
+        <param>
+          <type>const FARWaveDefRow &amp;</type>
+          <declname>WaveDef</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bColorSwap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="178" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1056" bodyend="1118"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a834a356835aba11d967e5a328e9c092f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::SpawnWavesIfNeeded</definition>
+        <argsstring>()</argsstring>
+        <name>SpawnWavesIfNeeded</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::SpawnWavesIfNeeded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="150" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="730" bodyend="826"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a59934c956515668d6327a5fe888c392d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::StopInvaderRunWithReason</definition>
+        <argsstring>(EARInvaderRunEndReason EndReason)</argsstring>
+        <name>StopInvaderRunWithReason</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::StopInvaderRunWithReason</qualifiedname>
+        <param>
+          <type>EARInvaderRunEndReason</type>
+          <declname>EndReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="161" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="220" bodyend="281"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1abd18ff97c709c9c5abd761c162b54082" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::TickDirector</definition>
+        <argsstring>(float DeltaTime)</argsstring>
+        <name>TickDirector</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::TickDirector</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="146" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="523" bodyend="555"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a59bd828d5ab0433494b14bd6b7cc13cc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::TickStageChoice</definition>
+        <argsstring>(float DeltaTime)</argsstring>
+        <name>TickStageChoice</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::TickStageChoice</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="159" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2106" bodyend="2116"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a0e459055a485ab398cddc2baeef35d5d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::TickTransition</definition>
+        <argsstring>(float DeltaTime)</argsstring>
+        <name>TickTransition</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::TickTransition</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="160" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2118" bodyend="2140"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a6a5bfd450fe2f0d64c10c522b1efac24" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::TransitionWavePhase</definition>
+        <argsstring>(FWaveRuntimeInternal &amp;Wave, EARWavePhase NewPhase)</argsstring>
+        <name>TransitionWavePhase</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::TransitionWavePhase</qualifiedname>
+        <param>
+          <type>FWaveRuntimeInternal &amp;</type>
+          <declname>Wave</declname>
+        </param>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>NewPhase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="179" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="1120" bodyend="1141"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1acfe84ad7ba2da4b6396490c5715eae84" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::UnregisterConsoleCommands</definition>
+        <argsstring>()</argsstring>
+        <name>UnregisterConsoleCommands</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::UnregisterConsoleCommands</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="199" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="2205" bodyend="2238"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1a93f3f05d13eacc1a74d155903145c8d0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::UpdateStage</definition>
+        <argsstring>(float DeltaTime)</argsstring>
+        <name>UpdateStage</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::UpdateStage</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="148" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="564" bodyend="598"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ad66306e53fd554d598a0789b568d3106" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::UpdateThreat</definition>
+        <argsstring>(float DeltaTime)</argsstring>
+        <name>UpdateThreat</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::UpdateThreat</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="147" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="557" bodyend="562"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderDirectorSubsystem_1ab9024b83a5947215b3ecfee098d1e9b7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderDirectorSubsystem::UpdateWaves</definition>
+        <argsstring>(float DeltaTime)</argsstring>
+        <name>UpdateWaves</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::UpdateWaves</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="149" column="6" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="600" bodyend="728"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>World subsystem that orchestrates Invader runs: wave spawning, stage progression, leaks/death tracking, and console debug hooks. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="31" column="1" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="32" bodyend="282"/>
+    <listofallmembers>
+      <member refid="classUARInvaderDirectorSubsystem_1a93f2828e099b86ef4b9a557edd9359f8" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ActiveWaves</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a97d423651903f8f40894e083637d1c78" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ApplyEnemyGameplayEffects</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a0775c511c1f329bbe208469aefc4b0e6" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>AreAllPlayersDead</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ad32d207276e65b08122f692821c21c93" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>AreAllPlayersDown</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab38e642c366f3ca05f3b26037a862a4f" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>AreAllPlayersDowned</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1abb31e4afaf2401f8554b9495f5692cf4" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>bAllPlayersDeadCached</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a11c19dcd71ec5f0a5becfe7fe9a056bc" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>bAllPlayersDownCached</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1abcb80208cc9459a23441ffecbeddcf23" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>BoundTrackedPlayersGameState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab7bf61f6bd21c93cd18adb1095996cfa" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>bRunActive</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aa64623422bc0946eefae29233ff3125d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>BuildStageChoiceOptions</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9adc09536143653cc10febf8d3a3c6f7" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>bWarnedMissingRuntimeComponent</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a1f724b933d7fc96dc5a24490ec22281c" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ChoiceLeftStageDef</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a124d227acca826a33d01512f486b5437" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ChoiceLeftStageRow</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9492f4ccc55fc94806d7a887bd928bf9" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ChoiceRightStageDef</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a8d2c7a13b44fc8dca2ed0f3a843e2952" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ChoiceRightStageRow</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a580e06c4340d9a0347cd09534e898cc7" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ClearPlayerStatusBindings</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a7dd454654e67c156f78253d62e57c8a6" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdCaptureBounds</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9e487b0d0090a6681280a49daac49a91" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdChooseStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a6bebe3b6d555d12774f382c7fd148e73" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdDumpState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a3dd8d8ba39d6174603d9dac5f72449c3" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdForcePhase</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a603d24eae660fa52e0eb16a720861478" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdForceStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ad300b98d37ee88919e98e8db1ddb01b8" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdForceThreat</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aca3af4c5f904a11bca9179873a2c8aaf" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdForceWave</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae37a481049ff9833609071f879a5a954" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdStart</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a444975d8a08775578a61e51617918845" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CmdStop</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1afd2a9c6f8d31f7707d38d340aac8343d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ComputeFormationTargetLocation</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a40adbd0409776d7da1c4baa58ac764d9" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ComputeSpawnLocation</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aae1fb68cd16681c9b887f94b411ce5de" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CurrentStageDef</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab1316619497d0f03dc5f1965c4837c5d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>CurrentStageRow</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a27cd83d3221b9fd8dc7c9d0ce01436d4" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>DeadPlayerCountCached</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a330ca0f739c4aed71267c4bd97cbbc88" prot="public" virt="virtual"><scope>UARInvaderDirectorSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a6e3c9ae0a7ce0b2782ccb08459f8cca8" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>DestroyManagedInvaderEnemies</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a4984bab31320e27e3a6128d88d7b5e69" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>DispatchStageReward</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a56a9944b130b600a679f1bb4f42a32d2" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>DownedPlayerCountCached</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab848dd34d1f4b8388d9df46bcb76369b" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>DumpRuntimeState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aa62f3d39b8603bb7bd41566ab2104add" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EnemyClassPreloadHandles</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a03da2758720026dcd608f1c3a55bcc61" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EnemyDefinitionCache</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae66a5f2400f5e63ed0a2689607f28d8c" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EnsureDataTables</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a1774335be4c3ed1c4966569d5949bddf" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EnterAwaitStageClear</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a95ad06173e28869ecc5d0eb91e90c08c" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EnterStageChoice</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a5decbb8b8503c426b6a1810ce497c55b" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EnterTransition</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a739ce505632aef9cd9237de8f3165398" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EvaluatedPlayerCountCached</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a90d12c89a8976163087353dcbaaed7ba" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>EvaluateLossConditions</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a3d8396db6fb86165454f2e65f727340c" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>FlowState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1adf821042eca6cba362b74f80a49041e5" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ForceStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae4dba5a41cdf6e03639425d15f83b35a" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ForceThreat</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ad8f48c44e7904c5c60fe4ca7281754ab" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ForceWaveByRow</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae584021fd9cd5714dfdb82f3a508d9c4" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ForceWavePhase</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aab47843c8eb47ee18b46a4767adb567d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetActivePlayerCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a39cd53a85a929d9216b7ff65a1a16ac3" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetActiveProjectileCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aaea68a3925033ce2c96041bf1e7e675f" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetAliveEnemyCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1abd1c65ec555142b5d8d422688fefd489" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetDeadPlayerCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1acec5ed75aad849fa2bfdb01d5c6697b2" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetDownedPlayerCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae0215d9cda404171cc82671f8861712c" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetEvaluatedPlayerCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab5fe23a4feff8b45d248a2bbeaf3beb3" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetFlowState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a1658c8e6bfb2940d52cbf6727f89f592" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetLastRunEndReason</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab2f5c306329e374e74f50fa111a7ff0a" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetOrCreateRuntimeComponent</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a4bd77ccb200577ebfed950631c46bbcd" prot="public" virt="virtual"><scope>UARInvaderDirectorSubsystem</scope><name>GetStatId</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af089af5fd203ca43fa5c7240fefed860" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleCaptureBounds</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a78b6bd10956bae046283613b44010548" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleChooseStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab3ae7d99de07e2c35c3010e50981849d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleDumpState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a0595aa5160774bec3293e10ef1810daf" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleForcePhase</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a06e4b382f0149c55d918be766cb95e5d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleForceStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a250e59fc1172220a3382667e2bcec3b3" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleForceThreat</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aa14b90bc7e1ec7c2bee3e761562b72ee" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleForceWave</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1adf1a327ae3d082c85154a65aa4f7dbf0" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleStart</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1afa86bbb0d443ec2ea6d0b2b0fccafe31" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleConsoleStop</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a959959b0a3fe1d103ad28e1367467143" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandlePlayerDeadSignal</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a25e6b9936357eeea34bb73327c397691" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandlePlayerDownedSignal</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae1c11e815739d6391db0e933e2b5cbc8" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandlePlayerHealthSignal</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a6c1c2704073bd007925a45500c6055bf" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>HandleTrackedPlayersChanged</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aaf8760a827cf745137113bd635604a0a" prot="public" virt="virtual"><scope>UARInvaderDirectorSubsystem</scope><name>Initialize</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aad041a2ef343cf540f290b63639f9ec1" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>IsInsideEnteredScreenBounds</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aa3c7cae06d288b68954525845043f396" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>IsInsideGameplayBounds</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a523cfd496240e501359b19f329ca5ca6" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>IsPlayerDead</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a8be888ba055d1fef2e88344819d0bcb3" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>IsPlayerDowned</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9cefde6db40ed6a79326e159ddc57ea2" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>IsRunActive</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab080b8af5b7426417f02aafbf9477b2e" prot="public" virt="virtual"><scope>UARInvaderDirectorSubsystem</scope><name>IsTickable</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a437ad5595aa811507a77917ddf62caf4" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>LastRewardDescriptor</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9dde1022e35a5b42e8d6d14a86ce9640" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>LastRewardStageRow</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9b1847df044c65739bcbcc5f41088d73" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>LastRunEndReason</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ace67647099fafea7f8c8d35d4f60b9d6" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>LastWaveRowName</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a8fa73ab6b6eb2852a45831bae1f83ddb" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>LeakCount</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af7cdf3e7322ea3e896677d43ddf45966" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>NextWaveInstanceId</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a6bc6c7d94e6a4a70b80db9db1f38d9b0" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OffscreenDurationByEnemy</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1adc63ce18a0ef491151bb11f19af5235a" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OnAllPlayersDeadChanged</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af08f0c0eaeb8f1845c83017cbbe360c9" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OnAllPlayersDownChanged</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9b7cf613d93898ef4f8f22530eadfc26" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OnEnemyLeaked</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a503cddacb2c6d342071a60d196af6b49" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OneTimeWaveRowsUsed</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ac26857263a46816bf259db9c6b39c0ef" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OnPlayerDeadChanged</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a32d3b98e5de3a30e64438cc881ddc3e7" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OnPlayerDownedChanged</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af6482a26ecf127d50f803be22a5be203" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>OnRunEnded</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aadb1a57929ad3b1e3ad8ba54dcea1fd1" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PendingStageDef</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a3bbf2c4ce6b6e6047bc64b49b5c8f882" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PendingStageRow</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a3933e9135e56f2a4c7c8ebf6376fec81" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PlayerDeadCache</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a2ffa462d913c41c69ed47ee428eb9fc0" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PlayerDownedCache</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ac2e8e8d08c9668b107b9eaee47be0fa5" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PlayerStatusBindings</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aafbbae955d22bfbd8e2dc76748cb85a0" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PreloadEnemyClass</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a80d1f931a5b2ac96dcaad533326b5ad0" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PreloadEnemyClassesForWaveCandidates</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a1822e5d58f5ca24e771511cbe9c79ada" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>PushSnapshotToGameState</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a9d571652745e164e40b4c80b5c3c55fc" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RebuildPlayerStatusBindings</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ad7de6c3f76143338f4865218574b6fd1" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RecountAliveAndHandleLeaks</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1addb4e073d9ded002924bbeab0470bc19" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RefreshPlayerStatusSignals</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1abd218dbf216163f0b868b0d514c2a519" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RegisterConsoleCommands</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab116904e8c9901d45010f0b4a218afcc" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ReportedLeakedEnemies</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af625cbfa43f3879204a8164c452eb226" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ReportEnemyLeaked</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ad80038c30319926dbc68f28e8c7f6095" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>ResolveEnemyDefinitionByTag</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aeca50b72c8fecb39db2267a97acab6a7" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RewardEventId</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1aa32bb01a55dcec9dd990a2c6fc5eba5a" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RunElapsed</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a5f47e8b60032acbcad12e56fec80daf9" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RunEndEventId</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1accd6fd983bec7f0eb7379e1aa0e9627d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RunRng</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a8c3f64d24e7be464ce188fabc371d4df" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>RunSeed</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1add996c3ff1dcf7b6bad4ade5a60e975c" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>SelectStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a24bdd692f9a9551a6308e32a7425c4fe" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>SelectWave</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ae3110c45d491c535080244ab314cbf0f" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>SetCurrentStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af4325bdf29af24add857cef2a9b9ff32" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>SpawnWaveFromDefinition</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a834a356835aba11d967e5a328e9c092f" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>SpawnWavesIfNeeded</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a7e0ec3a6991fd68d5e451ab2f5f4f2aa" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StageChoiceElapsed</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ac4956990828abf362035d9a1babccdc6" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StageElapsed</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a55cd0cca24bd978664b8f5ebb09d6cd4" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StageSequence</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1af7e74d8ac56dd754587973befad7c878" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StageTable</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ace823ccdd92ecd2dd36a540d008e04b1" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StageTransitionRemaining</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a64b184a159ee9a3ba270390ba2a9ea80" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StartInvaderRun</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a81db852e693234a131d6e867362f84a7" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StopInvaderRun</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a59934c956515668d6327a5fe888c392d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>StopInvaderRunWithReason</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a8fb9ac75768c9a54b531f92f40d7ca8e" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>SubmitStageChoice</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a4d890a68fde4e7a5ebc5be6a54d49735" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>Threat</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1adb891d5a41b1d052e5df098c05ad87c3" prot="public" virt="virtual"><scope>UARInvaderDirectorSubsystem</scope><name>Tick</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1abd18ff97c709c9c5abd761c162b54082" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>TickDirector</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a59bd828d5ab0433494b14bd6b7cc13cc" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>TickStageChoice</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a0e459055a485ab398cddc2baeef35d5d" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>TickTransition</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a680e91baab5da6b8e2d04420d1b415be" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>TimeSinceLastWaveSpawn</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a6a5bfd450fe2f0d64c10c522b1efac24" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>TransitionWavePhase</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a8fb660bb630879c3b64d5b0e10e6b2ce" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>UARInvaderDirectorSubsystem</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1acfe84ad7ba2da4b6396490c5715eae84" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>UnregisterConsoleCommands</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a93f3f05d13eacc1a74d155903145c8d0" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>UpdateStage</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ad66306e53fd554d598a0789b568d3106" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>UpdateThreat</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1ab9024b83a5947215b3ecfee098d1e9b7" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>UpdateWaves</name></member>
+      <member refid="classUARInvaderDirectorSubsystem_1a80f1195682d8955f25813376fe320b11" prot="private" virt="non-virtual"><scope>UARInvaderDirectorSubsystem</scope><name>WaveTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

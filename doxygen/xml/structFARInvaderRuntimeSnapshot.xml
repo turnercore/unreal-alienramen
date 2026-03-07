@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderRuntimeSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderRuntimeSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1afaa746609fc7c3f269b3c48cabbd3dd6" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARWaveInstanceState &gt;</type>
+        <definition>TArray&lt;FARWaveInstanceState&gt; FARInvaderRuntimeSnapshot::ActiveWaves</definition>
+        <argsstring></argsstring>
+        <name>ActiveWaves</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::ActiveWaves</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="371" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="371" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1af55f1dc69d7d65ebe4112e60dd3f302c" prot="public" static="no" mutable="no">
+        <type>EARInvaderFlowState</type>
+        <definition>EARInvaderFlowState FARInvaderRuntimeSnapshot::FlowState</definition>
+        <argsstring></argsstring>
+        <name>FlowState</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::FlowState</qualifiedname>
+        <initializer>= EARInvaderFlowState::Stopped</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="311" column="21" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a79f3c08456da841311ce5f0b347b96c2" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARInvaderRuntimeSnapshot::LastRewardDescriptor</definition>
+        <argsstring></argsstring>
+        <name>LastRewardDescriptor</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::LastRewardDescriptor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="362" column="9" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="362" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a3dbc6ed9a13f62566c3028c78b275742" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARInvaderRuntimeSnapshot::LastRewardStageRowName</definition>
+        <argsstring></argsstring>
+        <name>LastRewardStageRowName</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::LastRewardStageRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="359" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="359" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1aa4cf5c8667f3813c8285f3cab1812cd7" prot="public" static="no" mutable="no">
+        <type>EARInvaderRunEndReason</type>
+        <definition>EARInvaderRunEndReason FARInvaderRuntimeSnapshot::LastRunEndReason</definition>
+        <argsstring></argsstring>
+        <name>LastRunEndReason</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::LastRunEndReason</qualifiedname>
+        <initializer>= EARInvaderRunEndReason::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="356" column="24" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a5407ffcf51049117040c4bd040eeb041" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::LeakCount</definition>
+        <argsstring></argsstring>
+        <name>LeakCount</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::LeakCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="344" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="344" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1ac0f6715bae5de4784c28d5d06c2c56ac" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::RewardEventId</definition>
+        <argsstring></argsstring>
+        <name>RewardEventId</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::RewardEventId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="350" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="350" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a035f95913ef44ac0fea1e6abbd833fc5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderRuntimeSnapshot::RunElapsedTime</definition>
+        <argsstring></argsstring>
+        <name>RunElapsedTime</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::RunElapsedTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="317" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a59f62ae4409b270aec3df0df03d8e734" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::RunEndEventId</definition>
+        <argsstring></argsstring>
+        <name>RunEndEventId</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::RunEndEventId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="353" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1aa0ca6a58c13ad8e7f120e5e3cb524e61" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::Seed</definition>
+        <argsstring></argsstring>
+        <name>Seed</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::Seed</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="347" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="347" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a685c8f3d498c85c1fcd2fe55e48050c9" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::SoftCapActiveProjectiles</definition>
+        <argsstring></argsstring>
+        <name>SoftCapActiveProjectiles</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::SoftCapActiveProjectiles</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="368" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a6c9f5458b58af13c737f005adc3bbfa8" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::SoftCapAliveEnemies</definition>
+        <argsstring></argsstring>
+        <name>SoftCapAliveEnemies</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::SoftCapAliveEnemies</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="365" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="365" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a836ac53d225aea0e8d8d930300a8545e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderRuntimeSnapshot::StageChoiceElapsedTime</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceElapsedTime</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageChoiceElapsedTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="338" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="338" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1af597df040703a5b65e2502aa86afc385" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARInvaderRuntimeSnapshot::StageChoiceLeftReward</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceLeftReward</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageChoiceLeftReward</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="332" column="9" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="332" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1aa1af3eafbd3769bf5f509246621046c4" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARInvaderRuntimeSnapshot::StageChoiceLeftRowName</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceLeftRowName</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageChoiceLeftRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="326" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a29ad3ce2cb1548b1754dea3fe78b6459" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARInvaderRuntimeSnapshot::StageChoiceRightReward</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceRightReward</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageChoiceRightReward</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="335" column="9" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1af9d95c5055a68167a7c6bce44914677a" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARInvaderRuntimeSnapshot::StageChoiceRightRowName</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceRightRowName</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageChoiceRightRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="329" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="329" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a794ff55cdc6b4dcfae01091cc9f6aafd" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderRuntimeSnapshot::StageElapsedTime</definition>
+        <argsstring></argsstring>
+        <name>StageElapsedTime</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageElapsedTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="323" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="323" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1adbe0f79dec4b479748481d1b7a94f048" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARInvaderRuntimeSnapshot::StageRowName</definition>
+        <argsstring></argsstring>
+        <name>StageRowName</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="320" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="320" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1a44125484b74bfabe0fc7ed06fb5e5ee7" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderRuntimeSnapshot::StageSequence</definition>
+        <argsstring></argsstring>
+        <name>StageSequence</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::StageSequence</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="341" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="341" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderRuntimeSnapshot_1ab734a7449a568c01c21ba74d903b90e8" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderRuntimeSnapshot::Threat</definition>
+        <argsstring></argsstring>
+        <name>Threat</name>
+        <qualifiedname>FARInvaderRuntimeSnapshot::Threat</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="314" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="314" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="306" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="307" bodyend="372"/>
+    <listofallmembers>
+      <member refid="structFARInvaderRuntimeSnapshot_1afaa746609fc7c3f269b3c48cabbd3dd6" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>ActiveWaves</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1af55f1dc69d7d65ebe4112e60dd3f302c" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>FlowState</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a79f3c08456da841311ce5f0b347b96c2" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>LastRewardDescriptor</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a3dbc6ed9a13f62566c3028c78b275742" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>LastRewardStageRowName</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1aa4cf5c8667f3813c8285f3cab1812cd7" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>LastRunEndReason</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a5407ffcf51049117040c4bd040eeb041" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>LeakCount</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1ac0f6715bae5de4784c28d5d06c2c56ac" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>RewardEventId</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a035f95913ef44ac0fea1e6abbd833fc5" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>RunElapsedTime</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a59f62ae4409b270aec3df0df03d8e734" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>RunEndEventId</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1aa0ca6a58c13ad8e7f120e5e3cb524e61" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>Seed</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a685c8f3d498c85c1fcd2fe55e48050c9" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>SoftCapActiveProjectiles</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a6c9f5458b58af13c737f005adc3bbfa8" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>SoftCapAliveEnemies</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a836ac53d225aea0e8d8d930300a8545e" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageChoiceElapsedTime</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1af597df040703a5b65e2502aa86afc385" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageChoiceLeftReward</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1aa1af3eafbd3769bf5f509246621046c4" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageChoiceLeftRowName</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a29ad3ce2cb1548b1754dea3fe78b6459" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageChoiceRightReward</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1af9d95c5055a68167a7c6bce44914677a" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageChoiceRightRowName</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a794ff55cdc6b4dcfae01091cc9f6aafd" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageElapsedTime</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1adbe0f79dec4b479748481d1b7a94f048" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageRowName</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1a44125484b74bfabe0fc7ed06fb5e5ee7" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>StageSequence</name></member>
+      <member refid="structFARInvaderRuntimeSnapshot_1ab734a7449a568c01c21ba74d903b90e8" prot="public" virt="non-virtual"><scope>FARInvaderRuntimeSnapshot</scope><name>Threat</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

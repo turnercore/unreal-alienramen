@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structAREnemyBaseInternal_1_1FEffectEntryKey" kind="struct" language="C++" prot="public">
+    <compoundname>AREnemyBaseInternal::FEffectEntryKey</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structAREnemyBaseInternal_1_1FEffectEntryKey_1a508db7b9a83f369ebd2cb5fcb9c56a8d" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; UGameplayEffect &gt;</type>
+        <definition>TSubclassOf&lt;UGameplayEffect&gt; AREnemyBaseInternal::FEffectEntryKey::EffectClass</definition>
+        <argsstring></argsstring>
+        <name>EffectClass</name>
+        <qualifiedname>AREnemyBaseInternal::FEffectEntryKey::EffectClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="81" column="13" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAREnemyBaseInternal_1_1FEffectEntryKey_1a2bd647d4869ce853684c2652cffd76d1" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AREnemyBaseInternal::FEffectEntryKey::Level</definition>
+        <argsstring></argsstring>
+        <name>Level</name>
+        <qualifiedname>AREnemyBaseInternal::FEffectEntryKey::Level</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="82" column="7" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="structAREnemyBaseInternal_1_1FEffectEntryKey_1a3b09307e8c8845241e7e79ed11d5dda0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32</type>
+        <definition>uint32 GetTypeHash</definition>
+        <argsstring>(const FEffectEntryKey &amp;Key)</argsstring>
+        <name>GetTypeHash</name>
+        <qualifiedname>AREnemyBaseInternal::FEffectEntryKey::GetTypeHash</qualifiedname>
+        <param>
+          <type>const FEffectEntryKey &amp;</type>
+          <declname>Key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="84" column="15" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="84" bodyend="87"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structAREnemyBaseInternal_1_1FEffectEntryKey_1aa3f86b7bacfc09248890c4a39d2f6d9f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AREnemyBaseInternal::FEffectEntryKey::operator==</definition>
+        <argsstring>(const FEffectEntryKey &amp;Other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>AREnemyBaseInternal::FEffectEntryKey::operator==</qualifiedname>
+        <param>
+          <type>const FEffectEntryKey &amp;</type>
+          <declname>Other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="89" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="89" bodyend="92"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/AREnemyBase.cpp" line="79" column="1" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="80" bodyend="93"/>
+    <listofallmembers>
+      <member refid="structAREnemyBaseInternal_1_1FEffectEntryKey_1a508db7b9a83f369ebd2cb5fcb9c56a8d" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FEffectEntryKey</scope><name>EffectClass</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FEffectEntryKey_1a3b09307e8c8845241e7e79ed11d5dda0" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FEffectEntryKey</scope><name>GetTypeHash</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FEffectEntryKey_1a2bd647d4869ce853684c2652cffd76d1" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FEffectEntryKey</scope><name>Level</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FEffectEntryKey_1aa3f86b7bacfc09248890c4a39d2f6d9f" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FEffectEntryKey</scope><name>operator==</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

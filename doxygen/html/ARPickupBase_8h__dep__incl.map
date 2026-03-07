@@ -1,0 +1,15 @@
+<map id="ARPickupBase.h" name="ARPickupBase.h">
+<area shape="rect" id="Node000001" title="ARPickupBase header for Alien Ramen." alt="" coords="447,5,574,31"/>
+<area shape="rect" id="Node000002" href="$ARInvaderDropBase_8h.html" title="Replicated base actor for invader currency drops." alt="" coords="341,79,505,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="488,41,439,81,435,76,484,37"/>
+<area shape="rect" id="Node000007" href="$ARPickupBase_8cpp_source.html" title=" " alt="" coords="529,79,671,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="537,37,587,76,584,81,534,41"/>
+<area shape="rect" id="Node000003" href="$ARInvaderDropBase_8cpp_source.html" title=" " alt="" coords="5,152,184,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="357,109,148,154,147,149,356,104"/>
+<area shape="rect" id="Node000004" href="$ARInvaderGameState_8cpp_source.html" title=" " alt="" coords="208,152,397,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="393,113,324,154,321,149,390,109"/>
+<area shape="rect" id="Node000005" href="$ARPickupCollectorComponent_8cpp_source.html" title=" " alt="" coords="421,152,664,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="455,109,524,149,522,154,453,113"/>
+<area shape="rect" id="Node000006" href="$ARPlayerCharacterInvader_8cpp_source.html" title=" " alt="" coords="688,152,907,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="496,104,737,149,736,155,496,109"/>
+</map>

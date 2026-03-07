@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARScrapyardAIController_8h" kind="file" language="C++">
+    <compoundname>ARScrapyardAIController.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARAIControllerBase_8h" local="yes">ARAIControllerBase.h</includes>
+    <includes local="yes">ARScrapyardAIController.generated.h</includes>
+    <includedby refid="ARScrapyardAIController_8cpp" local="yes">ARScrapyardAIController.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>ARAIControllerBase.h</label>
+        <link refid="ARAIControllerBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARScrapyardAIController.h</label>
+        <link refid="ARScrapyardAIController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>AIController.h</label>
+      </node>
+      <node id="6">
+        <label>ARAIControllerBase.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARScrapyardAIController.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARScrapyardAIController.cpp</label>
+        <link refid="ARScrapyardAIController_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARScrapyardAIController.h</label>
+        <link refid="ARScrapyardAIController_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARScrapyardAIController" prot="public">AARScrapyardAIController</innerclass>
+    <briefdescription>
+<para>ARScrapyardAIController header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARAIControllerBase_8h" kindref="compound">ARAIControllerBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARScrapyardAIController.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARScrapyardAIController<sp/>:<sp/>public<sp/>AARAIControllerBase</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>AARScrapyardAIController();</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARScrapyardAIController.h"/>
+  </compounddef>
+</doxygen>

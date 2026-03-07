@@ -1,0 +1,1711 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Alien Ramen UE5.7 C++ and gameplay docs">
+      
+      
+      
+        <link rel="canonical" href="https://turnercore.github.io/unreal-alienramen/CppOverview/InvaderSpicyTrack/">
+      
+      
+        <link rel="prev" href="../InvaderDataTypes/">
+      
+      
+        <link rel="next" href="../UARInvaderDirectorSettings/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Invader Spicy Track - Alien Ramen Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#invader-spicy-track-aarinvadergamestate-uarinvaderspicytracksettings" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Alien Ramen Documentation" class="md-header__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Alien Ramen Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Invader Spicy Track
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../README_GAS/" class="md-tabs__link">
+          
+  
+  
+  GAS
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../README_SessionSubsystem/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Session System
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../README_FactionSubsystem/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Faction System
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../README_SaveSubsystem/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Save System
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../README_InvaderDrops/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Invader Drops
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../README_ProgressionUnlocks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Progression & Unlocks
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../README_DialogueNPC/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Dialogue & NPC
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  C++ Overview
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../API-Reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference (Doxygen)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Alien Ramen Documentation" class="md-nav__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Alien Ramen Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    GAS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_GAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_GAS_Blueprint_Attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Blueprint Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_SessionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_FactionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faction System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_SaveSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Save System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_InvaderDrops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Drops
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_ProgressionUnlocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progression & Unlocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_DialogueNPC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue & NPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Overview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C++ Overview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AAREnemyBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enemy Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AAREnemyAIController/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enemy AI Controller
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../InvaderDataTypes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Data Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Spicy Track
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Spicy Track
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-and-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership and Authority
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ownership-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Ownership Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offer-session-lifecycle-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offer Session Lifecycle (v1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config Source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-runtime-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main Runtime APIs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug-console-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug Console Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-blast-ui-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Blast UI Bridge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gameplay-rules-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gameplay Rules Implemented
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gameplay-pause-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gameplay Pause Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UARInvaderDirectorSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UARInvaderDirectorSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UARInvaderRuntimeStateComponent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Runtime State Component
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../EnemyUtilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enemy Utilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AARInvaderDropBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Drop Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Editor_SInvaderAuthoringPanel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Authoring Panel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Editor_Settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API-Reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference (Doxygen)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-and-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership and Authority
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ownership-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Ownership Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offer-session-lifecycle-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offer Session Lifecycle (v1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config Source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-runtime-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main Runtime APIs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug-console-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug Console Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-blast-ui-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Blast UI Bridge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gameplay-rules-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gameplay Rules Implemented
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gameplay-pause-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gameplay Pause Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="invader-spicy-track-aarinvadergamestate-uarinvaderspicytracksettings">Invader Spicy Track (<code>AARInvaderGameState</code>, <code>UARInvaderSpicyTrackSettings</code>)<a class="headerlink" href="#invader-spicy-track-aarinvadergamestate-uarinvaderspicytracksettings" title="Permanent link">&para;</a></h1>
+<p>Paths:
+- <code>Source/AlienRamen/Public/ARInvaderGameState.h</code>
+- <code>Source/AlienRamen/Public/ARInvaderSpicyTrackSettings.h</code>
+- <code>Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h</code></p>
+<h2 id="ownership-and-authority">Ownership and Authority<a class="headerlink" href="#ownership-and-authority" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Server-authoritative runtime in <code>AARInvaderGameState</code>.</li>
+<li>Shared track/full-blast state is replicated from GameState.</li>
+<li>Per-player runtime spicy metadata (color/combo/activated-upgrade ledger) lives on <code>AARPlayerStateBase</code>.</li>
+<li>System is runtime-only for Invader and is not persisted in save/hydration structs.</li>
+</ul>
+<h2 id="runtime-ownership-matrix">Runtime Ownership Matrix<a class="headerlink" href="#runtime-ownership-matrix" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Class</th>
+<th>Authority</th>
+<th>Replication</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>InvaderPlayerColor</code></td>
+<td><code>AARPlayerStateBase</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>Used for combo color matching.</td>
+</tr>
+<tr>
+<td><code>InvaderComboCount</code></td>
+<td><code>AARPlayerStateBase</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>Drives HUD combo display via <code>OnInvaderComboChanged</code>.</td>
+</tr>
+<tr>
+<td><code>LastInvaderKillCreditServerTime</code></td>
+<td><code>AARPlayerStateBase</code></td>
+<td>Server</td>
+<td>Not replicated</td>
+<td>Timeout bookkeeping for combo reset.</td>
+</tr>
+<tr>
+<td><code>Spice</code></td>
+<td><code>AARPlayerStateBase</code> (ASC <code>UARAttributeSetCore</code>)</td>
+<td>Server</td>
+<td>GAS attribute replication</td>
+<td>Individual player meter value.</td>
+</tr>
+<tr>
+<td><code>MaxSpice</code></td>
+<td><code>AARPlayerStateBase</code> (ASC <code>UARAttributeSetCore</code>)</td>
+<td>Server (synced by Invader GS)</td>
+<td>GAS attribute replication</td>
+<td>Shared cap derived from <code>SharedFullBlastTier</code>.</td>
+</tr>
+<tr>
+<td><code>ActivatedInvaderUpgradeTags</code></td>
+<td><code>AARPlayerStateBase</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>"Has upgrade" ledger for claim/prereq logic.</td>
+</tr>
+<tr>
+<td><code>SharedTrackSlots</code></td>
+<td><code>AARInvaderGameState</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>Team-shared slotted upgrades.</td>
+</tr>
+<tr>
+<td><code>SharedFullBlastTier</code></td>
+<td><code>AARInvaderGameState</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>Tier progression (default max 5).</td>
+</tr>
+<tr>
+<td><code>FullBlastSession</code> (<code>bIsActive</code>, <code>Offers</code>, <code>RequestingPlayerSlot</code>, <code>ActivationTier</code>)</td>
+<td><code>AARInvaderGameState</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>Authoritative offer session snapshot.</td>
+</tr>
+<tr>
+<td><code>OfferPresenceStates</code> (<code>PlayerSlot</code>, hovered offer, destination slot, cursor)</td>
+<td><code>AARInvaderGameState</code></td>
+<td>Server</td>
+<td>Replicated to all</td>
+<td>Live UI presence for both players during active offer session.</td>
+</tr>
+<tr>
+<td><code>ActiveSpiceSharers</code></td>
+<td><code>AARInvaderGameState</code></td>
+<td>Server</td>
+<td>Not replicated</td>
+<td>Server tick loop membership for hold-to-share transfer.</td>
+</tr>
+<tr>
+<td><code>PredictedSpiceValue</code>, <code>bHasPredictedSpiceValue</code></td>
+<td><code>AARPlayerStateBase</code></td>
+<td>Client local</td>
+<td>Not replicated</td>
+<td>Cosmetic HUD prediction overlay only.</td>
+</tr>
+<tr>
+<td>Kill-credit FX event (<code>FARInvaderKillCreditFxEvent</code>)</td>
+<td><code>AARInvaderGameState</code></td>
+<td>Server emit</td>
+<td>NetMulticast to all</td>
+<td>Cosmetic hook for enemy-&gt;meter particles/cues with target player slot.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="offer-session-lifecycle-v1">Offer Session Lifecycle (v1)<a class="headerlink" href="#offer-session-lifecycle-v1" title="Permanent link">&para;</a></h2>
+<p>Server flow:
+<code>Inactive -&gt; FullBlastTriggered -&gt; OfferSessionActive -&gt; OfferChosen or OfferSkipped -&gt; ResolveEffects -&gt; Inactive</code></p>
+<p>Replicated offer-session payload (<code>FARInvaderFullBlastSessionState</code>):
+- <code>bIsActive</code>
+- <code>RequestingPlayerSlot</code>
+- <code>ActivationTier</code>
+- <code>Offers</code> (<code>UpgradeTag</code>, <code>OfferedLevel</code>)</p>
+<p>Rules enforced in current runtime:
+- Only one offer session may exist at a time (<code>RequestActivateFullBlast</code> fails when <code>bIsActive</code> is true).
+- A new full blast cannot trigger while a session is active.
+- Only the requesting player slot can resolve choose/skip.
+- Both players receive replicated <code>FullBlastSession</code> and can render the same options while the non-requesting player observes.
+- Selection must match one of the currently active replicated offers.
+- Late-join clients reconstruct current offer session from replicated <code>FullBlastSession</code>.
+- Offer presence is replicated for any player slot that publishes it during an active session.</p>
+<p>Not yet implemented (open hardening work):
+- Session id/nonce for stale-RPC rejection across sequential sessions.
+- Offer timeout and auto-skip behavior.
+- Chooser disconnect auto-skip behavior.</p>
+<h2 id="config-source">Config Source<a class="headerlink" href="#config-source" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Project settings class: <code>UARInvaderSpicyTrackSettings</code> (<code>Project Settings -&gt; Alien Ramen -&gt; Alien Ramen Invader Spicy Track</code>).</li>
+<li>Key knobs:</li>
+<li>combo timeout,</li>
+<li>spice-per-tier and max full-blast tier,</li>
+<li>skip scrap rewards per tier,</li>
+<li>level-roll offset weights (<code>-3..+3</code>),</li>
+<li>upgrade definition root tag (<code>Progression.InvaderUpgrade</code>) resolved through <code>UContentLookupSubsystem</code>,</li>
+<li>full-blast menu widget class (<code>FullBlastMenuWidgetClass</code>),</li>
+<li>enemy projectile clear tag,</li>
+<li>full-blast gameplay cue tag.</li>
+</ul>
+<h2 id="main-runtime-apis">Main Runtime APIs<a class="headerlink" href="#main-runtime-apis" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>RequestActivateFullBlast(...)</code> creates an offer session when the requester is at cap.</li>
+<li><code>ResolveFullBlastSelection(...)</code> applies picked upgrade to track and resolves full-blast effects.</li>
+<li><code>ResolveFullBlastSkip(...)</code> drains meter and grants configured scrap without slot replacement.</li>
+<li><code>ActivateTrackUpgrade(...)</code> activates a slotted upgrade, then performs one-tier track drop.</li>
+<li><code>GetMaxSelectableTrackCursorTierForPlayer(...)</code> returns the highest selectable tier for one player.</li>
+<li><code>GetMaxSelectableTrackCursorTierAcrossPlayers(...)</code> returns the highest selectable tier available to any tracked player (useful for shared UI lane affordance/coloring).</li>
+<li><code>StartSharingSpice(...)</code> / <code>StopSharingSpice(...)</code> drive hold-to-share transfer loop.</li>
+<li><code>AwardKillCredit(...)</code> supports explicit scripted credit.</li>
+<li><code>NotifyEnemyKilled(...)</code> is the automatic ingestion entry called from enemy death.</li>
+<li><code>SetOfferPresence(...)</code> / <code>ClearOfferPresence(...)</code> publish/clear replicated per-player offer UI presence.</li>
+<li><code>OnInvaderKillCreditFxEvent</code> broadcasts on server + clients when kill credit awards spice (includes target slot, spice gained, combo, enemy metadata, optional origin).</li>
+</ul>
+<h2 id="debug-console-commands">Debug Console Commands<a class="headerlink" href="#debug-console-commands" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>AR.Invader.Debug.SetSpice [p1|p2] &lt;value&gt;</code></li>
+<li><code>AR.Invader.Debug.AddSpice [p1|p2] &lt;delta&gt;</code></li>
+<li><code>AR.Invader.Debug.SetCursor [p1|p2] &lt;tier&gt;</code></li>
+<li><code>AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]</code></li>
+<li><code>InjectUpgrade</code> resolves token by:</li>
+<li>row name first (exact/case-insensitive) from upgrade definition table,</li>
+<li>then gameplay tag token,</li>
+<li>then fallback tag-string/leaf match against loaded upgrade definitions.</li>
+<li><code>InjectUpgrade</code> executes through the same resolve-selection path as normal full-blast selection (synthetic one-off offer session), so track updates and tier progression mirror real gameplay flow.</li>
+<li>Destination behavior:</li>
+<li>below max tier: injects at current full-blast lane and pushes full blast up one tier,</li>
+<li>at max tier: replaces topmost slotted upgrade lane (never the full-blast lane).</li>
+</ul>
+<h2 id="full-blast-ui-bridge">Full Blast UI Bridge<a class="headerlink" href="#full-blast-ui-bridge" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Local invader UI owner is <code>AARInvaderPlayerController</code>; it binds to <code>AARInvaderGameState::OnInvaderFullBlastSessionChanged</code>.</li>
+<li>Controller resolves offer definition rows through content lookup and publishes <code>OnInvaderFullBlastMenuSessionUpdated(bIsActive, SessionState, OfferDefinitions)</code>.</li>
+<li>Optional auto-spawned menu widget is settings-driven via <code>UARInvaderSpicyTrackSettings::FullBlastMenuWidgetClass</code>.</li>
+<li>Native widget base is <code>UARInvaderFullBlastMenuWidget</code>:</li>
+<li>receives session payload via <code>BP_OnFullBlastMenuUpdated(...)</code>,</li>
+<li>and sends selection/skip/presence back through owning controller (<code>SubmitSelection</code>, <code>SubmitSkip</code>, <code>PublishOfferPresence</code>, <code>ClearOfferPresence</code>).</li>
+<li>Menu is auto-shown only for the requesting player slot and removed when session ends.</li>
+</ul>
+<h2 id="gameplay-rules-implemented">Gameplay Rules Implemented<a class="headerlink" href="#gameplay-rules-implemented" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Offer generation is unique and excludes currently slotted upgrades.</li>
+<li>Offer eligibility checks tier locks, unlock tags, claim policy, and team-level activation prerequisites.</li>
+<li>If no offers are eligible, full blast activation fails (no fallback/override) and logs a loud error with rejection diagnostics.</li>
+<li>Activation checks claim policy and activating-player prerequisites.</li>
+<li>Claim policy supports one-player lock, both-players lock, or repeatable upgrades.</li>
+<li>Any upgrade activation resets spicy meter to <code>0</code>.</li>
+<li>Full blast resolve path currently uses <code>SetGamePaused(true/false)</code>, executes gameplay cue, and clears tagged enemy projectiles.</li>
+</ul>
+<h2 id="gameplay-pause-model">Gameplay Pause Model<a class="headerlink" href="#gameplay-pause-model" title="Permanent link">&para;</a></h2>
+<p>Current implementation:
+- Full blast activation calls engine pause (<code>UGameplayStatics::SetGamePaused</code>), and resolve unpauses.
+- Invader spicy runtime adds hard gates while full-blast session is active:
+- <code>AARInvaderGameState::Tick</code> skips combo/share processing,
+- kill-credit ingestion paths ignore events (<code>AwardKillCreditInternal</code>, <code>NotifyEnemyKilled</code>).</p>
+<p>Recommended multiplayer-safe direction:
+- Replace true pause with replicated gameplay suspension state (for example <code>bInvaderMatchSuspended</code> on <code>AARInvaderGameState</code>).
+- While suspended: gate enemy AI updates, wave spawning/progression, and player firing; keep UI and networking active.
+- Keep replication/RPC processing active so offer selection remains responsive in multiplayer.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

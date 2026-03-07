@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARDialogueChoiceView" kind="struct" language="C++" prot="public">
+    <compoundname>FARDialogueChoiceView</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARDialogueChoiceView_1a2b19719ab5a3ead9f43c4a0054ddbbe6" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueChoiceView::bCanChoose</definition>
+        <argsstring></argsstring>
+        <name>bCanChoose</name>
+        <qualifiedname>FARDialogueChoiceView::bCanChoose</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="177" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueChoiceView_1a33b2b5365759a50261df348028cac858" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueChoiceView::ChoiceTag</definition>
+        <argsstring></argsstring>
+        <name>ChoiceTag</name>
+        <qualifiedname>FARDialogueChoiceView::ChoiceTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="171" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueChoiceView_1ae1f2e7298dd436d2cb1064f12f0e9952" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARDialogueChoiceView::ChoiceText</definition>
+        <argsstring></argsstring>
+        <name>ChoiceText</name>
+        <qualifiedname>FARDialogueChoiceView::ChoiceText</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="174" column="7" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueTypes.h" line="166" column="1" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="167" bodyend="178"/>
+    <listofallmembers>
+      <member refid="structFARDialogueChoiceView_1a2b19719ab5a3ead9f43c4a0054ddbbe6" prot="public" virt="non-virtual"><scope>FARDialogueChoiceView</scope><name>bCanChoose</name></member>
+      <member refid="structFARDialogueChoiceView_1a33b2b5365759a50261df348028cac858" prot="public" virt="non-virtual"><scope>FARDialogueChoiceView</scope><name>ChoiceTag</name></member>
+      <member refid="structFARDialogueChoiceView_1ae1f2e7298dd436d2cb1064f12f0e9952" prot="public" virt="non-virtual"><scope>FARDialogueChoiceView</scope><name>ChoiceText</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

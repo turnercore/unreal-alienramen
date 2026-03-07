@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARStateTreeAIComponentSchema_8h" kind="file" language="C++">
+    <compoundname>ARStateTreeAIComponentSchema.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Components/StateTreeAIComponentSchema.h</includes>
+    <includes local="yes">ARStateTreeAIComponentSchema.generated.h</includes>
+    <includedby refid="ARStateTreeAIComponent_8cpp" local="yes">ARStateTreeAIComponent.cpp</includedby>
+    <includedby refid="ARStateTreeAIComponentSchema_8cpp" local="yes">ARStateTreeAIComponentSchema.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARStateTreeAIComponentSchema.h</label>
+        <link refid="ARStateTreeAIComponentSchema_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="3">
+        <label>Components/StateTreeAIComponentSchema.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARStateTreeAIComponent.cpp</label>
+        <link refid="ARStateTreeAIComponent_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARStateTreeAIComponentSchema_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARStateTreeAIComponentSchema.h</label>
+        <link refid="ARStateTreeAIComponentSchema_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARStateTreeAIComponentSchema" prot="public">UARStateTreeAIComponentSchema</innerclass>
+    <briefdescription>
+<para>ARStateTreeAIComponentSchema header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Components/StateTreeAIComponentSchema.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARStateTreeAIComponentSchema.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">UCLASS(BlueprintType,<sp/>EditInlineNew,<sp/>CollapseCategories,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR<sp/>StateTree<sp/>AI<sp/>Schema&quot;</highlight><highlight class="normal">,<sp/>CommonSchema))</highlight></codeline>
+<codeline lineno="19" refid="classUARStateTreeAIComponentSchema" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARStateTreeAIComponentSchema" kindref="compound">UARStateTreeAIComponentSchema</ref><sp/>:<sp/>public<sp/>UStateTreeAIComponentSchema</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARStateTreeAIComponentSchema" kindref="compound">UARStateTreeAIComponentSchema</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FObjectInitializer&amp;<sp/>ObjectInitializer<sp/>=<sp/>FObjectInitializer::Get());</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PostLoad()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>WITH_EDITOR</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PostEditChangeChainProperty(FPropertyChangedChainEvent&amp;<sp/>PropertyChangedEvent)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SyncContextDescriptorTypes();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARStateTreeAIComponentSchema.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARLobbyGameState" kind="class" language="C++" prot="public">
+    <compoundname>AARLobbyGameState</compoundname>
+    <basecompoundref refid="classAARGameStateBase" prot="public" virt="non-virtual">AARGameStateBase</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARLobbyGameState_1a90574e0a9883b28b7d4a883aa5922707" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARLobbyGameState::AARLobbyGameState</definition>
+        <argsstring>()</argsstring>
+        <name>AARLobbyGameState</name>
+        <qualifiedname>AARLobbyGameState::AARLobbyGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLobbyGameState.h" line="17" column="1" bodyfile="AlienRamen/Private/ARLobbyGameState.cpp" bodystart="4" bodyend="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARLobbyGameState_1a020f5ffc25272de6b000730c764b4c10" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UScriptStruct *</type>
+        <definition>UScriptStruct * AARLobbyGameState::GetStateStruct_Implementation</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetStateStruct_Implementation</name>
+        <qualifiedname>AARLobbyGameState::GetStateStruct_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLobbyGameState.h" line="19" column="23" bodyfile="AlienRamen/Private/ARLobbyGameState.cpp" bodystart="9" bodyend="12"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameStateBase</label>
+        <link refid="classAARGameStateBase"/>
+      </node>
+      <node id="1">
+        <label>AARLobbyGameState</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARGameStateBase</label>
+        <link refid="classAARGameStateBase"/>
+      </node>
+      <node id="1">
+        <label>AARLobbyGameState</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARLobbyGameState.h" line="12" column="1" bodyfile="AlienRamen/Public/ARLobbyGameState.h" bodystart="13" bodyend="20"/>
+    <listofallmembers>
+      <member refid="classAARGameStateBase_1a075d2e7860ca9b6d9e41803014a5f072" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>AARGameStateBase</name></member>
+      <member refid="classAARLobbyGameState_1a90574e0a9883b28b7d4a883aa5922707" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>AARLobbyGameState</name></member>
+      <member refid="classAARGameStateBase_1ac3c595bf88ef3279899a61c59f340f59" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a4f9eeac63add5bb963d55fef0df21172" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1ab3a84a76705f5d7dc077044656fd08fe" prot="protected" virt="virtual"><scope>AARLobbyGameState</scope><name>AddPlayerState</name></member>
+      <member refid="classAARGameStateBase_1a3142310d4651cf45d640e2638cd912a1" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>AddUnlockTag</name></member>
+      <member refid="classIStructSerializable_1adcaa30117468380311076dd5b9eed468" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ApplyStateFromStruct</name></member>
+      <member refid="classAARGameStateBase_1aa471347f77c963a09ae318a143c12732" prot="public" virt="virtual"><scope>AARLobbyGameState</scope><name>ApplyStateFromStruct_Implementation</name></member>
+      <member refid="classAARGameStateBase_1a2e8366ad493f04834aa69d4cb813ce8f" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>AreAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1a458fbf3efa089eac2f3adf7d8feead65" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>AreAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1a1a57b65251f946f165730b72cf890e2d" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>bAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1a74f19aea0886c5a68ab330c6f3d74151" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>bAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1aa1c3182de242762baca56e42f7285c29" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>bAnyExternalPauseActive</name></member>
+      <member refid="classAARGameStateBase_1a4300971b1bde8d6bef07cdf599349fd9" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>bEffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1aee79662aeb2cfd32b0c1dda0a3cda567" prot="protected" virt="virtual"><scope>AARLobbyGameState</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameStateBase_1a04e7aff20c49a14df781d86a73af317b" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>BindPlayerStateSignals</name></member>
+      <member refid="classAARGameStateBase_1a3fee2dbe665c8f711797a09f629f7bbd" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>bManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a79936aeadbad02a32253599cef0a41cc" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>bShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a28f70d724354706d31320af517296bb0" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ClassStateStruct</name></member>
+      <member refid="classAARGameStateBase_1abc3bda9fa177fc0f4d66d6ef67b7fe42" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ClearPauseVoteForSlot</name></member>
+      <member refid="classAARGameStateBase_1a056e759fee01d8b35415552005668a92" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ComputeAllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1ae2a199b73553ffac05000574b98f49ad" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ComputeAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1ae47905652463c24d916e92ab7fb74247" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>Cycles</name></member>
+      <member refid="classAARGameStateBase_1aadd232c74253c849299fab21b9f04ece" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ExternalPauseReasonMask</name></member>
+      <member refid="classIStructSerializable_1afad3e17bff2bf8fec0d10189ec899165" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ExtractStateToStruct</name></member>
+      <member refid="classIStructSerializable_1a15418826f08d93f52741bb6c57dc7ae7" prot="public" virt="virtual"><scope>AARLobbyGameState</scope><name>ExtractStateToStruct_Implementation</name></member>
+      <member refid="classAARGameStateBase_1a009a9eedff64d4f8021bd0ae421f65ca" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a21a45a638e09f757ba92595a6b26469d" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1a46a0e3f68240d1dec873068410a93363" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetCycles</name></member>
+      <member refid="classAARGameStateBase_1a3e6ef9f72a28e3e45b9fb998ab44d99b" prot="protected" virt="virtual"><scope>AARLobbyGameState</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARGameStateBase_1a027a2c55154ed94ecd2c2db2d9554895" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetMeat</name></member>
+      <member refid="classAARGameStateBase_1ae0847d14761ecb8e091930796bf5e501" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetMoney</name></member>
+      <member refid="classAARGameStateBase_1a2de9ad63ecf4a0ad956143b7d2e9565e" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetOtherPlayerStateFromController</name></member>
+      <member refid="classAARGameStateBase_1a7d4c230b489a5a38905fb1d25238d34c" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetOtherPlayerStateFromPawn</name></member>
+      <member refid="classAARGameStateBase_1ac77455e773703e215fe8bd97fda9dbe7" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetOtherPlayerStateFromPlayerState</name></member>
+      <member refid="classAARGameStateBase_1a438b115bc2318ca87350cc1e8b825024" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetPlayerBySlot</name></member>
+      <member refid="classAARGameStateBase_1a4c0dea6eb9d7ce975abcca6075728a2f" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetPlayerStates</name></member>
+      <member refid="classAARGameStateBase_1aece8a828e66197d67d2ec627df01e84e" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetScrap</name></member>
+      <member refid="classIStructSerializable_1a9075619a58d98d67f61949d1a93d62c7" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetStateStruct</name></member>
+      <member refid="classAARLobbyGameState_1a020f5ffc25272de6b000730c764b4c10" prot="public" virt="virtual"><scope>AARLobbyGameState</scope><name>GetStateStruct_Implementation</name></member>
+      <member refid="classAARGameStateBase_1a9fbab75cc0a111c4dc7deb8d146d3e2e" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>GetUnlocks</name></member>
+      <member refid="classAARGameStateBase_1a601342795e4752fe8f9fbc8c6770ffb6" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>HandlePlayerCharacterPickedChanged</name></member>
+      <member refid="classAARGameStateBase_1a3609bf620cf5224e49a2ac3f227b9581" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>HandlePlayerReadyStatusChanged</name></member>
+      <member refid="classAARGameStateBase_1a991f5e8d139ae9fb17ffe87f50d44540" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>HandlePlayerSlotChanged</name></member>
+      <member refid="classAARGameStateBase_1ac4bd1069b17bcbd65178549ebc7faf11" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>HasUnlockTag</name></member>
+      <member refid="classAARGameStateBase_1a5abd01e68411bc0bfc2e6c64e40b3e1f" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>IsAnyExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1a6ab73dce18095e5b8cafb33781827d80" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>IsEffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1ada5db26e0b39316aade1df26cc27faa3" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>IsExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1a6fbd01da8838c0c32d357baec15a2797" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>IsManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a7d1e86340e1edaefb7a2463be876ee6f" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>IsPlayerPauseMenuVoteActive</name></member>
+      <member refid="classAARGameStateBase_1a7a349542d919082ced3a125c761bebca" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>Meat</name></member>
+      <member refid="classAARGameStateBase_1a442dc8416751eadecf72558eff782052" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>Money</name></member>
+      <member refid="classAARGameStateBase_1a7a8adfb6bad0029a5fd0eabf21346b41" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>NotifyHydratedFromSave</name></member>
+      <member refid="classAARGameStateBase_1a30e6144386c6fc123215292b3a211bba" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnActiveFactionEffectTagsChanged</name></member>
+      <member refid="classAARGameStateBase_1ad205f3969127f8900be5ee0358d674f4" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnActiveFactionTagChanged</name></member>
+      <member refid="classAARGameStateBase_1ae46a1fa8e2d0dbcfdd8b192841c5111b" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnAllPlayersPausedByMenuChanged</name></member>
+      <member refid="classAARGameStateBase_1a5110fd5ba97187778b7488e2b0f54330" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnAllPlayersTravelReadyChanged</name></member>
+      <member refid="classAARGameStateBase_1a731990345f051ccd300635efa1d32035" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnAnyExternalPauseActiveChanged</name></member>
+      <member refid="classAARGameStateBase_1a4851ad372c6441d3e6f4ec8f10c3f296" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnCyclesChanged</name></member>
+      <member refid="classAARGameStateBase_1a2f99856ac736a6d806fe7d6dec117534" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnEffectivePauseStateChanged</name></member>
+      <member refid="classAARGameStateBase_1a2fcd40ead3c9ba87e2edd91e4523bab0" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnHydratedFromSave</name></member>
+      <member refid="classAARGameStateBase_1acdfc8feb6eb016518dc4bb96b92dfd73" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnManualSaveAllowedChanged</name></member>
+      <member refid="classAARGameStateBase_1addd5b4c481f098a51e01fd0fd16cd019" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnMeatChanged</name></member>
+      <member refid="classAARGameStateBase_1a46e3534ee0ac720f301875f8472bdfe7" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnMoneyChanged</name></member>
+      <member refid="classAARGameStateBase_1abd06e553fd70ff727a98ed195a12c648" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnPlayerReadyChanged</name></member>
+      <member refid="classAARGameStateBase_1a6851cdf641848bb6286ba6eb724764d9" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_ActiveFactionEffectTags</name></member>
+      <member refid="classAARGameStateBase_1a986d0395e034ebeb2e989afa76e56941" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_ActiveFactionTag</name></member>
+      <member refid="classAARGameStateBase_1a4d3f2c5a19f416ca1b56c76eb062a2c8" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_AllPlayersPausedByMenu</name></member>
+      <member refid="classAARGameStateBase_1ae8903ae3a9a825a8f33d711e75453c0f" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_AllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1aa5a26bb111dde1795d3414d4d8b1a039" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_AnyExternalPauseActive</name></member>
+      <member refid="classAARGameStateBase_1a0e1f86c173441f8b74d27b8ae1706356" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_Cycles</name></member>
+      <member refid="classAARGameStateBase_1a873c021a8bdf4700cc014164fb7ec6f5" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_EffectivePauseStateActive</name></member>
+      <member refid="classAARGameStateBase_1ac45c1f7645dcff95d28d5c630e649849" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_ExternalPauseReasonMask</name></member>
+      <member refid="classAARGameStateBase_1acba89994af0144560f208af08360f4bb" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_ManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a78efbe8387f51b38e0855028f0cb17eb" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_Meat</name></member>
+      <member refid="classAARGameStateBase_1a699cf5444487ec30ded742c8b611b1c8" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_Money</name></member>
+      <member refid="classAARGameStateBase_1a0b10f1fdc0d7985e593970965f3def4c" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_PauseMenuVoteMask</name></member>
+      <member refid="classAARGameStateBase_1a84870c8430f7e20378fbcf3d77bfe0a4" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_Scrap</name></member>
+      <member refid="classAARGameStateBase_1a13d47c4b3edc74ed0cdfcf31e939f3d0" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_ShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a197dc84e6ae0931dd5dc1476a091dab8" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnRep_Unlocks</name></member>
+      <member refid="classAARGameStateBase_1aa3f46281043137acfd4fb854c5ae0f52" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnScrapChanged</name></member>
+      <member refid="classAARGameStateBase_1aa5e92119ac8691217e87cb76346c44c0" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnShareLocalPauseAcrossControllersChanged</name></member>
+      <member refid="classAARGameStateBase_1af2e2b810aa56069d54beb9bcfb15bf62" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnTrackedPlayersChanged</name></member>
+      <member refid="classAARGameStateBase_1ae66430986826af34b1d9f93aac2592dc" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>OnUnlocksChanged</name></member>
+      <member refid="classAARGameStateBase_1a5e5cb3cf006a121355b217d4e813e6a0" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>PauseMenuVoteMask</name></member>
+      <member refid="classAARGameStateBase_1a0dcb69cb41accbd4e79b868e7f230746" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>RefreshAllPlayersTravelReady</name></member>
+      <member refid="classAARGameStateBase_1a3a83ac28a7af26b6ef10e317658df549" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>RefreshPauseResolution</name></member>
+      <member refid="classAARGameStateBase_1a78b25fada365a31798ea799e17db06a6" prot="protected" virt="virtual"><scope>AARLobbyGameState</scope><name>RemovePlayerState</name></member>
+      <member refid="classAARGameStateBase_1a8472fce2100ea5ee6cacdf61cd59f1be" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>RemoveUnlockTag</name></member>
+      <member refid="classAARGameStateBase_1ab69bf036d85c775fb161bde42576b0aa" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>Scrap</name></member>
+      <member refid="classAARGameStateBase_1adfc4ac0f41d0053fe75ff55f1aca94a2" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetActiveFactionEffectTagsFromSave</name></member>
+      <member refid="classAARGameStateBase_1a5d1c9bd1234cd707e1bdca2462bd56db" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetActiveFactionTagFromSave</name></member>
+      <member refid="classAARGameStateBase_1abce6f4fb638bf288d72c4048888a464f" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetExternalPauseReasonActive</name></member>
+      <member refid="classAARGameStateBase_1afa471d8f2aff0c3aa53997469ccc0220" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetManualSaveAllowed</name></member>
+      <member refid="classAARGameStateBase_1a3016a06ba7f36bae4fa922258e741203" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetMeatFromSave</name></member>
+      <member refid="classAARGameStateBase_1ab6a657eb22e23e00b9494f387628d13b" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetMoneyFromSave</name></member>
+      <member refid="classAARGameStateBase_1aaf0d1915cf380e7cda1da6b85e742292" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetPlayerPauseMenuVote</name></member>
+      <member refid="classAARGameStateBase_1ae1fde584bd2f9cb964328a882e71da8d" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetScrapFromSave</name></member>
+      <member refid="classAARGameStateBase_1a1d143301a5cbf6d5d125b34425c62499" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1a94b7f9b5f0d805ee597c8a3743a5a912" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SetUnlocksFromSave</name></member>
+      <member refid="classAARGameStateBase_1a145cda01f8384fcf05b3b392d50d60ba" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>ShouldShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARGameStateBase_1ab127eb7fd6891837d677a4fd9e148075" prot="public" virt="non-virtual"><scope>AARLobbyGameState</scope><name>SyncCyclesFromSave</name></member>
+      <member refid="classAARGameStateBase_1a1325b2693628582e60043bf8cd754215" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>UnbindPlayerStateSignals</name></member>
+      <member refid="classAARGameStateBase_1a469c83eca2b9fd7d9ea8dce9b65c2263" prot="protected" virt="non-virtual"><scope>AARLobbyGameState</scope><name>Unlocks</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

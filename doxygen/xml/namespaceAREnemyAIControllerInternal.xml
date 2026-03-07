@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceAREnemyAIControllerInternal" kind="namespace" language="C++">
+    <compoundname>AREnemyAIControllerInternal</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="AREnemyAIController_8cpp_1a511bd9ad97d39516686d4117ace34905" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const TCHAR *</type>
+        <definition>static const TCHAR * AREnemyAIControllerInternal::ToPhaseName</definition>
+        <argsstring>(EARWavePhase Phase)</argsstring>
+        <name>ToPhaseName</name>
+        <qualifiedname>AREnemyAIControllerInternal::ToPhaseName</qualifiedname>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>Phase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyAIController.cpp" line="12" column="20" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="12" bodyend="20"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/AREnemyAIController.cpp" line="10" column="1"/>
+  </compounddef>
+</doxygen>

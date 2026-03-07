@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARPlayerCharacterBase_8h" kind="file" language="C++">
+    <compoundname>ARPlayerCharacterBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameFramework/Character.h</includes>
+    <includes local="yes">AbilitySystemInterface.h</includes>
+    <includes local="yes">ARPlayerCharacterBase.generated.h</includes>
+    <includedby refid="ARPlayerCharacterBase_8cpp" local="yes">ARPlayerCharacterBase.cpp</includedby>
+    <includedby refid="ARPlayerCharacterInvader_8h" local="yes">ARPlayerCharacterInvader.h</includedby>
+    <includedby refid="ARPlayerCharacterScrapyard_8h" local="yes">ARPlayerCharacterScrapyard.h</includedby>
+    <includedby refid="ARPlayerCharacterShop_8h" local="yes">ARPlayerCharacterShop.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARPlayerCharacterBase.h</label>
+        <link refid="ARPlayerCharacterBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARPlayerCharacterBase.generated.h</label>
+      </node>
+      <node id="4">
+        <label>AbilitySystemInterface.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>GameFramework/Character.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="4">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARPickupCollectorComponent.cpp</label>
+        <link refid="ARPickupCollectorComponent_8cpp_source"/>
+      </node>
+      <node id="2">
+        <label>ARPlayerCharacterBase.cpp</label>
+        <link refid="ARPlayerCharacterBase_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARPlayerCharacterScrapyard.cpp</label>
+        <link refid="ARPlayerCharacterScrapyard_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARPlayerCharacterShop.cpp</label>
+        <link refid="ARPlayerCharacterShop_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARPlayerCharacterBase.h</label>
+        <link refid="ARPlayerCharacterBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerCharacterInvader.h</label>
+        <link refid="ARPlayerCharacterInvader_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARPlayerCharacterScrapyard.h</label>
+        <link refid="ARPlayerCharacterScrapyard_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARPlayerCharacterShop.h</label>
+        <link refid="ARPlayerCharacterShop_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARPlayerCharacterBase" prot="public">AARPlayerCharacterBase</innerclass>
+    <briefdescription>
+<para>ARPlayerCharacterBase header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Character.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AbilitySystemInterface.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARPlayerCharacterBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UAbilitySystemComponent;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="16" refid="classAARPlayerCharacterBase" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classAARPlayerCharacterBase" kindref="compound">AARPlayerCharacterBase</ref><sp/>:<sp/>public<sp/>ACharacter,<sp/>public<sp/>IAbilitySystemInterface</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARPlayerCharacterBase" kindref="compound">AARPlayerCharacterBase</ref>();</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Default<sp/>base<sp/>returns<sp/>null;<sp/>mode-specific<sp/>character<sp/>classes<sp/>can<sp/>provide<sp/>an<sp/>ASC<sp/>source.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>UAbilitySystemComponent*<sp/>GetAbilitySystemComponent()<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARPlayerCharacterBase.h"/>
+  </compounddef>
+</doxygen>

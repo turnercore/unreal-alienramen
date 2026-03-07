@@ -1,0 +1,726 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderDirectorSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderDirectorSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1abf03b2678afdd9b88548034e7547cf3e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::BaseThreatGainPerSecond</definition>
+        <argsstring></argsstring>
+        <name>BaseThreatGainPerSecond</name>
+        <qualifiedname>UARInvaderDirectorSettings::BaseThreatGainPerSecond</qualifiedname>
+        <initializer>= 1.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="70" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ab6f6d50d7f5729589ec9e53294c14daf" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSettings::bBlockSpawnsWhenEnemySoftCapExceeded</definition>
+        <argsstring></argsstring>
+        <name>bBlockSpawnsWhenEnemySoftCapExceeded</name>
+        <qualifiedname>UARInvaderDirectorSettings::bBlockSpawnsWhenEnemySoftCapExceeded</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="209" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1acf28a660129884a8aff4ae2f1517082b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSettings::bStageChoiceAutoSelectLeft</definition>
+        <argsstring></argsstring>
+        <name>bStageChoiceAutoSelectLeft</name>
+        <qualifiedname>UARInvaderDirectorSettings::bStageChoiceAutoSelectLeft</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="85" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1abf854002fbfc0fb00afb95ea0a93bc53" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSettings::bUseCapsuleDerivedPlayerPickupRadius</definition>
+        <argsstring></argsstring>
+        <name>bUseCapsuleDerivedPlayerPickupRadius</name>
+        <qualifiedname>UARInvaderDirectorSettings::bUseCapsuleDerivedPlayerPickupRadius</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="191" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="191" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1af621e6b42e0b5eb2bc3be746856a59bb" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DefaultEnemyDropChance</definition>
+        <argsstring></argsstring>
+        <name>DefaultEnemyDropChance</name>
+        <qualifiedname>UARInvaderDirectorSettings::DefaultEnemyDropChance</qualifiedname>
+        <initializer>= 0.5f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="123" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ae8629300aae44f4b7c50695368af5638" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DefaultEnemyMeatDropChance</definition>
+        <argsstring></argsstring>
+        <name>DefaultEnemyMeatDropChance</name>
+        <qualifiedname>UARInvaderDirectorSettings::DefaultEnemyMeatDropChance</qualifiedname>
+        <initializer>= 0.2f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="131" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1afe20ad6e9bd2dad8b0233678375cae95" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DefaultEnemyScrapDropChance</definition>
+        <argsstring></argsstring>
+        <name>DefaultEnemyScrapDropChance</name>
+        <qualifiedname>UARInvaderDirectorSettings::DefaultEnemyScrapDropChance</qualifiedname>
+        <initializer>= 0.5f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="127" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a75500a4a97b0157ada8ec25d928abcf2" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DefaultPlayerPickupRadius</definition>
+        <argsstring></argsstring>
+        <name>DefaultPlayerPickupRadius</name>
+        <qualifiedname>UARInvaderDirectorSettings::DefaultPlayerPickupRadius</qualifiedname>
+        <initializer>= 150.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="195" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1accbd866ab13631a50db24d8f04ddb78e" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UCurveFloat &gt;</type>
+        <definition>TSoftObjectPtr&lt;UCurveFloat&gt; UARInvaderDirectorSettings::DropAmountVarianceCurve</definition>
+        <argsstring></argsstring>
+        <name>DropAmountVarianceCurve</name>
+        <qualifiedname>UARInvaderDirectorSettings::DropAmountVarianceCurve</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="147" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ace4613739f45871007bfbf1e438245a5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DropAmountVarianceFraction</definition>
+        <argsstring></argsstring>
+        <name>DropAmountVarianceFraction</name>
+        <qualifiedname>UARInvaderDirectorSettings::DropAmountVarianceFraction</qualifiedname>
+        <initializer>= 0.25f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="135" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1acd5b678a55a064c21a316425b0eb6303" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DropEarthGravityAcceleration</definition>
+        <argsstring></argsstring>
+        <name>DropEarthGravityAcceleration</name>
+        <qualifiedname>UARInvaderDirectorSettings::DropEarthGravityAcceleration</qualifiedname>
+        <initializer>= 980.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="186" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ae8cb6ab9899f428945b984198da7fcdb" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DropInitialLinearSpeedMax</definition>
+        <argsstring></argsstring>
+        <name>DropInitialLinearSpeedMax</name>
+        <qualifiedname>UARInvaderDirectorSettings::DropInitialLinearSpeedMax</qualifiedname>
+        <initializer>= 220.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="163" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a0052159763911da46db3b5b3e5d89535" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::DropInitialLinearSpeedMin</definition>
+        <argsstring></argsstring>
+        <name>DropInitialLinearSpeedMin</name>
+        <qualifiedname>UARInvaderDirectorSettings::DropInitialLinearSpeedMin</qualifiedname>
+        <initializer>= 120.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="159" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a20d918e117439a9df5cdbf6d068de7bd" prot="public" static="no" mutable="no">
+        <type><ref refid="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5" kindref="member">EARInvaderDropPawnCollisionMode</ref></type>
+        <definition>EARInvaderDropPawnCollisionMode UARInvaderDirectorSettings::DropPawnCollisionMode</definition>
+        <argsstring></argsstring>
+        <name>DropPawnCollisionMode</name>
+        <qualifiedname>UARInvaderDirectorSettings::DropPawnCollisionMode</qualifiedname>
+        <initializer>= EARInvaderDropPawnCollisionMode::CollideWithPawns</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="177" column="33" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a08395b4098126c682e50c885716e1b34" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FAREnemyArchetypeAbilitySetEntry &gt;</type>
+        <definition>TArray&lt;FAREnemyArchetypeAbilitySetEntry&gt; UARInvaderDirectorSettings::EnemyArchetypeAbilitySets</definition>
+        <argsstring></argsstring>
+        <name>EnemyArchetypeAbilitySets</name>
+        <qualifiedname>UARInvaderDirectorSettings::EnemyArchetypeAbilitySets</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="64" column="8" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a41e965ffd4ceb1e23c4ab7df0ba13e5d" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UARAbilitySet &gt;</type>
+        <definition>TSoftObjectPtr&lt;UARAbilitySet&gt; UARInvaderDirectorSettings::EnemyCommonAbilitySet</definition>
+        <argsstring></argsstring>
+        <name>EnemyCommonAbilitySet</name>
+        <qualifiedname>UARInvaderDirectorSettings::EnemyCommonAbilitySet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="60" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a026565cfc48d446d8faf22997d46d6d1" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSettings::EnemyPreloadWaveLookahead</definition>
+        <argsstring></argsstring>
+        <name>EnemyPreloadWaveLookahead</name>
+        <qualifiedname>UARInvaderDirectorSettings::EnemyPreloadWaveLookahead</qualifiedname>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="213" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1acd4e568a8d44d8ca53050a1c6afbd257" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::EnteredScreenInset</definition>
+        <argsstring></argsstring>
+        <name>EnteredScreenInset</name>
+        <qualifiedname>UARInvaderDirectorSettings::EnteredScreenInset</qualifiedname>
+        <initializer>= 40.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="200" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a35c1fa9de0abad79fdb35d4eed3340ad" prot="public" static="no" mutable="no">
+        <type>FVector2D</type>
+        <definition>FVector2D UARInvaderDirectorSettings::GameplayBoundsMax</definition>
+        <argsstring></argsstring>
+        <name>GameplayBoundsMax</name>
+        <qualifiedname>UARInvaderDirectorSettings::GameplayBoundsMax</qualifiedname>
+        <initializer>= FVector2D(1400.f, 1550.f)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="108" column="11" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a0dd50de7f30804392594eff8527f2cdb" prot="public" static="no" mutable="no">
+        <type>FVector2D</type>
+        <definition>FVector2D UARInvaderDirectorSettings::GameplayBoundsMin</definition>
+        <argsstring></argsstring>
+        <name>GameplayBoundsMin</name>
+        <qualifiedname>UARInvaderDirectorSettings::GameplayBoundsMin</qualifiedname>
+        <initializer>= FVector2D(0.f, -1350.f)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="105" column="11" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a21d902128a06bbb1c54485a7e75129cc" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSettings::InitialStageRow</definition>
+        <argsstring></argsstring>
+        <name>InitialStageRow</name>
+        <qualifiedname>UARInvaderDirectorSettings::InitialStageRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="67" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a2e764935b248f42fef29ab8142353ec9" prot="public" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector UARInvaderDirectorSettings::InvaderDesiredUpDirection</definition>
+        <argsstring></argsstring>
+        <name>InvaderDesiredUpDirection</name>
+        <qualifiedname>UARInvaderDirectorSettings::InvaderDesiredUpDirection</qualifiedname>
+        <initializer>= FVector(1.0f, 0.0f, 0.0f)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="182" column="9" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1af2ede219b6df318c73ebe82c5ede634b" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UCurveFloat &gt;</type>
+        <definition>TSoftObjectPtr&lt;UCurveFloat&gt; UARInvaderDirectorSettings::MeatDropAmountVarianceCurve</definition>
+        <argsstring></argsstring>
+        <name>MeatDropAmountVarianceCurve</name>
+        <qualifiedname>UARInvaderDirectorSettings::MeatDropAmountVarianceCurve</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="155" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1af95095381df1f61e4561a3196976abf7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::MeatDropAmountVarianceFraction</definition>
+        <argsstring></argsstring>
+        <name>MeatDropAmountVarianceFraction</name>
+        <qualifiedname>UARInvaderDirectorSettings::MeatDropAmountVarianceFraction</qualifiedname>
+        <initializer>= 0.25f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="143" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a4eb768fefb6b8336adb55b8f08e94f9b" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderDropStackDefinition &gt;</type>
+        <definition>TArray&lt;FARInvaderDropStackDefinition&gt; UARInvaderDirectorSettings::MeatDropStacks</definition>
+        <argsstring></argsstring>
+        <name>MeatDropStacks</name>
+        <qualifiedname>UARInvaderDirectorSettings::MeatDropStacks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="173" column="8" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ab3372997312a427b241ad1863ae50f33" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::NewWaveDelayAfterClear</definition>
+        <argsstring></argsstring>
+        <name>NewWaveDelayAfterClear</name>
+        <qualifiedname>UARInvaderDirectorSettings::NewWaveDelayAfterClear</qualifiedname>
+        <initializer>= 1.5f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="73" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1add1e324a3950c86b028fb78f65c5d6a8" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::NewWaveDelayWhenOvertime</definition>
+        <argsstring></argsstring>
+        <name>NewWaveDelayWhenOvertime</name>
+        <qualifiedname>UARInvaderDirectorSettings::NewWaveDelayWhenOvertime</qualifiedname>
+        <initializer>= 3.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="76" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a6a1f1db4398f961f540cf9ec99b3229a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::OffscreenCullSeconds</definition>
+        <argsstring></argsstring>
+        <name>OffscreenCullSeconds</name>
+        <qualifiedname>UARInvaderDirectorSettings::OffscreenCullSeconds</qualifiedname>
+        <initializer>= 12.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="111" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ae8061075017fce33e2ed37220d64dc19" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::PickupOffscreenCullSeconds</definition>
+        <argsstring></argsstring>
+        <name>PickupOffscreenCullSeconds</name>
+        <qualifiedname>UARInvaderDirectorSettings::PickupOffscreenCullSeconds</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="119" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1af30cfbff928bbcecddc494b7e1a98023" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; AActor &gt;</type>
+        <definition>TSoftClassPtr&lt;AActor&gt; UARInvaderDirectorSettings::ProjectileActorClass</definition>
+        <argsstring></argsstring>
+        <name>ProjectileActorClass</name>
+        <qualifiedname>UARInvaderDirectorSettings::ProjectileActorClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="216" column="15" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a9b870f61f06d9888b2047a09a800df5c" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::ProjectileOffscreenCullSeconds</definition>
+        <argsstring></argsstring>
+        <name>ProjectileOffscreenCullSeconds</name>
+        <qualifiedname>UARInvaderDirectorSettings::ProjectileOffscreenCullSeconds</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="115" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a649b08a1d5f79e3c08980298280b97a5" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UCurveFloat &gt;</type>
+        <definition>TSoftObjectPtr&lt;UCurveFloat&gt; UARInvaderDirectorSettings::ScrapDropAmountVarianceCurve</definition>
+        <argsstring></argsstring>
+        <name>ScrapDropAmountVarianceCurve</name>
+        <qualifiedname>UARInvaderDirectorSettings::ScrapDropAmountVarianceCurve</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="151" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1aa9f3d115f543d6e120a4855510662411" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::ScrapDropAmountVarianceFraction</definition>
+        <argsstring></argsstring>
+        <name>ScrapDropAmountVarianceFraction</name>
+        <qualifiedname>UARInvaderDirectorSettings::ScrapDropAmountVarianceFraction</qualifiedname>
+        <initializer>= 0.25f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="139" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a79a6205541a2bae4184936d65af91914" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderDropStackDefinition &gt;</type>
+        <definition>TArray&lt;FARInvaderDropStackDefinition&gt; UARInvaderDirectorSettings::ScrapDropStacks</definition>
+        <argsstring></argsstring>
+        <name>ScrapDropStacks</name>
+        <qualifiedname>UARInvaderDirectorSettings::ScrapDropStacks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="168" column="8" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1abbbb87315d48b77063fa040be0119db8" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSettings::SoftCapActiveProjectiles</definition>
+        <argsstring></argsstring>
+        <name>SoftCapActiveProjectiles</name>
+        <qualifiedname>UARInvaderDirectorSettings::SoftCapActiveProjectiles</qualifiedname>
+        <initializer>= 500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="206" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1ac49f831408c88493b8a6cfa43ce23433" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSettings::SoftCapAliveEnemies</definition>
+        <argsstring></argsstring>
+        <name>SoftCapAliveEnemies</name>
+        <qualifiedname>UARInvaderDirectorSettings::SoftCapAliveEnemies</qualifiedname>
+        <initializer>= 120</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="203" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a206112c949954a787a1716ffcb8a0de6" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::SpawnFacingYawOffset</definition>
+        <argsstring></argsstring>
+        <name>SpawnFacingYawOffset</name>
+        <qualifiedname>UARInvaderDirectorSettings::SpawnFacingYawOffset</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="98" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a175aab10a2b10c87116d9d3d17b7abc8" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::SpawnLaneSpacing</definition>
+        <argsstring></argsstring>
+        <name>SpawnLaneSpacing</name>
+        <qualifiedname>UARInvaderDirectorSettings::SpawnLaneSpacing</qualifiedname>
+        <initializer>= 220.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="94" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1aca735366869ac4e82b736d7efb3fbdb5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::SpawnOffscreenDistance</definition>
+        <argsstring></argsstring>
+        <name>SpawnOffscreenDistance</name>
+        <qualifiedname>UARInvaderDirectorSettings::SpawnOffscreenDistance</qualifiedname>
+        <initializer>= 350.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="91" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a6ecf32b50f2463613b982094c4cd2f0d" prot="public" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector UARInvaderDirectorSettings::SpawnOrigin</definition>
+        <argsstring></argsstring>
+        <name>SpawnOrigin</name>
+        <qualifiedname>UARInvaderDirectorSettings::SpawnOrigin</qualifiedname>
+        <initializer>= FVector::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="88" column="9" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a3b7d468b773ad0b97d6591aad0310f17" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::StageChoiceAutoSelectSeconds</definition>
+        <argsstring></argsstring>
+        <name>StageChoiceAutoSelectSeconds</name>
+        <qualifiedname>UARInvaderDirectorSettings::StageChoiceAutoSelectSeconds</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="82" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a7b4eeed36b53b876b43522f53d93d210" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARInvaderDirectorSettings::StageDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>StageDefinitionRootTag</name>
+        <qualifiedname>UARInvaderDirectorSettings::StageDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="56" column="14" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1aca81fb7605f7a4529e0df2ef57c0c797" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSettings::StageTransitionDelay</definition>
+        <argsstring></argsstring>
+        <name>StageTransitionDelay</name>
+        <qualifiedname>UARInvaderDirectorSettings::StageTransitionDelay</qualifiedname>
+        <initializer>= 0.75f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="79" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderDirectorSettings_1a8d46295195a650a3b18e800e764bde26" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARInvaderDirectorSettings::WaveDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>WaveDefinitionRootTag</name>
+        <qualifiedname>UARInvaderDirectorSettings::WaveDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="53" column="14" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderDirectorSettings_1aa3d5b24adf4f0798ca18bb8b3153f995" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARInvaderDirectorSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARInvaderDirectorSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="50" column="15" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="50" bodyend="50"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="45" column="1" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="46" bodyend="217"/>
+    <listofallmembers>
+      <member refid="classUARInvaderDirectorSettings_1abf03b2678afdd9b88548034e7547cf3e" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>BaseThreatGainPerSecond</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ab6f6d50d7f5729589ec9e53294c14daf" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>bBlockSpawnsWhenEnemySoftCapExceeded</name></member>
+      <member refid="classUARInvaderDirectorSettings_1acf28a660129884a8aff4ae2f1517082b" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>bStageChoiceAutoSelectLeft</name></member>
+      <member refid="classUARInvaderDirectorSettings_1abf854002fbfc0fb00afb95ea0a93bc53" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>bUseCapsuleDerivedPlayerPickupRadius</name></member>
+      <member refid="classUARInvaderDirectorSettings_1af621e6b42e0b5eb2bc3be746856a59bb" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DefaultEnemyDropChance</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ae8629300aae44f4b7c50695368af5638" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DefaultEnemyMeatDropChance</name></member>
+      <member refid="classUARInvaderDirectorSettings_1afe20ad6e9bd2dad8b0233678375cae95" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DefaultEnemyScrapDropChance</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a75500a4a97b0157ada8ec25d928abcf2" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DefaultPlayerPickupRadius</name></member>
+      <member refid="classUARInvaderDirectorSettings_1accbd866ab13631a50db24d8f04ddb78e" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DropAmountVarianceCurve</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ace4613739f45871007bfbf1e438245a5" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DropAmountVarianceFraction</name></member>
+      <member refid="classUARInvaderDirectorSettings_1acd5b678a55a064c21a316425b0eb6303" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DropEarthGravityAcceleration</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ae8cb6ab9899f428945b984198da7fcdb" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DropInitialLinearSpeedMax</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a0052159763911da46db3b5b3e5d89535" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DropInitialLinearSpeedMin</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a20d918e117439a9df5cdbf6d068de7bd" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>DropPawnCollisionMode</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a08395b4098126c682e50c885716e1b34" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>EnemyArchetypeAbilitySets</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a41e965ffd4ceb1e23c4ab7df0ba13e5d" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>EnemyCommonAbilitySet</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a026565cfc48d446d8faf22997d46d6d1" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>EnemyPreloadWaveLookahead</name></member>
+      <member refid="classUARInvaderDirectorSettings_1acd4e568a8d44d8ca53050a1c6afbd257" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>EnteredScreenInset</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a35c1fa9de0abad79fdb35d4eed3340ad" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>GameplayBoundsMax</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a0dd50de7f30804392594eff8527f2cdb" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>GameplayBoundsMin</name></member>
+      <member refid="classUARInvaderDirectorSettings_1aa3d5b24adf4f0798ca18bb8b3153f995" prot="public" virt="virtual"><scope>UARInvaderDirectorSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a21d902128a06bbb1c54485a7e75129cc" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>InitialStageRow</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a2e764935b248f42fef29ab8142353ec9" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>InvaderDesiredUpDirection</name></member>
+      <member refid="classUARInvaderDirectorSettings_1af2ede219b6df318c73ebe82c5ede634b" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>MeatDropAmountVarianceCurve</name></member>
+      <member refid="classUARInvaderDirectorSettings_1af95095381df1f61e4561a3196976abf7" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>MeatDropAmountVarianceFraction</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a4eb768fefb6b8336adb55b8f08e94f9b" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>MeatDropStacks</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ab3372997312a427b241ad1863ae50f33" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>NewWaveDelayAfterClear</name></member>
+      <member refid="classUARInvaderDirectorSettings_1add1e324a3950c86b028fb78f65c5d6a8" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>NewWaveDelayWhenOvertime</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a6a1f1db4398f961f540cf9ec99b3229a" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>OffscreenCullSeconds</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ae8061075017fce33e2ed37220d64dc19" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>PickupOffscreenCullSeconds</name></member>
+      <member refid="classUARInvaderDirectorSettings_1af30cfbff928bbcecddc494b7e1a98023" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>ProjectileActorClass</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a9b870f61f06d9888b2047a09a800df5c" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>ProjectileOffscreenCullSeconds</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a649b08a1d5f79e3c08980298280b97a5" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>ScrapDropAmountVarianceCurve</name></member>
+      <member refid="classUARInvaderDirectorSettings_1aa9f3d115f543d6e120a4855510662411" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>ScrapDropAmountVarianceFraction</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a79a6205541a2bae4184936d65af91914" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>ScrapDropStacks</name></member>
+      <member refid="classUARInvaderDirectorSettings_1abbbb87315d48b77063fa040be0119db8" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>SoftCapActiveProjectiles</name></member>
+      <member refid="classUARInvaderDirectorSettings_1ac49f831408c88493b8a6cfa43ce23433" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>SoftCapAliveEnemies</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a206112c949954a787a1716ffcb8a0de6" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>SpawnFacingYawOffset</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a175aab10a2b10c87116d9d3d17b7abc8" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>SpawnLaneSpacing</name></member>
+      <member refid="classUARInvaderDirectorSettings_1aca735366869ac4e82b736d7efb3fbdb5" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>SpawnOffscreenDistance</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a6ecf32b50f2463613b982094c4cd2f0d" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>SpawnOrigin</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a3b7d468b773ad0b97d6591aad0310f17" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>StageChoiceAutoSelectSeconds</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a7b4eeed36b53b876b43522f53d93d210" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>StageDefinitionRootTag</name></member>
+      <member refid="classUARInvaderDirectorSettings_1aca81fb7605f7a4529e0df2ef57c0c797" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>StageTransitionDelay</name></member>
+      <member refid="classUARInvaderDirectorSettings_1a8d46295195a650a3b18e800e764bde26" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSettings</scope><name>WaveDefinitionRootTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARFactionDefinitionRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARFactionDefinitionRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1a7ff83ea3524917b93b88c7d1e97c3d0b" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionDefinitionRow::BasePopularity</definition>
+        <argsstring></argsstring>
+        <name>BasePopularity</name>
+        <qualifiedname>FARFactionDefinitionRow::BasePopularity</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="40" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1a1b51dc71d21b4b5fe9500b53da06d3dd" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARFactionDefinitionRow::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARFactionDefinitionRow::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="37" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1a5bf4ce2c097e195e0eccc36350743061" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionDefinitionRow::DriftPerCycleMax</definition>
+        <argsstring></argsstring>
+        <name>DriftPerCycleMax</name>
+        <qualifiedname>FARFactionDefinitionRow::DriftPerCycleMax</qualifiedname>
+        <initializer>= 2.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="54" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1ac319c068250639a7c6f9675305190632" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionDefinitionRow::DriftPerCycleMin</definition>
+        <argsstring></argsstring>
+        <name>DriftPerCycleMin</name>
+        <qualifiedname>FARFactionDefinitionRow::DriftPerCycleMin</qualifiedname>
+        <initializer>= -2.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="50" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1ae82e43babc7e046d87c8ddd4f0d179d2" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARFactionDefinitionRow::EffectTags</definition>
+        <argsstring></argsstring>
+        <name>EffectTags</name>
+        <qualifiedname>FARFactionDefinitionRow::EffectTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="58" column="23" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1af015cb598246971adcd00e04affc5267" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARFactionDefinitionRow::FactionTag</definition>
+        <argsstring></argsstring>
+        <name>FactionTag</name>
+        <qualifiedname>FARFactionDefinitionRow::FactionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="34" column="14" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1a5d1dfe3c8a605f3a3a058c217c73ec37" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionDefinitionRow::MaxPopularity</definition>
+        <argsstring></argsstring>
+        <name>MaxPopularity</name>
+        <qualifiedname>FARFactionDefinitionRow::MaxPopularity</qualifiedname>
+        <initializer>= 100.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="46" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1a25f24d3c43a2f86ef00769e260cc66bf" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionDefinitionRow::MinPopularity</definition>
+        <argsstring></argsstring>
+        <name>MinPopularity</name>
+        <qualifiedname>FARFactionDefinitionRow::MinPopularity</qualifiedname>
+        <initializer>= -100.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="43" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionDefinitionRow_1ae27d4d8d38d047acb50ad0a6b7ac0f8d" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARFactionPopularityModifierRule &gt;</type>
+        <definition>TArray&lt;FARFactionPopularityModifierRule&gt; FARFactionDefinitionRow::PopularityModifierRules</definition>
+        <argsstring></argsstring>
+        <name>PopularityModifierRules</name>
+        <qualifiedname>FARFactionDefinitionRow::PopularityModifierRules</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="62" column="8" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionTypes.h" line="28" column="1" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="29" bodyend="63"/>
+    <listofallmembers>
+      <member refid="structFARFactionDefinitionRow_1a7ff83ea3524917b93b88c7d1e97c3d0b" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>BasePopularity</name></member>
+      <member refid="structFARFactionDefinitionRow_1a1b51dc71d21b4b5fe9500b53da06d3dd" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>DisplayName</name></member>
+      <member refid="structFARFactionDefinitionRow_1a5bf4ce2c097e195e0eccc36350743061" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>DriftPerCycleMax</name></member>
+      <member refid="structFARFactionDefinitionRow_1ac319c068250639a7c6f9675305190632" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>DriftPerCycleMin</name></member>
+      <member refid="structFARFactionDefinitionRow_1ae82e43babc7e046d87c8ddd4f0d179d2" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>EffectTags</name></member>
+      <member refid="structFARFactionDefinitionRow_1af015cb598246971adcd00e04affc5267" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>FactionTag</name></member>
+      <member refid="structFARFactionDefinitionRow_1a5d1dfe3c8a605f3a3a058c217c73ec37" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>MaxPopularity</name></member>
+      <member refid="structFARFactionDefinitionRow_1a25f24d3c43a2f86ef00769e260cc66bf" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>MinPopularity</name></member>
+      <member refid="structFARFactionDefinitionRow_1ae27d4d8d38d047acb50ad0a6b7ac0f8d" prot="public" virt="non-virtual"><scope>FARFactionDefinitionRow</scope><name>PopularityModifierRules</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

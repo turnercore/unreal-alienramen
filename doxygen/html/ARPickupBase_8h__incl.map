@@ -1,0 +1,9 @@
+<map id="ARPickupBase.h" name="ARPickupBase.h">
+<area shape="rect" id="Node000001" title="ARPickupBase header for Alien Ramen." alt="" coords="175,5,302,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,33,106,76,104,71,210,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,330,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="241,31,241,65,236,65,236,31"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="354,79,550,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="274,28,405,72,404,77,272,33"/>
+</map>

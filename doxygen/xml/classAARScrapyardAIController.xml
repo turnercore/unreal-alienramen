@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARScrapyardAIController" kind="class" language="C++" prot="public">
+    <compoundname>AARScrapyardAIController</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARAIControllerBase</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARScrapyardAIController_1a7b9c9ec68f431946299c2002b01872c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARScrapyardAIController::AARScrapyardAIController</definition>
+        <argsstring>()</argsstring>
+        <name>AARScrapyardAIController</name>
+        <qualifiedname>AARScrapyardAIController::AARScrapyardAIController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardAIController.h" line="17" column="1" bodyfile="AlienRamen/Private/ARScrapyardAIController.cpp" bodystart="3" bodyend="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardAIController.h" line="12" column="1" bodyfile="AlienRamen/Public/ARScrapyardAIController.h" bodystart="13" bodyend="18"/>
+    <listofallmembers>
+      <member refid="classAARScrapyardAIController_1a7b9c9ec68f431946299c2002b01872c2" prot="public" virt="non-virtual"><scope>AARScrapyardAIController</scope><name>AARScrapyardAIController</name></member>
+      <member refid="classAARAIControllerBase_1a17aa084bb46190ff330d3dedfe9a5fca" prot="public" virt="non-virtual"><scope>AARScrapyardAIController</scope><name>BP_OnPawnSignal</name></member>
+      <member refid="classAARAIControllerBase_1a414320632ff8106b89d1a0adc2ea555e" prot="public" virt="virtual"><scope>AARScrapyardAIController</scope><name>ReceivePawnSignal</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

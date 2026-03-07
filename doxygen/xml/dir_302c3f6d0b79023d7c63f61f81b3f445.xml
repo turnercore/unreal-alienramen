@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_302c3f6d0b79023d7c63f61f81b3f445" kind="dir">
+    <compoundname>Tests</compoundname>
+    <innerfile refid="ARDialogueSaveContractTests_8cpp">ARDialogueSaveContractTests.cpp</innerfile>
+    <innerfile refid="AREnemyAIStateTagBridgeTest_8cpp">AREnemyAIStateTagBridgeTest.cpp</innerfile>
+    <innerfile refid="ARInvaderDropsContractTests_8cpp">ARInvaderDropsContractTests.cpp</innerfile>
+    <innerfile refid="ARInvaderSpicyTrackOfferSessionTest_8cpp">ARInvaderSpicyTrackOfferSessionTest.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/Tests/"/>
+  </compounddef>
+</doxygen>

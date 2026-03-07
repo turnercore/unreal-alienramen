@@ -1,0 +1,1613 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Alien Ramen UE5.7 C++ and gameplay docs">
+      
+      
+      
+        <link rel="canonical" href="https://turnercore.github.io/unreal-alienramen/README_SessionSubsystem/">
+      
+      
+        <link rel="prev" href="../README_GAS_Blueprint_Attributes/">
+      
+      
+        <link rel="next" href="../README_FactionSubsystem/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Session System - Alien Ramen Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#session-subsystem-guide-uarsessionsubsystem" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Alien Ramen Documentation" class="md-header__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Alien Ramen Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Session System
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_GAS/" class="md-tabs__link">
+          
+  
+  
+  GAS
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Session System
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../README_FactionSubsystem/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Faction System
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../README_SaveSubsystem/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Save System
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../README_InvaderDrops/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Invader Drops
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../README_ProgressionUnlocks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Progression & Unlocks
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../README_DialogueNPC/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Dialogue & NPC
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../CppOverview/" class="md-tabs__link">
+          
+  
+  
+  C++ Overview
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../API-Reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference (Doxygen)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Alien Ramen Documentation" class="md-nav__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Alien Ramen Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    GAS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS_Blueprint_Attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Blueprint Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session System
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprint-api-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint API Surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authority-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authority Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backend-expansion-eosxboxother-oss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Expansion (EOS/Xbox/Other OSS)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-stays-the-same-no-bp-change-expected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What stays the same (no BP change expected)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-changes-per-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changes per backend
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#identity-save-compatibility-across-backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identity + Save Compatibility Across Backends
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimum-test-matrix-when-adding-a-new-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Test Matrix When Adding a New Backend
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_FactionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faction System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SaveSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Save System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_InvaderDrops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Drops
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ProgressionUnlocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progression & Unlocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_DialogueNPC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue & NPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Overview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C++ Overview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enemy Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyAIController/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enemy AI Controller
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderDataTypes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Data Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderSpicyTrack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Spicy Track
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderRuntimeStateComponent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Runtime State Component
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/EnemyUtilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enemy Utilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AARInvaderDropBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Drop Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_SInvaderAuthoringPanel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Authoring Panel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_Settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API-Reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference (Doxygen)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprint-api-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint API Surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authority-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authority Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backend-expansion-eosxboxother-oss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Expansion (EOS/Xbox/Other OSS)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-stays-the-same-no-bp-change-expected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What stays the same (no BP change expected)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-changes-per-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changes per backend
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#identity-save-compatibility-across-backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identity + Save Compatibility Across Backends
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimum-test-matrix-when-adding-a-new-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Test Matrix When Adding a New Backend
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="session-subsystem-guide-uarsessionsubsystem">Session Subsystem Guide (<code>UARSessionSubsystem</code>)<a class="headerlink" href="#session-subsystem-guide-uarsessionsubsystem" title="Permanent link">&para;</a></h1>
+<p>This document describes the runtime session orchestration contract and how to expand from Steam to additional online backends (for example EOS or console services) without Blueprint rewrites.</p>
+<h2 id="runtime-ownership">Runtime Ownership<a class="headerlink" href="#runtime-ownership" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Primary runtime API: <code>UARSessionSubsystem</code> (<code>Source/AlienRamen/Public/ARSessionSubsystem.h</code>)</li>
+<li>Settings source: <code>UARNetworkUserSettings</code> (<code>Config=GameUserSettings</code>)</li>
+<li>Current policy:</li>
+<li>Global seat cap is 2 total players (local + online combined)</li>
+<li><code>Stay Offline</code> blocks host/find/join/advertise and online PreLogin</li>
+<li>LAN flow prefers null subsystem</li>
+<li>Online flow prefers configured default subsystem when non-null, then Steam fallback, then default/null fallback</li>
+<li>Steam invite acceptance is handled natively via OSS session invite delegates and routes into the same join path</li>
+</ul>
+<p>The subsystem is a <code>UGameInstanceSubsystem</code>, so in Blueprint:
+- <code>Get Game Instance Subsystem</code> -&gt; <code>ARSessionSubsystem</code></p>
+<p>Per-user setting persistence:
+- Seed defaults: <code>Config/DefaultGameUserSettings.ini</code>
+- Runtime writes: <code>Saved/Config/&lt;Platform&gt;/GameUserSettings.ini</code></p>
+<p>Platform config note:
+- <code>Config/Windows/WindowsEngine.ini</code> sets <code>DefaultPlatformService=Steam</code> for Windows builds.</p>
+<h2 id="blueprint-api-surface">Blueprint API Surface<a class="headerlink" href="#blueprint-api-surface" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CreateSession(bUseLAN, OutResult)</code></li>
+<li><code>CreateSessionNamed(bUseLAN, SessionDisplayName, OutResult)</code></li>
+<li><code>FindSessions(bLANQuery, MaxResults, OutResult)</code></li>
+<li><code>CancelFindSessions(OutResult)</code></li>
+<li><code>JoinSessionByIndex(ResultIndex, OutResult)</code></li>
+<li><code>FindFriendSession(FriendUniqueNetId, OutResult)</code></li>
+<li><code>InviteFriendToSession(FriendUniqueNetId, OutResult)</code></li>
+<li><code>DestroySession(OutResult)</code></li>
+<li><code>RefreshJoinability(OutResult)</code></li>
+<li><code>AddLocalPlayer(OutResult)</code></li>
+<li><code>IsStayOfflineEnabled()</code></li>
+<li><code>SetStayOfflineEnabled(bEnabled, bOutRestartRecommended)</code></li>
+</ul>
+<p>Events:
+- <code>OnCreateSessionCompleted</code>
+- <code>OnFindSessionsCompleted</code>
+- <code>OnFindFriendSessionCompleted</code>
+- <code>OnInviteFriendCompleted</code>
+- <code>OnCancelFindSessionsCompleted</code>
+- <code>OnJoinSessionCompleted</code>
+- <code>OnDestroySessionCompleted</code>
+- <code>OnRefreshJoinabilityCompleted</code>
+- <code>OnLocalJoinCompleted</code></p>
+<p>Async Blueprint exec-flow nodes (<code>OnSuccess</code> / <code>OnFailure</code>):
+- <code>CreateSessionAsync(WorldContext, bUseLAN, SessionDisplayName)</code>
+- <code>FindSessionsAsync(WorldContext, bLANQuery, MaxResults)</code>
+- <code>JoinSessionByIndexAsync(WorldContext, ResultIndex)</code>
+- <code>DestroySessionAsync(WorldContext)</code></p>
+<p>Session display-name policy:
+- host path writes <code>ARLobbyName</code> and <code>SETTING_SESSIONKEY</code> into advertised session settings
+- if <code>SessionDisplayName</code> is empty, runtime default is:
+  1) current save slot base name (when a save is loaded)
+  2) generated random slot-style name (save subsystem helper)
+  3) fallback literal <code>AlienRamenLobby</code>
+- find results expose this as <code>FARSessionSearchResultData.SessionDisplayName</code></p>
+<h2 id="authority-enforcement">Authority Enforcement<a class="headerlink" href="#authority-enforcement" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>AARGameModeBase::PreLogin(...)</code> rejects online joins when:</li>
+<li>player cap is already reached (2)</li>
+<li><code>Stay Offline</code> is enabled for online identities</li>
+<li><code>AddLocalPlayer(...)</code> enforces the same 2-seat cap for couch-join.</li>
+<li><code>AARGameModeBase</code> refreshes session joinability on player join/leave.</li>
+</ul>
+<h2 id="backend-expansion-eosxboxother-oss">Backend Expansion (EOS/Xbox/Other OSS)<a class="headerlink" href="#backend-expansion-eosxboxother-oss" title="Permanent link">&para;</a></h2>
+<h2 id="what-stays-the-same-no-bp-change-expected">What stays the same (no BP change expected)<a class="headerlink" href="#what-stays-the-same-no-bp-change-expected" title="Permanent link">&para;</a></h2>
+<ul>
+<li>UI/menu Blueprint calls continue using <code>UARSessionSubsystem</code>.</li>
+<li>Save/hydration flow remains unchanged.</li>
+<li>Seat cap and offline policy remain authoritative in GameMode/SessionSubsystem.</li>
+</ul>
+<h2 id="what-changes-per-backend">What changes per backend<a class="headerlink" href="#what-changes-per-backend" title="Permanent link">&para;</a></h2>
+<ol>
+<li><code>DefaultEngine.ini</code> backend config:</li>
+<li>set/override <code>DefaultPlatformService</code></li>
+<li>add backend-specific subsystem sections and net driver settings</li>
+<li>Plugins/modules:</li>
+<li>enable the backend OSS plugin(s)</li>
+<li>keep/remove Steam plugin depending on target platforms</li>
+<li>Platform auth/session policy:</li>
+<li>required login flow, permissions, and service compliance for that backend</li>
+</ol>
+<p>No gameplay Blueprint should need to switch from Steam-specific nodes when using this subsystem contract.</p>
+<h2 id="identity-save-compatibility-across-backends">Identity + Save Compatibility Across Backends<a class="headerlink" href="#identity-save-compatibility-across-backends" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Player save identity is provider-aware (<code>UniqueNetIdString</code> + <code>UniqueNetIdType</code>).</li>
+<li>Strict online identities require exact provider/id match for hydration.</li>
+<li>Local-only/null-style identities can use slot fallback.</li>
+<li>If two local players share one online identity, hydration prefers matching <code>PlayerSlot</code>.</li>
+</ul>
+<p>This means moving from Steam to another backend does not require a new Blueprint save schema; identity matching remains backend-aware in C++.</p>
+<h2 id="operational-notes">Operational Notes<a class="headerlink" href="#operational-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Call <code>RefreshJoinability</code> after major state transitions if needed (player joins/leaves already trigger server-side refresh).</li>
+<li>Use <code>AddLocalPlayer</code> for couch-join input handling; it enforces seat cap and updates joinability.</li>
+<li>Steam overlay friend-invite accept flow is handled by subsystem callback (<code>OnSessionUserInviteAccepted</code>) and attempts direct join; if an existing named session is active, subsystem destroys it first and then joins invite target.</li>
+<li>Manual <code>JoinSessionByIndex</code> also performs destroy-then-join if the local runtime is already in a different named session.</li>
+<li>Online (non-LAN) find now performs a retry without strict query filters when the first filtered search returns zero rows.</li>
+<li>Find completion semantics: transport/query success returns <code>bSuccess=true</code>; empty result sets use <code>ResultCode=SessionNotFound</code> with <code>Error="No sessions found."</code>.</li>
+<li>Session create/find execution path now uses AdvancedSessions C++ proxies when a local player controller is available (<code>UCreateSessionCallbackProxyAdvanced</code>, <code>UFindSessionsCallbackProxyAdvanced</code>) while preserving <code>UARSessionSubsystem</code> Blueprint API.</li>
+<li>Project plugin requirement for that proxy path: <code>AdvancedSessions</code> and <code>AdvancedSteamSessions</code> are enabled in <code>AlienRamen.uproject</code>.</li>
+<li><code>Stay Offline</code> is runtime best-effort; full backend deactivation may still require restart depending on subsystem startup behavior.</li>
+<li>Session lifetime is intended to survive normal map travel (listen-server flow) unless explicitly destroyed.</li>
+<li>Leave behavior:</li>
+<li>remote client leave returns only that client to menu (host session continues)</li>
+<li>host/standalone leave runs best-effort autosave-if-dirty except in <code>Mode.Invader</code>, then returns to menu</li>
+</ul>
+<h2 id="minimum-test-matrix-when-adding-a-new-backend">Minimum Test Matrix When Adding a New Backend<a class="headerlink" href="#minimum-test-matrix-when-adding-a-new-backend" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Host flow creates a discoverable joinable session.</li>
+<li>Join flow resolves connect string and travels correctly.</li>
+<li>Seat cap: third player always rejected.</li>
+<li>Offline toggle blocks host/find/join/remote joins.</li>
+<li>Save hydration matches correct identity after rejoin.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARHUDBase" kind="class" language="C++" prot="public">
+    <compoundname>AARHUDBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AHUD</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderHUD" prot="public" virt="non-virtual">AARInvaderHUD</derivedcompoundref>
+    <derivedcompoundref refid="classAARLobbyHUD" prot="public" virt="non-virtual">AARLobbyHUD</derivedcompoundref>
+    <derivedcompoundref refid="classAARScrapyardHUD" prot="public" virt="non-virtual">AARScrapyardHUD</derivedcompoundref>
+    <derivedcompoundref refid="classAARShopHUD" prot="public" virt="non-virtual">AARShopHUD</derivedcompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARHUDBase_1a102327fde82a0320d364415674ad6600" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARHUDBase::RequestHUDInitialization</definition>
+        <argsstring>(AARPlayerController *SourceController, APlayerState *CurrentPlayerState, AGameStateBase *CurrentGameState)</argsstring>
+        <name>RequestHUDInitialization</name>
+        <qualifiedname>AARHUDBase::RequestHUDInitialization</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>APlayerState *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>AGameStateBase *</type>
+          <declname>CurrentGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="22" column="14" bodyfile="AlienRamen/Private/ARHUDBase.cpp" bodystart="5" bodyend="13"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARHUDBase_1a31ecc4e338025898f5dea6a60f2120a7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARHUDBase::BP_OnHUDInitializationRequested</definition>
+        <argsstring>(AARPlayerController *SourceController, APlayerState *CurrentPlayerState, AGameStateBase *CurrentGameState)</argsstring>
+        <name>BP_OnHUDInitializationRequested</name>
+        <qualifiedname>AARHUDBase::BP_OnHUDInitializationRequested</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>APlayerState *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>AGameStateBase *</type>
+          <declname>CurrentGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="27" column="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARHUDBase.h" line="15" column="1" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="16" bodyend="28"/>
+    <listofallmembers>
+      <member refid="classAARHUDBase_1a31ecc4e338025898f5dea6a60f2120a7" prot="protected" virt="non-virtual"><scope>AARHUDBase</scope><name>BP_OnHUDInitializationRequested</name></member>
+      <member refid="classAARHUDBase_1a102327fde82a0320d364415674ad6600" prot="public" virt="virtual"><scope>AARHUDBase</scope><name>RequestHUDInitialization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

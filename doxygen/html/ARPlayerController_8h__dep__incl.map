@@ -1,0 +1,34 @@
+<map id="ARPlayerController.h" name="ARPlayerController.h">
+<area shape="rect" id="Node000001" title="ARPlayerController header for Alien Ramen." alt="" coords="830,5,986,31"/>
+<area shape="rect" id="Node000002" href="$ARDialogueSubsystem_8cpp_source.html" title=" " alt="" coords="5,79,203,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="817,29,215,81,203,82,203,77,214,76,816,24"/>
+<area shape="rect" id="Node000003" href="$ARHUDBase_8cpp_source.html" title=" " alt="" coords="227,79,357,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="817,31,370,81,357,83,357,78,369,76,816,26"/>
+<area shape="rect" id="Node000004" href="$ARInvaderPlayerController_8h.html" title="ARInvaderPlayerController header for Alien Ramen." alt="" coords="381,79,587,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="827,36,553,81,552,76,826,30"/>
+<area shape="rect" id="Node000007" href="$ARLobbyPlayerController_8h.html" title="ARLobbyPlayerController header for Alien Ramen." alt="" coords="611,79,805,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="864,38,742,81,740,76,862,33"/>
+<area shape="rect" id="Node000009" href="$ARPlayerController_8cpp_source.html" title=" " alt="" coords="837,152,1008,177"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="889,43,872,72,868,88,870,103,887,130,909,150,905,154,883,133,866,105,863,87,867,70,884,40"/>
+<area shape="rect" id="Node000010" href="$ARNPCCharacterBase_8cpp_source.html" title=" " alt="" coords="880,79,1069,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="930,39,966,77,962,80,927,43"/>
+<area shape="rect" id="Node000011" href="$ARPlayerCharacterInvader_8cpp_source.html" title=" " alt="" coords="1093,79,1312,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="969,31,1156,76,1154,81,968,36"/>
+<area shape="rect" id="Node000012" href="$ARSaveSubsystem_8cpp_source.html" title=" " alt="" coords="1336,79,1507,104"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="1000,29,1339,76,1339,81,999,35"/>
+<area shape="rect" id="Node000013" href="$ARScrapyardPlayerController_8h.html" title="ARScrapyardPlayerController header for Alien Ramen." alt="" coords="1531,79,1752,104"/>
+<area shape="poly" id="edge13_Node000001_Node000013" title=" " alt="" coords="1000,26,1531,77,1530,82,999,31"/>
+<area shape="rect" id="Node000015" href="$ARShopPlayerController_8h.html" title="ARShopPlayerController header for Alien Ramen." alt="" coords="1783,79,1971,104"/>
+<area shape="poly" id="edge15_Node000001_Node000015" title=" " alt="" coords="1000,22,1337,44,1764,76,1783,78,1783,83,1764,81,1337,49,1000,27"/>
+<area shape="rect" id="Node000005" href="$ARInvaderFullBlastMenuWidget_8cpp_source.html" title=" " alt="" coords="79,152,334,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="427,110,252,154,251,149,425,105"/>
+<area shape="rect" id="Node000006" href="$ARInvaderPlayerController_8cpp_source.html" title=" " alt="" coords="358,152,578,177"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="481,118,473,152,468,151,476,117"/>
+<area shape="rect" id="Node000008" href="$ARLobbyPlayerController_8cpp_source.html" title=" " alt="" coords="603,152,813,177"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="711,118,711,152,705,152,705,118"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="756,106,889,149,887,154,755,111"/>
+<area shape="rect" id="Node000014" href="$ARScrapyardPlayerController_8cpp_source.html" title=" " alt="" coords="1519,152,1755,177"/>
+<area shape="poly" id="edge14_Node000013_Node000014" title=" " alt="" coords="1643,118,1641,152,1635,152,1637,118"/>
+<area shape="rect" id="Node000016" href="$ARShopPlayerController_8cpp_source.html" title=" " alt="" coords="1780,152,1983,177"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="1881,118,1883,152,1878,152,1876,118"/>
+</map>

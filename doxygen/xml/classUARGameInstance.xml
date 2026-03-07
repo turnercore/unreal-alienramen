@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARGameInstance" kind="class" language="C++" prot="public">
+    <compoundname>UARGameInstance</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstance</basecompoundref>
+    <includes refid="ARGameInstance_8h" local="no">AlienRamen/Public/ARGameInstance.h</includes>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classUARGameInstance_1a42d8a6e919990dc801a43e53c0717947" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr int32</type>
+        <definition>constexpr int32 UARGameInstance::ARMinCompatibleProtocol</definition>
+        <argsstring></argsstring>
+        <name>ARMinCompatibleProtocol</name>
+        <qualifiedname>UARGameInstance::ARMinCompatibleProtocol</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="62" column="24" bodyfile="AlienRamen/Public/ARGameInstance.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARGameInstance_1a893f91dff0ccecb44349ba5b354e0a8d" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr int32</type>
+        <definition>constexpr int32 UARGameInstance::ARProtocolVersion</definition>
+        <argsstring></argsstring>
+        <name>ARProtocolVersion</name>
+        <qualifiedname>UARGameInstance::ARProtocolVersion</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="61" column="24" bodyfile="AlienRamen/Public/ARGameInstance.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARGameInstance_1a08a9399a5c7e019f5e51635f94891604" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+        <definition>UARSaveSubsystem * UARGameInstance::GetARSaveSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>GetARSaveSubsystem</name>
+        <qualifiedname>UARGameInstance::GetARSaveSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="27" column="18" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="25" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a082748c053a65344cb7fc80920f036ae" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref> *</type>
+        <definition>UARSessionSubsystem * UARGameInstance::GetARSessionSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>GetARSessionSubsystem</name>
+        <qualifiedname>UARGameInstance::GetARSessionSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="30" column="21" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="30" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a1f26237b1bad7856bd2b6587c69a3734" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::Init</definition>
+        <argsstring>() override</argsstring>
+        <name>Init</name>
+        <qualifiedname>UARGameInstance::Init</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="23" column="14" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="11" bodyend="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1af58d58ae81bd6ebb6da83d578a0d5415" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::Shutdown</definition>
+        <argsstring>() override</argsstring>
+        <name>Shutdown</name>
+        <qualifiedname>UARGameInstance::Shutdown</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="24" column="14" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="18" bodyend="23"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARGameInstance_1a6af1978bdbcd53a785681b7e7587fd13" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::ApplyARProtocolSessionSetting</definition>
+        <argsstring>(UPARAM(ref) FOnlineSessionSettings &amp;SessionSettings)</argsstring>
+        <name>ApplyARProtocolSessionSetting</name>
+        <qualifiedname>UARGameInstance::ApplyARProtocolSessionSetting</qualifiedname>
+        <param>
+          <type>UPARAM(ref) FOnlineSessionSettings &amp;</type>
+          <declname>SessionSettings</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="46" column="13" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="48" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a37475a302163c70c51040cc83db09ad1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARGameInstance::GetARBuildFingerprint</definition>
+        <argsstring>()</argsstring>
+        <name>GetARBuildFingerprint</name>
+        <qualifiedname>UARGameInstance::GetARBuildFingerprint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="58" column="16" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="84" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a09cec026ccae6a87e24531561f71f35a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>static int32 UARGameInstance::GetARMinCompatibleProtocol</definition>
+        <argsstring>()</argsstring>
+        <name>GetARMinCompatibleProtocol</name>
+        <qualifiedname>UARGameInstance::GetARMinCompatibleProtocol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="40" column="14" bodyfile="AlienRamen/Public/ARGameInstance.h" bodystart="40" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a69a4d2e1e308c23876e57e7ebc9e7d43" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARGameInstance::GetARProjectVersion</definition>
+        <argsstring>()</argsstring>
+        <name>GetARProjectVersion</name>
+        <qualifiedname>UARGameInstance::GetARProjectVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="54" column="16" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="69" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a6886e1a0bc8f1bdac96aa562eaf21043" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARGameInstance::GetARProtocolFromSession</definition>
+        <argsstring>(const FOnlineSessionSearchResult &amp;SearchResult, int32 &amp;OutProtocol)</argsstring>
+        <name>GetARProtocolFromSession</name>
+        <qualifiedname>UARGameInstance::GetARProtocolFromSession</qualifiedname>
+        <param>
+          <type>const FOnlineSessionSearchResult &amp;</type>
+          <declname>SearchResult</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutProtocol</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="49" column="13" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="53" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1ace344665ca614beafafe867084cea7d0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>static int32 UARGameInstance::GetARProtocolVersion</definition>
+        <argsstring>()</argsstring>
+        <name>GetARProtocolVersion</name>
+        <qualifiedname>UARGameInstance::GetARProtocolVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="36" column="14" bodyfile="AlienRamen/Public/ARGameInstance.h" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1aeaee2278496f16db2aa8510090ce7033" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARGameInstance::IsARProtocolCompatible</definition>
+        <argsstring>(int32 OtherProtocol)</argsstring>
+        <name>IsARProtocolCompatible</name>
+        <qualifiedname>UARGameInstance::IsARProtocolCompatible</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OtherProtocol</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="43" column="13" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="43" bodyend="46"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARGameInstance_1aa0ffeff1551c7ff29ab842d333a5ab17" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::BP_OnARGameInstanceInitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnARGameInstanceInitialized</name>
+        <qualifiedname>UARGameInstance::BP_OnARGameInstanceInitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="66" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1aafcd9504d752887a2b31854cea0a8d6c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::BP_OnARGameInstanceInitialized_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnARGameInstanceInitialized_Implementation</name>
+        <qualifiedname>UARGameInstance::BP_OnARGameInstanceInitialized_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="67" column="14" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="93" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1ade63cba68e07bd21ac7dda3c32c39516" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::BP_OnARGameInstanceShutdown</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnARGameInstanceShutdown</name>
+        <qualifiedname>UARGameInstance::BP_OnARGameInstanceShutdown</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="70" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARGameInstance_1a60e28de210b59194780696da7ccc7aa2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARGameInstance::BP_OnARGameInstanceShutdown_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnARGameInstanceShutdown_Implementation</name>
+        <qualifiedname>UARGameInstance::BP_OnARGameInstanceShutdown_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameInstance.h" line="71" column="14" bodyfile="AlienRamen/Private/ARGameInstance.cpp" bodystart="97" bodyend="99"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>GameInstance root that owns the save subsystem and build/network compatibility helpers. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARGameInstance.h" line="18" column="1" bodyfile="AlienRamen/Public/ARGameInstance.h" bodystart="19" bodyend="72"/>
+    <listofallmembers>
+      <member refid="classUARGameInstance_1a6af1978bdbcd53a785681b7e7587fd13" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>ApplyARProtocolSessionSetting</name></member>
+      <member refid="classUARGameInstance_1a42d8a6e919990dc801a43e53c0717947" prot="private" virt="non-virtual"><scope>UARGameInstance</scope><name>ARMinCompatibleProtocol</name></member>
+      <member refid="classUARGameInstance_1a893f91dff0ccecb44349ba5b354e0a8d" prot="private" virt="non-virtual"><scope>UARGameInstance</scope><name>ARProtocolVersion</name></member>
+      <member refid="classUARGameInstance_1aa0ffeff1551c7ff29ab842d333a5ab17" prot="protected" virt="non-virtual"><scope>UARGameInstance</scope><name>BP_OnARGameInstanceInitialized</name></member>
+      <member refid="classUARGameInstance_1aafcd9504d752887a2b31854cea0a8d6c" prot="protected" virt="virtual"><scope>UARGameInstance</scope><name>BP_OnARGameInstanceInitialized_Implementation</name></member>
+      <member refid="classUARGameInstance_1ade63cba68e07bd21ac7dda3c32c39516" prot="protected" virt="non-virtual"><scope>UARGameInstance</scope><name>BP_OnARGameInstanceShutdown</name></member>
+      <member refid="classUARGameInstance_1a60e28de210b59194780696da7ccc7aa2" prot="protected" virt="virtual"><scope>UARGameInstance</scope><name>BP_OnARGameInstanceShutdown_Implementation</name></member>
+      <member refid="classUARGameInstance_1a37475a302163c70c51040cc83db09ad1" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARBuildFingerprint</name></member>
+      <member refid="classUARGameInstance_1a09cec026ccae6a87e24531561f71f35a" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARMinCompatibleProtocol</name></member>
+      <member refid="classUARGameInstance_1a69a4d2e1e308c23876e57e7ebc9e7d43" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARProjectVersion</name></member>
+      <member refid="classUARGameInstance_1a6886e1a0bc8f1bdac96aa562eaf21043" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARProtocolFromSession</name></member>
+      <member refid="classUARGameInstance_1ace344665ca614beafafe867084cea7d0" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARProtocolVersion</name></member>
+      <member refid="classUARGameInstance_1a08a9399a5c7e019f5e51635f94891604" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARSaveSubsystem</name></member>
+      <member refid="classUARGameInstance_1a082748c053a65344cb7fc80920f036ae" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>GetARSessionSubsystem</name></member>
+      <member refid="classUARGameInstance_1a1f26237b1bad7856bd2b6587c69a3734" prot="public" virt="virtual"><scope>UARGameInstance</scope><name>Init</name></member>
+      <member refid="classUARGameInstance_1aeaee2278496f16db2aa8510090ce7033" prot="public" virt="non-virtual"><scope>UARGameInstance</scope><name>IsARProtocolCompatible</name></member>
+      <member refid="classUARGameInstance_1af58d58ae81bd6ebb6da83d578a0d5415" prot="public" virt="virtual"><scope>UARGameInstance</scope><name>Shutdown</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

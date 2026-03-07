@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classFAlienRamenTestsModule" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>FAlienRamenTestsModule</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">IModuleInterface</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classFAlienRamenTestsModule_1a5313597febc2c837f0882cf9f292940f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void FAlienRamenTestsModule::ShutdownModule</definition>
+        <argsstring>() override</argsstring>
+        <name>ShutdownModule</name>
+        <qualifiedname>FAlienRamenTestsModule::ShutdownModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/AlienRamenTestsModule.cpp" line="7" column="14" bodyfile="AlienRamenTests/Private/AlienRamenTestsModule.cpp" bodystart="7" bodyend="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classFAlienRamenTestsModule_1a7a4580a6b24e01b6da3d6ef77d4a7cc7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void FAlienRamenTestsModule::StartupModule</definition>
+        <argsstring>() override</argsstring>
+        <name>StartupModule</name>
+        <qualifiedname>FAlienRamenTestsModule::StartupModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/AlienRamenTestsModule.cpp" line="6" column="14" bodyfile="AlienRamenTests/Private/AlienRamenTestsModule.cpp" bodystart="6" bodyend="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenTests/Private/AlienRamenTestsModule.cpp" line="3" column="1" bodyfile="AlienRamenTests/Private/AlienRamenTestsModule.cpp" bodystart="4" bodyend="8"/>
+    <listofallmembers>
+      <member refid="classFAlienRamenTestsModule_1a5313597febc2c837f0882cf9f292940f" prot="public" virt="virtual"><scope>FAlienRamenTestsModule</scope><name>ShutdownModule</name></member>
+      <member refid="classFAlienRamenTestsModule_1a7a4580a6b24e01b6da3d6ef77d4a7cc7" prot="public" virt="virtual"><scope>FAlienRamenTestsModule</scope><name>StartupModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

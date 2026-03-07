@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structAREnemyBaseInternal_1_1FAbilityEntryKey" kind="struct" language="C++" prot="public">
+    <compoundname>AREnemyBaseInternal::FAbilityEntryKey</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structAREnemyBaseInternal_1_1FAbilityEntryKey_1a233f773647d0818837e69a67e432f5c8" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; UGameplayAbility &gt;</type>
+        <definition>TSubclassOf&lt;UGameplayAbility&gt; AREnemyBaseInternal::FAbilityEntryKey::AbilityClass</definition>
+        <argsstring></argsstring>
+        <name>AbilityClass</name>
+        <qualifiedname>AREnemyBaseInternal::FAbilityEntryKey::AbilityClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="62" column="13" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAREnemyBaseInternal_1_1FAbilityEntryKey_1a5176274393a6e71ca5c65397d254d28a" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AREnemyBaseInternal::FAbilityEntryKey::ActivationTag</definition>
+        <argsstring></argsstring>
+        <name>ActivationTag</name>
+        <qualifiedname>AREnemyBaseInternal::FAbilityEntryKey::ActivationTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="63" column="14" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAREnemyBaseInternal_1_1FAbilityEntryKey_1abeefef411418a9a51346dd443547df88" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AREnemyBaseInternal::FAbilityEntryKey::Level</definition>
+        <argsstring></argsstring>
+        <name>Level</name>
+        <qualifiedname>AREnemyBaseInternal::FAbilityEntryKey::Level</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="64" column="7" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="structAREnemyBaseInternal_1_1FAbilityEntryKey_1af1ea2abec2698d949a23805415240991" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32</type>
+        <definition>uint32 GetTypeHash</definition>
+        <argsstring>(const FAbilityEntryKey &amp;Key)</argsstring>
+        <name>GetTypeHash</name>
+        <qualifiedname>AREnemyBaseInternal::FAbilityEntryKey::GetTypeHash</qualifiedname>
+        <param>
+          <type>const FAbilityEntryKey &amp;</type>
+          <declname>Key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="66" column="15" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="66" bodyend="69"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structAREnemyBaseInternal_1_1FAbilityEntryKey_1a0f7f358d9b25b55ca5089462127fe209" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AREnemyBaseInternal::FAbilityEntryKey::operator==</definition>
+        <argsstring>(const FAbilityEntryKey &amp;Other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>AREnemyBaseInternal::FAbilityEntryKey::operator==</qualifiedname>
+        <param>
+          <type>const FAbilityEntryKey &amp;</type>
+          <declname>Other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/AREnemyBase.cpp" line="71" column="6" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="71" bodyend="76"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/AREnemyBase.cpp" line="60" column="1" bodyfile="AlienRamen/Private/AREnemyBase.cpp" bodystart="61" bodyend="77"/>
+    <listofallmembers>
+      <member refid="structAREnemyBaseInternal_1_1FAbilityEntryKey_1a233f773647d0818837e69a67e432f5c8" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FAbilityEntryKey</scope><name>AbilityClass</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FAbilityEntryKey_1a5176274393a6e71ca5c65397d254d28a" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FAbilityEntryKey</scope><name>ActivationTag</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FAbilityEntryKey_1af1ea2abec2698d949a23805415240991" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FAbilityEntryKey</scope><name>GetTypeHash</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FAbilityEntryKey_1abeefef411418a9a51346dd443547df88" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FAbilityEntryKey</scope><name>Level</name></member>
+      <member refid="structAREnemyBaseInternal_1_1FAbilityEntryKey_1a0f7f358d9b25b55ca5089462127fe209" prot="public" virt="non-virtual"><scope>AREnemyBaseInternal::FAbilityEntryKey</scope><name>operator==</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

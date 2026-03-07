@@ -1,0 +1,13 @@
+<map id="ARInvaderGameState.h" name="ARInvaderGameState.h">
+<area shape="rect" id="Node000001" title="ARInvaderGameState header for Alien Ramen." alt="" coords="410,5,585,31"/>
+<area shape="rect" id="Node000002" href="$AREnemyBase_8cpp_source.html" title=" " alt="" coords="5,79,149,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="417,36,145,81,145,76,416,30"/>
+<area shape="rect" id="Node000003" href="$ARInvaderGameState_8cpp_source.html" title=" " alt="" coords="173,79,363,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="448,37,306,81,304,76,446,32"/>
+<area shape="rect" id="Node000004" href="$ARInvaderPlayerController_8cpp_source.html" title=" " alt="" coords="387,79,607,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="500,44,500,79,495,79,495,44"/>
+<area shape="rect" id="Node000005" href="$ARPlayerController_8cpp_source.html" title=" " alt="" coords="632,79,803,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="547,32,683,76,681,81,545,37"/>
+<area shape="rect" id="Node000006" href="$ARPlayerStateBase_8cpp_source.html" title=" " alt="" coords="827,79,1002,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="578,30,848,76,847,81,577,36"/>
+</map>

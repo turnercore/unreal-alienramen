@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFInvaderLayerInfo" kind="struct" language="C++" prot="public">
+    <compoundname>FInvaderLayerInfo</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFInvaderLayerInfo_1af3cb61495385fc0486dd5f4bb4c90aac" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FInvaderLayerInfo::Delay</definition>
+        <argsstring></argsstring>
+        <name>Delay</name>
+        <qualifiedname>FInvaderLayerInfo::Delay</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="41" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFInvaderLayerInfo_1aea68c53c20a8ae9bb1541d955b90f944" prot="public" static="no" mutable="no">
+        <type>TArray&lt; int32 &gt;</type>
+        <definition>TArray&lt;int32&gt; FInvaderLayerInfo::SpawnIndices</definition>
+        <argsstring></argsstring>
+        <name>SpawnIndices</name>
+        <qualifiedname>FInvaderLayerInfo::SpawnIndices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="42" column="8" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="39" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="40" bodyend="43"/>
+    <listofallmembers>
+      <member refid="structFInvaderLayerInfo_1af3cb61495385fc0486dd5f4bb4c90aac" prot="public" virt="non-virtual"><scope>FInvaderLayerInfo</scope><name>Delay</name></member>
+      <member refid="structFInvaderLayerInfo_1aea68c53c20a8ae9bb1541d955b90f944" prot="public" virt="non-virtual"><scope>FInvaderLayerInfo</scope><name>SpawnIndices</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

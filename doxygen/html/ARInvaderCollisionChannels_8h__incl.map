@@ -1,0 +1,5 @@
+<map id="ARInvaderCollisionChannels.h" name="ARInvaderCollisionChannels.h">
+<area shape="rect" id="Node000001" title="Shared collision&#45;channel helpers for invader runtime actors." alt="" coords="5,5,223,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="55,79,173,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,31,117,65,111,65,111,31"/>
+</map>

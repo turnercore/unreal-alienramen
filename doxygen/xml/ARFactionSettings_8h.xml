@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARFactionSettings_8h" kind="file" language="C++">
+    <compoundname>ARFactionSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ARFactionSettings.generated.h</includes>
+    <includedby refid="ARFactionSettings_8cpp" local="yes">ARFactionSettings.cpp</includedby>
+    <includedby refid="ARFactionSubsystem_8cpp" local="yes">ARFactionSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARFactionSettings.h</label>
+        <link refid="ARFactionSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARFactionSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARFactionSettings.cpp</label>
+        <link refid="ARFactionSettings_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARFactionSubsystem.cpp</label>
+        <link refid="ARFactionSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARFactionSettings.h</label>
+        <link refid="ARFactionSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARFactionSettings" prot="public">UARFactionSettings</innerclass>
+    <briefdescription>
+<para>Faction system settings for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARFactionSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">UCLASS(Config=Game,<sp/>DefaultConfig,<sp/>meta=(DisplayName=</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen<sp/>Factions&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARFactionSettings<sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>FName<sp/>GetCategoryName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Root<sp/>used<sp/>for<sp/>ContentLookup<sp/>route<sp/>resolution<sp/>and<sp/>row<sp/>tag<sp/>reconstruction.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Faction&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>FactionDefinitionRootTag;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARFactionSettings.h"/>
+  </compounddef>
+</doxygen>

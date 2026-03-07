@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARScrapyardHUD_8cpp" kind="file" language="C++">
+    <compoundname>ARScrapyardHUD.cpp</compoundname>
+    <includes refid="ARScrapyardHUD_8h" local="yes">ARScrapyardHUD.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARScrapyardHUD.cpp</label>
+        <link refid="ARScrapyardHUD_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARHUDBase.h</label>
+        <link refid="ARHUDBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARScrapyardHUD.h</label>
+        <link refid="ARScrapyardHUD_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARHUDBase.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARScrapyardHUD.generated.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="5">
+        <label>GameFramework/HUD.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARScrapyardHUD_8h" kindref="compound">ARScrapyardHUD.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARScrapyardHUD.cpp"/>
+  </compounddef>
+</doxygen>

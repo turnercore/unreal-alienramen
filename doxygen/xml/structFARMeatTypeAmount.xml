@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARMeatTypeAmount" kind="struct" language="C++" prot="public">
+    <compoundname>FARMeatTypeAmount</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARMeatTypeAmount_1a092d1b9aa81eb077dcb683d8a7d9cb94" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARMeatTypeAmount::Amount</definition>
+        <argsstring></argsstring>
+        <name>Amount</name>
+        <qualifiedname>FARMeatTypeAmount::Amount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="34" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatTypeAmount_1aa386f8fc830d88fbfd34fd3b25ad09aa" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARMeatTypeAmount::MeatType</definition>
+        <argsstring></argsstring>
+        <name>MeatType</name>
+        <qualifiedname>FARMeatTypeAmount::MeatType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="31" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="26" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="27" bodyend="35"/>
+    <listofallmembers>
+      <member refid="structFARMeatTypeAmount_1a092d1b9aa81eb077dcb683d8a7d9cb94" prot="public" virt="non-virtual"><scope>FARMeatTypeAmount</scope><name>Amount</name></member>
+      <member refid="structFARMeatTypeAmount_1aa386f8fc830d88fbfd34fd3b25ad09aa" prot="public" virt="non-virtual"><scope>FARMeatTypeAmount</scope><name>MeatType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARNPCSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARNPCSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARNPCSubsystem_1a02153c39b514dac943bd9e24325c20b8" prot="public" static="no" mutable="no">
+        <type>FAROnNpcTalkableChanged</type>
+        <definition>FAROnNpcTalkableChanged UARNPCSubsystem::OnNpcTalkableChanged</definition>
+        <argsstring></argsstring>
+        <name>OnNpcTalkableChanged</name>
+        <qualifiedname>UARNPCSubsystem::OnNpcTalkableChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="38" column="25" bodyfile="AlienRamen/Public/ARNPCSubsystem.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARNPCSubsystem_1a9f45c41cbec29ca491315f3699d8dae5" prot="private" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, bool &gt;</type>
+        <definition>TMap&lt;FGameplayTag, bool&gt; UARNPCSubsystem::NpcTalkableCache</definition>
+        <argsstring></argsstring>
+        <name>NpcTalkableCache</name>
+        <qualifiedname>UARNPCSubsystem::NpcTalkableCache</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="42" column="6" bodyfile="AlienRamen/Public/ARNPCSubsystem.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARNPCSubsystem_1a4cb6957373a3418ce658f634d952138a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARNPCSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARNPCSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="20" column="14" bodyfile="AlienRamen/Private/ARNPCSubsystem.cpp" bodystart="67" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARNPCSubsystem_1a81b299a9c1e587d677693a2e625ba256" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARNPCSubsystem::IsNpcTalkable</definition>
+        <argsstring>(FGameplayTag NpcTag) const</argsstring>
+        <name>IsNpcTalkable</name>
+        <qualifiedname>UARNPCSubsystem::IsNpcTalkable</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="29" column="6" bodyfile="AlienRamen/Private/ARNPCSubsystem.cpp" bodystart="215" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARNPCSubsystem_1af6baa755fbf2a09fd01d7d2c6bf5eaee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARNPCSubsystem::RefreshAllNpcTalkableStates</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshAllNpcTalkableStates</name>
+        <qualifiedname>UARNPCSubsystem::RefreshAllNpcTalkableStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="35" column="6" bodyfile="AlienRamen/Private/ARNPCSubsystem.cpp" bodystart="256" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARNPCSubsystem_1aa77ed7f47b1603d6aa8094433e59e078" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARNPCSubsystem::RefreshNpcTalkableState</definition>
+        <argsstring>(FGameplayTag NpcTag)</argsstring>
+        <name>RefreshNpcTalkableState</name>
+        <qualifiedname>UARNPCSubsystem::RefreshNpcTalkableState</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="32" column="6" bodyfile="AlienRamen/Private/ARNPCSubsystem.cpp" bodystart="230" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARNPCSubsystem_1afe78239b384b427ec2fe2e4aaa0eb5f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARNPCSubsystem::SubmitNpcRamenDelivery</definition>
+        <argsstring>(FGameplayTag NpcTag, FGameplayTag DeliveredRamenTag, bool &amp;bOutAccepted)</argsstring>
+        <name>SubmitNpcRamenDelivery</name>
+        <qualifiedname>UARNPCSubsystem::SubmitNpcRamenDelivery</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>DeliveredRamenTag</declname>
+        </param>
+        <param>
+          <type>bool &amp;</type>
+          <declname>bOutAccepted</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="23" column="6" bodyfile="AlienRamen/Private/ARNPCSubsystem.cpp" bodystart="146" bodyend="186"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARNPCSubsystem_1af492da2a97bb9f92a27122123232cb3f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARNPCSubsystem::TryGetNpcRelationshipState</definition>
+        <argsstring>(FGameplayTag NpcTag, FARNpcRelationshipState &amp;OutState) const</argsstring>
+        <name>TryGetNpcRelationshipState</name>
+        <qualifiedname>UARNPCSubsystem::TryGetNpcRelationshipState</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <param>
+          <type>FARNpcRelationshipState &amp;</type>
+          <declname>OutState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCSubsystem.h" line="26" column="6" bodyfile="AlienRamen/Private/ARNPCSubsystem.cpp" bodystart="188" bodyend="213"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARNPCSubsystem.h" line="15" column="1" bodyfile="AlienRamen/Public/ARNPCSubsystem.h" bodystart="16" bodyend="43"/>
+    <listofallmembers>
+      <member refid="classUARNPCSubsystem_1a4cb6957373a3418ce658f634d952138a" prot="public" virt="virtual"><scope>UARNPCSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARNPCSubsystem_1a81b299a9c1e587d677693a2e625ba256" prot="public" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>IsNpcTalkable</name></member>
+      <member refid="classUARNPCSubsystem_1a9f45c41cbec29ca491315f3699d8dae5" prot="private" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>NpcTalkableCache</name></member>
+      <member refid="classUARNPCSubsystem_1a02153c39b514dac943bd9e24325c20b8" prot="public" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>OnNpcTalkableChanged</name></member>
+      <member refid="classUARNPCSubsystem_1af6baa755fbf2a09fd01d7d2c6bf5eaee" prot="public" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>RefreshAllNpcTalkableStates</name></member>
+      <member refid="classUARNPCSubsystem_1aa77ed7f47b1603d6aa8094433e59e078" prot="public" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>RefreshNpcTalkableState</name></member>
+      <member refid="classUARNPCSubsystem_1afe78239b384b427ec2fe2e4aaa0eb5f7" prot="public" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>SubmitNpcRamenDelivery</name></member>
+      <member refid="classUARNPCSubsystem_1af492da2a97bb9f92a27122123232cb3f" prot="public" virt="non-virtual"><scope>UARNPCSubsystem</scope><name>TryGetNpcRelationshipState</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

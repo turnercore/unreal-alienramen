@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARTestingSettings_8cpp" kind="file" language="C++">
+    <compoundname>ARTestingSettings.cpp</compoundname>
+    <includes refid="ARTestingSettings_8h" local="yes">ARTestingSettings.h</includes>
+    <incdepgraph>
+      <node id="17">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARPlayerStateBase.h</label>
+        <link refid="ARPlayerStateBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>StructSerializable.h</label>
+        <link refid="StructSerializable_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARTestingSettings.cpp</label>
+        <link refid="ARTestingSettings_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARTestingSettings.h</label>
+        <link refid="ARTestingSettings_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="16">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="23">
+        <label>ARInvaderSpicyTrackTypes.generated.h</label>
+      </node>
+      <node id="20">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="28">
+        <label>ARPlayerStateBase.generated.h</label>
+      </node>
+      <node id="22">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="30">
+        <label>ARTestingSettings.generated.h</label>
+      </node>
+      <node id="5">
+        <label>AbilitySystemInterface.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="18">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="12">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="29">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="8">
+        <label>GameFramework/PlayerState.h</label>
+      </node>
+      <node id="6">
+        <label>GameplayEffectTypes.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="27">
+        <label>StructSerializable.generated.h</label>
+      </node>
+      <node id="26">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="25">
+        <label>UObject/Interface.h</label>
+      </node>
+      <node id="13">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;ARTestingSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal">UARTestingSettings::UARTestingSettings()</highlight></codeline>
+<codeline lineno="4"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARTestingSettings_1a3a79c9e69dab70b83fa3ed62469b8c0d" kindref="member">DefaultTestPlayerSlot</ref><sp/>=<sp/>FName(TEXT(</highlight><highlight class="stringliteral">&quot;Auto&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARTestingSettings_1a62482c296376c0aca6d2eb917c8569d5" kindref="member">DefaultTestCharacter</ref><sp/>=<sp/>EARCharacterChoice::Brother;</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARTestingSettings_1a91187d3d68eb819e4361bc8a92687ca0" kindref="member">bAllowNetworkedTests</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARTestingSettings_1a97331c769f0ffc81c1f45b0f6ea2754d" kindref="member">ReplicationWaitTimeoutSeconds</ref><sp/>=<sp/>5.0f;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARTestingSettings_1a9159af37240ee3804e5b62b397337808" kindref="member">DebugSaveRevision</ref><sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenTests/Private/ARTestingSettings.cpp"/>
+  </compounddef>
+</doxygen>

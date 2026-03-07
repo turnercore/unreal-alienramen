@@ -1,0 +1,713 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAAREnemyAIController" kind="class" language="C++" prot="public">
+    <compoundname>AAREnemyAIController</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARAIControllerBase</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderAIController" prot="public" virt="non-virtual">AARInvaderAIController</derivedcompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAAREnemyAIController_1acba7fed2d8421959a256ba7f09659c48" prot="private" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AAREnemyAIController::AppliedStateTreeTags</definition>
+        <argsstring></argsstring>
+        <name>AppliedStateTreeTags</name>
+        <qualifiedname>AAREnemyAIController::AppliedStateTreeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="78" column="23" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a1822e6eef9bba807df4398df68d0b458" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyAIController::bPendingStateTreeStart</definition>
+        <argsstring></argsstring>
+        <name>bPendingStateTreeStart</name>
+        <qualifiedname>AAREnemyAIController::bPendingStateTreeStart</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="75" column="6" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a0ac3287bda089f0e6030343e803579b9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AAREnemyAIController::bStateTreeInitializedForPossession</definition>
+        <argsstring></argsstring>
+        <name>bStateTreeInitializedForPossession</name>
+        <qualifiedname>AAREnemyAIController::bStateTreeInitializedForPossession</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="76" column="6" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a9e818997b0f480f5e9d0f7ee69e73961" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyAIController::DeferredStartAttemptCounter</definition>
+        <argsstring></argsstring>
+        <name>DeferredStartAttemptCounter</name>
+        <qualifiedname>AAREnemyAIController::DeferredStartAttemptCounter</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="79" column="7" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1aa525571b23afdae8e22b068645bae342" prot="private" static="no" mutable="no">
+        <type>FTimerHandle</type>
+        <definition>FTimerHandle AAREnemyAIController::DeferredStartTimerHandle</definition>
+        <argsstring></argsstring>
+        <name>DeferredStartTimerHandle</name>
+        <qualifiedname>AAREnemyAIController::DeferredStartTimerHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="77" column="14" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAAREnemyAIController_1a5b86d684d0741100ce6f88c3d94929d5" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyAIController::ActivePhaseEventTag</definition>
+        <argsstring></argsstring>
+        <name>ActivePhaseEventTag</name>
+        <qualifiedname>AAREnemyAIController::ActivePhaseEventTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="89" column="14" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a1b1f17a1b002a15713311b9577991b82" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyAIController::BerserkPhaseEventTag</definition>
+        <argsstring></argsstring>
+        <name>BerserkPhaseEventTag</name>
+        <qualifiedname>AAREnemyAIController::BerserkPhaseEventTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="92" column="14" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a3cce11bf2e36056a34641fd525efe9e0" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UStateTree &gt;</type>
+        <definition>TObjectPtr&lt;UStateTree&gt; AAREnemyAIController::DefaultStateTree</definition>
+        <argsstring></argsstring>
+        <name>DefaultStateTree</name>
+        <qualifiedname>AAREnemyAIController::DefaultStateTree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="86" column="12" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1aee7ef7b388cff5e17a251643f3c878e9" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyAIController::EnteredScreenEventTag</definition>
+        <argsstring></argsstring>
+        <name>EnteredScreenEventTag</name>
+        <qualifiedname>AAREnemyAIController::EnteredScreenEventTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="95" column="14" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a6a2d1c35f256f6dd4c5672b8603b77ed" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnemyAIController::InFormationEventTag</definition>
+        <argsstring></argsstring>
+        <name>InFormationEventTag</name>
+        <qualifiedname>AAREnemyAIController::InFormationEventTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="98" column="14" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a44788d1927f12fb64138f35db2a1d348" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyAIController::LastSentEnteredScreenWaveId</definition>
+        <argsstring></argsstring>
+        <name>LastSentEnteredScreenWaveId</name>
+        <qualifiedname>AAREnemyAIController::LastSentEnteredScreenWaveId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="102" column="7" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a83c081974bda8d61f975d89b976dfbfe" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyAIController::LastSentInFormationWaveId</definition>
+        <argsstring></argsstring>
+        <name>LastSentInFormationWaveId</name>
+        <qualifiedname>AAREnemyAIController::LastSentInFormationWaveId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="103" column="7" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a2527cb3d5e43d8287b56d2cc79c85765" prot="protected" static="no" mutable="no">
+        <type>EARWavePhase</type>
+        <definition>EARWavePhase AAREnemyAIController::LastSentWavePhase</definition>
+        <argsstring></argsstring>
+        <name>LastSentWavePhase</name>
+        <qualifiedname>AAREnemyAIController::LastSentWavePhase</qualifiedname>
+        <initializer>= EARWavePhase::Berserk</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="101" column="14" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1a410ccc2728d404075f3037357902533f" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AAREnemyAIController::LastSentWavePhaseWaveId</definition>
+        <argsstring></argsstring>
+        <name>LastSentWavePhaseWaveId</name>
+        <qualifiedname>AAREnemyAIController::LastSentWavePhaseWaveId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="100" column="7" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAAREnemyAIController_1ac3904081de9d5ad064921b14741dbab4" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARStateTreeAIComponent" kindref="compound">UARStateTreeAIComponent</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARStateTreeAIComponent&gt; AAREnemyAIController::StateTreeComponent</definition>
+        <argsstring></argsstring>
+        <name>StateTreeComponent</name>
+        <qualifiedname>AAREnemyAIController::StateTreeComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="83" column="12" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAAREnemyAIController_1ab24d9705fa443ec335b268a2b1c71ec4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AAREnemyAIController::AAREnemyAIController</definition>
+        <argsstring>()</argsstring>
+        <name>AAREnemyAIController</name>
+        <qualifiedname>AAREnemyAIController::AAREnemyAIController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="23" column="1" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="23" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a2647e491db82cab1afc7c2eaa171a333" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classUARStateTreeAIComponent" kindref="compound">UARStateTreeAIComponent</ref> *</type>
+        <definition>UARStateTreeAIComponent * AAREnemyAIController::GetEnemyStateTreeComponent</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnemyStateTreeComponent</name>
+        <qualifiedname>AAREnemyAIController::GetEnemyStateTreeComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="42" column="25" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a391268c325d82998810df617300af70b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::NotifyEnemyEnteredScreen</definition>
+        <argsstring>(int32 WaveInstanceId)</argsstring>
+        <name>NotifyEnemyEnteredScreen</name>
+        <qualifiedname>AAREnemyAIController::NotifyEnemyEnteredScreen</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>WaveInstanceId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="25" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="603" bodyend="663"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1af787dd9f72323b71484fbe77a1506941" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::NotifyEnemyInFormation</definition>
+        <argsstring>(int32 WaveInstanceId)</argsstring>
+        <name>NotifyEnemyInFormation</name>
+        <qualifiedname>AAREnemyAIController::NotifyEnemyInFormation</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>WaveInstanceId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="26" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="665" bodyend="705"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a11fb759cfbe7c8d1267b1efcc9e76dd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::NotifyWavePhaseChanged</definition>
+        <argsstring>(int32 WaveInstanceId, EARWavePhase NewPhase)</argsstring>
+        <name>NotifyWavePhaseChanged</name>
+        <qualifiedname>AAREnemyAIController::NotifyWavePhaseChanged</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>WaveInstanceId</declname>
+        </param>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>NewPhase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="24" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="553" bodyend="601"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a07c86d725e56db65486b1c6f44618d75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::PopPawnASCStateTag</definition>
+        <argsstring>(FGameplayTag StateTag)</argsstring>
+        <name>PopPawnASCStateTag</name>
+        <qualifiedname>AAREnemyAIController::PopPawnASCStateTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>StateTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="33" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="434" bodyend="445"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a0aa135a3dd6a2298b4c4c928716c14df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::PopPawnASCStateTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;StateTags)</argsstring>
+        <name>PopPawnASCStateTags</name>
+        <qualifiedname>AAREnemyAIController::PopPawnASCStateTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>StateTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="39" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="460" bodyend="471"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a3bb9da421a77e0fe1e73822c68c6acab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::PushPawnASCStateTag</definition>
+        <argsstring>(FGameplayTag StateTag)</argsstring>
+        <name>PushPawnASCStateTag</name>
+        <qualifiedname>AAREnemyAIController::PushPawnASCStateTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>StateTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="30" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="421" bodyend="432"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a8417277dc207959b7ce824c3708c445b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::PushPawnASCStateTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;StateTags)</argsstring>
+        <name>PushPawnASCStateTags</name>
+        <qualifiedname>AAREnemyAIController::PushPawnASCStateTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>StateTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="36" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="447" bodyend="458"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a1eb75a93fc3e1fe23e91dea5c4e7cb94" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyAIController::ReceivePawnSignal</definition>
+        <argsstring>(FGameplayTag SignalTag, AActor *RelatedActor=nullptr, FVector WorldLocation=FVector::ZeroVector, float ScalarValue=0.f, bool bForwardToStateTree=true) override</argsstring>
+        <name>ReceivePawnSignal</name>
+        <qualifiedname>AAREnemyAIController::ReceivePawnSignal</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SignalTag</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>RelatedActor</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>WorldLocation</declname>
+          <defval>FVector::ZeroVector</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ScalarValue</declname>
+          <defval>0.f</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bForwardToStateTree</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="53" column="14" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="517" bodyend="536"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a5fcd7a3ed11c0007329765fe96448ac6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyAIController::SendStateTreeEvent</definition>
+        <argsstring>(const FStateTreeEvent &amp;Event)</argsstring>
+        <name>SendStateTreeEvent</name>
+        <qualifiedname>AAREnemyAIController::SendStateTreeEvent</qualifiedname>
+        <param>
+          <type>const FStateTreeEvent &amp;</type>
+          <declname>Event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="46" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="473" bodyend="504"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a786787adcabf7909618de47aaa59efe3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyAIController::SendStateTreeEventByTag</definition>
+        <argsstring>(FGameplayTag EventTag, FName Origin=NAME_None)</argsstring>
+        <name>SendStateTreeEventByTag</name>
+        <qualifiedname>AAREnemyAIController::SendStateTreeEventByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EventTag</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>Origin</declname>
+          <defval>NAME_None</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="50" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="506" bodyend="515"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a17a78a9b7d8bf5f2a1ad32a7bdae1b2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::TryStartStateTreeForCurrentPawn</definition>
+        <argsstring>(const TCHAR *Reason=TEXT(&quot;Unknown&quot;))</argsstring>
+        <name>TryStartStateTreeForCurrentPawn</name>
+        <qualifiedname>AAREnemyAIController::TryStartStateTreeForCurrentPawn</qualifiedname>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>Reason</declname>
+          <defval>TEXT(&quot;Unknown&quot;)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="27" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="109" bodyend="126"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAAREnemyAIController_1acf8603ec4fb30eab3d563ff936c85d59" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::OnPossess</definition>
+        <argsstring>(APawn *InPawn) override</argsstring>
+        <name>OnPossess</name>
+        <qualifiedname>AAREnemyAIController::OnPossess</qualifiedname>
+        <param>
+          <type>APawn *</type>
+          <declname>InPawn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="61" column="14" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="54" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a6182db7230391732f5353479bc1af242" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::OnUnPossess</definition>
+        <argsstring>() override</argsstring>
+        <name>OnUnPossess</name>
+        <qualifiedname>AAREnemyAIController::OnUnPossess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="62" column="14" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="89" bodyend="107"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAAREnemyAIController_1a642e7b1bf9e1c1ce4705be6c6cb20977" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::BindStateTreeTagBridge</definition>
+        <argsstring>()</argsstring>
+        <name>BindStateTreeTagBridge</name>
+        <qualifiedname>AAREnemyAIController::BindStateTreeTagBridge</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="70" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="337" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1af2e246aaf4511ac6d5b31f29254fba53" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::EnsureEventTagsInitialized</definition>
+        <argsstring>()</argsstring>
+        <name>EnsureEventTagsInitialized</name>
+        <qualifiedname>AAREnemyAIController::EnsureEventTagsInitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="65" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="34" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1ab8c10cf64faf2db317ae0c08a9127526" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::HandleStateTreeActiveTagsChanged</definition>
+        <argsstring>(const FGameplayTagContainer &amp;AddedTags, const FGameplayTagContainer &amp;RemovedTags)</argsstring>
+        <name>HandleStateTreeActiveTagsChanged</name>
+        <qualifiedname>AAREnemyAIController::HandleStateTreeActiveTagsChanged</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>AddedTags</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>RemovedTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="72" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="369" bodyend="419"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1aca188c9327c1805e6cbb5937093b8efb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnemyAIController::IsStateTreeRunning</definition>
+        <argsstring>() const</argsstring>
+        <name>IsStateTreeRunning</name>
+        <qualifiedname>AAREnemyAIController::IsStateTreeRunning</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="69" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="332" bodyend="335"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1ae644297bd667dfbb5069242d5c8ac98c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::StartStateTreeForPawn</definition>
+        <argsstring>(APawn *InPawn, const TCHAR *Reason)</argsstring>
+        <name>StartStateTreeForPawn</name>
+        <qualifiedname>AAREnemyAIController::StartStateTreeForPawn</qualifiedname>
+        <param>
+          <type>APawn *</type>
+          <declname>InPawn</declname>
+        </param>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>Reason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="66" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="128" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a2cd7c3a32b6386d821f8447cb1b7e1a5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::StartStateTreeForPawn_Deferred</definition>
+        <argsstring>(APawn *InPawn, const TCHAR *Reason)</argsstring>
+        <name>StartStateTreeForPawn_Deferred</name>
+        <qualifiedname>AAREnemyAIController::StartStateTreeForPawn_Deferred</qualifiedname>
+        <param>
+          <type>APawn *</type>
+          <declname>InPawn</declname>
+        </param>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>Reason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="67" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="199" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1a136496ca0e25de4d577b92cb88de369b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::StopStateTree</definition>
+        <argsstring>(const FString &amp;Reason)</argsstring>
+        <name>StopStateTree</name>
+        <qualifiedname>AAREnemyAIController::StopStateTree</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Reason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="68" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="538" bodyend="551"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnemyAIController_1aba093a444683b97cb2de9ce328c3788f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnemyAIController::UnbindStateTreeTagBridge</definition>
+        <argsstring>(bool bPopAppliedTags)</argsstring>
+        <name>UnbindStateTreeTagBridge</name>
+        <qualifiedname>AAREnemyAIController::UnbindStateTreeTagBridge</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bPopAppliedTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAIController.h" line="71" column="6" bodyfile="AlienRamen/Private/AREnemyAIController.cpp" bodystart="354" bodyend="367"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREnemyAIController.h" line="18" column="1" bodyfile="AlienRamen/Public/AREnemyAIController.h" bodystart="19" bodyend="105"/>
+    <listofallmembers>
+      <member refid="classAAREnemyAIController_1ab24d9705fa443ec335b268a2b1c71ec4" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>AAREnemyAIController</name></member>
+      <member refid="classAAREnemyAIController_1a5b86d684d0741100ce6f88c3d94929d5" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>ActivePhaseEventTag</name></member>
+      <member refid="classAAREnemyAIController_1acba7fed2d8421959a256ba7f09659c48" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>AppliedStateTreeTags</name></member>
+      <member refid="classAAREnemyAIController_1a1b1f17a1b002a15713311b9577991b82" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>BerserkPhaseEventTag</name></member>
+      <member refid="classAAREnemyAIController_1a642e7b1bf9e1c1ce4705be6c6cb20977" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>BindStateTreeTagBridge</name></member>
+      <member refid="classAARAIControllerBase_1a17aa084bb46190ff330d3dedfe9a5fca" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>BP_OnPawnSignal</name></member>
+      <member refid="classAAREnemyAIController_1a1822e6eef9bba807df4398df68d0b458" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>bPendingStateTreeStart</name></member>
+      <member refid="classAAREnemyAIController_1a0ac3287bda089f0e6030343e803579b9" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>bStateTreeInitializedForPossession</name></member>
+      <member refid="classAAREnemyAIController_1a3cce11bf2e36056a34641fd525efe9e0" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>DefaultStateTree</name></member>
+      <member refid="classAAREnemyAIController_1a9e818997b0f480f5e9d0f7ee69e73961" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>DeferredStartAttemptCounter</name></member>
+      <member refid="classAAREnemyAIController_1aa525571b23afdae8e22b068645bae342" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>DeferredStartTimerHandle</name></member>
+      <member refid="classAAREnemyAIController_1af2e246aaf4511ac6d5b31f29254fba53" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>EnsureEventTagsInitialized</name></member>
+      <member refid="classAAREnemyAIController_1aee7ef7b388cff5e17a251643f3c878e9" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>EnteredScreenEventTag</name></member>
+      <member refid="classAAREnemyAIController_1a2647e491db82cab1afc7c2eaa171a333" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>GetEnemyStateTreeComponent</name></member>
+      <member refid="classAAREnemyAIController_1ab8c10cf64faf2db317ae0c08a9127526" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>HandleStateTreeActiveTagsChanged</name></member>
+      <member refid="classAAREnemyAIController_1a6a2d1c35f256f6dd4c5672b8603b77ed" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>InFormationEventTag</name></member>
+      <member refid="classAAREnemyAIController_1aca188c9327c1805e6cbb5937093b8efb" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>IsStateTreeRunning</name></member>
+      <member refid="classAAREnemyAIController_1a44788d1927f12fb64138f35db2a1d348" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>LastSentEnteredScreenWaveId</name></member>
+      <member refid="classAAREnemyAIController_1a83c081974bda8d61f975d89b976dfbfe" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>LastSentInFormationWaveId</name></member>
+      <member refid="classAAREnemyAIController_1a2527cb3d5e43d8287b56d2cc79c85765" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>LastSentWavePhase</name></member>
+      <member refid="classAAREnemyAIController_1a410ccc2728d404075f3037357902533f" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>LastSentWavePhaseWaveId</name></member>
+      <member refid="classAAREnemyAIController_1a391268c325d82998810df617300af70b" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>NotifyEnemyEnteredScreen</name></member>
+      <member refid="classAAREnemyAIController_1af787dd9f72323b71484fbe77a1506941" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>NotifyEnemyInFormation</name></member>
+      <member refid="classAAREnemyAIController_1a11fb759cfbe7c8d1267b1efcc9e76dd6" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>NotifyWavePhaseChanged</name></member>
+      <member refid="classAAREnemyAIController_1acf8603ec4fb30eab3d563ff936c85d59" prot="protected" virt="virtual"><scope>AAREnemyAIController</scope><name>OnPossess</name></member>
+      <member refid="classAAREnemyAIController_1a6182db7230391732f5353479bc1af242" prot="protected" virt="virtual"><scope>AAREnemyAIController</scope><name>OnUnPossess</name></member>
+      <member refid="classAAREnemyAIController_1a07c86d725e56db65486b1c6f44618d75" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>PopPawnASCStateTag</name></member>
+      <member refid="classAAREnemyAIController_1a0aa135a3dd6a2298b4c4c928716c14df" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>PopPawnASCStateTags</name></member>
+      <member refid="classAAREnemyAIController_1a3bb9da421a77e0fe1e73822c68c6acab" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>PushPawnASCStateTag</name></member>
+      <member refid="classAAREnemyAIController_1a8417277dc207959b7ce824c3708c445b" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>PushPawnASCStateTags</name></member>
+      <member refid="classAAREnemyAIController_1a1eb75a93fc3e1fe23e91dea5c4e7cb94" prot="public" virt="virtual"><scope>AAREnemyAIController</scope><name>ReceivePawnSignal</name></member>
+      <member refid="classAAREnemyAIController_1a5fcd7a3ed11c0007329765fe96448ac6" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>SendStateTreeEvent</name></member>
+      <member refid="classAAREnemyAIController_1a786787adcabf7909618de47aaa59efe3" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>SendStateTreeEventByTag</name></member>
+      <member refid="classAAREnemyAIController_1ae644297bd667dfbb5069242d5c8ac98c" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>StartStateTreeForPawn</name></member>
+      <member refid="classAAREnemyAIController_1a2cd7c3a32b6386d821f8447cb1b7e1a5" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>StartStateTreeForPawn_Deferred</name></member>
+      <member refid="classAAREnemyAIController_1ac3904081de9d5ad064921b14741dbab4" prot="protected" virt="non-virtual"><scope>AAREnemyAIController</scope><name>StateTreeComponent</name></member>
+      <member refid="classAAREnemyAIController_1a136496ca0e25de4d577b92cb88de369b" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>StopStateTree</name></member>
+      <member refid="classAAREnemyAIController_1a17a78a9b7d8bf5f2a1ad32a7bdae1b2c" prot="public" virt="non-virtual"><scope>AAREnemyAIController</scope><name>TryStartStateTreeForCurrentPawn</name></member>
+      <member refid="classAAREnemyAIController_1aba093a444683b97cb2de9ce328c3788f" prot="private" virt="non-virtual"><scope>AAREnemyAIController</scope><name>UnbindStateTreeTagBridge</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

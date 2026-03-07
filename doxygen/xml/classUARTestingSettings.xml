@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARTestingSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARTestingSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <includes refid="ARTestingSettings_8h" local="no">AlienRamenTests/Public/ARTestingSettings.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARTestingSettings_1a91187d3d68eb819e4361bc8a92687ca0" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARTestingSettings::bAllowNetworkedTests</definition>
+        <argsstring></argsstring>
+        <name>bAllowNetworkedTests</name>
+        <qualifiedname>UARTestingSettings::bAllowNetworkedTests</qualifiedname>
+        <briefdescription>
+<para>Allow automation that spins up multiple clients (PIE). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Gate for CI that cannot run multi-PIE. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="51" column="6" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a9159af37240ee3804e5b62b397337808" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARTestingSettings::DebugSaveRevision</definition>
+        <argsstring></argsstring>
+        <name>DebugSaveRevision</name>
+        <qualifiedname>UARTestingSettings::DebugSaveRevision</qualifiedname>
+        <briefdescription>
+<para>Optional revision for debug save (-1 means latest). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="65" column="7" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a2f34c50cf10921b0cf174f2142d739d5" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARTestingSettings::DebugSaveSlotBase</definition>
+        <argsstring></argsstring>
+        <name>DebugSaveSlotBase</name>
+        <qualifiedname>UARTestingSettings::DebugSaveSlotBase</qualifiedname>
+        <briefdescription>
+<para>Optional canonical slot base used by tests that opt-in to load a debug save. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="61" column="7" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a62482c296376c0aca6d2eb917c8569d5" prot="public" static="no" mutable="no">
+        <type>EARCharacterChoice</type>
+        <definition>EARCharacterChoice UARTestingSettings::DefaultTestCharacter</definition>
+        <argsstring></argsstring>
+        <name>DefaultTestCharacter</name>
+        <qualifiedname>UARTestingSettings::DefaultTestCharacter</qualifiedname>
+        <briefdescription>
+<para>Default character choice for spawning test players. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="47" column="20" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a3a79c9e69dab70b83fa3ed62469b8c0d" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARTestingSettings::DefaultTestPlayerSlot</definition>
+        <argsstring></argsstring>
+        <name>DefaultTestPlayerSlot</name>
+        <qualifiedname>UARTestingSettings::DefaultTestPlayerSlot</qualifiedname>
+        <briefdescription>
+<para>Default player slot to use in tests (&quot;P1&quot;, &quot;P2&quot;, or &quot;Auto&quot;). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="43" column="7" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a0d050caacc8449622838bf2d140bb0c8" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString UARTestingSettings::Notes</definition>
+        <argsstring></argsstring>
+        <name>Notes</name>
+        <qualifiedname>UARTestingSettings::Notes</qualifiedname>
+        <briefdescription>
+<para>Free-form notes for QA/engineers (not used by code). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="71" column="9" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a97331c769f0ffc81c1f45b0f6ea2754d" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARTestingSettings::ReplicationWaitTimeoutSeconds</definition>
+        <argsstring></argsstring>
+        <name>ReplicationWaitTimeoutSeconds</name>
+        <qualifiedname>UARTestingSettings::ReplicationWaitTimeoutSeconds</qualifiedname>
+        <briefdescription>
+<para>Max wait time (seconds) for replication helpers in latent tests. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="55" column="7" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a53e42692341956748fd431bdbce25ebc" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UWorld &gt;</type>
+        <definition>TSoftObjectPtr&lt;UWorld&gt; UARTestingSettings::TestMap_Invader</definition>
+        <argsstring></argsstring>
+        <name>TestMap_Invader</name>
+        <qualifiedname>UARTestingSettings::TestMap_Invader</qualifiedname>
+        <briefdescription>
+<para>Test map for Invader mode (soft reference). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="29" column="16" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1ade4d47458b772c56af9f5d47bade8ce8" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UWorld &gt;</type>
+        <definition>TSoftObjectPtr&lt;UWorld&gt; UARTestingSettings::TestMap_Lobby</definition>
+        <argsstring></argsstring>
+        <name>TestMap_Lobby</name>
+        <qualifiedname>UARTestingSettings::TestMap_Lobby</qualifiedname>
+        <briefdescription>
+<para>Test map for Lobby/coop setup (soft reference). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="33" column="16" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTestingSettings_1a13209fbccadf9ed93d90b0ad61d08ec4" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UWorld &gt;</type>
+        <definition>TSoftObjectPtr&lt;UWorld&gt; UARTestingSettings::TestMap_Menu</definition>
+        <argsstring></argsstring>
+        <name>TestMap_Menu</name>
+        <qualifiedname>UARTestingSettings::TestMap_Menu</qualifiedname>
+        <briefdescription>
+<para>Optional test map for front-end/menu flows. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="37" column="16" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARTestingSettings_1a6de264f8676e3015aba654b1631567ef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARTestingSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARTestingSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="21" column="15" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTestingSettings_1aea1aa3881b2a2123b4c4cbbbc695ae43" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARTestingSettings::GetSectionName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetSectionName</name>
+        <qualifiedname>UARTestingSettings::GetSectionName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="22" column="15" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="22" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTestingSettings_1a5e536623b08751069c6af766ff6da5fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARTestingSettings::UARTestingSettings</definition>
+        <argsstring>()</argsstring>
+        <name>UARTestingSettings</name>
+        <qualifiedname>UARTestingSettings::UARTestingSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Public/ARTestingSettings.h" line="18" column="1" bodyfile="AlienRamenTests/Private/ARTestingSettings.cpp" bodystart="3" bodyend="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Project Settings: Alien Ramen | Testing Centralized config used by automation/functional tests to resolve maps, defaults, and optional debug save references. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenTests/Public/ARTestingSettings.h" line="13" column="1" bodyfile="AlienRamenTests/Public/ARTestingSettings.h" bodystart="14" bodyend="72"/>
+    <listofallmembers>
+      <member refid="classUARTestingSettings_1a91187d3d68eb819e4361bc8a92687ca0" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>bAllowNetworkedTests</name></member>
+      <member refid="classUARTestingSettings_1a9159af37240ee3804e5b62b397337808" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>DebugSaveRevision</name></member>
+      <member refid="classUARTestingSettings_1a2f34c50cf10921b0cf174f2142d739d5" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>DebugSaveSlotBase</name></member>
+      <member refid="classUARTestingSettings_1a62482c296376c0aca6d2eb917c8569d5" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>DefaultTestCharacter</name></member>
+      <member refid="classUARTestingSettings_1a3a79c9e69dab70b83fa3ed62469b8c0d" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>DefaultTestPlayerSlot</name></member>
+      <member refid="classUARTestingSettings_1a6de264f8676e3015aba654b1631567ef" prot="public" virt="virtual"><scope>UARTestingSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARTestingSettings_1aea1aa3881b2a2123b4c4cbbbc695ae43" prot="public" virt="virtual"><scope>UARTestingSettings</scope><name>GetSectionName</name></member>
+      <member refid="classUARTestingSettings_1a0d050caacc8449622838bf2d140bb0c8" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>Notes</name></member>
+      <member refid="classUARTestingSettings_1a97331c769f0ffc81c1f45b0f6ea2754d" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>ReplicationWaitTimeoutSeconds</name></member>
+      <member refid="classUARTestingSettings_1a53e42692341956748fd431bdbce25ebc" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>TestMap_Invader</name></member>
+      <member refid="classUARTestingSettings_1ade4d47458b772c56af9f5d47bade8ce8" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>TestMap_Lobby</name></member>
+      <member refid="classUARTestingSettings_1a13209fbccadf9ed93d90b0ad61d08ec4" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>TestMap_Menu</name></member>
+      <member refid="classUARTestingSettings_1a5e536623b08751069c6af766ff6da5fc" prot="public" virt="non-virtual"><scope>UARTestingSettings</scope><name>UARTestingSettings</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARDialogueSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARDialogueSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARDialogueSettings_1a6267305a53668f3a27552cfc5af37d90" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARDialogueSettings::DialogueNodeRootTag</definition>
+        <argsstring></argsstring>
+        <name>DialogueNodeRootTag</name>
+        <qualifiedname>UARDialogueSettings::DialogueNodeRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSettings.h" line="22" column="14" bodyfile="AlienRamen/Public/ARDialogueSettings.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueSettings_1a95aa3f19364d6c64414f16e8006b6d23" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARDialogueSettings::PauseOnDialogueModeTags</definition>
+        <argsstring></argsstring>
+        <name>PauseOnDialogueModeTags</name>
+        <qualifiedname>UARDialogueSettings::PauseOnDialogueModeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSettings.h" line="34" column="23" bodyfile="AlienRamen/Public/ARDialogueSettings.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueSettings_1a1f5219e707035f5693debe20177969fb" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARDialogueSettings::PerPlayerDialogueModeTags</definition>
+        <argsstring></argsstring>
+        <name>PerPlayerDialogueModeTags</name>
+        <qualifiedname>UARDialogueSettings::PerPlayerDialogueModeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSettings.h" line="30" column="23" bodyfile="AlienRamen/Public/ARDialogueSettings.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueSettings_1a6b0ffd3cd9f23295d5d78c5c912f2ae7" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARDialogueSettings::SharedDialogueModeTags</definition>
+        <argsstring></argsstring>
+        <name>SharedDialogueModeTags</name>
+        <qualifiedname>UARDialogueSettings::SharedDialogueModeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSettings.h" line="26" column="23" bodyfile="AlienRamen/Public/ARDialogueSettings.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARDialogueSettings_1a29d77afa9febb2844be54d3e6af2446d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARDialogueSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARDialogueSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueSettings.h" line="18" column="15" bodyfile="AlienRamen/Public/ARDialogueSettings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueSettings.h" line="13" column="1" bodyfile="AlienRamen/Public/ARDialogueSettings.h" bodystart="14" bodyend="35"/>
+    <listofallmembers>
+      <member refid="classUARDialogueSettings_1a6267305a53668f3a27552cfc5af37d90" prot="public" virt="non-virtual"><scope>UARDialogueSettings</scope><name>DialogueNodeRootTag</name></member>
+      <member refid="classUARDialogueSettings_1a29d77afa9febb2844be54d3e6af2446d" prot="public" virt="virtual"><scope>UARDialogueSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARDialogueSettings_1a95aa3f19364d6c64414f16e8006b6d23" prot="public" virt="non-virtual"><scope>UARDialogueSettings</scope><name>PauseOnDialogueModeTags</name></member>
+      <member refid="classUARDialogueSettings_1a1f5219e707035f5693debe20177969fb" prot="public" virt="non-virtual"><scope>UARDialogueSettings</scope><name>PerPlayerDialogueModeTags</name></member>
+      <member refid="classUARDialogueSettings_1a6b0ffd3cd9f23295d5d78c5c912f2ae7" prot="public" virt="non-virtual"><scope>UARDialogueSettings</scope><name>SharedDialogueModeTags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

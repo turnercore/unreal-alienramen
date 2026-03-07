@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFInvaderAuthoringIssue" kind="struct" language="C++" prot="public">
+    <compoundname>FInvaderAuthoringIssue</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFInvaderAuthoringIssue_1af419123ed5eb7bf5ea48d45452c8244f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FInvaderAuthoringIssue::bError</definition>
+        <argsstring></argsstring>
+        <name>bError</name>
+        <qualifiedname>FInvaderAuthoringIssue::bError</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="33" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFInvaderAuthoringIssue_1a5e3a96c47ee90de793c4f6298acefb35" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FInvaderAuthoringIssue::bWave</definition>
+        <argsstring></argsstring>
+        <name>bWave</name>
+        <qualifiedname>FInvaderAuthoringIssue::bWave</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="34" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFInvaderAuthoringIssue_1a677f3340ca1e2368efb35fada6c05b2b" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FInvaderAuthoringIssue::Message</definition>
+        <argsstring></argsstring>
+        <name>Message</name>
+        <qualifiedname>FInvaderAuthoringIssue::Message</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="36" column="9" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFInvaderAuthoringIssue_1aa961de131f98684660f6e0fc921b5784" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FInvaderAuthoringIssue::RowName</definition>
+        <argsstring></argsstring>
+        <name>RowName</name>
+        <qualifiedname>FInvaderAuthoringIssue::RowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="35" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="31" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="32" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structFInvaderAuthoringIssue_1af419123ed5eb7bf5ea48d45452c8244f" prot="public" virt="non-virtual"><scope>FInvaderAuthoringIssue</scope><name>bError</name></member>
+      <member refid="structFInvaderAuthoringIssue_1a5e3a96c47ee90de793c4f6298acefb35" prot="public" virt="non-virtual"><scope>FInvaderAuthoringIssue</scope><name>bWave</name></member>
+      <member refid="structFInvaderAuthoringIssue_1a677f3340ca1e2368efb35fada6c05b2b" prot="public" virt="non-virtual"><scope>FInvaderAuthoringIssue</scope><name>Message</name></member>
+      <member refid="structFInvaderAuthoringIssue_1aa961de131f98684660f6e0fc921b5784" prot="public" virt="non-virtual"><scope>FInvaderAuthoringIssue</scope><name>RowName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="MMC__FireCooldownDuration_8h" kind="file" language="C++">
+    <compoundname>MMC_FireCooldownDuration.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameplayModMagnitudeCalculation.h</includes>
+    <includes local="yes">MMC_FireCooldownDuration.generated.h</includes>
+    <includedby refid="MMC__FireCooldownDuration_8cpp" local="yes">MMC_FireCooldownDuration.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>MMC_FireCooldownDuration.h</label>
+        <link refid="MMC__FireCooldownDuration_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>GameplayModMagnitudeCalculation.h</label>
+      </node>
+      <node id="4">
+        <label>MMC_FireCooldownDuration.generated.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>MMC_FireCooldownDuration.cpp</label>
+        <link refid="MMC__FireCooldownDuration_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>MMC_FireCooldownDuration.h</label>
+        <link refid="MMC__FireCooldownDuration_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUMMC__FireCooldownDuration" prot="public">UMMC_FireCooldownDuration</innerclass>
+    <briefdescription>
+<para>MMC FireCooldownDuration header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>MMC_FireCooldownDuration.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayModMagnitudeCalculation.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;MMC_FireCooldownDuration.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UMMC_FireCooldownDuration<sp/>:<sp/>public<sp/>UGameplayModMagnitudeCalculation</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>UMMC_FireCooldownDuration();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>CalculateBaseMagnitude_Implementation(const<sp/>FGameplayEffectSpec&amp;<sp/>Spec)<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayEffectAttributeCaptureDefinition<sp/>FireRateDef;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/MMC_FireCooldownDuration.h"/>
+  </compounddef>
+</doxygen>

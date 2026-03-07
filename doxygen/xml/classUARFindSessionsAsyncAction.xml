@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARFindSessionsAsyncAction" kind="class" language="C++" prot="public">
+    <compoundname>UARFindSessionsAsyncAction</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintAsyncActionBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1aa15e5671fae16e9bce3cd72d0484264c" prot="public" static="no" mutable="no">
+        <type>FARSessionFindAsyncActionCompleted</type>
+        <definition>FARSessionFindAsyncActionCompleted UARFindSessionsAsyncAction::OnFailure</definition>
+        <argsstring></argsstring>
+        <name>OnFailure</name>
+        <qualifiedname>UARFindSessionsAsyncAction::OnFailure</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="64" column="36" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1a129eb9fe2ab9f8f9cbd264a96d76938a" prot="public" static="no" mutable="no">
+        <type>FARSessionFindAsyncActionCompleted</type>
+        <definition>FARSessionFindAsyncActionCompleted UARFindSessionsAsyncAction::OnSuccess</definition>
+        <argsstring></argsstring>
+        <name>OnSuccess</name>
+        <qualifiedname>UARFindSessionsAsyncAction::OnSuccess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="61" column="36" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1a77fe93f710bc3353d27ff2756365c3e5" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARFindSessionsAsyncAction::bCompleted</definition>
+        <argsstring></argsstring>
+        <name>bCompleted</name>
+        <qualifiedname>UARFindSessionsAsyncAction::bCompleted</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="78" column="6" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1af0f550b8e6323f25ec7a3a902957f449" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARFindSessionsAsyncAction::bLANQuery</definition>
+        <argsstring></argsstring>
+        <name>bLANQuery</name>
+        <qualifiedname>UARFindSessionsAsyncAction::bLANQuery</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="76" column="6" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1ae6695db1457160e1c3aafc0ecc033c7c" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARFindSessionsAsyncAction::MaxResults</definition>
+        <argsstring></argsstring>
+        <name>MaxResults</name>
+        <qualifiedname>UARFindSessionsAsyncAction::MaxResults</qualifiedname>
+        <initializer>= 50</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="77" column="7" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1acc5037397d5e7c8fd589451b08836c3f" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;UARSessionSubsystem&gt; UARFindSessionsAsyncAction::SessionSubsystem</definition>
+        <argsstring></argsstring>
+        <name>SessionSubsystem</name>
+        <qualifiedname>UARFindSessionsAsyncAction::SessionSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="75" column="16" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFindSessionsAsyncAction_1a5c174d53b8aeea200ed425caa4382938" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UObject &gt;</type>
+        <definition>TWeakObjectPtr&lt;UObject&gt; UARFindSessionsAsyncAction::WorldContextObject</definition>
+        <argsstring></argsstring>
+        <name>WorldContextObject</name>
+        <qualifiedname>UARFindSessionsAsyncAction::WorldContextObject</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="74" column="16" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARFindSessionsAsyncAction_1af2f8ed944dc52e3a74f64d19261dfef2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UARFindSessionsAsyncAction *</type>
+        <definition>UARFindSessionsAsyncAction * UARFindSessionsAsyncAction::FindSessionsAsync</definition>
+        <argsstring>(UObject *WorldContextObject, bool bLANQuery, int32 MaxResults=50)</argsstring>
+        <name>FindSessionsAsync</name>
+        <qualifiedname>UARFindSessionsAsyncAction::FindSessionsAsync</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>WorldContextObject</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bLANQuery</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>MaxResults</declname>
+          <defval>50</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="58" column="35" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="99" bodyend="107"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARFindSessionsAsyncAction_1aaa38fc0586bc1aad1091c42da79983de" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARFindSessionsAsyncAction::Activate</definition>
+        <argsstring>() override</argsstring>
+        <name>Activate</name>
+        <qualifiedname>UARFindSessionsAsyncAction::Activate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="66" column="14" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="109" bodyend="127"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARFindSessionsAsyncAction_1ab9b4325883819b4ceb9c6ba740cf989c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFindSessionsAsyncAction::CleanupBinding</definition>
+        <argsstring>()</argsstring>
+        <name>CleanupBinding</name>
+        <qualifiedname>UARFindSessionsAsyncAction::CleanupBinding</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="72" column="6" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="151" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFindSessionsAsyncAction_1a73f9566593e03c733edd8ef07c64a789" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFindSessionsAsyncAction::HandleCompleted</definition>
+        <argsstring>(const FARSessionResult &amp;Result, const TArray&lt; FARSessionSearchResultData &gt; &amp;Results)</argsstring>
+        <name>HandleCompleted</name>
+        <qualifiedname>UARFindSessionsAsyncAction::HandleCompleted</qualifiedname>
+        <param>
+          <type>const FARSessionResult &amp;</type>
+          <declname>Result</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FARSessionSearchResultData &gt; &amp;</type>
+          <declname>Results</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="70" column="6" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="129" bodyend="149"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="49" column="1" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="50" bodyend="79"/>
+    <listofallmembers>
+      <member refid="classUARFindSessionsAsyncAction_1aaa38fc0586bc1aad1091c42da79983de" prot="public" virt="virtual"><scope>UARFindSessionsAsyncAction</scope><name>Activate</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1a77fe93f710bc3353d27ff2756365c3e5" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>bCompleted</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1af0f550b8e6323f25ec7a3a902957f449" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>bLANQuery</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1ab9b4325883819b4ceb9c6ba740cf989c" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>CleanupBinding</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1af2f8ed944dc52e3a74f64d19261dfef2" prot="public" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>FindSessionsAsync</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1a73f9566593e03c733edd8ef07c64a789" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>HandleCompleted</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1ae6695db1457160e1c3aafc0ecc033c7c" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>MaxResults</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1aa15e5671fae16e9bce3cd72d0484264c" prot="public" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>OnFailure</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1a129eb9fe2ab9f8f9cbd264a96d76938a" prot="public" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>OnSuccess</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1acc5037397d5e7c8fd589451b08836c3f" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>SessionSubsystem</name></member>
+      <member refid="classUARFindSessionsAsyncAction_1a5c174d53b8aeea200ed425caa4382938" prot="private" virt="non-virtual"><scope>UARFindSessionsAsyncAction</scope><name>WorldContextObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARStateTreeAIComponent" kind="class" language="C++" prot="public">
+    <compoundname>UARStateTreeAIComponent</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UStateTreeAIComponent</basecompoundref>
+    <includes refid="ARStateTreeAIComponent_8h" local="no">AlienRamen/Public/ARStateTreeAIComponent.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARStateTreeAIComponent_1a8a08965cf9397f31b37fb380086028e1" prot="public" static="no" mutable="no">
+        <type>FAROnActiveStateTagsChangedNative</type>
+        <definition>FAROnActiveStateTagsChangedNative UARStateTreeAIComponent::OnActiveStateTagsChanged</definition>
+        <argsstring></argsstring>
+        <name>OnActiveStateTagsChanged</name>
+        <qualifiedname>UARStateTreeAIComponent::OnActiveStateTagsChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="39" column="35" bodyfile="AlienRamen/Public/ARStateTreeAIComponent.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARStateTreeAIComponent_1ada874fbc80c8b6a7f095b5f370779bb5" prot="private" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARStateTreeAIComponent::CurrentActiveStateTags</definition>
+        <argsstring></argsstring>
+        <name>CurrentActiveStateTags</name>
+        <qualifiedname>UARStateTreeAIComponent::CurrentActiveStateTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="47" column="23" bodyfile="AlienRamen/Public/ARStateTreeAIComponent.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1a863c379315b19000bacbf7577766ec08" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARStateTreeAIComponent::Cleanup</definition>
+        <argsstring>() override</argsstring>
+        <name>Cleanup</name>
+        <qualifiedname>UARStateTreeAIComponent::Cleanup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="34" column="14" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="52" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1af526e1fd0e5f7034ad34f3985d644d93" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARStateTreeAIComponent::GetCurrentActiveStateTags</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentActiveStateTags</name>
+        <qualifiedname>UARStateTreeAIComponent::GetCurrentActiveStateTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="37" column="23" bodyfile="AlienRamen/Public/ARStateTreeAIComponent.h" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1a1d6240deff6132d54e16d96645a9f87a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>TSubclassOf&lt; UStateTreeSchema &gt;</type>
+        <definition>TSubclassOf&lt; UStateTreeSchema &gt; UARStateTreeAIComponent::GetSchema</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetSchema</name>
+        <qualifiedname>UARStateTreeAIComponent::GetSchema</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="29" column="21" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="9" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1a87fa5c2875891a1bca59e74669b544bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARStateTreeAIComponent::StartLogic</definition>
+        <argsstring>() override</argsstring>
+        <name>StartLogic</name>
+        <qualifiedname>UARStateTreeAIComponent::StartLogic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="32" column="14" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="20" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1a44f5f189aebb6899e1ebb9278721e627" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARStateTreeAIComponent::StopLogic</definition>
+        <argsstring>(const FString &amp;Reason) override</argsstring>
+        <name>StopLogic</name>
+        <qualifiedname>UARStateTreeAIComponent::StopLogic</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Reason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="33" column="14" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="44" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1aa8aabe9874c013eea899962d5d24a493" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARStateTreeAIComponent::TickComponent</definition>
+        <argsstring>(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override</argsstring>
+        <name>TickComponent</name>
+        <qualifiedname>UARStateTreeAIComponent::TickComponent</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <param>
+          <type>enum ELevelTick</type>
+          <declname>TickType</declname>
+        </param>
+        <param>
+          <type>FActorComponentTickFunction *</type>
+          <declname>ThisTickFunction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="31" column="14" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="14" bodyend="18"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1acdce70c6859a2508353946fd47307951" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARStateTreeAIComponent::EmitTagDelta</definition>
+        <argsstring>(const FGameplayTagContainer &amp;NewTags)</argsstring>
+        <name>EmitTagDelta</name>
+        <qualifiedname>UARStateTreeAIComponent::EmitTagDelta</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>NewTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="43" column="6" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="106" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARStateTreeAIComponent_1a85b86e6afd520339e1abe951c44ce426" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARStateTreeAIComponent::RefreshActiveStateTags</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshActiveStateTags</name>
+        <qualifiedname>UARStateTreeAIComponent::RefreshActiveStateTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="42" column="6" bodyfile="AlienRamen/Private/ARStateTreeAIComponent.cpp" bodystart="58" bodyend="104"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Enemy-focused StateTree AI component that tracks active state tags at runtime and emits add/remove deltas whenever the active state-tag set changes. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARStateTreeAIComponent.h" line="24" column="1" bodyfile="AlienRamen/Public/ARStateTreeAIComponent.h" bodystart="25" bodyend="48"/>
+    <listofallmembers>
+      <member refid="classUARStateTreeAIComponent_1a863c379315b19000bacbf7577766ec08" prot="public" virt="virtual"><scope>UARStateTreeAIComponent</scope><name>Cleanup</name></member>
+      <member refid="classUARStateTreeAIComponent_1ada874fbc80c8b6a7f095b5f370779bb5" prot="private" virt="non-virtual"><scope>UARStateTreeAIComponent</scope><name>CurrentActiveStateTags</name></member>
+      <member refid="classUARStateTreeAIComponent_1acdce70c6859a2508353946fd47307951" prot="private" virt="non-virtual"><scope>UARStateTreeAIComponent</scope><name>EmitTagDelta</name></member>
+      <member refid="classUARStateTreeAIComponent_1af526e1fd0e5f7034ad34f3985d644d93" prot="public" virt="non-virtual"><scope>UARStateTreeAIComponent</scope><name>GetCurrentActiveStateTags</name></member>
+      <member refid="classUARStateTreeAIComponent_1a1d6240deff6132d54e16d96645a9f87a" prot="public" virt="virtual"><scope>UARStateTreeAIComponent</scope><name>GetSchema</name></member>
+      <member refid="classUARStateTreeAIComponent_1a8a08965cf9397f31b37fb380086028e1" prot="public" virt="non-virtual"><scope>UARStateTreeAIComponent</scope><name>OnActiveStateTagsChanged</name></member>
+      <member refid="classUARStateTreeAIComponent_1a85b86e6afd520339e1abe951c44ce426" prot="private" virt="non-virtual"><scope>UARStateTreeAIComponent</scope><name>RefreshActiveStateTags</name></member>
+      <member refid="classUARStateTreeAIComponent_1a87fa5c2875891a1bca59e74669b544bd" prot="public" virt="virtual"><scope>UARStateTreeAIComponent</scope><name>StartLogic</name></member>
+      <member refid="classUARStateTreeAIComponent_1a44f5f189aebb6899e1ebb9278721e627" prot="public" virt="virtual"><scope>UARStateTreeAIComponent</scope><name>StopLogic</name></member>
+      <member refid="classUARStateTreeAIComponent_1aa8aabe9874c013eea899962d5d24a493" prot="public" virt="virtual"><scope>UARStateTreeAIComponent</scope><name>TickComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

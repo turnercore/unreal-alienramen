@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARSaveTypesLibrary_8h" kind="file" language="C++">
+    <compoundname>ARSaveTypesLibrary.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARSaveTypes_8h" local="yes">ARSaveTypes.h</includes>
+    <includes local="yes">Kismet/BlueprintFunctionLibrary.h</includes>
+    <includes local="yes">ARSaveTypesLibrary.generated.h</includes>
+    <includedby refid="ARSaveTypesLibrary_8cpp" local="yes">ARSaveTypesLibrary.cpp</includedby>
+    <incdepgraph>
+      <node id="5">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARSaveTypesLibrary.h</label>
+        <link refid="ARSaveTypesLibrary_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="9">
+        <label>ARSaveTypesLibrary.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="8">
+        <label>Kismet/BlueprintFunctionLibrary.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARSaveTypesLibrary.cpp</label>
+        <link refid="ARSaveTypesLibrary_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARSaveTypesLibrary.h</label>
+        <link refid="ARSaveTypesLibrary_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARSaveTypesLibrary" prot="public">UARSaveTypesLibrary</innerclass>
+    <briefdescription>
+<para>Blueprint helpers for save-related shared structs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSaveTypes_8h" kindref="compound">ARSaveTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Kismet/BlueprintFunctionLibrary.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARSaveTypesLibrary.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARSaveTypesLibrary<sp/>:<sp/>public<sp/>UBlueprintFunctionLibrary</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Save|Meat&quot;)</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/>int32<sp/>GetTotalMeatAmount(const<sp/>FARMeatState&amp;<sp/>MeatState);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARSaveTypesLibrary.h"/>
+  </compounddef>
+</doxygen>

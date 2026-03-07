@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARAIControllerBase_8h" kind="file" language="C++">
+    <compoundname>ARAIControllerBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">AIController.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ARAIControllerBase.generated.h</includes>
+    <includedby refid="ARAIControllerBase_8cpp" local="yes">ARAIControllerBase.cpp</includedby>
+    <includedby refid="AREnemyAIController_8h" local="yes">AREnemyAIController.h</includedby>
+    <includedby refid="ARScrapyardAIController_8h" local="yes">ARScrapyardAIController.h</includedby>
+    <includedby refid="ARShopAIController_8h" local="yes">ARShopAIController.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARAIControllerBase.h</label>
+        <link refid="ARAIControllerBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>AIController.h</label>
+      </node>
+      <node id="5">
+        <label>ARAIControllerBase.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARAIControllerBase.cpp</label>
+        <link refid="ARAIControllerBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>AREnemyAIController.cpp</label>
+        <link refid="AREnemyAIController_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARInvaderAIController.cpp</label>
+        <link refid="ARInvaderAIController_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARScrapyardAIController.cpp</label>
+        <link refid="ARScrapyardAIController_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARShopAIController.cpp</label>
+        <link refid="ARShopAIController_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARStateTreeAIComponentSchema_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARAIControllerBase.h</label>
+        <link refid="ARAIControllerBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>AREnemyAIController.h</label>
+        <link refid="AREnemyAIController_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARInvaderAIController.h</label>
+        <link refid="ARInvaderAIController_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARScrapyardAIController.h</label>
+        <link refid="ARScrapyardAIController_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>ARShopAIController.h</label>
+        <link refid="ARShopAIController_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARAIControllerBase" prot="public">AARAIControllerBase</innerclass>
+    <briefdescription>
+<para>ARAIControllerBase header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AIController.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARAIControllerBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARAIControllerBase<sp/>:<sp/>public<sp/>AAIController</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|AI|Signal&quot;,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ReceivePawnSignal(</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>SignalTag,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AActor*<sp/>RelatedActor<sp/>=<sp/></highlight><highlight class="keywordtype">nullptr</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FVector<sp/>WorldLocation<sp/>=<sp/>FVector::ZeroVector,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ScalarValue<sp/>=<sp/>0.f,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bForwardToStateTree<sp/>=<sp/>true);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintImplementableEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|AI|Signal&quot;)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnPawnSignal(</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>SignalTag,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AActor*<sp/>RelatedActor,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FVector<sp/>WorldLocation,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ScalarValue);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARAIControllerBase.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderKillCreditFxEvent" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderKillCreditFxEvent</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1a606d026bb13e16b07b9642446d656ce9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderKillCreditFxEvent::bHasEffectOrigin</definition>
+        <argsstring></argsstring>
+        <name>bHasEffectOrigin</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::bHasEffectOrigin</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="204" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1a85d78572e1ab726eb5f791b0d60e0229" prot="public" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector FARInvaderKillCreditFxEvent::EffectOrigin</definition>
+        <argsstring></argsstring>
+        <name>EffectOrigin</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::EffectOrigin</qualifiedname>
+        <initializer>= FVector::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="201" column="9" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1ae2259e960d4431524ec4e27fd258aa9e" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARInvaderKillCreditFxEvent::EnemyColor</definition>
+        <argsstring></argsstring>
+        <name>EnemyColor</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::EnemyColor</qualifiedname>
+        <initializer>= EARAffinityColor::White</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="193" column="18" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1a6f4470613249d78d9acd08381425e0e4" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderKillCreditFxEvent::EnemyIdentifierTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyIdentifierTag</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::EnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="197" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1a6c0fb2bed0fa7455555340f9a534d1c7" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderKillCreditFxEvent::NewComboCount</definition>
+        <argsstring></argsstring>
+        <name>NewComboCount</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::NewComboCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="189" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1add60bed3bfd6191732aeb59ce6786137" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderKillCreditFxEvent::SpiceGained</definition>
+        <argsstring></argsstring>
+        <name>SpiceGained</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::SpiceGained</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="185" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderKillCreditFxEvent_1a24acff753ff12b04dda8313a310c8686" prot="public" static="no" mutable="no">
+        <type>EARPlayerSlot</type>
+        <definition>EARPlayerSlot FARInvaderKillCreditFxEvent::TargetPlayerSlot</definition>
+        <argsstring></argsstring>
+        <name>TargetPlayerSlot</name>
+        <qualifiedname>FARInvaderKillCreditFxEvent::TargetPlayerSlot</qualifiedname>
+        <initializer>= EARPlayerSlot::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="181" column="15" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="175" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="176" bodyend="205"/>
+    <listofallmembers>
+      <member refid="structFARInvaderKillCreditFxEvent_1a606d026bb13e16b07b9642446d656ce9" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>bHasEffectOrigin</name></member>
+      <member refid="structFARInvaderKillCreditFxEvent_1a85d78572e1ab726eb5f791b0d60e0229" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>EffectOrigin</name></member>
+      <member refid="structFARInvaderKillCreditFxEvent_1ae2259e960d4431524ec4e27fd258aa9e" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>EnemyColor</name></member>
+      <member refid="structFARInvaderKillCreditFxEvent_1a6f4470613249d78d9acd08381425e0e4" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>EnemyIdentifierTag</name></member>
+      <member refid="structFARInvaderKillCreditFxEvent_1a6c0fb2bed0fa7455555340f9a534d1c7" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>NewComboCount</name></member>
+      <member refid="structFARInvaderKillCreditFxEvent_1add60bed3bfd6191732aeb59ce6786137" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>SpiceGained</name></member>
+      <member refid="structFARInvaderKillCreditFxEvent_1a24acff753ff12b04dda8313a310c8686" prot="public" virt="non-virtual"><scope>FARInvaderKillCreditFxEvent</scope><name>TargetPlayerSlot</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARSaveSlotDescriptor" kind="struct" language="C++" prot="public">
+    <compoundname>FARSaveSlotDescriptor</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARSaveSlotDescriptor_1af8626b92076c223e97930d7a35f20a33" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSaveSlotDescriptor::CyclesPlayed</definition>
+        <argsstring></argsstring>
+        <name>CyclesPlayed</name>
+        <qualifiedname>FARSaveSlotDescriptor::CyclesPlayed</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="192" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveSlotDescriptor_1aa0afe871ab61297a5b8ce42dac445473" prot="public" static="no" mutable="no">
+        <type>FDateTime</type>
+        <definition>FDateTime FARSaveSlotDescriptor::LastSavedTime</definition>
+        <argsstring></argsstring>
+        <name>LastSavedTime</name>
+        <qualifiedname>FARSaveSlotDescriptor::LastSavedTime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="195" column="11" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveSlotDescriptor_1a88b7206e856bf4397e467ca8e04c4ef8" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSaveSlotDescriptor::Money</definition>
+        <argsstring></argsstring>
+        <name>Money</name>
+        <qualifiedname>FARSaveSlotDescriptor::Money</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="198" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveSlotDescriptor_1a20ab1557d253a307ad86fddaf76c423a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSaveSlotDescriptor::SaveVersion</definition>
+        <argsstring></argsstring>
+        <name>SaveVersion</name>
+        <qualifiedname>FARSaveSlotDescriptor::SaveVersion</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="189" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveSlotDescriptor_1a7a7b96e89968fa1f2dc268713e9218ac" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARSaveSlotDescriptor::SlotName</definition>
+        <argsstring></argsstring>
+        <name>SlotName</name>
+        <qualifiedname>FARSaveSlotDescriptor::SlotName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="183" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSaveSlotDescriptor_1a7b0033cdcb9f76478bf7a4c74a66075c" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSaveSlotDescriptor::SlotNumber</definition>
+        <argsstring></argsstring>
+        <name>SlotNumber</name>
+        <qualifiedname>FARSaveSlotDescriptor::SlotNumber</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="186" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="178" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="179" bodyend="199"/>
+    <listofallmembers>
+      <member refid="structFARSaveSlotDescriptor_1af8626b92076c223e97930d7a35f20a33" prot="public" virt="non-virtual"><scope>FARSaveSlotDescriptor</scope><name>CyclesPlayed</name></member>
+      <member refid="structFARSaveSlotDescriptor_1aa0afe871ab61297a5b8ce42dac445473" prot="public" virt="non-virtual"><scope>FARSaveSlotDescriptor</scope><name>LastSavedTime</name></member>
+      <member refid="structFARSaveSlotDescriptor_1a88b7206e856bf4397e467ca8e04c4ef8" prot="public" virt="non-virtual"><scope>FARSaveSlotDescriptor</scope><name>Money</name></member>
+      <member refid="structFARSaveSlotDescriptor_1a20ab1557d253a307ad86fddaf76c423a" prot="public" virt="non-virtual"><scope>FARSaveSlotDescriptor</scope><name>SaveVersion</name></member>
+      <member refid="structFARSaveSlotDescriptor_1a7a7b96e89968fa1f2dc268713e9218ac" prot="public" virt="non-virtual"><scope>FARSaveSlotDescriptor</scope><name>SlotName</name></member>
+      <member refid="structFARSaveSlotDescriptor_1a7b0033cdcb9f76478bf7a4c74a66075c" prot="public" virt="non-virtual"><scope>FARSaveSlotDescriptor</scope><name>SlotNumber</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

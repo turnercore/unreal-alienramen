@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARPlayerStateSaveData" kind="struct" language="C++" prot="public">
+    <compoundname>FARPlayerStateSaveData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1a3bd86cb8de0793f69f905eef3313ca9d" prot="public" static="no" mutable="no">
+        <type>EARCharacterChoice</type>
+        <definition>EARCharacterChoice FARPlayerStateSaveData::CharacterPicked</definition>
+        <argsstring></argsstring>
+        <name>CharacterPicked</name>
+        <qualifiedname>FARPlayerStateSaveData::CharacterPicked</qualifiedname>
+        <initializer>= EARCharacterChoice::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="171" column="20" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1a8f7543ea5e0a90199fade9085fe3cc8f" prot="public" static="no" mutable="no">
+        <type>FARPlayerIdentity</type>
+        <definition>FARPlayerIdentity FARPlayerStateSaveData::Identity</definition>
+        <argsstring></argsstring>
+        <name>Identity</name>
+        <qualifiedname>FARPlayerStateSaveData::Identity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="168" column="19" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1a0f2693c91adf1aaf4cefb25c54148b2f" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARPlayerStateSaveData::LoadoutTags</definition>
+        <argsstring></argsstring>
+        <name>LoadoutTags</name>
+        <qualifiedname>FARPlayerStateSaveData::LoadoutTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="174" column="23" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="163" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="164" bodyend="175"/>
+    <listofallmembers>
+      <member refid="structFARPlayerStateSaveData_1a3bd86cb8de0793f69f905eef3313ca9d" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>CharacterPicked</name></member>
+      <member refid="structFARPlayerStateSaveData_1a8f7543ea5e0a90199fade9085fe3cc8f" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>Identity</name></member>
+      <member refid="structFARPlayerStateSaveData_1a0f2693c91adf1aaf4cefb25c54148b2f" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>LoadoutTags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

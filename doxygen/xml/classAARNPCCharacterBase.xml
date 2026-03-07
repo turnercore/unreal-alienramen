@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARNPCCharacterBase" kind="class" language="C++" prot="public">
+    <compoundname>AARNPCCharacterBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">ACharacter</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARNPCCharacterBase_1a9cb5394291d2a1c4dcc33014b706bc11" prot="public" static="no" mutable="no">
+        <type>FAROnNpcTalkableStateChanged</type>
+        <definition>FAROnNpcTalkableStateChanged AARNPCCharacterBase::OnNpcTalkableStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnNpcTalkableStateChanged</name>
+        <qualifiedname>AARNPCCharacterBase::OnNpcTalkableStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="34" column="30" bodyfile="AlienRamen/Public/ARNPCCharacterBase.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARNPCCharacterBase_1aac08f9fc78347f3fbbc8a35e225f027e" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARNPCCharacterBase::bIsTalkable</definition>
+        <argsstring></argsstring>
+        <name>bIsTalkable</name>
+        <qualifiedname>AARNPCCharacterBase::bIsTalkable</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="54" column="6" bodyfile="AlienRamen/Public/ARNPCCharacterBase.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARNPCCharacterBase_1a3e2ec159388b3539bb79a95fa3b8d743" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARNPCCharacterBase::NpcTag</definition>
+        <argsstring></argsstring>
+        <name>NpcTag</name>
+        <qualifiedname>AARNPCCharacterBase::NpcTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="51" column="14" bodyfile="AlienRamen/Public/ARNPCCharacterBase.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARNPCCharacterBase_1a27ec78f66f2024c4ea39d57146a7e496" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARNPCCharacterBase::AARNPCCharacterBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARNPCCharacterBase</name>
+        <qualifiedname>AARNPCCharacterBase::AARNPCCharacterBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="22" column="1" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="9" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1a89dca18257122cac8d85f5696726cfd9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARNPCCharacterBase::GetNpcTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetNpcTag</name>
+        <qualifiedname>AARNPCCharacterBase::GetNpcTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="28" column="14" bodyfile="AlienRamen/Public/ARNPCCharacterBase.h" bodystart="28" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1aaab0d25ef8ea6ce1d61b52f051179c36" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::InteractByController</definition>
+        <argsstring>(AARPlayerController *InteractingController)</argsstring>
+        <name>InteractByController</name>
+        <qualifiedname>AARNPCCharacterBase::InteractByController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>InteractingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="25" column="6" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="41" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1aa7dc488c69c1b418fc37f1c484893262" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARNPCCharacterBase::IsTalkable</definition>
+        <argsstring>() const</argsstring>
+        <name>IsTalkable</name>
+        <qualifiedname>AARNPCCharacterBase::IsTalkable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="31" column="6" bodyfile="AlienRamen/Public/ARNPCCharacterBase.h" bodystart="31" bodyend="31"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARNPCCharacterBase_1a78aac29cc6a4b50b03ad23b661518ff0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARNPCCharacterBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="37" column="14" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="14" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1aa0d1ff2162b52cec98897af25c5df0db" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARNPCCharacterBase::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="38" column="14" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="28" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1a729f47f3ed69b74ee173dad0a86bd6d7" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARNPCCharacterBase::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="39" column="14" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="110" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1a19c338be05942458c05833359d24fae1" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::HandleNpcTalkableChanged</definition>
+        <argsstring>(FGameplayTag ChangedNpcTag, bool bNewTalkable)</argsstring>
+        <name>HandleNpcTalkableChanged</name>
+        <qualifiedname>AARNPCCharacterBase::HandleNpcTalkableChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ChangedNpcTag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bNewTalkable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="45" column="6" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="84" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1aed3df09436c4557953cd34206990a855" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::OnRep_IsTalkable</definition>
+        <argsstring>(bool bOldTalkable)</argsstring>
+        <name>OnRep_IsTalkable</name>
+        <qualifiedname>AARNPCCharacterBase::OnRep_IsTalkable</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldTalkable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="42" column="6" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="102" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARNPCCharacterBase_1a41361ada0bd7bdf19a91db087a23c70e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARNPCCharacterBase::RefreshTalkableFromSubsystem</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshTalkableFromSubsystem</name>
+        <qualifiedname>AARNPCCharacterBase::RefreshTalkableFromSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="48" column="6" bodyfile="AlienRamen/Private/ARNPCCharacterBase.cpp" bodystart="63" bodyend="82"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARNPCCharacterBase.h" line="17" column="1" bodyfile="AlienRamen/Public/ARNPCCharacterBase.h" bodystart="18" bodyend="55"/>
+    <listofallmembers>
+      <member refid="classAARNPCCharacterBase_1a27ec78f66f2024c4ea39d57146a7e496" prot="public" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>AARNPCCharacterBase</name></member>
+      <member refid="classAARNPCCharacterBase_1a78aac29cc6a4b50b03ad23b661518ff0" prot="protected" virt="virtual"><scope>AARNPCCharacterBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARNPCCharacterBase_1aac08f9fc78347f3fbbc8a35e225f027e" prot="protected" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>bIsTalkable</name></member>
+      <member refid="classAARNPCCharacterBase_1aa0d1ff2162b52cec98897af25c5df0db" prot="protected" virt="virtual"><scope>AARNPCCharacterBase</scope><name>EndPlay</name></member>
+      <member refid="classAARNPCCharacterBase_1a729f47f3ed69b74ee173dad0a86bd6d7" prot="protected" virt="virtual"><scope>AARNPCCharacterBase</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARNPCCharacterBase_1a89dca18257122cac8d85f5696726cfd9" prot="public" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>GetNpcTag</name></member>
+      <member refid="classAARNPCCharacterBase_1a19c338be05942458c05833359d24fae1" prot="protected" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>HandleNpcTalkableChanged</name></member>
+      <member refid="classAARNPCCharacterBase_1aaab0d25ef8ea6ce1d61b52f051179c36" prot="public" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>InteractByController</name></member>
+      <member refid="classAARNPCCharacterBase_1aa7dc488c69c1b418fc37f1c484893262" prot="public" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>IsTalkable</name></member>
+      <member refid="classAARNPCCharacterBase_1a3e2ec159388b3539bb79a95fa3b8d743" prot="protected" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>NpcTag</name></member>
+      <member refid="classAARNPCCharacterBase_1a9cb5394291d2a1c4dcc33014b706bc11" prot="public" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>OnNpcTalkableStateChanged</name></member>
+      <member refid="classAARNPCCharacterBase_1aed3df09436c4557953cd34206990a855" prot="protected" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>OnRep_IsTalkable</name></member>
+      <member refid="classAARNPCCharacterBase_1a41361ada0bd7bdf19a91db087a23c70e" prot="protected" virt="non-virtual"><scope>AARNPCCharacterBase</scope><name>RefreshTalkableFromSubsystem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

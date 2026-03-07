@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderGameStateData" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderGameStateData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1ab1c0ddab4ff0b7974a63a151e599e959" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARInvaderGameStateData::ActiveFactionEffectTags</definition>
+        <argsstring></argsstring>
+        <name>ActiveFactionEffectTags</name>
+        <qualifiedname>FARInvaderGameStateData::ActiveFactionEffectTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="36" column="23" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1aea11843e1911763f5150e474443805f1" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderGameStateData::ActiveFactionTag</definition>
+        <argsstring></argsstring>
+        <name>ActiveFactionTag</name>
+        <qualifiedname>FARInvaderGameStateData::ActiveFactionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="33" column="14" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1a6439fd6a49f4a087761326851591e0c2" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderGameStateData::Cycles</definition>
+        <argsstring></argsstring>
+        <name>Cycles</name>
+        <qualifiedname>FARInvaderGameStateData::Cycles</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="30" column="7" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1ab9f63e8d259fb72515587720b101a35a" prot="public" static="no" mutable="no">
+        <type>FARMeatState</type>
+        <definition>FARMeatState FARInvaderGameStateData::Meat</definition>
+        <argsstring></argsstring>
+        <name>Meat</name>
+        <qualifiedname>FARInvaderGameStateData::Meat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="27" column="14" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1a11965fb0be55fb18c4ff61bc49e63f5a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderGameStateData::Money</definition>
+        <argsstring></argsstring>
+        <name>Money</name>
+        <qualifiedname>FARInvaderGameStateData::Money</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="21" column="7" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1a650949355018cd0eb41c726e0c1be81a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderGameStateData::Scrap</definition>
+        <argsstring></argsstring>
+        <name>Scrap</name>
+        <qualifiedname>FARInvaderGameStateData::Scrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="24" column="7" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderGameStateData_1a785e83feaa29237ac4abebbdcdc2ac5b" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARInvaderGameStateData::Unlocks</definition>
+        <argsstring></argsstring>
+        <name>Unlocks</name>
+        <qualifiedname>FARInvaderGameStateData::Unlocks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="18" column="23" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="13" column="1" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="14" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structFARInvaderGameStateData_1ab1c0ddab4ff0b7974a63a151e599e959" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>ActiveFactionEffectTags</name></member>
+      <member refid="structFARInvaderGameStateData_1aea11843e1911763f5150e474443805f1" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>ActiveFactionTag</name></member>
+      <member refid="structFARInvaderGameStateData_1a6439fd6a49f4a087761326851591e0c2" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Cycles</name></member>
+      <member refid="structFARInvaderGameStateData_1ab9f63e8d259fb72515587720b101a35a" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Meat</name></member>
+      <member refid="structFARInvaderGameStateData_1a11965fb0be55fb18c4ff61bc49e63f5a" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Money</name></member>
+      <member refid="structFARInvaderGameStateData_1a650949355018cd0eb41c726e0c1be81a" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Scrap</name></member>
+      <member refid="structFARInvaderGameStateData_1a785e83feaa29237ac4abebbdcdc2ac5b" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Unlocks</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

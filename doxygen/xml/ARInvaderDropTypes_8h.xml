@@ -1,0 +1,538 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARInvaderDropTypes_8h" kind="file" language="C++">
+    <compoundname>ARInvaderDropTypes.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">ARInvaderDropTypes.generated.h</includes>
+    <includedby refid="ARInvaderDirectorSettings_8h" local="yes">ARInvaderDirectorSettings.h</includedby>
+    <includedby refid="ARInvaderDropBase_8h" local="yes">ARInvaderDropBase.h</includedby>
+    <includedby refid="ARInvaderGameState_8h" local="yes">ARInvaderGameState.h</includedby>
+    <includedby refid="ARInvaderTypes_8h" local="yes">ARInvaderTypes.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="36">
+        <label>ARDialogueSubsystem.cpp</label>
+        <link refid="ARDialogueSubsystem_8cpp_source"/>
+      </node>
+      <node id="20">
+        <label>AREnemyAIController.cpp</label>
+        <link refid="AREnemyAIController_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>AREnemyFacingLibrary.cpp</label>
+        <link refid="AREnemyFacingLibrary_8cpp_source"/>
+      </node>
+      <node id="37">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="52">
+        <label>ARGameStateBase.cpp</label>
+        <link refid="ARGameStateBase_8cpp_source"/>
+      </node>
+      <node id="22">
+        <label>ARInvaderAIController.cpp</label>
+        <link refid="ARInvaderAIController_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="47">
+        <label>ARInvaderFullBlastMenuWidget.cpp</label>
+        <link refid="ARInvaderFullBlastMenuWidget_8cpp_source"/>
+      </node>
+      <node id="39">
+        <label>ARInvaderGameMode.cpp</label>
+        <link refid="ARInvaderGameMode_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="15">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="33">
+        <label>ARInvaderRuntimeStateComponent.cpp</label>
+        <link refid="ARInvaderRuntimeStateComponent_8cpp_source"/>
+      </node>
+      <node id="50">
+        <label>ARInvaderSpicyTrackSettings.cpp</label>
+        <link refid="ARInvaderSpicyTrackSettings_8cpp_source"/>
+      </node>
+      <node id="41">
+        <label>ARLobbyGameMode.cpp</label>
+        <link refid="ARLobbyGameMode_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARPickupBase.cpp</label>
+        <link refid="ARPickupBase_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARPickupCollectorComponent.cpp</label>
+        <link refid="ARPickupCollectorComponent_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="16">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="17">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARProjectileBase.cpp</label>
+        <link refid="ARProjectileBase_8cpp_source"/>
+      </node>
+      <node id="53">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="43">
+        <label>ARScrapyardGameMode.cpp</label>
+        <link refid="ARScrapyardGameMode_8cpp_source"/>
+      </node>
+      <node id="54">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="45">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="23">
+        <label>ARStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARStateTreeAIComponentSchema_8cpp_source"/>
+      </node>
+      <node id="19">
+        <label>AREnemyAIController.h</label>
+        <link refid="AREnemyAIController_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>AREnemyBase.h</label>
+        <link refid="AREnemyBase_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>ARGameModeBase.h</label>
+        <link refid="ARGameModeBase_8h"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ARInvaderAIController.h</label>
+        <link refid="ARInvaderAIController_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARInvaderDirectorSettings.h</label>
+        <link refid="ARInvaderDirectorSettings_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>ARInvaderDirectorSubsystem.h</label>
+        <link refid="ARInvaderDirectorSubsystem_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>ARInvaderDropBase.h</label>
+        <link refid="ARInvaderDropBase_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>ARInvaderFullBlastMenuWidget.h</label>
+        <link refid="ARInvaderFullBlastMenuWidget_8h"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>ARInvaderGameMode.h</label>
+        <link refid="ARInvaderGameMode_8h"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARInvaderGameState.h</label>
+        <link refid="ARInvaderGameState_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>ARInvaderPlayerController.h</label>
+        <link refid="ARInvaderPlayerController_8h"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>ARInvaderRuntimeStateComponent.h</label>
+        <link refid="ARInvaderRuntimeStateComponent_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>ARInvaderSpicyTrackSettings.h</label>
+        <link refid="ARInvaderSpicyTrackSettings_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>ARLobbyGameMode.h</label>
+        <link refid="ARLobbyGameMode_8h"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>ARPlayerStateBase.h</label>
+        <link refid="ARPlayerStateBase_8h"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>ARScrapyardGameMode.h</label>
+        <link refid="ARScrapyardGameMode_8h"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>ARShopGameMode.h</label>
+        <link refid="ARShopGameMode_8h"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>AREnemyAuthoringPanel.cpp</label>
+        <link refid="AREnemyAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="24">
+        <label>AREnemyAuthoringPanel.h</label>
+        <link refid="AREnemyAuthoringPanel_8h_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>ARInvaderAuthoringEditorProxies.cpp</label>
+        <link refid="ARInvaderAuthoringEditorProxies_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="30">
+        <label>ARInvaderAuthoringPanel.h</label>
+        <link refid="ARInvaderAuthoringPanel_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>AlienRamenEditorModule.cpp</label>
+        <link refid="AlienRamenEditorModule_8cpp_source"/>
+      </node>
+      <node id="28">
+        <label>ARInvaderAuthoringEditorProxies.h</label>
+        <link refid="ARInvaderAuthoringEditorProxies_8h_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>ARTestingSettings.cpp</label>
+        <link refid="ARTestingSettings_8cpp_source"/>
+      </node>
+      <node id="55">
+        <label>ARTestingSettings.h</label>
+        <link refid="ARTestingSettings_8h_source"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARInvaderDropPawnCollisionMode</name>
+        <enumvalue id="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5af3eed4fe433de92d21d3d2e57884cb4b" prot="public">
+          <name>CollideWithPawns</name>
+          <initializer>= 0 UMETA(DisplayName = &quot;Collide With Pawns&quot;)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5aa3f80d8f0f1b4ffa8c475f5d60ea5635" prot="public">
+          <name>UMETA</name>
+          <initializer>=(DisplayName = &quot;Ignore All Pawns&quot;)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Pawn collision behavior for invader drop physics drift. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropTypes.h" line="21" column="1" bodyfile="AlienRamen/Public/ARInvaderDropTypes.h" bodystart="22" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="enum" id="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARInvaderDropType</name>
+        <enumvalue id="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001a6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <initializer>= 0 UMETA(DisplayName = &quot;None&quot;)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001aa3f80d8f0f1b4ffa8c475f5d60ea5635" prot="public">
+          <name>UMETA</name>
+          <initializer>=(DisplayName = &quot;Scrap&quot;)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001aa3f80d8f0f1b4ffa8c475f5d60ea5635" prot="public">
+          <name>UMETA</name>
+          <initializer>=(DisplayName = &quot;Meat&quot;)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Runtime currency category produced by invader enemy drops. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDropTypes.h" line="12" column="1" bodyfile="AlienRamen/Public/ARInvaderDropTypes.h" bodystart="13" bodyend="17"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared invader drop type surface. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARInvaderDropTypes.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="12" refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" refkind="member"><highlight class="normal">enum<sp/>class<sp/><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref><sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>None<sp/>=<sp/>0<sp/>UMETA(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;None&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>Scrap<sp/>UMETA(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Scrap&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>Meat<sp/>UMETA(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Meat&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="21" refid="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5" refkind="member"><highlight class="normal">enum<sp/>class<sp/><ref refid="ARInvaderDropTypes_8h_1a827780896da777f06491ca92f26855c5" kindref="member">EARInvaderDropPawnCollisionMode</ref><sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>CollideWithPawns<sp/>=<sp/>0<sp/>UMETA(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Collide<sp/>With<sp/>Pawns&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>IgnoreAllPawns<sp/>UMETA(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Ignore<sp/>All<sp/>Pawns&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARInvaderDropTypes.h"/>
+  </compounddef>
+</doxygen>

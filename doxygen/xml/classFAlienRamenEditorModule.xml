@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classFAlienRamenEditorModule" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>FAlienRamenEditorModule</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">IModuleInterface</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1afa18fab793cfff4cb8d37ac401a1964a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void FAlienRamenEditorModule::ShutdownModule</definition>
+        <argsstring>() override</argsstring>
+        <name>ShutdownModule</name>
+        <qualifiedname>FAlienRamenEditorModule::ShutdownModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1551" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1551" bodyend="1560"/>
+      </memberdef>
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1a6ef092f17c0fbaef785359aa0253d666" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void FAlienRamenEditorModule::StartupModule</definition>
+        <argsstring>() override</argsstring>
+        <name>StartupModule</name>
+        <qualifiedname>FAlienRamenEditorModule::StartupModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1522" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1522" bodyend="1549"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1a84ad6ef4671ee4c5264f8eacac2af8b6" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FAlienRamenEditorModule::OpenEnemyAuthoringTab</definition>
+        <argsstring>(const FToolMenuContext &amp;)</argsstring>
+        <name>OpenEnemyAuthoringTab</name>
+        <qualifiedname>FAlienRamenEditorModule::OpenEnemyAuthoringTab</qualifiedname>
+        <param>
+          <type>const FToolMenuContext &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1606" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1606" bodyend="1609"/>
+      </memberdef>
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1a82ae5df5de1d672c588a0efc4e935e0c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FAlienRamenEditorModule::OpenInvaderAuthoringTab</definition>
+        <argsstring>(const FToolMenuContext &amp;)</argsstring>
+        <name>OpenInvaderAuthoringTab</name>
+        <qualifiedname>FAlienRamenEditorModule::OpenInvaderAuthoringTab</qualifiedname>
+        <param>
+          <type>const FToolMenuContext &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1601" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1601" bodyend="1604"/>
+      </memberdef>
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1a2962c17663ba66194c662f9400b7d00c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FAlienRamenEditorModule::OpenTab</definition>
+        <argsstring>(const FToolMenuContext &amp;)</argsstring>
+        <name>OpenTab</name>
+        <qualifiedname>FAlienRamenEditorModule::OpenTab</qualifiedname>
+        <param>
+          <type>const FToolMenuContext &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1596" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1596" bodyend="1599"/>
+      </memberdef>
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1a2100ea75d87258fd28c40080cb4c3e8d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FAlienRamenEditorModule::RegisterMenus</definition>
+        <argsstring>()</argsstring>
+        <name>RegisterMenus</name>
+        <qualifiedname>FAlienRamenEditorModule::RegisterMenus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1572" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1572" bodyend="1594"/>
+      </memberdef>
+      <memberdef kind="function" id="classFAlienRamenEditorModule_1a072bd35f016b5545585397d21cf34d5d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>TSharedRef&lt; SDockTab &gt;</type>
+        <definition>TSharedRef&lt; SDockTab &gt; FAlienRamenEditorModule::SpawnDebugSaveTab</definition>
+        <argsstring>(const FSpawnTabArgs &amp;)</argsstring>
+        <name>SpawnDebugSaveTab</name>
+        <qualifiedname>FAlienRamenEditorModule::SpawnDebugSaveTab</qualifiedname>
+        <param>
+          <type>const FSpawnTabArgs &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1563" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1563" bodyend="1570"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1519" column="1" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1520" bodyend="1610"/>
+    <listofallmembers>
+      <member refid="classFAlienRamenEditorModule_1a84ad6ef4671ee4c5264f8eacac2af8b6" prot="private" virt="non-virtual"><scope>FAlienRamenEditorModule</scope><name>OpenEnemyAuthoringTab</name></member>
+      <member refid="classFAlienRamenEditorModule_1a82ae5df5de1d672c588a0efc4e935e0c" prot="private" virt="non-virtual"><scope>FAlienRamenEditorModule</scope><name>OpenInvaderAuthoringTab</name></member>
+      <member refid="classFAlienRamenEditorModule_1a2962c17663ba66194c662f9400b7d00c" prot="private" virt="non-virtual"><scope>FAlienRamenEditorModule</scope><name>OpenTab</name></member>
+      <member refid="classFAlienRamenEditorModule_1a2100ea75d87258fd28c40080cb4c3e8d" prot="private" virt="non-virtual"><scope>FAlienRamenEditorModule</scope><name>RegisterMenus</name></member>
+      <member refid="classFAlienRamenEditorModule_1afa18fab793cfff4cb8d37ac401a1964a" prot="public" virt="virtual"><scope>FAlienRamenEditorModule</scope><name>ShutdownModule</name></member>
+      <member refid="classFAlienRamenEditorModule_1a072bd35f016b5545585397d21cf34d5d" prot="private" virt="non-virtual"><scope>FAlienRamenEditorModule</scope><name>SpawnDebugSaveTab</name></member>
+      <member refid="classFAlienRamenEditorModule_1a6ef092f17c0fbaef785359aa0253d666" prot="public" virt="virtual"><scope>FAlienRamenEditorModule</scope><name>StartupModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARLobbyGameMode" kind="class" language="C++" prot="public">
+    <compoundname>AARLobbyGameMode</compoundname>
+    <basecompoundref refid="classAARGameModeBase" prot="public" virt="non-virtual">AARGameModeBase</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARLobbyGameMode_1aaa54d13c5e36cf79a4051aa34590e4ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARLobbyGameMode::AARLobbyGameMode</definition>
+        <argsstring>()</argsstring>
+        <name>AARLobbyGameMode</name>
+        <qualifiedname>AARLobbyGameMode::AARLobbyGameMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLobbyGameMode.h" line="17" column="1" bodyfile="AlienRamen/Private/ARLobbyGameMode.cpp" bodystart="3" bodyend="8"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARLobbyGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARLobbyGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARLobbyGameMode.h" line="12" column="1" bodyfile="AlienRamen/Public/ARLobbyGameMode.h" bodystart="13" bodyend="18"/>
+    <listofallmembers>
+      <member refid="classAARGameModeBase_1a3f460f2f0d7dd5e8caa50efb68159572" prot="public" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>AARGameModeBase</name></member>
+      <member refid="classAARLobbyGameMode_1aaa54d13c5e36cf79a4051aa34590e4ba" prot="public" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>AARLobbyGameMode</name></member>
+      <member refid="classAARGameModeBase_1a67c3e7ca1b1322a6d320a56fb8157754" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>bAllowManualSaveInMode</name></member>
+      <member refid="classAARGameModeBase_1ad9ce9f6823f31ca9e1c07f55de25959e" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>bAutosaveOnQuit</name></member>
+      <member refid="classAARGameModeBase_1a5703ce61904bde33c8a0bd579d040b8f" prot="public" virt="virtual"><scope>AARLobbyGameMode</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameModeBase_1ac678b63a65ef55bef9b939f26cd9ef0f" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>BP_OnPlayerJoined</name></member>
+      <member refid="classAARGameModeBase_1ac597fe28d4f7c2333e9d1712a1f2ee03" prot="protected" virt="virtual"><scope>AARLobbyGameMode</scope><name>BP_OnPlayerJoined_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a31d1c06c85346d521686aa4935bc4dd2" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>BP_OnPlayerLeft</name></member>
+      <member refid="classAARGameModeBase_1a24f70a614614aa76595a083658d02565" prot="protected" virt="virtual"><scope>AARLobbyGameMode</scope><name>BP_OnPlayerLeft_Implementation</name></member>
+      <member refid="classAARGameModeBase_1ac99ba610d5367b67ef7143ca49b0b09c" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>bSaveOnModeExit</name></member>
+      <member refid="classAARGameModeBase_1a07b0a1e587e4749212baf833737410db" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>bShareLocalPauseAcrossControllersInMode</name></member>
+      <member refid="classAARGameModeBase_1a36775a1d8591f7996458c71bae8220e6" prot="public" virt="virtual"><scope>AARLobbyGameMode</scope><name>EndPlay</name></member>
+      <member refid="classAARGameModeBase_1a522a92ad0c86cdbdec92858b84423126" prot="public" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>GetModeTag</name></member>
+      <member refid="classAARGameModeBase_1ad68a4c0a07a8185f6f49caf82bc9baeb" prot="public" virt="virtual"><scope>AARLobbyGameMode</scope><name>HandleStartingNewPlayer_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a7b648939f858fa67f53d03edfb02ab27" prot="public" virt="virtual"><scope>AARLobbyGameMode</scope><name>Logout</name></member>
+      <member refid="classAARGameModeBase_1a0f7ba4ef355da62af10604959eb99d1c" prot="protected" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>ModeTag</name></member>
+      <member refid="classAARGameModeBase_1aa62dce3fa0cadc55f118b297d7df7dfd" prot="public" virt="virtual"><scope>AARLobbyGameMode</scope><name>PreLogin</name></member>
+      <member refid="classAARGameModeBase_1a8c933e18be2e10f14ee766ab4a90ad63" prot="protected" virt="virtual"><scope>AARLobbyGameMode</scope><name>PreStartTravel</name></member>
+      <member refid="classAARGameModeBase_1a6d4c18322af8cb60fb697a4dd71ec13f" prot="public" virt="non-virtual"><scope>AARLobbyGameMode</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

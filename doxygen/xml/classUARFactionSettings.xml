@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARFactionSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARFactionSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARFactionSettings_1a7232058c4814ebbe2293c1df5f368f75" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARFactionSettings::FactionDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>FactionDefinitionRootTag</name>
+        <qualifiedname>UARFactionSettings::FactionDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionSettings.h" line="22" column="14" bodyfile="AlienRamen/Public/ARFactionSettings.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARFactionSettings_1aabd42e8c2b34ebd1bbd52abdec6cd14d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARFactionSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARFactionSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionSettings.h" line="18" column="15" bodyfile="AlienRamen/Public/ARFactionSettings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionSettings.h" line="13" column="1" bodyfile="AlienRamen/Public/ARFactionSettings.h" bodystart="14" bodyend="23"/>
+    <listofallmembers>
+      <member refid="classUARFactionSettings_1a7232058c4814ebbe2293c1df5f368f75" prot="public" virt="non-virtual"><scope>UARFactionSettings</scope><name>FactionDefinitionRootTag</name></member>
+      <member refid="classUARFactionSettings_1aabd42e8c2b34ebd1bbd52abdec6cd14d" prot="public" virt="virtual"><scope>UARFactionSettings</scope><name>GetCategoryName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

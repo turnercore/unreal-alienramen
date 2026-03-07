@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structAARInvaderGameState_1_1FResolvedDropStackEntry" kind="struct" language="C++" prot="private">
+    <compoundname>AARInvaderGameState::FResolvedDropStackEntry</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structAARInvaderGameState_1_1FResolvedDropStackEntry_1a76c612817029e545466ea5042a6175ce" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARInvaderGameState::FResolvedDropStackEntry::Denomination</definition>
+        <argsstring></argsstring>
+        <name>Denomination</name>
+        <qualifiedname>AARInvaderGameState::FResolvedDropStackEntry::Denomination</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="167" column="7" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAARInvaderGameState_1_1FResolvedDropStackEntry_1a6da368ad7cea1e2c6703d598448849c9" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> &gt;</type>
+        <definition>TSubclassOf&lt;AARInvaderDropBase&gt; AARInvaderGameState::FResolvedDropStackEntry::DropClass</definition>
+        <argsstring></argsstring>
+        <name>DropClass</name>
+        <qualifiedname>AARInvaderGameState::FResolvedDropStackEntry::DropClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameState.h" line="168" column="13" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderGameState.h" line="165" column="1" bodyfile="AlienRamen/Public/ARInvaderGameState.h" bodystart="166" bodyend="169"/>
+    <listofallmembers>
+      <member refid="structAARInvaderGameState_1_1FResolvedDropStackEntry_1a76c612817029e545466ea5042a6175ce" prot="public" virt="non-virtual"><scope>AARInvaderGameState::FResolvedDropStackEntry</scope><name>Denomination</name></member>
+      <member refid="structAARInvaderGameState_1_1FResolvedDropStackEntry_1a6da368ad7cea1e2c6703d598448849c9" prot="public" virt="non-virtual"><scope>AARInvaderGameState::FResolvedDropStackEntry</scope><name>DropClass</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

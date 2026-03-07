@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderToolingSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderToolingSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a0f1c01883b1be207ce14887c39fd42a8" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderToolingSettings::BackupRetentionCount</definition>
+        <argsstring></argsstring>
+        <name>BackupRetentionCount</name>
+        <qualifiedname>UARInvaderToolingSettings::BackupRetentionCount</qualifiedname>
+        <initializer>= 10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="37" column="7" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1ad9cd24e28623cacf702270ea52609ba0" prot="public" static="no" mutable="no">
+        <type>FDirectoryPath</type>
+        <definition>FDirectoryPath UARInvaderToolingSettings::BackupsFolder</definition>
+        <argsstring></argsstring>
+        <name>BackupsFolder</name>
+        <qualifiedname>UARInvaderToolingSettings::BackupsFolder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="41" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a61126b03bf6787f26517438fb904a8d2" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderToolingSettings::bAutoSaveTablesOnEdit</definition>
+        <argsstring></argsstring>
+        <name>bAutoSaveTablesOnEdit</name>
+        <qualifiedname>UARInvaderToolingSettings::bAutoSaveTablesOnEdit</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="31" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1adf077f329f3bfc1902882541751a8f3d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderToolingSettings::bCreateBackupOnToolOpen</definition>
+        <argsstring></argsstring>
+        <name>bCreateBackupOnToolOpen</name>
+        <qualifiedname>UARInvaderToolingSettings::bCreateBackupOnToolOpen</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="34" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a49577b3c7228077bdbac94c27cebc3a0" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderToolingSettings::bEnablePIESaveBootstrap</definition>
+        <argsstring></argsstring>
+        <name>bEnablePIESaveBootstrap</name>
+        <qualifiedname>UARInvaderToolingSettings::bEnablePIESaveBootstrap</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="45" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1aa63f9cacfac5da2e6b6ba2affe5cbdd0" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TSoftObjectPtr&lt;UDataTable&gt; UARInvaderToolingSettings::EnemyDataTable</definition>
+        <argsstring></argsstring>
+        <name>EnemyDataTable</name>
+        <qualifiedname>UARInvaderToolingSettings::EnemyDataTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="28" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a90d011360a73e68f18e761456b42266f" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UWorld &gt;</type>
+        <definition>TSoftObjectPtr&lt;UWorld&gt; UARInvaderToolingSettings::PIEBootstrapDebugMap</definition>
+        <argsstring></argsstring>
+        <name>PIEBootstrapDebugMap</name>
+        <qualifiedname>UARInvaderToolingSettings::PIEBootstrapDebugMap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="61" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a7fe693c2aed7616121a2dc71daa5ae5e" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UWorld &gt;</type>
+        <definition>TSoftObjectPtr&lt;UWorld&gt; UARInvaderToolingSettings::PIEBootstrapLoadingMap</definition>
+        <argsstring></argsstring>
+        <name>PIEBootstrapLoadingMap</name>
+        <qualifiedname>UARInvaderToolingSettings::PIEBootstrapLoadingMap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="49" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1ac28d078bc088e58389f1b030bdffcc6e" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderToolingSettings::PIELoadSlotName</definition>
+        <argsstring></argsstring>
+        <name>PIELoadSlotName</name>
+        <qualifiedname>UARInvaderToolingSettings::PIELoadSlotName</qualifiedname>
+        <initializer>= TEXT(&quot;Debug&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="53" column="7" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a3a19eb6101aa8cca81545ca16c585328" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderToolingSettings::PIELoadSlotNumber</definition>
+        <argsstring></argsstring>
+        <name>PIELoadSlotNumber</name>
+        <qualifiedname>UARInvaderToolingSettings::PIELoadSlotNumber</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="57" column="7" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1aa3f8b05b907aa935bed510f68a9bf189" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TSoftObjectPtr&lt;UDataTable&gt; UARInvaderToolingSettings::StageDataTable</definition>
+        <argsstring></argsstring>
+        <name>StageDataTable</name>
+        <qualifiedname>UARInvaderToolingSettings::StageDataTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="25" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderToolingSettings_1a51c5eb7034527b6541248ad0f1f3a3f2" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TSoftObjectPtr&lt;UDataTable&gt; UARInvaderToolingSettings::WaveDataTable</definition>
+        <argsstring></argsstring>
+        <name>WaveDataTable</name>
+        <qualifiedname>UARInvaderToolingSettings::WaveDataTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="22" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderToolingSettings_1a4921903437c44ca7d64642943555ae81" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARInvaderToolingSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARInvaderToolingSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="18" column="15" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderToolingSettings_1aa757a4eb20d65981d67869ebc99273b3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARInvaderToolingSettings::GetSectionName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetSectionName</name>
+        <qualifiedname>UARInvaderToolingSettings::GetSectionName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="19" column="15" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="19" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderToolingSettings_1a4e3dd0ba6f525a10c923b05c4198901a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARInvaderToolingSettings::UARInvaderToolingSettings</definition>
+        <argsstring>()</argsstring>
+        <name>UARInvaderToolingSettings</name>
+        <qualifiedname>UARInvaderToolingSettings::UARInvaderToolingSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="16" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderToolingSettings.cpp" bodystart="3" bodyend="29"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Public/ARInvaderToolingSettings.h" line="11" column="1" bodyfile="AlienRamenEditor/Public/ARInvaderToolingSettings.h" bodystart="12" bodyend="63"/>
+    <listofallmembers>
+      <member refid="classUARInvaderToolingSettings_1a0f1c01883b1be207ce14887c39fd42a8" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>BackupRetentionCount</name></member>
+      <member refid="classUARInvaderToolingSettings_1ad9cd24e28623cacf702270ea52609ba0" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>BackupsFolder</name></member>
+      <member refid="classUARInvaderToolingSettings_1a61126b03bf6787f26517438fb904a8d2" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>bAutoSaveTablesOnEdit</name></member>
+      <member refid="classUARInvaderToolingSettings_1adf077f329f3bfc1902882541751a8f3d" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>bCreateBackupOnToolOpen</name></member>
+      <member refid="classUARInvaderToolingSettings_1a49577b3c7228077bdbac94c27cebc3a0" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>bEnablePIESaveBootstrap</name></member>
+      <member refid="classUARInvaderToolingSettings_1aa63f9cacfac5da2e6b6ba2affe5cbdd0" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>EnemyDataTable</name></member>
+      <member refid="classUARInvaderToolingSettings_1a4921903437c44ca7d64642943555ae81" prot="public" virt="virtual"><scope>UARInvaderToolingSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARInvaderToolingSettings_1aa757a4eb20d65981d67869ebc99273b3" prot="public" virt="virtual"><scope>UARInvaderToolingSettings</scope><name>GetSectionName</name></member>
+      <member refid="classUARInvaderToolingSettings_1a90d011360a73e68f18e761456b42266f" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>PIEBootstrapDebugMap</name></member>
+      <member refid="classUARInvaderToolingSettings_1a7fe693c2aed7616121a2dc71daa5ae5e" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>PIEBootstrapLoadingMap</name></member>
+      <member refid="classUARInvaderToolingSettings_1ac28d078bc088e58389f1b030bdffcc6e" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>PIELoadSlotName</name></member>
+      <member refid="classUARInvaderToolingSettings_1a3a19eb6101aa8cca81545ca16c585328" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>PIELoadSlotNumber</name></member>
+      <member refid="classUARInvaderToolingSettings_1aa3f8b05b907aa935bed510f68a9bf189" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>StageDataTable</name></member>
+      <member refid="classUARInvaderToolingSettings_1a4e3dd0ba6f525a10c923b05c4198901a" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>UARInvaderToolingSettings</name></member>
+      <member refid="classUARInvaderToolingSettings_1a51c5eb7034527b6541248ad0f1f3a3f2" prot="public" virt="non-virtual"><scope>UARInvaderToolingSettings</scope><name>WaveDataTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

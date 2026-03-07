@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARProjectileBase" kind="class" language="C++" prot="public">
+    <compoundname>AARProjectileBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARProjectileBase_1a64ee0ba6871cdafa69f17b661e7a8d72" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::bApplyDefaultInvaderCollisionResponses</definition>
+        <argsstring></argsstring>
+        <name>bApplyDefaultInvaderCollisionResponses</name>
+        <qualifiedname>AARProjectileBase::bApplyDefaultInvaderCollisionResponses</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="53" column="6" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1adacd2111d98253a84224261c51b756e7" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::bAutoWireCollisionAndMovement</definition>
+        <argsstring></argsstring>
+        <name>bAutoWireCollisionAndMovement</name>
+        <qualifiedname>AARProjectileBase::bAutoWireCollisionAndMovement</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="48" column="6" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1afeadde59d80bc6b7bf1bf732a672c1ba" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::bOffscreenCheckAuthorityOnly</definition>
+        <argsstring></argsstring>
+        <name>bOffscreenCheckAuthorityOnly</name>
+        <qualifiedname>AARProjectileBase::bOffscreenCheckAuthorityOnly</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="74" column="6" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1af39c55d85ffbac63f8b1caed5d43890d" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::bReleaseWhenOutsideGameplayBounds</definition>
+        <argsstring></argsstring>
+        <name>bReleaseWhenOutsideGameplayBounds</name>
+        <qualifiedname>AARProjectileBase::bReleaseWhenOutsideGameplayBounds</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="58" column="6" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1ad979a68dd3c1a243be0e03ffb413331b" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::bUseProjectSettingsOffscreenCullSeconds</definition>
+        <argsstring></argsstring>
+        <name>bUseProjectSettingsOffscreenCullSeconds</name>
+        <qualifiedname>AARProjectileBase::bUseProjectSettingsOffscreenCullSeconds</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="62" column="6" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1a241694f96f5893b5bd686ee0f9449b60" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARProjectileBase::OffscreenReleaseDelay</definition>
+        <argsstring></argsstring>
+        <name>OffscreenReleaseDelay</name>
+        <qualifiedname>AARProjectileBase::OffscreenReleaseDelay</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="66" column="7" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1ac2be9d3aec412e509e73930630e133cf" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARProjectileBase::OffscreenReleaseMargin</definition>
+        <argsstring></argsstring>
+        <name>OffscreenReleaseMargin</name>
+        <qualifiedname>AARProjectileBase::OffscreenReleaseMargin</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="70" column="7" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARProjectileBase_1afda92004a6efa33ed5517d4da594fbbc" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::bReleased</definition>
+        <argsstring></argsstring>
+        <name>bReleased</name>
+        <qualifiedname>AARProjectileBase::bReleased</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="79" column="6" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARProjectileBase_1ad918b7c8bd96025049154cb006a24c07" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARProjectileBase::OffscreenSeconds</definition>
+        <argsstring></argsstring>
+        <name>OffscreenSeconds</name>
+        <qualifiedname>AARProjectileBase::OffscreenSeconds</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="80" column="7" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARProjectileBase_1a8a7971ce9fc5b4aa49eb9d4a2040fe8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARProjectileBase::AARProjectileBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARProjectileBase</name>
+        <qualifiedname>AARProjectileBase::AARProjectileBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="18" column="1" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="11" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1a085d6881d48f591722d020b8921c46dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::BP_OnProjectilePreRelease</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnProjectilePreRelease</name>
+        <qualifiedname>AARProjectileBase::BP_OnProjectilePreRelease</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="38" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1a23bed42dd101b7226294822bded05aeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::EvaluateOffscreenRelease</definition>
+        <argsstring>()</argsstring>
+        <name>EvaluateOffscreenRelease</name>
+        <qualifiedname>AARProjectileBase::EvaluateOffscreenRelease</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="28" column="6" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="129" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1a4e105990cf5a25c657572ba481107f3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::InitializeProjectileFromData</definition>
+        <argsstring>(const FInstancedStruct &amp;InitData)</argsstring>
+        <name>InitializeProjectileFromData</name>
+        <qualifiedname>AARProjectileBase::InitializeProjectileFromData</qualifiedname>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>InitData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="25" column="6" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="17" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1a77a9192dca38a90b7e8a0019482a2231" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARProjectileBase::IsOutsideGameplayBounds</definition>
+        <argsstring>() const</argsstring>
+        <name>IsOutsideGameplayBounds</name>
+        <qualifiedname>AARProjectileBase::IsOutsideGameplayBounds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="31" column="6" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="172" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1a32b591202f04932f7b79968d7cef69d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::ReleaseProjectile</definition>
+        <argsstring>()</argsstring>
+        <name>ReleaseProjectile</name>
+        <qualifiedname>AARProjectileBase::ReleaseProjectile</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="35" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1ad0be3df1e19d095292facfe045e18679" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARProjectileBase::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="20" column="14" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="123" bodyend="127"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARProjectileBase_1a3e58bb33a1f30d49d0b58dc0fca24d77" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARProjectileBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="41" column="14" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="44" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARProjectileBase_1a4c908f90a39e1fd59ea154ba83513182" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::ReleaseProjectile_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>ReleaseProjectile_Implementation</name>
+        <qualifiedname>AARProjectileBase::ReleaseProjectile_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="43" column="6" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="193" bodyend="196"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARProjectileBase_1a5720a46480568d93ecb0496f908462fa" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARProjectileBase::EvaluateOffscreenReleaseInternal</definition>
+        <argsstring>(float DeltaSeconds)</argsstring>
+        <name>EvaluateOffscreenReleaseInternal</name>
+        <qualifiedname>AARProjectileBase::EvaluateOffscreenReleaseInternal</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARProjectileBase.h" line="77" column="6" bodyfile="AlienRamen/Private/ARProjectileBase.cpp" bodystart="135" bodyend="170"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARProjectileBase.h" line="13" column="1" bodyfile="AlienRamen/Public/ARProjectileBase.h" bodystart="14" bodyend="81"/>
+    <listofallmembers>
+      <member refid="classAARProjectileBase_1a8a7971ce9fc5b4aa49eb9d4a2040fe8b" prot="public" virt="non-virtual"><scope>AARProjectileBase</scope><name>AARProjectileBase</name></member>
+      <member refid="classAARProjectileBase_1a64ee0ba6871cdafa69f17b661e7a8d72" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>bApplyDefaultInvaderCollisionResponses</name></member>
+      <member refid="classAARProjectileBase_1adacd2111d98253a84224261c51b756e7" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>bAutoWireCollisionAndMovement</name></member>
+      <member refid="classAARProjectileBase_1a3e58bb33a1f30d49d0b58dc0fca24d77" prot="protected" virt="virtual"><scope>AARProjectileBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARProjectileBase_1afeadde59d80bc6b7bf1bf732a672c1ba" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>bOffscreenCheckAuthorityOnly</name></member>
+      <member refid="classAARProjectileBase_1a085d6881d48f591722d020b8921c46dc" prot="public" virt="non-virtual"><scope>AARProjectileBase</scope><name>BP_OnProjectilePreRelease</name></member>
+      <member refid="classAARProjectileBase_1afda92004a6efa33ed5517d4da594fbbc" prot="private" virt="non-virtual"><scope>AARProjectileBase</scope><name>bReleased</name></member>
+      <member refid="classAARProjectileBase_1af39c55d85ffbac63f8b1caed5d43890d" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>bReleaseWhenOutsideGameplayBounds</name></member>
+      <member refid="classAARProjectileBase_1ad979a68dd3c1a243be0e03ffb413331b" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>bUseProjectSettingsOffscreenCullSeconds</name></member>
+      <member refid="classAARProjectileBase_1a23bed42dd101b7226294822bded05aeb" prot="public" virt="non-virtual"><scope>AARProjectileBase</scope><name>EvaluateOffscreenRelease</name></member>
+      <member refid="classAARProjectileBase_1a5720a46480568d93ecb0496f908462fa" prot="private" virt="non-virtual"><scope>AARProjectileBase</scope><name>EvaluateOffscreenReleaseInternal</name></member>
+      <member refid="classAARProjectileBase_1a4e105990cf5a25c657572ba481107f3e" prot="public" virt="non-virtual"><scope>AARProjectileBase</scope><name>InitializeProjectileFromData</name></member>
+      <member refid="classAARProjectileBase_1a77a9192dca38a90b7e8a0019482a2231" prot="public" virt="non-virtual"><scope>AARProjectileBase</scope><name>IsOutsideGameplayBounds</name></member>
+      <member refid="classAARProjectileBase_1a241694f96f5893b5bd686ee0f9449b60" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>OffscreenReleaseDelay</name></member>
+      <member refid="classAARProjectileBase_1ac2be9d3aec412e509e73930630e133cf" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>OffscreenReleaseMargin</name></member>
+      <member refid="classAARProjectileBase_1ad918b7c8bd96025049154cb006a24c07" prot="private" virt="non-virtual"><scope>AARProjectileBase</scope><name>OffscreenSeconds</name></member>
+      <member refid="classAARProjectileBase_1a32b591202f04932f7b79968d7cef69d1" prot="public" virt="non-virtual"><scope>AARProjectileBase</scope><name>ReleaseProjectile</name></member>
+      <member refid="classAARProjectileBase_1a4c908f90a39e1fd59ea154ba83513182" prot="protected" virt="non-virtual"><scope>AARProjectileBase</scope><name>ReleaseProjectile_Implementation</name></member>
+      <member refid="classAARProjectileBase_1ad0be3df1e19d095292facfe045e18679" prot="public" virt="virtual"><scope>AARProjectileBase</scope><name>Tick</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

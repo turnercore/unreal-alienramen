@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal" kind="struct" language="C++" prot="private">
+    <compoundname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a2c0bb8d9628ccd05b22766733be39749" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::FWaveRuntimeInternal::AliveCount</definition>
+        <argsstring></argsstring>
+        <name>AliveCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::AliveCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="137" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a3c86f401370282453a2fb34b983863da" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::FWaveRuntimeInternal::bColorSwap</definition>
+        <argsstring></argsstring>
+        <name>bColorSwap</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::bColorSwap</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="138" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1af635c8fbfd7c3c70fe7f94c59694a419" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::FWaveRuntimeInternal::bFlipX</definition>
+        <argsstring></argsstring>
+        <name>bFlipX</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::bFlipX</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="139" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a21b4eeabf262fcc68e63a7f899efc073" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderDirectorSubsystem::FWaveRuntimeInternal::bFlipY</definition>
+        <argsstring></argsstring>
+        <name>bFlipY</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::bFlipY</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="140" column="6" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a67aa514732c382665d5a9e6ec656422b" prot="public" static="no" mutable="no">
+        <type>FARWaveDefRow</type>
+        <definition>FARWaveDefRow UARInvaderDirectorSubsystem::FWaveRuntimeInternal::Def</definition>
+        <argsstring></argsstring>
+        <name>Def</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::Def</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="130" column="15" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1ae364299b24acb34bdfc3d55aba7c458a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::FWaveRuntimeInternal::NextSpawnIndex</definition>
+        <argsstring></argsstring>
+        <name>NextSpawnIndex</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::NextSpawnIndex</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="135" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a65aca14c7723ff5f68f00583ca7f5f68" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::FWaveRuntimeInternal::NextSpawnTime</definition>
+        <argsstring></argsstring>
+        <name>NextSpawnTime</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::NextSpawnTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="134" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1aa211a5a8e9ac1a46284f22e79d37d30b" prot="public" static="no" mutable="no">
+        <type>EARWavePhase</type>
+        <definition>EARWavePhase UARInvaderDirectorSubsystem::FWaveRuntimeInternal::Phase</definition>
+        <argsstring></argsstring>
+        <name>Phase</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::Phase</qualifiedname>
+        <initializer>= EARWavePhase::Active</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="142" column="14" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a6ca9eafa0047dcaa2bf29d8832a52089" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::FWaveRuntimeInternal::PhaseStartTime</definition>
+        <argsstring></argsstring>
+        <name>PhaseStartTime</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::PhaseStartTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="133" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1af01a7f8ae3eefc000d159b1b18677356" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::FWaveRuntimeInternal::RowName</definition>
+        <argsstring></argsstring>
+        <name>RowName</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::RowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="131" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a37f8923aa89acd452cac55560f27c362" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::FWaveRuntimeInternal::SpawnedCount</definition>
+        <argsstring></argsstring>
+        <name>SpawnedCount</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::SpawnedCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="136" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a09c93a87d7044dfd9c5817479fc000f6" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TWeakObjectPtr&lt; class AAREnemyBase &gt; &gt;</type>
+        <definition>TArray&lt;TWeakObjectPtr&lt;class AAREnemyBase&gt; &gt; UARInvaderDirectorSubsystem::FWaveRuntimeInternal::SpawnedEnemies</definition>
+        <argsstring></argsstring>
+        <name>SpawnedEnemies</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::SpawnedEnemies</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="143" column="8" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a6df999c04d86d8254355b6cdf9f67c3f" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARInvaderDirectorSubsystem::FWaveRuntimeInternal::StageRowName</definition>
+        <argsstring></argsstring>
+        <name>StageRowName</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::StageRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="141" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1ab3f852f07081a12a56cac941110c64b1" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderDirectorSubsystem::FWaveRuntimeInternal::WaveInstanceId</definition>
+        <argsstring></argsstring>
+        <name>WaveInstanceId</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::WaveInstanceId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="129" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a2e1650e9cf706eecdbef2dc8ee845c5a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderDirectorSubsystem::FWaveRuntimeInternal::WaveStartTime</definition>
+        <argsstring></argsstring>
+        <name>WaveStartTime</name>
+        <qualifiedname>UARInvaderDirectorSubsystem::FWaveRuntimeInternal::WaveStartTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="132" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDirectorSubsystem.h" line="127" column="1" bodyfile="AlienRamen/Public/ARInvaderDirectorSubsystem.h" bodystart="128" bodyend="144"/>
+    <listofallmembers>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a2c0bb8d9628ccd05b22766733be39749" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>AliveCount</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a3c86f401370282453a2fb34b983863da" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>bColorSwap</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1af635c8fbfd7c3c70fe7f94c59694a419" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>bFlipX</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a21b4eeabf262fcc68e63a7f899efc073" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>bFlipY</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a67aa514732c382665d5a9e6ec656422b" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>Def</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1ae364299b24acb34bdfc3d55aba7c458a" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>NextSpawnIndex</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a65aca14c7723ff5f68f00583ca7f5f68" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>NextSpawnTime</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1aa211a5a8e9ac1a46284f22e79d37d30b" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>Phase</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a6ca9eafa0047dcaa2bf29d8832a52089" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>PhaseStartTime</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1af01a7f8ae3eefc000d159b1b18677356" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>RowName</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a37f8923aa89acd452cac55560f27c362" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>SpawnedCount</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a09c93a87d7044dfd9c5817479fc000f6" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>SpawnedEnemies</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a6df999c04d86d8254355b6cdf9f67c3f" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>StageRowName</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1ab3f852f07081a12a56cac941110c64b1" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>WaveInstanceId</name></member>
+      <member refid="structUARInvaderDirectorSubsystem_1_1FWaveRuntimeInternal_1a2e1650e9cf706eecdbef2dc8ee845c5a" prot="public" virt="non-virtual"><scope>UARInvaderDirectorSubsystem::FWaveRuntimeInternal</scope><name>WaveStartTime</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

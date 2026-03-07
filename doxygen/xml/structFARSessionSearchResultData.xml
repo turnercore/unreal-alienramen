@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARSessionSearchResultData" kind="struct" language="C++" prot="public">
+    <compoundname>FARSessionSearchResultData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1a41f3087cf76d78a5ff39117e7f048340" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARSessionSearchResultData::bIsLAN</definition>
+        <argsstring></argsstring>
+        <name>bIsLAN</name>
+        <qualifiedname>FARSessionSearchResultData::bIsLAN</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="79" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1a5a6bbd109b1c7e56d3943cace7dc3b10" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARSessionSearchResultData::bProtocolCompatible</definition>
+        <argsstring></argsstring>
+        <name>bProtocolCompatible</name>
+        <qualifiedname>FARSessionSearchResultData::bProtocolCompatible</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="91" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1aff0b48190be5a89c79f88aa3e1208855" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARSessionSearchResultData::bProtocolPresent</definition>
+        <argsstring></argsstring>
+        <name>bProtocolPresent</name>
+        <qualifiedname>FARSessionSearchResultData::bProtocolPresent</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="85" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1afec3ea245fdef22284d93c637a0532ae" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSessionSearchResultData::CurrentPlayers</definition>
+        <argsstring></argsstring>
+        <name>CurrentPlayers</name>
+        <qualifiedname>FARSessionSearchResultData::CurrentPlayers</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="73" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1a51beca67e50e6796bcdd95f8b721a8e1" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSessionSearchResultData::MaxPlayers</definition>
+        <argsstring></argsstring>
+        <name>MaxPlayers</name>
+        <qualifiedname>FARSessionSearchResultData::MaxPlayers</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="76" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1a5fbcda032366134fd5d83982affaafcb" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARSessionSearchResultData::OwningUserName</definition>
+        <argsstring></argsstring>
+        <name>OwningUserName</name>
+        <qualifiedname>FARSessionSearchResultData::OwningUserName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="70" column="9" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1aa278137adc5bc94f7151718ba8e758d4" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSessionSearchResultData::PingInMs</definition>
+        <argsstring></argsstring>
+        <name>PingInMs</name>
+        <qualifiedname>FARSessionSearchResultData::PingInMs</qualifiedname>
+        <initializer>= -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="82" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1a46a4813d9734d43a8299a10f8c9a0c10" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARSessionSearchResultData::ProtocolVersion</definition>
+        <argsstring></argsstring>
+        <name>ProtocolVersion</name>
+        <qualifiedname>FARSessionSearchResultData::ProtocolVersion</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="88" column="7" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1ab6b13bc0973d0343bfd71788f6094fc6" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARSessionSearchResultData::SessionDisplayName</definition>
+        <argsstring></argsstring>
+        <name>SessionDisplayName</name>
+        <qualifiedname>FARSessionSearchResultData::SessionDisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="64" column="9" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionSearchResultData_1a028bb75b9abfc3effd49363509ea69f5" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARSessionSearchResultData::SessionId</definition>
+        <argsstring></argsstring>
+        <name>SessionId</name>
+        <qualifiedname>FARSessionSearchResultData::SessionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="67" column="9" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSessionSubsystem.h" line="59" column="1" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="60" bodyend="92"/>
+    <listofallmembers>
+      <member refid="structFARSessionSearchResultData_1a41f3087cf76d78a5ff39117e7f048340" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>bIsLAN</name></member>
+      <member refid="structFARSessionSearchResultData_1a5a6bbd109b1c7e56d3943cace7dc3b10" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>bProtocolCompatible</name></member>
+      <member refid="structFARSessionSearchResultData_1aff0b48190be5a89c79f88aa3e1208855" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>bProtocolPresent</name></member>
+      <member refid="structFARSessionSearchResultData_1afec3ea245fdef22284d93c637a0532ae" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>CurrentPlayers</name></member>
+      <member refid="structFARSessionSearchResultData_1a51beca67e50e6796bcdd95f8b721a8e1" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>MaxPlayers</name></member>
+      <member refid="structFARSessionSearchResultData_1a5fbcda032366134fd5d83982affaafcb" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>OwningUserName</name></member>
+      <member refid="structFARSessionSearchResultData_1aa278137adc5bc94f7151718ba8e758d4" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>PingInMs</name></member>
+      <member refid="structFARSessionSearchResultData_1a46a4813d9734d43a8299a10f8c9a0c10" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>ProtocolVersion</name></member>
+      <member refid="structFARSessionSearchResultData_1ab6b13bc0973d0343bfd71788f6094fc6" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>SessionDisplayName</name></member>
+      <member refid="structFARSessionSearchResultData_1a028bb75b9abfc3effd49363509ea69f5" prot="public" virt="non-virtual"><scope>FARSessionSearchResultData</scope><name>SessionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

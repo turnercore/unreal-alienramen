@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUContentLookupSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UContentLookupSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <includes refid="ContentLookupSubsystem_8h" local="no">AlienRamen/Public/ContentLookupSubsystem.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUContentLookupSubsystem_1a4b96b15520757fee37b5e9dcfc80fedf" prot="public" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, TObjectPtr&lt; UDataTable &gt; &gt;</type>
+        <definition>TMap&lt;FGameplayTag, TObjectPtr&lt;UDataTable&gt; &gt; UContentLookupSubsystem::LoadedTables</definition>
+        <argsstring></argsstring>
+        <name>LoadedTables</name>
+        <qualifiedname>UContentLookupSubsystem::LoadedTables</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="70" column="6" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUContentLookupSubsystem_1a328849c71ea1d9daaac4d96843aab64c" prot="public" static="no" mutable="no">
+        <type>TObjectPtr&lt; UContentLookupRegistry &gt;</type>
+        <definition>TObjectPtr&lt;UContentLookupRegistry&gt; UContentLookupSubsystem::Registry</definition>
+        <argsstring></argsstring>
+        <name>Registry</name>
+        <qualifiedname>UContentLookupSubsystem::Registry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="66" column="12" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUContentLookupSubsystem_1aaa0abf55e1502c0e3c469d78eacc5449" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UContentLookupSubsystem::ClearCache</definition>
+        <argsstring>()</argsstring>
+        <name>ClearCache</name>
+        <qualifiedname>UContentLookupSubsystem::ClearCache</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="80" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="74" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a18b3695f22b9ebb4e448810d124fb564" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UContentLookupSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UContentLookupSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="61" column="14" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="50" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a28779b8c49953266e00207e5f97eae66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::DoesRowExistForTag</definition>
+        <argsstring>(FGameplayTag Tag, FString &amp;OutError)</argsstring>
+        <name>DoesRowExistForTag</name>
+        <qualifiedname>UContentLookupSubsystem::DoesRowExistForTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="84" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="124" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1aa8052bbbbb77f4d34de5e5970701cd8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::GetAllRowNamesForRootTag</definition>
+        <argsstring>(FGameplayTag RootTag, TArray&lt; FName &gt; &amp;OutRowNames, FString &amp;OutError)</argsstring>
+        <name>GetAllRowNamesForRootTag</name>
+        <qualifiedname>UContentLookupSubsystem::GetAllRowNamesForRootTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RootTag</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FName &gt; &amp;</type>
+          <declname>OutRowNames</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="103" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="199" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a4ccf71641522fc4e9aa966cc18ce0caf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::GetDataTableForRootTag</definition>
+        <argsstring>(FGameplayTag RootTag, UDataTable *&amp;OutDataTable, FString &amp;OutError)</argsstring>
+        <name>GetDataTableForRootTag</name>
+        <qualifiedname>UContentLookupSubsystem::GetDataTableForRootTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RootTag</declname>
+        </param>
+        <param>
+          <type>UDataTable *&amp;</type>
+          <declname>OutDataTable</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="111" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="224" bodyend="270"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a973ce1a49ccee08984c7a50ccced78d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::GetDataTableForRowStruct</definition>
+        <argsstring>(UScriptStruct *DesiredRowStruct, UDataTable *&amp;OutDataTable, FGameplayTag &amp;OutMatchedRootTag, FString &amp;OutError)</argsstring>
+        <name>GetDataTableForRowStruct</name>
+        <qualifiedname>UContentLookupSubsystem::GetDataTableForRowStruct</qualifiedname>
+        <param>
+          <type>UScriptStruct *</type>
+          <declname>DesiredRowStruct</declname>
+        </param>
+        <param>
+          <type>UDataTable *&amp;</type>
+          <declname>OutDataTable</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutMatchedRootTag</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="120" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="272" bodyend="335"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a7bb13529c5d735a061bf98367ec8de91" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UContentLookupSubsystem::Initialize</definition>
+        <argsstring>(FSubsystemCollectionBase &amp;Collection) override</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UContentLookupSubsystem::Initialize</qualifiedname>
+        <param>
+          <type>FSubsystemCollectionBase &amp;</type>
+          <declname>Collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="60" column="14" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="20" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1adbb05cbb4fd4d668514c717ae4937b93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::LookupWithGameplayTag</definition>
+        <argsstring>(FGameplayTag Tag, FInstancedStruct &amp;OutRow, FString &amp;OutError)</argsstring>
+        <name>LookupWithGameplayTag</name>
+        <qualifiedname>UContentLookupSubsystem::LookupWithGameplayTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FInstancedStruct &amp;</type>
+          <declname>OutRow</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="94" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="444" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1adc3fa45a864e8f82d8f8d8a0451100d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UContentLookupSubsystem::SetRegistry</definition>
+        <argsstring>(UContentLookupRegistry *InRegistry)</argsstring>
+        <name>SetRegistry</name>
+        <qualifiedname>UContentLookupSubsystem::SetRegistry</qualifiedname>
+        <param>
+          <type>UContentLookupRegistry *</type>
+          <declname>InRegistry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="76" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="58" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a672027c312c56b4952877cb21477bc05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::ValidateRegistry</definition>
+        <argsstring>(FString &amp;OutError)</argsstring>
+        <name>ValidateRegistry</name>
+        <qualifiedname>UContentLookupSubsystem::ValidateRegistry</qualifiedname>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="89" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="150" bodyend="197"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a83b088517a7ad18a463460c5a3c748ec" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName UContentLookupSubsystem::GetLeafRowNameFromTag</definition>
+        <argsstring>(FGameplayTag Tag)</argsstring>
+        <name>GetLeafRowNameFromTag</name>
+        <qualifiedname>UContentLookupSubsystem::GetLeafRowNameFromTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="130" column="14" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="79" bodyend="83"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUContentLookupSubsystem_1aba8a7e5473cb92d15f2e96b279c057d3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UContentLookupRegistry *</type>
+        <definition>UContentLookupRegistry * UContentLookupSubsystem::GetActiveRegistry</definition>
+        <argsstring>()</argsstring>
+        <name>GetActiveRegistry</name>
+        <qualifiedname>UContentLookupSubsystem::GetActiveRegistry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="141" column="24" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="337" bodyend="363"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1afe5e2db9e7444eab0eed0369b16a9e56" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UContentLookupSubsystem::GetTableAndRowNameFromTag</definition>
+        <argsstring>(FGameplayTag Tag, UDataTable *&amp;OutDataTable, FName &amp;OutRowName, FString &amp;OutError)</argsstring>
+        <name>GetTableAndRowNameFromTag</name>
+        <qualifiedname>UContentLookupSubsystem::GetTableAndRowNameFromTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>UDataTable *&amp;</type>
+          <declname>OutDataTable</declname>
+        </param>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutRowName</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="133" column="6" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="85" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1a1e89cfdb7cf6017af7f1ea7477e40890" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UDataTable *</type>
+        <definition>UDataTable * UContentLookupSubsystem::LoadAndCacheTable</definition>
+        <argsstring>(const FGameplayTag &amp;RootTag, const TSoftObjectPtr&lt; UDataTable &gt; &amp;TableRef, FString &amp;OutError)</argsstring>
+        <name>LoadAndCacheTable</name>
+        <qualifiedname>UContentLookupSubsystem::LoadAndCacheTable</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>RootTag</declname>
+        </param>
+        <param>
+          <type>const TSoftObjectPtr&lt; UDataTable &gt; &amp;</type>
+          <declname>TableRef</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="147" column="12" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="421" bodyend="442"/>
+      </memberdef>
+      <memberdef kind="function" id="classUContentLookupSubsystem_1ae09db53b9579ba570f3e66c448643010" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UDataTable *</type>
+        <definition>UDataTable * UContentLookupSubsystem::ResolveTableForTag</definition>
+        <argsstring>(FGameplayTag Tag, FGameplayTag &amp;OutMatchedRoot, FString &amp;OutError)</argsstring>
+        <name>ResolveTableForTag</name>
+        <qualifiedname>UContentLookupSubsystem::ResolveTableForTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutMatchedRoot</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="144" column="12" bodyfile="AlienRamen/Private/ContentLookupSubsystem.cpp" bodystart="366" bodyend="419"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>ContentLookupSubsystem. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Routes a GameplayTag to a DataTable based on RootTag prefix matching.</para>
+</listitem><listitem><para>Uses the tag leaf (last segment after &apos;.&apos;) as the DataTable RowName by default.</para>
+</listitem></itemizedlist>
+</para>
+<para>Example: Unlocks.Ships.Sammy RootTag: Unlocks.Ships -&gt; DT_Unlocks_Ships Leaf: Sammy -&gt; RowName &apos;Sammy&apos; </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ContentLookupSubsystem.h" line="54" column="1" bodyfile="AlienRamen/Public/ContentLookupSubsystem.h" bodystart="55" bodyend="148"/>
+    <listofallmembers>
+      <member refid="classUContentLookupSubsystem_1aaa0abf55e1502c0e3c469d78eacc5449" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>ClearCache</name></member>
+      <member refid="classUContentLookupSubsystem_1a18b3695f22b9ebb4e448810d124fb564" prot="public" virt="virtual"><scope>UContentLookupSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUContentLookupSubsystem_1a28779b8c49953266e00207e5f97eae66" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>DoesRowExistForTag</name></member>
+      <member refid="classUContentLookupSubsystem_1aba8a7e5473cb92d15f2e96b279c057d3" prot="private" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>GetActiveRegistry</name></member>
+      <member refid="classUContentLookupSubsystem_1aa8052bbbbb77f4d34de5e5970701cd8e" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>GetAllRowNamesForRootTag</name></member>
+      <member refid="classUContentLookupSubsystem_1a4ccf71641522fc4e9aa966cc18ce0caf" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>GetDataTableForRootTag</name></member>
+      <member refid="classUContentLookupSubsystem_1a973ce1a49ccee08984c7a50ccced78d7" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>GetDataTableForRowStruct</name></member>
+      <member refid="classUContentLookupSubsystem_1a83b088517a7ad18a463460c5a3c748ec" prot="private" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>GetLeafRowNameFromTag</name></member>
+      <member refid="classUContentLookupSubsystem_1afe5e2db9e7444eab0eed0369b16a9e56" prot="private" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>GetTableAndRowNameFromTag</name></member>
+      <member refid="classUContentLookupSubsystem_1a7bb13529c5d735a061bf98367ec8de91" prot="public" virt="virtual"><scope>UContentLookupSubsystem</scope><name>Initialize</name></member>
+      <member refid="classUContentLookupSubsystem_1a1e89cfdb7cf6017af7f1ea7477e40890" prot="private" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>LoadAndCacheTable</name></member>
+      <member refid="classUContentLookupSubsystem_1a4b96b15520757fee37b5e9dcfc80fedf" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>LoadedTables</name></member>
+      <member refid="classUContentLookupSubsystem_1adbb05cbb4fd4d668514c717ae4937b93" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>LookupWithGameplayTag</name></member>
+      <member refid="classUContentLookupSubsystem_1a328849c71ea1d9daaac4d96843aab64c" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>Registry</name></member>
+      <member refid="classUContentLookupSubsystem_1ae09db53b9579ba570f3e66c448643010" prot="private" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>ResolveTableForTag</name></member>
+      <member refid="classUContentLookupSubsystem_1adc3fa45a864e8f82d8f8d8a0451100d1" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>SetRegistry</name></member>
+      <member refid="classUContentLookupSubsystem_1a672027c312c56b4952877cb21477bc05" prot="public" virt="non-virtual"><scope>UContentLookupSubsystem</scope><name>ValidateRegistry</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

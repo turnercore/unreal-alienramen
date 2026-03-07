@@ -1,0 +1,1196 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classARDebugSaveEditor_1_1SPanel" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>ARDebugSaveEditor::SPanel</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SCompoundWidget</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a42d4a489909739b053ef06469fcf1d2f" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::bUseDebugSaves</definition>
+        <argsstring></argsstring>
+        <name>bUseDebugSaves</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::bUseDebugSaves</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1515" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1515" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1adf778df9aa0aefdbe659a4ae037fd17c" prot="private" static="no" mutable="no">
+        <type>TStrongObjectPtr&lt; <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> &gt;</type>
+        <definition>TStrongObjectPtr&lt;UARSaveGame&gt; ARDebugSaveEditor::SPanel::CurrentSaveObject</definition>
+        <argsstring></argsstring>
+        <name>CurrentSaveObject</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::CurrentSaveObject</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1512" column="18" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1512" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a2fd31a39f7a9c00dc76b41eadbd7c153" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName ARDebugSaveEditor::SPanel::CurrentSlotName</definition>
+        <argsstring></argsstring>
+        <name>CurrentSlotName</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::CurrentSlotName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1511" column="7" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1511" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1af4cf0372f1b70365efec7778e543e1e5" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; STextBlock &gt;</type>
+        <definition>TSharedPtr&lt;STextBlock&gt; ARDebugSaveEditor::SPanel::CurrentSlotText</definition>
+        <argsstring></argsstring>
+        <name>CurrentSlotText</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::CurrentSlotText</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1506" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1506" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a1fa0519644462b1674cc32dd3aaa9640" prot="private" static="no" mutable="no">
+        <type>TArray&lt; uint8 &gt;</type>
+        <definition>TArray&lt;uint8&gt; ARDebugSaveEditor::SPanel::LoadedSnapshotBytes</definition>
+        <argsstring></argsstring>
+        <name>LoadedSnapshotBytes</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::LoadedSnapshotBytes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1513" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1513" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a7b940f3e9640b6497f62d01f0ca59869" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName ARDebugSaveEditor::SPanel::LoadedSnapshotSlotName</definition>
+        <argsstring></argsstring>
+        <name>LoadedSnapshotSlotName</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::LoadedSnapshotSlotName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1514" column="7" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1514" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a6811b66c1b38f5431c1c942ca2dd4a3f" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; IDetailsView &gt;</type>
+        <definition>TSharedPtr&lt;IDetailsView&gt; ARDebugSaveEditor::SPanel::SaveDetailsView</definition>
+        <argsstring></argsstring>
+        <name>SaveDetailsView</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SaveDetailsView</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1509" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1509" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a9d83090f672a53d819d7c5a72e922380" prot="private" static="no" mutable="no">
+        <type>TArray&lt; TSharedPtr&lt; FARSaveSlotDescriptor &gt; &gt;</type>
+        <definition>TArray&lt;TSharedPtr&lt;FARSaveSlotDescriptor&gt; &gt; ARDebugSaveEditor::SPanel::SlotItems</definition>
+        <argsstring></argsstring>
+        <name>SlotItems</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SlotItems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1502" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1502" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a91dd675d95c0ae8094bfdfcdcbab2cc1" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SScrollBar &gt;</type>
+        <definition>TSharedPtr&lt;SScrollBar&gt; ARDebugSaveEditor::SPanel::SlotListScrollbar</definition>
+        <argsstring></argsstring>
+        <name>SlotListScrollbar</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SlotListScrollbar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1508" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1508" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a659e0ec6eeab519b9982028e94384440" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SListView&lt; TSharedPtr&lt; FARSaveSlotDescriptor &gt; &gt; &gt;</type>
+        <definition>TSharedPtr&lt;SListView&lt;TSharedPtr&lt;FARSaveSlotDescriptor&gt; &gt; &gt; ARDebugSaveEditor::SPanel::SlotListView</definition>
+        <argsstring></argsstring>
+        <name>SlotListView</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SlotListView</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1507" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1507" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a95cda3ebd74e8b772c34c6d6745ebd47" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; SEditableTextBox &gt;</type>
+        <definition>TSharedPtr&lt;SEditableTextBox&gt; ARDebugSaveEditor::SPanel::SlotNameTextBox</definition>
+        <argsstring></argsstring>
+        <name>SlotNameTextBox</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SlotNameTextBox</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1504" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1504" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classARDebugSaveEditor_1_1SPanel_1a287d90aeb0cf390f09665d79b287e0e0" prot="private" static="no" mutable="no">
+        <type>TSharedPtr&lt; STextBlock &gt;</type>
+        <definition>TSharedPtr&lt;STextBlock&gt; ARDebugSaveEditor::SPanel::StatusText</definition>
+        <argsstring></argsstring>
+        <name>StatusText</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::StatusText</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1505" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1505" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a3b1148cff09f3efe70ca4b15b7cf0ab7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::Construct</definition>
+        <argsstring>(const FArguments &amp;)</argsstring>
+        <name>Construct</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::Construct</qualifiedname>
+        <param>
+          <type>const FArguments &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="64" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="64" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a4a6b22d4034bcf6be23800e1f8f5fb75" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>FReply</type>
+        <definition>virtual FReply ARDebugSaveEditor::SPanel::OnKeyDown</definition>
+        <argsstring>(const FGeometry &amp;MyGeometry, const FKeyEvent &amp;InKeyEvent) override</argsstring>
+        <name>OnKeyDown</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnKeyDown</qualifiedname>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FKeyEvent &amp;</type>
+          <declname>InKeyEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="54" column="16" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="54" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a9a2c027060062d9dd90f7b3b1bfe0791" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ARDebugSaveEditor::SPanel::SLATE_BEGIN_ARGS</definition>
+        <argsstring>(SPanel)</argsstring>
+        <name>SLATE_BEGIN_ARGS</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SLATE_BEGIN_ARGS</qualifiedname>
+        <param>
+          <type>SPanel</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="46" column="1" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a89abba652907f738128bf4d65e2c8420" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool ARDebugSaveEditor::SPanel::SupportsKeyboardFocus</definition>
+        <argsstring>() const override</argsstring>
+        <name>SupportsKeyboardFocus</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SupportsKeyboardFocus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="49" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="49" bodyend="52"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a0110b1dab046bb9b1f492175fdb825e4" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::BindCurrentSaveToDetails</definition>
+        <argsstring>()</argsstring>
+        <name>BindCurrentSaveToDetails</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::BindCurrentSaveToDetails</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="843" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="843" bodyend="869"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a3ce88ef0f22834d17fb805c4ae7c6e11" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::CaptureLoadedSnapshot</definition>
+        <argsstring>()</argsstring>
+        <name>CaptureLoadedSnapshot</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::CaptureLoadedSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="342" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="342" bodyend="355"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a6102fb1ece83b1d5464d9db3c9083001" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::CreateSlotOffline</definition>
+        <argsstring>(FName InSlotBase, bool bDebugMode, FString &amp;OutError)</argsstring>
+        <name>CreateSlotOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::CreateSlotOffline</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1117" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1117" bodyend="1175"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a419f955b4167c713d5c260ddc6f24cae" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::DeleteSlotOffline</definition>
+        <argsstring>(FName InSlotBase, bool bDebugMode, FString &amp;OutError)</argsstring>
+        <name>DeleteSlotOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::DeleteSlotOffline</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1290" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1290" bodyend="1336"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a44d3d1500e08f0fa447e1b5748bdb932" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::DuplicateOrRenameSlotOffline</definition>
+        <argsstring>(FName InSourceSlotBase, FName InTargetSlotBase, bool bDebugMode, bool bRename, FString &amp;OutError)</argsstring>
+        <name>DuplicateOrRenameSlotOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::DuplicateOrRenameSlotOffline</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InSourceSlotBase</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>InTargetSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bRename</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1363" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1363" bodyend="1499"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a908f8523a265471f6f02e8d980bd7704" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>ECheckBoxState</type>
+        <definition>ECheckBoxState ARDebugSaveEditor::SPanel::GetDebugNamespaceCheckState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDebugNamespaceCheckState</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::GetDebugNamespaceCheckState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="560" column="16" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="560" bodyend="563"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ac7d2c14846de61a3c0206913dfff7820" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName ARDebugSaveEditor::SPanel::GetDisplaySlotName</definition>
+        <argsstring>(FName SlotBase) const</argsstring>
+        <name>GetDisplaySlotName</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::GetDisplaySlotName</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="952" column="7" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="952" bodyend="955"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ab1639346e1b7ea201747f37e532ae43d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::GetPrimarySelectionForSingleAction</definition>
+        <argsstring>(TSharedPtr&lt; FARSaveSlotDescriptor &gt; &amp;OutPrimarySelected)</argsstring>
+        <name>GetPrimarySelectionForSingleAction</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::GetPrimarySelectionForSingleAction</qualifiedname>
+        <param>
+          <type>TSharedPtr&lt; FARSaveSlotDescriptor &gt; &amp;</type>
+          <declname>OutPrimarySelected</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="297" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="297" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a5ad579e74da75c9fb40a5fec8239179e" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FText</type>
+        <definition>FText ARDebugSaveEditor::SPanel::GetSaveNamespaceLabel</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSaveNamespaceLabel</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::GetSaveNamespaceLabel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="571" column="7" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="571" bodyend="574"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a1ce8883d9191e72a5ef5c3486fce43ff" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::HandleContextDelete</definition>
+        <argsstring>()</argsstring>
+        <name>HandleContextDelete</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::HandleContextDelete</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="464" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="464" bodyend="464"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ae6a115e0e7121f95dfcf7ff44ab3c7d3" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::HandleContextDuplicate</definition>
+        <argsstring>()</argsstring>
+        <name>HandleContextDuplicate</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::HandleContextDuplicate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="466" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="466" bodyend="466"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1aa7aa9530bf466f4e1009cc59d5c757ec" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::HandleContextHealMissing</definition>
+        <argsstring>()</argsstring>
+        <name>HandleContextHealMissing</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::HandleContextHealMissing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="467" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="467" bodyend="483"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ae5ddd38eddb2e462de312e304284fe09" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::HandleContextLoad</definition>
+        <argsstring>()</argsstring>
+        <name>HandleContextLoad</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::HandleContextLoad</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="463" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="463" bodyend="463"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1aade253e093dbd5613071a797e41506a3" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::HandleContextRename</definition>
+        <argsstring>()</argsstring>
+        <name>HandleContextRename</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::HandleContextRename</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="465" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="465" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a8fb5b9bacf4b6bf582da7a141a6c0789" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::HasAnyPhysicalRevisionForSlot</definition>
+        <argsstring>(FName InSlotBase, bool bDebugMode) const</argsstring>
+        <name>HasAnyPhysicalRevisionForSlot</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::HasAnyPhysicalRevisionForSlot</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1023" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1023" bodyend="1058"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ae8f0159134f8ca253f1bc218d72dac67" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::ListSlotsOffline</definition>
+        <argsstring>(bool bDebugMode, TArray&lt; FARSaveSlotDescriptor &gt; &amp;OutSlots, FString &amp;OutError) const</argsstring>
+        <name>ListSlotsOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::ListSlotsOffline</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FARSaveSlotDescriptor &gt; &amp;</type>
+          <declname>OutSlots</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1105" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1105" bodyend="1115"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a2396bb182de1f3c9b03207f4b34ef5c1" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::LoadOrCreateIndexOffline</definition>
+        <argsstring>(bool bDebugMode, UARSaveIndexGame *&amp;OutIndex, FString &amp;OutError) const</argsstring>
+        <name>LoadOrCreateIndexOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::LoadOrCreateIndexOffline</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *&amp;</type>
+          <declname>OutIndex</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="962" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="962" bodyend="995"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1af8a79f7a8911963cd835a83156885747" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::LoadSlotByName</definition>
+        <argsstring>(const FName SlotName, const bool bAutoSaveCurrentFirst)</argsstring>
+        <name>LoadSlotByName</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::LoadSlotByName</qualifiedname>
+        <param>
+          <type>const FName</type>
+          <declname>SlotName</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>bAutoSaveCurrentFirst</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="357" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="357" bodyend="424"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a84def7de3251ce560a64d8439fd3c1ed" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::LoadSlotOffline</definition>
+        <argsstring>(FName InSlotBase, bool bDebugMode, FString &amp;OutError)</argsstring>
+        <name>LoadSlotOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::LoadSlotOffline</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1177" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1177" bodyend="1222"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a7913bff40e1ca080662275f010d4e9e6" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnCreateSlot</definition>
+        <argsstring>()</argsstring>
+        <name>OnCreateSlot</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnCreateSlot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="522" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="522" bodyend="558"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ac377fc418e405036882a1fa4059f34c0" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnDefaultLoadoutAllPlayersCurrent</definition>
+        <argsstring>()</argsstring>
+        <name>OnDefaultLoadoutAllPlayersCurrent</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnDefaultLoadoutAllPlayersCurrent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="783" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="783" bodyend="813"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a54fede0faaee079c071f798440140d02" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnDeleteSelected</definition>
+        <argsstring>()</argsstring>
+        <name>OnDeleteSelected</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnDeleteSelected</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="619" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="619" bodyend="684"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1aa3f2f9db3ad7c9bff571811c98d0b1d7" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnDuplicateSelected</definition>
+        <argsstring>()</argsstring>
+        <name>OnDuplicateSelected</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnDuplicateSelected</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="686" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="686" bodyend="713"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a403e8315599add0dbe644a68679c44cf" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>TSharedRef&lt; ITableRow &gt;</type>
+        <definition>TSharedRef&lt; ITableRow &gt; ARDebugSaveEditor::SPanel::OnGenerateRow</definition>
+        <argsstring>(TSharedPtr&lt; FARSaveSlotDescriptor &gt; Item, const TSharedRef&lt; STableViewBase &gt; &amp;OwnerTable) const</argsstring>
+        <name>OnGenerateRow</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnGenerateRow</qualifiedname>
+        <param>
+          <type>TSharedPtr&lt; FARSaveSlotDescriptor &gt;</type>
+          <declname>Item</declname>
+        </param>
+        <param>
+          <type>const TSharedRef&lt; STableViewBase &gt; &amp;</type>
+          <declname>OwnerTable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="275" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="275" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1afc6ef93c8bff9821a0b084e76f78b2ab" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnLoadSelected</definition>
+        <argsstring>()</argsstring>
+        <name>OnLoadSelected</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnLoadSelected</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="576" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="576" bodyend="585"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1aa86896a373c6e51d0be95a1472746ced" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnRefreshSlots</definition>
+        <argsstring>()</argsstring>
+        <name>OnRefreshSlots</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnRefreshSlots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="516" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="516" bodyend="520"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a47d38ab523652f70d151b1885eaf2fee" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnRenameSelected</definition>
+        <argsstring>()</argsstring>
+        <name>OnRenameSelected</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnRenameSelected</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="715" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="715" bodyend="751"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a1ebd880e1aa220e2182a7496ef0d20bb" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnRevertCurrent</definition>
+        <argsstring>()</argsstring>
+        <name>OnRevertCurrent</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnRevertCurrent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="815" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="815" bodyend="841"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a06373e5c52b8d05b61f33671519f41eb" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnSaveCurrent</definition>
+        <argsstring>()</argsstring>
+        <name>OnSaveCurrent</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnSaveCurrent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="587" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="587" bodyend="617"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a8ed4e6505a0e877dc7aed66d64ede109" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::OnSaveNamespaceToggled</definition>
+        <argsstring>(ECheckBoxState NewState)</argsstring>
+        <name>OnSaveNamespaceToggled</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnSaveNamespaceToggled</qualifiedname>
+        <param>
+          <type>ECheckBoxState</type>
+          <declname>NewState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="565" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="565" bodyend="569"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a59afdb2df5a0a6b66c335a3fef0ec11e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FReply</type>
+        <definition>FReply ARDebugSaveEditor::SPanel::OnSetDefaultUnlocksCurrent</definition>
+        <argsstring>()</argsstring>
+        <name>OnSetDefaultUnlocksCurrent</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnSetDefaultUnlocksCurrent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="753" column="8" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="753" bodyend="781"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a89cebe22c9dee8212fffc0563e9dab0a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::OnSlotDoubleClicked</definition>
+        <argsstring>(TSharedPtr&lt; FARSaveSlotDescriptor &gt; Item)</argsstring>
+        <name>OnSlotDoubleClicked</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnSlotDoubleClicked</qualifiedname>
+        <param>
+          <type>TSharedPtr&lt; FARSaveSlotDescriptor &gt;</type>
+          <declname>Item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="285" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="285" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1af43e09d039607dbd6048de2b1eefb71e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>TSharedPtr&lt; SWidget &gt;</type>
+        <definition>TSharedPtr&lt; SWidget &gt; ARDebugSaveEditor::SPanel::OnSlotListContextMenuOpening</definition>
+        <argsstring>()</argsstring>
+        <name>OnSlotListContextMenuOpening</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::OnSlotListContextMenuOpening</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="426" column="12" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="426" bodyend="461"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a14f9a243857b56898bdc62b179336d03" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::PromptRemoveBrokenSlotEntry</definition>
+        <argsstring>(FName SlotName, const FString &amp;FailureReason)</argsstring>
+        <name>PromptRemoveBrokenSlotEntry</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::PromptRemoveBrokenSlotEntry</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotName</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>FailureReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1060" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1060" bodyend="1086"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1af4dec8ba12320368424451cd5170d0ec" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::PruneSlotFromIndexOffline</definition>
+        <argsstring>(FName InSlotBase, bool bDebugMode)</argsstring>
+        <name>PruneSlotFromIndexOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::PruneSlotFromIndexOffline</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="997" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="997" bodyend="1021"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1afebac0656830019f4dce0b1da7d73a21" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::RefreshSlots</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshSlots</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::RefreshSlots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="485" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="485" bodyend="514"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ae871c0dbb4119118e22087919ca2cacc" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::RemoveIndexEntryExactOffline</definition>
+        <argsstring>(FName ExactSlotBase, bool bDebugMode, FString &amp;OutError)</argsstring>
+        <name>RemoveIndexEntryExactOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::RemoveIndexEntryExactOffline</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>ExactSlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1338" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1338" bodyend="1361"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a1cb3c5d9a13601d6837a1a352751ec89" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::SaveCurrentLoadedForSwitch</definition>
+        <argsstring>(const FName TargetSlotName)</argsstring>
+        <name>SaveCurrentLoadedForSwitch</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SaveCurrentLoadedForSwitch</qualifiedname>
+        <param>
+          <type>const FName</type>
+          <declname>TargetSlotName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="316" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="316" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a7779876f76060b2bf73fb9bb4b05a023" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::SaveCurrentOffline</definition>
+        <argsstring>(bool bDebugMode, FString &amp;OutError)</argsstring>
+        <name>SaveCurrentOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SaveCurrentOffline</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1224" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1224" bodyend="1288"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a6f27e2978072394bcbdbe8a789ca3646" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARDebugSaveEditor::SPanel::SaveIndexOffline</definition>
+        <argsstring>(bool bDebugMode, UARSaveIndexGame *IndexObj, FString &amp;OutError) const</argsstring>
+        <name>SaveIndexOffline</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SaveIndexOffline</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *</type>
+          <declname>IndexObj</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="1088" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="1088" bodyend="1103"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a94715d1d8263e7d75ccc08c586f20444" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARDebugSaveEditor::SPanel::SetStatus</definition>
+        <argsstring>(const FString &amp;InStatus)</argsstring>
+        <name>SetStatus</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::SetStatus</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>InStatus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="871" column="6" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="871" bodyend="878"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a6863ba1c096938f0d61ab4913a005ee2" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+        <definition>UARSaveSubsystem * ARDebugSaveEditor::SPanel::TryGetSaveSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>TryGetSaveSubsystem</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::TryGetSaveSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="880" column="18" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="880" bodyend="904"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a56ac8e51914eacac61181dbe542e498d" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FName</type>
+        <definition>static FName ARDebugSaveEditor::SPanel::BuildRevisionSlotName</definition>
+        <argsstring>(FName SlotBase, int32 Revision)</argsstring>
+        <name>BuildRevisionSlotName</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::BuildRevisionSlotName</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBase</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Revision</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="957" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="957" bodyend="960"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a1e77220c892197290da7d561398b6b83" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TCHAR *</type>
+        <definition>static const TCHAR * ARDebugSaveEditor::SPanel::GetIndexSlotNameForMode</definition>
+        <argsstring>(bool bDebugMode)</argsstring>
+        <name>GetIndexSlotNameForMode</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::GetIndexSlotNameForMode</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="920" column="20" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="920" bodyend="923"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1ada91282b1f2ed3745f5cffa61797f877" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FName</type>
+        <definition>static FName ARDebugSaveEditor::SPanel::LogicalSlotBaseForMode</definition>
+        <argsstring>(FName SlotBase, bool bDebugMode)</argsstring>
+        <name>LogicalSlotBaseForMode</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::LogicalSlotBaseForMode</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="942" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="942" bodyend="950"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1afd8bbce0ffe3c1d19ec07b1cba4dc91b" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FName</type>
+        <definition>static FName ARDebugSaveEditor::SPanel::NormalizeSlotBase</definition>
+        <argsstring>(FName InName, UARSaveSubsystem *Subsystem)</argsstring>
+        <name>NormalizeSlotBase</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::NormalizeSlotBase</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>InName</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>Subsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="906" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="906" bodyend="918"/>
+      </memberdef>
+      <memberdef kind="function" id="classARDebugSaveEditor_1_1SPanel_1a810f67e9223416a1684cd4ed5241e23d" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FName</type>
+        <definition>static FName ARDebugSaveEditor::SPanel::NormalizeSlotBaseForMode</definition>
+        <argsstring>(FName SlotBase, bool bDebugMode)</argsstring>
+        <name>NormalizeSlotBaseForMode</name>
+        <qualifiedname>ARDebugSaveEditor::SPanel::NormalizeSlotBaseForMode</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBase</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDebugMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="925" column="14" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="925" bodyend="940"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="43" column="1" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="44" bodyend="1516"/>
+    <listofallmembers>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a0110b1dab046bb9b1f492175fdb825e4" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>BindCurrentSaveToDetails</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a56ac8e51914eacac61181dbe542e498d" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>BuildRevisionSlotName</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a42d4a489909739b053ef06469fcf1d2f" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>bUseDebugSaves</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a3ce88ef0f22834d17fb805c4ae7c6e11" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>CaptureLoadedSnapshot</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a3b1148cff09f3efe70ca4b15b7cf0ab7" prot="public" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>Construct</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a6102fb1ece83b1d5464d9db3c9083001" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>CreateSlotOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1adf778df9aa0aefdbe659a4ae037fd17c" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>CurrentSaveObject</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a2fd31a39f7a9c00dc76b41eadbd7c153" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>CurrentSlotName</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1af4cf0372f1b70365efec7778e543e1e5" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>CurrentSlotText</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a419f955b4167c713d5c260ddc6f24cae" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>DeleteSlotOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a44d3d1500e08f0fa447e1b5748bdb932" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>DuplicateOrRenameSlotOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a908f8523a265471f6f02e8d980bd7704" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>GetDebugNamespaceCheckState</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ac7d2c14846de61a3c0206913dfff7820" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>GetDisplaySlotName</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a1e77220c892197290da7d561398b6b83" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>GetIndexSlotNameForMode</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ab1639346e1b7ea201747f37e532ae43d" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>GetPrimarySelectionForSingleAction</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a5ad579e74da75c9fb40a5fec8239179e" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>GetSaveNamespaceLabel</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a1ce8883d9191e72a5ef5c3486fce43ff" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>HandleContextDelete</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ae6a115e0e7121f95dfcf7ff44ab3c7d3" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>HandleContextDuplicate</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1aa7aa9530bf466f4e1009cc59d5c757ec" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>HandleContextHealMissing</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ae5ddd38eddb2e462de312e304284fe09" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>HandleContextLoad</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1aade253e093dbd5613071a797e41506a3" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>HandleContextRename</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a8fb5b9bacf4b6bf582da7a141a6c0789" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>HasAnyPhysicalRevisionForSlot</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ae8f0159134f8ca253f1bc218d72dac67" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>ListSlotsOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a1fa0519644462b1674cc32dd3aaa9640" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>LoadedSnapshotBytes</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a7b940f3e9640b6497f62d01f0ca59869" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>LoadedSnapshotSlotName</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a2396bb182de1f3c9b03207f4b34ef5c1" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>LoadOrCreateIndexOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1af8a79f7a8911963cd835a83156885747" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>LoadSlotByName</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a84def7de3251ce560a64d8439fd3c1ed" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>LoadSlotOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ada91282b1f2ed3745f5cffa61797f877" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>LogicalSlotBaseForMode</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1afd8bbce0ffe3c1d19ec07b1cba4dc91b" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>NormalizeSlotBase</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a810f67e9223416a1684cd4ed5241e23d" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>NormalizeSlotBaseForMode</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a7913bff40e1ca080662275f010d4e9e6" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnCreateSlot</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ac377fc418e405036882a1fa4059f34c0" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnDefaultLoadoutAllPlayersCurrent</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a54fede0faaee079c071f798440140d02" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnDeleteSelected</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1aa3f2f9db3ad7c9bff571811c98d0b1d7" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnDuplicateSelected</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a403e8315599add0dbe644a68679c44cf" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnGenerateRow</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a4a6b22d4034bcf6be23800e1f8f5fb75" prot="public" virt="virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnKeyDown</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1afc6ef93c8bff9821a0b084e76f78b2ab" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnLoadSelected</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1aa86896a373c6e51d0be95a1472746ced" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnRefreshSlots</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a47d38ab523652f70d151b1885eaf2fee" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnRenameSelected</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a1ebd880e1aa220e2182a7496ef0d20bb" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnRevertCurrent</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a06373e5c52b8d05b61f33671519f41eb" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnSaveCurrent</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a8ed4e6505a0e877dc7aed66d64ede109" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnSaveNamespaceToggled</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a59afdb2df5a0a6b66c335a3fef0ec11e" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnSetDefaultUnlocksCurrent</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a89cebe22c9dee8212fffc0563e9dab0a" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnSlotDoubleClicked</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1af43e09d039607dbd6048de2b1eefb71e" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>OnSlotListContextMenuOpening</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a14f9a243857b56898bdc62b179336d03" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>PromptRemoveBrokenSlotEntry</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1af4dec8ba12320368424451cd5170d0ec" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>PruneSlotFromIndexOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1afebac0656830019f4dce0b1da7d73a21" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>RefreshSlots</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1ae871c0dbb4119118e22087919ca2cacc" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>RemoveIndexEntryExactOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a1cb3c5d9a13601d6837a1a352751ec89" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SaveCurrentLoadedForSwitch</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a7779876f76060b2bf73fb9bb4b05a023" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SaveCurrentOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a6811b66c1b38f5431c1c942ca2dd4a3f" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SaveDetailsView</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a6f27e2978072394bcbdbe8a789ca3646" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SaveIndexOffline</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a94715d1d8263e7d75ccc08c586f20444" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SetStatus</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a9a2c027060062d9dd90f7b3b1bfe0791" prot="public" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SLATE_BEGIN_ARGS</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a9d83090f672a53d819d7c5a72e922380" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SlotItems</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a91dd675d95c0ae8094bfdfcdcbab2cc1" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SlotListScrollbar</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a659e0ec6eeab519b9982028e94384440" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SlotListView</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a95cda3ebd74e8b772c34c6d6745ebd47" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SlotNameTextBox</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a287d90aeb0cf390f09665d79b287e0e0" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>StatusText</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a89abba652907f738128bf4d65e2c8420" prot="public" virt="virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>SupportsKeyboardFocus</name></member>
+      <member refid="classARDebugSaveEditor_1_1SPanel_1a6863ba1c096938f0d61ab4913a005ee2" prot="private" virt="non-virtual"><scope>ARDebugSaveEditor::SPanel</scope><name>TryGetSaveSubsystem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

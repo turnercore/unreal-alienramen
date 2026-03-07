@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderEnemyRuntimeInitData" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderEnemyRuntimeInitData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1ac67bdc2e2d1997ad6df8ac037a9bdb98" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderEnemyRuntimeInitData::bCollideWithDrops</definition>
+        <argsstring></argsstring>
+        <name>bCollideWithDrops</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::bCollideWithDrops</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="125" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a9e84bd9b284c22684862d36c0e565775" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderEnemyRuntimeInitData::bCollideWithEnemies</definition>
+        <argsstring></argsstring>
+        <name>bCollideWithEnemies</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::bCollideWithEnemies</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="116" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a5d329571b6a53bdbb323feede28e5ee6" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderEnemyRuntimeInitData::bCollideWithPlayers</definition>
+        <argsstring></argsstring>
+        <name>bCollideWithPlayers</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::bCollideWithPlayers</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="119" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a8aec1d083abc95625c7d38f1b400b897" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderEnemyRuntimeInitData::bCollideWithProjectiles</definition>
+        <argsstring></argsstring>
+        <name>bCollideWithProjectiles</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::bCollideWithProjectiles</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="122" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a590eedc5f40c2a037ec3b81dfa070778" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::CollisionDamage</definition>
+        <argsstring></argsstring>
+        <name>CollisionDamage</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::CollisionDamage</qualifiedname>
+        <initializer>= 10.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="95" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1ae2115bb57e3ee16babd7178c4a5d4f5a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::Damage</definition>
+        <argsstring></argsstring>
+        <name>Damage</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::Damage</qualifiedname>
+        <initializer>= 10.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="92" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a16fcd5fa41a2e388b4d94f46d61bd082" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::DamageTakenMultiplier</definition>
+        <argsstring></argsstring>
+        <name>DamageTakenMultiplier</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::DamageTakenMultiplier</qualifiedname>
+        <initializer>= 1.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="104" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1af95f3450e887f92f1d45f77f981e29dd" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::DropAmount</definition>
+        <argsstring></argsstring>
+        <name>DropAmount</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::DropAmount</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="112" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a86c54ece92721f5f50b75ee356ddc704" prot="public" static="no" mutable="no">
+        <type><ref refid="ARInvaderDropTypes_8h_1ab293c5b992a7e9dc9b77206aa0ce1001" kindref="member">EARInvaderDropType</ref></type>
+        <definition>EARInvaderDropType FARInvaderEnemyRuntimeInitData::DropType</definition>
+        <argsstring></argsstring>
+        <name>DropType</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::DropType</qualifiedname>
+        <initializer>= EARInvaderDropType::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="108" column="20" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1ad508eb35e3cd9c115c3acdbd2ab155db" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderEnemyRuntimeInitData::EnemyArchetypeTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyArchetypeTag</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::EnemyArchetypeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="128" column="14" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a5a3806985d580fd7ea75711b067592e8" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARAbilitySet_AbilityEntry &gt;</type>
+        <definition>TArray&lt;FARAbilitySet_AbilityEntry&gt; FARInvaderEnemyRuntimeInitData::EnemySpecificAbilities</definition>
+        <argsstring></argsstring>
+        <name>EnemySpecificAbilities</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::EnemySpecificAbilities</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="132" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a41b92e19df853cfcd4258abe8f640787" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::FireRate</definition>
+        <argsstring></argsstring>
+        <name>FireRate</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::FireRate</qualifiedname>
+        <initializer>= 1.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="101" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1aa9358351e073ff5520ee7e4e6e219465" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::MaxHealth</definition>
+        <argsstring></argsstring>
+        <name>MaxHealth</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::MaxHealth</qualifiedname>
+        <initializer>= 100.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="89" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a5d42c51fde45f73e42aa78b55c3a0380" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyRuntimeInitData::MoveSpeed</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeed</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::MoveSpeed</qualifiedname>
+        <initializer>= 350.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="98" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1ad936130e9a71bc5bcd2f2674478bd163" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt;</type>
+        <definition>TArray&lt;TSubclassOf&lt;UGameplayEffect&gt; &gt; FARInvaderEnemyRuntimeInitData::StartupGameplayEffects</definition>
+        <argsstring></argsstring>
+        <name>StartupGameplayEffects</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::StartupGameplayEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="135" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyRuntimeInitData_1a9d57631e767f1d3ae124010059692bf8" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARInvaderEnemyRuntimeInitData::StartupLooseTags</definition>
+        <argsstring></argsstring>
+        <name>StartupLooseTags</name>
+        <qualifiedname>FARInvaderEnemyRuntimeInitData::StartupLooseTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="138" column="23" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="84" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="85" bodyend="139"/>
+    <listofallmembers>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1ac67bdc2e2d1997ad6df8ac037a9bdb98" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>bCollideWithDrops</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a9e84bd9b284c22684862d36c0e565775" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>bCollideWithEnemies</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a5d329571b6a53bdbb323feede28e5ee6" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>bCollideWithPlayers</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a8aec1d083abc95625c7d38f1b400b897" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>bCollideWithProjectiles</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a590eedc5f40c2a037ec3b81dfa070778" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>CollisionDamage</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1ae2115bb57e3ee16babd7178c4a5d4f5a" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>Damage</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a16fcd5fa41a2e388b4d94f46d61bd082" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>DamageTakenMultiplier</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1af95f3450e887f92f1d45f77f981e29dd" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>DropAmount</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a86c54ece92721f5f50b75ee356ddc704" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>DropType</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1ad508eb35e3cd9c115c3acdbd2ab155db" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>EnemyArchetypeTag</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a5a3806985d580fd7ea75711b067592e8" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>EnemySpecificAbilities</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a41b92e19df853cfcd4258abe8f640787" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>FireRate</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1aa9358351e073ff5520ee7e4e6e219465" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>MaxHealth</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a5d42c51fde45f73e42aa78b55c3a0380" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>MoveSpeed</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1ad936130e9a71bc5bcd2f2674478bd163" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>StartupGameplayEffects</name></member>
+      <member refid="structFARInvaderEnemyRuntimeInitData_1a9d57631e767f1d3ae124010059692bf8" prot="public" virt="non-virtual"><scope>FARInvaderEnemyRuntimeInitData</scope><name>StartupLooseTags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARCreateSessionAsyncAction" kind="class" language="C++" prot="public">
+    <compoundname>UARCreateSessionAsyncAction</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintAsyncActionBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1a4dd47c45b7c14ead6e044a3ca633376b" prot="public" static="no" mutable="no">
+        <type>FARSessionAsyncActionCompleted</type>
+        <definition>FARSessionAsyncActionCompleted UARCreateSessionAsyncAction::OnFailure</definition>
+        <argsstring></argsstring>
+        <name>OnFailure</name>
+        <qualifiedname>UARCreateSessionAsyncAction::OnFailure</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="31" column="32" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1a303c448911aa36f1f76dd7b1defe4928" prot="public" static="no" mutable="no">
+        <type>FARSessionAsyncActionCompleted</type>
+        <definition>FARSessionAsyncActionCompleted UARCreateSessionAsyncAction::OnSuccess</definition>
+        <argsstring></argsstring>
+        <name>OnSuccess</name>
+        <qualifiedname>UARCreateSessionAsyncAction::OnSuccess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="28" column="32" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1a85c1af671f1dcabfb26db1d9b10b8fcd" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCreateSessionAsyncAction::bCompleted</definition>
+        <argsstring></argsstring>
+        <name>bCompleted</name>
+        <qualifiedname>UARCreateSessionAsyncAction::bCompleted</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="44" column="6" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1a1eed479ceec68c6fe0fe5655021cfa4b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCreateSessionAsyncAction::bUseLAN</definition>
+        <argsstring></argsstring>
+        <name>bUseLAN</name>
+        <qualifiedname>UARCreateSessionAsyncAction::bUseLAN</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="43" column="6" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1a5149a879f8c41c6501c45acefaf4d2de" prot="private" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString UARCreateSessionAsyncAction::SessionDisplayName</definition>
+        <argsstring></argsstring>
+        <name>SessionDisplayName</name>
+        <qualifiedname>UARCreateSessionAsyncAction::SessionDisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="45" column="9" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1ac120d21cc2f6c2be39ef1af20556e07e" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;UARSessionSubsystem&gt; UARCreateSessionAsyncAction::SessionSubsystem</definition>
+        <argsstring></argsstring>
+        <name>SessionSubsystem</name>
+        <qualifiedname>UARCreateSessionAsyncAction::SessionSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="42" column="16" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCreateSessionAsyncAction_1a311ce06ab1a863fe4eefdbfd2559208f" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UObject &gt;</type>
+        <definition>TWeakObjectPtr&lt;UObject&gt; UARCreateSessionAsyncAction::WorldContextObject</definition>
+        <argsstring></argsstring>
+        <name>WorldContextObject</name>
+        <qualifiedname>UARCreateSessionAsyncAction::WorldContextObject</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="41" column="16" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARCreateSessionAsyncAction_1aeaeb29fc5d330f08f2c44eefef50d921" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UARCreateSessionAsyncAction *</type>
+        <definition>UARCreateSessionAsyncAction * UARCreateSessionAsyncAction::CreateSessionAsync</definition>
+        <argsstring>(UObject *WorldContextObject, bool bUseLAN, const FString &amp;SessionDisplayName=TEXT(&quot;&quot;))</argsstring>
+        <name>CreateSessionAsync</name>
+        <qualifiedname>UARCreateSessionAsyncAction::CreateSessionAsync</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>WorldContextObject</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseLAN</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>SessionDisplayName</declname>
+          <defval>TEXT(&quot;&quot;)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="25" column="36" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="36" bodyend="47"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARCreateSessionAsyncAction_1a83114bdb865ec2bdc99ebb7140555421" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCreateSessionAsyncAction::Activate</definition>
+        <argsstring>() override</argsstring>
+        <name>Activate</name>
+        <qualifiedname>UARCreateSessionAsyncAction::Activate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="33" column="14" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="49" bodyend="67"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARCreateSessionAsyncAction_1a282ee622ac1b87ea79b5a0e1af0811d2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCreateSessionAsyncAction::CleanupBinding</definition>
+        <argsstring>()</argsstring>
+        <name>CleanupBinding</name>
+        <qualifiedname>UARCreateSessionAsyncAction::CleanupBinding</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="39" column="6" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="91" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCreateSessionAsyncAction_1a7d255fa12b320796c3777a2fd7ec8650" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCreateSessionAsyncAction::HandleCompleted</definition>
+        <argsstring>(const FARSessionResult &amp;Result)</argsstring>
+        <name>HandleCompleted</name>
+        <qualifiedname>UARCreateSessionAsyncAction::HandleCompleted</qualifiedname>
+        <param>
+          <type>const FARSessionResult &amp;</type>
+          <declname>Result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="37" column="6" bodyfile="AlienRamen/Private/ARSessionAsyncActions.cpp" bodystart="69" bodyend="89"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSessionAsyncActions.h" line="16" column="1" bodyfile="AlienRamen/Public/ARSessionAsyncActions.h" bodystart="17" bodyend="46"/>
+    <listofallmembers>
+      <member refid="classUARCreateSessionAsyncAction_1a83114bdb865ec2bdc99ebb7140555421" prot="public" virt="virtual"><scope>UARCreateSessionAsyncAction</scope><name>Activate</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a85c1af671f1dcabfb26db1d9b10b8fcd" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>bCompleted</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a1eed479ceec68c6fe0fe5655021cfa4b" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>bUseLAN</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a282ee622ac1b87ea79b5a0e1af0811d2" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>CleanupBinding</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1aeaeb29fc5d330f08f2c44eefef50d921" prot="public" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>CreateSessionAsync</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a7d255fa12b320796c3777a2fd7ec8650" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>HandleCompleted</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a4dd47c45b7c14ead6e044a3ca633376b" prot="public" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>OnFailure</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a303c448911aa36f1f76dd7b1defe4928" prot="public" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>OnSuccess</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a5149a879f8c41c6501c45acefaf4d2de" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>SessionDisplayName</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1ac120d21cc2f6c2be39ef1af20556e07e" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>SessionSubsystem</name></member>
+      <member refid="classUARCreateSessionAsyncAction_1a311ce06ab1a863fe4eefdbfd2559208f" prot="private" virt="non-virtual"><scope>UARCreateSessionAsyncAction</scope><name>WorldContextObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

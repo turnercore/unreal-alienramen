@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="AlienRamen_8cpp" kind="file" language="C++">
+    <compoundname>AlienRamen.cpp</compoundname>
+    <includes refid="AlienRamen_8h" local="yes">AlienRamen.h</includes>
+    <includes local="yes">Modules/ModuleManager.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>AlienRamen.cpp</label>
+        <link refid="AlienRamen_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AlienRamen.h</label>
+        <link refid="AlienRamen_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="5">
+        <label>Modules/ModuleManager.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="AlienRamen_8cpp_1a6f3ceeab2a9970201dc85e4dff89e457" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DEFINE_LOG_CATEGORY</definition>
+        <argsstring>(ARLog)</argsstring>
+        <name>DEFINE_LOG_CATEGORY</name>
+        <param>
+          <type>ARLog</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/AlienRamen.cpp" line="5" column="1" declfile="AlienRamen/AlienRamen.cpp" declline="5" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="AlienRamen_8cpp_1afa06647b9a1cc0be32ab09d086778a99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_PRIMARY_GAME_MODULE</definition>
+        <argsstring>(FDefaultGameModuleImpl, AlienRamen, &quot;AlienRamen&quot;)</argsstring>
+        <name>IMPLEMENT_PRIMARY_GAME_MODULE</name>
+        <param>
+          <type>FDefaultGameModuleImpl</type>
+        </param>
+        <param>
+          <type>AlienRamen</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/AlienRamen.cpp" line="4" column="1" declfile="AlienRamen/AlienRamen.cpp" declline="4" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;AlienRamen.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Modules/ModuleManager.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">IMPLEMENT_PRIMARY_GAME_MODULE(<sp/>FDefaultGameModuleImpl,<sp/>AlienRamen,<sp/></highlight><highlight class="stringliteral">&quot;AlienRamen&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="5"><highlight class="normal">DEFINE_LOG_CATEGORY(ARLog);</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/AlienRamen.cpp"/>
+  </compounddef>
+</doxygen>

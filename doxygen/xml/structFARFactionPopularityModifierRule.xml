@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARFactionPopularityModifierRule" kind="struct" language="C++" prot="public">
+    <compoundname>FARFactionPopularityModifierRule</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARFactionPopularityModifierRule_1a9d0472c715a25c296e955b1c275c9ebf" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARFactionPopularityModifierRule::ConditionTag</definition>
+        <argsstring></argsstring>
+        <name>ConditionTag</name>
+        <qualifiedname>FARFactionPopularityModifierRule::ConditionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="20" column="14" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionPopularityModifierRule_1a2ae8e511c1c1ca6795410ccf18a78d3d" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionPopularityModifierRule::Delta</definition>
+        <argsstring></argsstring>
+        <name>Delta</name>
+        <qualifiedname>FARFactionPopularityModifierRule::Delta</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionTypes.h" line="24" column="7" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionTypes.h" line="14" column="1" bodyfile="AlienRamen/Public/ARFactionTypes.h" bodystart="15" bodyend="25"/>
+    <listofallmembers>
+      <member refid="structFARFactionPopularityModifierRule_1a9d0472c715a25c296e955b1c275c9ebf" prot="public" virt="non-virtual"><scope>FARFactionPopularityModifierRule</scope><name>ConditionTag</name></member>
+      <member refid="structFARFactionPopularityModifierRule_1a2ae8e511c1c1ca6795410ccf18a78d3d" prot="public" virt="non-virtual"><scope>FARFactionPopularityModifierRule</scope><name>Delta</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

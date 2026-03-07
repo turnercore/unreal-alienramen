@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSaveIndexGame" kind="class" language="C++" prot="public">
+    <compoundname>UARSaveIndexGame</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">USaveGame</basecompoundref>
+    <includes refid="ARSaveIndexGame_8h" local="no">AlienRamen/Public/ARSaveIndexGame.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARSaveIndexGame_1a4fef371b557e890678bfa5016591338f" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARSaveSlotDescriptor &gt;</type>
+        <definition>TArray&lt;FARSaveSlotDescriptor&gt; UARSaveIndexGame::SlotNames</definition>
+        <argsstring></argsstring>
+        <name>SlotNames</name>
+        <qualifiedname>UARSaveIndexGame::SlotNames</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveIndexGame.h" line="21" column="8" bodyfile="AlienRamen/Public/ARSaveIndexGame.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>SaveIndex record (canonical + debug namespaces) that lists known slots. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveIndexGame.h" line="14" column="1" bodyfile="AlienRamen/Public/ARSaveIndexGame.h" bodystart="15" bodyend="22"/>
+    <listofallmembers>
+      <member refid="classUARSaveIndexGame_1a4fef371b557e890678bfa5016591338f" prot="public" virt="non-virtual"><scope>UARSaveIndexGame</scope><name>SlotNames</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

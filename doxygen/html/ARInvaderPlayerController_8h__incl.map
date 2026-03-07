@@ -1,0 +1,79 @@
+<map id="ARInvaderPlayerController.h" name="ARInvaderPlayerController.h">
+<area shape="rect" id="Node000001" title="ARInvaderPlayerController header for Alien Ramen." alt="" coords="759,5,964,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="845,372,963,397"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="759,29,546,46,298,75,185,94,93,115,31,139,15,151,9,164,9,239,10,287,17,305,33,322,135,334,360,350,832,377,832,382,360,355,134,339,31,326,13,307,5,288,4,239,4,163,11,148,28,134,91,110,184,88,297,70,545,41,758,23"/>
+<area shape="rect" id="Node000003" href="$ARPlayerController_8h.html" title="ARPlayerController header for Alien Ramen." alt="" coords="1063,79,1219,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="907,28,1083,73,1082,78,906,33"/>
+<area shape="rect" id="Node000017" href="$ARInvaderSpicyTrackTypes_8h.html" title="Shared Invader spicy&#45;track enums/structs for runtime + data authoring." alt="" coords="218,152,425,177"/>
+<area shape="poly" id="edge23_Node000001_Node000017" title=" " alt="" coords="819,33,378,151,377,146,818,28"/>
+<area shape="rect" id="Node000029" title=" " alt="" coords="1244,79,1519,104"/>
+<area shape="poly" id="edge48_Node000001_Node000029" title=" " alt="" coords="945,28,1284,74,1284,79,945,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="1220,100,1310,120,1347,133,1370,150,1375,164,1370,179,1329,203,1247,243,1121,301,1077,326,1016,351,958,370,956,365,1014,346,1075,322,1119,296,1245,238,1326,198,1366,176,1370,164,1366,154,1344,138,1308,125,1219,106"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="1695,372,1881,397"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="1220,100,1719,166,1957,201,2032,214,2064,223,2074,238,2079,252,2080,265,2076,277,2057,300,2028,319,1991,336,1949,350,1867,372,1865,367,1948,345,1989,331,2025,315,2054,296,2071,275,2074,264,2074,252,2070,240,2061,228,2031,219,1956,206,1718,171,1219,105"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="2126,152,2381,177"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="1220,100,1232,101,1478,120,1669,129,1861,136,2107,149,2112,150,2112,155,2107,155,1861,141,1669,134,1477,125,1232,107,1219,105"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="449,152,703,177"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="1064,105,681,153,680,148,1063,100"/>
+<area shape="rect" id="Node000007" href="$ARDialogueTypes_8h.html" title="Shared dialogue and NPC runtime types for Alien Ramen." alt="" coords="1431,152,1577,177"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="1200,101,1433,147,1432,152,1199,107"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="727,152,953,177"/>
+<area shape="poly" id="edge20_Node000003_Node000014" title=" " alt="" coords="1094,107,902,151,901,146,1092,101"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="977,152,1105,177"/>
+<area shape="poly" id="edge21_Node000003_Node000015" title=" " alt="" coords="1127,106,1070,146,1067,142,1124,102"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="1129,152,1356,177"/>
+<area shape="poly" id="edge22_Node000003_Node000016" title=" " alt="" coords="1159,102,1216,142,1213,146,1156,106"/>
+<area shape="poly" id="edge8_Node000007_Node000002" title=" " alt="" coords="1474,180,1342,230,1172,301,1121,326,1043,352,970,371,969,366,1042,347,1119,322,1170,296,1340,225,1472,175"/>
+<area shape="poly" id="edge10_Node000007_Node000004" title=" " alt="" coords="1578,170,1672,188,1722,203,1770,223,1825,251,1844,269,1861,298,1864,318,1856,337,1841,353,1823,367,1820,363,1837,349,1851,334,1859,317,1856,300,1840,272,1822,255,1768,228,1721,208,1671,193,1577,176"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="917,299,1064,324"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="1431,177,1268,199,1190,213,1134,228,1070,259,1018,293,1015,288,1067,254,1132,223,1189,208,1267,194,1430,172"/>
+<area shape="rect" id="Node000009" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="1429,299,1560,324"/>
+<area shape="poly" id="edge11_Node000007_Node000009" title=" " alt="" coords="1506,178,1499,285,1494,285,1501,178"/>
+<area shape="rect" id="Node000011" href="$ARSaveTypes_8h.html" title="ARSaveTypes header for Alien Ramen." alt="" coords="1635,225,1757,251"/>
+<area shape="poly" id="edge14_Node000007_Node000011" title=" " alt="" coords="1536,175,1653,218,1651,223,1534,180"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="1833,225,2050,251"/>
+<area shape="poly" id="edge19_Node000007_Node000013" title=" " alt="" coords="1575,175,1858,220,1857,226,1574,180"/>
+<area shape="poly" id="edge12_Node000009_Node000002" title=" " alt="" coords="1430,323,977,377,976,372,1429,318"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="1396,372,1596,397"/>
+<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="1498,324,1498,358,1493,359,1492,324"/>
+<area shape="poly" id="edge15_Node000011_Node000002" title=" " alt="" coords="1635,244,1554,249,1451,259,1339,276,1229,301,1200,313,1172,327,1070,354,977,374,976,369,1069,349,1170,321,1198,308,1227,296,1338,271,1451,254,1553,244,1635,239"/>
+<area shape="poly" id="edge16_Node000011_Node000004" title=" " alt="" coords="1758,246,1803,264,1824,278,1841,297,1846,315,1841,334,1830,350,1816,365,1812,361,1826,347,1836,331,1841,315,1836,300,1821,282,1801,269,1756,251"/>
+<area shape="poly" id="edge17_Node000011_Node000009" title=" " alt="" coords="1665,253,1541,297,1539,291,1663,248"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="1635,299,1826,324"/>
+<area shape="poly" id="edge18_Node000011_Node000012" title=" " alt="" coords="1704,250,1721,285,1717,287,1699,252"/>
+<area shape="poly" id="edge24_Node000017_Node000002" title=" " alt="" coords="307,179,274,207,240,245,227,265,220,285,221,304,231,322,255,330,308,338,474,354,831,377,831,382,474,359,308,343,253,335,228,326,216,306,215,285,222,263,235,242,270,203,304,175"/>
+<area shape="poly" id="edge29_Node000017_Node000004" title=" " alt="" coords="425,174,436,175,610,187,758,193,1011,199,1132,207,1261,223,1405,251,1573,296,1600,308,1625,322,1741,365,1739,370,1623,326,1597,313,1571,301,1404,256,1260,228,1132,212,1011,204,758,199,610,193,436,180,425,179"/>
+<area shape="poly" id="edge28_Node000017_Node000008" title=" " alt="" coords="425,174,660,199,762,212,821,223,899,254,962,289,960,294,897,259,819,228,761,218,659,205,425,179"/>
+<area shape="poly" id="edge46_Node000017_Node000009" title=" " alt="" coords="425,174,871,223,1416,296,1415,301,870,228,424,179"/>
+<area shape="rect" id="Node000018" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="44,299,167,324"/>
+<area shape="poly" id="edge25_Node000017_Node000018" title=" " alt="" coords="286,180,237,199,187,228,152,258,125,289,121,285,148,254,184,223,235,195,284,175"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="242,299,417,324"/>
+<area shape="poly" id="edge30_Node000017_Node000020" title=" " alt="" coords="325,178,331,285,325,285,319,178"/>
+<area shape="rect" id="Node000021" href="$ARInvaderTypes_8h.html" title="ARInvaderTypes header for Alien Ramen." alt="" coords="669,225,808,251"/>
+<area shape="poly" id="edge31_Node000017_Node000021" title=" " alt="" coords="389,175,659,220,658,226,388,180"/>
+<area shape="rect" id="Node000028" title=" " alt="" coords="359,225,636,251"/>
+<area shape="poly" id="edge47_Node000017_Node000028" title=" " alt="" coords="351,175,457,218,455,222,349,180"/>
+<area shape="poly" id="edge26_Node000018_Node000002" title=" " alt="" coords="167,319,186,321,549,355,832,376,831,381,548,361,185,327,167,324"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="9,372,202,397"/>
+<area shape="poly" id="edge27_Node000018_Node000019" title=" " alt="" coords="108,324,108,358,103,358,103,324"/>
+<area shape="poly" id="edge32_Node000021_Node000002" title=" " alt="" coords="774,248,816,268,857,297,880,327,897,358,892,360,876,330,853,301,813,272,772,253"/>
+<area shape="poly" id="edge37_Node000021_Node000004" title=" " alt="" coords="809,240,1102,260,1256,276,1368,296,1393,309,1418,322,1485,340,1554,354,1682,372,1681,378,1553,360,1484,345,1416,326,1391,313,1366,301,1255,281,1101,265,808,245"/>
+<area shape="poly" id="edge38_Node000021_Node000008" title=" " alt="" coords="780,248,937,292,936,297,778,253"/>
+<area shape="poly" id="edge33_Node000021_Node000018" title=" " alt="" coords="669,251,648,253,181,305,180,300,648,248,669,246"/>
+<area shape="poly" id="edge39_Node000021_Node000020" title=" " alt="" coords="673,253,409,299,408,294,672,248"/>
+<area shape="rect" id="Node000022" href="$ARInvaderDropTypes_8h.html" title="Shared invader drop type surface." alt="" coords="441,299,610,324"/>
+<area shape="poly" id="edge34_Node000021_Node000022" title=" " alt="" coords="705,253,574,297,572,292,704,248"/>
+<area shape="rect" id="Node000024" href="$ARAbilitySet_8h.html" title="ARAbilitySet header for Alien Ramen." alt="" coords="1240,299,1355,324"/>
+<area shape="poly" id="edge40_Node000021_Node000024" title=" " alt="" coords="809,245,1227,298,1226,304,808,251"/>
+<area shape="rect" id="Node000027" title=" " alt="" coords="635,299,843,324"/>
+<area shape="poly" id="edge45_Node000021_Node000027" title=" " alt="" coords="741,251,741,285,736,285,736,251"/>
+<area shape="poly" id="edge35_Node000022_Node000002" title=" " alt="" coords="587,321,832,367,831,372,586,327"/>
+<area shape="rect" id="Node000023" title=" " alt="" coords="406,372,645,397"/>
+<area shape="poly" id="edge36_Node000022_Node000023" title=" " alt="" coords="528,324,528,358,523,358,523,324"/>
+<area shape="poly" id="edge41_Node000024_Node000002" title=" " alt="" coords="1240,326,977,373,976,368,1239,320"/>
+<area shape="poly" id="edge43_Node000024_Node000004" title=" " alt="" coords="1355,319,1374,321,1694,367,1694,373,1373,327,1355,324"/>
+<area shape="rect" id="Node000025" title=" " alt="" coords="1223,372,1372,397"/>
+<area shape="poly" id="edge42_Node000024_Node000025" title=" " alt="" coords="1300,324,1300,358,1295,358,1295,324"/>
+<area shape="rect" id="Node000026" title=" " alt="" coords="1013,372,1198,397"/>
+<area shape="poly" id="edge44_Node000024_Node000026" title=" " alt="" coords="1267,327,1151,369,1149,364,1266,322"/>
+</map>

@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARTestingSettings_8h" kind="file" language="C++">
+    <compoundname>ARTestingSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARPlayerStateBase_8h" local="yes">ARPlayerStateBase.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">ARTestingSettings.generated.h</includes>
+    <includedby refid="ARTestingSettings_8cpp" local="yes">ARTestingSettings.cpp</includedby>
+    <incdepgraph>
+      <node id="16">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerStateBase.h</label>
+        <link refid="ARPlayerStateBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>StructSerializable.h</label>
+        <link refid="StructSerializable_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARTestingSettings.h</label>
+        <link refid="ARTestingSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="10">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="15">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="22">
+        <label>ARInvaderSpicyTrackTypes.generated.h</label>
+      </node>
+      <node id="19">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="27">
+        <label>ARPlayerStateBase.generated.h</label>
+      </node>
+      <node id="21">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="29">
+        <label>ARTestingSettings.generated.h</label>
+      </node>
+      <node id="4">
+        <label>AbilitySystemInterface.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="17">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="11">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="28">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="7">
+        <label>GameFramework/PlayerState.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayEffectTypes.h</label>
+      </node>
+      <node id="6">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="26">
+        <label>StructSerializable.generated.h</label>
+      </node>
+      <node id="25">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="24">
+        <label>UObject/Interface.h</label>
+      </node>
+      <node id="12">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARTestingSettings.cpp</label>
+        <link refid="ARTestingSettings_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARTestingSettings.h</label>
+        <link refid="ARTestingSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARTestingSettings" prot="public">UARTestingSettings</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerStateBase_8h" kindref="compound">ARPlayerStateBase.h</ref>&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>for<sp/>EARCharacterChoice</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARTestingSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">UCLASS(Config=Editor,<sp/>DefaultConfig,<sp/>meta=(DisplayName=</highlight><highlight class="stringliteral">&quot;Testing&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="13" refid="classUARTestingSettings" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMENTESTS_API<sp/><ref refid="classUARTestingSettings" kindref="compound">UARTestingSettings</ref><sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARTestingSettings" kindref="compound">UARTestingSettings</ref>();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Override<sp/>category<sp/>so<sp/>it<sp/>appears<sp/>under<sp/>Alien<sp/>Ramen.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>FName<sp/>GetCategoryName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>FName<sp/>GetSectionName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Testing&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>---<sp/>Maps<sp/>---</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Maps&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="29" refid="classUARTestingSettings_1a53e42692341956748fd431bdbce25ebc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UWorld&gt;<sp/>TestMap_Invader;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Maps&quot;)</highlight></codeline>
+<codeline lineno="33" refid="classUARTestingSettings_1ade4d47458b772c56af9f5d47bade8ce8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UWorld&gt;<sp/>TestMap_Lobby;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Maps&quot;)</highlight></codeline>
+<codeline lineno="37" refid="classUARTestingSettings_1a13209fbccadf9ed93d90b0ad61d08ec4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UWorld&gt;<sp/>TestMap_Menu;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>---<sp/>Defaults<sp/>---</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Defaults&quot;)</highlight></codeline>
+<codeline lineno="43" refid="classUARTestingSettings_1a3a79c9e69dab70b83fa3ed62469b8c0d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>DefaultTestPlayerSlot;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Defaults&quot;)</highlight></codeline>
+<codeline lineno="47" refid="classUARTestingSettings_1a62482c296376c0aca6d2eb917c8569d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>EARCharacterChoice<sp/>DefaultTestCharacter;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Defaults&quot;)</highlight></codeline>
+<codeline lineno="51" refid="classUARTestingSettings_1a91187d3d68eb819e4361bc8a92687ca0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAllowNetworkedTests;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Defaults&quot;,<sp/>meta=(ClampMin=&quot;0.1&quot;,<sp/>UIMin=&quot;0.1&quot;,<sp/>UIMax=&quot;30&quot;))</highlight></codeline>
+<codeline lineno="55" refid="classUARTestingSettings_1a97331c769f0ffc81c1f45b0f6ea2754d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ReplicationWaitTimeoutSeconds;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>---<sp/>Debug<sp/>Save<sp/>Reference<sp/>(opt-in)<sp/>---</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Debug<sp/>Save&quot;)</highlight></codeline>
+<codeline lineno="61" refid="classUARTestingSettings_1a2f34c50cf10921b0cf174f2142d739d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>DebugSaveSlotBase;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Debug<sp/>Save&quot;)</highlight></codeline>
+<codeline lineno="65" refid="classUARTestingSettings_1a9159af37240ee3804e5b62b397337808" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>DebugSaveRevision;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>---<sp/>Notes<sp/>---</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>Config,<sp/>Category<sp/>=<sp/>&quot;Notes&quot;,<sp/>meta=(MultiLine=true))</highlight></codeline>
+<codeline lineno="71" refid="classUARTestingSettings_1a0d050caacc8449622838bf2d140bb0c8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>Notes;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenTests/Public/ARTestingSettings.h"/>
+  </compounddef>
+</doxygen>

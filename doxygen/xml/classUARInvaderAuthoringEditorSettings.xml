@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderAuthoringEditorSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderAuthoringEditorSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1a89183443626dd91e6fc9972972f13fe3" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderAuthoringEditorSettings::bHideOtherLayersInWavePreview</definition>
+        <argsstring></argsstring>
+        <name>bHideOtherLayersInWavePreview</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::bHideOtherLayersInWavePreview</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="33" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1a36225f02ab01ab5a67b9be963d35799d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderAuthoringEditorSettings::bShowApproximatePreviewBanner</definition>
+        <argsstring></argsstring>
+        <name>bShowApproximatePreviewBanner</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::bShowApproximatePreviewBanner</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="36" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1a12d41965dbd7c342e9dc358dc260d6a0" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderAuthoringEditorSettings::bSnapCanvasToGrid</definition>
+        <argsstring></argsstring>
+        <name>bSnapCanvasToGrid</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::bSnapCanvasToGrid</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="40" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1a7da73f1b3dfc4edddca1dcbfcc59cb8a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderAuthoringEditorSettings::CanvasGridSize</definition>
+        <argsstring></argsstring>
+        <name>CanvasGridSize</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::CanvasGridSize</qualifiedname>
+        <initializer>= 100.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="44" column="7" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1aec08cf04fef8645aa107e47d7869563c" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UWorld &gt;</type>
+        <definition>TSoftObjectPtr&lt;UWorld&gt; UARInvaderAuthoringEditorSettings::DefaultTestMap</definition>
+        <argsstring></argsstring>
+        <name>DefaultTestMap</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::DefaultTestMap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="20" column="16" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1a69f45ade2e5d02e6f3cf9c600e605103" prot="public" static="no" mutable="no">
+        <type>TMap&lt; FSoftClassPath, int32 &gt;</type>
+        <definition>TMap&lt;FSoftClassPath, int32&gt; UARInvaderAuthoringEditorSettings::EnemyClassShapeCycles</definition>
+        <argsstring></argsstring>
+        <name>EnemyClassShapeCycles</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::EnemyClassShapeCycles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="30" column="6" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1a2d48b98cf0ab30d0c94a54e2b29c9546" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FSoftClassPath &gt;</type>
+        <definition>TArray&lt;FSoftClassPath&gt; UARInvaderAuthoringEditorSettings::FavoriteEnemyClasses</definition>
+        <argsstring></argsstring>
+        <name>FavoriteEnemyClasses</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::FavoriteEnemyClasses</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="26" column="8" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderAuthoringEditorSettings_1ada1c2447e5d238ac9a9852b57de8ec70" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderAuthoringEditorSettings::LastSeed</definition>
+        <argsstring></argsstring>
+        <name>LastSeed</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::LastSeed</qualifiedname>
+        <initializer>= 1337</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="23" column="7" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderAuthoringEditorSettings_1a9c2613e08e9bfe351a700dd429f663f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARInvaderAuthoringEditorSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="17" column="15" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="17" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderAuthoringEditorSettings_1a17ab96b96732807b4e7e18d2f0a7c347" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARInvaderAuthoringEditorSettings::UARInvaderAuthoringEditorSettings</definition>
+        <argsstring>()</argsstring>
+        <name>UARInvaderAuthoringEditorSettings</name>
+        <qualifiedname>UARInvaderAuthoringEditorSettings::UARInvaderAuthoringEditorSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="15" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringEditorSettings.cpp" bodystart="4" bodyend="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" line="10" column="1" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorSettings.h" bodystart="11" bodyend="45"/>
+    <listofallmembers>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a89183443626dd91e6fc9972972f13fe3" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>bHideOtherLayersInWavePreview</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a36225f02ab01ab5a67b9be963d35799d" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>bShowApproximatePreviewBanner</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a12d41965dbd7c342e9dc358dc260d6a0" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>bSnapCanvasToGrid</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a7da73f1b3dfc4edddca1dcbfcc59cb8a" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>CanvasGridSize</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1aec08cf04fef8645aa107e47d7869563c" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>DefaultTestMap</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a69f45ade2e5d02e6f3cf9c600e605103" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>EnemyClassShapeCycles</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a2d48b98cf0ab30d0c94a54e2b29c9546" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>FavoriteEnemyClasses</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a9c2613e08e9bfe351a700dd429f663f9" prot="public" virt="virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1ada1c2447e5d238ac9a9852b57de8ec70" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>LastSeed</name></member>
+      <member refid="classUARInvaderAuthoringEditorSettings_1a17ab96b96732807b4e7e18d2f0a7c347" prot="public" virt="non-virtual"><scope>UARInvaderAuthoringEditorSettings</scope><name>UARInvaderAuthoringEditorSettings</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARInvaderCollisionChannels" kind="namespace" language="C++">
+    <compoundname>ARInvaderCollisionChannels</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="ARInvaderCollisionChannels_8h_1a2e67a8aa4c29b8167eb34fdae59fe958" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr ECollisionChannel</type>
+        <definition>constexpr ECollisionChannel ARInvaderCollisionChannels::Drop</definition>
+        <argsstring></argsstring>
+        <name>Drop</name>
+        <qualifiedname>ARInvaderCollisionChannels::Drop</qualifiedname>
+        <initializer>= ECC_GameTraceChannel5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderCollisionChannels.h" line="15" column="36" bodyfile="AlienRamen/Public/ARInvaderCollisionChannels.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARInvaderCollisionChannels_8h_1a843ca21878a8c313f5295a4a05fa27ac" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr ECollisionChannel</type>
+        <definition>constexpr ECollisionChannel ARInvaderCollisionChannels::Enemy</definition>
+        <argsstring></argsstring>
+        <name>Enemy</name>
+        <qualifiedname>ARInvaderCollisionChannels::Enemy</qualifiedname>
+        <initializer>= ECC_GameTraceChannel2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderCollisionChannels.h" line="12" column="36" bodyfile="AlienRamen/Public/ARInvaderCollisionChannels.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARInvaderCollisionChannels_8h_1a75b0623129bae6c497491f4b5f1c9457" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr ECollisionChannel</type>
+        <definition>constexpr ECollisionChannel ARInvaderCollisionChannels::Player</definition>
+        <argsstring></argsstring>
+        <name>Player</name>
+        <qualifiedname>ARInvaderCollisionChannels::Player</qualifiedname>
+        <initializer>= ECC_GameTraceChannel3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderCollisionChannels.h" line="13" column="36" bodyfile="AlienRamen/Public/ARInvaderCollisionChannels.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARInvaderCollisionChannels_8h_1af2ef62f5f46b5ac6a8f6db55f2ad278d" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr ECollisionChannel</type>
+        <definition>constexpr ECollisionChannel ARInvaderCollisionChannels::Projectile</definition>
+        <argsstring></argsstring>
+        <name>Projectile</name>
+        <qualifiedname>ARInvaderCollisionChannels::Projectile</qualifiedname>
+        <initializer>= ECC_GameTraceChannel4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderCollisionChannels.h" line="14" column="36" bodyfile="AlienRamen/Public/ARInvaderCollisionChannels.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderCollisionChannels.h" line="9" column="1"/>
+  </compounddef>
+</doxygen>

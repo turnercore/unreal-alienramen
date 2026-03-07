@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARPickupBase" kind="class" language="C++" prot="public">
+    <compoundname>AARPickupBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderDropBase" prot="public" virt="non-virtual">AARInvaderDropBase</derivedcompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARPickupBase_1ad2d91a8411ddd06ddbe38a7d32d1c624" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPickupBase::bOffscreenCheckAuthorityOnly</definition>
+        <argsstring></argsstring>
+        <name>bOffscreenCheckAuthorityOnly</name>
+        <qualifiedname>AARPickupBase::bOffscreenCheckAuthorityOnly</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="58" column="6" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPickupBase_1a244844d050f581a68ab57cc0ecabd762" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPickupBase::bReleaseWhenOutsideGameplayBounds</definition>
+        <argsstring></argsstring>
+        <name>bReleaseWhenOutsideGameplayBounds</name>
+        <qualifiedname>AARPickupBase::bReleaseWhenOutsideGameplayBounds</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="42" column="6" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPickupBase_1a64b56d20b911b0fd7395b1fb104a2468" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPickupBase::bUseProjectSettingsOffscreenCullSeconds</definition>
+        <argsstring></argsstring>
+        <name>bUseProjectSettingsOffscreenCullSeconds</name>
+        <qualifiedname>AARPickupBase::bUseProjectSettingsOffscreenCullSeconds</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="46" column="6" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPickupBase_1a6bbbc1157037206ff97a75633e639059" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARPickupBase::OffscreenReleaseDelay</definition>
+        <argsstring></argsstring>
+        <name>OffscreenReleaseDelay</name>
+        <qualifiedname>AARPickupBase::OffscreenReleaseDelay</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="50" column="7" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPickupBase_1a5514e79208adf329b8ccec7ecf2c0ea4" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARPickupBase::OffscreenReleaseMargin</definition>
+        <argsstring></argsstring>
+        <name>OffscreenReleaseMargin</name>
+        <qualifiedname>AARPickupBase::OffscreenReleaseMargin</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="54" column="7" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARPickupBase_1ae7b1af590b00aa29151c9506b77ccb63" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPickupBase::bReleased</definition>
+        <argsstring></argsstring>
+        <name>bReleased</name>
+        <qualifiedname>AARPickupBase::bReleased</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="61" column="6" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPickupBase_1a5fb41cd416e3b88c527bebc435199e45" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARPickupBase::OffscreenSeconds</definition>
+        <argsstring></argsstring>
+        <name>OffscreenSeconds</name>
+        <qualifiedname>AARPickupBase::OffscreenSeconds</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="62" column="7" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARPickupBase_1a2b079da992e3cf9bef90a7969d9aeac9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARPickupBase::AARPickupBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARPickupBase</name>
+        <qualifiedname>AARPickupBase::AARPickupBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="17" column="1" bodyfile="AlienRamen/Private/ARPickupBase.cpp" bodystart="6" bodyend="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPickupBase_1ab60f2c304d068f0c14702b34e27749e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPickupBase::BP_OnPickupPreRelease</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnPickupPreRelease</name>
+        <qualifiedname>AARPickupBase::BP_OnPickupPreRelease</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="32" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPickupBase_1aefede9297621562490a0cc788eeaf03b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPickupBase::EvaluateOffscreenRelease</definition>
+        <argsstring>(float DeltaSeconds)</argsstring>
+        <name>EvaluateOffscreenRelease</name>
+        <qualifiedname>AARPickupBase::EvaluateOffscreenRelease</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="22" column="6" bodyfile="AlienRamen/Private/ARPickupBase.cpp" bodystart="34" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPickupBase_1a8e1fbd02af87556fd0f122349251ae8d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPickupBase::IsOutsideGameplayBounds</definition>
+        <argsstring>() const</argsstring>
+        <name>IsOutsideGameplayBounds</name>
+        <qualifiedname>AARPickupBase::IsOutsideGameplayBounds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="25" column="6" bodyfile="AlienRamen/Private/ARPickupBase.cpp" bodystart="71" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPickupBase_1a0139376c1f2ab057a4f4e5230ef3c2ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPickupBase::ReleasePickup</definition>
+        <argsstring>()</argsstring>
+        <name>ReleasePickup</name>
+        <qualifiedname>AARPickupBase::ReleasePickup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="29" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPickupBase_1aa4c70966da9f353c0d40ac93582fbd4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPickupBase::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARPickupBase::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="19" column="14" bodyfile="AlienRamen/Private/ARPickupBase.cpp" bodystart="28" bodyend="32"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARPickupBase_1aa8a340f06a5888c6001351cbb3570dd4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPickupBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARPickupBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="35" column="14" bodyfile="AlienRamen/Private/ARPickupBase.cpp" bodystart="12" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPickupBase_1a7bbccc790fbcc67908396e099ac7acfb" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPickupBase::ReleasePickup_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>ReleasePickup_Implementation</name>
+        <qualifiedname>AARPickupBase::ReleasePickup_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupBase.h" line="37" column="6" bodyfile="AlienRamen/Private/ARPickupBase.cpp" bodystart="92" bodyend="95"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARInvaderDropBase</label>
+        <link refid="classAARInvaderDropBase"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>AARPickupBase</label>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARPickupBase.h" line="12" column="1" bodyfile="AlienRamen/Public/ARPickupBase.h" bodystart="13" bodyend="63"/>
+    <listofallmembers>
+      <member refid="classAARPickupBase_1a2b079da992e3cf9bef90a7969d9aeac9" prot="public" virt="non-virtual"><scope>AARPickupBase</scope><name>AARPickupBase</name></member>
+      <member refid="classAARPickupBase_1aa8a340f06a5888c6001351cbb3570dd4" prot="protected" virt="virtual"><scope>AARPickupBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARPickupBase_1ad2d91a8411ddd06ddbe38a7d32d1c624" prot="protected" virt="non-virtual"><scope>AARPickupBase</scope><name>bOffscreenCheckAuthorityOnly</name></member>
+      <member refid="classAARPickupBase_1ab60f2c304d068f0c14702b34e27749e1" prot="public" virt="non-virtual"><scope>AARPickupBase</scope><name>BP_OnPickupPreRelease</name></member>
+      <member refid="classAARPickupBase_1ae7b1af590b00aa29151c9506b77ccb63" prot="private" virt="non-virtual"><scope>AARPickupBase</scope><name>bReleased</name></member>
+      <member refid="classAARPickupBase_1a244844d050f581a68ab57cc0ecabd762" prot="protected" virt="non-virtual"><scope>AARPickupBase</scope><name>bReleaseWhenOutsideGameplayBounds</name></member>
+      <member refid="classAARPickupBase_1a64b56d20b911b0fd7395b1fb104a2468" prot="protected" virt="non-virtual"><scope>AARPickupBase</scope><name>bUseProjectSettingsOffscreenCullSeconds</name></member>
+      <member refid="classAARPickupBase_1aefede9297621562490a0cc788eeaf03b" prot="public" virt="non-virtual"><scope>AARPickupBase</scope><name>EvaluateOffscreenRelease</name></member>
+      <member refid="classAARPickupBase_1a8e1fbd02af87556fd0f122349251ae8d" prot="public" virt="non-virtual"><scope>AARPickupBase</scope><name>IsOutsideGameplayBounds</name></member>
+      <member refid="classAARPickupBase_1a6bbbc1157037206ff97a75633e639059" prot="protected" virt="non-virtual"><scope>AARPickupBase</scope><name>OffscreenReleaseDelay</name></member>
+      <member refid="classAARPickupBase_1a5514e79208adf329b8ccec7ecf2c0ea4" prot="protected" virt="non-virtual"><scope>AARPickupBase</scope><name>OffscreenReleaseMargin</name></member>
+      <member refid="classAARPickupBase_1a5fb41cd416e3b88c527bebc435199e45" prot="private" virt="non-virtual"><scope>AARPickupBase</scope><name>OffscreenSeconds</name></member>
+      <member refid="classAARPickupBase_1a0139376c1f2ab057a4f4e5230ef3c2ad" prot="public" virt="non-virtual"><scope>AARPickupBase</scope><name>ReleasePickup</name></member>
+      <member refid="classAARPickupBase_1a7bbccc790fbcc67908396e099ac7acfb" prot="protected" virt="non-virtual"><scope>AARPickupBase</scope><name>ReleasePickup_Implementation</name></member>
+      <member refid="classAARPickupBase_1aa4c70966da9f353c0d40ac93582fbd4c" prot="public" virt="virtual"><scope>AARPickupBase</scope><name>Tick</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

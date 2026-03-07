@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARWaveDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARWaveDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARWaveDefRow_1a45ed6f5f5bdf4a52a57e54065ca2151f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bAllowColorSwap</definition>
+        <argsstring></argsstring>
+        <name>bAllowColorSwap</name>
+        <qualifiedname>FARWaveDefRow::bAllowColorSwap</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="196" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ad61ddcb4a08be2fcaf45e94def5b8a93" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bAllowFlipX</definition>
+        <argsstring></argsstring>
+        <name>bAllowFlipX</name>
+        <qualifiedname>FARWaveDefRow::bAllowFlipX</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="211" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a032c3bd58bba638847949a40dc850a5a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bAllowFlipY</definition>
+        <argsstring></argsstring>
+        <name>bAllowFlipY</name>
+        <qualifiedname>FARWaveDefRow::bAllowFlipY</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="215" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ad49649f51174acefcc30e71954dba55a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bEnabled</definition>
+        <argsstring></argsstring>
+        <name>bEnabled</name>
+        <qualifiedname>FARWaveDefRow::bEnabled</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="175" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ad953bcba28ead7c0b4151ff248612cf9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bFormationLockActive</definition>
+        <argsstring></argsstring>
+        <name>bFormationLockActive</name>
+        <qualifiedname>FARWaveDefRow::bFormationLockActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="207" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a3da75696e855910f3a12e572eacf30d4" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bFormationLockEnter</definition>
+        <argsstring></argsstring>
+        <name>bFormationLockEnter</name>
+        <qualifiedname>FARWaveDefRow::bFormationLockEnter</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="203" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a19d4ac7c3f718bb4f75372b2de3321a4" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveDefRow::bOneTimeOnlyPerRun</definition>
+        <argsstring></argsstring>
+        <name>bOneTimeOnlyPerRun</name>
+        <qualifiedname>FARWaveDefRow::bOneTimeOnlyPerRun</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="193" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ab47d8e31bceec5d7616da682654db013" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt;</type>
+        <definition>TArray&lt;TSubclassOf&lt;UGameplayEffect&gt; &gt; FARWaveDefRow::EnemyGameplayEffects</definition>
+        <argsstring></argsstring>
+        <name>EnemyGameplayEffects</name>
+        <qualifiedname>FARWaveDefRow::EnemyGameplayEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="232" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ae211a5e4a325d8575d7a1878fb05bac1" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARWaveEnemySpawnDef &gt;</type>
+        <definition>TArray&lt;FARWaveEnemySpawnDef&gt; FARWaveDefRow::EnemySpawns</definition>
+        <argsstring></argsstring>
+        <name>EnemySpawns</name>
+        <qualifiedname>FARWaveDefRow::EnemySpawns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="225" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a1c57e57722f444fa7648d7a6c8432625" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveDefRow::EnterDuration</definition>
+        <argsstring></argsstring>
+        <name>EnterDuration</name>
+        <qualifiedname>FARWaveDefRow::EnterDuration</qualifiedname>
+        <initializer>= 3.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="219" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a35a3dd51870d0b39441d85bcd3081a94" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARWaveDefRow::MaxPlayers</definition>
+        <argsstring></argsstring>
+        <name>MaxPlayers</name>
+        <qualifiedname>FARWaveDefRow::MaxPlayers</qualifiedname>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="190" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ab67df717c460a8b65bce5eb4ba4d7b70" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveDefRow::MaxThreat</definition>
+        <argsstring></argsstring>
+        <name>MaxThreat</name>
+        <qualifiedname>FARWaveDefRow::MaxThreat</qualifiedname>
+        <initializer>= 1000.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="181" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a525dac07f9723da81b664244db380c29" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARWaveDefRow::MinPlayers</definition>
+        <argsstring></argsstring>
+        <name>MinPlayers</name>
+        <qualifiedname>FARWaveDefRow::MinPlayers</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="187" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1ac046137b5dc00a22264a27d62b25548e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveDefRow::MinThreat</definition>
+        <argsstring></argsstring>
+        <name>MinThreat</name>
+        <qualifiedname>FARWaveDefRow::MinThreat</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="178" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1aa26be7befd690578b5442e8182eda336" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveDefRow::RepeatWeightPenalty</definition>
+        <argsstring></argsstring>
+        <name>RepeatWeightPenalty</name>
+        <qualifiedname>FARWaveDefRow::RepeatWeightPenalty</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="199" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a28234f79382c70a7c54bc151bbda4dcf" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARWaveDefRow::SelectionWeight</definition>
+        <argsstring></argsstring>
+        <name>SelectionWeight</name>
+        <qualifiedname>FARWaveDefRow::SelectionWeight</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="184" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a59de512c880b16177fc9a3b6f6bdd33b" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveDefRow::WaveDuration</definition>
+        <argsstring></argsstring>
+        <name>WaveDuration</name>
+        <qualifiedname>FARWaveDefRow::WaveDuration</qualifiedname>
+        <initializer>= 16.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="222" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveDefRow_1a5e7b8d0dc27e394694bcc4c59ef9d7ec" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARWaveDefRow::WaveTags</definition>
+        <argsstring></argsstring>
+        <name>WaveTags</name>
+        <qualifiedname>FARWaveDefRow::WaveTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="228" column="23" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="170" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="171" bodyend="233"/>
+    <listofallmembers>
+      <member refid="structFARWaveDefRow_1a45ed6f5f5bdf4a52a57e54065ca2151f" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bAllowColorSwap</name></member>
+      <member refid="structFARWaveDefRow_1ad61ddcb4a08be2fcaf45e94def5b8a93" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bAllowFlipX</name></member>
+      <member refid="structFARWaveDefRow_1a032c3bd58bba638847949a40dc850a5a" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bAllowFlipY</name></member>
+      <member refid="structFARWaveDefRow_1ad49649f51174acefcc30e71954dba55a" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bEnabled</name></member>
+      <member refid="structFARWaveDefRow_1ad953bcba28ead7c0b4151ff248612cf9" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bFormationLockActive</name></member>
+      <member refid="structFARWaveDefRow_1a3da75696e855910f3a12e572eacf30d4" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bFormationLockEnter</name></member>
+      <member refid="structFARWaveDefRow_1a19d4ac7c3f718bb4f75372b2de3321a4" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>bOneTimeOnlyPerRun</name></member>
+      <member refid="structFARWaveDefRow_1ab47d8e31bceec5d7616da682654db013" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>EnemyGameplayEffects</name></member>
+      <member refid="structFARWaveDefRow_1ae211a5e4a325d8575d7a1878fb05bac1" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>EnemySpawns</name></member>
+      <member refid="structFARWaveDefRow_1a1c57e57722f444fa7648d7a6c8432625" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>EnterDuration</name></member>
+      <member refid="structFARWaveDefRow_1a35a3dd51870d0b39441d85bcd3081a94" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>MaxPlayers</name></member>
+      <member refid="structFARWaveDefRow_1ab67df717c460a8b65bce5eb4ba4d7b70" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>MaxThreat</name></member>
+      <member refid="structFARWaveDefRow_1a525dac07f9723da81b664244db380c29" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>MinPlayers</name></member>
+      <member refid="structFARWaveDefRow_1ac046137b5dc00a22264a27d62b25548e" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>MinThreat</name></member>
+      <member refid="structFARWaveDefRow_1aa26be7befd690578b5442e8182eda336" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>RepeatWeightPenalty</name></member>
+      <member refid="structFARWaveDefRow_1a28234f79382c70a7c54bc151bbda4dcf" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>SelectionWeight</name></member>
+      <member refid="structFARWaveDefRow_1a59de512c880b16177fc9a3b6f6bdd33b" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>WaveDuration</name></member>
+      <member refid="structFARWaveDefRow_1a5e7b8d0dc27e394694bcc4c59ef9d7ec" prot="public" virt="non-virtual"><scope>FARWaveDefRow</scope><name>WaveTags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

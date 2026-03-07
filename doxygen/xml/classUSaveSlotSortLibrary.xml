@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUSaveSlotSortLibrary" kind="class" language="C++" prot="public">
+    <compoundname>USaveSlotSortLibrary</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintFunctionLibrary</basecompoundref>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUSaveSlotSortLibrary_1a3a2a5189382374d0efdfc3273fd1a054" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void USaveSlotSortLibrary::SortStructArrayByDateTimeField</definition>
+        <argsstring>(UPARAM(ref) TArray&lt; int32 &gt; &amp;TargetArray, FName FieldName=TEXT(&quot;LastSavedTime&quot;), bool bNewestFirst=true)</argsstring>
+        <name>SortStructArrayByDateTimeField</name>
+        <qualifiedname>USaveSlotSortLibrary::SortStructArrayByDateTimeField</qualifiedname>
+        <param>
+          <type>UPARAM(ref) TArray&lt; int32 &gt; &amp;</type>
+          <declname>TargetArray</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>FieldName</declname>
+          <defval>TEXT(&quot;LastSavedTime&quot;)</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bNewestFirst</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/SaveSlotSortLibrary.h" line="25" column="13" bodyfile="AlienRamen/Private/SaveSlotSortLibrary.cpp" bodystart="136" bodyend="139"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUSaveSlotSortLibrary_1aacecc5e00049d78dd8be12a07e0049d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>USaveSlotSortLibrary::DECLARE_FUNCTION</definition>
+        <argsstring>(execSortStructArrayByDateTimeField)</argsstring>
+        <name>DECLARE_FUNCTION</name>
+        <qualifiedname>USaveSlotSortLibrary::DECLARE_FUNCTION</qualifiedname>
+        <param>
+          <type>execSortStructArrayByDateTimeField</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/SaveSlotSortLibrary.h" line="31" column="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/SaveSlotSortLibrary.h" line="12" column="1" bodyfile="AlienRamen/Public/SaveSlotSortLibrary.h" bodystart="13" bodyend="32"/>
+    <listofallmembers>
+      <member refid="classUSaveSlotSortLibrary_1aacecc5e00049d78dd8be12a07e0049d8" prot="public" virt="non-virtual"><scope>USaveSlotSortLibrary</scope><name>DECLARE_FUNCTION</name></member>
+      <member refid="classUSaveSlotSortLibrary_1a3a2a5189382374d0efdfc3273fd1a054" prot="public" virt="non-virtual"><scope>USaveSlotSortLibrary</scope><name>SortStructArrayByDateTimeField</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

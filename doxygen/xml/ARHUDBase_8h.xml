@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARHUDBase_8h" kind="file" language="C++">
+    <compoundname>ARHUDBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameFramework/HUD.h</includes>
+    <includes local="yes">ARHUDBase.generated.h</includes>
+    <includedby refid="ARHUDBase_8cpp" local="yes">ARHUDBase.cpp</includedby>
+    <includedby refid="ARInvaderHUD_8h" local="yes">ARInvaderHUD.h</includedby>
+    <includedby refid="ARLobbyHUD_8h" local="yes">ARLobbyHUD.h</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARScrapyardHUD_8h" local="yes">ARScrapyardHUD.h</includedby>
+    <includedby refid="ARShopHUD_8h" local="yes">ARShopHUD.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARHUDBase.h</label>
+        <link refid="ARHUDBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARHUDBase.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>GameFramework/HUD.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARHUDBase.cpp</label>
+        <link refid="ARHUDBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARInvaderHUD.cpp</label>
+        <link refid="ARInvaderHUD_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARLobbyHUD.cpp</label>
+        <link refid="ARLobbyHUD_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARScrapyardHUD.cpp</label>
+        <link refid="ARScrapyardHUD_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARShopHUD.cpp</label>
+        <link refid="ARShopHUD_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARHUDBase.h</label>
+        <link refid="ARHUDBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARInvaderHUD.h</label>
+        <link refid="ARInvaderHUD_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARLobbyHUD.h</label>
+        <link refid="ARLobbyHUD_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARScrapyardHUD.h</label>
+        <link refid="ARScrapyardHUD_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARShopHUD.h</label>
+        <link refid="ARShopHUD_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARHUDBase" prot="public">AARHUDBase</innerclass>
+    <briefdescription>
+<para>ARHUDBase header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/HUD.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARHUDBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AGameStateBase;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARHUDBase<sp/>:<sp/>public<sp/>AHUD</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Local-only<sp/>HUD<sp/>init<sp/>entrypoint<sp/>called<sp/>by<sp/>AARPlayerController.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|UI|HUD&quot;)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RequestHUDInitialization(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>SourceController,<sp/>APlayerState*<sp/>CurrentPlayerState,<sp/>AGameStateBase*<sp/>CurrentGameState);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Local-only<sp/>BP<sp/>hook<sp/>for<sp/>HUD/widget<sp/>creation/rebind.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintImplementableEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|UI|HUD&quot;)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnHUDInitializationRequested(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>SourceController,<sp/>APlayerState*<sp/>CurrentPlayerState,<sp/>AGameStateBase*<sp/>CurrentGameState);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARHUDBase.h"/>
+  </compounddef>
+</doxygen>

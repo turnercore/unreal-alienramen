@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structUARDialogueSubsystem_1_1FARDialogueRuntimeState" kind="struct" language="C++" prot="public">
+    <compoundname>UARDialogueSubsystem::FARDialogueRuntimeState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structUARDialogueSubsystem_1_1FARDialogueRuntimeState_1a3ed2ccd841c83f69b7e554b819c7b9f8" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARActiveDialogueSession &gt;</type>
+        <definition>TArray&lt;FARActiveDialogueSession&gt; UARDialogueSubsystem::FARDialogueRuntimeState::ActiveSessions</definition>
+        <argsstring></argsstring>
+        <name>ActiveSessions</name>
+        <qualifiedname>UARDialogueSubsystem::FARDialogueRuntimeState::ActiveSessions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARDialogueSubsystem.cpp" line="64" column="8" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARDialogueSubsystem_1_1FARDialogueRuntimeState_1a86e6d3866720056f3d1cfb411569b6eb" prot="public" static="no" mutable="no">
+        <type>TMap&lt; EARPlayerSlot, EARPlayerSlot &gt;</type>
+        <definition>TMap&lt;EARPlayerSlot, EARPlayerSlot&gt; UARDialogueSubsystem::FARDialogueRuntimeState::ShopEavesdropTargetByViewer</definition>
+        <argsstring></argsstring>
+        <name>ShopEavesdropTargetByViewer</name>
+        <qualifiedname>UARDialogueSubsystem::FARDialogueRuntimeState::ShopEavesdropTargetByViewer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARDialogueSubsystem.cpp" line="65" column="6" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="65" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/ARDialogueSubsystem.cpp" line="62" column="1" bodyfile="AlienRamen/Private/ARDialogueSubsystem.cpp" bodystart="63" bodyend="66"/>
+    <listofallmembers>
+      <member refid="structUARDialogueSubsystem_1_1FARDialogueRuntimeState_1a3ed2ccd841c83f69b7e554b819c7b9f8" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem::FARDialogueRuntimeState</scope><name>ActiveSessions</name></member>
+      <member refid="structUARDialogueSubsystem_1_1FARDialogueRuntimeState_1a86e6d3866720056f3d1cfb411569b6eb" prot="public" virt="non-virtual"><scope>UARDialogueSubsystem::FARDialogueRuntimeState</scope><name>ShopEavesdropTargetByViewer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

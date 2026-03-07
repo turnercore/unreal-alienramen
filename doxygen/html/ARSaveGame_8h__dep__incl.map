@@ -1,0 +1,17 @@
+<map id="ARSaveGame.h" name="ARSaveGame.h">
+<area shape="rect" id="Node000001" title="ARSaveGame header for Alien Ramen." alt="" coords="644,5,767,31"/>
+<area shape="rect" id="Node000002" href="$ARDialogueSubsystem_8cpp_source.html" title=" " alt="" coords="5,79,203,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="631,31,201,81,200,76,630,25"/>
+<area shape="rect" id="Node000003" href="$ARFactionSubsystem_8cpp_source.html" title=" " alt="" coords="227,79,413,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="631,36,382,81,381,76,630,30"/>
+<area shape="rect" id="Node000004" href="$ARGameInstance_8cpp_source.html" title=" " alt="" coords="437,79,598,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="663,38,549,81,547,76,662,33"/>
+<area shape="rect" id="Node000005" href="$ARNPCSubsystem_8cpp_source.html" title=" " alt="" coords="622,79,789,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="708,44,708,79,703,79,703,44"/>
+<area shape="rect" id="Node000006" href="$ARSaveGame_8cpp_source.html" title=" " alt="" coords="813,79,952,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="748,33,855,76,853,81,746,38"/>
+<area shape="rect" id="Node000007" href="$ARSaveSubsystem_8cpp_source.html" title=" " alt="" coords="976,79,1147,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="776,31,1004,76,1003,81,775,36"/>
+<area shape="rect" id="Node000008" href="$AlienRamenEditorModule_8cpp_source.html" title=" " alt="" coords="1171,79,1386,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="781,26,1187,76,1186,81,780,31"/>
+</map>

@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARWaveEnemySpawnDef" kind="struct" language="C++" prot="public">
+    <compoundname>FARWaveEnemySpawnDef</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1ae0fec12bfd3c790b8dfd9da94efe488a" prot="public" static="no" mutable="no">
+        <type>FVector2D</type>
+        <definition>FVector2D FARWaveEnemySpawnDef::AuthoredScreenOffset</definition>
+        <argsstring></argsstring>
+        <name>AuthoredScreenOffset</name>
+        <qualifiedname>FARWaveEnemySpawnDef::AuthoredScreenOffset</qualifiedname>
+        <initializer>= FVector2D::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="76" column="11" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1a878bffa908742cd1994bf915df557b07" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; AAREnemyBase &gt;</type>
+        <definition>TSubclassOf&lt;AAREnemyBase&gt; FARWaveEnemySpawnDef::EnemyClass</definition>
+        <argsstring></argsstring>
+        <name>EnemyClass</name>
+        <qualifiedname>FARWaveEnemySpawnDef::EnemyClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="64" column="13" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1a00629a1e0d3efab49fb5ff05e7b17260" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARWaveEnemySpawnDef::EnemyColor</definition>
+        <argsstring></argsstring>
+        <name>EnemyColor</name>
+        <qualifiedname>FARWaveEnemySpawnDef::EnemyColor</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="67" column="18" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1a1dfa769ee5e7660389d0201e5b81db39" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt;</type>
+        <definition>TArray&lt;TSubclassOf&lt;UGameplayEffect&gt; &gt; FARWaveEnemySpawnDef::EnemyGameplayEffects</definition>
+        <argsstring></argsstring>
+        <name>EnemyGameplayEffects</name>
+        <qualifiedname>FARWaveEnemySpawnDef::EnemyGameplayEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="80" column="8" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1a8579f38e286cf771e46930c4e5a9e182" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARWaveEnemySpawnDef::EnemyIdentifierTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyIdentifierTag</name>
+        <qualifiedname>FARWaveEnemySpawnDef::EnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="60" column="14" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1af41a65e2a36000215dcadbf30a27edf7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveEnemySpawnDef::SpawnDelay</definition>
+        <argsstring></argsstring>
+        <name>SpawnDelay</name>
+        <qualifiedname>FARWaveEnemySpawnDef::SpawnDelay</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="73" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveEnemySpawnDef_1a804b2d1493ea106b5dce1e4c57b55850" prot="public" static="no" mutable="no">
+        <type>EARSpawnEdge</type>
+        <definition>EARSpawnEdge FARWaveEnemySpawnDef::SpawnEdge</definition>
+        <argsstring></argsstring>
+        <name>SpawnEdge</name>
+        <qualifiedname>FARWaveEnemySpawnDef::SpawnEdge</qualifiedname>
+        <initializer>= EARSpawnEdge::Top</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="70" column="14" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="54" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="55" bodyend="81"/>
+    <listofallmembers>
+      <member refid="structFARWaveEnemySpawnDef_1ae0fec12bfd3c790b8dfd9da94efe488a" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>AuthoredScreenOffset</name></member>
+      <member refid="structFARWaveEnemySpawnDef_1a878bffa908742cd1994bf915df557b07" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>EnemyClass</name></member>
+      <member refid="structFARWaveEnemySpawnDef_1a00629a1e0d3efab49fb5ff05e7b17260" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>EnemyColor</name></member>
+      <member refid="structFARWaveEnemySpawnDef_1a1dfa769ee5e7660389d0201e5b81db39" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>EnemyGameplayEffects</name></member>
+      <member refid="structFARWaveEnemySpawnDef_1a8579f38e286cf771e46930c4e5a9e182" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>EnemyIdentifierTag</name></member>
+      <member refid="structFARWaveEnemySpawnDef_1af41a65e2a36000215dcadbf30a27edf7" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>SpawnDelay</name></member>
+      <member refid="structFARWaveEnemySpawnDef_1a804b2d1493ea106b5dce1e4c57b55850" prot="public" virt="non-virtual"><scope>FARWaveEnemySpawnDef</scope><name>SpawnEdge</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

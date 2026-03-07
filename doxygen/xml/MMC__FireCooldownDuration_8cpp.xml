@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="MMC__FireCooldownDuration_8cpp" kind="file" language="C++">
+    <compoundname>MMC_FireCooldownDuration.cpp</compoundname>
+    <includes refid="MMC__FireCooldownDuration_8h" local="yes">MMC_FireCooldownDuration.h</includes>
+    <includes local="yes">AbilitySystemComponent.h</includes>
+    <includes local="yes">GameplayEffect.h</includes>
+    <includes refid="ARAttributeSetCore_8h" local="yes">ARAttributeSetCore.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>MMC_FireCooldownDuration.cpp</label>
+        <link refid="MMC__FireCooldownDuration_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARAttributeSetCore.h</label>
+        <link refid="ARAttributeSetCore_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MMC_FireCooldownDuration.h</label>
+        <link refid="MMC__FireCooldownDuration_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARAttributeSetCore.generated.h</label>
+      </node>
+      <node id="6">
+        <label>AbilitySystemComponent.h</label>
+      </node>
+      <node id="9">
+        <label>AttributeSet.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayEffect.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayModMagnitudeCalculation.h</label>
+      </node>
+      <node id="5">
+        <label>MMC_FireCooldownDuration.generated.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MMC_FireCooldownDuration.cpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="MMC__FireCooldownDuration_8h" kindref="compound">MMC_FireCooldownDuration.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AbilitySystemComponent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayEffect.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARAttributeSetCore_8h" kindref="compound">ARAttributeSetCore.h</ref>&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>&lt;--<sp/>fix<sp/>include<sp/>path<sp/>to<sp/>your<sp/>AttributeSet<sp/>header</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal">UMMC_FireCooldownDuration::UMMC_FireCooldownDuration()</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Capture<sp/>FireRate<sp/>from<sp/>the<sp/>Source<sp/>(the<sp/>shooter)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>FireRateDef<sp/>=<sp/>FGameplayEffectAttributeCaptureDefinition(</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UARAttributeSetCore::GetFireRateAttribute(),</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EGameplayEffectAttributeCaptureSource::Source,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bSnapshot*/</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>RelevantAttributesToCapture.Add(FireRateDef);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>UMMC_FireCooldownDuration::CalculateBaseMagnitude_Implementation(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayEffectSpec&amp;<sp/>Spec)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="21"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>FAggregatorEvaluateParameters<sp/>Params;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>Params.SourceTags<sp/>=<sp/>Spec.CapturedSourceTags.GetAggregatedTags();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>Params.TargetTags<sp/>=<sp/>Spec.CapturedTargetTags.GetAggregatedTags();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>FireRate<sp/>=<sp/>0.f;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>GetCapturedAttributeMagnitude(FireRateDef,<sp/>Spec,<sp/>Params,<sp/>FireRate);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shots<sp/>per<sp/>second<sp/>-&gt;<sp/>seconds<sp/>per<sp/>shot</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>SafeRate<sp/>=<sp/>FMath::Max(0.01f,<sp/>FireRate);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>CooldownSeconds<sp/>=<sp/>1.f<sp/>/<sp/>SafeRate;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>CooldownSeconds;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/MMC_FireCooldownDuration.cpp"/>
+  </compounddef>
+</doxygen>

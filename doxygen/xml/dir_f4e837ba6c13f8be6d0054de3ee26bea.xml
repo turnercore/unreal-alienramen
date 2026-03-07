@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_f4e837ba6c13f8be6d0054de3ee26bea" kind="dir">
+    <compoundname>Private</compoundname>
+    <innerdir refid="dir_302c3f6d0b79023d7c63f61f81b3f445">Tests</innerdir>
+    <innerfile refid="ARAIControllerBase_8cpp">ARAIControllerBase.cpp</innerfile>
+    <innerfile refid="ARAttributeSetCore_8cpp">ARAttributeSetCore.cpp</innerfile>
+    <innerfile refid="ARDialogueSettings_8cpp">ARDialogueSettings.cpp</innerfile>
+    <innerfile refid="ARDialogueSubsystem_8cpp">ARDialogueSubsystem.cpp</innerfile>
+    <innerfile refid="AREnemyAIController_8cpp">AREnemyAIController.cpp</innerfile>
+    <innerfile refid="AREnemyAttributeSet_8cpp">AREnemyAttributeSet.cpp</innerfile>
+    <innerfile refid="AREnemyBase_8cpp">AREnemyBase.cpp</innerfile>
+    <innerfile refid="AREnemyFacingLibrary_8cpp">AREnemyFacingLibrary.cpp</innerfile>
+    <innerfile refid="AREnemyIncomingDamageEffect_8cpp">AREnemyIncomingDamageEffect.cpp</innerfile>
+    <innerfile refid="ARFactionSettings_8cpp">ARFactionSettings.cpp</innerfile>
+    <innerfile refid="ARFactionSubsystem_8cpp">ARFactionSubsystem.cpp</innerfile>
+    <innerfile refid="ARGameInstance_8cpp">ARGameInstance.cpp</innerfile>
+    <innerfile refid="ARGameModeBase_8cpp">ARGameModeBase.cpp</innerfile>
+    <innerfile refid="ARGameStateBase_8cpp">ARGameStateBase.cpp</innerfile>
+    <innerfile refid="ARHUDBase_8cpp">ARHUDBase.cpp</innerfile>
+    <innerfile refid="ARInvaderAIController_8cpp">ARInvaderAIController.cpp</innerfile>
+    <innerfile refid="ARInvaderDirectorSubsystem_8cpp">ARInvaderDirectorSubsystem.cpp</innerfile>
+    <innerfile refid="ARInvaderDropBase_8cpp">ARInvaderDropBase.cpp</innerfile>
+    <innerfile refid="ARInvaderFullBlastMenuWidget_8cpp">ARInvaderFullBlastMenuWidget.cpp</innerfile>
+    <innerfile refid="ARInvaderGameMode_8cpp">ARInvaderGameMode.cpp</innerfile>
+    <innerfile refid="ARInvaderGameState_8cpp">ARInvaderGameState.cpp</innerfile>
+    <innerfile refid="ARInvaderHUD_8cpp">ARInvaderHUD.cpp</innerfile>
+    <innerfile refid="ARInvaderPlayerController_8cpp">ARInvaderPlayerController.cpp</innerfile>
+    <innerfile refid="ARInvaderRuntimeStateComponent_8cpp">ARInvaderRuntimeStateComponent.cpp</innerfile>
+    <innerfile refid="ARInvaderSpicyTrackSettings_8cpp">ARInvaderSpicyTrackSettings.cpp</innerfile>
+    <innerfile refid="ARLoadoutSettings_8cpp">ARLoadoutSettings.cpp</innerfile>
+    <innerfile refid="ARLobbyGameMode_8cpp">ARLobbyGameMode.cpp</innerfile>
+    <innerfile refid="ARLobbyGameState_8cpp">ARLobbyGameState.cpp</innerfile>
+    <innerfile refid="ARLobbyHUD_8cpp">ARLobbyHUD.cpp</innerfile>
+    <innerfile refid="ARLobbyPlayerController_8cpp">ARLobbyPlayerController.cpp</innerfile>
+    <innerfile refid="ARNPCCharacterBase_8cpp">ARNPCCharacterBase.cpp</innerfile>
+    <innerfile refid="ARNPCSettings_8cpp">ARNPCSettings.cpp</innerfile>
+    <innerfile refid="ARNPCSubsystem_8cpp">ARNPCSubsystem.cpp</innerfile>
+    <innerfile refid="ARPickupBase_8cpp">ARPickupBase.cpp</innerfile>
+    <innerfile refid="ARPickupCollectorComponent_8cpp">ARPickupCollectorComponent.cpp</innerfile>
+    <innerfile refid="ARPlayerCharacterBase_8cpp">ARPlayerCharacterBase.cpp</innerfile>
+    <innerfile refid="ARPlayerCharacterInvader_8cpp">ARPlayerCharacterInvader.cpp</innerfile>
+    <innerfile refid="ARPlayerCharacterScrapyard_8cpp">ARPlayerCharacterScrapyard.cpp</innerfile>
+    <innerfile refid="ARPlayerCharacterShop_8cpp">ARPlayerCharacterShop.cpp</innerfile>
+    <innerfile refid="ARPlayerController_8cpp">ARPlayerController.cpp</innerfile>
+    <innerfile refid="ARPlayerStateBase_8cpp">ARPlayerStateBase.cpp</innerfile>
+    <innerfile refid="ARProjectileBase_8cpp">ARProjectileBase.cpp</innerfile>
+    <innerfile refid="ARSaveGame_8cpp">ARSaveGame.cpp</innerfile>
+    <innerfile refid="ARSaveSubsystem_8cpp">ARSaveSubsystem.cpp</innerfile>
+    <innerfile refid="ARSaveTypesLibrary_8cpp">ARSaveTypesLibrary.cpp</innerfile>
+    <innerfile refid="ARScrapyardAIController_8cpp">ARScrapyardAIController.cpp</innerfile>
+    <innerfile refid="ARScrapyardGameMode_8cpp">ARScrapyardGameMode.cpp</innerfile>
+    <innerfile refid="ARScrapyardGameState_8cpp">ARScrapyardGameState.cpp</innerfile>
+    <innerfile refid="ARScrapyardHUD_8cpp">ARScrapyardHUD.cpp</innerfile>
+    <innerfile refid="ARScrapyardPlayerController_8cpp">ARScrapyardPlayerController.cpp</innerfile>
+    <innerfile refid="ARSessionAsyncActions_8cpp">ARSessionAsyncActions.cpp</innerfile>
+    <innerfile refid="ARSessionSubsystem_8cpp">ARSessionSubsystem.cpp</innerfile>
+    <innerfile refid="ARShopAIController_8cpp">ARShopAIController.cpp</innerfile>
+    <innerfile refid="ARShopGameMode_8cpp">ARShopGameMode.cpp</innerfile>
+    <innerfile refid="ARShopGameState_8cpp">ARShopGameState.cpp</innerfile>
+    <innerfile refid="ARShopHUD_8cpp">ARShopHUD.cpp</innerfile>
+    <innerfile refid="ARShopPlayerController_8cpp">ARShopPlayerController.cpp</innerfile>
+    <innerfile refid="ARStateTreeAIComponent_8cpp">ARStateTreeAIComponent.cpp</innerfile>
+    <innerfile refid="ARStateTreeAIComponentSchema_8cpp">ARStateTreeAIComponentSchema.cpp</innerfile>
+    <innerfile refid="ContentLookupSubsystem_8cpp">ContentLookupSubsystem.cpp</innerfile>
+    <innerfile refid="GameplayTagUtilities_8cpp">GameplayTagUtilities.cpp</innerfile>
+    <innerfile refid="HelperLibrary_8cpp">HelperLibrary.cpp</innerfile>
+    <innerfile refid="MMC__FireCooldownDuration_8cpp">MMC_FireCooldownDuration.cpp</innerfile>
+    <innerfile refid="SaveSlotSortLibrary_8cpp">SaveSlotSortLibrary.cpp</innerfile>
+    <innerfile refid="StructSerializable_8cpp">StructSerializable.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/"/>
+  </compounddef>
+</doxygen>

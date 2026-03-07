@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderEnemyDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderEnemyDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1ab440b11ed509df096c3180e61ba35073" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderEnemyDefRow::BaseSpiceKillValue</definition>
+        <argsstring></argsstring>
+        <name>BaseSpiceKillValue</name>
+        <qualifiedname>FARInvaderEnemyDefRow::BaseSpiceKillValue</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="163" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1ab6728d6e3b451a725233ebd6b1a2b7b4" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderEnemyDefRow::bEnabled</definition>
+        <argsstring></argsstring>
+        <name>bEnabled</name>
+        <qualifiedname>FARInvaderEnemyDefRow::bEnabled</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="147" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1a89b319ce334dede099b363928a820eaf" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARInvaderEnemyDefRow::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>FARInvaderEnemyDefRow::Description</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="153" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1a5ffcd50b83e3156fc4fc2ba74e4fb56e" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARInvaderEnemyDefRow::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARInvaderEnemyDefRow::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="150" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1aedc7d319996cce3aed13545e8cff11e2" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; AAREnemyBase &gt;</type>
+        <definition>TSoftClassPtr&lt;AAREnemyBase&gt; FARInvaderEnemyDefRow::EnemyClass</definition>
+        <argsstring></argsstring>
+        <name>EnemyClass</name>
+        <qualifiedname>FARInvaderEnemyDefRow::EnemyClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="156" column="15" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1a501c975b1bb8b3a8ec41afa12ecb0735" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderEnemyDefRow::EnemyIdentifierTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyIdentifierTag</name>
+        <qualifiedname>FARInvaderEnemyDefRow::EnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="159" column="14" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderEnemyDefRow_1ab73f2b9b996662e779fefc0ebb09e1df" prot="public" static="no" mutable="no">
+        <type>FARInvaderEnemyRuntimeInitData</type>
+        <definition>FARInvaderEnemyRuntimeInitData FARInvaderEnemyDefRow::RuntimeInit</definition>
+        <argsstring></argsstring>
+        <name>RuntimeInit</name>
+        <qualifiedname>FARInvaderEnemyDefRow::RuntimeInit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="166" column="32" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="142" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="143" bodyend="167"/>
+    <listofallmembers>
+      <member refid="structFARInvaderEnemyDefRow_1ab440b11ed509df096c3180e61ba35073" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>BaseSpiceKillValue</name></member>
+      <member refid="structFARInvaderEnemyDefRow_1ab6728d6e3b451a725233ebd6b1a2b7b4" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>bEnabled</name></member>
+      <member refid="structFARInvaderEnemyDefRow_1a89b319ce334dede099b363928a820eaf" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>Description</name></member>
+      <member refid="structFARInvaderEnemyDefRow_1a5ffcd50b83e3156fc4fc2ba74e4fb56e" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>DisplayName</name></member>
+      <member refid="structFARInvaderEnemyDefRow_1aedc7d319996cce3aed13545e8cff11e2" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>EnemyClass</name></member>
+      <member refid="structFARInvaderEnemyDefRow_1a501c975b1bb8b3a8ec41afa12ecb0735" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>EnemyIdentifierTag</name></member>
+      <member refid="structFARInvaderEnemyDefRow_1ab73f2b9b996662e779fefc0ebb09e1df" prot="public" virt="non-virtual"><scope>FARInvaderEnemyDefRow</scope><name>RuntimeInit</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

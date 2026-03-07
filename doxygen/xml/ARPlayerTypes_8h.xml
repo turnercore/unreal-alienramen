@@ -1,0 +1,749 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARPlayerTypes_8h" kind="file" language="C++">
+    <compoundname>ARPlayerTypes.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">ARPlayerTypes.generated.h</includes>
+    <includedby refid="ARDialogueTypes_8h" local="yes">ARDialogueTypes.h</includedby>
+    <includedby refid="ARFactionTypes_8h" local="yes">ARFactionTypes.h</includedby>
+    <includedby refid="ARGameModeBase_8h" local="yes">ARGameModeBase.h</includedby>
+    <includedby refid="ARGameStateBase_8h" local="yes">ARGameStateBase.h</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8h" local="yes">ARInvaderDirectorSubsystem.h</includedby>
+    <includedby refid="ARInvaderSpicyTrackTypes_8h" local="yes">ARInvaderSpicyTrackTypes.h</includedby>
+    <includedby refid="ARPlayerStateBase_8h" local="yes">ARPlayerStateBase.h</includedby>
+    <includedby refid="ARSaveTypes_8h" local="yes">ARSaveTypes.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="4">
+        <label>ARDialogueSubsystem.cpp</label>
+        <link refid="ARDialogueSubsystem_8cpp_source"/>
+      </node>
+      <node id="44">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="23">
+        <label>ARFactionSubsystem.cpp</label>
+        <link refid="ARFactionSubsystem_8cpp_source"/>
+      </node>
+      <node id="24">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="31">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="40">
+        <label>ARGameStateBase.cpp</label>
+        <link refid="ARGameStateBase_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARHUDBase.cpp</label>
+        <link refid="ARHUDBase_8cpp_source"/>
+      </node>
+      <node id="41">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="42">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARInvaderFullBlastMenuWidget.cpp</label>
+        <link refid="ARInvaderFullBlastMenuWidget_8cpp_source"/>
+      </node>
+      <node id="33">
+        <label>ARInvaderGameMode.cpp</label>
+        <link refid="ARInvaderGameMode_8cpp_source"/>
+      </node>
+      <node id="45">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="59">
+        <label>ARInvaderSpicyTrackSettings.cpp</label>
+        <link refid="ARInvaderSpicyTrackSettings_8cpp_source"/>
+      </node>
+      <node id="35">
+        <label>ARLobbyGameMode.cpp</label>
+        <link refid="ARLobbyGameMode_8cpp_source"/>
+      </node>
+      <node id="48">
+        <label>ARLobbyGameState.cpp</label>
+        <link refid="ARLobbyGameState_8cpp_source"/>
+      </node>
+      <node id="15">
+        <label>ARLobbyPlayerController.cpp</label>
+        <link refid="ARLobbyPlayerController_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARNPCSubsystem.cpp</label>
+        <link refid="ARNPCSubsystem_8cpp_source"/>
+      </node>
+      <node id="16">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="46">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="25">
+        <label>ARSaveGame.cpp</label>
+        <link refid="ARSaveGame_8cpp_source"/>
+      </node>
+      <node id="17">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="69">
+        <label>ARSaveTypesLibrary.cpp</label>
+        <link refid="ARSaveTypesLibrary_8cpp_source"/>
+      </node>
+      <node id="37">
+        <label>ARScrapyardGameMode.cpp</label>
+        <link refid="ARScrapyardGameMode_8cpp_source"/>
+      </node>
+      <node id="50">
+        <label>ARScrapyardGameState.cpp</label>
+        <link refid="ARScrapyardGameState_8cpp_source"/>
+      </node>
+      <node id="19">
+        <label>ARScrapyardPlayerController.cpp</label>
+        <link refid="ARScrapyardPlayerController_8cpp_source"/>
+      </node>
+      <node id="72">
+        <label>ARSessionAsyncActions.cpp</label>
+        <link refid="ARSessionAsyncActions_8cpp_source"/>
+      </node>
+      <node id="61">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="29">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="52">
+        <label>ARShopGameState.cpp</label>
+        <link refid="ARShopGameState_8cpp_source"/>
+      </node>
+      <node id="21">
+        <label>ARShopPlayerController.cpp</label>
+        <link refid="ARShopPlayerController_8cpp_source"/>
+      </node>
+      <node id="53">
+        <label>StructSerializable.cpp</label>
+        <link refid="StructSerializable_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARDialogueSubsystem.h</label>
+        <link refid="ARDialogueSubsystem_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARDialogueTypes.h</label>
+        <link refid="ARDialogueTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>ARFactionSubsystem.h</label>
+        <link refid="ARFactionSubsystem_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>ARFactionTypes.h</label>
+        <link refid="ARFactionTypes_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>ARGameModeBase.h</label>
+        <link refid="ARGameModeBase_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>ARGameStateBase.h</label>
+        <link refid="ARGameStateBase_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>ARGameStateModeStructs.h</label>
+        <link refid="ARGameStateModeStructs_8h"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>ARInvaderDirectorSubsystem.h</label>
+        <link refid="ARInvaderDirectorSubsystem_8h"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>ARInvaderFullBlastMenuWidget.h</label>
+        <link refid="ARInvaderFullBlastMenuWidget_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>ARInvaderGameMode.h</label>
+        <link refid="ARInvaderGameMode_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>ARInvaderGameState.h</label>
+        <link refid="ARInvaderGameState_8h"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ARInvaderPlayerController.h</label>
+        <link refid="ARInvaderPlayerController_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>ARInvaderSpicyTrackSettings.h</label>
+        <link refid="ARInvaderSpicyTrackSettings_8h"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>ARLobbyGameMode.h</label>
+        <link refid="ARLobbyGameMode_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>ARLobbyGameState.h</label>
+        <link refid="ARLobbyGameState_8h"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARLobbyPlayerController.h</label>
+        <link refid="ARLobbyPlayerController_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARNPCSubsystem.h</label>
+        <link refid="ARNPCSubsystem_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARPlayerController.h</label>
+        <link refid="ARPlayerController_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>ARPlayerStateBase.h</label>
+        <link refid="ARPlayerStateBase_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ARSaveGame.h</label>
+        <link refid="ARSaveGame_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>ARSaveIndexGame.h</label>
+        <link refid="ARSaveIndexGame_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>ARSaveSubsystem.h</label>
+        <link refid="ARSaveSubsystem_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>ARSaveTypesLibrary.h</label>
+        <link refid="ARSaveTypesLibrary_8h"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>ARScrapyardGameMode.h</label>
+        <link refid="ARScrapyardGameMode_8h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>ARScrapyardGameState.h</label>
+        <link refid="ARScrapyardGameState_8h"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ARScrapyardPlayerController.h</label>
+        <link refid="ARScrapyardPlayerController_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>ARSessionAsyncActions.h</label>
+        <link refid="ARSessionAsyncActions_8h"/>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>ARSessionSubsystem.h</label>
+        <link refid="ARSessionSubsystem_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>ARShopGameMode.h</label>
+        <link refid="ARShopGameMode_8h"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>ARShopGameState.h</label>
+        <link refid="ARShopGameState_8h"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>ARShopPlayerController.h</label>
+        <link refid="ARShopPlayerController_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>AREnemyAuthoringPanel.cpp</label>
+        <link refid="AREnemyAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="26">
+        <label>AlienRamenEditorModule.cpp</label>
+        <link refid="AlienRamenEditorModule_8cpp_source"/>
+      </node>
+      <node id="63">
+        <label>ARTestingSettings.cpp</label>
+        <link refid="ARTestingSettings_8cpp_source"/>
+      </node>
+      <node id="62">
+        <label>ARTestingSettings.h</label>
+        <link refid="ARTestingSettings_8h_source"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="ARPlayerTypes_8h_1a68d7a4effdc17879e24c9d6ecea59f83" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARCharacterChoice</name>
+        <enumvalue id="ARPlayerTypes_8h_1a68d7a4effdc17879e24c9d6ecea59f83a6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1a68d7a4effdc17879e24c9d6ecea59f83ae0efbdcea0abe735dbf887292a5670fa" prot="public">
+          <name>Brother</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1a68d7a4effdc17879e24c9d6ecea59f83a19cda37369e2d2015e66b9d478ffbe15" prot="public">
+          <name>Sister</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="19" column="1" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="20" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="enum" id="ARPlayerTypes_8h_1a19d615c8184c699f8723cc101c5c1c99" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARCoreAttributeType</name>
+        <enumvalue id="ARPlayerTypes_8h_1a19d615c8184c699f8723cc101c5c1c99a605669cab962bf944d99ce89cf9e58d9" prot="public">
+          <name>Health</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1a19d615c8184c699f8723cc101c5c1c99a01dc2c0b0a5b72f35bfbe2a358b82c27" prot="public">
+          <name>MaxHealth</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1a19d615c8184c699f8723cc101c5c1c99a69ad808a578343046a547820b491b546" prot="public">
+          <name>Spice</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1a19d615c8184c699f8723cc101c5c1c99a898bc37c6431524e11a9ef7fbcfc5783" prot="public">
+          <name>MaxSpice</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1a19d615c8184c699f8723cc101c5c1c99a3dfb8a09b650ce66270c54fdf5c2aa74" prot="public">
+          <name>MoveSpeed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="27" column="1" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="28" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="enum" id="ARPlayerTypes_8h_1aaa1c54970edc47d4841bf3e48eddebbf" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARPlayerSlot</name>
+        <enumvalue id="ARPlayerTypes_8h_1aaa1c54970edc47d4841bf3e48eddebbfa88183b946cc5f0e8c96b2e66e1c74a7e" prot="public">
+          <name>Unknown</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1aaa1c54970edc47d4841bf3e48eddebbfa5f2b9323c39ee3c861a7b382d205c3d3" prot="public">
+          <name>P1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARPlayerTypes_8h_1aaa1c54970edc47d4841bf3e48eddebbfa5890595e16cbebb8866e1842e4bd6ec7" prot="public">
+          <name>P2</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="11" column="1" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="12" bodyend="16"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared player-facing enum types for Alien Ramen gameplay/save/runtime APIs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARPlayerTypes.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARPlayerSlot<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>Unknown<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>P1,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>P2</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARCharacterChoice<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>None<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>Brother,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>Sister</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARCoreAttributeType<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>Health,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>MaxHealth,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>Spice,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>MaxSpice,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>MoveSpeed</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARPlayerTypes.h"/>
+  </compounddef>
+</doxygen>

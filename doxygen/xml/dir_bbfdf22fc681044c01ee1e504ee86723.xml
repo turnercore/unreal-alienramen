@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_bbfdf22fc681044c01ee1e504ee86723" kind="dir">
+    <compoundname>Private</compoundname>
+    <innerfile refid="AlienRamenEditorModule_8cpp">AlienRamenEditorModule.cpp</innerfile>
+    <innerfile refid="AREnemyAuthoringPanel_8cpp">AREnemyAuthoringPanel.cpp</innerfile>
+    <innerfile refid="AREnemyAuthoringPanel_8h">AREnemyAuthoringPanel.h</innerfile>
+    <innerfile refid="ARInvaderAuthoringEditorProxies_8cpp">ARInvaderAuthoringEditorProxies.cpp</innerfile>
+    <innerfile refid="ARInvaderAuthoringEditorSettings_8cpp">ARInvaderAuthoringEditorSettings.cpp</innerfile>
+    <innerfile refid="ARInvaderAuthoringPanel_8cpp">ARInvaderAuthoringPanel.cpp</innerfile>
+    <innerfile refid="ARInvaderAuthoringPanel_8h">ARInvaderAuthoringPanel.h</innerfile>
+    <innerfile refid="ARInvaderToolingSettings_8cpp">ARInvaderToolingSettings.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/"/>
+  </compounddef>
+</doxygen>

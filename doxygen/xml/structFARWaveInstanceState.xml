@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARWaveInstanceState" kind="struct" language="C++" prot="public">
+    <compoundname>FARWaveInstanceState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a0b02288d0bb06a468cde3802faccdca3" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARWaveInstanceState::AliveCount</definition>
+        <argsstring></argsstring>
+        <name>AliveCount</name>
+        <qualifiedname>FARWaveInstanceState::AliveCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="296" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a1e350f6fed9b9eaa9c304d43f03dc379" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARWaveInstanceState::bColorSwap</definition>
+        <argsstring></argsstring>
+        <name>bColorSwap</name>
+        <qualifiedname>FARWaveInstanceState::bColorSwap</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="299" column="6" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a76b513417131128d77b787f3e0497432" prot="public" static="no" mutable="no">
+        <type>EARWavePhase</type>
+        <definition>EARWavePhase FARWaveInstanceState::Phase</definition>
+        <argsstring></argsstring>
+        <name>Phase</name>
+        <qualifiedname>FARWaveInstanceState::Phase</qualifiedname>
+        <initializer>= EARWavePhase::Active</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="284" column="14" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="284" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a695d57d9d5e634c9de7a7f7d1f199f99" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveInstanceState::PhaseStartServerTime</definition>
+        <argsstring></argsstring>
+        <name>PhaseStartServerTime</name>
+        <qualifiedname>FARWaveInstanceState::PhaseStartServerTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="290" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a431d3d741b4b8aed3f8d5fa7f4dde601" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARWaveInstanceState::SpawnedCount</definition>
+        <argsstring></argsstring>
+        <name>SpawnedCount</name>
+        <qualifiedname>FARWaveInstanceState::SpawnedCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="293" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a43999e8172f2ad9b5767db45151b57d3" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARWaveInstanceState::StageRowName</definition>
+        <argsstring></argsstring>
+        <name>StageRowName</name>
+        <qualifiedname>FARWaveInstanceState::StageRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="302" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a90287ee2bc7a7caf39a00dbc43d89b4b" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARWaveInstanceState::WaveInstanceId</definition>
+        <argsstring></argsstring>
+        <name>WaveInstanceId</name>
+        <qualifiedname>FARWaveInstanceState::WaveInstanceId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="278" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1ac117c4fef33e4c7cd8616c340e42c0ec" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName FARWaveInstanceState::WaveRowName</definition>
+        <argsstring></argsstring>
+        <name>WaveRowName</name>
+        <qualifiedname>FARWaveInstanceState::WaveRowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="281" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARWaveInstanceState_1a405ce37f5d8c7b220d4b468e0df652b4" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARWaveInstanceState::WaveStartServerTime</definition>
+        <argsstring></argsstring>
+        <name>WaveStartServerTime</name>
+        <qualifiedname>FARWaveInstanceState::WaveStartServerTime</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderTypes.h" line="287" column="7" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="287" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderTypes.h" line="273" column="1" bodyfile="AlienRamen/Public/ARInvaderTypes.h" bodystart="274" bodyend="303"/>
+    <listofallmembers>
+      <member refid="structFARWaveInstanceState_1a0b02288d0bb06a468cde3802faccdca3" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>AliveCount</name></member>
+      <member refid="structFARWaveInstanceState_1a1e350f6fed9b9eaa9c304d43f03dc379" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>bColorSwap</name></member>
+      <member refid="structFARWaveInstanceState_1a76b513417131128d77b787f3e0497432" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>Phase</name></member>
+      <member refid="structFARWaveInstanceState_1a695d57d9d5e634c9de7a7f7d1f199f99" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>PhaseStartServerTime</name></member>
+      <member refid="structFARWaveInstanceState_1a431d3d741b4b8aed3f8d5fa7f4dde601" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>SpawnedCount</name></member>
+      <member refid="structFARWaveInstanceState_1a43999e8172f2ad9b5767db45151b57d3" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>StageRowName</name></member>
+      <member refid="structFARWaveInstanceState_1a90287ee2bc7a7caf39a00dbc43d89b4b" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>WaveInstanceId</name></member>
+      <member refid="structFARWaveInstanceState_1ac117c4fef33e4c7cd8616c340e42c0ec" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>WaveRowName</name></member>
+      <member refid="structFARWaveInstanceState_1a405ce37f5d8c7b220d4b468e0df652b4" prot="public" virt="non-virtual"><scope>FARWaveInstanceState</scope><name>WaveStartServerTime</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

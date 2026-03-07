@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARSessionResult" kind="struct" language="C++" prot="public">
+    <compoundname>FARSessionResult</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARSessionResult_1aa63c210a48b929bcddd3662c067c4afb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARSessionResult::bSuccess</definition>
+        <argsstring></argsstring>
+        <name>bSuccess</name>
+        <qualifiedname>FARSessionResult::bSuccess</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="49" column="6" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionResult_1a6afa3d6f4264f6ee1905f74e4118318e" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARSessionResult::Error</definition>
+        <argsstring></argsstring>
+        <name>Error</name>
+        <qualifiedname>FARSessionResult::Error</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="55" column="9" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARSessionResult_1acf0493928894ec54766edde1d08228f1" prot="public" static="no" mutable="no">
+        <type>EARSessionResultCode</type>
+        <definition>EARSessionResultCode FARSessionResult::ResultCode</definition>
+        <argsstring></argsstring>
+        <name>ResultCode</name>
+        <qualifiedname>FARSessionResult::ResultCode</qualifiedname>
+        <initializer>= EARSessionResultCode::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSessionSubsystem.h" line="52" column="22" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSessionSubsystem.h" line="44" column="1" bodyfile="AlienRamen/Public/ARSessionSubsystem.h" bodystart="45" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structFARSessionResult_1aa63c210a48b929bcddd3662c067c4afb" prot="public" virt="non-virtual"><scope>FARSessionResult</scope><name>bSuccess</name></member>
+      <member refid="structFARSessionResult_1a6afa3d6f4264f6ee1905f74e4118318e" prot="public" virt="non-virtual"><scope>FARSessionResult</scope><name>Error</name></member>
+      <member refid="structFARSessionResult_1acf0493928894ec54766edde1d08228f1" prot="public" virt="non-virtual"><scope>FARSessionResult</scope><name>ResultCode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

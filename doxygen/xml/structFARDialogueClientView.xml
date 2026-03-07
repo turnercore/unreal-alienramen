@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARDialogueClientView" kind="struct" language="C++" prot="public">
+    <compoundname>FARDialogueClientView</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARDialogueClientView_1acea53522a6c829fc49099e1d63e45509" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueClientView::bIsEavesdropping</definition>
+        <argsstring></argsstring>
+        <name>bIsEavesdropping</name>
+        <qualifiedname>FARDialogueClientView::bIsEavesdropping</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="213" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a6c8a5cf6ccd4c154779536cebd98a708" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueClientView::bIsSharedSession</definition>
+        <argsstring></argsstring>
+        <name>bIsSharedSession</name>
+        <qualifiedname>FARDialogueClientView::bIsSharedSession</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="210" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a22c7ea53330d307139ae4e90960e4085" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARDialogueClientView::bWaitingForChoice</definition>
+        <argsstring></argsstring>
+        <name>bWaitingForChoice</name>
+        <qualifiedname>FARDialogueClientView::bWaitingForChoice</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="207" column="6" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a590d918f89399a3635ba0a0c6f478a37" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARDialogueChoiceView &gt;</type>
+        <definition>TArray&lt;FARDialogueChoiceView&gt; FARDialogueClientView::Choices</definition>
+        <argsstring></argsstring>
+        <name>Choices</name>
+        <qualifiedname>FARDialogueClientView::Choices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="204" column="8" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a6a13a57db278b0885b6b7b3f8fc67793" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueClientView::CurrentNodeTag</definition>
+        <argsstring></argsstring>
+        <name>CurrentNodeTag</name>
+        <qualifiedname>FARDialogueClientView::CurrentNodeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="192" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a00cb21bf917ff065f8fc409ab4d52148" prot="public" static="no" mutable="no">
+        <type>EARPlayerSlot</type>
+        <definition>EARPlayerSlot FARDialogueClientView::InitiatorSlot</definition>
+        <argsstring></argsstring>
+        <name>InitiatorSlot</name>
+        <qualifiedname>FARDialogueClientView::InitiatorSlot</qualifiedname>
+        <initializer>= EARPlayerSlot::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="216" column="15" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a265955a59ad59bc04000027345ba7e75" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARDialogueClientView::LineText</definition>
+        <argsstring></argsstring>
+        <name>LineText</name>
+        <qualifiedname>FARDialogueClientView::LineText</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="198" column="7" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a8f6ca901eeb3a1a1a07e0d08e27719c5" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueClientView::NpcTag</definition>
+        <argsstring></argsstring>
+        <name>NpcTag</name>
+        <qualifiedname>FARDialogueClientView::NpcTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="189" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a8f08b64eb19398227d0f0b3177cf25e0" prot="public" static="no" mutable="no">
+        <type>EARPlayerSlot</type>
+        <definition>EARPlayerSlot FARDialogueClientView::OwnerSlot</definition>
+        <argsstring></argsstring>
+        <name>OwnerSlot</name>
+        <qualifiedname>FARDialogueClientView::OwnerSlot</qualifiedname>
+        <initializer>= EARPlayerSlot::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="219" column="15" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a866fcec6c3e4b0ae6663920047a9ce00" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARDialogueClientView::SessionId</definition>
+        <argsstring></argsstring>
+        <name>SessionId</name>
+        <qualifiedname>FARDialogueClientView::SessionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="186" column="9" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1adfffa4e85d9ffaba08410d871d4a2d20" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UTexture2D &gt;</type>
+        <definition>TSoftObjectPtr&lt;UTexture2D&gt; FARDialogueClientView::SpeakerPortrait</definition>
+        <argsstring></argsstring>
+        <name>SpeakerPortrait</name>
+        <qualifiedname>FARDialogueClientView::SpeakerPortrait</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="201" column="16" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueClientView_1a94662deb2307c9bfa3919a80f2ba3312" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueClientView::SpeakerTag</definition>
+        <argsstring></argsstring>
+        <name>SpeakerTag</name>
+        <qualifiedname>FARDialogueClientView::SpeakerTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueTypes.h" line="195" column="14" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueTypes.h" line="181" column="1" bodyfile="AlienRamen/Public/ARDialogueTypes.h" bodystart="182" bodyend="220"/>
+    <listofallmembers>
+      <member refid="structFARDialogueClientView_1acea53522a6c829fc49099e1d63e45509" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>bIsEavesdropping</name></member>
+      <member refid="structFARDialogueClientView_1a6c8a5cf6ccd4c154779536cebd98a708" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>bIsSharedSession</name></member>
+      <member refid="structFARDialogueClientView_1a22c7ea53330d307139ae4e90960e4085" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>bWaitingForChoice</name></member>
+      <member refid="structFARDialogueClientView_1a590d918f89399a3635ba0a0c6f478a37" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>Choices</name></member>
+      <member refid="structFARDialogueClientView_1a6a13a57db278b0885b6b7b3f8fc67793" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>CurrentNodeTag</name></member>
+      <member refid="structFARDialogueClientView_1a00cb21bf917ff065f8fc409ab4d52148" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>InitiatorSlot</name></member>
+      <member refid="structFARDialogueClientView_1a265955a59ad59bc04000027345ba7e75" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>LineText</name></member>
+      <member refid="structFARDialogueClientView_1a8f6ca901eeb3a1a1a07e0d08e27719c5" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>NpcTag</name></member>
+      <member refid="structFARDialogueClientView_1a8f08b64eb19398227d0f0b3177cf25e0" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>OwnerSlot</name></member>
+      <member refid="structFARDialogueClientView_1a866fcec6c3e4b0ae6663920047a9ce00" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>SessionId</name></member>
+      <member refid="structFARDialogueClientView_1adfffa4e85d9ffaba08410d871d4a2d20" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>SpeakerPortrait</name></member>
+      <member refid="structFARDialogueClientView_1a94662deb2307c9bfa3919a80f2ba3312" prot="public" virt="non-virtual"><scope>FARDialogueClientView</scope><name>SpeakerTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderUpgradeOffer" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderUpgradeOffer</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderUpgradeOffer_1a5eaa97bd9493526e69bbab9f2fb404c4" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderUpgradeOffer::OfferedLevel</definition>
+        <argsstring></argsstring>
+        <name>OfferedLevel</name>
+        <qualifiedname>FARInvaderUpgradeOffer::OfferedLevel</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="145" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeOffer_1a51354e5af45780aa33a6a4be4b37a982" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderUpgradeOffer::UpgradeTag</definition>
+        <argsstring></argsstring>
+        <name>UpgradeTag</name>
+        <qualifiedname>FARInvaderUpgradeOffer::UpgradeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="142" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="137" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="138" bodyend="146"/>
+    <listofallmembers>
+      <member refid="structFARInvaderUpgradeOffer_1a5eaa97bd9493526e69bbab9f2fb404c4" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeOffer</scope><name>OfferedLevel</name></member>
+      <member refid="structFARInvaderUpgradeOffer_1a51354e5af45780aa33a6a4be4b37a982" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeOffer</scope><name>UpgradeTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

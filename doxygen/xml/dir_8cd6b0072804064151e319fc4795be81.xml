@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_8cd6b0072804064151e319fc4795be81" kind="dir">
+    <compoundname>AlienRamenEditor</compoundname>
+    <innerdir refid="dir_bbfdf22fc681044c01ee1e504ee86723">Private</innerdir>
+    <innerdir refid="dir_f088a3f110844ead7ed0e47877d4f9e3">Public</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/"/>
+  </compounddef>
+</doxygen>

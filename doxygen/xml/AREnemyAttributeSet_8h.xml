@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="AREnemyAttributeSet_8h" kind="file" language="C++">
+    <compoundname>AREnemyAttributeSet.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">AttributeSet.h</includes>
+    <includes local="yes">AbilitySystemComponent.h</includes>
+    <includes local="yes">AREnemyAttributeSet.generated.h</includes>
+    <includedby refid="AREnemyAttributeSet_8cpp" local="yes">AREnemyAttributeSet.cpp</includedby>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>AREnemyAttributeSet.h</label>
+        <link refid="AREnemyAttributeSet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>AREnemyAttributeSet.generated.h</label>
+      </node>
+      <node id="4">
+        <label>AbilitySystemComponent.h</label>
+      </node>
+      <node id="3">
+        <label>AttributeSet.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>AREnemyAttributeSet.cpp</label>
+        <link refid="AREnemyAttributeSet_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>AREnemyAttributeSet.h</label>
+        <link refid="AREnemyAttributeSet_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUAREnemyAttributeSet" prot="public">UAREnemyAttributeSet</innerclass>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="AREnemyAttributeSet_8h_1a61ce842d1c898409530e475b602d85a4" prot="public" static="no">
+        <name>AR_ENEMY_ATTRIBUTE_ACCESSORS</name>
+        <param><defname>ClassName</defname></param>
+        <param><defname>PropertyName</defname></param>
+        <initializer>	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="12" column="9" bodyfile="AlienRamen/Public/AREnemyAttributeSet.h" bodystart="12" bodyend="16"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>AREnemyAttributeSet header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AttributeSet.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AbilitySystemComponent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AREnemyAttributeSet.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AR_ENEMY_ATTRIBUTE_ACCESSORS(ClassName,<sp/>PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="13"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName,<sp/>PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="14"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="15"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="16"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UAREnemyAttributeSet<sp/>:<sp/>public<sp/>UAttributeSet</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>UAREnemyAttributeSet();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PreAttributeChange(const<sp/>FGameplayAttribute&amp;<sp/>Attribute,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">&amp;<sp/>NewValue)<sp/>override;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp;<sp/>OutLifetimeProps)<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_CollisionDamage,<sp/>Category<sp/>=<sp/>&quot;AR|Enemy|Combat&quot;)</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>CollisionDamage;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_ENEMY_ATTRIBUTE_ACCESSORS(UAREnemyAttributeSet,<sp/>CollisionDamage)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_CollisionDamage(const<sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>AR_ENEMY_ATTRIBUTE_ACCESSORS</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/AREnemyAttributeSet.h"/>
+  </compounddef>
+</doxygen>

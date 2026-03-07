@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classSListView" kind="class" language="C++" prot="public">
+    <compoundname>SListView</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename ItemType</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="18" column="11" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="18" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

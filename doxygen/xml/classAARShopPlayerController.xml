@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARShopPlayerController" kind="class" language="C++" prot="public">
+    <compoundname>AARShopPlayerController</compoundname>
+    <basecompoundref refid="classAARPlayerController" prot="public" virt="non-virtual">AARPlayerController</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARShopPlayerController_1ab1f9c2a9f4e5f00cf4a528c68c7044ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARShopPlayerController::AARShopPlayerController</definition>
+        <argsstring>()</argsstring>
+        <name>AARShopPlayerController</name>
+        <qualifiedname>AARShopPlayerController::AARShopPlayerController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopPlayerController.h" line="17" column="1" bodyfile="AlienRamen/Private/ARShopPlayerController.cpp" bodystart="3" bodyend="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARPlayerController</label>
+        <link refid="classAARPlayerController"/>
+      </node>
+      <node id="1">
+        <label>AARShopPlayerController</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARPlayerController</label>
+        <link refid="classAARPlayerController"/>
+      </node>
+      <node id="1">
+        <label>AARShopPlayerController</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARShopPlayerController.h" line="12" column="1" bodyfile="AlienRamen/Public/ARShopPlayerController.h" bodystart="13" bodyend="18"/>
+    <listofallmembers>
+      <member refid="classAARPlayerController_1a852ec8f5070378d82e5fad9a854f90b2" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>AARPlayerController</name></member>
+      <member refid="classAARShopPlayerController_1ab1f9c2a9f4e5f00cf4a528c68c7044ac" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>AARShopPlayerController</name></member>
+      <member refid="classAARPlayerController_1a2a7ccd29574c80ad55747f7ec9fdb8e6" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>bAutoApplyDefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1aab6479d47faff2427e9f24bfd17229db" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>bAutoManagePauseInputContexts</name></member>
+      <member refid="classAARPlayerController_1a4ca6b00026d8104bc36eed14f8d579e6" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>bAutoManagePauseInputMode</name></member>
+      <member refid="classAARPlayerController_1ab5ffee08228aeef8ed889f6ab479d619" prot="protected" virt="virtual"><scope>AARShopPlayerController</scope><name>BeginPlay</name></member>
+      <member refid="classAARPlayerController_1abafa617c8d51cb9e0042493b9832df69" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>bEnableCustomCursorInit</name></member>
+      <member refid="classAARPlayerController_1a5260952dcffa3e0c75bca32e952fca1b" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>BP_OnDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a8662462182a3527d9a2981a5ad3fd6a9" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>BP_OnDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1a731995a28993591f557b33b76ac7cfbd" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>BP_OnHUDInitializationRequested</name></member>
+      <member refid="classAARPlayerController_1a4348f51608224438edc9145e67e18d9f" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>BP_OnPauseMenuClosed</name></member>
+      <member refid="classAARPlayerController_1abe0db467ccd391175a928eb6346a7fed" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>BP_OnPauseMenuOpened</name></member>
+      <member refid="classAARPlayerController_1a58c931aaf0bf7d311faf4fe754a21f98" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ClientDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a1f52120764dde137b9401f37100a0a0d" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ClientDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1afedffb7dc01187f4a3e92b3687c234ca" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ClientPersistCanonicalSave</name></member>
+      <member refid="classAARPlayerController_1a555a83237d7fb05a0774e5b6d1c52ac8" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ClosePause</name></member>
+      <member refid="classAARPlayerController_1a5a43ecdccb3cdbf283c674c98b7db1bc" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>CommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1a23b1d27a49b2c59911433930653238bb" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>Cursor</name></member>
+      <member refid="classAARPlayerController_1a625bde322ba65ac6a9ec7f93c4a4695f" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>CursorDefaultWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a3a0faa7dcd71376138c6af7d1d10d6d7" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>DefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1a9fa574b21a9b50d3aaf6069163845dc2" prot="protected" virt="virtual"><scope>AARShopPlayerController</scope><name>EndPlay</name></member>
+      <member refid="classAARPlayerController_1adfd1d6ed3e52490c4e8bc38c3c947db2" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>GetCommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1aa0036d9e86cb3d54a95c0fc70ee583e1" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>InitializeCustomCursor</name></member>
+      <member refid="classAARPlayerController_1afa6eb7aeb54460a8e8b72de3abf767bc" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>IsPauseMenuBlockedLocal</name></member>
+      <member refid="classAARPlayerController_1abdfec9ec181b8e1270fb4a1119fce07a" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>IsPauseMenuOpenLocal</name></member>
+      <member refid="classAARPlayerController_1ad2e671ae13782803683985045b707b2d" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>IsPauseMenuOverlayVisibleLocal</name></member>
+      <member refid="classAARPlayerController_1aae63616984248eb0fc4aed2650bbc264" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>LeaveSession</name></member>
+      <member refid="classAARPlayerController_1aa2af5b3f3ccb30fb0f7bbeadac9effda" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>OnPauseMenuOverlayVisibilityChanged</name></member>
+      <member refid="classAARPlayerController_1aaffd2baddfc55193c377d89721ffb43d" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>OnPauseMenuStateChanged</name></member>
+      <member refid="classAARPlayerController_1abb940bb16a747e4f5206f2ecccadc8bd" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>PauseMenuInputMappingContext</name></member>
+      <member refid="classAARPlayerController_1a8445855f6a5983cd000c4dd4e86f6fff" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>PauseMenuInputPriority</name></member>
+      <member refid="classAARPlayerController_1ad0921d5e7bf0982307251ff33aa2bffc" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>PauseOverlayWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a57efd278ed2280d65a2e292f35b65bb2" prot="protected" virt="non-virtual"><scope>AARShopPlayerController</scope><name>PauseOverlayWidgetZOrder</name></member>
+      <member refid="classAARPlayerController_1aa222b72dc4c7def338275dffbdcd2f93" prot="protected" virt="virtual"><scope>AARShopPlayerController</scope><name>PlayerTick</name></member>
+      <member refid="classAARPlayerController_1a9da33c122582cb6ae2358545bcb68515" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a643ca359c291725aab872a40e0a35bb6" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestClosePauseMenu</name></member>
+      <member refid="classAARPlayerController_1a10a756a339dabee13256e43cd1509399" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestHUDInitialization</name></member>
+      <member refid="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestOpenPauseMenu</name></member>
+      <member refid="classAARPlayerController_1a031e7d812927df360dfe20c5598f7a35" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestRemoveUnlock</name></member>
+      <member refid="classAARPlayerController_1a1cbb3e3fdfd84fc83635f1291735fe0a" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestSetDialogueEavesdrop</name></member>
+      <member refid="classAARPlayerController_1a70c9c812a6887c3f062ca55df1da64fe" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestStartDialogue</name></member>
+      <member refid="classAARPlayerController_1adf8d5ecc34ad162b878e366eaaec2d51" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>RequestTogglePauseMenu</name></member>
+      <member refid="classAARPlayerController_1a6c13654525fb6b4c81d53122996ac030" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerLeaveSession</name></member>
+      <member refid="classAARPlayerController_1a60b7eb92f87748d503f2994976b42dfc" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a3bf16683192dd60dac37f876a429215c" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1a4bebade6c01814b4d01e9f283a192e56" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestCanonicalSaveSync</name></member>
+      <member refid="classAARPlayerController_1a7d458860e51dfa57ed7e38a392f13ba3" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestRemoveUnlock</name></member>
+      <member refid="classAARPlayerController_1a1ea8c0441618e9d8102f44036d5636e2" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestSetDialogueEavesdrop</name></member>
+      <member refid="classAARPlayerController_1a10beeb36a44e94567ebe82e2f24384b7" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestStartDialogue</name></member>
+      <member refid="classAARPlayerController_1a5d97c63602d82c6e19cd17eb55e20e05" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerRequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1a374e49efbd19723235e3f8c6f91c0ca1" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerSetPauseMenuVote</name></member>
+      <member refid="classAARPlayerController_1aabc8f4fff6df37fd71c4045edc006f70" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>ServerTryStartTravel</name></member>
+      <member refid="classAARPlayerController_1a90164b122bb092cbd6f66f3657233ab2" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>SetPauseMenuBlocked</name></member>
+      <member refid="classAARPlayerController_1a952943a56da01091847280598b7ee8d6" prot="public" virt="non-virtual"><scope>AARShopPlayerController</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

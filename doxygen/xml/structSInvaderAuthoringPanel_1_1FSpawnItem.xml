@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structSInvaderAuthoringPanel_1_1FSpawnItem" kind="struct" language="C++" prot="private">
+    <compoundname>SInvaderAuthoringPanel::FSpawnItem</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FSpawnItem_1abfee6a0d3d6358191a12141fc6412998" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor SInvaderAuthoringPanel::FSpawnItem::Color</definition>
+        <argsstring></argsstring>
+        <name>Color</name>
+        <qualifiedname>SInvaderAuthoringPanel::FSpawnItem::Color</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="93" column="18" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FSpawnItem_1a65a5cbb4fc9281c5a32dcb0924ce0186" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float SInvaderAuthoringPanel::FSpawnItem::Delay</definition>
+        <argsstring></argsstring>
+        <name>Delay</name>
+        <qualifiedname>SInvaderAuthoringPanel::FSpawnItem::Delay</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="92" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FSpawnItem_1aa0136ff24831d6a577b33ac41a700858" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString SInvaderAuthoringPanel::FSpawnItem::EnemyClassName</definition>
+        <argsstring></argsstring>
+        <name>EnemyClassName</name>
+        <qualifiedname>SInvaderAuthoringPanel::FSpawnItem::EnemyClassName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="94" column="9" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSInvaderAuthoringPanel_1_1FSpawnItem_1a6da658becb9958db18567ba1aa5e0cf7" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 SInvaderAuthoringPanel::FSpawnItem::SpawnIndex</definition>
+        <argsstring></argsstring>
+        <name>SpawnIndex</name>
+        <qualifiedname>SInvaderAuthoringPanel::FSpawnItem::SpawnIndex</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="91" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" line="89" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.h" bodystart="90" bodyend="95"/>
+    <listofallmembers>
+      <member refid="structSInvaderAuthoringPanel_1_1FSpawnItem_1abfee6a0d3d6358191a12141fc6412998" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FSpawnItem</scope><name>Color</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FSpawnItem_1a65a5cbb4fc9281c5a32dcb0924ce0186" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FSpawnItem</scope><name>Delay</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FSpawnItem_1aa0136ff24831d6a577b33ac41a700858" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FSpawnItem</scope><name>EnemyClassName</name></member>
+      <member refid="structSInvaderAuthoringPanel_1_1FSpawnItem_1a6da658becb9958db18567ba1aa5e0cf7" prot="public" virt="non-virtual"><scope>SInvaderAuthoringPanel::FSpawnItem</scope><name>SpawnIndex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

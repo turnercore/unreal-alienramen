@@ -1,0 +1,1526 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSaveSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARSaveSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <includes refid="ARSaveSubsystem_8h" local="no">AlienRamen/Public/ARSaveSubsystem.h</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classUARSaveSubsystem_1aaddd205bac5a7f49cc7412a2e73a6873" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr int32</type>
+        <definition>constexpr int32 UARSaveSubsystem::DefaultUserIndex</definition>
+        <argsstring></argsstring>
+        <name>DefaultUserIndex</name>
+        <qualifiedname>UARSaveSubsystem::DefaultUserIndex</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="32" column="24" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARSaveSubsystem_1aeaadef154d5f28aa50ffc5a0eb8f5abf" prot="public" static="no" mutable="no">
+        <type>FAROnGameLoaded</type>
+        <definition>FAROnGameLoaded UARSaveSubsystem::OnGameLoaded</definition>
+        <argsstring></argsstring>
+        <name>OnGameLoaded</name>
+        <qualifiedname>UARSaveSubsystem::OnGameLoaded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="183" column="17" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a1944d99f09bf8c102c6eeaef2a07e434" prot="public" static="no" mutable="no">
+        <type>FAROnSaveOperationCompleted</type>
+        <definition>FAROnSaveOperationCompleted UARSaveSubsystem::OnLoadCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnLoadCompleted</name>
+        <qualifiedname>UARSaveSubsystem::OnLoadCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="174" column="29" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1ab44ab6c83a635e8b2e0743ec6459e954" prot="public" static="no" mutable="no">
+        <type>FAROnSaveOperationFailed</type>
+        <definition>FAROnSaveOperationFailed UARSaveSubsystem::OnLoadFailed</definition>
+        <argsstring></argsstring>
+        <name>OnLoadFailed</name>
+        <qualifiedname>UARSaveSubsystem::OnLoadFailed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="180" column="26" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a7a8525663f10af490e8a0f8c376d3292" prot="public" static="no" mutable="no">
+        <type>FAROnSaveOperationCompleted</type>
+        <definition>FAROnSaveOperationCompleted UARSaveSubsystem::OnSaveCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnSaveCompleted</name>
+        <qualifiedname>UARSaveSubsystem::OnSaveCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="167" column="29" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a857a2ba42f0d789094ecdf58508719c4" prot="public" static="no" mutable="no">
+        <type>FAROnSaveOperationFailed</type>
+        <definition>FAROnSaveOperationFailed UARSaveSubsystem::OnSaveFailed</definition>
+        <argsstring></argsstring>
+        <name>OnSaveFailed</name>
+        <qualifiedname>UARSaveSubsystem::OnSaveFailed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="177" column="26" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a7840499cf46797ac7457e8520ccc69cc" prot="public" static="no" mutable="no">
+        <type>FAROnSaveOperationStarted</type>
+        <definition>FAROnSaveOperationStarted UARSaveSubsystem::OnSaveStarted</definition>
+        <argsstring></argsstring>
+        <name>OnSaveStarted</name>
+        <qualifiedname>UARSaveSubsystem::OnSaveStarted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="171" column="27" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a2ab3fb6fefe66b3a2e82410fac68b414" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::bLogSaveSuccess</definition>
+        <argsstring></argsstring>
+        <name>bLogSaveSuccess</name>
+        <qualifiedname>UARSaveSubsystem::bLogSaveSuccess</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="242" column="6" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a4f62ddc8d7ffdcd81f04076bcff8640d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::bSaveDirty</definition>
+        <argsstring></argsstring>
+        <name>bSaveDirty</name>
+        <qualifiedname>UARSaveSubsystem::bSaveDirty</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="231" column="6" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1aa4e1530af9ca09acfe108ab9908ff1d4" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::bSaveInProgress</definition>
+        <argsstring></argsstring>
+        <name>bSaveInProgress</name>
+        <qualifiedname>UARSaveSubsystem::bSaveInProgress</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="228" column="6" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a4522a50d934a287d4d3d64dfcb43d32b" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARSaveGame&gt; UARSaveSubsystem::CurrentSaveGame</definition>
+        <argsstring></argsstring>
+        <name>CurrentSaveGame</name>
+        <qualifiedname>UARSaveSubsystem::CurrentSaveGame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="216" column="12" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a9f01259491f36f934f2c854fa7f1f215" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARSaveSubsystem::CurrentSlotBaseName</definition>
+        <argsstring></argsstring>
+        <name>CurrentSlotBaseName</name>
+        <qualifiedname>UARSaveSubsystem::CurrentSlotBaseName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="219" column="7" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a39c1999978c139d0d66abdcb5b2a965a" prot="private" static="no" mutable="no">
+        <type>FDateTime</type>
+        <definition>FDateTime UARSaveSubsystem::LastSaveTimestampUtc</definition>
+        <argsstring></argsstring>
+        <name>LastSaveTimestampUtc</name>
+        <qualifiedname>UARSaveSubsystem::LastSaveTimestampUtc</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="234" column="11" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1aadd3984ba4b4272b5b9764e97e661720" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARSaveSubsystem::MinSaveIntervalSeconds</definition>
+        <argsstring></argsstring>
+        <name>MinSaveIntervalSeconds</name>
+        <qualifiedname>UARSaveSubsystem::MinSaveIntervalSeconds</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="238" column="7" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1abd6770903e8a4dab9f2dc87924007259" prot="private" static="no" mutable="no">
+        <type>TArray&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> &gt; &gt;</type>
+        <definition>TArray&lt;TWeakObjectPtr&lt;AARPlayerController&gt; &gt; UARSaveSubsystem::PendingCanonicalSyncRequests</definition>
+        <argsstring></argsstring>
+        <name>PendingCanonicalSyncRequests</name>
+        <qualifiedname>UARSaveSubsystem::PendingCanonicalSyncRequests</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="222" column="8" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveSubsystem_1a51cc6f8b965ec648dd01480f15912094" prot="private" static="no" mutable="no">
+        <type>FInstancedStruct</type>
+        <definition>FInstancedStruct UARSaveSubsystem::PendingTravelGameStateData</definition>
+        <argsstring></argsstring>
+        <name>PendingTravelGameStateData</name>
+        <qualifiedname>UARSaveSubsystem::PendingTravelGameStateData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="225" column="18" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARSaveSubsystem_1aaf3bb06e8ca6c82f1423cdb66922340d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::AddProgressionTag</definition>
+        <argsstring>(FGameplayTag ProgressionTag)</argsstring>
+        <name>AddProgressionTag</name>
+        <qualifiedname>UARSaveSubsystem::AddProgressionTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ProgressionTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="97" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1379" bodyend="1394"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a04db2969508571b3408ced34a71e153d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::ClearPendingTravelGameStateData</definition>
+        <argsstring>()</argsstring>
+        <name>ClearPendingTravelGameStateData</name>
+        <qualifiedname>UARSaveSubsystem::ClearPendingTravelGameStateData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="149" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1061" bodyend="1064"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a542dc91db61c4c9958ad908d9b22937f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::CreateNewSave</definition>
+        <argsstring>(FName DesiredSlotBase, FARSaveSlotDescriptor &amp;OutSlot, FARSaveResult &amp;OutResult, bool bUseDebugSaves=false)</argsstring>
+        <name>CreateNewSave</name>
+        <qualifiedname>UARSaveSubsystem::CreateNewSave</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>DesiredSlotBase</declname>
+        </param>
+        <param>
+          <type>FARSaveSlotDescriptor &amp;</type>
+          <declname>OutSlot</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="35" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="527" bodyend="596"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a7b67bf4452c494f569f9a0a289ad464b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::DeleteSave</definition>
+        <argsstring>(FName SlotBaseName, FARSaveResult &amp;OutResult, bool bUseDebugSaves=false)</argsstring>
+        <name>DeleteSave</name>
+        <qualifiedname>UARSaveSubsystem::DeleteSave</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="47" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="885" bodyend="938"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a17cec90ea1fb0d0a8af77fbe61bcec5f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::FormatTimeSinceLastSave</definition>
+        <argsstring>(FText &amp;OutText) const</argsstring>
+        <name>FormatTimeSinceLastSave</name>
+        <qualifiedname>UARSaveSubsystem::FormatTimeSinceLastSave</qualifiedname>
+        <param>
+          <type>FText &amp;</type>
+          <declname>OutText</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="80" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1348" bodyend="1357"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a4cb5b2e2e3f71daac65b80aa9577960b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName UARSaveSubsystem::GenerateRandomSlotBaseName</definition>
+        <argsstring>(bool bEnsureUnique=true)</argsstring>
+        <name>GenerateRandomSlotBaseName</name>
+        <qualifiedname>UARSaveSubsystem::GenerateRandomSlotBaseName</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnsureUnique</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="62" column="7" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="164" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a5a152c7f44322c12f39c052a73a038f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+        <definition>UARSaveGame * UARSaveSubsystem::GetCurrentSaveGame</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentSaveGame</name>
+        <qualifiedname>UARSaveSubsystem::GetCurrentSaveGame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="50" column="13" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a883b391bbf2f618f5b623f630b279385" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName UARSaveSubsystem::GetCurrentSlotBaseName</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentSlotBaseName</name>
+        <qualifiedname>UARSaveSubsystem::GetCurrentSlotBaseName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="56" column="7" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1aca59cdc8eece1af37e24e2f6b8d77d29" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSaveSubsystem::GetCurrentSlotRevision</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentSlotRevision</name>
+        <qualifiedname>UARSaveSubsystem::GetCurrentSlotRevision</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="59" column="7" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="247" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a72a587b9021029cbdbd8547dd6b6e45c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSaveSubsystem::GetFactionClout</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFactionClout</name>
+        <qualifiedname>UARSaveSubsystem::GetFactionClout</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="103" column="7" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1413" bodyend="1416"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a27474699e4c97b6ec51bad2aca043bb1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::GetLastSaveTimestamp</definition>
+        <argsstring>(FDateTime &amp;OutTimestampUtc) const</argsstring>
+        <name>GetLastSaveTimestamp</name>
+        <qualifiedname>UARSaveSubsystem::GetLastSaveTimestamp</qualifiedname>
+        <param>
+          <type>FDateTime &amp;</type>
+          <declname>OutTimestampUtc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="76" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1338" bodyend="1346"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a1cca304549d499fd6f4ead14bf301867" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSaveSubsystem::GetMaxBackupRevisions</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMaxBackupRevisions</name>
+        <qualifiedname>UARSaveSubsystem::GetMaxBackupRevisions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="65" column="7" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="241" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a85e82164271821928b2dfe6c4cc91a1f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARSaveSubsystem::GetProgressionTags</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProgressionTags</name>
+        <qualifiedname>UARSaveSubsystem::GetProgressionTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="91" column="23" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1364" bodyend="1372"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1adc9621a4afe95dc3db9f7cb9c4e4e21a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::GetTimeSinceLastSave</definition>
+        <argsstring>(FTimespan &amp;OutElapsed) const</argsstring>
+        <name>GetTimeSinceLastSave</name>
+        <qualifiedname>UARSaveSubsystem::GetTimeSinceLastSave</qualifiedname>
+        <param>
+          <type>FTimespan &amp;</type>
+          <declname>OutElapsed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="72" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1326" bodyend="1336"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1af2c70694afed796760d01f6965c48448" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::HasCurrentSave</definition>
+        <argsstring>() const</argsstring>
+        <name>HasCurrentSave</name>
+        <qualifiedname>UARSaveSubsystem::HasCurrentSave</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="53" column="6" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1ae64b4092a0262db8a22ed03d65ede8ab" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::HasPendingTravelGameStateData</definition>
+        <argsstring>() const</argsstring>
+        <name>HasPendingTravelGameStateData</name>
+        <qualifiedname>UARSaveSubsystem::HasPendingTravelGameStateData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="152" column="6" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="152" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a18730e96c492c07ede449b7094b4bc2d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::HasProgressionTag</definition>
+        <argsstring>(FGameplayTag ProgressionTag) const</argsstring>
+        <name>HasProgressionTag</name>
+        <qualifiedname>UARSaveSubsystem::HasProgressionTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ProgressionTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="94" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1374" bodyend="1377"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a6a44db47cf16726915e07b448aa6c246" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::IncrementSaveCycles</definition>
+        <argsstring>(int32 Delta, bool bSaveAfterIncrement, FARSaveResult &amp;OutResult)</argsstring>
+        <name>IncrementSaveCycles</name>
+        <qualifiedname>UARSaveSubsystem::IncrementSaveCycles</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>Delta</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSaveAfterIncrement</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="114" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1277" bodyend="1324"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1afd586c8f86886498a54a9b5f48a6ffcb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::IsSaveInProgress</definition>
+        <argsstring>() const</argsstring>
+        <name>IsSaveInProgress</name>
+        <qualifiedname>UARSaveSubsystem::IsSaveInProgress</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="84" column="6" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1aeb3a5681f804c159684d5ff126cad270" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::ListSaves</definition>
+        <argsstring>(TArray&lt; FARSaveSlotDescriptor &gt; &amp;OutSlots, FARSaveResult &amp;OutResult, bool bUseDebugSaves=false) const</argsstring>
+        <name>ListSaves</name>
+        <qualifiedname>UARSaveSubsystem::ListSaves</qualifiedname>
+        <param>
+          <type>TArray&lt; FARSaveSlotDescriptor &gt; &amp;</type>
+          <declname>OutSlots</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="44" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="869" bodyend="883"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1aa041acf71a75ce7b81b3c5cc8c2f1b15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::LoadGame</definition>
+        <argsstring>(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult &amp;OutResult, bool bUseDebugSaves=false)</argsstring>
+        <name>LoadGame</name>
+        <qualifiedname>UARSaveSubsystem::LoadGame</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RevisionOrLatest</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="41" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="825" bodyend="867"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a7da8bd37ffef8b39d417b4d4a9d49e30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::MarkSaveDirty</definition>
+        <argsstring>()</argsstring>
+        <name>MarkSaveDirty</name>
+        <qualifiedname>UARSaveSubsystem::MarkSaveDirty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="88" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1359" bodyend="1362"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a95e153dd9da41be64dea9619db3c1f5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::PersistCanonicalSaveFromBytes</definition>
+        <argsstring>(const TArray&lt; uint8 &gt; &amp;SaveBytes, FName SlotBaseName, int32 SlotNumber, FARSaveResult &amp;OutResult)</argsstring>
+        <name>PersistCanonicalSaveFromBytes</name>
+        <qualifiedname>UARSaveSubsystem::PersistCanonicalSaveFromBytes</qualifiedname>
+        <param>
+          <type>const TArray&lt; uint8 &gt; &amp;</type>
+          <declname>SaveBytes</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>SlotNumber</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="164" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="598" bodyend="656"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a493207f1b56df92bedd5a1fc43b5fead" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::PushCurrentSaveToPlayer</definition>
+        <argsstring>(AARPlayerController *TargetPlayerController, FARSaveResult &amp;OutResult)</argsstring>
+        <name>PushCurrentSaveToPlayer</name>
+        <qualifiedname>UARSaveSubsystem::PushCurrentSaveToPlayer</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>TargetPlayerController</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="161" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="940" bodyend="1005"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a6f5f75810bc93292cd9e4f6be9e06e26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::RemoveProgressionTag</definition>
+        <argsstring>(FGameplayTag ProgressionTag)</argsstring>
+        <name>RemoveProgressionTag</name>
+        <qualifiedname>UARSaveSubsystem::RemoveProgressionTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ProgressionTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="100" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1396" bodyend="1411"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1ada551eeb9d374c5377d47d55133b32a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::RequestAutosaveIfDirty</definition>
+        <argsstring>(bool bCreateNewRevision, FARSaveResult &amp;OutResult)</argsstring>
+        <name>RequestAutosaveIfDirty</name>
+        <qualifiedname>UARSaveSubsystem::RequestAutosaveIfDirty</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bCreateNewRevision</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="110" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1435" bodyend="1446"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a8d06f8320444a4d296ad1df9ac58ee96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::RequestGameStateHydration</definition>
+        <argsstring>(AARGameStateBase *Requester)</argsstring>
+        <name>RequestGameStateHydration</name>
+        <qualifiedname>UARSaveSubsystem::RequestGameStateHydration</qualifiedname>
+        <param>
+          <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>Requester</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="117" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1007" bodyend="1048"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a8467377d7d37d66bdf7c5efcb2aa0931" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::RequestOpenLevel</definition>
+        <argsstring>(const FString &amp;LevelName, const FString &amp;Options=&quot;&quot;, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bPersistSaveBeforeTravel=true)</argsstring>
+        <name>RequestOpenLevel</name>
+        <qualifiedname>UARSaveSubsystem::RequestOpenLevel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>LevelName</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bPersistSaveBeforeTravel</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Authority-only non-networked level open. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Enforces listen option so host remains authoritative. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="136" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1237" bodyend="1275"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a58ad5bc6831b602a3d50768da7bf1239" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::RequestServerTravel</definition>
+        <argsstring>(const FString &amp;URL, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bPersistSaveBeforeTravel=true)</argsstring>
+        <name>RequestServerTravel</name>
+        <qualifiedname>UARSaveSubsystem::RequestServerTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bPersistSaveBeforeTravel</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Authority-only travel helper used by UI/Blueprints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Flow: optional readiness gate -&gt; capture GameState travel snapshot -&gt; optional disk save -&gt; ServerTravel with enforced listen option. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="125" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1198" bodyend="1235"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a0ea5f8902c49b616dd6734579e496560" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::SaveCurrentGame</definition>
+        <argsstring>(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult &amp;OutResult, bool bUseDebugSaves=false)</argsstring>
+        <name>SaveCurrentGame</name>
+        <qualifiedname>UARSaveSubsystem::SaveCurrentGame</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bCreateNewRevision</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDebugSaves</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="38" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="658" bodyend="823"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a54f1d577297422f39d968fb204d7f617" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::SetFactionClout</definition>
+        <argsstring>(int32 NewFactionClout)</argsstring>
+        <name>SetFactionClout</name>
+        <qualifiedname>UARSaveSubsystem::SetFactionClout</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewFactionClout</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="106" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1418" bodyend="1433"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a82190aab24d2563a9261c2304babc5c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::SetMaxBackupRevisions</definition>
+        <argsstring>(int32 NewMaxBackups)</argsstring>
+        <name>SetMaxBackupRevisions</name>
+        <qualifiedname>UARSaveSubsystem::SetMaxBackupRevisions</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewMaxBackups</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="68" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="252" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1af76f120cbfddc8f7fcefcfe65e6e89a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::SetPendingTravelGameStateData</definition>
+        <argsstring>(const FInstancedStruct &amp;PendingStateData)</argsstring>
+        <name>SetPendingTravelGameStateData</name>
+        <qualifiedname>UARSaveSubsystem::SetPendingTravelGameStateData</qualifiedname>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>PendingStateData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="146" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1050" bodyend="1059"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a780f0fb5d30d8aea74b3d167301c6a9a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave</definition>
+        <argsstring>(AARPlayerStateBase *Requester, bool bAllowSlotFallback=true)</argsstring>
+        <name>TryHydratePlayerStateFromCurrentSave</name>
+        <qualifiedname>UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>Requester</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAllowSlotFallback</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="157" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1066" bodyend="1100"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARSaveSubsystem_1a35648626063001a9cb3666dec25f634c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARSaveSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="187" column="14" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="139" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1aa0bd2fe3ac66c6ed08676e77f447cb00" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::Initialize</definition>
+        <argsstring>(FSubsystemCollectionBase &amp;Collection) override</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UARSaveSubsystem::Initialize</qualifiedname>
+        <param>
+          <type>FSubsystemCollectionBase &amp;</type>
+          <declname>Collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="186" column="14" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="148" bodyend="152"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARSaveSubsystem_1a0858a1c6fd0af251e191288bb351082f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::ApplyLoadedSave</definition>
+        <argsstring>(UARSaveGame *LoadedSave, const FARSaveResult &amp;LoadResult)</argsstring>
+        <name>ApplyLoadedSave</name>
+        <qualifiedname>UARSaveSubsystem::ApplyLoadedSave</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>LoadedSave</declname>
+        </param>
+        <param>
+          <type>const FARSaveResult &amp;</type>
+          <declname>LoadResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="208" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1460" bodyend="1482"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a29e3eda2539f37c5117e388ec2d161c3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::ArePlayersReadyForTravel</definition>
+        <argsstring>(bool bSkipReadyChecks, FString &amp;OutError) const</argsstring>
+        <name>ArePlayersReadyForTravel</name>
+        <qualifiedname>UARSaveSubsystem::ArePlayersReadyForTravel</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="190" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1102" bodyend="1157"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a297ba14554017be40404ff47511b2d55" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::BroadcastLoadFailure</definition>
+        <argsstring>(const FARSaveResult &amp;Result)</argsstring>
+        <name>BroadcastLoadFailure</name>
+        <qualifiedname>UARSaveSubsystem::BroadcastLoadFailure</qualifiedname>
+        <param>
+          <type>const FARSaveResult &amp;</type>
+          <declname>Result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="207" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1454" bodyend="1458"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a5a78ae83007e848a4da6c3b6b26f5d55" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::BroadcastSaveFailure</definition>
+        <argsstring>(const FARSaveResult &amp;Result)</argsstring>
+        <name>BroadcastSaveFailure</name>
+        <qualifiedname>UARSaveSubsystem::BroadcastSaveFailure</qualifiedname>
+        <param>
+          <type>const FARSaveResult &amp;</type>
+          <declname>Result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="206" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1448" bodyend="1452"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a1bf604ac5c5d5ecc105de1886c4238fb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::CaptureGameStateForTravel</definition>
+        <argsstring>(UWorld *World)</argsstring>
+        <name>CaptureGameStateForTravel</name>
+        <qualifiedname>UARSaveSubsystem::CaptureGameStateForTravel</qualifiedname>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="191" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1159" bodyend="1181"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a470ade0489339ac0be26207a53062bf4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::FlushPendingCanonicalSyncRequests</definition>
+        <argsstring>()</argsstring>
+        <name>FlushPendingCanonicalSyncRequests</name>
+        <qualifiedname>UARSaveSubsystem::FlushPendingCanonicalSyncRequests</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="210" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1498" bodyend="1517"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1ab83384b0150cf35bba6d2bf890c07b43" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::GatherRuntimeData</definition>
+        <argsstring>(UARSaveGame *SaveObject)</argsstring>
+        <name>GatherRuntimeData</name>
+        <qualifiedname>UARSaveSubsystem::GatherRuntimeData</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveObject</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="205" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="407" bodyend="473"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a6fbd384a3380a98584deb27b16fb1ef1" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::LoadOrCreateIndex</definition>
+        <argsstring>(UARSaveIndexGame *&amp;OutIndex, FARSaveResult &amp;OutResult) const</argsstring>
+        <name>LoadOrCreateIndex</name>
+        <qualifiedname>UARSaveSubsystem::LoadOrCreateIndex</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *&amp;</type>
+          <declname>OutIndex</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="200" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="334" bodyend="337"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a038cc3baf3f5208ec8d92632261afcc5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::LoadOrCreateIndexForSlot</definition>
+        <argsstring>(UARSaveIndexGame *&amp;OutIndex, FARSaveResult &amp;OutResult, const TCHAR *IndexSlotName) const</argsstring>
+        <name>LoadOrCreateIndexForSlot</name>
+        <qualifiedname>UARSaveSubsystem::LoadOrCreateIndexForSlot</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *&amp;</type>
+          <declname>OutIndex</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>IndexSlotName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="198" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="292" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a8838d7e4ddca217659218d7659cfa7c5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+        <definition>UARSaveGame * UARSaveSubsystem::LoadSaveObjectWithRollback</definition>
+        <argsstring>(FName SlotBaseName, int32 RevisionOrLatest, int32 &amp;OutResolvedSlotNumber, FARSaveResult &amp;OutResult, const TCHAR *IndexSlotName) const</argsstring>
+        <name>LoadSaveObjectWithRollback</name>
+        <qualifiedname>UARSaveSubsystem::LoadSaveObjectWithRollback</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RevisionOrLatest</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutResolvedSlotNumber</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>IndexSlotName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="203" column="13" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="475" bodyend="525"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a428df4956af845bdb8e1ab85fc95dffa" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::PruneOldRevisions</definition>
+        <argsstring>(FName SlotBaseName, int32 LatestRevision) const</argsstring>
+        <name>PruneOldRevisions</name>
+        <qualifiedname>UARSaveSubsystem::PruneOldRevisions</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>LatestRevision</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="204" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="360" bodyend="372"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a6601b31e83a388919229c828fb90f843" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARSaveSubsystem::QueuePendingCanonicalSyncRequest</definition>
+        <argsstring>(AARPlayerController *TargetPlayerController)</argsstring>
+        <name>QueuePendingCanonicalSyncRequest</name>
+        <qualifiedname>UARSaveSubsystem::QueuePendingCanonicalSyncRequest</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>TargetPlayerController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="209" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1484" bodyend="1496"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a31844b2fab736c2c33cdaed1379d8b25" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::RemoveIndexEntry</definition>
+        <argsstring>(UARSaveIndexGame *IndexObj, FName SlotBaseName) const</argsstring>
+        <name>RemoveIndexEntry</name>
+        <qualifiedname>UARSaveSubsystem::RemoveIndexEntry</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *</type>
+          <declname>IndexObj</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="213" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="393" bodyend="405"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a557f72c7a33600d97159015e79f54886" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::SaveIndex</definition>
+        <argsstring>(UARSaveIndexGame *IndexObj, FARSaveResult &amp;OutResult) const</argsstring>
+        <name>SaveIndex</name>
+        <qualifiedname>UARSaveSubsystem::SaveIndex</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *</type>
+          <declname>IndexObj</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="201" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="339" bodyend="342"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a10bf1691750c7149225db1f9f81e223a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::SaveIndexForSlot</definition>
+        <argsstring>(UARSaveIndexGame *IndexObj, FARSaveResult &amp;OutResult, const TCHAR *IndexSlotName) const</argsstring>
+        <name>SaveIndexForSlot</name>
+        <qualifiedname>UARSaveSubsystem::SaveIndexForSlot</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *</type>
+          <declname>IndexObj</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>IndexSlotName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="199" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="319" bodyend="332"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a915ff96d1b0c826f56ffb64e924d9423" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::SaveSaveObject</definition>
+        <argsstring>(UARSaveGame *SaveObject, FName SlotBaseName, int32 SlotNumber, FARSaveResult &amp;OutResult) const</argsstring>
+        <name>SaveSaveObject</name>
+        <qualifiedname>UARSaveSubsystem::SaveSaveObject</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveObject</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>SlotNumber</declname>
+        </param>
+        <param>
+          <type>FARSaveResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="202" column="6" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="344" bodyend="358"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1aae35f59caf9ea76203ed12b96a5a2211" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSaveSubsystem::UpsertIndexEntry</definition>
+        <argsstring>(UARSaveIndexGame *IndexObj, const FARSaveSlotDescriptor &amp;Descriptor) const</argsstring>
+        <name>UpsertIndexEntry</name>
+        <qualifiedname>UARSaveSubsystem::UpsertIndexEntry</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveIndexGame" kindref="compound">UARSaveIndexGame</ref> *</type>
+          <declname>IndexObj</declname>
+        </param>
+        <param>
+          <type>const FARSaveSlotDescriptor &amp;</type>
+          <declname>Descriptor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="212" column="7" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="374" bodyend="391"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARSaveSubsystem_1aae1e2aca837f390d7f2c0a53011e848a" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName UARSaveSubsystem::BuildRevisionSlotName</definition>
+        <argsstring>(FName SlotBaseName, int32 SlotNumber)</argsstring>
+        <name>BuildRevisionSlotName</name>
+        <qualifiedname>UARSaveSubsystem::BuildRevisionSlotName</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>SlotNumber</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="195" column="14" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="264" bodyend="267"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a3b3cd67dc05f9ff318636a679a128308" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARSaveSubsystem::EnsureListenOption</definition>
+        <argsstring>(const FString &amp;InURLOrOptions)</argsstring>
+        <name>EnsureListenOption</name>
+        <qualifiedname>UARSaveSubsystem::EnsureListenOption</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>InURLOrOptions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="192" column="16" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="1183" bodyend="1196"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1a6a1418c2dbd2a51fc8237138d97a1deb" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName UARSaveSubsystem::NormalizeSlotBaseName</definition>
+        <argsstring>(FName SlotBaseName)</argsstring>
+        <name>NormalizeSlotBaseName</name>
+        <qualifiedname>UARSaveSubsystem::NormalizeSlotBaseName</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="194" column="14" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="154" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveSubsystem_1ae7495b473dd0975cab7a2093249c5ff8" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveSubsystem::TrySplitRevisionSlotName</definition>
+        <argsstring>(const FString &amp;InSlotName, FString &amp;OutBaseSlotName, int32 &amp;OutSlotNumber)</argsstring>
+        <name>TrySplitRevisionSlotName</name>
+        <qualifiedname>UARSaveSubsystem::TrySplitRevisionSlotName</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>InSlotName</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutBaseSlotName</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutSlotNumber</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveSubsystem.h" line="196" column="13" bodyfile="AlienRamen/Private/ARSaveSubsystem.cpp" bodystart="269" bodyend="290"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>GameInstance subsystem that owns save/load/list/delete plus travel-save orchestration. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveSubsystem.h" line="27" column="1" bodyfile="AlienRamen/Public/ARSaveSubsystem.h" bodystart="28" bodyend="243"/>
+    <listofallmembers>
+      <member refid="classUARSaveSubsystem_1aaf3bb06e8ca6c82f1423cdb66922340d" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>AddProgressionTag</name></member>
+      <member refid="classUARSaveSubsystem_1a0858a1c6fd0af251e191288bb351082f" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>ApplyLoadedSave</name></member>
+      <member refid="classUARSaveSubsystem_1a29e3eda2539f37c5117e388ec2d161c3" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>ArePlayersReadyForTravel</name></member>
+      <member refid="classUARSaveSubsystem_1a2ab3fb6fefe66b3a2e82410fac68b414" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>bLogSaveSuccess</name></member>
+      <member refid="classUARSaveSubsystem_1a297ba14554017be40404ff47511b2d55" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>BroadcastLoadFailure</name></member>
+      <member refid="classUARSaveSubsystem_1a5a78ae83007e848a4da6c3b6b26f5d55" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>BroadcastSaveFailure</name></member>
+      <member refid="classUARSaveSubsystem_1a4f62ddc8d7ffdcd81f04076bcff8640d" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>bSaveDirty</name></member>
+      <member refid="classUARSaveSubsystem_1aa4e1530af9ca09acfe108ab9908ff1d4" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>bSaveInProgress</name></member>
+      <member refid="classUARSaveSubsystem_1aae1e2aca837f390d7f2c0a53011e848a" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>BuildRevisionSlotName</name></member>
+      <member refid="classUARSaveSubsystem_1a1bf604ac5c5d5ecc105de1886c4238fb" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>CaptureGameStateForTravel</name></member>
+      <member refid="classUARSaveSubsystem_1a04db2969508571b3408ced34a71e153d" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>ClearPendingTravelGameStateData</name></member>
+      <member refid="classUARSaveSubsystem_1a542dc91db61c4c9958ad908d9b22937f" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>CreateNewSave</name></member>
+      <member refid="classUARSaveSubsystem_1a4522a50d934a287d4d3d64dfcb43d32b" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>CurrentSaveGame</name></member>
+      <member refid="classUARSaveSubsystem_1a9f01259491f36f934f2c854fa7f1f215" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>CurrentSlotBaseName</name></member>
+      <member refid="classUARSaveSubsystem_1aaddd205bac5a7f49cc7412a2e73a6873" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>DefaultUserIndex</name></member>
+      <member refid="classUARSaveSubsystem_1a35648626063001a9cb3666dec25f634c" prot="protected" virt="virtual"><scope>UARSaveSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARSaveSubsystem_1a7b67bf4452c494f569f9a0a289ad464b" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>DeleteSave</name></member>
+      <member refid="classUARSaveSubsystem_1a3b3cd67dc05f9ff318636a679a128308" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>EnsureListenOption</name></member>
+      <member refid="classUARSaveSubsystem_1a470ade0489339ac0be26207a53062bf4" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>FlushPendingCanonicalSyncRequests</name></member>
+      <member refid="classUARSaveSubsystem_1a17cec90ea1fb0d0a8af77fbe61bcec5f" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>FormatTimeSinceLastSave</name></member>
+      <member refid="classUARSaveSubsystem_1ab83384b0150cf35bba6d2bf890c07b43" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GatherRuntimeData</name></member>
+      <member refid="classUARSaveSubsystem_1a4cb5b2e2e3f71daac65b80aa9577960b" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GenerateRandomSlotBaseName</name></member>
+      <member refid="classUARSaveSubsystem_1a5a152c7f44322c12f39c052a73a038f7" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetCurrentSaveGame</name></member>
+      <member refid="classUARSaveSubsystem_1a883b391bbf2f618f5b623f630b279385" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetCurrentSlotBaseName</name></member>
+      <member refid="classUARSaveSubsystem_1aca59cdc8eece1af37e24e2f6b8d77d29" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetCurrentSlotRevision</name></member>
+      <member refid="classUARSaveSubsystem_1a72a587b9021029cbdbd8547dd6b6e45c" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetFactionClout</name></member>
+      <member refid="classUARSaveSubsystem_1a27474699e4c97b6ec51bad2aca043bb1" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetLastSaveTimestamp</name></member>
+      <member refid="classUARSaveSubsystem_1a1cca304549d499fd6f4ead14bf301867" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetMaxBackupRevisions</name></member>
+      <member refid="classUARSaveSubsystem_1a85e82164271821928b2dfe6c4cc91a1f" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetProgressionTags</name></member>
+      <member refid="classUARSaveSubsystem_1adc9621a4afe95dc3db9f7cb9c4e4e21a" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>GetTimeSinceLastSave</name></member>
+      <member refid="classUARSaveSubsystem_1af2c70694afed796760d01f6965c48448" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>HasCurrentSave</name></member>
+      <member refid="classUARSaveSubsystem_1ae64b4092a0262db8a22ed03d65ede8ab" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>HasPendingTravelGameStateData</name></member>
+      <member refid="classUARSaveSubsystem_1a18730e96c492c07ede449b7094b4bc2d" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>HasProgressionTag</name></member>
+      <member refid="classUARSaveSubsystem_1a6a44db47cf16726915e07b448aa6c246" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>IncrementSaveCycles</name></member>
+      <member refid="classUARSaveSubsystem_1aa0bd2fe3ac66c6ed08676e77f447cb00" prot="protected" virt="virtual"><scope>UARSaveSubsystem</scope><name>Initialize</name></member>
+      <member refid="classUARSaveSubsystem_1afd586c8f86886498a54a9b5f48a6ffcb" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>IsSaveInProgress</name></member>
+      <member refid="classUARSaveSubsystem_1a39c1999978c139d0d66abdcb5b2a965a" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>LastSaveTimestampUtc</name></member>
+      <member refid="classUARSaveSubsystem_1aeb3a5681f804c159684d5ff126cad270" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>ListSaves</name></member>
+      <member refid="classUARSaveSubsystem_1aa041acf71a75ce7b81b3c5cc8c2f1b15" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>LoadGame</name></member>
+      <member refid="classUARSaveSubsystem_1a6fbd384a3380a98584deb27b16fb1ef1" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>LoadOrCreateIndex</name></member>
+      <member refid="classUARSaveSubsystem_1a038cc3baf3f5208ec8d92632261afcc5" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>LoadOrCreateIndexForSlot</name></member>
+      <member refid="classUARSaveSubsystem_1a8838d7e4ddca217659218d7659cfa7c5" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>LoadSaveObjectWithRollback</name></member>
+      <member refid="classUARSaveSubsystem_1a7da8bd37ffef8b39d417b4d4a9d49e30" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>MarkSaveDirty</name></member>
+      <member refid="classUARSaveSubsystem_1aadd3984ba4b4272b5b9764e97e661720" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>MinSaveIntervalSeconds</name></member>
+      <member refid="classUARSaveSubsystem_1a6a1418c2dbd2a51fc8237138d97a1deb" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>NormalizeSlotBaseName</name></member>
+      <member refid="classUARSaveSubsystem_1aeaadef154d5f28aa50ffc5a0eb8f5abf" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>OnGameLoaded</name></member>
+      <member refid="classUARSaveSubsystem_1a1944d99f09bf8c102c6eeaef2a07e434" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>OnLoadCompleted</name></member>
+      <member refid="classUARSaveSubsystem_1ab44ab6c83a635e8b2e0743ec6459e954" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>OnLoadFailed</name></member>
+      <member refid="classUARSaveSubsystem_1a7a8525663f10af490e8a0f8c376d3292" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>OnSaveCompleted</name></member>
+      <member refid="classUARSaveSubsystem_1a857a2ba42f0d789094ecdf58508719c4" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>OnSaveFailed</name></member>
+      <member refid="classUARSaveSubsystem_1a7840499cf46797ac7457e8520ccc69cc" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>OnSaveStarted</name></member>
+      <member refid="classUARSaveSubsystem_1abd6770903e8a4dab9f2dc87924007259" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>PendingCanonicalSyncRequests</name></member>
+      <member refid="classUARSaveSubsystem_1a51cc6f8b965ec648dd01480f15912094" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>PendingTravelGameStateData</name></member>
+      <member refid="classUARSaveSubsystem_1a95e153dd9da41be64dea9619db3c1f5a" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>PersistCanonicalSaveFromBytes</name></member>
+      <member refid="classUARSaveSubsystem_1a428df4956af845bdb8e1ab85fc95dffa" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>PruneOldRevisions</name></member>
+      <member refid="classUARSaveSubsystem_1a493207f1b56df92bedd5a1fc43b5fead" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>PushCurrentSaveToPlayer</name></member>
+      <member refid="classUARSaveSubsystem_1a6601b31e83a388919229c828fb90f843" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>QueuePendingCanonicalSyncRequest</name></member>
+      <member refid="classUARSaveSubsystem_1a31844b2fab736c2c33cdaed1379d8b25" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>RemoveIndexEntry</name></member>
+      <member refid="classUARSaveSubsystem_1a6f5f75810bc93292cd9e4f6be9e06e26" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>RemoveProgressionTag</name></member>
+      <member refid="classUARSaveSubsystem_1ada551eeb9d374c5377d47d55133b32a3" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>RequestAutosaveIfDirty</name></member>
+      <member refid="classUARSaveSubsystem_1a8d06f8320444a4d296ad1df9ac58ee96" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>RequestGameStateHydration</name></member>
+      <member refid="classUARSaveSubsystem_1a8467377d7d37d66bdf7c5efcb2aa0931" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>RequestOpenLevel</name></member>
+      <member refid="classUARSaveSubsystem_1a58ad5bc6831b602a3d50768da7bf1239" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>RequestServerTravel</name></member>
+      <member refid="classUARSaveSubsystem_1a0ea5f8902c49b616dd6734579e496560" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SaveCurrentGame</name></member>
+      <member refid="classUARSaveSubsystem_1a557f72c7a33600d97159015e79f54886" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SaveIndex</name></member>
+      <member refid="classUARSaveSubsystem_1a10bf1691750c7149225db1f9f81e223a" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SaveIndexForSlot</name></member>
+      <member refid="classUARSaveSubsystem_1a915ff96d1b0c826f56ffb64e924d9423" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SaveSaveObject</name></member>
+      <member refid="classUARSaveSubsystem_1a54f1d577297422f39d968fb204d7f617" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SetFactionClout</name></member>
+      <member refid="classUARSaveSubsystem_1a82190aab24d2563a9261c2304babc5c7" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SetMaxBackupRevisions</name></member>
+      <member refid="classUARSaveSubsystem_1af76f120cbfddc8f7fcefcfe65e6e89a2" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>SetPendingTravelGameStateData</name></member>
+      <member refid="classUARSaveSubsystem_1a780f0fb5d30d8aea74b3d167301c6a9a" prot="public" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>TryHydratePlayerStateFromCurrentSave</name></member>
+      <member refid="classUARSaveSubsystem_1ae7495b473dd0975cab7a2093249c5ff8" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>TrySplitRevisionSlotName</name></member>
+      <member refid="classUARSaveSubsystem_1aae35f59caf9ea76203ed12b96a5a2211" prot="private" virt="non-virtual"><scope>UARSaveSubsystem</scope><name>UpsertIndexEntry</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

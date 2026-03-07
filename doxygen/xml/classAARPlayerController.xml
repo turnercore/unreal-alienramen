@@ -1,0 +1,1673 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARPlayerController" kind="class" language="C++" prot="public">
+    <compoundname>AARPlayerController</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">APlayerController</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderPlayerController" prot="public" virt="non-virtual">AARInvaderPlayerController</derivedcompoundref>
+    <derivedcompoundref refid="classAARLobbyPlayerController" prot="public" virt="non-virtual">AARLobbyPlayerController</derivedcompoundref>
+    <derivedcompoundref refid="classAARScrapyardPlayerController" prot="public" virt="non-virtual">AARScrapyardPlayerController</derivedcompoundref>
+    <derivedcompoundref refid="classAARShopPlayerController" prot="public" virt="non-virtual">AARShopPlayerController</derivedcompoundref>
+    <includes refid="ARPlayerController_8h" local="no">AlienRamen/Public/ARPlayerController.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARPlayerController_1a5a43ecdccb3cdbf283c674c98b7db1bc" prot="public" static="no" mutable="no">
+        <type>TObjectPtr&lt; UARAbilitySet &gt;</type>
+        <definition>TObjectPtr&lt;UARAbilitySet&gt; AARPlayerController::CommonAbilitySet</definition>
+        <argsstring></argsstring>
+        <name>CommonAbilitySet</name>
+        <qualifiedname>AARPlayerController::CommonAbilitySet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="52" column="12" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1aa2af5b3f3ccb30fb0f7bbeadac9effda" prot="public" static="no" mutable="no">
+        <type>FAROnPauseMenuOverlayVisibilityChangedSignature</type>
+        <definition>FAROnPauseMenuOverlayVisibilityChangedSignature AARPlayerController::OnPauseMenuOverlayVisibilityChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPauseMenuOverlayVisibilityChanged</name>
+        <qualifiedname>AARPlayerController::OnPauseMenuOverlayVisibilityChanged</qualifiedname>
+        <briefdescription>
+<para>Broadcast when this controller should show/hide pause overlay content. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="184" column="49" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1aaffd2baddfc55193c377d89721ffb43d" prot="public" static="no" mutable="no">
+        <type>FAROnPauseMenuStateChangedSignature</type>
+        <definition>FAROnPauseMenuStateChangedSignature AARPlayerController::OnPauseMenuStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPauseMenuStateChanged</name>
+        <qualifiedname>AARPlayerController::OnPauseMenuStateChanged</qualifiedname>
+        <briefdescription>
+<para>Broadcast when this controller&apos;s local pause-menu state flips. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="180" column="37" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARPlayerController_1a2a7ccd29574c80ad55747f7ec9fdb8e6" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bAutoApplyDefaultInputMappings</definition>
+        <argsstring></argsstring>
+        <name>bAutoApplyDefaultInputMappings</name>
+        <qualifiedname>AARPlayerController::bAutoApplyDefaultInputMappings</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Automatically applies/removes DefaultInputMappings for local controllers at lifecycle boundaries. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="201" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1aab6479d47faff2427e9f24bfd17229db" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bAutoManagePauseInputContexts</definition>
+        <argsstring></argsstring>
+        <name>bAutoManagePauseInputContexts</name>
+        <qualifiedname>AARPlayerController::bAutoManagePauseInputContexts</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Automatically swaps Enhanced Input mapping contexts when pause menu opens/closes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="221" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a4ca6b00026d8104bc36eed14f8d579e6" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bAutoManagePauseInputMode</definition>
+        <argsstring></argsstring>
+        <name>bAutoManagePauseInputMode</name>
+        <qualifiedname>AARPlayerController::bAutoManagePauseInputMode</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Automatically switches controller input mode and cursor visibility when paused. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="241" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1abafa617c8d51cb9e0042493b9832df69" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bEnableCustomCursorInit</definition>
+        <argsstring></argsstring>
+        <name>bEnableCustomCursorInit</name>
+        <qualifiedname>AARPlayerController::bEnableCustomCursorInit</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="209" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a23b1d27a49b2c59911433930653238bb" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UUserWidget &gt;</type>
+        <definition>TObjectPtr&lt;UUserWidget&gt; AARPlayerController::Cursor</definition>
+        <argsstring></argsstring>
+        <name>Cursor</name>
+        <qualifiedname>AARPlayerController::Cursor</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="217" column="12" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a625bde322ba65ac6a9ec7f93c4a4695f" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; UUserWidget &gt;</type>
+        <definition>TSubclassOf&lt;UUserWidget&gt; AARPlayerController::CursorDefaultWidgetClass</definition>
+        <argsstring></argsstring>
+        <name>CursorDefaultWidgetClass</name>
+        <qualifiedname>AARPlayerController::CursorDefaultWidgetClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="213" column="13" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a3a0faa7dcd71376138c6af7d1d10d6d7" prot="protected" static="no" mutable="no">
+        <type>TArray&lt; FARControllerInputMapping &gt;</type>
+        <definition>TArray&lt;FARControllerInputMapping&gt; AARPlayerController::DefaultInputMappings</definition>
+        <argsstring></argsstring>
+        <name>DefaultInputMappings</name>
+        <qualifiedname>AARPlayerController::DefaultInputMappings</qualifiedname>
+        <briefdescription>
+<para>Base gameplay mappings for this controller; pause flow removes/restores these automatically. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="205" column="8" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1abb940bb16a747e4f5206f2ecccadc8bd" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UInputMappingContext &gt;</type>
+        <definition>TObjectPtr&lt;UInputMappingContext&gt; AARPlayerController::PauseMenuInputMappingContext</definition>
+        <argsstring></argsstring>
+        <name>PauseMenuInputMappingContext</name>
+        <qualifiedname>AARPlayerController::PauseMenuInputMappingContext</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+<para>Pause menu mapping context applied while pause menu is open. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="225" column="12" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a8445855f6a5983cd000c4dd4e86f6fff" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARPlayerController::PauseMenuInputPriority</definition>
+        <argsstring></argsstring>
+        <name>PauseMenuInputPriority</name>
+        <qualifiedname>AARPlayerController::PauseMenuInputPriority</qualifiedname>
+        <initializer>= 1000</initializer>
+        <briefdescription>
+<para>Priority used when adding PauseMenuInputMappingContext. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="229" column="7" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1ad0921d5e7bf0982307251ff33aa2bffc" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; UUserWidget &gt;</type>
+        <definition>TSubclassOf&lt;UUserWidget&gt; AARPlayerController::PauseOverlayWidgetClass</definition>
+        <argsstring></argsstring>
+        <name>PauseOverlayWidgetClass</name>
+        <qualifiedname>AARPlayerController::PauseOverlayWidgetClass</qualifiedname>
+        <briefdescription>
+<para>Overlay widget class shown while pause menu is open on overlay-owning local controllers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="233" column="13" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a57efd278ed2280d65a2e292f35b65bb2" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARPlayerController::PauseOverlayWidgetZOrder</definition>
+        <argsstring></argsstring>
+        <name>PauseOverlayWidgetZOrder</name>
+        <qualifiedname>AARPlayerController::PauseOverlayWidgetZOrder</qualifiedname>
+        <initializer>= 2000</initializer>
+        <briefdescription>
+<para>Viewport z-order for PauseOverlayWidgetClass instances. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="237" column="7" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARPlayerController_1afeb9f261edd379372be63fe0b8c4a21e" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bCachedShowMouseCursorForPause</definition>
+        <argsstring></argsstring>
+        <name>bCachedShowMouseCursorForPause</name>
+        <qualifiedname>AARPlayerController::bCachedShowMouseCursorForPause</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="297" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="297" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a1cce0b692d15f94c5ba75358dc09f24d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bDefaultInputMappingsApplied</definition>
+        <argsstring></argsstring>
+        <name>bDefaultInputMappingsApplied</name>
+        <qualifiedname>AARPlayerController::bDefaultInputMappingsApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="291" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a588fd1cf29ad6a5a7474640db6d30d7d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bHasBroadcastHUDInitialization</definition>
+        <argsstring></argsstring>
+        <name>bHasBroadcastHUDInitialization</name>
+        <qualifiedname>AARPlayerController::bHasBroadcastHUDInitialization</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="271" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="271" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a4846c6ca449e2584ee297aeed43b2977" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bPauseInputContextsApplied</definition>
+        <argsstring></argsstring>
+        <name>bPauseInputContextsApplied</name>
+        <qualifiedname>AARPlayerController::bPauseInputContextsApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="288" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="288" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1aa7a535e78aea365f66b276886e2f37f5" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bPauseInputModeApplied</definition>
+        <argsstring></argsstring>
+        <name>bPauseInputModeApplied</name>
+        <qualifiedname>AARPlayerController::bPauseInputModeApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="294" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a19682439eef4b411a02e994c654e749c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bPauseMenuOpenLocal</definition>
+        <argsstring></argsstring>
+        <name>bPauseMenuOpenLocal</name>
+        <qualifiedname>AARPlayerController::bPauseMenuOpenLocal</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="282" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a99fd31e84ea3b99b0d353b7a4a8d9f9e" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bPauseMenuOverlayVisibleLocal</definition>
+        <argsstring></argsstring>
+        <name>bPauseMenuOverlayVisibleLocal</name>
+        <qualifiedname>AARPlayerController::bPauseMenuOverlayVisibleLocal</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="285" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a990750c849d555b9c47059d040096aa5" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerController::bRequestedInitialCanonicalSaveSync</definition>
+        <argsstring></argsstring>
+        <name>bRequestedInitialCanonicalSaveSync</name>
+        <qualifiedname>AARPlayerController::bRequestedInitialCanonicalSaveSync</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="268" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a6fe5a0e90317d59566ffd6ec2d7efac7" prot="private" static="no" mutable="no">
+        <type>FTimerHandle</type>
+        <definition>FTimerHandle AARPlayerController::HUDInitializationRetryTimer</definition>
+        <argsstring></argsstring>
+        <name>HUDInitializationRetryTimer</name>
+        <qualifiedname>AARPlayerController::HUDInitializationRetryTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="279" column="14" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a9c46cd96fb2d4cc182bb64d9e8a782a7" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AGameStateBase &gt;</type>
+        <definition>TWeakObjectPtr&lt;AGameStateBase&gt; AARPlayerController::LastHUDInitGameState</definition>
+        <argsstring></argsstring>
+        <name>LastHUDInitGameState</name>
+        <qualifiedname>AARPlayerController::LastHUDInitGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="277" column="16" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a7d182468e4de9064816747452737ba86" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; APlayerState &gt;</type>
+        <definition>TWeakObjectPtr&lt;APlayerState&gt; AARPlayerController::LastHUDInitPlayerState</definition>
+        <argsstring></argsstring>
+        <name>LastHUDInitPlayerState</name>
+        <qualifiedname>AARPlayerController::LastHUDInitPlayerState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="274" column="16" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a895c442c25888b73b86af755bf14ea4a" prot="private" static="no" mutable="no">
+        <type>TSet&lt; FName &gt;</type>
+        <definition>TSet&lt;FName&gt; AARPlayerController::PauseMenuBlockerReasons</definition>
+        <argsstring></argsstring>
+        <name>PauseMenuBlockerReasons</name>
+        <qualifiedname>AARPlayerController::PauseMenuBlockerReasons</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="302" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerController_1a720d100798232df2a20299e2a4f76b12" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UUserWidget &gt;</type>
+        <definition>TObjectPtr&lt;UUserWidget&gt; AARPlayerController::PauseOverlayWidget</definition>
+        <argsstring></argsstring>
+        <name>PauseOverlayWidget</name>
+        <qualifiedname>AARPlayerController::PauseOverlayWidget</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="300" column="12" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARPlayerController_1a852ec8f5070378d82e5fad9a854f90b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARPlayerController::AARPlayerController</definition>
+        <argsstring>()</argsstring>
+        <name>AARPlayerController</name>
+        <qualifiedname>AARPlayerController::AARPlayerController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="48" column="1" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="17" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a5260952dcffa3e0c75bca32e952fca1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::BP_OnDialogueSessionEnded</definition>
+        <argsstring>(const FString &amp;SessionId)</argsstring>
+        <name>BP_OnDialogueSessionEnded</name>
+        <qualifiedname>AARPlayerController::BP_OnDialogueSessionEnded</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>SessionId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="129" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a8662462182a3527d9a2981a5ad3fd6a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::BP_OnDialogueSessionUpdated</definition>
+        <argsstring>(const FARDialogueClientView &amp;View)</argsstring>
+        <name>BP_OnDialogueSessionUpdated</name>
+        <qualifiedname>AARPlayerController::BP_OnDialogueSessionUpdated</qualifiedname>
+        <param>
+          <type>const FARDialogueClientView &amp;</type>
+          <declname>View</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="126" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a731995a28993591f557b33b76ac7cfbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::BP_OnHUDInitializationRequested</definition>
+        <argsstring>(AARPlayerController *SourceController, APlayerState *CurrentPlayerState, AGameStateBase *CurrentGameState)</argsstring>
+        <name>BP_OnHUDInitializationRequested</name>
+        <qualifiedname>AARPlayerController::BP_OnHUDInitializationRequested</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>APlayerState *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>AGameStateBase *</type>
+          <declname>CurrentGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="141" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a4348f51608224438edc9145e67e18d9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::BP_OnPauseMenuClosed</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnPauseMenuClosed</name>
+        <qualifiedname>AARPlayerController::BP_OnPauseMenuClosed</qualifiedname>
+        <briefdescription>
+<para>BP hook fired when this controller exits local pause-menu state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="192" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1abe0db467ccd391175a928eb6346a7fed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::BP_OnPauseMenuOpened</definition>
+        <argsstring>(bool bShouldDisplayOverlay)</argsstring>
+        <name>BP_OnPauseMenuOpened</name>
+        <qualifiedname>AARPlayerController::BP_OnPauseMenuOpened</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bShouldDisplayOverlay</declname>
+        </param>
+        <briefdescription>
+<para>BP hook fired when this controller enters local pause-menu state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="188" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a58c931aaf0bf7d311faf4fe754a21f98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ClientDialogueSessionEnded</definition>
+        <argsstring>(const FString &amp;SessionId)</argsstring>
+        <name>ClientDialogueSessionEnded</name>
+        <qualifiedname>AARPlayerController::ClientDialogueSessionEnded</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>SessionId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="123" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a1f52120764dde137b9401f37100a0a0d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ClientDialogueSessionUpdated</definition>
+        <argsstring>(const FARDialogueClientView &amp;View)</argsstring>
+        <name>ClientDialogueSessionUpdated</name>
+        <qualifiedname>AARPlayerController::ClientDialogueSessionUpdated</qualifiedname>
+        <param>
+          <type>const FARDialogueClientView &amp;</type>
+          <declname>View</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="120" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1afedffb7dc01187f4a3e92b3687c234ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ClientPersistCanonicalSave</definition>
+        <argsstring>(const TArray&lt; uint8 &gt; &amp;SaveBytes, FName SlotBaseName, int32 SlotNumber)</argsstring>
+        <name>ClientPersistCanonicalSave</name>
+        <qualifiedname>AARPlayerController::ClientPersistCanonicalSave</qualifiedname>
+        <param>
+          <type>const TArray&lt; uint8 &gt; &amp;</type>
+          <declname>SaveBytes</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>SlotBaseName</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>SlotNumber</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="60" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a555a83237d7fb05a0774e5b6d1c52ac8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ClosePause</definition>
+        <argsstring>()</argsstring>
+        <name>ClosePause</name>
+        <qualifiedname>AARPlayerController::ClosePause</qualifiedname>
+        <briefdescription>
+<para>Alias for RequestClosePauseMenu for UI/input bindings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="152" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="507" bodyend="510"/>
+        <references refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" compoundref="ARPlayerController_8cpp" startline="483" endline="505">RequestClosePauseMenu</references>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1adfd1d6ed3e52490c4e8bc38c3c947db2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const UARAbilitySet *</type>
+        <definition>const UARAbilitySet * AARPlayerController::GetCommonAbilitySet</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCommonAbilitySet</name>
+        <qualifiedname>AARPlayerController::GetCommonAbilitySet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="56" column="21" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1aa0036d9e86cb3d54a95c0fc70ee583e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::InitializeCustomCursor</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeCustomCursor</name>
+        <qualifiedname>AARPlayerController::InitializeCustomCursor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="133" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="56" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1afa6eb7aeb54460a8e8b72de3abf767bc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::IsPauseMenuBlockedLocal</definition>
+        <argsstring>() const</argsstring>
+        <name>IsPauseMenuBlockedLocal</name>
+        <qualifiedname>AARPlayerController::IsPauseMenuBlockedLocal</qualifiedname>
+        <briefdescription>
+<para>Returns true when this local controller cannot open pause menu due to policy/system blockers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="168" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="554" bodyend="567"/>
+        <referencedby refid="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" compoundref="ARPlayerController_8cpp" startline="441" endline="481">RequestOpenPauseMenu</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1abdfec9ec181b8e1270fb4a1119fce07a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::IsPauseMenuOpenLocal</definition>
+        <argsstring>() const</argsstring>
+        <name>IsPauseMenuOpenLocal</name>
+        <qualifiedname>AARPlayerController::IsPauseMenuOpenLocal</qualifiedname>
+        <briefdescription>
+<para>Returns true if this local controller currently has pause-menu state active. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="160" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="160" bodyend="160"/>
+        <referencedby refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" compoundref="ARPlayerController_8cpp" startline="512" endline="552">RequestTogglePauseMenu</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1ad2e671ae13782803683985045b707b2d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::IsPauseMenuOverlayVisibleLocal</definition>
+        <argsstring>() const</argsstring>
+        <name>IsPauseMenuOverlayVisibleLocal</name>
+        <qualifiedname>AARPlayerController::IsPauseMenuOverlayVisibleLocal</qualifiedname>
+        <briefdescription>
+<para>Returns true if this local controller should currently display pause overlay content. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="164" column="6" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="164" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1aae63616984248eb0fc4aed2650bbc264" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::LeaveSession</definition>
+        <argsstring>()</argsstring>
+        <name>LeaveSession</name>
+        <qualifiedname>AARPlayerController::LeaveSession</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="68" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="123" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a9da33c122582cb6ae2358545bcb68515" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestAddUnlock</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>RequestAddUnlock</name>
+        <qualifiedname>AARPlayerController::RequestAddUnlock</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="84" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="216" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a643ca359c291725aab872a40e0a35bb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestAdvanceDialogue</definition>
+        <argsstring>()</argsstring>
+        <name>RequestAdvanceDialogue</name>
+        <qualifiedname>AARPlayerController::RequestAdvanceDialogue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="102" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="295" bodyend="307"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestClosePauseMenu</definition>
+        <argsstring>()</argsstring>
+        <name>RequestClosePauseMenu</name>
+        <qualifiedname>AARPlayerController::RequestClosePauseMenu</qualifiedname>
+        <briefdescription>
+<para>Closes pause menu for all local AR controllers on this machine (C++ path). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="148" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="483" bodyend="505"/>
+        <referencedby refid="classAARPlayerController_1a555a83237d7fb05a0774e5b6d1c52ac8" compoundref="ARPlayerController_8cpp" startline="507" endline="510">ClosePause</referencedby>
+        <referencedby refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" compoundref="ARPlayerController_8cpp" startline="512" endline="552">RequestTogglePauseMenu</referencedby>
+        <referencedby refid="classAARPlayerController_1a90164b122bb092cbd6f66f3657233ab2" compoundref="ARPlayerController_8cpp" startline="569" endline="592">SetPauseMenuBlocked</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a10a756a339dabee13256e43cd1509399" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestHUDInitialization</definition>
+        <argsstring>()</argsstring>
+        <name>RequestHUDInitialization</name>
+        <qualifiedname>AARPlayerController::RequestHUDInitialization</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="137" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="88" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestOpenPauseMenu</definition>
+        <argsstring>()</argsstring>
+        <name>RequestOpenPauseMenu</name>
+        <qualifiedname>AARPlayerController::RequestOpenPauseMenu</qualifiedname>
+        <briefdescription>
+<para>Opens pause menu for all local AR controllers on this machine (if not blocked). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="145" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="441" bodyend="481"/>
+        <references refid="classAARPlayerController_1afa6eb7aeb54460a8e8b72de3abf767bc" compoundref="ARPlayerController_8cpp" startline="554" endline="567">IsPauseMenuBlockedLocal</references>
+        <referencedby refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" compoundref="ARPlayerController_8cpp" startline="512" endline="552">RequestTogglePauseMenu</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a031e7d812927df360dfe20c5598f7a35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestRemoveUnlock</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>RequestRemoveUnlock</name>
+        <qualifiedname>AARPlayerController::RequestRemoveUnlock</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="87" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="227" bodyend="236"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a1cbb3e3fdfd84fc83635f1291735fe0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestSetDialogueEavesdrop</definition>
+        <argsstring>(bool bEnable, EARPlayerSlot TargetSlot)</argsstring>
+        <name>RequestSetDialogueEavesdrop</name>
+        <qualifiedname>AARPlayerController::RequestSetDialogueEavesdrop</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>TargetSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="114" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="333" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a70c9c812a6887c3f062ca55df1da64fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestStartDialogue</definition>
+        <argsstring>(FGameplayTag NpcTag)</argsstring>
+        <name>RequestStartDialogue</name>
+        <qualifiedname>AARPlayerController::RequestStartDialogue</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="96" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="276" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1adf8d5ecc34ad162b878e366eaaec2d51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestSubmitDialogueChoice</definition>
+        <argsstring>(FGameplayTag ChoiceTag)</argsstring>
+        <name>RequestSubmitDialogueChoice</name>
+        <qualifiedname>AARPlayerController::RequestSubmitDialogueChoice</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ChoiceTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="108" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="314" bodyend="326"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestTogglePauseMenu</definition>
+        <argsstring>()</argsstring>
+        <name>RequestTogglePauseMenu</name>
+        <qualifiedname>AARPlayerController::RequestTogglePauseMenu</qualifiedname>
+        <briefdescription>
+<para>Toggles pause menu for all local AR controllers on this machine. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="156" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="512" bodyend="552"/>
+        <references refid="classAARPlayerController_1abdfec9ec181b8e1270fb4a1119fce07a" compoundref="ARPlayerController_8h" startline="160" endline="160">IsPauseMenuOpenLocal</references>
+        <references refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" compoundref="ARPlayerController_8cpp" startline="483" endline="505">RequestClosePauseMenu</references>
+        <references refid="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" compoundref="ARPlayerController_8cpp" startline="441" endline="481">RequestOpenPauseMenu</references>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a6c13654525fb6b4c81d53122996ac030" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerLeaveSession</definition>
+        <argsstring>()</argsstring>
+        <name>ServerLeaveSession</name>
+        <qualifiedname>AARPlayerController::ServerLeaveSession</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="72" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a60b7eb92f87748d503f2994976b42dfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestAddUnlock</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>ServerRequestAddUnlock</name>
+        <qualifiedname>AARPlayerController::ServerRequestAddUnlock</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="90" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a3bf16683192dd60dac37f876a429215c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestAdvanceDialogue</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestAdvanceDialogue</name>
+        <qualifiedname>AARPlayerController::ServerRequestAdvanceDialogue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="105" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a4bebade6c01814b4d01e9f283a192e56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestCanonicalSaveSync</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestCanonicalSaveSync</name>
+        <qualifiedname>AARPlayerController::ServerRequestCanonicalSaveSync</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="64" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a7d458860e51dfa57ed7e38a392f13ba3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestRemoveUnlock</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>ServerRequestRemoveUnlock</name>
+        <qualifiedname>AARPlayerController::ServerRequestRemoveUnlock</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="93" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a1ea8c0441618e9d8102f44036d5636e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestSetDialogueEavesdrop</definition>
+        <argsstring>(bool bEnable, EARPlayerSlot TargetSlot)</argsstring>
+        <name>ServerRequestSetDialogueEavesdrop</name>
+        <qualifiedname>AARPlayerController::ServerRequestSetDialogueEavesdrop</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <param>
+          <type>EARPlayerSlot</type>
+          <declname>TargetSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="117" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a10beeb36a44e94567ebe82e2f24384b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestStartDialogue</definition>
+        <argsstring>(FGameplayTag NpcTag)</argsstring>
+        <name>ServerRequestStartDialogue</name>
+        <qualifiedname>AARPlayerController::ServerRequestStartDialogue</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NpcTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="99" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a5d97c63602d82c6e19cd17eb55e20e05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerRequestSubmitDialogueChoice</definition>
+        <argsstring>(FGameplayTag ChoiceTag)</argsstring>
+        <name>ServerRequestSubmitDialogueChoice</name>
+        <qualifiedname>AARPlayerController::ServerRequestSubmitDialogueChoice</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ChoiceTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="111" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a374e49efbd19723235e3f8c6f91c0ca1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerSetPauseMenuVote</definition>
+        <argsstring>(bool bPaused)</argsstring>
+        <name>ServerSetPauseMenuVote</name>
+        <qualifiedname>AARPlayerController::ServerSetPauseMenuVote</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bPaused</declname>
+        </param>
+        <briefdescription>
+<para>Server mutation endpoint for this controller&apos;s pause-menu vote. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="176" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1aabc8f4fff6df37fd71c4045edc006f70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ServerTryStartTravel</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options=&quot;&quot;, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bUseOpenLevelInPIE=false)</argsstring>
+        <name>ServerTryStartTravel</name>
+        <qualifiedname>AARPlayerController::ServerTryStartTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="80" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a90164b122bb092cbd6f66f3657233ab2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::SetPauseMenuBlocked</definition>
+        <argsstring>(bool bBlocked, FName Reason=NAME_None)</argsstring>
+        <name>SetPauseMenuBlocked</name>
+        <qualifiedname>AARPlayerController::SetPauseMenuBlocked</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bBlocked</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>Reason</declname>
+          <defval>NAME_None</defval>
+        </param>
+        <briefdescription>
+<para>Adds/removes local pause blocker reason (terminal/menu/etc). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="172" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="569" bodyend="592"/>
+        <references refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" compoundref="ARPlayerController_8cpp" startline="483" endline="505">RequestClosePauseMenu</references>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a952943a56da01091847280598b7ee8d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::TryStartTravel</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options=&quot;&quot;, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bUseOpenLevelInPIE=false)</argsstring>
+        <name>TryStartTravel</name>
+        <qualifiedname>AARPlayerController::TryStartTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="76" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="186" bodyend="195"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARPlayerController_1ab5ffee08228aeef8ed889f6ab479d619" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARPlayerController::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="195" column="14" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="23" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a9fa574b21a9b50d3aaf6069163845dc2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARPlayerController::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="196" column="14" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="38" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1aa222b72dc4c7def338275dffbdcd2f93" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::PlayerTick</definition>
+        <argsstring>(float DeltaTime) override</argsstring>
+        <name>PlayerTick</name>
+        <qualifiedname>AARPlayerController::PlayerTick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="197" column="14" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="46" bodyend="54"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARPlayerController_1a5531a9ed5585ebf045950f223875eee3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ApplyDefaultInputMappings</definition>
+        <argsstring>(bool bEnable)</argsstring>
+        <name>ApplyDefaultInputMappings</name>
+        <qualifiedname>AARPlayerController::ApplyDefaultInputMappings</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="253" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="659" bodyend="711"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a36361097161b2010923a45c7e674fd39" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ApplyPauseInputContexts</definition>
+        <argsstring>(bool bEnable)</argsstring>
+        <name>ApplyPauseInputContexts</name>
+        <qualifiedname>AARPlayerController::ApplyPauseInputContexts</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="254" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="713" bodyend="761"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a2d4b8659093a5075cc98c69a74994c08" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::ApplyPauseInputMode</definition>
+        <argsstring>(bool bEnable)</argsstring>
+        <name>ApplyPauseInputMode</name>
+        <qualifiedname>AARPlayerController::ApplyPauseInputMode</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEnable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="255" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="763" bodyend="791"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1abba99be7308a3a2d7ae3fc17f7a4b6df" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::HandleHUDInitializationRetry</definition>
+        <argsstring>()</argsstring>
+        <name>HandleHUDInitializationRetry</name>
+        <qualifiedname>AARPlayerController::HandleHUDInitializationRetry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="251" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="436" bodyend="439"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a9035bbd44ecce20cf401fa08c3e53a5b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::HidePauseOverlayWidget</definition>
+        <argsstring>()</argsstring>
+        <name>HidePauseOverlayWidget</name>
+        <qualifiedname>AARPlayerController::HidePauseOverlayWidget</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="257" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="821" bodyend="827"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a64fa3aff52b66ef56f17b33c937a8b9e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::IsDialogueSessionActiveLocal</definition>
+        <argsstring>() const</argsstring>
+        <name>IsDialogueSessionActiveLocal</name>
+        <qualifiedname>AARPlayerController::IsDialogueSessionActiveLocal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="262" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="885" bodyend="894"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a69fc5e85254b8eb5846b32c97b698e1f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::IsInvaderFullBlastSessionActiveLocal</definition>
+        <argsstring>() const</argsstring>
+        <name>IsInvaderFullBlastSessionActiveLocal</name>
+        <qualifiedname>AARPlayerController::IsInvaderFullBlastSessionActiveLocal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="263" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="896" bodyend="904"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a33e954fb08be856fedbdd989c7522122" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::IsLobbyControllerMode</definition>
+        <argsstring>() const</argsstring>
+        <name>IsLobbyControllerMode</name>
+        <qualifiedname>AARPlayerController::IsLobbyControllerMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="261" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="880" bodyend="883"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a44c46675d8a69c53d7be0b537cce6d9a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::LeaveSessionInternal</definition>
+        <argsstring>()</argsstring>
+        <name>LeaveSessionInternal</name>
+        <qualifiedname>AARPlayerController::LeaveSessionInternal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="244" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="139" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1ad01ba6e915ac0d3c7dee046098ca9710" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestAddUnlockInternal</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>RequestAddUnlockInternal</name>
+        <qualifiedname>AARPlayerController::RequestAddUnlockInternal</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="246" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="248" bodyend="260"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a49e93df6987c01bde599f787c47d1f2d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestHUDInitializationInternal</definition>
+        <argsstring>(bool bForceBroadcast)</argsstring>
+        <name>RequestHUDInitializationInternal</name>
+        <qualifiedname>AARPlayerController::RequestHUDInitializationInternal</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bForceBroadcast</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="248" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="362" bodyend="400"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a0e2a8cf3f3b8c3061ffcc4ec47c65c61" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::RequestRemoveUnlockInternal</definition>
+        <argsstring>(const FGameplayTag &amp;UnlockTag)</argsstring>
+        <name>RequestRemoveUnlockInternal</name>
+        <qualifiedname>AARPlayerController::RequestRemoveUnlockInternal</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>UnlockTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="247" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="262" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1adcd03494dabf22182d35593de701e6d5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::SetPauseMenuOpenLocal</definition>
+        <argsstring>(bool bOpen)</argsstring>
+        <name>SetPauseMenuOpenLocal</name>
+        <qualifiedname>AARPlayerController::SetPauseMenuOpenLocal</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOpen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="252" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="599" bodyend="657"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a41e3e13a63fc9180f44e710019f2b2de" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::ShouldDisplayPauseOverlayForLocalController</definition>
+        <argsstring>() const</argsstring>
+        <name>ShouldDisplayPauseOverlayForLocalController</name>
+        <qualifiedname>AARPlayerController::ShouldDisplayPauseOverlayForLocalController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="259" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="853" bodyend="866"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a865ef011ec0c0b3ced60d4275dc0a523" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::ShouldShareLocalPauseAcrossControllers</definition>
+        <argsstring>() const</argsstring>
+        <name>ShouldShareLocalPauseAcrossControllers</name>
+        <qualifiedname>AARPlayerController::ShouldShareLocalPauseAcrossControllers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="260" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="868" bodyend="878"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a66bffea3b0e99a304bffdfe772680a27" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerController::ShowPauseOverlayWidget</definition>
+        <argsstring>()</argsstring>
+        <name>ShowPauseOverlayWidget</name>
+        <qualifiedname>AARPlayerController::ShowPauseOverlayWidget</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="256" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="793" bodyend="819"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1ad0a26f44919477fe1ccc4b8f71148047" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::StartHUDInitializationRetry</definition>
+        <argsstring>()</argsstring>
+        <name>StartHUDInitializationRetry</name>
+        <qualifiedname>AARPlayerController::StartHUDInitializationRetry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="249" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="402" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a42d32ceef86a0d1df4e1b8fb95300895" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::StopHUDInitializationRetry</definition>
+        <argsstring>()</argsstring>
+        <name>StopHUDInitializationRetry</name>
+        <qualifiedname>AARPlayerController::StopHUDInitializationRetry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="250" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="428" bodyend="434"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1af633f8dd3638a30dc4ed6db8028aa0cc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::SubmitPauseMenuVote</definition>
+        <argsstring>(bool bPaused)</argsstring>
+        <name>SubmitPauseMenuVote</name>
+        <qualifiedname>AARPlayerController::SubmitPauseMenuVote</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bPaused</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="258" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="829" bodyend="851"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1a76bb400157651b44eafaea19c2618735" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::TryStartTravelInternal</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)</argsstring>
+        <name>TryStartTravelInternal</name>
+        <qualifiedname>AARPlayerController::TryStartTravelInternal</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="245" column="6" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="202" bodyend="214"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARPlayerController_1a032c8e71c97a6ae69242ecf9a27d3dbe" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerController::GatherLocalARPlayerControllers</definition>
+        <argsstring>(UWorld *World, TArray&lt; AARPlayerController * &gt; &amp;OutControllers)</argsstring>
+        <name>GatherLocalARPlayerControllers</name>
+        <qualifiedname>AARPlayerController::GatherLocalARPlayerControllers</qualifiedname>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <param>
+          <type>TArray&lt; <ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> * &gt; &amp;</type>
+          <declname>OutControllers</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="264" column="13" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="906" bodyend="924"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerController_1afeb99201ecc23cdfd3fee0a5125b6b15" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+        <definition>AARPlayerController * AARPlayerController::ResolveSharedPauseOverlayOwner</definition>
+        <argsstring>(UWorld *World)</argsstring>
+        <name>ResolveSharedPauseOverlayOwner</name>
+        <qualifiedname>AARPlayerController::ResolveSharedPauseOverlayOwner</qualifiedname>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerController.h" line="265" column="28" bodyfile="AlienRamen/Private/ARPlayerController.cpp" bodystart="926" bodyend="947"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARPlayerController.h" line="43" column="1" bodyfile="AlienRamen/Public/ARPlayerController.h" bodystart="44" bodyend="303"/>
+    <listofallmembers>
+      <member refid="classAARPlayerController_1a852ec8f5070378d82e5fad9a854f90b2" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>AARPlayerController</name></member>
+      <member refid="classAARPlayerController_1a5531a9ed5585ebf045950f223875eee3" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ApplyDefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1a36361097161b2010923a45c7e674fd39" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ApplyPauseInputContexts</name></member>
+      <member refid="classAARPlayerController_1a2d4b8659093a5075cc98c69a74994c08" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ApplyPauseInputMode</name></member>
+      <member refid="classAARPlayerController_1a2a7ccd29574c80ad55747f7ec9fdb8e6" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>bAutoApplyDefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1aab6479d47faff2427e9f24bfd17229db" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>bAutoManagePauseInputContexts</name></member>
+      <member refid="classAARPlayerController_1a4ca6b00026d8104bc36eed14f8d579e6" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>bAutoManagePauseInputMode</name></member>
+      <member refid="classAARPlayerController_1afeb9f261edd379372be63fe0b8c4a21e" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bCachedShowMouseCursorForPause</name></member>
+      <member refid="classAARPlayerController_1a1cce0b692d15f94c5ba75358dc09f24d" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bDefaultInputMappingsApplied</name></member>
+      <member refid="classAARPlayerController_1ab5ffee08228aeef8ed889f6ab479d619" prot="protected" virt="virtual"><scope>AARPlayerController</scope><name>BeginPlay</name></member>
+      <member refid="classAARPlayerController_1abafa617c8d51cb9e0042493b9832df69" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>bEnableCustomCursorInit</name></member>
+      <member refid="classAARPlayerController_1a588fd1cf29ad6a5a7474640db6d30d7d" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bHasBroadcastHUDInitialization</name></member>
+      <member refid="classAARPlayerController_1a5260952dcffa3e0c75bca32e952fca1b" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>BP_OnDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a8662462182a3527d9a2981a5ad3fd6a9" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>BP_OnDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1a731995a28993591f557b33b76ac7cfbd" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>BP_OnHUDInitializationRequested</name></member>
+      <member refid="classAARPlayerController_1a4348f51608224438edc9145e67e18d9f" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>BP_OnPauseMenuClosed</name></member>
+      <member refid="classAARPlayerController_1abe0db467ccd391175a928eb6346a7fed" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>BP_OnPauseMenuOpened</name></member>
+      <member refid="classAARPlayerController_1a4846c6ca449e2584ee297aeed43b2977" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bPauseInputContextsApplied</name></member>
+      <member refid="classAARPlayerController_1aa7a535e78aea365f66b276886e2f37f5" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bPauseInputModeApplied</name></member>
+      <member refid="classAARPlayerController_1a19682439eef4b411a02e994c654e749c" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bPauseMenuOpenLocal</name></member>
+      <member refid="classAARPlayerController_1a99fd31e84ea3b99b0d353b7a4a8d9f9e" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bPauseMenuOverlayVisibleLocal</name></member>
+      <member refid="classAARPlayerController_1a990750c849d555b9c47059d040096aa5" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>bRequestedInitialCanonicalSaveSync</name></member>
+      <member refid="classAARPlayerController_1a58c931aaf0bf7d311faf4fe754a21f98" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ClientDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a1f52120764dde137b9401f37100a0a0d" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ClientDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1afedffb7dc01187f4a3e92b3687c234ca" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ClientPersistCanonicalSave</name></member>
+      <member refid="classAARPlayerController_1a555a83237d7fb05a0774e5b6d1c52ac8" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ClosePause</name></member>
+      <member refid="classAARPlayerController_1a5a43ecdccb3cdbf283c674c98b7db1bc" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>CommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1a23b1d27a49b2c59911433930653238bb" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>Cursor</name></member>
+      <member refid="classAARPlayerController_1a625bde322ba65ac6a9ec7f93c4a4695f" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>CursorDefaultWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a3a0faa7dcd71376138c6af7d1d10d6d7" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>DefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1a9fa574b21a9b50d3aaf6069163845dc2" prot="protected" virt="virtual"><scope>AARPlayerController</scope><name>EndPlay</name></member>
+      <member refid="classAARPlayerController_1a032c8e71c97a6ae69242ecf9a27d3dbe" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>GatherLocalARPlayerControllers</name></member>
+      <member refid="classAARPlayerController_1adfd1d6ed3e52490c4e8bc38c3c947db2" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>GetCommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1abba99be7308a3a2d7ae3fc17f7a4b6df" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>HandleHUDInitializationRetry</name></member>
+      <member refid="classAARPlayerController_1a9035bbd44ecce20cf401fa08c3e53a5b" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>HidePauseOverlayWidget</name></member>
+      <member refid="classAARPlayerController_1a6fe5a0e90317d59566ffd6ec2d7efac7" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>HUDInitializationRetryTimer</name></member>
+      <member refid="classAARPlayerController_1aa0036d9e86cb3d54a95c0fc70ee583e1" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>InitializeCustomCursor</name></member>
+      <member refid="classAARPlayerController_1a64fa3aff52b66ef56f17b33c937a8b9e" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>IsDialogueSessionActiveLocal</name></member>
+      <member refid="classAARPlayerController_1a69fc5e85254b8eb5846b32c97b698e1f" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>IsInvaderFullBlastSessionActiveLocal</name></member>
+      <member refid="classAARPlayerController_1a33e954fb08be856fedbdd989c7522122" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>IsLobbyControllerMode</name></member>
+      <member refid="classAARPlayerController_1afa6eb7aeb54460a8e8b72de3abf767bc" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>IsPauseMenuBlockedLocal</name></member>
+      <member refid="classAARPlayerController_1abdfec9ec181b8e1270fb4a1119fce07a" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>IsPauseMenuOpenLocal</name></member>
+      <member refid="classAARPlayerController_1ad2e671ae13782803683985045b707b2d" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>IsPauseMenuOverlayVisibleLocal</name></member>
+      <member refid="classAARPlayerController_1a9c46cd96fb2d4cc182bb64d9e8a782a7" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>LastHUDInitGameState</name></member>
+      <member refid="classAARPlayerController_1a7d182468e4de9064816747452737ba86" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>LastHUDInitPlayerState</name></member>
+      <member refid="classAARPlayerController_1aae63616984248eb0fc4aed2650bbc264" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>LeaveSession</name></member>
+      <member refid="classAARPlayerController_1a44c46675d8a69c53d7be0b537cce6d9a" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>LeaveSessionInternal</name></member>
+      <member refid="classAARPlayerController_1aa2af5b3f3ccb30fb0f7bbeadac9effda" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>OnPauseMenuOverlayVisibilityChanged</name></member>
+      <member refid="classAARPlayerController_1aaffd2baddfc55193c377d89721ffb43d" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>OnPauseMenuStateChanged</name></member>
+      <member refid="classAARPlayerController_1a895c442c25888b73b86af755bf14ea4a" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>PauseMenuBlockerReasons</name></member>
+      <member refid="classAARPlayerController_1abb940bb16a747e4f5206f2ecccadc8bd" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>PauseMenuInputMappingContext</name></member>
+      <member refid="classAARPlayerController_1a8445855f6a5983cd000c4dd4e86f6fff" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>PauseMenuInputPriority</name></member>
+      <member refid="classAARPlayerController_1a720d100798232df2a20299e2a4f76b12" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>PauseOverlayWidget</name></member>
+      <member refid="classAARPlayerController_1ad0921d5e7bf0982307251ff33aa2bffc" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>PauseOverlayWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a57efd278ed2280d65a2e292f35b65bb2" prot="protected" virt="non-virtual"><scope>AARPlayerController</scope><name>PauseOverlayWidgetZOrder</name></member>
+      <member refid="classAARPlayerController_1aa222b72dc4c7def338275dffbdcd2f93" prot="protected" virt="virtual"><scope>AARPlayerController</scope><name>PlayerTick</name></member>
+      <member refid="classAARPlayerController_1a9da33c122582cb6ae2358545bcb68515" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1ad01ba6e915ac0d3c7dee046098ca9710" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestAddUnlockInternal</name></member>
+      <member refid="classAARPlayerController_1a643ca359c291725aab872a40e0a35bb6" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestClosePauseMenu</name></member>
+      <member refid="classAARPlayerController_1a10a756a339dabee13256e43cd1509399" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestHUDInitialization</name></member>
+      <member refid="classAARPlayerController_1a49e93df6987c01bde599f787c47d1f2d" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestHUDInitializationInternal</name></member>
+      <member refid="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestOpenPauseMenu</name></member>
+      <member refid="classAARPlayerController_1a031e7d812927df360dfe20c5598f7a35" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestRemoveUnlock</name></member>
+      <member refid="classAARPlayerController_1a0e2a8cf3f3b8c3061ffcc4ec47c65c61" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestRemoveUnlockInternal</name></member>
+      <member refid="classAARPlayerController_1a1cbb3e3fdfd84fc83635f1291735fe0a" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestSetDialogueEavesdrop</name></member>
+      <member refid="classAARPlayerController_1a70c9c812a6887c3f062ca55df1da64fe" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestStartDialogue</name></member>
+      <member refid="classAARPlayerController_1adf8d5ecc34ad162b878e366eaaec2d51" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>RequestTogglePauseMenu</name></member>
+      <member refid="classAARPlayerController_1afeb99201ecc23cdfd3fee0a5125b6b15" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ResolveSharedPauseOverlayOwner</name></member>
+      <member refid="classAARPlayerController_1a6c13654525fb6b4c81d53122996ac030" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerLeaveSession</name></member>
+      <member refid="classAARPlayerController_1a60b7eb92f87748d503f2994976b42dfc" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a3bf16683192dd60dac37f876a429215c" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1a4bebade6c01814b4d01e9f283a192e56" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestCanonicalSaveSync</name></member>
+      <member refid="classAARPlayerController_1a7d458860e51dfa57ed7e38a392f13ba3" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestRemoveUnlock</name></member>
+      <member refid="classAARPlayerController_1a1ea8c0441618e9d8102f44036d5636e2" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestSetDialogueEavesdrop</name></member>
+      <member refid="classAARPlayerController_1a10beeb36a44e94567ebe82e2f24384b7" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestStartDialogue</name></member>
+      <member refid="classAARPlayerController_1a5d97c63602d82c6e19cd17eb55e20e05" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerRequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1a374e49efbd19723235e3f8c6f91c0ca1" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerSetPauseMenuVote</name></member>
+      <member refid="classAARPlayerController_1aabc8f4fff6df37fd71c4045edc006f70" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>ServerTryStartTravel</name></member>
+      <member refid="classAARPlayerController_1a90164b122bb092cbd6f66f3657233ab2" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>SetPauseMenuBlocked</name></member>
+      <member refid="classAARPlayerController_1adcd03494dabf22182d35593de701e6d5" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>SetPauseMenuOpenLocal</name></member>
+      <member refid="classAARPlayerController_1a41e3e13a63fc9180f44e710019f2b2de" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ShouldDisplayPauseOverlayForLocalController</name></member>
+      <member refid="classAARPlayerController_1a865ef011ec0c0b3ced60d4275dc0a523" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ShouldShareLocalPauseAcrossControllers</name></member>
+      <member refid="classAARPlayerController_1a66bffea3b0e99a304bffdfe772680a27" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>ShowPauseOverlayWidget</name></member>
+      <member refid="classAARPlayerController_1ad0a26f44919477fe1ccc4b8f71148047" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>StartHUDInitializationRetry</name></member>
+      <member refid="classAARPlayerController_1a42d32ceef86a0d1df4e1b8fb95300895" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>StopHUDInitializationRetry</name></member>
+      <member refid="classAARPlayerController_1af633f8dd3638a30dc4ed6db8028aa0cc" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>SubmitPauseMenuVote</name></member>
+      <member refid="classAARPlayerController_1a952943a56da01091847280598b7ee8d6" prot="public" virt="non-virtual"><scope>AARPlayerController</scope><name>TryStartTravel</name></member>
+      <member refid="classAARPlayerController_1a76bb400157651b44eafaea19c2618735" prot="private" virt="non-virtual"><scope>AARPlayerController</scope><name>TryStartTravelInternal</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderFullBlastMenuWidget" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderFullBlastMenuWidget</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARInvaderFullBlastMenuWidget_1a8b1882fcf9b8d091becfd9a178484d25" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderFullBlastMenuWidget::bIsChooser</definition>
+        <argsstring></argsstring>
+        <name>bIsChooser</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::bIsChooser</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="82" column="6" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderFullBlastMenuWidget_1ad2205cf50547b7aae01d1d404b831641" prot="private" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderUpgradeDefRow &gt;</type>
+        <definition>TArray&lt;FARInvaderUpgradeDefRow&gt; UARInvaderFullBlastMenuWidget::OfferDefinitions</definition>
+        <argsstring></argsstring>
+        <name>OfferDefinitions</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::OfferDefinitions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="79" column="8" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderFullBlastMenuWidget_1a74498d56852c545a8704f8d368b935f9" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARInvaderPlayerController &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARInvaderPlayerController&gt; UARInvaderFullBlastMenuWidget::OwningInvaderController</definition>
+        <argsstring></argsstring>
+        <name>OwningInvaderController</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::OwningInvaderController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="73" column="16" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderFullBlastMenuWidget_1a0a91c824343c700bdd21ac81db954468" prot="private" static="no" mutable="no">
+        <type>FARInvaderFullBlastSessionState</type>
+        <definition>FARInvaderFullBlastSessionState UARInvaderFullBlastMenuWidget::SessionState</definition>
+        <argsstring></argsstring>
+        <name>SessionState</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::SessionState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="76" column="33" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1ab9aa2341c42fdaa62cc5e81e07017a1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::BP_OnFullBlastMenuClosed</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnFullBlastMenuClosed</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::BP_OnFullBlastMenuClosed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="65" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a708a22876b7a9ba035f8af740613cb9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::BP_OnFullBlastMenuUpdated</definition>
+        <argsstring>(const FARInvaderFullBlastSessionState &amp;InSessionState, const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;InOfferDefinitions, bool bInIsChooser)</argsstring>
+        <name>BP_OnFullBlastMenuUpdated</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::BP_OnFullBlastMenuUpdated</qualifiedname>
+        <param>
+          <type>const FARInvaderFullBlastSessionState &amp;</type>
+          <declname>InSessionState</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;</type>
+          <declname>InOfferDefinitions</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bInIsChooser</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="58" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a3d83d312f19d0538a251d7f749faed18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::ClearOfferPresence</definition>
+        <argsstring>()</argsstring>
+        <name>ClearOfferPresence</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::ClearOfferPresence</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="45" column="6" bodyfile="AlienRamen/Private/ARInvaderFullBlastMenuWidget.cpp" bodystart="46" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a13552933a7a7d411d3251a4f42d2bcb7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;</type>
+        <definition>const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp; UARInvaderFullBlastMenuWidget::GetOfferDefinitions</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOfferDefinitions</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::GetOfferDefinitions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="51" column="14" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="51" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a34f83fb5ccb014cd24e16c39febfec88" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARInvaderFullBlastSessionState &amp;</type>
+        <definition>const FARInvaderFullBlastSessionState &amp; UARInvaderFullBlastMenuWidget::GetSessionState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSessionState</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::GetSessionState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="48" column="39" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="48" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1aa153a0dbd83dd899ec65631f0fd27165" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::InitializeFullBlastMenu</definition>
+        <argsstring>(AARInvaderPlayerController *InOwningController, const FARInvaderFullBlastSessionState &amp;InSessionState, const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;InOfferDefinitions, bool bInIsChooser)</argsstring>
+        <name>InitializeFullBlastMenu</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::InitializeFullBlastMenu</qualifiedname>
+        <param>
+          <type>AARInvaderPlayerController *</type>
+          <declname>InOwningController</declname>
+        </param>
+        <param>
+          <type>const FARInvaderFullBlastSessionState &amp;</type>
+          <declname>InSessionState</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FARInvaderUpgradeDefRow &gt; &amp;</type>
+          <declname>InOfferDefinitions</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bInIsChooser</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="22" column="6" bodyfile="AlienRamen/Private/ARInvaderFullBlastMenuWidget.cpp" bodystart="5" bodyend="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a2401e9646e1448891e9418a336b352df" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderFullBlastMenuWidget::IsChooser</definition>
+        <argsstring>() const</argsstring>
+        <name>IsChooser</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::IsChooser</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="54" column="6" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="54" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a4cc7dbe1a9108adf685d8526477e2403" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::NotifyMenuClosed</definition>
+        <argsstring>()</argsstring>
+        <name>NotifyMenuClosed</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::NotifyMenuClosed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="69" column="6" bodyfile="AlienRamen/Private/ARInvaderFullBlastMenuWidget.cpp" bodystart="54" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a42714fdbc97ee17f72ff6301d918286d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::PublishOfferPresence</definition>
+        <argsstring>(FGameplayTag HoveredUpgradeTag, int32 HoveredDestinationSlot, FVector2D CursorNormalized, bool bHasCursor)</argsstring>
+        <name>PublishOfferPresence</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::PublishOfferPresence</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>HoveredUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>HoveredDestinationSlot</declname>
+        </param>
+        <param>
+          <type>FVector2D</type>
+          <declname>CursorNormalized</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bHasCursor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="38" column="6" bodyfile="AlienRamen/Private/ARInvaderFullBlastMenuWidget.cpp" bodystart="34" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1a013e3bf24a967ff0bb23d2f098f1fd2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::SubmitSelection</definition>
+        <argsstring>(FGameplayTag SelectedUpgradeTag, int32 DesiredDestinationSlot=-1)</argsstring>
+        <name>SubmitSelection</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::SubmitSelection</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SelectedUpgradeTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DesiredDestinationSlot</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="30" column="6" bodyfile="AlienRamen/Private/ARInvaderFullBlastMenuWidget.cpp" bodystart="18" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderFullBlastMenuWidget_1aa1526a7fdc2d8229c68a5a55cb236f14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderFullBlastMenuWidget::SubmitSkip</definition>
+        <argsstring>()</argsstring>
+        <name>SubmitSkip</name>
+        <qualifiedname>UARInvaderFullBlastMenuWidget::SubmitSkip</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="34" column="6" bodyfile="AlienRamen/Private/ARInvaderFullBlastMenuWidget.cpp" bodystart="26" bodyend="32"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" line="15" column="1" bodyfile="AlienRamen/Public/ARInvaderFullBlastMenuWidget.h" bodystart="16" bodyend="83"/>
+    <listofallmembers>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a8b1882fcf9b8d091becfd9a178484d25" prot="private" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>bIsChooser</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1ab9aa2341c42fdaa62cc5e81e07017a1e" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>BP_OnFullBlastMenuClosed</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a708a22876b7a9ba035f8af740613cb9f" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>BP_OnFullBlastMenuUpdated</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a3d83d312f19d0538a251d7f749faed18" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>ClearOfferPresence</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a13552933a7a7d411d3251a4f42d2bcb7" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>GetOfferDefinitions</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a34f83fb5ccb014cd24e16c39febfec88" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>GetSessionState</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1aa153a0dbd83dd899ec65631f0fd27165" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>InitializeFullBlastMenu</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a2401e9646e1448891e9418a336b352df" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>IsChooser</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a4cc7dbe1a9108adf685d8526477e2403" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>NotifyMenuClosed</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1ad2205cf50547b7aae01d1d404b831641" prot="private" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>OfferDefinitions</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a74498d56852c545a8704f8d368b935f9" prot="private" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>OwningInvaderController</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a42714fdbc97ee17f72ff6301d918286d" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>PublishOfferPresence</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a0a91c824343c700bdd21ac81db954468" prot="private" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>SessionState</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1a013e3bf24a967ff0bb23d2f098f1fd2f" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>SubmitSelection</name></member>
+      <member refid="classUARInvaderFullBlastMenuWidget_1aa1526a7fdc2d8229c68a5a55cb236f14" prot="public" virt="non-virtual"><scope>UARInvaderFullBlastMenuWidget</scope><name>SubmitSkip</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

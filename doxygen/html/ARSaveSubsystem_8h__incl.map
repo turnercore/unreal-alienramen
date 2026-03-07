@@ -1,0 +1,23 @@
+<map id="ARSaveSubsystem.h" name="ARSaveSubsystem.h">
+<area shape="rect" id="Node000001" title="ARSaveSubsystem header for Alien Ramen." alt="" coords="320,5,476,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="26,225,143,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="320,23,236,27,146,36,68,54,39,66,20,80,11,96,8,113,11,131,17,149,39,184,64,213,60,217,35,187,13,151,5,132,3,113,6,94,16,77,36,61,66,49,145,31,235,21,319,17"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="30,79,312,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="362,33,222,77,220,72,360,28"/>
+<area shape="rect" id="Node000004" href="$ARSaveTypes_8h.html" title="ARSaveTypes header for Alien Ramen." alt="" coords="337,79,458,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="400,31,400,65,395,65,395,31"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="482,79,689,104"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="429,28,543,71,541,76,427,33"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="714,79,940,104"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="467,28,745,74,744,79,466,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="337,106,196,133,138,146,111,154,101,166,95,181,88,212,83,211,90,179,97,164,108,150,136,141,195,128,336,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="122,152,308,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="369,107,259,149,257,144,367,102"/>
+<area shape="rect" id="Node000006" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="332,152,463,177"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="400,104,400,138,395,138,395,104"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="488,152,678,177"/>
+<area shape="poly" id="edge9_Node000004_Node000008" title=" " alt="" coords="428,102,541,145,539,149,427,107"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="348,180,149,225,148,220,347,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="298,225,498,251"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="400,178,400,212,395,212,395,178"/>
+</map>

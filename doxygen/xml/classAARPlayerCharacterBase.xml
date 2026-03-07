@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARPlayerCharacterBase" kind="class" language="C++" prot="public">
+    <compoundname>AARPlayerCharacterBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">ACharacter</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">IAbilitySystemInterface</basecompoundref>
+    <derivedcompoundref refid="classAARPlayerCharacterInvader" prot="public" virt="non-virtual">AARPlayerCharacterInvader</derivedcompoundref>
+    <derivedcompoundref refid="classAARPlayerCharacterScrapyard" prot="public" virt="non-virtual">AARPlayerCharacterScrapyard</derivedcompoundref>
+    <derivedcompoundref refid="classAARPlayerCharacterShop" prot="public" virt="non-virtual">AARPlayerCharacterShop</derivedcompoundref>
+    <includes refid="ARPlayerCharacterBase_8h" local="no">AlienRamen/Public/ARPlayerCharacterBase.h</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARPlayerCharacterBase_1a4f76b07cc2bd196db15ac75ec7e10d39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARPlayerCharacterBase::AARPlayerCharacterBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARPlayerCharacterBase</name>
+        <qualifiedname>AARPlayerCharacterBase::AARPlayerCharacterBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterBase.h" line="21" column="1" bodyfile="AlienRamen/Private/ARPlayerCharacterBase.cpp" bodystart="3" bodyend="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterBase_1a97c7a37b1faf44e4dd9ad80b8f9ba57e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * AARPlayerCharacterBase::GetAbilitySystemComponent</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetAbilitySystemComponent</name>
+        <qualifiedname>AARPlayerCharacterBase::GetAbilitySystemComponent</qualifiedname>
+        <reimplementedby refid="classAARPlayerCharacterInvader_1af94154b26649ef7fd3176d54074ef001">GetAbilitySystemComponent</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterBase.h" line="24" column="33" bodyfile="AlienRamen/Private/ARPlayerCharacterBase.cpp" bodystart="8" bodyend="11"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Root player pawn base; implements ASC interface stub for mode-specific subclasses. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="2">
+        <label>AARPlayerCharacterInvader</label>
+        <link refid="classAARPlayerCharacterInvader"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARPlayerCharacterBase.h" line="16" column="1" bodyfile="AlienRamen/Public/ARPlayerCharacterBase.h" bodystart="17" bodyend="25"/>
+    <listofallmembers>
+      <member refid="classAARPlayerCharacterBase_1a4f76b07cc2bd196db15ac75ec7e10d39" prot="public" virt="non-virtual"><scope>AARPlayerCharacterBase</scope><name>AARPlayerCharacterBase</name></member>
+      <member refid="classAARPlayerCharacterBase_1a97c7a37b1faf44e4dd9ad80b8f9ba57e" prot="public" virt="virtual"><scope>AARPlayerCharacterBase</scope><name>GetAbilitySystemComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,11 @@
+<map id="ARNPCSettings.h" name="ARNPCSettings.h">
+<area shape="rect" id="Node000001" title="NPC system settings for Alien Ramen." alt="" coords="291,5,423,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="311,33,125,78,124,73,310,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,349,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="341,33,279,73,276,69,338,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="374,79,559,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="376,28,439,69,436,73,373,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="584,79,787,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="411,28,620,73,619,78,409,33"/>
+</map>

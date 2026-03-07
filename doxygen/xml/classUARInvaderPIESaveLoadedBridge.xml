@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderPIESaveLoadedBridge" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderPIESaveLoadedBridge</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UObject</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARInvaderPIESaveLoadedBridge_1a59a4bb408d1d3006d03a32fac35d9e11" prot="private" static="no" mutable="no">
+        <type>FSimpleDelegate</type>
+        <definition>FSimpleDelegate UARInvaderPIESaveLoadedBridge::OnLoaded</definition>
+        <argsstring></argsstring>
+        <name>OnLoaded</name>
+        <qualifiedname>UARInvaderPIESaveLoadedBridge::OnLoaded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" line="60" column="17" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderPIESaveLoadedBridge_1a5cc79672c8b87fd907c6e6e79a4abc19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderPIESaveLoadedBridge::Configure</definition>
+        <argsstring>(FSimpleDelegate InOnLoaded)</argsstring>
+        <name>Configure</name>
+        <qualifiedname>UARInvaderPIESaveLoadedBridge::Configure</qualifiedname>
+        <param>
+          <type>FSimpleDelegate</type>
+          <declname>InOnLoaded</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" line="54" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringEditorProxies.cpp" bodystart="3" bodyend="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderPIESaveLoadedBridge_1af9066029a4cd31f2aec78e28b9069dd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderPIESaveLoadedBridge::HandleSignalOnGameLoaded</definition>
+        <argsstring>()</argsstring>
+        <name>HandleSignalOnGameLoaded</name>
+        <qualifiedname>UARInvaderPIESaveLoadedBridge::HandleSignalOnGameLoaded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" line="57" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringEditorProxies.cpp" bodystart="8" bodyend="11"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" line="49" column="1" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" bodystart="50" bodyend="61"/>
+    <listofallmembers>
+      <member refid="classUARInvaderPIESaveLoadedBridge_1a5cc79672c8b87fd907c6e6e79a4abc19" prot="public" virt="non-virtual"><scope>UARInvaderPIESaveLoadedBridge</scope><name>Configure</name></member>
+      <member refid="classUARInvaderPIESaveLoadedBridge_1af9066029a4cd31f2aec78e28b9069dd3" prot="public" virt="non-virtual"><scope>UARInvaderPIESaveLoadedBridge</scope><name>HandleSignalOnGameLoaded</name></member>
+      <member refid="classUARInvaderPIESaveLoadedBridge_1a59a4bb408d1d3006d03a32fac35d9e11" prot="private" virt="non-virtual"><scope>UARInvaderPIESaveLoadedBridge</scope><name>OnLoaded</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

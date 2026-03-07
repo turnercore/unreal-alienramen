@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classIStructSerializable" kind="class" language="C++" prot="public">
+    <compoundname>IStructSerializable</compoundname>
+    <derivedcompoundref refid="classAARGameStateBase" prot="public" virt="non-virtual">AARGameStateBase</derivedcompoundref>
+    <derivedcompoundref refid="classAARPlayerStateBase" prot="public" virt="non-virtual">AARPlayerStateBase</derivedcompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classIStructSerializable_1adcaa30117468380311076dd5b9eed468" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IStructSerializable::ApplyStateFromStruct</definition>
+        <argsstring>(const FInstancedStruct &amp;SavedState)</argsstring>
+        <name>ApplyStateFromStruct</name>
+        <qualifiedname>IStructSerializable::ApplyStateFromStruct</qualifiedname>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>SavedState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/StructSerializable.h" line="28" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classIStructSerializable_1aecc5bcf3d63d4fb19b703f37c569a1c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool IStructSerializable::ApplyStateFromStruct_Implementation</definition>
+        <argsstring>(const FInstancedStruct &amp;SavedState)</argsstring>
+        <name>ApplyStateFromStruct_Implementation</name>
+        <qualifiedname>IStructSerializable::ApplyStateFromStruct_Implementation</qualifiedname>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>SavedState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/StructSerializable.h" line="29" column="14" bodyfile="AlienRamen/Private/StructSerializable.cpp" bodystart="29" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classIStructSerializable_1afad3e17bff2bf8fec0d10189ec899165" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void IStructSerializable::ExtractStateToStruct</definition>
+        <argsstring>(FInstancedStruct &amp;CurrentState) const</argsstring>
+        <name>ExtractStateToStruct</name>
+        <qualifiedname>IStructSerializable::ExtractStateToStruct</qualifiedname>
+        <param>
+          <type>FInstancedStruct &amp;</type>
+          <declname>CurrentState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/StructSerializable.h" line="24" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classIStructSerializable_1a15418826f08d93f52741bb6c57dc7ae7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void IStructSerializable::ExtractStateToStruct_Implementation</definition>
+        <argsstring>(FInstancedStruct &amp;CurrentState) const</argsstring>
+        <name>ExtractStateToStruct_Implementation</name>
+        <qualifiedname>IStructSerializable::ExtractStateToStruct_Implementation</qualifiedname>
+        <param>
+          <type>FInstancedStruct &amp;</type>
+          <declname>CurrentState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/StructSerializable.h" line="25" column="14" bodyfile="AlienRamen/Private/StructSerializable.cpp" bodystart="9" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classIStructSerializable_1a9075619a58d98d67f61949d1a93d62c7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>UScriptStruct *</type>
+        <definition>UScriptStruct * IStructSerializable::GetStateStruct</definition>
+        <argsstring>() const</argsstring>
+        <name>GetStateStruct</name>
+        <qualifiedname>IStructSerializable::GetStateStruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/StructSerializable.h" line="32" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classIStructSerializable_1acaca475c3c7a833d77eebd7a7aadb61f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UScriptStruct *</type>
+        <definition>UScriptStruct * IStructSerializable::GetStateStruct_Implementation</definition>
+        <argsstring>() const</argsstring>
+        <name>GetStateStruct_Implementation</name>
+        <qualifiedname>IStructSerializable::GetStateStruct_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/StructSerializable.h" line="33" column="23" bodyfile="AlienRamen/Private/StructSerializable.cpp" bodystart="91" bodyend="127"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameStateBase</label>
+        <link refid="classAARGameStateBase"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>AARPlayerStateBase</label>
+        <link refid="classAARPlayerStateBase"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>IStructSerializable</label>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/StructSerializable.h" line="18" column="1" bodyfile="AlienRamen/Public/StructSerializable.h" bodystart="19" bodyend="34"/>
+    <listofallmembers>
+      <member refid="classIStructSerializable_1adcaa30117468380311076dd5b9eed468" prot="public" virt="non-virtual"><scope>IStructSerializable</scope><name>ApplyStateFromStruct</name></member>
+      <member refid="classIStructSerializable_1aecc5bcf3d63d4fb19b703f37c569a1c3" prot="public" virt="virtual"><scope>IStructSerializable</scope><name>ApplyStateFromStruct_Implementation</name></member>
+      <member refid="classIStructSerializable_1afad3e17bff2bf8fec0d10189ec899165" prot="public" virt="non-virtual"><scope>IStructSerializable</scope><name>ExtractStateToStruct</name></member>
+      <member refid="classIStructSerializable_1a15418826f08d93f52741bb6c57dc7ae7" prot="public" virt="virtual"><scope>IStructSerializable</scope><name>ExtractStateToStruct_Implementation</name></member>
+      <member refid="classIStructSerializable_1a9075619a58d98d67f61949d1a93d62c7" prot="public" virt="non-virtual"><scope>IStructSerializable</scope><name>GetStateStruct</name></member>
+      <member refid="classIStructSerializable_1acaca475c3c7a833d77eebd7a7aadb61f" prot="public" virt="virtual"><scope>IStructSerializable</scope><name>GetStateStruct_Implementation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

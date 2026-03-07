@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARInvaderInternal" kind="namespace" language="C++">
+    <compoundname>ARInvaderInternal</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="ARInvaderDirectorSubsystem_8cpp_1acdd43c6781f38427dd79ef11b998c8c1" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr float</type>
+        <definition>constexpr float ARInvaderInternal::WaveColorSwapChance</definition>
+        <argsstring></argsstring>
+        <name>WaveColorSwapChance</name>
+        <qualifiedname>ARInvaderInternal::WaveColorSwapChance</qualifiedname>
+        <initializer>= 0.30f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="30" column="24" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8cpp_1a7166ea5568a1744724a1c1f352a4ea63" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARInvaderInternal::GetStateDeadTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetStateDeadTag</name>
+        <qualifiedname>ARInvaderInternal::GetStateDeadTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="36" column="21" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8cpp_1a1af0980dcc88b259b03f4a2b5deed858" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARInvaderInternal::GetStateDownedTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetStateDownedTag</name>
+        <qualifiedname>ARInvaderInternal::GetStateDownedTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="31" column="21" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="31" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8cpp_1a206c5aed0f1e5a778fa06d54724d7f79" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool ARInvaderInternal::IntersectRayWithHorizontalPlane</definition>
+        <argsstring>(const FVector &amp;RayOrigin, const FVector &amp;RayDirection, float PlaneZ, FVector &amp;OutPoint)</argsstring>
+        <name>IntersectRayWithHorizontalPlane</name>
+        <qualifiedname>ARInvaderInternal::IntersectRayWithHorizontalPlane</qualifiedname>
+        <param>
+          <type>const FVector &amp;</type>
+          <declname>RayOrigin</declname>
+        </param>
+        <param>
+          <type>const FVector &amp;</type>
+          <declname>RayDirection</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>PlaneZ</declname>
+        </param>
+        <param>
+          <type>FVector &amp;</type>
+          <declname>OutPoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="58" column="13" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="58" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8cpp_1a000070ba2a21367001774c5f4ad15edc" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>static EARAffinityColor ARInvaderInternal::SwapEnemyColor</definition>
+        <argsstring>(EARAffinityColor InColor)</argsstring>
+        <name>SwapEnemyColor</name>
+        <qualifiedname>ARInvaderInternal::SwapEnemyColor</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>InColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="41" column="25" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="41" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="ARInvaderDirectorSubsystem_8cpp_1ad02e0bf7f657408014074d932d29d8b2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const TCHAR *</type>
+        <definition>static const TCHAR * ARInvaderInternal::ToPhaseName</definition>
+        <argsstring>(EARWavePhase Phase)</argsstring>
+        <name>ToPhaseName</name>
+        <qualifiedname>ARInvaderInternal::ToPhaseName</qualifiedname>
+        <param>
+          <type>EARWavePhase</type>
+          <declname>Phase</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="48" column="20" bodyfile="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" bodystart="48" bodyend="56"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/ARInvaderDirectorSubsystem.cpp" line="28" column="1"/>
+  </compounddef>
+</doxygen>

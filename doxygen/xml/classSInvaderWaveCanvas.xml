@@ -1,0 +1,829 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classSInvaderWaveCanvas" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>SInvaderWaveCanvas</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SLeafWidget</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1ae3452b1a57e4d730b4e9512189ffc2d0" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SInvaderWaveCanvas::bSelectionRectActive</definition>
+        <argsstring></argsstring>
+        <name>bSelectionRectActive</name>
+        <qualifiedname>SInvaderWaveCanvas::bSelectionRectActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1101" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a29064c80e137d2c2f810c3f147f48361" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SInvaderWaveCanvas::bSelectionRectAppend</definition>
+        <argsstring></argsstring>
+        <name>bSelectionRectAppend</name>
+        <qualifiedname>SInvaderWaveCanvas::bSelectionRectAppend</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1102" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a4b94658a972cb822114a3fa71f1cc4db" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SInvaderWaveCanvas::bStartedDragTransaction</definition>
+        <argsstring></argsstring>
+        <name>bStartedDragTransaction</name>
+        <qualifiedname>SInvaderWaveCanvas::bStartedDragTransaction</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1100" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a6de4f4bbeb960b497b2cb66eaa36636c" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 SInvaderWaveCanvas::DraggedSpawnIndex</definition>
+        <argsstring></argsstring>
+        <name>DraggedSpawnIndex</name>
+        <qualifiedname>SInvaderWaveCanvas::DraggedSpawnIndex</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1098" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1098" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a63620fc4d05ac8b3057f08f3e90b2ff7" prot="private" static="no" mutable="no">
+        <type>FVector2D</type>
+        <definition>FVector2D SInvaderWaveCanvas::DragStartOffset</definition>
+        <argsstring></argsstring>
+        <name>DragStartOffset</name>
+        <qualifiedname>SInvaderWaveCanvas::DragStartOffset</qualifiedname>
+        <initializer>= FVector2D::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1103" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a8f7a87d2ca81e3e12a7edb944fd7af14" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; float()&gt;</type>
+        <definition>TFunction&lt;float()&gt; SInvaderWaveCanvas::GetGridSize</definition>
+        <argsstring></argsstring>
+        <name>GetGridSize</name>
+        <qualifiedname>SInvaderWaveCanvas::GetGridSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1086" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1086" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1ae8b0bc3670c8ae2273b03aed7e566f0b" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; bool()&gt;</type>
+        <definition>TFunction&lt;bool()&gt; SInvaderWaveCanvas::GetHideOtherLayers</definition>
+        <argsstring></argsstring>
+        <name>GetHideOtherLayers</name>
+        <qualifiedname>SInvaderWaveCanvas::GetHideOtherLayers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1084" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1084" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1af88409a67710a3535fd806724179b32b" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; float()&gt;</type>
+        <definition>TFunction&lt;float()&gt; SInvaderWaveCanvas::GetPreviewTime</definition>
+        <argsstring></argsstring>
+        <name>GetPreviewTime</name>
+        <qualifiedname>SInvaderWaveCanvas::GetPreviewTime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1088" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1088" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a91d15a199f9611a40df69cf62a348833" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; float()&gt;</type>
+        <definition>TFunction&lt;float()&gt; SInvaderWaveCanvas::GetSelectedLayerDelay</definition>
+        <argsstring></argsstring>
+        <name>GetSelectedLayerDelay</name>
+        <qualifiedname>SInvaderWaveCanvas::GetSelectedLayerDelay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1083" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1083" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1af75aa3b57d9ea5ce629cea59d014a4f5" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; TSet&lt; int32 &gt;()&gt;</type>
+        <definition>TFunction&lt;TSet&lt;int32&gt;()&gt; SInvaderWaveCanvas::GetSelectedSpawnIndices</definition>
+        <argsstring></argsstring>
+        <name>GetSelectedSpawnIndices</name>
+        <qualifiedname>SInvaderWaveCanvas::GetSelectedSpawnIndices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1087" column="13" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1087" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a6678f0e98c754e388e83184df39ff29e" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; bool()&gt;</type>
+        <definition>TFunction&lt;bool()&gt; SInvaderWaveCanvas::GetSnapToGridEnabled</definition>
+        <argsstring></argsstring>
+        <name>GetSnapToGridEnabled</name>
+        <qualifiedname>SInvaderWaveCanvas::GetSnapToGridEnabled</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1085" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1085" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a5cf2869a26fdf3a34aee7ad06e7c7fe4" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; const FARWaveDefRow *()&gt;</type>
+        <definition>TFunction&lt;const FARWaveDefRow*()&gt; SInvaderWaveCanvas::GetWaveRow</definition>
+        <argsstring></argsstring>
+        <name>GetWaveRow</name>
+        <qualifiedname>SInvaderWaveCanvas::GetWaveRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1082" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1082" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1aa173509821bbbb99e9b9827c29c0f419" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 SInvaderWaveCanvas::HoveredSpawnIndex</definition>
+        <argsstring></argsstring>
+        <name>HoveredSpawnIndex</name>
+        <qualifiedname>SInvaderWaveCanvas::HoveredSpawnIndex</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1099" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1099" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a503209f898a0d407d72e61d4b6e0e9ec" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void(const FVector2D &amp;)&gt;</type>
+        <definition>TFunction&lt;void(const FVector2D&amp;)&gt; SInvaderWaveCanvas::OnAddSpawnAt</definition>
+        <argsstring></argsstring>
+        <name>OnAddSpawnAt</name>
+        <qualifiedname>SInvaderWaveCanvas::OnAddSpawnAt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1096" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1096" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a091e82ca3ffdc05735905614bd8a5e8b" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void()&gt;</type>
+        <definition>TFunction&lt;void()&gt; SInvaderWaveCanvas::OnBeginDragSpawn</definition>
+        <argsstring></argsstring>
+        <name>OnBeginDragSpawn</name>
+        <qualifiedname>SInvaderWaveCanvas::OnBeginDragSpawn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1092" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1092" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1ac9d521f56282010b67b79670401f282d" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void()&gt;</type>
+        <definition>TFunction&lt;void()&gt; SInvaderWaveCanvas::OnClearSelection</definition>
+        <argsstring></argsstring>
+        <name>OnClearSelection</name>
+        <qualifiedname>SInvaderWaveCanvas::OnClearSelection</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1090" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1090" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a251945891d33559c1893c511e693f252" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void()&gt;</type>
+        <definition>TFunction&lt;void()&gt; SInvaderWaveCanvas::OnEndDragSpawn</definition>
+        <argsstring></argsstring>
+        <name>OnEndDragSpawn</name>
+        <qualifiedname>SInvaderWaveCanvas::OnEndDragSpawn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1093" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1093" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1ad86c4223a2fb5ea18b6236926b998206" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void(const FVector2D &amp;)&gt;</type>
+        <definition>TFunction&lt;void(const FVector2D&amp;)&gt; SInvaderWaveCanvas::OnMoveSelectedSpawnsByDelta</definition>
+        <argsstring></argsstring>
+        <name>OnMoveSelectedSpawnsByDelta</name>
+        <qualifiedname>SInvaderWaveCanvas::OnMoveSelectedSpawnsByDelta</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1094" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1094" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1aa25c6b5c1a0a919b04c9544c20775fae" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void(int32, const FVector2D &amp;)&gt;</type>
+        <definition>TFunction&lt;void(int32, const FVector2D&amp;)&gt; SInvaderWaveCanvas::OnOpenSpawnContextMenu</definition>
+        <argsstring></argsstring>
+        <name>OnOpenSpawnContextMenu</name>
+        <qualifiedname>SInvaderWaveCanvas::OnOpenSpawnContextMenu</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1091" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1091" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1addcf66c727aad659457e53e9f447ee7b" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void(const TArray&lt; int32 &gt; &amp;, bool)&gt;</type>
+        <definition>TFunction&lt;void(const TArray&lt;int32&gt;&amp;, bool)&gt; SInvaderWaveCanvas::OnSelectionRectChanged</definition>
+        <argsstring></argsstring>
+        <name>OnSelectionRectChanged</name>
+        <qualifiedname>SInvaderWaveCanvas::OnSelectionRectChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1095" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1095" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1aab679552b180c931b56c137b3b25031d" prot="private" static="no" mutable="no">
+        <type>TFunction&lt; void(int32, bool, bool)&gt;</type>
+        <definition>TFunction&lt;void(int32, bool, bool)&gt; SInvaderWaveCanvas::OnSpawnSelected</definition>
+        <argsstring></argsstring>
+        <name>OnSpawnSelected</name>
+        <qualifiedname>SInvaderWaveCanvas::OnSpawnSelected</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1089" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1089" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a6309079a9636612eee99aeec72cde1fa" prot="private" static="no" mutable="no">
+        <type>FVector2D</type>
+        <definition>FVector2D SInvaderWaveCanvas::SelectionRectEnd</definition>
+        <argsstring></argsstring>
+        <name>SelectionRectEnd</name>
+        <qualifiedname>SInvaderWaveCanvas::SelectionRectEnd</qualifiedname>
+        <initializer>= FVector2D::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1105" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSInvaderWaveCanvas_1a99f9559d1178c62593181a29f1de8d88" prot="private" static="no" mutable="no">
+        <type>FVector2D</type>
+        <definition>FVector2D SInvaderWaveCanvas::SelectionRectStart</definition>
+        <argsstring></argsstring>
+        <name>SelectionRectStart</name>
+        <qualifiedname>SInvaderWaveCanvas::SelectionRectStart</qualifiedname>
+        <initializer>= FVector2D::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1104" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1104" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1ad61aa10281dd50c49ab5c4e2bb99cc33" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FVector2D</type>
+        <definition>virtual FVector2D SInvaderWaveCanvas::ComputeDesiredSize</definition>
+        <argsstring>(float) const override</argsstring>
+        <name>ComputeDesiredSize</name>
+        <qualifiedname>SInvaderWaveCanvas::ComputeDesiredSize</qualifiedname>
+        <param>
+          <type>float</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="523" column="19" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="523" bodyend="526"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1ac12ea283e307861bbb5f4c425a041250" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SInvaderWaveCanvas::Construct</definition>
+        <argsstring>(const FArguments &amp;)</argsstring>
+        <name>Construct</name>
+        <qualifiedname>SInvaderWaveCanvas::Construct</qualifiedname>
+        <param>
+          <type>const FArguments &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="485" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="485" bodyend="487"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a8cfa352e800b02814546726edd31b225" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>FReply</type>
+        <definition>virtual FReply SInvaderWaveCanvas::OnMouseButtonDown</definition>
+        <argsstring>(const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</argsstring>
+        <name>OnMouseButtonDown</name>
+        <qualifiedname>SInvaderWaveCanvas::OnMouseButtonDown</qualifiedname>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FPointerEvent &amp;</type>
+          <declname>MouseEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="688" column="16" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="688" bodyend="763"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a5bb69db3febacea8807df27901ca2be6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>FReply</type>
+        <definition>virtual FReply SInvaderWaveCanvas::OnMouseButtonUp</definition>
+        <argsstring>(const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</argsstring>
+        <name>OnMouseButtonUp</name>
+        <qualifiedname>SInvaderWaveCanvas::OnMouseButtonUp</qualifiedname>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FPointerEvent &amp;</type>
+          <declname>MouseEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="826" column="16" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="826" bodyend="843"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1aa33d17f38cf3fd36f34b24d0d9b7bbb7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void SInvaderWaveCanvas::OnMouseCaptureLost</definition>
+        <argsstring>(const FCaptureLostEvent &amp;CaptureLostEvent) override</argsstring>
+        <name>OnMouseCaptureLost</name>
+        <qualifiedname>SInvaderWaveCanvas::OnMouseCaptureLost</qualifiedname>
+        <param>
+          <type>const FCaptureLostEvent &amp;</type>
+          <declname>CaptureLostEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="845" column="14" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="845" bodyend="855"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a0e031bc436e74c0830dead001f8c9c21" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void SInvaderWaveCanvas::OnMouseLeave</definition>
+        <argsstring>(const FPointerEvent &amp;MouseEvent) override</argsstring>
+        <name>OnMouseLeave</name>
+        <qualifiedname>SInvaderWaveCanvas::OnMouseLeave</qualifiedname>
+        <param>
+          <type>const FPointerEvent &amp;</type>
+          <declname>MouseEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="857" column="14" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="857" bodyend="862"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a788f89f35f99016686eba2d1bbc3389a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>FReply</type>
+        <definition>virtual FReply SInvaderWaveCanvas::OnMouseMove</definition>
+        <argsstring>(const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</argsstring>
+        <name>OnMouseMove</name>
+        <qualifiedname>SInvaderWaveCanvas::OnMouseMove</qualifiedname>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FPointerEvent &amp;</type>
+          <declname>MouseEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="765" column="16" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="765" bodyend="824"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a424bfb6afa40a7e7d59c6a2f989a4f85" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>int32</type>
+        <definition>virtual int32 SInvaderWaveCanvas::OnPaint</definition>
+        <argsstring>(const FPaintArgs &amp;Args, const FGeometry &amp;AllottedGeometry, const FSlateRect &amp;MyCullingRect, FSlateWindowElementList &amp;OutDrawElements, int32 LayerId, const FWidgetStyle &amp;InWidgetStyle, bool bParentEnabled) const override</argsstring>
+        <name>OnPaint</name>
+        <qualifiedname>SInvaderWaveCanvas::OnPaint</qualifiedname>
+        <param>
+          <type>const FPaintArgs &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>AllottedGeometry</declname>
+        </param>
+        <param>
+          <type>const FSlateRect &amp;</type>
+          <declname>MyCullingRect</declname>
+        </param>
+        <param>
+          <type>FSlateWindowElementList &amp;</type>
+          <declname>OutDrawElements</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>LayerId</declname>
+        </param>
+        <param>
+          <type>const FWidgetStyle &amp;</type>
+          <declname>InWidgetStyle</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bParentEnabled</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="528" column="15" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="528" bodyend="686"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a250e2dc8d9e7d6a75c7aeb1faf8e3ebe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SInvaderWaveCanvas::SetDataAccessors</definition>
+        <argsstring>(TFunction&lt; const FARWaveDefRow *()&gt; InGetWaveRow, TFunction&lt; float()&gt; InGetSelectedLayerDelay, TFunction&lt; bool()&gt; InGetHideOtherLayers, TFunction&lt; bool()&gt; InGetSnapToGridEnabled, TFunction&lt; float()&gt; InGetGridSize, TFunction&lt; TSet&lt; int32 &gt;()&gt; InGetSelectedSpawnIndices, TFunction&lt; float()&gt; InGetPreviewTime, TFunction&lt; void(int32, bool, bool)&gt; InOnSpawnSelected, TFunction&lt; void()&gt; InOnClearSelection, TFunction&lt; void(int32, const FVector2D &amp;)&gt; InOnOpenSpawnContextMenu, TFunction&lt; void()&gt; InOnBeginDragSpawn, TFunction&lt; void()&gt; InOnEndDragSpawn, TFunction&lt; void(const FVector2D &amp;)&gt; InOnMoveSelectedSpawnsByDelta, TFunction&lt; void(const TArray&lt; int32 &gt; &amp;, bool)&gt; InOnSelectionRectChanged, TFunction&lt; void(const FVector2D &amp;)&gt; InOnAddSpawnAt)</argsstring>
+        <name>SetDataAccessors</name>
+        <qualifiedname>SInvaderWaveCanvas::SetDataAccessors</qualifiedname>
+        <param>
+          <type>TFunction&lt; const FARWaveDefRow *()&gt;</type>
+          <declname>InGetWaveRow</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; float()&gt;</type>
+          <declname>InGetSelectedLayerDelay</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; bool()&gt;</type>
+          <declname>InGetHideOtherLayers</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; bool()&gt;</type>
+          <declname>InGetSnapToGridEnabled</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; float()&gt;</type>
+          <declname>InGetGridSize</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; TSet&lt; int32 &gt;()&gt;</type>
+          <declname>InGetSelectedSpawnIndices</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; float()&gt;</type>
+          <declname>InGetPreviewTime</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void(int32, bool, bool)&gt;</type>
+          <declname>InOnSpawnSelected</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void()&gt;</type>
+          <declname>InOnClearSelection</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void(int32, const FVector2D &amp;)&gt;</type>
+          <declname>InOnOpenSpawnContextMenu</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void()&gt;</type>
+          <declname>InOnBeginDragSpawn</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void()&gt;</type>
+          <declname>InOnEndDragSpawn</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void(const FVector2D &amp;)&gt;</type>
+          <declname>InOnMoveSelectedSpawnsByDelta</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void(const TArray&lt; int32 &gt; &amp;, bool)&gt;</type>
+          <declname>InOnSelectionRectChanged</declname>
+        </param>
+        <param>
+          <type>TFunction&lt; void(const FVector2D &amp;)&gt;</type>
+          <declname>InOnAddSpawnAt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="489" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="489" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a3d08063506008c57ddc9d0d5e97c6e11" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SInvaderWaveCanvas::SLATE_BEGIN_ARGS</definition>
+        <argsstring>(SInvaderWaveCanvas)</argsstring>
+        <name>SLATE_BEGIN_ARGS</name>
+        <qualifiedname>SInvaderWaveCanvas::SLATE_BEGIN_ARGS</qualifiedname>
+        <param>
+          <type>SInvaderWaveCanvas</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="482" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="482" bodyend="482"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a94c81656859166a5326816f25f35b789" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SInvaderWaveCanvas::DrawShape</definition>
+        <argsstring>(FSlateWindowElementList &amp;OutDrawElements, int32 Layer, const FGeometry &amp;Geometry, const FVector2D &amp;Center, const FLinearColor &amp;Color, int32 ShapeCycle, float Size, bool bOutlineOnly) const</argsstring>
+        <name>DrawShape</name>
+        <qualifiedname>SInvaderWaveCanvas::DrawShape</qualifiedname>
+        <param>
+          <type>FSlateWindowElementList &amp;</type>
+          <declname>OutDrawElements</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Layer</declname>
+        </param>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>Geometry</declname>
+        </param>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>Center</declname>
+        </param>
+        <param>
+          <type>const FLinearColor &amp;</type>
+          <declname>Color</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>ShapeCycle</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>Size</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bOutlineOnly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="865" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="865" bodyend="983"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1afea53dfc17674684e3cdc0028778011a" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 SInvaderWaveCanvas::FindSpawnAtLocalPoint</definition>
+        <argsstring>(const FARWaveDefRow *WaveRow, const FGeometry &amp;MyGeometry, const FVector2D &amp;Local) const</argsstring>
+        <name>FindSpawnAtLocalPoint</name>
+        <qualifiedname>SInvaderWaveCanvas::FindSpawnAtLocalPoint</qualifiedname>
+        <param>
+          <type>const FARWaveDefRow *</type>
+          <declname>WaveRow</declname>
+        </param>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>Local</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="985" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="985" bodyend="1001"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1ac52e17de581c089954b0ef15285baf84" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>TArray&lt; int32 &gt;</type>
+        <definition>TArray&lt; int32 &gt; SInvaderWaveCanvas::FindSpawnsInRect</definition>
+        <argsstring>(const FARWaveDefRow *WaveRow, const FGeometry &amp;MyGeometry, const FVector2D &amp;A, const FVector2D &amp;B) const</argsstring>
+        <name>FindSpawnsInRect</name>
+        <qualifiedname>SInvaderWaveCanvas::FindSpawnsInRect</qualifiedname>
+        <param>
+          <type>const FARWaveDefRow *</type>
+          <declname>WaveRow</declname>
+        </param>
+        <param>
+          <type>const FGeometry &amp;</type>
+          <declname>MyGeometry</declname>
+        </param>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>B</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1003" column="8" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1003" bodyend="1046"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1aa07b51519cda481ef7e250f96d97cd08" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>float SInvaderWaveCanvas::GetGridSnapSize</definition>
+        <argsstring>() const</argsstring>
+        <name>GetGridSnapSize</name>
+        <qualifiedname>SInvaderWaveCanvas::GetGridSnapSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1067" column="7" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1067" bodyend="1071"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1acce82e7b66d4d91150081922376f0fbe" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FVector2D</type>
+        <definition>FVector2D SInvaderWaveCanvas::LocalToOffset</definition>
+        <argsstring>(const FVector2D &amp;Local, const FVector2D &amp;Size) const</argsstring>
+        <name>LocalToOffset</name>
+        <qualifiedname>SInvaderWaveCanvas::LocalToOffset</qualifiedname>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>Local</declname>
+        </param>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>Size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1048" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1048" bodyend="1060"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a206e3204231695be0c6277088b54dc2a" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool SInvaderWaveCanvas::ShouldSnapToGrid</definition>
+        <argsstring>() const</argsstring>
+        <name>ShouldSnapToGrid</name>
+        <qualifiedname>SInvaderWaveCanvas::ShouldSnapToGrid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1062" column="6" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1062" bodyend="1065"/>
+      </memberdef>
+      <memberdef kind="function" id="classSInvaderWaveCanvas_1a5bfebd8fdd68753fe49b8bd8a5762df5" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FVector2D</type>
+        <definition>FVector2D SInvaderWaveCanvas::SnapOffset</definition>
+        <argsstring>(const FVector2D &amp;InOffset) const</argsstring>
+        <name>SnapOffset</name>
+        <qualifiedname>SInvaderWaveCanvas::SnapOffset</qualifiedname>
+        <param>
+          <type>const FVector2D &amp;</type>
+          <declname>InOffset</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="1073" column="11" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="1073" bodyend="1079"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" line="479" column="1" bodyfile="AlienRamenEditor/Private/ARInvaderAuthoringPanel.cpp" bodystart="480" bodyend="1106"/>
+    <listofallmembers>
+      <member refid="classSInvaderWaveCanvas_1ae3452b1a57e4d730b4e9512189ffc2d0" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>bSelectionRectActive</name></member>
+      <member refid="classSInvaderWaveCanvas_1a29064c80e137d2c2f810c3f147f48361" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>bSelectionRectAppend</name></member>
+      <member refid="classSInvaderWaveCanvas_1a4b94658a972cb822114a3fa71f1cc4db" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>bStartedDragTransaction</name></member>
+      <member refid="classSInvaderWaveCanvas_1ad61aa10281dd50c49ab5c4e2bb99cc33" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>ComputeDesiredSize</name></member>
+      <member refid="classSInvaderWaveCanvas_1ac12ea283e307861bbb5f4c425a041250" prot="public" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>Construct</name></member>
+      <member refid="classSInvaderWaveCanvas_1a6de4f4bbeb960b497b2cb66eaa36636c" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>DraggedSpawnIndex</name></member>
+      <member refid="classSInvaderWaveCanvas_1a63620fc4d05ac8b3057f08f3e90b2ff7" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>DragStartOffset</name></member>
+      <member refid="classSInvaderWaveCanvas_1a94c81656859166a5326816f25f35b789" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>DrawShape</name></member>
+      <member refid="classSInvaderWaveCanvas_1afea53dfc17674684e3cdc0028778011a" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>FindSpawnAtLocalPoint</name></member>
+      <member refid="classSInvaderWaveCanvas_1ac52e17de581c089954b0ef15285baf84" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>FindSpawnsInRect</name></member>
+      <member refid="classSInvaderWaveCanvas_1a8f7a87d2ca81e3e12a7edb944fd7af14" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetGridSize</name></member>
+      <member refid="classSInvaderWaveCanvas_1aa07b51519cda481ef7e250f96d97cd08" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetGridSnapSize</name></member>
+      <member refid="classSInvaderWaveCanvas_1ae8b0bc3670c8ae2273b03aed7e566f0b" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetHideOtherLayers</name></member>
+      <member refid="classSInvaderWaveCanvas_1af88409a67710a3535fd806724179b32b" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetPreviewTime</name></member>
+      <member refid="classSInvaderWaveCanvas_1a91d15a199f9611a40df69cf62a348833" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetSelectedLayerDelay</name></member>
+      <member refid="classSInvaderWaveCanvas_1af75aa3b57d9ea5ce629cea59d014a4f5" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetSelectedSpawnIndices</name></member>
+      <member refid="classSInvaderWaveCanvas_1a6678f0e98c754e388e83184df39ff29e" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetSnapToGridEnabled</name></member>
+      <member refid="classSInvaderWaveCanvas_1a5cf2869a26fdf3a34aee7ad06e7c7fe4" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>GetWaveRow</name></member>
+      <member refid="classSInvaderWaveCanvas_1aa173509821bbbb99e9b9827c29c0f419" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>HoveredSpawnIndex</name></member>
+      <member refid="classSInvaderWaveCanvas_1acce82e7b66d4d91150081922376f0fbe" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>LocalToOffset</name></member>
+      <member refid="classSInvaderWaveCanvas_1a503209f898a0d407d72e61d4b6e0e9ec" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnAddSpawnAt</name></member>
+      <member refid="classSInvaderWaveCanvas_1a091e82ca3ffdc05735905614bd8a5e8b" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnBeginDragSpawn</name></member>
+      <member refid="classSInvaderWaveCanvas_1ac9d521f56282010b67b79670401f282d" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnClearSelection</name></member>
+      <member refid="classSInvaderWaveCanvas_1a251945891d33559c1893c511e693f252" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnEndDragSpawn</name></member>
+      <member refid="classSInvaderWaveCanvas_1a8cfa352e800b02814546726edd31b225" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>OnMouseButtonDown</name></member>
+      <member refid="classSInvaderWaveCanvas_1a5bb69db3febacea8807df27901ca2be6" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>OnMouseButtonUp</name></member>
+      <member refid="classSInvaderWaveCanvas_1aa33d17f38cf3fd36f34b24d0d9b7bbb7" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>OnMouseCaptureLost</name></member>
+      <member refid="classSInvaderWaveCanvas_1a0e031bc436e74c0830dead001f8c9c21" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>OnMouseLeave</name></member>
+      <member refid="classSInvaderWaveCanvas_1a788f89f35f99016686eba2d1bbc3389a" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>OnMouseMove</name></member>
+      <member refid="classSInvaderWaveCanvas_1ad86c4223a2fb5ea18b6236926b998206" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnMoveSelectedSpawnsByDelta</name></member>
+      <member refid="classSInvaderWaveCanvas_1aa25c6b5c1a0a919b04c9544c20775fae" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnOpenSpawnContextMenu</name></member>
+      <member refid="classSInvaderWaveCanvas_1a424bfb6afa40a7e7d59c6a2f989a4f85" prot="public" virt="virtual"><scope>SInvaderWaveCanvas</scope><name>OnPaint</name></member>
+      <member refid="classSInvaderWaveCanvas_1addcf66c727aad659457e53e9f447ee7b" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnSelectionRectChanged</name></member>
+      <member refid="classSInvaderWaveCanvas_1aab679552b180c931b56c137b3b25031d" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>OnSpawnSelected</name></member>
+      <member refid="classSInvaderWaveCanvas_1a6309079a9636612eee99aeec72cde1fa" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>SelectionRectEnd</name></member>
+      <member refid="classSInvaderWaveCanvas_1a99f9559d1178c62593181a29f1de8d88" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>SelectionRectStart</name></member>
+      <member refid="classSInvaderWaveCanvas_1a250e2dc8d9e7d6a75c7aeb1faf8e3ebe" prot="public" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>SetDataAccessors</name></member>
+      <member refid="classSInvaderWaveCanvas_1a206e3204231695be0c6277088b54dc2a" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>ShouldSnapToGrid</name></member>
+      <member refid="classSInvaderWaveCanvas_1a3d08063506008c57ddc9d0d5e97c6e11" prot="public" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>SLATE_BEGIN_ARGS</name></member>
+      <member refid="classSInvaderWaveCanvas_1a5bfebd8fdd68753fe49b8bd8a5762df5" prot="private" virt="non-virtual"><scope>SInvaderWaveCanvas</scope><name>SnapOffset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

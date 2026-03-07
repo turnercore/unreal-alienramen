@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderFullBlastSessionState" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderFullBlastSessionState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderFullBlastSessionState_1a54d429b8b7a204fe70f13d53ecafa3b0" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderFullBlastSessionState::ActivationTier</definition>
+        <argsstring></argsstring>
+        <name>ActivationTier</name>
+        <qualifiedname>FARInvaderFullBlastSessionState::ActivationTier</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="220" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderFullBlastSessionState_1a0f84e84771a100a71b1742440c700c15" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderFullBlastSessionState::bIsActive</definition>
+        <argsstring></argsstring>
+        <name>bIsActive</name>
+        <qualifiedname>FARInvaderFullBlastSessionState::bIsActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="213" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderFullBlastSessionState_1a5de10ef82804295b1c9c968ae075adf0" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderUpgradeOffer &gt;</type>
+        <definition>TArray&lt;FARInvaderUpgradeOffer&gt; FARInvaderFullBlastSessionState::Offers</definition>
+        <argsstring></argsstring>
+        <name>Offers</name>
+        <qualifiedname>FARInvaderFullBlastSessionState::Offers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="223" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderFullBlastSessionState_1a8270d0203a23c8edc38f7353f94febc5" prot="public" static="no" mutable="no">
+        <type>EARPlayerSlot</type>
+        <definition>EARPlayerSlot FARInvaderFullBlastSessionState::RequestingPlayerSlot</definition>
+        <argsstring></argsstring>
+        <name>RequestingPlayerSlot</name>
+        <qualifiedname>FARInvaderFullBlastSessionState::RequestingPlayerSlot</qualifiedname>
+        <initializer>= EARPlayerSlot::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="216" column="15" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="208" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="209" bodyend="224"/>
+    <listofallmembers>
+      <member refid="structFARInvaderFullBlastSessionState_1a54d429b8b7a204fe70f13d53ecafa3b0" prot="public" virt="non-virtual"><scope>FARInvaderFullBlastSessionState</scope><name>ActivationTier</name></member>
+      <member refid="structFARInvaderFullBlastSessionState_1a0f84e84771a100a71b1742440c700c15" prot="public" virt="non-virtual"><scope>FARInvaderFullBlastSessionState</scope><name>bIsActive</name></member>
+      <member refid="structFARInvaderFullBlastSessionState_1a5de10ef82804295b1c9c968ae075adf0" prot="public" virt="non-virtual"><scope>FARInvaderFullBlastSessionState</scope><name>Offers</name></member>
+      <member refid="structFARInvaderFullBlastSessionState_1a8270d0203a23c8edc38f7353f94febc5" prot="public" virt="non-virtual"><scope>FARInvaderFullBlastSessionState</scope><name>RequestingPlayerSlot</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

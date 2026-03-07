@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARInvaderEnemyAuthoringEditor" kind="namespace" language="C++">
+    <compoundname>ARInvaderEnemyAuthoringEditor</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="AREnemyAuthoringPanel_8h_1ad582cec0e1bf261d4b4e6769e09e74fe" prot="public" static="no" extern="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName ARInvaderEnemyAuthoringEditor::TabName</definition>
+        <argsstring></argsstring>
+        <name>TabName</name>
+        <qualifiedname>ARInvaderEnemyAuthoringEditor::TabName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="28" column="20" declfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" declline="28" declcolumn="20"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="AREnemyAuthoringPanel_8cpp_1aadee0d7e2821c6ef1c1875b4530e9b10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARInvaderEnemyAuthoringEditor::OpenEnemyAuthoringForIdentifierTag</definition>
+        <argsstring>(const FGameplayTag &amp;EnemyIdentifierTag)</argsstring>
+        <name>OpenEnemyAuthoringForIdentifierTag</name>
+        <qualifiedname>ARInvaderEnemyAuthoringEditor::OpenEnemyAuthoringForIdentifierTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>EnemyIdentifierTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" line="160" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="160" bodyend="168" declfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" declline="30" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyAuthoringPanel_8cpp_1a3e11ad366dd3170abbb30d019c3fcd95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARInvaderEnemyAuthoringEditor::ResolveEnemyRowByIdentifierTag</definition>
+        <argsstring>(const FGameplayTag &amp;EnemyIdentifierTag, FName &amp;OutRowName, FARInvaderEnemyDefRow &amp;OutRow)</argsstring>
+        <name>ResolveEnemyRowByIdentifierTag</name>
+        <qualifiedname>ARInvaderEnemyAuthoringEditor::ResolveEnemyRowByIdentifierTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>EnemyIdentifierTag</declname>
+        </param>
+        <param>
+          <type>FName &amp;</type>
+          <declname>OutRowName</declname>
+        </param>
+        <param>
+          <type>FARInvaderEnemyDefRow &amp;</type>
+          <declname>OutRow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" line="170" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="170" bodyend="198" declfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" declline="31" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyAuthoringPanel_8cpp_1ac3053595d358e3eb82b4ca9132b34f45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TSharedRef&lt; SDockTab &gt;</type>
+        <definition>TSharedRef&lt; class SDockTab &gt; ARInvaderEnemyAuthoringEditor::SpawnTab</definition>
+        <argsstring>(const FSpawnTabArgs &amp;Args)</argsstring>
+        <name>SpawnTab</name>
+        <qualifiedname>ARInvaderEnemyAuthoringEditor::SpawnTab</qualifiedname>
+        <param>
+          <type>const FSpawnTabArgs &amp;</type>
+          <declname>Args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" line="150" column="12" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" bodystart="150" bodyend="158" declfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" declline="29" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="AREnemyAuthoringPanel_8cpp_1a0cb0e4910da67aef74e05d347cc11b3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const FName</type>
+        <definition>const FName ARInvaderEnemyAuthoringEditor::TabName</definition>
+        <argsstring>(TEXT(&quot;AR_EnemyAuthoringTool&quot;))</argsstring>
+        <name>TabName</name>
+        <qualifiedname>ARInvaderEnemyAuthoringEditor::TabName</qualifiedname>
+        <param>
+          <type>TEXT(&quot;AR_EnemyAuthoringTool&quot;)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" line="148" column="13" declfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" declline="148" declcolumn="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.cpp" line="146" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,531 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARPickupCollectorComponent" kind="class" language="C++" prot="public">
+    <compoundname>UARPickupCollectorComponent</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UActorComponent</basecompoundref>
+    <includes refid="ARPickupCollectorComponent_8h" local="no">AlienRamen/Public/ARPickupCollectorComponent.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1a86e68e0c8a0f6f3ce192bb25372a038e" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARPickupCollectorComponent::bEnableClientPrediction</definition>
+        <argsstring></argsstring>
+        <name>bEnableClientPrediction</name>
+        <qualifiedname>UARPickupCollectorComponent::bEnableClientPrediction</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="74" column="6" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1ae76c339953902077213679eda4d1ab09" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TWeakObjectPtr&lt;UAbilitySystemComponent&gt; UARPickupCollectorComponent::BoundASC</definition>
+        <argsstring></argsstring>
+        <name>BoundASC</name>
+        <qualifiedname>UARPickupCollectorComponent::BoundASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="89" column="16" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1ae2c4d824ecb4c38a41170e2d9bc064c1" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARPickupCollectorComponent::CachedPickupRadius</definition>
+        <argsstring></argsstring>
+        <name>CachedPickupRadius</name>
+        <qualifiedname>UARPickupCollectorComponent::CachedPickupRadius</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="87" column="7" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1aebc2c9685769289b170ec619cb2a3348" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARPickupCollectorComponent::FallbackPickupRadius</definition>
+        <argsstring></argsstring>
+        <name>FallbackPickupRadius</name>
+        <qualifiedname>UARPickupCollectorComponent::FallbackPickupRadius</qualifiedname>
+        <initializer>= 150.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="82" column="7" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1a0dae05af956fbc1c863b2bb6748659fc" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; const <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> &gt;, float &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;const AARInvaderDropBase&gt;, float&gt; UARPickupCollectorComponent::LastServerRequestByDrop</definition>
+        <argsstring></argsstring>
+        <name>LastServerRequestByDrop</name>
+        <qualifiedname>UARPickupCollectorComponent::LastServerRequestByDrop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="92" column="6" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1af51e10cee97aca86b384bd8b2cebd922" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;AARInvaderDropBase&gt; &gt; UARPickupCollectorComponent::OverlappingDrops</definition>
+        <argsstring></argsstring>
+        <name>OverlappingDrops</name>
+        <qualifiedname>UARPickupCollectorComponent::OverlappingDrops</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="91" column="6" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1ad174736a701b44dbc3097f51b7cee876" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; USphereComponent &gt;</type>
+        <definition>TObjectPtr&lt;USphereComponent&gt; UARPickupCollectorComponent::PickupDetector</definition>
+        <argsstring></argsstring>
+        <name>PickupDetector</name>
+        <qualifiedname>UARPickupCollectorComponent::PickupDetector</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="85" column="12" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1ab4a011f2212c13999ec884c3bbc3c2e5" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARPickupCollectorComponent::PickupRadiusChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>PickupRadiusChangedDelegateHandle</name>
+        <qualifiedname>UARPickupCollectorComponent::PickupRadiusChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="90" column="17" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1ae96ee1c077d25d1af02ee5e4887a741c" prot="private" static="no" mutable="no">
+        <type>FTimerHandle</type>
+        <definition>FTimerHandle UARPickupCollectorComponent::RetryTimerHandle</definition>
+        <argsstring></argsstring>
+        <name>RetryTimerHandle</name>
+        <qualifiedname>UARPickupCollectorComponent::RetryTimerHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="88" column="14" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPickupCollectorComponent_1ad5342411c59761375e9da53530c5fb73" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARPickupCollectorComponent::ServerRequestRetrySeconds</definition>
+        <argsstring></argsstring>
+        <name>ServerRequestRetrySeconds</name>
+        <qualifiedname>UARPickupCollectorComponent::ServerRequestRetrySeconds</qualifiedname>
+        <initializer>= 0.10f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="78" column="7" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a353c470f4ccacd702a1472f360c9afae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARPickupCollectorComponent::UARPickupCollectorComponent</definition>
+        <argsstring>()</argsstring>
+        <name>UARPickupCollectorComponent</name>
+        <qualifiedname>UARPickupCollectorComponent::UARPickupCollectorComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="32" column="1" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="13" bodyend="17"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a40197ad78f88e90498e998cb1a3d920f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>UARPickupCollectorComponent::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="35" column="14" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="19" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1aff81ad059efffc7ed7727581e4b1a608" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>UARPickupCollectorComponent::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="36" column="14" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="28" bodyend="35"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a54f2ef906e3cb976b2fd1a2b179a6d69" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::EnsurePickupRadiusBinding</definition>
+        <argsstring>()</argsstring>
+        <name>EnsurePickupRadiusBinding</name>
+        <qualifiedname>UARPickupCollectorComponent::EnsurePickupRadiusBinding</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="41" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="71" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1ac27e6d3576c81bc5d273012d86326d51" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerCharacterInvader" kindref="compound">AARPlayerCharacterInvader</ref> *</type>
+        <definition>AARPlayerCharacterInvader * UARPickupCollectorComponent::GetOwnerInvader</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOwnerInvader</name>
+        <qualifiedname>UARPickupCollectorComponent::GetOwnerInvader</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="39" column="27" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="147" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a57a1ab888503d3385b9bf393c014c331" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::HandleDetectorBeginOverlap</definition>
+        <argsstring>(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp;SweepResult)</argsstring>
+        <name>HandleDetectorBeginOverlap</name>
+        <qualifiedname>UARPickupCollectorComponent::HandleDetectorBeginOverlap</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OverlappedComponent</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OtherBodyIndex</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFromSweep</declname>
+        </param>
+        <param>
+          <type>const FHitResult &amp;</type>
+          <declname>SweepResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="56" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="285" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a246cfb01361b920103327310504fe7f4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::HandleDetectorEndOverlap</definition>
+        <argsstring>(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)</argsstring>
+        <name>HandleDetectorEndOverlap</name>
+        <qualifiedname>UARPickupCollectorComponent::HandleDetectorEndOverlap</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OverlappedComponent</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OtherBodyIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="65" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="303" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1aff7d657c3807d4743fa738a957aee1e1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::HandlePickupRadiusAttributeChanged</definition>
+        <argsstring>(const FOnAttributeChangeData &amp;ChangeData)</argsstring>
+        <name>HandlePickupRadiusAttributeChanged</name>
+        <qualifiedname>UARPickupCollectorComponent::HandlePickupRadiusAttributeChanged</qualifiedname>
+        <param>
+          <type>const FOnAttributeChangeData &amp;</type>
+          <declname>ChangeData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="53" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="280" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1acad1a2d37f63f966a7340c88c5d525aa" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::HandleRetryTimerTick</definition>
+        <argsstring>()</argsstring>
+        <name>HandleRetryTimerTick</name>
+        <qualifiedname>UARPickupCollectorComponent::HandleRetryTimerTick</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="47" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="175" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a2008d96b398f45376a90b8371eb23a23" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::ProcessAllOverlappingDrops</definition>
+        <argsstring>()</argsstring>
+        <name>ProcessAllOverlappingDrops</name>
+        <qualifiedname>UARPickupCollectorComponent::ProcessAllOverlappingDrops</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="48" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="182" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1ab29d4e3644e6ffd7943ab441d159bdf6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::PrunePendingRequests</definition>
+        <argsstring>()</argsstring>
+        <name>PrunePendingRequests</name>
+        <qualifiedname>UARPickupCollectorComponent::PrunePendingRequests</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="50" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="243" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a102111f2dc5f4d7a31ec559372365cb2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::RefreshDetectorRadius</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshDetectorRadius</name>
+        <qualifiedname>UARPickupCollectorComponent::RefreshDetectorRadius</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="44" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="109" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1abcdf53e6855a69882c112abdb1a27ed1" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float UARPickupCollectorComponent::ResolvePickupRadius</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolvePickupRadius</name>
+        <qualifiedname>UARPickupCollectorComponent::ResolvePickupRadius</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="43" column="7" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="152" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1ab55ab9ac9f1bcb9d84d4e79a40d08e92" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::SetupDetectorComponent</definition>
+        <argsstring>()</argsstring>
+        <name>SetupDetectorComponent</name>
+        <qualifiedname>UARPickupCollectorComponent::SetupDetectorComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="40" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="37" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a02a859cf3f137b7974fed10a4be5039b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARPickupCollectorComponent::ShouldSendServerRequestForDrop</definition>
+        <argsstring>(const AARInvaderDropBase *Drop, float WorldTimeSeconds) const</argsstring>
+        <name>ShouldSendServerRequestForDrop</name>
+        <qualifiedname>UARPickupCollectorComponent::ShouldSendServerRequestForDrop</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> *</type>
+          <declname>Drop</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>WorldTimeSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="51" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="264" bodyend="278"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a07eccf3c13efe40a751c85b750d9a0ca" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::StartRetryTimer</definition>
+        <argsstring>()</argsstring>
+        <name>StartRetryTimer</name>
+        <qualifiedname>UARPickupCollectorComponent::StartRetryTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="45" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="127" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1af2721934f5052d4888d970a5b3d0801c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::StopRetryTimer</definition>
+        <argsstring>()</argsstring>
+        <name>StopRetryTimer</name>
+        <qualifiedname>UARPickupCollectorComponent::StopRetryTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="46" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="139" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a10e0ecadd1d8761f94a6c2fa84637a8c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::TryProcessDrop</definition>
+        <argsstring>(AARInvaderDropBase *Drop)</argsstring>
+        <name>TryProcessDrop</name>
+        <qualifiedname>UARPickupCollectorComponent::TryProcessDrop</qualifiedname>
+        <param>
+          <type><ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> *</type>
+          <declname>Drop</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="49" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="203" bodyend="241"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPickupCollectorComponent_1a60af171b8fe8515076dda8212ba5b182" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPickupCollectorComponent::UnbindPickupRadiusDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindPickupRadiusDelegate</name>
+        <qualifiedname>UARPickupCollectorComponent::UnbindPickupRadiusDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="42" column="6" bodyfile="AlienRamen/Private/ARPickupCollectorComponent.cpp" bodystart="96" bodyend="107"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Lightweight collector attached to invader player pawns. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Uses an overlap sphere detector for nearby drops.</para>
+</listitem><listitem><para>Subscribes to owner ASC PickupRadius attribute changes and updates detector radius immediately.</para>
+</listitem><listitem><para>Locally-controlled client performs predicted visual collection and sends server request.</para>
+</listitem><listitem><para>Server validates range and starts authoritative collection/reward flow. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARPickupCollectorComponent.h" line="27" column="1" bodyfile="AlienRamen/Public/ARPickupCollectorComponent.h" bodystart="28" bodyend="93"/>
+    <listofallmembers>
+      <member refid="classUARPickupCollectorComponent_1a40197ad78f88e90498e998cb1a3d920f" prot="protected" virt="virtual"><scope>UARPickupCollectorComponent</scope><name>BeginPlay</name></member>
+      <member refid="classUARPickupCollectorComponent_1a86e68e0c8a0f6f3ce192bb25372a038e" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>bEnableClientPrediction</name></member>
+      <member refid="classUARPickupCollectorComponent_1ae76c339953902077213679eda4d1ab09" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>BoundASC</name></member>
+      <member refid="classUARPickupCollectorComponent_1ae2c4d824ecb4c38a41170e2d9bc064c1" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>CachedPickupRadius</name></member>
+      <member refid="classUARPickupCollectorComponent_1aff81ad059efffc7ed7727581e4b1a608" prot="protected" virt="virtual"><scope>UARPickupCollectorComponent</scope><name>EndPlay</name></member>
+      <member refid="classUARPickupCollectorComponent_1a54f2ef906e3cb976b2fd1a2b179a6d69" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>EnsurePickupRadiusBinding</name></member>
+      <member refid="classUARPickupCollectorComponent_1aebc2c9685769289b170ec619cb2a3348" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>FallbackPickupRadius</name></member>
+      <member refid="classUARPickupCollectorComponent_1ac27e6d3576c81bc5d273012d86326d51" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>GetOwnerInvader</name></member>
+      <member refid="classUARPickupCollectorComponent_1a57a1ab888503d3385b9bf393c014c331" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>HandleDetectorBeginOverlap</name></member>
+      <member refid="classUARPickupCollectorComponent_1a246cfb01361b920103327310504fe7f4" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>HandleDetectorEndOverlap</name></member>
+      <member refid="classUARPickupCollectorComponent_1aff7d657c3807d4743fa738a957aee1e1" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>HandlePickupRadiusAttributeChanged</name></member>
+      <member refid="classUARPickupCollectorComponent_1acad1a2d37f63f966a7340c88c5d525aa" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>HandleRetryTimerTick</name></member>
+      <member refid="classUARPickupCollectorComponent_1a0dae05af956fbc1c863b2bb6748659fc" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>LastServerRequestByDrop</name></member>
+      <member refid="classUARPickupCollectorComponent_1af51e10cee97aca86b384bd8b2cebd922" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>OverlappingDrops</name></member>
+      <member refid="classUARPickupCollectorComponent_1ad174736a701b44dbc3097f51b7cee876" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>PickupDetector</name></member>
+      <member refid="classUARPickupCollectorComponent_1ab4a011f2212c13999ec884c3bbc3c2e5" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>PickupRadiusChangedDelegateHandle</name></member>
+      <member refid="classUARPickupCollectorComponent_1a2008d96b398f45376a90b8371eb23a23" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>ProcessAllOverlappingDrops</name></member>
+      <member refid="classUARPickupCollectorComponent_1ab29d4e3644e6ffd7943ab441d159bdf6" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>PrunePendingRequests</name></member>
+      <member refid="classUARPickupCollectorComponent_1a102111f2dc5f4d7a31ec559372365cb2" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>RefreshDetectorRadius</name></member>
+      <member refid="classUARPickupCollectorComponent_1abcdf53e6855a69882c112abdb1a27ed1" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>ResolvePickupRadius</name></member>
+      <member refid="classUARPickupCollectorComponent_1ae96ee1c077d25d1af02ee5e4887a741c" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>RetryTimerHandle</name></member>
+      <member refid="classUARPickupCollectorComponent_1ad5342411c59761375e9da53530c5fb73" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>ServerRequestRetrySeconds</name></member>
+      <member refid="classUARPickupCollectorComponent_1ab55ab9ac9f1bcb9d84d4e79a40d08e92" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>SetupDetectorComponent</name></member>
+      <member refid="classUARPickupCollectorComponent_1a02a859cf3f137b7974fed10a4be5039b" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>ShouldSendServerRequestForDrop</name></member>
+      <member refid="classUARPickupCollectorComponent_1a07eccf3c13efe40a751c85b750d9a0ca" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>StartRetryTimer</name></member>
+      <member refid="classUARPickupCollectorComponent_1af2721934f5052d4888d970a5b3d0801c" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>StopRetryTimer</name></member>
+      <member refid="classUARPickupCollectorComponent_1a10e0ecadd1d8761f94a6c2fa84637a8c" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>TryProcessDrop</name></member>
+      <member refid="classUARPickupCollectorComponent_1a353c470f4ccacd702a1472f360c9afae" prot="public" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>UARPickupCollectorComponent</name></member>
+      <member refid="classUARPickupCollectorComponent_1a60af171b8fe8515076dda8212ba5b182" prot="private" virt="non-virtual"><scope>UARPickupCollectorComponent</scope><name>UnbindPickupRadiusDelegate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
