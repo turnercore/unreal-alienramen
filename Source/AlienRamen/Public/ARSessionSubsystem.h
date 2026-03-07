@@ -153,6 +153,8 @@ private:
 	};
 
 	IOnlineSessionPtr ResolveSessionInterface(bool bPreferLAN, FName& OutSubsystemName) const;
+	IOnlineSessionPtr ResolveSessionInterfaceForSubsystem(FName InSubsystemName) const;
+	void ClearAllSessionDelegateHandles();
 	int32 CountCurrentARPlayers() const;
 	int32 ComputeOpenPublicConnections() const;
 	bool BuildDesiredSessionSettings(bool bPreferLAN, FOnlineSessionSettings& OutSettings, FARSessionResult& OutResult) const;
@@ -180,6 +182,7 @@ private:
 	TArray<FARSessionSearchResultData> LastFindResults;
 
 	FName ActiveSubsystemName = NAME_None;
+	FName SearchResultsSubsystemName = NAME_None;
 	bool bOperationInFlight = false;
 	ESessionOperation CurrentOperation = ESessionOperation::None;
 };
