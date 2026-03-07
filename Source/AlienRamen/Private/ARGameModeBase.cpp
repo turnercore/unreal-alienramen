@@ -78,6 +78,7 @@ void AARGameModeBase::BeginPlay()
 	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
 	{
 		NormalizeConnectedPlayersIdentity(GS);
+		GS->SetManualSaveAllowed(bAllowManualSaveInMode);
 	}
 }
 
