@@ -14,7 +14,6 @@
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameplayTagsManager.h"
-#include "Kismet/GameplayStatics.h"
 
 namespace
 {
@@ -694,7 +693,10 @@ static void EndSession(UARDialogueSubsystem* Subsystem, FARActiveDialogueSession
 		{
 			if (IsModeInContainer(GetCurrentModeTag(Subsystem->GetWorld()), Settings->PauseOnDialogueModeTags))
 			{
-				UGameplayStatics::SetGamePaused(Subsystem->GetWorld(), false);
+				if (AARGameStateBase* ARGameState = Subsystem->GetWorld() ? Subsystem->GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+				{
+					ARGameState->SetExternalPauseReasonActive(EARPauseExternalReason::DialogueShared, false);
+				}
 			}
 		}
 	}
@@ -837,7 +839,10 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 
 		if (Settings && IsModeInContainer(ModeTag, Settings->PauseOnDialogueModeTags))
 		{
-			UGameplayStatics::SetGamePaused(World, true);
+			if (AARGameStateBase* ARGameState = World->GetGameState<AARGameStateBase>())
+			{
+				ARGameState->SetExternalPauseReasonActive(EARPauseExternalReason::DialogueShared, true);
+			}
 		}
 	}
 	else

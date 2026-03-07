@@ -14,7 +14,29 @@
 #include "ARPlayerController.generated.h"
 
 class UARAbilitySet;
+class UInputMappingContext;
 class UUserWidget;
+
+USTRUCT(BlueprintType)
+struct FARControllerInputMapping
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Input")
+	TObjectPtr<UInputMappingContext> MappingContext = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Input")
+	int32 Priority = 0;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FAROnPauseMenuStateChangedSignature,
+	bool,
+	bIsOpen);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FAROnPauseMenuOverlayVisibilityChangedSignature,
+	bool,
+	bShouldDisplayOverlay);
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
@@ -26,11 +48,11 @@ public:
 	AARPlayerController();
 
 	// Common abilities/effects every pawn gets when possessed (server grants via pawn).
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AR|Abilities")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Abilities")
 	TObjectPtr<UARAbilitySet> CommonAbilitySet;
 
 	// Convenience accessor
-	UFUNCTION(BlueprintCallable, Category = "AR|Abilities")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Abilities")
 	const UARAbilitySet* GetCommonAbilitySet() const { return CommonAbilitySet; }
 
 	// Client endpoint for persisting server-canonical save snapshots locally.
@@ -118,9 +140,69 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
 	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
+	/** Opens pause menu for all local AR controllers on this machine (if not blocked). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Pause")
+	void RequestOpenPauseMenu();
+
+	/** Closes pause menu for all local AR controllers on this machine (C++ path). */
+	void RequestClosePauseMenu();
+
+	/** Alias for RequestClosePauseMenu for UI/input bindings. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Pause")
+	void ClosePause();
+
+	/** Toggles pause menu for all local AR controllers on this machine. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Pause")
+	void RequestTogglePauseMenu();
+
+	/** Returns true if this local controller currently has pause-menu state active. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|Pause")
+	bool IsPauseMenuOpenLocal() const { return bPauseMenuOpenLocal; }
+
+	/** Returns true if this local controller should currently display pause overlay content. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|Pause")
+	bool IsPauseMenuOverlayVisibleLocal() const { return bPauseMenuOverlayVisibleLocal; }
+
+	/** Returns true when this local controller cannot open pause menu due to policy/system blockers. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|Pause")
+	bool IsPauseMenuBlockedLocal() const;
+
+	/** Adds/removes local pause blocker reason (terminal/menu/etc). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Pause")
+	void SetPauseMenuBlocked(bool bBlocked, FName Reason = NAME_None);
+
+	/** Server mutation endpoint for this controller's pause-menu vote. */
+	UFUNCTION(Server, Reliable)
+	void ServerSetPauseMenuVote(bool bPaused);
+
+	/** Broadcast when this controller's local pause-menu state flips. */
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|Pause")
+	FAROnPauseMenuStateChangedSignature OnPauseMenuStateChanged;
+
+	/** Broadcast when this controller should show/hide pause overlay content. */
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|Pause")
+	FAROnPauseMenuOverlayVisibilityChangedSignature OnPauseMenuOverlayVisibilityChanged;
+
+	/** BP hook fired when this controller enters local pause-menu state. */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|Pause")
+	void BP_OnPauseMenuOpened(bool bShouldDisplayOverlay);
+
+	/** BP hook fired when this controller exits local pause-menu state. */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|Pause")
+	void BP_OnPauseMenuClosed();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void PlayerTick(float DeltaTime) override;
+
+	/** Automatically applies/removes DefaultInputMappings for local controllers at lifecycle boundaries. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Input")
+	bool bAutoApplyDefaultInputMappings = true;
+
+	/** Base gameplay mappings for this controller; pause flow removes/restores these automatically. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Input")
+	TArray<FARControllerInputMapping> DefaultInputMappings;
 
 	// Enables local-only custom cursor initialization from BeginPlay.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
@@ -134,6 +216,30 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
 	TObjectPtr<UUserWidget> Cursor = nullptr;
 
+	/** Automatically swaps Enhanced Input mapping contexts when pause menu opens/closes. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
+	bool bAutoManagePauseInputContexts = true;
+
+	/** Pause menu mapping context applied while pause menu is open. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
+	TObjectPtr<UInputMappingContext> PauseMenuInputMappingContext = nullptr;
+
+	/** Priority used when adding PauseMenuInputMappingContext. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
+	int32 PauseMenuInputPriority = 1000;
+
+	/** Overlay widget class shown while pause menu is open on overlay-owning local controllers. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause")
+	TSubclassOf<UUserWidget> PauseOverlayWidgetClass;
+
+	/** Viewport z-order for PauseOverlayWidgetClass instances. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause")
+	int32 PauseOverlayWidgetZOrder = 2000;
+
+	/** Automatically switches controller input mode and cursor visibility when paused. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
+	bool bAutoManagePauseInputMode = true;
+
 private:
 	void LeaveSessionInternal();
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE);
@@ -143,6 +249,19 @@ private:
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
 	void HandleHUDInitializationRetry();
+	void SetPauseMenuOpenLocal(bool bOpen);
+	void ApplyDefaultInputMappings(bool bEnable);
+	void ApplyPauseInputContexts(bool bEnable);
+	void ApplyPauseInputMode(bool bEnable);
+	bool ShowPauseOverlayWidget();
+	void HidePauseOverlayWidget();
+	void SubmitPauseMenuVote(bool bPaused);
+	bool ShouldDisplayPauseOverlayForLocalController() const;
+	bool IsLobbyControllerMode() const;
+	bool IsDialogueSessionActiveLocal() const;
+	bool IsInvaderFullBlastSessionActiveLocal() const;
+	static void GatherLocalARPlayerControllers(UWorld* World, TArray<AARPlayerController*>& OutControllers);
+	static AARPlayerController* ResolveInvaderSharedOverlayOwner(UWorld* World);
 
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
@@ -157,4 +276,24 @@ private:
 	TWeakObjectPtr<AGameStateBase> LastHUDInitGameState;
 
 	FTimerHandle HUDInitializationRetryTimer;
+
+	UPROPERTY(Transient)
+	bool bPauseMenuOpenLocal = false;
+
+	UPROPERTY(Transient)
+	bool bPauseMenuOverlayVisibleLocal = false;
+
+	UPROPERTY(Transient)
+	bool bPauseInputContextsApplied = false;
+
+	UPROPERTY(Transient)
+	bool bDefaultInputMappingsApplied = false;
+
+	UPROPERTY(Transient)
+	bool bCachedShowMouseCursorForPause = false;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
+
+	TSet<FName> PauseMenuBlockerReasons;
 };
