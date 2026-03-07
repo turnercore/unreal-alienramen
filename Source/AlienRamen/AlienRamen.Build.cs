@@ -9,7 +9,7 @@ public class AlienRamen : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils", "AdvancedSessions", "AdvancedSteamSessions" });
 		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 
 		// Stage Steam redistributables from tracked project SDK location.

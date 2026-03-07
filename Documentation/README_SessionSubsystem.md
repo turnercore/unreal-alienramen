@@ -11,6 +11,7 @@ This document describes the runtime session orchestration contract and how to ex
   - `Stay Offline` blocks host/find/join/advertise and online PreLogin
   - LAN flow prefers null subsystem
   - Online flow prefers configured default subsystem when non-null, then Steam fallback, then default/null fallback
+  - Steam invite acceptance is handled natively via OSS session invite delegates and routes into the same join path
 
 The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `Get Game Instance Subsystem` -> `ARSessionSubsystem`
@@ -19,31 +20,55 @@ Per-user setting persistence:
 - Seed defaults: `Config/DefaultGameUserSettings.ini`
 - Runtime writes: `Saved/Config/<Platform>/GameUserSettings.ini`
 
+Platform config note:
+- `Config/Windows/WindowsEngine.ini` sets `DefaultPlatformService=Steam` for Windows builds.
+
 ## Blueprint API Surface
 
-- `EnsureSessionForCurrentFlow(bPreferLAN, OutResult)`
+- `CreateSession(bUseLAN, OutResult)`
+- `CreateSessionNamed(bUseLAN, SessionDisplayName, OutResult)`
 - `FindSessions(bLANQuery, MaxResults, OutResult)`
+- `CancelFindSessions(OutResult)`
 - `JoinSessionByIndex(ResultIndex, OutResult)`
+- `FindFriendSession(FriendUniqueNetId, OutResult)`
+- `InviteFriendToSession(FriendUniqueNetId, OutResult)`
 - `DestroySession(OutResult)`
 - `RefreshJoinability(OutResult)`
-- `RequestLocalPlayerJoin(OutResult)`
+- `AddLocalPlayer(OutResult)`
 - `IsStayOfflineEnabled()`
 - `SetStayOfflineEnabled(bEnabled, bOutRestartRecommended)`
 
 Events:
-- `OnEnsureSessionCompleted`
+- `OnCreateSessionCompleted`
 - `OnFindSessionsCompleted`
+- `OnFindFriendSessionCompleted`
+- `OnInviteFriendCompleted`
+- `OnCancelFindSessionsCompleted`
 - `OnJoinSessionCompleted`
 - `OnDestroySessionCompleted`
 - `OnRefreshJoinabilityCompleted`
 - `OnLocalJoinCompleted`
+
+Async Blueprint exec-flow nodes (`OnSuccess` / `OnFailure`):
+- `CreateSessionAsync(WorldContext, bUseLAN, SessionDisplayName)`
+- `FindSessionsAsync(WorldContext, bLANQuery, MaxResults)`
+- `JoinSessionByIndexAsync(WorldContext, ResultIndex)`
+- `DestroySessionAsync(WorldContext)`
+
+Session display-name policy:
+- host path writes `ARLobbyName` and `SETTING_SESSIONKEY` into advertised session settings
+- if `SessionDisplayName` is empty, runtime default is:
+  1) current save slot base name (when a save is loaded)
+  2) generated random slot-style name (save subsystem helper)
+  3) fallback literal `AlienRamenLobby`
+- find results expose this as `FARSessionSearchResultData.SessionDisplayName`
 
 ## Authority Enforcement
 
 - `AARGameModeBase::PreLogin(...)` rejects online joins when:
   - player cap is already reached (2)
   - `Stay Offline` is enabled for online identities
-- `RequestLocalPlayerJoin(...)` enforces the same 2-seat cap for couch-join.
+- `AddLocalPlayer(...)` enforces the same 2-seat cap for couch-join.
 - `AARGameModeBase` refreshes session joinability on player join/leave.
 
 ## Backend Expansion (EOS/Xbox/Other OSS)
@@ -79,7 +104,13 @@ This means moving from Steam to another backend does not require a new Blueprint
 ## Operational Notes
 
 - Call `RefreshJoinability` after major state transitions if needed (player joins/leaves already trigger server-side refresh).
-- Use `RequestLocalPlayerJoin` for couch-join input handling; it enforces seat cap and updates joinability.
+- Use `AddLocalPlayer` for couch-join input handling; it enforces seat cap and updates joinability.
+- Steam overlay friend-invite accept flow is handled by subsystem callback (`OnSessionUserInviteAccepted`) and attempts direct join; if an existing named session is active, subsystem destroys it first and then joins invite target.
+- Manual `JoinSessionByIndex` also performs destroy-then-join if the local runtime is already in a different named session.
+- Online (non-LAN) find now performs a retry without strict query filters when the first filtered search returns zero rows.
+- Find completion semantics: transport/query success returns `bSuccess=true`; empty result sets use `ResultCode=SessionNotFound` with `Error="No sessions found."`.
+- Session create/find execution path now uses AdvancedSessions C++ proxies when a local player controller is available (`UCreateSessionCallbackProxyAdvanced`, `UFindSessionsCallbackProxyAdvanced`) while preserving `UARSessionSubsystem` Blueprint API.
+- Project plugin requirement for that proxy path: `AdvancedSessions` and `AdvancedSteamSessions` are enabled in `AlienRamen.uproject`.
 - `Stay Offline` is runtime best-effort; full backend deactivation may still require restart depending on subsystem startup behavior.
 - Session lifetime is intended to survive normal map travel (listen-server flow) unless explicitly destroyed.
 - Leave behavior:
