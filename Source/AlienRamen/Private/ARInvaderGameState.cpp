@@ -1949,6 +1949,8 @@ bool AARInvaderGameState::BuildDropSpawnPlan(
 		return true;
 	}
 
+	const FResolvedDropStackEntry* LowestDenominationDef = Definitions.Num() > 0 ? &Definitions.Last() : nullptr;
+
 	const int32 Unreachable = TNumericLimits<int32>::Max() / 4;
 	TArray<int32> MinPickupCount;
 	TArray<int32> MaxDenomSum;
@@ -1991,16 +1993,55 @@ bool AARInvaderGameState::BuildDropSpawnPlan(
 
 	if (ChoiceIndex[TotalAmount] == INDEX_NONE)
 	{
-		TSubclassOf<AARInvaderDropBase> FallbackClass = ResolveDropClass(DropType);
-		if (!FallbackClass)
+		// No exact decomposition exists. Fall back to partial denomination decomposition
+		// plus one remainder pickup using the lowest-denomination class.
+		if (!LowestDenominationDef || !LowestDenominationDef->DropClass)
 		{
-			return false;
+			TSubclassOf<AARInvaderDropBase> FallbackClass = ResolveDropClass(DropType);
+			if (!FallbackClass)
+			{
+				return false;
+			}
+
+			FDropSpawnPlanEntry Fallback;
+			Fallback.Amount = TotalAmount;
+			Fallback.DropClass = FallbackClass;
+			OutPlan.Add(Fallback);
+			return true;
 		}
 
-		FDropSpawnPlanEntry Fallback;
-		Fallback.Amount = TotalAmount;
-		Fallback.DropClass = FallbackClass;
-		OutPlan.Add(Fallback);
+		int32 Remaining = TotalAmount;
+		for (const FResolvedDropStackEntry& Def : Definitions)
+		{
+			if (Def.Denomination <= 0 || !Def.DropClass)
+			{
+				continue;
+			}
+
+			const int32 Count = Remaining / Def.Denomination;
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				FDropSpawnPlanEntry PlanEntry;
+				PlanEntry.Amount = Def.Denomination;
+				PlanEntry.DropClass = Def.DropClass;
+				OutPlan.Add(PlanEntry);
+			}
+
+			Remaining -= Count * Def.Denomination;
+			if (Remaining <= 0)
+			{
+				break;
+			}
+		}
+
+		if (Remaining > 0)
+		{
+			FDropSpawnPlanEntry RemainderEntry;
+			RemainderEntry.Amount = Remaining;
+			RemainderEntry.DropClass = LowestDenominationDef->DropClass;
+			OutPlan.Add(RemainderEntry);
+		}
+
 		return true;
 	}
 

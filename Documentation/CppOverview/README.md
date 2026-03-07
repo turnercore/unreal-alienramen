@@ -18,5 +18,6 @@ This folder is a quick API inventory for Invader runtime/authoring C++ types. Ea
 - [InvaderDataTypes](InvaderDataTypes.md) - core structs/enums for invader flow
 - [InvaderSpicyTrack](InvaderSpicyTrack.md) - shared spicy-track/full-blast runtime
 - [EnemyUtilities](EnemyUtilities.md) - helper utilities for enemies
+- [AARInvaderDropBase](AARInvaderDropBase.md) - replicated invader currency pickup base
 - [Editor_SInvaderAuthoringPanel](Editor_SInvaderAuthoringPanel.md) - editor authoring UI
 - [Editor_Settings](Editor_Settings.md) - editor-side settings
