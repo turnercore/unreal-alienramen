@@ -10,7 +10,6 @@
 #include "ARInvaderDropTypes.h"
 #include "ARInvaderDirectorSettings.generated.h"
 
-class UDataTable;
 class AActor;
 class UARAbilitySet;
 class UCurveFloat;
@@ -51,13 +50,10 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> WaveDataTable;
+	FGameplayTag WaveDefinitionRootTag;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> StageDataTable;
-
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> EnemyDataTable;
+	FGameplayTag StageDefinitionRootTag;
 
 	// Applied to all enemies before archetype/specific startup abilities.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
@@ -166,23 +162,13 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0"))
 	float DropInitialLinearSpeedMax = 220.0f;
 
-	// Spawn class used for scrap drops; Blueprint subclass of AARInvaderDropBase recommended.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
-	TSoftClassPtr<AARInvaderDropBase> ScrapDropClass;
-
-	// Spawn class used for meat drops; Blueprint subclass of AARInvaderDropBase recommended.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
-	TSoftClassPtr<AARInvaderDropBase> MeatDropClass;
-
 	// Optional denomination definitions for scrap drops. Runtime decomposes the final
 	// drop amount into an optimal pickup set (fewest actors, then larger denominations).
-	// When empty/invalid, runtime falls back to ScrapDropClass as one pickup.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
 	TArray<FARInvaderDropStackDefinition> ScrapDropStacks;
 
 	// Optional denomination definitions for meat drops. Runtime decomposes the final
 	// drop amount into an optimal pickup set (fewest actors, then larger denominations).
-	// When empty/invalid, runtime falls back to MeatDropClass as one pickup.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
 	TArray<FARInvaderDropStackDefinition> MeatDropStacks;
 

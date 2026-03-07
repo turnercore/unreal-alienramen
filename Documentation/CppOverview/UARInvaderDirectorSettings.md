@@ -7,7 +7,7 @@ Path: `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 
 ## Key Config Groups
 - Data:
-- `WaveDataTable`, `StageDataTable`, `InitialStageRow`
+- `WaveDefinitionRootTag`, `StageDefinitionRootTag`, `InitialStageRow`
 - Run:
 - `BaseThreatGainPerSecond`
 - `NewWaveDelayAfterClear`
@@ -34,7 +34,6 @@ Path: `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 - `ScrapDropAmountVarianceCurve` / `MeatDropAmountVarianceCurve` (per-drop-type variance overrides)
 - `DropInitialLinearSpeedMin/Max`
 - `ScrapDropStacks`, `MeatDropStacks` (`Denomination + DropClass` stack definitions)
-- `ScrapDropClass`, `MeatDropClass` (fallback drop BP class hooks)
 - `DropPawnCollisionMode` (`CollideWithPawns` or `IgnoreAllPawns`)
 - `InvaderDesiredUpDirection`, `DropEarthGravityAcceleration` (shared gravity frame + debug-earth-gravity tuning)
 - `bUseCapsuleDerivedPlayerPickupRadius` (explicit toggle for capsule-derived player pickup radius seeding)

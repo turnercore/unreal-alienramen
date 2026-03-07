@@ -19,6 +19,8 @@ UARInvaderSpicyTrackSettings::UARInvaderSpicyTrackSettings()
 	{
 		SkipScrapRewardByTier = { 10, 20, 30, 40, 60 };
 	}
+
+	DefaultBaseKillSpiceValue = FMath::Max(1.0f, DefaultBaseKillSpiceValue);
 }
 
 int32 UARInvaderSpicyTrackSettings::GetSkipScrapRewardForTier(const int32 Tier) const
