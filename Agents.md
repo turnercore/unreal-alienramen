@@ -63,6 +63,7 @@
 - `UARSessionSubsystem::JoinSessionByIndex(...)` now handles active-session replacement by destroying the current named session first and then retrying the requested join automatically.
 - `UARSessionSubsystem` online find flow retries once without strict filters when the first non-LAN filtered query returns zero rows, reducing false-empty server lists on backend variance.
 - `UARSessionSubsystem` create/find runtime paths now integrate AdvancedSessions C++ proxies (`CreateAdvancedSession` / `FindSessionsAdvanced`) when local player context is available, while subsystem BP API names remain unchanged.
+- `AlienRamen.uproject` enables `AdvancedSessions` and `AdvancedSteamSessions`; this is required by `UARSessionSubsystem` C++ proxy integration (`CreateSessionCallbackProxyAdvanced` / `FindSessionsCallbackProxyAdvanced`) and matching Build.cs module dependencies.
 - `UARSessionSubsystem` exposes Steam/friends-first utilities in the same API surface: `FindFriendSession(...)` and `InviteFriendToSession(...)` with `OnFindFriendSessionCompleted` / `OnInviteFriendCompleted`.
 - Session search cancel path is exposed natively via `CancelFindSessions(...)` + `OnCancelFindSessionsCompleted`.
 - Blueprint exec-flow wrappers now exist in `ARSessionAsyncActions` (`CreateSessionAsync`, `FindSessionsAsync`, `JoinSessionByIndexAsync`, `DestroySessionAsync`) with `OnSuccess` / `OnFailure` pins while existing subsystem multicast signals remain available.
@@ -101,7 +102,7 @@
 - Native dialogue + NPC runtime now exists:
 - shared dialogue/NPC types: `Source/AlienRamen/Public/ARDialogueTypes.h`
 - dialogue settings: `UARDialogueSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Dialogue`) with root/policy tags (defaults: `Dialogue.Node`, shared modes `Mode.Invader`+`Mode.Scrapyard`, per-player mode `Mode.Shop`, pause-on-dialogue mode `Mode.Invader`)
-- NPC settings: `UARNPCSettings` (`Project Settings -> Alien Ramen -> Alien Ramen NPC`) with `NpcDefinitionRootTag` (default `Npc.Definition`)
+- NPC settings: `UARNPCSettings` (`Project Settings -> Alien Ramen -> Alien Ramen NPC`) with `NpcDefinitionRootTag` (default `NPC.Identity`)
 - dialogue subsystem: `UARDialogueSubsystem` (`Source/AlienRamen/Public/ARDialogueSubsystem.h`) owns authoritative dialogue sessions, choice resolution, Shop eavesdrop, and mode-specific shared vs per-player policy.
 - NPC subsystem: `UARNPCSubsystem` (`Source/AlienRamen/Public/ARNPCSubsystem.h`) owns persistent NPC relationship/want state and talkable-state refresh.
 - native NPC world actor base: `AARNPCCharacterBase` (`Source/AlienRamen/Public/ARNPCCharacterBase.h`) exposes server interaction entrypoint and replicated `bIsTalkable`.
@@ -152,7 +153,7 @@
 - important decision hook: node flag `bForceEavesdropForImportantDecision` forces partner view subscription in Shop and server-locks choice submission until all slotted players are viewing.
 - NPC progression policy: relationship/love and want satisfaction are global per save (not per-player). `SubmitNpcRamenDelivery(...)` only applies when delivered ramen tag matches current want.
 - Talkable policy: NPC talkable state is computed from dialogue unlock availability (`HasUnlockedDialogueForNpcForAnyPlayer`) and replicated to world NPC actors via `AARNPCCharacterBase::bIsTalkable`.
-- Content authoring source: dialogue and NPC definitions are tag-keyed DataTable rows resolved through `UContentLookupSubsystem` roots (`Dialogue.Node`, `Npc.Definition`).
+- Content authoring source: dialogue and NPC definitions are tag-keyed DataTable rows resolved through `UContentLookupSubsystem` roots (`Dialogue.Node`, `NPC.Identity`).
 
 ## GAS Runtime Contract
 

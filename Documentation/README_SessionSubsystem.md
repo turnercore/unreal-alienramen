@@ -110,6 +110,7 @@ This means moving from Steam to another backend does not require a new Blueprint
 - Online (non-LAN) find now performs a retry without strict query filters when the first filtered search returns zero rows.
 - Find completion semantics: transport/query success returns `bSuccess=true`; empty result sets use `ResultCode=SessionNotFound` with `Error="No sessions found."`.
 - Session create/find execution path now uses AdvancedSessions C++ proxies when a local player controller is available (`UCreateSessionCallbackProxyAdvanced`, `UFindSessionsCallbackProxyAdvanced`) while preserving `UARSessionSubsystem` Blueprint API.
+- Project plugin requirement for that proxy path: `AdvancedSessions` and `AdvancedSteamSessions` are enabled in `AlienRamen.uproject`.
 - `Stay Offline` is runtime best-effort; full backend deactivation may still require restart depending on subsystem startup behavior.
 - Session lifetime is intended to survive normal map travel (listen-server flow) unless explicitly destroyed.
 - Leave behavior:
