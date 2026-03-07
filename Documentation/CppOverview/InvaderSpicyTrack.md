@@ -58,7 +58,8 @@ Not yet implemented (open hardening work):
 - spice-per-tier and max full-blast tier,
 - skip scrap rewards per tier,
 - level-roll offset weights (`-3..+3`),
-- upgrade DataTable,
+- upgrade definition root tag (`Progression.InvaderUpgrade`) resolved through `UContentLookupSubsystem`,
+- full-blast menu widget class (`FullBlastMenuWidgetClass`),
 - enemy projectile clear tag,
 - full-blast gameplay cue tag.
 
@@ -67,15 +68,41 @@ Not yet implemented (open hardening work):
 - `ResolveFullBlastSelection(...)` applies picked upgrade to track and resolves full-blast effects.
 - `ResolveFullBlastSkip(...)` drains meter and grants configured scrap without slot replacement.
 - `ActivateTrackUpgrade(...)` activates a slotted upgrade, then performs one-tier track drop.
+- `GetMaxSelectableTrackCursorTierForPlayer(...)` returns the highest selectable tier for one player.
+- `GetMaxSelectableTrackCursorTierAcrossPlayers(...)` returns the highest selectable tier available to any tracked player (useful for shared UI lane affordance/coloring).
 - `StartSharingSpice(...)` / `StopSharingSpice(...)` drive hold-to-share transfer loop.
 - `AwardKillCredit(...)` supports explicit scripted credit.
 - `NotifyEnemyKilled(...)` is the automatic ingestion entry called from enemy death.
 - `SetOfferPresence(...)` / `ClearOfferPresence(...)` publish/clear replicated per-player offer UI presence.
 - `OnInvaderKillCreditFxEvent` broadcasts on server + clients when kill credit awards spice (includes target slot, spice gained, combo, enemy metadata, optional origin).
 
+## Debug Console Commands
+- `AR.Invader.Debug.SetSpice [p1|p2] <value>`
+- `AR.Invader.Debug.AddSpice [p1|p2] <delta>`
+- `AR.Invader.Debug.SetCursor [p1|p2] <tier>`
+- `AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]`
+- `InjectUpgrade` resolves token by:
+- row name first (exact/case-insensitive) from upgrade definition table,
+- then gameplay tag token,
+- then fallback tag-string/leaf match against loaded upgrade definitions.
+- `InjectUpgrade` executes through the same resolve-selection path as normal full-blast selection (synthetic one-off offer session), so track updates and tier progression mirror real gameplay flow.
+- Destination behavior:
+- below max tier: injects at current full-blast lane and pushes full blast up one tier,
+- at max tier: replaces topmost slotted upgrade lane (never the full-blast lane).
+
+## Full Blast UI Bridge
+- Local invader UI owner is `AARInvaderPlayerController`; it binds to `AARInvaderGameState::OnInvaderFullBlastSessionChanged`.
+- Controller resolves offer definition rows through content lookup and publishes `OnInvaderFullBlastMenuSessionUpdated(bIsActive, SessionState, OfferDefinitions)`.
+- Optional auto-spawned menu widget is settings-driven via `UARInvaderSpicyTrackSettings::FullBlastMenuWidgetClass`.
+- Native widget base is `UARInvaderFullBlastMenuWidget`:
+- receives session payload via `BP_OnFullBlastMenuUpdated(...)`,
+- and sends selection/skip/presence back through owning controller (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
+- Menu is auto-shown only for the requesting player slot and removed when session ends.
+
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.
 - Offer eligibility checks tier locks, unlock tags, claim policy, and team-level activation prerequisites.
+- If no offers are eligible, full blast activation fails (no fallback/override) and logs a loud error with rejection diagnostics.
 - Activation checks claim policy and activating-player prerequisites.
 - Claim policy supports one-player lock, both-players lock, or repeatable upgrades.
 - Any upgrade activation resets spicy meter to `0`.
@@ -84,6 +111,9 @@ Not yet implemented (open hardening work):
 ## Gameplay Pause Model
 Current implementation:
 - Full blast activation calls engine pause (`UGameplayStatics::SetGamePaused`), and resolve unpauses.
+- Invader spicy runtime adds hard gates while full-blast session is active:
+- `AARInvaderGameState::Tick` skips combo/share processing,
+- kill-credit ingestion paths ignore events (`AwardKillCreditInternal`, `NotifyEnemyKilled`).
 
 Recommended multiplayer-safe direction:
 - Replace true pause with replicated gameplay suspension state (for example `bInvaderMatchSuspended` on `AARInvaderGameState`).
