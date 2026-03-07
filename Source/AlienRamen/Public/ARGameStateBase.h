@@ -84,6 +84,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	bool,
 	bOldManualSaveAllowed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnShareLocalPauseAcrossControllersChangedSignature,
+	bool,
+	bNewShareAcrossControllers,
+	bool,
+	bOldShareAcrossControllers);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnAllPlayersPausedByMenuChangedSignature,
 	bool,
 	bNewAllPlayersPausedByMenu,
@@ -179,6 +185,9 @@ public:
 	FAROnManualSaveAllowedChangedSignature OnManualSaveAllowedChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
+	FAROnShareLocalPauseAcrossControllersChangedSignature OnShareLocalPauseAcrossControllersChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
 	FAROnAllPlayersPausedByMenuChangedSignature OnAllPlayersPausedByMenuChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Pause")
@@ -206,6 +215,10 @@ public:
 	/** Returns whether manual save actions (for example pause-menu save) are allowed in the current mode. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool IsManualSaveAllowed() const { return bManualSaveAllowed; }
+
+	/** Returns whether local pause open/close should fan out across all local controllers on the same machine. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
+	bool ShouldShareLocalPauseAcrossControllers() const { return bShareLocalPauseAcrossControllers; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	int32 GetCycles() const { return Cycles; }
@@ -283,6 +296,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetManualSaveAllowed(bool bAllowed);
 
+	/** Writes mode-driven local pause fanout policy and notifies listeners. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Pause", meta = (BlueprintAuthorityOnly))
+	void SetShareLocalPauseAcrossControllers(bool bShareAcrossControllers);
+
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 
 	/** Called by SaveSubsystem after hydration completes to inform UI widgets. */
@@ -330,6 +347,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_ManualSaveAllowed(bool bOldManualSaveAllowed);
+
+	UFUNCTION()
+	void OnRep_ShareLocalPauseAcrossControllers(bool bOldShareLocalPauseAcrossControllers);
 
 	UFUNCTION()
 	void OnRep_PauseMenuVoteMask(uint8 OldPauseMenuVoteMask);
@@ -380,6 +400,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_ManualSaveAllowed, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	bool bManualSaveAllowed = true;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ShareLocalPauseAcrossControllers, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	bool bShareLocalPauseAcrossControllers = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_PauseMenuVoteMask, BlueprintReadOnly, Category = "Alien Ramen|Pause")
 	uint8 PauseMenuVoteMask = 0;

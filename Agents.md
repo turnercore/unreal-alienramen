@@ -399,9 +399,12 @@
 - `AARGameModeBase` travel/save policy flags:
 - `bSaveOnModeExit` controls whether `TryStartTravel` persists disk save before travel.
 - `bAutosaveOnQuit` controls authority autosave-if-dirty on `EndPlay` when end reason is `Quit`.
-- Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` (carry via pending travel state without forced disk save), `AARInvaderGameMode` sets `bAutosaveOnQuit=false` (no quit autosave by default for invader runs).
+- `bAllowManualSaveInMode` controls whether manual save actions (for example pause-menu save) are allowed in this mode.
+- `bShareLocalPauseAcrossControllersInMode` controls whether local pause open/close fanout should affect all local controllers on the same machine (shared-camera style).
+- Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` and `bAllowManualSaveInMode=false`; `AARInvaderGameMode` sets `bAutosaveOnQuit=false`, `bAllowManualSaveInMode=false`, and `bShareLocalPauseAcrossControllersInMode=true`.
 - `AARGameModeBase::TryStartTravel(...)` now has `PreStartTravel(...)` hook seam for mode-specific authority work before save/travel.
 - `AARShopGameMode::PreStartTravel(...)` finalizes faction election through `UARFactionSubsystem` before travel; travel is blocked if finalization fails.
+- `AARGameModeBase::BeginPlay` pushes mode policy into `AARGameStateBase` via `SetManualSaveAllowed(...)` and `SetShareLocalPauseAcrossControllers(...)`.
 
 ## Player Controller UI
 
@@ -422,7 +425,9 @@
 - requests: `RequestOpenPauseMenu` / `RequestTogglePauseMenu` are BP-callable; `RequestClosePauseMenu` is C++-only; client votes route through `ServerSetPauseMenuVote`.
 - local-state queries: `IsPauseMenuOpenLocal`, `IsPauseMenuOverlayVisibleLocal`, `IsPauseMenuBlockedLocal`.
 - BP blocker seam: `SetPauseMenuBlocked(bool bBlocked, FName Reason)` for terminal/menu/UI lockouts.
-- local fanout rule: open/close/toggle always applies to all local `AARPlayerController` instances on the same machine (split-screen-safe).
+- local fanout rule is mode-driven via replicated `AARGameStateBase::ShouldShareLocalPauseAcrossControllers()`:
+- when false (default), pause open/close affects only the calling local controller (normal multiplayer behavior).
+- when true (invader shared-camera default), pause open/close fans out to all local controllers on the machine.
 - shared-camera invader overlay rule: all local controllers still enter pause state, but overlay display ownership is deterministic (`P1` local controller if present, else first local invader controller).
 - local auto-close safety: if a local pause becomes invalid while open (for example dialogue/full-blast/lobby/blocker), controller closes pause state automatically.
 - optional input-context automation is native when configured:

@@ -52,6 +52,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	bool bAllowManualSaveInMode = true;
 
+	// When true, local pause open/close requests fan out across all local controllers on the same machine.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Pause")
+	bool bShareLocalPauseAcrossControllersInMode = false;
+
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Players")
 	void BP_OnPlayerJoined(AARPlayerStateBase* JoinedPlayerState);
 	virtual void BP_OnPlayerJoined_Implementation(AARPlayerStateBase* JoinedPlayerState);
