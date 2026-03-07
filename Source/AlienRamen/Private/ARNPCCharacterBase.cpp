@@ -16,17 +16,23 @@ void AARNPCCharacterBase::BeginPlay()
 	Super::BeginPlay();
 	RefreshTalkableFromSubsystem();
 
-	if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
+	if (HasAuthority())
 	{
-		NpcSubsystem->OnNpcTalkableChanged.AddDynamic(this, &AARNPCCharacterBase::HandleNpcTalkableChanged);
+		if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
+		{
+			NpcSubsystem->OnNpcTalkableChanged.AddDynamic(this, &AARNPCCharacterBase::HandleNpcTalkableChanged);
+		}
 	}
 }
 
 void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
+	if (HasAuthority())
 	{
-		NpcSubsystem->OnNpcTalkableChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleNpcTalkableChanged);
+		if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
+		{
+			NpcSubsystem->OnNpcTalkableChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleNpcTalkableChanged);
+		}
 	}
 
 	Super::EndPlay(EndPlayReason);
