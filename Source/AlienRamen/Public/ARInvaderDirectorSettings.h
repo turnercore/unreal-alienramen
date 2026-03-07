@@ -7,11 +7,13 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
+#include "ARInvaderDropTypes.h"
 #include "ARInvaderDirectorSettings.generated.h"
 
-class UDataTable;
 class AActor;
 class UARAbilitySet;
+class UCurveFloat;
+class AARInvaderDropBase;
 
 USTRUCT(BlueprintType)
 struct FAREnemyArchetypeAbilitySetEntry
@@ -25,6 +27,20 @@ struct FAREnemyArchetypeAbilitySetEntry
 	TSoftObjectPtr<UARAbilitySet> AbilitySet;
 };
 
+USTRUCT(BlueprintType)
+struct FARInvaderDropStackDefinition
+{
+	GENERATED_BODY()
+
+	// Currency value represented by one pickup spawn for this entry.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta = (ClampMin = "1"))
+	int32 Denomination = 1;
+
+	// Pickup class spawned for this denomination.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
+	TSoftClassPtr<AARInvaderDropBase> DropClass;
+};
+
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Invader Director"))
 class ALIENRAMEN_API UARInvaderDirectorSettings : public UDeveloperSettings
 {
@@ -34,13 +50,10 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> WaveDataTable;
+	FGameplayTag WaveDefinitionRootTag;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> StageDataTable;
-
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> EnemyDataTable;
+	FGameplayTag StageDefinitionRootTag;
 
 	// Applied to all enemies before archetype/specific startup abilities.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
@@ -104,6 +117,82 @@ public:
 	// Seconds pickups can remain outside gameplay bounds before auto-release.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Bounds|Pickups", meta=(ClampMin="0.0"))
 	float PickupOffscreenCullSeconds = 0.1f;
+
+	// Baseline chance applied to enemy DropChance attribute at runtime.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0", ClampMax="1.0"))
+	float DefaultEnemyDropChance = 0.5f;
+
+	// Baseline chance applied to enemy DropChance when DropType is Scrap.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0", ClampMax="1.0"))
+	float DefaultEnemyScrapDropChance = 0.5f;
+
+	// Baseline chance applied to enemy DropChance when DropType is Meat.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0", ClampMax="1.0"))
+	float DefaultEnemyMeatDropChance = 0.2f;
+
+	// Max fractional deviation around authored drop amount (0.25 => +/-25%).
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0", ClampMax="1.0"))
+	float DropAmountVarianceFraction = 0.25f;
+
+	// Max fractional deviation for scrap drop amount.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0", ClampMax="1.0"))
+	float ScrapDropAmountVarianceFraction = 0.25f;
+
+	// Max fractional deviation for meat drop amount.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0", ClampMax="1.0"))
+	float MeatDropAmountVarianceFraction = 0.25f;
+
+	// Optional curve sampled with random [0..1], expected output in [-1..1] to bias drop amount roll around center.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
+	TSoftObjectPtr<UCurveFloat> DropAmountVarianceCurve;
+
+	// Optional variance curve for scrap amount rolls. Falls back to DropAmountVarianceCurve when unset.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
+	TSoftObjectPtr<UCurveFloat> ScrapDropAmountVarianceCurve;
+
+	// Optional variance curve for meat amount rolls. Falls back to DropAmountVarianceCurve when unset.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
+	TSoftObjectPtr<UCurveFloat> MeatDropAmountVarianceCurve;
+
+	// Initial random XY linear speed injected into spawned drop physics.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0"))
+	float DropInitialLinearSpeedMin = 120.0f;
+
+	// Initial random XY linear speed injected into spawned drop physics.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops", meta=(ClampMin="0.0"))
+	float DropInitialLinearSpeedMax = 220.0f;
+
+	// Optional denomination definitions for scrap drops. Runtime decomposes the final
+	// drop amount into an optimal pickup set (fewest actors, then larger denominations).
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
+	TArray<FARInvaderDropStackDefinition> ScrapDropStacks;
+
+	// Optional denomination definitions for meat drops. Runtime decomposes the final
+	// drop amount into an optimal pickup set (fewest actors, then larger denominations).
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
+	TArray<FARInvaderDropStackDefinition> MeatDropStacks;
+
+	// Controls whether drifting drops collide with pawns (enemy bumping) or ignore all pawns.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops|Physics")
+	EARInvaderDropPawnCollisionMode DropPawnCollisionMode = EARInvaderDropPawnCollisionMode::CollideWithPawns;
+
+	// Invader "up" direction used to orient custom drop gravity frame.
+	// Earth gravity direction resolves to `-Normalized(InvaderDesiredUpDirection)`.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops|Physics")
+	FVector InvaderDesiredUpDirection = FVector(1.0f, 0.0f, 0.0f);
+
+	// Acceleration magnitude used when debug-enabling drop earth gravity.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops|Physics", meta=(ClampMin="0.0"))
+	float DropEarthGravityAcceleration = 980.0f;
+
+	// If true, runtime derives pickup radius from pawn capsule as:
+	// Radius + Diameter, which is roughly one character-length outside the ship on all sides.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops|Pickup", meta=(InlineEditConditionToggle))
+	bool bUseCapsuleDerivedPlayerPickupRadius = true;
+
+	// Default player pickup radius written to ASC PickupRadius at spawn/init when capsule-derived sizing is disabled.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops|Pickup", meta=(ClampMin="0.0", EditCondition="!bUseCapsuleDerivedPlayerPickupRadius"))
+	float DefaultPlayerPickupRadius = 150.0f;
 
 	// Screen-entry detection inset from gameplay bounds used for first-visibility events.
 	// Positive values require enemies to be farther inside bounds before "entered screen" is considered true.

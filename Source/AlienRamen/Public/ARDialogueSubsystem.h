@@ -20,6 +20,7 @@ class ALIENRAMEN_API UARDialogueSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	UARDialogueSubsystem();
 	virtual ~UARDialogueSubsystem() override;
 	virtual void Deinitialize() override;
 
@@ -56,5 +57,5 @@ private:
 	FARDialogueRuntimeState& GetRuntimeState();
 	const FARDialogueRuntimeState& GetRuntimeState() const;
 
-	mutable TUniquePtr<FARDialogueRuntimeState> RuntimeState;
+	mutable FARDialogueRuntimeState* RuntimeState = nullptr;
 };
