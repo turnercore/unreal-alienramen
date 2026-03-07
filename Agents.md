@@ -77,6 +77,10 @@
 - Native authoritative lobby/runtime bases:
 - `AARGameModeBase` (`Source/AlienRamen/Public/ARGameModeBase.h`)
 - `AARGameStateBase` (`Source/AlienRamen/Public/ARGameStateBase.h`)
+- Shared pause reason type surface now lives in `Source/AlienRamen/Public/ARPauseTypes.h` (`EARPauseExternalReason`).
+- `AARGameStateBase` is now the authoritative world-pause resolver for gameplay runtime:
+- server-owned per-slot pause-menu votes + external reason mask (`DialogueShared`, `InvaderFullBlast`) resolve effective pause.
+- world pause apply/clear is centralized in `AARGameStateBase::RefreshPauseResolution()` (`ExternalReasonActive || AllSlottedPlayersPausedByMenu`).
 - Native mode-layer subclasses now exist for GameMode and PlayerController:
 - Canonical mode naming is now: `Invader`, `Scrapyard`, `Shop`, `Lobby`.
 - GameModes: `AARInvaderGameMode`, `AARScrapyardGameMode`, `AARShopGameMode`, `AARLobbyGameMode` (all inherit `AARGameModeBase`)
@@ -144,7 +148,7 @@
 - Mode policy:
 - `Mode.Invader` and `Mode.Scrapyard` use one shared global dialogue session (single active shared session).
 - `Mode.Shop` uses per-player sessions; eavesdrop can subscribe a partner as mirrored co-pilot.
-- Pause policy: shared dialogue pauses the world only in modes tagged by `UARDialogueSettings::PauseOnDialogueModeTags` (default `Mode.Invader`), and unpauses on session end.
+- Pause policy: shared dialogue pause intent is still gated by `UARDialogueSettings::PauseOnDialogueModeTags` (default `Mode.Invader`), but runtime pause apply/clear now routes through `AARGameStateBase` external pause reasons (`EARPauseExternalReason::DialogueShared`) instead of direct `UGameplayStatics::SetGamePaused` calls.
 - Seen-history policy: only the active speaker (session initiator driving node progression) gets seen-node credit; passive viewers/eavesdroppers do not.
 - Choice policy:
 - node-level participation mode is `InitiatorOnly` or `GroupChoice`.
@@ -395,9 +399,12 @@
 - `AARGameModeBase` travel/save policy flags:
 - `bSaveOnModeExit` controls whether `TryStartTravel` persists disk save before travel.
 - `bAutosaveOnQuit` controls authority autosave-if-dirty on `EndPlay` when end reason is `Quit`.
-- Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` (carry via pending travel state without forced disk save), `AARInvaderGameMode` sets `bAutosaveOnQuit=false` (no quit autosave by default for invader runs).
+- `bAllowManualSaveInMode` controls whether manual save actions (for example pause-menu save) are allowed in this mode.
+- `bShareLocalPauseAcrossControllersInMode` controls whether local pause open/close fanout should affect all local controllers on the same machine (shared-camera style).
+- Current mode defaults: `AARLobbyGameMode` sets `bSaveOnModeExit=false` and `bAllowManualSaveInMode=false`; `AARInvaderGameMode` sets `bAutosaveOnQuit=false`, `bAllowManualSaveInMode=false`, and `bShareLocalPauseAcrossControllersInMode=true`.
 - `AARGameModeBase::TryStartTravel(...)` now has `PreStartTravel(...)` hook seam for mode-specific authority work before save/travel.
 - `AARShopGameMode::PreStartTravel(...)` finalizes faction election through `UARFactionSubsystem` before travel; travel is blocked if finalization fails.
+- `AARGameModeBase::BeginPlay` pushes mode policy into `AARGameStateBase` via `SetManualSaveAllowed(...)` and `SetShareLocalPauseAcrossControllers(...)`.
 
 ## Player Controller UI
 
@@ -414,6 +421,33 @@
 - Player-controller cursor init seam is native on `AARPlayerController`:
 - local-only `InitializeCustomCursor()` is BP-callable (`Alien Ramen|UI|Cursor`) and auto-runs from `BeginPlay`.
 - cursor init is gated by `bEnableCustomCursorInit` and uses `CursorDefaultWidgetClass` to create/store `Cursor`, then applies it to `EMouseCursor::Default` via `SetMouseCursorWidget`.
+- Pause menu contract is now native on `AARPlayerController` (`Alien Ramen|UI|Pause`):
+- requests: `RequestOpenPauseMenu` / `RequestTogglePauseMenu` are BP-callable; `RequestClosePauseMenu` is C++-only; client votes route through `ServerSetPauseMenuVote`.
+- local-state queries: `IsPauseMenuOpenLocal`, `IsPauseMenuOverlayVisibleLocal`, `IsPauseMenuBlockedLocal`.
+- BP blocker seam: `SetPauseMenuBlocked(bool bBlocked, FName Reason)` for terminal/menu/UI lockouts.
+- local fanout rule is mode-driven via replicated `AARGameStateBase::ShouldShareLocalPauseAcrossControllers()`:
+- when false (default), pause open/close affects only the calling local controller (normal multiplayer behavior).
+- when true (invader shared-camera default), pause open/close fans out to all local controllers on the machine.
+- shared-camera invader overlay rule: all local controllers still enter pause state, but overlay display ownership is deterministic (`P1` local controller if present, else first local invader controller).
+- local auto-close safety: if a local pause becomes invalid while open (for example dialogue/full-blast/lobby/blocker), controller closes pause state automatically.
+- optional input-context automation is native when configured:
+- `DefaultInputMappings` (mapping + priority array) is the base gameplay source-of-truth applied by `AARPlayerController` on local begin-play.
+- pause open removes `DefaultInputMappings` and adds `PauseMenuInputMappingContext` (`PauseMenuInputPriority`); pause close removes pause context and restores `DefaultInputMappings`.
+- this replaces BP-local "setup controls" mapping-context bootstrapping for gameplay controllers.
+- input mode/cursor can auto-switch via `bAutoManagePauseInputMode`.
+- pause-open input mode uses `FInputModeGameAndUI` and focuses the pause overlay widget when present.
+- pause-IMC actions intended to fire while world pause is active (for example `IA_Unpause -> ClosePause()`) should be authored with Trigger While Paused enabled in input assets.
+- pause overlay widget lifecycle is now C++-owned when `PauseOverlayWidgetClass` is assigned on the controller:
+- open path auto-creates/adds widget for overlay-owning local controller; close path auto-removes widget.
+- invader shared-camera non-owner local controllers stay in pause state without spawning duplicate overlay.
+- BP hooks remain optional for extension:
+- delegates `OnPauseMenuStateChanged`, `OnPauseMenuOverlayVisibilityChanged`
+- BP events `BP_OnPauseMenuOpened(bool bShouldDisplayOverlay)`, `BP_OnPauseMenuClosed()`.
+- `ClosePause()` alias is BP-callable and routes to `RequestClosePauseMenu`; pause overlay widgets can call it via owning controller for manual close buttons.
+- Pause authority owner is `AARGameStateBase` (not controller-local):
+- per-slot menu votes + external reasons (`EARPauseExternalReason`: `DialogueShared`, `InvaderFullBlast`) resolve effective world pause.
+- effective pause state is `ExternalReasonActive || AllSlottedPlayersPausedByMenu`.
+- `AARGameStateBase` is now the sole runtime caller of `UGameplayStatics::SetGamePaused`.
 - `AARGameStateBase` provides BP convenience lookups for coop player access:
 - `GetPlayerStates()` (returns filtered `AARPlayerStateBase` array from `PlayerArray` for BP iteration)
 - `AreAllPlayersTravelReady()` (true only when at least one AR player exists and every AR player passes `IsTravelReady()`)
@@ -624,7 +658,7 @@
 - enemy kill-credit attribution now also tracks a short-lived server-side recent damage instigator on `AAREnemyBase` and uses it as a fallback when death context arrives with null instigator; this reduces `NotifyEnemyKilled` attribution misses from context-loss race cases.
 - kill-credit FX multicast hook: `OnInvaderKillCreditFxEvent` (payload `FARInvaderKillCreditFxEvent`) fires when spice is actually awarded; includes target slot + spice + combo + enemy metadata + optional world origin for client cosmetic routing.
 - offer-presence APIs: `SetOfferPresence` / `ClearOfferPresence` support replicated UI cursor/highlight presence during active full-blast sessions.
-- full-blast resolve side effects in C++: unpause, execute configured gameplay cue, and clear enemy projectiles by configured actor tag.
+- full-blast resolve side effects in C++: execute configured gameplay cue and clear enemy projectiles by configured actor tag (pause clear is now handled by shared GameState pause resolver/external-reason path).
 - Automation coverage exists for spicy-track session/presence seams in `Source/AlienRamen/Private/Tests/ARInvaderSpicyTrackOfferSessionTest.cpp`:
 - `AlienRamen.Invader.SpiceTrack.OfferPresenceLifecycle`
 - `AlienRamen.Invader.SpiceTrack.OfferChooserRestriction`
@@ -638,8 +672,9 @@
 - single active session (`FullBlastSession.bIsActive` gate), chooser-slot ownership, replicated offer snapshot for late-join reconstruction.
 - current runtime has no session id, timeout auto-skip, or disconnect auto-skip; those are documented as open hardening work.
 - Pause model contract:
-- current implementation uses `UGameplayStatics::SetGamePaused(true/false)` for full-blast choose flow.
-- recommended multiplayer-safe direction is a replicated gameplay suspension state (do not assume true pause is long-term contract).
+- full-blast pause intent is represented by `AARInvaderGameState::FullBlastSession.bIsActive`.
+- `AARInvaderGameState::OnRep_FullBlastSession` (authority path) syncs `AARGameStateBase` external pause reason `EARPauseExternalReason::InvaderFullBlast` on every session active-state change.
+- direct `UGameplayStatics::SetGamePaused` calls were removed from invader spicy-track flow; world pause is resolved centrally by `AARGameStateBase`.
 - Invader spicy-track configuration source is project settings `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`):
 - combo timeout, spice-per-tier, max full-blast tier, offer count
 - skip scrap reward per tier
