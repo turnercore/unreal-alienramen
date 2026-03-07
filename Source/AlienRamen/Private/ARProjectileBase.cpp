@@ -1,8 +1,12 @@
 #include "ARProjectileBase.h"
 
+#include "ARInvaderCollisionChannels.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
+#include "HelperLibrary.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 AARProjectileBase::AARProjectileBase()
 {
@@ -10,9 +14,99 @@ AARProjectileBase::AARProjectileBase()
 	bReplicates = true;
 }
 
+bool AARProjectileBase::InitializeProjectileFromData(const FInstancedStruct& InitData)
+{
+	if (!InitData.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[ProjectileBase] InitializeProjectileFromData invalid struct on '%s'."), *GetNameSafe(this));
+		return false;
+	}
+
+	// Apply shared actor-level fields first.
+	UHelperLibrary::ApplyStructToObjectByName(this, InitData);
+
+	// Apply the same payload to movement components for common speed/acceleration fields.
+	TArray<UProjectileMovementComponent*> ProjectileMovementComponents;
+	GetComponents<UProjectileMovementComponent>(ProjectileMovementComponents);
+	for (UProjectileMovementComponent* ProjectileMovement : ProjectileMovementComponents)
+	{
+		if (!ProjectileMovement)
+		{
+			continue;
+		}
+
+		UHelperLibrary::ApplyStructToObjectByName(ProjectileMovement, InitData);
+	}
+
+	return true;
+}
+
 void AARProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
+	GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+	UPrimitiveComponent* PreferredCollisionPrimitive = nullptr;
+
+	for (UPrimitiveComponent* PrimitiveComponent : PrimitiveComponents)
+	{
+		if (!PrimitiveComponent || PrimitiveComponent->GetCollisionEnabled() == ECollisionEnabled::NoCollision)
+		{
+			continue;
+		}
+
+		PreferredCollisionPrimitive = PrimitiveComponent;
+		if (PrimitiveComponent == GetRootComponent())
+		{
+			break;
+		}
+	}
+
+	if (bAutoWireCollisionAndMovement)
+	{
+		if (!GetRootComponent() && PreferredCollisionPrimitive)
+		{
+			SetRootComponent(PreferredCollisionPrimitive);
+			UE_LOG(ARLog, Verbose, TEXT("[ProjectileBase] Auto-wired root component to '%s' for '%s'."),
+				*GetNameSafe(PreferredCollisionPrimitive),
+				*GetNameSafe(this));
+		}
+
+		if (PreferredCollisionPrimitive)
+		{
+			TArray<UProjectileMovementComponent*> ProjectileMovementComponents;
+			GetComponents<UProjectileMovementComponent>(ProjectileMovementComponents);
+			for (UProjectileMovementComponent* ProjectileMovement : ProjectileMovementComponents)
+			{
+				if (!ProjectileMovement || ProjectileMovement->UpdatedComponent)
+				{
+					continue;
+				}
+
+				ProjectileMovement->SetUpdatedComponent(PreferredCollisionPrimitive);
+				UE_LOG(ARLog, Verbose, TEXT("[ProjectileBase] Auto-wired ProjectileMovement '%s' UpdatedComponent='%s' for '%s'."),
+					*GetNameSafe(ProjectileMovement),
+					*GetNameSafe(PreferredCollisionPrimitive),
+					*GetNameSafe(this));
+			}
+		}
+	}
+
+	for (UPrimitiveComponent* PrimitiveComponent : PrimitiveComponents)
+	{
+		if (!PrimitiveComponent || PrimitiveComponent->GetCollisionEnabled() == ECollisionEnabled::NoCollision)
+		{
+			continue;
+		}
+
+		PrimitiveComponent->SetCollisionObjectType(ARInvaderCollisionChannels::Projectile);
+		if (bApplyDefaultInvaderCollisionResponses)
+		{
+			PrimitiveComponent->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Projectile, ECR_Ignore);
+			PrimitiveComponent->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Drop, ECR_Ignore);
+		}
+	}
 
 	if (bUseProjectSettingsOffscreenCullSeconds)
 	{

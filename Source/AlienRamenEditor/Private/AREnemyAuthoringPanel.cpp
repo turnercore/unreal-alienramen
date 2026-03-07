@@ -1116,6 +1116,18 @@ void SEnemyAuthoringPanel::ValidateSingleRow(const FName RowName, const FARInvad
 	{
 		OutIssues.Add({ true, RowName, TEXT("DamageTakenMultiplier must be >= 0.") });
 	}
+	if (Row.RuntimeInit.DropAmount < 0.f)
+	{
+		OutIssues.Add({ true, RowName, TEXT("DropAmount must be >= 0.") });
+	}
+	if (Row.RuntimeInit.DropType != EARInvaderDropType::None && Row.RuntimeInit.DropAmount <= 0.f)
+	{
+		OutIssues.Add({ true, RowName, TEXT("DropAmount must be > 0 when DropType is Scrap or Meat.") });
+	}
+	if (Row.RuntimeInit.DropType == EARInvaderDropType::None && Row.RuntimeInit.DropAmount > 0.f)
+	{
+		OutIssues.Add({ false, RowName, TEXT("DropAmount is set but DropType is None; no drops will spawn.") });
+	}
 	for (int32 AbilityIndex = 0; AbilityIndex < Row.RuntimeInit.EnemySpecificAbilities.Num(); ++AbilityIndex)
 	{
 		const FARAbilitySet_AbilityEntry& Entry = Row.RuntimeInit.EnemySpecificAbilities[AbilityIndex];

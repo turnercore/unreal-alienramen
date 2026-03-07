@@ -130,6 +130,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Gameplay")
 	FGameplayTag GetEnemyIdentifierTag() const { return EnemyIdentifierTag; }
 
+	UFUNCTION(BlueprintPure, Category = "AR|Enemy|Drops")
+	EARInvaderDropType GetEnemyDropType() const { return EnemyDropType; }
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "AR|Enemy|Gameplay")
 	void BP_OnEnemyIdentifierTagChanged(FGameplayTag NewIdentifierTag);
 
@@ -253,6 +256,7 @@ protected:
 	void EvaluateEnemyColorFromASCOverrideTags();
 	EARAffinityColor ResolveEnemyColorFromASCOverrideTags() const;
 	void ApplyEnemyColorGameplayTags(EARAffinityColor NewColor);
+	void ApplyInvaderCollisionResponses(const FARInvaderEnemyRuntimeInitData& RuntimeInit);
 	void RefreshCharacterMovementSpeedFromAttributes();
 
 public:	
@@ -289,6 +293,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing=OnRep_EnemyIdentifierTag, Category = "AR|Enemy|Gameplay")
 	FGameplayTag EnemyIdentifierTag;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|Drops")
+	EARInvaderDropType EnemyDropType = EARInvaderDropType::None;
 
 	UFUNCTION()
 	void OnRep_EnemyIdentifierTag();

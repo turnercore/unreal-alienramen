@@ -15,6 +15,7 @@
 - Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
 - Include hygiene rule: prefer forward declarations in headers and move concrete `#include` dependencies to `.cpp` files wherever UHT/type requirements allow.
 - Type-surface hygiene rule: when multiple systems consume the same enums/structs, extract them into focused shared type headers (for example `*Types.h`) to avoid dragging large owner headers across module boundaries.
+- Module layout hygiene: keep shared headers in `Source/AlienRamen/Public` and implementations in `Source/AlienRamen/Private`; `UHelperLibrary` now follows this (`Public/HelperLibrary.h`, `Private/HelperLibrary.cpp`) and callers should include `"HelperLibrary.h"` (no relative `../` includes).
 - API exposure default: prefer Blueprint exposure for gameplay-facing utilities unless told otherwise.
 - If exposure choice is unclear, ask before locking API surface.
 - Blueprint API categories should be under `Alien Ramen|...` (or existing subsystem category path following that prefix).
@@ -106,6 +107,19 @@
 - Runtime isolation contract: dialogue session/eavesdrop caches and NPC talkable caches are subsystem-instance-owned (no translation-unit static shared runtime state), so multi-PIE/multi-GameInstance runs do not leak state across instances.
 - Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
 - Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
+- Invader drop type surface is native in `Source/AlienRamen/Public/ARInvaderDropTypes.h` (`EARInvaderDropType`: `None`, `Scrap`, `Meat`).
+- Invader runtime collision channels are reserved/configured in `Config/DefaultEngine.ini`:
+- `InvaderEnemy` (`ECC_GameTraceChannel2`)
+- `InvaderPlayer` (`ECC_GameTraceChannel3`)
+- `InvaderProjectile` (`ECC_GameTraceChannel4`)
+- `InvaderDrop` (`ECC_GameTraceChannel5`)
+- `AARProjectileBase` now hardens runtime component wiring: at `BeginPlay` it finds a collidable primitive, auto-sets root when missing, and auto-binds any unset `UProjectileMovementComponent::UpdatedComponent` to that primitive (toggle: `bAutoWireCollisionAndMovement`); default invader collision responses can still be overridden per-BP (`bApplyDefaultInvaderCollisionResponses`).
+- `AARProjectileBase` now exposes native init ingestion `InitializeProjectileFromData(const FInstancedStruct&)`; it applies payload fields by name to the projectile actor and any attached `UProjectileMovementComponent`s, so lifecycle/BP init can forward `FInstancedStruct` directly without per-projectile manual struct unpack nodes.
+- Invader drop actor base is native in `Source/AlienRamen/Public/ARInvaderDropBase.h` (`AARInvaderDropBase`) and is intended for BP visual subclasses.
+- Player pickup detector component is native in `Source/AlienRamen/Public/ARPickupCollectorComponent.h` (`UARPickupCollectorComponent`) and is attached by default to `AARPlayerCharacterInvader`.
+- Invader drop tuning/class routing is project-settings-driven via `UARInvaderDirectorSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Director`) using global and per-type chance/variance fields (`DefaultEnemyDropChance`, `DefaultEnemyScrapDropChance`, `DefaultEnemyMeatDropChance`, `DropAmountVarianceFraction`, `ScrapDropAmountVarianceFraction`, `MeatDropAmountVarianceFraction`, and optional matching variance curves), `DropInitialLinearSpeedMin/Max`, stack-definition arrays (`ScrapDropStacks` / `MeatDropStacks`: denomination + class), legacy fallback class hooks (`ScrapDropClass`/`MeatDropClass`), `DropPawnCollisionMode`, and pickup-radius seed settings (`bUseCapsuleDerivedPlayerPickupRadius`, `DefaultPlayerPickupRadius`).
+- Invader drop spawn decomposition is server-side in `AARInvaderGameState`: final integer drop amount is decomposed into configured denominations using an optimal plan (fewest pickups, then larger denominations). If no valid decomposition exists, runtime falls back to one pickup using the legacy per-type class.
+- Invader gravity frame source is project-settings-driven via `UARInvaderDirectorSettings::InvaderDesiredUpDirection`; both invader drops and `AARPlayerCharacterInvader` consume this vector at runtime (`GravityDir = -Normalized(DesiredUp)` with safe fallback) so player/drop gravity orientation stays in sync.
 
 ## Multiplayer Architecture Assumptions
 
@@ -170,6 +184,7 @@
 - `AARPlayerCharacterBase` is the shared player pawn root (`IAbilitySystemInterface` default returns null).
 - Invader pawn (`AARPlayerCharacterInvader`) binds as ASC avatar (owner/avatar split, Lyra-style).
 - `UARAttributeSetCore` owns shared combat/survivability attributes for both players and enemies, including transient meta attribute `IncomingDamage`.
+- `UARAttributeSetCore` invader drop attributes now include enemy-side `DropChance` (clamped `[0..1]`) and `DropAmount` (non-negative), plus killer-side `MeatDropMultiplier` and `ScrapDropMultiplier` (non-negative).
 - Enemy-only attributes live in `UAREnemyAttributeSet` (v1: `CollisionDamage`), while shared attributes stay in `Core`.
 - Possession baseline flow (server): clear prior grants/effects/tags -> grant common ability set -> read `PlayerState.LoadoutTags` -> resolve content rows -> apply row baseline.
 - Loadout naming convention migrated from `Gadget` to `Hat`:
@@ -267,6 +282,7 @@
 - Current save schema is `v6`; minimum supported is also `v6` (no legacy migration path kept in pre-production).
 - `UARSaveGame` persists disk-save gameplay fields (`Money`, `Unlocks`, `Meat`, `Scrap`, `Cycles`, `ProgressionTags`, `FactionClout`, `ActiveFactionTag`, `ActiveFactionEffectTags`, `FactionPopularityStates`, `SaveSlot`, `SaveGameVersion`, `SaveSlotNumber`, `LastSaved`, `PlayerStates`, `NpcRelationshipStates`, `DialogueCanonicalChoiceStates`, `PlayerDialogueHistoryStates`); no serialized `GameStateData`/`GameStateStruct` payload is stored in save files.
 - `FARMeatState` uses replication-safe typed entries (`TArray<FARMeatTypeAmount>`) for extensible meat types instead of a `TMap`; normalization merges duplicate tags, drops invalid/zero entries, and keeps deterministic tag-sort order.
+- Blueprint helper `UARSaveTypesLibrary::GetTotalMeatAmount(const FARMeatState&)` is available for UI/query graphs that need the aggregate meat value from a struct payload.
 - BP hydration compatibility helpers are exposed on `UARSaveGame`:
 - `FindPlayerStateDataBySlot(...)`
 - `FindPlayerStateDataByIdentity(...)`
@@ -408,6 +424,8 @@
 - Enemies are `ACharacter`-based for movement/nav reliability (even if visuals are flying).
 - `AAREnemyBase` is actor-owned ASC (owner/avatar = enemy), server-authoritative.
 - Enemy definition schema is `FARInvaderEnemyDefRow` + nested `FARInvaderEnemyRuntimeInitData` (no `StartingHealth`; health initializes from `MaxHealth` via attributes).
+- Enemy definition runtime init now includes drop authoring fields: `DropType` (`EARInvaderDropType`) and `DropAmount` (baseline pre-variance amount).
+- Enemy definition runtime init also includes invader collision toggles (`bCollideWithEnemies`, `bCollideWithPlayers`, `bCollideWithProjectiles`, `bCollideWithDrops`) applied to enemy capsule responses against invader collision channels.
 - `AAREnemyBase` defaults `CharacterMovement.bOrientRotationToMovement=false`; per-enemy child Blueprints can opt in when pilot-style steering rotation is desired.
 - Enemy death is one-shot and server-gated (`bIsDead`), with BP hooks:
 - `BP_OnEnemyInitialized`
@@ -416,6 +434,7 @@
 - Enemy spawn identity is tag-first: `FARWaveEnemySpawnDef::EnemyIdentifierTag` is authoritative at runtime; `EnemyClass` in spawn rows is legacy/migration-only.
 - On possess (authority), enemy resolves definition from content lookup by identifier tag and applies base stats via `SetNumericAttributeBase`:
 - core: `MaxHealth`, `Health` (from max), `Damage`, `MoveSpeed`, `FireRate`, `DamageTakenMultiplier`
+- core drop attrs: `DropAmount` (from enemy definition) and `DropChance` (from `UARInvaderDirectorSettings::DefaultEnemyDropChance`)
 - enemy set: `CollisionDamage`
 - Enemy move-speed runtime flow is C++/GAS-driven: after init and on MoveSpeed attribute changes, `AAREnemyBase` syncs core `MoveSpeed` to `CharacterMovement.MaxWalkSpeed` and `MaxFlySpeed`.
 - Enemy startup ability/effect layering on possess (authority) is deterministic and deduped:
@@ -450,6 +469,16 @@
 - offscreen checks run on authority only when `bOffscreenCheckAuthorityOnly` is true (default); set false for client-only pickups.
 - `OffscreenReleaseMargin` expands XY bounds padding before the offscreen timer starts.
 - pickup release path is override-friendly for pooling via `ReleasePickup` (`BlueprintNativeEvent`); default implementation destroys actor.
+- Invader drop base (`AARInvaderDropBase`) extends `AARPickupBase` with replicated drop payload (`DropType`, `DropAmount`, `DropColor`) and server-authoritative proximity pickup.
+- Drop physics contract: simulate physics enabled, gravity disabled, Z translation locked (XY-only drift), replicated movement on.
+- Drop collision contract: drifting drop pawn collisions are settings-driven via `DropPawnCollisionMode` (`CollideWithPawns` or `IgnoreAllPawns`).
+- Drop object type is invader-specific (`InvaderDrop`), and player pickup detector overlap includes `InvaderDrop` channel explicitly.
+- Collection detection contract: `UARPickupCollectorComponent` on each invader pawn is event-driven (query sphere overlap events + ASC `PickupRadius` attribute-change delegate subscription), sends server collection requests, and supports immediate local predicted collection visuals for owning clients.
+- Collector retry contract: overlapping drops are re-processed on a lightweight interval timer (`ServerRequestRetrySeconds`) for client request retries and late authority state transitions, avoiding per-frame actor iteration.
+- Player ASC pickup-radius seed contract: during invader pawn ASC init on authority, if current `PickupRadius <= 0`, runtime writes seed from `UARInvaderDirectorSettings`; when `bUseCapsuleDerivedPlayerPickupRadius` is true it derives from pawn capsule (`Radius + Diameter`), otherwise it uses explicit `DefaultPlayerPickupRadius`.
+- Authoritative collection contract: server validates drop availability + range (`TryCollectByPlayer`), disables collision/physics, and performs short lerp-to-player before release.
+- Predicted visual contract: owning clients can locally hide/disable pickup visuals immediately (`BeginPredictedCollectionLocal`); if authority confirmation does not arrive quickly, visuals auto-rollback.
+- Reward application contract: server applies scrap/meat directly to `AARGameStateBase` via `SetScrapFromSave(...)` / `SetMeatFromSave(...)`; optional collection gameplay cue can execute on collecting player ASC.
 - Spawn placement contract: authored spawn offsets are treated as in-bounds target formation positions; runtime offscreen spawn applies edge-based translation (Top/Left/Right) while preserving authored formation geometry, so non-side-edge waves can enter already arranged in formation.
 - Director sets explicit per-enemy formation target world location at spawn (`AAREnemyBase::SetFormationTargetWorldLocation(...)`) derived from authored offset (+ optional flips) before offscreen edge translation.
 - Wave phases in runtime flow: `Active`, `Berserk` (waves start `Active`, then time-transition to `Berserk`; waves clear when spawned enemies are dead and fully spawned).
@@ -578,6 +607,13 @@
 - track-use API: `ActivateTrackUpgrade` (uses selected slot, drops one tier, resets all player spice to zero).
 - hold-share APIs: `StartSharingSpice` / `StopSharingSpice` with server tick transfer using source `SpiceDrainRate` and `SpiceShareRatio`.
 - explicit/manual kill-credit API: `AwardKillCredit`; automatic death bridge path: `AAREnemyBase::HandleDeath` calls `AARInvaderGameState::NotifyEnemyKilled`.
+- enemy death bridge now also runs invader drop spawn resolution from `NotifyEnemyKilled(...)` when killer resolves to a player state (enemy/self/environment kills do not drop).
+- drop roll contract:
+- chance source is enemy ASC `DropChance` (baseline seeded from `UARInvaderDirectorSettings::DefaultEnemyDropChance` during enemy runtime init)
+- base amount source is enemy ASC `DropAmount` (seeded from enemy definition `RuntimeInit.DropAmount`)
+- amount variance is center-weighted with default triangular fallback (`[-1..1]`) or optional `DropAmountVarianceCurve`, scaled by `DropAmountVarianceFraction` (default `0.25`, i.e. ~`+/-25%`)
+- final amount multiplies by killer ASC drop multiplier (`MeatDropMultiplier` or `ScrapDropMultiplier`) and rounds to int; `<=0` cancels spawn
+- drop class routing is settings-driven (`MeatDropClass`/`ScrapDropClass`) with fallback to native `AARInvaderDropBase` if unset
 - spicy gain is color-gated: kills only award spice when killer player color matches enemy color, with enemy `White` acting as wildcard; kill events still update combo state so mismatched colors reset combo as expected.
 - enemy death instigator resolution for kill-credit now prefers GAS effect-context `OriginalInstigator` and falls back to `EffectCauser` before `NotifyEnemyKilled`, improving attribution when projectile/effect chains omit original instigator.
 - enemy kill-credit attribution now also tracks a short-lived server-side recent damage instigator on `AAREnemyBase` and uses it as a fallback when death context arrives with null instigator; this reduces `NotifyEnemyKilled` attribution misses from context-loss race cases.
@@ -588,6 +624,10 @@
 - `AlienRamen.Invader.SpiceTrack.OfferPresenceLifecycle`
 - `AlienRamen.Invader.SpiceTrack.OfferChooserRestriction`
 - tests are currently PIE/Game-context based (world-required), matching existing project automation style.
+- Automation coverage for invader drop contracts exists in `Source/AlienRamen/Private/Tests/ARInvaderDropsContractTests.cpp` (editor-context/no-map):
+- `AlienRamen.Invader.Drops.RuntimeInitDefaults`
+- `AlienRamen.Invader.Drops.DirectorSettingsDefaults`
+- `AlienRamen.Invader.Drops.AttributeClamps`
 - Detailed spicy-track ownership/authority matrix is documented in `Documentation/CppOverview/InvaderSpicyTrack.md` and is the source-of-truth for where state lives and whether it replicates.
 - Offer-session lifecycle contract is documented in `Documentation/CppOverview/InvaderSpicyTrack.md`:
 - single active session (`FullBlastSession.bIsActive` gate), chooser-slot ownership, replicated offer snapshot for late-join reconstruction.
@@ -626,6 +666,8 @@
 - `ar.invader.dump_state`
 - `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
     - deprojects viewport corners at runtime, intersects with horizontal plane `Z=PlaneZ` (default `SpawnOrigin.Z`), logs suggested `GameplayBoundsMin/Max`, and optionally applies+saves when `apply` is provided
+- `AARInvaderGameState` also registers authority-only runtime debug commands under `AR.Invader.Debug.*` (`SetSpice`, `AddSpice`, `AddScrap`, `AddMoney`, `AddMeat`); teardown must unregister their `IConsoleObject*` handles in `EndPlay`.
+- `AR.Invader.Debug.AddScrap/AddMoney/AddMeat` mutate replicated GameState save mirrors through authoritative setters (`SetScrapFromSave`, `SetMoneyFromSave`, `SetMeatFromSave`) so existing currency-change delegates/UI bindings fire normally.
 
 ## Debug Save Tool (Current)
 

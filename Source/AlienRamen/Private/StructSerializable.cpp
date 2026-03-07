@@ -1,7 +1,7 @@
 #include "StructSerializable.h"
 
 #include "ARLog.h"
-#include "../HelperLibrary.h"
+#include "HelperLibrary.h"
 #include "GameFramework/Actor.h"
 #include "UObject/UnrealType.h"
 

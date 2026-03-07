@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "StructUtils/InstancedStruct.h"
 #include "ARProjectileBase.generated.h"
 
 UCLASS(Blueprintable)
@@ -17,6 +18,11 @@ public:
 	AARProjectileBase();
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	// Applies projectile init data by property-name matching to this actor and its projectile-movement components.
+	// Intended to be called from lifecycle init flows that provide FInstancedStruct payloads.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Projectile|Init")
+	bool InitializeProjectileFromData(const FInstancedStruct& InitData);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Projectile|Lifecycle")
 	void EvaluateOffscreenRelease();
@@ -35,6 +41,16 @@ protected:
 	virtual void BeginPlay() override;
 
 	void ReleaseProjectile_Implementation();
+
+	// If true, BeginPlay auto-wires runtime component setup:
+	// picks a collision primitive, uses it as root when root is missing, and assigns projectile movement UpdatedComponent.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Projectile|Collision")
+	bool bAutoWireCollisionAndMovement = true;
+
+	// If true, BeginPlay applies invader-safe default collision responses:
+	// projectile ignores other projectiles and drops. Disable in BP to fully own collision setup.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Projectile|Collision")
+	bool bApplyDefaultInvaderCollisionResponses = true;
 
 protected:
 	// If true, this projectile releases itself the moment it is outside gameplay bounds.
