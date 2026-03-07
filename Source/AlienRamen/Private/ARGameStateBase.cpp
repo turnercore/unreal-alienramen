@@ -135,6 +135,7 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, Cycles);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionTag);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionEffectTags);
+	DOREPLIFETIME(AARGameStateBase, bManualSaveAllowed);
 	DOREPLIFETIME(AARGameStateBase, PauseMenuVoteMask);
 	DOREPLIFETIME(AARGameStateBase, ExternalPauseReasonMask);
 	DOREPLIFETIME(AARGameStateBase, bAllPlayersPausedByMenu);
@@ -482,6 +483,24 @@ void AARGameStateBase::SetActiveFactionEffectTagsFromSave(const FGameplayTagCont
 	ForceNetUpdate();
 }
 
+void AARGameStateBase::SetManualSaveAllowed(const bool bAllowed)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (bManualSaveAllowed == bAllowed)
+	{
+		return;
+	}
+
+	const bool bOldAllowed = bManualSaveAllowed;
+	bManualSaveAllowed = bAllowed;
+	OnRep_ManualSaveAllowed(bOldAllowed);
+	ForceNetUpdate();
+}
+
 void AARGameStateBase::NotifyHydratedFromSave()
 {
 	OnHydratedFromSave.Broadcast();
@@ -527,6 +546,11 @@ void AARGameStateBase::OnRep_ActiveFactionTag(FGameplayTag OldActiveFactionTag)
 void AARGameStateBase::OnRep_ActiveFactionEffectTags(FGameplayTagContainer OldActiveFactionEffectTags)
 {
 	OnActiveFactionEffectTagsChanged.Broadcast(ActiveFactionEffectTags, OldActiveFactionEffectTags);
+}
+
+void AARGameStateBase::OnRep_ManualSaveAllowed(const bool bOldManualSaveAllowed)
+{
+	OnManualSaveAllowedChanged.Broadcast(bManualSaveAllowed, bOldManualSaveAllowed);
 }
 
 void AARGameStateBase::OnRep_PauseMenuVoteMask(const uint8 /*OldPauseMenuVoteMask*/)

@@ -48,6 +48,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	bool bAutosaveOnQuit = true;
 
+	// When true, mode allows manual save actions (for example pause-menu save).
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	bool bAllowManualSaveInMode = true;
+
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Players")
 	void BP_OnPlayerJoined(AARPlayerStateBase* JoinedPlayerState);
 	virtual void BP_OnPlayerJoined_Implementation(AARPlayerStateBase* JoinedPlayerState);
