@@ -246,6 +246,9 @@ void AARInvaderPlayerController::CloseFullBlastMenu()
 
 void AARInvaderPlayerController::RequestActivateFullBlast()
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] RequestActivateFullBlast controller='%s' authority=%d"),
+		*GetNameSafe(this), HasAuthority() ? 1 : 0);
+
 	if (HasAuthority())
 	{
 		ServerRequestActivateFullBlast_Implementation();
@@ -257,6 +260,9 @@ void AARInvaderPlayerController::RequestActivateFullBlast()
 
 void AARInvaderPlayerController::ServerRequestActivateFullBlast_Implementation()
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateFullBlast controller='%s' playerState='%s'"),
+		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()));
+
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
 		InvaderGameState->RequestActivateFullBlast(GetInvaderPlayerState());
@@ -265,6 +271,9 @@ void AARInvaderPlayerController::ServerRequestActivateFullBlast_Implementation()
 
 void AARInvaderPlayerController::RequestResolveFullBlastSelection(const FGameplayTag SelectedUpgradeTag, const int32 DesiredDestinationSlot)
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] RequestResolveFullBlastSelection controller='%s' tag='%s' slot=%d authority=%d"),
+		*GetNameSafe(this), *SelectedUpgradeTag.ToString(), DesiredDestinationSlot, HasAuthority() ? 1 : 0);
+
 	if (HasAuthority())
 	{
 		ServerRequestResolveFullBlastSelection_Implementation(SelectedUpgradeTag, DesiredDestinationSlot);
@@ -276,6 +285,9 @@ void AARInvaderPlayerController::RequestResolveFullBlastSelection(const FGamepla
 
 void AARInvaderPlayerController::ServerRequestResolveFullBlastSelection_Implementation(const FGameplayTag SelectedUpgradeTag, const int32 DesiredDestinationSlot)
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestResolveFullBlastSelection controller='%s' playerState='%s' tag='%s' slot=%d"),
+		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()), *SelectedUpgradeTag.ToString(), DesiredDestinationSlot);
+
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
 		InvaderGameState->ResolveFullBlastSelection(GetInvaderPlayerState(), SelectedUpgradeTag, DesiredDestinationSlot);
@@ -284,6 +296,9 @@ void AARInvaderPlayerController::ServerRequestResolveFullBlastSelection_Implemen
 
 void AARInvaderPlayerController::RequestResolveFullBlastSkip()
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] RequestResolveFullBlastSkip controller='%s' authority=%d"),
+		*GetNameSafe(this), HasAuthority() ? 1 : 0);
+
 	if (HasAuthority())
 	{
 		ServerRequestResolveFullBlastSkip_Implementation();
@@ -295,6 +310,9 @@ void AARInvaderPlayerController::RequestResolveFullBlastSkip()
 
 void AARInvaderPlayerController::ServerRequestResolveFullBlastSkip_Implementation()
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestResolveFullBlastSkip controller='%s' playerState='%s'"),
+		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()));
+
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
 		InvaderGameState->ResolveFullBlastSkip(GetInvaderPlayerState());
@@ -303,6 +321,9 @@ void AARInvaderPlayerController::ServerRequestResolveFullBlastSkip_Implementatio
 
 void AARInvaderPlayerController::RequestActivateTrackUpgrade(const int32 SlotIndex)
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] RequestActivateTrackUpgrade controller='%s' slot=%d authority=%d"),
+		*GetNameSafe(this), SlotIndex, HasAuthority() ? 1 : 0);
+
 	if (HasAuthority())
 	{
 		ServerRequestActivateTrackUpgrade_Implementation(SlotIndex);
@@ -314,6 +335,9 @@ void AARInvaderPlayerController::RequestActivateTrackUpgrade(const int32 SlotInd
 
 void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade_Implementation(const int32 SlotIndex)
 {
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' slot=%d"),
+		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()), SlotIndex);
+
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
 		InvaderGameState->ActivateTrackUpgrade(GetInvaderPlayerState(), SlotIndex);
@@ -352,6 +376,9 @@ void AARInvaderPlayerController::HandleSpiceTrackActivateFromCursor()
 	const int32 CursorTier = InvaderPlayerState->GetEffectiveSpicyTrackCursorTier();
 	if (CursorTier <= 0)
 	{
+		// Compatibility fallback: if UI/input hasn't moved cursor onto full-blast tier yet,
+		// still allow direct full-blast activation attempt from neutral cursor state.
+		RequestActivateFullBlast();
 		return;
 	}
 
