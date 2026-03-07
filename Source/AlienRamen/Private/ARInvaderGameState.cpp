@@ -3,12 +3,15 @@
 #include "ARAttributeSetCore.h"
 #include "AREnemyBase.h"
 #include "ARGameStateModeStructs.h"
+#include "ARInvaderDropBase.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARProjectileBase.h"
 #include "AbilitySystemComponent.h"
+#include "Curves/CurveFloat.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/DataTable.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
@@ -76,6 +79,30 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddSpice),
 		ECVF_Cheat);
 
+	CmdDebugAddScrap = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.AddScrap"),
+		TEXT("Usage: AR.Invader.Debug.AddScrap <delta>"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddScrap),
+		ECVF_Cheat);
+
+	CmdDebugAddMoney = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.AddMoney"),
+		TEXT("Usage: AR.Invader.Debug.AddMoney <delta>"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMoney),
+		ECVF_Cheat);
+
+	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.AddMeat"),
+		TEXT("Usage: AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMeat),
+		ECVF_Cheat);
+
+	CmdDebugSetDropEarthGravity = ConsoleManager.RegisterConsoleCommand(
+		TEXT("AR.Invader.Debug.SetDropEarthGravity"),
+		TEXT("Usage: AR.Invader.Debug.SetDropEarthGravity <0|1>"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetDropEarthGravity),
+		ECVF_Cheat);
+
 	CmdDebugSetCursor = ConsoleManager.RegisterConsoleCommand(
 		TEXT("AR.Invader.Debug.SetCursor"),
 		TEXT("Usage: AR.Invader.Debug.SetCursor <p1|p2> <tier>"),
@@ -101,6 +128,26 @@ void AARInvaderGameState::UnregisterDebugConsoleCommands()
 	{
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddSpice, false);
 		CmdDebugAddSpice = nullptr;
+	}
+	if (CmdDebugAddScrap)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugAddScrap, false);
+		CmdDebugAddScrap = nullptr;
+	}
+	if (CmdDebugAddMoney)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMoney, false);
+		CmdDebugAddMoney = nullptr;
+	}
+	if (CmdDebugAddMeat)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMeat, false);
+		CmdDebugAddMeat = nullptr;
+	}
+	if (CmdDebugSetDropEarthGravity)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugSetDropEarthGravity, false);
+		CmdDebugSetDropEarthGravity = nullptr;
 	}
 	if (CmdDebugSetCursor)
 	{
@@ -222,6 +269,126 @@ void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWo
 	const float Current = PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	PlayerState->SetSpiceMeter(Current + Delta);
 	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] AddSpice '%s' %+0.2f -> %.2f"), *GetNameSafe(PlayerState), Delta, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+}
+
+void AARInvaderGameState::HandleConsoleAddScrap(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 1)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddScrap <delta>"));
+		return;
+	}
+
+	const int32 Delta = FCString::Atoi(*Args[0]);
+	const int32 OldScrap = GetScrap();
+	const int32 NewScrap = OldScrap + Delta;
+	SetScrapFromSave(NewScrap);
+
+	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddScrap %+d -> %d"), Delta, GetScrap());
+}
+
+void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 1)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddMoney <delta>"));
+		return;
+	}
+
+	const int32 Delta = FCString::Atoi(*Args[0]);
+	const int32 OldMoney = GetMoney();
+	const int32 NewMoney = OldMoney + Delta;
+	SetMoneyFromSave(NewMoney);
+
+	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddMoney %+d -> %d"), Delta, GetMoney());
+}
+
+void AARInvaderGameState::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 1)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]"));
+		return;
+	}
+
+	const int32 Delta = FCString::Atoi(*Args[0]);
+	EARAffinityColor ColorBucket = EARAffinityColor::None;
+	bool bUseUnspecifiedBucket = true;
+	if (Args.Num() > 1)
+	{
+		const FString ColorToken = Args[1].TrimStartAndEnd().ToLower();
+		if (ColorToken == TEXT("red"))
+		{
+			ColorBucket = EARAffinityColor::Red;
+			bUseUnspecifiedBucket = false;
+		}
+		else if (ColorToken == TEXT("blue"))
+		{
+			ColorBucket = EARAffinityColor::Blue;
+			bUseUnspecifiedBucket = false;
+		}
+		else if (ColorToken == TEXT("white"))
+		{
+			ColorBucket = EARAffinityColor::White;
+			bUseUnspecifiedBucket = false;
+		}
+		else if (ColorToken == TEXT("unspecified") || ColorToken == TEXT("none"))
+		{
+			bUseUnspecifiedBucket = true;
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderSave|Debug] Invalid meat color '%s'. Expected red|blue|white|unspecified."),
+				*Args[1]);
+			return;
+		}
+	}
+
+	FARMeatState MeatState = GetMeat();
+	if (bUseUnspecifiedBucket)
+	{
+		MeatState.UnspecifiedAmount += Delta;
+	}
+	else
+	{
+		switch (ColorBucket)
+		{
+		case EARAffinityColor::Red:
+			MeatState.RedAmount += Delta;
+			break;
+		case EARAffinityColor::Blue:
+			MeatState.BlueAmount += Delta;
+			break;
+		case EARAffinityColor::White:
+			MeatState.WhiteAmount += Delta;
+			break;
+		default:
+			MeatState.UnspecifiedAmount += Delta;
+			break;
+		}
+	}
+
+	SetMeatFromSave(MeatState);
+	const TCHAR* BucketLabel = bUseUnspecifiedBucket ? TEXT("unspecified") : *Args[1];
+	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddMeat bucket=%s %+d -> total=%d"), BucketLabel, Delta, GetMeat().GetTotalAmount());
+}
+
+void AARInvaderGameState::HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority() || Args.Num() < 1)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDrop|Debug] Usage: AR.Invader.Debug.SetDropEarthGravity <0|1>"));
+		return;
+	}
+
+	const int32 RawValue = FCString::Atoi(*Args[0]);
+	const bool bEnabled = RawValue != 0;
+	bDebugDropEarthGravityEnabled = bEnabled;
+	SetDropEarthGravityEnabledForAll(bEnabled);
+	UE_LOG(ARLog, Log, TEXT("[InvaderDrop|Debug] SetDropEarthGravity -> %s"), bEnabled ? TEXT("ON") : TEXT("OFF"));
 }
 
 void AARInvaderGameState::HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* /*World*/)
@@ -1469,6 +1636,423 @@ void AARInvaderGameState::NotifyEnemyKilled(AAREnemyBase* Enemy, AActor* Instiga
 		Enemy->GetActorLocation(),
 		true,
 		Enemy->GetEnemyIdentifierTag());
+
+	TrySpawnEnemyDrop(Enemy, KillerPlayerState);
+}
+
+void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateBase* KillerPlayerState)
+{
+	if (!HasAuthority() || !Enemy || !KillerPlayerState)
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* EnemyASC = Enemy->GetASC();
+	if (!EnemyASC)
+	{
+		return;
+	}
+
+	const EARInvaderDropType DropType = Enemy->GetEnemyDropType();
+	if (DropType == EARInvaderDropType::None)
+	{
+		return;
+	}
+
+	const float DropChance = FMath::Clamp(
+		EnemyASC->GetNumericAttribute(UARAttributeSetCore::GetDropChanceAttribute()),
+		0.0f,
+		1.0f);
+	if (DropChance <= 0.0f || FMath::FRand() > DropChance)
+	{
+		return;
+	}
+
+	const float EnemyDropAmount = FMath::Max(
+		0.0f,
+		EnemyASC->GetNumericAttribute(UARAttributeSetCore::GetDropAmountAttribute()));
+	if (EnemyDropAmount <= 0.0f)
+	{
+		return;
+	}
+
+	const float VariedDropAmount = RollDropAmountWithVariance(EnemyDropAmount, DropType);
+	const float KillerDropMultiplier = ResolveKillerDropMultiplier(KillerPlayerState, DropType);
+	const int32 FinalDropAmount = FMath::RoundToInt(VariedDropAmount * KillerDropMultiplier);
+	if (FinalDropAmount <= 0)
+	{
+		return;
+	}
+
+	TArray<FDropSpawnPlanEntry> SpawnPlan;
+	if (!BuildDropSpawnPlan(DropType, FinalDropAmount, SpawnPlan) || SpawnPlan.IsEmpty() || !GetWorld())
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = Enemy->GetInstigator();
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	const float MinSpeed = Settings ? FMath::Max(0.0f, Settings->DropInitialLinearSpeedMin) : 120.0f;
+	const float MaxSpeed = Settings ? FMath::Max(MinSpeed, Settings->DropInitialLinearSpeedMax) : 220.0f;
+
+	for (const FDropSpawnPlanEntry& PlanEntry : SpawnPlan)
+	{
+		if (PlanEntry.Amount <= 0 || !PlanEntry.DropClass)
+		{
+			continue;
+		}
+
+		AARInvaderDropBase* SpawnedDrop = GetWorld()->SpawnActor<AARInvaderDropBase>(
+			PlanEntry.DropClass,
+			Enemy->GetActorLocation(),
+			FRotator::ZeroRotator,
+			SpawnParams);
+		if (!SpawnedDrop)
+		{
+			continue;
+		}
+
+		SpawnedDrop->InitializeDrop(DropType, PlanEntry.Amount, Enemy->GetEnemyColor());
+		SpawnedDrop->SetEarthGravityEnabled(bDebugDropEarthGravityEnabled);
+
+		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedDrop->GetRootComponent()))
+		{
+			const float AngleRadians = FMath::FRandRange(0.0f, 2.0f * PI);
+			const float Speed = FMath::FRandRange(MinSpeed, MaxSpeed);
+			const FVector InitialVelocity(FMath::Cos(AngleRadians) * Speed, FMath::Sin(AngleRadians) * Speed, 0.0f);
+			RootPrimitive->SetPhysicsLinearVelocity(InitialVelocity);
+		}
+	}
+}
+
+void AARInvaderGameState::SetDropEarthGravityEnabledForAll(const bool bEnabled)
+{
+	if (!HasAuthority() || !GetWorld())
+	{
+		return;
+	}
+
+	for (TActorIterator<AARInvaderDropBase> It(GetWorld()); It; ++It)
+	{
+		AARInvaderDropBase* Drop = *It;
+		if (!Drop || Drop->IsPendingKillPending())
+		{
+			continue;
+		}
+
+		Drop->SetEarthGravityEnabled(bEnabled);
+	}
+}
+
+float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount, const EARInvaderDropType DropType) const
+{
+	if (BaseDropAmount <= 0.0f)
+	{
+		return 0.0f;
+	}
+
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	if (!Settings)
+	{
+		return BaseDropAmount;
+	}
+
+	float VarianceFraction = Settings->DropAmountVarianceFraction;
+	TSoftObjectPtr<UCurveFloat> SelectedCurve = Settings->DropAmountVarianceCurve;
+	if (DropType == EARInvaderDropType::Scrap)
+	{
+		VarianceFraction = Settings->ScrapDropAmountVarianceFraction;
+		if (!Settings->ScrapDropAmountVarianceCurve.IsNull())
+		{
+			SelectedCurve = Settings->ScrapDropAmountVarianceCurve;
+		}
+	}
+	else if (DropType == EARInvaderDropType::Meat)
+	{
+		VarianceFraction = Settings->MeatDropAmountVarianceFraction;
+		if (!Settings->MeatDropAmountVarianceCurve.IsNull())
+		{
+			SelectedCurve = Settings->MeatDropAmountVarianceCurve;
+		}
+	}
+
+	VarianceFraction = FMath::Clamp(VarianceFraction, 0.0f, 1.0f);
+	if (VarianceFraction <= 0.0f)
+	{
+		return BaseDropAmount;
+	}
+
+	// Default distribution is center-weighted triangular noise in [-1..1].
+	float SignedCenterWeightedNoise = (FMath::FRand() - FMath::FRand());
+
+	if (UCurveFloat* VarianceCurve = SelectedCurve.LoadSynchronous())
+	{
+		const float SampleX = FMath::FRandRange(0.0f, 1.0f);
+		SignedCenterWeightedNoise = FMath::Clamp(VarianceCurve->GetFloatValue(SampleX), -1.0f, 1.0f);
+	}
+
+	const float Multiplier = FMath::Max(0.0f, 1.0f + (SignedCenterWeightedNoise * VarianceFraction));
+	return BaseDropAmount * Multiplier;
+}
+
+float AARInvaderGameState::ResolveKillerDropMultiplier(const AARPlayerStateBase* KillerPlayerState, const EARInvaderDropType DropType) const
+{
+	if (!KillerPlayerState)
+	{
+		return 0.0f;
+	}
+
+	const UAbilitySystemComponent* KillerASC = KillerPlayerState->GetASC();
+	if (!KillerASC)
+	{
+		return 1.0f;
+	}
+
+	if (DropType == EARInvaderDropType::Meat)
+	{
+		return FMath::Max(0.0f, KillerASC->GetNumericAttribute(UARAttributeSetCore::GetMeatDropMultiplierAttribute()));
+	}
+
+	if (DropType == EARInvaderDropType::Scrap)
+	{
+		return FMath::Max(0.0f, KillerASC->GetNumericAttribute(UARAttributeSetCore::GetScrapDropMultiplierAttribute()));
+	}
+
+	return 0.0f;
+}
+
+TSubclassOf<AARInvaderDropBase> AARInvaderGameState::ResolveDropClass(const EARInvaderDropType DropType) const
+{
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	if (Settings)
+	{
+		TSoftClassPtr<AARInvaderDropBase> SoftDropClass;
+		if (DropType == EARInvaderDropType::Meat)
+		{
+			SoftDropClass = Settings->MeatDropClass;
+		}
+		else if (DropType == EARInvaderDropType::Scrap)
+		{
+			SoftDropClass = Settings->ScrapDropClass;
+		}
+
+		if (UClass* LoadedClass = SoftDropClass.LoadSynchronous())
+		{
+			return LoadedClass;
+		}
+	}
+
+	return AARInvaderDropBase::StaticClass();
+}
+
+void AARInvaderGameState::ResolveDropStackDefinitions(
+	const EARInvaderDropType DropType,
+	TArray<FResolvedDropStackEntry>& OutDefinitions) const
+{
+	OutDefinitions.Reset();
+
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	if (!Settings)
+	{
+		return;
+	}
+
+	const TArray<FARInvaderDropStackDefinition>* SourceDefs = nullptr;
+	if (DropType == EARInvaderDropType::Meat)
+	{
+		SourceDefs = &Settings->MeatDropStacks;
+	}
+	else if (DropType == EARInvaderDropType::Scrap)
+	{
+		SourceDefs = &Settings->ScrapDropStacks;
+	}
+
+	if (!SourceDefs)
+	{
+		return;
+	}
+
+	for (const FARInvaderDropStackDefinition& Def : *SourceDefs)
+	{
+		if (Def.Denomination <= 0)
+		{
+			continue;
+		}
+
+		UClass* LoadedClass = Def.DropClass.LoadSynchronous();
+		if (!LoadedClass || !LoadedClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+		{
+			continue;
+		}
+
+		FResolvedDropStackEntry Entry;
+		Entry.Denomination = Def.Denomination;
+		Entry.DropClass = LoadedClass;
+		OutDefinitions.Add(Entry);
+	}
+
+	OutDefinitions.Sort([](const FResolvedDropStackEntry& A, const FResolvedDropStackEntry& B)
+		{
+			if (A.Denomination != B.Denomination)
+			{
+				return A.Denomination > B.Denomination;
+			}
+
+			return A.DropClass.Get() < B.DropClass.Get();
+		});
+
+	TSet<int32> SeenDenominations;
+	for (int32 Index = OutDefinitions.Num() - 1; Index >= 0; --Index)
+	{
+		const int32 Denomination = OutDefinitions[Index].Denomination;
+		if (SeenDenominations.Contains(Denomination))
+		{
+			OutDefinitions.RemoveAtSwap(Index, 1, EAllowShrinking::No);
+			continue;
+		}
+
+		SeenDenominations.Add(Denomination);
+	}
+}
+
+bool AARInvaderGameState::BuildDropSpawnPlan(
+	const EARInvaderDropType DropType,
+	const int32 TotalAmount,
+	TArray<FDropSpawnPlanEntry>& OutPlan) const
+{
+	OutPlan.Reset();
+
+	if (TotalAmount <= 0)
+	{
+		return false;
+	}
+
+	TArray<FResolvedDropStackEntry> Definitions;
+	ResolveDropStackDefinitions(DropType, Definitions);
+
+	if (Definitions.IsEmpty())
+	{
+		TSubclassOf<AARInvaderDropBase> FallbackClass = ResolveDropClass(DropType);
+		if (!FallbackClass)
+		{
+			return false;
+		}
+
+		FDropSpawnPlanEntry Fallback;
+		Fallback.Amount = TotalAmount;
+		Fallback.DropClass = FallbackClass;
+		OutPlan.Add(Fallback);
+		return true;
+	}
+
+	const int32 Unreachable = TNumericLimits<int32>::Max() / 4;
+	TArray<int32> MinPickupCount;
+	TArray<int32> MaxDenomSum;
+	TArray<int32> ChoiceIndex;
+	MinPickupCount.Init(Unreachable, TotalAmount + 1);
+	MaxDenomSum.Init(-1, TotalAmount + 1);
+	ChoiceIndex.Init(INDEX_NONE, TotalAmount + 1);
+
+	MinPickupCount[0] = 0;
+	MaxDenomSum[0] = 0;
+
+	for (int32 Amount = 1; Amount <= TotalAmount; ++Amount)
+	{
+		for (int32 DefIndex = 0; DefIndex < Definitions.Num(); ++DefIndex)
+		{
+			const int32 Denom = Definitions[DefIndex].Denomination;
+			if (Denom <= 0 || Denom > Amount)
+			{
+				continue;
+			}
+
+			const int32 PrevAmount = Amount - Denom;
+			if (MinPickupCount[PrevAmount] >= Unreachable)
+			{
+				continue;
+			}
+
+			const int32 CandidateCount = MinPickupCount[PrevAmount] + 1;
+			const int32 CandidateDenomSum = MaxDenomSum[PrevAmount] + Denom;
+			const bool bBetterCount = CandidateCount < MinPickupCount[Amount];
+			const bool bTieBetterDenom = (CandidateCount == MinPickupCount[Amount]) && (CandidateDenomSum > MaxDenomSum[Amount]);
+			if (bBetterCount || bTieBetterDenom)
+			{
+				MinPickupCount[Amount] = CandidateCount;
+				MaxDenomSum[Amount] = CandidateDenomSum;
+				ChoiceIndex[Amount] = DefIndex;
+			}
+		}
+	}
+
+	if (ChoiceIndex[TotalAmount] == INDEX_NONE)
+	{
+		TSubclassOf<AARInvaderDropBase> FallbackClass = ResolveDropClass(DropType);
+		if (!FallbackClass)
+		{
+			return false;
+		}
+
+		FDropSpawnPlanEntry Fallback;
+		Fallback.Amount = TotalAmount;
+		Fallback.DropClass = FallbackClass;
+		OutPlan.Add(Fallback);
+		return true;
+	}
+
+	TMap<int32, int32> CountsByDenomination;
+	int32 Remaining = TotalAmount;
+	while (Remaining > 0)
+	{
+		const int32 DefIndex = ChoiceIndex[Remaining];
+		if (!Definitions.IsValidIndex(DefIndex))
+		{
+			break;
+		}
+
+		const int32 Denom = Definitions[DefIndex].Denomination;
+		if (Denom <= 0 || Denom > Remaining)
+		{
+			break;
+		}
+
+		CountsByDenomination.FindOrAdd(Denom) += 1;
+		Remaining -= Denom;
+	}
+
+	if (Remaining != 0)
+	{
+		TSubclassOf<AARInvaderDropBase> FallbackClass = ResolveDropClass(DropType);
+		if (!FallbackClass)
+		{
+			return false;
+		}
+
+		FDropSpawnPlanEntry Fallback;
+		Fallback.Amount = TotalAmount;
+		Fallback.DropClass = FallbackClass;
+		OutPlan.Add(Fallback);
+		return true;
+	}
+
+	for (const FResolvedDropStackEntry& Def : Definitions)
+	{
+		const int32* CountPtr = CountsByDenomination.Find(Def.Denomination);
+		const int32 Count = CountPtr ? *CountPtr : 0;
+		for (int32 Index = 0; Index < Count; ++Index)
+		{
+			FDropSpawnPlanEntry PlanEntry;
+			PlanEntry.Amount = Def.Denomination;
+			PlanEntry.DropClass = Def.DropClass;
+			OutPlan.Add(PlanEntry);
+		}
+	}
+
+	return !OutPlan.IsEmpty();
 }
 
 float AARInvaderGameState::ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy) const
