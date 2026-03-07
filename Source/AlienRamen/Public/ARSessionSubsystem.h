@@ -179,6 +179,10 @@ private:
 	UPROPERTY(Transient)
 	TArray<FARSessionSearchResultData> LastFindResults;
 
+	/** Subsystem that owns the currently hosted (created) session. Set on successful CreateSession and cleared on successful DestroySession. */
+	FName HostedSessionSubsystemName = NAME_None;
+	/** Subsystem used for the most recent FindSessions call; used by JoinSessionByIndex to operate on the same interface. */
+	FName LastFindSubsystemName = NAME_None;
 	FName ActiveSubsystemName = NAME_None;
 	bool bOperationInFlight = false;
 	ESessionOperation CurrentOperation = ESessionOperation::None;
