@@ -19,7 +19,6 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
 #include "HAL/IConsoleManager.h"
-#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 AARInvaderGameState::AARInvaderGameState()
@@ -814,6 +813,11 @@ void AARInvaderGameState::OnRep_SharedFullBlastTier(const int32 /*OldTier*/)
 
 void AARInvaderGameState::OnRep_FullBlastSession(const FARInvaderFullBlastSessionState& /*OldSession*/)
 {
+	if (HasAuthority())
+	{
+		SetExternalPauseReasonActive(EARPauseExternalReason::InvaderFullBlast, FullBlastSession.bIsActive);
+	}
+
 	OnInvaderFullBlastSessionChanged.Broadcast(FullBlastSession.bIsActive);
 }
 
@@ -1412,7 +1416,6 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 	OnRep_FullBlastSession(OldSession);
 	OnRep_OfferPresenceStates(OldPresenceStates);
 	ForceNetUpdate();
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] RequestActivateFullBlast accepted requester='%s' activationTier=%d offers=%d"),
 		*GetNameSafe(RequestingPlayerState), FullBlastSession.ActivationTier, FullBlastSession.Offers.Num());
 	return true;
@@ -2631,11 +2634,6 @@ EARAffinityColor AARInvaderGameState::ToPlayerColor(const EARAffinityColor Enemy
 
 void AARInvaderGameState::ResolveFullBlastCommonPostChoice(const bool bSkipped, const EARPlayerSlot RequestingSlot, const int32 ActivationTier)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()))
-	{
-		UGameplayStatics::SetGamePaused(GetWorld(), false);
-	}
-
 	ApplyFullBlastGameplayCue();
 	ClearEnemyProjectilesByTag();
 	OnInvaderFullBlastResolved.Broadcast(bSkipped, ActivationTier, RequestingSlot);
