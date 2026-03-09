@@ -15,7 +15,9 @@
 
 class UARAbilitySet;
 class UInputMappingContext;
+class UARDialogueWidgetBase;
 class UUserWidget;
+class AARNPCCharacterBase;
 
 USTRUCT(BlueprintType)
 struct FARControllerInputMapping
@@ -37,6 +39,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FAROnPauseMenuOverlayVisibilityChangedSignature,
 	bool,
 	bShouldDisplayOverlay);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FAROnDialogueViewUpdatedSignature,
+	const FDialogueClientView&,
+	View);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FAROnDialogueSessionEndedSignature,
+	const FString&,
+	SessionId);
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
@@ -98,6 +108,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestStartDialogue(FGameplayTag NpcTag);
 
+	// Convenience interaction path for world NPC actors. Safe to call from client/UI/BP.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void RequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void RequestAdvanceDialogue();
 
@@ -116,6 +133,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
 
+	// Convenience wrapper that targets the opposite slotted player when possible.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void RequestSetDialogueEavesdropOtherPlayer(bool bEnable);
+
 	UFUNCTION(Client, Reliable)
 	void ClientDialogueSessionUpdated(const FDialogueClientView& View);
 
@@ -127,6 +148,34 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
 	void BP_OnDialogueSessionEnded(const FString& SessionId);
+
+	// Multicast mirrors for dialogue session updates/end (used by reusable UI widget bases).
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
+	FAROnDialogueViewUpdatedSignature OnDialogueViewUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
+	FAROnDialogueSessionEndedSignature OnDialogueSessionEndedSignal;
+
+	// Runtime dialogue-view cache for late-bound widgets/UI.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool GetCachedDialogueView(FDialogueClientView& OutView) const;
+
+	// Queries current local dialogue view directly from subsystem.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool QueryLocalDialogueView(FDialogueClientView& OutView) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool HasCachedDialogueView() const { return bHasCachedDialogueView; }
+
+	// Optional auto-created dialogue widget for local controllers.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	void EnsureDialogueWidget();
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	void RemoveDialogueWidget();
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI")
+	UARDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
 
 	// Initializes a custom default cursor widget on local controllers only.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
@@ -216,6 +265,18 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
 	TObjectPtr<UUserWidget> Cursor = nullptr;
 
+	// Automatically creates a dialogue widget on local controller begin play.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI")
+	bool bAutoCreateDialogueWidget = false;
+
+	// Widget class for dialogue presentation/input (typically deriving from UARDialogueWidgetBase).
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
+	TSubclassOf<UARDialogueWidgetBase> DialogueWidgetClass;
+
+	// Viewport z-order for auto-created dialogue widget.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
+	int32 DialogueWidgetZOrder = 1800;
+
 	/** Automatically swaps Enhanced Input mapping contexts when pause menu opens/closes. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
 	bool bAutoManagePauseInputContexts = true;
@@ -267,6 +328,12 @@ private:
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
 
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (AllowPrivateAccess = "true"))
+	FDialogueClientView CachedDialogueView;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (AllowPrivateAccess = "true"))
+	bool bHasCachedDialogueView = false;
+
 	UPROPERTY(Transient)
 	bool bHasBroadcastHUDInitialization = false;
 
@@ -298,6 +365,9 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UARDialogueWidgetBase> DialogueWidget = nullptr;
 
 	TSet<FName> PauseMenuBlockerReasons;
 };

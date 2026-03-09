@@ -13,9 +13,11 @@ Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
 Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 
 - `RequestStartDialogue(FGameplayTag NpcTag)`
+- `RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)`
 - `RequestAdvanceDialogue()`
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
 - `RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)`
+- `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (slot convenience wrapper)
 
 Server runtime now pushes authoritative view snapshots back to client controllers via:
 
@@ -32,6 +34,7 @@ Core subsystem API:
 - `ValidateConversation(...)`
 - `ValidateSpeaker(...)`
 - `PreviewConversation(...)`
+- `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
 
 Compatibility wrappers still exist for gameplay BPs:
 
@@ -39,24 +42,35 @@ Compatibility wrappers still exist for gameplay BPs:
 - `SubmitDialogueChoice(...)` (routes to `SubmitChoice`)
 - `SetShopEavesdropTarget(...)` (routes to `ForceEavesdrop`)
 
+## Runtime UI Bridge
+
+Runtime UI is intentionally separate from editor preview tooling.
+
+- `UARDialogueWidgetBase` (`Source/AlienRamen/Public/ARDialogueWidgetBase.h`) is the shared Blueprint-facing widget base for dialogue presentation and input forwarding.
+- `AARPlayerController` now exposes a local runtime UI bridge:
+  - dialogue delegates: `OnDialogueViewUpdated`, `OnDialogueSessionEndedSignal`
+  - cached view helpers: `GetCachedDialogueView(...)`, `QueryLocalDialogueView(...)`
+  - widget lifecycle: `EnsureDialogueWidget()`, `RemoveDialogueWidget()`, `GetDialogueWidget()`
+  - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
+- `UARDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithNpcTag`, `InteractWithNpc`) back to the bound controller.
+- Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
+
 ## Content Model
 
 Shared dialogue types live in [`Source/AlienRamen/Public/ARDialogueTypes.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueTypes.h).
 
-- Speakers: `FDialogueSpeakerRow` rows (content lookup compatible).
+- Speakers: `FARDialogueSpeakerRow` rows (content lookup compatible).
 - Conversations: `UARDialogueConversationAsset` with:
   - `Header` (`FDialogueConversationHeader`)
   - `CompiledData` (`FDialogueCompiledConversationData`)
 - Lines are embedded per conversation (`FDialogueConversationLine`), not global rows.
-- Conversation registry sources:
-  - Explicit `ConversationAssets` list in `UARDialogueSettings`.
-  - Optional ContentLookup DataTable rows (`FDialogueConversationAssetRow`) routed by `ConversationDefinitionRootTag` (row tag or built tag from root+row name). Runtime merges both, logs duplicates, and keeps the first registration per `ConversationTag`.
+- Conversation registry source:
+  - ContentLookup DataTable rows (`FARDialogueConversationAssetRow`) routed by `ConversationDefinitionRootTag` (row tag or built tag from root+row name).
 
 Settings live in [`Source/AlienRamen/Public/ARDialogueSettings.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueSettings.h):
 
 - `SpeakerDefinitionRootTag` (speaker row lookup root)
-- `ConversationDefinitionRootTag`
-- `ConversationAssets` (runtime registry)
+- `ConversationDefinitionRootTag` (conversation lookup row root)
 - shared/per-player mode tag containers
 - execution guard `MaxExecutionStepsPerAdvance`
 
@@ -96,6 +110,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - initiating player completion tag is persisted
   - per-choice memory records are persisted (`FDialogueChoiceMemoryRecord`)
 - Choice nodes in `LockedToRecordedChoice` mode auto-route to persisted branch when encountered after completion.
+- If a completed conversation is replayed and a locked choice record is missing/unroutable, runtime now fails closed (ends non-completed) instead of reopening free choice.
 
 ## Persistence
 
@@ -139,13 +154,15 @@ Conversation graph tooling now provides:
 - dynamic branch-pin behavior for choice/switch/random nodes driven by stable branch GUIDs
 - compile-from-editor-graph into `CompiledData` with node-level validation markers
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running
+- no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
+- preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 
 Speaker hub currently provides:
 
 - content-lookup-backed speaker table loading from `SpeakerDefinitionRootTag`
-- searchable/filterable/sortable speaker list with columns (display name/tag/faction/thresholds/conversation count)
+- searchable/sortable speaker list with columns (display name/tag/thresholds/conversation count)
 - speaker CRUD (`New`, `Duplicate`, `Delete`) + `Save Speaker` + `Validate Speaker`
-- inline threshold editing/reset (`50,150,300,500` defaults)
+- reorderable threshold editing/reset (`50,150,300,500` defaults)
 - inline portrait list with add/update/remove operations
-- relationship-band conversation map for selected primary speaker
+- relationship-band grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
 - conversation create/open actions and broken-conversation scan using runtime validator

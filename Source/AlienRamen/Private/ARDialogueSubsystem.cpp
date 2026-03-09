@@ -155,7 +155,7 @@ namespace
 struct UARDialogueSubsystem::FARDialogueRuntimeState
 {
 	TMap<FGameplayTag, TObjectPtr<UARDialogueConversationAsset>> ConversationsByTag;
-	TMap<FGameplayTag, FDialogueSpeakerRow> SpeakerRowsByTag;
+	TMap<FGameplayTag, FARDialogueSpeakerRow> SpeakerRowsByTag;
 	TArray<FARActiveDialogueSession> ActiveSessions;
 	TMap<EARPlayerSlot, FGameplayTagContainer> SeenByPlayerTransient;
 	FGameplayTagContainer SeenByGameTransient;
@@ -548,8 +548,8 @@ static FGameplayTag StripLeafGameplayTag(const FGameplayTag& Tag)
 	return UGameplayTagsManager::Get().RequestGameplayTag(FName(*Path), false);
 }
 
-static const FDialogueSpeakerRow* FindSpeakerRowByConversationSpeakerTag(
-	const TMap<FGameplayTag, FDialogueSpeakerRow>& SpeakerRowsByTag,
+static const FARDialogueSpeakerRow* FindSpeakerRowByConversationSpeakerTag(
+	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& LineSpeakerTag,
 	FGameplayTag& OutResolvedSpeakerRowTag)
 {
@@ -558,7 +558,7 @@ static const FDialogueSpeakerRow* FindSpeakerRowByConversationSpeakerTag(
 
 	while (Candidate.IsValid())
 	{
-		if (const FDialogueSpeakerRow* Found = SpeakerRowsByTag.Find(Candidate))
+		if (const FARDialogueSpeakerRow* Found = SpeakerRowsByTag.Find(Candidate))
 		{
 			OutResolvedSpeakerRowTag = Candidate;
 			return Found;
@@ -598,7 +598,7 @@ static bool IsBuiltInDialogueSpeakerTag(const FGameplayTag& SpeakerTag)
 }
 
 static bool IsResolvableConversationSpeakerTag(
-	const TMap<FGameplayTag, FDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& SpeakerTag)
 {
 	if (!SpeakerTag.IsValid())
@@ -616,12 +616,45 @@ static bool IsResolvableConversationSpeakerTag(
 }
 
 static FSpeakerPortraitData ResolvePortraitForSpeaker(
-	const TMap<FGameplayTag, FDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& LineSpeakerTag)
 {
 	FSpeakerPortraitData ResolvedPortrait;
 	FGameplayTag SpeakerRowTag;
-	const FDialogueSpeakerRow* SpeakerRow = FindSpeakerRowByConversationSpeakerTag(SpeakerRowsByTag, LineSpeakerTag, SpeakerRowTag);
+	const FARDialogueSpeakerRow* SpeakerRow = FindSpeakerRowByConversationSpeakerTag(SpeakerRowsByTag, LineSpeakerTag, SpeakerRowTag);
+	if (!SpeakerRow && IsBuiltInDialogueSpeakerTag(LineSpeakerTag))
+	{
+		TArray<FGameplayTag> FallbackCandidates;
+		const FGameplayTag PlayerTag = GetDialogueSpeakerPlayerPlaceholderTag();
+		const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
+		const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
+		if (LineSpeakerTag.MatchesTag(BrotherTag))
+		{
+			FallbackCandidates = { PlayerTag, SisterTag };
+		}
+		else if (LineSpeakerTag.MatchesTag(SisterTag))
+		{
+			FallbackCandidates = { PlayerTag, BrotherTag };
+		}
+		else
+		{
+			FallbackCandidates = { BrotherTag, SisterTag };
+		}
+
+		for (const FGameplayTag CandidateTag : FallbackCandidates)
+		{
+			if (!CandidateTag.IsValid())
+			{
+				continue;
+			}
+
+			SpeakerRow = FindSpeakerRowByConversationSpeakerTag(SpeakerRowsByTag, CandidateTag, SpeakerRowTag);
+			if (SpeakerRow)
+			{
+				break;
+			}
+		}
+	}
 	if (!SpeakerRow)
 	{
 		return ResolvedPortrait;
@@ -812,22 +845,6 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
-	int32 ConversationsFromSettings = 0;
-	for (const TSoftObjectPtr<UARDialogueConversationAsset>& ConversationRef : Settings->ConversationAssets)
-	{
-		UARDialogueConversationAsset* Conversation = ConversationRef.LoadSynchronous();
-		if (!Conversation)
-		{
-			UE_LOG(ARLog, Warning, TEXT("[Dialogue] Settings ConversationAssets entry is null; skipping."));
-			continue;
-		}
-
-		if (AddConversationToRuntimeRegistry(Runtime.ConversationsByTag, Conversation, FGameplayTag(), TEXT("Dialogue settings ConversationAssets")))
-		{
-			++ConversationsFromSettings;
-		}
-	}
-
 	int32 ConversationsFromLookup = 0;
 	if (UContentLookupSubsystem* Lookup = GetLookupSubsystem(this))
 	{
@@ -837,7 +854,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		const bool bHasConversationRoot = Settings->ConversationDefinitionRootTag.IsValid();
 
 		// Prefer explicit row-struct routing when present; fall back to a direct root match.
-		if (!Lookup->GetDataTableForRowStruct(FDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
+		if (!Lookup->GetDataTableForRowStruct(FARDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
 		{
 			LookupError.Empty();
 			if (bHasConversationRoot)
@@ -848,10 +865,10 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 		if (ConversationTable)
 		{
-			if (ConversationTable->GetRowStruct() != FDialogueConversationAssetRow::StaticStruct())
+			if (ConversationTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
 			{
 				UE_LOG(ARLog, Warning,
-					TEXT("[Dialogue] ContentLookup conversation table '%s' row struct mismatch (%s); expected FDialogueConversationAssetRow."),
+					TEXT("[Dialogue] ContentLookup conversation table '%s' row struct mismatch (%s); expected FARDialogueConversationAssetRow."),
 					*ConversationTable->GetName(),
 					*GetNameSafe(ConversationTable->GetRowStruct()));
 			}
@@ -859,7 +876,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 			{
 				for (const FName RowName : ConversationTable->GetRowNames())
 				{
-					const FDialogueConversationAssetRow* Row = ConversationTable->FindRow<FDialogueConversationAssetRow>(RowName, TEXT("DialogueConversationLookup"), false);
+					const FARDialogueConversationAssetRow* Row = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueConversationLookup"), false);
 					if (!Row)
 					{
 						continue;
@@ -918,9 +935,9 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 					continue;
 				}
 
-				if (const FDialogueSpeakerRow* Typed = RowData.GetPtr<FDialogueSpeakerRow>())
+				if (const FARDialogueSpeakerRow* Typed = RowData.GetPtr<FARDialogueSpeakerRow>())
 				{
-					FDialogueSpeakerRow Row = *Typed;
+					FARDialogueSpeakerRow Row = *Typed;
 					if (!Row.SpeakerTag.IsValid())
 					{
 						Row.SpeakerTag = CandidateTag;
@@ -941,13 +958,12 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	if (Runtime.ConversationsByTag.IsEmpty())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Dialogue] No conversations registered (settings:%d, lookup:%d). Dialogue offering will fail."), ConversationsFromSettings, ConversationsFromLookup);
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] No conversations registered from ContentLookup. Dialogue offering will fail."));
 	}
 	else
 	{
-		UE_LOG(ARLog, Log, TEXT("[Dialogue] Registered %d conversations (settings:%d, lookup:%d) and %d speakers."),
+		UE_LOG(ARLog, Log, TEXT("[Dialogue] Registered %d conversations (lookup) and %d speakers."),
 			Runtime.ConversationsByTag.Num(),
-			ConversationsFromSettings,
 			ConversationsFromLookup,
 			Runtime.SpeakerRowsByTag.Num());
 	}
@@ -1213,7 +1229,7 @@ bool UARDialogueSubsystem::ApplyDialogueFactionMutation(const FDialogueFactionMu
 	return false;
 }
 
-bool UARDialogueSubsystem::ValidateSpeaker(const FDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
+bool UARDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
 {
 	OutReport = FDialogueValidationReport();
 	auto Add = [&OutReport](EDialogueValidationSeverity Severity, const FString& Message)
@@ -1267,11 +1283,11 @@ bool UARDialogueSubsystem::ValidateSpeaker(const FDialogueSpeakerRow& SpeakerRow
 				return Route.RootTag.MatchesTagExact(DialogueSettings->SpeakerDefinitionRootTag);
 			});
 			UDataTable* SpeakerTable = SpeakerRoute ? SpeakerRoute->DataTable.LoadSynchronous() : nullptr;
-			if (SpeakerTable && SpeakerTable->GetRowStruct() == FDialogueSpeakerRow::StaticStruct())
+			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
 				{
-					const FDialogueSpeakerRow* Row = SpeakerTable->FindRow<FDialogueSpeakerRow>(RowName, TEXT("DialogueSpeakerValidate"), false);
+					const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueSpeakerValidate"), false);
 					if (!Row)
 					{
 						continue;
@@ -1407,6 +1423,73 @@ namespace
 			return false;
 		}
 	}
+
+	static FString BuildInjectedValueKey(const FDialogueInjectedValue& Value)
+	{
+		switch (Value.ValueType)
+		{
+		case EDialogueInjectedValueType::Bool:
+			return FString::Printf(TEXT("B:%d"), Value.BoolValue ? 1 : 0);
+		case EDialogueInjectedValueType::Integer:
+			return FString::Printf(TEXT("I:%d"), Value.IntValue);
+		case EDialogueInjectedValueType::Float:
+			return FString::Printf(TEXT("F:%s"), *FString::SanitizeFloat(Value.FloatValue));
+		case EDialogueInjectedValueType::Tag:
+			return FString::Printf(TEXT("T:%s"), *Value.TagValue.ToString());
+		case EDialogueInjectedValueType::Text:
+			return FString::Printf(TEXT("X:%s"), *Value.TextValue.ToString());
+		default:
+			break;
+		}
+
+		return TEXT("N");
+	}
+
+	static FString BuildConditionKey(const FDialogueCondition& Condition)
+	{
+		return FString::Printf(
+			TEXT("Src=%d|Op=%d|Tag=%s|Num=%s|Var=%s|Inj=%s"),
+			static_cast<int32>(Condition.Source),
+			static_cast<int32>(Condition.Operator),
+			*Condition.TagValue.ToString(),
+			*FString::SanitizeFloat(Condition.NumericValue),
+			*Condition.VariableName.ToString(),
+			*BuildInjectedValueKey(Condition.InjectedValue));
+	}
+
+	static FString BuildConditionGroupKey(const FDialogueConditionGroup& Group)
+	{
+		TArray<FString> ConditionKeys;
+		ConditionKeys.Reserve(Group.Conditions.Num());
+		for (const FDialogueCondition& Condition : Group.Conditions)
+		{
+			ConditionKeys.Add(BuildConditionKey(Condition));
+		}
+		ConditionKeys.Sort();
+
+		FString Result = FString::Printf(TEXT("Mode=%d|Count=%d"), static_cast<int32>(Group.MatchMode), ConditionKeys.Num());
+		for (const FString& Key : ConditionKeys)
+		{
+			Result += TEXT("|");
+			Result += Key;
+		}
+		return Result;
+	}
+
+	static FString BuildConversationOfferGatingSignature(const FDialogueConversationHeader& Header)
+	{
+		return FString::Printf(
+			TEXT("Speaker=%s|Pri=%d|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
+			*Header.PrimarySpeakerTag.ToString(),
+			Header.Priority,
+			*FString::SanitizeFloat(Header.MinimumRelationshipPoints),
+			Header.bRepeatable ? 1 : 0,
+			Header.bSeenByGameBlocksReoffer ? 1 : 0,
+			Header.bSeenByPlayerBlocksReoffer ? 1 : 0,
+			Header.bCompletedByGameBlocksReoffer ? 1 : 0,
+			*BuildConditionGroupKey(Header.LockedConditions),
+			*BuildConditionGroupKey(Header.BlockedConditions));
+	}
 }
 
 bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* ConversationAsset, FDialogueValidationReport& OutReport) const
@@ -1486,25 +1569,16 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 	{
 #if WITH_EDITOR
 		int32 MatchingConversationTagCount = 0;
+		TArray<FString> OverlappingConversationLabels;
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
-		if (DialogueSettings)
-		{
-			for (const TSoftObjectPtr<UARDialogueConversationAsset>& ConversationRef : DialogueSettings->ConversationAssets)
-			{
-				const UARDialogueConversationAsset* CandidateConversation = ConversationRef.LoadSynchronous();
-				if (CandidateConversation && CandidateConversation->Header.ConversationTag.MatchesTagExact(ConversationAsset->Header.ConversationTag))
-				{
-					++MatchingConversationTagCount;
-				}
-			}
-		}
+		const FString CurrentOfferGatingSignature = BuildConversationOfferGatingSignature(ConversationAsset->Header);
 
 		if (UContentLookupSubsystem* Lookup = GetLookupSubsystem(this))
 		{
 			UDataTable* ConversationTable = nullptr;
 			FGameplayTag MatchedRoot;
 			FString LookupError;
-			if (!Lookup->GetDataTableForRowStruct(FDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
+			if (!Lookup->GetDataTableForRowStruct(FARDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
 			{
 				LookupError.Empty();
 				if (DialogueSettings && DialogueSettings->ConversationDefinitionRootTag.IsValid())
@@ -1513,11 +1587,11 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 				}
 			}
 
-			if (ConversationTable && ConversationTable->GetRowStruct() == FDialogueConversationAssetRow::StaticStruct())
+			if (ConversationTable && ConversationTable->GetRowStruct() == FARDialogueConversationAssetRow::StaticStruct())
 			{
 				for (const FName RowName : ConversationTable->GetRowNames())
 				{
-					const FDialogueConversationAssetRow* Row = ConversationTable->FindRow<FDialogueConversationAssetRow>(RowName, TEXT("DialogueConversationDuplicateCheck"), false);
+					const FARDialogueConversationAssetRow* Row = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueConversationDuplicateCheck"), false);
 					if (!Row)
 					{
 						continue;
@@ -1533,6 +1607,20 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 					{
 						++MatchingConversationTagCount;
 					}
+
+					UARDialogueConversationAsset* CandidateConversation = Row->Conversation.LoadSynchronous();
+					if (!CandidateConversation || CandidateConversation == ConversationAsset)
+					{
+						continue;
+					}
+
+					if (BuildConversationOfferGatingSignature(CandidateConversation->Header) == CurrentOfferGatingSignature)
+					{
+						const FString CandidateLabel = CandidateConversation->Header.ConversationTag.IsValid()
+							? CandidateConversation->Header.ConversationTag.ToString()
+							: CandidateConversation->GetName();
+						OverlappingConversationLabels.AddUnique(CandidateLabel);
+					}
 				}
 			}
 		}
@@ -1540,15 +1628,27 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 		if (MatchingConversationTagCount > 1)
 		{
 			Add(EDialogueValidationSeverity::Error, FGuid(),
-				FString::Printf(TEXT("Duplicate conversation tag '%s' detected (%d occurrences across settings/content lookup)."),
+				FString::Printf(TEXT("Duplicate conversation tag '%s' detected (%d occurrences in ContentLookup rows)."),
 					*ConversationAsset->Header.ConversationTag.ToString(),
 					MatchingConversationTagCount));
+		}
+
+		if (!OverlappingConversationLabels.IsEmpty())
+		{
+			OverlappingConversationLabels.Sort();
+			Add(
+				EDialogueValidationSeverity::Warning,
+				FGuid(),
+				FString::Printf(
+					TEXT("Offer overlap ambiguity: conversation shares identical primary-speaker/priority/gating with %d other conversation(s): %s"),
+					OverlappingConversationLabels.Num(),
+					*FString::Join(OverlappingConversationLabels, TEXT(", "))));
 		}
 #endif
 	}
 
 	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
-	TMap<FGameplayTag, FDialogueSpeakerRow> ValidationSpeakerRows = Runtime.SpeakerRowsByTag;
+	TMap<FGameplayTag, FARDialogueSpeakerRow> ValidationSpeakerRows = Runtime.SpeakerRowsByTag;
 	if (ValidationSpeakerRows.IsEmpty())
 	{
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
@@ -1561,17 +1661,17 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 				return Route.RootTag.MatchesTagExact(DialogueSettings->SpeakerDefinitionRootTag);
 			});
 			UDataTable* SpeakerTable = SpeakerRoute ? SpeakerRoute->DataTable.LoadSynchronous() : nullptr;
-			if (SpeakerTable && SpeakerTable->GetRowStruct() == FDialogueSpeakerRow::StaticStruct())
+			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
 				{
-					const FDialogueSpeakerRow* SpeakerRow = SpeakerTable->FindRow<FDialogueSpeakerRow>(RowName, TEXT("DialogueValidationFallback"), false);
+					const FARDialogueSpeakerRow* SpeakerRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueValidationFallback"), false);
 					if (!SpeakerRow)
 					{
 						continue;
 					}
 
-					FDialogueSpeakerRow Copy = *SpeakerRow;
+					FARDialogueSpeakerRow Copy = *SpeakerRow;
 					if (!Copy.SpeakerTag.IsValid())
 					{
 						Copy.SpeakerTag = BuildTagFromRootAndLeaf(DialogueSettings->SpeakerDefinitionRootTag, RowName);
@@ -1758,8 +1858,10 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 		case EDialogueNodeType::SwitchOnTagsByPriority:
 		{
 			TSet<FGuid> SeenSwitchBranchIds;
-			for (const FDialogueCompiledSwitchBranch& Branch : Node.SwitchBranches)
+			TMap<FString, int32> FirstBranchIndexByGateSignature;
+			for (int32 BranchIndex = 0; BranchIndex < Node.SwitchBranches.Num(); ++BranchIndex)
 			{
+				const FDialogueCompiledSwitchBranch& Branch = Node.SwitchBranches[BranchIndex];
 				if (!Branch.BranchId.IsValid())
 				{
 					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Switch branch has invalid BranchId."));
@@ -1773,6 +1875,22 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 				ValidateConditionGroup(Branch.LockedConditions, Node.NodeId);
 				ValidateConditionGroup(Branch.BlockedConditions, Node.NodeId);
 				RegisterEdge(Node.NodeId, Branch.NextNodeId, true, TEXT("Switch branch output"));
+
+				const FString GateSignature = BuildConditionGroupKey(Branch.LockedConditions) + TEXT("||") + BuildConditionGroupKey(Branch.BlockedConditions);
+				if (const int32* ExistingIndex = FirstBranchIndexByGateSignature.Find(GateSignature))
+				{
+					Add(
+						EDialogueValidationSeverity::Warning,
+						Node.NodeId,
+						FString::Printf(
+							TEXT("Switch branch ordering ambiguity: branch %d and branch %d share identical gating; first-match order controls routing."),
+							*ExistingIndex + 1,
+							BranchIndex + 1));
+				}
+				else
+				{
+					FirstBranchIndexByGateSignature.Add(GateSignature, BranchIndex);
+				}
 			}
 			if (Node.bSwitchHasDefaultOutput)
 			{
@@ -2452,6 +2570,16 @@ static bool PersistCompletedConversation(
 		*Session.ConversationTag.ToString(),
 		*OwnerSlotString);
 	DialogueSubsystem->OnConversationCompleted.Broadcast(Session.ConversationTag);
+
+	// Keep NPC talkable icons/state in sync after completion changes offer availability.
+	if (UGameInstance* GI = DialogueSubsystem->GetGameInstance())
+	{
+		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		{
+			NpcSubsystem->RefreshAllNpcTalkableStates();
+		}
+	}
+
 	return true;
 }
 
@@ -2463,7 +2591,7 @@ static bool IsBranchConnected(const FGuid& NodeId)
 static EDialogueExecutionResult ExecuteSessionUntilWait(
 	UARDialogueSubsystem* DialogueSubsystem,
 	FARActiveDialogueSession& Session,
-	const TMap<FGameplayTag, FDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
 	TMap<EARPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
 	const FGameplayTagContainer& SeenByGameTransient,
 	const bool bAdvanceLineInput,
@@ -2631,7 +2759,10 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			if (Node->CompletedChoicePolicy == EDialogueCompletedChoicePolicy::LockedToRecordedChoice)
 			{
 				const UARSaveGame* SaveGame = GetCurrentSave(DialogueSubsystem);
-				if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(SaveGame, OwnerIdentity))
+				const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(SaveGame, OwnerIdentity);
+				const bool bConversationCompletedForOwner = PlayerState && PlayerState->CompletedConversationTags.HasTagExact(Session.ConversationTag);
+				bool bFoundRecordedChoiceForNode = false;
+				if (PlayerState)
 				{
 					for (const FDialogueChoiceMemoryRecord& Record : PlayerState->CompletedChoiceRecords)
 					{
@@ -2640,6 +2771,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 							continue;
 						}
 
+						bFoundRecordedChoiceForNode = true;
 						const FDialogueCompiledChoiceBranch* RecordedBranch = Node->ChoiceBranches.FindByPredicate(
 							[&Record](const FDialogueCompiledChoiceBranch& Branch)
 							{
@@ -2651,7 +2783,16 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 							Session.CurrentNodeId = RecordedBranch->NextNodeId;
 							goto NextStep;
 						}
+
+						LogRuntimeWarning(TEXT("Locked choice record points to a missing or unlinked branch; ending non-completed to enforce locked policy."));
+						return EDialogueExecutionResult::EndedNonCompleted;
 					}
+				}
+
+				if (bConversationCompletedForOwner && !bFoundRecordedChoiceForNode)
+				{
+					LogRuntimeWarning(TEXT("Locked choice policy requires a recorded branch for completed conversations; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
 				}
 			}
 
@@ -2891,6 +3032,46 @@ NextStep:
 	return EDialogueExecutionResult::Failed;
 }
 
+static bool ApplyPreviewAutoChoice(FARActiveDialogueSession& Session, FGuid& OutSelectedChoiceBranchId)
+{
+	OutSelectedChoiceBranchId.Invalidate();
+	if (!Session.bWaitingForChoice || !Session.WaitingChoiceNodeId.IsValid())
+	{
+		return false;
+	}
+
+	const FDialogueChoiceView* VisibleChoice = Session.CurrentChoices.FindByPredicate([](const FDialogueChoiceView& ChoiceView)
+	{
+		return ChoiceView.bCanChoose && ChoiceView.ChoiceBranchId.IsValid();
+	});
+	if (!VisibleChoice)
+	{
+		return false;
+	}
+
+	const FDialogueCompiledNode* ChoiceNode = FindNodeById(Session, Session.WaitingChoiceNodeId);
+	if (!ChoiceNode)
+	{
+		return false;
+	}
+
+	const FDialogueCompiledChoiceBranch* SelectedBranch = ChoiceNode->ChoiceBranches.FindByPredicate(
+		[VisibleChoice](const FDialogueCompiledChoiceBranch& Branch)
+		{
+			return Branch.ChoiceBranchId == VisibleChoice->ChoiceBranchId;
+		});
+	if (!SelectedBranch || !SelectedBranch->NextNodeId.IsValid())
+	{
+		return false;
+	}
+
+	OutSelectedChoiceBranchId = VisibleChoice->ChoiceBranchId;
+	ClearSessionPresentationState(Session);
+	Session.RuntimeChoiceSelections.Add(ChoiceNode->NodeId, VisibleChoice->ChoiceBranchId);
+	Session.CurrentNodeId = SelectedBranch->NextNodeId;
+	return true;
+}
+
 static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARActiveDialogueSession>& Sessions, const int32 SessionIndex)
 {
 	if (!DialogueSubsystem || !Sessions.IsValidIndex(SessionIndex))
@@ -3124,6 +3305,14 @@ bool UARDialogueSubsystem::AdvanceConversation(AARPlayerController* RequestingCo
 	}
 
 	FARActiveDialogueSession& Session = Runtime.ActiveSessions[SessionIndex];
+	if (RequesterPS->GetPlayerSlot() != Session.OwnerSlot)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Advance rejected: slot %s is not the owner of session '%s'."),
+			*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(RequesterPS->GetPlayerSlot())),
+			*Session.SessionId);
+		return false;
+	}
+
 	if (Session.bWaitingForChoice)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Advance rejected: session '%s' waiting for choice."), *Session.SessionId);
@@ -3307,58 +3496,152 @@ bool UARDialogueSubsystem::ForceEavesdrop(AARPlayerController* RequestingControl
 	return true;
 }
 
-bool UARDialogueSubsystem::PreviewConversation(UARDialogueConversationAsset* ConversationAsset, const FDialogueRuntimeContext& PreviewContext, FDialogueClientView& OutFirstView, FDialogueValidationReport& OutReport) const
+bool UARDialogueSubsystem::PreviewConversationTrace(
+	UARDialogueConversationAsset* ConversationAsset,
+	const FDialogueRuntimeContext& PreviewContext,
+	int32 MaxInteractiveSteps,
+	TArray<FDialogueClientView>& OutViews,
+	TArray<FGuid>& OutAutoSelectedChoiceBranchIds,
+	bool& bOutEndedCompleted,
+	FDialogueValidationReport& OutReport) const
 {
-	OutFirstView = FDialogueClientView();
+	OutViews.Reset();
+	OutAutoSelectedChoiceBranchIds.Reset();
+	bOutEndedCompleted = false;
 	if (!ValidateConversation(ConversationAsset, OutReport))
 	{
 		return false;
 	}
 
-	// Preview returns the first player-visible node state reachable from Enter.
-	// It does not persist mutations or completion state.
+	const int32 StepLimit = FMath::Clamp(MaxInteractiveSteps <= 0 ? 64 : MaxInteractiveSteps, 1, 512);
+
 	FARActiveDialogueSession PreviewSession;
-	PreviewSession.SessionId = TEXT("Preview");
+	PreviewSession.SessionId = TEXT("PreviewTrace");
 	PreviewSession.ConversationTag = ConversationAsset->Header.ConversationTag;
 	PreviewSession.PrimarySpeakerTag = ConversationAsset->Header.PrimarySpeakerTag;
 	PreviewSession.ConversationAsset = ConversationAsset;
 	PreviewSession.CurrentNodeId = ConversationAsset->CompiledData.EnterNodeId;
+	PreviewSession.bConversationImportant = ConversationAsset->Header.bImportant;
 	PreviewSession.OwnerSlot = EARPlayerSlot::P1;
 	PreviewSession.InitiatorSlot = EARPlayerSlot::P1;
 	PreviewSession.Participants.Add(EARPlayerSlot::P1);
 	PreviewSession.TransientConversationTags = PreviewContext.TransientConversationTags;
 
-	TMap<EARPlayerSlot, FGameplayTagContainer> EmptySeenByPlayer;
-	FGameplayTagContainer EmptySeenByGame;
-
-	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
-	EDialogueExecutionResult Result = ExecuteSessionUntilWait(
-		const_cast<UARDialogueSubsystem*>(this),
-		PreviewSession,
-		Runtime.SpeakerRowsByTag,
-		EmptySeenByPlayer,
-		EmptySeenByGame,
-		false,
-		true,
-		&PreviewContext);
-	if (Result == EDialogueExecutionResult::Waiting)
+	TMap<EARPlayerSlot, FGameplayTagContainer> PreviewSeenByPlayer;
+	FGameplayTagContainer PreviewSeenByGame;
+	if (PreviewContext.bSeenByPlayer && PreviewSession.ConversationTag.IsValid())
 	{
-		FillClientViewForSlot(PreviewSession, EARPlayerSlot::P1, OutFirstView);
-		return true;
+		PreviewSeenByPlayer.FindOrAdd(EARPlayerSlot::P1).AddTag(PreviewSession.ConversationTag);
+	}
+	if (PreviewContext.bSeenByGame && PreviewSession.ConversationTag.IsValid())
+	{
+		PreviewSeenByGame.AddTag(PreviewSession.ConversationTag);
 	}
 
-	if (Result == EDialogueExecutionResult::EndedCompleted || Result == EDialogueExecutionResult::EndedNonCompleted)
+	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	bool bAdvanceLineInput = false;
+	for (int32 StepIndex = 0; StepIndex < StepLimit; ++StepIndex)
 	{
+		const EDialogueExecutionResult Result = ExecuteSessionUntilWait(
+			const_cast<UARDialogueSubsystem*>(this),
+			PreviewSession,
+			Runtime.SpeakerRowsByTag,
+			PreviewSeenByPlayer,
+			PreviewSeenByGame,
+			bAdvanceLineInput,
+			true,
+			&PreviewContext);
+
+		bAdvanceLineInput = false;
+		if (Result == EDialogueExecutionResult::Waiting)
+		{
+			FDialogueClientView View;
+			FillClientViewForSlot(PreviewSession, EARPlayerSlot::P1, View);
+			OutViews.Add(View);
+
+			if (PreviewSession.bWaitingForChoice)
+			{
+				FGuid AutoSelectedBranchId;
+				if (!ApplyPreviewAutoChoice(PreviewSession, AutoSelectedBranchId))
+				{
+					FDialogueValidationIssue& Issue = OutReport.Issues.AddDefaulted_GetRef();
+					Issue.Severity = EDialogueValidationSeverity::Error;
+					Issue.NodeId = PreviewSession.WaitingChoiceNodeId;
+					Issue.Message = FText::FromString(TEXT("Preview trace failed to auto-select a valid choice branch."));
+					return false;
+				}
+
+				OutAutoSelectedChoiceBranchIds.Add(AutoSelectedBranchId);
+				continue;
+			}
+
+			if (PreviewSession.bWaitingForAdvanceInput)
+			{
+				bAdvanceLineInput = true;
+				continue;
+			}
+
+			FDialogueValidationIssue& Issue = OutReport.Issues.AddDefaulted_GetRef();
+			Issue.Severity = EDialogueValidationSeverity::Warning;
+			Issue.NodeId = PreviewSession.CurrentNodeId;
+			Issue.Message = FText::FromString(TEXT("Preview trace reached an unknown waiting state and stopped early."));
+			return true;
+		}
+
+		if (Result == EDialogueExecutionResult::EndedCompleted)
+		{
+			bOutEndedCompleted = true;
+			return true;
+		}
+
+		if (Result == EDialogueExecutionResult::EndedNonCompleted)
+		{
+			bOutEndedCompleted = false;
+			return true;
+		}
+
 		FDialogueValidationIssue& Issue = OutReport.Issues.AddDefaulted_GetRef();
-		Issue.Severity = EDialogueValidationSeverity::Warning;
-		Issue.Message = FText::FromString(TEXT("Conversation preview ended before reaching a player-interactive node."));
+		Issue.Severity = EDialogueValidationSeverity::Error;
+		Issue.NodeId = PreviewSession.CurrentNodeId;
+		Issue.Message = FText::FromString(TEXT("Preview trace failed due to invalid runtime graph execution."));
+		return false;
+	}
+
+	FDialogueValidationIssue& Issue = OutReport.Issues.AddDefaulted_GetRef();
+	Issue.Severity = EDialogueValidationSeverity::Warning;
+	Issue.Message = FText::FromString(TEXT("Preview trace hit the interactive-step cap and stopped early."));
+	return true;
+}
+
+bool UARDialogueSubsystem::PreviewConversation(UARDialogueConversationAsset* ConversationAsset, const FDialogueRuntimeContext& PreviewContext, FDialogueClientView& OutFirstView, FDialogueValidationReport& OutReport) const
+{
+	OutFirstView = FDialogueClientView();
+
+	TArray<FDialogueClientView> TraceViews;
+	TArray<FGuid> AutoChoiceSelections;
+	bool bEndedCompleted = false;
+	if (!PreviewConversationTrace(
+		ConversationAsset,
+		PreviewContext,
+		64,
+		TraceViews,
+		AutoChoiceSelections,
+		bEndedCompleted,
+		OutReport))
+	{
+		return false;
+	}
+
+	if (!TraceViews.IsEmpty())
+	{
+		OutFirstView = TraceViews[0];
 		return true;
 	}
 
 	FDialogueValidationIssue& Issue = OutReport.Issues.AddDefaulted_GetRef();
-	Issue.Severity = EDialogueValidationSeverity::Error;
-	Issue.Message = FText::FromString(TEXT("Conversation preview failed due to invalid runtime graph execution."));
-	return false;
+	Issue.Severity = EDialogueValidationSeverity::Warning;
+	Issue.Message = FText::FromString(TEXT("Conversation preview produced no player-visible steps."));
+	return true;
 }
 
 bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForSlot(FGameplayTag PrimarySpeakerTag, EARPlayerSlot PlayerSlot) const
@@ -3474,7 +3757,7 @@ int32 UARDialogueSubsystem::GetRelationshipLevelForSpeaker(FGameplayTag SpeakerT
 	FGameplayTag CandidateSpeakerTag = SpeakerTag;
 	while (CandidateSpeakerTag.IsValid())
 	{
-		if (const FDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(CandidateSpeakerTag))
+		if (const FARDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(CandidateSpeakerTag))
 		{
 			return ResolveRelationshipLevelFromThresholds(Points, SpeakerRow->RelationshipThresholds);
 		}
