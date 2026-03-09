@@ -45,7 +45,7 @@ struct ALIENRAMEN_API FSpeakerPortraitEntry
 };
 
 USTRUCT(BlueprintType)
-struct ALIENRAMEN_API FDialogueSpeakerRow : public FTableRowBase
+struct ALIENRAMEN_API FARDialogueSpeakerRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -234,9 +234,9 @@ struct ALIENRAMEN_API FDialogueConversationHeader
 	bool bCompletedByGameBlocksReoffer = false;
 };
 
-// Optional content-lookup row shape for conversation assets.
+// ContentLookup row shape for conversation asset registration.
 USTRUCT(BlueprintType)
-struct ALIENRAMEN_API FDialogueConversationAssetRow : public FTableRowBase
+struct ALIENRAMEN_API FARDialogueConversationAssetRow : public FTableRowBase
 {
 	GENERATED_BODY()
 

@@ -61,10 +61,20 @@ public:
 	bool ValidateConversation(UARDialogueConversationAsset* ConversationAsset, FDialogueValidationReport& OutReport) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool ValidateSpeaker(const FDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const;
+	bool ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool PreviewConversation(UARDialogueConversationAsset* ConversationAsset, const FDialogueRuntimeContext& PreviewContext, FDialogueClientView& OutFirstView, FDialogueValidationReport& OutReport) const;
+
+	// Editor/tooling preview runner: simulates a full conversation trace with auto-advance and auto-choice routing.
+	bool PreviewConversationTrace(
+		UARDialogueConversationAsset* ConversationAsset,
+		const FDialogueRuntimeContext& PreviewContext,
+		int32 MaxInteractiveSteps,
+		TArray<FDialogueClientView>& OutViews,
+		TArray<FGuid>& OutAutoSelectedChoiceBranchIds,
+		bool& bOutEndedCompleted,
+		FDialogueValidationReport& OutReport) const;
 
 	// ---- Compatibility wrappers used by gameplay code ----
 
