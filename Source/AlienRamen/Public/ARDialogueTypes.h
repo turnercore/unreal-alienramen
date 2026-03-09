@@ -284,7 +284,8 @@ enum class EDialogueNodeType : uint8
 	FactionMutation,
 	Random,
 	Route,
-	Sequence
+	Sequence,
+	MultiLine
 };
 
 USTRUCT(BlueprintType)
@@ -305,6 +306,27 @@ struct ALIENRAMEN_API FDialogueLineNodeData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Skip Blocked Conditions", ToolTip = "If this condition group passes, this line is skipped. Defaults to Match Any for convenience."))
 	FDialogueConditionGroup SkipBlockedConditions;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FDialogueMultiLineEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Entry ID (Compile Managed)", ToolTip = "Stable per-entry identifier used by editor tooling for ordering and editing."))
+	FGuid EntryId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ShowOnlyInnerProperties, DisplayName = "Line", ToolTip = "Line payload and skip conditions for this step in the multiline sequence."))
+	FDialogueLineNodeData LineData;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FDialogueMultiLineNodeData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Lines", ToolTip = "Ordered authored lines executed top-to-bottom inside one node."))
+	TArray<FDialogueMultiLineEntry> Lines;
 };
 
 UENUM(BlueprintType)
@@ -584,7 +606,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 		EditAnywhere,
 		BlueprintReadWrite,
 		Category = "",
-		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
+		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
 	FInstancedStruct NodeData;
 
 	// Single output edge for Enter/Line/TagMutation/RelationshipMutation/FactionMutation.
@@ -593,7 +615,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 		BlueprintReadWrite,
 		Category = "",
 		AdvancedDisplay,
-		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/Mutation/Route nodes."))
+		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/MultiLine/Mutation/Route nodes."))
 	FGuid NextNodeId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Bool", EditConditionHides, DisplayName = "True Node ID (Compile Managed)", ToolTip = "Compile-managed output target when the Bool condition evaluates true."))

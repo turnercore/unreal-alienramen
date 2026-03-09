@@ -60,6 +60,11 @@ public:
 	bool SetRelationshipDeltaPoints(float NewDeltaPoints);
 	bool SetFactionTag(const FGameplayTag& NewTag);
 	bool SetFactionDeltaPopularity(float NewDeltaPopularity);
+	bool AddMultiLineEntry();
+	bool RemoveMultiLineEntry(const FGuid& EntryId);
+	bool ReorderMultiLineEntry(const FGuid& MovingEntryId, const FGuid& TargetEntryId);
+	bool SetMultiLineEntrySpeakerTag(const FGuid& EntryId, const FGameplayTag& NewSpeakerTag);
+	bool SetMultiLineEntryText(const FGuid& EntryId, const FText& NewText);
 
 	void ApplyValidation(EDialogueValidationSeverity Severity, const FString& Message);
 	void ClearValidation();

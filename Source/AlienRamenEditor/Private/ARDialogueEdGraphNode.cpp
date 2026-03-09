@@ -1,7 +1,9 @@
 #include "ARDialogueEdGraphNode.h"
 
+#include "EdGraphUtilities.h"
 #include "EdGraph/EdGraphSchema.h"
 #include "EdGraph/EdGraphPin.h"
+#include "HAL/PlatformApplicationMisc.h"
 #include "Logging/MessageLog.h"
 #include "ScopedTransaction.h"
 #include "ToolMenu.h"
@@ -53,6 +55,8 @@ namespace
 			return FText::FromString(TEXT("Route"));
 		case EDialogueNodeType::Sequence:
 			return FText::FromString(TEXT("Sequence"));
+		case EDialogueNodeType::MultiLine:
+			return FText::FromString(TEXT("Multi-Line"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
@@ -768,6 +772,187 @@ bool UARDialogueEdGraphNode::SetFactionDeltaPopularity(const float NewDeltaPopul
 		false);
 }
 
+bool UARDialogueEdGraphNode::AddMultiLineEntry()
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("AddMultiLineEntry", "Add Multi-Line Entry"),
+		[this]() -> bool
+		{
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineEntry& NewEntry = MultiLineData->Lines.AddDefaulted_GetRef();
+			NewEntry.EntryId = FGuid::NewGuid();
+			NewEntry.LineData.SkipBlockedConditions.MatchMode = EDialogueConditionMatchMode::Any;
+			NewEntry.LineData.Line.LocalLineGuid = FGuid::NewGuid();
+			return true;
+		},
+		false);
+}
+
+bool UARDialogueEdGraphNode::RemoveMultiLineEntry(const FGuid& EntryId)
+{
+	if (!EntryId.IsValid())
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("RemoveMultiLineEntry", "Remove Multi-Line Entry"),
+		[this, EntryId]() -> bool
+		{
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData || MultiLineData->Lines.Num() <= 1)
+			{
+				return false;
+			}
+
+			const int32 RemovedCount = MultiLineData->Lines.RemoveAll([EntryId](const FDialogueMultiLineEntry& Entry)
+			{
+				return Entry.EntryId == EntryId;
+			});
+			return RemovedCount > 0;
+		},
+		false);
+}
+
+bool UARDialogueEdGraphNode::ReorderMultiLineEntry(const FGuid& MovingEntryId, const FGuid& TargetEntryId)
+{
+	if (!MovingEntryId.IsValid() || !TargetEntryId.IsValid() || MovingEntryId == TargetEntryId)
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("ReorderMultiLineEntry", "Reorder Multi-Line Entry"),
+		[this, MovingEntryId, TargetEntryId]() -> bool
+		{
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				return false;
+			}
+
+			const int32 SourceIndex = MultiLineData->Lines.IndexOfByPredicate([MovingEntryId](const FDialogueMultiLineEntry& Entry)
+			{
+				return Entry.EntryId == MovingEntryId;
+			});
+			const int32 TargetIndex = MultiLineData->Lines.IndexOfByPredicate([TargetEntryId](const FDialogueMultiLineEntry& Entry)
+			{
+				return Entry.EntryId == TargetEntryId;
+			});
+			if (SourceIndex == INDEX_NONE || TargetIndex == INDEX_NONE || SourceIndex == TargetIndex)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineEntry Moving = MoveTemp(MultiLineData->Lines[SourceIndex]);
+			MultiLineData->Lines.RemoveAt(SourceIndex);
+			const int32 InsertIndex = SourceIndex < TargetIndex ? TargetIndex - 1 : TargetIndex;
+			MultiLineData->Lines.Insert(MoveTemp(Moving), InsertIndex);
+			return true;
+		},
+		false);
+}
+
+bool UARDialogueEdGraphNode::SetMultiLineEntrySpeakerTag(const FGuid& EntryId, const FGameplayTag& NewSpeakerTag)
+{
+	if (!EntryId.IsValid())
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetMultiLineEntrySpeakerTag", "Set Multi-Line Speaker Tag"),
+		[this, EntryId, NewSpeakerTag]() -> bool
+		{
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				return false;
+			}
+
+			for (FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+			{
+				if (Entry.EntryId != EntryId)
+				{
+					continue;
+				}
+				if (Entry.LineData.Line.SpeakerTag.MatchesTagExact(NewSpeakerTag))
+				{
+					return false;
+				}
+				Entry.LineData.Line.SpeakerTag = NewSpeakerTag;
+				return true;
+			}
+			return false;
+		},
+		false);
+}
+
+bool UARDialogueEdGraphNode::SetMultiLineEntryText(const FGuid& EntryId, const FText& NewText)
+{
+	if (!EntryId.IsValid())
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetMultiLineEntryText", "Set Multi-Line Text"),
+		[this, EntryId, NewText]() -> bool
+		{
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				return false;
+			}
+
+			for (FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+			{
+				if (Entry.EntryId != EntryId)
+				{
+					continue;
+				}
+				if (Entry.LineData.Line.Text.EqualTo(NewText))
+				{
+					return false;
+				}
+				Entry.LineData.Line.Text = NewText;
+				return true;
+			}
+			return false;
+		},
+		false);
+}
+
 void UARDialogueEdGraphNode::AddInputPinIfNeeded()
 {
 	CreatePin(EGPD_Input, MakeExecPinType(), GetPinNameIn());
@@ -876,6 +1061,7 @@ void UARDialogueEdGraphNode::AllocateDefaultPins()
 		AddInputPinIfNeeded();
 		break;
 	case EDialogueNodeType::Line:
+	case EDialogueNodeType::MultiLine:
 	case EDialogueNodeType::TagMutation:
 	case EDialogueNodeType::RelationshipMutation:
 	case EDialogueNodeType::FactionMutation:
@@ -951,6 +1137,8 @@ FLinearColor UARDialogueEdGraphNode::GetNodeTitleColor() const
 		return FLinearColor(0.16f, 0.27f, 0.18f, 1.0f);
 	case EDialogueNodeType::Line:
 		return FLinearColor(0.14f, 0.21f, 0.23f, 1.0f);
+	case EDialogueNodeType::MultiLine:
+		return FLinearColor(0.14f, 0.24f, 0.28f, 1.0f);
 	case EDialogueNodeType::Choice:
 		return FLinearColor(0.22f, 0.20f, 0.30f, 1.0f);
 	case EDialogueNodeType::Bool:
@@ -1007,6 +1195,257 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 					Graph->NotifyGraphChanged();
 				}
 			}))));
+
+	FToolMenuSection& EditSection = Menu->AddSection(
+		TEXT("ARDialogueClipboardActions"),
+		LOCTEXT("ARDialogueClipboardActionsSection", "Edit"));
+	EditSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+		TEXT("ARDialogueCopyNode"),
+		LOCTEXT("ARDialogueCopyNodeLabel", "Copy"),
+		LOCTEXT("ARDialogueCopyNodeTooltip", "Copy this node to clipboard."),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					if (!IsValid(MutableNode) || !MutableNode->CanDuplicateNode() || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+					{
+						return;
+					}
+
+					TSet<UObject*> NodesToCopy;
+					MutableNode->PrepareForCopying();
+					NodesToCopy.Add(MutableNode);
+
+					FString ExportedText;
+					FEdGraphUtilities::ExportNodesToText(NodesToCopy, ExportedText);
+					FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
+				}),
+			FCanExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					return IsValid(MutableNode) && MutableNode->CanDuplicateNode() && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter;
+				}))));
+	EditSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+		TEXT("ARDialogueCutNode"),
+		LOCTEXT("ARDialogueCutNodeLabel", "Cut"),
+		LOCTEXT("ARDialogueCutNodeTooltip", "Copy this node and delete it."),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					if (!IsValid(MutableNode) || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter || !MutableNode->CanUserDeleteNode())
+					{
+						return;
+					}
+
+					TSet<UObject*> NodesToCopy;
+					MutableNode->PrepareForCopying();
+					NodesToCopy.Add(MutableNode);
+
+					FString ExportedText;
+					FEdGraphUtilities::ExportNodesToText(NodesToCopy, ExportedText);
+					FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
+
+					if (UEdGraph* Graph = MutableNode->GetGraph())
+					{
+						const FScopedTransaction Transaction(LOCTEXT("CutDialogueNode", "Cut Dialogue Node"));
+						Graph->Modify();
+						MutableNode->Modify();
+						MutableNode->DestroyNode();
+						Graph->NotifyGraphChanged();
+						if (UObject* GraphOuter = Graph->GetOuter())
+						{
+							GraphOuter->MarkPackageDirty();
+						}
+					}
+				}),
+			FCanExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					return IsValid(MutableNode)
+						&& MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter
+						&& MutableNode->CanDuplicateNode()
+						&& MutableNode->CanUserDeleteNode();
+				}))));
+	EditSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+		TEXT("ARDialogueDuplicateNode"),
+		LOCTEXT("ARDialogueDuplicateNodeLabel", "Duplicate"),
+		LOCTEXT("ARDialogueDuplicateNodeTooltip", "Duplicate this node."),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					if (!IsValid(MutableNode) || !MutableNode->CanDuplicateNode() || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+					{
+						return;
+					}
+
+					UEdGraph* Graph = MutableNode->GetGraph();
+					if (!Graph)
+					{
+						return;
+					}
+
+					TSet<UObject*> NodesToCopy;
+					MutableNode->PrepareForCopying();
+					NodesToCopy.Add(MutableNode);
+
+					FString ExportedText;
+					FEdGraphUtilities::ExportNodesToText(NodesToCopy, ExportedText);
+
+					const FScopedTransaction Transaction(LOCTEXT("DuplicateDialogueNode", "Duplicate Dialogue Node"));
+					Graph->Modify();
+
+					TSet<UEdGraphNode*> PastedNodes;
+					FEdGraphUtilities::ImportNodesFromText(Graph, ExportedText, PastedNodes);
+
+					for (UEdGraphNode* PastedNode : PastedNodes)
+					{
+						if (!PastedNode)
+						{
+							continue;
+						}
+
+						if (UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(PastedNode))
+						{
+							if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+							{
+								DialogueNode->Modify();
+								DialogueNode->DestroyNode();
+								continue;
+							}
+							DialogueNode->EnsureStableIds(true, true);
+							DialogueNode->ReconstructNode();
+						}
+
+						PastedNode->Modify();
+						PastedNode->NodePosX += 80;
+						PastedNode->NodePosY += 40;
+						PastedNode->SnapToGrid(16);
+					}
+
+					Graph->NotifyGraphChanged();
+					if (UObject* GraphOuter = Graph->GetOuter())
+					{
+						GraphOuter->MarkPackageDirty();
+					}
+				}),
+			FCanExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					return IsValid(MutableNode) && MutableNode->CanDuplicateNode() && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter;
+				}))));
+	EditSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+		TEXT("ARDialogueDeleteNode"),
+		LOCTEXT("ARDialogueDeleteNodeLabel", "Delete"),
+		LOCTEXT("ARDialogueDeleteNodeTooltip", "Delete this node."),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					if (!IsValid(MutableNode) || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter || !MutableNode->CanUserDeleteNode())
+					{
+						return;
+					}
+
+					if (UEdGraph* Graph = MutableNode->GetGraph())
+					{
+						const FScopedTransaction Transaction(LOCTEXT("DeleteDialogueNode", "Delete Dialogue Node"));
+						Graph->Modify();
+						MutableNode->Modify();
+						MutableNode->DestroyNode();
+						Graph->NotifyGraphChanged();
+						if (UObject* GraphOuter = Graph->GetOuter())
+						{
+							GraphOuter->MarkPackageDirty();
+						}
+					}
+				}),
+			FCanExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					return IsValid(MutableNode) && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter && MutableNode->CanUserDeleteNode();
+				}))));
+
+	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	{
+		FToolMenuSection& MultiLineSection = Menu->AddSection(
+			TEXT("ARDialogueMultiLine"),
+			LOCTEXT("ARDialogueMultiLineSection", "Multi-Line"));
+
+		MultiLineSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+			TEXT("ARDialogueAddMultiLineEntry"),
+			LOCTEXT("ARDialogueAddMultiLineEntryLabel", "Add Line"),
+			LOCTEXT("ARDialogueAddMultiLineEntryTooltip", "Add another line entry to this multi-line node."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					if (IsValid(MutableNode))
+					{
+						MutableNode->AddMultiLineEntry();
+					}
+				}))));
+
+		MultiLineSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+			TEXT("ARDialogueRemoveLastMultiLineEntry"),
+			LOCTEXT("ARDialogueRemoveLastMultiLineEntryLabel", "Remove Line"),
+			LOCTEXT("ARDialogueRemoveLastMultiLineEntryTooltip", "Remove the last line entry from this multi-line node."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode]()
+				{
+					if (!IsValid(MutableNode))
+					{
+						return;
+					}
+
+					const FDialogueMultiLineNodeData* Data = MutableNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
+					if (!Data || Data->Lines.Num() <= 1)
+					{
+						return;
+					}
+
+					MutableNode->RemoveMultiLineEntry(Data->Lines.Last().EntryId);
+				}))));
+
+		const FDialogueMultiLineNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
+		if (Data)
+		{
+			for (int32 Index = 0; Index < Data->Lines.Num(); ++Index)
+			{
+				const FDialogueMultiLineEntry& Entry = Data->Lines[Index];
+				MultiLineSection.AddEntry(FToolMenuEntry::InitMenuEntry(
+					*FString::Printf(TEXT("ARDialogueDeleteMultiLineEntry_%d"), Index),
+					FText::FromString(FString::Printf(TEXT("Delete Line %d"), Index + 1)),
+					LOCTEXT("ARDialogueDeleteMultiLineEntryTooltip", "Delete this line entry."),
+					FSlateIcon(),
+					FUIAction(FExecuteAction::CreateWeakLambda(
+						MutableNode,
+						[MutableNode, EntryId = Entry.EntryId]()
+						{
+							if (IsValid(MutableNode))
+							{
+								MutableNode->RemoveMultiLineEntry(EntryId);
+							}
+						}))));
+			}
+		}
+	}
 
 	if (!SupportsDynamicBranchPins())
 	{
@@ -1400,6 +1839,12 @@ void UARDialogueEdGraphNode::EnsureNodeDataMatchesNodeType()
 			RuntimeNode.NodeData.InitializeAs<FDialogueLineNodeData>();
 		}
 		break;
+	case EDialogueNodeType::MultiLine:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueMultiLineNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueMultiLineNodeData>();
+		}
+		break;
 	case EDialogueNodeType::Bool:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueBoolNodeData::StaticStruct())
 		{
@@ -1439,6 +1884,36 @@ void UARDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBranch
 			if (bRegenerateLineGuid || !LineData->Line.LocalLineGuid.IsValid())
 			{
 				LineData->Line.LocalLineGuid = FGuid::NewGuid();
+			}
+		}
+	}
+
+	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	{
+		FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+		if (MultiLineData)
+		{
+			if (MultiLineData->Lines.IsEmpty())
+			{
+				FDialogueMultiLineEntry& DefaultEntry = MultiLineData->Lines.AddDefaulted_GetRef();
+				DefaultEntry.EntryId = FGuid::NewGuid();
+				DefaultEntry.LineData.SkipBlockedConditions.MatchMode = EDialogueConditionMatchMode::Any;
+				DefaultEntry.LineData.Line.LocalLineGuid = FGuid::NewGuid();
+			}
+
+			TSet<FGuid> SeenEntryIds;
+			for (FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+			{
+				if (bRegenerateBranches || !Entry.EntryId.IsValid() || SeenEntryIds.Contains(Entry.EntryId))
+				{
+					Entry.EntryId = FGuid::NewGuid();
+				}
+				SeenEntryIds.Add(Entry.EntryId);
+
+				if (bRegenerateLineGuid || !Entry.LineData.Line.LocalLineGuid.IsValid())
+				{
+					Entry.LineData.Line.LocalLineGuid = FGuid::NewGuid();
+				}
 			}
 		}
 	}
@@ -1535,6 +2010,13 @@ FString UARDialogueEdGraphNode::BuildInlineSummary() const
 			*Text,
 			LineData->SkipLockedConditions.Conditions.Num(),
 			LineData->SkipBlockedConditions.Conditions.Num());
+	}
+	case EDialogueNodeType::MultiLine:
+	{
+		const FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
+		return MultiLineData
+			? FString::Printf(TEXT("Lines:%d"), MultiLineData->Lines.Num())
+			: TEXT("Invalid multiline payload");
 	}
 	case EDialogueNodeType::Choice:
 		return FString::Printf(TEXT("Choices:%d Fallback:\"%s\" Important:%s"),

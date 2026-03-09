@@ -49,15 +49,63 @@ void FARDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& Detai
 	const TSharedPtr<IPropertyHandle> NodeDataHandle = RuntimeNodeHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, NodeData));
 	if (NodeDataHandle.IsValid() && NodeDataHandle->IsValidHandle())
 	{
+		TSharedPtr<IPropertyHandle> PayloadStructHandle;
 		uint32 NumNodeDataChildren = 0;
 		NodeDataHandle->GetNumChildren(NumNodeDataChildren);
 		for (uint32 ChildIndex = 0; ChildIndex < NumNodeDataChildren; ++ChildIndex)
 		{
-			const TSharedPtr<IPropertyHandle> ChildHandle = NodeDataHandle->GetChildHandle(ChildIndex);
-			if (ChildHandle.IsValid() && ChildHandle->IsValidHandle())
+			const TSharedPtr<IPropertyHandle> CandidateChild = NodeDataHandle->GetChildHandle(ChildIndex);
+			if (!CandidateChild.IsValid() || !CandidateChild->IsValidHandle())
 			{
-				Category.AddProperty(ChildHandle.ToSharedRef(), EPropertyLocation::Default);
+				continue;
 			}
+
+			uint32 NumCandidateChildren = 0;
+			CandidateChild->GetNumChildren(NumCandidateChildren);
+			if (NumCandidateChildren > 0)
+			{
+				PayloadStructHandle = CandidateChild;
+				break;
+			}
+		}
+
+		if (!PayloadStructHandle.IsValid())
+		{
+			PayloadStructHandle = NodeDataHandle;
+		}
+
+		uint32 NumPayloadChildren = 0;
+		PayloadStructHandle->GetNumChildren(NumPayloadChildren);
+		for (uint32 ChildIndex = 0; ChildIndex < NumPayloadChildren; ++ChildIndex)
+		{
+			const TSharedPtr<IPropertyHandle> ChildHandle = PayloadStructHandle->GetChildHandle(ChildIndex);
+			if (!ChildHandle.IsValid() || !ChildHandle->IsValidHandle())
+			{
+				continue;
+			}
+
+			const FName ChildName = ChildHandle->GetProperty() ? ChildHandle->GetProperty()->GetFName() : NAME_None;
+			const bool bFlattenInnerStruct = ChildName == GET_MEMBER_NAME_CHECKED(FDialogueLineNodeData, Line)
+				|| ChildName == GET_MEMBER_NAME_CHECKED(FDialogueBoolNodeData, Condition);
+
+			if (bFlattenInnerStruct)
+			{
+				uint32 NumInnerChildren = 0;
+				ChildHandle->GetNumChildren(NumInnerChildren);
+				for (uint32 InnerIndex = 0; InnerIndex < NumInnerChildren; ++InnerIndex)
+				{
+					const TSharedPtr<IPropertyHandle> InnerHandle = ChildHandle->GetChildHandle(InnerIndex);
+					if (InnerHandle.IsValid() && InnerHandle->IsValidHandle())
+					{
+						IDetailPropertyRow& Row = Category.AddProperty(InnerHandle.ToSharedRef(), EPropertyLocation::Default);
+						Row.ShouldAutoExpand(true);
+					}
+				}
+				continue;
+			}
+
+			IDetailPropertyRow& Row = Category.AddProperty(ChildHandle.ToSharedRef(), EPropertyLocation::Default);
+			Row.ShouldAutoExpand(true);
 		}
 	}
 
