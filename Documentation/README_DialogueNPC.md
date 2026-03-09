@@ -145,7 +145,9 @@ Registered editor tabs:
 Conversation graph tooling now provides:
 
 - blueprint-style `SGraphEditor` canvas with right-click node creation
+- right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)
 - graph node classes/schema (`UARDialogueEdGraph`, `UARDialogueEdGraphNode`, `UARDialogueEdGraphSchema`)
+- line nodes now render with inline authoring UI: speaker portrait button (click to cycle speakers) + wrapped inline line-text edit
 - drag-link execution wiring with:
   - one outgoing link per output pin
   - multiple incoming links allowed per node input
@@ -156,6 +158,7 @@ Conversation graph tooling now provides:
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
+- speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 
 Speaker hub currently provides:
 
