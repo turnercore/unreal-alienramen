@@ -1,11 +1,13 @@
 #include "ARPlayerController.h"
 #include "ARDialogueSubsystem.h"
+#include "ARDialogueWidgetBase.h"
 #include "ARHUDBase.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARInvaderGameState.h"
 #include "ARLobbyPlayerController.h"
 #include "ARLog.h"
+#include "ARNPCCharacterBase.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "EnhancedInputSubsystems.h"
@@ -27,6 +29,7 @@ void AARPlayerController::BeginPlay()
 	ApplyDefaultInputMappings(true);
 	InitializeCustomCursor();
 	RequestHUDInitializationInternal(false);
+	EnsureDialogueWidget();
 
 	if (IsLocalController() && !HasAuthority() && !bRequestedInitialCanonicalSaveSync)
 	{
@@ -38,6 +41,7 @@ void AARPlayerController::BeginPlay()
 void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	SetPauseMenuOpenLocal(false);
+	RemoveDialogueWidget();
 	ApplyDefaultInputMappings(false);
 	StopHUDInitializationRetry();
 	Super::EndPlay(EndPlayReason);
@@ -292,6 +296,27 @@ void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag
 	RequestStartDialogue(NpcTag);
 }
 
+void AARPlayerController::RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)
+{
+	if (!NpcActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		NpcActor->InteractByController(this);
+		return;
+	}
+
+	ServerRequestInteractWithNpc(NpcActor);
+}
+
+void AARPlayerController::ServerRequestInteractWithNpc_Implementation(AARNPCCharacterBase* NpcActor)
+{
+	RequestInteractWithNpc(NpcActor);
+}
+
 void AARPlayerController::RequestAdvanceDialogue()
 {
 	if (HasAuthority())
@@ -349,14 +374,110 @@ void AARPlayerController::ServerRequestSetDialogueEavesdrop_Implementation(bool 
 	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
 }
 
+void AARPlayerController::RequestSetDialogueEavesdropOtherPlayer(bool bEnable)
+{
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	if (!ARPS)
+	{
+		return;
+	}
+
+	EARPlayerSlot TargetSlot = EARPlayerSlot::Unknown;
+	switch (ARPS->GetPlayerSlot())
+	{
+	case EARPlayerSlot::P1:
+		TargetSlot = EARPlayerSlot::P2;
+		break;
+	case EARPlayerSlot::P2:
+		TargetSlot = EARPlayerSlot::P1;
+		break;
+	default:
+		break;
+	}
+
+	if (TargetSlot == EARPlayerSlot::Unknown)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] RequestSetDialogueEavesdropOtherPlayer ignored: controller '%s' has unknown player slot."), *GetNameSafe(this));
+		return;
+	}
+
+	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
+}
+
 void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FDialogueClientView& View)
 {
+	CachedDialogueView = View;
+	bHasCachedDialogueView = true;
+	OnDialogueViewUpdated.Broadcast(View);
+	EnsureDialogueWidget();
 	BP_OnDialogueSessionUpdated(View);
 }
 
 void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FString& SessionId)
 {
+	if (bHasCachedDialogueView && CachedDialogueView.SessionId == SessionId)
+	{
+		CachedDialogueView = FDialogueClientView();
+		bHasCachedDialogueView = false;
+	}
+	OnDialogueSessionEndedSignal.Broadcast(SessionId);
 	BP_OnDialogueSessionEnded(SessionId);
+}
+
+bool AARPlayerController::GetCachedDialogueView(FDialogueClientView& OutView) const
+{
+	OutView = bHasCachedDialogueView ? CachedDialogueView : FDialogueClientView();
+	return bHasCachedDialogueView;
+}
+
+bool AARPlayerController::QueryLocalDialogueView(FDialogueClientView& OutView) const
+{
+	OutView = FDialogueClientView();
+	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+	{
+		return DialogueSubsystem->GetLocalViewForController(this, OutView);
+	}
+	return false;
+}
+
+void AARPlayerController::EnsureDialogueWidget()
+{
+	if (!IsLocalController() || !bAutoCreateDialogueWidget)
+	{
+		return;
+	}
+
+	if (DialogueWidget)
+	{
+		return;
+	}
+
+	if (!DialogueWidgetClass)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue|UI] Auto dialogue widget skipped on '%s': DialogueWidgetClass is not set."), *GetNameSafe(this));
+		return;
+	}
+
+	DialogueWidget = CreateWidget<UARDialogueWidgetBase>(this, DialogueWidgetClass);
+	if (!DialogueWidget)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue|UI] Failed to create auto dialogue widget for '%s'."), *GetNameSafe(this));
+		return;
+	}
+
+	DialogueWidget->InitializeDialogueWidget(this);
+	DialogueWidget->AddToViewport(DialogueWidgetZOrder);
+}
+
+void AARPlayerController::RemoveDialogueWidget()
+{
+	if (!DialogueWidget)
+	{
+		return;
+	}
+
+	DialogueWidget->RemoveFromParent();
+	DialogueWidget = nullptr;
 }
 
 void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroadcast)
