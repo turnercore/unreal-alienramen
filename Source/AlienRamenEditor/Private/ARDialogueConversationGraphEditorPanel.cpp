@@ -374,6 +374,20 @@ void SDialogueConversationGraphEditorPanel::RebuildGraphEditorWidget(UEdGraph* G
 		return;
 	}
 
+	GraphEditorWidget.Reset();
+	if (!IsValid(GraphToEdit))
+	{
+		GraphEditorHost->SetContent(
+			SNew(SBorder)
+			.Padding(8.0f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("No conversation selected.")))
+				.AutoWrapText(true)
+			]);
+		return;
+	}
+
 	FGraphAppearanceInfo GraphAppearance;
 	GraphAppearance.CornerText = FText::FromString(TEXT("Dialogue Conversation Graph"));
 
@@ -387,7 +401,10 @@ void SDialogueConversationGraphEditorPanel::RebuildGraphEditorWidget(UEdGraph* G
 		.ShowGraphStateOverlay(false)
 		.GraphEvents(GraphEvents);
 
-	GraphEditorHost->SetContent(GraphEditorWidget.ToSharedRef());
+	if (GraphEditorWidget.IsValid())
+	{
+		GraphEditorHost->SetContent(GraphEditorWidget.ToSharedRef());
+	}
 }
 
 FString SDialogueConversationGraphEditorPanel::GetSelectedConversationPath() const
