@@ -58,6 +58,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "TagContentResolver",
+			"Enabled": true
+		},
+		{
 			"Name": "VisualStudioTools",
 			"Enabled": false,
 			"SupportedTargetPlatforms": [

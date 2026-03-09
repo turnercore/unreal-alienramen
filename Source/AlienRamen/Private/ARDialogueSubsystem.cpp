@@ -1,6 +1,5 @@
 #include "ARDialogueSubsystem.h"
 
-#include "ARContentLookupSettings.h"
 #include "ARDialogueConversationAsset.h"
 #include "ARDialogueSettings.h"
 #include "ARFactionSubsystem.h"
@@ -12,7 +11,7 @@
 #include "ARPlayerStateBase.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
 #include "Engine/World.h"
@@ -272,7 +271,7 @@ static const UARSaveGame* GetCurrentSave(const UARDialogueSubsystem* Subsystem)
 	return nullptr;
 }
 
-static UContentLookupSubsystem* GetLookupSubsystem(const UARDialogueSubsystem* Subsystem)
+static UTagContentResolverSubsystem* GetLookupSubsystem(const UARDialogueSubsystem* Subsystem)
 {
 	if (!Subsystem)
 	{
@@ -280,7 +279,7 @@ static UContentLookupSubsystem* GetLookupSubsystem(const UARDialogueSubsystem* S
 	}
 	if (UGameInstance* GI = Subsystem->GetGameInstance())
 	{
-		return GI->GetSubsystem<UContentLookupSubsystem>();
+		return GI->GetSubsystem<UTagContentResolverSubsystem>();
 	}
 	return nullptr;
 }
@@ -834,7 +833,7 @@ static bool IsModeDialogueEnabled(const UARDialogueSettings* Settings, const FGa
 void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	Collection.InitializeDependency<UContentLookupSubsystem>();
+	Collection.InitializeDependency<UTagContentResolverSubsystem>();
 
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
 	Runtime.ConversationsByTag.Reset();
@@ -858,7 +857,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 
 	int32 ConversationsFromLookup = 0;
-	if (UContentLookupSubsystem* Lookup = GetLookupSubsystem(this))
+	if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 	{
 		UDataTable* ConversationTable = nullptr;
 		FString LookupError;
@@ -866,12 +865,12 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		const bool bHasConversationRoot = Settings->ConversationDefinitionRootTag.IsValid();
 
 		// Prefer explicit row-struct routing when present; fall back to a direct root match.
-		if (!Lookup->GetDataTableForRowStruct(FARDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
+		if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
 		{
 			LookupError.Empty();
 			if (bHasConversationRoot)
 			{
-				Lookup->GetDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationTable, LookupError);
+				Lookup->TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationTable, LookupError);
 			}
 		}
 
@@ -885,7 +884,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 			if (ConversationTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
 			{
 				UE_LOG(ARLog, Warning,
-					TEXT("[Dialogue] ContentLookup conversation table '%s' row struct mismatch (%s); expected FARDialogueConversationAssetRow."),
+					TEXT("[Dialogue] TagContentResolver conversation table '%s' row struct mismatch (%s); expected FARDialogueConversationAssetRow."),
 					*ConversationTable->GetName(),
 					*GetNameSafe(ConversationTable->GetRowStruct()));
 			}
@@ -909,7 +908,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 					if (!Conversation)
 					{
 						UE_LOG(ARLog, Warning,
-							TEXT("[Dialogue] ContentLookup row '%s' missing conversation asset reference; skipping."),
+							TEXT("[Dialogue] TagContentResolver row '%s' missing conversation asset reference; skipping."),
 							*RowName.ToString());
 						continue;
 					}
@@ -918,7 +917,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 						Runtime.ConversationsByTag,
 						Conversation,
 						RowConversationTag,
-						FString::Printf(TEXT("ContentLookup row '%s'"), *RowName.ToString())))
+						FString::Printf(TEXT("TagContentResolver row '%s'"), *RowName.ToString())))
 					{
 						++ConversationsFromLookup;
 					}
@@ -928,27 +927,27 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		else if (!LookupError.IsEmpty())
 		{
 			UE_LOG(ARLog, Warning,
-				TEXT("[Dialogue] No ContentLookup conversation table resolved for root '%s': %s"),
+				TEXT("[Dialogue] No TagContentResolver conversation table resolved for root '%s': %s"),
 				*Settings->ConversationDefinitionRootTag.ToString(),
 				*LookupError);
 		}
 		else
 		{
 			UE_LOG(ARLog, Warning,
-				TEXT("[Dialogue] No ContentLookup conversation table resolved for root '%s' (empty lookup error)."),
+				TEXT("[Dialogue] No TagContentResolver conversation table resolved for root '%s' (empty lookup error)."),
 				*Settings->ConversationDefinitionRootTag.ToString());
 		}
 	}
 	else
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Dialogue] ContentLookupSubsystem unavailable during dialogue initialization."));
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] TagContentResolverSubsystem unavailable during dialogue initialization."));
 	}
 
-	if (UContentLookupSubsystem* Lookup = GetLookupSubsystem(this))
+	if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 	{
 		TArray<FName> RowNames;
 		FString Error;
-		if (Lookup->GetAllRowNamesForRootTag(Settings->SpeakerDefinitionRootTag, RowNames, Error))
+		if (Lookup->TryGetRowNamesForRootTag(Settings->SpeakerDefinitionRootTag, RowNames, Error))
 		{
 			for (const FName RowName : RowNames)
 			{
@@ -960,7 +959,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 				FInstancedStruct RowData;
 				FString LookupError;
-				if (!Lookup->LookupWithGameplayTag(CandidateTag, RowData, LookupError))
+				if (!Lookup->TryResolveRowForTag(CandidateTag, RowData, LookupError))
 				{
 					continue;
 				}
@@ -987,12 +986,12 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 	else
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Dialogue] ContentLookupSubsystem unavailable during speaker initialization."));
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] TagContentResolverSubsystem unavailable during speaker initialization."));
 	}
 
 	if (Runtime.ConversationsByTag.IsEmpty())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Dialogue] No conversations registered from ContentLookup. Dialogue offering will fail."));
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] No conversations registered from TagContentResolver. Dialogue offering will fail."));
 	}
 	else
 	{
@@ -1308,15 +1307,15 @@ bool UARDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerR
 		// Duplicate speaker-tag validation must work outside initialized runtime state.
 		int32 MatchingSpeakerTagCount = 0;
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
-		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-		UContentLookupRegistry* Registry = LookupSettings ? LookupSettings->RegistryAsset.LoadSynchronous() : nullptr;
-		if (DialogueSettings && Registry && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		UDataTable* SpeakerTable = nullptr;
+		FString LookupError;
+		if (DialogueSettings
+			&& DialogueSettings->SpeakerDefinitionRootTag.IsValid()
+			&& UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+				DialogueSettings->SpeakerDefinitionRootTag,
+				SpeakerTable,
+				LookupError))
 		{
-			const FContentLookupRoute* SpeakerRoute = Registry->Routes.FindByPredicate([DialogueSettings](const FContentLookupRoute& Route)
-			{
-				return Route.RootTag.MatchesTagExact(DialogueSettings->SpeakerDefinitionRootTag);
-			});
-			UDataTable* SpeakerTable = SpeakerRoute ? SpeakerRoute->DataTable.LoadSynchronous() : nullptr;
 			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
@@ -1607,17 +1606,17 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
 		const FString CurrentOfferGatingSignature = BuildConversationOfferGatingSignature(ConversationAsset->Header);
 
-		if (UContentLookupSubsystem* Lookup = GetLookupSubsystem(this))
+		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 		{
 			UDataTable* ConversationTable = nullptr;
 			FGameplayTag MatchedRoot;
 			FString LookupError;
-			if (!Lookup->GetDataTableForRowStruct(FARDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
+			if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
 			{
 				LookupError.Empty();
 				if (DialogueSettings && DialogueSettings->ConversationDefinitionRootTag.IsValid())
 				{
-					Lookup->GetDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError);
+					Lookup->TryResolveDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError);
 				}
 			}
 
@@ -1662,7 +1661,7 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 		if (MatchingConversationTagCount > 1)
 		{
 			Add(EDialogueValidationSeverity::Error, FGuid(),
-				FString::Printf(TEXT("Duplicate conversation tag '%s' detected (%d occurrences in ContentLookup rows)."),
+				FString::Printf(TEXT("Duplicate conversation tag '%s' detected (%d occurrences in TagContentResolver rows)."),
 					*ConversationAsset->Header.ConversationTag.ToString(),
 					MatchingConversationTagCount));
 		}
@@ -1686,15 +1685,15 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 	if (ValidationSpeakerRows.IsEmpty())
 	{
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
-		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-		UContentLookupRegistry* Registry = LookupSettings ? LookupSettings->RegistryAsset.LoadSynchronous() : nullptr;
-		if (DialogueSettings && Registry && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		UDataTable* SpeakerTable = nullptr;
+		FString LookupError;
+		if (DialogueSettings
+			&& DialogueSettings->SpeakerDefinitionRootTag.IsValid()
+			&& UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+				DialogueSettings->SpeakerDefinitionRootTag,
+				SpeakerTable,
+				LookupError))
 		{
-			const FContentLookupRoute* SpeakerRoute = Registry->Routes.FindByPredicate([DialogueSettings](const FContentLookupRoute& Route)
-			{
-				return Route.RootTag.MatchesTagExact(DialogueSettings->SpeakerDefinitionRootTag);
-			});
-			UDataTable* SpeakerTable = SpeakerRoute ? SpeakerRoute->DataTable.LoadSynchronous() : nullptr;
 			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
@@ -3877,3 +3876,4 @@ int32 UARDialogueSubsystem::GetRelationshipLevelForSpeaker(FGameplayTag SpeakerT
 	}
 	return 0;
 }
+

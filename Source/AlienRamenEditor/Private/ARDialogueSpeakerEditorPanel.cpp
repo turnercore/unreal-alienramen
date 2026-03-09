@@ -1,11 +1,11 @@
 #include "ARDialogueSpeakerEditorPanel.h"
 
-#include "ARContentLookupSettings.h"
 #include "ARDialogueConversationAsset.h"
 #include "ARDialogueConversationGraphEditorPanel.h"
 #include "ARDialogueSettings.h"
 #include "ARDialogueSubsystem.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
+#include "TagContentResolverEditorHelpers.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetRegistry/AssetData.h"
 #include "Editor.h"
@@ -296,61 +296,52 @@ namespace
 			OutConversationsByTag.Add(Tag, Conversation);
 		};
 
-		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-		if (LookupSettings)
+		UDataTable* ConversationTable = nullptr;
+		FString LookupError;
+		if (FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError)
+			&& ConversationTable
+			&& ConversationTable->GetRowStruct() == FARDialogueConversationAssetRow::StaticStruct())
 		{
-			UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
-			const FContentLookupRoute* Route = Registry
-				? Registry->Routes.FindByPredicate([DialogueSettings](const FContentLookupRoute& R)
-				{
-					return R.RootTag.MatchesTagExact(DialogueSettings->ConversationDefinitionRootTag);
-				})
-				: nullptr;
-
-			UDataTable* ConversationTable = Route ? Route->DataTable.LoadSynchronous() : nullptr;
-			if (ConversationTable && ConversationTable->GetRowStruct() == FARDialogueConversationAssetRow::StaticStruct())
+			for (const FName RowName : ConversationTable->GetRowNames())
 			{
-				for (const FName RowName : ConversationTable->GetRowNames())
+				const FARDialogueConversationAssetRow* Row = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
+				if (!Row)
 				{
-					const FARDialogueConversationAssetRow* Row = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
-					if (!Row)
+					continue;
+				}
+
+				FGameplayTag RowTag = Row->ConversationTag;
+				if (!RowTag.IsValid())
+				{
+					const FString RowTagPath = DialogueSettings->ConversationDefinitionRootTag.ToString() + TEXT(".") + RowName.ToString();
+					FString EnsureTagError;
+					RowTag = EnsureGameplayTagRegistered(
+						RowTagPath,
+						FString::Printf(TEXT("Auto-generated conversation tag for row '%s'."), *RowName.ToString()),
+						EnsureTagError);
+					if (!RowTag.IsValid())
 					{
 						continue;
 					}
 
-					FGameplayTag RowTag = Row->ConversationTag;
-					if (!RowTag.IsValid())
+					FARDialogueConversationAssetRow* MutableRow = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
+					if (MutableRow && !MutableRow->ConversationTag.IsValid())
 					{
-						const FString RowTagPath = DialogueSettings->ConversationDefinitionRootTag.ToString() + TEXT(".") + RowName.ToString();
-						FString EnsureTagError;
-						RowTag = EnsureGameplayTagRegistered(
-							RowTagPath,
-							FString::Printf(TEXT("Auto-generated conversation tag for row '%s'."), *RowName.ToString()),
-							EnsureTagError);
-						if (!RowTag.IsValid())
-						{
-							continue;
-						}
-
-						FARDialogueConversationAssetRow* MutableRow = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
-						if (MutableRow && !MutableRow->ConversationTag.IsValid())
-						{
-							ConversationTable->Modify();
-							MutableRow->ConversationTag = RowTag;
-							ConversationTable->MarkPackageDirty();
-						}
+						ConversationTable->Modify();
+						MutableRow->ConversationTag = RowTag;
+						ConversationTable->MarkPackageDirty();
 					}
-
-					UARDialogueConversationAsset* Conversation = Row->Conversation.LoadSynchronous();
-					if (Conversation && !Conversation->Header.ConversationTag.IsValid() && RowTag.IsValid())
-					{
-						Conversation->Modify();
-						Conversation->Header.ConversationTag = RowTag;
-						Conversation->MarkPackageDirty();
-					}
-
-					TryAddConversation(Conversation, RowTag);
 				}
+
+				UARDialogueConversationAsset* Conversation = Row->Conversation.LoadSynchronous();
+				if (Conversation && !Conversation->Header.ConversationTag.IsValid() && RowTag.IsValid())
+				{
+					Conversation->Modify();
+					Conversation->Header.ConversationTag = RowTag;
+					Conversation->MarkPackageDirty();
+				}
+
+				TryAddConversation(Conversation, RowTag);
 			}
 		}
 	}
@@ -744,34 +735,8 @@ bool SDialogueSpeakerEditorPanel::ResolveSpeakerDataTable(UDataTable*& OutTable,
 		return false;
 	}
 
-	const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-	if (!LookupSettings || LookupSettings->RegistryAsset.IsNull())
+	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, OutTable, OutError))
 	{
-		OutError = TEXT("Content lookup registry asset is not configured.");
-		return false;
-	}
-
-	UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
-	if (!Registry)
-	{
-		OutError = TEXT("Failed to load content lookup registry asset.");
-		return false;
-	}
-
-	const FContentLookupRoute* SpeakerRoute = Registry->Routes.FindByPredicate([DialogueSettings](const FContentLookupRoute& Route)
-	{
-		return Route.RootTag.MatchesTagExact(DialogueSettings->SpeakerDefinitionRootTag);
-	});
-	if (!SpeakerRoute)
-	{
-		OutError = FString::Printf(TEXT("No content lookup route matches speaker root '%s'."), *DialogueSettings->SpeakerDefinitionRootTag.ToString());
-		return false;
-	}
-
-	OutTable = SpeakerRoute->DataTable.LoadSynchronous();
-	if (!OutTable)
-	{
-		OutError = FString::Printf(TEXT("Failed to load speaker data table '%s'."), *SpeakerRoute->DataTable.ToString());
 		return false;
 	}
 
@@ -1731,38 +1696,20 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	}
 
 	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
-	const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-	if (!Settings || !LookupSettings || !Settings->ConversationDefinitionRootTag.IsValid())
+	if (!Settings || !Settings->ConversationDefinitionRootTag.IsValid())
 	{
 		AppendLogLine(TEXT("Dialogue settings/content lookup configuration are unavailable."));
 		return FReply::Handled();
 	}
 
-	UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
-	if (!Registry)
+	UDataTable* ConversationLookupTable = nullptr;
+	FString LookupError;
+	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
 	{
-		AppendLogLine(TEXT("Failed to load ContentLookup registry asset."));
+		AppendLogLine(LookupError);
 		return FReply::Handled();
 	}
 
-	const FContentLookupRoute* ConversationRoute = Registry->Routes.FindByPredicate([Settings](const FContentLookupRoute& Route)
-	{
-		return Route.RootTag.MatchesTagExact(Settings->ConversationDefinitionRootTag);
-	});
-	if (!ConversationRoute)
-	{
-		AppendLogLine(FString::Printf(TEXT("No ContentLookup route matches conversation root '%s'."),
-			*Settings->ConversationDefinitionRootTag.ToString()));
-		return FReply::Handled();
-	}
-
-	UDataTable* ConversationLookupTable = ConversationRoute->DataTable.LoadSynchronous();
-	if (!ConversationLookupTable)
-	{
-		AppendLogLine(FString::Printf(TEXT("Failed to load conversation lookup DataTable '%s'."),
-			*ConversationRoute->DataTable.ToString()));
-		return FReply::Handled();
-	}
 	if (ConversationLookupTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
 	{
 		AppendLogLine(FString::Printf(TEXT("Conversation lookup table row struct mismatch. Expected '%s', got '%s'."),
@@ -1772,7 +1719,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	}
 
 	FString PackageFolder = TEXT("/Game/Data/Dialogue/Conversations");
-	const FString ConversationTablePackageName = ConversationRoute->DataTable.ToSoftObjectPath().GetLongPackageName();
+	const FString ConversationTablePackageName = FPackageName::ObjectPathToPackageName(ConversationLookupTable->GetPathName());
 	if (!ConversationTablePackageName.IsEmpty())
 	{
 		PackageFolder = FPackageName::GetLongPackagePath(ConversationTablePackageName);
@@ -2328,3 +2275,4 @@ void SDialogueSpeakerEditorPanel::OnThresholdSelectionChanged(TSharedPtr<FThresh
 	(void)SelectInfo;
 	SelectedThresholdIndex = Item.IsValid() ? Item->ThresholdIndex : INDEX_NONE;
 }
+
