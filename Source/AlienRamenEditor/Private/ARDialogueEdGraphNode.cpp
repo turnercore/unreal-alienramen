@@ -248,7 +248,7 @@ void UARDialogueEdGraphNode::AddDynamicBranchPin()
 		NewPin = CreatePin(EGPD_Output, MakeExecPinType(), MakeRandomPinName(AddedBranch.BranchId));
 		if (NewPin)
 		{
-			NewPin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Branch %d (w=%.2f)"), RuntimeNode.RandomBranches.Num(), AddedBranch.Weight));
+			NewPin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("%d"), RuntimeNode.RandomBranches.Num()));
 		}
 		break;
 	}
@@ -503,7 +503,7 @@ bool UARDialogueEdGraphNode::SetRandomBranchWeight(const FGuid& BranchId, const 
 		{
 			if (UEdGraphPin* Pin = GetRandomOutputPin(BranchId))
 			{
-				Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Branch %d (w=%.2f)"), BranchIndex + 1, NewWeight));
+				Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("%d"), BranchIndex + 1));
 			}
 		}
 	}
@@ -1028,7 +1028,7 @@ void UARDialogueEdGraphNode::AddRandomPins()
 		{
 			Pin->bHidden = false;
 			Pin->bAdvancedView = false;
-			Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Branch %d (w=%.2f)"), Index + 1, Branch.Weight));
+			Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("%d"), Index + 1));
 		}
 	}
 }
