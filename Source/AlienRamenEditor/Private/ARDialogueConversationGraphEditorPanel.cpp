@@ -12,17 +12,13 @@
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
 #include "FileHelpers.h"
-#include "GameplayTagsManager.h"
 #include "GraphEditor.h"
+#include "Input/Events.h"
+#include "InputCoreTypes.h"
 #include "Modules/ModuleManager.h"
 #include "PropertyCustomizationHelpers.h"
 #include "PropertyEditorModule.h"
-#include "Misc/DefaultValueHelper.h"
 #include "Widgets/Input/SButton.h"
-#include "Widgets/Input/SCheckBox.h"
-#include "Widgets/Input/SEditableTextBox.h"
-#include "Widgets/Input/SMultiLineEditableTextBox.h"
-#include "Widgets/Input/SSpinBox.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SScrollBox.h"
@@ -48,7 +44,7 @@ namespace
 		return PIEContext->OwningGameInstance->GetSubsystem<UARDialogueSubsystem>();
 	}
 
-	static UARDialogueSubsystem* GetDialogueSubsystemForValidationAndPreview()
+	static UARDialogueSubsystem* GetDialogueSubsystemForValidation()
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemFromPIE())
 		{
@@ -61,16 +57,6 @@ namespace
 			Cached = NewObject<UARDialogueSubsystem>(GetTransientPackage());
 		}
 		return Cached.Get();
-	}
-
-	static UARDialogueEdGraphNode* GetLinkedDialogueNode(const UEdGraphPin* OutputPin)
-	{
-		if (!OutputPin || OutputPin->Direction != EGPD_Output || OutputPin->LinkedTo.IsEmpty())
-		{
-			return nullptr;
-		}
-
-		return Cast<UARDialogueEdGraphNode>(OutputPin->LinkedTo[0]->GetOwningNode());
 	}
 
 	static void AddValidationIssue(
@@ -109,41 +95,36 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 			SNew(SHorizontalBox)
 			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
 			[
-				SNew(SButton).Text(FText::FromString(TEXT("Refresh"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleRefresh)
+				SNew(SButton)
+				.Text(FText::FromString(TEXT("Refresh")))
+				.ToolTipText(FText::FromString(TEXT("Reloads the selected conversation and rebuilds the graph/details views from the current asset state.")))
+				.OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleRefresh)
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
 			[
-				SNew(SButton).Text(FText::FromString(TEXT("Save"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleSave)
+				SNew(SButton)
+				.Text(FText::FromString(TEXT("Validate")))
+				.ToolTipText(FText::FromString(TEXT("Compiles the current graph to runtime data in-memory and runs validation checks. Does not save the asset package.")))
+				.OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleValidate)
 			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
 			[
-				SNew(SButton).Text(FText::FromString(TEXT("Validate"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleValidate)
+				SNew(SButton)
+				.Text(FText::FromString(TEXT("Compile Runtime Graph")))
+				.ToolTipText(FText::FromString(TEXT("Builds compile-managed runtime node/link data from editor graph pins and writes it back to the conversation asset.")))
+				.OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleCompile)
 			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
+			+ SHorizontalBox::Slot().FillWidth(1.0f)
 			[
-				SNew(SButton).Text(FText::FromString(TEXT("Compile Runtime Graph"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleCompile)
+				SNew(SBox)
 			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f, 2.0f, 2.0f, 2.0f)
 			[
-				SNew(SButton).Text(FText::FromString(TEXT("Focus Enter Node"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleFocusEnterNode)
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("Asset")))
+				.ToolTipText(FText::FromString(TEXT("Conversation asset currently opened in this editor panel.")))
 			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Auto Layout"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleAutoLayout)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Preview Conversation"))).OnClicked(this, &SDialogueConversationGraphEditorPanel::HandlePreviewConversation)
-			]
-		]
-		+ SVerticalBox::Slot().AutoHeight().Padding(4.0f, 0.0f, 4.0f, 4.0f)
-		[
-			SNew(SHorizontalBox)
-			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(2.0f)
-			[
-				SNew(STextBlock).Text(FText::FromString(TEXT("Conversation Asset")))
-			]
-			+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f)
+			+ SHorizontalBox::Slot().FillWidth(0.8f).Padding(2.0f)
 			[
 				SAssignNew(ConversationAssetPicker, SObjectPropertyEntryBox)
 				.AllowedClass(UARDialogueConversationAsset::StaticClass())
@@ -168,140 +149,26 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 				.Padding(4.0f)
 				[
 					SNew(SVerticalBox)
-					+ SVerticalBox::Slot().FillHeight(0.58f).Padding(0.0f, 0.0f, 0.0f, 6.0f)
+					+ SVerticalBox::Slot().FillHeight(0.72f).Padding(0.0f, 0.0f, 0.0f, 6.0f)
 					[
 						DetailsView.ToSharedRef()
 					]
-					+ SVerticalBox::Slot().FillHeight(0.42f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
 					[
-						SNew(SScrollBox)
-						+ SScrollBox::Slot()
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("Validation / Compile Output")))
+						.ToolTipText(FText::FromString(TEXT("Action log with validation issues, compile status, and save flow feedback.")))
+					]
+					+ SVerticalBox::Slot().FillHeight(0.28f)
+					[
+						SNew(SBorder)
+						.Padding(4.0f)
 						[
-							SNew(SVerticalBox)
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
-							[
-								SNew(STextBlock).Text(FText::FromString(TEXT("Preview Inputs")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SCheckBox)
-								.IsChecked_Lambda([this]() { return bPreviewAsBrother ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
-								.OnCheckStateChanged_Lambda([this](const ECheckBoxState NewState) { bPreviewAsBrother = (NewState == ECheckBoxState::Checked); })
-								[
-									SNew(STextBlock).Text(FText::FromString(TEXT("Active Character = Brother (unchecked: Sister)")))
-								]
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SCheckBox)
-								.IsChecked_Lambda([this]() { return bPreviewCompletedByPlayer ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
-								.OnCheckStateChanged_Lambda([this](const ECheckBoxState NewState) { bPreviewCompletedByPlayer = (NewState == ECheckBoxState::Checked); })
-								[
-									SNew(STextBlock).Text(FText::FromString(TEXT("Completed By Player")))
-								]
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SCheckBox)
-								.IsChecked_Lambda([this]() { return bPreviewCompletedByGame ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
-								.OnCheckStateChanged_Lambda([this](const ECheckBoxState NewState) { bPreviewCompletedByGame = (NewState == ECheckBoxState::Checked); })
-								[
-									SNew(STextBlock).Text(FText::FromString(TEXT("Completed By Game")))
-								]
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SCheckBox)
-								.IsChecked_Lambda([this]() { return bPreviewSeenByPlayer ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
-								.OnCheckStateChanged_Lambda([this](const ECheckBoxState NewState) { bPreviewSeenByPlayer = (NewState == ECheckBoxState::Checked); })
-								[
-									SNew(STextBlock).Text(FText::FromString(TEXT("Seen By Player")))
-								]
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SCheckBox)
-								.IsChecked_Lambda([this]() { return bPreviewSeenByGame ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
-								.OnCheckStateChanged_Lambda([this](const ECheckBoxState NewState) { bPreviewSeenByGame = (NewState == ECheckBoxState::Checked); })
-								[
-									SNew(STextBlock).Text(FText::FromString(TEXT("Seen By Game")))
-								]
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SSpinBox<float>)
-								.MinValue(0.0f)
-								.MaxValue(10000.0f)
-								.Value_Lambda([this]() { return PreviewRelationshipPoints; })
-								.OnValueChanged_Lambda([this](const float NewValue) { PreviewRelationshipPoints = NewValue; })
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 1.0f)
-							[
-								SNew(STextBlock).Text(FText::FromString(TEXT("Relationship Points")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SSpinBox<int32>)
-								.MinValue(0)
-								.MaxValue(1000000)
-								.Value_Lambda([this]() { return PreviewPlayerKills; })
-								.OnValueChanged_Lambda([this](const int32 NewValue) { PreviewPlayerKills = NewValue; })
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 1.0f)
-							[
-								SNew(STextBlock).Text(FText::FromString(TEXT("Player Kills")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SNew(SSpinBox<float>)
-								.MinValue(0.0f)
-								.MaxValue(1000000.0f)
-								.Value_Lambda([this]() { return PreviewTimePlayed; })
-								.OnValueChanged_Lambda([this](const float NewValue) { PreviewTimePlayed = NewValue; })
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 1.0f)
-							[
-								SNew(STextBlock).Text(FText::FromString(TEXT("Time Played (s)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SAssignNew(PreviewCombinedTagsTextBox, SEditableTextBox)
-								.HintText(FText::FromString(TEXT("Combined tags (comma-separated)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SAssignNew(PreviewPlayerTagsTextBox, SEditableTextBox)
-								.HintText(FText::FromString(TEXT("Player tags (comma-separated)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SAssignNew(PreviewGameTagsTextBox, SEditableTextBox)
-								.HintText(FText::FromString(TEXT("Game tags (comma-separated)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SAssignNew(PreviewTransientTagsTextBox, SEditableTextBox)
-								.HintText(FText::FromString(TEXT("Transient tags (comma-separated)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SAssignNew(PreviewLoadoutTagsTextBox, SEditableTextBox)
-								.HintText(FText::FromString(TEXT("Loadout tags (comma-separated)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 0.0f)
-							[
-								SNew(STextBlock).Text(FText::FromString(TEXT("Injected Variables (one per line: Name=Value or Name:Type=Value)")))
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f)
-							[
-								SAssignNew(PreviewInjectedVariablesTextBox, SMultiLineEditableTextBox)
-								.HintText(FText::FromString(TEXT("Example:\nIsHungry:Bool=true\nMoodTag:Tag=Dialogue.Mood.Happy\nAttempts:Int=2\nShopMultiplier:Float=1.25\nGreeting=Hello there")))
-								.AutoWrapText(false)
-							]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 8.0f, 0.0f, 0.0f)
+							SNew(SScrollBox)
+							+ SScrollBox::Slot()
 							[
 								SNew(STextBlock)
-								.Text_Lambda([this]() { return FText::FromString(ValidationOutput + TEXT("\n\n") + PreviewOutput); })
+								.Text_Lambda([this]() { return FText::FromString(ValidationOutput); })
 								.AutoWrapText(true)
 							]
 						]
@@ -309,15 +176,39 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 				]
 			]
 		]
+		+ SVerticalBox::Slot().AutoHeight().Padding(6.0f, 0.0f, 8.0f, 6.0f)
+		.HAlign(HAlign_Right)
+		[
+			SNew(SBorder)
+			.Padding(FMargin(8.0f, 4.0f))
+			.ToolTipText(FText::FromString(TEXT("Latest action status for this panel (info, warning, or error).")))
+			[
+				SNew(STextBlock)
+				.Text_Lambda([this]() { return FText::FromString(StatusMessage); })
+				.ColorAndOpacity_Lambda([this]() { return FSlateColor(StatusColor); })
+			]
+		]
 	];
 
 	RebuildGraphEditorWidget(nullptr);
 	LoadPendingConversationRequest();
+	SetStatusMessage(TEXT("Ready."), EEditorStatusType::Info);
 }
 
 void SDialogueConversationGraphEditorPanel::RequestOpenConversation(UARDialogueConversationAsset* Asset)
 {
 	GPendingConversationToEdit = Asset;
+}
+
+FReply SDialogueConversationGraphEditorPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (InKeyEvent.GetKey() == EKeys::S && (InKeyEvent.IsControlDown() || InKeyEvent.IsCommandDown()))
+	{
+		ExecuteSaveCommand();
+		return FReply::Handled();
+	}
+
+	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
 
 void SDialogueConversationGraphEditorPanel::LoadPendingConversationRequest()
@@ -338,6 +229,27 @@ void SDialogueConversationGraphEditorPanel::AppendLogLine(const FString& Message
 	ValidationOutput += Message;
 }
 
+void SDialogueConversationGraphEditorPanel::SetStatusMessage(const FString& Message, const EEditorStatusType StatusType)
+{
+	StatusMessage = Message;
+	switch (StatusType)
+	{
+	case EEditorStatusType::Success:
+		StatusColor = FLinearColor(0.21f, 0.8f, 0.4f, 1.0f);
+		break;
+	case EEditorStatusType::Warning:
+		StatusColor = FLinearColor(0.92f, 0.75f, 0.2f, 1.0f);
+		break;
+	case EEditorStatusType::Error:
+		StatusColor = FLinearColor(0.9f, 0.28f, 0.28f, 1.0f);
+		break;
+	case EEditorStatusType::Info:
+	default:
+		StatusColor = FLinearColor(0.68f, 0.68f, 0.68f, 1.0f);
+		break;
+	}
+}
+
 void SDialogueConversationGraphEditorPanel::SetSelectedConversation(UARDialogueConversationAsset* Asset)
 {
 	SelectedConversation = Asset;
@@ -350,12 +262,14 @@ void SDialogueConversationGraphEditorPanel::SetSelectedConversation(UARDialogueC
 		{
 			DetailsView->SetObject(nullptr);
 		}
+		SetStatusMessage(TEXT("No conversation selected."), EEditorStatusType::Info);
 		return;
 	}
 
 	if (!EnsureConversationEditorGraph(Asset))
 	{
 		AppendLogLine(TEXT("Failed to initialize editor graph for selected conversation."));
+		SetStatusMessage(TEXT("Failed to initialize editor graph."), EEditorStatusType::Error);
 		return;
 	}
 
@@ -365,6 +279,7 @@ void SDialogueConversationGraphEditorPanel::SetSelectedConversation(UARDialogueC
 	{
 		DetailsView->SetObject(Asset);
 	}
+	SetStatusMessage(FString::Printf(TEXT("Editing '%s'."), *Asset->GetName()), EEditorStatusType::Info);
 }
 
 void SDialogueConversationGraphEditorPanel::RebuildGraphEditorWidget(UEdGraph* GraphToEdit)
@@ -450,10 +365,12 @@ FReply SDialogueConversationGraphEditorPanel::HandleRefresh()
 	if (SelectedConversation.IsValid())
 	{
 		SetSelectedConversation(SelectedConversation.Get());
+		SetStatusMessage(TEXT("Refresh complete."), EEditorStatusType::Info);
 	}
 	else
 	{
 		LoadPendingConversationRequest();
+		SetStatusMessage(TEXT("Refresh complete (no conversation selected)."), EEditorStatusType::Info);
 	}
 	return FReply::Handled();
 }
@@ -464,21 +381,82 @@ FReply SDialogueConversationGraphEditorPanel::HandleSave()
 	if (!Conversation)
 	{
 		AppendLogLine(TEXT("No conversation selected."));
+		SetStatusMessage(TEXT("Save failed: no conversation selected."), EEditorStatusType::Error);
 		return FReply::Handled();
 	}
 
 	FDialogueValidationReport ValidationReport;
-	CompileEditorGraphToRuntime(Conversation, ValidationReport);
+	const bool bCompiled = CompileEditorGraphToRuntime(Conversation, ValidationReport);
+	const bool bHasErrors = ValidationReport.HasErrors();
 	Conversation->LastCompileValidation = ValidationReport;
-	Conversation->bLastCompileSucceeded = !ValidationReport.HasErrors();
+	Conversation->bLastCompileSucceeded = bCompiled;
+	Conversation->CompileVersion += 1;
 	ApplyValidationToEditorNodes(Conversation, ValidationReport);
 
 	Conversation->MarkPackageDirty();
 	TArray<UPackage*> PackagesToSave;
 	PackagesToSave.Add(Conversation->GetOutermost());
-	FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, true, false);
-	AppendLogLine(FString::Printf(TEXT("Saved '%s'."), *Conversation->GetName()));
+	const FEditorFileUtils::EPromptReturnCode SaveResult = FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, true, false);
+
+	AppendLogLine(FString::Printf(
+		TEXT("Save requested for '%s' | Compile: %s | Version: %d"),
+		*Conversation->GetName(),
+		bCompiled ? TEXT("SUCCESS") : TEXT("FAILED"),
+		Conversation->CompileVersion));
+	for (const FDialogueValidationIssue& Issue : ValidationReport.Issues)
+	{
+		const TCHAR* SeverityLabel = TEXT("INFO");
+		if (Issue.Severity == EDialogueValidationSeverity::Warning)
+		{
+			SeverityLabel = TEXT("WARN");
+		}
+		else if (Issue.Severity == EDialogueValidationSeverity::Error)
+		{
+			SeverityLabel = TEXT("ERROR");
+		}
+		AppendLogLine(FString::Printf(TEXT("[%s] %s"), SeverityLabel, *Issue.Message.ToString()));
+	}
+
+	switch (SaveResult)
+	{
+	case FEditorFileUtils::PR_Success:
+		if (bHasErrors || !bCompiled)
+		{
+			SetStatusMessage(
+				FString::Printf(TEXT("Saved '%s' with compile/validation issues."), *Conversation->GetName()),
+				EEditorStatusType::Warning);
+		}
+		else if (ValidationReport.Issues.Num() > 0)
+		{
+			SetStatusMessage(
+				FString::Printf(TEXT("Save successful with warnings: '%s' (Compile Version %d)."), *Conversation->GetName(), Conversation->CompileVersion),
+				EEditorStatusType::Warning);
+		}
+		else
+		{
+			SetStatusMessage(
+				FString::Printf(TEXT("Save successful: '%s' (Compile Version %d)."), *Conversation->GetName(), Conversation->CompileVersion),
+				EEditorStatusType::Success);
+		}
+		break;
+	case FEditorFileUtils::PR_Declined:
+		SetStatusMessage(TEXT("Save declined."), EEditorStatusType::Warning);
+		break;
+	case FEditorFileUtils::PR_Cancelled:
+		SetStatusMessage(TEXT("Save cancelled."), EEditorStatusType::Warning);
+		break;
+	case FEditorFileUtils::PR_Failure:
+	default:
+		SetStatusMessage(TEXT("Save failed."), EEditorStatusType::Error);
+		break;
+	}
+
 	return FReply::Handled();
+}
+
+void SDialogueConversationGraphEditorPanel::ExecuteSaveCommand()
+{
+	HandleSave();
 }
 
 FReply SDialogueConversationGraphEditorPanel::HandleValidate()
@@ -488,6 +466,7 @@ FReply SDialogueConversationGraphEditorPanel::HandleValidate()
 	if (!Conversation)
 	{
 		AppendLogLine(TEXT("No conversation selected."));
+		SetStatusMessage(TEXT("Validation failed: no conversation selected."), EEditorStatusType::Error);
 		return FReply::Handled();
 	}
 
@@ -510,6 +489,23 @@ FReply SDialogueConversationGraphEditorPanel::HandleValidate()
 
 		AppendLogLine(FString::Printf(TEXT("[%s] %s"), SeverityLabel, *Issue.Message.ToString()));
 	}
+
+	if (!bValid)
+	{
+		SetStatusMessage(
+			FString::Printf(TEXT("Validation failed (%d issue(s))."), ValidationReport.Issues.Num()),
+			EEditorStatusType::Error);
+	}
+	else if (ValidationReport.Issues.Num() > 0)
+	{
+		SetStatusMessage(
+			FString::Printf(TEXT("Validation successful with warnings (%d issue(s))."), ValidationReport.Issues.Num()),
+			EEditorStatusType::Warning);
+	}
+	else
+	{
+		SetStatusMessage(TEXT("Validation successful."), EEditorStatusType::Success);
+	}
 	return FReply::Handled();
 }
 
@@ -519,11 +515,13 @@ FReply SDialogueConversationGraphEditorPanel::HandleCompile()
 	if (!Conversation)
 	{
 		AppendLogLine(TEXT("No conversation selected."));
+		SetStatusMessage(TEXT("Compile failed: no conversation selected."), EEditorStatusType::Error);
 		return FReply::Handled();
 	}
 
 	FDialogueValidationReport ValidationReport;
 	const bool bCompiled = CompileEditorGraphToRuntime(Conversation, ValidationReport);
+	const bool bHasErrors = ValidationReport.HasErrors();
 
 	Conversation->LastCompileValidation = ValidationReport;
 	Conversation->bLastCompileSucceeded = bCompiled;
@@ -534,269 +532,7 @@ FReply SDialogueConversationGraphEditorPanel::HandleCompile()
 	AppendLogLine(FString::Printf(TEXT("Compile Runtime Graph: %s (Version %d)"),
 		bCompiled ? TEXT("SUCCESS") : TEXT("FAILED"),
 		Conversation->CompileVersion));
-	return FReply::Handled();
-}
-
-FReply SDialogueConversationGraphEditorPanel::HandleFocusEnterNode()
-{
-	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
-	if (!Graph || !GraphEditorWidget.IsValid())
-	{
-		return FReply::Handled();
-	}
-
-	for (UEdGraphNode* GraphNode : Graph->Nodes)
-	{
-		UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
-		if (!DialogueNode || DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Enter)
-		{
-			continue;
-		}
-
-		GraphEditorWidget->ClearSelectionSet();
-		GraphEditorWidget->SetNodeSelection(DialogueNode, true);
-		GraphEditorWidget->JumpToNode(DialogueNode, false);
-		break;
-	}
-
-	return FReply::Handled();
-}
-
-FReply SDialogueConversationGraphEditorPanel::HandleAutoLayout()
-{
-	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
-	if (!Graph)
-	{
-		return FReply::Handled();
-	}
-
-	TMap<FGuid, UARDialogueEdGraphNode*> NodeById;
-	for (UEdGraphNode* GraphNode : Graph->Nodes)
-	{
-		if (UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode))
-		{
-			DialogueNode->EnsureStableIds(false, false);
-			NodeById.Add(DialogueNode->RuntimeNode.NodeId, DialogueNode);
-		}
-	}
-
-	FGuid EnterNodeId;
-	for (const TPair<FGuid, UARDialogueEdGraphNode*>& Pair : NodeById)
-	{
-		if (Pair.Value && Pair.Value->RuntimeNode.NodeType == EDialogueNodeType::Enter)
-		{
-			EnterNodeId = Pair.Key;
-			break;
-		}
-	}
-
-	TMap<FGuid, int32> DepthByNode;
-	TArray<FGuid> Queue;
-	if (EnterNodeId.IsValid())
-	{
-		DepthByNode.Add(EnterNodeId, 0);
-		Queue.Add(EnterNodeId);
-	}
-
-	while (!Queue.IsEmpty())
-	{
-		const FGuid CurrentId = Queue[0];
-		Queue.RemoveAt(0, 1, EAllowShrinking::No);
-
-		UARDialogueEdGraphNode* CurrentNode = NodeById.FindRef(CurrentId);
-		if (!CurrentNode)
-		{
-			continue;
-		}
-
-		const int32 CurrentDepth = DepthByNode.FindRef(CurrentId);
-		for (UEdGraphPin* Pin : CurrentNode->Pins)
-		{
-			if (!Pin || Pin->Direction != EGPD_Output)
-			{
-				continue;
-			}
-
-			UARDialogueEdGraphNode* LinkedNode = GetLinkedDialogueNode(Pin);
-			if (!LinkedNode)
-			{
-				continue;
-			}
-
-			const FGuid LinkedId = LinkedNode->RuntimeNode.NodeId;
-			if (!DepthByNode.Contains(LinkedId))
-			{
-				DepthByNode.Add(LinkedId, CurrentDepth + 1);
-				Queue.Add(LinkedId);
-			}
-		}
-	}
-
-	TMap<int32, int32> RowByDepth;
-	TArray<TPair<FGuid, UARDialogueEdGraphNode*>> SortedNodes;
-	for (const TPair<FGuid, UARDialogueEdGraphNode*>& Pair : NodeById)
-	{
-		SortedNodes.Add(Pair);
-	}
-	SortedNodes.Sort([&DepthByNode](const TPair<FGuid, UARDialogueEdGraphNode*>& Lhs, const TPair<FGuid, UARDialogueEdGraphNode*>& Rhs)
-	{
-		const int32 LDepth = DepthByNode.FindRef(Lhs.Key);
-		const int32 RDepth = DepthByNode.FindRef(Rhs.Key);
-		if (LDepth != RDepth)
-		{
-			return LDepth < RDepth;
-		}
-		return Lhs.Key.ToString() < Rhs.Key.ToString();
-	});
-
-	constexpr int32 XSpacing = 420;
-	constexpr int32 YSpacing = 220;
-	constexpr int32 UnreachableDepth = 8;
-
-	Graph->Modify();
-	for (const TPair<FGuid, UARDialogueEdGraphNode*>& Pair : SortedNodes)
-	{
-		UARDialogueEdGraphNode* Node = Pair.Value;
-		if (!Node)
-		{
-			continue;
-		}
-
-		const bool bReachable = DepthByNode.Contains(Pair.Key);
-		const int32 Depth = bReachable ? DepthByNode.FindRef(Pair.Key) : UnreachableDepth;
-		int32& Row = RowByDepth.FindOrAdd(Depth);
-
-		Node->Modify();
-		Node->NodePosX = Depth * XSpacing;
-		Node->NodePosY = Row * YSpacing;
-		++Row;
-	}
-
-	Graph->NotifyGraphChanged();
-	if (UARDialogueConversationAsset* Conversation = SelectedConversation.Get())
-	{
-		Conversation->MarkPackageDirty();
-	}
-
-	AppendLogLine(TEXT("Auto Layout applied."));
-	return FReply::Handled();
-}
-
-FReply SDialogueConversationGraphEditorPanel::HandlePreviewConversation()
-{
-	PreviewOutput.Empty();
-	UARDialogueConversationAsset* Conversation = SelectedConversation.Get();
-	if (!Conversation)
-	{
-		PreviewOutput = TEXT("No conversation selected.");
-		return FReply::Handled();
-	}
-
-	FDialogueValidationReport ValidationReport;
-	CompileEditorGraphToRuntime(Conversation, ValidationReport);
-
-	FDialogueRuntimeContext PreviewContext;
-	PreviewContext.ConversationTag = Conversation->Header.ConversationTag;
-	PreviewContext.PrimarySpeakerTag = Conversation->Header.PrimarySpeakerTag;
-	PreviewContext.RelationshipPointsForPrimarySpeaker = PreviewRelationshipPoints;
-	PreviewContext.PlayerKills = PreviewPlayerKills;
-	PreviewContext.TimePlayed = PreviewTimePlayed;
-	PreviewContext.bSeenByPlayer = bPreviewSeenByPlayer;
-	PreviewContext.bSeenByGame = bPreviewSeenByGame;
-	PreviewContext.bCompletedByGame = bPreviewCompletedByGame;
-	PreviewContext.bCompletedByPlayer = bPreviewCompletedByPlayer;
-	PreviewContext.ResolvedPlayerSpeakerTag = bPreviewAsBrother
-		? UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false)
-		: UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
-
-	ParseTagList(PreviewCombinedTagsTextBox.IsValid() ? PreviewCombinedTagsTextBox->GetText().ToString() : FString(), PreviewContext.CombinedProgressionTags);
-	ParseTagList(PreviewPlayerTagsTextBox.IsValid() ? PreviewPlayerTagsTextBox->GetText().ToString() : FString(), PreviewContext.PlayerOnlyProgressionTags);
-	ParseTagList(PreviewGameTagsTextBox.IsValid() ? PreviewGameTagsTextBox->GetText().ToString() : FString(), PreviewContext.GameOnlyProgressionTags);
-	ParseTagList(PreviewTransientTagsTextBox.IsValid() ? PreviewTransientTagsTextBox->GetText().ToString() : FString(), PreviewContext.TransientConversationTags);
-	ParseTagList(PreviewLoadoutTagsTextBox.IsValid() ? PreviewLoadoutTagsTextBox->GetText().ToString() : FString(), PreviewContext.LoadoutView.LoadoutTags);
-	PreviewContext.CombinedProgressionTags = PreviewContext.PlayerOnlyProgressionTags;
-	PreviewContext.CombinedProgressionTags.AppendTags(PreviewContext.GameOnlyProgressionTags);
-
-	FString InjectedParseError;
-	if (!ParseInjectedVariables(
-		PreviewInjectedVariablesTextBox.IsValid() ? PreviewInjectedVariablesTextBox->GetText().ToString() : FString(),
-		PreviewContext.InjectedVariables,
-		InjectedParseError))
-	{
-		PreviewOutput = FString::Printf(TEXT("Injected variable parse error: %s"), *InjectedParseError);
-		return FReply::Handled();
-	}
-
-	TArray<FDialogueClientView> PreviewTrace;
-	TArray<FGuid> AutoChoiceSelections;
-	bool bEndedCompleted = false;
-	FDialogueValidationReport PreviewReport;
-	bool bPreviewReturnedTrace = false;
-	if (UARDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemForValidationAndPreview())
-	{
-		bPreviewReturnedTrace = DialogueSubsystem->PreviewConversationTrace(
-			Conversation,
-			PreviewContext,
-			128,
-			PreviewTrace,
-			AutoChoiceSelections,
-			bEndedCompleted,
-			PreviewReport);
-	}
-
-	if (!bPreviewReturnedTrace)
-	{
-		PreviewOutput = TEXT("Preview failed (trace execution could not complete safely).");
-		return FReply::Handled();
-	}
-
-	PreviewOutput = FString::Printf(TEXT("Preview Steps: %d\nEnded Completed: %s\nPlayerKills: %d\nTimePlayed: %.2f\nCombinedTags: %d | PlayerTags: %d | GameTags: %d | TransientTags: %d | LoadoutTags: %d | InjectedVars: %d"),
-		PreviewTrace.Num(),
-		bEndedCompleted ? TEXT("Yes") : TEXT("No"),
-		PreviewPlayerKills,
-		PreviewTimePlayed,
-		PreviewContext.CombinedProgressionTags.Num(),
-		PreviewContext.PlayerOnlyProgressionTags.Num(),
-		PreviewContext.GameOnlyProgressionTags.Num(),
-		PreviewContext.TransientConversationTags.Num(),
-		PreviewContext.LoadoutView.LoadoutTags.Num(),
-		PreviewContext.InjectedVariables.Num());
-
-	int32 AutoChoiceCursor = 0;
-	for (int32 StepIndex = 0; StepIndex < PreviewTrace.Num(); ++StepIndex)
-	{
-		const FDialogueClientView& StepView = PreviewTrace[StepIndex];
-		PreviewOutput += FString::Printf(
-			TEXT("\n\nStep %d\nNode: %s\nSpeaker: %s\nLine: %s\nWaitingChoice: %s"),
-			StepIndex + 1,
-			*StepView.CurrentNodeId.ToString(EGuidFormats::DigitsWithHyphensInBraces),
-			*StepView.SpeakerTag.ToString(),
-			*StepView.LineText.ToString(),
-			StepView.bWaitingForChoice ? TEXT("Yes") : TEXT("No"));
-
-		if (StepView.bWaitingForChoice)
-		{
-			for (const FDialogueChoiceView& Choice : StepView.Choices)
-			{
-				PreviewOutput += FString::Printf(
-					TEXT("\n  Choice %s | CanChoose=%s | Important=%s | %s"),
-					*Choice.ChoiceBranchId.ToString(EGuidFormats::DigitsWithHyphensInBraces),
-					Choice.bCanChoose ? TEXT("Y") : TEXT("N"),
-					Choice.bImportant ? TEXT("Y") : TEXT("N"),
-					*Choice.ChoiceText.ToString());
-			}
-
-			if (AutoChoiceSelections.IsValidIndex(AutoChoiceCursor))
-			{
-				PreviewOutput += FString::Printf(
-					TEXT("\n  AutoSelected: %s"),
-					*AutoChoiceSelections[AutoChoiceCursor].ToString(EGuidFormats::DigitsWithHyphensInBraces));
-				++AutoChoiceCursor;
-			}
-		}
-	}
-
-	for (const FDialogueValidationIssue& Issue : PreviewReport.Issues)
+	for (const FDialogueValidationIssue& Issue : ValidationReport.Issues)
 	{
 		const TCHAR* SeverityLabel = TEXT("INFO");
 		if (Issue.Severity == EDialogueValidationSeverity::Warning)
@@ -807,9 +543,27 @@ FReply SDialogueConversationGraphEditorPanel::HandlePreviewConversation()
 		{
 			SeverityLabel = TEXT("ERROR");
 		}
-		PreviewOutput += FString::Printf(TEXT("\n[%s] %s"), SeverityLabel, *Issue.Message.ToString());
+		AppendLogLine(FString::Printf(TEXT("[%s] %s"), SeverityLabel, *Issue.Message.ToString()));
 	}
 
+	if (!bCompiled || bHasErrors)
+	{
+		SetStatusMessage(
+			FString::Printf(TEXT("Compile failed (Version %d)."), Conversation->CompileVersion),
+			EEditorStatusType::Error);
+	}
+	else if (ValidationReport.Issues.Num() > 0)
+	{
+		SetStatusMessage(
+			FString::Printf(TEXT("Compile successful with warnings (Version %d)."), Conversation->CompileVersion),
+			EEditorStatusType::Warning);
+	}
+	else
+	{
+		SetStatusMessage(
+			FString::Printf(TEXT("Compile successful (Version %d)."), Conversation->CompileVersion),
+			EEditorStatusType::Success);
+	}
 	return FReply::Handled();
 }
 
@@ -1120,7 +874,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 
 	FDialogueValidationReport RuntimeValidation;
 	bool bRuntimeValid = false;
-	if (UARDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemForValidationAndPreview())
+	if (UARDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemForValidation())
 	{
 		bRuntimeValid = DialogueSubsystem->ValidateConversation(ConversationAsset, RuntimeValidation);
 	}
@@ -1187,184 +941,4 @@ void SDialogueConversationGraphEditorPanel::ApplyValidationToEditorNodes(UARDial
 	}
 
 	Graph->NotifyGraphChanged();
-}
-
-bool SDialogueConversationGraphEditorPanel::ParseInjectedVariables(const FString& SourceText, TMap<FName, FDialogueInjectedValue>& OutVariables, FString& OutError) const
-{
-	OutVariables.Reset();
-	OutError.Empty();
-
-	TArray<FString> Lines;
-	SourceText.ParseIntoArrayLines(Lines, false);
-	for (int32 LineIndex = 0; LineIndex < Lines.Num(); ++LineIndex)
-	{
-		FString Line = Lines[LineIndex].TrimStartAndEnd();
-		if (Line.IsEmpty() || Line.StartsWith(TEXT("#")))
-		{
-			continue;
-		}
-
-		const int32 EqualsIndex = Line.Find(TEXT("="));
-		if (EqualsIndex == INDEX_NONE)
-		{
-			OutError = FString::Printf(TEXT("Line %d is missing '=': %s"), LineIndex + 1, *Line);
-			return false;
-		}
-
-		FString NamePart = Line.Left(EqualsIndex).TrimStartAndEnd();
-		const FString ValuePart = Line.Mid(EqualsIndex + 1).TrimStartAndEnd();
-		if (NamePart.IsEmpty())
-		{
-			OutError = FString::Printf(TEXT("Line %d has an empty variable name."), LineIndex + 1);
-			return false;
-		}
-
-		FString TypePart;
-		int32 TypeSeparatorIndex = INDEX_NONE;
-		if (NamePart.FindLastChar(TEXT(':'), TypeSeparatorIndex) && TypeSeparatorIndex > 0 && TypeSeparatorIndex < NamePart.Len() - 1)
-		{
-			TypePart = NamePart.Mid(TypeSeparatorIndex + 1).TrimStartAndEnd().ToLower();
-			NamePart = NamePart.Left(TypeSeparatorIndex).TrimStartAndEnd();
-		}
-
-		if (NamePart.IsEmpty())
-		{
-			OutError = FString::Printf(TEXT("Line %d has an invalid variable name."), LineIndex + 1);
-			return false;
-		}
-
-		FDialogueInjectedValue ParsedValue;
-		auto ParseAsBool = [&ValuePart, &ParsedValue]() -> bool
-		{
-			if (ValuePart.Equals(TEXT("true"), ESearchCase::IgnoreCase) || ValuePart.Equals(TEXT("1")))
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Bool;
-				ParsedValue.BoolValue = true;
-				return true;
-			}
-			if (ValuePart.Equals(TEXT("false"), ESearchCase::IgnoreCase) || ValuePart.Equals(TEXT("0")))
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Bool;
-				ParsedValue.BoolValue = false;
-				return true;
-			}
-			return false;
-		};
-
-		auto ParseAsInt = [&ValuePart, &ParsedValue]() -> bool
-		{
-			int32 OutInt = 0;
-			if (FDefaultValueHelper::ParseInt(ValuePart, OutInt))
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Integer;
-				ParsedValue.IntValue = OutInt;
-				return true;
-			}
-			return false;
-		};
-
-		auto ParseAsFloat = [&ValuePart, &ParsedValue]() -> bool
-		{
-			float OutFloat = 0.0f;
-			if (FDefaultValueHelper::ParseFloat(ValuePart, OutFloat))
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Float;
-				ParsedValue.FloatValue = OutFloat;
-				return true;
-			}
-			return false;
-		};
-
-		auto ParseAsTag = [&ValuePart, &ParsedValue]() -> bool
-		{
-			const FGameplayTag ParsedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*ValuePart), false);
-			if (ParsedTag.IsValid())
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Tag;
-				ParsedValue.TagValue = ParsedTag;
-				return true;
-			}
-			return false;
-		};
-
-		const bool bHasExplicitType = !TypePart.IsEmpty();
-		bool bParsed = false;
-		if (bHasExplicitType)
-		{
-			if (TypePart == TEXT("bool") || TypePart == TEXT("boolean"))
-			{
-				bParsed = ParseAsBool();
-			}
-			else if (TypePart == TEXT("int") || TypePart == TEXT("integer"))
-			{
-				bParsed = ParseAsInt();
-			}
-			else if (TypePart == TEXT("float"))
-			{
-				bParsed = ParseAsFloat();
-			}
-			else if (TypePart == TEXT("tag"))
-			{
-				bParsed = ParseAsTag();
-			}
-			else if (TypePart == TEXT("text") || TypePart == TEXT("string"))
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Text;
-				ParsedValue.TextValue = FText::FromString(ValuePart);
-				bParsed = true;
-			}
-			else
-			{
-				OutError = FString::Printf(TEXT("Line %d has unsupported type '%s'."), LineIndex + 1, *TypePart);
-				return false;
-			}
-
-			if (!bParsed)
-			{
-				OutError = FString::Printf(TEXT("Line %d value '%s' is invalid for type '%s'."), LineIndex + 1, *ValuePart, *TypePart);
-				return false;
-			}
-		}
-		else
-		{
-			if (ParseAsBool() || ParseAsInt() || ParseAsFloat() || ParseAsTag())
-			{
-				bParsed = true;
-			}
-			else
-			{
-				ParsedValue.ValueType = EDialogueInjectedValueType::Text;
-				ParsedValue.TextValue = FText::FromString(ValuePart);
-				bParsed = true;
-			}
-		}
-
-		if (bParsed)
-		{
-			OutVariables.Add(FName(*NamePart), ParsedValue);
-		}
-	}
-
-	return true;
-}
-
-void SDialogueConversationGraphEditorPanel::ParseTagList(const FString& SourceText, FGameplayTagContainer& OutContainer) const
-{
-	OutContainer.Reset();
-	TArray<FString> Parts;
-	SourceText.ParseIntoArray(Parts, TEXT(","), true);
-	for (FString& Part : Parts)
-	{
-		Part.TrimStartAndEndInline();
-		if (Part.IsEmpty())
-		{
-			continue;
-		}
-
-		const FGameplayTag ParsedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*Part), false);
-		if (ParsedTag.IsValid())
-		{
-			OutContainer.AddTag(ParsedTag);
-		}
-	}
 }
