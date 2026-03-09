@@ -41,8 +41,13 @@ void UARSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UARSessionSubsystem::Deinitialize()
 {
-	if (IOnlineSessionPtr Session = IOnlineSubsystem::Get() ? IOnlineSubsystem::Get()->GetSessionInterface() : nullptr)
+	auto ClearDelegateHandles = [this](const IOnlineSessionPtr& Session)
 	{
+		if (!Session.IsValid())
+		{
+			return;
+		}
+
 		if (CreateSessionCompleteHandle.IsValid())
 		{
 			Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteHandle);
@@ -63,6 +68,19 @@ void UARSessionSubsystem::Deinitialize()
 		{
 			Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteHandle);
 		}
+	};
+
+	if (!ActiveSubsystemName.IsNone())
+	{
+		if (IOnlineSubsystem* ActiveSubsystem = IOnlineSubsystem::Get(ActiveSubsystemName))
+		{
+			ClearDelegateHandles(ActiveSubsystem->GetSessionInterface());
+		}
+	}
+
+	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+	{
+		ClearDelegateHandles(DefaultSubsystem->GetSessionInterface());
 	}
 
 	CachedNativeSearchResults.Reset();
@@ -70,6 +88,12 @@ void UARSessionSubsystem::Deinitialize()
 	ActiveSessionSearch.Reset();
 	bOperationInFlight = false;
 	CurrentOperation = ESessionOperation::None;
+	ActiveSubsystemName = NAME_None;
+	CreateSessionCompleteHandle.Reset();
+	UpdateSessionCompleteHandle.Reset();
+	DestroySessionCompleteHandle.Reset();
+	FindSessionsCompleteHandle.Reset();
+	JoinSessionCompleteHandle.Reset();
 	Super::Deinitialize();
 }
 
