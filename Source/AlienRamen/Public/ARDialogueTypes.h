@@ -295,7 +295,7 @@ struct ALIENRAMEN_API FDialogueLineNodeData
 		SkipBlockedConditions.MatchMode = EDialogueConditionMatchMode::Any;
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Line", ToolTip = "Dialogue line payload for this node."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ShowOnlyInnerProperties, DisplayName = "Line", ToolTip = "Dialogue line payload for this node."))
 	FDialogueConversationLine Line;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Skip Locked Conditions", ToolTip = "If this condition group passes, this line is skipped even if the conversation is active."))
@@ -361,7 +361,7 @@ struct ALIENRAMEN_API FDialogueBoolNodeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Condition", ToolTip = "Condition evaluated by this Bool node. True/False outputs are chosen from this result."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ShowOnlyInnerProperties, DisplayName = "Condition", ToolTip = "Condition evaluated by this Bool node. True/False outputs are chosen from this result."))
 	FDialogueCondition Condition;
 };
 
@@ -544,13 +544,13 @@ struct ALIENRAMEN_API FDialogueCompiledRandomBranch
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Branch ID", ToolTip = "Compile-managed random branch identifier used for linking."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Branch ID (Compile Managed)", ToolTip = "Compile-managed random branch identifier used for linking this output pin."))
 	FGuid BranchId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Weight", ToolTip = "Compiled random weight for this branch."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Weight", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Relative weight for this output branch. With default weights (1.0 each), valid branches are selected uniformly."))
 	float Weight = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed link target selected when this random branch is chosen."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed link target selected when this random branch is chosen."))
 	FGuid NextNodeId;
 };
 
@@ -570,7 +570,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 		EditAnywhere,
 		BlueprintReadWrite,
 		Category = "",
-		meta = (EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
+		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
 	FInstancedStruct NodeData;
 
 	// Single output edge for Enter/Line/TagMutation/RelationshipMutation/FactionMutation.
@@ -612,7 +612,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::SwitchOnTagsByPriority && bSwitchHasDefaultOutput", EditConditionHides, DisplayName = "Switch Default Node ID (Compile Managed)", ToolTip = "Compile-managed default output target for switch nodes."))
 	FGuid SwitchDefaultNodeId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Random", EditConditionHides, DisplayName = "Random Branches (Compile Managed)", ToolTip = "Compile-managed weighted random branches and link targets."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (EditCondition = "NodeType == EDialogueNodeType::Random", EditConditionHides, DisplayName = "Random Branches", ToolTip = "Random output branches. Edit per-branch Weight here; link targets are compile-managed from graph pin connections."))
 	TArray<FDialogueCompiledRandomBranch> RandomBranches;
 };
 

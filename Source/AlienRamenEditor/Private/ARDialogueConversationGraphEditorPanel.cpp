@@ -12,12 +12,15 @@
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
 #include "FileHelpers.h"
+#include "Framework/Commands/GenericCommands.h"
+#include "Framework/Commands/UICommandList.h"
 #include "GraphEditor.h"
 #include "Input/Events.h"
 #include "InputCoreTypes.h"
 #include "Modules/ModuleManager.h"
 #include "PropertyCustomizationHelpers.h"
 #include "PropertyEditorModule.h"
+#include "ScopedTransaction.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SBorder.h"
@@ -85,7 +88,16 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 	DetailsArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
 	DetailsArgs.bLockable = false;
 	DetailsArgs.bUpdatesFromSelection = false;
+	DetailsArgs.bShowObjectLabel = false;
+	DetailsArgs.bShowLooseProperties = true;
 	DetailsView = PropertyEditorModule.CreateDetailView(DetailsArgs);
+
+	FGenericCommands::Register();
+	GraphEditorCommands = MakeShared<FUICommandList>();
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Delete,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanDeleteSelectedNodes));
 
 	ChildSlot
 	[
@@ -207,6 +219,14 @@ FReply SDialogueConversationGraphEditorPanel::OnKeyDown(const FGeometry& MyGeome
 		ExecuteSaveCommand();
 		return FReply::Handled();
 	}
+	if ((InKeyEvent.GetKey() == EKeys::Delete || InKeyEvent.GetKey() == EKeys::BackSpace) && !InKeyEvent.IsControlDown() && !InKeyEvent.IsCommandDown())
+	{
+		if (CanDeleteSelectedNodes())
+		{
+			HandleDeleteSelectedNodes();
+			return FReply::Handled();
+		}
+	}
 
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
@@ -314,6 +334,7 @@ void SDialogueConversationGraphEditorPanel::RebuildGraphEditorWidget(UEdGraph* G
 		.GraphToEdit(GraphToEdit)
 		.IsEditable(true)
 		.ShowGraphStateOverlay(false)
+		.AdditionalCommands(GraphEditorCommands)
 		.GraphEvents(GraphEvents);
 
 	if (GraphEditorWidget.IsValid())
@@ -567,6 +588,90 @@ FReply SDialogueConversationGraphEditorPanel::HandleCompile()
 	return FReply::Handled();
 }
 
+void SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes()
+{
+	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
+	if (!Graph || !GraphEditorWidget.IsValid())
+	{
+		return;
+	}
+
+	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+	if (SelectedNodes.IsEmpty())
+	{
+		return;
+	}
+
+	const FScopedTransaction Transaction(FText::FromString(TEXT("Delete Dialogue Node")));
+	Graph->Modify();
+
+	int32 DeletedCount = 0;
+	int32 SkippedEnterCount = 0;
+	for (UObject* SelectedObject : SelectedNodes)
+	{
+		UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(SelectedObject);
+		if (!DialogueNode)
+		{
+			continue;
+		}
+
+		if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		{
+			++SkippedEnterCount;
+			continue;
+		}
+
+		if (DialogueNode->CanUserDeleteNode())
+		{
+			DialogueNode->Modify();
+			DialogueNode->DestroyNode();
+			++DeletedCount;
+		}
+	}
+
+	if (DeletedCount > 0)
+	{
+		Graph->NotifyGraphChanged();
+		if (UARDialogueConversationAsset* Conversation = SelectedConversation.Get())
+		{
+			Conversation->MarkPackageDirty();
+		}
+
+		SetStatusMessage(FString::Printf(TEXT("Deleted %d node(s)."), DeletedCount), EEditorStatusType::Success);
+		AppendLogLine(FString::Printf(TEXT("Deleted %d node(s)."), DeletedCount));
+	}
+	else if (SkippedEnterCount > 0)
+	{
+		SetStatusMessage(TEXT("Enter node cannot be deleted."), EEditorStatusType::Warning);
+		AppendLogLine(TEXT("Delete skipped: Enter node cannot be deleted."));
+	}
+}
+
+bool SDialogueConversationGraphEditorPanel::CanDeleteSelectedNodes() const
+{
+	if (!GraphEditorWidget.IsValid())
+	{
+		return false;
+	}
+
+	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+	for (UObject* SelectedObject : SelectedNodes)
+	{
+		const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(SelectedObject);
+		if (!DialogueNode || !DialogueNode->CanUserDeleteNode())
+		{
+			continue;
+		}
+
+		if (DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Enter)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool SDialogueConversationGraphEditorPanel::EnsureConversationEditorGraph(UARDialogueConversationAsset* ConversationAsset)
 {
 	if (!ConversationAsset)
@@ -735,6 +840,72 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 		}
 	}
 
+	auto SpawnEnterNode = [Graph]() -> UARDialogueEdGraphNode*
+	{
+		if (!Graph)
+		{
+			return nullptr;
+		}
+
+		Graph->Modify();
+		UARDialogueEdGraphNode* EnterNode = NewObject<UARDialogueEdGraphNode>(Graph);
+		EnterNode->SetFlags(RF_Transactional);
+		EnterNode->InitializeForNodeType(EDialogueNodeType::Enter);
+		EnterNode->NodePosX = -300;
+		EnterNode->NodePosY = 0;
+		EnterNode->CreateNewGuid();
+		EnterNode->AllocateDefaultPins();
+		Graph->AddNode(EnterNode, true, false);
+		return EnterNode;
+	};
+
+	TArray<UARDialogueEdGraphNode*> EnterNodes;
+	for (UARDialogueEdGraphNode* Node : EditorNodes)
+	{
+		if (Node && Node->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		{
+			EnterNodes.Add(Node);
+		}
+	}
+
+	if (EnterNodes.IsEmpty())
+	{
+		if (UARDialogueEdGraphNode* NewEnterNode = SpawnEnterNode())
+		{
+			NewEnterNode->EnsureStableIds(false, false);
+			EditorNodes.Add(NewEnterNode);
+			AddValidationIssue(
+				OutValidationReport,
+				EDialogueValidationSeverity::Warning,
+				NewEnterNode->RuntimeNode.NodeId,
+				TEXT("Missing Enter node was automatically re-created during compile."));
+			Graph->NotifyGraphChanged();
+			ConversationAsset->MarkPackageDirty();
+		}
+	}
+	else if (EnterNodes.Num() > 1)
+	{
+		UARDialogueEdGraphNode* PrimaryEnterNode = EnterNodes[0];
+		Graph->Modify();
+		for (int32 Index = 1; Index < EnterNodes.Num(); ++Index)
+		{
+			if (UARDialogueEdGraphNode* DuplicateEnterNode = EnterNodes[Index])
+			{
+				EditorNodes.RemoveSingleSwap(DuplicateEnterNode);
+				DuplicateEnterNode->Modify();
+				DuplicateEnterNode->DestroyNode();
+			}
+		}
+
+		AddValidationIssue(
+			OutValidationReport,
+			EDialogueValidationSeverity::Warning,
+			PrimaryEnterNode ? PrimaryEnterNode->RuntimeNode.NodeId : FGuid(),
+			TEXT("Multiple Enter nodes were found; extras were removed automatically during compile."));
+		Graph->NotifyGraphChanged();
+		ConversationAsset->MarkPackageDirty();
+	}
+
 	if (EditorNodes.IsEmpty())
 	{
 		AddValidationIssue(OutValidationReport, EDialogueValidationSeverity::Error, FGuid(), TEXT("Editor graph has no dialogue nodes."));
@@ -863,9 +1034,9 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 		CompiledData.Nodes.Add(MoveTemp(CompiledNode));
 	}
 
-	if (EnterCount == 0)
+	if (EnterCount != 1)
 	{
-		AddValidationIssue(OutValidationReport, EDialogueValidationSeverity::Error, FGuid(), TEXT("Compiled graph has no Enter node."));
+		AddValidationIssue(OutValidationReport, EDialogueValidationSeverity::Error, FGuid(), TEXT("Compiled graph must have exactly one Enter node."));
 	}
 
 	ConversationAsset->Modify();

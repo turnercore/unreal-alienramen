@@ -11,6 +11,7 @@ class SObjectPropertyEntryBox;
 class UARDialogueConversationAsset;
 class UARDialogueEdGraph;
 class UARDialogueEdGraphNode;
+class FUICommandList;
 struct FAssetData;
 struct FDialogueValidationReport;
 struct FGeometry;
@@ -49,6 +50,8 @@ private:
 	FReply HandleSave();
 	FReply HandleValidate();
 	FReply HandleCompile();
+	void HandleDeleteSelectedNodes();
+	bool CanDeleteSelectedNodes() const;
 	void ExecuteSaveCommand();
 
 	bool EnsureConversationEditorGraph(UARDialogueConversationAsset* ConversationAsset);
@@ -59,6 +62,7 @@ private:
 	TSharedPtr<SObjectPropertyEntryBox> ConversationAssetPicker;
 	TSharedPtr<SBox> GraphEditorHost;
 	TSharedPtr<SGraphEditor> GraphEditorWidget;
+	TSharedPtr<FUICommandList> GraphEditorCommands;
 	TSharedPtr<IDetailsView> DetailsView;
 
 	TWeakObjectPtr<UARDialogueConversationAsset> SelectedConversation;
