@@ -282,7 +282,8 @@ enum class EDialogueNodeType : uint8
 	TagMutation,
 	RelationshipMutation,
 	FactionMutation,
-	Random
+	Random,
+	Route
 };
 
 USTRUCT(BlueprintType)
@@ -579,7 +580,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 		BlueprintReadWrite,
 		Category = "",
 		AdvancedDisplay,
-		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/Mutation nodes."))
+		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/Mutation/Route nodes."))
 	FGuid NextNodeId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Bool", EditConditionHides, DisplayName = "True Node ID (Compile Managed)", ToolTip = "Compile-managed output target when the Bool condition evaluates true."))
