@@ -17,11 +17,11 @@ class ALIENRAMEN_API UARDialogueSettings : public UDeveloperSettings
 public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 
-	// ContentLookup root tag used to resolve FARDialogueSpeakerRow records.
+	// TagContentResolver root tag used to resolve FARDialogueSpeakerRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content")
 	FGameplayTag SpeakerDefinitionRootTag;
 
-	// ContentLookup root tag used to resolve FARDialogueConversationAssetRow records.
+	// TagContentResolver root tag used to resolve FARDialogueConversationAssetRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content")
 	FGameplayTag ConversationDefinitionRootTag;
 
