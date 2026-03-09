@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARDialogueTypes.h"
 #include "GameplayTagContainer.h"
 #include "SGraphNode.h"
 
@@ -31,11 +32,13 @@ private:
 	TSharedRef<SWidget> BuildChoiceInlineContent() const;
 	TSharedRef<SWidget> BuildSwitchInlineContent() const;
 	TSharedRef<SWidget> BuildRandomInlineContent() const;
+	TSharedRef<SWidget> BuildSequenceInlineContent() const;
 	TSharedRef<SWidget> BuildRelationshipInlineContent() const;
 	TSharedRef<SWidget> BuildFactionInlineContent() const;
 	void AddDynamicPinButtonIfSupported();
 	float GetInlineContentMinWidth() const;
 	void RefreshNodeWidget() const;
+	bool HandleBranchRowDropped(EDialogueNodeType BranchNodeType, FGuid DraggedBranchId, FGuid TargetBranchId) const;
 
 	FReply HandleAddBranchPinClicked() const;
 

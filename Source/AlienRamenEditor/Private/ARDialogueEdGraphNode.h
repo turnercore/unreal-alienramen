@@ -8,7 +8,7 @@
 class UGraphNodeContextMenuContext;
 class UToolMenu;
 
-UCLASS()
+UCLASS(CollapseCategories)
 class UARDialogueEdGraphNode : public UEdGraphNode
 {
 	GENERATED_BODY()
@@ -40,6 +40,7 @@ public:
 	UEdGraphPin* GetChoiceOutputPin(const FGuid& ChoiceBranchId) const;
 	UEdGraphPin* GetSwitchOutputPin(const FGuid& BranchId) const;
 	UEdGraphPin* GetRandomOutputPin(const FGuid& BranchId) const;
+	UEdGraphPin* GetSequenceOutputPin(const FGuid& BranchId) const;
 
 	bool SupportsDynamicBranchPins() const;
 	void AddDynamicBranchPin();
@@ -73,6 +74,7 @@ public:
 	static FName MakeChoicePinName(const FGuid& ChoiceBranchId);
 	static FName MakeSwitchPinName(const FGuid& BranchId);
 	static FName MakeRandomPinName(const FGuid& BranchId);
+	static FName MakeSequencePinName(const FGuid& BranchId);
 
 private:
 	bool CommitRuntimeNodeMutation(const FText& TransactionText, TFunctionRef<bool()> MutateFn, bool bReconstructPins);
@@ -85,6 +87,7 @@ private:
 	void AddChoicePins();
 	void AddSwitchPins();
 	void AddRandomPins();
+	void AddSequencePins();
 	FString BuildInlineSummary() const;
 
 	EDialogueValidationSeverity ValidationSeverity = EDialogueValidationSeverity::Info;

@@ -283,7 +283,8 @@ enum class EDialogueNodeType : uint8
 	RelationshipMutation,
 	FactionMutation,
 	Random,
-	Route
+	Route,
+	Sequence
 };
 
 USTRUCT(BlueprintType)
@@ -556,6 +557,18 @@ struct ALIENRAMEN_API FDialogueCompiledRandomBranch
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FDialogueCompiledSequenceBranch
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Branch ID (Compile Managed)", ToolTip = "Compile-managed sequence branch identifier used to keep branch ordering stable."))
+	FGuid BranchId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed link target for this sequence branch output."))
+	FGuid NextNodeId;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FDialogueCompiledNode
 {
 	GENERATED_BODY()
@@ -615,6 +628,9 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (EditCondition = "NodeType == EDialogueNodeType::Random", EditConditionHides, DisplayName = "Random Branches", ToolTip = "Random output branches. Edit per-branch Weight here; link targets are compile-managed from graph pin connections."))
 	TArray<FDialogueCompiledRandomBranch> RandomBranches;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Sequence", EditConditionHides, DisplayName = "Sequence Branches (Compile Managed)", ToolTip = "Ordered sequence output branches executed first-to-last. Link targets are compile-managed from graph pin connections."))
+	TArray<FDialogueCompiledSequenceBranch> SequenceBranches;
 };
 
 USTRUCT(BlueprintType)
