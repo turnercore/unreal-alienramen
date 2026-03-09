@@ -2,6 +2,7 @@
 
 #include "ARDialogueConversationAsset.h"
 #include "ARDialogueConversationGraphEditorPanel.h"
+#include "ARDialogueEditorSettings.h"
 #include "ARDialogueSettings.h"
 #include "ARDialogueSubsystem.h"
 #include "TagContentResolverSubsystem.h"
@@ -11,6 +12,7 @@
 #include "Editor.h"
 #include "Engine/DataTable.h"
 #include "Framework/Docking/TabManager.h"
+#include "Framework/Application/SlateApplication.h"
 #include "GameplayTagsManager.h"
 #include "HAL/FileManager.h"
 #include "Misc/FileHelper.h"
@@ -19,14 +21,23 @@
 #include "Misc/MessageDialog.h"
 #include "Misc/PackageName.h"
 #include "Misc/Paths.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Input/Events.h"
+#include "InputCoreTypes.h"
+#include "Styling/AppStyle.h"
 #include "Styling/CoreStyle.h"
+#include "Styling/SlateBrush.h"
 #include "Subsystems/AssetEditorSubsystem.h"
 #include "UObject/Package.h"
 #include "Engine/Texture2D.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
-#include "Widgets/Input/SSpinBox.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "Widgets/Images/SImage.h"
 #include "Widgets/Layout/SBorder.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Layout/SExpandableArea.h"
+#include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SSplitter.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
@@ -46,6 +57,16 @@ namespace
 		void Construct(const FArguments& InArgs, const TSharedRef<STableViewBase>& InOwnerTableView)
 		{
 			Item = InArgs._Item;
+			PortraitBrush = FSlateBrush();
+			PortraitBrush.DrawAs = ESlateBrushDrawType::Image;
+			PortraitBrush.ImageSize = FVector2D(20.0f, 20.0f);
+			if (Item.IsValid())
+			{
+				if (UTexture2D* PortraitTexture = Item->Row.DefaultPortrait.PortraitTexture.LoadSynchronous())
+				{
+					PortraitBrush.SetResourceObject(PortraitTexture);
+				}
+			}
 			SMultiColumnTableRow<TSharedPtr<SDialogueSpeakerEditorPanel::FSpeakerEntry>>::Construct(FSuperRowType::FArguments(), InOwnerTableView);
 		}
 
@@ -56,6 +77,26 @@ namespace
 				return SNew(STextBlock).Text(FText::FromString(TEXT("<Invalid>")));
 			}
 
+			if (ColumnName == TEXT("Portrait"))
+			{
+				if (PortraitBrush.GetResourceObject() != nullptr)
+				{
+					return SNew(SBox)
+						.WidthOverride(20.0f)
+						.HeightOverride(20.0f)
+						.HAlign(HAlign_Center)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SImage)
+							.Image(&PortraitBrush)
+						];
+				}
+
+				return SNew(SBox)
+					.WidthOverride(20.0f)
+					.HeightOverride(20.0f);
+			}
+
 			if (ColumnName == TEXT("DisplayName"))
 			{
 				return SNew(STextBlock).Text(Item->Row.DisplayName);
@@ -63,10 +104,6 @@ namespace
 			if (ColumnName == TEXT("SpeakerTag"))
 			{
 				return SNew(STextBlock).Text(FText::FromString(Item->Row.SpeakerTag.ToString()));
-			}
-			if (ColumnName == TEXT("Thresholds"))
-			{
-				return SNew(STextBlock).Text(FText::FromString(Item->ThresholdSummary));
 			}
 			if (ColumnName == TEXT("ConversationCount"))
 			{
@@ -77,6 +114,7 @@ namespace
 
 	private:
 		TSharedPtr<SDialogueSpeakerEditorPanel::FSpeakerEntry> Item;
+		FSlateBrush PortraitBrush;
 	};
 
 	static UARDialogueSubsystem* GetDialogueSubsystemFromPIE()
@@ -142,6 +180,17 @@ namespace
 		}
 
 		return SanitizeTagSegment(TagString);
+	}
+
+	static FString GetSpeakerAssetNameSegment(const FARDialogueSpeakerRow& SpeakerRow, const FName SpeakerRowName)
+	{
+		const FString DisplayName = SpeakerRow.DisplayName.ToString().TrimStartAndEnd();
+		if (!DisplayName.IsEmpty())
+		{
+			return SanitizeTagSegment(DisplayName);
+		}
+
+		return SanitizeTagSegment(SpeakerRowName.ToString());
 	}
 
 	static bool EnsureTagLineInConfig(
@@ -458,50 +507,7 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 
 	ChildSlot
 	[
-		SNew(SVerticalBox)
-		+ SVerticalBox::Slot().AutoHeight().Padding(4.0f)
-		[
-			SNew(SHorizontalBox)
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Refresh"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleRefresh)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("New Speaker"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleNewSpeaker)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Duplicate Speaker"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleDuplicateSpeaker)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Delete Speaker"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleDeleteSpeaker)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Validate Speaker"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleValidateSpeaker)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Save Speaker"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleSaveSpeaker)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Create Conversation"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleCreateConversation)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Open Conversation"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleOpenConversation)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
-			[
-				SNew(SButton).Text(FText::FromString(TEXT("Find Broken Conversations"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleFindBrokenConversations)
-			]
-		]
-		+ SVerticalBox::Slot().FillHeight(1.0f).Padding(4.0f)
-		[
-			SNew(SSplitter)
+		SNew(SSplitter)
 			+ SSplitter::Slot().Value(0.42f)
 			[
 				SNew(SBorder)
@@ -510,39 +516,60 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
 					[
-						SAssignNew(SearchTextBox, SEditableTextBox)
-						.HintText(FText::FromString(TEXT("Search display name / tag")))
-						.OnTextChanged_Lambda([this](const FText&){ ApplySpeakerFilterAndSort(); })
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
-					[
 						SNew(SHorizontalBox)
 						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 4.0f, 0.0f)
 						[
-							SNew(SButton).Text(FText::FromString(TEXT("Sort Name"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleSortByName)
+							SNew(SButton).Text(FText::FromString(TEXT("Refresh"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleRefresh)
 						]
 						+ SHorizontalBox::Slot().AutoWidth()
 						[
-							SNew(SButton).Text(FText::FromString(TEXT("Sort Conversations"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleSortByConversationCount)
+							SNew(SButton).Text(FText::FromString(TEXT("New Speaker"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleNewSpeaker)
 						]
 					]
-					+ SVerticalBox::Slot().FillHeight(1.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
+					[
+						SAssignNew(SearchTextBox, SSearchBox)
+						.HintText(FText::FromString(TEXT("Search display name / tag")))
+						.OnTextChanged_Lambda([this](const FText&){ ApplySpeakerFilterAndSort(); })
+					]
+					+ SVerticalBox::Slot().FillHeight(0.74f)
 					[
 						SAssignNew(SpeakerListView, SListView<TSharedPtr<FSpeakerEntry>>)
 						.ListItemsSource(&FilteredSpeakerEntries)
 						.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateSpeakerRow)
 						.OnSelectionChanged(this, &SDialogueSpeakerEditorPanel::OnSpeakerSelectionChanged)
+						.OnContextMenuOpening(this, &SDialogueSpeakerEditorPanel::BuildSpeakerListContextMenu)
+						.OnKeyDownHandler(FOnKeyDown::CreateSP(this, &SDialogueSpeakerEditorPanel::HandleSpeakerListKeyDown))
 						.HeaderRow(
 							SNew(SHeaderRow)
-							+ SHeaderRow::Column(TEXT("DisplayName")).DefaultLabel(FText::FromString(TEXT("Display Name"))).FillWidth(0.30f)
-							+ SHeaderRow::Column(TEXT("SpeakerTag")).DefaultLabel(FText::FromString(TEXT("Speaker Tag"))).FillWidth(0.34f)
-							+ SHeaderRow::Column(TEXT("Thresholds")).DefaultLabel(FText::FromString(TEXT("Relationship Thresholds"))).FillWidth(0.26f)
-							+ SHeaderRow::Column(TEXT("ConversationCount")).DefaultLabel(FText::FromString(TEXT("Conversations"))).FillWidth(0.10f)
+							+ SHeaderRow::Column(TEXT("Portrait"))
+								.DefaultLabel(FText::FromString(TEXT(" ")))
+								.FixedWidth(28.0f)
+								.HAlignHeader(HAlign_Center)
+								.HAlignCell(HAlign_Center)
+								.VAlignCell(VAlign_Center)
+							+ SHeaderRow::Column(TEXT("DisplayName")).DefaultLabel(FText::FromString(TEXT("Display Name"))).FillWidth(0.34f)
+							+ SHeaderRow::Column(TEXT("SpeakerTag")).DefaultLabel(FText::FromString(TEXT("Speaker Tag"))).FillWidth(0.48f)
+							+ SHeaderRow::Column(TEXT("ConversationCount")).DefaultLabel(FText::FromString(TEXT("Conversations"))).FillWidth(0.18f)
 						)
+					]
+					+ SVerticalBox::Slot().FillHeight(0.26f).Padding(0.0f, 6.0f, 0.0f, 0.0f)
+					[
+						SNew(SBorder)
+						.Padding(4.0f)
+						[
+							SNew(SScrollBox)
+							+ SScrollBox::Slot()
+							[
+								SNew(STextBlock)
+								.Text_Lambda([this]() { return FText::FromString(ValidationOutput); })
+								.AutoWrapText(true)
+							]
+						]
 					]
 				]
 			]
-			+ SSplitter::Slot().Value(0.58f)
+			+ SSplitter::Slot().Value(0.36f)
 			[
 				SNew(SBorder)
 				.Padding(6.0f)
@@ -550,11 +577,41 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Speaker Details")))
+						SNew(STextBlock).Text(FText::FromString(TEXT("Default Portrait")))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 6.0f, 0.0f).VAlign(VAlign_Center)
+						[
+							SNew(SBox)
+							.WidthOverride(48.0f)
+							.HeightOverride(48.0f)
+							[
+								SNew(SImage)
+								.Image(this, &SDialogueSpeakerEditorPanel::GetDefaultPortraitFieldBrush)
+							]
+						]
+						+ SHorizontalBox::Slot().FillWidth(1.0f)
+						[
+							SAssignNew(DefaultPortraitTexturePicker, SObjectPropertyEntryBox)
+							.AllowedClass(UTexture2D::StaticClass())
+							.DisplayThumbnail(true)
+							.ObjectPath(this, &SDialogueSpeakerEditorPanel::GetEditedDefaultPortraitTexturePath)
+							.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedDefaultPortraitTextureChanged)
+						]
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					[
+						SNew(STextBlock).Text(FText::FromString(TEXT("Name")))
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 					[
 						SAssignNew(DisplayNameTextBox, SEditableTextBox).HintText(FText::FromString(TEXT("Display Name")))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					[
+						SNew(STextBlock).Text(FText::FromString(TEXT("Description")))
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 					[
@@ -575,127 +632,109 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					[
 						SNew(STextBlock).Text(FText::FromString(TEXT("Faction Tag (optional)")))
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 					[
 						SNew(SGameplayTagCombo)
 						.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedFactionTag)
 						.OnTagChanged(this, &SDialogueSpeakerEditorPanel::OnEditedFactionTagChanged)
 					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)
+					[
+						SAssignNew(EmotionsExpandableArea, SExpandableArea)
+						.InitiallyCollapsed(false)
+						.BorderBackgroundColor(FLinearColor(0.08f, 0.08f, 0.08f, 1.0f))
+						.OnAreaExpansionChanged_Lambda([this](const bool bExpanded) { bEmotionsExpanded = bExpanded; })
+						.HeaderContent()
+						[
+							SNew(STextBlock).Text(FText::FromString(TEXT("Emotions")))
+						]
+						.BodyContent()
+						[
+							SNew(SVerticalBox)
+							+ SVerticalBox::Slot().AutoHeight().MaxHeight(130.0f).Padding(0.0f, 0.0f, 0.0f, 4.0f)
+							[
+								SAssignNew(PortraitListView, SListView<TSharedPtr<FPortraitEntry>>)
+								.ListItemsSource(&PortraitEntries)
+								.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGeneratePortraitRow)
+								.OnSelectionChanged(this, &SDialogueSpeakerEditorPanel::OnPortraitSelectionChanged)
+								.OnContextMenuOpening(this, &SDialogueSpeakerEditorPanel::BuildEmotionListContextMenu)
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(TEXT("No emotions yet. Add one to start.")))
+								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Visible : EVisibility::Collapsed; })
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+							[
+								SNew(STextBlock).Text(FText::FromString(TEXT("Emotion Tag")))
+								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+							[
+								SAssignNew(EmotionTagComboHost, SBox)
+								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+							[
+								SNew(STextBlock).Text(FText::FromString(TEXT("Emotion Portrait Texture")))
+								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
+							[
+								SAssignNew(PortraitTexturePicker, SObjectPropertyEntryBox)
+								.AllowedClass(UTexture2D::StaticClass())
+								.DisplayThumbnail(true)
+								.ObjectPath(this, &SDialogueSpeakerEditorPanel::GetEditedPortraitTexturePath)
+								.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedPortraitTextureChanged)
+								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
+							]
+						]
+					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Default Portrait Texture (optional)")))
+						SAssignNew(ThresholdsExpandableArea, SExpandableArea)
+						.InitiallyCollapsed(false)
+						.BorderBackgroundColor(FLinearColor(0.08f, 0.08f, 0.08f, 1.0f))
+						.OnAreaExpansionChanged_Lambda([this](const bool bExpanded) { bThresholdsExpanded = bExpanded; })
+						.HeaderContent()
+						[
+							SNew(STextBlock).Text(FText::FromString(TEXT("Relationship Bands")))
+						]
+						.BodyContent()
+						[
+							SAssignNew(ThresholdListView, SListView<TSharedPtr<FThresholdEntry>>)
+							.ListItemsSource(&ThresholdEntries)
+							.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateThresholdRow)
+							.OnSelectionChanged(this, &SDialogueSpeakerEditorPanel::OnThresholdSelectionChanged)
+							.OnMouseButtonDoubleClick(this, &SDialogueSpeakerEditorPanel::OnThresholdDoubleClicked)
+							.OnContextMenuOpening(this, &SDialogueSpeakerEditorPanel::BuildThresholdContextMenu)
+							.OnKeyDownHandler(FOnKeyDown::CreateSP(this, &SDialogueSpeakerEditorPanel::HandleThresholdListKeyDown))
+						]
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
-					[
-						SAssignNew(DefaultPortraitTexturePicker, SObjectPropertyEntryBox)
-						.AllowedClass(UTexture2D::StaticClass())
-						.ObjectPath(this, &SDialogueSpeakerEditorPanel::GetEditedDefaultPortraitTexturePath)
-						.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedDefaultPortraitTextureChanged)
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Portrait Configuration")))
-					]
-					+ SVerticalBox::Slot().AutoHeight().MaxHeight(120.0f).Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SAssignNew(PortraitListView, SListView<TSharedPtr<FPortraitEntry>>)
-						.ListItemsSource(&PortraitEntries)
-						.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGeneratePortraitRow)
-						.OnSelectionChanged(this, &SDialogueSpeakerEditorPanel::OnPortraitSelectionChanged)
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Portrait Tag")))
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SNew(SGameplayTagCombo)
-						.Filter(TEXT("Dialogue.Speaker"))
-						.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedPortraitTag)
-						.OnTagChanged(this, &SDialogueSpeakerEditorPanel::OnEditedPortraitTagChanged)
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Portrait Texture (optional)")))
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SAssignNew(PortraitTexturePicker, SObjectPropertyEntryBox)
-						.AllowedClass(UTexture2D::StaticClass())
-						.ObjectPath(this, &SDialogueSpeakerEditorPanel::GetEditedPortraitTexturePath)
-						.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedPortraitTextureChanged)
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
+				]
+			]
+			+ SSplitter::Slot().Value(0.22f)
+			[
+				SNew(SBorder)
+				.Padding(6.0f)
+				[
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
 					[
 						SNew(SHorizontalBox)
-						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
 						[
-							SNew(SButton).Text(FText::FromString(TEXT("Add/Update Portrait"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleAddPortrait)
+							SNew(STextBlock).Text(FText::FromString(TEXT("Conversation Map (Primary Speaker only)")))
 						]
-						+ SHorizontalBox::Slot().AutoWidth()
+						+ SHorizontalBox::Slot().AutoWidth().Padding(4.0f, 0.0f, 0.0f, 0.0f)
 						[
-							SNew(SButton).Text(FText::FromString(TEXT("Remove Portrait"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleRemovePortrait)
+							SNew(SButton).Text(FText::FromString(TEXT("Create Conversation"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleCreateConversation)
 						]
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Relationship Thresholds")))
-					]
-					+ SVerticalBox::Slot().AutoHeight().MaxHeight(110.0f).Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SAssignNew(ThresholdListView, SListView<TSharedPtr<FThresholdEntry>>)
-						.ListItemsSource(&ThresholdEntries)
-						.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateThresholdRow)
-						.OnSelectionChanged(this, &SDialogueSpeakerEditorPanel::OnThresholdSelectionChanged)
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
-					[
-						SNew(SSpinBox<float>)
-						.MinValue(-100000.0f)
-						.MaxValue(100000.0f)
-						.IsEnabled_Lambda([this]() { return SelectedThresholdIndex != INDEX_NONE && EditedRelationshipThresholds.IsValidIndex(SelectedThresholdIndex); })
-						.Value_Lambda([this]()
-						{
-							return EditedRelationshipThresholds.IsValidIndex(SelectedThresholdIndex)
-								? EditedRelationshipThresholds[SelectedThresholdIndex]
-								: 0.0f;
-						})
-						.OnValueCommitted_Lambda([this](const float NewValue, ETextCommit::Type)
-						{
-							SetEditedThresholdValue(NewValue);
-						})
-						.OnValueChanged_Lambda([this](const float NewValue)
-						{
-							SetEditedThresholdValue(NewValue);
-						})
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
-					[
-						SNew(SHorizontalBox)
-						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						+ SHorizontalBox::Slot().AutoWidth().Padding(4.0f, 0.0f, 0.0f, 0.0f)
 						[
-							SNew(SButton).Text(FText::FromString(TEXT("Add"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleAddThreshold)
+							SNew(SButton).Text(FText::FromString(TEXT("Find Broken"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleFindBrokenConversations)
 						]
-						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 4.0f, 0.0f)
-						[
-							SNew(SButton).Text(FText::FromString(TEXT("Remove"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleRemoveThreshold)
-						]
-						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 4.0f, 0.0f)
-						[
-							SNew(SButton).Text(FText::FromString(TEXT("Move Up"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleMoveThresholdUp)
-						]
-						+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 4.0f, 0.0f)
-						[
-							SNew(SButton).Text(FText::FromString(TEXT("Move Down"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleMoveThresholdDown)
-						]
-						+ SHorizontalBox::Slot().AutoWidth()
-						[
-							SNew(SButton).Text(FText::FromString(TEXT("Reset Defaults"))).OnClicked(this, &SDialogueSpeakerEditorPanel::HandleResetThresholds)
-						]
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Conversation Map (Primary Speaker only)")))
 					]
 					+ SVerticalBox::Slot().FillHeight(1.0f).Padding(0.0f, 0.0f, 0.0f, 6.0f)
 					[
@@ -704,18 +743,31 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 						.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateConversationRow)
 						.OnMouseButtonDoubleClick(this, &SDialogueSpeakerEditorPanel::OnConversationDoubleClicked)
 					]
-					+ SVerticalBox::Slot().AutoHeight()
-					[
-						SNew(STextBlock)
-						.Text_Lambda([this]() { return FText::FromString(ValidationOutput); })
-						.AutoWrapText(true)
-					]
 				]
 			]
-		]
 	];
 
 	SyncSpeakerFieldsFromSelection();
+	RebuildEmotionTagCombo();
+}
+
+SDialogueSpeakerEditorPanel::~SDialogueSpeakerEditorPanel()
+{
+	HandleSaveSpeaker();
+}
+
+FReply SDialogueSpeakerEditorPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	(void)MyGeometry;
+	if ((InKeyEvent.IsControlDown() || InKeyEvent.IsCommandDown())
+		&& !InKeyEvent.IsAltDown()
+		&& InKeyEvent.GetKey() == EKeys::S)
+	{
+		HandleSaveSpeaker();
+		return FReply::Handled();
+	}
+
+	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
 
 bool SDialogueSpeakerEditorPanel::ResolveSpeakerDataTable(UDataTable*& OutTable, FString& OutError) const
@@ -1088,7 +1140,15 @@ void SDialogueSpeakerEditorPanel::RefreshPortraitList()
 		const FSpeakerPortraitEntry& Portrait = Row->Portraits[Index];
 		TSharedPtr<FPortraitEntry> Entry = MakeShared<FPortraitEntry>();
 		Entry->PortraitIndex = Index;
-		Entry->Label = FString::Printf(TEXT("%d | %s | %s"), Index, *Portrait.PortraitTag.ToString(), *Portrait.Portrait.PortraitTexture.ToString());
+		Entry->PortraitTag = Portrait.PortraitTag;
+		Entry->PortraitTexture = Portrait.Portrait.PortraitTexture;
+		Entry->Label = Portrait.PortraitTag.IsValid() ? Portrait.PortraitTag.ToString() : FString(TEXT("<No Tag>"));
+		Entry->PortraitBrush.DrawAs = ESlateBrushDrawType::Image;
+		Entry->PortraitBrush.ImageSize = FVector2D(32.0f, 32.0f);
+		if (UTexture2D* PortraitTexture = Entry->PortraitTexture.LoadSynchronous())
+		{
+			Entry->PortraitBrush.SetResourceObject(PortraitTexture);
+		}
 		PortraitEntries.Add(Entry);
 	}
 
@@ -1245,7 +1305,7 @@ FString SDialogueSpeakerEditorPanel::BuildThresholdSummary(const TArray<float>& 
 	return Result;
 }
 
-bool SDialogueSpeakerEditorPanel::CommitEditedSpeakerRow(FString& OutError)
+bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& OutRow, FString& OutError) const
 {
 	OutError.Empty();
 
@@ -1256,8 +1316,8 @@ bool SDialogueSpeakerEditorPanel::CommitEditedSpeakerRow(FString& OutError)
 		return false;
 	}
 
-	FARDialogueSpeakerRow* MutableRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
-	if (!MutableRow)
+	const FARDialogueSpeakerRow* CurrentRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	if (!CurrentRow)
 	{
 		OutError = TEXT("Selected speaker row could not be resolved in table.");
 		return false;
@@ -1294,13 +1354,42 @@ bool SDialogueSpeakerEditorPanel::CommitEditedSpeakerRow(FString& OutError)
 		LastThresholdValue = ThresholdValue;
 	}
 
+	OutRow = *CurrentRow;
+	OutRow.DisplayName = FText::FromString(DisplayNameText);
+	OutRow.Description = FText::FromString(DescriptionText);
+	OutRow.SpeakerTag = EditedSpeakerTag;
+	OutRow.FactionTag = EditedFactionTag;
+	OutRow.DefaultPortrait.PortraitTexture = EditedDefaultPortraitTexture;
+	OutRow.RelationshipThresholds = EditedRelationshipThresholds;
+	return true;
+}
+
+bool SDialogueSpeakerEditorPanel::CommitEditedSpeakerRow(FString& OutError)
+{
+	OutError.Empty();
+
+	UDataTable* SpeakerTable = SpeakerDataTable.Get();
+	if (!SpeakerTable || SelectedSpeakerRowName.IsNone())
+	{
+		OutError = TEXT("No speaker selected.");
+		return false;
+	}
+
+	FARDialogueSpeakerRow* MutableRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	if (!MutableRow)
+	{
+		OutError = TEXT("Selected speaker row could not be resolved in table.");
+		return false;
+	}
+
+	FARDialogueSpeakerRow EditedRow;
+	if (!BuildEditedSpeakerRow(EditedRow, OutError))
+	{
+		return false;
+	}
+
 	SpeakerTable->Modify();
-	MutableRow->DisplayName = FText::FromString(DisplayNameText);
-	MutableRow->Description = FText::FromString(DescriptionText);
-	MutableRow->SpeakerTag = EditedSpeakerTag;
-	MutableRow->FactionTag = EditedFactionTag;
-	MutableRow->DefaultPortrait.PortraitTexture = EditedDefaultPortraitTexture;
-	MutableRow->RelationshipThresholds = EditedRelationshipThresholds;
+	*MutableRow = EditedRow;
 	SpeakerTable->MarkPackageDirty();
 	return true;
 }
@@ -1313,6 +1402,17 @@ FGameplayTag SDialogueSpeakerEditorPanel::GetEditedSpeakerTag() const
 void SDialogueSpeakerEditorPanel::OnEditedSpeakerTagChanged(FGameplayTag NewTag)
 {
 	EditedSpeakerTag = NewTag;
+	EnsureSpeakerDefaultEmotionTag(NewTag);
+	RebuildEmotionTagCombo();
+
+	if (EditedPortraitTag.IsValid() && NewTag.IsValid())
+	{
+		const FString RootPath = NewTag.ToString() + TEXT(".");
+		if (!EditedPortraitTag.ToString().StartsWith(RootPath, ESearchCase::CaseSensitive))
+		{
+			EditedPortraitTag = FGameplayTag();
+		}
+	}
 }
 
 FGameplayTag SDialogueSpeakerEditorPanel::GetEditedFactionTag() const
@@ -1359,6 +1459,50 @@ void SDialogueSpeakerEditorPanel::OnEditedPortraitTextureChanged(const FAssetDat
 		: TSoftObjectPtr<UTexture2D>();
 }
 
+FString SDialogueSpeakerEditorPanel::GetEmotionTagFilter() const
+{
+	if (!EditedSpeakerTag.IsValid())
+	{
+		return TEXT("Dialogue.Speaker");
+	}
+
+	return EditedSpeakerTag.ToString();
+}
+
+void SDialogueSpeakerEditorPanel::RebuildEmotionTagCombo()
+{
+	if (!EmotionTagComboHost.IsValid())
+	{
+		return;
+	}
+
+	EmotionTagComboHost->SetContent(
+		SNew(SGameplayTagCombo)
+		.Filter(GetEmotionTagFilter())
+		.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedPortraitTag)
+		.OnTagChanged(this, &SDialogueSpeakerEditorPanel::OnEditedPortraitTagChanged));
+}
+
+void SDialogueSpeakerEditorPanel::EnsureSpeakerDefaultEmotionTag(const FGameplayTag& SpeakerTag)
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	FString EnsureTagError;
+	const FString DefaultTagPath = SpeakerTag.ToString() + TEXT(".Default");
+	const FGameplayTag DefaultTag = EnsureGameplayTagRegistered(
+		DefaultTagPath,
+		FString::Printf(TEXT("Auto-created default emotion tag for speaker '%s'."), *SpeakerTag.ToString()),
+		EnsureTagError);
+
+	if (!DefaultTag.IsValid() && !EnsureTagError.IsEmpty())
+	{
+		AppendLogLine(FString::Printf(TEXT("Failed to ensure speaker default emotion tag '%s': %s"), *DefaultTagPath, *EnsureTagError));
+	}
+}
+
 void SDialogueSpeakerEditorPanel::AppendLogLine(const FString& Message)
 {
 	if (!ValidationOutput.IsEmpty())
@@ -1397,12 +1541,13 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 		RefreshThresholdList();
 		RefreshPortraitList();
 		RefreshConversationMap();
+		RebuildEmotionTagCombo();
 		return;
 	}
 
 	if (DisplayNameTextBox.IsValid()) { DisplayNameTextBox->SetText(SelectedRow.DisplayName); }
 	if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(SelectedRow.Description); }
-	EditedSpeakerTag = SelectedRow.SpeakerTag;
+	OnEditedSpeakerTagChanged(SelectedRow.SpeakerTag);
 	EditedFactionTag = SelectedRow.FactionTag;
 	EditedDefaultPortraitTexture = SelectedRow.DefaultPortrait.PortraitTexture;
 	EditedPortraitTag = FGameplayTag();
@@ -1456,9 +1601,288 @@ void SDialogueSpeakerEditorPanel::SetSelectedSpeakerRow(const FName RowName)
 	SyncSpeakerFieldsFromSelection();
 }
 
+TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildSpeakerListContextMenu()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Copy")),
+		FText::FromString(TEXT("Copy selected speaker row to local clipboard.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateSP(this, &SDialogueSpeakerEditorPanel::HandleCopySpeaker)));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Cut")),
+		FText::FromString(TEXT("Copy selected speaker row and delete it.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateSP(this, &SDialogueSpeakerEditorPanel::HandleCutSpeaker)));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Paste")),
+		FText::FromString(TEXT("Paste speaker row from local clipboard as a new row.")),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateSP(this, &SDialogueSpeakerEditorPanel::HandlePasteSpeaker),
+			FCanExecuteAction::CreateSP(this, &SDialogueSpeakerEditorPanel::CanPasteSpeaker)));
+
+	MenuBuilder.AddMenuSeparator();
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Duplicate")),
+		FText::FromString(TEXT("Duplicate selected speaker row.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleDuplicateSpeaker(); })));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Delete")),
+		FText::FromString(TEXT("Delete selected speaker row.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleDeleteSpeaker(); })));
+
+	return MenuBuilder.MakeWidget();
+}
+
+void SDialogueSpeakerEditorPanel::HandleCopySpeaker()
+{
+	UDataTable* SpeakerTable = SpeakerDataTable.Get();
+	if (!SpeakerTable || SelectedSpeakerRowName.IsNone())
+	{
+		return;
+	}
+
+	const FARDialogueSpeakerRow* SourceRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	if (!SourceRow)
+	{
+		return;
+	}
+
+	SpeakerClipboardSourceRowName = SelectedSpeakerRowName;
+	SpeakerClipboardRow = *SourceRow;
+	bHasSpeakerClipboard = true;
+	AppendLogLine(FString::Printf(TEXT("Copied speaker '%s'."), *SelectedSpeakerRowName.ToString()));
+}
+
+void SDialogueSpeakerEditorPanel::HandleCutSpeaker()
+{
+	HandleCopySpeaker();
+	if (bHasSpeakerClipboard)
+	{
+		HandleDeleteSpeaker();
+	}
+}
+
+void SDialogueSpeakerEditorPanel::HandlePasteSpeaker()
+{
+	if (!CanPasteSpeaker())
+	{
+		return;
+	}
+
+	UDataTable* SpeakerTable = SpeakerDataTable.Get();
+	if (!SpeakerTable)
+	{
+		return;
+	}
+
+	const FString SourceName = SpeakerClipboardSourceRowName.IsNone() ? TEXT("Speaker") : SpeakerClipboardSourceRowName.ToString();
+	FName NewRowName(*FString::Printf(TEXT("%s_Copy"), *SourceName));
+	for (int32 Suffix = 1; SpeakerTable->GetRowMap().Contains(NewRowName); ++Suffix)
+	{
+		NewRowName = FName(*FString::Printf(TEXT("%s_Copy%d"), *SourceName, Suffix));
+	}
+
+	FARDialogueSpeakerRow NewRow = SpeakerClipboardRow;
+	NewRow.DisplayName = FText::FromString(NewRow.DisplayName.ToString() + TEXT(" Copy"));
+
+	const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
+	if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+	{
+		const FString SpeakerPath = FString::Printf(TEXT("%s.%s"), *DialogueSettings->SpeakerDefinitionRootTag.ToString(), *NewRowName.ToString());
+		const FGameplayTag DuplicatedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*SpeakerPath), false);
+		if (DuplicatedTag.IsValid())
+		{
+			NewRow.SpeakerTag = DuplicatedTag;
+		}
+	}
+
+	SpeakerTable->Modify();
+	SpeakerTable->AddRow(NewRowName, NewRow);
+	SpeakerTable->MarkPackageDirty();
+
+	AppendLogLine(FString::Printf(TEXT("Pasted speaker as '%s'."), *NewRowName.ToString()));
+	RefreshData();
+	SetSelectedSpeakerRow(NewRowName);
+}
+
+bool SDialogueSpeakerEditorPanel::CanPasteSpeaker() const
+{
+	return bHasSpeakerClipboard;
+}
+
+TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildThresholdContextMenu()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Add Band")),
+		FText::FromString(TEXT("Insert a new relationship band after the selected band.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleAddThreshold(); })));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Remove Band")),
+		FText::FromString(TEXT("Remove the selected relationship band.")),
+		FSlateIcon(),
+	FUIAction(FExecuteAction::CreateLambda([this]() { HandleRemoveThreshold(); })));
+	return MenuBuilder.MakeWidget();
+}
+
+TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildEmotionListContextMenu()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Add Emotion")),
+		FText::FromString(TEXT("Add an emotion entry (or apply edits to selected entry).")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]()
+		{
+			if (PortraitEntries.IsEmpty())
+			{
+				HandleAddEmotionSlot();
+			}
+			else
+			{
+				HandleAddPortrait();
+			}
+		})));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Remove Emotion")),
+		FText::FromString(TEXT("Remove the currently selected emotion entry.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleRemovePortrait(); })));
+
+	return MenuBuilder.MakeWidget();
+}
+
+void SDialogueSpeakerEditorPanel::BeginInlineThresholdEdit(const int32 ThresholdIndex)
+{
+	if (!ThresholdEntries.IsValidIndex(ThresholdIndex))
+	{
+		return;
+	}
+
+	EditingThresholdIndex = ThresholdIndex;
+	SelectedThresholdIndex = ThresholdIndex;
+	if (ThresholdListView.IsValid())
+	{
+		ThresholdListView->RequestListRefresh();
+	}
+}
+
+void SDialogueSpeakerEditorPanel::CommitInlineThresholdEdit(const int32 ThresholdIndex, const FText& NewText, ETextCommit::Type CommitType)
+{
+	if (CommitType == ETextCommit::OnCleared)
+	{
+		EditingThresholdIndex = INDEX_NONE;
+		if (ThresholdListView.IsValid())
+		{
+			ThresholdListView->RequestListRefresh();
+		}
+		return;
+	}
+
+	const FString TextValue = NewText.ToString().TrimStartAndEnd();
+	double ParsedValue = 0.0;
+	if (!LexTryParseString(ParsedValue, *TextValue))
+	{
+		AppendLogLine(FString::Printf(TEXT("Invalid band value '%s'."), *TextValue));
+		return;
+	}
+
+	SelectedThresholdIndex = ThresholdIndex;
+	SetEditedThresholdValue(static_cast<float>(ParsedValue));
+	EditingThresholdIndex = INDEX_NONE;
+	if (ThresholdListView.IsValid())
+	{
+		ThresholdListView->RequestListRefresh();
+	}
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleThresholdListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	(void)MyGeometry;
+	if (InKeyEvent.GetKey() == EKeys::Delete || InKeyEvent.GetKey() == EKeys::BackSpace)
+	{
+		HandleRemoveThreshold();
+		return FReply::Handled();
+	}
+	return FReply::Unhandled();
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleSpeakerListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	(void)MyGeometry;
+
+	const bool bCtrl = InKeyEvent.IsControlDown() || InKeyEvent.IsCommandDown();
+	if (bCtrl && !InKeyEvent.IsAltDown())
+	{
+		if (InKeyEvent.GetKey() == EKeys::C)
+		{
+			HandleCopySpeaker();
+			return FReply::Handled();
+		}
+		if (InKeyEvent.GetKey() == EKeys::V)
+		{
+			HandlePasteSpeaker();
+			return FReply::Handled();
+		}
+		if (InKeyEvent.GetKey() == EKeys::D)
+		{
+			HandleDuplicateSpeaker();
+			return FReply::Handled();
+		}
+		if (InKeyEvent.GetKey() == EKeys::X)
+		{
+			HandleCutSpeaker();
+			return FReply::Handled();
+		}
+		if (InKeyEvent.GetKey() == EKeys::S)
+		{
+			HandleSaveSpeaker();
+			return FReply::Handled();
+		}
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Delete || InKeyEvent.GetKey() == EKeys::BackSpace)
+	{
+		HandleDeleteSpeaker();
+		return FReply::Handled();
+	}
+
+	return FReply::Unhandled();
+}
+
+const FSlateBrush* SDialogueSpeakerEditorPanel::GetDefaultPortraitFieldBrush() const
+{
+	DefaultPortraitFieldBrush.DrawAs = ESlateBrushDrawType::Image;
+	DefaultPortraitFieldBrush.ImageSize = FVector2D(48.0f, 48.0f);
+	DefaultPortraitFieldBrush.SetResourceObject(nullptr);
+	if (UTexture2D* Texture = EditedDefaultPortraitTexture.LoadSynchronous())
+	{
+		DefaultPortraitFieldBrush.SetResourceObject(Texture);
+		return &DefaultPortraitFieldBrush;
+	}
+
+	return FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+}
+
 void SDialogueSpeakerEditorPanel::RefreshThresholdList()
 {
 	ThresholdEntries.Reset();
+	if (!EditedRelationshipThresholds.IsValidIndex(EditingThresholdIndex))
+	{
+		EditingThresholdIndex = INDEX_NONE;
+	}
 	for (int32 ThresholdIndex = 0; ThresholdIndex < EditedRelationshipThresholds.Num(); ++ThresholdIndex)
 	{
 		TSharedPtr<FThresholdEntry> Entry = MakeShared<FThresholdEntry>();
@@ -1616,29 +2040,16 @@ FReply SDialogueSpeakerEditorPanel::HandleValidateSpeaker()
 {
 	ValidationOutput.Empty();
 
-	UDataTable* SpeakerTable = SpeakerDataTable.Get();
-	if (!SpeakerTable || SelectedSpeakerRowName.IsNone())
-	{
-		AppendLogLine(TEXT("No speaker selected."));
-		return FReply::Handled();
-	}
-
 	FString ParseError;
-	if (!CommitEditedSpeakerRow(ParseError))
+	FARDialogueSpeakerRow EditedRow;
+	if (!BuildEditedSpeakerRow(EditedRow, ParseError))
 	{
-		AppendLogLine(FString::Printf(TEXT("Save-before-validate failed: %s"), *ParseError));
-		return FReply::Handled();
-	}
-
-	const FARDialogueSpeakerRow* CurrentRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
-	if (!CurrentRow)
-	{
-		AppendLogLine(TEXT("Speaker row became unavailable after commit."));
+		AppendLogLine(FString::Printf(TEXT("Validation failed: %s"), *ParseError));
 		return FReply::Handled();
 	}
 
 	FDialogueValidationReport Report;
-	const bool bValid = ValidateSpeakerWithBestAvailable(*CurrentRow, Report);
+	const bool bValid = ValidateSpeakerWithBestAvailable(EditedRow, Report);
 	AppendLogLine(bValid ? TEXT("Speaker validation succeeded.") : TEXT("Speaker validation failed."));
 
 	for (const FDialogueValidationIssue& Issue : Report.Issues)
@@ -1648,14 +2059,37 @@ FReply SDialogueSpeakerEditorPanel::HandleValidateSpeaker()
 			: (Issue.Severity == EDialogueValidationSeverity::Warning ? TEXT("WARN") : TEXT("INFO"));
 		AppendLogLine(FString::Printf(TEXT("[%s] %s"), Severity, *Issue.Message.ToString()));
 	}
-
-	RefreshData();
-	SetSelectedSpeakerRow(SelectedSpeakerRowName);
 	return FReply::Handled();
 }
 
 FReply SDialogueSpeakerEditorPanel::HandleSaveSpeaker()
 {
+	FString ParseError;
+	FARDialogueSpeakerRow EditedRow;
+	if (!BuildEditedSpeakerRow(EditedRow, ParseError))
+	{
+		AppendLogLine(FString::Printf(TEXT("Save failed: %s"), *ParseError));
+		return FReply::Handled();
+	}
+
+	FDialogueValidationReport Report;
+	const bool bValid = ValidateSpeakerWithBestAvailable(EditedRow, Report);
+	for (const FDialogueValidationIssue& Issue : Report.Issues)
+	{
+		if (Issue.Severity == EDialogueValidationSeverity::Info)
+		{
+			continue;
+		}
+
+		const TCHAR* Severity = Issue.Severity == EDialogueValidationSeverity::Error ? TEXT("ERROR") : TEXT("WARN");
+		AppendLogLine(FString::Printf(TEXT("[%s] %s"), Severity, *Issue.Message.ToString()));
+	}
+	if (!bValid || Report.HasErrors())
+	{
+		AppendLogLine(TEXT("Save blocked: validation failed."));
+		return FReply::Handled();
+	}
+
 	FString Error;
 	if (!CommitEditedSpeakerRow(Error))
 	{
@@ -1718,14 +2152,28 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		return FReply::Handled();
 	}
 
-	FString PackageFolder = TEXT("/Game/Data/Dialogue/Conversations");
-	const FString ConversationTablePackageName = FPackageName::ObjectPathToPackageName(ConversationLookupTable->GetPathName());
-	if (!ConversationTablePackageName.IsEmpty())
+	const UARDialogueEditorSettings* DialogueEditorSettings = GetDefault<UARDialogueEditorSettings>();
+	FString PackageFolder = DialogueEditorSettings ? DialogueEditorSettings->ConversationAssetsFolder.Path : FString();
+	if (PackageFolder.IsEmpty())
 	{
-		PackageFolder = FPackageName::GetLongPackagePath(ConversationTablePackageName);
+		PackageFolder = TEXT("/Game/Data/Conversations");
+	}
+	if (!PackageFolder.StartsWith(TEXT("/")))
+	{
+		PackageFolder = FString(TEXT("/")) + PackageFolder;
+	}
+	PackageFolder.RemoveFromEnd(TEXT("/"));
+
+	if (!FPackageName::IsValidLongPackageName(PackageFolder))
+	{
+		AppendLogLine(FString::Printf(
+			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Alien Ramen -> Dialogue Tooling."),
+			*PackageFolder));
+		return FReply::Handled();
 	}
 
-	FString AssetNameBase = FString::Printf(TEXT("DA_DialogueConv_%s"), *SelectedSpeakerRowName.ToString());
+	const FString SpeakerNameSegment = GetSpeakerAssetNameSegment(*SpeakerRow, SelectedSpeakerRowName);
+	FString AssetNameBase = FString::Printf(TEXT("Conversation_%s"), *SpeakerNameSegment);
 	FString AssetName = AssetNameBase;
 	FString PackageName = FString::Printf(TEXT("%s/%s"), *PackageFolder, *AssetName);
 	for (int32 Suffix = 1; FPackageName::DoesPackageExist(PackageName); ++Suffix)
@@ -2046,6 +2494,45 @@ FReply SDialogueSpeakerEditorPanel::HandleMoveThresholdDown()
 	return FReply::Handled();
 }
 
+FReply SDialogueSpeakerEditorPanel::HandleAddEmotionSlot()
+{
+	UDataTable* SpeakerTable = SpeakerDataTable.Get();
+	if (!SpeakerTable || SelectedSpeakerRowName.IsNone())
+	{
+		AppendLogLine(TEXT("No speaker selected."));
+		return FReply::Handled();
+	}
+
+	FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	if (!Row)
+	{
+		AppendLogLine(TEXT("Selected speaker row could not be loaded."));
+		return FReply::Handled();
+	}
+
+	if (EditedDefaultPortraitTexture.IsNull())
+	{
+		AppendLogLine(TEXT("Set Default Portrait before adding emotions."));
+		return FReply::Handled();
+	}
+
+	FSpeakerPortraitEntry NewPortrait;
+	SpeakerTable->Modify();
+	Row->Portraits.Add(NewPortrait);
+	const int32 NewPortraitIndex = Row->Portraits.Num() - 1;
+	SpeakerTable->MarkPackageDirty();
+
+	RefreshData();
+	SetSelectedSpeakerRow(SelectedSpeakerRowName);
+	SelectedPortraitIndex = NewPortraitIndex;
+	if (PortraitEntries.IsValidIndex(SelectedPortraitIndex) && PortraitListView.IsValid())
+	{
+		PortraitListView->SetSelection(PortraitEntries[SelectedPortraitIndex]);
+	}
+	AppendLogLine(TEXT("Added empty emotion entry."));
+	return FReply::Handled();
+}
+
 FReply SDialogueSpeakerEditorPanel::HandleAddPortrait()
 {
 	UDataTable* SpeakerTable = SpeakerDataTable.Get();
@@ -2062,9 +2549,15 @@ FReply SDialogueSpeakerEditorPanel::HandleAddPortrait()
 		return FReply::Handled();
 	}
 
+	if (EditedDefaultPortraitTexture.IsNull())
+	{
+		AppendLogLine(TEXT("Set Default Portrait Texture before adding emotion portraits."));
+		return FReply::Handled();
+	}
+
 	if (!EditedPortraitTag.IsValid())
 	{
-		AppendLogLine(TEXT("Portrait tag is required."));
+		AppendLogLine(TEXT("Emotion tag is required."));
 		return FReply::Handled();
 	}
 
@@ -2076,12 +2569,12 @@ FReply SDialogueSpeakerEditorPanel::HandleAddPortrait()
 	if (SelectedPortraitIndex != INDEX_NONE && Row->Portraits.IsValidIndex(SelectedPortraitIndex))
 	{
 		Row->Portraits[SelectedPortraitIndex] = NewPortrait;
-		AppendLogLine(FString::Printf(TEXT("Updated portrait index %d."), SelectedPortraitIndex));
+		AppendLogLine(FString::Printf(TEXT("Updated emotion index %d."), SelectedPortraitIndex));
 	}
 	else
 	{
 		Row->Portraits.Add(NewPortrait);
-		AppendLogLine(TEXT("Added new portrait entry."));
+		AppendLogLine(TEXT("Added new emotion entry."));
 	}
 	SpeakerTable->MarkPackageDirty();
 
@@ -2108,14 +2601,14 @@ FReply SDialogueSpeakerEditorPanel::HandleRemovePortrait()
 
 	if (SelectedPortraitIndex == INDEX_NONE || !Row->Portraits.IsValidIndex(SelectedPortraitIndex))
 	{
-		AppendLogLine(TEXT("No portrait selected."));
+		AppendLogLine(TEXT("No emotion selected."));
 		return FReply::Handled();
 	}
 
 	SpeakerTable->Modify();
 	Row->Portraits.RemoveAt(SelectedPortraitIndex);
 	SpeakerTable->MarkPackageDirty();
-	AppendLogLine(FString::Printf(TEXT("Removed portrait index %d."), SelectedPortraitIndex));
+	AppendLogLine(FString::Printf(TEXT("Removed emotion index %d."), SelectedPortraitIndex));
 
 	SelectedPortraitIndex = INDEX_NONE;
 	RefreshData();
@@ -2187,21 +2680,100 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 
 TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGeneratePortraitRow(TSharedPtr<FPortraitEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const
 {
+	if (!Item.IsValid())
+	{
+		return SNew(STableRow<TSharedPtr<FPortraitEntry>>, OwnerTable)
+		[
+			SNew(STextBlock).Text(FText::FromString(TEXT("<Invalid Emotion Entry>"))).AutoWrapText(true)
+		];
+	}
+
+	const FString TextureLabel = Item->PortraitTexture.IsNull()
+		? FString(TEXT("No Texture"))
+		: FPackageName::GetLongPackageAssetName(Item->PortraitTexture.ToString());
+
+	const FSlateBrush* RowBrush = Item->PortraitBrush.GetResourceObject() != nullptr
+		? &Item->PortraitBrush
+		: FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+
 	return SNew(STableRow<TSharedPtr<FPortraitEntry>>, OwnerTable)
 	[
-		SNew(STextBlock).Text(FText::FromString(Item.IsValid() ? Item->Label : FString(TEXT("<Invalid Portrait Entry>")))).AutoWrapText(true)
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 6.0f, 0.0f).VAlign(VAlign_Center)
+		[
+			SNew(SBox)
+			.WidthOverride(32.0f)
+			.HeightOverride(32.0f)
+			[
+				SNew(SImage)
+				.Image(RowBrush)
+			]
+		]
+		+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
+		[
+			SNew(SVerticalBox)
+			+ SVerticalBox::Slot().AutoHeight()
+			[
+				SNew(STextBlock).Text(FText::FromString(Item->Label))
+			]
+			+ SVerticalBox::Slot().AutoHeight()
+			[
+				SNew(STextBlock).Text(FText::FromString(TextureLabel))
+			]
+		]
 	];
 }
 
 TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateThresholdRow(TSharedPtr<FThresholdEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const
 {
-	const FString Label = Item.IsValid()
-		? FString::Printf(TEXT("%d: %.1f"), Item->ThresholdIndex + 1, Item->Value)
-		: FString(TEXT("<Invalid Threshold Entry>"));
+	if (!Item.IsValid())
+	{
+		return SNew(STableRow<TSharedPtr<FThresholdEntry>>, OwnerTable)
+		[
+			SNew(STextBlock).Text(FText::FromString(TEXT("<Invalid Threshold Entry>"))).AutoWrapText(true)
+		];
+	}
+
+	const FString BandLabel = FString::Printf(TEXT("Band %d"), Item->ThresholdIndex + 1);
+	const FString ValueLabel = FString::Printf(TEXT("%.1f"), Item->Value);
+	const FLinearColor BandTint = (Item->ThresholdIndex % 2 == 0)
+		? FLinearColor(0.18f, 0.32f, 0.50f, 1.0f)
+		: FLinearColor(0.22f, 0.25f, 0.40f, 1.0f);
+	const bool bIsEditing = (Item->ThresholdIndex == EditingThresholdIndex);
 
 	return SNew(STableRow<TSharedPtr<FThresholdEntry>>, OwnerTable)
 	[
-		SNew(STextBlock).Text(FText::FromString(Label)).AutoWrapText(true)
+		SNew(SBorder)
+		.BorderBackgroundColor(FLinearColor(0.08f, 0.08f, 0.08f, 1.0f))
+		.Padding(FMargin(6.0f, 4.0f))
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.0f, 0.0f, 8.0f, 0.0f)
+			[
+				SNew(SBorder)
+				.BorderBackgroundColor(BandTint)
+				.Padding(FMargin(6.0f, 2.0f))
+				[
+					SNew(STextBlock).Text(FText::FromString(BandLabel))
+				]
+			]
+			+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
+			[
+				bIsEditing
+				? StaticCastSharedRef<SWidget>(
+					SNew(SEditableTextBox)
+					.Text(FText::FromString(ValueLabel))
+					.SelectAllTextWhenFocused(true)
+					.OnTextCommitted_Lambda([this, ThresholdIndex = Item->ThresholdIndex](const FText& NewText, ETextCommit::Type CommitType)
+					{
+						const_cast<SDialogueSpeakerEditorPanel*>(this)->CommitInlineThresholdEdit(ThresholdIndex, NewText, CommitType);
+					}))
+				: StaticCastSharedRef<SWidget>(
+					SNew(STextBlock)
+					.Text(FText::FromString(ValueLabel))
+					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 11)))
+			]
+		]
 	];
 }
 
@@ -2215,10 +2787,19 @@ void SDialogueSpeakerEditorPanel::OnSpeakerSelectionChanged(TSharedPtr<FSpeakerE
 
 	if (!Item.IsValid())
 	{
+		if (!SelectedSpeakerRowName.IsNone())
+		{
+			HandleSaveSpeaker();
+		}
 		SelectedSpeakerRowName = NAME_None;
 		SelectedPortraitIndex = INDEX_NONE;
 		SyncSpeakerFieldsFromSelection();
 		return;
+	}
+
+	if (!SelectedSpeakerRowName.IsNone() && Item->RowName != SelectedSpeakerRowName)
+	{
+		HandleSaveSpeaker();
 	}
 
 	SelectedSpeakerRowName = Item->RowName;
@@ -2274,5 +2855,15 @@ void SDialogueSpeakerEditorPanel::OnThresholdSelectionChanged(TSharedPtr<FThresh
 {
 	(void)SelectInfo;
 	SelectedThresholdIndex = Item.IsValid() ? Item->ThresholdIndex : INDEX_NONE;
+}
+
+void SDialogueSpeakerEditorPanel::OnThresholdDoubleClicked(TSharedPtr<FThresholdEntry> Item)
+{
+	if (!Item.IsValid())
+	{
+		return;
+	}
+
+	BeginInlineThresholdEdit(Item->ThresholdIndex);
 }
 
