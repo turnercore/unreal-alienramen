@@ -8,6 +8,24 @@ namespace
 {
 	static const FName PinCategoryExec(TEXT("DialogueExec"));
 
+	static bool GraphHasEnterNode(const UEdGraph* Graph)
+	{
+		if (!Graph)
+		{
+			return false;
+		}
+
+		for (const UEdGraphNode* GraphNode : Graph->Nodes)
+		{
+			const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+			if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	static FText GetNodeDisplayName(const EDialogueNodeType NodeType)
 	{
 		switch (NodeType)
@@ -56,6 +74,10 @@ namespace
 			{
 				return nullptr;
 			}
+			if (NodeType == EDialogueNodeType::Enter && GraphHasEnterNode(ParentGraph))
+			{
+				return nullptr;
+			}
 
 			ParentGraph->Modify();
 			UARDialogueEdGraphNode* NewNode = NewObject<UARDialogueEdGraphNode>(ParentGraph);
@@ -96,7 +118,6 @@ void UARDialogueEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
 	static const TArray<EDialogueNodeType> NodeTypes = {
-		EDialogueNodeType::Enter,
 		EDialogueNodeType::Completed,
 		EDialogueNodeType::Line,
 		EDialogueNodeType::Choice,
