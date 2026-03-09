@@ -11,7 +11,7 @@ class UARDialogueEdGraphNode : public UEdGraphNode
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, Category = "", meta = (ShowOnlyInnerProperties, ToolTip = "Node payload and compile-managed links for this graph node."))
 	FDialogueCompiledNode RuntimeNode;
 
 	virtual void AllocateDefaultPins() override;

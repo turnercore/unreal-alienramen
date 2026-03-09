@@ -17,19 +17,19 @@ class ALIENRAMEN_API UARDialogueConversationAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "", meta = (ShowOnlyInnerProperties, ToolTip = "Authoring header used to select and gate this conversation at runtime."))
 	FDialogueConversationHeader Header;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Dialogue")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "", AdvancedDisplay, meta = (ToolTip = "Compile-managed runtime graph data generated from the editor graph. Do not hand-edit unless you are debugging compile output."))
 	FDialogueCompiledConversationData CompiledData;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Dialogue")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "", AdvancedDisplay, meta = (ToolTip = "Most recent validation report produced by Validate/Compile/Save."))
 	FDialogueValidationReport LastCompileValidation;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Dialogue")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "", AdvancedDisplay, meta = (DisplayName = "Last Compile Succeeded", ToolTip = "True when the most recent compile completed without errors."))
 	bool bLastCompileSucceeded = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Dialogue")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "", AdvancedDisplay, meta = (ToolTip = "Incremented each time compile output is regenerated. Useful for tracking compile freshness and debugging stale data."))
 	int32 CompileVersion = 0;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
