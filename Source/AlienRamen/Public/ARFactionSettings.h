@@ -9,7 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "ARFactionSettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Factions"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Factions"))
 class ALIENRAMEN_API UARFactionSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

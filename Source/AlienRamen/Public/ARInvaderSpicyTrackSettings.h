@@ -10,7 +10,7 @@
 #include "ARInvaderSpicyTrackTypes.h"
 #include "ARInvaderSpicyTrackSettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Invader Spicy Track"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Invader Spicy Track"))
 class ALIENRAMEN_API UARInvaderSpicyTrackSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
