@@ -37,7 +37,7 @@ struct ALIENRAMEN_API FSpeakerPortraitEntry
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue", meta = (Categories = "Dialogue.Speaker"))
 	FGameplayTag PortraitTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
@@ -49,7 +49,7 @@ struct ALIENRAMEN_API FARDialogueSpeakerRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue", meta = (Categories = "Dialogue.Speaker"))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
@@ -200,10 +200,10 @@ struct ALIENRAMEN_API FDialogueConversationHeader
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	FText DisplayTitle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue", meta = (Categories = "Dialogue.Speaker"))
 	FGameplayTag PrimarySpeakerTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue", meta = (Categories = "Dialogue.Speaker"))
 	TArray<FGameplayTag> ParticipatingSpeakerTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
@@ -263,7 +263,7 @@ struct ALIENRAMEN_API FDialogueConversationLine
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	TObjectPtr<USoundBase> Sound = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue", meta = (Categories = "Dialogue.Speaker"))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
@@ -447,7 +447,7 @@ struct ALIENRAMEN_API FDialogueRelationshipMutationNodeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue", meta = (Categories = "Dialogue.Speaker"))
 	FGameplayTag TargetSpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
