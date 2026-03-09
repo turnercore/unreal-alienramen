@@ -640,10 +640,14 @@ void UTagContentResolverSubsystem::GatherConfiguredRoutes(
 
 	for (const FTagContentResolverProjectRoute& ProjectRoute : Settings->ProjectRoutes)
 	{
-		OutRoutes.Add(ProjectRoute.Route);
-		if (OutCriticalPreloadRoots && ProjectRoute.bPreload && ProjectRoute.Route.RootTag.IsValid())
+		FTagContentResolverRoute Route;
+		Route.RootTag = ProjectRoute.RootTag;
+		Route.DataTable = ProjectRoute.DataTable;
+		OutRoutes.Add(Route);
+
+		if (OutCriticalPreloadRoots && ProjectRoute.bPreload && ProjectRoute.RootTag.IsValid())
 		{
-			OutCriticalPreloadRoots->Add(ProjectRoute.Route.RootTag);
+			OutCriticalPreloadRoots->Add(ProjectRoute.RootTag);
 		}
 	}
 
