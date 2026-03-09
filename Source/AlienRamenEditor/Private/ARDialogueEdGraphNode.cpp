@@ -498,10 +498,9 @@ FString UARDialogueEdGraphNode::BuildInlineSummary() const
 		}
 
 		const FString Text = LineData->Line.Text.ToString().Left(64);
-		return FString::Printf(TEXT("[%s] \"%s\" Auto:%s SkipLocked:%d SkipBlocked:%d"),
+		return FString::Printf(TEXT("[%s] \"%s\" SkipLocked:%d SkipBlocked:%d"),
 			*LineData->Line.SpeakerTag.ToString(),
 			*Text,
-			LineData->bAutoAdvance ? TEXT("Y") : TEXT("N"),
 			LineData->SkipLockedConditions.Conditions.Num(),
 			LineData->SkipBlockedConditions.Conditions.Num());
 	}

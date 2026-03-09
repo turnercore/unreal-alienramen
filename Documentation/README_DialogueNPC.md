@@ -91,6 +91,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - seen/completed/repeatability suppression flags
 - Runtime executes compiled nodes server-side with a step cap from settings.
 - Implemented node execution: enter/completed/line/choice/bool/switch/tag-mutation/relationship-mutation/faction-mutation/random.
+- Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
