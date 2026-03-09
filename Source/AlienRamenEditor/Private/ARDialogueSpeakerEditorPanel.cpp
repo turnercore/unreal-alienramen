@@ -12,10 +12,13 @@
 #include "Engine/DataTable.h"
 #include "Framework/Docking/TabManager.h"
 #include "GameplayTagsManager.h"
+#include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
 #include "PropertyCustomizationHelpers.h"
 #include "SGameplayTagCombo.h"
 #include "Misc/MessageDialog.h"
 #include "Misc/PackageName.h"
+#include "Misc/Paths.h"
 #include "Styling/CoreStyle.h"
 #include "Subsystems/AssetEditorSubsystem.h"
 #include "UObject/Package.h"
@@ -102,6 +105,166 @@ namespace
 		return Cached.Get();
 	}
 
+	static const TCHAR* DialogueAutoTagConfigRelativePath = TEXT("Tags/DialogueConversationGeneratedTags.ini");
+
+	static FString SanitizeTagSegment(const FString& RawSegment)
+	{
+		FString Sanitized;
+		Sanitized.Reserve(RawSegment.Len());
+
+		bool bPreviousWasUnderscore = false;
+		for (const TCHAR Char : RawSegment)
+		{
+			const bool bAllowed = FChar::IsAlnum(Char) || Char == TCHAR('_');
+			const TCHAR OutChar = bAllowed ? Char : TCHAR('_');
+			if (OutChar == TCHAR('_') && bPreviousWasUnderscore)
+			{
+				continue;
+			}
+
+			Sanitized.AppendChar(OutChar);
+			bPreviousWasUnderscore = (OutChar == TCHAR('_'));
+		}
+
+		Sanitized.TrimStartAndEndInline();
+		Sanitized.RemoveFromStart(TEXT("_"));
+		Sanitized.RemoveFromEnd(TEXT("_"));
+		return Sanitized.IsEmpty() ? TEXT("Speaker") : Sanitized;
+	}
+
+	static FString GetSpeakerLeafSegment(const FGameplayTag SpeakerTag)
+	{
+		const FString TagString = SpeakerTag.ToString();
+		int32 DotIndex = INDEX_NONE;
+		if (TagString.FindLastChar(TEXT('.'), DotIndex) && DotIndex + 1 < TagString.Len())
+		{
+			return SanitizeTagSegment(TagString.Mid(DotIndex + 1));
+		}
+
+		return SanitizeTagSegment(TagString);
+	}
+
+	static bool EnsureTagLineInConfig(
+		const FString& ConfigPath,
+		const FString& SectionHeader,
+		const FString& TagPath,
+		const FString& DevComment,
+		const bool bUsePlusPrefix,
+		FString& OutError)
+	{
+		OutError.Empty();
+		FString ConfigText;
+		const bool bConfigExists = FPaths::FileExists(ConfigPath);
+		if (bConfigExists && !FFileHelper::LoadFileToString(ConfigText, *ConfigPath))
+		{
+			OutError = FString::Printf(TEXT("Failed to load gameplay tag config '%s'."), *ConfigPath);
+			return false;
+		}
+
+		if (!bConfigExists)
+		{
+			const FString ConfigDir = FPaths::GetPath(ConfigPath);
+			IFileManager::Get().MakeDirectory(*ConfigDir, true);
+			ConfigText = SectionHeader;
+			ConfigText += LINE_TERMINATOR;
+		}
+		else if (!ConfigText.Contains(SectionHeader, ESearchCase::IgnoreCase))
+		{
+			if (!ConfigText.EndsWith(TEXT("\n")) && !ConfigText.EndsWith(TEXT("\r\n")))
+			{
+				ConfigText += LINE_TERMINATOR;
+			}
+			ConfigText += SectionHeader;
+			ConfigText += LINE_TERMINATOR;
+		}
+
+		const FString TagNeedle = FString::Printf(TEXT("Tag=\"%s\""), *TagPath);
+		if (ConfigText.Contains(TagNeedle, ESearchCase::CaseSensitive))
+		{
+			return true;
+		}
+
+		FString SafeComment = DevComment;
+		SafeComment.ReplaceInline(TEXT("\""), TEXT("\\\""));
+		const TCHAR* Prefix = bUsePlusPrefix ? TEXT("+") : TEXT("");
+		const FString NewLine = FString::Printf(TEXT("%sGameplayTagList=(Tag=\"%s\",DevComment=\"%s\")"), Prefix, *TagPath, *SafeComment);
+		if (!ConfigText.EndsWith(TEXT("\n")) && !ConfigText.EndsWith(TEXT("\r\n")))
+		{
+			ConfigText += LINE_TERMINATOR;
+		}
+		ConfigText += NewLine;
+		ConfigText += LINE_TERMINATOR;
+
+		if (!FFileHelper::SaveStringToFile(ConfigText, *ConfigPath))
+		{
+			OutError = FString::Printf(TEXT("Failed to write gameplay tag config '%s'."), *ConfigPath);
+			return false;
+		}
+
+		return true;
+	}
+
+	static FGameplayTag EnsureGameplayTagRegistered(const FString& TagPath, const FString& DevComment, FString& OutError)
+	{
+		OutError.Empty();
+		if (TagPath.IsEmpty())
+		{
+			OutError = TEXT("Cannot register an empty gameplay tag path.");
+			return FGameplayTag();
+		}
+
+		const FName TagName(*TagPath);
+		FGameplayTag Existing = UGameplayTagsManager::Get().RequestGameplayTag(TagName, false);
+		if (Existing.IsValid())
+		{
+			return Existing;
+		}
+
+		const FString GeneratedConfigPath = FPaths::ProjectConfigDir() / DialogueAutoTagConfigRelativePath;
+		const FString GeneratedSection = TEXT("[/Script/GameplayTags.GameplayTagsList]");
+		FString WriteError;
+		if (!EnsureTagLineInConfig(
+			GeneratedConfigPath,
+			GeneratedSection,
+			TagPath,
+			DevComment,
+			false,
+			WriteError))
+		{
+			OutError = WriteError;
+			return FGameplayTag();
+		}
+
+		UGameplayTagsManager::Get().EditorRefreshGameplayTagTree();
+		Existing = UGameplayTagsManager::Get().RequestGameplayTag(TagName, false);
+		if (Existing.IsValid())
+		{
+			return Existing;
+		}
+
+		const FString FallbackConfigPath = FPaths::ProjectConfigDir() / TEXT("DefaultGameplayTags.ini");
+		const FString FallbackSection = TEXT("[/Script/GameplayTags.GameplayTagsSettings]");
+		if (!EnsureTagLineInConfig(
+			FallbackConfigPath,
+			FallbackSection,
+			TagPath,
+			DevComment,
+			true,
+			WriteError))
+		{
+			OutError = WriteError;
+			return FGameplayTag();
+		}
+
+		UGameplayTagsManager::Get().EditorRefreshGameplayTagTree();
+		Existing = UGameplayTagsManager::Get().RequestGameplayTag(TagName, false);
+		if (!Existing.IsValid())
+		{
+			OutError = FString::Printf(TEXT("Gameplay tag '%s' is still invalid after config update/refresh."), *TagPath);
+		}
+		return Existing;
+	}
+
 	static void GatherConversationAssetsFromLookup(const UARDialogueSettings* DialogueSettings, TMap<FGameplayTag, UARDialogueConversationAsset*>& OutConversationsByTag)
 	{
 		OutConversationsByTag.Reset();
@@ -158,12 +321,35 @@ namespace
 					FGameplayTag RowTag = Row->ConversationTag;
 					if (!RowTag.IsValid())
 					{
-						RowTag = UGameplayTagsManager::Get().RequestGameplayTag(
-							FName(*(DialogueSettings->ConversationDefinitionRootTag.ToString() + TEXT(".") + RowName.ToString())),
-							false);
+						const FString RowTagPath = DialogueSettings->ConversationDefinitionRootTag.ToString() + TEXT(".") + RowName.ToString();
+						FString EnsureTagError;
+						RowTag = EnsureGameplayTagRegistered(
+							RowTagPath,
+							FString::Printf(TEXT("Auto-generated conversation tag for row '%s'."), *RowName.ToString()),
+							EnsureTagError);
+						if (!RowTag.IsValid())
+						{
+							continue;
+						}
+
+						FARDialogueConversationAssetRow* MutableRow = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
+						if (MutableRow && !MutableRow->ConversationTag.IsValid())
+						{
+							ConversationTable->Modify();
+							MutableRow->ConversationTag = RowTag;
+							ConversationTable->MarkPackageDirty();
+						}
 					}
 
-					TryAddConversation(Row->Conversation.LoadSynchronous(), RowTag);
+					UARDialogueConversationAsset* Conversation = Row->Conversation.LoadSynchronous();
+					if (Conversation && !Conversation->Header.ConversationTag.IsValid() && RowTag.IsValid())
+					{
+						Conversation->Modify();
+						Conversation->Header.ConversationTag = RowTag;
+						Conversation->MarkPackageDirty();
+					}
+
+					TryAddConversation(Conversation, RowTag);
 				}
 			}
 		}
@@ -1633,8 +1819,65 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		LookupRowName = FName(*FString::Printf(TEXT("%s_%d"), *AssetName, Suffix));
 	}
 
-	const FString ConversationTagPath = FString::Printf(TEXT("%s.%s"), *Settings->ConversationDefinitionRootTag.ToString(), *LookupRowName.ToString());
-	NewConversation->Header.ConversationTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*ConversationTagPath), false);
+	TSet<FGameplayTag> UsedConversationTags;
+	for (const FName ExistingRowName : ConversationLookupTable->GetRowNames())
+	{
+		const FARDialogueConversationAssetRow* ExistingRow = ConversationLookupTable->FindRow<FARDialogueConversationAssetRow>(
+			ExistingRowName,
+			TEXT("DialogueSpeakerEditorConversationTagScan"),
+			false);
+		if (!ExistingRow)
+		{
+			continue;
+		}
+
+		if (ExistingRow->ConversationTag.IsValid())
+		{
+			UsedConversationTags.Add(ExistingRow->ConversationTag);
+		}
+
+		if (UARDialogueConversationAsset* ExistingConversation = ExistingRow->Conversation.LoadSynchronous())
+		{
+			if (ExistingConversation->Header.ConversationTag.IsValid())
+			{
+				UsedConversationTags.Add(ExistingConversation->Header.ConversationTag);
+			}
+		}
+	}
+
+	const FString SpeakerSegment = GetSpeakerLeafSegment(SpeakerRow->SpeakerTag);
+	const FString ConversationTagPrefix = FString::Printf(
+		TEXT("%s.Id.%s"),
+		*Settings->ConversationDefinitionRootTag.ToString(),
+		*SpeakerSegment);
+
+	FString EnsureTagError;
+	FGameplayTag ConversationTag;
+	for (int32 Index = 1; Index < 100000; ++Index)
+	{
+		const FString CandidateTagPath = FString::Printf(TEXT("%s.%d"), *ConversationTagPrefix, Index);
+		const FGameplayTag CandidateTag = EnsureGameplayTagRegistered(
+			CandidateTagPath,
+			FString::Printf(TEXT("Auto-created conversation tag for speaker '%s'."), *SpeakerRow->SpeakerTag.ToString()),
+			EnsureTagError);
+		if (!CandidateTag.IsValid())
+		{
+			break;
+		}
+
+		if (!UsedConversationTags.Contains(CandidateTag))
+		{
+			ConversationTag = CandidateTag;
+			break;
+		}
+	}
+
+	if (!ConversationTag.IsValid())
+	{
+		AppendLogLine(FString::Printf(TEXT("Failed to create auto conversation tag under '%s': %s"), *ConversationTagPrefix, *EnsureTagError));
+		return FReply::Handled();
+	}
+	NewConversation->Header.ConversationTag = ConversationTag;
 
 	FDialogueCompiledNode& EnterNode = NewConversation->CompiledData.Nodes.AddDefaulted_GetRef();
 	EnterNode.NodeId = FGuid::NewGuid();
