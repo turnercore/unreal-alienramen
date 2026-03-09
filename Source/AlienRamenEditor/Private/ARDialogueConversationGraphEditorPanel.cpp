@@ -9,6 +9,7 @@
 #include "Editor.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
+#include "EdGraph/EdGraphSchema.h"
 #include "EdGraphNode_Comment.h"
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
@@ -396,6 +397,8 @@ void SDialogueConversationGraphEditorPanel::RebuildGraphEditorWidget(UEdGraph* G
 
 	SGraphEditor::FGraphEditorEvents GraphEvents;
 	GraphEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &SDialogueConversationGraphEditorPanel::OnGraphSelectionChanged);
+	GraphEvents.OnVerifyTextCommit = FOnNodeVerifyTextCommit::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleVerifyNodeTextCommit);
+	GraphEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleNodeTextCommitted);
 	GraphEvents.OnSpawnNodeByShortcutAtLocation = SGraphEditor::FOnSpawnNodeByShortcutAtLocation::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut);
 
 	SAssignNew(GraphEditorWidget, SGraphEditor)
@@ -448,6 +451,40 @@ void SDialogueConversationGraphEditorPanel::OnGraphSelectionChanged(const TSet<U
 	}
 
 	DetailsView->SetObject(SelectedConversation.Get());
+}
+
+bool SDialogueConversationGraphEditorPanel::HandleVerifyNodeTextCommit(
+	const FText& NewText,
+	UEdGraphNode* Node,
+	FText& OutErrorMessage) const
+{
+	(void)Node;
+	if (NewText.ToString().TrimStartAndEnd().IsEmpty())
+	{
+		OutErrorMessage = FText::FromString(TEXT("Name cannot be empty."));
+		return false;
+	}
+
+	return true;
+}
+
+void SDialogueConversationGraphEditorPanel::HandleNodeTextCommitted(
+	const FText& NewText,
+	const ETextCommit::Type CommitType,
+	UEdGraphNode* Node)
+{
+	(void)CommitType;
+	if (!Node)
+	{
+		return;
+	}
+
+	Node->Modify();
+	Node->OnRenameNode(NewText.ToString());
+	if (UARDialogueConversationAsset* Conversation = SelectedConversation.Get())
+	{
+		Conversation->MarkPackageDirty();
+	}
 }
 
 FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputChord InChord, const FVector2f& Location)
@@ -567,16 +604,25 @@ void SDialogueConversationGraphEditorPanel::CreateCommentAtLocation(const FVecto
 	const FScopedTransaction Transaction(FText::FromString(TEXT("Add Dialogue Comment")));
 	Graph->Modify();
 
-	UEdGraphNode_Comment* CommentNode = NewObject<UEdGraphNode_Comment>(Graph);
-	CommentNode->SetFlags(RF_Transactional);
-	CommentNode->CreateNewGuid();
-	CommentNode->NodeComment = TEXT("Comment");
-	CommentNode->NodePosX = static_cast<int32>(Location.X);
-	CommentNode->NodePosY = static_cast<int32>(Location.Y);
-	CommentNode->NodeWidth = 360;
-	CommentNode->NodeHeight = 180;
-	CommentNode->SnapToGrid(16);
-	Graph->AddNode(CommentNode, true, true);
+	UEdGraphNode_Comment* CommentTemplate = NewObject<UEdGraphNode_Comment>();
+	CommentTemplate->SetFlags(RF_Transactional);
+	CommentTemplate->bCommentBubbleVisible_InDetailsPanel = false;
+	CommentTemplate->bColorCommentBubble = false;
+	CommentTemplate->NodeComment = TEXT("Comment");
+	CommentTemplate->NodeWidth = 360;
+	CommentTemplate->NodeHeight = 180;
+
+	UEdGraphNode_Comment* CommentNode =
+		Cast<UEdGraphNode_Comment>(
+			FEdGraphSchemaAction_NewNode::SpawnNodeFromTemplate<UEdGraphNode_Comment>(
+				Graph,
+				CommentTemplate,
+				Location,
+				true));
+	if (!CommentNode)
+	{
+		return;
+	}
 
 	if (GraphEditorWidget.IsValid())
 	{

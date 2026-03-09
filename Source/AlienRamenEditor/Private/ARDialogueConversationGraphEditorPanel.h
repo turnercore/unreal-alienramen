@@ -46,6 +46,8 @@ private:
 	FString GetSelectedConversationPath() const;
 	void OnSelectedConversationChanged(const FAssetData& AssetData);
 	void OnGraphSelectionChanged(const TSet<UObject*>& NewSelection);
+	bool HandleVerifyNodeTextCommit(const FText& NewText, UEdGraphNode* Node, FText& OutErrorMessage) const;
+	void HandleNodeTextCommitted(const FText& NewText, ETextCommit::Type CommitType, UEdGraphNode* Node);
 	FReply HandleSpawnNodeByShortcut(FInputChord InChord, const FVector2f& Location);
 	void HandleCreateComment();
 	bool CanCreateComment() const;
