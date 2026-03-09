@@ -298,7 +298,7 @@ void AARPlayerController::RequestAdvanceDialogue()
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->AdvanceDialogue(this);
+			DialogueSubsystem->AdvanceConversation(this);
 		}
 		return;
 	}
@@ -311,23 +311,23 @@ void AARPlayerController::ServerRequestAdvanceDialogue_Implementation()
 	RequestAdvanceDialogue();
 }
 
-void AARPlayerController::RequestSubmitDialogueChoice(FGameplayTag ChoiceTag)
+void AARPlayerController::RequestSubmitDialogueChoice(FGuid ChoiceBranchId)
 {
 	if (HasAuthority())
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceTag);
+			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceBranchId);
 		}
 		return;
 	}
 
-	ServerRequestSubmitDialogueChoice(ChoiceTag);
+	ServerRequestSubmitDialogueChoice(ChoiceBranchId);
 }
 
-void AARPlayerController::ServerRequestSubmitDialogueChoice_Implementation(FGameplayTag ChoiceTag)
+void AARPlayerController::ServerRequestSubmitDialogueChoice_Implementation(FGuid ChoiceBranchId)
 {
-	RequestSubmitDialogueChoice(ChoiceTag);
+	RequestSubmitDialogueChoice(ChoiceBranchId);
 }
 
 void AARPlayerController::RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)
@@ -349,7 +349,7 @@ void AARPlayerController::ServerRequestSetDialogueEavesdrop_Implementation(bool 
 	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
 }
 
-void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FARDialogueClientView& View)
+void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FDialogueClientView& View)
 {
 	BP_OnDialogueSessionUpdated(View);
 }
@@ -886,7 +886,7 @@ bool AARPlayerController::IsDialogueSessionActiveLocal() const
 {
 	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 	{
-		FARDialogueClientView View;
+		FDialogueClientView View;
 		return DialogueSubsystem->GetLocalViewForController(this, View);
 	}
 

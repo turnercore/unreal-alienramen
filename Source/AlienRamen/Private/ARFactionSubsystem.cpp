@@ -114,6 +114,43 @@ void UARFactionSubsystem::ClearVotes()
 	VoteSelections.Reset();
 }
 
+bool UARFactionSubsystem::ModifyFactionPopularity(FGameplayTag FactionTag, float DeltaPopularity)
+{
+	if (!IsAuthorityWorld_Faction(GetWorld()) || !FactionTag.IsValid())
+	{
+		return false;
+	}
+
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	if (!SaveSubsystem || !SaveGame)
+	{
+		return false;
+	}
+
+	FARFactionRuntimeState* RuntimeState = nullptr;
+	for (FARFactionRuntimeState& Entry : SaveGame->FactionPopularityStates)
+	{
+		if (Entry.FactionTag.MatchesTagExact(FactionTag))
+		{
+			RuntimeState = &Entry;
+			break;
+		}
+	}
+
+	if (!RuntimeState)
+	{
+		FARFactionRuntimeState& Added = SaveGame->FactionPopularityStates.AddDefaulted_GetRef();
+		Added.FactionTag = FactionTag;
+		RuntimeState = &Added;
+	}
+
+	RuntimeState->Popularity += DeltaPopularity;
+	SaveSubsystem->MarkSaveDirty();
+	bSnapshotValid = false;
+	return true;
+}
+
 bool UARFactionSubsystem::FinalizeElectionForTravel(FGameplayTag& OutWinnerFactionTag, EARFactionWinnerReason& OutReason)
 {
 	if (!IsAuthorityWorld_Faction(GetWorld()))

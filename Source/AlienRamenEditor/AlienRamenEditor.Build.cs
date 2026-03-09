@@ -16,6 +16,7 @@ public class AlienRamenEditor : ModuleRules
 			"InputCore",
 			"UnrealEd",
 			"LevelEditor",
+			"GraphEditor",
 			"PropertyEditor",
 			"ToolMenus",
 			"AssetRegistry",

@@ -48,6 +48,9 @@
 ## High-Level Architecture
 
 - Unreal Engine version contract: this project is on Unreal Engine `5.7` (`AlienRamen.uproject` `EngineAssociation` is `5.7`). Use UE 5.7 toolchain/Build scripts for compile/package commands.
+- UE target include-order contract: both `AlienRamen.Target.cs` and `AlienRamenEditor.Target.cs` explicitly set `IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7` to avoid backward-compat include-order drift warnings.
+- Game target build-environment contract: `AlienRamen.Target.cs` sets `bOverrideBuildEnvironment = true` because it injects custom Steam `GlobalDefinitions`; this is required for installed-engine builds where unique build environments are not allowed.
+- Module type contract: `AlienRamenTests` is `DeveloperTool` (not deprecated `Developer`) in `AlienRamen.uproject`.
 - Core runtime module: `Source/AlienRamen`
 - Editor tooling module: `Source/AlienRamenEditor`
 - Native GameInstance base now exists: `UARGameInstance` (`Source/AlienRamen/Public/ARGameInstance.h`) for future central orchestration.
@@ -105,12 +108,22 @@
 - subsystem: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`) for candidate generation, transient vote capture, and travel-time winner finalization.
 - Native dialogue + NPC runtime now exists:
 - shared dialogue/NPC types: `Source/AlienRamen/Public/ARDialogueTypes.h`
-- dialogue settings: `UARDialogueSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Dialogue`) with root/policy tags (defaults: `Dialogue.Node`, shared modes `Mode.Invader`+`Mode.Scrapyard`, per-player mode `Mode.Shop`, pause-on-dialogue mode `Mode.Invader`)
+- conversation asset type: `UARDialogueConversationAsset` (`Source/AlienRamen/Public/ARDialogueConversationAsset.h`) with `Header` + `CompiledData` + compile validation snapshot.
+- dialogue settings: `UARDialogueSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Dialogue`) now uses `SpeakerDefinitionRootTag` (default `Dialogue.Speaker`), `ConversationDefinitionRootTag` (default `Dialogue.Conversation`), explicit `ConversationAssets` registry, optional ContentLookup conversation rows (`FDialogueConversationAssetRow` DataTable routed by `ConversationDefinitionRootTag`), mode policy tags, and `MaxExecutionStepsPerAdvance`.
 - NPC settings: `UARNPCSettings` (`Project Settings -> Alien Ramen -> Alien Ramen NPC`) with `NpcDefinitionRootTag` (default `NPC.Identity`)
-- dialogue subsystem: `UARDialogueSubsystem` (`Source/AlienRamen/Public/ARDialogueSubsystem.h`) owns authoritative dialogue sessions, choice resolution, Shop eavesdrop, and mode-specific shared vs per-player policy.
-- NPC subsystem: `UARNPCSubsystem` (`Source/AlienRamen/Public/ARNPCSubsystem.h`) owns persistent NPC relationship/want state and talkable-state refresh.
+- dialogue subsystem: `UARDialogueSubsystem` (`Source/AlienRamen/Public/ARDialogueSubsystem.h`) owns authoritative offer selection, compiled-node execution (enter/completed/line/choice/bool/switch/tag-mutation/relationship-mutation/faction-mutation/random), completion persistence, and choice-memory persistence.
+- dialogue session view replication contract: server runtime now forwards authoritative per-slot view updates through `AARPlayerController::ClientDialogueSessionUpdated(...)` / `ClientDialogueSessionEnded(...)` in addition to subsystem delegates.
+- dialogue validation contract now enforces speaker resolvability on conversation primary/participants/line speakers (built-in player/brother/sister tags or resolvable speaker rows), plus start-time validation gate before execution.
+- dialogue tag-mutation API now supports `ActivePlayerTransientConversation` through runtime session-owned transient tag containers (in addition to saved game/player progression targets).
+- dialogue condition defaults now match authored intent for blocked groups: conversation/node blocked groups default to `Any` while locked groups remain `All`.
+- save contract now blocks canonical saves while any dialogue session is active (`UARDialogueSubsystem::HasActiveDialogueSession()` check in `UARSaveSubsystem::SaveCurrentGame`), enforcing no mid-conversation saves.
+- NPC subsystem: `UARNPCSubsystem` (`Source/AlienRamen/Public/ARNPCSubsystem.h`) is now talkable-cache focused (no native ramen/want mutation API path).
 - native NPC world actor base: `AARNPCCharacterBase` (`Source/AlienRamen/Public/ARNPCCharacterBase.h`) exposes server interaction entrypoint and replicated `bIsTalkable`.
+- NPC local-state gate: `AARNPCCharacterBase::bNpcLocalStateAllowsDialogue` + `SetNpcLocalStateAllowsDialogue(...)` apply a server-authoritative per-NPC local conversation block (for example ordering mode), and replicated `bIsTalkable` is now `global unlock talkable && local-state allows`.
 - Runtime isolation contract: dialogue session/eavesdrop caches and NPC talkable caches are subsystem-instance-owned (no translation-unit static shared runtime state), so multi-PIE/multi-GameInstance runs do not leak state across instances.
+- Dialogue editor tooling now includes:
+- speaker hub tab: `SDialogueSpeakerEditorPanel` (`AR_DialogueSpeakerEditor`) with content-lookup-backed speaker table loading, search/faction filter/sort, speaker CRUD/validate/save actions, inline threshold reset/editing, portrait add-update-remove controls, relationship-band conversation map, conversation create/open, and broken-conversation scan.
+- conversation graph tab: `SDialogueConversationGraphEditorPanel` (`AR_DialogueConversationGraphEditor`) is now graph-canvas-based (`SGraphEditor`) and backed by `UARDialogueEdGraph` / `UARDialogueEdGraphNode` / `UARDialogueEdGraphSchema`; it supports right-click node creation, exec pin wiring, node/asset details editing, compile-from-editor-graph into runtime `CompiledData`, node-level validation markers, and Save/Validate/Compile/Focus Enter/Auto Layout/Preview actions.
 - Invader spicy-track shared type surface is native in `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`.
 - Invader spicy-track tuning is project-settings-driven via `UARInvaderSpicyTrackSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Invader Spicy Track`).
 - Invader drop type surface is native in `Source/AlienRamen/Public/ARInvaderDropTypes.h` (`EARInvaderDropType`: `None`, `Scrap`, `Meat`).
@@ -145,19 +158,32 @@
 ## Dialogue + NPC Runtime Contract
 
 - Authority model: dialogue session creation/advance/choice/eavesdrop mutations are server-authoritative via `UARDialogueSubsystem`; client UI submits through `AARPlayerController` server RPC entrypoints (`RequestStartDialogue`, `RequestAdvanceDialogue`, `RequestSubmitDialogueChoice`, `RequestSetDialogueEavesdrop`).
+- Server-to-client presentation model: authoritative dialogue view payloads are pushed from server to clients through `ClientDialogueSessionUpdated` and `ClientDialogueSessionEnded`; UI should consume those payloads (and/or subsystem delegates) as the canonical view state.
 - Mode policy:
 - `Mode.Invader` and `Mode.Scrapyard` use one shared global dialogue session (single active shared session).
 - `Mode.Shop` uses per-player sessions; eavesdrop can subscribe a partner as mirrored co-pilot.
-- Pause policy: shared dialogue pause intent is still gated by `UARDialogueSettings::PauseOnDialogueModeTags` (default `Mode.Invader`), but runtime pause apply/clear now routes through `AARGameStateBase` external pause reasons (`EARPauseExternalReason::DialogueShared`) instead of direct `UGameplayStatics::SetGamePaused` calls.
-- Seen-history policy: only the active speaker (session initiator driving node progression) gets seen-node credit; passive viewers/eavesdroppers do not.
-- Choice policy:
-- node-level participation mode is `InitiatorOnly` or `GroupChoice`.
-- canonical branch outcome is global-per-node and persisted once.
-- group-choice conflict tie-break is currently initiator-wins.
-- important decision hook: node flag `bForceEavesdropForImportantDecision` forces partner view subscription in Shop and server-locks choice submission until all slotted players are viewing.
-- NPC progression policy: relationship/love and want satisfaction are global per save (not per-player). `SubmitNpcRamenDelivery(...)` only applies when delivered ramen tag matches current want.
+- Offer policy:
+- candidates are filtered by exact `Conversation.Header.PrimarySpeakerTag`
+- offer gating includes relationship minimum, locked/blocked condition groups, and seen/completed/repeatability block flags
+- valid candidates are bucketed (`unseen` -> `game-seen/player-unseen catch-up` -> `repeatable/other`), then highest priority and random among ties.
+- Seen policy:
+- seen is transient-only (`SeenByGameTransient`, `SeenByPlayerTransient`) and is never saved.
+- Completion policy:
+- completion is persisted only when a `Completed` node executes:
+- game completion tag: `DialogueCompletedConversationTagsByGame`
+- player completion tag: `DialoguePlayerPersistentStates[*].CompletedConversationTags`
+- Choice-memory policy:
+- per-session choice selections are tracked by choice node id
+- on completed conversation, persisted to `DialoguePlayerPersistentStates[*].CompletedChoiceRecords`
+- choice nodes with `LockedToRecordedChoice` enforce recorded branch when replayed after completion.
+- Important/eavesdrop policy:
+- conversation-level `bImportant` and choice-level important flags force all slotted players into participants before interaction.
 - Talkable policy: NPC talkable state is computed from dialogue unlock availability (`HasUnlockedDialogueForNpcForAnyPlayer`) and replicated to world NPC actors via `AARNPCCharacterBase::bIsTalkable`.
-- Content authoring source: dialogue and NPC definitions are tag-keyed DataTable rows resolved through `UContentLookupSubsystem` roots (`Dialogue.Node`, `NPC.Identity`).
+- NPC local gating policy: NPC actors may temporarily block local interaction via `SetNpcLocalStateAllowsDialogue(false)` without changing progression unlock state; this local gate is combined with subsystem talkable cache before replicating `bIsTalkable`.
+- Content authoring source:
+- speakers are DataTable rows resolved through `UContentLookupSubsystem` using `SpeakerDefinitionRootTag` (default `Dialogue.Speaker`)
+- conversations are resolved from the merged registry: `UARDialogueSettings::ConversationAssets` plus optional ContentLookup DataTable rows (`FDialogueConversationAssetRow`, routed by `ConversationDefinitionRootTag`). Duplicate `ConversationTag` entries log errors; the first registration wins.
+- runtime logging: expected gating/selection paths log at `Verbose` in `ARLog`; invalid graphs/runtime corruption/persistence failures log as `Warning` or `Error` with conversation/session context.
 
 ## GAS Runtime Contract
 

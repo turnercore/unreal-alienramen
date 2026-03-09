@@ -20,7 +20,7 @@
 		},
 		{
 			"Name": "AlienRamenTests",
-			"Type": "Developer",
+			"Type": "DeveloperTool",
 			"LoadingPhase": "Default"
 		}
 	],

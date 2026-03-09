@@ -30,6 +30,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
 	bool IsTalkable() const { return bIsTalkable; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
+	bool IsNpcLocalStateAllowingDialogue() const { return bNpcLocalStateAllowsDialogue; }
+
+	// Server-authoritative local state gate (for example ordering mode) applied on top of global dialogue availability.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
+	void SetNpcLocalStateAllowsDialogue(bool bEnabled);
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC")
 	FAROnNpcTalkableStateChanged OnNpcTalkableStateChanged;
 
@@ -49,6 +56,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC")
 	FGameplayTag NpcTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC")
+	bool bNpcLocalStateAllowsDialogue = true;
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|NPC")
 	bool bIsTalkable = false;

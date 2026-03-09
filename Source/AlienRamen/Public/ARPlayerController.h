@@ -105,10 +105,10 @@ public:
 	void ServerRequestAdvanceDialogue();
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestSubmitDialogueChoice(FGameplayTag ChoiceTag);
+	void RequestSubmitDialogueChoice(FGuid ChoiceBranchId);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestSubmitDialogueChoice(FGameplayTag ChoiceTag);
+	void ServerRequestSubmitDialogueChoice(FGuid ChoiceBranchId);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
@@ -117,13 +117,13 @@ public:
 	void ServerRequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
 
 	UFUNCTION(Client, Reliable)
-	void ClientDialogueSessionUpdated(const FARDialogueClientView& View);
+	void ClientDialogueSessionUpdated(const FDialogueClientView& View);
 
 	UFUNCTION(Client, Reliable)
 	void ClientDialogueSessionEnded(const FString& SessionId);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
-	void BP_OnDialogueSessionUpdated(const FARDialogueClientView& View);
+	void BP_OnDialogueSessionUpdated(const FDialogueClientView& View);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
 	void BP_OnDialogueSessionEnded(const FString& SessionId);
