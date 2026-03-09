@@ -299,6 +299,12 @@ FReply SDialogueConversationGraphEditorPanel::OnKeyDown(const FGeometry& MyGeome
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
 
+void SDialogueConversationGraphEditorPanel::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+{
+	SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+	LoadPendingConversationRequest();
+}
+
 void SDialogueConversationGraphEditorPanel::LoadPendingConversationRequest()
 {
 	if (GPendingConversationToEdit.IsValid())
