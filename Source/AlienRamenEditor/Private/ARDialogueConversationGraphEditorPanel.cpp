@@ -17,6 +17,7 @@
 #include "Framework/Commands/GenericCommands.h"
 #include "Framework/Commands/UICommandList.h"
 #include "GraphEditor.h"
+#include "GraphEditorActions.h"
 #include "HAL/PlatformApplicationMisc.h"
 #include "Input/Events.h"
 #include "InputCoreTypes.h"
@@ -120,6 +121,7 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 
 	FGenericCommands::Register();
 	GraphEditorCommands = MakeShared<FUICommandList>();
+	FGraphEditorCommands::Register();
 	GraphEditorCommands->MapAction(
 		FGenericCommands::Get().Copy,
 		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleCopySelectedNodes),
@@ -140,6 +142,14 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 		FGenericCommands::Get().Delete,
 		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes),
 		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanDeleteSelectedNodes));
+	GraphEditorCommands->MapAction(
+		FGraphEditorCommands::Get().CreateComment,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleCreateComment),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanCreateComment));
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Rename,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleRenameSelectedNode),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanRenameSelectedNode));
 
 	ChildSlot
 	[
@@ -487,6 +497,73 @@ FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputCh
 	}
 
 	// C: Add a comment node. If nodes are selected, wrap around their bounds.
+	CreateCommentAtLocation(Location);
+	return FReply::Handled();
+}
+
+void SDialogueConversationGraphEditorPanel::HandleCreateComment()
+{
+	if (!GraphEditorWidget.IsValid())
+	{
+		return;
+	}
+
+	CreateCommentAtLocation(FVector2f(GraphEditorWidget->GetPasteLocation2f()));
+}
+
+bool SDialogueConversationGraphEditorPanel::CanCreateComment() const
+{
+	return SelectedEditorGraph.IsValid() && GraphEditorWidget.IsValid();
+}
+
+void SDialogueConversationGraphEditorPanel::HandleRenameSelectedNode()
+{
+	if (!GraphEditorWidget.IsValid())
+	{
+		return;
+	}
+
+	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+	if (SelectedNodes.Num() != 1)
+	{
+		return;
+	}
+
+	UObject* SelectedObject = *SelectedNodes.CreateConstIterator();
+	UEdGraphNode* SelectedNode = Cast<UEdGraphNode>(SelectedObject);
+	if (!SelectedNode)
+	{
+		return;
+	}
+
+	GraphEditorWidget->IsNodeTitleVisible(SelectedNode, true);
+}
+
+bool SDialogueConversationGraphEditorPanel::CanRenameSelectedNode() const
+{
+	if (!GraphEditorWidget.IsValid())
+	{
+		return false;
+	}
+
+	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+	if (SelectedNodes.Num() != 1)
+	{
+		return false;
+	}
+
+	const UObject* SelectedObject = *SelectedNodes.CreateConstIterator();
+	return Cast<UEdGraphNode>(SelectedObject) != nullptr;
+}
+
+void SDialogueConversationGraphEditorPanel::CreateCommentAtLocation(const FVector2f& Location)
+{
+	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
+	if (!Graph)
+	{
+		return;
+	}
+
 	const FScopedTransaction Transaction(FText::FromString(TEXT("Add Dialogue Comment")));
 	Graph->Modify();
 
@@ -547,7 +624,6 @@ FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputCh
 	}
 
 	SetStatusMessage(TEXT("Comment node added."), EEditorStatusType::Info);
-	return FReply::Handled();
 }
 
 FReply SDialogueConversationGraphEditorPanel::HandleRefresh()
