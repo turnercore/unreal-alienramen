@@ -9,7 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "ARNPCSettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen NPC"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="NPC"))
 class ALIENRAMEN_API UARNPCSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

@@ -9,7 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "ARLoadoutSettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Loadout"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Loadout"))
 class ALIENRAMEN_API UARLoadoutSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
