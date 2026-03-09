@@ -47,6 +47,10 @@ private:
 	void OnSelectedConversationChanged(const FAssetData& AssetData);
 	void OnGraphSelectionChanged(const TSet<UObject*>& NewSelection);
 	FReply HandleSpawnNodeByShortcut(FInputChord InChord, const FVector2f& Location);
+	void HandleCreateComment();
+	bool CanCreateComment() const;
+	void HandleRenameSelectedNode();
+	bool CanRenameSelectedNode() const;
 
 	FReply HandleRefresh();
 	FReply HandleSave();
@@ -64,6 +68,7 @@ private:
 	void HandleDeleteSelectedNodes();
 	bool CanDeleteSelectedNodes() const;
 	void ExecuteSaveCommand();
+	void CreateCommentAtLocation(const FVector2f& Location);
 
 	bool EnsureConversationEditorGraph(UARDialogueConversationAsset* ConversationAsset);
 	void RebuildEditorGraphFromCompiled(UARDialogueConversationAsset* ConversationAsset, UARDialogueEdGraph* Graph) const;
