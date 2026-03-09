@@ -28,6 +28,7 @@ public:
 	static void RequestOpenConversation(UARDialogueConversationAsset* Asset);
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
 private:
 	enum class EEditorStatusType : uint8
