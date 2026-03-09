@@ -15,7 +15,7 @@ class ALIENRAMEN_API UARNPCSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetCategoryName() const override { return TEXT("NPC"); }
 
 	// Root used for content lookup routing of NPC rows.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "NPC")
