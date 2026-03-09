@@ -9,6 +9,7 @@ class SMultiLineEditableTextBox;
 class SVerticalBox;
 class UARDialogueConversationAsset;
 class UARDialogueEdGraphNode;
+struct FDialogueLineNodeData;
 
 class SARDialogueLineGraphNode final : public SGraphNode
 {
@@ -26,30 +27,40 @@ private:
 	const UARDialogueEdGraphNode* GetDialogueNode() const;
 	UARDialogueEdGraphNode* GetDialogueNodeMutable() const;
 	const UARDialogueConversationAsset* GetOwningConversationAsset() const;
+	bool IsMultiLineNode() const;
 
 	FReply HandlePortraitClicked();
+	FReply HandlePortraitClickedForEntry(FGuid EntryId);
 	void HandleLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType);
+	void HandleLineTextCommittedForEntry(const FText& NewText, ETextCommit::Type CommitType, FGuid EntryId);
+	FReply HandleAddMultiLineEntryClicked();
+	bool HandleMultiLineRowDropped(FGuid DraggedEntryId, FGuid TargetEntryId);
 
 	FText GetNodeTitleText() const;
 	FText GetSpeakerTagText() const;
 	FText GetSpeakerInitialsText() const;
+	FText GetSpeakerTagTextForEntry(FGuid EntryId) const;
+	FText GetSpeakerInitialsTextForEntry(FGuid EntryId) const;
 	FText GetLineEditHintText() const;
 	EVisibility GetSpeakerInitialsVisibility() const;
+	EVisibility GetSpeakerInitialsVisibilityForEntry(FGuid EntryId) const;
 	FSlateColor GetTitleColor() const;
 
 	const FSlateBrush* GetPortraitBrush() const;
-	void RefreshPortraitBrush() const;
-	TArray<FGameplayTag> BuildQuickSpeakerCycleList() const;
-	void SetLineSpeakerTag(const FGameplayTag& NewSpeakerTag);
-	void CommitLineText(const FText& NewText);
+	const FSlateBrush* GetPortraitBrushForEntry(FGuid EntryId) const;
+	void RefreshPortraitBrushForSpeaker(const FGameplayTag& SpeakerTag) const;
+	TArray<FGameplayTag> BuildQuickSpeakerCycleList(FGuid EntryId) const;
+	void SetLineSpeakerTagForEntry(FGuid EntryId, const FGameplayTag& NewSpeakerTag);
+	void CommitLineTextForEntry(FGuid EntryId, const FText& NewText);
+	FGameplayTag GetSpeakerTagForEntry(FGuid EntryId) const;
+	const FDialogueLineNodeData* GetLineDataForEntry(FGuid EntryId) const;
+	TSharedRef<SWidget> BuildLineEntryWidget(FGuid EntryId, int32 DisplayIndex, bool bShowDragHandle);
 
 	TSharedPtr<SVerticalBox> LeftNodeBox;
 	TSharedPtr<SVerticalBox> RightNodeBox;
-	TSharedPtr<SMultiLineEditableTextBox> LineTextBox;
 
-	mutable FSlateBrush PortraitBrush;
-	mutable FGameplayTag CachedPortraitTag;
-	mutable bool bHasPortraitTexture = false;
+	mutable TMap<FName, FSlateBrush> PortraitBrushesBySpeaker;
+	mutable TSet<FName> SpeakersWithPortrait;
 };
 
 TSharedRef<FGraphPanelNodeFactory> CreateARDialogueLineGraphNodeFactory();

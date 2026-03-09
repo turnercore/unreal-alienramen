@@ -9,6 +9,7 @@
 #include "Editor.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
+#include "EdGraphNode_Comment.h"
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
 #include "EdGraphUtilities.h"
@@ -30,6 +31,7 @@
 #include "Widgets/Layout/SSplitter.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
+#include "Math/NumericLimits.h"
 
 namespace
 {
@@ -427,7 +429,7 @@ void SDialogueConversationGraphEditorPanel::OnGraphSelectionChanged(const TSet<U
 	{
 		if (UObject* SelectedObject = *NewSelection.CreateConstIterator())
 		{
-			if (Cast<UARDialogueEdGraphNode>(SelectedObject))
+			if (Cast<UEdGraphNode>(SelectedObject))
 			{
 				DetailsView->SetObject(SelectedObject);
 				return;
@@ -440,7 +442,7 @@ void SDialogueConversationGraphEditorPanel::OnGraphSelectionChanged(const TSet<U
 
 FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputChord InChord, const FVector2f& Location)
 {
-	if (InChord.Key != EKeys::R)
+	if (InChord.Key != EKeys::R && InChord.Key != EKeys::C)
 	{
 		return FReply::Unhandled();
 	}
@@ -451,25 +453,91 @@ FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputCh
 		return FReply::Unhandled();
 	}
 
-	const FScopedTransaction Transaction(FText::FromString(TEXT("Add Dialogue Route Node")));
+	if (InChord.Key == EKeys::R)
+	{
+		const FScopedTransaction Transaction(FText::FromString(TEXT("Add Dialogue Route Node")));
+		Graph->Modify();
+
+		UARDialogueEdGraphNode* RouteNode = NewObject<UARDialogueEdGraphNode>(Graph);
+		RouteNode->SetFlags(RF_Transactional);
+		RouteNode->InitializeForNodeType(EDialogueNodeType::Route);
+		RouteNode->NodePosX = static_cast<int32>(Location.X);
+		RouteNode->NodePosY = static_cast<int32>(Location.Y);
+		RouteNode->CreateNewGuid();
+		RouteNode->PostPlacedNewNode();
+		RouteNode->AllocateDefaultPins();
+		Graph->AddNode(RouteNode, true, true);
+
+		if (GraphEditorWidget.IsValid())
+		{
+			if (UEdGraphPin* DragPin = GraphEditorWidget->GetGraphPinForMenu())
+			{
+				RouteNode->AutowireNewNode(DragPin);
+			}
+		}
+
+		Graph->NotifyGraphChanged();
+		if (UARDialogueConversationAsset* Conversation = SelectedConversation.Get())
+		{
+			Conversation->MarkPackageDirty();
+		}
+
+		SetStatusMessage(TEXT("Route node added."), EEditorStatusType::Info);
+		return FReply::Handled();
+	}
+
+	// C: Add a comment node. If nodes are selected, wrap around their bounds.
+	const FScopedTransaction Transaction(FText::FromString(TEXT("Add Dialogue Comment")));
 	Graph->Modify();
 
-	UARDialogueEdGraphNode* RouteNode = NewObject<UARDialogueEdGraphNode>(Graph);
-	RouteNode->SetFlags(RF_Transactional);
-	RouteNode->InitializeForNodeType(EDialogueNodeType::Route);
-	RouteNode->NodePosX = static_cast<int32>(Location.X);
-	RouteNode->NodePosY = static_cast<int32>(Location.Y);
-	RouteNode->CreateNewGuid();
-	RouteNode->PostPlacedNewNode();
-	RouteNode->AllocateDefaultPins();
-	Graph->AddNode(RouteNode, true, true);
+	UEdGraphNode_Comment* CommentNode = NewObject<UEdGraphNode_Comment>(Graph);
+	CommentNode->SetFlags(RF_Transactional);
+	CommentNode->CreateNewGuid();
+	CommentNode->NodeComment = TEXT("Comment");
+	CommentNode->NodePosX = static_cast<int32>(Location.X);
+	CommentNode->NodePosY = static_cast<int32>(Location.Y);
+	CommentNode->NodeWidth = 360;
+	CommentNode->NodeHeight = 180;
+	CommentNode->SnapToGrid(16);
+	Graph->AddNode(CommentNode, true, true);
 
 	if (GraphEditorWidget.IsValid())
 	{
-		if (UEdGraphPin* DragPin = GraphEditorWidget->GetGraphPinForMenu())
+		const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+		int32 MinX = TNumericLimits<int32>::Max();
+		int32 MinY = TNumericLimits<int32>::Max();
+		int32 MaxX = TNumericLimits<int32>::Lowest();
+		int32 MaxY = TNumericLimits<int32>::Lowest();
+		int32 WrappedCount = 0;
+		for (UObject* SelectedObject : SelectedNodes)
 		{
-			RouteNode->AutowireNewNode(DragPin);
+			UEdGraphNode* SelectedNode = Cast<UEdGraphNode>(SelectedObject);
+			if (!SelectedNode || SelectedNode == CommentNode)
+			{
+				continue;
+			}
+
+			const int32 NodeWidth = FMath::Max(80, SelectedNode->NodeWidth);
+			const int32 NodeHeight = FMath::Max(60, SelectedNode->NodeHeight);
+			MinX = FMath::Min(MinX, SelectedNode->NodePosX);
+			MinY = FMath::Min(MinY, SelectedNode->NodePosY);
+			MaxX = FMath::Max(MaxX, SelectedNode->NodePosX + NodeWidth);
+			MaxY = FMath::Max(MaxY, SelectedNode->NodePosY + NodeHeight);
+			++WrappedCount;
 		}
+
+		if (WrappedCount > 0)
+		{
+			constexpr int32 CommentPadding = 48;
+			CommentNode->NodePosX = MinX - CommentPadding;
+			CommentNode->NodePosY = MinY - CommentPadding;
+			CommentNode->NodeWidth = FMath::Max(220, (MaxX - MinX) + (CommentPadding * 2));
+			CommentNode->NodeHeight = FMath::Max(140, (MaxY - MinY) + (CommentPadding * 2));
+			CommentNode->SnapToGrid(16);
+		}
+
+		GraphEditorWidget->ClearSelectionSet();
+		GraphEditorWidget->SetNodeSelection(CommentNode, true);
 	}
 
 	Graph->NotifyGraphChanged();
@@ -478,7 +546,7 @@ FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputCh
 		Conversation->MarkPackageDirty();
 	}
 
-	SetStatusMessage(TEXT("Route node added."), EEditorStatusType::Info);
+	SetStatusMessage(TEXT("Comment node added."), EEditorStatusType::Info);
 	return FReply::Handled();
 }
 
@@ -927,22 +995,23 @@ void SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes()
 	int32 SkippedEnterCount = 0;
 	for (UObject* SelectedObject : SelectedNodes)
 	{
-		UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(SelectedObject);
-		if (!DialogueNode)
+		UEdGraphNode* GraphNode = Cast<UEdGraphNode>(SelectedObject);
+		if (!GraphNode)
 		{
 			continue;
 		}
 
-		if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		if (UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+			DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
 		{
 			++SkippedEnterCount;
 			continue;
 		}
 
-		if (DialogueNode->CanUserDeleteNode())
+		if (GraphNode->CanUserDeleteNode())
 		{
-			DialogueNode->Modify();
-			DialogueNode->DestroyNode();
+			GraphNode->Modify();
+			GraphNode->DestroyNode();
 			++DeletedCount;
 		}
 	}
@@ -975,13 +1044,14 @@ bool SDialogueConversationGraphEditorPanel::CanDeleteSelectedNodes() const
 	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
 	for (UObject* SelectedObject : SelectedNodes)
 	{
-		const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(SelectedObject);
-		if (!DialogueNode || !DialogueNode->CanUserDeleteNode())
+		const UEdGraphNode* GraphNode = Cast<UEdGraphNode>(SelectedObject);
+		if (!GraphNode || !GraphNode->CanUserDeleteNode())
 		{
 			continue;
 		}
 
-		if (DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Enter)
+		const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+		if (!DialogueNode || DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Enter)
 		{
 			return true;
 		}
