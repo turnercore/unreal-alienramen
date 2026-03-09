@@ -167,6 +167,7 @@ namespace
 			case EDialogueNodeType::SwitchOnTagsByPriority:
 			case EDialogueNodeType::Random:
 			case EDialogueNodeType::Sequence:
+			case EDialogueNodeType::MultiLine:
 			case EDialogueNodeType::RelationshipMutation:
 			case EDialogueNodeType::FactionMutation:
 				return SNew(SARDialogueInlineGraphNode, DialogueNode);
@@ -316,6 +317,8 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildInlineContent() const
 		return BuildRandomInlineContent();
 	case EDialogueNodeType::Sequence:
 		return BuildSequenceInlineContent();
+	case EDialogueNodeType::MultiLine:
+		return BuildMultiLineInlineContent();
 	case EDialogueNodeType::RelationshipMutation:
 		return BuildRelationshipInlineContent();
 	case EDialogueNodeType::FactionMutation:
@@ -331,14 +334,6 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildChoiceInlineContent() const
 	const TArray<FDialogueCompiledChoiceBranch>* ChoiceBranches = DialogueNode ? &DialogueNode->RuntimeNode.ChoiceBranches : nullptr;
 
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
-	Content->AddSlot()
-	.AutoHeight()
-	.Padding(0.0f, 0.0f, 0.0f, 2.0f)
-	[
-		SNew(STextBlock)
-		.Text(FText::FromString(TEXT("Choices")))
-	];
-
 	if (!ChoiceBranches || ChoiceBranches->IsEmpty())
 	{
 		Content->AddSlot()
@@ -403,21 +398,13 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildChoiceInlineContent() const
 	.AutoHeight()
 	.Padding(0.0f, 4.0f, 0.0f, 0.0f)
 	[
-		SNew(STextBlock)
-		.Text(FText::FromString(TEXT("Fallback Choice Text")))
-	];
-
-	Content->AddSlot()
-	.AutoHeight()
-	.Padding(0.0f, 2.0f, 0.0f, 0.0f)
-	[
 		SNew(SEditableTextBox)
 		.Text_Lambda([this]()
 		{
 			const UARDialogueEdGraphNode* Node = GetDialogueNode();
 			return Node ? Node->RuntimeNode.FallbackChoiceText : FText::GetEmpty();
 		})
-		.HintText(FText::FromString(TEXT("Fallback text shown for fallback output")))
+		.HintText(FText::FromString(TEXT("Fallback text")))
 		.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleFallbackTextCommitted)
 	];
 
@@ -498,14 +485,6 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRandomInlineContent() const
 	const TArray<FDialogueCompiledRandomBranch>* RandomBranches = DialogueNode ? &DialogueNode->RuntimeNode.RandomBranches : nullptr;
 
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
-	Content->AddSlot()
-	.AutoHeight()
-	.Padding(0.0f, 0.0f, 0.0f, 2.0f)
-	[
-		SNew(STextBlock)
-		.Text(FText::FromString(TEXT("Random Branch Weights")))
-	];
-
 	if (!RandomBranches || RandomBranches->IsEmpty())
 	{
 		Content->AddSlot()
@@ -587,14 +566,6 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSequenceInlineContent() con
 	const TArray<FDialogueCompiledSequenceBranch>* SequenceBranches = DialogueNode ? &DialogueNode->RuntimeNode.SequenceBranches : nullptr;
 
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
-	Content->AddSlot()
-	.AutoHeight()
-	.Padding(0.0f, 0.0f, 0.0f, 2.0f)
-	[
-		SNew(STextBlock)
-		.Text(FText::FromString(TEXT("Sequence Order")))
-	];
-
 	if (!SequenceBranches || SequenceBranches->IsEmpty())
 	{
 		Content->AddSlot()
@@ -621,18 +592,118 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSequenceInlineContent() con
 	return Content;
 }
 
-TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRelationshipInlineContent() const
+TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildMultiLineInlineContent() const
 {
-	return SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
+	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const FDialogueMultiLineNodeData* MultiLineData = DialogueNode ? DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>() : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!MultiLineData || MultiLineData->Lines.IsEmpty())
+	{
+		Content->AddSlot()
 		.AutoHeight()
-		.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 		[
 			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("Target Speaker")))
+			.Text(FText::FromString(TEXT("No lines yet. Add a line to author this node.")))
+		];
+	}
+	else
+	{
+		const bool bCanDeleteEntries = MultiLineData->Lines.Num() > 1;
+		for (int32 Index = 0; Index < MultiLineData->Lines.Num(); ++Index)
+		{
+			const FDialogueMultiLineEntry& Entry = MultiLineData->Lines[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::MultiLine)
+				.BranchId(Entry.EntryId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SARDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::MultiLine)
+							.BranchId(Entry.EntryId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 6.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(0.0f, 0.0f, 6.0f, 0.0f)
+						[
+							SNew(SBox)
+							.WidthOverride(180.0f)
+							[
+								SNew(SGameplayTagCombo)
+								.Filter(TEXT("Dialogue.Speaker"))
+								.Tag(Entry.LineData.Line.SpeakerTag)
+								.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleMultiLineSpeakerTagChanged, Entry.EntryId)
+							]
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(Entry.LineData.Line.Text)
+							.HintText(FText::FromString(TEXT("Line text")))
+							.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleMultiLineTextCommitted, Entry.EntryId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(6.0f, 0.0f, 0.0f, 0.0f)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SButton)
+							.Text(FText::FromString(TEXT("X")))
+							.ToolTipText(FText::FromString(TEXT("Delete this line entry.")))
+							.IsEnabled(bCanDeleteEntries)
+							.OnClicked(this, &SARDialogueInlineGraphNode::HandleDeleteMultiLineEntryClicked, Entry.EntryId)
+						]
+					]
+				]
+			];
+		}
+	}
+
+	Content->AddSlot()
+	.AutoHeight()
+	.HAlign(HAlign_Right)
+	.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+	[
+		SNew(SButton)
+		.ToolTipText(FText::FromString(TEXT("Append a new line entry to this multi-line node.")))
+		.OnClicked(this, &SARDialogueInlineGraphNode::HandleAddMultiLineEntryClicked)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("Add Line +")))
 		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
+	];
+
+	return Content;
+}
+
+TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRelationshipInlineContent() const
+{
+	return SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot()
+		.FillWidth(1.0f)
 		[
 			SNew(SGameplayTagCombo)
 			.Filter(TEXT("Dialogue.Speaker"))
@@ -644,35 +715,26 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRelationshipInlineContent()
 			})
 			.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged)
 		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(0.0f, 4.0f, 0.0f, 2.0f)
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(6.0f, 0.0f, 0.0f, 0.0f)
 		[
-			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("Relationship Delta Points")))
-		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		[
-			SNew(SEditableTextBox)
-			.Text(this, &SARDialogueInlineGraphNode::GetRelationshipDeltaText)
-			.HintText(FText::FromString(TEXT("0.0")))
-			.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted)
+			SNew(SBox)
+			.WidthOverride(110.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(this, &SARDialogueInlineGraphNode::GetRelationshipDeltaText)
+				.HintText(FText::FromString(TEXT("Delta")))
+				.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted)
+			]
 		];
 }
 
 TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildFactionInlineContent() const
 {
-	return SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(0.0f, 0.0f, 0.0f, 2.0f)
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("Faction Tag")))
-		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
+	return SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot()
+		.FillWidth(1.0f)
 		[
 			SNew(SGameplayTagCombo)
 			.Filter(GetFactionTagFilter())
@@ -684,20 +746,18 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildFactionInlineContent() cons
 			})
 			.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleFactionTagChanged)
 		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(0.0f, 4.0f, 0.0f, 2.0f)
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(6.0f, 0.0f, 0.0f, 0.0f)
 		[
-			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("Faction Popularity Delta")))
-		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		[
-			SNew(SEditableTextBox)
-			.Text(this, &SARDialogueInlineGraphNode::GetFactionDeltaText)
-			.HintText(FText::FromString(TEXT("0.0")))
-			.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleFactionDeltaTextCommitted)
+			SNew(SBox)
+			.WidthOverride(110.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(this, &SARDialogueInlineGraphNode::GetFactionDeltaText)
+				.HintText(FText::FromString(TEXT("Delta")))
+				.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleFactionDeltaTextCommitted)
+			]
 		];
 }
 
@@ -742,7 +802,7 @@ void SARDialogueInlineGraphNode::AddDynamicPinButtonIfSupported()
 			.VAlign(VAlign_Center)
 			[
 				SNew(STextBlock)
-				.Text(FText::FromString(TEXT("Add pin")))
+				.Text(FText::FromString(TEXT("Add")))
 			]
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
@@ -800,6 +860,9 @@ bool SARDialogueInlineGraphNode::HandleBranchRowDropped(
 	case EDialogueNodeType::Random:
 		bReordered = DialogueNode->ReorderRandomBranch(DraggedBranchId, TargetBranchId);
 		break;
+	case EDialogueNodeType::MultiLine:
+		bReordered = DialogueNode->ReorderMultiLineEntry(DraggedBranchId, TargetBranchId);
+		break;
 	default:
 		break;
 	}
@@ -845,6 +908,45 @@ void SARDialogueInlineGraphNode::HandleRandomWeightCommitted(const float NewValu
 	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
 		DialogueNode->SetRandomBranchWeight(BranchId, NewValue);
+	}
+}
+
+FReply SARDialogueInlineGraphNode::HandleAddMultiLineEntryClicked() const
+{
+	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->AddMultiLineEntry();
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SARDialogueInlineGraphNode::HandleDeleteMultiLineEntryClicked(const FGuid EntryId) const
+{
+	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->RemoveMultiLineEntry(EntryId);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SARDialogueInlineGraphNode::HandleMultiLineSpeakerTagChanged(const FGameplayTag NewTag, const FGuid EntryId) const
+{
+	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetMultiLineEntrySpeakerTag(EntryId, NewTag);
+	}
+}
+
+void SARDialogueInlineGraphNode::HandleMultiLineTextCommitted(const FText& NewText, const ETextCommit::Type CommitType, const FGuid EntryId) const
+{
+	(void)CommitType;
+	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetMultiLineEntryText(EntryId, NewText);
 	}
 }
 

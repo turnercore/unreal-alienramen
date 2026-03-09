@@ -57,9 +57,11 @@ namespace
 		FText CurrentLineText;
 		FSpeakerPortraitData CurrentSpeakerPortrait;
 		FGuid WaitingLineNodeId;
+		int32 WaitingMultiLineEntryIndex = INDEX_NONE;
 		TMap<FGuid, FGuid> RuntimeChoiceSelections;
 		FGameplayTagContainer TransientConversationTags;
 		TArray<FGuid> PendingSequenceBranchNodeIds;
+		TMap<FGuid, int32> PendingMultiLineStartIndexByNode;
 		TSet<EARPlayerSlot> Participants;
 		FTimerHandle AutoAdvanceTimerHandle;
 	};
@@ -1800,6 +1802,73 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 	int32 EnterCount = 0;
 	TSet<FGuid> CompletedNodeIds;
 	TSet<FGuid> LineGuidSet;
+	auto ValidateLineEntry = [&](
+		const FDialogueLineNodeData& LineData,
+		const FGuid& NodeId,
+		const TCHAR* ContextLabel)
+	{
+		if (LineData.Line.Text.IsEmpty())
+		{
+			Add(
+				EDialogueValidationSeverity::Error,
+				NodeId,
+				FString::Printf(TEXT("%s text is missing (sound-only lines are invalid)."), ContextLabel));
+		}
+		if (LineData.Line.LengthSeconds <= 0.0f && LineData.Line.Sound == nullptr)
+		{
+			Add(
+				EDialogueValidationSeverity::Warning,
+				NodeId,
+				FString::Printf(
+					TEXT("%s has no audio and Length Seconds is 0. Set a positive Length Seconds value or assign a Sound."),
+					ContextLabel));
+		}
+		if (!LineData.Line.SpeakerTag.IsValid())
+		{
+			Add(
+				EDialogueValidationSeverity::Error,
+				NodeId,
+				FString::Printf(TEXT("%s speaker tag is invalid."), ContextLabel));
+		}
+		else if (!IsResolvableConversationSpeakerTag(ValidationSpeakerRows, LineData.Line.SpeakerTag))
+		{
+			Add(
+				EDialogueValidationSeverity::Error,
+				NodeId,
+				FString::Printf(
+					TEXT("%s speaker '%s' does not resolve to a known speaker."),
+					ContextLabel,
+					*LineData.Line.SpeakerTag.ToString()));
+		}
+		else if (!ParticipantSpeakerTags.Contains(LineData.Line.SpeakerTag))
+		{
+			Add(
+				EDialogueValidationSeverity::Warning,
+				NodeId,
+				FString::Printf(
+					TEXT("%s speaker '%s' is not listed in ParticipatingSpeakerTags/PrimarySpeakerTag."),
+					ContextLabel,
+					*LineData.Line.SpeakerTag.ToString()));
+		}
+		if (!LineData.Line.LocalLineGuid.IsValid())
+		{
+			Add(
+				EDialogueValidationSeverity::Error,
+				NodeId,
+				FString::Printf(TEXT("%s LocalLineGuid must be valid."), ContextLabel));
+		}
+		else if (LineGuidSet.Contains(LineData.Line.LocalLineGuid))
+		{
+			Add(
+				EDialogueValidationSeverity::Warning,
+				NodeId,
+				TEXT("Repeated line LocalLineGuid detected in conversation."));
+		}
+		LineGuidSet.Add(LineData.Line.LocalLineGuid);
+
+		ValidateConditionGroup(LineData.SkipLockedConditions, NodeId);
+		ValidateConditionGroup(LineData.SkipBlockedConditions, NodeId);
+	};
 	for (const FDialogueCompiledNode& Node : ConversationAsset->CompiledData.Nodes)
 	{
 		if (!Node.NodeId.IsValid()) { Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Node has invalid NodeId.")); }
@@ -1824,44 +1893,43 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 			}
 			else if (const FDialogueLineNodeData* LineData = Node.NodeData.GetPtr<FDialogueLineNodeData>())
 			{
-				if (LineData->Line.Text.IsEmpty()) { Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Line text is missing (sound-only lines are invalid).")); }
-				if (LineData->Line.LengthSeconds <= 0.0f && LineData->Line.Sound == nullptr)
-				{
-					Add(
-						EDialogueValidationSeverity::Warning,
-						Node.NodeId,
-						TEXT("Line has no audio and Length Seconds is 0. Set a positive Length Seconds value or assign a Sound."));
-				}
-				if (!LineData->Line.SpeakerTag.IsValid())
-				{
-					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Line speaker tag is invalid."));
-				}
-				else if (!IsResolvableConversationSpeakerTag(ValidationSpeakerRows, LineData->Line.SpeakerTag))
-				{
-					Add(EDialogueValidationSeverity::Error, Node.NodeId,
-						FString::Printf(TEXT("Line speaker '%s' does not resolve to a known speaker."),
-							*LineData->Line.SpeakerTag.ToString()));
-				}
-				else if (!ParticipantSpeakerTags.Contains(LineData->Line.SpeakerTag))
-				{
-					Add(EDialogueValidationSeverity::Warning, Node.NodeId,
-						FString::Printf(TEXT("Line speaker '%s' is not listed in ParticipatingSpeakerTags/PrimarySpeakerTag."),
-							*LineData->Line.SpeakerTag.ToString()));
-				}
-				if (!LineData->Line.LocalLineGuid.IsValid())
-				{
-					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Line LocalLineGuid must be valid."));
-				}
-				else if (LineGuidSet.Contains(LineData->Line.LocalLineGuid))
-				{
-					Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Repeated line LocalLineGuid detected in conversation."));
-				}
-				LineGuidSet.Add(LineData->Line.LocalLineGuid);
-
-				ValidateConditionGroup(LineData->SkipLockedConditions, Node.NodeId);
-				ValidateConditionGroup(LineData->SkipBlockedConditions, Node.NodeId);
+				ValidateLineEntry(*LineData, Node.NodeId, TEXT("Line"));
 			}
 			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Line node next output"));
+			break;
+		}
+		case EDialogueNodeType::MultiLine:
+		{
+			const FDialogueMultiLineNodeData* MultiLineData = Node.NodeData.GetPtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Multi-line node payload mismatch."));
+			}
+			else
+			{
+				if (MultiLineData->Lines.IsEmpty())
+				{
+					Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Multi-line node has zero lines."));
+				}
+
+				TSet<FGuid> SeenEntryIds;
+				for (const FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+				{
+					if (!Entry.EntryId.IsValid())
+					{
+						Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Multi-line entry has invalid EntryId."));
+					}
+					else if (SeenEntryIds.Contains(Entry.EntryId))
+					{
+						Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Duplicate EntryId found in multi-line node."));
+					}
+					SeenEntryIds.Add(Entry.EntryId);
+
+					ValidateLineEntry(Entry.LineData, Node.NodeId, TEXT("Multi-line entry"));
+				}
+			}
+
+			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Multi-line node next output"));
 			break;
 		}
 		case EDialogueNodeType::Choice:
@@ -2591,6 +2659,7 @@ static void ClearSessionPresentationState(FARActiveDialogueSession& Session)
 	Session.bChoiceRequiresAllViewers = false;
 	Session.WaitingChoiceNodeId.Invalidate();
 	Session.WaitingLineNodeId.Invalidate();
+	Session.WaitingMultiLineEntryIndex = INDEX_NONE;
 	Session.CurrentChoices.Reset();
 	Session.CurrentSpeakerTag = FGameplayTag();
 	Session.CurrentLineText = FText::GetEmpty();
@@ -2798,6 +2867,82 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		return false;
 	};
 
+	auto PresentLineAndWait = [&](const FDialogueConversationLine& Line, const FDialogueRuntimeContext& Context, const FGuid& WaitingNodeId, const int32 MultiLineEntryIndex) -> EDialogueExecutionResult
+	{
+		ClearSessionPresentationState(Session);
+
+		FGameplayTag ResolvedSpeakerTag = Line.SpeakerTag;
+		if (ResolvedSpeakerTag.IsValid() && GetDialogueSpeakerPlayerPlaceholderTag().IsValid()
+			&& ResolvedSpeakerTag.MatchesTagExact(GetDialogueSpeakerPlayerPlaceholderTag())
+			&& Context.ResolvedPlayerSpeakerTag.IsValid())
+		{
+			ResolvedSpeakerTag = Context.ResolvedPlayerSpeakerTag;
+		}
+
+		Session.CurrentSpeakerTag = ResolvedSpeakerTag;
+		Session.CurrentLineText = Line.Text;
+		Session.CurrentSpeakerPortrait = ResolvePortraitForSpeaker(SpeakerRowsByTag, ResolvedSpeakerTag);
+		Session.bWaitingForAdvanceInput = true;
+		Session.WaitingLineNodeId = WaitingNodeId;
+		Session.WaitingMultiLineEntryIndex = MultiLineEntryIndex;
+
+		const AARPlayerStateBase* ActiveARPlayerState = Cast<AARPlayerStateBase>(Context.ActivePlayerState);
+		const bool bAutoAdvanceEnabledForOwner = !bPreviewMode
+			&& ActiveARPlayerState
+			&& ActiveARPlayerState->IsDialogueAutoAdvanceEnabled();
+		if (bAutoAdvanceEnabledForOwner && Context.World)
+		{
+			float DelaySeconds = Line.LengthSeconds;
+			if (Line.Sound)
+			{
+				const float SoundDuration = Line.Sound->GetDuration();
+				if (SoundDuration > 0.0f)
+				{
+					DelaySeconds = SoundDuration;
+				}
+			}
+			DelaySeconds = FMath::Max(0.05f, DelaySeconds);
+			FTimerDelegate AutoAdvanceDelegate = FTimerDelegate::CreateLambda(
+				[WeakSubsystem = TWeakObjectPtr<UARDialogueSubsystem>(DialogueSubsystem), OwnerSlot = Session.OwnerSlot]()
+				{
+					if (UARDialogueSubsystem* Pinned = WeakSubsystem.Get())
+					{
+						if (AARPlayerController* OwnerController = FindPlayerControllerBySlot(Pinned->GetWorld(), OwnerSlot))
+						{
+							Pinned->AdvanceConversation(OwnerController);
+						}
+					}
+				});
+
+			Context.World->GetTimerManager().SetTimer(Session.AutoAdvanceTimerHandle, AutoAdvanceDelegate, DelaySeconds, false);
+		}
+
+		return EDialogueExecutionResult::Waiting;
+	};
+
+	auto ShouldShowLineEntry = [&](const FDialogueLineNodeData& LineData, const FDialogueRuntimeContext& Context) -> bool
+	{
+		return PassesLockedConditions(DialogueSubsystem, LineData.SkipLockedConditions, Context)
+			&& PassesBlockedConditions(DialogueSubsystem, LineData.SkipBlockedConditions, Context);
+	};
+
+	auto RouteToNextOrPending = [&](const FGuid& NextNodeId, const TCHAR* MissingNextWarning, EDialogueExecutionResult& OutResult) -> bool
+	{
+		Session.CurrentNodeId = NextNodeId;
+		if (Session.CurrentNodeId.IsValid())
+		{
+			return true;
+		}
+		if (ContinuePendingSequenceBranch())
+		{
+			return true;
+		}
+
+		LogRuntimeWarning(MissingNextWarning);
+		OutResult = EDialogueExecutionResult::EndedNonCompleted;
+		return false;
+	};
+
 	if (Session.bWaitingForAdvanceInput)
 	{
 		if (!bAdvanceLineInput || !Session.WaitingLineNodeId.IsValid())
@@ -2812,14 +2957,23 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			return EDialogueExecutionResult::Failed;
 		}
 
+		const int32 WaitingMultiLineEntryIndex = Session.WaitingMultiLineEntryIndex;
 		ClearSessionPresentationState(Session);
-		Session.CurrentNodeId = WaitingLineNode->NextNodeId;
-		if (!Session.CurrentNodeId.IsValid())
+		if (WaitingLineNode->NodeType == EDialogueNodeType::MultiLine && WaitingMultiLineEntryIndex != INDEX_NONE)
 		{
-			if (!ContinuePendingSequenceBranch())
+			Session.PendingMultiLineStartIndexByNode.Add(WaitingLineNode->NodeId, WaitingMultiLineEntryIndex + 1);
+			Session.CurrentNodeId = WaitingLineNode->NodeId;
+		}
+		else
+		{
+			Session.PendingMultiLineStartIndexByNode.Remove(WaitingLineNode->NodeId);
+			EDialogueExecutionResult RouteResult = EDialogueExecutionResult::Failed;
+			if (!RouteToNextOrPending(
+				WaitingLineNode->NextNodeId,
+				TEXT("Line node had no Next link during advance; ending non-completed."),
+				RouteResult))
 			{
-				LogRuntimeWarning(TEXT("Line node had no Next link during advance; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				return RouteResult;
 			}
 		}
 	}
@@ -2895,70 +3049,59 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 				return EDialogueExecutionResult::Failed;
 			}
 
-			const bool bShowLine = PassesLockedConditions(DialogueSubsystem, LineData->SkipLockedConditions, Context)
-				&& PassesBlockedConditions(DialogueSubsystem, LineData->SkipBlockedConditions, Context);
+			const bool bShowLine = ShouldShowLineEntry(*LineData, Context);
 			if (!bShowLine)
 			{
-				Session.CurrentNodeId = Node->NextNodeId;
-				if (!Session.CurrentNodeId.IsValid())
+				EDialogueExecutionResult RouteResult = EDialogueExecutionResult::Failed;
+				if (!RouteToNextOrPending(
+					Node->NextNodeId,
+					TEXT("Line node skip had no Next link; ending non-completed."),
+					RouteResult))
 				{
-					if (!ContinuePendingSequenceBranch())
-					{
-						LogRuntimeWarning(TEXT("Line node skip had no Next link; ending non-completed."));
-						return EDialogueExecutionResult::EndedNonCompleted;
-					}
+					return RouteResult;
 				}
 				break;
 			}
 
-			ClearSessionPresentationState(Session);
-
-			FGameplayTag ResolvedSpeakerTag = LineData->Line.SpeakerTag;
-			if (ResolvedSpeakerTag.IsValid() && GetDialogueSpeakerPlayerPlaceholderTag().IsValid()
-				&& ResolvedSpeakerTag.MatchesTagExact(GetDialogueSpeakerPlayerPlaceholderTag())
-				&& Context.ResolvedPlayerSpeakerTag.IsValid())
+			return PresentLineAndWait(LineData->Line, Context, Node->NodeId, INDEX_NONE);
+		}
+		case EDialogueNodeType::MultiLine:
+		{
+			const FDialogueMultiLineNodeData* MultiLineData = Node->NodeData.GetPtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
 			{
-				ResolvedSpeakerTag = Context.ResolvedPlayerSpeakerTag;
+				LogRuntimeError(TEXT("Multi-line node payload missing."));
+				return EDialogueExecutionResult::Failed;
 			}
 
-			Session.CurrentSpeakerTag = ResolvedSpeakerTag;
-			Session.CurrentLineText = LineData->Line.Text;
-			Session.CurrentSpeakerPortrait = ResolvePortraitForSpeaker(SpeakerRowsByTag, ResolvedSpeakerTag);
-			Session.bWaitingForAdvanceInput = true;
-			Session.WaitingLineNodeId = Node->NodeId;
-
-			const AARPlayerStateBase* ActiveARPlayerState = Cast<AARPlayerStateBase>(Context.ActivePlayerState);
-			const bool bAutoAdvanceEnabledForOwner = !bPreviewMode
-				&& ActiveARPlayerState
-				&& ActiveARPlayerState->IsDialogueAutoAdvanceEnabled();
-			if (bAutoAdvanceEnabledForOwner && Context.World)
+			int32 StartIndex = 0;
+			if (const int32* PendingStartIndex = Session.PendingMultiLineStartIndexByNode.Find(Node->NodeId))
 			{
-				float DelaySeconds = LineData->Line.LengthSeconds;
-				if (LineData->Line.Sound)
+				StartIndex = FMath::Max(0, *PendingStartIndex);
+			}
+			Session.PendingMultiLineStartIndexByNode.Remove(Node->NodeId);
+
+			for (int32 EntryIndex = StartIndex; EntryIndex < MultiLineData->Lines.Num(); ++EntryIndex)
+			{
+				const FDialogueMultiLineEntry& Entry = MultiLineData->Lines[EntryIndex];
+				const bool bShowLine = ShouldShowLineEntry(Entry.LineData, Context);
+				if (!bShowLine)
 				{
-					const float SoundDuration = LineData->Line.Sound->GetDuration();
-					if (SoundDuration > 0.0f)
-					{
-						DelaySeconds = SoundDuration;
-					}
+					continue;
 				}
-				DelaySeconds = FMath::Max(0.05f, DelaySeconds);
-				FTimerDelegate AutoAdvanceDelegate = FTimerDelegate::CreateLambda(
-					[WeakSubsystem = TWeakObjectPtr<UARDialogueSubsystem>(DialogueSubsystem), OwnerSlot = Session.OwnerSlot]()
-					{
-						if (UARDialogueSubsystem* Pinned = WeakSubsystem.Get())
-						{
-							if (AARPlayerController* OwnerController = FindPlayerControllerBySlot(Pinned->GetWorld(), OwnerSlot))
-							{
-								Pinned->AdvanceConversation(OwnerController);
-							}
-						}
-					});
 
-				Context.World->GetTimerManager().SetTimer(Session.AutoAdvanceTimerHandle, AutoAdvanceDelegate, DelaySeconds, false);
+				return PresentLineAndWait(Entry.LineData.Line, Context, Node->NodeId, EntryIndex);
 			}
 
-			return EDialogueExecutionResult::Waiting;
+			EDialogueExecutionResult RouteResult = EDialogueExecutionResult::Failed;
+			if (!RouteToNextOrPending(
+				Node->NextNodeId,
+				TEXT("Multi-line node had no remaining visible lines and no Next link; ending non-completed."),
+				RouteResult))
+			{
+				return RouteResult;
+			}
+			break;
 		}
 		case EDialogueNodeType::Choice:
 		{
