@@ -3,6 +3,7 @@
 #include "ARDialogueSpeakerEditorPanel.h"
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
+#include "SARDialogueLineGraphNode.h"
 #include "ARSaveSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
@@ -20,6 +21,7 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/MessageDialog.h"
+#include "EdGraphUtilities.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SCheckBox.h"
@@ -1533,6 +1535,9 @@ class FAlienRamenEditorModule final : public IModuleInterface
 public:
 	virtual void StartupModule() override
 	{
+		DialogueLineNodeFactory = CreateARDialogueLineGraphNodeFactory();
+		FEdGraphUtilities::RegisterVisualNodeFactory(DialogueLineNodeFactory);
+
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARDebugSaveEditor::TabName,
 			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDebugSaveTab))
@@ -1578,6 +1583,12 @@ public:
 
 	virtual void ShutdownModule() override
 	{
+		if (DialogueLineNodeFactory.IsValid())
+		{
+			FEdGraphUtilities::UnregisterVisualNodeFactory(DialogueLineNodeFactory);
+			DialogueLineNodeFactory.Reset();
+		}
+
 		if (UToolMenus::TryGet())
 		{
 			UToolMenus::UnRegisterStartupCallback(this);
@@ -1677,6 +1688,8 @@ private:
 	{
 		FGlobalTabmanager::Get()->TryInvokeTab(ARDialogueConversationGraphEditor::TabName);
 	}
+
+	TSharedPtr<FGraphPanelNodeFactory> DialogueLineNodeFactory;
 };
 
 IMPLEMENT_MODULE(FAlienRamenEditorModule, AlienRamenEditor)

@@ -112,7 +112,7 @@ void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& 
 	{
 		const FText DisplayName = GetNodeDisplayName(NodeType);
 		TSharedPtr<FARDialogueGraphSchemaAction_NewNode> NewAction = MakeShared<FARDialogueGraphSchemaAction_NewNode>(
-			FText::FromString(TEXT("Dialogue Nodes")),
+			FText::GetEmpty(),
 			DisplayName,
 			DisplayName,
 			0,

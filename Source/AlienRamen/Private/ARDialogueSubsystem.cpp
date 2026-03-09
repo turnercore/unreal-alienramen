@@ -1798,6 +1798,12 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 						FString::Printf(TEXT("Line speaker '%s' does not resolve to a known speaker."),
 							*LineData->Line.SpeakerTag.ToString()));
 				}
+				else if (!ParticipantSpeakerTags.Contains(LineData->Line.SpeakerTag))
+				{
+					Add(EDialogueValidationSeverity::Warning, Node.NodeId,
+						FString::Printf(TEXT("Line speaker '%s' is not listed in ParticipatingSpeakerTags/PrimarySpeakerTag."),
+							*LineData->Line.SpeakerTag.ToString()));
+				}
 				if (!LineData->Line.LocalLineGuid.IsValid())
 				{
 					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Line LocalLineGuid must be valid."));
