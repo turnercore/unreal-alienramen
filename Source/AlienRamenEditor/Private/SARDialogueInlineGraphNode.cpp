@@ -5,9 +5,11 @@
 #include "ARDialogueTypes.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphUtilities.h"
+#include "Misc/DefaultValueHelper.h"
 #include "SGameplayTagCombo.h"
 #include "SGraphPin.h"
 #include "Styling/AppStyle.h"
+#include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
 #include "Widgets/Input/SSpinBox.h"
@@ -18,6 +20,9 @@
 
 namespace
 {
+	constexpr float ChoiceMinWidth = 540.0f;
+	constexpr float StandardMinWidth = 360.0f;
+
 	class FARDialogueInlineGraphNodeFactory final : public FGraphPanelNodeFactory
 	{
 	public:
@@ -77,6 +82,7 @@ void SARDialogueInlineGraphNode::UpdateGraphNode()
 				[
 					SNew(STextBlock)
 					.Text(this, &SARDialogueInlineGraphNode::GetNodeTitleText)
+					.ColorAndOpacity(FSlateColor(FLinearColor::White))
 				]
 			]
 			+ SVerticalBox::Slot()
@@ -93,7 +99,11 @@ void SARDialogueInlineGraphNode::UpdateGraphNode()
 				.FillWidth(1.0f)
 				.Padding(6.0f, 0.0f)
 				[
-					BuildInlineContent()
+					SNew(SBox)
+					.MinDesiredWidth(GetInlineContentMinWidth())
+					[
+						BuildInlineContent()
+					]
 				]
 				+ SHorizontalBox::Slot()
 				.AutoWidth()
@@ -208,31 +218,37 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildChoiceInlineContent() const
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
-				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.VAlign(VAlign_Center)
-				.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+				SNew(SBorder)
+				.Padding(FMargin(2.0f, 1.0f))
+				.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
-				]
-				+ SHorizontalBox::Slot()
-				.FillWidth(1.0f)
-				[
-					SNew(SEditableTextBox)
-					.Text(Branch.ChoiceText)
-					.HintText(FText::FromString(TEXT("Choice text")))
-					.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleChoiceTextCommitted, Branch.ChoiceBranchId)
-				]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4.0f, 0.0f, 0.0f, 0.0f)
-				[
-					SNew(SButton)
-					.Text(FText::FromString(TEXT("X")))
-					.ToolTipText(FText::FromString(TEXT("Remove this choice branch pin.")))
-					.OnClicked(this, &SARDialogueInlineGraphNode::HandleRemoveChoiceBranchClicked, Branch.ChoiceBranchId)
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.VAlign(VAlign_Center)
+					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("::")))
+						.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
+						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.VAlign(VAlign_Center)
+					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+					]
+					+ SHorizontalBox::Slot()
+					.FillWidth(1.0f)
+					[
+						SNew(SEditableTextBox)
+						.Text(Branch.ChoiceText)
+						.HintText(FText::FromString(TEXT("Choice text")))
+						.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleChoiceTextCommitted, Branch.ChoiceBranchId)
+					]
 				]
 			];
 		}
@@ -269,14 +285,6 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSwitchInlineContent() const
 	const TArray<FDialogueCompiledSwitchBranch>* SwitchBranches = DialogueNode ? &DialogueNode->RuntimeNode.SwitchBranches : nullptr;
 
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
-	Content->AddSlot()
-	.AutoHeight()
-	.Padding(0.0f, 0.0f, 0.0f, 2.0f)
-	[
-		SNew(STextBlock)
-		.Text(FText::FromString(TEXT("Switch Branch Labels")))
-	];
-
 	if (!SwitchBranches || SwitchBranches->IsEmpty())
 	{
 		Content->AddSlot()
@@ -295,31 +303,37 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSwitchInlineContent() const
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
-				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.VAlign(VAlign_Center)
-				.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+				SNew(SBorder)
+				.Padding(FMargin(2.0f, 1.0f))
+				.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
-				]
-				+ SHorizontalBox::Slot()
-				.FillWidth(1.0f)
-				[
-					SNew(SEditableTextBox)
-					.Text(Branch.Label)
-					.HintText(FText::FromString(TEXT("Branch label")))
-					.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleSwitchLabelCommitted, Branch.BranchId)
-				]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4.0f, 0.0f, 0.0f, 0.0f)
-				[
-					SNew(SButton)
-					.Text(FText::FromString(TEXT("X")))
-					.ToolTipText(FText::FromString(TEXT("Remove this switch branch pin.")))
-					.OnClicked(this, &SARDialogueInlineGraphNode::HandleRemoveSwitchBranchClicked, Branch.BranchId)
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.VAlign(VAlign_Center)
+					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("::")))
+						.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
+						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.VAlign(VAlign_Center)
+					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+					]
+					+ SHorizontalBox::Slot()
+					.FillWidth(1.0f)
+					[
+						SNew(SEditableTextBox)
+						.Text(Branch.Label)
+						.HintText(FText::FromString(TEXT("Branch label")))
+						.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleSwitchLabelCommitted, Branch.BranchId)
+					]
 				]
 			];
 		}
@@ -360,33 +374,39 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRandomInlineContent() const
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
-				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.VAlign(VAlign_Center)
-				.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+				SNew(SBorder)
+				.Padding(FMargin(2.0f, 1.0f))
+				.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
-				]
-				+ SHorizontalBox::Slot()
-				.FillWidth(1.0f)
-				[
-					SNew(SSpinBox<float>)
-					.MinValue(0.0f)
-					.MaxValue(1000000.0f)
-					.Delta(0.1f)
-					.Value(Branch.Weight)
-					.OnValueCommitted(this, &SARDialogueInlineGraphNode::HandleRandomWeightCommitted, Branch.BranchId)
-				]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4.0f, 0.0f, 0.0f, 0.0f)
-				[
-					SNew(SButton)
-					.Text(FText::FromString(TEXT("X")))
-					.ToolTipText(FText::FromString(TEXT("Remove this random branch pin.")))
-					.OnClicked(this, &SARDialogueInlineGraphNode::HandleRemoveRandomBranchClicked, Branch.BranchId)
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.VAlign(VAlign_Center)
+					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("::")))
+						.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
+						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.VAlign(VAlign_Center)
+					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+					]
+					+ SHorizontalBox::Slot()
+					.FillWidth(1.0f)
+					[
+						SNew(SSpinBox<float>)
+						.MinValue(0.0f)
+						.MaxValue(1000000.0f)
+						.Delta(0.1f)
+						.Value(Branch.Weight)
+						.OnValueCommitted(this, &SARDialogueInlineGraphNode::HandleRandomWeightCommitted, Branch.BranchId)
+					]
 				]
 			];
 		}
@@ -428,17 +448,10 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRelationshipInlineContent()
 		+ SVerticalBox::Slot()
 		.AutoHeight()
 		[
-			SNew(SSpinBox<float>)
-			.MinValue(-1000000.0f)
-			.MaxValue(1000000.0f)
-			.Delta(1.0f)
-			.Value_Lambda([this]()
-			{
-				const UARDialogueEdGraphNode* Node = GetDialogueNode();
-				const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
-				return Data ? Data->DeltaPoints : 0.0f;
-			})
-			.OnValueCommitted(this, &SARDialogueInlineGraphNode::HandleRelationshipDeltaCommitted)
+			SNew(SEditableTextBox)
+			.Text(this, &SARDialogueInlineGraphNode::GetRelationshipDeltaText)
+			.HintText(FText::FromString(TEXT("0.0")))
+			.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted)
 		];
 }
 
@@ -475,18 +488,22 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildFactionInlineContent() cons
 		+ SVerticalBox::Slot()
 		.AutoHeight()
 		[
-			SNew(SSpinBox<float>)
-			.MinValue(-1000000.0f)
-			.MaxValue(1000000.0f)
-			.Delta(1.0f)
-			.Value_Lambda([this]()
-			{
-				const UARDialogueEdGraphNode* Node = GetDialogueNode();
-				const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
-				return Data ? Data->DeltaPopularity : 0.0f;
-			})
-			.OnValueCommitted(this, &SARDialogueInlineGraphNode::HandleFactionDeltaCommitted)
+			SNew(SEditableTextBox)
+			.Text(this, &SARDialogueInlineGraphNode::GetFactionDeltaText)
+			.HintText(FText::FromString(TEXT("0.0")))
+			.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleFactionDeltaTextCommitted)
 		];
+}
+
+float SARDialogueInlineGraphNode::GetInlineContentMinWidth() const
+{
+	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Choice)
+	{
+		return ChoiceMinWidth;
+	}
+
+	return StandardMinWidth;
 }
 
 void SARDialogueInlineGraphNode::AddDynamicPinButtonIfSupported()
@@ -508,9 +525,28 @@ void SARDialogueInlineGraphNode::AddDynamicPinButtonIfSupported()
 	.Padding(0.0f, 4.0f, 0.0f, 0.0f)
 	[
 		SNew(SButton)
-		.Text(FText::FromString(TEXT("Add pin +")))
+		.ButtonStyle(FAppStyle::Get(), "NoBorder")
+		.ContentPadding(FMargin(2.0f, 1.0f))
 		.ToolTipText(FText::FromString(TEXT("Add another output branch pin.")))
 		.OnClicked(this, &SARDialogueInlineGraphNode::HandleAddBranchPinClicked)
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.VAlign(VAlign_Center)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("Add pin")))
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.VAlign(VAlign_Center)
+			.Padding(4.0f, 0.0f, 0.0f, 0.0f)
+			[
+				SNew(SImage)
+				.Image(FAppStyle::GetBrush(TEXT("Plus")))
+			]
+		]
 	];
 }
 
@@ -519,39 +555,15 @@ FReply SARDialogueInlineGraphNode::HandleAddBranchPinClicked() const
 	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
 		DialogueNode->AddDynamicBranchPin();
+		RefreshNodeWidget();
 	}
 
 	return FReply::Handled();
 }
 
-FReply SARDialogueInlineGraphNode::HandleRemoveChoiceBranchClicked(const FGuid ChoiceBranchId) const
+void SARDialogueInlineGraphNode::RefreshNodeWidget() const
 {
-	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
-	{
-		DialogueNode->RemoveDynamicBranchPinByName(UARDialogueEdGraphNode::MakeChoicePinName(ChoiceBranchId));
-	}
-
-	return FReply::Handled();
-}
-
-FReply SARDialogueInlineGraphNode::HandleRemoveSwitchBranchClicked(const FGuid BranchId) const
-{
-	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
-	{
-		DialogueNode->RemoveDynamicBranchPinByName(UARDialogueEdGraphNode::MakeSwitchPinName(BranchId));
-	}
-
-	return FReply::Handled();
-}
-
-FReply SARDialogueInlineGraphNode::HandleRemoveRandomBranchClicked(const FGuid BranchId) const
-{
-	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
-	{
-		DialogueNode->RemoveDynamicBranchPinByName(UARDialogueEdGraphNode::MakeRandomPinName(BranchId));
-	}
-
-	return FReply::Handled();
+	const_cast<SARDialogueInlineGraphNode*>(this)->UpdateGraphNode();
 }
 
 void SARDialogueInlineGraphNode::HandleChoiceTextCommitted(const FText& NewText, const ETextCommit::Type CommitType, const FGuid ChoiceBranchId) const
@@ -598,12 +610,18 @@ void SARDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged(const FGame
 	}
 }
 
-void SARDialogueInlineGraphNode::HandleRelationshipDeltaCommitted(const float NewValue, const ETextCommit::Type CommitType) const
+void SARDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
 {
 	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
 	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
-		DialogueNode->SetRelationshipDeltaPoints(NewValue);
+		DialogueNode->SetRelationshipDeltaPoints(ParsedValue);
 	}
 }
 
@@ -615,12 +633,18 @@ void SARDialogueInlineGraphNode::HandleFactionTagChanged(const FGameplayTag NewT
 	}
 }
 
-void SARDialogueInlineGraphNode::HandleFactionDeltaCommitted(const float NewValue, const ETextCommit::Type CommitType) const
+void SARDialogueInlineGraphNode::HandleFactionDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
 {
 	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
 	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
-		DialogueNode->SetFactionDeltaPopularity(NewValue);
+		DialogueNode->SetFactionDeltaPopularity(ParsedValue);
 	}
 }
 
@@ -645,6 +669,20 @@ FString SARDialogueInlineGraphNode::GetFactionTagFilter() const
 	}
 
 	return FactionSettings->FactionDefinitionRootTag.ToString();
+}
+
+FText SARDialogueInlineGraphNode::GetRelationshipDeltaText() const
+{
+	const UARDialogueEdGraphNode* Node = GetDialogueNode();
+	const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
+	return FText::AsNumber(Data ? Data->DeltaPoints : 0.0f);
+}
+
+FText SARDialogueInlineGraphNode::GetFactionDeltaText() const
+{
+	const UARDialogueEdGraphNode* Node = GetDialogueNode();
+	const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+	return FText::AsNumber(Data ? Data->DeltaPopularity : 0.0f);
 }
 
 TSharedRef<FGraphPanelNodeFactory> CreateARDialogueInlineGraphNodeFactory()

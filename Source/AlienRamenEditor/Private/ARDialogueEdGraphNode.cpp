@@ -48,6 +48,8 @@ namespace
 			return FText::FromString(TEXT("Faction"));
 		case EDialogueNodeType::Random:
 			return FText::FromString(TEXT("Random"));
+		case EDialogueNodeType::Route:
+			return FText::FromString(TEXT("Route"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
@@ -183,45 +185,116 @@ void UARDialogueEdGraphNode::AddDynamicBranchPin()
 		return;
 	}
 
-	CommitRuntimeNodeMutation(
-		LOCTEXT("AddDialogueBranchPin", "Add Dialogue Branch Pin"),
-		[this]() -> bool
+	const FScopedTransaction Transaction(LOCTEXT("AddDialogueBranchPin", "Add Dialogue Branch Pin"));
+	Modify();
+
+	UEdGraphPin* NewPin = nullptr;
+	switch (RuntimeNode.NodeType)
+	{
+	case EDialogueNodeType::Choice:
+	{
+		FDialogueCompiledChoiceBranch NewBranch;
+		NewBranch.ChoiceBranchId = FGuid::NewGuid();
+		NewBranch.ChoiceText = FText::FromString(FString::Printf(TEXT("Choice %d"), RuntimeNode.ChoiceBranches.Num() + 1));
+		const FDialogueCompiledChoiceBranch& AddedBranch = RuntimeNode.ChoiceBranches.Add_GetRef(MoveTemp(NewBranch));
+		NewPin = CreatePin(EGPD_Output, MakeExecPinType(), MakeChoicePinName(AddedBranch.ChoiceBranchId));
+		if (NewPin)
 		{
-			switch (RuntimeNode.NodeType)
-			{
-			case EDialogueNodeType::Choice:
-			{
-				FDialogueCompiledChoiceBranch NewBranch;
-				NewBranch.ChoiceBranchId = FGuid::NewGuid();
-				NewBranch.ChoiceText = FText::FromString(FString::Printf(TEXT("Choice %d"), RuntimeNode.ChoiceBranches.Num() + 1));
-				RuntimeNode.ChoiceBranches.Add(MoveTemp(NewBranch));
-				return true;
-			}
-			case EDialogueNodeType::SwitchOnTagsByPriority:
-			{
-				FDialogueCompiledSwitchBranch NewBranch;
-				NewBranch.BranchId = FGuid::NewGuid();
-				NewBranch.Label = FText::FromString(FString::Printf(TEXT("Branch %d"), RuntimeNode.SwitchBranches.Num() + 1));
-				RuntimeNode.SwitchBranches.Add(MoveTemp(NewBranch));
-				return true;
-			}
-			case EDialogueNodeType::Random:
-			{
-				FDialogueCompiledRandomBranch NewBranch;
-				NewBranch.BranchId = FGuid::NewGuid();
-				NewBranch.Weight = 1.0f;
-				RuntimeNode.RandomBranches.Add(MoveTemp(NewBranch));
-				return true;
-			}
-			default:
-				return false;
-			}
-		},
-		true);
+			NewPin->PinFriendlyName = AddedBranch.ChoiceText;
+		}
+		break;
+	}
+	case EDialogueNodeType::SwitchOnTagsByPriority:
+	{
+		FDialogueCompiledSwitchBranch NewBranch;
+		NewBranch.BranchId = FGuid::NewGuid();
+		NewBranch.Label = FText::FromString(FString::Printf(TEXT("Branch %d"), RuntimeNode.SwitchBranches.Num() + 1));
+		const FDialogueCompiledSwitchBranch& AddedBranch = RuntimeNode.SwitchBranches.Add_GetRef(MoveTemp(NewBranch));
+		NewPin = CreatePin(EGPD_Output, MakeExecPinType(), MakeSwitchPinName(AddedBranch.BranchId));
+		if (NewPin)
+		{
+			NewPin->PinFriendlyName = AddedBranch.Label;
+		}
+		break;
+	}
+	case EDialogueNodeType::Random:
+	{
+		FDialogueCompiledRandomBranch NewBranch;
+		NewBranch.BranchId = FGuid::NewGuid();
+		NewBranch.Weight = 1.0f;
+		const FDialogueCompiledRandomBranch& AddedBranch = RuntimeNode.RandomBranches.Add_GetRef(MoveTemp(NewBranch));
+		NewPin = CreatePin(EGPD_Output, MakeExecPinType(), MakeRandomPinName(AddedBranch.BranchId));
+		if (NewPin)
+		{
+			NewPin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Branch %d (w=%.2f)"), RuntimeNode.RandomBranches.Num(), AddedBranch.Weight));
+		}
+		break;
+	}
+	default:
+		return;
+	}
+
+	EnsureStableIds(false, false);
+
+	if (NewPin)
+	{
+		NewPin->bHidden = false;
+		NewPin->bAdvancedView = false;
+	}
+
+	if (UEdGraph* Graph = GetGraph())
+	{
+		Graph->Modify();
+		Graph->NotifyNodeChanged(this);
+		Graph->NotifyGraphChanged();
+		if (UObject* GraphOuter = Graph->GetOuter())
+		{
+			GraphOuter->MarkPackageDirty();
+		}
+	}
+
+	MarkPackageDirty();
+}
+
+bool UARDialogueEdGraphNode::RemoveLastDynamicBranchPin()
+{
+	if (!SupportsDynamicBranchPins())
+	{
+		return false;
+	}
+
+	switch (RuntimeNode.NodeType)
+	{
+	case EDialogueNodeType::Choice:
+		if (RuntimeNode.ChoiceBranches.IsEmpty())
+		{
+			return false;
+		}
+		return RemoveDynamicBranchPinByName(MakeChoicePinName(RuntimeNode.ChoiceBranches.Last().ChoiceBranchId));
+	case EDialogueNodeType::SwitchOnTagsByPriority:
+		if (RuntimeNode.SwitchBranches.IsEmpty())
+		{
+			return false;
+		}
+		return RemoveDynamicBranchPinByName(MakeSwitchPinName(RuntimeNode.SwitchBranches.Last().BranchId));
+	case EDialogueNodeType::Random:
+		if (RuntimeNode.RandomBranches.Num() <= 1)
+		{
+			return false;
+		}
+		return RemoveDynamicBranchPinByName(MakeRandomPinName(RuntimeNode.RandomBranches.Last().BranchId));
+	default:
+		return false;
+	}
 }
 
 bool UARDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinName)
 {
+	if (!SupportsDynamicBranchPins())
+	{
+		return false;
+	}
+
 	return CommitRuntimeNodeMutation(
 		LOCTEXT("RemoveDialogueBranchPin", "Remove Dialogue Branch Pin"),
 		[this, PinName]() -> bool
@@ -250,6 +323,11 @@ bool UARDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinName)
 			if (RuntimeNode.NodeType == EDialogueNodeType::Random
 				&& TryParseBranchGuidFromPinName(PinName, RandomPinPrefix, BranchId))
 			{
+				if (RuntimeNode.RandomBranches.Num() <= 1)
+				{
+					return false;
+				}
+
 				const int32 RemovedCount = RuntimeNode.RandomBranches.RemoveAll([BranchId](const FDialogueCompiledRandomBranch& Branch)
 				{
 					return Branch.BranchId == BranchId;
@@ -264,7 +342,7 @@ bool UARDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinName)
 
 bool UARDialogueEdGraphNode::SetChoiceBranchText(const FGuid& ChoiceBranchId, const FText& NewText)
 {
-	return CommitRuntimeNodeMutation(
+	const bool bChanged = CommitRuntimeNodeMutation(
 		LOCTEXT("SetChoiceBranchText", "Set Choice Branch Text"),
 		[this, ChoiceBranchId, NewText]() -> bool
 		{
@@ -287,11 +365,20 @@ bool UARDialogueEdGraphNode::SetChoiceBranchText(const FGuid& ChoiceBranchId, co
 			return false;
 		},
 		true);
+
+	if (bChanged)
+	{
+		if (UEdGraphPin* Pin = GetChoiceOutputPin(ChoiceBranchId))
+		{
+			Pin->PinFriendlyName = NewText;
+		}
+	}
+	return bChanged;
 }
 
 bool UARDialogueEdGraphNode::SetSwitchBranchLabel(const FGuid& BranchId, const FText& NewLabel)
 {
-	return CommitRuntimeNodeMutation(
+	const bool bChanged = CommitRuntimeNodeMutation(
 		LOCTEXT("SetSwitchBranchLabel", "Set Switch Branch Label"),
 		[this, BranchId, NewLabel]() -> bool
 		{
@@ -314,11 +401,20 @@ bool UARDialogueEdGraphNode::SetSwitchBranchLabel(const FGuid& BranchId, const F
 			return false;
 		},
 		true);
+
+	if (bChanged)
+	{
+		if (UEdGraphPin* Pin = GetSwitchOutputPin(BranchId))
+		{
+			Pin->PinFriendlyName = NewLabel;
+		}
+	}
+	return bChanged;
 }
 
 bool UARDialogueEdGraphNode::SetRandomBranchWeight(const FGuid& BranchId, const float NewWeight)
 {
-	return CommitRuntimeNodeMutation(
+	const bool bChanged = CommitRuntimeNodeMutation(
 		LOCTEXT("SetRandomBranchWeight", "Set Random Branch Weight"),
 		[this, BranchId, NewWeight]() -> bool
 		{
@@ -339,6 +435,175 @@ bool UARDialogueEdGraphNode::SetRandomBranchWeight(const FGuid& BranchId, const 
 			}
 
 			return false;
+		},
+		true);
+
+	if (bChanged)
+	{
+		const int32 BranchIndex = RuntimeNode.RandomBranches.IndexOfByPredicate([BranchId](const FDialogueCompiledRandomBranch& Branch)
+		{
+			return Branch.BranchId == BranchId;
+		});
+		if (BranchIndex != INDEX_NONE)
+		{
+			if (UEdGraphPin* Pin = GetRandomOutputPin(BranchId))
+			{
+				Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Branch %d (w=%.2f)"), BranchIndex + 1, NewWeight));
+			}
+		}
+	}
+	return bChanged;
+}
+
+bool UARDialogueEdGraphNode::MoveChoiceBranch(const FGuid& ChoiceBranchId, const bool bMoveUp)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("MoveChoiceBranch", "Reorder Choice Branch"),
+		[this, ChoiceBranchId, bMoveUp]() -> bool
+		{
+			const int32 CurrentIndex = RuntimeNode.ChoiceBranches.IndexOfByPredicate([ChoiceBranchId](const FDialogueCompiledChoiceBranch& Branch)
+			{
+				return Branch.ChoiceBranchId == ChoiceBranchId;
+			});
+			if (CurrentIndex == INDEX_NONE)
+			{
+				return false;
+			}
+
+			const int32 TargetIndex = bMoveUp ? CurrentIndex - 1 : CurrentIndex + 1;
+			if (!RuntimeNode.ChoiceBranches.IsValidIndex(TargetIndex))
+			{
+				return false;
+			}
+
+			RuntimeNode.ChoiceBranches.Swap(CurrentIndex, TargetIndex);
+			return true;
+		},
+		true);
+}
+
+bool UARDialogueEdGraphNode::MoveSwitchBranch(const FGuid& BranchId, const bool bMoveUp)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("MoveSwitchBranch", "Reorder Switch Branch"),
+		[this, BranchId, bMoveUp]() -> bool
+		{
+			const int32 CurrentIndex = RuntimeNode.SwitchBranches.IndexOfByPredicate([BranchId](const FDialogueCompiledSwitchBranch& Branch)
+			{
+				return Branch.BranchId == BranchId;
+			});
+			if (CurrentIndex == INDEX_NONE)
+			{
+				return false;
+			}
+
+			const int32 TargetIndex = bMoveUp ? CurrentIndex - 1 : CurrentIndex + 1;
+			if (!RuntimeNode.SwitchBranches.IsValidIndex(TargetIndex))
+			{
+				return false;
+			}
+
+			RuntimeNode.SwitchBranches.Swap(CurrentIndex, TargetIndex);
+			return true;
+		},
+		true);
+}
+
+bool UARDialogueEdGraphNode::ReorderChoiceBranch(const FGuid& MovingChoiceBranchId, const FGuid& TargetChoiceBranchId)
+{
+	if (!MovingChoiceBranchId.IsValid() || !TargetChoiceBranchId.IsValid() || MovingChoiceBranchId == TargetChoiceBranchId)
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("ReorderChoiceBranch", "Reorder Choice Branch"),
+		[this, MovingChoiceBranchId, TargetChoiceBranchId]() -> bool
+		{
+			const int32 SourceIndex = RuntimeNode.ChoiceBranches.IndexOfByPredicate([MovingChoiceBranchId](const FDialogueCompiledChoiceBranch& Branch)
+			{
+				return Branch.ChoiceBranchId == MovingChoiceBranchId;
+			});
+			const int32 TargetIndex = RuntimeNode.ChoiceBranches.IndexOfByPredicate([TargetChoiceBranchId](const FDialogueCompiledChoiceBranch& Branch)
+			{
+				return Branch.ChoiceBranchId == TargetChoiceBranchId;
+			});
+			if (SourceIndex == INDEX_NONE || TargetIndex == INDEX_NONE || SourceIndex == TargetIndex)
+			{
+				return false;
+			}
+
+			FDialogueCompiledChoiceBranch MovingBranch = MoveTemp(RuntimeNode.ChoiceBranches[SourceIndex]);
+			RuntimeNode.ChoiceBranches.RemoveAt(SourceIndex);
+			const int32 InsertIndex = SourceIndex < TargetIndex ? TargetIndex - 1 : TargetIndex;
+			RuntimeNode.ChoiceBranches.Insert(MoveTemp(MovingBranch), InsertIndex);
+			return true;
+		},
+		true);
+}
+
+bool UARDialogueEdGraphNode::ReorderSwitchBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId)
+{
+	if (!MovingBranchId.IsValid() || !TargetBranchId.IsValid() || MovingBranchId == TargetBranchId)
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("ReorderSwitchBranch", "Reorder Switch Branch"),
+		[this, MovingBranchId, TargetBranchId]() -> bool
+		{
+			const int32 SourceIndex = RuntimeNode.SwitchBranches.IndexOfByPredicate([MovingBranchId](const FDialogueCompiledSwitchBranch& Branch)
+			{
+				return Branch.BranchId == MovingBranchId;
+			});
+			const int32 TargetIndex = RuntimeNode.SwitchBranches.IndexOfByPredicate([TargetBranchId](const FDialogueCompiledSwitchBranch& Branch)
+			{
+				return Branch.BranchId == TargetBranchId;
+			});
+			if (SourceIndex == INDEX_NONE || TargetIndex == INDEX_NONE || SourceIndex == TargetIndex)
+			{
+				return false;
+			}
+
+			FDialogueCompiledSwitchBranch MovingBranch = MoveTemp(RuntimeNode.SwitchBranches[SourceIndex]);
+			RuntimeNode.SwitchBranches.RemoveAt(SourceIndex);
+			const int32 InsertIndex = SourceIndex < TargetIndex ? TargetIndex - 1 : TargetIndex;
+			RuntimeNode.SwitchBranches.Insert(MoveTemp(MovingBranch), InsertIndex);
+			return true;
+		},
+		true);
+}
+
+bool UARDialogueEdGraphNode::ReorderRandomBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId)
+{
+	if (!MovingBranchId.IsValid() || !TargetBranchId.IsValid() || MovingBranchId == TargetBranchId)
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("ReorderRandomBranch", "Reorder Random Branch"),
+		[this, MovingBranchId, TargetBranchId]() -> bool
+		{
+			const int32 SourceIndex = RuntimeNode.RandomBranches.IndexOfByPredicate([MovingBranchId](const FDialogueCompiledRandomBranch& Branch)
+			{
+				return Branch.BranchId == MovingBranchId;
+			});
+			const int32 TargetIndex = RuntimeNode.RandomBranches.IndexOfByPredicate([TargetBranchId](const FDialogueCompiledRandomBranch& Branch)
+			{
+				return Branch.BranchId == TargetBranchId;
+			});
+			if (SourceIndex == INDEX_NONE || TargetIndex == INDEX_NONE || SourceIndex == TargetIndex)
+			{
+				return false;
+			}
+
+			FDialogueCompiledRandomBranch MovingBranch = MoveTemp(RuntimeNode.RandomBranches[SourceIndex]);
+			RuntimeNode.RandomBranches.RemoveAt(SourceIndex);
+			const int32 InsertIndex = SourceIndex < TargetIndex ? TargetIndex - 1 : TargetIndex;
+			RuntimeNode.RandomBranches.Insert(MoveTemp(MovingBranch), InsertIndex);
+			return true;
 		},
 		true);
 }
@@ -470,6 +735,8 @@ void UARDialogueEdGraphNode::AddChoicePins()
 		UEdGraphPin* Pin = CreatePin(EGPD_Output, MakeExecPinType(), MakeChoicePinName(Branch.ChoiceBranchId));
 		if (Pin)
 		{
+			Pin->bHidden = false;
+			Pin->bAdvancedView = false;
 			Pin->PinFriendlyName = Branch.ChoiceText.IsEmpty()
 				? FText::FromString(FString::Printf(TEXT("Choice %d"), Index + 1))
 				: Branch.ChoiceText;
@@ -479,6 +746,8 @@ void UARDialogueEdGraphNode::AddChoicePins()
 	UEdGraphPin* FallbackPin = CreatePin(EGPD_Output, MakeExecPinType(), GetPinNameFallback());
 	if (FallbackPin)
 	{
+		FallbackPin->bHidden = false;
+		FallbackPin->bAdvancedView = false;
 		FallbackPin->PinFriendlyName = RuntimeNode.FallbackChoiceText.IsEmpty()
 			? FText::FromString(TEXT("..."))
 			: RuntimeNode.FallbackChoiceText;
@@ -493,6 +762,8 @@ void UARDialogueEdGraphNode::AddSwitchPins()
 		UEdGraphPin* Pin = CreatePin(EGPD_Output, MakeExecPinType(), MakeSwitchPinName(Branch.BranchId));
 		if (Pin)
 		{
+			Pin->bHidden = false;
+			Pin->bAdvancedView = false;
 			Pin->PinFriendlyName = Branch.Label.IsEmpty()
 				? FText::FromString(FString::Printf(TEXT("Branch %d"), Index + 1))
 				: Branch.Label;
@@ -504,6 +775,8 @@ void UARDialogueEdGraphNode::AddSwitchPins()
 		UEdGraphPin* DefaultPin = CreatePin(EGPD_Output, MakeExecPinType(), GetPinNameSwitchDefault());
 		if (DefaultPin)
 		{
+			DefaultPin->bHidden = false;
+			DefaultPin->bAdvancedView = false;
 			DefaultPin->PinFriendlyName = FText::FromString(TEXT("Default"));
 		}
 	}
@@ -517,6 +790,8 @@ void UARDialogueEdGraphNode::AddRandomPins()
 		UEdGraphPin* Pin = CreatePin(EGPD_Output, MakeExecPinType(), MakeRandomPinName(Branch.BranchId));
 		if (Pin)
 		{
+			Pin->bHidden = false;
+			Pin->bAdvancedView = false;
 			Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Branch %d (w=%.2f)"), Index + 1, Branch.Weight));
 		}
 	}
@@ -538,6 +813,7 @@ void UARDialogueEdGraphNode::AllocateDefaultPins()
 	case EDialogueNodeType::TagMutation:
 	case EDialogueNodeType::RelationshipMutation:
 	case EDialogueNodeType::FactionMutation:
+	case EDialogueNodeType::Route:
 		AddInputPinIfNeeded();
 		AddNextOutputPinIfNeeded();
 		break;
@@ -573,14 +849,7 @@ bool UARDialogueEdGraphNode::CanUserDeleteNode() const
 FText UARDialogueEdGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
 	(void)TitleType;
-	const FText TypeTitle = BuildNodeTypeText(RuntimeNode.NodeType);
-	const FString InlineSummary = BuildInlineSummary();
-	if (InlineSummary.IsEmpty())
-	{
-		return TypeTitle;
-	}
-
-	return FText::FromString(FString::Printf(TEXT("%s\n%s"), *TypeTitle.ToString(), *InlineSummary));
+	return BuildNodeTypeText(RuntimeNode.NodeType);
 }
 
 FText UARDialogueEdGraphNode::GetTooltipText() const
@@ -604,20 +873,7 @@ FLinearColor UARDialogueEdGraphNode::GetNodeTitleColor() const
 		return FLinearColor(0.85f, 0.55f, 0.1f, 1.0f);
 	}
 
-	switch (RuntimeNode.NodeType)
-	{
-	case EDialogueNodeType::Enter:
-		return FLinearColor(0.1f, 0.45f, 0.8f, 1.0f);
-	case EDialogueNodeType::Completed:
-		return FLinearColor(0.15f, 0.55f, 0.2f, 1.0f);
-	case EDialogueNodeType::Choice:
-	case EDialogueNodeType::Bool:
-	case EDialogueNodeType::SwitchOnTagsByPriority:
-	case EDialogueNodeType::Random:
-		return FLinearColor(0.18f, 0.18f, 0.5f, 1.0f);
-	default:
-		return FLinearColor(0.28f, 0.28f, 0.28f, 1.0f);
-	}
+	return FLinearColor(0.18f, 0.18f, 0.18f, 1.0f);
 }
 
 void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
@@ -639,6 +895,21 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 		LOCTEXT("ARDialogueAddPinTooltip", "Add another output branch pin to this node."),
 		FSlateIcon(),
 		FUIAction(FExecuteAction::CreateUObject(MutableNode, &UARDialogueEdGraphNode::AddDynamicBranchPin))));
+
+	Section.AddEntry(FToolMenuEntry::InitMenuEntry(
+		TEXT("ARDialogueRemoveLastPin"),
+		LOCTEXT("ARDialogueRemoveLastPinLabel", "Remove Pin"),
+		LOCTEXT("ARDialogueRemoveLastPinTooltip", "Remove the bottom-most branch pin from this node."),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateWeakLambda(
+			MutableNode,
+			[MutableNode]()
+			{
+				if (IsValid(MutableNode))
+				{
+					MutableNode->RemoveLastDynamicBranchPin();
+				}
+			}))));
 
 	if (!Context->Pin || Context->Pin->Direction != EGPD_Output)
 	{
@@ -663,6 +934,97 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 	if (!bCanDeletePin)
 	{
 		return;
+	}
+
+	int32 BranchIndex = INDEX_NONE;
+	int32 BranchCount = 0;
+	if (RuntimeNode.NodeType == EDialogueNodeType::Choice)
+	{
+		BranchIndex = RuntimeNode.ChoiceBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledChoiceBranch& Branch)
+		{
+			return Branch.ChoiceBranchId == ParsedBranchId;
+		});
+		BranchCount = RuntimeNode.ChoiceBranches.Num();
+	}
+	else if (RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+	{
+		BranchIndex = RuntimeNode.SwitchBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledSwitchBranch& Branch)
+		{
+			return Branch.BranchId == ParsedBranchId;
+		});
+		BranchCount = RuntimeNode.SwitchBranches.Num();
+	}
+	else if (RuntimeNode.NodeType == EDialogueNodeType::Random)
+	{
+		BranchIndex = RuntimeNode.RandomBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledRandomBranch& Branch)
+		{
+			return Branch.BranchId == ParsedBranchId;
+		});
+		BranchCount = RuntimeNode.RandomBranches.Num();
+	}
+
+	if (BranchIndex > 0)
+	{
+		Section.AddEntry(FToolMenuEntry::InitMenuEntry(
+			TEXT("ARDialogueMovePinUp"),
+			LOCTEXT("ARDialogueMovePinUpLabel", "Move Pin Up"),
+			LOCTEXT("ARDialogueMovePinUpTooltip", "Move this branch one slot up."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode, ParsedBranchId, BranchIndex]()
+				{
+					if (!IsValid(MutableNode))
+					{
+						return;
+					}
+
+					if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Choice)
+					{
+						MutableNode->MoveChoiceBranch(ParsedBranchId, true);
+					}
+					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+					{
+						MutableNode->MoveSwitchBranch(ParsedBranchId, true);
+					}
+					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Random
+						&& MutableNode->RuntimeNode.RandomBranches.IsValidIndex(BranchIndex - 1))
+					{
+						MutableNode->ReorderRandomBranch(ParsedBranchId, MutableNode->RuntimeNode.RandomBranches[BranchIndex - 1].BranchId);
+					}
+				}))));
+	}
+
+	if (BranchIndex != INDEX_NONE && BranchIndex + 1 < BranchCount)
+	{
+		Section.AddEntry(FToolMenuEntry::InitMenuEntry(
+			TEXT("ARDialogueMovePinDown"),
+			LOCTEXT("ARDialogueMovePinDownLabel", "Move Pin Down"),
+			LOCTEXT("ARDialogueMovePinDownTooltip", "Move this branch one slot down."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode, ParsedBranchId, BranchIndex]()
+				{
+					if (!IsValid(MutableNode))
+					{
+						return;
+					}
+
+					if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Choice)
+					{
+						MutableNode->MoveChoiceBranch(ParsedBranchId, false);
+					}
+					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+					{
+						MutableNode->MoveSwitchBranch(ParsedBranchId, false);
+					}
+					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Random
+						&& MutableNode->RuntimeNode.RandomBranches.IsValidIndex(BranchIndex + 1))
+					{
+						MutableNode->ReorderRandomBranch(ParsedBranchId, MutableNode->RuntimeNode.RandomBranches[BranchIndex + 1].BranchId);
+					}
+				}))));
 	}
 
 	const FName PinName = Context->Pin->PinName;
@@ -762,6 +1124,7 @@ bool UARDialogueEdGraphNode::CommitRuntimeNodeMutation(const FText& TransactionT
 	if (UEdGraph* Graph = GetGraph())
 	{
 		Graph->Modify();
+		Graph->NotifyNodeChanged(this);
 		Graph->NotifyGraphChanged();
 		if (UObject* GraphOuter = Graph->GetOuter())
 		{
@@ -952,6 +1315,8 @@ FString UARDialogueEdGraphNode::BuildInlineSummary() const
 	}
 	case EDialogueNodeType::Random:
 		return FString::Printf(TEXT("Branches:%d"), RuntimeNode.RandomBranches.Num());
+	case EDialogueNodeType::Route:
+		return TEXT("Wire organizer (no runtime side effects)");
 	default:
 		return FString();
 	}

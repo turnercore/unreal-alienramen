@@ -50,6 +50,8 @@ namespace
 			return FText::FromString(TEXT("Modify Faction Popularity"));
 		case EDialogueNodeType::Random:
 			return FText::FromString(TEXT("Random"));
+		case EDialogueNodeType::Route:
+			return FText::FromString(TEXT("Route"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
@@ -126,7 +128,8 @@ void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& 
 		EDialogueNodeType::TagMutation,
 		EDialogueNodeType::RelationshipMutation,
 		EDialogueNodeType::FactionMutation,
-		EDialogueNodeType::Random
+		EDialogueNodeType::Random,
+		EDialogueNodeType::Route
 	};
 
 	for (const EDialogueNodeType NodeType : NodeTypes)
