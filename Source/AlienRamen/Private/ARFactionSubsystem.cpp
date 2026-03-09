@@ -5,7 +5,7 @@
 #include "ARLog.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameplayTagsManager.h"
@@ -278,7 +278,7 @@ bool UARFactionSubsystem::BuildResolvedDefinitions(TArray<FFactionResolvedDef>& 
 		return false;
 	}
 
-	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
 	UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
 	if (!Lookup || !SaveSubsystem)
 	{
@@ -295,7 +295,7 @@ bool UARFactionSubsystem::BuildResolvedDefinitions(TArray<FFactionResolvedDef>& 
 	}
 
 	TArray<FName> RowNames;
-	if (!Lookup->GetAllRowNamesForRootTag(RootTag, RowNames, OutError))
+	if (!Lookup->TryGetRowNamesForRootTag(RootTag, RowNames, OutError))
 	{
 		return false;
 	}
@@ -363,15 +363,15 @@ bool UARFactionSubsystem::ResolveFactionDefinition(const FGameplayTag& FactionTa
 		return false;
 	}
 
-	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
 	if (!Lookup)
 	{
-		OutError = TEXT("ContentLookupSubsystem missing.");
+		OutError = TEXT("TagContentResolverSubsystem missing.");
 		return false;
 	}
 
 	FInstancedStruct RowData;
-	if (!Lookup->LookupWithGameplayTag(FactionTag, RowData, OutError))
+	if (!Lookup->TryResolveRowForTag(FactionTag, RowData, OutError))
 	{
 		return false;
 	}
@@ -580,3 +580,4 @@ FGameplayTag UARFactionSubsystem::BuildFactionTagFromRootAndLeaf(const FGameplay
 	const FString TagPath = FString::Printf(TEXT("%s.%s"), *RootTag.ToString(), *LeafRowName.ToString());
 	return UGameplayTagsManager::Get().RequestGameplayTag(FName(*TagPath), false);
 }
+

@@ -234,7 +234,7 @@ struct ALIENRAMEN_API FDialogueConversationHeader
 	bool bCompletedByGameBlocksReoffer = false;
 };
 
-// ContentLookup row shape for conversation asset registration.
+// TagContentResolver row shape for conversation asset registration.
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARDialogueConversationAssetRow : public FTableRowBase
 {

@@ -24,6 +24,8 @@ public class AlienRamenEditor : ModuleRules
 			"GameplayAbilities",
 			"GameplayTags",
 			"GameplayTagsEditor",
+			"TagContentResolver",
+			"TagContentResolverEditor",
 			"AlienRamen"
 		});
 	}

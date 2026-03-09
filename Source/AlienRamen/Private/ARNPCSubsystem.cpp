@@ -3,7 +3,7 @@
 #include "ARDialogueSettings.h"
 #include "ARDialogueSubsystem.h"
 #include "ARLog.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameplayTagsManager.h"
 
@@ -18,11 +18,11 @@ namespace
 		return nullptr;
 	}
 
-	static UContentLookupSubsystem* GetLookupSubsystem(const UARNPCSubsystem* Subsystem)
+	static UTagContentResolverSubsystem* GetLookupSubsystem(const UARNPCSubsystem* Subsystem)
 	{
 		if (UGameInstance* GI = Subsystem ? Subsystem->GetGameInstance() : nullptr)
 		{
-			return GI->GetSubsystem<UContentLookupSubsystem>();
+			return GI->GetSubsystem<UTagContentResolverSubsystem>();
 		}
 		return nullptr;
 	}
@@ -88,7 +88,7 @@ bool UARNPCSubsystem::RefreshNpcTalkableState(FGameplayTag NpcTag)
 
 void UARNPCSubsystem::RefreshAllNpcTalkableStates()
 {
-	UContentLookupSubsystem* Lookup = GetLookupSubsystem(this);
+	UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this);
 	const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
 	if (!Lookup || !DialogueSettings || !DialogueSettings->SpeakerDefinitionRootTag.IsValid())
 	{
@@ -97,7 +97,7 @@ void UARNPCSubsystem::RefreshAllNpcTalkableStates()
 
 	TArray<FName> RowNames;
 	FString Error;
-	if (!Lookup->GetAllRowNamesForRootTag(DialogueSettings->SpeakerDefinitionRootTag, RowNames, Error))
+	if (!Lookup->TryGetRowNamesForRootTag(DialogueSettings->SpeakerDefinitionRootTag, RowNames, Error))
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[NPC] RefreshAll talkables failed to fetch speaker rows: %s"), *Error);
 		return;
@@ -112,3 +112,4 @@ void UARNPCSubsystem::RefreshAllNpcTalkableStates()
 		}
 	}
 }
+

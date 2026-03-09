@@ -1,11 +1,11 @@
 #include "SARDialogueLineGraphNode.h"
 
-#include "ARContentLookupSettings.h"
 #include "ARDialogueConversationAsset.h"
 #include "ARDialogueEdGraphNode.h"
 #include "ARDialogueSettings.h"
 #include "ARDialogueTypes.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
+#include "TagContentResolverEditorHelpers.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
 #include "EdGraph/EdGraphPin.h"
@@ -38,31 +38,18 @@ namespace
 		}
 
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
-		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-		if (!DialogueSettings
-			|| !LookupSettings
-			|| !DialogueSettings->SpeakerDefinitionRootTag.IsValid()
-			|| LookupSettings->RegistryAsset.IsNull())
+		if (!DialogueSettings || !DialogueSettings->SpeakerDefinitionRootTag.IsValid())
 		{
 			return nullptr;
 		}
 
-		UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
-		if (!Registry)
+		UDataTable* SpeakerTable = nullptr;
+		FString LookupError;
+		if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
 		{
 			return nullptr;
 		}
 
-		const FContentLookupRoute* SpeakerRoute = Registry->Routes.FindByPredicate([DialogueSettings](const FContentLookupRoute& Route)
-		{
-			return Route.RootTag.MatchesTagExact(DialogueSettings->SpeakerDefinitionRootTag);
-		});
-		if (!SpeakerRoute)
-		{
-			return nullptr;
-		}
-
-		UDataTable* SpeakerTable = SpeakerRoute->DataTable.LoadSynchronous();
 		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FARDialogueSpeakerRow::StaticStruct())
 		{
 			return nullptr;
@@ -545,3 +532,4 @@ TSharedRef<FGraphPanelNodeFactory> CreateARDialogueLineGraphNodeFactory()
 {
 	return MakeShared<FARDialogueLineGraphNodeFactory>();
 }
+
