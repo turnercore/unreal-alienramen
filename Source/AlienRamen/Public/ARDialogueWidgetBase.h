@@ -44,6 +44,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
 	void InteractWithNpc(AARNPCCharacterBase* NpcActor);
 
+	// Toggles local player's dialogue auto-advance preference through the bound controller.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	void ToggleAutoAdvance();
+
+	// Submits selected choice when waiting for choice; otherwise advances dialogue.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	void AdvanceOrSubmitDialogue();
+
+	// Moves selected choice index by Delta on the bound controller.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	void ChoiceDelta(int32 Delta);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI")
 	bool GetCurrentDialogueView(FDialogueClientView& OutView) const;
 
