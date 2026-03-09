@@ -18,8 +18,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 6;
-	static constexpr int32 MinSupportedSchemaVersion = 6;
+	static constexpr int32 CurrentSchemaVersion = 7;
+	static constexpr int32 MinSupportedSchemaVersion = 7;
 
 	UARSaveGame();
 
@@ -84,17 +84,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	TArray<FARPlayerStateSaveData> PlayerStates;
 
-	// Global per-NPC relationship state and wants.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|NPC")
-	TArray<FARNpcRelationshipState> NpcRelationshipStates;
-
-	// Canonical branch outcomes for choice nodes.
+	// Global speaker relationship points.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
-	TArray<FARDialogueCanonicalChoiceState> DialogueCanonicalChoiceStates;
+	TArray<FDialogueRelationshipState> DialogueRelationshipStates;
 
-	// Per-player node seen history.
+	// Persistent game-scope completed conversations.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
-	TArray<FARPlayerDialogueHistoryState> PlayerDialogueHistoryStates;
+	FGameplayTagContainer DialogueCompletedConversationTagsByGame;
+
+	// Per-player dialogue progression/completion/choice-memory state.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
+	TArray<FDialoguePlayerPersistentState> DialoguePlayerPersistentStates;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataBySlot(EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const;

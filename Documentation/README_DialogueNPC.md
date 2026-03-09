@@ -2,87 +2,150 @@
 
 ## Overview
 
-Alien Ramen dialogue/NPC runtime is server-authoritative and save-backed:
+Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
 
-- `UARDialogueSubsystem` owns runtime dialogue sessions, node progression, choices, and eavesdrop policy.
-- `UARNPCSubsystem` owns persistent NPC relationship/want state and talkable-state refresh.
-- `AARNPCCharacterBase` is the world NPC entrypoint with replicated `bIsTalkable` and server interaction handoff.
+- `UARDialogueSubsystem` is server-authoritative for offer selection, session execution, branching, eavesdrop, completion persistence, and choice-memory persistence.
+- `UARNPCSubsystem` is now talkable-cache-focused and derives NPC talkable state from dialogue unlock availability.
+- `AARNPCCharacterBase` remains the world interaction entrypoint and replicates `bIsTalkable`.
 
 ## Runtime Entry Points
 
-- Player/UI entrypoints are routed through `AARPlayerController` RPC wrappers:
-  - `RequestStartDialogue`
-  - `RequestAdvanceDialogue`
-  - `RequestSubmitDialogueChoice`
-  - `RequestSetDialogueEavesdrop`
-- World interaction entrypoint is `AARNPCCharacterBase::InteractByController(...)` (authority-only).
-- Core subsystem calls:
-  - `TryStartDialogueWithNpc(...)`
-  - `AdvanceDialogue(...)`
-  - `SubmitDialogueChoice(...)`
-  - `SetShopEavesdropTarget(...)`
+Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 
-## Mode Behavior
+- `RequestStartDialogue(FGameplayTag NpcTag)`
+- `RequestAdvanceDialogue()`
+- `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
+- `RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)`
 
-- `Mode.Invader`, `Mode.Scrapyard`: one shared dialogue session for the match.
-- `Mode.Shop`: per-player dialogue sessions.
-- Shop supports eavesdrop mirroring (`RequestSetDialogueEavesdrop(...)`).
-- World pause on dialogue is controlled by `UARDialogueSettings::PauseOnDialogueModeTags` (default only `Mode.Invader`).
-- Shared mode policy: only one shared session can be active at a time.
-- Shop policy: each owner slot can have at most one active per-player session.
+Server runtime now pushes authoritative view snapshots back to client controllers via:
 
-## Unlock + Row Selection Policy
+- `ClientDialogueSessionUpdated(const FDialogueClientView& View)`
+- `ClientDialogueSessionEnded(const FString& SessionId)`
 
-- Dialogue rows are discovered through `UContentLookupSubsystem` from root `Dialogue.Node`.
-- Candidate rows are filtered by exact `NpcTag`, then ordered by priority/tag sort.
-- Row unlock conditions are evaluated server-side against:
-  - Save progression tags (`RequiredProgressionTags`, `BlockedProgressionTags`)
-  - GameState unlock tags (`RequiredUnlockTags`, `BlockedUnlockTags`)
-  - NPC relationship state (`MinLoveRating`, `bRequiresWantSatisfied`)
-  - Seen-history repeat policy (`bAllowRepeatAfterSeen`)
+Core subsystem API:
 
-## Choice + Seen + Progression Policy
+- `GetAvailableConversationForNPC(...)`
+- `StartConversation(...)`
+- `AdvanceConversation(...)`
+- `SubmitChoice(...)`
+- `ForceEavesdrop(...)`
+- `ValidateConversation(...)`
+- `ValidateSpeaker(...)`
+- `PreviewConversation(...)`
 
-- Node participation mode: `InitiatorOnly` or `GroupChoice`.
-- Canonical branch outcome is persisted once globally per node.
-- Group-choice conflict tie-break is initiator-wins.
-- Important node hook: `bForceEavesdropForImportantDecision` forces partner viewing in Shop and blocks choice submit until all slotted players are viewing.
-- Seen history is per-player, but only active speaker gets seen credit.
-- Progression grants:
-  - `GrantProgressionTagsOnEnter` are applied when entering a row.
-  - `GrantProgressionTags` from the resolved choice are applied on choice commit.
-- Canonical choice writes and seen-history writes mark save dirty (`UARSaveSubsystem::MarkSaveDirty()`).
+Compatibility wrappers still exist for gameplay BPs:
 
-## NPC Relationship + Talkable State
+- `TryStartDialogueWithNpc(...)`
+- `SubmitDialogueChoice(...)` (routes to `SubmitChoice`)
+- `SetShopEavesdropTarget(...)` (routes to `ForceEavesdrop`)
 
-- `UARNPCSubsystem::SubmitNpcRamenDelivery(...)` accepts only exact want-tag matches.
-- On accepted delivery:
-  - `LoveRating` increases by at least `1` (or NPC row override)
-  - `bCurrentWantSatisfied` is set
-  - Save is marked dirty
-- NPC talkable state is derived from dialogue unlock availability (`HasUnlockedDialogueForNpcForAnyPlayer`) and cached in `UARNPCSubsystem`.
-- `AARNPCCharacterBase` listens for talkable cache changes and replicates `bIsTalkable` to clients.
+## Content Model
+
+Shared dialogue types live in [`Source/AlienRamen/Public/ARDialogueTypes.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueTypes.h).
+
+- Speakers: `FDialogueSpeakerRow` rows (content lookup compatible).
+- Conversations: `UARDialogueConversationAsset` with:
+  - `Header` (`FDialogueConversationHeader`)
+  - `CompiledData` (`FDialogueCompiledConversationData`)
+- Lines are embedded per conversation (`FDialogueConversationLine`), not global rows.
+- Conversation registry sources:
+  - Explicit `ConversationAssets` list in `UARDialogueSettings`.
+  - Optional ContentLookup DataTable rows (`FDialogueConversationAssetRow`) routed by `ConversationDefinitionRootTag` (row tag or built tag from root+row name). Runtime merges both, logs duplicates, and keeps the first registration per `ConversationTag`.
+
+Settings live in [`Source/AlienRamen/Public/ARDialogueSettings.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueSettings.h):
+
+- `SpeakerDefinitionRootTag` (speaker row lookup root)
+- `ConversationDefinitionRootTag`
+- `ConversationAssets` (runtime registry)
+- shared/per-player mode tag containers
+- execution guard `MaxExecutionStepsPerAdvance`
+
+Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `ConversationDefinitionRootTag=Dialogue.Conversation`.
+
+## Offer + Execution Rules (Current Runtime)
+
+- Offer selection is server-side and bucketed:
+  - unseen
+  - game-seen/player-unseen catch-up
+  - repeatable/other
+- Highest numeric priority wins inside the first non-empty bucket; equal priorities randomize.
+- Offer checks include:
+  - mode enabled by `UARDialogueSettings` shared/per-player mode tags
+  - primary speaker exact match
+  - relationship minimum
+  - locked/blocked condition groups
+  - seen/completed/repeatability suppression flags
+- Runtime executes compiled nodes server-side with a step cap from settings.
+- Implemented node execution: enter/completed/line/choice/bool/switch/tag-mutation/relationship-mutation/faction-mutation/random.
+- Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
+- Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
+- Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
+
+## Seen vs Completed
+
+- Seen state is transient only (game + per-slot runtime containers in `UARDialogueSubsystem`).
+- Completed state is persistent and save-backed.
+- Completion is written only when a `Completed` node executes.
+- Save system enforces no mid-conversation saves by checking active dialogue sessions before `SaveCurrentGame`.
+
+## Choice Memory
+
+- Runtime choice picks are tracked per session (`ChoiceNodeId -> BranchId`).
+- On completed conversation:
+  - game completion tag is persisted
+  - initiating player completion tag is persisted
+  - per-choice memory records are persisted (`FDialogueChoiceMemoryRecord`)
+- Choice nodes in `LockedToRecordedChoice` mode auto-route to persisted branch when encountered after completion.
 
 ## Persistence
 
-Save schema `v6` includes:
+Save schema is now `v7`:
+
+- `DialogueRelationshipStates`
+- `DialogueCompletedConversationTagsByGame`
+- `DialoguePlayerPersistentStates`
+
+Removed legacy dialogue save fields:
 
 - `NpcRelationshipStates`
 - `DialogueCanonicalChoiceStates`
 - `PlayerDialogueHistoryStates`
 
-`UARSaveSubsystem::GatherRuntimeData(...)` carries these arrays forward from `CurrentSaveGame` so runtime dialogue/NPC mutations persist across normal save cycles.
+## NPC Talkable Runtime
 
-Related saved-tag contracts:
-- [Progression + Unlocks](README_ProgressionUnlocks.md)
-- [Save subsystem](README_SaveSubsystem.md)
+`UARNPCSubsystem` no longer owns ramen/want mutation logic. It now:
 
-## Content Authoring
+- caches `NpcTag -> bTalkable`
+- refreshes from `UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer(...)`
+- broadcasts `OnNpcTalkableChanged`
+- combines subsystem talkable state with `AARNPCCharacterBase::bNpcLocalStateAllowsDialogue` (local NPC runtime gate, for example ordering-mode lockouts)
 
-Dialogue and NPC definitions are DataTable rows resolved via `UContentLookupSubsystem`.
+## Editor Tooling (Current)
 
-- Dialogue root tag: `Dialogue.Node`
-- NPC root tag: `NPC.Identity`
+Registered editor tabs:
 
-Dialogue row type: `FARDialogueNodeRow`
-NPC row type: `FARNpcDefinitionRow`
+- `Dialogue Speaker Editor` (`SDialogueSpeakerEditorPanel`)
+- `Dialogue Conversation Graph Editor` (`SDialogueConversationGraphEditorPanel`)
+
+Conversation graph tooling now provides:
+
+- blueprint-style `SGraphEditor` canvas with right-click node creation
+- graph node classes/schema (`UARDialogueEdGraph`, `UARDialogueEdGraphNode`, `UARDialogueEdGraphSchema`)
+- drag-link execution wiring with:
+  - one outgoing link per output pin
+  - multiple incoming links allowed per node input
+- full toolbar flow: Save / Validate / Compile Runtime Graph / Focus Enter / Auto Layout / Preview
+- details-panel editing for selected node or conversation root
+- dynamic branch-pin behavior for choice/switch/random nodes driven by stable branch GUIDs
+- compile-from-editor-graph into `CompiledData` with node-level validation markers
+- validation + preview execution through runtime dialogue subsystem even when PIE is not running
+
+Speaker hub currently provides:
+
+- content-lookup-backed speaker table loading from `SpeakerDefinitionRootTag`
+- searchable/filterable/sortable speaker list with columns (display name/tag/faction/thresholds/conversation count)
+- speaker CRUD (`New`, `Duplicate`, `Delete`) + `Save Speaker` + `Validate Speaker`
+- inline threshold editing/reset (`50,150,300,500` defaults)
+- inline portrait list with add/update/remove operations
+- relationship-band conversation map for selected primary speaker
+- conversation create/open actions and broken-conversation scan using runtime validator
