@@ -5,6 +5,9 @@
 #include "ARDialogueTypes.h"
 #include "ARDialogueEdGraphNode.generated.h"
 
+class UGraphNodeContextMenuContext;
+class UToolMenu;
+
 UCLASS()
 class UARDialogueEdGraphNode : public UEdGraphNode
 {
@@ -15,9 +18,11 @@ public:
 	FDialogueCompiledNode RuntimeNode;
 
 	virtual void AllocateDefaultPins() override;
+	virtual bool CanUserDeleteNode() const override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FText GetTooltipText() const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
+	virtual void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 	virtual void PostPlacedNewNode() override;
 	virtual void PostPasteNode() override;
 	virtual void PrepareForCopying() override;
@@ -36,6 +41,19 @@ public:
 	UEdGraphPin* GetSwitchOutputPin(const FGuid& BranchId) const;
 	UEdGraphPin* GetRandomOutputPin(const FGuid& BranchId) const;
 
+	bool SupportsDynamicBranchPins() const;
+	void AddDynamicBranchPin();
+	bool RemoveDynamicBranchPinByName(FName PinName);
+
+	bool SetChoiceBranchText(const FGuid& ChoiceBranchId, const FText& NewText);
+	bool SetSwitchBranchLabel(const FGuid& BranchId, const FText& NewLabel);
+	bool SetRandomBranchWeight(const FGuid& BranchId, float NewWeight);
+	bool SetChoiceFallbackText(const FText& NewFallbackText);
+	bool SetRelationshipTargetSpeakerTag(const FGameplayTag& NewTag);
+	bool SetRelationshipDeltaPoints(float NewDeltaPoints);
+	bool SetFactionTag(const FGameplayTag& NewTag);
+	bool SetFactionDeltaPopularity(float NewDeltaPopularity);
+
 	void ApplyValidation(EDialogueValidationSeverity Severity, const FString& Message);
 	void ClearValidation();
 
@@ -51,6 +69,9 @@ public:
 	static FName MakeRandomPinName(const FGuid& BranchId);
 
 private:
+	bool CommitRuntimeNodeMutation(const FText& TransactionText, TFunctionRef<bool()> MutateFn, bool bReconstructPins);
+	static bool TryParseBranchGuidFromPinName(const FName PinName, const FString& Prefix, FGuid& OutBranchId);
+
 	void EnsureNodeDataMatchesNodeType();
 	void EnsureBranchAndLineIds(bool bRegenerateBranches, bool bRegenerateLineGuid);
 	void AddInputPinIfNeeded();

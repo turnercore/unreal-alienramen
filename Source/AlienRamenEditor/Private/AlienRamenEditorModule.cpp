@@ -4,6 +4,7 @@
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
 #include "SARDialogueLineGraphNode.h"
+#include "SARDialogueInlineGraphNode.h"
 #include "ARSaveSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
@@ -1537,6 +1538,8 @@ public:
 	{
 		DialogueLineNodeFactory = CreateARDialogueLineGraphNodeFactory();
 		FEdGraphUtilities::RegisterVisualNodeFactory(DialogueLineNodeFactory);
+		DialogueInlineNodeFactory = CreateARDialogueInlineGraphNodeFactory();
+		FEdGraphUtilities::RegisterVisualNodeFactory(DialogueInlineNodeFactory);
 
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARDebugSaveEditor::TabName,
@@ -1587,6 +1590,11 @@ public:
 		{
 			FEdGraphUtilities::UnregisterVisualNodeFactory(DialogueLineNodeFactory);
 			DialogueLineNodeFactory.Reset();
+		}
+		if (DialogueInlineNodeFactory.IsValid())
+		{
+			FEdGraphUtilities::UnregisterVisualNodeFactory(DialogueInlineNodeFactory);
+			DialogueInlineNodeFactory.Reset();
 		}
 
 		if (UToolMenus::TryGet())
@@ -1690,6 +1698,7 @@ private:
 	}
 
 	TSharedPtr<FGraphPanelNodeFactory> DialogueLineNodeFactory;
+	TSharedPtr<FGraphPanelNodeFactory> DialogueInlineNodeFactory;
 };
 
 IMPLEMENT_MODULE(FAlienRamenEditorModule, AlienRamenEditor)
