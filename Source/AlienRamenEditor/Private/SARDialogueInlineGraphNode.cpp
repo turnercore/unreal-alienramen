@@ -3,25 +3,152 @@
 #include "ARDialogueEdGraphNode.h"
 #include "ARFactionSettings.h"
 #include "ARDialogueTypes.h"
+#include "DragAndDrop/DecoratedDragDropOp.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphUtilities.h"
+#include "InputCoreTypes.h"
 #include "Misc/DefaultValueHelper.h"
 #include "SGameplayTagCombo.h"
 #include "SGraphPin.h"
 #include "Styling/AppStyle.h"
 #include "Widgets/Images/SImage.h"
+#include "Widgets/SCompoundWidget.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
 #include "Widgets/Input/SSpinBox.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/SBoxPanel.h"
+#include "Widgets/SOverlay.h"
 #include "Widgets/Text/STextBlock.h"
 
 namespace
 {
 	constexpr float ChoiceMinWidth = 540.0f;
 	constexpr float StandardMinWidth = 360.0f;
+
+	class FARDialogueBranchDragDropOp final : public FDecoratedDragDropOp
+	{
+	public:
+		DRAG_DROP_OPERATOR_TYPE(FARDialogueBranchDragDropOp, FDecoratedDragDropOp)
+
+		static TSharedRef<FARDialogueBranchDragDropOp> New(const EDialogueNodeType InBranchNodeType, const FGuid InBranchId)
+		{
+			TSharedRef<FARDialogueBranchDragDropOp> Op = MakeShared<FARDialogueBranchDragDropOp>();
+			Op->BranchNodeType = InBranchNodeType;
+			Op->BranchId = InBranchId;
+			Op->DefaultHoverText = FText::FromString(TEXT("Reorder Branch"));
+			Op->Construct();
+			return Op;
+		}
+
+		EDialogueNodeType BranchNodeType = EDialogueNodeType::Line;
+		FGuid BranchId;
+	};
+
+	DECLARE_DELEGATE_RetVal_ThreeParams(bool, FOnDialogueBranchDropped, EDialogueNodeType, FGuid, FGuid);
+
+	class SARDialogueBranchDragRow final : public SCompoundWidget
+	{
+	public:
+		SLATE_BEGIN_ARGS(SARDialogueBranchDragRow) {}
+			SLATE_ARGUMENT(EDialogueNodeType, BranchNodeType)
+			SLATE_ARGUMENT(FGuid, BranchId)
+			SLATE_EVENT(FOnDialogueBranchDropped, OnBranchDropped)
+			SLATE_DEFAULT_SLOT(FArguments, Content)
+		SLATE_END_ARGS()
+
+		void Construct(const FArguments& InArgs)
+		{
+			BranchNodeType = InArgs._BranchNodeType;
+			BranchId = InArgs._BranchId;
+			OnBranchDropped = InArgs._OnBranchDropped;
+
+			ChildSlot
+			[
+				InArgs._Content.Widget
+			];
+		}
+
+		virtual FReply OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
+		{
+			(void)MyGeometry;
+			const TSharedPtr<FARDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FARDialogueBranchDragDropOp>();
+			if (DragOperation.IsValid() && DragOperation->BranchNodeType == BranchNodeType)
+			{
+				return FReply::Handled();
+			}
+			return FReply::Unhandled();
+		}
+
+		virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
+		{
+			(void)MyGeometry;
+			const TSharedPtr<FARDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FARDialogueBranchDragDropOp>();
+			if (!DragOperation.IsValid() || DragOperation->BranchNodeType != BranchNodeType || DragOperation->BranchId == BranchId)
+			{
+				return FReply::Unhandled();
+			}
+
+			if (OnBranchDropped.IsBound() && OnBranchDropped.Execute(BranchNodeType, DragOperation->BranchId, BranchId))
+			{
+				return FReply::Handled();
+			}
+
+			return FReply::Unhandled();
+		}
+
+	private:
+		EDialogueNodeType BranchNodeType = EDialogueNodeType::Line;
+		FGuid BranchId;
+		FOnDialogueBranchDropped OnBranchDropped;
+	};
+
+	class SARDialogueBranchDragHandle final : public SCompoundWidget
+	{
+	public:
+		SLATE_BEGIN_ARGS(SARDialogueBranchDragHandle) {}
+			SLATE_ARGUMENT(EDialogueNodeType, BranchNodeType)
+			SLATE_ARGUMENT(FGuid, BranchId)
+		SLATE_END_ARGS()
+
+		void Construct(const FArguments& InArgs)
+		{
+			BranchNodeType = InArgs._BranchNodeType;
+			BranchId = InArgs._BranchId;
+
+			ChildSlot
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("::")))
+				.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
+				.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
+			];
+		}
+
+		virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
+		{
+			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+			{
+				return FReply::Handled().DetectDrag(AsShared(), EKeys::LeftMouseButton);
+			}
+			return SCompoundWidget::OnMouseButtonDown(MyGeometry, MouseEvent);
+		}
+
+		virtual FReply OnDragDetected(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
+		{
+			(void)MyGeometry;
+			if (MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+			{
+				return FReply::Handled().BeginDragDrop(FARDialogueBranchDragDropOp::New(BranchNodeType, BranchId));
+			}
+			return FReply::Unhandled();
+		}
+
+	private:
+		EDialogueNodeType BranchNodeType = EDialogueNodeType::Line;
+		FGuid BranchId;
+	};
 
 	class FARDialogueInlineGraphNodeFactory final : public FGraphPanelNodeFactory
 	{
@@ -39,6 +166,7 @@ namespace
 			case EDialogueNodeType::Choice:
 			case EDialogueNodeType::SwitchOnTagsByPriority:
 			case EDialogueNodeType::Random:
+			case EDialogueNodeType::Sequence:
 			case EDialogueNodeType::RelationshipMutation:
 			case EDialogueNodeType::FactionMutation:
 				return SNew(SARDialogueInlineGraphNode, DialogueNode);
@@ -75,14 +203,24 @@ void SARDialogueInlineGraphNode::UpdateGraphNode()
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			[
-				SNew(SBorder)
-				.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.TitleBackground")))
-				.BorderBackgroundColor(this, &SARDialogueInlineGraphNode::GetTitleColor)
-				.Padding(FMargin(6.0f, 2.0f))
+				SNew(SOverlay)
+				+ SOverlay::Slot()
 				[
-					SNew(STextBlock)
-					.Text(this, &SARDialogueInlineGraphNode::GetNodeTitleText)
-					.ColorAndOpacity(FSlateColor(FLinearColor::White))
+					SNew(SBorder)
+					.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.TitleBackground")))
+					.BorderBackgroundColor(this, &SARDialogueInlineGraphNode::GetTitleColor)
+					.Padding(FMargin(6.0f, 2.0f))
+					[
+						SNew(STextBlock)
+						.Text(this, &SARDialogueInlineGraphNode::GetNodeTitleText)
+						.ColorAndOpacity(FSlateColor(FLinearColor::White))
+					]
+				]
+				+ SOverlay::Slot()
+				[
+					SNew(SImage)
+					.Image(FAppStyle::GetBrush(TEXT("Graph.Node.TitleGloss")))
+					.ColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 0.35f)))
 				]
 			]
 			+ SVerticalBox::Slot()
@@ -176,6 +314,8 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildInlineContent() const
 		return BuildSwitchInlineContent();
 	case EDialogueNodeType::Random:
 		return BuildRandomInlineContent();
+	case EDialogueNodeType::Sequence:
+		return BuildSequenceInlineContent();
 	case EDialogueNodeType::RelationshipMutation:
 		return BuildRelationshipInlineContent();
 	case EDialogueNodeType::FactionMutation:
@@ -218,36 +358,41 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildChoiceInlineContent() const
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
-				SNew(SBorder)
-				.Padding(FMargin(2.0f, 1.0f))
-				.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::Choice)
+				.BranchId(Branch.ChoiceBranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SARDialogueInlineGraphNode::HandleBranchRowDropped))
 				[
-					SNew(SHorizontalBox)
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.VAlign(VAlign_Center)
-					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
 					[
-						SNew(STextBlock)
-						.Text(FText::FromString(TEXT("::")))
-						.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
-					]
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.VAlign(VAlign_Center)
-					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
-					[
-						SNew(STextBlock)
-						.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
-					]
-					+ SHorizontalBox::Slot()
-					.FillWidth(1.0f)
-					[
-						SNew(SEditableTextBox)
-						.Text(Branch.ChoiceText)
-						.HintText(FText::FromString(TEXT("Choice text")))
-						.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleChoiceTextCommitted, Branch.ChoiceBranchId)
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::Choice)
+							.BranchId(Branch.ChoiceBranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(Branch.ChoiceText)
+							.HintText(FText::FromString(TEXT("Choice text")))
+							.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleChoiceTextCommitted, Branch.ChoiceBranchId)
+						]
 					]
 				]
 			];
@@ -303,36 +448,41 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSwitchInlineContent() const
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
-				SNew(SBorder)
-				.Padding(FMargin(2.0f, 1.0f))
-				.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::SwitchOnTagsByPriority)
+				.BranchId(Branch.BranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SARDialogueInlineGraphNode::HandleBranchRowDropped))
 				[
-					SNew(SHorizontalBox)
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.VAlign(VAlign_Center)
-					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
 					[
-						SNew(STextBlock)
-						.Text(FText::FromString(TEXT("::")))
-						.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
-					]
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.VAlign(VAlign_Center)
-					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
-					[
-						SNew(STextBlock)
-						.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
-					]
-					+ SHorizontalBox::Slot()
-					.FillWidth(1.0f)
-					[
-						SNew(SEditableTextBox)
-						.Text(Branch.Label)
-						.HintText(FText::FromString(TEXT("Branch label")))
-						.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleSwitchLabelCommitted, Branch.BranchId)
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::SwitchOnTagsByPriority)
+							.BranchId(Branch.BranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(Branch.Label)
+							.HintText(FText::FromString(TEXT("Branch label")))
+							.OnTextCommitted(this, &SARDialogueInlineGraphNode::HandleSwitchLabelCommitted, Branch.BranchId)
+						]
 					]
 				]
 			];
@@ -374,40 +524,96 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRandomInlineContent() const
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
-				SNew(SBorder)
-				.Padding(FMargin(2.0f, 1.0f))
-				.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::Random)
+				.BranchId(Branch.BranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SARDialogueInlineGraphNode::HandleBranchRowDropped))
 				[
-					SNew(SHorizontalBox)
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.VAlign(VAlign_Center)
-					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
 					[
-						SNew(STextBlock)
-						.Text(FText::FromString(TEXT("::")))
-						.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
-					]
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.VAlign(VAlign_Center)
-					.Padding(0.0f, 0.0f, 4.0f, 0.0f)
-					[
-						SNew(STextBlock)
-						.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
-					]
-					+ SHorizontalBox::Slot()
-					.FillWidth(1.0f)
-					[
-						SNew(SSpinBox<float>)
-						.MinValue(0.0f)
-						.MaxValue(1000000.0f)
-						.Delta(0.1f)
-						.Value(Branch.Weight)
-						.OnValueCommitted(this, &SARDialogueInlineGraphNode::HandleRandomWeightCommitted, Branch.BranchId)
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::Random)
+							.BranchId(Branch.BranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(FText::AsNumber(Branch.Weight))
+							.HintText(FText::FromString(TEXT("1.0")))
+							.OnTextCommitted_Lambda([this, BranchId = Branch.BranchId](const FText& NewText, const ETextCommit::Type CommitType)
+							{
+								(void)CommitType;
+								float ParsedValue = 0.0f;
+								if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+								{
+									return;
+								}
+
+								if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+								{
+									DialogueNode->SetRandomBranchWeight(BranchId, ParsedValue);
+								}
+							})
+						]
 					]
 				]
+			];
+		}
+	}
+
+	return Content;
+}
+
+TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSequenceInlineContent() const
+{
+	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledSequenceBranch>* SequenceBranches = DialogueNode ? &DialogueNode->RuntimeNode.SequenceBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	Content->AddSlot()
+	.AutoHeight()
+	.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+	[
+		SNew(STextBlock)
+		.Text(FText::FromString(TEXT("Sequence Order")))
+	];
+
+	if (!SequenceBranches || SequenceBranches->IsEmpty())
+	{
+		Content->AddSlot()
+		.AutoHeight()
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("No sequence branches yet. Use Add pin to create one.")))
+		];
+	}
+	else
+	{
+		for (int32 Index = 0; Index < SequenceBranches->Num(); ++Index)
+		{
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(FString::Printf(TEXT("Then %d"), Index + 1)))
 			];
 		}
 	}
@@ -564,6 +770,46 @@ FReply SARDialogueInlineGraphNode::HandleAddBranchPinClicked() const
 void SARDialogueInlineGraphNode::RefreshNodeWidget() const
 {
 	const_cast<SARDialogueInlineGraphNode*>(this)->UpdateGraphNode();
+}
+
+bool SARDialogueInlineGraphNode::HandleBranchRowDropped(
+	const EDialogueNodeType BranchNodeType,
+	const FGuid DraggedBranchId,
+	const FGuid TargetBranchId) const
+{
+	if (!DraggedBranchId.IsValid() || !TargetBranchId.IsValid() || DraggedBranchId == TargetBranchId)
+	{
+		return false;
+	}
+
+	UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
+	if (!DialogueNode)
+	{
+		return false;
+	}
+
+	bool bReordered = false;
+	switch (BranchNodeType)
+	{
+	case EDialogueNodeType::Choice:
+		bReordered = DialogueNode->ReorderChoiceBranch(DraggedBranchId, TargetBranchId);
+		break;
+	case EDialogueNodeType::SwitchOnTagsByPriority:
+		bReordered = DialogueNode->ReorderSwitchBranch(DraggedBranchId, TargetBranchId);
+		break;
+	case EDialogueNodeType::Random:
+		bReordered = DialogueNode->ReorderRandomBranch(DraggedBranchId, TargetBranchId);
+		break;
+	default:
+		break;
+	}
+
+	if (bReordered)
+	{
+		RefreshNodeWidget();
+	}
+
+	return bReordered;
 }
 
 void SARDialogueInlineGraphNode::HandleChoiceTextCommitted(const FText& NewText, const ETextCommit::Type CommitType, const FGuid ChoiceBranchId) const
