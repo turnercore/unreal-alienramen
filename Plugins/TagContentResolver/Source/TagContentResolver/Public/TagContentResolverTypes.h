@@ -34,8 +34,8 @@ struct TAGCONTENTRESOLVER_API FTagContentResolverProjectRoute
 UENUM(BlueprintType)
 enum class ETagContentResolverPreloadPolicy : uint8
 {
-	None UMETA(DisplayName = "None", ToolTip = "Do not preload tables at startup. Tables load on first use."),
-	CriticalRoots UMETA(DisplayName = "Critical Routes", ToolTip = "Preload only routes in ProjectRoutes with bPreload enabled."),
+	None UMETA(DisplayName = "Never", ToolTip = "Do not preload tables at startup. Tables load on first use."),
+	CriticalRoots UMETA(DisplayName = "Only Routes Marked as Preload", ToolTip = "Preload only routes in ProjectRoutes with bPreload enabled."),
 	AllRoutes UMETA(DisplayName = "All Routes", ToolTip = "Preload all configured routes at startup.")
 };
 

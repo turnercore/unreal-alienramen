@@ -9,7 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "ARDialogueSettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Dialogue"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Dialogue"))
 class ALIENRAMEN_API UARDialogueSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

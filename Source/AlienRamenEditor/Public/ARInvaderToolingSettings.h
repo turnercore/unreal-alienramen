@@ -7,7 +7,7 @@
 class UDataTable;
 class UWorld;
 
-UCLASS(Config=Editor, DefaultConfig, meta=(DisplayName="Alien Ramen Tooling"))
+UCLASS(Config=Editor, DefaultConfig, meta=(DisplayName="Tooling"))
 class ALIENRAMENEDITOR_API UARInvaderToolingSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

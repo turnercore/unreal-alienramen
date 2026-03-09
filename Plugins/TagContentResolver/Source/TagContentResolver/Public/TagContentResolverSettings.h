@@ -16,8 +16,8 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Project-owned routes. Other plugins can still contribute additional routes via providers."))
 	TArray<FTagContentResolverProjectRoute> ProjectRoutes;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Performance", meta=(ToolTip="Controls which DataTables are preloaded at subsystem startup."))
-	ETagContentResolverPreloadPolicy PreloadPolicy = ETagContentResolverPreloadPolicy::None;
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Controls which route tables are preloaded at subsystem startup."))
+	ETagContentResolverPreloadPolicy PreloadPolicy = ETagContentResolverPreloadPolicy::CriticalRoots;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Diagnostics", meta=(ToolTip="When enabled, repeated identical resolver failures are logged once to reduce spam."))
 	bool bDeduplicateFailureLogs = true;

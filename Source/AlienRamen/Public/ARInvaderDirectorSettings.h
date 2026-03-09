@@ -41,7 +41,7 @@ struct FARInvaderDropStackDefinition
 	TSoftClassPtr<AARInvaderDropBase> DropClass;
 };
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Invader Director"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Invader Director"))
 class ALIENRAMEN_API UARInvaderDirectorSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
