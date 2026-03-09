@@ -9,8 +9,6 @@
 #include "GameplayTagContainer.h"
 #include "ARDialogueSettings.generated.h"
 
-class UARDialogueConversationAsset;
-
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Dialogue"))
 class ALIENRAMEN_API UARDialogueSettings : public UDeveloperSettings
 {
@@ -19,17 +17,13 @@ class ALIENRAMEN_API UARDialogueSettings : public UDeveloperSettings
 public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 
-	// ContentLookup root tag used to resolve FDialogueSpeakerRow records.
+	// ContentLookup root tag used to resolve FARDialogueSpeakerRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content")
 	FGameplayTag SpeakerDefinitionRootTag;
 
-	// Optional canonical root for conversation identity tags (used for validation/logging).
+	// ContentLookup root tag used to resolve FARDialogueConversationAssetRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content")
 	FGameplayTag ConversationDefinitionRootTag;
-
-	// Explicit conversation asset registry consumed at runtime for offers/lookups.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content")
-	TArray<TSoftObjectPtr<UARDialogueConversationAsset>> ConversationAssets;
 
 	// Modes that use one shared session for all slotted players.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Mode")
