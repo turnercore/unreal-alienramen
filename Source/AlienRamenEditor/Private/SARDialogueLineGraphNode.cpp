@@ -139,14 +139,24 @@ void SARDialogueLineGraphNode::UpdateGraphNode()
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			[
-				SNew(SBorder)
-				.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.TitleBackground")))
-				.BorderBackgroundColor(this, &SARDialogueLineGraphNode::GetTitleColor)
-				.Padding(FMargin(6.0f, 2.0f))
+				SNew(SOverlay)
+				+ SOverlay::Slot()
 				[
-					SNew(STextBlock)
-					.Text(this, &SARDialogueLineGraphNode::GetNodeTitleText)
-					.ColorAndOpacity(FSlateColor(FLinearColor::White))
+					SNew(SBorder)
+					.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.TitleBackground")))
+					.BorderBackgroundColor(this, &SARDialogueLineGraphNode::GetTitleColor)
+					.Padding(FMargin(6.0f, 2.0f))
+					[
+						SNew(STextBlock)
+						.Text(this, &SARDialogueLineGraphNode::GetNodeTitleText)
+						.ColorAndOpacity(FSlateColor(FLinearColor::White))
+					]
+				]
+				+ SOverlay::Slot()
+				[
+					SNew(SImage)
+					.Image(FAppStyle::GetBrush(TEXT("Graph.Node.TitleGloss")))
+					.ColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 0.35f)))
 				]
 			]
 			+ SVerticalBox::Slot()

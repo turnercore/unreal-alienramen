@@ -867,6 +867,12 @@ void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UARDi
 				LinkPinToNode(SourceNode->GetRandomOutputPin(Branch.BranchId), Branch.NextNodeId);
 			}
 			break;
+		case EDialogueNodeType::Sequence:
+			for (const FDialogueCompiledSequenceBranch& Branch : RuntimeNode.SequenceBranches)
+			{
+				LinkPinToNode(SourceNode->GetSequenceOutputPin(Branch.BranchId), Branch.NextNodeId);
+			}
+			break;
 		default:
 			break;
 		}
@@ -1042,6 +1048,10 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 		{
 			Branch.NextNodeId.Invalidate();
 		}
+		for (FDialogueCompiledSequenceBranch& Branch : CompiledNode.SequenceBranches)
+		{
+			Branch.NextNodeId.Invalidate();
+		}
 
 		switch (CompiledNode.NodeType)
 		{
@@ -1095,6 +1105,16 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 					EditorNode,
 					EditorNode->GetRandomOutputPin(Branch.BranchId),
 					FString::Printf(TEXT("Random %.2f"), Branch.Weight));
+			}
+			break;
+		case EDialogueNodeType::Sequence:
+			for (int32 BranchIndex = 0; BranchIndex < CompiledNode.SequenceBranches.Num(); ++BranchIndex)
+			{
+				FDialogueCompiledSequenceBranch& Branch = CompiledNode.SequenceBranches[BranchIndex];
+				Branch.NextNodeId = ResolveLinkedNodeId(
+					EditorNode,
+					EditorNode->GetSequenceOutputPin(Branch.BranchId),
+					FString::Printf(TEXT("Then %d"), BranchIndex + 1));
 			}
 			break;
 		default:

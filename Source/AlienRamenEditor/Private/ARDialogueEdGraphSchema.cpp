@@ -3,6 +3,7 @@
 #include "ARDialogueEdGraphNode.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphPin.h"
+#include "EdGraphNode_Comment.h"
 
 namespace
 {
@@ -52,6 +53,8 @@ namespace
 			return FText::FromString(TEXT("Random"));
 		case EDialogueNodeType::Route:
 			return FText::FromString(TEXT("Route"));
+		case EDialogueNodeType::Sequence:
+			return FText::FromString(TEXT("Sequence"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
@@ -102,6 +105,31 @@ namespace
 
 		EDialogueNodeType NodeType = EDialogueNodeType::Line;
 	};
+
+	struct FARDialogueGraphSchemaAction_NewComment final : public FEdGraphSchemaAction
+	{
+		FARDialogueGraphSchemaAction_NewComment()
+			: FEdGraphSchemaAction(
+				FText::GetEmpty(),
+				FText::FromString(TEXT("Add Comment...")),
+				FText::FromString(TEXT("Create a resizable comment box.")),
+				0)
+		{
+		}
+
+		virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, const bool bSelectNewNode = true) override
+		{
+			(void)FromPin;
+
+			if (!ParentGraph)
+			{
+				return nullptr;
+			}
+
+			UEdGraphNode_Comment* CommentTemplate = NewObject<UEdGraphNode_Comment>();
+			return FEdGraphSchemaAction_NewNode::SpawnNodeFromTemplate<UEdGraphNode_Comment>(ParentGraph, CommentTemplate, FVector2f(Location), bSelectNewNode);
+		}
+	};
 }
 
 void UARDialogueEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
@@ -119,6 +147,8 @@ void UARDialogueEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 
 void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
+	ContextMenuBuilder.AddAction(GetCreateCommentAction());
+
 	static const TArray<EDialogueNodeType> NodeTypes = {
 		EDialogueNodeType::Completed,
 		EDialogueNodeType::Line,
@@ -129,7 +159,8 @@ void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& 
 		EDialogueNodeType::RelationshipMutation,
 		EDialogueNodeType::FactionMutation,
 		EDialogueNodeType::Random,
-		EDialogueNodeType::Route
+		EDialogueNodeType::Route,
+		EDialogueNodeType::Sequence
 	};
 
 	for (const EDialogueNodeType NodeType : NodeTypes)
@@ -143,6 +174,11 @@ void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& 
 			NodeType);
 		ContextMenuBuilder.AddAction(NewAction);
 	}
+}
+
+TSharedPtr<FEdGraphSchemaAction> UARDialogueEdGraphSchema::GetCreateCommentAction() const
+{
+	return MakeShared<FARDialogueGraphSchemaAction_NewComment>();
 }
 
 const FPinConnectionResponse UARDialogueEdGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const

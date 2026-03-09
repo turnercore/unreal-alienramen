@@ -1,8 +1,10 @@
 #include "AREnemyAuthoringPanel.h"
 #include "ARDialogueConversationGraphEditorPanel.h"
+#include "ARDialogueEdGraphNode.h"
 #include "ARDialogueSpeakerEditorPanel.h"
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
+#include "ARDialogueNodeDetailsCustomization.h"
 #include "SARDialogueLineGraphNode.h"
 #include "SARDialogueInlineGraphNode.h"
 #include "ARSaveSubsystem.h"
@@ -1536,6 +1538,18 @@ class FAlienRamenEditorModule final : public IModuleInterface
 public:
 	virtual void StartupModule() override
 	{
+		FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+		PropertyEditorModule.RegisterCustomClassLayout(
+			UARDialogueEdGraphNode::StaticClass()->GetFName(),
+			FOnGetDetailCustomizationInstance::CreateStatic(&FARDialogueEdGraphNodeDetails::MakeInstance));
+		PropertyEditorModule.RegisterCustomPropertyTypeLayout(
+			TEXT("DialogueBoolNodeData"),
+			FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FARDialogueBoolNodeDataCustomization::MakeInstance));
+		PropertyEditorModule.RegisterCustomPropertyTypeLayout(
+			TEXT("DialogueLineNodeData"),
+			FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FARDialogueLineNodeDataCustomization::MakeInstance));
+		PropertyEditorModule.NotifyCustomizationModuleChanged();
+
 		DialogueLineNodeFactory = CreateARDialogueLineGraphNodeFactory();
 		FEdGraphUtilities::RegisterVisualNodeFactory(DialogueLineNodeFactory);
 		DialogueInlineNodeFactory = CreateARDialogueInlineGraphNodeFactory();
@@ -1586,6 +1600,15 @@ public:
 
 	virtual void ShutdownModule() override
 	{
+		if (FModuleManager::Get().IsModuleLoaded(TEXT("PropertyEditor")))
+		{
+			FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+			PropertyEditorModule.UnregisterCustomClassLayout(UARDialogueEdGraphNode::StaticClass()->GetFName());
+			PropertyEditorModule.UnregisterCustomPropertyTypeLayout(TEXT("DialogueBoolNodeData"));
+			PropertyEditorModule.UnregisterCustomPropertyTypeLayout(TEXT("DialogueLineNodeData"));
+			PropertyEditorModule.NotifyCustomizationModuleChanged();
+		}
+
 		if (DialogueLineNodeFactory.IsValid())
 		{
 			FEdGraphUtilities::UnregisterVisualNodeFactory(DialogueLineNodeFactory);
