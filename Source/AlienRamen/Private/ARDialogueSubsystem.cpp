@@ -834,6 +834,7 @@ static bool IsModeDialogueEnabled(const UARDialogueSettings* Settings, const FGa
 void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	Collection.InitializeDependency<UContentLookupSubsystem>();
 
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
 	Runtime.ConversationsByTag.Reset();
@@ -842,7 +843,18 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
 	if (!Settings)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] Dialogue settings unavailable; runtime initialization aborted."));
 		return;
+	}
+
+	if (!Settings->ConversationDefinitionRootTag.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] ConversationDefinitionRootTag is invalid; conversation lookup cannot run."));
+	}
+
+	if (!Settings->SpeakerDefinitionRootTag.IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] SpeakerDefinitionRootTag is invalid; speaker lookup cannot run."));
 	}
 
 	int32 ConversationsFromLookup = 0;
@@ -865,6 +877,11 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 		if (ConversationTable)
 		{
+			UE_LOG(ARLog, Log,
+				TEXT("[Dialogue] Resolved conversation table '%s' (Root=%s, RowStruct=%s)."),
+				*ConversationTable->GetName(),
+				MatchedRoot.IsValid() ? *MatchedRoot.ToString() : *Settings->ConversationDefinitionRootTag.ToString(),
+				*GetNameSafe(ConversationTable->GetRowStruct()));
 			if (ConversationTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
 			{
 				UE_LOG(ARLog, Warning,
@@ -910,8 +927,21 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		}
 		else if (!LookupError.IsEmpty())
 		{
-			UE_LOG(ARLog, Verbose, TEXT("[Dialogue] No ContentLookup conversation table resolved: %s"), *LookupError);
+			UE_LOG(ARLog, Warning,
+				TEXT("[Dialogue] No ContentLookup conversation table resolved for root '%s': %s"),
+				*Settings->ConversationDefinitionRootTag.ToString(),
+				*LookupError);
 		}
+		else
+		{
+			UE_LOG(ARLog, Warning,
+				TEXT("[Dialogue] No ContentLookup conversation table resolved for root '%s' (empty lookup error)."),
+				*Settings->ConversationDefinitionRootTag.ToString());
+		}
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] ContentLookupSubsystem unavailable during dialogue initialization."));
 	}
 
 	if (UContentLookupSubsystem* Lookup = GetLookupSubsystem(this))
@@ -954,6 +984,10 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 				}
 			}
 		}
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue] ContentLookupSubsystem unavailable during speaker initialization."));
 	}
 
 	if (Runtime.ConversationsByTag.IsEmpty())
@@ -2198,6 +2232,45 @@ static bool PassesConversationOfferRules(
 	return true;
 }
 
+static bool EvaluateConversationOfferRules(
+	const UARDialogueSubsystem* DialogueSubsystem,
+	const FDialogueRuntimeContext& Context,
+	const FDialogueConversationHeader& Header,
+	FString* OutFailureReason)
+{
+	if (Context.RelationshipPointsForPrimarySpeaker < Header.MinimumRelationshipPoints)
+	{
+		if (OutFailureReason)
+		{
+			*OutFailureReason = FString::Printf(
+				TEXT("RelationshipPoints %.2f < MinimumRelationshipPoints %.2f."),
+				Context.RelationshipPointsForPrimarySpeaker,
+				Header.MinimumRelationshipPoints);
+		}
+		return false;
+	}
+
+	if (!PassesLockedConditions(DialogueSubsystem, Header.LockedConditions, Context))
+	{
+		if (OutFailureReason)
+		{
+			*OutFailureReason = TEXT("LockedConditions failed.");
+		}
+		return false;
+	}
+
+	if (!PassesBlockedConditions(DialogueSubsystem, Header.BlockedConditions, Context))
+	{
+		if (OutFailureReason)
+		{
+			*OutFailureReason = TEXT("BlockedConditions failed.");
+		}
+		return false;
+	}
+
+	return true;
+}
+
 bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bNpcLocalStateAllowsDialogue)
 {
 	OutOffer = FDialogueConversationOffer();
@@ -2279,8 +2352,14 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		{
 			Context.bSeenByPlayer = SeenForPlayer->HasTagExact(Conversation->Header.ConversationTag);
 		}
-		if (!PassesConversationOfferRules(this, Context, Conversation->Header))
+		FString OfferGateFailure;
+		if (!EvaluateConversationOfferRules(this, Context, Conversation->Header, &OfferGateFailure))
 		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer skipped '%s' for speaker '%s': %s"),
+				*Conversation->Header.ConversationTag.ToString(),
+				*PrimarySpeakerTag.ToString(),
+				*OfferGateFailure);
 			continue;
 		}
 
@@ -2295,18 +2374,30 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 
 		if (!Conversation->Header.bRepeatable && Candidate.bCompletedByPlayer)
 		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer skipped '%s': non-repeatable and already completed by requesting player."),
+				*Conversation->Header.ConversationTag.ToString());
 			continue;
 		}
 		if (Conversation->Header.bCompletedByGameBlocksReoffer && Candidate.bCompletedByGame)
 		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer skipped '%s': bCompletedByGameBlocksReoffer is true and conversation is completed by game."),
+				*Conversation->Header.ConversationTag.ToString());
 			continue;
 		}
 		if (Conversation->Header.bSeenByGameBlocksReoffer && Candidate.bSeenByGame)
 		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer skipped '%s': bSeenByGameBlocksReoffer is true and conversation is seen by game."),
+				*Conversation->Header.ConversationTag.ToString());
 			continue;
 		}
 		if (Conversation->Header.bSeenByPlayerBlocksReoffer && Candidate.bSeenByPlayer)
 		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer skipped '%s': bSeenByPlayerBlocksReoffer is true and conversation is seen by requesting player."),
+				*Conversation->Header.ConversationTag.ToString());
 			continue;
 		}
 
@@ -2728,7 +2819,11 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.bWaitingForAdvanceInput = true;
 			Session.WaitingLineNodeId = Node->NodeId;
 
-			if (!bPreviewMode && LineData->bAutoAdvance && Context.World)
+			const AARPlayerStateBase* ActiveARPlayerState = Cast<AARPlayerStateBase>(Context.ActivePlayerState);
+			const bool bAutoAdvanceEnabledForOwner = !bPreviewMode
+				&& ActiveARPlayerState
+				&& ActiveARPlayerState->IsDialogueAutoAdvanceEnabled();
+			if (bAutoAdvanceEnabledForOwner && Context.World)
 			{
 				float DelaySeconds = LineData->Line.LengthSeconds;
 				if (LineData->Line.Sound)
@@ -3177,9 +3272,10 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 		StartContext.bSeenByPlayer = SeenTags->HasTagExact(ConversationTag);
 	}
 
-	if (!PassesConversationOfferRules(this, StartContext, Conversation->Header))
+	FString StartGateFailure;
+	if (!EvaluateConversationOfferRules(this, StartContext, Conversation->Header, &StartGateFailure))
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] StartConversation gated out for '%s' (conditions/relationship)."), *ConversationTag.ToString());
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] StartConversation gated out for '%s': %s"), *ConversationTag.ToString(), *StartGateFailure);
 		return false;
 	}
 
