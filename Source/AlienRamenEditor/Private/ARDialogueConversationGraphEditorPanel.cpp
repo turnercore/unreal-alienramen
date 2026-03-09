@@ -11,10 +11,12 @@
 #include "EdGraph/EdGraphNode.h"
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
+#include "EdGraphUtilities.h"
 #include "FileHelpers.h"
 #include "Framework/Commands/GenericCommands.h"
 #include "Framework/Commands/UICommandList.h"
 #include "GraphEditor.h"
+#include "HAL/PlatformApplicationMisc.h"
 #include "Input/Events.h"
 #include "InputCoreTypes.h"
 #include "Modules/ModuleManager.h"
@@ -117,6 +119,22 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 	FGenericCommands::Register();
 	GraphEditorCommands = MakeShared<FUICommandList>();
 	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Copy,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleCopySelectedNodes),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanCopySelectedNodes));
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Cut,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleCutSelectedNodes),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanCutSelectedNodes));
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Paste,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandlePasteNodes),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanPasteNodes));
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Duplicate,
+		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleDuplicateSelectedNodes),
+		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanDuplicateSelectedNodes));
+	GraphEditorCommands->MapAction(
 		FGenericCommands::Get().Delete,
 		FExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes),
 		FCanExecuteAction::CreateSP(this, &SDialogueConversationGraphEditorPanel::CanDeleteSelectedNodes));
@@ -161,7 +179,7 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
 			[
 				SNew(SButton)
-				.Text(FText::FromString(TEXT("Compile Runtime Graph")))
+				.Text(FText::FromString(TEXT("Compile")))
 				.ToolTipText(FText::FromString(TEXT("Builds compile-managed runtime node/link data from editor graph pins and writes it back to the conversation asset.")))
 				.OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleCompile)
 			]
@@ -241,6 +259,17 @@ FReply SDialogueConversationGraphEditorPanel::OnKeyDown(const FGeometry& MyGeome
 		ExecuteSaveCommand();
 		return FReply::Handled();
 	}
+	if (InKeyEvent.GetKey() == EKeys::D
+		&& (InKeyEvent.IsControlDown() || InKeyEvent.IsCommandDown())
+		&& !InKeyEvent.IsAltDown()
+		&& !InKeyEvent.IsShiftDown())
+	{
+		if (CanDuplicateSelectedNodes())
+		{
+			HandleDuplicateSelectedNodes();
+			return FReply::Handled();
+		}
+	}
 	if ((InKeyEvent.GetKey() == EKeys::Delete || InKeyEvent.GetKey() == EKeys::BackSpace) && !InKeyEvent.IsControlDown() && !InKeyEvent.IsCommandDown())
 	{
 		if (CanDeleteSelectedNodes())
@@ -248,6 +277,10 @@ FReply SDialogueConversationGraphEditorPanel::OnKeyDown(const FGeometry& MyGeome
 			HandleDeleteSelectedNodes();
 			return FReply::Handled();
 		}
+	}
+	if (GraphEditorCommands.IsValid() && GraphEditorCommands->ProcessCommandBindings(InKeyEvent))
+	{
+		return FReply::Handled();
 	}
 
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
@@ -618,7 +651,7 @@ FReply SDialogueConversationGraphEditorPanel::HandleCompile()
 	Conversation->MarkPackageDirty();
 
 	ApplyValidationToEditorNodes(Conversation, ValidationReport);
-	AppendLogLine(FString::Printf(TEXT("Compile Runtime Graph: %s (Version %d)"),
+	AppendLogLine(FString::Printf(TEXT("Compile: %s (Version %d)"),
 		bCompiled ? TEXT("SUCCESS") : TEXT("FAILED"),
 		Conversation->CompileVersion));
 	for (const FDialogueValidationIssue& Issue : ValidationReport.Issues)
@@ -654,6 +687,223 @@ FReply SDialogueConversationGraphEditorPanel::HandleCompile()
 			EEditorStatusType::Success);
 	}
 	return FReply::Handled();
+}
+
+void SDialogueConversationGraphEditorPanel::HandleCopySelectedNodes()
+{
+	if (!GraphEditorWidget.IsValid())
+	{
+		return;
+	}
+
+	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+	TSet<UObject*> NodesToCopy;
+	for (UObject* SelectedObject : SelectedNodes)
+	{
+		UEdGraphNode* GraphNode = Cast<UEdGraphNode>(SelectedObject);
+		if (!GraphNode || !GraphNode->CanDuplicateNode())
+		{
+			continue;
+		}
+
+		const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+		if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		{
+			continue;
+		}
+
+		GraphNode->PrepareForCopying();
+		NodesToCopy.Add(GraphNode);
+	}
+
+	if (NodesToCopy.IsEmpty())
+	{
+		return;
+	}
+
+	FString ExportedText;
+	FEdGraphUtilities::ExportNodesToText(NodesToCopy, ExportedText);
+	FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
+	SetStatusMessage(FString::Printf(TEXT("Copied %d node(s)."), NodesToCopy.Num()), EEditorStatusType::Info);
+}
+
+bool SDialogueConversationGraphEditorPanel::CanCopySelectedNodes() const
+{
+	if (!GraphEditorWidget.IsValid())
+	{
+		return false;
+	}
+
+	const FGraphPanelSelectionSet SelectedNodes = GraphEditorWidget->GetSelectedNodes();
+	for (UObject* SelectedObject : SelectedNodes)
+	{
+		const UEdGraphNode* GraphNode = Cast<UEdGraphNode>(SelectedObject);
+		if (!GraphNode || !GraphNode->CanDuplicateNode())
+		{
+			continue;
+		}
+
+		const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+		if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		{
+			continue;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+void SDialogueConversationGraphEditorPanel::HandleCutSelectedNodes()
+{
+	if (!CanCutSelectedNodes())
+	{
+		return;
+	}
+
+	HandleCopySelectedNodes();
+	HandleDeleteSelectedNodes();
+}
+
+bool SDialogueConversationGraphEditorPanel::CanCutSelectedNodes() const
+{
+	return CanCopySelectedNodes() && CanDeleteSelectedNodes();
+}
+
+void SDialogueConversationGraphEditorPanel::HandlePasteNodes()
+{
+	if (!CanPasteNodes())
+	{
+		return;
+	}
+
+	const FVector2f PasteLocation = GraphEditorWidget.IsValid() ? FVector2f(GraphEditorWidget->GetPasteLocation2f()) : FVector2f::ZeroVector;
+	PasteNodesAtLocation(PasteLocation);
+}
+
+bool SDialogueConversationGraphEditorPanel::CanPasteNodes() const
+{
+	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
+	if (!Graph)
+	{
+		return false;
+	}
+
+	FString ClipboardContent;
+	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+	return FEdGraphUtilities::CanImportNodesFromText(Graph, ClipboardContent);
+}
+
+void SDialogueConversationGraphEditorPanel::HandleDuplicateSelectedNodes()
+{
+	if (!CanDuplicateSelectedNodes())
+	{
+		return;
+	}
+
+	const FVector2f PasteLocation = GraphEditorWidget.IsValid() ? FVector2f(GraphEditorWidget->GetPasteLocation2f()) : FVector2f::ZeroVector;
+	HandleCopySelectedNodes();
+	PasteNodesAtLocation(PasteLocation);
+}
+
+bool SDialogueConversationGraphEditorPanel::CanDuplicateSelectedNodes() const
+{
+	return CanCopySelectedNodes() && SelectedEditorGraph.IsValid() && GraphEditorWidget.IsValid();
+}
+
+void SDialogueConversationGraphEditorPanel::PasteNodesAtLocation(const FVector2f Location)
+{
+	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
+	if (!Graph || !GraphEditorWidget.IsValid())
+	{
+		return;
+	}
+
+	FString ClipboardContent;
+	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+	if (!FEdGraphUtilities::CanImportNodesFromText(Graph, ClipboardContent))
+	{
+		return;
+	}
+
+	const FScopedTransaction Transaction(FGenericCommands::Get().Paste->GetDescription());
+	Graph->Modify();
+
+	GraphEditorWidget->ClearSelectionSet();
+
+	TSet<UEdGraphNode*> PastedNodes;
+	FEdGraphUtilities::ImportNodesFromText(Graph, ClipboardContent, PastedNodes);
+	if (PastedNodes.IsEmpty())
+	{
+		return;
+	}
+
+	FVector2f AveragePosition = FVector2f::ZeroVector;
+	int32 AverageCount = 0;
+	for (UEdGraphNode* PastedNode : PastedNodes)
+	{
+		if (!PastedNode)
+		{
+			continue;
+		}
+
+		AveragePosition.X += PastedNode->NodePosX;
+		AveragePosition.Y += PastedNode->NodePosY;
+		++AverageCount;
+	}
+	if (AverageCount > 0)
+	{
+		AveragePosition /= static_cast<float>(AverageCount);
+	}
+
+	int32 PastedCount = 0;
+	int32 SkippedEnterCount = 0;
+	for (UEdGraphNode* PastedNode : PastedNodes)
+	{
+		if (!PastedNode)
+		{
+			continue;
+		}
+
+		if (UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(PastedNode))
+		{
+			if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+			{
+				DialogueNode->Modify();
+				DialogueNode->DestroyNode();
+				++SkippedEnterCount;
+				continue;
+			}
+
+			DialogueNode->EnsureStableIds(true, true);
+			DialogueNode->ReconstructNode();
+		}
+
+		PastedNode->Modify();
+		PastedNode->NodePosX = static_cast<int32>((PastedNode->NodePosX - AveragePosition.X) + Location.X);
+		PastedNode->NodePosY = static_cast<int32>((PastedNode->NodePosY - AveragePosition.Y) + Location.Y);
+		PastedNode->SnapToGrid(16);
+		GraphEditorWidget->SetNodeSelection(PastedNode, true);
+		++PastedCount;
+	}
+
+	Graph->NotifyGraphChanged();
+	if (UARDialogueConversationAsset* Conversation = SelectedConversation.Get())
+	{
+		Conversation->MarkPackageDirty();
+	}
+
+	if (SkippedEnterCount > 0)
+	{
+		SetStatusMessage(
+			FString::Printf(TEXT("Pasted %d node(s). Skipped %d Enter node(s)."), PastedCount, SkippedEnterCount),
+			EEditorStatusType::Warning);
+	}
+	else
+	{
+		SetStatusMessage(FString::Printf(TEXT("Pasted %d node(s)."), PastedCount), EEditorStatusType::Success);
+	}
 }
 
 void SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes()
@@ -834,6 +1084,7 @@ void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UARDi
 		{
 		case EDialogueNodeType::Enter:
 		case EDialogueNodeType::Line:
+		case EDialogueNodeType::MultiLine:
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
@@ -1064,6 +1315,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 			}
 			break;
 		case EDialogueNodeType::Line:
+		case EDialogueNodeType::MultiLine:
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:

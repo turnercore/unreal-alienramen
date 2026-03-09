@@ -52,6 +52,15 @@ private:
 	FReply HandleSave();
 	FReply HandleValidate();
 	FReply HandleCompile();
+	void HandleCopySelectedNodes();
+	bool CanCopySelectedNodes() const;
+	void HandleCutSelectedNodes();
+	bool CanCutSelectedNodes() const;
+	void HandlePasteNodes();
+	bool CanPasteNodes() const;
+	void HandleDuplicateSelectedNodes();
+	bool CanDuplicateSelectedNodes() const;
+	void PasteNodesAtLocation(FVector2f Location);
 	void HandleDeleteSelectedNodes();
 	bool CanDeleteSelectedNodes() const;
 	void ExecuteSaveCommand();
