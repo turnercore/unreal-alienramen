@@ -13,6 +13,7 @@ public class AlienRamenEditor : ModuleRules
 			"Engine",
 			"Slate",
 			"SlateCore",
+			"ApplicationCore",
 			"InputCore",
 			"UnrealEd",
 			"LevelEditor",

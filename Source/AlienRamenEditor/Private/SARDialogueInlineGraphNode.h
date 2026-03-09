@@ -33,6 +33,7 @@ private:
 	TSharedRef<SWidget> BuildSwitchInlineContent() const;
 	TSharedRef<SWidget> BuildRandomInlineContent() const;
 	TSharedRef<SWidget> BuildSequenceInlineContent() const;
+	TSharedRef<SWidget> BuildMultiLineInlineContent() const;
 	TSharedRef<SWidget> BuildRelationshipInlineContent() const;
 	TSharedRef<SWidget> BuildFactionInlineContent() const;
 	void AddDynamicPinButtonIfSupported();
@@ -46,6 +47,10 @@ private:
 	void HandleFallbackTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 	void HandleSwitchLabelCommitted(const FText& NewText, ETextCommit::Type CommitType, FGuid BranchId) const;
 	void HandleRandomWeightCommitted(float NewValue, ETextCommit::Type CommitType, FGuid BranchId) const;
+	FReply HandleAddMultiLineEntryClicked() const;
+	FReply HandleDeleteMultiLineEntryClicked(FGuid EntryId) const;
+	void HandleMultiLineSpeakerTagChanged(FGameplayTag NewTag, FGuid EntryId) const;
+	void HandleMultiLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType, FGuid EntryId) const;
 	void HandleRelationshipSpeakerTagChanged(FGameplayTag NewTag) const;
 	void HandleRelationshipDeltaTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 	void HandleFactionTagChanged(FGameplayTag NewTag) const;

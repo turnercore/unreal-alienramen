@@ -55,6 +55,8 @@ namespace
 			return FText::FromString(TEXT("Route"));
 		case EDialogueNodeType::Sequence:
 			return FText::FromString(TEXT("Sequence"));
+		case EDialogueNodeType::MultiLine:
+			return FText::FromString(TEXT("Multi-Line"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
@@ -160,7 +162,8 @@ void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& 
 		EDialogueNodeType::FactionMutation,
 		EDialogueNodeType::Random,
 		EDialogueNodeType::Route,
-		EDialogueNodeType::Sequence
+		EDialogueNodeType::Sequence,
+		EDialogueNodeType::MultiLine
 	};
 
 	for (const EDialogueNodeType NodeType : NodeTypes)
