@@ -24,8 +24,12 @@
 
 namespace
 {
-	constexpr float ChoiceMinWidth = 540.0f;
-	constexpr float StandardMinWidth = 360.0f;
+	constexpr float ChoiceMinWidth = 320.0f;
+	constexpr float CompactMinWidth = 260.0f;
+	constexpr float RandomMinWidth = 140.0f;
+	constexpr float MutationMinWidth = 200.0f;
+	constexpr float SequenceMinWidth = 72.0f;
+	constexpr float SwitchMinWidth = 180.0f;
 
 	class FARDialogueBranchDragDropOp final : public FDecoratedDragDropOp
 	{
@@ -167,7 +171,6 @@ namespace
 			case EDialogueNodeType::SwitchOnTagsByPriority:
 			case EDialogueNodeType::Random:
 			case EDialogueNodeType::Sequence:
-			case EDialogueNodeType::MultiLine:
 			case EDialogueNodeType::RelationshipMutation:
 			case EDialogueNodeType::FactionMutation:
 				return SNew(SARDialogueInlineGraphNode, DialogueNode);
@@ -317,8 +320,6 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildInlineContent() const
 		return BuildRandomInlineContent();
 	case EDialogueNodeType::Sequence:
 		return BuildSequenceInlineContent();
-	case EDialogueNodeType::MultiLine:
-		return BuildMultiLineInlineContent();
 	case EDialogueNodeType::RelationshipMutation:
 		return BuildRelationshipInlineContent();
 	case EDialogueNodeType::FactionMutation:
@@ -336,13 +337,7 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildChoiceInlineContent() const
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
 	if (!ChoiceBranches || ChoiceBranches->IsEmpty())
 	{
-		Content->AddSlot()
-		.AutoHeight()
-		.Padding(0.0f, 0.0f, 0.0f, 2.0f)
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("No choices yet. Use Add pin to create one.")))
-		];
+		// Intentionally empty: keep compact footprint when no choices are authored yet.
 	}
 	else
 	{
@@ -419,12 +414,7 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSwitchInlineContent() const
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
 	if (!SwitchBranches || SwitchBranches->IsEmpty())
 	{
-		Content->AddSlot()
-		.AutoHeight()
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("No switch branches yet. Use Add pin to create one.")))
-		];
+		// Intentionally empty: keep compact footprint when no branches are authored yet.
 	}
 	else
 	{
@@ -531,25 +521,29 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRandomInlineContent() const
 							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
 						]
 						+ SHorizontalBox::Slot()
-						.FillWidth(1.0f)
+						.AutoWidth()
 						[
-							SNew(SEditableTextBox)
-							.Text(FText::AsNumber(Branch.Weight))
-							.HintText(FText::FromString(TEXT("1.0")))
-							.OnTextCommitted_Lambda([this, BranchId = Branch.BranchId](const FText& NewText, const ETextCommit::Type CommitType)
-							{
-								(void)CommitType;
-								float ParsedValue = 0.0f;
-								if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+							SNew(SBox)
+							.WidthOverride(76.0f)
+							[
+								SNew(SEditableTextBox)
+								.Text(FText::AsNumber(Branch.Weight))
+								.HintText(FText::FromString(TEXT("1.0")))
+								.OnTextCommitted_Lambda([this, BranchId = Branch.BranchId](const FText& NewText, const ETextCommit::Type CommitType)
 								{
-									return;
-								}
+									(void)CommitType;
+									float ParsedValue = 0.0f;
+									if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+									{
+										return;
+									}
 
-								if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
-								{
-									DialogueNode->SetRandomBranchWeight(BranchId, ParsedValue);
-								}
-							})
+									if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+									{
+										DialogueNode->SetRandomBranchWeight(BranchId, ParsedValue);
+									}
+								})
+							]
 						]
 					]
 				]
@@ -568,12 +562,7 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSequenceInlineContent() con
 	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
 	if (!SequenceBranches || SequenceBranches->IsEmpty())
 	{
-		Content->AddSlot()
-		.AutoHeight()
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("No sequence branches yet. Use Add pin to create one.")))
-		];
+		// No helper text for sequence by design.
 	}
 	else
 	{
@@ -701,26 +690,30 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildMultiLineInlineContent() co
 
 TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRelationshipInlineContent() const
 {
-	return SNew(SHorizontalBox)
-		+ SHorizontalBox::Slot()
-		.FillWidth(1.0f)
-		[
-			SNew(SGameplayTagCombo)
-			.Filter(TEXT("Dialogue.Speaker"))
-			.Tag_Lambda([this]()
-			{
-				const UARDialogueEdGraphNode* Node = GetDialogueNode();
-				const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
-				return Data ? Data->TargetSpeakerTag : FGameplayTag();
-			})
-			.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged)
-		]
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(6.0f, 0.0f, 0.0f, 0.0f)
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
 		[
 			SNew(SBox)
-			.WidthOverride(110.0f)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Dialogue.Speaker"))
+				.Tag_Lambda([this]()
+				{
+					const UARDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
+					return Data ? Data->TargetSpeakerTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(84.0f)
 			[
 				SNew(SEditableTextBox)
 				.Text(this, &SARDialogueInlineGraphNode::GetRelationshipDeltaText)
@@ -732,26 +725,30 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildRelationshipInlineContent()
 
 TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildFactionInlineContent() const
 {
-	return SNew(SHorizontalBox)
-		+ SHorizontalBox::Slot()
-		.FillWidth(1.0f)
-		[
-			SNew(SGameplayTagCombo)
-			.Filter(GetFactionTagFilter())
-			.Tag_Lambda([this]()
-			{
-				const UARDialogueEdGraphNode* Node = GetDialogueNode();
-				const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
-				return Data ? Data->FactionTag : FGameplayTag();
-			})
-			.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleFactionTagChanged)
-		]
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(6.0f, 0.0f, 0.0f, 0.0f)
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
 		[
 			SNew(SBox)
-			.WidthOverride(110.0f)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(GetFactionTagFilter())
+				.Tag_Lambda([this]()
+				{
+					const UARDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+					return Data ? Data->FactionTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleFactionTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(84.0f)
 			[
 				SNew(SEditableTextBox)
 				.Text(this, &SARDialogueInlineGraphNode::GetFactionDeltaText)
@@ -764,12 +761,27 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildFactionInlineContent() cons
 float SARDialogueInlineGraphNode::GetInlineContentMinWidth() const
 {
 	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
-	if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Choice)
+	if (!DialogueNode)
 	{
-		return ChoiceMinWidth;
+		return CompactMinWidth;
 	}
 
-	return StandardMinWidth;
+	switch (DialogueNode->RuntimeNode.NodeType)
+	{
+	case EDialogueNodeType::Choice:
+		return ChoiceMinWidth;
+	case EDialogueNodeType::Random:
+		return RandomMinWidth;
+	case EDialogueNodeType::SwitchOnTagsByPriority:
+		return SwitchMinWidth;
+	case EDialogueNodeType::RelationshipMutation:
+	case EDialogueNodeType::FactionMutation:
+		return MutationMinWidth;
+	case EDialogueNodeType::Sequence:
+		return SequenceMinWidth;
+	default:
+		return CompactMinWidth;
+	}
 }
 
 void SARDialogueInlineGraphNode::AddDynamicPinButtonIfSupported()
