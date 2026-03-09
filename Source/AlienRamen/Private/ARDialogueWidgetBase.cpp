@@ -100,6 +100,30 @@ void UARDialogueWidgetBase::InteractWithNpc(AARNPCCharacterBase* NpcActor)
 	}
 }
 
+void UARDialogueWidgetBase::ToggleAutoAdvance()
+{
+	if (BoundController)
+	{
+		BoundController->RequestToggleDialogueAutoAdvance();
+	}
+}
+
+void UARDialogueWidgetBase::AdvanceOrSubmitDialogue()
+{
+	if (BoundController)
+	{
+		BoundController->RequestAdvanceOrSubmitDialogue();
+	}
+}
+
+void UARDialogueWidgetBase::ChoiceDelta(const int32 Delta)
+{
+	if (BoundController)
+	{
+		BoundController->RequestDialogueChoiceDelta(Delta);
+	}
+}
+
 bool UARDialogueWidgetBase::GetCurrentDialogueView(FDialogueClientView& OutView) const
 {
 	OutView = bHasActiveDialogueView ? CurrentDialogueView : FDialogueClientView();

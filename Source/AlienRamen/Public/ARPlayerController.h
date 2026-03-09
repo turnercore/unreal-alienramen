@@ -47,6 +47,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FAROnDialogueSessionEndedSignature,
 	const FString&,
 	SessionId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnDialogueChoiceSelectionChangedSignature,
+	int32,
+	NewChoiceIndex,
+	int32,
+	OldChoiceIndex);
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
@@ -166,6 +172,27 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool HasCachedDialogueView() const { return bHasCachedDialogueView; }
+
+	// Toggles this player's dialogue auto-advance preference.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Input")
+	void RequestToggleDialogueAutoAdvance();
+
+	// If waiting for a choice, submits the currently selected choice; otherwise advances dialogue.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Input")
+	void RequestAdvanceOrSubmitDialogue();
+
+	// Moves local selected choice index by Delta (wrap-around). No-op when not waiting for choices.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Input")
+	void RequestDialogueChoiceDelta(int32 Delta);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Input")
+	int32 GetSelectedDialogueChoiceIndex() const { return SelectedDialogueChoiceIndex; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Input")
+	bool GetSelectedDialogueChoiceBranchId(FGuid& OutChoiceBranchId) const;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Input")
+	FAROnDialogueChoiceSelectionChangedSignature OnDialogueChoiceSelectionChanged;
 
 	// Optional auto-created dialogue widget for local controllers.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
@@ -301,6 +328,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
 	bool bAutoManagePauseInputMode = true;
 
+	/** Automatically swaps Enhanced Input mapping contexts when a local dialogue session starts/ends. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
+	bool bAutoManageDialogueInputContexts = true;
+
+	/** Dialogue mapping context applied while a local dialogue session is active. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
+	TObjectPtr<UInputMappingContext> DialogueInputMappingContext = nullptr;
+
+	/** Priority used when adding DialogueInputMappingContext. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
+	int32 DialogueInputPriority = 1100;
+
+	/** Automatically switches input mode and cursor visibility while local dialogue is active. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
+	bool bAutoManageDialogueInputMode = true;
+
 private:
 	void LeaveSessionInternal();
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE);
@@ -314,6 +357,10 @@ private:
 	void ApplyDefaultInputMappings(bool bEnable);
 	void ApplyPauseInputContexts(bool bEnable);
 	void ApplyPauseInputMode(bool bEnable);
+	void ApplyDialogueInputContexts(bool bEnable);
+	void ApplyDialogueInputMode(bool bEnable);
+	void RefreshDialogueInputStateFromSession();
+	void SetSelectedDialogueChoiceIndex(int32 NewIndex);
 	bool ShowPauseOverlayWidget();
 	void HidePauseOverlayWidget();
 	void SubmitPauseMenuVote(bool bPaused);
@@ -363,11 +410,23 @@ private:
 	UPROPERTY(Transient)
 	bool bCachedShowMouseCursorForPause = false;
 
+	UPROPERTY(Transient)
+	bool bDialogueInputContextsApplied = false;
+
+	UPROPERTY(Transient)
+	bool bDialogueInputModeApplied = false;
+
+	UPROPERTY(Transient)
+	bool bCachedShowMouseCursorForDialogue = false;
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UARDialogueWidgetBase> DialogueWidget = nullptr;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input", meta = (AllowPrivateAccess = "true"))
+	int32 SelectedDialogueChoiceIndex = INDEX_NONE;
 
 	TSet<FName> PauseMenuBlockerReasons;
 };
