@@ -149,6 +149,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpiceSharingStateChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, bool, bIsSharingNow, bool, bWasSharingBefore);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpicyTrackCursorChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCursorTier, int32, OldCursorTier);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnDialogueAutoAdvancePreferenceChangedSignature, AARPlayerStateBase*, SourcePlayerState, bool, bNewAutoAdvanceEnabled, bool, bOldAutoAdvanceEnabled);
 
 /**
  * PlayerState backbone for Alien Ramen.
@@ -215,6 +216,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	bool IsDeadState() const { return bIsDeadState; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool IsDialogueAutoAdvanceEnabled() const { return bDialogueAutoAdvanceEnabled; }
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void SetDialogueAutoAdvanceEnabled(bool bEnabled);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetDialogueAutoAdvanceEnabled(bool bEnabled);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
 	void SetDownedState(bool bNewDowned);
@@ -455,6 +465,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Cursor")
 	FAROnSpicyTrackCursorChangedSignature OnSpicyTrackCursorChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
+	FAROnDialogueAutoAdvancePreferenceChangedSignature OnDialogueAutoAdvancePreferenceChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
@@ -478,6 +491,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_IsDeadState(bool bOldDeadState);
+
+	UFUNCTION()
+	void OnRep_DialogueAutoAdvanceEnabled(bool bOldEnabled);
 
 	UFUNCTION()
 	void OnRep_IsSetup(bool bOldIsSetup);
@@ -504,6 +520,7 @@ protected:
 	void SetReady_Internal(bool bNewReady);
 	void SetDowned_Internal(bool bNewDowned);
 	void SetDead_Internal(bool bNewDead);
+	void SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled);
 	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags);
 	void UpdateLoadoutWithTag_Internal(FGameplayTag NewTag);
 	void RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove);
@@ -554,6 +571,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsSetup = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_DialogueAutoAdvanceEnabled, Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue")
+	bool bDialogueAutoAdvanceEnabled = false;
 
 	UPROPERTY(ReplicatedUsing=OnRep_InvaderPlayerColor, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
 	EARAffinityColor InvaderPlayerColor = EARAffinityColor::None;
