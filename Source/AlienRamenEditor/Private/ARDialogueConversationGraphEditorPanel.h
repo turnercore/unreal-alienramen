@@ -16,6 +16,7 @@ struct FAssetData;
 struct FDialogueValidationReport;
 struct FGeometry;
 struct FKeyEvent;
+struct FInputChord;
 
 class SDialogueConversationGraphEditorPanel final : public SCompoundWidget
 {
@@ -45,6 +46,7 @@ private:
 	FString GetSelectedConversationPath() const;
 	void OnSelectedConversationChanged(const FAssetData& AssetData);
 	void OnGraphSelectionChanged(const TSet<UObject*>& NewSelection);
+	FReply HandleSpawnNodeByShortcut(FInputChord InChord, const FVector2f& Location);
 
 	FReply HandleRefresh();
 	FReply HandleSave();

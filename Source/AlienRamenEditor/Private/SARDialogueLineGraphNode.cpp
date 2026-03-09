@@ -146,6 +146,7 @@ void SARDialogueLineGraphNode::UpdateGraphNode()
 				[
 					SNew(STextBlock)
 					.Text(this, &SARDialogueLineGraphNode::GetNodeTitleText)
+					.ColorAndOpacity(FSlateColor(FLinearColor::White))
 				]
 			]
 			+ SVerticalBox::Slot()
@@ -208,6 +209,7 @@ void SARDialogueLineGraphNode::UpdateGraphNode()
 							SNew(STextBlock)
 							.Text(this, &SARDialogueLineGraphNode::GetSpeakerTagText)
 							.AutoWrapText(true)
+							.ColorAndOpacity(FSlateColor(FLinearColor::White))
 						]
 					]
 					+ SVerticalBox::Slot()
@@ -225,15 +227,6 @@ void SARDialogueLineGraphNode::UpdateGraphNode()
 							.AutoWrapText(true)
 							.OnTextCommitted(this, &SARDialogueLineGraphNode::HandleLineTextCommitted)
 						]
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					.Padding(0.0f, 3.0f, 0.0f, 0.0f)
-					[
-						SNew(STextBlock)
-						.Text(FText::FromString(TEXT("Inline line edit; use details panel for advanced line options.")))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.7f, 0.7f, 0.7f, 1.0f)))
-						.WrapTextAt(LineWrapWidth)
 					]
 				]
 				+ SHorizontalBox::Slot()

@@ -1810,6 +1810,9 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 		case EDialogueNodeType::Enter:
 			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Enter node next output"));
 			break;
+		case EDialogueNodeType::Route:
+			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Route node next output"));
+			break;
 		case EDialogueNodeType::Completed:
 			break;
 		case EDialogueNodeType::Line:
@@ -2078,6 +2081,22 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 		else if (Pair.Value->NodeType != EDialogueNodeType::Enter && IncomingCountByNode.FindRef(Pair.Key) == 0)
 		{
 			Add(EDialogueValidationSeverity::Warning, Pair.Key, TEXT("Reachable node has no incoming edges (orphan layout)."));
+		}
+	}
+
+	// Orphan/unreachable nodes are allowed as staging/storage nodes during authoring.
+	// Keep their diagnostics visible, but do not fail compile because of them.
+	for (FDialogueValidationIssue& Issue : OutReport.Issues)
+	{
+		if (Issue.Severity != EDialogueValidationSeverity::Error || !Issue.NodeId.IsValid())
+		{
+			continue;
+		}
+
+		if (!ReachableNodeIds.Contains(Issue.NodeId))
+		{
+			Issue.Severity = EDialogueValidationSeverity::Warning;
+			Issue.Message = FText::FromString(FString::Printf(TEXT("[Orphan Node] %s"), *Issue.Message.ToString()));
 		}
 	}
 
@@ -2767,6 +2786,16 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			if (!Node->NextNodeId.IsValid())
 			{
 				LogRuntimeWarning(TEXT("Enter node has no outgoing connection; ending non-completed."));
+				return EDialogueExecutionResult::EndedNonCompleted;
+			}
+			Session.CurrentNodeId = Node->NextNodeId;
+			break;
+		}
+		case EDialogueNodeType::Route:
+		{
+			if (!Node->NextNodeId.IsValid())
+			{
+				LogRuntimeWarning(TEXT("Route node has no outgoing connection; ending non-completed."));
 				return EDialogueExecutionResult::EndedNonCompleted;
 			}
 			Session.CurrentNodeId = Node->NextNodeId;
