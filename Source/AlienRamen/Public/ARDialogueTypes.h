@@ -299,9 +299,6 @@ struct ALIENRAMEN_API FDialogueLineNodeData
 	FDialogueConversationLine Line;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
-	bool bAutoAdvance = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	FDialogueConditionGroup SkipLockedConditions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
