@@ -138,7 +138,7 @@ protected:
 	// Find the first tag under a root (e.g. Unlocks.Ships.*)
 	bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& Root, FGameplayTag& OutTag) const;
 
-	// Resolve a row using ContentLookupSubsystem (returns an InstancedStruct)
+	// Resolve a row using TagContentResolverSubsystem (returns an InstancedStruct)
 	bool ResolveRowFromTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) const;
 	bool TryApplyServerLoadoutFromPlayerState(bool bLogErrors);
 	void RetryServerLoadoutInit();

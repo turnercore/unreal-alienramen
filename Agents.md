@@ -133,9 +133,9 @@ If a section starts growing again:
 
 - `UARFactionSubsystem` owns faction election runtime and finalization flow.
 
-### Content Lookup
+### Tag Content Resolver
 
-- `UContentLookupSubsystem` resolves gameplay tags to authored content through registry routes.
+- `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
 
 ### Invader Runtime

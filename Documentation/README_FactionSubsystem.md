@@ -6,7 +6,7 @@ This document describes the current server-authoritative faction election flow a
 
 - Primary runtime API: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`)
 - Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Factions`)
-- Content source: `UContentLookupSubsystem` root `Faction.Definition`
+- Content source: `UTagContentResolverSubsystem` root `Faction.Definition`
 - Persistence source: `UARSaveSubsystem` / `UARSaveGame`
 
 ## Core API Surface

@@ -4,6 +4,12 @@ DerivedDataCache
 Intermediate
 Saved
 Plugins
+!Plugins/
+Plugins/*
+!Plugins/TagContentResolver/
+!Plugins/TagContentResolver/**
+Plugins/TagContentResolver/Binaries/
+Plugins/TagContentResolver/Intermediate/
 .vscode
 .vs
 *.VC.db

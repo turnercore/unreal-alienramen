@@ -17,7 +17,7 @@ class ALIENRAMEN_API UARFactionSettings : public UDeveloperSettings
 public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 
-	// Root used for ContentLookup route resolution and row tag reconstruction.
+	// Root used for TagContentResolver route resolution and row tag reconstruction.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Faction")
 	FGameplayTag FactionDefinitionRootTag;
 };

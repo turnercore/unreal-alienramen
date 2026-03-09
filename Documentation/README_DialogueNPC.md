@@ -65,7 +65,7 @@ Shared dialogue types live in [`Source/AlienRamen/Public/ARDialogueTypes.h`](/c:
   - `CompiledData` (`FDialogueCompiledConversationData`)
 - Lines are embedded per conversation (`FDialogueConversationLine`), not global rows.
 - Conversation registry source:
-  - ContentLookup DataTable rows (`FARDialogueConversationAssetRow`) routed by `ConversationDefinitionRootTag` (row tag or built tag from root+row name).
+  - TagContentResolver DataTable rows (`FARDialogueConversationAssetRow`) routed by `ConversationDefinitionRootTag` (row tag or built tag from root+row name).
 
 Settings live in [`Source/AlienRamen/Public/ARDialogueSettings.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueSettings.h):
 
