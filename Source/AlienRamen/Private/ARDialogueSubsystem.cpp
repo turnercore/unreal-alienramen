@@ -3197,6 +3197,16 @@ static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARA
 			TargetController->ClientDialogueSessionEnded(SessionId);
 		}
 	}
+
+	// Session end can change offer availability even when conversation did not persist completion.
+	// Keep NPC talkable indicators in sync with current offer state.
+	if (UGameInstance* GI = DialogueSubsystem->GetGameInstance())
+	{
+		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		{
+			NpcSubsystem->RefreshAllNpcTalkableStates();
+		}
+	}
 }
 
 bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag)

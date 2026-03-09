@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARPlayerTypes.h"
 #include "GameFramework/Character.h"
 #include "GameplayTagContainer.h"
 #include "ARNPCCharacterBase.generated.h"
@@ -30,6 +31,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
 	bool IsTalkable() const { return bIsTalkable; }
 
+	// Per-slot talkable state. Use this for per-player local interaction indicators.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
+	bool IsTalkableForPlayerSlot(EARPlayerSlot PlayerSlot) const;
+
+	// Convenience per-controller query for per-player local interaction indicators.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
+	bool IsTalkableForController(const AARPlayerController* QueryController) const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
 	bool IsNpcLocalStateAllowingDialogue() const { return bNpcLocalStateAllowsDialogue; }
 
@@ -49,6 +58,9 @@ protected:
 	void OnRep_IsTalkable(bool bOldTalkable);
 
 	UFUNCTION()
+	void OnRep_TalkablePlayerSlotMask(uint8 bOldTalkablePlayerSlotMask);
+
+	UFUNCTION()
 	void HandleNpcTalkableChanged(FGameplayTag ChangedNpcTag, bool bNewTalkable);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
@@ -62,4 +74,8 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|NPC")
 	bool bIsTalkable = false;
+
+	// Bitmask of talkable slots (P1=bit0, P2=bit1).
+	UPROPERTY(ReplicatedUsing=OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Alien Ramen|NPC")
+	uint8 TalkablePlayerSlotMask = 0;
 };

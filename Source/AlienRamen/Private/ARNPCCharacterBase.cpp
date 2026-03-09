@@ -4,7 +4,24 @@
 #include "ARLog.h"
 #include "ARNPCSubsystem.h"
 #include "ARPlayerController.h"
+#include "ARPlayerStateBase.h"
 #include "Net/UnrealNetwork.h"
+
+namespace
+{
+	static uint8 GetTalkableMaskForSlot(const EARPlayerSlot Slot)
+	{
+		switch (Slot)
+		{
+		case EARPlayerSlot::P1:
+			return 1 << 0;
+		case EARPlayerSlot::P2:
+			return 1 << 1;
+		default:
+			return 0;
+		}
+	}
+}
 
 AARNPCCharacterBase::AARNPCCharacterBase()
 {
@@ -90,39 +107,55 @@ void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
 		return;
 	}
 
-	if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
+	uint8 NewTalkableMask = 0;
+	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 	{
-		NpcSubsystem->RefreshNpcTalkableState(NpcTag);
-		const bool bGlobalTalkable = NpcSubsystem->IsNpcTalkable(NpcTag);
-		const bool bNewTalkable = bGlobalTalkable && bNpcLocalStateAllowsDialogue;
-		if (bIsTalkable != bNewTalkable)
+		if (bNpcLocalStateAllowsDialogue)
 		{
-			const bool bOld = bIsTalkable;
-			bIsTalkable = bNewTalkable;
-			OnRep_IsTalkable(bOld);
-			ForceNetUpdate();
+			if (DialogueSubsystem->HasUnlockedDialogueForNpcForSlot(NpcTag, EARPlayerSlot::P1))
+			{
+				NewTalkableMask |= GetTalkableMaskForSlot(EARPlayerSlot::P1);
+			}
+
+			if (DialogueSubsystem->HasUnlockedDialogueForNpcForSlot(NpcTag, EARPlayerSlot::P2))
+			{
+				NewTalkableMask |= GetTalkableMaskForSlot(EARPlayerSlot::P2);
+			}
 		}
+	}
+
+	const uint8 OldMask = TalkablePlayerSlotMask;
+	const bool bMaskChanged = OldMask != NewTalkableMask;
+	TalkablePlayerSlotMask = NewTalkableMask;
+	if (bMaskChanged)
+	{
+		OnRep_TalkablePlayerSlotMask(OldMask);
+	}
+
+	const bool bNewTalkable = TalkablePlayerSlotMask != 0;
+	const bool bTalkableChanged = bIsTalkable != bNewTalkable;
+	if (bTalkableChanged)
+	{
+		const bool bOld = bIsTalkable;
+		bIsTalkable = bNewTalkable;
+		OnRep_IsTalkable(bOld);
+	}
+
+	if (bMaskChanged || bTalkableChanged)
+	{
+		ForceNetUpdate();
 	}
 }
 
 void AARNPCCharacterBase::HandleNpcTalkableChanged(FGameplayTag ChangedNpcTag, bool bNewTalkable)
 {
+	(void)bNewTalkable;
 	if (!HasAuthority() || !ChangedNpcTag.MatchesTagExact(NpcTag))
 	{
 		return;
 	}
 
-	bNewTalkable = bNewTalkable && bNpcLocalStateAllowsDialogue;
-
-	if (bIsTalkable == bNewTalkable)
-	{
-		return;
-	}
-
-	const bool bOld = bIsTalkable;
-	bIsTalkable = bNewTalkable;
-	OnRep_IsTalkable(bOld);
-	ForceNetUpdate();
+	RefreshTalkableFromSubsystem();
 }
 
 void AARNPCCharacterBase::OnRep_IsTalkable(bool bOldTalkable)
@@ -133,8 +166,36 @@ void AARNPCCharacterBase::OnRep_IsTalkable(bool bOldTalkable)
 	}
 }
 
+void AARNPCCharacterBase::OnRep_TalkablePlayerSlotMask(uint8 bOldTalkablePlayerSlotMask)
+{
+	(void)bOldTalkablePlayerSlotMask;
+}
+
+bool AARNPCCharacterBase::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
+{
+	const uint8 SlotMask = GetTalkableMaskForSlot(PlayerSlot);
+	return SlotMask != 0 && (TalkablePlayerSlotMask & SlotMask) != 0;
+}
+
+bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* QueryController) const
+{
+	if (!QueryController)
+	{
+		return false;
+	}
+
+	const AARPlayerStateBase* QueryPlayerState = QueryController->GetPlayerState<AARPlayerStateBase>();
+	if (!QueryPlayerState)
+	{
+		return false;
+	}
+
+	return IsTalkableForPlayerSlot(QueryPlayerState->GetPlayerSlot());
+}
+
 void AARNPCCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AARNPCCharacterBase, bIsTalkable);
+	DOREPLIFETIME(AARNPCCharacterBase, TalkablePlayerSlotMask);
 }
