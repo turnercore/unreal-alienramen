@@ -43,11 +43,17 @@ public:
 
 	bool SupportsDynamicBranchPins() const;
 	void AddDynamicBranchPin();
+	bool RemoveLastDynamicBranchPin();
 	bool RemoveDynamicBranchPinByName(FName PinName);
 
 	bool SetChoiceBranchText(const FGuid& ChoiceBranchId, const FText& NewText);
 	bool SetSwitchBranchLabel(const FGuid& BranchId, const FText& NewLabel);
 	bool SetRandomBranchWeight(const FGuid& BranchId, float NewWeight);
+	bool MoveChoiceBranch(const FGuid& ChoiceBranchId, bool bMoveUp);
+	bool MoveSwitchBranch(const FGuid& BranchId, bool bMoveUp);
+	bool ReorderChoiceBranch(const FGuid& MovingChoiceBranchId, const FGuid& TargetChoiceBranchId);
+	bool ReorderSwitchBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
+	bool ReorderRandomBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
 	bool SetChoiceFallbackText(const FText& NewFallbackText);
 	bool SetRelationshipTargetSpeakerTag(const FGameplayTag& NewTag);
 	bool SetRelationshipDeltaPoints(float NewDeltaPoints);

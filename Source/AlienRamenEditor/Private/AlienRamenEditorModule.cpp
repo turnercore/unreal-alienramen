@@ -1544,7 +1544,7 @@ public:
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARDebugSaveEditor::TabName,
 			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDebugSaveTab))
-			.SetDisplayName(FText::FromString("Debug Save Tool"))
+			.SetDisplayName(FText::FromString("AR Debug Save Tool"))
 			.SetTooltipText(FText::FromString("Create, load, edit, and save isolated debug save slots."))
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
@@ -1552,7 +1552,7 @@ public:
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARInvaderAuthoringEditor::TabName,
 			FOnSpawnTab::CreateStatic(&ARInvaderAuthoringEditor::SpawnTab))
-			.SetDisplayName(FText::FromString("Invader Authoring Tool"))
+			.SetDisplayName(FText::FromString("AR Invader Waves Editor"))
 			.SetTooltipText(FText::FromString("Author invader waves/stages, validate, preview, and run PIE tests."))
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Viewports"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
@@ -1560,7 +1560,7 @@ public:
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARInvaderEnemyAuthoringEditor::TabName,
 			FOnSpawnTab::CreateStatic(&ARInvaderEnemyAuthoringEditor::SpawnTab))
-			.SetDisplayName(FText::FromString("Enemy Authoring Tool"))
+			.SetDisplayName(FText::FromString("AR Enemy Authoring Tool"))
 			.SetTooltipText(FText::FromString("Author enemy rows, tune runtime stats, and validate enemy definitions."))
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
@@ -1568,7 +1568,7 @@ public:
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARDialogueSpeakerEditor::TabName,
 			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDialogueSpeakerTab))
-			.SetDisplayName(FText::FromString("Dialogue Speaker Editor"))
+			.SetDisplayName(FText::FromString("AR Dialogue Speaker Editor"))
 			.SetTooltipText(FText::FromString("Speaker-centric dialogue authoring hub."))
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
@@ -1576,9 +1576,9 @@ public:
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARDialogueConversationGraphEditor::TabName,
 			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDialogueConversationGraphTab))
-			.SetDisplayName(FText::FromString("Dialogue Conversation Graph Editor"))
+			.SetDisplayName(FText::FromString("AR Dialogue Conversation Graph Editor"))
 			.SetTooltipText(FText::FromString("Conversation graph validation, compile, and preview workflow."))
-			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Blueprints"))
+			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
 		UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FAlienRamenEditorModule::RegisterMenus));
@@ -1642,33 +1642,33 @@ private:
 		FToolMenuSection& Section = Menu->FindOrAddSection("WindowLayout");
 		Section.AddMenuEntry(
 			"OpenARDebugSaveTool",
-			FText::FromString("Alien Ramen Debug Save Tool"),
-			FText::FromString("Open the Alien Ramen debug save authoring tool."),
+			FText::FromString("AR Debug Save Tool"),
+			FText::FromString("Open the debug save authoring tool."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenTab));
 		Section.AddMenuEntry(
 			"OpenARInvaderAuthoringTool",
-			FText::FromString("Alien Ramen Invader Authoring"),
+			FText::FromString("AR Invader Waves Editor"),
 			FText::FromString("Open the invader wave/stage authoring tool."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Viewports"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenInvaderAuthoringTab));
 		Section.AddMenuEntry(
 			"OpenAREnemyAuthoringTool",
-			FText::FromString("Alien Ramen Enemy Authoring"),
+			FText::FromString("AR Enemy Authoring Tool"),
 			FText::FromString("Open the dedicated enemy authoring tool."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenEnemyAuthoringTab));
 		Section.AddMenuEntry(
 			"OpenARDialogueSpeakerEditor",
-			FText::FromString("Alien Ramen Dialogue Speaker Editor"),
+			FText::FromString("AR Dialogue Speaker Editor"),
 			FText::FromString("Open the dialogue speaker-centric authoring tab."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenDialogueSpeakerTab));
 		Section.AddMenuEntry(
 			"OpenARDialogueConversationGraphEditor",
-			FText::FromString("Alien Ramen Dialogue Conversation Graph Editor"),
+			FText::FromString("AR Dialogue Conversation Graph Editor"),
 			FText::FromString("Open the conversation graph authoring and preview tab."),
-			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Blueprints"),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenDialogueConversationGraphTab));
 	}
 

@@ -74,6 +74,28 @@ namespace
 		Issue.Message = FText::FromString(Message);
 	}
 
+	static void SyncDialogueGraphPins(UARDialogueEdGraph* Graph)
+	{
+		if (!Graph)
+		{
+			return;
+		}
+
+		for (UEdGraphNode* GraphNode : Graph->Nodes)
+		{
+			UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+			if (!DialogueNode)
+			{
+				continue;
+			}
+
+			DialogueNode->EnsureStableIds(false, false);
+			DialogueNode->ReconstructNode();
+		}
+
+		Graph->NotifyGraphChanged();
+	}
+
 	static TWeakObjectPtr<UARDialogueConversationAsset> GPendingConversationToEdit;
 }
 
@@ -105,6 +127,23 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 		+ SVerticalBox::Slot().AutoHeight().Padding(4.0f)
 		[
 			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f, 2.0f, 2.0f, 2.0f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("Asset")))
+				.ToolTipText(FText::FromString(TEXT("Conversation asset currently opened in this editor panel.")))
+			]
+			+ SHorizontalBox::Slot().FillWidth(0.8f).Padding(2.0f)
+			[
+				SAssignNew(ConversationAssetPicker, SObjectPropertyEntryBox)
+				.AllowedClass(UARDialogueConversationAsset::StaticClass())
+				.ObjectPath(this, &SDialogueConversationGraphEditorPanel::GetSelectedConversationPath)
+				.OnObjectChanged(this, &SDialogueConversationGraphEditorPanel::OnSelectedConversationChanged)
+			]
+			+ SHorizontalBox::Slot().FillWidth(1.0f)
+			[
+				SNew(SBox)
+			]
 			+ SHorizontalBox::Slot().AutoWidth().Padding(2.0f)
 			[
 				SNew(SButton)
@@ -125,23 +164,6 @@ void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
 				.Text(FText::FromString(TEXT("Compile Runtime Graph")))
 				.ToolTipText(FText::FromString(TEXT("Builds compile-managed runtime node/link data from editor graph pins and writes it back to the conversation asset.")))
 				.OnClicked(this, &SDialogueConversationGraphEditorPanel::HandleCompile)
-			]
-			+ SHorizontalBox::Slot().FillWidth(1.0f)
-			[
-				SNew(SBox)
-			]
-			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f, 2.0f, 2.0f, 2.0f)
-			[
-				SNew(STextBlock)
-				.Text(FText::FromString(TEXT("Asset")))
-				.ToolTipText(FText::FromString(TEXT("Conversation asset currently opened in this editor panel.")))
-			]
-			+ SHorizontalBox::Slot().FillWidth(0.8f).Padding(2.0f)
-			[
-				SAssignNew(ConversationAssetPicker, SObjectPropertyEntryBox)
-				.AllowedClass(UARDialogueConversationAsset::StaticClass())
-				.ObjectPath(this, &SDialogueConversationGraphEditorPanel::GetSelectedConversationPath)
-				.OnObjectChanged(this, &SDialogueConversationGraphEditorPanel::OnSelectedConversationChanged)
 			]
 		]
 		+ SVerticalBox::Slot().FillHeight(1.0f).Padding(4.0f)
@@ -294,6 +316,7 @@ void SDialogueConversationGraphEditorPanel::SetSelectedConversation(UARDialogueC
 	}
 
 	SelectedEditorGraph = Cast<UARDialogueEdGraph>(Asset->EditorGraph);
+	SyncDialogueGraphPins(SelectedEditorGraph.Get());
 	RebuildGraphEditorWidget(SelectedEditorGraph.Get());
 	if (DetailsView.IsValid())
 	{
@@ -328,6 +351,7 @@ void SDialogueConversationGraphEditorPanel::RebuildGraphEditorWidget(UEdGraph* G
 
 	SGraphEditor::FGraphEditorEvents GraphEvents;
 	GraphEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &SDialogueConversationGraphEditorPanel::OnGraphSelectionChanged);
+	GraphEvents.OnSpawnNodeByShortcutAtLocation = SGraphEditor::FOnSpawnNodeByShortcutAtLocation::CreateSP(this, &SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut);
 
 	SAssignNew(GraphEditorWidget, SGraphEditor)
 		.Appearance(GraphAppearance)
@@ -379,6 +403,50 @@ void SDialogueConversationGraphEditorPanel::OnGraphSelectionChanged(const TSet<U
 	}
 
 	DetailsView->SetObject(SelectedConversation.Get());
+}
+
+FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputChord InChord, const FVector2f& Location)
+{
+	if (InChord.Key != EKeys::R)
+	{
+		return FReply::Unhandled();
+	}
+
+	UARDialogueEdGraph* Graph = SelectedEditorGraph.Get();
+	if (!Graph)
+	{
+		return FReply::Unhandled();
+	}
+
+	const FScopedTransaction Transaction(FText::FromString(TEXT("Add Dialogue Route Node")));
+	Graph->Modify();
+
+	UARDialogueEdGraphNode* RouteNode = NewObject<UARDialogueEdGraphNode>(Graph);
+	RouteNode->SetFlags(RF_Transactional);
+	RouteNode->InitializeForNodeType(EDialogueNodeType::Route);
+	RouteNode->NodePosX = static_cast<int32>(Location.X);
+	RouteNode->NodePosY = static_cast<int32>(Location.Y);
+	RouteNode->CreateNewGuid();
+	RouteNode->PostPlacedNewNode();
+	RouteNode->AllocateDefaultPins();
+	Graph->AddNode(RouteNode, true, true);
+
+	if (GraphEditorWidget.IsValid())
+	{
+		if (UEdGraphPin* DragPin = GraphEditorWidget->GetGraphPinForMenu())
+		{
+			RouteNode->AutowireNewNode(DragPin);
+		}
+	}
+
+	Graph->NotifyGraphChanged();
+	if (UARDialogueConversationAsset* Conversation = SelectedConversation.Get())
+	{
+		Conversation->MarkPackageDirty();
+	}
+
+	SetStatusMessage(TEXT("Route node added."), EEditorStatusType::Info);
+	return FReply::Handled();
 }
 
 FReply SDialogueConversationGraphEditorPanel::HandleRefresh()
@@ -769,6 +837,7 @@ void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UARDi
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
+		case EDialogueNodeType::Route:
 			LinkPinToNode(SourceNode->GetOutputPinByName(UARDialogueEdGraphNode::GetPinNameNext()), RuntimeNode.NextNodeId);
 			break;
 		case EDialogueNodeType::Bool:
@@ -988,6 +1057,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
+		case EDialogueNodeType::Route:
 			CompiledNode.NextNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UARDialogueEdGraphNode::GetPinNameNext()), TEXT("Next"));
 			break;
 		case EDialogueNodeType::Choice:
