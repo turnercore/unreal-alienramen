@@ -41,6 +41,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
 	void ClearVotes();
 
+	// Applies an immediate popularity delta to a faction runtime state in save data.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
+	bool ModifyFactionPopularity(FGameplayTag FactionTag, float DeltaPopularity);
+
 	// Finalizes election and applies elected faction/effects to save + replicated GameState state.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
 	bool FinalizeElectionForTravel(FGameplayTag& OutWinnerFactionTag, EARFactionWinnerReason& OutReason);

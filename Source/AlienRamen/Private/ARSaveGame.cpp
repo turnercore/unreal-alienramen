@@ -92,53 +92,34 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
 	}
 
-	for (FARNpcRelationshipState& NpcState : NpcRelationshipStates)
+	for (int32 Index = DialogueRelationshipStates.Num() - 1; Index >= 0; --Index)
 	{
-		ClampNonNegative(NpcState.LoveRating, TEXT("NpcRelationshipStates.LoveRating"));
-	}
-
-	for (int32 Index = NpcRelationshipStates.Num() - 1; Index >= 0; --Index)
-	{
-		if (!NpcRelationshipStates[Index].NpcTag.IsValid())
+		if (!DialogueRelationshipStates[Index].SpeakerTag.IsValid())
 		{
-			NpcRelationshipStates.RemoveAtSwap(Index);
+			DialogueRelationshipStates.RemoveAtSwap(Index);
 			++ClampedCount;
 			if (OutWarnings)
 			{
-				OutWarnings->Add(TEXT("NpcRelationshipStates contained an invalid NpcTag and was removed."));
+				OutWarnings->Add(TEXT("DialogueRelationshipStates contained an invalid SpeakerTag and was removed."));
 			}
 		}
 	}
 
-	for (int32 Index = DialogueCanonicalChoiceStates.Num() - 1; Index >= 0; --Index)
+	for (FDialoguePlayerPersistentState& PlayerDialogueState : DialoguePlayerPersistentStates)
 	{
-		const FARDialogueCanonicalChoiceState& Entry = DialogueCanonicalChoiceStates[Index];
-		if (!Entry.NodeTag.IsValid() || !Entry.ChoiceTag.IsValid())
+		for (int32 ChoiceIndex = PlayerDialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
 		{
-			DialogueCanonicalChoiceStates.RemoveAtSwap(Index);
-			++ClampedCount;
-			if (OutWarnings)
+			const FDialogueChoiceMemoryRecord& Record = PlayerDialogueState.CompletedChoiceRecords[ChoiceIndex];
+			if (!Record.ConversationTag.IsValid() || !Record.ChoiceNodeId.IsValid() || !Record.SelectedBranchId.IsValid())
 			{
-				OutWarnings->Add(TEXT("DialogueCanonicalChoiceStates contained invalid tags and was removed."));
+				PlayerDialogueState.CompletedChoiceRecords.RemoveAtSwap(ChoiceIndex);
+				++ClampedCount;
+				if (OutWarnings)
+				{
+					OutWarnings->Add(TEXT("DialoguePlayerPersistentStates contained an invalid choice-memory record and it was removed."));
+				}
 			}
 		}
-	}
-
-	TSet<FGameplayTag> SeenChoiceNodes;
-	for (int32 Index = DialogueCanonicalChoiceStates.Num() - 1; Index >= 0; --Index)
-	{
-		const FGameplayTag NodeTag = DialogueCanonicalChoiceStates[Index].NodeTag;
-		if (SeenChoiceNodes.Contains(NodeTag))
-		{
-			DialogueCanonicalChoiceStates.RemoveAtSwap(Index);
-			++ClampedCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("DialogueCanonicalChoiceStates contained duplicate NodeTag entries and extras were removed."));
-			}
-			continue;
-		}
-		SeenChoiceNodes.Add(NodeTag);
 	}
 
 	TSet<FGameplayTag> SeenFactions;

@@ -51,6 +51,12 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 		return;
 	}
 
+	if (!bNpcLocalStateAllowsDialogue)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[NPC] Interact ignored for '%s': local state blocks dialogue."), *GetNameSafe(this));
+		return;
+	}
+
 	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 	{
 		if (!DialogueSubsystem->TryStartDialogueWithNpc(InteractingController, NpcTag))
@@ -58,6 +64,23 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 			UE_LOG(ARLog, Verbose, TEXT("[NPC] TryStartDialogueWithNpc returned false for '%s' with NPC '%s'."), *GetNameSafe(InteractingController), *NpcTag.ToString());
 		}
 	}
+}
+
+void AARNPCCharacterBase::SetNpcLocalStateAllowsDialogue(const bool bEnabled)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (bNpcLocalStateAllowsDialogue == bEnabled)
+	{
+		return;
+	}
+
+	bNpcLocalStateAllowsDialogue = bEnabled;
+	RefreshTalkableFromSubsystem();
+	ForceNetUpdate();
 }
 
 void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
@@ -70,7 +93,8 @@ void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
 	if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
 	{
 		NpcSubsystem->RefreshNpcTalkableState(NpcTag);
-		const bool bNewTalkable = NpcSubsystem->IsNpcTalkable(NpcTag);
+		const bool bGlobalTalkable = NpcSubsystem->IsNpcTalkable(NpcTag);
+		const bool bNewTalkable = bGlobalTalkable && bNpcLocalStateAllowsDialogue;
 		if (bIsTalkable != bNewTalkable)
 		{
 			const bool bOld = bIsTalkable;
@@ -87,6 +111,8 @@ void AARNPCCharacterBase::HandleNpcTalkableChanged(FGameplayTag ChangedNpcTag, b
 	{
 		return;
 	}
+
+	bNewTalkable = bNewTalkable && bNpcLocalStateAllowsDialogue;
 
 	if (bIsTalkable == bNewTalkable)
 	{

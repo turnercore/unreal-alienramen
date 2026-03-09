@@ -1,12 +1,12 @@
 /**
  * @file ARNPCSubsystem.h
- * @brief Server-authoritative NPC relationship/want runtime for Alien Ramen.
+ * @brief Server-authoritative NPC talkable-state runtime for Alien Ramen.
  */
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "ARDialogueTypes.h"
 #include "ARNPCSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnNpcTalkableChanged, FGameplayTag, NpcTag, bool, bNewTalkable);
@@ -18,12 +18,6 @@ class ALIENRAMEN_API UARNPCSubsystem : public UGameInstanceSubsystem
 
 public:
 	virtual void Deinitialize() override;
-
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
-	bool SubmitNpcRamenDelivery(FGameplayTag NpcTag, FGameplayTag DeliveredRamenTag, bool& bOutAccepted);
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
-	bool TryGetNpcRelationshipState(FGameplayTag NpcTag, FARNpcRelationshipState& OutState) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
 	bool IsNpcTalkable(FGameplayTag NpcTag) const;

@@ -1,4 +1,6 @@
 #include "AREnemyAuthoringPanel.h"
+#include "ARDialogueConversationGraphEditorPanel.h"
+#include "ARDialogueSpeakerEditorPanel.h"
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
 #include "ARSaveSubsystem.h"
@@ -1516,6 +1518,16 @@ namespace ARDebugSaveEditor
 	};
 }
 
+namespace ARDialogueSpeakerEditor
+{
+	static const FName TabName(TEXT("AR_DialogueSpeakerEditor"));
+}
+
+namespace ARDialogueConversationGraphEditor
+{
+	static const FName TabName(TEXT("AR_DialogueConversationGraphEditor"));
+}
+
 class FAlienRamenEditorModule final : public IModuleInterface
 {
 public:
@@ -1545,6 +1557,22 @@ public:
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
+			ARDialogueSpeakerEditor::TabName,
+			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDialogueSpeakerTab))
+			.SetDisplayName(FText::FromString("Dialogue Speaker Editor"))
+			.SetTooltipText(FText::FromString("Speaker-centric dialogue authoring hub."))
+			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"))
+			.SetMenuType(ETabSpawnerMenuType::Hidden);
+
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
+			ARDialogueConversationGraphEditor::TabName,
+			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDialogueConversationGraphTab))
+			.SetDisplayName(FText::FromString("Dialogue Conversation Graph Editor"))
+			.SetTooltipText(FText::FromString("Conversation graph validation, compile, and preview workflow."))
+			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Blueprints"))
+			.SetMenuType(ETabSpawnerMenuType::Hidden);
+
 		UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FAlienRamenEditorModule::RegisterMenus));
 	}
 
@@ -1557,6 +1585,8 @@ public:
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDebugSaveEditor::TabName);
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderAuthoringEditor::TabName);
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderEnemyAuthoringEditor::TabName);
+		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDialogueSpeakerEditor::TabName);
+		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDialogueConversationGraphEditor::TabName);
 	}
 
 private:
@@ -1566,6 +1596,24 @@ private:
 			.TabRole(ETabRole::NomadTab)
 			[
 				SNew(ARDebugSaveEditor::SPanel)
+			];
+	}
+
+	TSharedRef<SDockTab> SpawnDialogueSpeakerTab(const FSpawnTabArgs&)
+	{
+		return SNew(SDockTab)
+			.TabRole(ETabRole::NomadTab)
+			[
+				SNew(SDialogueSpeakerEditorPanel)
+			];
+	}
+
+	TSharedRef<SDockTab> SpawnDialogueConversationGraphTab(const FSpawnTabArgs&)
+	{
+		return SNew(SDockTab)
+			.TabRole(ETabRole::NomadTab)
+			[
+				SNew(SDialogueConversationGraphEditorPanel)
 			];
 	}
 
@@ -1591,6 +1639,18 @@ private:
 			FText::FromString("Open the dedicated enemy authoring tool."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenEnemyAuthoringTab));
+		Section.AddMenuEntry(
+			"OpenARDialogueSpeakerEditor",
+			FText::FromString("Alien Ramen Dialogue Speaker Editor"),
+			FText::FromString("Open the dialogue speaker-centric authoring tab."),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"),
+			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenDialogueSpeakerTab));
+		Section.AddMenuEntry(
+			"OpenARDialogueConversationGraphEditor",
+			FText::FromString("Alien Ramen Dialogue Conversation Graph Editor"),
+			FText::FromString("Open the conversation graph authoring and preview tab."),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Blueprints"),
+			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenDialogueConversationGraphTab));
 	}
 
 	void OpenTab(const FToolMenuContext&)
@@ -1606,6 +1666,16 @@ private:
 	void OpenEnemyAuthoringTab(const FToolMenuContext&)
 	{
 		FGlobalTabmanager::Get()->TryInvokeTab(ARInvaderEnemyAuthoringEditor::TabName);
+	}
+
+	void OpenDialogueSpeakerTab(const FToolMenuContext&)
+	{
+		FGlobalTabmanager::Get()->TryInvokeTab(ARDialogueSpeakerEditor::TabName);
+	}
+
+	void OpenDialogueConversationGraphTab(const FToolMenuContext&)
+	{
+		FGlobalTabmanager::Get()->TryInvokeTab(ARDialogueConversationGraphEditor::TabName);
 	}
 };
 
