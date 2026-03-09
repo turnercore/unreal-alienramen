@@ -59,6 +59,7 @@ namespace
 		FGuid WaitingLineNodeId;
 		TMap<FGuid, FGuid> RuntimeChoiceSelections;
 		FGameplayTagContainer TransientConversationTags;
+		TArray<FGuid> PendingSequenceBranchNodeIds;
 		TSet<EARPlayerSlot> Participants;
 		FTimerHandle AutoAdvanceTimerHandle;
 	};
@@ -1824,6 +1825,13 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 			else if (const FDialogueLineNodeData* LineData = Node.NodeData.GetPtr<FDialogueLineNodeData>())
 			{
 				if (LineData->Line.Text.IsEmpty()) { Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Line text is missing (sound-only lines are invalid).")); }
+				if (LineData->Line.LengthSeconds <= 0.0f && LineData->Line.Sound == nullptr)
+				{
+					Add(
+						EDialogueValidationSeverity::Warning,
+						Node.NodeId,
+						TEXT("Line has no audio and Length Seconds is 0. Set a positive Length Seconds value or assign a Sound."));
+				}
 				if (!LineData->Line.SpeakerTag.IsValid())
 				{
 					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Line speaker tag is invalid."));
@@ -2017,6 +2025,38 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 			if (TotalWeight <= 0.0f)
 			{
 				Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Random node has no valid positive-weight branches."));
+			}
+			break;
+		}
+		case EDialogueNodeType::Sequence:
+		{
+			TSet<FGuid> SeenSequenceBranchIds;
+			int32 ConnectedBranchCount = 0;
+			for (const FDialogueCompiledSequenceBranch& Branch : Node.SequenceBranches)
+			{
+				if (!Branch.BranchId.IsValid())
+				{
+					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Sequence branch has invalid BranchId."));
+					continue;
+				}
+				if (SeenSequenceBranchIds.Contains(Branch.BranchId))
+				{
+					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Sequence branch id is duplicated in node."));
+				}
+				SeenSequenceBranchIds.Add(Branch.BranchId);
+				if (Branch.NextNodeId.IsValid())
+				{
+					++ConnectedBranchCount;
+				}
+				RegisterEdge(Node.NodeId, Branch.NextNodeId, true, TEXT("Sequence branch output"));
+			}
+			if (Node.SequenceBranches.IsEmpty())
+			{
+				Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Sequence node has no branches."));
+			}
+			else if (ConnectedBranchCount == 0)
+			{
+				Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Sequence node has no connected branch outputs and will end non-completed."));
 			}
 			break;
 		}
@@ -2739,6 +2779,25 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			*Session.CurrentNodeId.ToString(EGuidFormats::DigitsWithHyphensInBraces));
 	};
 
+	auto ContinuePendingSequenceBranch = [&Session]() -> bool
+	{
+		while (!Session.PendingSequenceBranchNodeIds.IsEmpty())
+		{
+			const FGuid NextNodeId = Session.PendingSequenceBranchNodeIds[0];
+			Session.PendingSequenceBranchNodeIds.RemoveAt(0, 1, EAllowShrinking::No);
+			if (!NextNodeId.IsValid())
+			{
+				continue;
+			}
+
+			ClearSessionPresentationState(Session);
+			Session.CurrentNodeId = NextNodeId;
+			return true;
+		}
+
+		return false;
+	};
+
 	if (Session.bWaitingForAdvanceInput)
 	{
 		if (!bAdvanceLineInput || !Session.WaitingLineNodeId.IsValid())
@@ -2757,13 +2816,27 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		Session.CurrentNodeId = WaitingLineNode->NextNodeId;
 		if (!Session.CurrentNodeId.IsValid())
 		{
-			LogRuntimeWarning(TEXT("Line node had no Next link during advance; ending non-completed."));
-			return EDialogueExecutionResult::EndedNonCompleted;
+			if (!ContinuePendingSequenceBranch())
+			{
+				LogRuntimeWarning(TEXT("Line node had no Next link during advance; ending non-completed."));
+				return EDialogueExecutionResult::EndedNonCompleted;
+			}
 		}
 	}
 
 	for (int32 StepIndex = 0; StepIndex < MaxSteps; ++StepIndex)
 	{
+		if (!Session.CurrentNodeId.IsValid())
+		{
+			if (ContinuePendingSequenceBranch())
+			{
+				continue;
+			}
+
+			LogRuntimeWarning(TEXT("Dialogue execution reached an unlinked branch end; ending non-completed."));
+			return EDialogueExecutionResult::EndedNonCompleted;
+		}
+
 		const FDialogueCompiledNode* Node = FindNodeById(Session, Session.CurrentNodeId);
 		if (!Node)
 		{
@@ -2795,8 +2868,12 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		{
 			if (!Node->NextNodeId.IsValid())
 			{
-				LogRuntimeWarning(TEXT("Route node has no outgoing connection; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Route node has no outgoing connection; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
+				break;
 			}
 			Session.CurrentNodeId = Node->NextNodeId;
 			break;
@@ -2825,8 +2902,11 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 				Session.CurrentNodeId = Node->NextNodeId;
 				if (!Session.CurrentNodeId.IsValid())
 				{
-					LogRuntimeWarning(TEXT("Line node skip had no Next link; ending non-completed."));
-					return EDialogueExecutionResult::EndedNonCompleted;
+					if (!ContinuePendingSequenceBranch())
+					{
+						LogRuntimeWarning(TEXT("Line node skip had no Next link; ending non-completed."));
+						return EDialogueExecutionResult::EndedNonCompleted;
+					}
 				}
 				break;
 			}
@@ -2963,8 +3043,12 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			{
 				if (!Node->FallbackNodeId.IsValid())
 				{
-					UE_LOG(ARLog, Error, TEXT("[Dialogue] Choice node '%s' has no valid choices and no fallback branch."), *Node->NodeId.ToString(EGuidFormats::DigitsWithHyphensInBraces));
-					return EDialogueExecutionResult::EndedNonCompleted;
+					if (!ContinuePendingSequenceBranch())
+					{
+						UE_LOG(ARLog, Error, TEXT("[Dialogue] Choice node '%s' has no valid choices and no fallback branch."), *Node->NodeId.ToString(EGuidFormats::DigitsWithHyphensInBraces));
+						return EDialogueExecutionResult::EndedNonCompleted;
+					}
+					break;
 				}
 
 				Session.CurrentNodeId = Node->FallbackNodeId;
@@ -2989,8 +3073,11 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.CurrentNodeId = bConditionPassed ? Node->TrueNodeId : Node->FalseNodeId;
 			if (!Session.CurrentNodeId.IsValid())
 			{
-				LogRuntimeWarning(TEXT("Bool node branch has no connection; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Bool node branch has no connection; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
 			}
 			break;
 		}
@@ -3017,8 +3104,12 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			{
 				if (!Node->bSwitchHasDefaultOutput || !Node->SwitchDefaultNodeId.IsValid())
 				{
-					UE_LOG(ARLog, Error, TEXT("[Dialogue] Switch node '%s' has no matching branch and no default output."), *Node->NodeId.ToString(EGuidFormats::DigitsWithHyphensInBraces));
-					return EDialogueExecutionResult::EndedNonCompleted;
+					if (!ContinuePendingSequenceBranch())
+					{
+						UE_LOG(ARLog, Error, TEXT("[Dialogue] Switch node '%s' has no matching branch and no default output."), *Node->NodeId.ToString(EGuidFormats::DigitsWithHyphensInBraces));
+						return EDialogueExecutionResult::EndedNonCompleted;
+					}
+					break;
 				}
 				Session.CurrentNodeId = Node->SwitchDefaultNodeId;
 			}
@@ -3058,8 +3149,11 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.CurrentNodeId = Node->NextNodeId;
 			if (!Session.CurrentNodeId.IsValid())
 			{
-				LogRuntimeWarning(TEXT("Tag mutation node has no Next link; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Tag mutation node has no Next link; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
 			}
 			break;
 		}
@@ -3079,8 +3173,11 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.CurrentNodeId = Node->NextNodeId;
 			if (!Session.CurrentNodeId.IsValid())
 			{
-				LogRuntimeWarning(TEXT("Relationship mutation node has no Next link; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Relationship mutation node has no Next link; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
 			}
 			break;
 		}
@@ -3100,8 +3197,11 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.CurrentNodeId = Node->NextNodeId;
 			if (!Session.CurrentNodeId.IsValid())
 			{
-				LogRuntimeWarning(TEXT("Faction mutation node has no Next link; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Faction mutation node has no Next link; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
 			}
 			break;
 		}
@@ -3118,8 +3218,12 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 
 			if (TotalWeight <= 0.0f)
 			{
-				LogRuntimeWarning(TEXT("Random node has no positive-weight branches at runtime; ending non-completed."));
-				return EDialogueExecutionResult::EndedNonCompleted;
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Random node has no positive-weight branches at runtime; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
+				break;
 			}
 
 			const float Pick = FMath::FRandRange(0.0f, TotalWeight);
@@ -3143,7 +3247,27 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 
 			if (!bRouted)
 			{
-				LogRuntimeWarning(TEXT("Random node failed to route despite positive weight; ending non-completed."));
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Random node failed to route despite positive weight; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
+			}
+			break;
+		}
+		case EDialogueNodeType::Sequence:
+		{
+			TArray<FGuid> PreviouslyPendingSequenceBranches = MoveTemp(Session.PendingSequenceBranchNodeIds);
+			Session.PendingSequenceBranchNodeIds.Reset();
+			for (const FDialogueCompiledSequenceBranch& Branch : Node->SequenceBranches)
+			{
+				Session.PendingSequenceBranchNodeIds.Add(Branch.NextNodeId);
+			}
+			Session.PendingSequenceBranchNodeIds.Append(PreviouslyPendingSequenceBranches);
+
+			if (!ContinuePendingSequenceBranch())
+			{
+				LogRuntimeWarning(TEXT("Sequence node has no linked branch outputs; ending non-completed."));
 				return EDialogueExecutionResult::EndedNonCompleted;
 			}
 			break;
