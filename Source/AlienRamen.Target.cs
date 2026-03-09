@@ -8,6 +8,8 @@ public class AlienRamenTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V6;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
+		bOverrideBuildEnvironment = true;
 
 		string steamShippingId = Environment.GetEnvironmentVariable("UE_PROJECT_STEAMSHIPPINGID");
 		if (string.IsNullOrWhiteSpace(steamShippingId))
