@@ -58,6 +58,10 @@ struct ALIENRAMEN_API FARDialogueSpeakerRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FText Description;
 
+	// Optional rich-text style tag applied by default to this speaker's spoken lines.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FName LineFontStyleTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FGameplayTag FactionTag;
 
@@ -797,6 +801,9 @@ struct ALIENRAMEN_API FDialogueClientView
 
 	UPROPERTY(BlueprintReadOnly, Category = "")
 	FGameplayTag SpeakerTag;
+
+	UPROPERTY(BlueprintReadOnly, Category = "")
+	FName SpeakerLineFontStyleTag;
 
 	UPROPERTY(BlueprintReadOnly, Category = "")
 	FText LineText;

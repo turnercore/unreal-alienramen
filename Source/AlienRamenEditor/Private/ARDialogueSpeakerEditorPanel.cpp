@@ -39,6 +39,7 @@
 #include "Widgets/Layout/SExpandableArea.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SSplitter.h"
+#include "Widgets/Layout/SWrapBox.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Views/SHeaderRow.h"
@@ -624,6 +625,14 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 					[
+						SNew(STextBlock).Text(FText::FromString(TEXT("Line Font Style (optional)")))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					[
+						SAssignNew(LineFontStyleTextBox, SEditableTextBox).HintText(FText::FromString(TEXT("Rich text style tag (for example: npc_brother)")))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					[
 						SNew(STextBlock).Text(FText::FromString(TEXT("Speaker Tag")))
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
@@ -730,7 +739,38 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 						SNew(SHorizontalBox)
 						+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
 						[
-							SNew(STextBlock).Text(FText::FromString(TEXT("Conversation Map (Primary Speaker only)")))
+							SNew(SVerticalBox)
+							+ SVerticalBox::Slot().AutoHeight()
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(TEXT("Conversation Map")))
+								.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f, 0.0f, 0.0f)
+							[
+								SNew(STextBlock)
+								.Text_Lambda([this]()
+								{
+									int32 ConversationCount = 0;
+									TSet<int32> UsedBands;
+									for (const TSharedPtr<FConversationEntry>& Entry : ConversationEntries)
+									{
+										if (!Entry.IsValid() || Entry->bIsBandHeader)
+										{
+											continue;
+										}
+
+										++ConversationCount;
+										UsedBands.Add(Entry->RelationshipBand);
+									}
+
+									return FText::FromString(FString::Printf(
+										TEXT("Primary speaker only | %d conversations in %d bands"),
+										ConversationCount,
+										UsedBands.Num()));
+								})
+								.ColorAndOpacity(FSlateColor(FLinearColor(0.70f, 0.70f, 0.70f, 1.0f)))
+							]
 						]
 						+ SHorizontalBox::Slot().AutoWidth().Padding(4.0f, 0.0f, 0.0f, 0.0f)
 						[
@@ -743,10 +783,31 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					]
 					+ SVerticalBox::Slot().FillHeight(1.0f).Padding(0.0f, 0.0f, 0.0f, 6.0f)
 					[
-						SAssignNew(ConversationListView, SListView<TSharedPtr<FConversationEntry>>)
-						.ListItemsSource(&ConversationEntries)
-						.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateConversationRow)
-						.OnMouseButtonDoubleClick(this, &SDialogueSpeakerEditorPanel::OnConversationDoubleClicked)
+						SNew(SBorder)
+						.Padding(4.0f)
+						[
+							SAssignNew(ConversationListView, SListView<TSharedPtr<FConversationEntry>>)
+							.ListItemsSource(&ConversationEntries)
+							.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateConversationRow)
+							.OnMouseButtonDoubleClick(this, &SDialogueSpeakerEditorPanel::OnConversationDoubleClicked)
+						]
+					]
+					+ SVerticalBox::Slot().AutoHeight()
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("No conversations found for this speaker yet.")))
+						.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
+						.Visibility_Lambda([this]()
+						{
+							for (const TSharedPtr<FConversationEntry>& Entry : ConversationEntries)
+							{
+								if (Entry.IsValid() && !Entry->bIsBandHeader)
+								{
+									return EVisibility::Collapsed;
+								}
+							}
+							return EVisibility::Visible;
+						})
 					]
 				]
 			]
@@ -962,16 +1023,18 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 		Entry->MinimumRelationshipPoints = Conversation->Header.MinimumRelationshipPoints;
 		Entry->bImportant = Conversation->Header.bImportant;
 		Entry->bRepeatable = Conversation->Header.bRepeatable;
+		Entry->LockedConditionCount = Conversation->Header.LockedConditions.Conditions.Num();
+		Entry->BlockedConditionCount = Conversation->Header.BlockedConditions.Conditions.Num();
+		Entry->bSeenByGameBlocksReoffer = Conversation->Header.bSeenByGameBlocksReoffer;
+		Entry->bSeenByPlayerBlocksReoffer = Conversation->Header.bSeenByPlayerBlocksReoffer;
+		Entry->bCompletedByGameBlocksReoffer = Conversation->Header.bCompletedByGameBlocksReoffer;
 		Entry->RelationshipBand = ComputeRelationshipBand(Entry->MinimumRelationshipPoints, ThresholdsForBandCalc);
 		Entry->RelationshipBandLabel = BuildRelationshipBandLabel(Entry->RelationshipBand, ThresholdsForBandCalc);
 		Entry->Label = BuildConversationEntryLabel(Conversation);
 		Entry->GateSummary = FString::Printf(
-			TEXT("Gate L:%d B:%d | Reoffer SG:%s SP:%s CG:%s"),
-			Conversation->Header.LockedConditions.Conditions.Num(),
-			Conversation->Header.BlockedConditions.Conditions.Num(),
-			Conversation->Header.bSeenByGameBlocksReoffer ? TEXT("Y") : TEXT("N"),
-			Conversation->Header.bSeenByPlayerBlocksReoffer ? TEXT("Y") : TEXT("N"),
-			Conversation->Header.bCompletedByGameBlocksReoffer ? TEXT("Y") : TEXT("N"));
+			TEXT("Locked %d | Blocked %d"),
+			Entry->LockedConditionCount,
+			Entry->BlockedConditionCount);
 
 		FConversationChainData ChainData;
 		GatherConversationChainTags(
@@ -979,11 +1042,14 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 			ChainData.RequiredTags,
 			ChainData.AddedTags,
 			ChainData.RemovedTags);
+		Entry->AddedTagCount = ChainData.AddedTags.Num();
+		Entry->RemovedTagCount = ChainData.RemovedTags.Num();
+		Entry->RequiredTagCount = ChainData.RequiredTags.Num();
 		Entry->MutationSummary = FString::Printf(
-			TEXT("Tags +%d / -%d | RequiresTags:%d"),
-			ChainData.AddedTags.Num(),
-			ChainData.RemovedTags.Num(),
-			ChainData.RequiredTags.Num());
+			TEXT("Tag mutations +%d / -%d | Requires %d"),
+			Entry->AddedTagCount,
+			Entry->RemovedTagCount,
+			Entry->RequiredTagCount);
 
 		RawConversationEntries.Add(Entry);
 		ChainDataByConversation.Add(Conversation, MoveTemp(ChainData));
@@ -1054,8 +1120,10 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 		const FString RequiresSummary = RequiresFromConversationTags.IsEmpty()
 			? TEXT("-")
 			: FString::Join(RequiresFromConversationTags, TEXT(", "));
+		Entry->UnlocksSummary = UnlocksSummary;
+		Entry->RequiresSummary = RequiresSummary;
 		Entry->ChainSummary = FString::Printf(
-			TEXT("Chain unlocks -> %s | requires <- %s"),
+			TEXT("Unlocks -> %s | Requires <- %s"),
 			*UnlocksSummary,
 			*RequiresSummary);
 	}
@@ -1332,6 +1400,9 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& O
 
 	const FString DisplayNameText = DisplayNameTextBox.IsValid() ? DisplayNameTextBox->GetText().ToString().TrimStartAndEnd() : FString();
 	const FString DescriptionText = DescriptionTextBox.IsValid() ? DescriptionTextBox->GetText().ToString() : FString();
+	const FString LineFontStyleTagText = LineFontStyleTextBox.IsValid()
+		? LineFontStyleTextBox->GetText().ToString().TrimStartAndEnd()
+		: FString();
 
 	if (DisplayNameText.IsEmpty())
 	{
@@ -1366,6 +1437,7 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& O
 	OutRow.Description = FText::FromString(DescriptionText);
 	OutRow.SpeakerTag = EditedSpeakerTag;
 	OutRow.FactionTag = EditedFactionTag;
+	OutRow.LineFontStyleTag = LineFontStyleTagText.IsEmpty() ? NAME_None : FName(*LineFontStyleTagText);
 	OutRow.DefaultPortrait.PortraitTexture = EditedDefaultPortraitTexture;
 	OutRow.RelationshipThresholds = EditedRelationshipThresholds;
 	return true;
@@ -1538,8 +1610,10 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 	{
 		if (DisplayNameTextBox.IsValid()) { DisplayNameTextBox->SetText(FText::GetEmpty()); }
 		if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(FText::GetEmpty()); }
+		if (LineFontStyleTextBox.IsValid()) { LineFontStyleTextBox->SetText(FText::GetEmpty()); }
 		EditedSpeakerTag = FGameplayTag();
 		EditedFactionTag = FGameplayTag();
+		EditedLineFontStyleTag = NAME_None;
 		EditedDefaultPortraitTexture = TSoftObjectPtr<UTexture2D>();
 		EditedPortraitTag = FGameplayTag();
 		EditedPortraitTexture = TSoftObjectPtr<UTexture2D>();
@@ -1554,8 +1628,10 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 
 	if (DisplayNameTextBox.IsValid()) { DisplayNameTextBox->SetText(SelectedRow.DisplayName); }
 	if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(SelectedRow.Description); }
+	if (LineFontStyleTextBox.IsValid()) { LineFontStyleTextBox->SetText(FText::FromName(SelectedRow.LineFontStyleTag)); }
 	OnEditedSpeakerTagChanged(SelectedRow.SpeakerTag);
 	EditedFactionTag = SelectedRow.FactionTag;
+	EditedLineFontStyleTag = SelectedRow.LineFontStyleTag;
 	EditedDefaultPortraitTexture = SelectedRow.DefaultPortrait.PortraitTexture;
 	EditedPortraitTag = FGameplayTag();
 	EditedPortraitTexture = TSoftObjectPtr<UTexture2D>();
@@ -2643,47 +2719,147 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 
 	if (Item->bIsBandHeader)
 	{
+		const FLinearColor BandColor = (Item->RelationshipBand % 2 == 0)
+			? FLinearColor(0.11f, 0.18f, 0.28f, 1.0f)
+			: FLinearColor(0.12f, 0.14f, 0.22f, 1.0f);
+
 		return SNew(STableRow<TSharedPtr<FConversationEntry>>, OwnerTable)
 		[
-			SNew(STextBlock)
-			.Text(FText::FromString(Item->DisplayTitle))
-			.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
+			SNew(SBorder)
+			.BorderBackgroundColor(BandColor)
+			.Padding(FMargin(8.0f, 5.0f))
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(Item->DisplayTitle))
+				.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
+			]
 		];
 	}
 
-	const FString MetaLine = FString::Printf(
-		TEXT("Tag: %s | Pri %d | MinRel %.1f | Important:%s | Repeatable:%s"),
-		*Item->ConversationTag.ToString(),
-		Item->Priority,
-		Item->MinimumRelationshipPoints,
-		Item->bImportant ? TEXT("Y") : TEXT("N"),
-		Item->bRepeatable ? TEXT("Y") : TEXT("N"));
-
 	return SNew(STableRow<TSharedPtr<FConversationEntry>>, OwnerTable)
 	[
-		SNew(SVerticalBox)
-		+ SVerticalBox::Slot().AutoHeight()
+		SNew(SBorder)
+		.BorderBackgroundColor(FLinearColor(0.075f, 0.075f, 0.075f, 1.0f))
+		.Padding(FMargin(7.0f, 6.0f))
 		[
-			SNew(STextBlock)
-			.Text(FText::FromString(Item->Label))
-			.Font(FCoreStyle::GetDefaultFontStyle("Bold", 9))
-			.AutoWrapText(true)
-		]
-		+ SVerticalBox::Slot().AutoHeight()
-		[
-			SNew(STextBlock).Text(FText::FromString(MetaLine)).AutoWrapText(true)
-		]
-		+ SVerticalBox::Slot().AutoHeight()
-		[
-			SNew(STextBlock).Text(FText::FromString(Item->GateSummary)).AutoWrapText(true)
-		]
-		+ SVerticalBox::Slot().AutoHeight()
-		[
-			SNew(STextBlock).Text(FText::FromString(Item->MutationSummary)).AutoWrapText(true)
-		]
-		+ SVerticalBox::Slot().AutoHeight()
-		[
-			SNew(STextBlock).Text(FText::FromString(Item->ChainSummary)).AutoWrapText(true)
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 6.0f, 0.0f)
+			[
+				SNew(SBorder)
+				.BorderBackgroundColor(
+					Item->bImportant
+						? FLinearColor(0.70f, 0.40f, 0.10f, 1.0f)
+						: (Item->bRepeatable
+							? FLinearColor(0.14f, 0.45f, 0.42f, 1.0f)
+							: FLinearColor(0.20f, 0.30f, 0.45f, 1.0f)))
+				.Padding(FMargin(2.0f, 30.0f))
+			]
+			+ SHorizontalBox::Slot().FillWidth(1.0f)
+			[
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot().AutoHeight()
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(Item->Label))
+					.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
+					.AutoWrapText(true)
+				]
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 1.0f, 0.0f, 4.0f)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(Item->ConversationTag.ToString()))
+					.ColorAndOpacity(FSlateColor(FLinearColor(0.67f, 0.67f, 0.67f, 1.0f)))
+					.AutoWrapText(true)
+				]
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 5.0f)
+				[
+					SNew(SWrapBox)
+					.UseAllottedSize(true)
+					+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
+					[
+						SNew(SBorder)
+						.BorderBackgroundColor(FLinearColor(0.20f, 0.24f, 0.32f, 1.0f))
+						.Padding(FMargin(6.0f, 2.0f))
+						[
+							SNew(STextBlock).Text(FText::FromString(FString::Printf(TEXT("Pri %d"), Item->Priority)))
+						]
+					]
+					+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
+					[
+						SNew(SBorder)
+						.BorderBackgroundColor(FLinearColor(0.20f, 0.24f, 0.32f, 1.0f))
+						.Padding(FMargin(6.0f, 2.0f))
+						[
+							SNew(STextBlock).Text(FText::FromString(FString::Printf(TEXT("MinRel %.1f"), Item->MinimumRelationshipPoints)))
+						]
+					]
+					+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
+					[
+						SNew(SBorder)
+						.BorderBackgroundColor(FLinearColor(0.20f, 0.24f, 0.32f, 1.0f))
+						.Padding(FMargin(6.0f, 2.0f))
+						[
+							SNew(STextBlock).Text(FText::FromString(Item->RelationshipBandLabel))
+						]
+					]
+					+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
+					[
+						SNew(SBorder)
+						.BorderBackgroundColor(Item->bImportant ? FLinearColor(0.40f, 0.26f, 0.12f, 1.0f) : FLinearColor(0.13f, 0.13f, 0.13f, 1.0f))
+						.Padding(FMargin(6.0f, 2.0f))
+						[
+							SNew(STextBlock).Text(FText::FromString(Item->bImportant ? TEXT("Important") : TEXT("Normal")))
+						]
+					]
+					+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
+					[
+						SNew(SBorder)
+						.BorderBackgroundColor(Item->bRepeatable ? FLinearColor(0.15f, 0.30f, 0.28f, 1.0f) : FLinearColor(0.13f, 0.13f, 0.13f, 1.0f))
+						.Padding(FMargin(6.0f, 2.0f))
+						[
+							SNew(STextBlock).Text(FText::FromString(Item->bRepeatable ? TEXT("Repeatable") : TEXT("One-shot")))
+						]
+					]
+				]
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 1.0f)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(FString::Printf(
+						TEXT("Gates  Locked %d  |  Blocked %d"),
+						Item->LockedConditionCount,
+						Item->BlockedConditionCount)))
+				]
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 1.0f)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(FString::Printf(
+						TEXT("Reoffer Blocks  SeenGame:%s  SeenPlayer:%s  CompletedGame:%s"),
+						Item->bSeenByGameBlocksReoffer ? TEXT("Yes") : TEXT("No"),
+						Item->bSeenByPlayerBlocksReoffer ? TEXT("Yes") : TEXT("No"),
+						Item->bCompletedByGameBlocksReoffer ? TEXT("Yes") : TEXT("No"))))
+				]
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 1.0f)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(FString::Printf(
+						TEXT("Mutations  +%d  -%d  |  RequiresTags %d"),
+						Item->AddedTagCount,
+						Item->RemovedTagCount,
+						Item->RequiredTagCount)))
+				]
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 1.0f)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(FString::Printf(TEXT("Chain Unlocks -> %s"), *Item->UnlocksSummary)))
+					.AutoWrapText(true)
+				]
+				+ SVerticalBox::Slot().AutoHeight()
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(FString::Printf(TEXT("Chain Requires <- %s"), *Item->RequiresSummary)))
+					.AutoWrapText(true)
+				]
+			]
 		]
 	];
 }
