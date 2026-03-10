@@ -112,8 +112,9 @@ void AARNPCCharacterBase::SetNpcLocalStateAllowsDialogue(const bool bEnabled)
 
 void AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged(const bool bNewTalkable)
 {
-	(void)bNewTalkable;
-	OnNpcTalkableStateChanged.Broadcast(IsTalkable());
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	const bool bEffectiveTalkable = bHasActiveCustomerOrder || (bNpcLocalStateAllowsDialogue && bNewTalkable);
+	OnNpcTalkableStateChanged.Broadcast(bEffectiveTalkable);
 }
 
 void AARNPCCharacterBase::OnRep_NpcLocalStateAllowsDialogue(const bool bOldAllowsDialogue)

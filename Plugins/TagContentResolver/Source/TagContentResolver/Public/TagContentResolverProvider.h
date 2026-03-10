@@ -19,4 +19,5 @@ public:
 	static void RegisterProvider(ITagContentResolverRouteProvider* Provider);
 	static void UnregisterProvider(ITagContentResolverRouteProvider* Provider);
 	static void GetProviders(TArray<ITagContentResolverRouteProvider*>& OutProviders);
+	static uint64 GetProviderGeneration();
 };

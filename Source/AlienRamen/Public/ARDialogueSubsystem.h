@@ -135,9 +135,13 @@ public:
 
 private:
 	struct FARDialogueRuntimeState;
+	struct FARDialogueRuntimeStateDeleter
+	{
+		void operator()(FARDialogueRuntimeState* Ptr) const;
+	};
 
 	FARDialogueRuntimeState& GetRuntimeState();
 	const FARDialogueRuntimeState& GetRuntimeState() const;
 
-	mutable FARDialogueRuntimeState* RuntimeState = nullptr;
+	TUniquePtr<FARDialogueRuntimeState, FARDialogueRuntimeStateDeleter> RuntimeState;
 };
