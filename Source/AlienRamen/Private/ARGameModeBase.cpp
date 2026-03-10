@@ -96,6 +96,15 @@ void AARGameModeBase::BeginPlay()
 		{
 			NpcSubsystem->RefreshAllNpcTalkableStates();
 		}
+
+		if (UARSessionSubsystem* SessionSubsystem = GI->GetSubsystem<UARSessionSubsystem>())
+		{
+			FARSessionResult SessionResult;
+			if (!SessionSubsystem->RefreshJoinability(SessionResult) && SessionResult.ResultCode != EARSessionResultCode::SessionNotFound)
+			{
+				UE_LOG(ARLog, Verbose, TEXT("[GameMode] Session joinability refresh on mode begin failed: %s"), *SessionResult.Error);
+			}
+		}
 	}
 }
 

@@ -22,7 +22,7 @@ Paths:
 | `SharedTrackSlots` | `AARInvaderGameState` | Server | Replicated to all | Team-shared slotted upgrades. |
 | `SharedFullBlastTier` | `AARInvaderGameState` | Server | Replicated to all | Tier progression (default max 5). |
 | `FullBlastSession` (`bIsActive`, `Offers`, `RequestingPlayerSlot`, `ActivationTier`) | `AARInvaderGameState` | Server | Replicated to all | Authoritative offer session snapshot. |
-| `OfferPresenceStates` (`PlayerSlot`, hovered offer, destination slot, cursor) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session. |
+| `OfferPresenceStates` (`PlayerSlot`, hovered offer, destination slot, cursor, selected offer, selected destination`) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session, including teammate "presence select" highlights. |
 | `ActiveSpiceSharers` | `AARInvaderGameState` | Server | Not replicated | Server tick loop membership for hold-to-share transfer. |
 | `PredictedSpiceValue`, `bHasPredictedSpiceValue` | `AARPlayerStateBase` | Client local | Not replicated | Cosmetic HUD prediction overlay only. |
 | Kill-credit FX event (`FARInvaderKillCreditFxEvent`) | `AARInvaderGameState` | Server emit | NetMulticast to all | Cosmetic hook for enemy->meter particles/cues with target player slot. |
@@ -73,7 +73,7 @@ Not yet implemented (open hardening work):
 - `StartSharingSpice(...)` / `StopSharingSpice(...)` drive hold-to-share transfer loop.
 - `AwardKillCredit(...)` supports explicit scripted credit.
 - `NotifyEnemyKilled(...)` is the automatic ingestion entry called from enemy death.
-- `SetOfferPresence(...)` / `ClearOfferPresence(...)` publish/clear replicated per-player offer UI presence.
+- `SetOfferPresence(...)` / `ClearOfferPresence(...)` publish/clear replicated per-player offer UI presence (hover + cursor + optional selected offer/destination).
 - `OnInvaderKillCreditFxEvent` broadcasts on server + clients when kill credit awards spice (includes target slot, spice gained, combo, enemy metadata, optional origin).
 
 ## Debug Console Commands
@@ -97,7 +97,7 @@ Not yet implemented (open hardening work):
 - Native widget base is `UARInvaderFullBlastMenuWidget`:
 - receives session payload via `BP_OnFullBlastMenuUpdated(...)`,
 - and sends selection/skip/presence back through owning controller (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
-- Menu is auto-shown only for the requesting player slot and removed when session ends.
+- Menu is auto-shown for all local invader players while a session is active; only the requesting slot is chooser-authorized (`bIsChooser=true`), and menu is removed when session ends.
 
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.
