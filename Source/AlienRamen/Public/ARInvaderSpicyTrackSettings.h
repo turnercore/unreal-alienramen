@@ -10,8 +10,6 @@
 #include "ARInvaderSpicyTrackTypes.h"
 #include "ARInvaderSpicyTrackSettings.generated.h"
 
-class UDataTable;
-
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Invader Spicy Track"))
 class ALIENRAMEN_API UARInvaderSpicyTrackSettings : public UDeveloperSettings
 {
@@ -46,12 +44,16 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Offer")
 	TArray<FARInvaderLevelOffsetWeight> LevelOffsetWeights;
 
-	// Upgrade definitions used for offer generation and activation behavior.
+	// ContentLookup root tag used to resolve FARInvaderUpgradeDefRow definitions.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSoftObjectPtr<UDataTable> UpgradeDataTable;
+	FGameplayTag UpgradeDefinitionRootTag;
+
+	// UI widget class used by local invader controllers for full-blast offer selection.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<class UARInvaderFullBlastMenuWidget> FullBlastMenuWidgetClass;
 
 	// Enemy definition fallback value when a per-enemy row value is unavailable.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data", meta = (ClampMin = "0.0"))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data", meta = (ClampMin = "1.0"))
 	float DefaultBaseKillSpiceValue = 1.0f;
 
 	// Actor tag name to identify enemy projectiles for full-blast clear.

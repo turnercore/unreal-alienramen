@@ -5,6 +5,7 @@ Paths:
 
 ## Core Enums
 - `EAREnemyColor`: Red, White, Blue
+- `EARInvaderDropType`: None, Scrap, Meat
 - `EARWavePhase`: Active, Berserk
 - `EARInvaderFlowState`: Combat, AwaitStageClear, StageChoice, Transition, Stopped
 - `EARSpawnEdge`: Top, Left, Right
@@ -28,6 +29,8 @@ Paths:
 - Reward descriptor
 - `FARInvaderEnemyDefRow`
 - Enemy identifier, class/runtime init, `BaseSpiceKillValue`
+- Runtime init includes invader drop authoring: `DropType` + `DropAmount`
+- Runtime init also includes invader collision toggles: `bCollideWithEnemies`, `bCollideWithPlayers`, `bCollideWithProjectiles`, `bCollideWithDrops`
 - `FARInvaderUpgradeDefRow`
 - Upgrade identity tag + display fields
 - On-activate and while-slotted gameplay effects
