@@ -139,9 +139,11 @@ private:
 	TArray<float> GetActiveThresholdsForConversationMap() const;
 	float GetMinimumRelationshipForBand(int32 BandIndex, const TArray<float>& Thresholds) const;
 	FReply HandleCycleConversationBand(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	FReply HandleSetConversationBand(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, int32 TargetBand);
 	void CommitConversationPriority(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
 	FReply HandleToggleConversationRepeatable(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
 	FReply HandleToggleConversationImportant(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	void CommitConversationDisplayName(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
 	FReply HandleAddConversationLockedByTag(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
 	FReply HandleRemoveConversationLockedByTag(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, int32 TagIndex);
 	void HandleConversationLockedByTagChanged(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, int32 TagIndex, FGameplayTag NewTag);
@@ -159,6 +161,7 @@ private:
 	FReply HandleSaveSpeaker();
 	FReply HandleCreateConversation();
 	FReply HandleOpenConversation();
+	FReply HandleRenameConversation();
 	FReply HandleDuplicateConversation();
 	FReply HandleDeleteConversation();
 	FReply HandleDeleteConversationAndAsset();
@@ -230,4 +233,5 @@ private:
 	FARDialogueSpeakerRow SpeakerClipboardRow;
 	FString ValidationOutput;
 	mutable FSlateBrush DefaultPortraitFieldBrush;
+	TWeakObjectPtr<UARDialogueConversationAsset> RenamingConversationAsset;
 };
