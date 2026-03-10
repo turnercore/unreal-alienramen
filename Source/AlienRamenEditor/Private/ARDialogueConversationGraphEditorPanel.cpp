@@ -23,6 +23,7 @@
 #include "Input/Events.h"
 #include "InputCoreTypes.h"
 #include "Modules/ModuleManager.h"
+#include "GameplayTagsManager.h"
 #include "PropertyCustomizationHelpers.h"
 #include "PropertyEditorModule.h"
 #include "ScopedTransaction.h"
@@ -78,6 +79,82 @@ namespace
 		Issue.Severity = Severity;
 		Issue.NodeId = NodeId;
 		Issue.Message = FText::FromString(Message);
+	}
+
+	static bool ContainsTagExact(const TArray<FGameplayTag>& Tags, const FGameplayTag Tag)
+	{
+		return Tags.ContainsByPredicate([Tag](const FGameplayTag Existing)
+		{
+			return Existing.MatchesTagExact(Tag);
+		});
+	}
+
+	static bool EnsureConversationParticipantTags(UARDialogueConversationAsset* ConversationAsset)
+	{
+		if (!ConversationAsset)
+		{
+			return false;
+		}
+
+		TArray<FGameplayTag> UpdatedTags = ConversationAsset->Header.ParticipatingSpeakerTags;
+		auto AddUniqueTag = [&UpdatedTags](const FGameplayTag Tag)
+		{
+			if (Tag.IsValid() && !ContainsTagExact(UpdatedTags, Tag))
+			{
+				UpdatedTags.Add(Tag);
+			}
+		};
+
+		AddUniqueTag(ConversationAsset->Header.PrimarySpeakerTag);
+		if (const FGameplayTag PlayerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false); PlayerTag.IsValid())
+		{
+			AddUniqueTag(PlayerTag);
+		}
+
+		for (const FDialogueCompiledNode& Node : ConversationAsset->CompiledData.Nodes)
+		{
+			if (Node.NodeType == EDialogueNodeType::Line)
+			{
+				if (const FDialogueLineNodeData* LineData = Node.NodeData.GetPtr<FDialogueLineNodeData>())
+				{
+					AddUniqueTag(LineData->Line.SpeakerTag);
+				}
+			}
+			else if (Node.NodeType == EDialogueNodeType::MultiLine || Node.NodeType == EDialogueNodeType::SplitLine)
+			{
+				if (const FDialogueMultiLineNodeData* MultiLineData = Node.NodeData.GetPtr<FDialogueMultiLineNodeData>())
+				{
+					for (const FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+					{
+						AddUniqueTag(Entry.LineData.Line.SpeakerTag);
+					}
+				}
+			}
+			else if (Node.NodeType == EDialogueNodeType::RouteByCharacter)
+			{
+				for (const FDialogueCompiledCharacterRouteBranch& Branch : Node.CharacterRouteBranches)
+				{
+					AddUniqueTag(Branch.SpeakerTag);
+				}
+			}
+		}
+
+		const bool bDifferentCount = UpdatedTags.Num() != ConversationAsset->Header.ParticipatingSpeakerTags.Num();
+		const bool bDifferentTags = !bDifferentCount
+			&& UpdatedTags.ContainsByPredicate([ConversationAsset](const FGameplayTag Tag)
+			{
+				return !ContainsTagExact(ConversationAsset->Header.ParticipatingSpeakerTags, Tag);
+			});
+
+		if (!bDifferentCount && !bDifferentTags)
+		{
+			return false;
+		}
+
+		ConversationAsset->Modify();
+		ConversationAsset->Header.ParticipatingSpeakerTags = MoveTemp(UpdatedTags);
+		ConversationAsset->MarkPackageDirty();
+		return true;
 	}
 
 	static void SyncDialogueGraphPins(UARDialogueEdGraph* Graph)
@@ -1602,6 +1679,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 
 	ConversationAsset->Modify();
 	ConversationAsset->CompiledData = MoveTemp(CompiledData);
+	EnsureConversationParticipantTags(ConversationAsset);
 	ConversationAsset->MarkPackageDirty();
 
 	FDialogueValidationReport RuntimeValidation;
