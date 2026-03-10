@@ -24,6 +24,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, bIsDowned);
 	DOREPLIFETIME(AARPlayerStateBase, bIsDeadState);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
+	DOREPLIFETIME(AARPlayerStateBase, bDialogueAutoAdvanceEnabled);
 	DOREPLIFETIME(AARPlayerStateBase, InvaderPlayerColor);
 	DOREPLIFETIME(AARPlayerStateBase, InvaderComboCount);
 	DOREPLIFETIME(AARPlayerStateBase, ActivatedInvaderUpgradeTags);
@@ -245,6 +246,22 @@ void AARPlayerStateBase::SetDeadState(bool bNewDead)
 void AARPlayerStateBase::ServerUpdateDeadState_Implementation(bool bNewDead)
 {
 	SetDead_Internal(bNewDead);
+}
+
+void AARPlayerStateBase::SetDialogueAutoAdvanceEnabled(bool bEnabled)
+{
+	if (HasAuthority())
+	{
+		SetDialogueAutoAdvanceEnabled_Internal(bEnabled);
+		return;
+	}
+
+	ServerSetDialogueAutoAdvanceEnabled(bEnabled);
+}
+
+void AARPlayerStateBase::ServerSetDialogueAutoAdvanceEnabled_Implementation(bool bEnabled)
+{
+	SetDialogueAutoAdvanceEnabled_Internal(bEnabled);
 }
 
 void AARPlayerStateBase::UpdateLoadoutWithTag(FGameplayTag NewTag)
@@ -665,6 +682,11 @@ void AARPlayerStateBase::OnRep_IsDeadState(bool bOldDeadState)
 	OnDeadStateChanged.Broadcast(this, PlayerSlot, bIsDeadState, bOldDeadState);
 }
 
+void AARPlayerStateBase::OnRep_DialogueAutoAdvanceEnabled(bool bOldEnabled)
+{
+	OnDialogueAutoAdvancePreferenceChanged.Broadcast(this, bDialogueAutoAdvanceEnabled, bOldEnabled);
+}
+
 void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
 {
 	OnSetupStateChanged.Broadcast(bIsSetup, bOldIsSetup);
@@ -946,6 +968,19 @@ void AARPlayerStateBase::SetDead_Internal(bool bNewDead)
 	}
 }
 
+void AARPlayerStateBase::SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled)
+{
+	if (!HasAuthority() || bDialogueAutoAdvanceEnabled == bEnabled)
+	{
+		return;
+	}
+
+	const bool bOldEnabled = bDialogueAutoAdvanceEnabled;
+	bDialogueAutoAdvanceEnabled = bEnabled;
+	OnRep_DialogueAutoAdvanceEnabled(bOldEnabled);
+	ForceNetUpdate();
+}
+
 bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 {
 	if (!HasAuthority())
@@ -1200,6 +1235,7 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	TargetPS->SetLoadoutTags(LoadoutTags);
 	TargetPS->SetCharacterPicked(CharacterPicked);
 	TargetPS->SetDisplayNameValue(DisplayName);
+	TargetPS->SetDialogueAutoAdvanceEnabled(bDialogueAutoAdvanceEnabled);
 
 	// Mark copied/traveled state as setup-complete; ready remains transient.
 	TargetPS->SetIsSetupComplete(true);

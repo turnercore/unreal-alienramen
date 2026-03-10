@@ -6,7 +6,7 @@
 
 class UWorld;
 
-UCLASS(Config=EditorPerProjectUserSettings, DefaultConfig, meta=(DisplayName="Alien Ramen Invader Authoring"))
+UCLASS(Config=EditorPerProjectUserSettings, DefaultConfig, meta=(DisplayName="Invader Authoring"))
 class ALIENRAMENEDITOR_API UARInvaderAuthoringEditorSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
