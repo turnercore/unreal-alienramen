@@ -1,6 +1,6 @@
 /**
  * @file ARDialogueSubsystem.h
- * @brief Server-authoritative dialogue runtime for Alien Ramen.
+ * @brief Server-authoritative compiled-graph dialogue runtime for Alien Ramen.
  */
 #pragma once
 
@@ -10,9 +10,11 @@
 #include "ARDialogueSubsystem.generated.h"
 
 class AARPlayerController;
+class UARDialogueConversationAsset;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionUpdated, const FARDialogueClientView&, View);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionUpdated, const FDialogueClientView&, View);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionEnded, const FString&, SessionId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnConversationCompletedSignature, FGameplayTag, ConversationTag);
 
 UCLASS()
 class ALIENRAMEN_API UARDialogueSubsystem : public UGameInstanceSubsystem
@@ -20,31 +22,98 @@ class ALIENRAMEN_API UARDialogueSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-	UARDialogueSubsystem();
-	virtual ~UARDialogueSubsystem() override;
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag NpcTag);
+	// ---- Required runtime API contracts ----
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool AdvanceDialogue(AARPlayerController* RequestingController);
+	bool GetAvailableConversationForNPC(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bNpcLocalStateAllowsDialogue = true);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool SubmitDialogueChoice(AARPlayerController* RequestingController, FGameplayTag ChoiceTag);
+	bool StartConversation(AARPlayerController* RequestingController, FGameplayTag ConversationTag, FGameplayTag PrimarySpeakerTag);
 
-	// Shop-only helper: mirror a partner's dialogue session as a co-pilot viewer.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool SetShopEavesdropTarget(AARPlayerController* RequestingController, EARPlayerSlot TargetSlot, bool bEnable);
+	bool AdvanceConversation(AARPlayerController* RequestingController);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool SubmitChoice(AARPlayerController* RequestingController, FGuid ChoiceBranchId);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ForceEavesdrop(AARPlayerController* RequestingController, bool bEnable, EARPlayerSlot TargetSlot);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool HasUnlockedDialogueForNpcForSlot(FGameplayTag NpcTag, EARPlayerSlot PlayerSlot) const;
+	FGameplayTagContainer GetCombinedDialogueTags(const FGameplayTagContainer& PlayerOnlyProgressionTags, const FGameplayTagContainer& GameOnlyProgressionTags) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool EvaluateDialogueCondition(const FDialogueCondition& Condition, const FDialogueRuntimeContext& Context) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ApplyDialogueTagMutation(const FDialogueTagMutation& Mutation, const FDialogueRuntimeContext& Context);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ApplyDialogueRelationshipMutation(const FDialogueRelationshipMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ApplyDialogueFactionMutation(const FDialogueFactionMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ValidateConversation(UARDialogueConversationAsset* ConversationAsset, FDialogueValidationReport& OutReport) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool PreviewConversation(UARDialogueConversationAsset* ConversationAsset, const FDialogueRuntimeContext& PreviewContext, FDialogueClientView& OutFirstView, FDialogueValidationReport& OutReport) const;
+
+	// Editor/tooling preview runner: simulates a full conversation trace with auto-advance and auto-choice routing.
+	bool PreviewConversationTrace(
+		UARDialogueConversationAsset* ConversationAsset,
+		const FDialogueRuntimeContext& PreviewContext,
+		int32 MaxInteractiveSteps,
+		TArray<FDialogueClientView>& OutViews,
+		TArray<FGuid>& OutAutoSelectedChoiceBranchIds,
+		bool& bOutEndedCompleted,
+		FDialogueValidationReport& OutReport) const;
+
+	// ---- Compatibility wrappers used by gameplay code ----
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool SubmitDialogueChoice(AARPlayerController* RequestingController, FGuid ChoiceBranchId)
+	{
+		return SubmitChoice(RequestingController, ChoiceBranchId);
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool SetShopEavesdropTarget(AARPlayerController* RequestingController, EARPlayerSlot TargetSlot, bool bEnable)
+	{
+		return ForceEavesdrop(RequestingController, bEnable, TargetSlot);
+	}
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag NpcTag) const;
+	bool HasUnlockedDialogueForNpcForSlot(FGameplayTag PrimarySpeakerTag, EARPlayerSlot PlayerSlot) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool GetLocalViewForController(const AARPlayerController* RequestingController, FARDialogueClientView& OutView) const;
+	bool HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag PrimarySpeakerTag) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool GetLocalViewForController(const AARPlayerController* RequestingController, FDialogueClientView& OutView) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool HasActiveDialogueSession() const;
+
+	// Clears transient per-cycle offer blockers (seen/skipped). Pass Unknown to clear all player slots.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void ClearConversationCycleOfferState(EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	float GetRelationshipPointsForSpeaker(FGameplayTag SpeakerTag) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	int32 GetRelationshipLevelForSpeaker(FGameplayTag SpeakerTag) const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
 	FAROnDialogueSessionUpdated OnDialogueSessionUpdated;
@@ -52,8 +121,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
 	FAROnDialogueSessionEnded OnDialogueSessionEnded;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
+	FAROnConversationCompletedSignature OnConversationCompleted;
+
 private:
 	struct FARDialogueRuntimeState;
+
 	FARDialogueRuntimeState& GetRuntimeState();
 	const FARDialogueRuntimeState& GetRuntimeState() const;
 

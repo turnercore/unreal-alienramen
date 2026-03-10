@@ -9,8 +9,9 @@ This site is built with MkDocs Material + Doxygen. Everything under `Documentati
 - Save system: [Save subsystem](README_SaveSubsystem.md)
 - Invader drops: [Invader drops runtime](README_InvaderDrops.md)
 - Progression + unlocks: [Progression + Unlocks](README_ProgressionUnlocks.md)
+- Dialogue plugin boundary: [Dialogue plugin ownership](README_DialoguePluginBoundary.md)
 - Dialogue/NPC system: [Dialogue + NPC runtime](README_DialogueNPC.md)
-- Faction election system: [Faction subsystem](README_FactionSubsystem.md)
+- Faction election system (built on top): [Faction subsystem](README_FactionSubsystem.md)
 - C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
 - API reference: [Doxygen HTML](/unreal-alienramen/doxygen/index.html)
 
