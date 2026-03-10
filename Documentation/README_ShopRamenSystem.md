@@ -6,9 +6,10 @@ This document captures the runtime ownership and integration contract for the sh
 
 - **Server-authoritative runtime**:
   - `UARCustomerComponent` owns NPC customer order state and serving evaluation.
+  - `AARShopDispenserActor` owns generic item dispense flow (spawn + optional carry handoff + source consumption policy).
   - `AARShopStationActor` owns station slot/processing/stock runtime.
   - `AARRamenBowlActor` owns bowl fill progression (strict sequence).
-  - `AARMeatStorageBoxActor` owns world meat dispense flow backed by GameState meat.
+  - `AARMeatStorageBoxActor` is the meat-reserve specialization of `AARShopDispenserActor`.
 - **Dialogue-owned outcomes**:
   - relationship mutation and emotion output are applied through `UARDialogueSubsystem::ApplyRamenServeOutcome(...)`.
   - shop code does not own dialogue/emotion/relationship authority.
@@ -60,7 +61,7 @@ This document captures the runtime ownership and integration contract for the sh
 
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
-- Storage box dispense decrements replicated GameState meat buckets and spawns world meat actors.
+- Meat-reserve dispenser entries decrement replicated GameState meat buckets and spawn world meat actors.
 
 ## StateTree Integration
 
