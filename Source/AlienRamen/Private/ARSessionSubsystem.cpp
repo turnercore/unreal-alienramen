@@ -13,6 +13,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Modules/ModuleManager.h"
 #include "Online/OnlineSessionNames.h"
 #include "OnlineSessionSettings.h"
@@ -852,7 +853,13 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	NewSettings.bAllowInvites = bCanJoin;
 	if (const UWorld* World = GetWorld())
 	{
-		NewSettings.Set(SETTING_MAPNAME, World->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+		FString AdvertisedMapName = UGameplayStatics::GetCurrentLevelName(World, true);
+		if (AdvertisedMapName.IsEmpty())
+		{
+			AdvertisedMapName = World->GetMapName();
+		}
+
+		NewSettings.Set(SETTING_MAPNAME, AdvertisedMapName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	}
 	UARGameInstance::ApplyARProtocolSessionSetting(NewSettings);
 
