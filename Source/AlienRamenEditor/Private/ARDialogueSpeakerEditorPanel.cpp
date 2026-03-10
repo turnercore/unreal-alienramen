@@ -1182,7 +1182,7 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 						{
 							for (const TSharedPtr<FConversationEntry>& Entry : ConversationEntries)
 							{
-								if (Entry.IsValid() && !Entry->bIsBandHeader)
+								if (Entry.IsValid() && !Entry->bIsBandHeader && !Entry->bIsLevelZeroDropTarget && Entry->Asset.IsValid())
 								{
 									return EVisibility::Collapsed;
 								}
@@ -1592,6 +1592,15 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 	}
 
 	// Level 0 intentionally has no header; cards appear at the top.
+	if (EntriesByLevel[0].IsEmpty())
+	{
+		TSharedPtr<FConversationEntry> LevelZeroDropTarget = MakeShared<FConversationEntry>();
+		LevelZeroDropTarget->bIsLevelZeroDropTarget = true;
+		LevelZeroDropTarget->RelationshipBand = 0;
+		LevelZeroDropTarget->DisplayTitle = TEXT("No Requirement (drop here)");
+		ConversationEntries.Add(LevelZeroDropTarget);
+	}
+
 	for (const TSharedPtr<FConversationEntry>& Entry : EntriesByLevel[0])
 	{
 		ConversationEntries.Add(Entry);
@@ -1616,7 +1625,7 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 	{
 		const bool bRenameTargetStillVisible = ConversationEntries.ContainsByPredicate([this](const TSharedPtr<FConversationEntry>& Entry)
 		{
-			return Entry.IsValid() && !Entry->bIsBandHeader && Entry->Asset == RenamingConversationAsset;
+			return Entry.IsValid() && !Entry->bIsBandHeader && !Entry->bIsLevelZeroDropTarget && Entry->Asset == RenamingConversationAsset;
 		});
 		if (!bRenameTargetStillVisible)
 		{
@@ -4414,6 +4423,43 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 		];
 	}
 
+	if (Item->bIsLevelZeroDropTarget)
+	{
+		return SNew(STableRow<TSharedPtr<FConversationEntry>>, OwnerTable)
+		.ShowSelection(false)
+		.OnCanAcceptDrop_Lambda([](const FDragDropEvent& DragDropEvent, EItemDropZone DropZone, TSharedPtr<FConversationEntry>)
+		{
+			const TSharedPtr<FConversationBandDragDropOp> DragOp = DragDropEvent.GetOperationAs<FConversationBandDragDropOp>();
+			if (!DragOp.IsValid() || !DragOp->ConversationAsset.IsValid() || DragOp->SourceBand == 0)
+			{
+				return TOptional<EItemDropZone>();
+			}
+
+			return TOptional<EItemDropZone>(DropZone);
+		})
+		.OnAcceptDrop_Lambda([this](const FDragDropEvent& DragDropEvent, EItemDropZone, TSharedPtr<FConversationEntry>)
+		{
+			const TSharedPtr<FConversationBandDragDropOp> DragOp = DragDropEvent.GetOperationAs<FConversationBandDragDropOp>();
+			if (!DragOp.IsValid() || !DragOp->ConversationAsset.IsValid())
+			{
+				return FReply::Unhandled();
+			}
+
+			return const_cast<SDialogueSpeakerEditorPanel*>(this)->HandleSetConversationBand(DragOp->ConversationAsset, 0);
+		})
+		[
+			SNew(SBorder)
+			.BorderBackgroundColor(FLinearColor(0.10f, 0.20f, 0.30f, 0.45f))
+			.Padding(FMargin(7.0f, 5.0f))
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(Item->DisplayTitle))
+				.ColorAndOpacity(FSlateColor(FLinearColor(0.75f, 0.85f, 1.0f, 1.0f)))
+				.Font(FCoreStyle::GetDefaultFontStyle("Bold", 9))
+			]
+		];
+	}
+
 	TSharedRef<SWrapBox> LockedByTagsWrap = SNew(SWrapBox).UseAllottedSize(true);
 	if (Item->LockedByConversationTags.IsEmpty())
 	{
@@ -4480,6 +4526,24 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 			.BorderBackgroundColor(FLinearColor::Transparent)
 			.Padding(FMargin(0.0f))
 			.ToolTipText(FText::FromString(TEXT("Drag this conversation to a Level header to change its relationship level. Right-click for actions.")))
+			.OnMouseButtonDown_Lambda([this, Item](const FGeometry&, const FPointerEvent& MouseEvent)
+			{
+				if (!Item.IsValid() || !Item->Asset.IsValid() || MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
+				{
+					return FReply::Unhandled();
+				}
+
+				if (ConversationListView.IsValid())
+				{
+					ConversationListView->SetSelection(Item, ESelectInfo::OnMouseClick);
+				}
+
+				return FReply::Handled().BeginDragDrop(
+					FConversationBandDragDropOp::New(
+						Item->Asset,
+						Item->RelationshipBand,
+						FString::Printf(TEXT("Move: %s"), *Item->DisplayTitle)));
+			})
 			[
 				SNew(SHorizontalBox)
 				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.0f, 0.0f, 6.0f, 0.0f)
@@ -4585,7 +4649,7 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 				+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
 				[
 					SNew(SBox)
-					.WidthOverride(106.0f)
+					.WidthOverride(90.0f)
 					[
 						SNew(SButton)
 						.ContentPadding(FMargin(6.0f, 2.0f))
@@ -4601,7 +4665,7 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 				+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
 				[
 					SNew(SBox)
-					.WidthOverride(106.0f)
+					.WidthOverride(90.0f)
 					[
 						SNew(SButton)
 						.ContentPadding(FMargin(6.0f, 2.0f))
@@ -4832,7 +4896,7 @@ void SDialogueSpeakerEditorPanel::OnConversationDoubleClicked(TSharedPtr<FConver
 void SDialogueSpeakerEditorPanel::OnConversationSelectionChanged(TSharedPtr<FConversationEntry> Item, ESelectInfo::Type SelectInfo)
 {
 	(void)SelectInfo;
-	if (!ConversationListView.IsValid() || !Item.IsValid() || !Item->bIsBandHeader)
+	if (!ConversationListView.IsValid() || !Item.IsValid() || (!Item->bIsBandHeader && !Item->bIsLevelZeroDropTarget))
 	{
 		return;
 	}
