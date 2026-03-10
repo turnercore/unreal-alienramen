@@ -131,6 +131,14 @@ struct ALIENRAMEN_API FARInvaderTrackSlotDisplayState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
 	bool bHasUpgrade = false;
+
+	// Remaining finite activations for this slot. Ignored when bInfiniteUses is true.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	int32 RemainingActivationUses = 0;
+
+	// If true, this slot can be activated infinitely and RemainingActivationUses is not meaningful.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	bool bInfiniteUses = false;
 };
 
 USTRUCT(BlueprintType)
