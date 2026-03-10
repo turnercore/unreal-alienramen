@@ -181,13 +181,28 @@ bool AARInvaderPlayerController::ShouldDisplayFullBlastMenuForSession(const FARI
 		return false;
 	}
 
-	const EARPlayerSlot LocalSlot = InvaderPlayerState->GetPlayerSlot();
+	return true;
+}
+
+bool AARInvaderPlayerController::IsChooserForSession(const FARInvaderFullBlastSessionState& Session) const
+{
+	if (!IsLocalPlayerController() || !Session.bIsActive)
+	{
+		return false;
+	}
+
+	const AARPlayerStateBase* InvaderPlayerState = GetInvaderPlayerState();
+	if (!InvaderPlayerState)
+	{
+		return false;
+	}
+
 	if (Session.RequestingPlayerSlot == EARPlayerSlot::Unknown)
 	{
 		return true;
 	}
 
-	return LocalSlot == Session.RequestingPlayerSlot;
+	return InvaderPlayerState->GetPlayerSlot() == Session.RequestingPlayerSlot;
 }
 
 void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(
@@ -229,7 +244,7 @@ void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(
 		SetInputMode(InputMode);
 	}
 
-	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, ShouldDisplayFullBlastMenuForSession(Session));
+	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, IsChooserForSession(Session));
 }
 
 void AARInvaderPlayerController::CloseFullBlastMenu()
@@ -437,26 +452,54 @@ void AARInvaderPlayerController::RequestSetOfferPresence(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
 	const FVector2D CursorNormalized,
-	const bool bHasCursor)
+	const bool bHasCursor,
+	const FGameplayTag SelectedUpgradeTag,
+	const int32 SelectedDestinationSlot,
+	const bool bHasSelection)
 {
 	if (HasAuthority())
 	{
-		ServerRequestSetOfferPresence_Implementation(HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+		ServerRequestSetOfferPresence_Implementation(
+			HoveredUpgradeTag,
+			HoveredDestinationSlot,
+			CursorNormalized,
+			bHasCursor,
+			SelectedUpgradeTag,
+			SelectedDestinationSlot,
+			bHasSelection);
 		return;
 	}
 
-	ServerRequestSetOfferPresence(HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+	ServerRequestSetOfferPresence(
+		HoveredUpgradeTag,
+		HoveredDestinationSlot,
+		CursorNormalized,
+		bHasCursor,
+		SelectedUpgradeTag,
+		SelectedDestinationSlot,
+		bHasSelection);
 }
 
 void AARInvaderPlayerController::ServerRequestSetOfferPresence_Implementation(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
 	const FVector2D CursorNormalized,
-	const bool bHasCursor)
+	const bool bHasCursor,
+	const FGameplayTag SelectedUpgradeTag,
+	const int32 SelectedDestinationSlot,
+	const bool bHasSelection)
 {
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
-		InvaderGameState->SetOfferPresence(GetInvaderPlayerState(), HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+		InvaderGameState->SetOfferPresence(
+			GetInvaderPlayerState(),
+			HoveredUpgradeTag,
+			HoveredDestinationSlot,
+			CursorNormalized,
+			bHasCursor,
+			SelectedUpgradeTag,
+			SelectedDestinationSlot,
+			bHasSelection);
 	}
 }
 
