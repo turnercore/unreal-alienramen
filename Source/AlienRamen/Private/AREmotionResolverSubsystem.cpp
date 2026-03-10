@@ -403,17 +403,13 @@ void UAREmotionResolverSubsystem::UnregisterDebugConsoleCommands()
 {
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 
-	if (CmdLogCacheStats)
-	{
-		ConsoleManager.UnregisterConsoleObject(CmdLogCacheStats);
-		CmdLogCacheStats = nullptr;
-	}
+	// Teardown can invalidate console-object pointers before subsystem deinit.
+	// Unregister by name to avoid dereferencing stale pointers.
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.LogCacheStats"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.RebuildCache"), false);
 
-	if (CmdRebuildCache)
-	{
-		ConsoleManager.UnregisterConsoleObject(CmdRebuildCache);
-		CmdRebuildCache = nullptr;
-	}
+	CmdLogCacheStats = nullptr;
+	CmdRebuildCache = nullptr;
 }
 
 void UAREmotionResolverSubsystem::HandleEmotionDataTableChanged()
