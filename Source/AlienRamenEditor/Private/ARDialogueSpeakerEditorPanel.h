@@ -30,6 +30,7 @@ public:
 		FName RowName = NAME_None;
 		FARDialogueSpeakerRow Row;
 		int32 ConversationCount = 0;
+		int32 EmotionCount = 1;
 		FString ThresholdSummary;
 	};
 
@@ -187,6 +188,7 @@ private:
 	ESpeakerSortMode CurrentSortMode = ESpeakerSortMode::DisplayName;
 	bool bSortAscending = true;
 	bool bIgnoreSpeakerSelectionChanged = false;
+	bool bIsTearingDown = false;
 	bool bHasSpeakerClipboard = false;
 	bool bEmotionsExpanded = true;
 	bool bThresholdsExpanded = true;

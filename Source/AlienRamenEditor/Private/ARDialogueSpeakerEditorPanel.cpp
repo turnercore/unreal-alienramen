@@ -109,6 +109,10 @@ namespace
 			{
 				return SNew(STextBlock).Text(FText::AsNumber(Item->ConversationCount));
 			}
+			if (ColumnName == TEXT("EmotionCount"))
+			{
+				return SNew(STextBlock).Text(FText::AsNumber(Item->EmotionCount));
+			}
 			return SNew(STextBlock).Text(FText::GetEmpty());
 		}
 
@@ -548,9 +552,10 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 								.HAlignHeader(HAlign_Center)
 								.HAlignCell(HAlign_Center)
 								.VAlignCell(VAlign_Center)
-							+ SHeaderRow::Column(TEXT("DisplayName")).DefaultLabel(FText::FromString(TEXT("Display Name"))).FillWidth(0.34f)
-							+ SHeaderRow::Column(TEXT("SpeakerTag")).DefaultLabel(FText::FromString(TEXT("Speaker Tag"))).FillWidth(0.48f)
-							+ SHeaderRow::Column(TEXT("ConversationCount")).DefaultLabel(FText::FromString(TEXT("Conversations"))).FillWidth(0.18f)
+							+ SHeaderRow::Column(TEXT("DisplayName")).DefaultLabel(FText::FromString(TEXT("Display Name"))).FillWidth(0.30f)
+							+ SHeaderRow::Column(TEXT("SpeakerTag")).DefaultLabel(FText::FromString(TEXT("Speaker Tag"))).FillWidth(0.43f)
+							+ SHeaderRow::Column(TEXT("ConversationCount")).DefaultLabel(FText::FromString(TEXT("Conversations"))).FillWidth(0.15f)
+							+ SHeaderRow::Column(TEXT("EmotionCount")).DefaultLabel(FText::FromString(TEXT("Emotions"))).FillWidth(0.12f)
 						)
 					]
 					+ SVerticalBox::Slot().FillHeight(0.26f).Padding(0.0f, 6.0f, 0.0f, 0.0f)
@@ -753,6 +758,7 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 
 SDialogueSpeakerEditorPanel::~SDialogueSpeakerEditorPanel()
 {
+	bIsTearingDown = true;
 	HandleSaveSpeaker();
 }
 
@@ -868,6 +874,7 @@ void SDialogueSpeakerEditorPanel::RefreshData()
 			Entry->Row.SpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*BuiltPath), false);
 		}
 		Entry->ConversationCount = ConversationCountBySpeaker.FindRef(Entry->Row.SpeakerTag);
+		Entry->EmotionCount = 1 + Entry->Row.Portraits.Num();
 		Entry->ThresholdSummary = BuildThresholdSummary(Entry->Row.RelationshipThresholds);
 		AllSpeakerEntries.Add(Entry);
 	}
@@ -1471,7 +1478,7 @@ FString SDialogueSpeakerEditorPanel::GetEmotionTagFilter() const
 
 void SDialogueSpeakerEditorPanel::RebuildEmotionTagCombo()
 {
-	if (!EmotionTagComboHost.IsValid())
+	if (bIsTearingDown || !EmotionTagComboHost.IsValid())
 	{
 		return;
 	}
@@ -2098,8 +2105,11 @@ FReply SDialogueSpeakerEditorPanel::HandleSaveSpeaker()
 	}
 
 	AppendLogLine(FString::Printf(TEXT("Saved speaker row '%s'."), *SelectedSpeakerRowName.ToString()));
-	RefreshData();
-	SetSelectedSpeakerRow(SelectedSpeakerRowName);
+	if (!bIsTearingDown)
+	{
+		RefreshData();
+		SetSelectedSpeakerRow(SelectedSpeakerRowName);
+	}
 	return FReply::Handled();
 }
 
