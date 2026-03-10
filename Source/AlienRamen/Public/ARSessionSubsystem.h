@@ -1,6 +1,6 @@
 /**
  * @file ARSessionSubsystem.h
- * @brief Session subsystem for Steam/LAN/local multiplayer flow.
+ * @brief Session subsystem for platform/LAN/local multiplayer flow.
  */
 #pragma once
 
@@ -8,13 +8,12 @@
 #include "ARSaveTypes.h"
 #include "BlueprintDataDefinitions.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "OnlineSessionSettings.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSessionSubsystem.generated.h"
 
-class IOnlineSession;
 class FOnlineSessionSearch;
 class FOnlineSessionSettings;
+class UARNetworkRoutingSettings;
 class UCreateSessionCallbackProxyAdvanced;
 class UFindSessionsCallbackProxyAdvanced;
 
@@ -31,11 +30,11 @@ enum class EARSessionResultCode : uint8
 	SessionFull,
 	CreateFailed,
 	FindFailed,
-	CancelFailed,
 	JoinFailed,
-	InviteFailed,
 	DestroyFailed,
 	UpdateFailed,
+	InviteFailed,
+	CancelFailed,
 	LocalJoinFailed,
 	Unknown
 };
@@ -61,10 +60,10 @@ struct ALIENRAMEN_API FARSessionSearchResultData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Session")
-	FString SessionDisplayName;
+	FString SessionId;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Session")
-	FString SessionId;
+	FString SessionDisplayName;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Session")
 	FString OwningUserName;
@@ -94,7 +93,7 @@ struct ALIENRAMEN_API FARSessionSearchResultData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSessionActionCompleted, const FARSessionResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnSessionFindCompleted, const FARSessionResult&, Result, const TArray<FARSessionSearchResultData>&, Results);
 
-/** Server/client session orchestration surface for Steam/LAN/local multiplayer. */
+/** Server/client session orchestration surface for platform/LAN/local multiplayer. */
 UCLASS()
 class ALIENRAMEN_API UARSessionSubsystem : public UGameInstanceSubsystem
 {
@@ -110,12 +109,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
 	void SetStayOfflineEnabled(bool bEnabled, bool& bOutRestartRecommended);
 
-	// Creates/updates a host session for this runtime flow.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
 	bool CreateSession(bool bUseLAN, FARSessionResult& OutResult);
 
-	// Creates/updates a host session and advertises a friendly lobby name.
-	// If SessionDisplayName is empty, a default will be derived (current save slot base name, then random fallback).
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
 	bool CreateSessionNamed(bool bUseLAN, const FString& SessionDisplayName, FARSessionResult& OutResult);
 
@@ -146,6 +142,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session")
 	const TArray<FARSessionSearchResultData>& GetLastFindResults() const { return LastFindResults; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session|Routing")
+	FName GetConfiguredInternetSubsystemName() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session|Routing")
+	FName GetConfiguredLanSubsystemName() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session|Routing")
+	TArray<FName> GetConfiguredInternetSubsystemFallbackOrder() const;
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
 	FAROnSessionActionCompleted OnCreateSessionCompleted;
 
@@ -153,16 +158,16 @@ public:
 	FAROnSessionFindCompleted OnFindSessionsCompleted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
-	FAROnSessionFindCompleted OnFindFriendSessionCompleted;
-
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
-	FAROnSessionActionCompleted OnInviteFriendCompleted;
-
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
 	FAROnSessionActionCompleted OnCancelFindSessionsCompleted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
 	FAROnSessionActionCompleted OnJoinSessionCompleted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
+	FAROnSessionFindCompleted OnFindFriendSessionCompleted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
+	FAROnSessionActionCompleted OnInviteFriendCompleted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
 	FAROnSessionActionCompleted OnDestroySessionCompleted;
@@ -184,10 +189,12 @@ private:
 		Refresh
 	};
 
-	IOnlineSessionPtr ResolveSessionInterface(bool bPreferLAN, FName& OutSubsystemName) const;
+	IOnlineSessionPtr ResolveSessionInterface(bool bPreferLAN, FName& OutSubsystemName, const TCHAR* RequestType) const;
+	IOnlineSessionPtr GetSessionInterfaceForSubsystem(FName SubsystemName) const;
+	IOnlineSessionPtr GetActiveSessionInterface() const;
+	IOnlineSessionPtr FindSessionInterfaceOwningGameSession(FName& OutSubsystemName) const;
+
 	bool BeginJoinSession(IOnlineSessionPtr Session, int32 LocalUserNum, const FOnlineSessionSearchResult& SearchResult, FARSessionResult& OutResult);
-	void BindInviteAcceptedDelegate();
-	void ClearInviteAcceptedDelegate();
 	int32 CountCurrentARPlayers() const;
 	int32 ComputeOpenPublicConnections() const;
 	bool BuildDesiredSessionSettings(bool bPreferLAN, const FString& SessionDisplayName, FOnlineSessionSettings& OutSettings, FARSessionResult& OutResult);
@@ -197,22 +204,38 @@ private:
 	void RebuildLastFindResults();
 	void DestroySessionBestEffort();
 
+	void ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, bool bClearFindFriendHandle);
+	void ResetOperationState();
+	void ResetFindState();
+	const UARNetworkRoutingSettings* GetRoutingSettings() const;
+	FName GetConfiguredInternetSubsystemNameInternal() const;
+	FName GetConfiguredLanSubsystemNameInternal() const;
+	void GetConfiguredInternetFallbackOrderInternal(TArray<FName>& OutFallbackOrder) const;
+	void LogRouteDecision(const TCHAR* RequestType, bool bPreferLAN, bool bStayOffline, const FName& ChosenSubsystem, const FString& Reason) const;
+
+	void BindInviteAcceptedDelegate();
+	void ClearInviteAcceptedDelegate();
+
+	UFUNCTION()
+	void HandleAdvancedCreateSuccess();
+
+	UFUNCTION()
+	void HandleAdvancedCreateFailure();
+
+	UFUNCTION()
+	void HandleAdvancedFindSuccess(const TArray<FBlueprintSessionResult>& Results);
+
+	UFUNCTION()
+	void HandleAdvancedFindFailure(const TArray<FBlueprintSessionResult>& Results);
+
 	void HandleCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void HandleUpdateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void HandleDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 	void HandleFindSessionsComplete(bool bWasSuccessful);
 	void HandleCancelFindSessionsComplete(bool bWasSuccessful);
 	void HandleJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-	void HandleSessionUserInviteAccepted(bool bWasSuccessful, int32 ControllerId, FUniqueNetIdPtr UserId, const FOnlineSessionSearchResult& InviteResult);
 	void HandleFindFriendSessionComplete(int32 LocalUserNum, bool bWasSuccessful, const TArray<FOnlineSessionSearchResult>& SessionInfo);
-	UFUNCTION()
-	void HandleAdvancedCreateSuccess();
-	UFUNCTION()
-	void HandleAdvancedCreateFailure();
-	UFUNCTION()
-	void HandleAdvancedFindSuccess(const TArray<FBlueprintSessionResult>& Results);
-	UFUNCTION()
-	void HandleAdvancedFindFailure(const TArray<FBlueprintSessionResult>& Results);
+	void HandleSessionUserInviteAccepted(bool bWasSuccessful, int32 ControllerId, FUniqueNetIdPtr UserId, const FOnlineSessionSearchResult& InviteResult);
 
 	FDelegateHandle CreateSessionCompleteHandle;
 	FDelegateHandle UpdateSessionCompleteHandle;
@@ -225,25 +248,31 @@ private:
 
 	TSharedPtr<FOnlineSessionSearch> ActiveSessionSearch;
 	TArray<FOnlineSessionSearchResult> CachedNativeSearchResults;
-	UPROPERTY(Transient)
-	TObjectPtr<UCreateSessionCallbackProxyAdvanced> ActiveAdvancedCreateProxy = nullptr;
-	UPROPERTY(Transient)
-	TObjectPtr<UFindSessionsCallbackProxyAdvanced> ActiveAdvancedFindProxy = nullptr;
 
 	UPROPERTY(Transient)
 	TArray<FARSessionSearchResultData> LastFindResults;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UCreateSessionCallbackProxyAdvanced> ActiveAdvancedCreateProxy = nullptr;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UFindSessionsCallbackProxyAdvanced> ActiveAdvancedFindProxy = nullptr;
+
+	FName ActiveSubsystemName = NAME_None;
+	FName InviteDelegateSubsystemName = NAME_None;
+
+	bool bOperationInFlight = false;
 	bool bLastFindWasLANQuery = false;
-	int32 LastFindMaxResults = 50;
 	bool bFindRetryWithoutFilters = false;
 	bool bPendingInviteJoinAfterDestroy = false;
-	int32 PendingInviteControllerId = 0;
-	FOnlineSessionSearchResult PendingInviteSearchResult;
 	bool bPendingJoinAfterDestroy = false;
+
+	int32 LastFindMaxResults = 50;
+	int32 PendingInviteControllerId = 0;
 	int32 PendingJoinControllerId = 0;
+
+	FOnlineSessionSearchResult PendingInviteSearchResult;
 	FOnlineSessionSearchResult PendingJoinSearchResult;
-	FName InviteDelegateSubsystemName = NAME_None;
-	FName ActiveSubsystemName = NAME_None;
-	bool bOperationInFlight = false;
+
 	ESessionOperation CurrentOperation = ESessionOperation::None;
 };
