@@ -72,6 +72,33 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		}
 	};
 
+	auto SanitizeTagContainer = [OutWarnings, &ClampedCount](FGameplayTagContainer& Container, const TCHAR* FieldName)
+	{
+		FGameplayTagContainer Sanitized;
+		bool bRemovedInvalidTag = false;
+		for (const FGameplayTag Tag : Container)
+		{
+			if (Tag.IsValid())
+			{
+				Sanitized.AddTag(Tag);
+			}
+			else
+			{
+				bRemovedInvalidTag = true;
+			}
+		}
+
+		if (bRemovedInvalidTag)
+		{
+			Container = Sanitized;
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(FString::Printf(TEXT("%s contained invalid tags and they were removed."), FieldName));
+			}
+		}
+	};
+
 	ClampNonNegative(Money, TEXT("Money"));
 	ClampNonNegative(Scrap, TEXT("Scrap"));
 	ClampNonNegative(Cycles, TEXT("Cycles"));
@@ -92,53 +119,41 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
 	}
 
-	for (FARNpcRelationshipState& NpcState : NpcRelationshipStates)
-	{
-		ClampNonNegative(NpcState.LoveRating, TEXT("NpcRelationshipStates.LoveRating"));
-	}
+	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));
 
-	for (int32 Index = NpcRelationshipStates.Num() - 1; Index >= 0; --Index)
+	for (int32 Index = DialogueRelationshipStates.Num() - 1; Index >= 0; --Index)
 	{
-		if (!NpcRelationshipStates[Index].NpcTag.IsValid())
+		if (!DialogueRelationshipStates[Index].SpeakerTag.IsValid())
 		{
-			NpcRelationshipStates.RemoveAtSwap(Index);
+			DialogueRelationshipStates.RemoveAtSwap(Index);
 			++ClampedCount;
 			if (OutWarnings)
 			{
-				OutWarnings->Add(TEXT("NpcRelationshipStates contained an invalid NpcTag and was removed."));
+				OutWarnings->Add(TEXT("DialogueRelationshipStates contained an invalid SpeakerTag and was removed."));
 			}
 		}
 	}
 
-	for (int32 Index = DialogueCanonicalChoiceStates.Num() - 1; Index >= 0; --Index)
+	for (FDialoguePlayerPersistentState& PlayerDialogueState : DialoguePlayerPersistentStates)
 	{
-		const FARDialogueCanonicalChoiceState& Entry = DialogueCanonicalChoiceStates[Index];
-		if (!Entry.NodeTag.IsValid() || !Entry.ChoiceTag.IsValid())
-		{
-			DialogueCanonicalChoiceStates.RemoveAtSwap(Index);
-			++ClampedCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("DialogueCanonicalChoiceStates contained invalid tags and was removed."));
-			}
-		}
-	}
+		SanitizeTagContainer(PlayerDialogueState.ProgressionTags, TEXT("DialoguePlayerPersistentStates.ProgressionTags"));
+		SanitizeTagContainer(PlayerDialogueState.CompletedConversationTags, TEXT("DialoguePlayerPersistentStates.CompletedConversationTags"));
+		SanitizeTagContainer(PlayerDialogueState.SeenConversationTagsThisCycle, TEXT("DialoguePlayerPersistentStates.SeenConversationTagsThisCycle"));
+		SanitizeTagContainer(PlayerDialogueState.SkippedConversationTagsThisCycle, TEXT("DialoguePlayerPersistentStates.SkippedConversationTagsThisCycle"));
 
-	TSet<FGameplayTag> SeenChoiceNodes;
-	for (int32 Index = DialogueCanonicalChoiceStates.Num() - 1; Index >= 0; --Index)
-	{
-		const FGameplayTag NodeTag = DialogueCanonicalChoiceStates[Index].NodeTag;
-		if (SeenChoiceNodes.Contains(NodeTag))
+		for (int32 ChoiceIndex = PlayerDialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
 		{
-			DialogueCanonicalChoiceStates.RemoveAtSwap(Index);
-			++ClampedCount;
-			if (OutWarnings)
+			const FDialogueChoiceMemoryRecord& Record = PlayerDialogueState.CompletedChoiceRecords[ChoiceIndex];
+			if (!Record.ConversationTag.IsValid() || !Record.ChoiceNodeId.IsValid() || !Record.SelectedBranchId.IsValid())
 			{
-				OutWarnings->Add(TEXT("DialogueCanonicalChoiceStates contained duplicate NodeTag entries and extras were removed."));
+				PlayerDialogueState.CompletedChoiceRecords.RemoveAtSwap(ChoiceIndex);
+				++ClampedCount;
+				if (OutWarnings)
+				{
+					OutWarnings->Add(TEXT("DialoguePlayerPersistentStates contained an invalid choice-memory record and it was removed."));
+				}
 			}
-			continue;
 		}
-		SeenChoiceNodes.Add(NodeTag);
 	}
 
 	TSet<FGameplayTag> SeenFactions;

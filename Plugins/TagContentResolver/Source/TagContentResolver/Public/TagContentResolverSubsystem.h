@@ -1,0 +1,114 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GameplayTagContainer.h"
+#include "StructUtils/InstancedStruct.h"
+#include "StructUtils/StructView.h"
+#include "TagContentResolverTypes.h"
+#include "TagContentResolverSubsystem.generated.h"
+
+class UDataTable;
+class UScriptStruct;
+
+UCLASS()
+class TAGCONTENTRESOLVER_API UTagContentResolverSubsystem : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
+public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Rebuilds the resolver's internal route map and caches from current Project Settings plus any registered route providers. Use this after changing routes at runtime, enabling/disabling providers, or when you need a clean resolver state. If bPreloadConfiguredTables is true, preloading runs immediately after rebuild using the active preload policy."))
+	void RebuildRouteCache(bool bPreloadConfiguredTables = true);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Clears only loaded DataTable cache entries. Route configuration remains intact. Use this to release loaded table references or force the next lookup to reload tables from soft references without rebuilding route definitions."))
+	void ClearResolvedTableCache();
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Checks whether a row can be resolved for a full gameplay tag path. The resolver first chooses a route by tag hierarchy (best matching root), then uses the leaf segment as row name. Returns true only when both route/table and row exist. Returns false with OutError describing the failure reason."))
+	bool TryCheckRowExistsForTag(FGameplayTag Tag, FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Validates configured routes without mutating runtime state. Detects invalid root tags, null table references, duplicate roots, and empty route sets. Use this in setup/validation flows to surface configuration issues early."))
+	bool TryValidateRouteConfiguration(FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a gameplay tag to a DataTable row and copies that row into an InstancedStruct for Blueprint use. Use this when you need row data payload from a content tag and do not know row struct type at compile time. Returns false with OutError if route/table/row cannot be resolved."))
+	bool TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError);
+
+	bool TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Returns all row names from the DataTable mapped to an exact root tag. Row names are sorted alphabetically. Use this when you want to iterate a family of definitions under one root (for example validation, menus, random selection, or authoring tools)."))
+	bool TryGetRowNamesForRootTag(FGameplayTag RootTag, TArray<FName>& OutRowNames, FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves and loads the DataTable mapped to an exact root tag. Use this when the caller already knows the root category and wants direct table access. Returns false with OutError if root is not configured or table cannot be loaded."))
+	bool TryResolveDataTableForRootTag(FGameplayTag RootTag, UDataTable*& OutDataTable, FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a DataTable by row struct type. Useful when you know the row struct class but not the configured root tag. Returns the matched root in OutMatchedRootTag. Fails when no match exists or when multiple routes share the same row struct (ambiguous)."))
+	bool TryResolveDataTableForRowStruct(
+		UScriptStruct* DesiredRowStruct,
+		UDataTable*& OutDataTable,
+		FGameplayTag& OutMatchedRootTag,
+		FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves which configured root tag would handle a full gameplay tag. This does not return row data; it only tells you the matched route root. Use this to inspect routing decisions, debug tag hierarchies, or build diagnostics."))
+	bool TryResolveRootTagForTag(FGameplayTag Tag, FGameplayTag& OutMatchedRootTag, FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Preloads DataTables for the provided root tag list and stores them in cache. Use this during loading screens or phase transitions to avoid first-lookup sync load hitches. Returns false when one or more roots fail to resolve or load; OutError reports the first failure encountered."))
+	bool PreloadDataTablesForRoots(const TArray<FGameplayTag>& RootTags, FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Preloads only project routes marked with bPreload=true. This is the curated startup set for important content that should be warm before gameplay starts. Best used from loading screens or session bootstrap flows."))
+	bool PreloadConfiguredCriticalRoutes(FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Preloads every configured route table (project routes plus provider routes that resolve through root lookups). Use when you want maximum runtime lookup readiness and can afford higher up-front load cost."))
+	bool PreloadAllConfiguredRoutes(FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Preloads tables according to Project Settings PreloadPolicy. Never: no preload. Only Routes Marked as Preload: loads routes with bPreload=true. All Routes: loads every route. Use this as the default one-call preload entry point in loading screens."))
+	bool PreloadConfiguredRoutesForPolicy(FString& OutError);
+
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Returns resolver runtime diagnostics, including route count, loaded table cache size, matched/unresolved tag cache sizes, and deduplicated failure log count. Use this for debug UI, telemetry, and performance verification."))
+	void GetResolverDiagnostics(FTagContentResolverDiagnostics& OutDiagnostics) const;
+
+	static bool TryResolveDataTableForRootTagFromConfiguredRoutes(
+		FGameplayTag RootTag,
+		UDataTable*& OutDataTable,
+		FString& OutError);
+
+	static bool TryResolveDataTableForRowStructFromConfiguredRoutes(
+		UScriptStruct* DesiredRowStruct,
+		UDataTable*& OutDataTable,
+		FGameplayTag& OutMatchedRootTag,
+		FString& OutError);
+
+private:
+	static void GatherConfiguredRoutes(
+		TArray<FTagContentResolverRoute>& OutRoutes,
+		FString& OutError,
+		TArray<FGameplayTag>* OutCriticalPreloadRoots = nullptr);
+	static bool TryValidateRoutes(const TArray<FTagContentResolverRoute>& Routes, FString& OutError);
+	static bool TryBuildConfiguredRouteMap(const TArray<FTagContentResolverRoute>& Routes, TMap<FGameplayTag, FTagContentResolverRoute>& OutRouteMap, FString& OutError);
+
+	FName ExtractLeafRowNameFromTag(FGameplayTag Tag);
+
+	bool TryResolveTableAndRowNameForTag(FGameplayTag Tag, UDataTable*& OutDataTable, FName& OutRowName, FString& OutError);
+	bool TryResolveDataTableAndRootForTag(FGameplayTag Tag, UDataTable*& OutDataTable, FGameplayTag& OutMatchedRoot, FString& OutError);
+	bool TryLoadAndCacheDataTable(const FGameplayTag& RootTag, const TSoftObjectPtr<UDataTable>& TableRef, UDataTable*& OutDataTable, FString& OutError);
+	void LogFailure(const FString& Message, ELogVerbosity::Type Verbosity = ELogVerbosity::Warning);
+
+	bool bIsRouteConfigurationValid = false;
+
+	UPROPERTY(Transient)
+	TMap<FGameplayTag, TObjectPtr<UDataTable>> LoadedTablesByRootTag;
+
+	UPROPERTY(Transient)
+	TArray<FTagContentResolverRoute> CompiledRoutes;
+
+	UPROPERTY(Transient)
+	TMap<FGameplayTag, FTagContentResolverRoute> RouteByRootTag;
+
+	TMap<TObjectPtr<UScriptStruct>, FGameplayTag> CachedRowStructToRootTag;
+	TSet<TObjectPtr<UScriptStruct>> AmbiguousRowStructs;
+	TMap<FGameplayTag, FGameplayTag> CachedMatchedRootByTag;
+	TSet<FGameplayTag> CachedUnresolvedTags;
+	TMap<FGameplayTag, FName> CachedLeafRowNamesByTag;
+	TSet<uint32> LoggedFailureHashes;
+};

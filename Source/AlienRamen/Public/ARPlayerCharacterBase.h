@@ -10,6 +10,7 @@
 #include "ARPlayerCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
+class UAREmotionComponent;
 
 /** Root player pawn base; implements ASC interface stub for mode-specific subclasses. */
 UCLASS()
@@ -22,4 +23,11 @@ public:
 
 	// Default base returns null; mode-specific character classes can provide an ASC source.
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	UAREmotionComponent* GetEmotionComponent() const { return EmotionComponent; }
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
+	TObjectPtr<UAREmotionComponent> EmotionComponent;
 };

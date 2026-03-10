@@ -5,6 +5,8 @@
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARLoadoutSettings.h"
+#include "ARDialogueSubsystem.h"
+#include "ARNPCSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
@@ -443,9 +445,9 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->ProgressionTags = CurrentSaveGame->ProgressionTags;
 		SaveObject->FactionClout = CurrentSaveGame->FactionClout;
 		SaveObject->FactionPopularityStates = CurrentSaveGame->FactionPopularityStates;
-		SaveObject->NpcRelationshipStates = CurrentSaveGame->NpcRelationshipStates;
-		SaveObject->DialogueCanonicalChoiceStates = CurrentSaveGame->DialogueCanonicalChoiceStates;
-		SaveObject->PlayerDialogueHistoryStates = CurrentSaveGame->PlayerDialogueHistoryStates;
+		SaveObject->DialogueRelationshipStates = CurrentSaveGame->DialogueRelationshipStates;
+		SaveObject->DialogueCompletedConversationTagsByGame = CurrentSaveGame->DialogueCompletedConversationTagsByGame;
+		SaveObject->DialoguePlayerPersistentStates = CurrentSaveGame->DialoguePlayerPersistentStates;
 	}
 
 	SaveObject->PlayerStates.Reset();
@@ -685,6 +687,20 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 		OutResult.ResultCode = EARSaveResultCode::AuthorityRequired;
 		BroadcastSaveFailure(OutResult);
 		return false;
+	}
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UARDialogueSubsystem>())
+		{
+			if (DialogueSubsystem->HasActiveDialogueSession())
+			{
+				OutResult.Error = TEXT("SaveCurrentGame blocked: game cannot be saved mid-conversation.");
+				OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+				BroadcastSaveFailure(OutResult);
+				return false;
+			}
+		}
 	}
 
 	const FDateTime NowUtc = FDateTime::UtcNow();
@@ -1478,6 +1494,15 @@ void UARSaveSubsystem::ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveRes
 
 		FARSaveResult IgnoreResult;
 		SaveIndex(IndexObj, IgnoreResult);
+	}
+
+	// Loading a save can change dialogue availability; refresh NPC talkable caches/widgets immediately.
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		{
+			NpcSubsystem->RefreshAllNpcTalkableStates();
+		}
 	}
 }
 
