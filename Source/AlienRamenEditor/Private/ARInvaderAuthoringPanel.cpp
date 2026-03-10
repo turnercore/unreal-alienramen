@@ -3,12 +3,12 @@
 #include "AREnemyAuthoringPanel.h"
 #include "ARInvaderAuthoringEditorProxies.h"
 #include "ARInvaderAuthoringEditorSettings.h"
-#include "ARContentLookupSettings.h"
 #include "ARInvaderToolingSettings.h"
 #include "AREnemyBase.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
+#include "TagContentResolverEditorHelpers.h"
 
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
@@ -81,45 +81,19 @@ namespace
 		return MapPackageName;
 	}
 
-	static UDataTable* LoadTableByRowStructFromContentLookup(UScriptStruct* DesiredRowStruct)
+	static UDataTable* LoadTableByRowStructFromResolver(UScriptStruct* DesiredRowStruct)
 	{
 		if (!DesiredRowStruct)
 		{
 			return nullptr;
 		}
 
-		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
-		if (!LookupSettings || LookupSettings->RegistryAsset.IsNull())
-		{
-			return nullptr;
-		}
-
-		UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
-		if (!Registry)
-		{
-			return nullptr;
-		}
-
 		UDataTable* Found = nullptr;
-		for (const FContentLookupRoute& Route : Registry->Routes)
+		FGameplayTag MatchedRoot;
+		FString Error;
+		if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRowStruct(DesiredRowStruct, Found, MatchedRoot, Error))
 		{
-			if (Route.DataTable.IsNull())
-			{
-				continue;
-			}
-
-			UDataTable* Table = Route.DataTable.LoadSynchronous();
-			if (!Table || Table->GetRowStruct() != DesiredRowStruct)
-			{
-				continue;
-			}
-
-			if (Found && Found != Table)
-			{
-				return nullptr;
-			}
-
-			Found = Table;
+			return nullptr;
 		}
 
 		return Found;
@@ -1750,15 +1724,15 @@ void SInvaderAuthoringPanel::RefreshTables()
 	{
 		if (!WaveTable)
 		{
-			WaveTable = LoadTableByRowStructFromContentLookup(FARWaveDefRow::StaticStruct());
+			WaveTable = LoadTableByRowStructFromResolver(FARWaveDefRow::StaticStruct());
 		}
 		if (!StageTable)
 		{
-			StageTable = LoadTableByRowStructFromContentLookup(FARStageDefRow::StaticStruct());
+			StageTable = LoadTableByRowStructFromResolver(FARStageDefRow::StaticStruct());
 		}
 		if (!EnemyTable)
 		{
-			EnemyTable = LoadTableByRowStructFromContentLookup(FARInvaderEnemyDefRow::StaticStruct());
+			EnemyTable = LoadTableByRowStructFromResolver(FARInvaderEnemyDefRow::StaticStruct());
 		}
 	}
 
@@ -5316,3 +5290,4 @@ bool SInvaderAuthoringPanel::ExecPIECommand(const FString& Command)
 	}
 	return bResult;
 }
+
