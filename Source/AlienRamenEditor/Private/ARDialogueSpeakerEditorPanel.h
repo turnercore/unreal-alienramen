@@ -52,12 +52,22 @@ private:
 		FString GateSummary;
 		FString MutationSummary;
 		FString ChainSummary;
+		FString UnlocksSummary;
+		FString RequiresSummary;
 		FGameplayTag ConversationTag;
 		FGameplayTag PrimarySpeakerTag;
 		int32 Priority = 0;
+		int32 LockedConditionCount = 0;
+		int32 BlockedConditionCount = 0;
+		int32 AddedTagCount = 0;
+		int32 RemovedTagCount = 0;
+		int32 RequiredTagCount = 0;
 		float MinimumRelationshipPoints = 0.0f;
 		bool bImportant = false;
 		bool bRepeatable = false;
+		bool bSeenByGameBlocksReoffer = false;
+		bool bSeenByPlayerBlocksReoffer = false;
+		bool bCompletedByGameBlocksReoffer = false;
 		int32 RelationshipBand = 0;
 		TWeakObjectPtr<UARDialogueConversationAsset> Asset;
 	};
@@ -164,6 +174,7 @@ private:
 	TSharedPtr<SSearchBox> SearchTextBox;
 	TSharedPtr<SEditableTextBox> DisplayNameTextBox;
 	TSharedPtr<SEditableTextBox> DescriptionTextBox;
+	TSharedPtr<SEditableTextBox> LineFontStyleTextBox;
 	TSharedPtr<SObjectPropertyEntryBox> DefaultPortraitTexturePicker;
 	TSharedPtr<SObjectPropertyEntryBox> PortraitTexturePicker;
 	TSharedPtr<SBox> EmotionTagComboHost;
@@ -177,6 +188,7 @@ private:
 	TWeakObjectPtr<UDataTable> SpeakerDataTable;
 	FGameplayTag EditedSpeakerTag;
 	FGameplayTag EditedFactionTag;
+	FName EditedLineFontStyleTag;
 	TSoftObjectPtr<UTexture2D> EditedDefaultPortraitTexture;
 	FGameplayTag EditedPortraitTag;
 	TSoftObjectPtr<UTexture2D> EditedPortraitTexture;
