@@ -15,7 +15,8 @@ class ALIENRAMEN_API UARFactionSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("NPC"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|NPC"); }
+	virtual FName GetSectionName() const override { return TEXT("Factions"); }
 
 	// Root used for TagContentResolver route resolution and row tag reconstruction.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Faction")
