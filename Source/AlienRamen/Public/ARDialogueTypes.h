@@ -19,6 +19,7 @@ class APlayerState;
 class APawn;
 class AGameStateBase;
 class UARDialogueConversationAsset;
+class UFont;
 class USoundBase;
 class UTexture2D;
 class UWorld;
@@ -58,8 +59,12 @@ struct ALIENRAMEN_API FARDialogueSpeakerRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FText Description;
 
-	// Optional rich-text style tag applied by default to this speaker's spoken lines.
+	// Optional font asset used by dialogue widgets for this speaker's spoken lines.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	TSoftObjectPtr<UFont> LineFont;
+
+	// Deprecated rich-text style tag fallback for legacy widgets. New authoring should use LineFont.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, Category = "", meta = (DeprecatedProperty, DisplayName = "Line Font Style Tag (Deprecated)"))
 	FName LineFontStyleTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
@@ -847,6 +852,9 @@ struct ALIENRAMEN_API FDialogueClientView
 
 	UPROPERTY(BlueprintReadOnly, Category = "")
 	FName SpeakerLineFontStyleTag;
+
+	UPROPERTY(BlueprintReadOnly, Category = "")
+	TSoftObjectPtr<UFont> SpeakerLineFont;
 
 	UPROPERTY(BlueprintReadOnly, Category = "")
 	FText LineText;

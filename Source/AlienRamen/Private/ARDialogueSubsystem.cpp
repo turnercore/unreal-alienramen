@@ -65,6 +65,7 @@ namespace
 		TArray<FDialogueChoiceView> CurrentChoices;
 		FGameplayTag CurrentSpeakerTag;
 		FName CurrentSpeakerLineFontStyleTag;
+		TSoftObjectPtr<UFont> CurrentSpeakerLineFont;
 		FText CurrentLineText;
 		FSpeakerPortraitData CurrentSpeakerPortrait;
 		FGuid WaitingLineNodeId;
@@ -1010,6 +1011,12 @@ static bool ResolveSpeakerFieldValue(
 	}
 	if (Field == TEXT("font") || Field == TEXT("fontstyle") || Field == TEXT("linefontstyle") || Field == TEXT("linefontstyletag"))
 	{
+		if (!SpeakerRow.LineFont.IsNull())
+		{
+			OutValue = SpeakerRow.LineFont.ToSoftObjectPath().ToString();
+			return true;
+		}
+
 		if (SpeakerRow.LineFontStyleTag.IsNone())
 		{
 			return false;
@@ -1051,6 +1058,7 @@ static bool ResolveInstancedStructFieldValue(
 	}
 	if (CandidateFields[0] == TEXT("font") || CandidateFields[0] == TEXT("fontstyle"))
 	{
+		CandidateFields.Add(TEXT("linefont"));
 		CandidateFields.Add(TEXT("linefontstyletag"));
 	}
 
@@ -1539,9 +1547,11 @@ static FText BuildFormattedDialogueLineText(
 	const FDialogueRuntimeContext& Context,
 	const FGameplayTag& ResolvedSpeakerTag,
 	const FText& SourceLineText,
-	FName& OutSpeakerLineFontStyleTag)
+	FName& OutSpeakerLineFontStyleTag,
+	TSoftObjectPtr<UFont>& OutSpeakerLineFont)
 {
 	OutSpeakerLineFontStyleTag = NAME_None;
+	OutSpeakerLineFont = TSoftObjectPtr<UFont>();
 
 	const FString RawLineText = SourceLineText.ToString();
 	if (RawLineText.IsEmpty())
@@ -1552,6 +1562,7 @@ static FText BuildFormattedDialogueLineText(
 	FGameplayTag SpeakerRowTag;
 	if (const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag))
 	{
+		OutSpeakerLineFont = SpeakerRow->LineFont;
 		OutSpeakerLineFontStyleTag = SpeakerRow->LineFontStyleTag;
 	}
 
@@ -3679,6 +3690,7 @@ static void FillClientViewForSlot(const FARActiveDialogueSession& Session, const
 	OutView.CurrentNodeId = Session.CurrentNodeId;
 	OutView.SpeakerTag = Session.CurrentSpeakerTag;
 	OutView.SpeakerLineFontStyleTag = Session.CurrentSpeakerLineFontStyleTag;
+	OutView.SpeakerLineFont = Session.CurrentSpeakerLineFont;
 	OutView.LineText = Session.CurrentLineText;
 	OutView.SpeakerPortrait = Session.CurrentSpeakerPortrait;
 	OutView.Choices = Session.CurrentChoices;
@@ -3737,6 +3749,7 @@ static void ClearSessionPresentationState(FARActiveDialogueSession& Session)
 	Session.CurrentChoices.Reset();
 	Session.CurrentSpeakerTag = FGameplayTag();
 	Session.CurrentSpeakerLineFontStyleTag = NAME_None;
+	Session.CurrentSpeakerLineFont = TSoftObjectPtr<UFont>();
 	Session.CurrentLineText = FText::GetEmpty();
 	Session.CurrentSpeakerPortrait = FSpeakerPortraitData();
 }
@@ -4122,7 +4135,8 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Context,
 			ResolvedSpeakerTag,
 			Line.Text,
-			Session.CurrentSpeakerLineFontStyleTag);
+			Session.CurrentSpeakerLineFontStyleTag,
+			Session.CurrentSpeakerLineFont);
 		Session.CurrentSpeakerPortrait = ResolvePortraitForSpeaker(SpeakerRowsByTag, ResolvedSpeakerTag);
 		ApplyDialogueEmotionForPresentedSpeaker(Session, Context, ResolvedSpeakerTag);
 		Session.bWaitingForAdvanceInput = true;
@@ -5477,6 +5491,7 @@ bool UARDialogueSubsystem::GetLocalViewForController(const AARPlayerController* 
 	OutView.CurrentNodeId = Session->CurrentNodeId;
 	OutView.SpeakerTag = Session->CurrentSpeakerTag;
 	OutView.SpeakerLineFontStyleTag = Session->CurrentSpeakerLineFontStyleTag;
+	OutView.SpeakerLineFont = Session->CurrentSpeakerLineFont;
 	OutView.LineText = Session->CurrentLineText;
 	OutView.SpeakerPortrait = Session->CurrentSpeakerPortrait;
 	OutView.bWaitingForChoice = Session->bWaitingForChoice;

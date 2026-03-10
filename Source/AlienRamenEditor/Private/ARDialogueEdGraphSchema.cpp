@@ -66,6 +66,44 @@ namespace
 		}
 	}
 
+	static FText GetNodeTooltip(const EDialogueNodeType NodeType)
+	{
+		switch (NodeType)
+		{
+		case EDialogueNodeType::Completed:
+			return FText::FromString(TEXT("Ends the conversation and commits completion/memory results."));
+		case EDialogueNodeType::Line:
+			return FText::FromString(TEXT("Presents one dialogue line and waits for advance input."));
+		case EDialogueNodeType::Choice:
+			return FText::FromString(TEXT("Presents player choices and routes to the selected branch."));
+		case EDialogueNodeType::Bool:
+			return FText::FromString(TEXT("Evaluates one condition and routes to True or False."));
+		case EDialogueNodeType::SwitchOnTagsByPriority:
+			return FText::FromString(TEXT("Evaluates branch conditions in order and routes to the first passing branch."));
+		case EDialogueNodeType::TagMutation:
+			return FText::FromString(TEXT("Adds/removes gameplay tags on configured dialogue targets."));
+		case EDialogueNodeType::RelationshipMutation:
+			return FText::FromString(TEXT("Adjusts relationship points for a target speaker."));
+		case EDialogueNodeType::FactionMutation:
+			return FText::FromString(TEXT("Adjusts popularity for a target faction."));
+		case EDialogueNodeType::Random:
+			return FText::FromString(TEXT("Selects an outgoing branch by authored weights."));
+		case EDialogueNodeType::Route:
+			return FText::FromString(TEXT("Organizes graph flow without adding runtime side effects."));
+		case EDialogueNodeType::Sequence:
+			return FText::FromString(TEXT("Runs each connected branch in order."));
+		case EDialogueNodeType::MultiLine:
+			return FText::FromString(TEXT("Presents multiple lines from one node in authored order."));
+		case EDialogueNodeType::SplitLine:
+			return FText::FromString(TEXT("Presents line entries that can be split/filtered by conditions."));
+		case EDialogueNodeType::RouteByCharacter:
+			return FText::FromString(TEXT("Routes execution based on the active player speaker tag."));
+		case EDialogueNodeType::Enter:
+		default:
+			return FText::FromString(TEXT("Conversation entry node."));
+		}
+	}
+
 	struct FARDialogueGraphSchemaAction_NewNode final : public FEdGraphSchemaAction
 	{
 		FARDialogueGraphSchemaAction_NewNode()
@@ -178,7 +216,7 @@ void UARDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& 
 		TSharedPtr<FARDialogueGraphSchemaAction_NewNode> NewAction = MakeShared<FARDialogueGraphSchemaAction_NewNode>(
 			FText::GetEmpty(),
 			DisplayName,
-			DisplayName,
+			GetNodeTooltip(NodeType),
 			0,
 			NodeType);
 		ContextMenuBuilder.AddAction(NewAction);
