@@ -145,11 +145,12 @@ If a section starts growing again:
 
 - `UARCustomerComponent` is the authoritative NPC customer/order runtime (wants, scoring, picky rule, serve resolution).
 - NPC interaction queries remain available while a customer order is active so delivery interaction is not blocked by dialogue gating.
+- `AARShopDispenserActor` is the generic server-authoritative item dispenser surface (configured outputs + source policy + carry handoff).
 - `AARShopStationActor` is server-authoritative for station state (`Idle/MeatReady/Processing/Processed`), slot meat, hold-to-process progress, and processed stock.
 - Unupgraded station behavior is direct `None` output for bowl fills; upgraded behavior uses slot/processing/stock.
 - `AARRamenBowlActor` enforces strict fill sequence: `Noodles -> Broth -> Toppings`.
 - `UARShopCarryComponent` is replicated held-item state on `AARPlayerCharacterShop`; `AARPlayerController` provides server RPC entrypoints for station/storage interactions.
-- `AARMeatStorageBoxActor` dispenses world meat by mutating `AARGameStateBase::Meat` buckets.
+- `AARMeatStorageBoxActor` is the meat-reserve specialization of the generic dispenser (`AARGameStateBase::Meat` source).
 - Station processing progress is replicated runtime-only state and is intentionally **not** persisted to `UARSaveGame`.
 - Shop NPC StateTree scaffolding is native (`UARShopStateTreeAIComponent`, `UARShopStateTreeAIComponentSchema`, `AARShopAIController` helpers), with customer lifecycle events forwarded as gameplay tags.
 - `AARShopAIController` applies `State.ShopNPC.*` active tags to `AARNPCCharacterBase::bNpcLocalStateAllowsDialogue` (dialogue enabled in `State.ShopNPC.DialogueWindow`).
