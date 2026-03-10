@@ -20,7 +20,7 @@
 		},
 		{
 			"Name": "AlienRamenTests",
-			"Type": "Developer",
+			"Type": "DeveloperTool",
 			"LoadingPhase": "Default"
 		}
 	],
@@ -55,6 +55,10 @@
 		},
 		{
 			"Name": "StateTree",
+			"Enabled": true
+		},
+		{
+			"Name": "TagContentResolver",
 			"Enabled": true
 		},
 		{

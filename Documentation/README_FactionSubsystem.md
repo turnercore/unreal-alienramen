@@ -2,11 +2,16 @@
 
 This document describes the current server-authoritative faction election flow and its integration with save state and mode travel.
 
+Ownership note:
+
+- Faction voting/election orchestration is a built-on-top system and is outside Dialogue plugin ownership.
+- Dialogue plugin-owned faction surfaces are limited to dialogue-facing faction/relationship gating and mutation data used by dialogue runtime.
+
 ## Runtime Ownership
 
 - Primary runtime API: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`)
 - Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Factions`)
-- Content source: `UContentLookupSubsystem` root `Faction.Definition`
+- Content source: `UTagContentResolverSubsystem` root `Faction.Definition`
 - Persistence source: `UARSaveSubsystem` / `UARSaveGame`
 
 ## Core API Surface

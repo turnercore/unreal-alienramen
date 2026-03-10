@@ -18,7 +18,7 @@
 #include "GameplayEffect.h"
 #include "Abilities/GameplayAbility.h"
 
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "ARWeaponDefinition.h"
 
 #include "UObject/UnrealType.h"
@@ -1121,10 +1121,10 @@ bool AARPlayerCharacterInvader::ResolveRowFromTag(FGameplayTag Tag, FInstancedSt
 	UGameInstance* GI = World->GetGameInstance();
 	if (!GI) { OutError = TEXT("No GameInstance."); return false; }
 
-	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
-	if (!Lookup) { OutError = TEXT("No ContentLookupSubsystem."); return false; }
+	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
+	if (!Lookup) { OutError = TEXT("No TagContentResolverSubsystem."); return false; }
 
-	if (!Lookup->LookupWithGameplayTag(Tag, OutRow, OutError))
+	if (!Lookup->TryResolveRowForTag(Tag, OutRow, OutError))
 	{
 		return false;
 	}
@@ -1347,3 +1347,4 @@ void AARPlayerCharacterInvader::ApplyLoadoutTagsToASC(const FGameplayTagContaine
 
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());
 }
+
