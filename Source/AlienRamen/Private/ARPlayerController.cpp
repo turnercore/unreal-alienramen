@@ -8,8 +8,10 @@
 #include "ARLobbyPlayerController.h"
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
+#include "ARMeatStorageBoxActor.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
+#include "ARShopStationActor.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
@@ -321,6 +323,132 @@ void AARPlayerController::RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)
 void AARPlayerController::ServerRequestInteractWithNpc_Implementation(AARNPCCharacterBase* NpcActor)
 {
 	RequestInteractWithNpc(NpcActor);
+}
+
+void AARPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		StationActor->TryPlaceHeldMeatFromController(this);
+		return;
+	}
+
+	ServerRequestShopStationPlaceHeldMeat(StationActor);
+}
+
+void AARPlayerController::ServerRequestShopStationPlaceHeldMeat_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationPlaceHeldMeat(StationActor);
+}
+
+void AARPlayerController::RequestShopStationPickupMeat(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		StationActor->TryPickupSlottedMeatToController(this);
+		return;
+	}
+
+	ServerRequestShopStationPickupMeat(StationActor);
+}
+
+void AARPlayerController::ServerRequestShopStationPickupMeat_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationPickupMeat(StationActor);
+}
+
+void AARPlayerController::RequestShopStationStartProcessing(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		StationActor->StartProcessingByController(this);
+		return;
+	}
+
+	ServerRequestShopStationStartProcessing(StationActor);
+}
+
+void AARPlayerController::ServerRequestShopStationStartProcessing_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationStartProcessing(StationActor);
+}
+
+void AARPlayerController::RequestShopStationStopProcessing(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		StationActor->StopProcessingByController(this);
+		return;
+	}
+
+	ServerRequestShopStationStopProcessing(StationActor);
+}
+
+void AARPlayerController::ServerRequestShopStationStopProcessing_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationStopProcessing(StationActor);
+}
+
+void AARPlayerController::RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		StationActor->TryFillHeldBowlFromController(this);
+		return;
+	}
+
+	ServerRequestShopFillHeldBowlFromStation(StationActor);
+}
+
+void AARPlayerController::ServerRequestShopFillHeldBowlFromStation_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopFillHeldBowlFromStation(StationActor);
+}
+
+void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)
+{
+	if (!StorageActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		StorageActor->TryDispenseMeat(this);
+		return;
+	}
+
+	ServerRequestShopDispenseMeat(StorageActor);
+}
+
+void AARPlayerController::ServerRequestShopDispenseMeat_Implementation(AARMeatStorageBoxActor* StorageActor)
+{
+	RequestShopDispenseMeat(StorageActor);
 }
 
 void AARPlayerController::RequestAdvanceDialogue()

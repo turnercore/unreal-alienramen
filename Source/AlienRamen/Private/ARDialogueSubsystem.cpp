@@ -2151,6 +2151,94 @@ bool UARDialogueSubsystem::ApplyDialogueFactionMutation(const FDialogueFactionMu
 	return false;
 }
 
+bool UARDialogueSubsystem::ApplyRamenServeOutcome(
+	const FGameplayTag SpeakerTag,
+	const int32 RelationshipDeltaPoints,
+	const FGameplayTag ReactionEmotionTag,
+	AActor* PreferredSpeakerActor)
+{
+	const bool bValidSpeaker = SpeakerTag.IsValid();
+	if (!bValidSpeaker)
+	{
+		return false;
+	}
+
+	bool bApplied = false;
+
+	if (RelationshipDeltaPoints != 0)
+	{
+		FDialogueRelationshipMutationNodeData RelationshipMutation;
+		RelationshipMutation.TargetSpeakerTag = SpeakerTag;
+		RelationshipMutation.DeltaPoints = static_cast<float>(RelationshipDeltaPoints);
+
+		FDialogueRuntimeContext Context;
+		Context.PrimarySpeakerTag = SpeakerTag;
+		Context.PrimarySpeakerActor = PreferredSpeakerActor;
+		Context.World = GetWorld();
+		bApplied |= ApplyDialogueRelationshipMutation(RelationshipMutation, Context);
+	}
+
+	if (ReactionEmotionTag.IsValid())
+	{
+		UAREmotionComponent* TargetEmotion = nullptr;
+		auto MatchesSpeakerTag = [&SpeakerTag](const FGameplayTag CandidateTag) -> bool
+		{
+			return CandidateTag.IsValid()
+				&& (SpeakerTag.MatchesTag(CandidateTag) || CandidateTag.MatchesTag(SpeakerTag));
+		};
+
+		if (PreferredSpeakerActor)
+		{
+			if (UAREmotionComponent* PreferredEmotion = PreferredSpeakerActor->FindComponentByClass<UAREmotionComponent>())
+			{
+				TargetEmotion = PreferredEmotion;
+			}
+		}
+
+		UWorld* World = GetWorld();
+		if (!TargetEmotion && World)
+		{
+			for (TActorIterator<AActor> It(World); It; ++It)
+			{
+				AActor* Actor = *It;
+				if (!Actor)
+				{
+					continue;
+				}
+
+				if (const UARNPCTalkComponent* TalkComponent = Actor->FindComponentByClass<UARNPCTalkComponent>())
+				{
+					if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+					{
+						if (UAREmotionComponent* EmotionComponent = Actor->FindComponentByClass<UAREmotionComponent>())
+						{
+							TargetEmotion = EmotionComponent;
+							break;
+						}
+					}
+				}
+
+				if (UAREmotionComponent* EmotionComponent = Actor->FindComponentByClass<UAREmotionComponent>())
+				{
+					if (MatchesSpeakerTag(EmotionComponent->GetRegisteredSpeakerTag()))
+					{
+						TargetEmotion = EmotionComponent;
+						break;
+					}
+				}
+			}
+		}
+
+		if (TargetEmotion)
+		{
+			TargetEmotion->SetEmotionTag(ReactionEmotionTag);
+			bApplied = true;
+		}
+	}
+
+	return bApplied;
+}
+
 bool UARDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
 {
 	OutReport = FDialogueValidationReport();
@@ -5594,4 +5682,3 @@ int32 UARDialogueSubsystem::GetRelationshipLevelForSpeaker(FGameplayTag SpeakerT
 	}
 	return 0;
 }
-
