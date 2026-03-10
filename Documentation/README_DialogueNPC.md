@@ -92,6 +92,11 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Runtime executes compiled nodes server-side with a step cap from settings.
 - Implemented node execution: enter/completed/line/choice/bool/switch/tag-mutation/relationship-mutation/faction-mutation/random.
 - Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
+- Runtime line presentation supports token + style parsing at execute time (source `FText` is kept authored/localized, formatting is applied on the delivered view text):
+  - lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcuts `[Speaker]`, `[Brother]`, `[Sister]`
+  - unknown/failed commands fail loudly: unresolved bracket commands are replaced with `UNKNOWN` and logged as runtime errors
+  - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
+  - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
@@ -160,6 +165,7 @@ Conversation graph tooling now provides:
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
+- speaker rows include optional `LineFontStyleTag` default used whenever that speaker is presenting a line
 
 Speaker hub currently provides:
 
