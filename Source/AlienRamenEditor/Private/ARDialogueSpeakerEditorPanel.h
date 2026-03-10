@@ -47,6 +47,7 @@ private:
 	struct FConversationEntry
 	{
 		bool bIsBandHeader = false;
+		bool bIsLevelZeroDropTarget = false;
 		FString DisplayTitle;
 		FString Label;
 		FString RelationshipBandLabel;
