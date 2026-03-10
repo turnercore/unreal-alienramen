@@ -1189,6 +1189,11 @@ void AARPlayerController::ApplyDialogueInputMode(const bool bEnable)
 
 	if (bEnable)
 	{
+		if (bDialogueInputModeApplied)
+		{
+			return;
+		}
+
 		bCachedShowMouseCursorForDialogue = bShowMouseCursor;
 		bShowMouseCursor = true;
 
@@ -1201,6 +1206,11 @@ void AARPlayerController::ApplyDialogueInputMode(const bool bEnable)
 		InputMode.SetHideCursorDuringCapture(false);
 		SetInputMode(InputMode);
 		bDialogueInputModeApplied = true;
+		return;
+	}
+
+	if (!bDialogueInputModeApplied)
+	{
 		return;
 	}
 

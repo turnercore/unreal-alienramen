@@ -850,6 +850,10 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	NewSettings.bAllowJoinInProgress = bCanJoin;
 	NewSettings.bAllowJoinViaPresence = bCanJoin;
 	NewSettings.bAllowInvites = bCanJoin;
+	if (const UWorld* World = GetWorld())
+	{
+		NewSettings.Set(SETTING_MAPNAME, World->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	}
 	UARGameInstance::ApplyARProtocolSessionSetting(NewSettings);
 
 	bOperationInFlight = true;
