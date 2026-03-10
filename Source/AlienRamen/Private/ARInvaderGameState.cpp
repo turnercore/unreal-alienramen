@@ -1006,6 +1006,23 @@ void AARInvaderGameState::SyncSharedMaxSpiceToPlayers()
 	}
 }
 
+void AARInvaderGameState::ConsumeSpiceForPlayer(AARPlayerStateBase* PlayerState, const float SpendAmount)
+{
+	if (!HasAuthority() || !PlayerState)
+	{
+		return;
+	}
+
+	const float ClampedSpendAmount = FMath::Max(0.0f, SpendAmount);
+	if (ClampedSpendAmount <= KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	const float CurrentSpice = PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	PlayerState->SetSpiceMeter(CurrentSpice - ClampedSpendAmount);
+}
+
 void AARInvaderGameState::ResetAllPlayerSpiceMeters()
 {
 	if (!HasAuthority())
@@ -1451,6 +1468,7 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 	}
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
+	const float SpendAmount = static_cast<float>(GetSharedMaxSpice());
 	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
 	const bool bAtTopTier = Settings && SharedFullBlastTier >= Settings->MaxFullBlastTier;
 	const int32 DestinationSlot = bAtTopTier
@@ -1506,7 +1524,7 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 	FullBlastSession = FARInvaderFullBlastSessionState();
 	OfferPresenceStates.Reset();
 
-	ResetAllPlayerSpiceMeters();
+	ConsumeSpiceForPlayer(RequestingPlayerState, SpendAmount);
 	SyncSharedMaxSpiceToPlayers();
 	RefreshWhileSlottedEffects();
 	ReconcilePlayerCursorSelection();
@@ -1544,6 +1562,7 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 	}
 
 	const FARInvaderFullBlastSessionState OldSession = FullBlastSession;
+	const float SpendAmount = static_cast<float>(GetSharedMaxSpice());
 	const TArray<FARInvaderOfferPresenceState> OldPresenceStates = OfferPresenceStates;
 	FullBlastSession = FARInvaderFullBlastSessionState();
 	OfferPresenceStates.Reset();
@@ -1555,7 +1574,8 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 		SetScrapFromSave(GetScrap() + SkipReward);
 	}
 
-	ResetAllPlayerSpiceMeters();
+	ConsumeSpiceForPlayer(RequestingPlayerState, SpendAmount);
+	SyncSharedMaxSpiceToPlayers();
 	OnRep_FullBlastSession(OldSession);
 	OnRep_OfferPresenceStates(OldPresenceStates);
 	ResolveFullBlastCommonPostChoice(true, OldSession.RequestingPlayerSlot, OldSession.ActivationTier);
@@ -1757,6 +1777,7 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 	}
 
 	const FARInvaderTrackSlotState SelectedSlot = SharedTrackSlots[SlotIndex - 1];
+	const float SpendAmount = static_cast<float>(GetSharedMaxSpice());
 	if (!SelectedSlot.UpgradeTag.IsValid())
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ActivateTrackUpgrade rejected requester='%s' slot=%d no upgrade"),
@@ -1820,7 +1841,7 @@ bool AARInvaderGameState::ActivateTrackUpgrade(AARPlayerStateBase* RequestingPla
 		NormalizeTrackSlotIndices();
 	}
 
-	ResetAllPlayerSpiceMeters();
+	ConsumeSpiceForPlayer(RequestingPlayerState, SpendAmount);
 	SyncSharedMaxSpiceToPlayers();
 	if (bConsumedSlotThisActivation)
 	{

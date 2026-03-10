@@ -32,6 +32,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void SetPawn(APawn* InPawn) override;
 	virtual void OnRep_PlayerState() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
@@ -121,6 +122,7 @@ private:
 	void BuildOfferDefinitionsForSession(const FARInvaderFullBlastSessionState& Session, TArray<FARInvaderUpgradeDefRow>& OutDefinitions) const;
 	bool ShouldDisplayFullBlastMenuForSession(const FARInvaderFullBlastSessionState& Session) const;
 	bool IsChooserForSession(const FARInvaderFullBlastSessionState& Session) const;
+	void SyncLegacyShipReferenceFromPawn(APawn* InPawn);
 	void ShowOrUpdateFullBlastMenu(const FARInvaderFullBlastSessionState& Session, const TArray<FARInvaderUpgradeDefRow>& OfferDefinitions);
 	void CloseFullBlastMenu();
 
