@@ -26,16 +26,21 @@ namespace
 	{
 		TObjectPtr<UARDialogueConversationAsset> Conversation = nullptr;
 		int32 Priority = 0;
+		int32 EffectivePriority = 0;
+		int32 OfferWeight = 1;
+		float ChanceOffered = 1.0f;
 		bool bSeenByGame = false;
 		bool bSeenByPlayer = false;
 		bool bCompletedByGame = false;
 		bool bCompletedByPlayer = false;
 		bool bRepeatable = false;
+		bool bSeenThisCycle = false;
+		bool bSkippedThisCycle = false;
 	};
 
 	static bool SortCandidatesByPriority(const FDialogueCandidateEval& Lhs, const FDialogueCandidateEval& Rhs)
 	{
-		return Lhs.Priority > Rhs.Priority;
+		return Lhs.EffectivePriority > Rhs.EffectivePriority;
 	}
 
 	struct FARActiveDialogueSession
@@ -162,6 +167,7 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TMap<FGameplayTag, FARDialogueSpeakerRow> SpeakerRowsByTag;
 	TArray<FARActiveDialogueSession> ActiveSessions;
 	TMap<EARPlayerSlot, FGameplayTagContainer> SeenByPlayerTransient;
+	TMap<EARPlayerSlot, FGameplayTagContainer> SkippedByPlayerTransient;
 	FGameplayTagContainer SeenByGameTransient;
 	TMap<EARPlayerSlot, EARPlayerSlot> EavesdropTargetByViewer;
 };
@@ -1668,15 +1674,14 @@ bool UARDialogueSubsystem::EvaluateDialogueCondition(const FDialogueCondition& C
 	case EDialogueConditionSource::TransientConversationTags:
 		return EvaluateTagContainerCondition(Context.TransientConversationTags, Condition);
 	case EDialogueConditionSource::ActiveCharacter:
-		if (Condition.Operator == EDialogueComparisonOp::Equals || Condition.Operator == EDialogueComparisonOp::Contains || Condition.Operator == EDialogueComparisonOp::Present)
+	{
+		FGameplayTagContainer ActiveCharacterTags;
+		if (Context.ResolvedPlayerSpeakerTag.IsValid())
 		{
-			return Context.ResolvedPlayerSpeakerTag.MatchesTagExact(Condition.TagValue);
+			ActiveCharacterTags.AddTag(Context.ResolvedPlayerSpeakerTag);
 		}
-		if (Condition.Operator == EDialogueComparisonOp::NotEquals || Condition.Operator == EDialogueComparisonOp::NotContains || Condition.Operator == EDialogueComparisonOp::Absent)
-		{
-			return !Context.ResolvedPlayerSpeakerTag.MatchesTagExact(Condition.TagValue);
-		}
-		return false;
+		return EvaluateTagContainerCondition(ActiveCharacterTags, Condition);
+	}
 	case EDialogueConditionSource::RelationshipPoints:
 		return CompareNumeric(Context.RelationshipPointsForPrimarySpeaker, Condition.Operator, Condition.NumericValue);
 	case EDialogueConditionSource::RelationshipLevel:
@@ -2148,9 +2153,12 @@ namespace
 	static FString BuildConversationOfferGatingSignature(const FDialogueConversationHeader& Header)
 	{
 		return FString::Printf(
-			TEXT("Speaker=%s|Pri=%d|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
+			TEXT("Speaker=%s|Pri=%d|Weight=%d|Chance=%s|CycleBlock=%d|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
 			*Header.PrimarySpeakerTag.ToString(),
 			Header.Priority,
+			Header.OfferWeight,
+			*FString::SanitizeFloat(Header.ChanceOffered),
+			Header.bBlockOfferPerCycle ? 1 : 0,
 			*FString::SanitizeFloat(Header.MinimumRelationshipPoints),
 			Header.bRepeatable ? 1 : 0,
 			Header.bSeenByGameBlocksReoffer ? 1 : 0,
@@ -2229,6 +2237,24 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 
 	if (!ConversationAsset->Header.ConversationTag.IsValid()) { Add(EDialogueValidationSeverity::Error, FGuid(), TEXT("ConversationTag is required.")); }
 	if (!ConversationAsset->Header.PrimarySpeakerTag.IsValid()) { Add(EDialogueValidationSeverity::Error, FGuid(), TEXT("PrimarySpeakerTag is required.")); }
+	if (ConversationAsset->Header.OfferWeight < 1)
+	{
+		Add(
+			EDialogueValidationSeverity::Warning,
+			FGuid(),
+			FString::Printf(
+				TEXT("OfferWeight is %d. Runtime clamps this to 1."),
+				ConversationAsset->Header.OfferWeight));
+	}
+	if (ConversationAsset->Header.ChanceOffered < 0.0f || ConversationAsset->Header.ChanceOffered > 1.0f)
+	{
+		Add(
+			EDialogueValidationSeverity::Warning,
+			FGuid(),
+			FString::Printf(
+				TEXT("ChanceOffered is %.3f. Runtime clamps this into [0,1]."),
+				ConversationAsset->Header.ChanceOffered));
+	}
 	if (!ConversationAsset->CompiledData.EnterNodeId.IsValid()) { Add(EDialogueValidationSeverity::Error, FGuid(), TEXT("Missing Enter node.")); }
 	if (ConversationAsset->CompiledData.Nodes.IsEmpty()) { Add(EDialogueValidationSeverity::Error, FGuid(), TEXT("Compiled graph has no nodes.")); }
 	ValidateConditionGroup(ConversationAsset->Header.LockedConditions, FGuid());
@@ -3077,6 +3103,7 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 	TArray<FDialogueCandidateEval> Unseen;
 	TArray<FDialogueCandidateEval> Catchup;
 	TArray<FDialogueCandidateEval> Repeatable;
+	FGameplayTagContainer& SkippedForPlayer = Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot);
 
 	for (const TPair<FGameplayTag, TObjectPtr<UARDialogueConversationAsset>>& Pair : Runtime.ConversationsByTag)
 	{
@@ -3111,6 +3138,7 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		{
 			Context.bSeenByPlayer = SeenForPlayer->HasTagExact(Conversation->Header.ConversationTag);
 		}
+		const bool bSkippedThisCycle = SkippedForPlayer.HasTagExact(Conversation->Header.ConversationTag);
 		FString OfferGateFailure;
 		if (!EvaluateConversationOfferRules(this, Context, Conversation->Header, &OfferGateFailure))
 		{
@@ -3130,6 +3158,11 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		Candidate.bSeenByPlayer = Context.bSeenByPlayer;
 		Candidate.bCompletedByGame = Context.bCompletedByGame;
 		Candidate.bCompletedByPlayer = Context.bCompletedByPlayer;
+		Candidate.bSeenThisCycle = Context.bSeenByPlayer;
+		Candidate.bSkippedThisCycle = bSkippedThisCycle;
+		Candidate.OfferWeight = FMath::Max(1, Conversation->Header.OfferWeight);
+		Candidate.ChanceOffered = FMath::Clamp(Conversation->Header.ChanceOffered, 0.0f, 1.0f);
+		Candidate.EffectivePriority = Candidate.Priority;
 
 		if (!Conversation->Header.bRepeatable && Candidate.bCompletedByPlayer)
 		{
@@ -3160,6 +3193,39 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 			continue;
 		}
 
+		if (Conversation->Header.bBlockOfferPerCycle && (Candidate.bSeenThisCycle || Candidate.bSkippedThisCycle))
+		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer skipped '%s': blocked for requester this cycle (seen=%d skipped=%d)."),
+				*Conversation->Header.ConversationTag.ToString(),
+				Candidate.bSeenThisCycle ? 1 : 0,
+				Candidate.bSkippedThisCycle ? 1 : 0);
+			continue;
+		}
+
+		if (Candidate.bSeenThisCycle || Candidate.bSkippedThisCycle || (Candidate.bRepeatable && Candidate.bCompletedByPlayer))
+		{
+			Candidate.EffectivePriority = 1;
+		}
+
+		if (Candidate.ChanceOffered < 1.0f)
+		{
+			const float ChanceRoll = FMath::FRand();
+			if (ChanceRoll > Candidate.ChanceOffered)
+			{
+				if (Conversation->Header.ConversationTag.IsValid())
+				{
+					SkippedForPlayer.AddTag(Conversation->Header.ConversationTag);
+				}
+				UE_LOG(ARLog, Verbose,
+					TEXT("[Dialogue] Offer chance skipped '%s': roll %.3f > chance %.3f."),
+					*Conversation->Header.ConversationTag.ToString(),
+					ChanceRoll,
+					Candidate.ChanceOffered);
+				continue;
+			}
+		}
+
 		if (!Candidate.bSeenByGame && !Candidate.bSeenByPlayer)
 		{
 			Unseen.Add(Candidate);
@@ -3181,17 +3247,31 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 			return false;
 		}
 		Bucket.Sort(&SortCandidatesByPriority);
-		const int32 BestPriority = Bucket[0].Priority;
+		const int32 BestPriority = Bucket[0].EffectivePriority;
 		TArray<int32> Tied;
+		int32 TotalWeight = 0;
 		for (int32 Index = 0; Index < Bucket.Num(); ++Index)
 		{
-			if (Bucket[Index].Priority != BestPriority)
+			if (Bucket[Index].EffectivePriority != BestPriority)
 			{
 				break;
 			}
 			Tied.Add(Index);
+			TotalWeight += FMath::Max(1, Bucket[Index].OfferWeight);
 		}
-		OutCandidate = Bucket[Tied[FMath::RandRange(0, Tied.Num() - 1)]];
+
+		int32 WeightRoll = FMath::RandRange(1, FMath::Max(1, TotalWeight));
+		for (const int32 CandidateIndex : Tied)
+		{
+			WeightRoll -= FMath::Max(1, Bucket[CandidateIndex].OfferWeight);
+			if (WeightRoll <= 0)
+			{
+				OutCandidate = Bucket[CandidateIndex];
+				return true;
+			}
+		}
+
+		OutCandidate = Bucket[Tied.Last()];
 		return true;
 	};
 
@@ -3203,7 +3283,7 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 	}
 
 	OutOffer.ConversationTag = Picked.Conversation ? Picked.Conversation->Header.ConversationTag : FGameplayTag();
-	OutOffer.Priority = Picked.Priority;
+	OutOffer.Priority = Picked.EffectivePriority;
 	OutOffer.bUnseenByGame = !Picked.bSeenByGame;
 	OutOffer.bUnseenByPlayer = !Picked.bSeenByPlayer;
 	OutOffer.bCatchUpCandidate = Picked.bSeenByGame && !Picked.bSeenByPlayer;
@@ -3214,11 +3294,13 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		? TEXT("Unseen")
 		: (OutOffer.bCatchUpCandidate ? TEXT("CatchUp") : (OutOffer.bRepeatableCandidate ? TEXT("Repeatable") : TEXT("Seen")));
 	UE_LOG(ARLog, Verbose,
-		TEXT("[Dialogue] Offer resolved: slot %s speaker '%s' -> conversation '%s' (priority %d, bucket %s)."),
+		TEXT("[Dialogue] Offer resolved: slot %s speaker '%s' -> conversation '%s' (priority %d effective %d, weight %d, bucket %s)."),
 		*SlotString,
 		*PrimarySpeakerTag.ToString(),
 		*OutOffer.ConversationTag.ToString(),
+		Picked.Priority,
 		OutOffer.Priority,
+		Picked.OfferWeight,
 		*BucketLabel);
 	return OutOffer.ConversationTag.IsValid();
 }
@@ -4217,6 +4299,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	{
 		StartContext.bSeenByPlayer = SeenTags->HasTagExact(ConversationTag);
 	}
+	const bool bSkippedThisCycle = Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).HasTagExact(ConversationTag);
 
 	FString StartGateFailure;
 	if (!EvaluateConversationOfferRules(this, StartContext, Conversation->Header, &StartGateFailure))
@@ -4245,6 +4328,15 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] StartConversation blocked: seen-by-player suppression for '%s'."), *ConversationTag.ToString());
 		return false;
 	}
+	if (Conversation->Header.bBlockOfferPerCycle && (StartContext.bSeenByPlayer || bSkippedThisCycle))
+	{
+		UE_LOG(ARLog, Verbose,
+			TEXT("[Dialogue] StartConversation blocked: per-cycle blocker active for '%s' (seen=%d skipped=%d)."),
+			*ConversationTag.ToString(),
+			StartContext.bSeenByPlayer ? 1 : 0,
+			bSkippedThisCycle ? 1 : 0);
+		return false;
+	}
 
 	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
 	const FGameplayTag ModeTag = GetCurrentModeTag(World);
@@ -4263,6 +4355,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 			if (Existing->ConversationTag.MatchesTagExact(ConversationTag))
 			{
 				AddSessionParticipant(*Existing, Runtime.SeenByPlayerTransient, RequesterSlot);
+				Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).RemoveTag(ConversationTag);
 				BroadcastSessionUpdated(this, *Existing);
 				UE_LOG(ARLog, Verbose, TEXT("[Dialogue] StartConversation: player joined existing shared session for '%s'."), *ConversationTag.ToString());
 				return true;
@@ -4288,6 +4381,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	Session.bIsSharedSession = bSharedMode;
 	Session.bConversationImportant = Conversation->Header.bImportant;
 	AddSessionParticipant(Session, Runtime.SeenByPlayerTransient, RequesterSlot);
+	Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).RemoveTag(ConversationTag);
 
 	Runtime.SeenByGameTransient.AddTag(ConversationTag);
 
@@ -4298,6 +4392,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 		for (const EARPlayerSlot Slot : SlottedPlayers)
 		{
 			AddSessionParticipant(Session, Runtime.SeenByPlayerTransient, Slot);
+			Runtime.SkippedByPlayerTransient.FindOrAdd(Slot).RemoveTag(ConversationTag);
 		}
 	}
 
@@ -4775,6 +4870,24 @@ bool UARDialogueSubsystem::GetLocalViewForController(const AARPlayerController* 
 bool UARDialogueSubsystem::HasActiveDialogueSession() const
 {
 	return GetRuntimeState().ActiveSessions.Num() > 0;
+}
+
+void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot PlayerSlot)
+{
+	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+
+	if (PlayerSlot == EARPlayerSlot::Unknown)
+	{
+		Runtime.SeenByPlayerTransient.Reset();
+		Runtime.SkippedByPlayerTransient.Reset();
+		UE_LOG(ARLog, Log, TEXT("[Dialogue] Cleared conversation cycle offer state for all player slots."));
+		return;
+	}
+
+	Runtime.SeenByPlayerTransient.Remove(PlayerSlot);
+	Runtime.SkippedByPlayerTransient.Remove(PlayerSlot);
+	UE_LOG(ARLog, Log, TEXT("[Dialogue] Cleared conversation cycle offer state for slot %s."),
+		*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(PlayerSlot)));
 }
 
 float UARDialogueSubsystem::GetRelationshipPointsForSpeaker(FGameplayTag SpeakerTag) const

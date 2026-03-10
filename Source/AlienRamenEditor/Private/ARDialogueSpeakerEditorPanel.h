@@ -49,11 +49,10 @@ private:
 		FString DisplayTitle;
 		FString Label;
 		FString RelationshipBandLabel;
-		FString GateSummary;
-		FString MutationSummary;
-		FString ChainSummary;
 		FString UnlocksSummary;
 		FString RequiresSummary;
+		FString RequiredTagsText;
+		FString LockedByText;
 		FGameplayTag ConversationTag;
 		FGameplayTag PrimarySpeakerTag;
 		int32 Priority = 0;
@@ -68,6 +67,7 @@ private:
 		bool bSeenByGameBlocksReoffer = false;
 		bool bSeenByPlayerBlocksReoffer = false;
 		bool bCompletedByGameBlocksReoffer = false;
+		bool bCompletedByGame = false;
 		int32 RelationshipBand = 0;
 		TWeakObjectPtr<UARDialogueConversationAsset> Asset;
 	};
@@ -131,6 +131,13 @@ private:
 	bool CanPasteSpeaker() const;
 	void BeginInlineThresholdEdit(int32 ThresholdIndex);
 	void CommitInlineThresholdEdit(int32 ThresholdIndex, const FText& NewText, ETextCommit::Type CommitType);
+	TArray<float> GetActiveThresholdsForConversationMap() const;
+	float GetMinimumRelationshipForBand(int32 BandIndex, const TArray<float>& Thresholds) const;
+	FReply HandleCycleConversationBand(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	void CommitConversationPriority(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
+	FReply HandleToggleConversationRepeatable(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	FReply HandleToggleConversationImportant(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	void CommitConversationRequiredTags(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
 	FReply HandleThresholdListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent);
 	FReply HandleSpeakerListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent);
 	const FSlateBrush* GetDefaultPortraitFieldBrush() const;
