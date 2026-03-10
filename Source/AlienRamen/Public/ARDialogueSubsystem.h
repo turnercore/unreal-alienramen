@@ -105,6 +105,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool HasActiveDialogueSession() const;
 
+	// Clears transient per-cycle offer blockers (seen/skipped). Pass Unknown to clear all player slots.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	void ClearConversationCycleOfferState(EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	float GetRelationshipPointsForSpeaker(FGameplayTag SpeakerTag) const;
 
