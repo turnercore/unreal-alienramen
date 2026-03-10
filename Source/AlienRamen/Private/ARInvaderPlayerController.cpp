@@ -321,12 +321,21 @@ void AARInvaderPlayerController::RequestActivateFullBlast()
 
 void AARInvaderPlayerController::ServerRequestActivateFullBlast_Implementation()
 {
+	AARPlayerStateBase* RequestingPlayerState = GetInvaderPlayerState();
 	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateFullBlast controller='%s' playerState='%s'"),
-		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()));
+		*GetNameSafe(this), *GetNameSafe(RequestingPlayerState));
 
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
-		InvaderGameState->RequestActivateFullBlast(GetInvaderPlayerState());
+		const bool bActivated = InvaderGameState->RequestActivateFullBlast(RequestingPlayerState);
+		if (!bActivated)
+		{
+			const FString FailureMessage = FString::Printf(
+				TEXT("[InvaderSpice|Input] Full Blast activation failed for '%s'. Check prior [InvaderSpice] error log for rejection details."),
+				*GetNameSafe(RequestingPlayerState));
+			UE_LOG(ARLog, Error, TEXT("%s"), *FailureMessage);
+			ClientMessage(FailureMessage);
+		}
 	}
 }
 

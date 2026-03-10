@@ -67,6 +67,8 @@ AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
 	{
 		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
+		// Invader players should not body-block each other in co-op.
+		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
 	}
 
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> FireRateGEClass(
@@ -559,6 +561,13 @@ void AARPlayerCharacterInvader::BeginPlay()
 {
 	Super::BeginPlay();
 	ApplyInvaderGravityFrameFromSettings();
+
+	// Reapply in case BP defaults changed capsule responses.
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
+		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
+	}
 }
 
 void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
