@@ -453,17 +453,20 @@ void AARInvaderPlayerController::RequestActivateTrackUpgrade(const int32 SlotInd
 
 void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade_Implementation(const int32 SlotIndex)
 {
-	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' slot=%d"),
-		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()), SlotIndex);
+	AARPlayerStateBase* RequestingPlayerState = GetInvaderPlayerState();
+	const int32 RequestingSlot = RequestingPlayerState ? static_cast<int32>(RequestingPlayerState->GetPlayerSlot()) : static_cast<int32>(EARPlayerSlot::Unknown);
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' playerSlot=%d slot=%d"),
+		*GetNameSafe(this), *GetNameSafe(RequestingPlayerState), RequestingSlot, SlotIndex);
 
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
-		const bool bActivated = InvaderGameState->ActivateTrackUpgrade(GetInvaderPlayerState(), SlotIndex);
+		const bool bActivated = InvaderGameState->ActivateTrackUpgrade(RequestingPlayerState, SlotIndex);
 		if (!bActivated)
 		{
 			const FString FailureMessage = FString::Printf(
-				TEXT("[InvaderSpice|Input] Track upgrade activation failed for '%s' on slot %d. Check prior [InvaderSpice|Action] logs for rejection details."),
-				*GetNameSafe(GetInvaderPlayerState()),
+				TEXT("[InvaderSpice|Input] Track upgrade activation failed for '%s' (PlayerSlot=%d) on slot %d. Check prior [InvaderSpice|Action] logs for rejection details."),
+				*GetNameSafe(RequestingPlayerState),
+				RequestingSlot,
 				SlotIndex);
 			UE_LOG(ARLog, Error, TEXT("%s"), *FailureMessage);
 			ClientMessage(FailureMessage);
