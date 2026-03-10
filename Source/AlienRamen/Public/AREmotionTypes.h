@@ -17,6 +17,10 @@ struct ALIENRAMEN_API FAREmotionIconRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	// Authoritative emotion key mapped to the icon for this row.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue"))
+	FGameplayTag EmotionTag;
+
 	// Texture shown when this row resolves for a requested emotion tag.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	TSoftObjectPtr<UTexture2D> IconTexture;
@@ -39,4 +43,3 @@ struct ALIENRAMEN_API FAREmotionDisplayState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FGameplayTag P2EmotionTag;
 };
-

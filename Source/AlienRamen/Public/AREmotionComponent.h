@@ -80,6 +80,11 @@ public:
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Emotion")
+	bool TryResolvePreviewEmotionIcon(
+		TSoftObjectPtr<UTexture2D>& OutIconTexture,
+		FGameplayTag& OutResolvedEmotionTag) const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Emotion")
 	FVector GetEmotionAnchorWorldLocation() const;
 
@@ -91,6 +96,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Emotion")
 	FGameplayTag GetRegisteredSpeakerTag() const { return RegisteredSpeakerTag; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Emotion")
+	float GetIconScreenSize() const { return IconScreenSize; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Emotion")
+	FGameplayTag GetPreviewEmotionTag() const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion")
 	FAROnEmotionDisplayStateChanged OnEmotionDisplayStateChanged;
@@ -111,9 +122,8 @@ private:
 
 	bool IsAuthorityOwner() const;
 	void ForceOwnerNetUpdate() const;
-	void BuildEmotionLookupCandidates(const FGameplayTag& RequestedTag, TArray<FGameplayTag>& OutCandidates) const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker"))
 	FGameplayTag RegisteredSpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true"))
@@ -121,6 +131,12 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true"))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0"))
+	float IconScreenSize = 48.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue"))
+	FGameplayTag PreviewEmotionTag;
 
 	UPROPERTY(ReplicatedUsing = OnRep_BaseEmotionState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true"))
 	FAREmotionDisplayState BaseEmotionState;

@@ -1,10 +1,9 @@
 #include "AREmotionComponent.h"
 
+#include "AREmotionResolverSubsystem.h"
 #include "AREmotionSettings.h"
-#include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
-#include "TagContentResolverSubsystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
@@ -14,7 +13,6 @@
 #include "GameFramework/PlayerState.h"
 #include "GameplayTagsManager.h"
 #include "Net/UnrealNetwork.h"
-#include "StructUtils/InstancedStruct.h"
 
 namespace
 {
@@ -42,21 +40,6 @@ namespace
 		return Left.MatchesTagExact(Right);
 	}
 
-	static FString JoinTagSegments(const TArray<FString>& Segments, const int32 StartIndex)
-	{
-		if (!Segments.IsValidIndex(StartIndex))
-		{
-			return FString();
-		}
-
-		FString Joined = Segments[StartIndex];
-		for (int32 Index = StartIndex + 1; Index < Segments.Num(); ++Index)
-		{
-			Joined += TEXT(".");
-			Joined += Segments[Index];
-		}
-		return Joined;
-	}
 }
 
 UAREmotionComponent::UAREmotionComponent()
@@ -245,36 +228,34 @@ bool UAREmotionComponent::TryResolveEmotionIconForTag(
 		return false;
 	}
 
-	const UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UTagContentResolverSubsystem* Lookup = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
-	if (!Lookup)
+	UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
+	if (GameInstance)
 	{
-		return false;
+		if (UAREmotionResolverSubsystem* Resolver = GameInstance->GetSubsystem<UAREmotionResolverSubsystem>())
+		{
+			return Resolver->TryResolveEmotionIcon(EmotionTag, OutIconTexture, OutResolvedEmotionTag);
+		}
 	}
 
-	TArray<FGameplayTag> CandidateTags;
-	BuildEmotionLookupCandidates(EmotionTag, CandidateTags);
-	for (const FGameplayTag Candidate : CandidateTags)
+	return UAREmotionResolverSubsystem::TryResolveEmotionIconFromConfiguredData(EmotionTag, OutIconTexture, OutResolvedEmotionTag);
+}
+
+bool UAREmotionComponent::TryResolvePreviewEmotionIcon(
+	TSoftObjectPtr<UTexture2D>& OutIconTexture,
+	FGameplayTag& OutResolvedEmotionTag) const
+{
+	const FGameplayTag PreviewTag = GetPreviewEmotionTag();
+	return TryResolveEmotionIconForTag(PreviewTag, OutIconTexture, OutResolvedEmotionTag);
+}
+
+FGameplayTag UAREmotionComponent::GetPreviewEmotionTag() const
+{
+	if (PreviewEmotionTag.IsValid())
 	{
-		FInstancedStruct RowData;
-		FString LookupError;
-		if (!Lookup->TryResolveRowForTag(Candidate, RowData, LookupError))
-		{
-			continue;
-		}
-
-		const FAREmotionIconRow* EmotionRow = RowData.GetPtr<FAREmotionIconRow>();
-		if (!EmotionRow || EmotionRow->IconTexture.IsNull())
-		{
-			continue;
-		}
-
-		OutIconTexture = EmotionRow->IconTexture;
-		OutResolvedEmotionTag = Candidate;
-		return true;
+		return PreviewEmotionTag;
 	}
 
-	return false;
+	return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Emotion.Preview")), false);
 }
 
 FVector UAREmotionComponent::GetEmotionAnchorWorldLocation() const
@@ -386,94 +367,6 @@ void UAREmotionComponent::ForceOwnerNetUpdate() const
 	if (AActor* OwnerActor = GetOwner())
 	{
 		OwnerActor->ForceNetUpdate();
-	}
-}
-
-void UAREmotionComponent::BuildEmotionLookupCandidates(const FGameplayTag& RequestedTag, TArray<FGameplayTag>& OutCandidates) const
-{
-	OutCandidates.Reset();
-	if (!RequestedTag.IsValid())
-	{
-		return;
-	}
-
-	OutCandidates.Add(RequestedTag);
-
-	const FString RequestedPath = RequestedTag.ToString();
-	TArray<FString> RequestedSegments;
-	RequestedPath.ParseIntoArray(RequestedSegments, TEXT("."), true);
-	if (RequestedSegments.IsEmpty())
-	{
-		return;
-	}
-
-	int32 SpeakerIndex = INDEX_NONE;
-	for (int32 Index = 0; Index < RequestedSegments.Num(); ++Index)
-	{
-		if (RequestedSegments[Index].Equals(TEXT("speaker"), ESearchCase::IgnoreCase))
-		{
-			SpeakerIndex = Index;
-			break;
-		}
-	}
-
-	FString SuffixPath;
-	if (SpeakerIndex != INDEX_NONE && RequestedSegments.IsValidIndex(SpeakerIndex + 2))
-	{
-		SuffixPath = JoinTagSegments(RequestedSegments, SpeakerIndex + 2);
-	}
-	else if (RequestedSegments.Num() > 1)
-	{
-		SuffixPath = RequestedSegments.Last();
-	}
-
-	if (SuffixPath.IsEmpty())
-	{
-		return;
-	}
-
-	TArray<FGameplayTag> FallbackRoots;
-	if (const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>())
-	{
-		Settings->FallbackEmotionRootTags.GetGameplayTagArray(FallbackRoots);
-	}
-
-	if (FallbackRoots.IsEmpty())
-	{
-		if (const FGameplayTag FallbackRoot = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Emotion")), false);
-			FallbackRoot.IsValid())
-		{
-			FallbackRoots.Add(FallbackRoot);
-		}
-
-		if (const FGameplayTag FallbackRoot = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Emotion")), false);
-			FallbackRoot.IsValid())
-		{
-			FallbackRoots.Add(FallbackRoot);
-		}
-	}
-
-	for (const FGameplayTag RootTag : FallbackRoots)
-	{
-		if (!RootTag.IsValid())
-		{
-			continue;
-		}
-
-		const FString CandidatePath = FString::Printf(TEXT("%s.%s"), *RootTag.ToString(), *SuffixPath);
-		const FGameplayTag Candidate = UGameplayTagsManager::Get().RequestGameplayTag(FName(*CandidatePath), false);
-		if (!Candidate.IsValid())
-		{
-			continue;
-		}
-
-		if (!OutCandidates.ContainsByPredicate([&Candidate](const FGameplayTag Existing)
-			{
-				return Existing.MatchesTagExact(Candidate);
-			}))
-		{
-			OutCandidates.Add(Candidate);
-		}
 	}
 }
 

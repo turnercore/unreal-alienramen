@@ -89,7 +89,9 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
 - Dialogue line `SpeakerTag` may include an emotion leaf (example: `Dialogue.Speaker.Fred.Angry`).
-- Emotion icon lookup resolves the most specific tag first, then configured fallback roots (for example `Dialogue.Speaker.Emotion.*` or `Dialogue.Emotion.*`) through TagContentResolver row type `FAREmotionIconRow`.
+- Emotion icon lookup is resolved from a direct DataTable reference in `UAREmotionSettings` (row type `FAREmotionIconRow`) and cached by `UAREmotionResolverSubsystem`.
+- Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`).
+- `UAREmotionComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
 
 ## Offer + Execution Rules (Current Runtime)
 
