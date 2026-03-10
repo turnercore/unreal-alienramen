@@ -4,9 +4,6 @@
  */
 #pragma once
 
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
@@ -262,8 +259,6 @@ protected:
 public:	
 	// Set to false by default; enable in child Blueprints if needed.
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AR|Enemy|GAS")

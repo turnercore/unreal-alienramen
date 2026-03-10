@@ -16,6 +16,7 @@ class AAREnemyBase;
 class AARInvaderDropBase;
 class UARInvaderSpicyTrackSettings;
 class IConsoleObject;
+class UDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderSharedTrackChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderFullBlastSessionChangedSignature, bool, bIsActive);
@@ -190,6 +191,9 @@ private:
 	AARPlayerStateBase* ResolvePlayerStateFromDebugToken(const FString& Token) const;
 	bool ResolveUpgradeTagForDebugInject(const FString& TagToken, FGameplayTag& OutUpgradeTag) const;
 	void ReconcilePlayerCursorSelection();
+	int32 ResolveInvaderRunSeed() const;
+	int32 ResolveInvaderRunEndEventId() const;
+	void RefreshDeterministicRngSeedsFromRunState();
 
 	const UARInvaderSpicyTrackSettings* GetSpicyTrackSettings() const;
 	void InitializeSpicyTrackState();
@@ -227,7 +231,7 @@ private:
 		bool bHasEffectOrigin,
 		FGameplayTag EnemyIdentifierTag);
 	void TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateBase* KillerPlayerState);
-	float RollDropAmountWithVariance(float BaseDropAmount, EARInvaderDropType DropType) const;
+	float RollDropAmountWithVariance(float BaseDropAmount, EARInvaderDropType DropType);
 	float ResolveKillerDropMultiplier(const AARPlayerStateBase* KillerPlayerState, EARInvaderDropType DropType) const;
 	void ResolveDropStackDefinitions(EARInvaderDropType DropType, TArray<FResolvedDropStackEntry>& OutDefinitions) const;
 	bool BuildDropSpawnPlan(EARInvaderDropType DropType, int32 TotalAmount, TArray<FDropSpawnPlanEntry>& OutPlan) const;
@@ -257,6 +261,19 @@ private:
 
 	UPROPERTY(Transient)
 	FRandomStream OfferRng;
+
+	UPROPERTY(Transient)
+	FRandomStream DropRng;
+
+	UPROPERTY(Transient)
+	int32 CachedRngRunSeed = TNumericLimits<int32>::Min();
+
+	UPROPERTY(Transient)
+	int32 CachedRngRunEndEventId = TNumericLimits<int32>::Min();
+
+	mutable bool bUpgradeDefinitionCacheValid = false;
+	mutable TWeakObjectPtr<UDataTable> CachedUpgradeDefinitionTable;
+	mutable TMap<FGameplayTag, FARInvaderUpgradeDefRow> CachedUpgradeDefinitions;
 
 	IConsoleObject* CmdDebugSetSpice = nullptr;
 	IConsoleObject* CmdDebugAddSpice = nullptr;

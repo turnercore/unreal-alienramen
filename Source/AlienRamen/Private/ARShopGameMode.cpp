@@ -7,6 +7,7 @@
 AARShopGameMode::AARShopGameMode()
 {
 	ModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+	ensureMsgf(ModeTag.IsValid(), TEXT("[ShopGameMode] Required gameplay tag 'Mode.Shop' is missing."));
 }
 
 bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)

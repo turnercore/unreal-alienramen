@@ -44,16 +44,6 @@ namespace ARInvaderInternal
 		return InColor;
 	}
 
-	static const TCHAR* ToPhaseName(EARWavePhase Phase)
-	{
-		switch (Phase)
-		{
-		case EARWavePhase::Active: return TEXT("Active");
-		case EARWavePhase::Berserk: return TEXT("Berserk");
-		default: return TEXT("Unknown");
-		}
-	}
-
 	static bool IntersectRayWithHorizontalPlane(const FVector& RayOrigin, const FVector& RayDirection, float PlaneZ, FVector& OutPoint)
 	{
 		if (FMath::IsNearlyZero(RayDirection.Z, KINDA_SMALL_NUMBER))
@@ -93,7 +83,8 @@ void UARInvaderDirectorSubsystem::Deinitialize()
 
 bool UARInvaderDirectorSubsystem::IsTickable() const
 {
-	return GetWorld() != nullptr;
+	const UWorld* World = GetWorld();
+	return World && World->IsGameWorld();
 }
 
 TStatId UARInvaderDirectorSubsystem::GetStatId() const
@@ -144,37 +135,8 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 	bRunActive = true;
 	RunSeed = Seed;
 	RunRng.Initialize(RunSeed);
-	Threat = 0.f;
-	RunElapsed = 0.f;
-	StageElapsed = 0.f;
-	StageChoiceElapsed = 0.f;
-	StageTransitionRemaining = 0.f;
-	TimeSinceLastWaveSpawn = TNumericLimits<float>::Max();
-	NextWaveInstanceId = 1;
-	LeakCount = 0;
-	StageSequence = 0;
-	RewardEventId = 0;
 	LastRunEndReason = EARInvaderRunEndReason::None;
-	FlowState = EARInvaderFlowState::Stopped;
-	ActiveWaves.Reset();
-	OneTimeWaveRowsUsed.Reset();
-	LastWaveRowName = NAME_None;
-	ReportedLeakedEnemies.Reset();
-	bAllPlayersDownCached = false;
-	bAllPlayersDeadCached = false;
-	EvaluatedPlayerCountCached = 0;
-	DownedPlayerCountCached = 0;
-	DeadPlayerCountCached = 0;
-	PlayerDownedCache.Reset();
-	PlayerDeadCache.Reset();
-	EnemyDefinitionCache.Reset();
-	EnemyClassPreloadHandles.Reset();
-	OffscreenDurationByEnemy.Reset();
-	PendingStageRow = NAME_None;
-	ChoiceLeftStageRow = NAME_None;
-	ChoiceRightStageRow = NAME_None;
-	LastRewardStageRow = NAME_None;
-	LastRewardDescriptor.Reset();
+	ResetRunState(/*bForActiveRunStart=*/true);
 
 	FName StageRow = NAME_None;
 	FARStageDefRow StageDef;
@@ -228,44 +190,10 @@ void UARInvaderDirectorSubsystem::StopInvaderRunWithReason(EARInvaderRunEndReaso
 	const bool bWasAllPlayersDown = bAllPlayersDownCached;
 	const bool bWasAllPlayersDead = bAllPlayersDeadCached;
 	bRunActive = false;
-	FlowState = EARInvaderFlowState::Stopped;
 	LastRunEndReason = EndReason;
 	RunEndEventId++;
 	RunSeed = 0;
-	Threat = 0.f;
-	RunElapsed = 0.f;
-	StageElapsed = 0.f;
-	StageChoiceElapsed = 0.f;
-	StageTransitionRemaining = 0.f;
-	TimeSinceLastWaveSpawn = 0.f;
-	NextWaveInstanceId = 1;
-	LeakCount = 0;
-	StageSequence = 0;
-	RewardEventId = 0;
-	ActiveWaves.Reset();
-	OneTimeWaveRowsUsed.Reset();
-	LastWaveRowName = NAME_None;
-	ReportedLeakedEnemies.Reset();
-	bAllPlayersDownCached = false;
-	bAllPlayersDeadCached = false;
-	EvaluatedPlayerCountCached = 0;
-	DownedPlayerCountCached = 0;
-	DeadPlayerCountCached = 0;
-	PlayerDownedCache.Reset();
-	PlayerDeadCache.Reset();
-	EnemyDefinitionCache.Reset();
-	EnemyClassPreloadHandles.Reset();
-	OffscreenDurationByEnemy.Reset();
-	CurrentStageRow = NAME_None;
-	CurrentStageDef = FARStageDefRow();
-	PendingStageRow = NAME_None;
-	PendingStageDef = FARStageDefRow();
-	ChoiceLeftStageRow = NAME_None;
-	ChoiceLeftStageDef = FARStageDefRow();
-	ChoiceRightStageRow = NAME_None;
-	ChoiceRightStageDef = FARStageDefRow();
-	LastRewardStageRow = NAME_None;
-	LastRewardDescriptor.Reset();
+	ResetRunState(/*bForActiveRunStart=*/false);
 	PushSnapshotToGameState();
 	OnRunEnded.Broadcast(EndReason);
 	if (bWasAllPlayersDown)
@@ -277,6 +205,49 @@ void UARInvaderDirectorSubsystem::StopInvaderRunWithReason(EARInvaderRunEndReaso
 		OnAllPlayersDeadChanged.Broadcast(false);
 	}
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stopped run. Reason=%d"), static_cast<int32>(EndReason));
+}
+
+void UARInvaderDirectorSubsystem::ResetRunState(const bool bForActiveRunStart)
+{
+	FlowState = EARInvaderFlowState::Stopped;
+	Threat = 0.f;
+	RunElapsed = 0.f;
+	StageElapsed = 0.f;
+	StageChoiceElapsed = 0.f;
+	StageTransitionRemaining = 0.f;
+	TimeSinceLastWaveSpawn = bForActiveRunStart ? TNumericLimits<float>::Max() : 0.f;
+	NextWaveInstanceId = 1;
+	LeakCount = 0;
+	StageSequence = 0;
+	RewardEventId = 0;
+
+	ActiveWaves.Reset();
+	OneTimeWaveRowsUsed.Reset();
+	LastWaveRowName = NAME_None;
+	ReportedLeakedEnemies.Reset();
+
+	bAllPlayersDownCached = false;
+	bAllPlayersDeadCached = false;
+	EvaluatedPlayerCountCached = 0;
+	DownedPlayerCountCached = 0;
+	DeadPlayerCountCached = 0;
+	PlayerDownedCache.Reset();
+	PlayerDeadCache.Reset();
+
+	EnemyDefinitionCache.Reset();
+	EnemyClassPreloadHandles.Reset();
+	OffscreenDurationByEnemy.Reset();
+
+	CurrentStageRow = NAME_None;
+	CurrentStageDef = FARStageDefRow();
+	PendingStageRow = NAME_None;
+	PendingStageDef = FARStageDefRow();
+	ChoiceLeftStageRow = NAME_None;
+	ChoiceLeftStageDef = FARStageDefRow();
+	ChoiceRightStageRow = NAME_None;
+	ChoiceRightStageDef = FARStageDefRow();
+	LastRewardStageRow = NAME_None;
+	LastRewardDescriptor.Reset();
 }
 
 bool UARInvaderDirectorSubsystem::IsPlayerDowned(const AARPlayerStateBase* PlayerState) const
@@ -1135,7 +1106,7 @@ bool UARInvaderDirectorSubsystem::TransitionWavePhase(FWaveRuntimeInternal& Wave
 	}
 
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Wave %d ('%s') phase -> %s"),
-		Wave.WaveInstanceId, *Wave.RowName.ToString(), ARInvaderInternal::ToPhaseName(NewPhase));
+		Wave.WaveInstanceId, *Wave.RowName.ToString(), ARInvaderWavePhaseToString(NewPhase));
 	return true;
 }
 
