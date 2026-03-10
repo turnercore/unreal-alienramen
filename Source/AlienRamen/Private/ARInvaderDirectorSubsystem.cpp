@@ -3,13 +3,12 @@
 #include "AREnemyBase.h"
 #include "AREnemyAIController.h"
 #include "ARAttributeSetCore.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
 #include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
-#include "ContentLookupSubsystem.h"
 
 #include "AbilitySystemComponent.h"
 #include "Algo/StableSort.h"
@@ -1465,15 +1464,15 @@ bool UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag(FGameplayTag Enemy
 		return false;
 	}
 
-	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
 	if (!Lookup)
 	{
-		OutError = TEXT("No ContentLookupSubsystem.");
+		OutError = TEXT("No TagContentResolverSubsystem.");
 		return false;
 	}
 
 	FInstancedStruct ResolvedRow;
-	if (!Lookup->LookupWithGameplayTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	if (!Lookup->TryResolveRowForTag(EnemyIdentifierTag, ResolvedRow, OutError))
 	{
 		return false;
 	}
@@ -1785,10 +1784,10 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
-	UContentLookupSubsystem* ContentLookup = GameInstance ? GameInstance->GetSubsystem<UContentLookupSubsystem>() : nullptr;
-	if (!ContentLookup)
+	UTagContentResolverSubsystem* TagContentResolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	if (!TagContentResolver)
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] ContentLookupSubsystem unavailable while resolving wave/stage tables."));
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] TagContentResolverSubsystem unavailable while resolving wave/stage tables."));
 		return false;
 	}
 
@@ -1798,10 +1797,10 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		if (Settings->WaveDefinitionRootTag.IsValid())
 		{
 			UDataTable* ResolvedWaveTable = nullptr;
-			if (!ContentLookup->GetDataTableForRootTag(Settings->WaveDefinitionRootTag, ResolvedWaveTable, LookupError))
+			if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->WaveDefinitionRootTag, ResolvedWaveTable, LookupError))
 			{
 				FGameplayTag MatchedRoot;
-				ContentLookup->GetDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
+				TagContentResolver->TryResolveDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
 			}
 			WaveTable = ResolvedWaveTable;
 		}
@@ -1809,7 +1808,7 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		{
 			UDataTable* ResolvedWaveTable = nullptr;
 			FGameplayTag MatchedRoot;
-			ContentLookup->GetDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
+			TagContentResolver->TryResolveDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
 			WaveTable = ResolvedWaveTable;
 		}
 	}
@@ -1819,10 +1818,10 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		if (Settings->StageDefinitionRootTag.IsValid())
 		{
 			UDataTable* ResolvedStageTable = nullptr;
-			if (!ContentLookup->GetDataTableForRootTag(Settings->StageDefinitionRootTag, ResolvedStageTable, LookupError))
+			if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->StageDefinitionRootTag, ResolvedStageTable, LookupError))
 			{
 				FGameplayTag MatchedRoot;
-				ContentLookup->GetDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
+				TagContentResolver->TryResolveDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
 			}
 			StageTable = ResolvedStageTable;
 		}
@@ -1830,7 +1829,7 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		{
 			UDataTable* ResolvedStageTable = nullptr;
 			FGameplayTag MatchedRoot;
-			ContentLookup->GetDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
+			TagContentResolver->TryResolveDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
 			StageTable = ResolvedStageTable;
 		}
 	}
@@ -2481,3 +2480,4 @@ void UARInvaderDirectorSubsystem::HandleConsoleCaptureBounds(const TArray<FStrin
 
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector|BoundsCapture] Applied + saved GameplayBoundsMin/Max to project settings."));
 }
+

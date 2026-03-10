@@ -9,15 +9,16 @@
 #include "GameplayTagContainer.h"
 #include "ARFactionSettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Alien Ramen Factions"))
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Factions"))
 class ALIENRAMEN_API UARFactionSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|NPC"); }
+	virtual FName GetSectionName() const override { return TEXT("Factions"); }
 
-	// Root used for ContentLookup route resolution and row tag reconstruction.
+	// Root used for TagContentResolver route resolution and row tag reconstruction.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Faction")
 	FGameplayTag FactionDefinitionRootTag;
 };

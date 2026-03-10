@@ -5,7 +5,7 @@
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
 #include "TimerManager.h"
@@ -126,15 +126,15 @@ void AARInvaderPlayerController::BuildOfferDefinitionsForSession(
 		return;
 	}
 
-	UContentLookupSubsystem* ContentLookup = GetGameInstance() ? GetGameInstance()->GetSubsystem<UContentLookupSubsystem>() : nullptr;
-	if (!ContentLookup)
+	UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	if (!TagContentResolver)
 	{
 		return;
 	}
 
 	UDataTable* UpgradeTable = nullptr;
 	FString LookupError;
-	if (!ContentLookup->GetDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError) || !UpgradeTable)
+	if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError) || !UpgradeTable)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|UI] Could not resolve upgrade table for full-blast menu: %s"), *LookupError);
 		return;
@@ -521,3 +521,4 @@ void AARInvaderPlayerController::ServerRequestClearOfferPresence_Implementation(
 		InvaderGameState->ClearOfferPresence(GetInvaderPlayerState());
 	}
 }
+

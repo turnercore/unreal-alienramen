@@ -9,7 +9,7 @@
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARProjectileBase.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "AbilitySystemComponent.h"
 #include "Curves/CurveFloat.h"
 #include "Components/PrimitiveComponent.h"
@@ -316,14 +316,14 @@ bool AARInvaderGameState::ResolveUpgradeTagForDebugInject(const FString& TagToke
 	{
 		OutTable = nullptr;
 		const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-		UContentLookupSubsystem* ContentLookup = GetGameInstance() ? GetGameInstance()->GetSubsystem<UContentLookupSubsystem>() : nullptr;
-		if (!Settings || !Settings->UpgradeDefinitionRootTag.IsValid() || !ContentLookup)
+		UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+		if (!Settings || !Settings->UpgradeDefinitionRootTag.IsValid() || !TagContentResolver)
 		{
 			return false;
 		}
 
 		FString LookupError;
-		return ContentLookup->GetDataTableForRootTag(Settings->UpgradeDefinitionRootTag, OutTable, LookupError) && OutTable;
+		return TagContentResolver->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, OutTable, LookupError) && OutTable;
 	};
 
 	const auto ResolveByRowName = [](UDataTable* UpgradeTable, const FString& RowToken, FGameplayTag& OutTag) -> bool
@@ -630,7 +630,7 @@ void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args
 	const FString TagToken = Args.Num() > 0 ? Args[0] : FString();
 	if (!ResolveUpgradeTagForDebugInject(TagToken, UpgradeTag))
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: no valid upgrade tag resolved. Provide gameplay tag or row name, or ensure the ContentLookup root for upgrades has rows."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: no valid upgrade tag resolved. Provide gameplay tag or row name, or ensure the TagContentResolver root for upgrades has rows."));
 		return;
 	}
 
@@ -1066,16 +1066,16 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 		return false;
 	}
 
-	UContentLookupSubsystem* ContentLookup = GetGameInstance() ? GetGameInstance()->GetSubsystem<UContentLookupSubsystem>() : nullptr;
-	if (!ContentLookup)
+	UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	if (!TagContentResolver)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ContentLookupSubsystem unavailable while resolving upgrades."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] TagContentResolverSubsystem unavailable while resolving upgrades."));
 		return false;
 	}
 
 	FString LookupError;
 	UDataTable* UpgradeTable = nullptr;
-	if (!ContentLookup->GetDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError))
+	if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError))
 	{
 		UE_LOG(
 			ARLog,
@@ -2568,16 +2568,16 @@ float AARInvaderGameState::ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy)
 		return FallbackValue;
 	}
 
-	UContentLookupSubsystem* ContentLookup = GetGameInstance() ? GetGameInstance()->GetSubsystem<UContentLookupSubsystem>() : nullptr;
-	if (!ContentLookup)
+	UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	if (!TagContentResolver)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: missing ContentLookupSubsystem. Fallback=%.2f"), FallbackValue);
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: missing TagContentResolverSubsystem. Fallback=%.2f"), FallbackValue);
 		return FallbackValue;
 	}
 
 	FInstancedStruct RowData;
 	FString LookupError;
-	if (!ContentLookup->LookupWithGameplayTag(EnemyIdentifier, RowData, LookupError))
+	if (!TagContentResolver->TryResolveRowForTag(EnemyIdentifier, RowData, LookupError))
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: lookup failed for '%s' (%s). Fallback=%.2f"),
 			*EnemyIdentifier.ToString(), *LookupError, FallbackValue);
@@ -2807,3 +2807,4 @@ void AARInvaderGameState::ClearWhileSlottedEffectsForPlayer(AARPlayerStateBase* 
 		}
 	}
 }
+

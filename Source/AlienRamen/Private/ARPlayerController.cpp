@@ -1,11 +1,13 @@
 #include "ARPlayerController.h"
 #include "ARDialogueSubsystem.h"
+#include "ARDialogueWidgetBase.h"
 #include "ARHUDBase.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARInvaderGameState.h"
 #include "ARLobbyPlayerController.h"
 #include "ARLog.h"
+#include "ARNPCCharacterBase.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "EnhancedInputSubsystems.h"
@@ -27,6 +29,8 @@ void AARPlayerController::BeginPlay()
 	ApplyDefaultInputMappings(true);
 	InitializeCustomCursor();
 	RequestHUDInitializationInternal(false);
+	EnsureDialogueWidget();
+	RefreshDialogueInputStateFromSession();
 
 	if (IsLocalController() && !HasAuthority() && !bRequestedInitialCanonicalSaveSync)
 	{
@@ -38,6 +42,12 @@ void AARPlayerController::BeginPlay()
 void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	SetPauseMenuOpenLocal(false);
+	ApplyDialogueInputContexts(false);
+	if (bDialogueInputModeApplied)
+	{
+		ApplyDialogueInputMode(false);
+	}
+	RemoveDialogueWidget();
 	ApplyDefaultInputMappings(false);
 	StopHUDInitializationRetry();
 	Super::EndPlay(EndPlayReason);
@@ -292,13 +302,34 @@ void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag
 	RequestStartDialogue(NpcTag);
 }
 
+void AARPlayerController::RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)
+{
+	if (!NpcActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		NpcActor->InteractByController(this);
+		return;
+	}
+
+	ServerRequestInteractWithNpc(NpcActor);
+}
+
+void AARPlayerController::ServerRequestInteractWithNpc_Implementation(AARNPCCharacterBase* NpcActor)
+{
+	RequestInteractWithNpc(NpcActor);
+}
+
 void AARPlayerController::RequestAdvanceDialogue()
 {
 	if (HasAuthority())
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->AdvanceDialogue(this);
+			DialogueSubsystem->AdvanceConversation(this);
 		}
 		return;
 	}
@@ -311,23 +342,23 @@ void AARPlayerController::ServerRequestAdvanceDialogue_Implementation()
 	RequestAdvanceDialogue();
 }
 
-void AARPlayerController::RequestSubmitDialogueChoice(FGameplayTag ChoiceTag)
+void AARPlayerController::RequestSubmitDialogueChoice(FGuid ChoiceBranchId)
 {
 	if (HasAuthority())
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceTag);
+			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceBranchId);
 		}
 		return;
 	}
 
-	ServerRequestSubmitDialogueChoice(ChoiceTag);
+	ServerRequestSubmitDialogueChoice(ChoiceBranchId);
 }
 
-void AARPlayerController::ServerRequestSubmitDialogueChoice_Implementation(FGameplayTag ChoiceTag)
+void AARPlayerController::ServerRequestSubmitDialogueChoice_Implementation(FGuid ChoiceBranchId)
 {
-	RequestSubmitDialogueChoice(ChoiceTag);
+	RequestSubmitDialogueChoice(ChoiceBranchId);
 }
 
 void AARPlayerController::RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)
@@ -349,14 +380,197 @@ void AARPlayerController::ServerRequestSetDialogueEavesdrop_Implementation(bool 
 	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
 }
 
-void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FARDialogueClientView& View)
+void AARPlayerController::RequestSetDialogueEavesdropOtherPlayer(bool bEnable)
 {
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	if (!ARPS)
+	{
+		return;
+	}
+
+	EARPlayerSlot TargetSlot = EARPlayerSlot::Unknown;
+	switch (ARPS->GetPlayerSlot())
+	{
+	case EARPlayerSlot::P1:
+		TargetSlot = EARPlayerSlot::P2;
+		break;
+	case EARPlayerSlot::P2:
+		TargetSlot = EARPlayerSlot::P1;
+		break;
+	default:
+		break;
+	}
+
+	if (TargetSlot == EARPlayerSlot::Unknown)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] RequestSetDialogueEavesdropOtherPlayer ignored: controller '%s' has unknown player slot."), *GetNameSafe(this));
+		return;
+	}
+
+	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
+}
+
+void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FDialogueClientView& View)
+{
+	const int32 OldChoiceIndex = SelectedDialogueChoiceIndex;
+	CachedDialogueView = View;
+	bHasCachedDialogueView = true;
+	if (View.bWaitingForChoice && View.Choices.Num() > 0)
+	{
+		SelectedDialogueChoiceIndex = FMath::Clamp(
+			(OldChoiceIndex == INDEX_NONE) ? 0 : OldChoiceIndex,
+			0,
+			View.Choices.Num() - 1);
+	}
+	else
+	{
+		SelectedDialogueChoiceIndex = INDEX_NONE;
+	}
+	if (SelectedDialogueChoiceIndex != OldChoiceIndex)
+	{
+		OnDialogueChoiceSelectionChanged.Broadcast(SelectedDialogueChoiceIndex, OldChoiceIndex);
+	}
+	OnDialogueViewUpdated.Broadcast(View);
+	EnsureDialogueWidget();
+	RefreshDialogueInputStateFromSession();
 	BP_OnDialogueSessionUpdated(View);
 }
 
 void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FString& SessionId)
 {
+	if (bHasCachedDialogueView && CachedDialogueView.SessionId == SessionId)
+	{
+		CachedDialogueView = FDialogueClientView();
+		bHasCachedDialogueView = false;
+	}
+	SetSelectedDialogueChoiceIndex(INDEX_NONE);
+	RefreshDialogueInputStateFromSession();
+	OnDialogueSessionEndedSignal.Broadcast(SessionId);
 	BP_OnDialogueSessionEnded(SessionId);
+}
+
+bool AARPlayerController::GetCachedDialogueView(FDialogueClientView& OutView) const
+{
+	OutView = bHasCachedDialogueView ? CachedDialogueView : FDialogueClientView();
+	return bHasCachedDialogueView;
+}
+
+bool AARPlayerController::QueryLocalDialogueView(FDialogueClientView& OutView) const
+{
+	OutView = FDialogueClientView();
+	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+	{
+		return DialogueSubsystem->GetLocalViewForController(this, OutView);
+	}
+	return false;
+}
+
+void AARPlayerController::RequestToggleDialogueAutoAdvance()
+{
+	AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	if (!ARPS)
+	{
+		return;
+	}
+
+	ARPS->SetDialogueAutoAdvanceEnabled(!ARPS->IsDialogueAutoAdvanceEnabled());
+}
+
+bool AARPlayerController::GetSelectedDialogueChoiceBranchId(FGuid& OutChoiceBranchId) const
+{
+	OutChoiceBranchId.Invalidate();
+	if (!bHasCachedDialogueView || !CachedDialogueView.bWaitingForChoice)
+	{
+		return false;
+	}
+
+	const int32 ChoiceCount = CachedDialogueView.Choices.Num();
+	if (ChoiceCount <= 0)
+	{
+		return false;
+	}
+
+	const int32 ResolvedIndex = (SelectedDialogueChoiceIndex == INDEX_NONE)
+		? 0
+		: FMath::Clamp(SelectedDialogueChoiceIndex, 0, ChoiceCount - 1);
+	const FDialogueChoiceView& Choice = CachedDialogueView.Choices[ResolvedIndex];
+	if (!Choice.bCanChoose || !Choice.ChoiceBranchId.IsValid())
+	{
+		return false;
+	}
+
+	OutChoiceBranchId = Choice.ChoiceBranchId;
+	return true;
+}
+
+void AARPlayerController::RequestAdvanceOrSubmitDialogue()
+{
+	if (bHasCachedDialogueView && CachedDialogueView.bWaitingForChoice)
+	{
+		FGuid SelectedBranchId;
+		if (GetSelectedDialogueChoiceBranchId(SelectedBranchId))
+		{
+			RequestSubmitDialogueChoice(SelectedBranchId);
+			return;
+		}
+	}
+
+	RequestAdvanceDialogue();
+}
+
+void AARPlayerController::RequestDialogueChoiceDelta(const int32 Delta)
+{
+	if (!bHasCachedDialogueView || !CachedDialogueView.bWaitingForChoice || CachedDialogueView.Choices.Num() <= 0 || Delta == 0)
+	{
+		return;
+	}
+
+	const int32 ChoiceCount = CachedDialogueView.Choices.Num();
+	const int32 CurrentIndex = (SelectedDialogueChoiceIndex == INDEX_NONE)
+		? 0
+		: FMath::Clamp(SelectedDialogueChoiceIndex, 0, ChoiceCount - 1);
+	const int32 NewIndex = (CurrentIndex + Delta % ChoiceCount + ChoiceCount) % ChoiceCount;
+	SetSelectedDialogueChoiceIndex(NewIndex);
+}
+
+void AARPlayerController::EnsureDialogueWidget()
+{
+	if (!IsLocalController() || !bAutoCreateDialogueWidget)
+	{
+		return;
+	}
+
+	if (DialogueWidget)
+	{
+		return;
+	}
+
+	if (!DialogueWidgetClass)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue|UI] Auto dialogue widget skipped on '%s': DialogueWidgetClass is not set."), *GetNameSafe(this));
+		return;
+	}
+
+	DialogueWidget = CreateWidget<UARDialogueWidgetBase>(this, DialogueWidgetClass);
+	if (!DialogueWidget)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Dialogue|UI] Failed to create auto dialogue widget for '%s'."), *GetNameSafe(this));
+		return;
+	}
+
+	DialogueWidget->InitializeDialogueWidget(this);
+	DialogueWidget->AddToViewport(DialogueWidgetZOrder);
+}
+
+void AARPlayerController::RemoveDialogueWidget()
+{
+	if (!DialogueWidget)
+	{
+		return;
+	}
+
+	DialogueWidget->RemoveFromParent();
+	DialogueWidget = nullptr;
 }
 
 void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroadcast)
@@ -790,6 +1004,118 @@ void AARPlayerController::ApplyPauseInputMode(const bool bEnable)
 	bPauseInputModeApplied = false;
 }
 
+void AARPlayerController::ApplyDialogueInputContexts(const bool bEnable)
+{
+	if (!bAutoManageDialogueInputContexts || !IsLocalPlayerController())
+	{
+		return;
+	}
+
+	ULocalPlayer* LocalPlayer = GetLocalPlayer();
+	if (!LocalPlayer)
+	{
+		return;
+	}
+
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (!InputSubsystem)
+	{
+		return;
+	}
+
+	if (bEnable)
+	{
+		if (bDialogueInputContextsApplied)
+		{
+			return;
+		}
+
+		ApplyDefaultInputMappings(false);
+		if (DialogueInputMappingContext)
+		{
+			InputSubsystem->AddMappingContext(DialogueInputMappingContext, DialogueInputPriority);
+		}
+		bDialogueInputContextsApplied = true;
+		return;
+	}
+
+	if (!bDialogueInputContextsApplied)
+	{
+		return;
+	}
+
+	if (DialogueInputMappingContext)
+	{
+		InputSubsystem->RemoveMappingContext(DialogueInputMappingContext);
+	}
+	ApplyDefaultInputMappings(true);
+	bDialogueInputContextsApplied = false;
+}
+
+void AARPlayerController::ApplyDialogueInputMode(const bool bEnable)
+{
+	if (!bAutoManageDialogueInputMode || !IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (bEnable)
+	{
+		bCachedShowMouseCursorForDialogue = bShowMouseCursor;
+		bShowMouseCursor = true;
+
+		FInputModeGameAndUI InputMode;
+		if (DialogueWidget)
+		{
+			InputMode.SetWidgetToFocus(DialogueWidget->TakeWidget());
+		}
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		InputMode.SetHideCursorDuringCapture(false);
+		SetInputMode(InputMode);
+		bDialogueInputModeApplied = true;
+		return;
+	}
+
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = bCachedShowMouseCursorForDialogue;
+	bDialogueInputModeApplied = false;
+}
+
+void AARPlayerController::RefreshDialogueInputStateFromSession()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	FDialogueClientView LocalView;
+	const bool bDialogueActive = QueryLocalDialogueView(LocalView) || bHasCachedDialogueView;
+	ApplyDialogueInputContexts(bDialogueActive);
+	if (bDialogueActive)
+	{
+		ApplyDialogueInputMode(true);
+		return;
+	}
+
+	if (bDialogueInputModeApplied)
+	{
+		ApplyDialogueInputMode(false);
+	}
+}
+
+void AARPlayerController::SetSelectedDialogueChoiceIndex(const int32 NewIndex)
+{
+	if (SelectedDialogueChoiceIndex == NewIndex)
+	{
+		return;
+	}
+
+	const int32 OldIndex = SelectedDialogueChoiceIndex;
+	SelectedDialogueChoiceIndex = NewIndex;
+	OnDialogueChoiceSelectionChanged.Broadcast(SelectedDialogueChoiceIndex, OldIndex);
+}
+
 bool AARPlayerController::ShowPauseOverlayWidget()
 {
 	if (!PauseOverlayWidgetClass)
@@ -886,7 +1212,7 @@ bool AARPlayerController::IsDialogueSessionActiveLocal() const
 {
 	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 	{
-		FARDialogueClientView View;
+		FDialogueClientView View;
 		return DialogueSubsystem->GetLocalViewForController(this, View);
 	}
 
