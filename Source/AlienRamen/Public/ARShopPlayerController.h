@@ -8,6 +8,8 @@
 #include "ARPlayerController.h"
 #include "ARShopPlayerController.generated.h"
 
+class AARShopDispenserActor;
+
 UCLASS()
 class ALIENRAMEN_API AARShopPlayerController : public AARPlayerController
 {
@@ -15,4 +17,10 @@ class ALIENRAMEN_API AARShopPlayerController : public AARPlayerController
 
 public:
 	AARShopPlayerController();
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, FGameplayTag ItemTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, FGameplayTag ItemTag);
 };

@@ -6,15 +6,14 @@
 
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
-#include "GameFramework/Actor.h"
+#include "ARShopDispenserActor.h"
 #include "ARMeatStorageBoxActor.generated.h"
 
 class AARPlayerController;
 class AARRamenMeatActor;
-class USceneComponent;
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARMeatStorageBoxActor : public AActor
+class ALIENRAMEN_API AARMeatStorageBoxActor : public AARShopDispenserActor
 {
 	GENERATED_BODY()
 
@@ -25,11 +24,7 @@ public:
 	bool TryDispenseMeat(AARPlayerController* RequestingController);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
-	TObjectPtr<USceneComponent> SceneRoot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
-	TObjectPtr<USceneComponent> SpawnAnchor;
+	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
 	EARAffinityColor MeatColor = EARAffinityColor::Red;
@@ -39,4 +34,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
 	TSubclassOf<AARRamenMeatActor> MeatActorClass;
+
+	// Optional typed item tag forwarded into generic dispenser lookup.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Shop.Item"))
+	FGameplayTag MeatItemTag;
+
+private:
+	void SyncLegacyDefinition();
 };
