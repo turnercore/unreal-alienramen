@@ -5,7 +5,7 @@
 #include "ARLog.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
-#include "ContentLookupSubsystem.h"
+#include "TagContentResolverSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameplayTagsManager.h"
@@ -112,6 +112,43 @@ bool UARFactionSubsystem::SubmitVote(EARPlayerSlot PlayerSlot, FGameplayTag Sele
 void UARFactionSubsystem::ClearVotes()
 {
 	VoteSelections.Reset();
+}
+
+bool UARFactionSubsystem::ModifyFactionPopularity(FGameplayTag FactionTag, float DeltaPopularity)
+{
+	if (!IsAuthorityWorld_Faction(GetWorld()) || !FactionTag.IsValid())
+	{
+		return false;
+	}
+
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	if (!SaveSubsystem || !SaveGame)
+	{
+		return false;
+	}
+
+	FARFactionRuntimeState* RuntimeState = nullptr;
+	for (FARFactionRuntimeState& Entry : SaveGame->FactionPopularityStates)
+	{
+		if (Entry.FactionTag.MatchesTagExact(FactionTag))
+		{
+			RuntimeState = &Entry;
+			break;
+		}
+	}
+
+	if (!RuntimeState)
+	{
+		FARFactionRuntimeState& Added = SaveGame->FactionPopularityStates.AddDefaulted_GetRef();
+		Added.FactionTag = FactionTag;
+		RuntimeState = &Added;
+	}
+
+	RuntimeState->Popularity += DeltaPopularity;
+	SaveSubsystem->MarkSaveDirty();
+	bSnapshotValid = false;
+	return true;
 }
 
 bool UARFactionSubsystem::FinalizeElectionForTravel(FGameplayTag& OutWinnerFactionTag, EARFactionWinnerReason& OutReason)
@@ -241,7 +278,7 @@ bool UARFactionSubsystem::BuildResolvedDefinitions(TArray<FFactionResolvedDef>& 
 		return false;
 	}
 
-	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
 	UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
 	if (!Lookup || !SaveSubsystem)
 	{
@@ -258,7 +295,7 @@ bool UARFactionSubsystem::BuildResolvedDefinitions(TArray<FFactionResolvedDef>& 
 	}
 
 	TArray<FName> RowNames;
-	if (!Lookup->GetAllRowNamesForRootTag(RootTag, RowNames, OutError))
+	if (!Lookup->TryGetRowNamesForRootTag(RootTag, RowNames, OutError))
 	{
 		return false;
 	}
@@ -326,15 +363,15 @@ bool UARFactionSubsystem::ResolveFactionDefinition(const FGameplayTag& FactionTa
 		return false;
 	}
 
-	UContentLookupSubsystem* Lookup = GI->GetSubsystem<UContentLookupSubsystem>();
+	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
 	if (!Lookup)
 	{
-		OutError = TEXT("ContentLookupSubsystem missing.");
+		OutError = TEXT("TagContentResolverSubsystem missing.");
 		return false;
 	}
 
 	FInstancedStruct RowData;
-	if (!Lookup->LookupWithGameplayTag(FactionTag, RowData, OutError))
+	if (!Lookup->TryResolveRowForTag(FactionTag, RowData, OutError))
 	{
 		return false;
 	}
@@ -543,3 +580,4 @@ FGameplayTag UARFactionSubsystem::BuildFactionTagFromRootAndLeaf(const FGameplay
 	const FString TagPath = FString::Printf(TEXT("%s.%s"), *RootTag.ToString(), *LeafRowName.ToString());
 	return UGameplayTagsManager::Get().RequestGameplayTag(FName(*TagPath), false);
 }
+

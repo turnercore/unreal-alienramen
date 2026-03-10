@@ -3,6 +3,7 @@
 #include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARNetworkUserSettings.h"
+#include "ARNPCSubsystem.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
@@ -87,6 +88,14 @@ void AARGameModeBase::BeginPlay()
 		NormalizeConnectedPlayersIdentity(GS);
 		GS->SetManualSaveAllowed(bAllowManualSaveInMode);
 		GS->SetShareLocalPauseAcrossControllers(bShareLocalPauseAcrossControllersInMode);
+	}
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		{
+			NpcSubsystem->RefreshAllNpcTalkableStates();
+		}
 	}
 }
 
@@ -473,6 +482,13 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	// Enforce stable unique slot occupancy even when setup is already complete (for example seamless travel/copy paths).
 	EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
 	NormalizeConnectedPlayersIdentity(GS);
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		{
+			NpcSubsystem->RefreshAllNpcTalkableStates();
+		}
+	}
 
 	BP_OnPlayerJoined(JoinedPS);
 	UE_LOG(ARLog, Log, TEXT("[GameMode] Player joined: %s (Slot=%d, Setup=%s)"), *GetNameSafe(JoinedPS), static_cast<int32>(JoinedPS->GetPlayerSlot()), JoinedPS->IsSetupComplete() ? TEXT("true") : TEXT("false"));
@@ -501,6 +517,11 @@ void AARGameModeBase::Logout(AController* Exiting)
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
+		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		{
+			NpcSubsystem->RefreshAllNpcTalkableStates();
+		}
+
 		if (UARSessionSubsystem* SessionSubsystem = GI->GetSubsystem<UARSessionSubsystem>())
 		{
 			FARSessionResult SessionResult;

@@ -16,7 +16,8 @@ public class AlienRamenTests : ModuleRules
 			"GameplayAbilities",
 			"OnlineSubsystem",
 			"OnlineSubsystemUtils",
-			"DeveloperSettings"
+			"DeveloperSettings",
+			"TagContentResolver"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[]
