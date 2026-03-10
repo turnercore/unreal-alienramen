@@ -15,7 +15,8 @@ class ALIENRAMEN_API UARDialogueSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("NPC"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|NPC"); }
+	virtual FName GetSectionName() const override { return TEXT("Dialogue"); }
 
 	// TagContentResolver root tag used to resolve FARDialogueSpeakerRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content")
