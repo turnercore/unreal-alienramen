@@ -35,12 +35,13 @@ UARNPCTalkComponent::UARNPCTalkComponent()
 void UARNPCTalkComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	RefreshTalkableFromSubsystem();
 
 	if (!IsAuthorityOwner())
 	{
 		return;
 	}
+
+	RefreshTalkableFromSubsystem();
 
 	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
@@ -192,14 +193,9 @@ void UARNPCTalkComponent::OnRep_TalkablePlayerSlotMask(const uint8 bOldTalkableP
 		return;
 	}
 
-	// Slot-mask changes can alter per-player talkability while aggregate bIsTalkable stays true.
-	// Reuse the existing talkable-state delegate so UI/HUD listeners refresh their slot-specific queries.
-	const bool bOldMaskTalkable = bOldTalkablePlayerSlotMask != 0;
-	const bool bNewMaskTalkable = TalkablePlayerSlotMask != 0;
-	if (bOldMaskTalkable == bNewMaskTalkable)
-	{
-		OnNpcTalkableStateChanged.Broadcast(bIsTalkable);
-	}
+	// Always broadcast on slot-mask changes so listeners refresh per-slot indicators even
+	// if bIsTalkable replication is delayed or unchanged.
+	OnNpcTalkableStateChanged.Broadcast(TalkablePlayerSlotMask != 0);
 }
 
 bool UARNPCTalkComponent::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const

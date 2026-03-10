@@ -178,6 +178,11 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TMap<EARPlayerSlot, EARPlayerSlot> EavesdropTargetByViewer;
 };
 
+void UARDialogueSubsystem::FARDialogueRuntimeStateDeleter::operator()(FARDialogueRuntimeState* Ptr) const
+{
+	delete Ptr;
+}
+
 static bool AddConversationToRuntimeRegistry(
 	TMap<FGameplayTag, TObjectPtr<UARDialogueConversationAsset>>& ConversationsByTag,
 	UARDialogueConversationAsset* Conversation,
@@ -244,17 +249,17 @@ static bool AddConversationToRuntimeRegistry(
 
 UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState()
 {
-	if (!RuntimeState)
+	if (!RuntimeState.IsValid())
 	{
-		RuntimeState = new FARDialogueRuntimeState();
+		RuntimeState.Reset(new FARDialogueRuntimeState());
 	}
-	return *RuntimeState;
+	return *RuntimeState.Get();
 }
 
 const UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState() const
 {
 	static const FARDialogueRuntimeState EmptyState;
-	return RuntimeState ? *RuntimeState : EmptyState;
+	return RuntimeState.IsValid() ? *RuntimeState.Get() : EmptyState;
 }
 
 static UARSaveSubsystem* GetSaveSubsystem(const UARDialogueSubsystem* Subsystem)
@@ -1731,7 +1736,8 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 	Collection.InitializeDependency<UTagContentResolverSubsystem>();
 
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	RuntimeState.Reset(new FARDialogueRuntimeState());
+	FARDialogueRuntimeState& Runtime = *RuntimeState.Get();
 	Runtime.ConversationsByTag.Reset();
 	Runtime.SpeakerRowsByTag.Reset();
 	Runtime.ActiveSessions.Reset();
@@ -1905,8 +1911,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UARDialogueSubsystem::Deinitialize()
 {
-	delete RuntimeState;
-	RuntimeState = nullptr;
+	RuntimeState.Reset();
 	Super::Deinitialize();
 }
 
