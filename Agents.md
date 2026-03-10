@@ -94,6 +94,7 @@ If a section starts growing again:
 - Keep code comments and docs updated in the same pass as runtime/editor changes.
 - Prefer linking to detailed docs instead of duplicating detail here.
 - When Unreal documentation is needed, prefer **UE 5.7** docs and use MCP/Context7 when available.
+- Shop ramen runtime details are documented in `Documentation/README_ShopRamenSystem.md`.
 
 ---
 
@@ -126,6 +127,7 @@ If a section starts growing again:
 
 - Dialogue plugin ownership includes: dialogue runtime, speakers, dialogue editor tooling, conversations/lines, emotions, NPC dialogue/emotion components, dialogue-facing faction surfaces, and NPC relationship progression surfaces.
 - Dialogue plugin ownership excludes built-on-top systems: faction voting/election orchestration and ordering/customer-serving loops.
+- Built-on-top ordering/customer systems must use dialogue runtime APIs (not direct save/emotion mutation), specifically `UARDialogueSubsystem::ApplyRamenServeOutcome(...)` for serve outcome writes.
 
 ### Dialogue / NPC
 
@@ -135,9 +137,22 @@ If a section starts growing again:
 - `UAREmotionComponent` owns replicated overhead emotion display state (base state + dialogue override state), including per-player-slot variants and gameplay-tag-to-icon resolution.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache from the settings-configured emotion DataTable.
 - Emotion icon lookup for dialogue no longer depends on TagContentResolver routes; source table is configured directly in `UAREmotionSettings`.
-- `AARNPCCharacterBase` hosts `UARNPCTalkComponent` and owns non-dialogue local NPC gates (for example customer/serving state); NPC actors still do not own dialogue authority.
+- `AARNPCCharacterBase` hosts `UARNPCTalkComponent` + `UARCustomerComponent` and owns non-dialogue local NPC gates; NPC actors still do not own dialogue authority.
 - `AARNPCCharacterBase` and `AARPlayerCharacterBase` host `UAREmotionComponent`.
 - Seen state is transient only; completion and recorded choice results are persistent.
+
+### Shop Ordering (Built On Top)
+
+- `UARCustomerComponent` is the authoritative NPC customer/order runtime (wants, scoring, picky rule, serve resolution).
+- NPC interaction queries remain available while a customer order is active so delivery interaction is not blocked by dialogue gating.
+- `AARShopStationActor` is server-authoritative for station state (`Idle/MeatReady/Processing/Processed`), slot meat, hold-to-process progress, and processed stock.
+- Unupgraded station behavior is direct `None` output for bowl fills; upgraded behavior uses slot/processing/stock.
+- `AARRamenBowlActor` enforces strict fill sequence: `Noodles -> Broth -> Toppings`.
+- `UARShopCarryComponent` is replicated held-item state on `AARPlayerCharacterShop`; `AARPlayerController` provides server RPC entrypoints for station/storage interactions.
+- `AARMeatStorageBoxActor` dispenses world meat by mutating `AARGameStateBase::Meat` buckets.
+- Station processing progress is replicated runtime-only state and is intentionally **not** persisted to `UARSaveGame`.
+- Shop NPC StateTree scaffolding is native (`UARShopStateTreeAIComponent`, `UARShopStateTreeAIComponentSchema`, `AARShopAIController` helpers), with customer lifecycle events forwarded as gameplay tags.
+- `AARShopAIController` applies `State.ShopNPC.*` active tags to `AARNPCCharacterBase::bNpcLocalStateAllowsDialogue` (dialogue enabled in `State.ShopNPC.DialogueWindow`).
 
 ### Faction
 

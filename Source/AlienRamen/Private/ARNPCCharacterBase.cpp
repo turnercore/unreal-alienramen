@@ -1,5 +1,6 @@
 #include "ARNPCCharacterBase.h"
 
+#include "ARCustomerComponent.h"
 #include "AREmotionComponent.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
@@ -10,6 +11,7 @@ AARNPCCharacterBase::AARNPCCharacterBase()
 	bReplicates = true;
 	NpcTalkComponent = CreateDefaultSubobject<UARNPCTalkComponent>(TEXT("NpcTalkComponent"));
 	EmotionComponent = CreateDefaultSubobject<UAREmotionComponent>(TEXT("EmotionComponent"));
+	CustomerComponent = CreateDefaultSubobject<UARCustomerComponent>(TEXT("CustomerComponent"));
 }
 
 void AARNPCCharacterBase::BeginPlay()
@@ -46,6 +48,15 @@ void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingController)
 {
+	if (HasAuthority() && CustomerComponent && InteractingController)
+	{
+		FARRamenServeResult ServeResult;
+		if (CustomerComponent->TryServeHeldBowlFromController(InteractingController, ServeResult))
+		{
+			return;
+		}
+	}
+
 	if (!bNpcLocalStateAllowsDialogue)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[NPC] Interact ignored for '%s': local state blocks dialogue."), *GetNameSafe(this));
@@ -65,17 +76,20 @@ FGameplayTag AARNPCCharacterBase::GetNpcTag() const
 
 bool AARNPCCharacterBase::IsTalkable() const
 {
-	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkable();
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	return bHasActiveCustomerOrder || (bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkable());
 }
 
 bool AARNPCCharacterBase::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
 {
-	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForPlayerSlot(PlayerSlot);
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	return bHasActiveCustomerOrder || (bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForPlayerSlot(PlayerSlot));
 }
 
 bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* QueryController) const
 {
-	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForController(QueryController);
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	return bHasActiveCustomerOrder || (bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForController(QueryController));
 }
 
 bool AARNPCCharacterBase::IsNpcLocalStateAllowingDialogue() const

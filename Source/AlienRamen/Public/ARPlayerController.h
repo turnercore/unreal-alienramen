@@ -18,6 +18,8 @@ class UInputMappingContext;
 class UARDialogueWidgetBase;
 class UUserWidget;
 class AARNPCCharacterBase;
+class AARShopStationActor;
+class AARMeatStorageBoxActor;
 
 USTRUCT(BlueprintType)
 struct FARControllerInputMapping
@@ -120,6 +122,42 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationPickupMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationPickupMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationStartProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationStartProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationStopProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationStopProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void RequestAdvanceDialogue();
