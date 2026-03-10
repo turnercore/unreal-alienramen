@@ -8,7 +8,7 @@ Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
 
 - `UARDialogueSubsystem` is server-authoritative for offer selection, session execution, branching, eavesdrop, completion persistence, and choice-memory persistence.
 - `UARNPCSubsystem` is now talkable-cache-focused and derives NPC talkable state from dialogue unlock availability.
-- `AARNPCCharacterBase` remains the world interaction entrypoint and replicates `bIsTalkable`.
+- `AARNPCCharacterBase` remains the world interaction entrypoint; replicated dialogue talkable state is owned by `UARNPCTalkComponent` (`bIsTalkable` + per-slot mask).
 
 Ownership reminder:
 
@@ -64,9 +64,9 @@ Runtime UI is intentionally separate from editor preview tooling.
 
 ## Content Model
 
-Shared dialogue types live in [`Source/AlienRamen/Public/ARDialogueTypes.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueTypes.h).
+Shared dialogue types live in `Source/AlienRamen/Public/ARDialogueTypes.h`.
 
-- Speakers: `FARDialogueSpeakerRow` rows (content lookup compatible).
+- Speakers: `FARDialogueSpeakerRow` rows resolved through TagContentResolver routes from `SpeakerDefinitionRootTag`.
 - Conversations: `UARDialogueConversationAsset` with:
   - `Header` (`FDialogueConversationHeader`)
   - `CompiledData` (`FDialogueCompiledConversationData`)
@@ -74,7 +74,7 @@ Shared dialogue types live in [`Source/AlienRamen/Public/ARDialogueTypes.h`](/c:
 - Conversation registry source:
   - TagContentResolver DataTable rows (`FARDialogueConversationAssetRow`) routed by `ConversationDefinitionRootTag` (row tag or built tag from root+row name).
 
-Settings live in [`Source/AlienRamen/Public/ARDialogueSettings.h`](/c:/Projects/Unreal/AlienRamen/Source/AlienRamen/Public/ARDialogueSettings.h):
+Settings live in `Source/AlienRamen/Public/ARDialogueSettings.h`:
 
 - `SpeakerDefinitionRootTag` (speaker row lookup root)
 - `ConversationDefinitionRootTag` (conversation lookup row root)
@@ -210,7 +210,7 @@ Conversation graph tooling now provides:
 
 Speaker hub currently provides:
 
-- content-lookup-backed speaker table loading from `SpeakerDefinitionRootTag`
+- TagContentResolver-backed speaker table loading from `SpeakerDefinitionRootTag`
 - searchable/sortable speaker list with columns (display name/tag/thresholds/conversation count)
 - speaker CRUD (`New`, `Duplicate`, `Delete`) + `Save Speaker` + `Validate Speaker`
 - reorderable threshold editing/reset (`5,15,30,50` defaults)
