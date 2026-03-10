@@ -10,11 +10,18 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/GameStateBase.h"
+#include "GameFramework/GameSession.h"
 
 AARGameModeBase::AARGameModeBase()
 {
 	bUseSeamlessTravel = true;
 	DefaultPlayerName = FText::FromString(TEXT("Tenshu"));
+}
+
+TSubclassOf<AGameSession> AARGameModeBase::GetGameSessionClass() const
+{
+	// Keep runtime independent from BP-configured AdvancedGameSession classes.
+	return AGameSession::StaticClass();
 }
 
 void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
@@ -37,8 +44,8 @@ void AARGameModeBase::PreLogin(const FString& Options, const FString& Address, c
 
 			if (!bIsLocalStyleId)
 			{
-				ErrorMessage = TEXT("Server is offline.");
-				UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': Stay Offline is enabled (NetIdType=%s)."), *Address, *NetIdType);
+				ErrorMessage = TEXT("Server has StayOffline enabled.");
+				UE_LOG(ARLog, Warning, TEXT("[GameMode] PreLogin denied connection from '%s': StayOffline is enabled (NetIdType=%s)."), *Address, *NetIdType);
 				return;
 			}
 		}
