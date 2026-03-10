@@ -90,11 +90,12 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Offer checks include:
   - mode enabled by `UARDialogueSettings` shared/per-player mode tags
   - primary speaker exact match
+  - optional conversation-level active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`)
   - relationship minimum
   - locked/blocked condition groups
   - seen/completed/repeatability suppression flags
 - Runtime executes compiled nodes server-side with a step cap from settings.
-- Implemented node execution: enter/completed/line/choice/bool/switch/tag-mutation/relationship-mutation/faction-mutation/random.
+- Implemented node execution: enter/completed/line/multiline/split-line/choice/bool/switch/route/route-by-character/tag-mutation/relationship-mutation/faction-mutation/random/sequence.
 - Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
 - Runtime line presentation supports token + style parsing at execute time (source `FText` is kept authored/localized, formatting is applied on the delivered view text):
   - lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcuts `[Speaker]`, `[Brother]`, `[Sister]`
@@ -102,12 +103,14 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
   - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
+- Line nodes (including multiline entries) support the same convenience active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`) before skip-conditions are evaluated.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
 
 ## Seen vs Completed
 
-- Seen state is transient only (game + per-slot runtime containers in `UARDialogueSubsystem`).
+- Per-cycle player offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per player in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
+- Runtime still keeps active-session transient containers for fast gating/evaluation.
 - Completed state is persistent and save-backed.
 - Completion is written only when a `Completed` node executes.
 - Per-cycle offer blockers can be reset explicitly via `ClearConversationCycleOfferState(...)` (single slot or all slots).
@@ -146,6 +149,11 @@ Removed legacy dialogue save fields:
 - broadcasts `OnNpcTalkableChanged`
 - combines subsystem talkable state with `AARNPCCharacterBase::bNpcLocalStateAllowsDialogue` (local NPC runtime gate, for example ordering-mode lockouts)
 
+NPC actor integration now routes through `UARNPCTalkComponent`:
+
+- `UARNPCTalkComponent` owns NPC-side dialogue interaction + replicated dialogue talkable mask/state.
+- `AARNPCCharacterBase` remains the owner of non-dialogue local NPC gates (for example serving/customer mode) and combines that with component talkability for public NPC talk checks.
+
 ## Editor Tooling (Current)
 
 Registered editor tabs:
@@ -164,7 +172,8 @@ Conversation graph tooling now provides:
   - multiple incoming links allowed per node input
 - full toolbar flow: Save / Validate / Compile Runtime Graph / Focus Enter / Auto Layout / Preview
 - details-panel editing for selected node or conversation root
-- dynamic branch-pin behavior for choice/switch/random nodes driven by stable branch GUIDs
+- dynamic branch-pin behavior for choice/switch/random/route-by-character nodes driven by stable branch GUIDs
+- split-line node authoring uses multiline-style inline line rows, but runtime selects only the first row matching the active player character and otherwise skips to `Next`
 - compile-from-editor-graph into `CompiledData` with node-level validation markers
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)

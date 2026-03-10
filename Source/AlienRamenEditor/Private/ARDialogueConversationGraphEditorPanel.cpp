@@ -1283,6 +1283,7 @@ void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UARDi
 		case EDialogueNodeType::Enter:
 		case EDialogueNodeType::Line:
 		case EDialogueNodeType::MultiLine:
+		case EDialogueNodeType::SplitLine:
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
@@ -1320,6 +1321,12 @@ void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UARDi
 			for (const FDialogueCompiledSequenceBranch& Branch : RuntimeNode.SequenceBranches)
 			{
 				LinkPinToNode(SourceNode->GetSequenceOutputPin(Branch.BranchId), Branch.NextNodeId);
+			}
+			break;
+		case EDialogueNodeType::RouteByCharacter:
+			for (const FDialogueCompiledCharacterRouteBranch& Branch : RuntimeNode.CharacterRouteBranches)
+			{
+				LinkPinToNode(SourceNode->GetCharacterRouteOutputPin(Branch.BranchId), Branch.NextNodeId);
 			}
 			break;
 		default:
@@ -1501,6 +1508,10 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 		{
 			Branch.NextNodeId.Invalidate();
 		}
+		for (FDialogueCompiledCharacterRouteBranch& Branch : CompiledNode.CharacterRouteBranches)
+		{
+			Branch.NextNodeId.Invalidate();
+		}
 
 		switch (CompiledNode.NodeType)
 		{
@@ -1514,6 +1525,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 			break;
 		case EDialogueNodeType::Line:
 		case EDialogueNodeType::MultiLine:
+		case EDialogueNodeType::SplitLine:
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
@@ -1565,6 +1577,15 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UARDialo
 					EditorNode,
 					EditorNode->GetSequenceOutputPin(Branch.BranchId),
 					FString::Printf(TEXT("Then %d"), BranchIndex + 1));
+			}
+			break;
+		case EDialogueNodeType::RouteByCharacter:
+			for (FDialogueCompiledCharacterRouteBranch& Branch : CompiledNode.CharacterRouteBranches)
+			{
+				Branch.NextNodeId = ResolveLinkedNodeId(
+					EditorNode,
+					EditorNode->GetCharacterRouteOutputPin(Branch.BranchId),
+					Branch.SpeakerTag.ToString());
 			}
 			break;
 		default:
