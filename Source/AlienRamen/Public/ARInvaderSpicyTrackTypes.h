@@ -131,6 +131,14 @@ struct ALIENRAMEN_API FARInvaderTrackSlotDisplayState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
 	bool bHasUpgrade = false;
+
+	// Remaining finite activations for this slot. Ignored when bInfiniteUses is true.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	int32 RemainingActivationUses = 0;
+
+	// If true, this slot can be activated infinitely and RemainingActivationUses is not meaningful.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Track")
+	bool bInfiniteUses = false;
 };
 
 USTRUCT(BlueprintType)
@@ -169,6 +177,18 @@ struct ALIENRAMEN_API FARInvaderOfferPresenceState
 	// Whether CursorNormalized should be interpreted by HUD.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
 	bool bHasCursor = false;
+
+	// Optional currently selected offer (for teammate "locked-in" selection preview).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
+	FGameplayTag SelectedUpgradeTag;
+
+	// Optional selected destination slot for placement affordance.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
+	int32 SelectedDestinationSlot = -1;
+
+	// Whether selected fields should be interpreted by HUD.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
+	bool bHasSelection = false;
 };
 
 USTRUCT(BlueprintType)
