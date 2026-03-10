@@ -9,8 +9,18 @@ public class AlienRamen : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils", "AdvancedSessions", "AdvancedSteamSessions" });
-		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
+		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils", "AdvancedSessions" });
+
+		bool bDesktopTarget =
+			Target.Platform == UnrealTargetPlatform.Win64 ||
+			Target.Platform == UnrealTargetPlatform.Mac ||
+			Target.Platform == UnrealTargetPlatform.Linux;
+
+		if (bDesktopTarget)
+		{
+			PrivateDependencyModuleNames.Add("AdvancedSteamSessions");
+			DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
+		}
 
 		// Stage Steam redistributables from tracked project SDK location.
 		string ProjectRoot = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../"));

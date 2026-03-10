@@ -2,23 +2,21 @@
 
 #include "ARGameInstance.h"
 #include "ARLog.h"
+#include "ARNetworkRoutingSettings.h"
 #include "ARNetworkUserSettings.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "CreateSessionCallbackProxyAdvanced.h"
 #include "Engine/GameInstance.h"
-#include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
 #include "FindSessionsCallbackProxyAdvanced.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "Kismet/GameplayStatics.h"
 #include "Modules/ModuleManager.h"
 #include "Online/OnlineSessionNames.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
-#include "OnlineSubsystemNames.h"
 
 namespace
 {
@@ -43,12 +41,104 @@ namespace
 	{
 		return World ? World->GetFirstPlayerController() : nullptr;
 	}
+
+	static void AddUniqueSubsystemName(TArray<FName>& Names, const FName Name)
+	{
+		if (Name.IsNone())
+		{
+			return;
+		}
+
+		if (!Names.Contains(Name))
+		{
+			Names.Add(Name);
+		}
+	}
 }
 
 void UARSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	BindInviteAcceptedDelegate();
+}
+
+FName UARSessionSubsystem::GetConfiguredInternetSubsystemName() const
+{
+	return GetConfiguredInternetSubsystemNameInternal();
+}
+
+FName UARSessionSubsystem::GetConfiguredLanSubsystemName() const
+{
+	return GetConfiguredLanSubsystemNameInternal();
+}
+
+TArray<FName> UARSessionSubsystem::GetConfiguredInternetSubsystemFallbackOrder() const
+{
+	TArray<FName> Result;
+	GetConfiguredInternetFallbackOrderInternal(Result);
+	return Result;
+}
+
+const UARNetworkRoutingSettings* UARSessionSubsystem::GetRoutingSettings() const
+{
+	return GetDefault<UARNetworkRoutingSettings>();
+}
+
+FName UARSessionSubsystem::GetConfiguredInternetSubsystemNameInternal() const
+{
+	if (const UARNetworkRoutingSettings* Settings = GetRoutingSettings())
+	{
+		if (!Settings->InternetSubsystemName.IsNone())
+		{
+			return Settings->InternetSubsystemName;
+		}
+	}
+
+	return FName(TEXT("Steam"));
+}
+
+FName UARSessionSubsystem::GetConfiguredLanSubsystemNameInternal() const
+{
+	if (const UARNetworkRoutingSettings* Settings = GetRoutingSettings())
+	{
+		if (!Settings->LanSubsystemName.IsNone())
+		{
+			return Settings->LanSubsystemName;
+		}
+	}
+
+	return FName(TEXT("NULL"));
+}
+
+void UARSessionSubsystem::GetConfiguredInternetFallbackOrderInternal(TArray<FName>& OutFallbackOrder) const
+{
+	OutFallbackOrder.Reset();
+
+	if (const UARNetworkRoutingSettings* Settings = GetRoutingSettings())
+	{
+		for (const FName Candidate : Settings->InternetSubsystemFallbackOrder)
+		{
+			AddUniqueSubsystemName(OutFallbackOrder, Candidate);
+		}
+	}
+}
+
+void UARSessionSubsystem::LogRouteDecision(
+	const TCHAR* RequestType,
+	const bool bPreferLAN,
+	const bool bStayOffline,
+	const FName& ChosenSubsystem,
+	const FString& Reason) const
+{
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[Session][Route] Request=%s UseLAN=%d StayOffline=%d ChosenSubsystem=%s Reason=%s"),
+		RequestType ? RequestType : TEXT("Unknown"),
+		bPreferLAN ? 1 : 0,
+		bStayOffline ? 1 : 0,
+		ChosenSubsystem.IsNone() ? TEXT("None") : *ChosenSubsystem.ToString(),
+		Reason.IsEmpty() ? TEXT("None") : *Reason);
 }
 
 IOnlineSessionPtr UARSessionSubsystem::GetSessionInterfaceForSubsystem(FName SubsystemName) const
@@ -238,9 +328,9 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 		BindInviteAcceptedDelegate();
 	}
 
-	if (IsStayOfflineEnabled())
+	if (!bUseLAN && IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnCreateSessionCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -254,7 +344,7 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bUseLAN, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bUseLAN, SubsystemName, TEXT("CreateSession"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -366,9 +456,9 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 		BindInviteAcceptedDelegate();
 	}
 
-	if (IsStayOfflineEnabled())
+	if (!bLANQuery && IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		BroadcastFindCompleted(OutResult);
 		return false;
 	}
@@ -380,7 +470,7 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bLANQuery, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bLANQuery, SubsystemName, TEXT("FindSessions"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -473,10 +563,10 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 		BindInviteAcceptedDelegate();
 	}
 
-	if (IsStayOfflineEnabled())
+	if (!bLastFindWasLANQuery && IsStayOfflineEnabled())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: Stay Offline is enabled."));
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: StayOffline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnJoinSessionCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -499,7 +589,7 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName, TEXT("JoinSessionByIndex"));
 	if (!Session.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: no session interface (LAN query=%s)."),
@@ -572,7 +662,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 {
 	if (IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnFindFriendSessionCompleted.Broadcast(OutResult, LastFindResults);
 		return false;
 	}
@@ -592,7 +682,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName, TEXT("FindFriendSession"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -625,7 +715,7 @@ bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniq
 {
 	if (IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnInviteFriendCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -639,7 +729,7 @@ bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniq
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName, TEXT("InviteFriendToSession"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -680,7 +770,12 @@ bool UARSessionSubsystem::DestroySession(FARSessionResult& OutResult)
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = FindSessionInterfaceOwningGameSession(SubsystemName);
+	if (!Session.IsValid())
+	{
+		Session = ResolveSessionInterface(false, SubsystemName, TEXT("DestroySession"));
+	}
+
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -725,7 +820,12 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = FindSessionInterfaceOwningGameSession(SubsystemName);
+	if (!Session.IsValid())
+	{
+		Session = ResolveSessionInterface(false, SubsystemName, TEXT("RefreshJoinability"));
+	}
+
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -742,7 +842,7 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	}
 
 	const int32 OpenConnections = ComputeOpenPublicConnections();
-	const bool bCanJoin = !IsStayOfflineEnabled() && (Existing->SessionSettings.bIsLANMatch || OpenConnections > 0);
+	const bool bCanJoin = (OpenConnections > 0) && (Existing->SessionSettings.bIsLANMatch || !IsStayOfflineEnabled());
 
 	FOnlineSessionSettings NewSettings = Existing->SessionSettings;
 	NewSettings.NumPublicConnections = MaxPublicPlayerConnections;
@@ -806,82 +906,127 @@ bool UARSessionSubsystem::AddLocalPlayer(FARSessionResult& OutResult)
 	return true;
 }
 
-IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface(const bool bPreferLAN, FName& OutSubsystemName) const
+IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface(const bool bPreferLAN, FName& OutSubsystemName, const TCHAR* RequestType) const
 {
 	OutSubsystemName = NAME_None;
 
+	const bool bStayOffline = IsStayOfflineEnabled();
+	TArray<FName> Candidates;
+	TArray<FString> CandidateReasons;
+	auto AddCandidate = [&Candidates, &CandidateReasons](const FName Name, const FString& Reason)
+	{
+		if (Name.IsNone() || Candidates.Contains(Name))
+		{
+			return;
+		}
+
+		Candidates.Add(Name);
+		CandidateReasons.Add(Reason);
+	};
+
 	if (bPreferLAN)
 	{
+		// LAN should prefer null-like services first, then fall back.
+		AddCandidate(GetConfiguredLanSubsystemNameInternal(), TEXT("ConfiguredLanSubsystem"));
+
+		AddCandidate(FName(TEXT("NULL")), TEXT("LanNullFallback"));
+
 		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 		{
-			OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-			if (IOnlineSessionPtr DefaultSession = DefaultSubsystem->GetSessionInterface())
-			{
-				return DefaultSession;
-			}
+			AddCandidate(DefaultSubsystem->GetSubsystemName(), TEXT("DefaultSubsystemFallback"));
 		}
+	}
+	else
+	{
+		AddCandidate(GetConfiguredInternetSubsystemNameInternal(), TEXT("ConfiguredInternetSubsystem"));
 
-		if (IOnlineSubsystem* NullSubsystem = IOnlineSubsystem::Get(NULL_SUBSYSTEM))
+		TArray<FName> InternetFallbacks;
+		GetConfiguredInternetFallbackOrderInternal(InternetFallbacks);
+		for (const FName Candidate : InternetFallbacks)
 		{
-			OutSubsystemName = NullSubsystem->GetSubsystemName();
-			return NullSubsystem->GetSessionInterface();
+			AddCandidate(Candidate, TEXT("ConfiguredInternetFallback"));
 		}
 
+		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+		{
+			AddCandidate(DefaultSubsystem->GetSubsystemName(), TEXT("DefaultSubsystemFallback"));
+		}
+	}
+
+	FString LastFailureReason = TEXT("No subsystem candidates were available.");
+
+	// Ensure null subsystem can be loaded for LAN and/or null fallback entries.
+	if (Candidates.Contains(FName(TEXT("NULL"))))
+	{
 		FModuleManager::Get().LoadModulePtr<IModuleInterface>(TEXT("OnlineSubsystemNull"));
-		if (IOnlineSubsystem* LoadedNullSubsystem = IOnlineSubsystem::Get(NULL_SUBSYSTEM))
+	}
+
+	for (int32 CandidateIndex = 0; CandidateIndex < Candidates.Num(); ++CandidateIndex)
+	{
+		const FName CandidateName = Candidates[CandidateIndex];
+		const FString CandidateReason = CandidateReasons.IsValidIndex(CandidateIndex)
+			? CandidateReasons[CandidateIndex]
+			: TEXT("Candidate");
+
+		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get(CandidateName);
+		if (!Subsystem)
 		{
-			OutSubsystemName = LoadedNullSubsystem->GetSubsystemName();
-			return LoadedNullSubsystem->GetSessionInterface();
+			LastFailureReason = FString::Printf(TEXT("%s unavailable (%s)."), *CandidateName.ToString(), *CandidateReason);
+			continue;
 		}
 
-		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+		IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
+		if (!Session.IsValid())
 		{
-			OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-			return DefaultSubsystem->GetSessionInterface();
+			LastFailureReason = FString::Printf(TEXT("%s has no session interface (%s)."), *CandidateName.ToString(), *CandidateReason);
+			continue;
 		}
 
-		return nullptr;
+		OutSubsystemName = Subsystem->GetSubsystemName();
+		const FString SuccessReason = FString::Printf(TEXT("%s selected (%s)."), *OutSubsystemName.ToString(), *CandidateReason);
+		LogRouteDecision(RequestType, bPreferLAN, bStayOffline, OutSubsystemName, SuccessReason);
+		return Session;
+	}
+
+	LogRouteDecision(RequestType, bPreferLAN, bStayOffline, NAME_None, LastFailureReason);
+	return nullptr;
+}
+
+IOnlineSessionPtr UARSessionSubsystem::FindSessionInterfaceOwningGameSession(FName& OutSubsystemName) const
+{
+	OutSubsystemName = NAME_None;
+
+	TArray<FName> Candidates;
+	AddUniqueSubsystemName(Candidates, ActiveSubsystemName);
+	AddUniqueSubsystemName(Candidates, GetConfiguredLanSubsystemNameInternal());
+	AddUniqueSubsystemName(Candidates, FName(TEXT("NULL")));
+	AddUniqueSubsystemName(Candidates, GetConfiguredInternetSubsystemNameInternal());
+
+	TArray<FName> InternetFallbacks;
+	GetConfiguredInternetFallbackOrderInternal(InternetFallbacks);
+	for (const FName Candidate : InternetFallbacks)
+	{
+		AddUniqueSubsystemName(Candidates, Candidate);
 	}
 
 	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 	{
-		OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-		const bool bDefaultIsNullLike = IsNullLikeSubsystemName(OutSubsystemName);
-
-		if (IsStayOfflineEnabled())
-		{
-			if (!bDefaultIsNullLike)
-			{
-				return nullptr;
-			}
-			return DefaultSubsystem->GetSessionInterface();
-		}
-
-		if (!bDefaultIsNullLike)
-		{
-			if (IOnlineSessionPtr DefaultSession = DefaultSubsystem->GetSessionInterface())
-			{
-				return DefaultSession;
-			}
-		}
+		AddUniqueSubsystemName(Candidates, DefaultSubsystem->GetSubsystemName());
 	}
 
-	if (!IsStayOfflineEnabled())
+	for (const FName CandidateName : Candidates)
 	{
-		if (IOnlineSubsystem* SteamSubsystem = IOnlineSubsystem::Get(STEAM_SUBSYSTEM))
+		IOnlineSessionPtr Session = GetSessionInterfaceForSubsystem(CandidateName);
+		if (!Session.IsValid())
 		{
-			OutSubsystemName = SteamSubsystem->GetSubsystemName();
-			if (IOnlineSessionPtr SteamSession = SteamSubsystem->GetSessionInterface())
-			{
-				return SteamSession;
-			}
+			continue;
 		}
-	}
 
-	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
-	{
-		OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-		return DefaultSubsystem->GetSessionInterface();
+		if (Session->GetNamedSession(GameSessionName))
+		{
+			OutSubsystemName = CandidateName;
+			return Session;
+		}
 	}
 
 	return nullptr;
@@ -930,7 +1075,7 @@ bool UARSessionSubsystem::CancelFindSessions(FARSessionResult& OutResult)
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName, TEXT("CancelFindSessions"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -968,27 +1113,53 @@ void UARSessionSubsystem::BindInviteAcceptedDelegate()
 		return;
 	}
 
-	IOnlineSubsystem* InviteSubsystem = IOnlineSubsystem::Get(STEAM_SUBSYSTEM);
-	if (!InviteSubsystem)
+	TArray<FName> InviteCandidates;
+	AddUniqueSubsystemName(InviteCandidates, GetConfiguredInternetSubsystemNameInternal());
+
+	TArray<FName> InternetFallbacks;
+	GetConfiguredInternetFallbackOrderInternal(InternetFallbacks);
+	for (const FName Candidate : InternetFallbacks)
 	{
-		InviteSubsystem = IOnlineSubsystem::Get();
+		AddUniqueSubsystemName(InviteCandidates, Candidate);
 	}
 
-	if (!InviteSubsystem)
+	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 	{
+		AddUniqueSubsystemName(InviteCandidates, DefaultSubsystem->GetSubsystemName());
+	}
+
+	FString FailureReason = TEXT("No internet subsystem candidates were available for invite delegate binding.");
+	for (const FName CandidateName : InviteCandidates)
+	{
+		IOnlineSubsystem* InviteSubsystem = IOnlineSubsystem::Get(CandidateName);
+		if (!InviteSubsystem)
+		{
+			FailureReason = FString::Printf(TEXT("Subsystem '%s' was unavailable."), *CandidateName.ToString());
+			continue;
+		}
+
+		if (IsNullLikeSubsystemName(InviteSubsystem->GetSubsystemName()))
+		{
+			FailureReason = FString::Printf(TEXT("Subsystem '%s' is null-like and does not support platform invites."), *CandidateName.ToString());
+			continue;
+		}
+
+		IOnlineSessionPtr Session = InviteSubsystem->GetSessionInterface();
+		if (!Session.IsValid())
+		{
+			FailureReason = FString::Printf(TEXT("Subsystem '%s' had no session interface."), *CandidateName.ToString());
+			continue;
+		}
+
+		FOnSessionUserInviteAcceptedDelegate Delegate;
+		Delegate.BindUObject(this, &UARSessionSubsystem::HandleSessionUserInviteAccepted);
+		SessionUserInviteAcceptedHandle = Session->AddOnSessionUserInviteAcceptedDelegate_Handle(Delegate);
+		InviteDelegateSubsystemName = InviteSubsystem->GetSubsystemName();
+		LogRouteDecision(TEXT("BindInviteAcceptedDelegate"), false, IsStayOfflineEnabled(), InviteDelegateSubsystemName, TEXT("Invite delegate bound to configured internet subsystem."));
 		return;
 	}
 
-	IOnlineSessionPtr Session = InviteSubsystem->GetSessionInterface();
-	if (!Session.IsValid())
-	{
-		return;
-	}
-
-	FOnSessionUserInviteAcceptedDelegate Delegate;
-	Delegate.BindUObject(this, &UARSessionSubsystem::HandleSessionUserInviteAccepted);
-	SessionUserInviteAcceptedHandle = Session->AddOnSessionUserInviteAcceptedDelegate_Handle(Delegate);
-	InviteDelegateSubsystemName = InviteSubsystem->GetSubsystemName();
+	LogRouteDecision(TEXT("BindInviteAcceptedDelegate"), false, IsStayOfflineEnabled(), NAME_None, FailureReason);
 }
 
 void UARSessionSubsystem::ClearInviteAcceptedDelegate()
@@ -1069,7 +1240,7 @@ bool UARSessionSubsystem::BuildDesiredSessionSettings(
 	}
 
 	const int32 OpenConnections = ComputeOpenPublicConnections();
-	const bool bCanJoin = !IsStayOfflineEnabled() && (bPreferLAN || OpenConnections > 0);
+	const bool bCanJoin = (OpenConnections > 0) && (bPreferLAN || !IsStayOfflineEnabled());
 
 	OutSettings = FOnlineSessionSettings();
 	OutSettings.bIsLANMatch = bPreferLAN;
@@ -1343,7 +1514,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		}
 
 		FName JoinSubsystemName = NAME_None;
-		IOnlineSessionPtr JoinSession = ResolveSessionInterface(false, JoinSubsystemName);
+		IOnlineSessionPtr JoinSession = ResolveSessionInterface(false, JoinSubsystemName, TEXT("PendingInviteJoinAfterDestroy"));
 		ActiveSubsystemName = JoinSubsystemName;
 
 		FARSessionResult JoinStartResult;
@@ -1369,7 +1540,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		}
 
 		FName JoinSubsystemName = NAME_None;
-		IOnlineSessionPtr JoinSession = ResolveSessionInterface(bLastFindWasLANQuery, JoinSubsystemName);
+		IOnlineSessionPtr JoinSession = ResolveSessionInterface(bLastFindWasLANQuery, JoinSubsystemName, TEXT("PendingJoinAfterDestroy"));
 		ActiveSubsystemName = JoinSubsystemName;
 
 		FARSessionResult JoinStartResult;
@@ -1612,7 +1783,7 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 	if (IsStayOfflineEnabled())
 	{
 		FARSessionResult Result;
-		FillResult(Result, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(Result, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnJoinSessionCompleted.Broadcast(Result);
 		return;
 	}
@@ -1646,7 +1817,7 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 
 	if (!Session.IsValid())
 	{
-		Session = ResolveSessionInterface(false, SubsystemName);
+		Session = ResolveSessionInterface(false, SubsystemName, TEXT("InviteAcceptedFallbackJoin"));
 	}
 
 	if (!Session.IsValid())
