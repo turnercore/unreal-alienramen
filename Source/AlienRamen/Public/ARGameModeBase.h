@@ -13,6 +13,7 @@
 
 class AARGameStateBase;
 class AARPlayerStateBase;
+class AGameSession;
 class UARSaveSubsystem;
 
 /** Shared authoritative GameMode: join/setup flow, travel gating, and mode identity tag. */
@@ -23,6 +24,7 @@ class ALIENRAMEN_API AARGameModeBase : public AGameModeBase
 
 public:
 	AARGameModeBase();
+	virtual TSubclassOf<AGameSession> GetGameSessionClass() const override;
 	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
 	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
