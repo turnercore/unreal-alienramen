@@ -197,6 +197,7 @@ private:
 	void NormalizeTrackSlotIndices();
 	void TrimTrackToTierLimit();
 	void SyncSharedMaxSpiceToPlayers();
+	void ConsumeSpiceForPlayer(AARPlayerStateBase* PlayerState, float SpendAmount);
 	void ResetAllPlayerSpiceMeters();
 	void TickShareTransfers(float DeltaSeconds);
 	void TickComboTimeouts(float ServerTimeSeconds);
