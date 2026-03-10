@@ -6,12 +6,14 @@ This document describes the runtime session orchestration contract and how to ex
 
 - Primary runtime API: `UARSessionSubsystem` (`Source/AlienRamen/Public/ARSessionSubsystem.h`)
 - Settings source: `UARNetworkUserSettings` (`Config=GameUserSettings`)
+- Routing source: `UARNetworkRoutingSettings` (`Config=Game`, developer settings)
 - Current policy:
   - Global seat cap is 2 total players (local + online combined)
-  - `Stay Offline` blocks host/find/join/advertise and online PreLogin
-  - LAN flow prefers null subsystem
-  - Online flow prefers configured default subsystem when non-null, then Steam fallback, then default/null fallback
-  - Steam invite acceptance is handled natively via OSS session invite delegates and routes into the same join path
+  - `Stay Offline` blocks internet/platform session host/find/join/invite and online PreLogin
+  - LAN flow remains available when `Stay Offline` is enabled
+  - LAN flow prefers configured LAN subsystem (`LanSubsystemName`, default `NULL`)
+  - Internet flow prefers configured internet subsystem (`InternetSubsystemName`, default `Steam`) then optional fallback order
+  - Platform invite acceptance is handled natively via OSS session invite delegates and routes into the same join path
 
 The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `Get Game Instance Subsystem` -> `ARSessionSubsystem`
@@ -37,6 +39,9 @@ Platform config note:
 - `AddLocalPlayer(OutResult)`
 - `IsStayOfflineEnabled()`
 - `SetStayOfflineEnabled(bEnabled, bOutRestartRecommended)`
+- `GetConfiguredInternetSubsystemName()`
+- `GetConfiguredLanSubsystemName()`
+- `GetConfiguredInternetSubsystemFallbackOrder()`
 
 Events:
 - `OnCreateSessionCompleted`
@@ -77,7 +82,7 @@ Session display-name policy:
 
 - UI/menu Blueprint calls continue using `UARSessionSubsystem`.
 - Save/hydration flow remains unchanged.
-- Seat cap and offline policy remain authoritative in GameMode/SessionSubsystem.
+- Seat cap and `Stay Offline` policy remain authoritative in GameMode/SessionSubsystem.
 
 ## What changes per backend
 
@@ -105,13 +110,13 @@ This means moving from Steam to another backend does not require a new Blueprint
 
 - Call `RefreshJoinability` after major state transitions if needed (player joins/leaves already trigger server-side refresh).
 - Use `AddLocalPlayer` for couch-join input handling; it enforces seat cap and updates joinability.
-- Steam overlay friend-invite accept flow is handled by subsystem callback (`OnSessionUserInviteAccepted`) and attempts direct join; if an existing named session is active, subsystem destroys it first and then joins invite target.
+- Platform overlay friend-invite accept flow (Steam by default) is handled by subsystem callback (`OnSessionUserInviteAccepted`) and attempts direct join; if an existing named session is active, subsystem destroys it first and then joins invite target.
 - Manual `JoinSessionByIndex` also performs destroy-then-join if the local runtime is already in a different named session.
 - Online (non-LAN) find now performs a retry without strict query filters when the first filtered search returns zero rows.
 - Find completion semantics: transport/query success returns `bSuccess=true`; empty result sets use `ResultCode=SessionNotFound` with `Error="No sessions found."`.
 - Session create/find execution path now uses AdvancedSessions C++ proxies when a local player controller is available (`UCreateSessionCallbackProxyAdvanced`, `UFindSessionsCallbackProxyAdvanced`) while preserving `UARSessionSubsystem` Blueprint API.
 - Project plugin requirement for that proxy path: `AdvancedSessions` and `AdvancedSteamSessions` are enabled in `AlienRamen.uproject`.
-- `Stay Offline` is runtime best-effort; full backend deactivation may still require restart depending on subsystem startup behavior.
+- `Stay Offline` is a session-policy gate (not module shutdown): it blocks internet/platform session actions while leaving LAN/local session flow available.
 - Session lifetime is intended to survive normal map travel (listen-server flow) unless explicitly destroyed.
 - Leave behavior:
   - remote client leave returns only that client to menu (host session continues)
