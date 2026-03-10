@@ -250,7 +250,8 @@ Detailed behavior belongs in:
     - Dialogue Conversation Graph Editor
     - Debug Save Tool
 - Editor tools should author directly against current runtime contracts, not shadow them with alternate schemas.
-- Dialogue Speaker Editor contract: no faction-based filter/sort surface; speaker/faction/portrait tags use gameplay-tag picker widgets, and portrait textures use an object asset picker (`UTexture2D` soft reference) instead of raw path text.
+- Dialogue Speaker Editor contract: no faction-based filter/sort surface; speaker/faction/portrait tags use gameplay-tag picker widgets; line font uses an object asset picker (`UFont` soft reference); portrait textures use an object asset picker (`UTexture2D` soft reference) instead of raw path text.
+- Dialogue conversations authored/compiled through editor tooling must auto-include `Dialogue.Speaker.Player` + the primary speaker in `ParticipatingSpeakerTags`, and stale deleted-conversation lookup/tag references must be cleaned from lock/block condition surfaces.
 - Dialogue Speaker Editor conversation creation path is configured in Project Settings (`Alien Ramen -> Dialogue Tooling -> ConversationAssetsFolder`), defaulting to `/Game/Data/Conversations`.
 
 ---

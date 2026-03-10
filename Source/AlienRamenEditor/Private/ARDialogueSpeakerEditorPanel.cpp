@@ -20,17 +20,23 @@
 #include "Misc/FileHelper.h"
 #include "PropertyCustomizationHelpers.h"
 #include "SGameplayTagCombo.h"
+#include "SGameplayTagContainerCombo.h"
 #include "Misc/MessageDialog.h"
 #include "Misc/PackageName.h"
 #include "Misc/Paths.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Input/Events.h"
 #include "InputCoreTypes.h"
+#include "ScopedTransaction.h"
+#include "Brushes/SlateColorBrush.h"
 #include "Styling/AppStyle.h"
 #include "Styling/CoreStyle.h"
 #include "Styling/SlateBrush.h"
+#include "Styling/SlateTypes.h"
 #include "Subsystems/AssetEditorSubsystem.h"
+#include "ObjectTools.h"
 #include "UObject/Package.h"
+#include "Engine/Font.h"
 #include "Engine/Texture2D.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
@@ -60,6 +66,27 @@ namespace
 		}
 
 		return TagPath;
+	}
+
+	static const FTableRowStyle& GetConversationBandHeaderRowStyle()
+	{
+		static const FSlateColorBrush TransparentBrush(FLinearColor::Transparent);
+		static const FSlateNoResource NoResourceBrush;
+		static const FTableRowStyle RowStyle = []
+		{
+			FTableRowStyle Style = FAppStyle::Get().GetWidgetStyle<FTableRowStyle>("TableView.Row");
+			Style.SetEvenRowBackgroundBrush(TransparentBrush);
+			Style.SetEvenRowBackgroundHoveredBrush(TransparentBrush);
+			Style.SetOddRowBackgroundBrush(TransparentBrush);
+			Style.SetOddRowBackgroundHoveredBrush(TransparentBrush);
+			Style.SetSelectorFocusedBrush(NoResourceBrush);
+			Style.SetActiveBrush(NoResourceBrush);
+			Style.SetActiveHoveredBrush(NoResourceBrush);
+			Style.SetInactiveBrush(NoResourceBrush);
+			Style.SetInactiveHoveredBrush(NoResourceBrush);
+			return Style;
+		}();
+		return RowStyle;
 	}
 
 	class SDialogueSpeakerTableRow final : public SMultiColumnTableRow<TSharedPtr<SDialogueSpeakerEditorPanel::FSpeakerEntry>>
@@ -333,6 +360,97 @@ namespace
 		return Existing;
 	}
 
+	static bool RemoveTagFromConditionGroup(FDialogueConditionGroup& Group, const TSet<FGameplayTag>& RemovedTags)
+	{
+		if (RemovedTags.IsEmpty() || Group.Conditions.IsEmpty())
+		{
+			return false;
+		}
+
+		const int32 OriginalNum = Group.Conditions.Num();
+		Group.Conditions.RemoveAll([&RemovedTags](const FDialogueCondition& Condition)
+		{
+			return Condition.TagValue.IsValid() && RemovedTags.Contains(Condition.TagValue);
+		});
+		return Group.Conditions.Num() != OriginalNum;
+	}
+
+	static bool RemoveConversationTagReferencesFromConversation(
+		UARDialogueConversationAsset* Conversation,
+		const TSet<FGameplayTag>& RemovedTags)
+	{
+		if (!Conversation || RemovedTags.IsEmpty())
+		{
+			return false;
+		}
+
+		Conversation->Modify();
+		bool bChanged = false;
+		bChanged |= RemoveTagFromConditionGroup(Conversation->Header.LockedConditions, RemovedTags);
+		bChanged |= RemoveTagFromConditionGroup(Conversation->Header.BlockedConditions, RemovedTags);
+
+		for (FDialogueCompiledNode& Node : Conversation->CompiledData.Nodes)
+		{
+			switch (Node.NodeType)
+			{
+			case EDialogueNodeType::Line:
+			{
+				if (FDialogueLineNodeData* LineData = Node.NodeData.GetMutablePtr<FDialogueLineNodeData>())
+				{
+					bChanged |= RemoveTagFromConditionGroup(LineData->SkipLockedConditions, RemovedTags);
+					bChanged |= RemoveTagFromConditionGroup(LineData->SkipBlockedConditions, RemovedTags);
+				}
+				break;
+			}
+			case EDialogueNodeType::MultiLine:
+			case EDialogueNodeType::SplitLine:
+			{
+				if (FDialogueMultiLineNodeData* MultiLineData = Node.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>())
+				{
+					for (FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+					{
+						bChanged |= RemoveTagFromConditionGroup(Entry.LineData.SkipLockedConditions, RemovedTags);
+						bChanged |= RemoveTagFromConditionGroup(Entry.LineData.SkipBlockedConditions, RemovedTags);
+					}
+				}
+				break;
+			}
+			case EDialogueNodeType::Bool:
+			{
+				if (FDialogueBoolNodeData* BoolData = Node.NodeData.GetMutablePtr<FDialogueBoolNodeData>())
+				{
+					if (BoolData->Condition.TagValue.IsValid() && RemovedTags.Contains(BoolData->Condition.TagValue))
+					{
+						BoolData->Condition.TagValue = FGameplayTag();
+						bChanged = true;
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
+
+			for (FDialogueCompiledChoiceBranch& Branch : Node.ChoiceBranches)
+			{
+				bChanged |= RemoveTagFromConditionGroup(Branch.LockedConditions, RemovedTags);
+				bChanged |= RemoveTagFromConditionGroup(Branch.BlockedConditions, RemovedTags);
+			}
+			for (FDialogueCompiledSwitchBranch& Branch : Node.SwitchBranches)
+			{
+				bChanged |= RemoveTagFromConditionGroup(Branch.LockedConditions, RemovedTags);
+				bChanged |= RemoveTagFromConditionGroup(Branch.BlockedConditions, RemovedTags);
+			}
+		}
+
+		if (bChanged)
+		{
+			Conversation->MarkPackageDirty();
+		}
+
+		return bChanged;
+	}
+
 	static void GatherConversationAssetsFromLookup(const UARDialogueSettings* DialogueSettings, TMap<FGameplayTag, UARDialogueConversationAsset*>& OutConversationsByTag)
 	{
 		OutConversationsByTag.Reset();
@@ -370,6 +488,10 @@ namespace
 			&& ConversationTable
 			&& ConversationTable->GetRowStruct() == FARDialogueConversationAssetRow::StaticStruct())
 		{
+			TArray<FName> StaleRowNames;
+			TSet<FGameplayTag> RemovedConversationTags;
+			TArray<UARDialogueConversationAsset*> LoadedConversations;
+
 			for (const FName RowName : ConversationTable->GetRowNames())
 			{
 				const FARDialogueConversationAssetRow* Row = ConversationTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
@@ -402,6 +524,17 @@ namespace
 				}
 
 				UARDialogueConversationAsset* Conversation = Row->Conversation.LoadSynchronous();
+				if (!Conversation)
+				{
+					StaleRowNames.Add(RowName);
+					if (RowTag.IsValid())
+					{
+						RemovedConversationTags.Add(RowTag);
+					}
+					continue;
+				}
+
+				LoadedConversations.AddUnique(Conversation);
 				if (Conversation && !Conversation->Header.ConversationTag.IsValid() && RowTag.IsValid())
 				{
 					Conversation->Modify();
@@ -410,6 +543,24 @@ namespace
 				}
 
 				TryAddConversation(Conversation, RowTag);
+			}
+
+			if (!StaleRowNames.IsEmpty())
+			{
+				ConversationTable->Modify();
+				for (const FName StaleRowName : StaleRowNames)
+				{
+					ConversationTable->RemoveRow(StaleRowName);
+				}
+				ConversationTable->MarkPackageDirty();
+			}
+
+			if (!RemovedConversationTags.IsEmpty())
+			{
+				for (UARDialogueConversationAsset* ExistingConversation : LoadedConversations)
+				{
+					RemoveConversationTagReferencesFromConversation(ExistingConversation, RemovedConversationTags);
+				}
 			}
 		}
 	}
@@ -480,6 +631,107 @@ namespace
 			return true;
 		default:
 			return false;
+		}
+	}
+
+	static bool IsEditableRequiredTagCondition(const FDialogueCondition& Condition)
+	{
+		return Condition.TagValue.IsValid()
+			&& IsConditionTagSource(Condition.Source)
+			&& DoesOperatorRequireTagPresence(Condition.Operator);
+	}
+
+	static FString BuildSpeakerConversationTagFilter(const UARDialogueSettings* Settings, const FGameplayTag SpeakerTag)
+	{
+		if (!Settings || !Settings->ConversationDefinitionRootTag.IsValid() || !SpeakerTag.IsValid())
+		{
+			return FString();
+		}
+
+		return FString::Printf(
+			TEXT("%s.Id.%s"),
+			*Settings->ConversationDefinitionRootTag.ToString(),
+			*GetSpeakerLeafSegment(SpeakerTag));
+	}
+
+	static bool IsTagWithinFilterRoot(const FGameplayTag Tag, const FString& FilterRoot)
+	{
+		if (!Tag.IsValid() || FilterRoot.IsEmpty())
+		{
+			return false;
+		}
+
+		const FString TagPath = Tag.ToString();
+		return TagPath.Equals(FilterRoot, ESearchCase::CaseSensitive)
+			|| TagPath.StartsWith(FilterRoot + TEXT("."), ESearchCase::CaseSensitive);
+	}
+
+	static void GatherLockedConversationTagsForRoot(
+		const FDialogueConditionGroup& LockedConditions,
+		const FString& FilterRoot,
+		TArray<FGameplayTag>& OutTags)
+	{
+		OutTags.Reset();
+		if (FilterRoot.IsEmpty())
+		{
+			return;
+		}
+
+		for (const FDialogueCondition& Condition : LockedConditions.Conditions)
+		{
+			if (!IsEditableRequiredTagCondition(Condition))
+			{
+				continue;
+			}
+
+			if (IsTagWithinFilterRoot(Condition.TagValue, FilterRoot))
+			{
+				OutTags.AddUnique(Condition.TagValue);
+			}
+		}
+	}
+
+	static void ReplaceLockedConversationTagsForRoot(
+		FDialogueConditionGroup& LockedConditions,
+		const FString& FilterRoot,
+		const TArray<FGameplayTag>& NewTags)
+	{
+		TArray<FDialogueCondition> UpdatedConditions;
+		UpdatedConditions.Reserve(LockedConditions.Conditions.Num() + NewTags.Num());
+		for (const FDialogueCondition& Condition : LockedConditions.Conditions)
+		{
+			if (IsEditableRequiredTagCondition(Condition) && IsTagWithinFilterRoot(Condition.TagValue, FilterRoot))
+			{
+				continue;
+			}
+
+			UpdatedConditions.Add(Condition);
+		}
+
+		TSet<FGameplayTag> UniqueNewTags;
+		for (const FGameplayTag Tag : NewTags)
+		{
+			if (!Tag.IsValid() || !IsTagWithinFilterRoot(Tag, FilterRoot) || UniqueNewTags.Contains(Tag))
+			{
+				continue;
+			}
+
+			UniqueNewTags.Add(Tag);
+			FDialogueCondition& NewCondition = UpdatedConditions.AddDefaulted_GetRef();
+			NewCondition.Source = EDialogueConditionSource::CombinedTags;
+			NewCondition.Operator = EDialogueComparisonOp::Present;
+			NewCondition.TagValue = Tag;
+		}
+
+		const bool bHasAnyRequired = UpdatedConditions.ContainsByPredicate([](const FDialogueCondition& Condition)
+		{
+			return IsEditableRequiredTagCondition(Condition);
+		});
+
+		LockedConditions.Conditions = MoveTemp(UpdatedConditions);
+		if (bHasAnyRequired)
+		{
+			LockedConditions.MatchMode = EDialogueConditionMatchMode::All;
 		}
 	}
 
@@ -579,24 +831,15 @@ namespace
 		});
 	}
 
-	static FString BuildTagCsv(const TArray<FGameplayTag>& Tags)
-	{
-		TArray<FString> TagStrings;
-		for (const FGameplayTag Tag : Tags)
-		{
-			if (Tag.IsValid())
-			{
-				TagStrings.Add(Tag.ToString());
-			}
-		}
-		return FString::Join(TagStrings, TEXT(", "));
-	}
 }
 
 void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 {
 	(void)InArgs;
 	RefreshData();
+	const float DetailFieldSpacing = 6.0f;
+	const float DetailLabelToFieldSpacing = 3.0f;
+	const float PortraitPreviewSize = 72.0f;
 
 	ChildSlot
 	[
@@ -672,18 +915,14 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					+ SScrollBox::Slot()
 					[
 						SNew(SVerticalBox)
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
-						[
-							SNew(STextBlock).Text(FText::FromString(TEXT("Default Portrait")))
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 						[
 							SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 6.0f, 0.0f).VAlign(VAlign_Center)
+							+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f).VAlign(VAlign_Center)
 							[
 								SNew(SBox)
-								.WidthOverride(48.0f)
-								.HeightOverride(48.0f)
+								.WidthOverride(PortraitPreviewSize)
+								.HeightOverride(PortraitPreviewSize)
 								[
 									SNew(SImage)
 									.Image(this, &SDialogueSpeakerEditorPanel::GetDefaultPortraitFieldBrush)
@@ -698,46 +937,65 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 								.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedDefaultPortraitTextureChanged)
 							]
 						]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
 					[
 						SNew(STextBlock).Text(FText::FromString(TEXT("Name")))
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 					[
-						SAssignNew(DisplayNameTextBox, SEditableTextBox).HintText(FText::FromString(TEXT("Display Name")))
+						SAssignNew(DisplayNameTextBox, SEditableTextBox)
+						.HintText(FText::FromString(TEXT("Display Name")))
+						.OnTextCommitted_Lambda([this](const FText&, const ETextCommit::Type CommitType)
+						{
+							if (CommitType == ETextCommit::OnEnter)
+							{
+								HandleSaveSpeaker();
+							}
+						})
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
 					[
 						SNew(STextBlock).Text(FText::FromString(TEXT("Description")))
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 					[
-						SAssignNew(DescriptionTextBox, SEditableTextBox).HintText(FText::FromString(TEXT("Description")))
+						SAssignNew(DescriptionTextBox, SEditableTextBox)
+						.HintText(FText::FromString(TEXT("Description")))
+						.OnTextCommitted_Lambda([this](const FText&, const ETextCommit::Type CommitType)
+						{
+							if (CommitType == ETextCommit::OnEnter)
+							{
+								HandleSaveSpeaker();
+							}
+						})
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
 					[
-						SNew(STextBlock).Text(FText::FromString(TEXT("Line Font Style (optional)")))
+						SNew(STextBlock).Text(FText::FromString(TEXT("Line Font (optional)")))
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 					[
-						SAssignNew(LineFontStyleTextBox, SEditableTextBox).HintText(FText::FromString(TEXT("Rich text style tag (for example: npc_brother)")))
+						SAssignNew(LineFontPicker, SObjectPropertyEntryBox)
+						.AllowedClass(UFont::StaticClass())
+						.ObjectPath(this, &SDialogueSpeakerEditorPanel::GetEditedLineFontPath)
+						.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedLineFontChanged)
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
 					[
 						SNew(STextBlock).Text(FText::FromString(TEXT("Speaker Tag")))
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 					[
 						SNew(SGameplayTagCombo)
 						.Filter(TEXT("Dialogue.Speaker"))
 						.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedSpeakerTag)
 						.OnTagChanged(this, &SDialogueSpeakerEditorPanel::OnEditedSpeakerTagChanged)
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
 					[
 						SNew(STextBlock).Text(FText::FromString(TEXT("Faction Tag (optional)")))
 					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 					[
 						SNew(SGameplayTagCombo)
 						.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedFactionTag)
@@ -847,7 +1105,7 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 								.Justification(ETextJustify::Center)
 							]
 						]
-						+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f, 0.0f, 0.0f, 0.0f)
+						+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f, 0.0f, 2.0f, 0.0f)
 						[
 							SNew(SButton)
 							.HAlign(HAlign_Center)
@@ -856,6 +1114,19 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 							[
 								SNew(STextBlock)
 								.Text(FText::FromString(TEXT("Find Broken")))
+								.Justification(ETextJustify::Center)
+							]
+						]
+						+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f, 0.0f, 0.0f, 0.0f)
+						[
+							SNew(SButton)
+							.HAlign(HAlign_Center)
+							.ContentPadding(FMargin(8.0f, 4.0f))
+							.OnClicked(this, &SDialogueSpeakerEditorPanel::HandleCleanupGeneratedConversationTags)
+							.ToolTipText(FText::FromString(TEXT("Explicit cleanup pass for generated conversation gameplay tags. Removes stale generated tags no longer referenced by lookup rows/conversation headers.")))
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(TEXT("Cleanup Tags")))
 								.Justification(ETextJustify::Center)
 							]
 						]
@@ -868,6 +1139,8 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 							SAssignNew(ConversationListView, SListView<TSharedPtr<FConversationEntry>>)
 							.ListItemsSource(&ConversationEntries)
 							.OnGenerateRow(this, &SDialogueSpeakerEditorPanel::OnGenerateConversationRow)
+							.OnContextMenuOpening(this, &SDialogueSpeakerEditorPanel::BuildConversationListContextMenu)
+							.OnSelectionChanged(this, &SDialogueSpeakerEditorPanel::OnConversationSelectionChanged)
 							.OnMouseButtonDoubleClick(this, &SDialogueSpeakerEditorPanel::OnConversationDoubleClicked)
 						]
 					]
@@ -905,6 +1178,38 @@ SDialogueSpeakerEditorPanel::~SDialogueSpeakerEditorPanel()
 FReply SDialogueSpeakerEditorPanel::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
 	(void)MyGeometry;
+	if (!InKeyEvent.IsControlDown()
+		&& !InKeyEvent.IsCommandDown()
+		&& !InKeyEvent.IsAltDown()
+		&& InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		HandleSaveSpeaker();
+		return FReply::Handled();
+	}
+
+	if ((InKeyEvent.IsControlDown() || InKeyEvent.IsCommandDown()) && !InKeyEvent.IsAltDown())
+	{
+		if (!InKeyEvent.IsShiftDown() && InKeyEvent.GetKey() == EKeys::Z)
+		{
+			if (GEditor && GEditor->UndoTransaction())
+			{
+				RefreshData();
+				SetSelectedSpeakerRow(SelectedSpeakerRowName);
+			}
+			return FReply::Handled();
+		}
+
+		if (InKeyEvent.GetKey() == EKeys::Y || (InKeyEvent.IsShiftDown() && InKeyEvent.GetKey() == EKeys::Z))
+		{
+			if (GEditor && GEditor->RedoTransaction())
+			{
+				RefreshData();
+				SetSelectedSpeakerRow(SelectedSpeakerRowName);
+			}
+			return FReply::Handled();
+		}
+	}
+
 	if ((InKeyEvent.IsControlDown() || InKeyEvent.IsCommandDown())
 		&& !InKeyEvent.IsAltDown()
 		&& InKeyEvent.GetKey() == EKeys::S)
@@ -1071,6 +1376,8 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 		return;
 	}
 
+	const FString SelectedSpeakerConversationTagFilter = BuildSpeakerConversationTagFilter(Settings, SelectedSpeaker->Row.SpeakerTag);
+
 	TMap<FGameplayTag, UARDialogueConversationAsset*> ConversationsByTag;
 	GatherConversationAssetsFromLookup(Settings, ConversationsByTag);
 
@@ -1136,8 +1443,16 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 
 		TArray<FGameplayTag> HeaderRequiredTags;
 		GatherHeaderRequiredTags(Conversation, HeaderRequiredTags);
-		Entry->RequiredTagsText = BuildTagCsv(HeaderRequiredTags);
+		for (const FGameplayTag RequiredTag : HeaderRequiredTags)
+		{
+			if (RequiredTag.IsValid())
+			{
+				Entry->RequiredTags.AddTag(RequiredTag);
+			}
+		}
 		Entry->RequiredTagCount = HeaderRequiredTags.Num();
+		Entry->ConversationTagFilter = SelectedSpeakerConversationTagFilter;
+		GatherLockedConversationTagsForRoot(Conversation->Header.LockedConditions, Entry->ConversationTagFilter, Entry->LockedByConversationTags);
 
 		FConversationChainData ChainData;
 		GatherConversationChainTags(
@@ -1167,7 +1482,6 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 		}
 
 		TArray<FString> UnlocksConversationNames;
-		TArray<FString> LockedByConversationNames;
 		for (const TSharedPtr<FConversationEntry>& OtherEntry : RawConversationEntries)
 		{
 			if (!OtherEntry.IsValid() || !OtherEntry->Asset.IsValid() || OtherEntry == Entry)
@@ -1194,32 +1508,13 @@ void SDialogueSpeakerEditorPanel::RefreshConversationMap()
 			{
 				UnlocksConversationNames.AddUnique(OtherEntry->DisplayTitle);
 			}
-
-			bool bRequiresFromOther = false;
-			for (const FGameplayTag RequiredTag : SourceData->RequiredTags)
-			{
-				if (OtherData->AddedTags.Contains(RequiredTag))
-				{
-					bRequiresFromOther = true;
-					break;
-				}
-			}
-			if (bRequiresFromOther)
-			{
-				LockedByConversationNames.AddUnique(OtherEntry->DisplayTitle);
-			}
 		}
 
 		UnlocksConversationNames.Sort();
-		LockedByConversationNames.Sort();
 		const FString UnlocksSummary = UnlocksConversationNames.IsEmpty()
 			? TEXT("-")
 			: FString::Join(UnlocksConversationNames, TEXT(", "));
-		const FString LockedBySummary = LockedByConversationNames.IsEmpty()
-			? TEXT("-")
-			: FString::Join(LockedByConversationNames, TEXT(", "));
 		Entry->UnlocksSummary = UnlocksSummary;
-		Entry->LockedByText = LockedBySummary;
 	}
 
 	RawConversationEntries.Sort([](const TSharedPtr<FConversationEntry>& Lhs, const TSharedPtr<FConversationEntry>& Rhs)
@@ -1400,6 +1695,31 @@ void SDialogueSpeakerEditorPanel::ApplySpeakerFilterAndSort()
 	if (SpeakerListView.IsValid())
 	{
 		SpeakerListView->RequestListRefresh();
+
+		const TGuardValue<bool> IgnoreSelectionChangedGuard(bIgnoreSpeakerSelectionChanged, true);
+		SpeakerListView->ClearSelection();
+
+		TSharedPtr<FSpeakerEntry> SelectedEntry;
+		for (const TSharedPtr<FSpeakerEntry>& Entry : FilteredSpeakerEntries)
+		{
+			if (Entry.IsValid() && Entry->RowName == SelectedSpeakerRowName)
+			{
+				SelectedEntry = Entry;
+				break;
+			}
+		}
+
+		if (!SelectedEntry.IsValid() && FilteredSpeakerEntries.Num() > 0 && FilteredSpeakerEntries[0].IsValid())
+		{
+			SelectedEntry = FilteredSpeakerEntries[0];
+			SelectedSpeakerRowName = SelectedEntry->RowName;
+		}
+
+		if (SelectedEntry.IsValid())
+		{
+			SpeakerListView->SetSelection(SelectedEntry);
+			SpeakerListView->RequestScrollIntoView(SelectedEntry);
+		}
 	}
 }
 
@@ -1502,9 +1822,6 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& O
 
 	const FString DisplayNameText = DisplayNameTextBox.IsValid() ? DisplayNameTextBox->GetText().ToString().TrimStartAndEnd() : FString();
 	const FString DescriptionText = DescriptionTextBox.IsValid() ? DescriptionTextBox->GetText().ToString() : FString();
-	const FString LineFontStyleTagText = LineFontStyleTextBox.IsValid()
-		? LineFontStyleTextBox->GetText().ToString().TrimStartAndEnd()
-		: FString();
 
 	if (DisplayNameText.IsEmpty())
 	{
@@ -1539,7 +1856,8 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& O
 	OutRow.Description = FText::FromString(DescriptionText);
 	OutRow.SpeakerTag = EditedSpeakerTag;
 	OutRow.FactionTag = EditedFactionTag;
-	OutRow.LineFontStyleTag = LineFontStyleTagText.IsEmpty() ? NAME_None : FName(*LineFontStyleTagText);
+	OutRow.LineFont = EditedLineFontAsset;
+	OutRow.LineFontStyleTag = NAME_None;
 	OutRow.DefaultPortrait.PortraitTexture = EditedDefaultPortraitTexture;
 	OutRow.RelationshipThresholds = EditedRelationshipThresholds;
 	return true;
@@ -1604,6 +1922,18 @@ FGameplayTag SDialogueSpeakerEditorPanel::GetEditedFactionTag() const
 void SDialogueSpeakerEditorPanel::OnEditedFactionTagChanged(FGameplayTag NewTag)
 {
 	EditedFactionTag = NewTag;
+}
+
+FString SDialogueSpeakerEditorPanel::GetEditedLineFontPath() const
+{
+	return EditedLineFontAsset.ToSoftObjectPath().ToString();
+}
+
+void SDialogueSpeakerEditorPanel::OnEditedLineFontChanged(const FAssetData& AssetData)
+{
+	EditedLineFontAsset = AssetData.IsValid()
+		? TSoftObjectPtr<UFont>(AssetData.ToSoftObjectPath())
+		: TSoftObjectPtr<UFont>();
 }
 
 FString SDialogueSpeakerEditorPanel::GetEditedDefaultPortraitTexturePath() const
@@ -1712,10 +2042,9 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 	{
 		if (DisplayNameTextBox.IsValid()) { DisplayNameTextBox->SetText(FText::GetEmpty()); }
 		if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(FText::GetEmpty()); }
-		if (LineFontStyleTextBox.IsValid()) { LineFontStyleTextBox->SetText(FText::GetEmpty()); }
 		EditedSpeakerTag = FGameplayTag();
 		EditedFactionTag = FGameplayTag();
-		EditedLineFontStyleTag = NAME_None;
+		EditedLineFontAsset = TSoftObjectPtr<UFont>();
 		EditedDefaultPortraitTexture = TSoftObjectPtr<UTexture2D>();
 		EditedPortraitTag = FGameplayTag();
 		EditedPortraitTexture = TSoftObjectPtr<UTexture2D>();
@@ -1730,10 +2059,9 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 
 	if (DisplayNameTextBox.IsValid()) { DisplayNameTextBox->SetText(SelectedRow.DisplayName); }
 	if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(SelectedRow.Description); }
-	if (LineFontStyleTextBox.IsValid()) { LineFontStyleTextBox->SetText(FText::FromName(SelectedRow.LineFontStyleTag)); }
 	OnEditedSpeakerTagChanged(SelectedRow.SpeakerTag);
 	EditedFactionTag = SelectedRow.FactionTag;
-	EditedLineFontStyleTag = SelectedRow.LineFontStyleTag;
+	EditedLineFontAsset = SelectedRow.LineFont;
 	EditedDefaultPortraitTexture = SelectedRow.DefaultPortrait.PortraitTexture;
 	EditedPortraitTag = FGameplayTag();
 	EditedPortraitTexture = TSoftObjectPtr<UTexture2D>();
@@ -1778,6 +2106,7 @@ void SDialogueSpeakerEditorPanel::SetSelectedSpeakerRow(const FName RowName)
 			if (Entry.IsValid() && Entry->RowName == SelectedSpeakerRowName)
 			{
 				SpeakerListView->SetSelection(Entry);
+				SpeakerListView->RequestScrollIntoView(Entry);
 				break;
 			}
 		}
@@ -1823,6 +2152,51 @@ TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildSpeakerListContextMenu()
 		FText::FromString(TEXT("Delete selected speaker row.")),
 		FSlateIcon(),
 		FUIAction(FExecuteAction::CreateLambda([this]() { HandleDeleteSpeaker(); })));
+
+	return MenuBuilder.MakeWidget();
+}
+
+TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildConversationListContextMenu()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+
+	const bool bHasSelectedConversation = ConversationListView.IsValid()
+		&& ConversationListView->GetSelectedItems().ContainsByPredicate([](const TSharedPtr<FConversationEntry>& Entry)
+		{
+			return Entry.IsValid() && !Entry->bIsBandHeader && Entry->Asset.IsValid();
+		});
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Open")),
+		FText::FromString(TEXT("Open the selected conversation in the graph editor.")),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { HandleOpenConversation(); }),
+			FCanExecuteAction::CreateLambda([bHasSelectedConversation]() { return bHasSelectedConversation; })));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Duplicate")),
+		FText::FromString(TEXT("Duplicate the selected conversation asset and register a new conversation tag/lookup row.")),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { HandleDuplicateConversation(); }),
+			FCanExecuteAction::CreateLambda([bHasSelectedConversation]() { return bHasSelectedConversation; })));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Remove From Lookup")),
+		FText::FromString(TEXT("Remove the selected conversation from lookup and clean references to its conversation tag.")),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { HandleDeleteConversation(); }),
+			FCanExecuteAction::CreateLambda([bHasSelectedConversation]() { return bHasSelectedConversation; })));
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Delete Asset + Remove From Lookup")),
+		FText::FromString(TEXT("Delete the selected conversation asset from Content Browser and remove its lookup/tag references.")),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { HandleDeleteConversationAndAsset(); }),
+			FCanExecuteAction::CreateLambda([bHasSelectedConversation]() { return bHasSelectedConversation; })));
 
 	return MenuBuilder.MakeWidget();
 }
@@ -1907,6 +2281,16 @@ bool SDialogueSpeakerEditorPanel::CanPasteSpeaker() const
 TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildThresholdContextMenu()
 {
 	FMenuBuilder MenuBuilder(true, nullptr);
+
+	const bool bHasSelectedBand = EditedRelationshipThresholds.IsValidIndex(SelectedThresholdIndex);
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Edit Band Value")),
+		FText::FromString(TEXT("Edit the selected relationship band value inline.")),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { BeginInlineThresholdEdit(SelectedThresholdIndex); }),
+			FCanExecuteAction::CreateLambda([bHasSelectedBand]() { return bHasSelectedBand; })));
+	MenuBuilder.AddMenuSeparator();
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Add Band")),
 		FText::FromString(TEXT("Insert a new relationship band after the selected band.")),
@@ -1916,7 +2300,24 @@ TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildThresholdContextMenu()
 		FText::FromString(TEXT("Remove Band")),
 		FText::FromString(TEXT("Remove the selected relationship band.")),
 		FSlateIcon(),
-	FUIAction(FExecuteAction::CreateLambda([this]() { HandleRemoveThreshold(); })));
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleRemoveThreshold(); })));
+	MenuBuilder.AddMenuSeparator();
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Move Up")),
+		FText::FromString(TEXT("Move the selected relationship band earlier in the list.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleMoveThresholdUp(); })));
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Move Down")),
+		FText::FromString(TEXT("Move the selected relationship band later in the list.")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleMoveThresholdDown(); })));
+	MenuBuilder.AddMenuSeparator();
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Reset Bands")),
+		FText::FromString(TEXT("Reset relationship bands to the default values (50, 150, 300, 500).")),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([this]() { HandleResetThresholds(); })));
 	return MenuBuilder.MakeWidget();
 }
 
@@ -2107,78 +2508,226 @@ FReply SDialogueSpeakerEditorPanel::HandleToggleConversationImportant(TWeakObjec
 	return FReply::Handled();
 }
 
-void SDialogueSpeakerEditorPanel::CommitConversationRequiredTags(
-	TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset,
-	const FText& NewText,
-	const ETextCommit::Type CommitType)
+FReply SDialogueSpeakerEditorPanel::HandleAddConversationLockedByTag(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset)
 {
-	if (CommitType == ETextCommit::OnCleared)
+	UARDialogueConversationAsset* Conversation = ConversationAsset.Get();
+	if (!Conversation)
 	{
-		return;
+		return FReply::Handled();
 	}
 
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	const FString FilterRoot = BuildSpeakerConversationTagFilter(Settings, Conversation->Header.PrimarySpeakerTag);
+	if (FilterRoot.IsEmpty())
+	{
+		AppendLogLine(TEXT("Unable to add lock tag: conversation root filter could not be resolved."));
+		return FReply::Handled();
+	}
+
+	TArray<FGameplayTag> LockedByTags;
+	GatherLockedConversationTagsForRoot(Conversation->Header.LockedConditions, FilterRoot, LockedByTags);
+
+	FGameplayTag NewLockTag;
+	for (const TSharedPtr<FConversationEntry>& Entry : ConversationEntries)
+	{
+		if (!Entry.IsValid() || Entry->bIsBandHeader || !Entry->ConversationTag.IsValid())
+		{
+			continue;
+		}
+
+		if (!IsTagWithinFilterRoot(Entry->ConversationTag, FilterRoot))
+		{
+			continue;
+		}
+
+		NewLockTag = Entry->ConversationTag;
+		break;
+	}
+
+	if (!NewLockTag.IsValid())
+	{
+		AppendLogLine(TEXT("No valid conversation tag exists under this speaker root to add as a lock."));
+		return FReply::Handled();
+	}
+
+	LockedByTags.AddUnique(NewLockTag);
+	Conversation->Modify();
+	ReplaceLockedConversationTagsForRoot(Conversation->Header.LockedConditions, FilterRoot, LockedByTags);
+	Conversation->MarkPackageDirty();
+	RefreshConversationMap();
+	return FReply::Handled();
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleRemoveConversationLockedByTag(
+	TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset,
+	const int32 TagIndex)
+{
+	UARDialogueConversationAsset* Conversation = ConversationAsset.Get();
+	if (!Conversation)
+	{
+		return FReply::Handled();
+	}
+
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	const FString FilterRoot = BuildSpeakerConversationTagFilter(Settings, Conversation->Header.PrimarySpeakerTag);
+	if (FilterRoot.IsEmpty())
+	{
+		return FReply::Handled();
+	}
+
+	TArray<FGameplayTag> LockedByTags;
+	GatherLockedConversationTagsForRoot(Conversation->Header.LockedConditions, FilterRoot, LockedByTags);
+	if (!LockedByTags.IsValidIndex(TagIndex))
+	{
+		return FReply::Handled();
+	}
+
+	LockedByTags.RemoveAt(TagIndex);
+	Conversation->Modify();
+	ReplaceLockedConversationTagsForRoot(Conversation->Header.LockedConditions, FilterRoot, LockedByTags);
+	Conversation->MarkPackageDirty();
+	RefreshConversationMap();
+	return FReply::Handled();
+}
+
+void SDialogueSpeakerEditorPanel::HandleConversationLockedByTagChanged(
+	TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset,
+	const int32 TagIndex,
+	const FGameplayTag NewTag)
+{
 	UARDialogueConversationAsset* Conversation = ConversationAsset.Get();
 	if (!Conversation)
 	{
 		return;
 	}
 
-	FString RawText = NewText.ToString();
-	RawText.ReplaceInline(TEXT(";"), TEXT(","));
-
-	TArray<FString> Tokens;
-	RawText.ParseIntoArray(Tokens, TEXT(","), true);
-
-	TSet<FGameplayTag> UniqueTags;
-	TArray<FGameplayTag> ParsedTags;
-	for (FString Token : Tokens)
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	const FString FilterRoot = BuildSpeakerConversationTagFilter(Settings, Conversation->Header.PrimarySpeakerTag);
+	if (FilterRoot.IsEmpty())
 	{
-		Token.TrimStartAndEndInline();
-		if (Token.IsEmpty())
-		{
-			continue;
-		}
+		return;
+	}
 
-		const FGameplayTag ParsedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*Token), false);
-		if (!ParsedTag.IsValid())
-		{
-			AppendLogLine(FString::Printf(TEXT("Ignored invalid required tag '%s'."), *Token));
-			continue;
-		}
+	if (NewTag.IsValid() && !IsTagWithinFilterRoot(NewTag, FilterRoot))
+	{
+		AppendLogLine(FString::Printf(
+			TEXT("Ignored lock tag '%s': must be under '%s'."),
+			*NewTag.ToString(),
+			*FilterRoot));
+		return;
+	}
 
-		if (!UniqueTags.Contains(ParsedTag))
-		{
-			UniqueTags.Add(ParsedTag);
-			ParsedTags.Add(ParsedTag);
-		}
+	TArray<FGameplayTag> LockedByTags;
+	GatherLockedConversationTagsForRoot(Conversation->Header.LockedConditions, FilterRoot, LockedByTags);
+	if (!LockedByTags.IsValidIndex(TagIndex))
+	{
+		return;
+	}
+
+	if (NewTag.IsValid())
+	{
+		LockedByTags[TagIndex] = NewTag;
+	}
+	else
+	{
+		LockedByTags.RemoveAt(TagIndex);
 	}
 
 	Conversation->Modify();
-	TArray<FDialogueCondition> NewLockedConditions;
+	ReplaceLockedConversationTagsForRoot(Conversation->Header.LockedConditions, FilterRoot, LockedByTags);
+	Conversation->MarkPackageDirty();
+	RefreshConversationMap();
+}
+
+void SDialogueSpeakerEditorPanel::CommitConversationRequiredTags(
+	TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset,
+	const FGameplayTagContainer& NewTags)
+{
+	UARDialogueConversationAsset* Conversation = ConversationAsset.Get();
+	if (!Conversation)
+	{
+		return;
+	}
+
+	TSet<FGameplayTag> UniqueTags;
+	TArray<FGameplayTag> ParsedTags;
+	NewTags.GetGameplayTagArray(ParsedTags);
+	for (int32 TagIndex = ParsedTags.Num() - 1; TagIndex >= 0; --TagIndex)
+	{
+		const FGameplayTag ParsedTag = ParsedTags[TagIndex];
+		if (!ParsedTag.IsValid())
+		{
+			ParsedTags.RemoveAt(TagIndex);
+			continue;
+		}
+
+		if (UniqueTags.Contains(ParsedTag))
+		{
+			ParsedTags.RemoveAt(TagIndex);
+		}
+		else
+		{
+			UniqueTags.Add(ParsedTag);
+		}
+	}
+	ParsedTags.Sort([](const FGameplayTag& Lhs, const FGameplayTag& Rhs)
+	{
+		return Lhs.ToString() < Rhs.ToString();
+	});
+
+	TArray<FDialogueCondition> ExistingNonRequiredConditions;
+	ExistingNonRequiredConditions.Reserve(Conversation->Header.LockedConditions.Conditions.Num());
 	for (const FDialogueCondition& Condition : Conversation->Header.LockedConditions.Conditions)
 	{
-		const bool bIsEditableRequiredTag =
-			Condition.TagValue.IsValid()
-			&& IsConditionTagSource(Condition.Source)
-			&& DoesOperatorRequireTagPresence(Condition.Operator);
-		if (!bIsEditableRequiredTag)
+		if (!IsEditableRequiredTagCondition(Condition))
 		{
-			NewLockedConditions.Add(Condition);
+			ExistingNonRequiredConditions.Add(Condition);
 		}
 	}
 
+	TArray<FDialogueCondition> UpdatedLockedConditions = ExistingNonRequiredConditions;
+	UpdatedLockedConditions.Reserve(ExistingNonRequiredConditions.Num() + ParsedTags.Num());
 	for (const FGameplayTag RequiredTag : ParsedTags)
 	{
-		FDialogueCondition& NewCondition = NewLockedConditions.AddDefaulted_GetRef();
+		FDialogueCondition& NewCondition = UpdatedLockedConditions.AddDefaulted_GetRef();
 		NewCondition.Source = EDialogueConditionSource::CombinedTags;
 		NewCondition.Operator = EDialogueComparisonOp::Present;
 		NewCondition.TagValue = RequiredTag;
 	}
 
-	Conversation->Header.LockedConditions.Conditions = MoveTemp(NewLockedConditions);
+	const bool bSameCount = Conversation->Header.LockedConditions.Conditions.Num() == UpdatedLockedConditions.Num();
+	bool bAnyConditionDiffers = !bSameCount;
+	if (!bAnyConditionDiffers)
+	{
+		for (int32 Index = 0; Index < UpdatedLockedConditions.Num(); ++Index)
+		{
+			const FDialogueCondition& Existing = Conversation->Header.LockedConditions.Conditions[Index];
+			const FDialogueCondition& Updated = UpdatedLockedConditions[Index];
+			if (Existing.Source != Updated.Source
+				|| Existing.Operator != Updated.Operator
+				|| !Existing.TagValue.MatchesTagExact(Updated.TagValue))
+			{
+				bAnyConditionDiffers = true;
+				break;
+			}
+		}
+	}
+
+	const EDialogueConditionMatchMode PreviousMatchMode = Conversation->Header.LockedConditions.MatchMode;
+	const EDialogueConditionMatchMode UpdatedMatchMode = ParsedTags.IsEmpty()
+		? PreviousMatchMode
+		: EDialogueConditionMatchMode::All;
+
+	if (!bAnyConditionDiffers && PreviousMatchMode == UpdatedMatchMode)
+	{
+		return;
+	}
+
+	Conversation->Modify();
+	Conversation->Header.LockedConditions.Conditions = MoveTemp(UpdatedLockedConditions);
 	if (!ParsedTags.IsEmpty())
 	{
-		Conversation->Header.LockedConditions.MatchMode = EDialogueConditionMatchMode::All;
+		Conversation->Header.LockedConditions.MatchMode = UpdatedMatchMode;
 	}
 	Conversation->MarkPackageDirty();
 	RefreshConversationMap();
@@ -2187,6 +2736,12 @@ void SDialogueSpeakerEditorPanel::CommitConversationRequiredTags(
 FReply SDialogueSpeakerEditorPanel::HandleThresholdListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
 	(void)MyGeometry;
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::F2)
+	{
+		BeginInlineThresholdEdit(SelectedThresholdIndex);
+		return FReply::Handled();
+	}
+
 	if (InKeyEvent.GetKey() == EKeys::Delete || InKeyEvent.GetKey() == EKeys::BackSpace)
 	{
 		HandleRemoveThreshold();
@@ -2241,7 +2796,7 @@ FReply SDialogueSpeakerEditorPanel::HandleSpeakerListKeyDown(const FGeometry& My
 const FSlateBrush* SDialogueSpeakerEditorPanel::GetDefaultPortraitFieldBrush() const
 {
 	DefaultPortraitFieldBrush.DrawAs = ESlateBrushDrawType::Image;
-	DefaultPortraitFieldBrush.ImageSize = FVector2D(48.0f, 48.0f);
+	DefaultPortraitFieldBrush.ImageSize = FVector2D(72.0f, 72.0f);
 	DefaultPortraitFieldBrush.SetResourceObject(nullptr);
 	if (UTexture2D* Texture = EditedDefaultPortraitTexture.LoadSynchronous())
 	{
@@ -2568,6 +3123,8 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		return FReply::Handled();
 	}
 
+	const FScopedTransaction Transaction(NSLOCTEXT("ARDialogueSpeakerEditor", "CreateConversation", "Create Dialogue Conversation"));
+
 	UARDialogueConversationAsset* NewConversation = NewObject<UARDialogueConversationAsset>(
 		Package,
 		UARDialogueConversationAsset::StaticClass(),
@@ -2582,6 +3139,10 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	NewConversation->Header.DisplayTitle = FText::FromString(AssetName);
 	NewConversation->Header.PrimarySpeakerTag = SpeakerRow->SpeakerTag;
 	NewConversation->Header.ParticipatingSpeakerTags.AddUnique(SpeakerRow->SpeakerTag);
+	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
+	{
+		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(PlayerSpeakerTag);
+	}
 	if (TargetRelationshipBand > 0 && SpeakerRow->RelationshipThresholds.IsValidIndex(TargetRelationshipBand - 1))
 	{
 		NewConversation->Header.MinimumRelationshipPoints = SpeakerRow->RelationshipThresholds[TargetRelationshipBand - 1];
@@ -2619,11 +3180,12 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		}
 	}
 
-	const FString SpeakerSegment = GetSpeakerLeafSegment(SpeakerRow->SpeakerTag);
-	const FString ConversationTagPrefix = FString::Printf(
-		TEXT("%s.Id.%s"),
-		*Settings->ConversationDefinitionRootTag.ToString(),
-		*SpeakerSegment);
+	const FString ConversationTagPrefix = BuildSpeakerConversationTagFilter(Settings, SpeakerRow->SpeakerTag);
+	if (ConversationTagPrefix.IsEmpty())
+	{
+		AppendLogLine(TEXT("Failed to resolve conversation tag root for selected speaker."));
+		return FReply::Handled();
+	}
 
 	FString EnsureTagError;
 	FGameplayTag ConversationTag;
@@ -2721,6 +3283,488 @@ FReply SDialogueSpeakerEditorPanel::HandleOpenConversation()
 	}
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(SelectedItems[0]->Asset.Get());
 	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	return FReply::Handled();
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleDuplicateConversation()
+{
+	if (!ConversationListView.IsValid())
+	{
+		return FReply::Handled();
+	}
+
+	const TArray<TSharedPtr<FConversationEntry>> SelectedItems = ConversationListView->GetSelectedItems();
+	if (SelectedItems.IsEmpty() || !SelectedItems[0].IsValid() || SelectedItems[0]->bIsBandHeader || !SelectedItems[0]->Asset.IsValid())
+	{
+		AppendLogLine(TEXT("No conversation selected."));
+		return FReply::Handled();
+	}
+
+	UARDialogueConversationAsset* SourceConversation = SelectedItems[0]->Asset.Get();
+	if (!SourceConversation)
+	{
+		AppendLogLine(TEXT("Selected conversation asset is unavailable."));
+		return FReply::Handled();
+	}
+
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	if (!Settings || !Settings->ConversationDefinitionRootTag.IsValid())
+	{
+		AppendLogLine(TEXT("Dialogue settings/content lookup configuration are unavailable."));
+		return FReply::Handled();
+	}
+
+	UDataTable* ConversationLookupTable = nullptr;
+	FString LookupError;
+	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	{
+		AppendLogLine(LookupError);
+		return FReply::Handled();
+	}
+
+	if (!ConversationLookupTable || ConversationLookupTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
+	{
+		AppendLogLine(TEXT("Conversation lookup table is invalid."));
+		return FReply::Handled();
+	}
+
+	const FString SourcePackagePath = SourceConversation->GetOutermost()
+		? SourceConversation->GetOutermost()->GetName()
+		: FString();
+	FString PackageFolder = FPackageName::GetLongPackagePath(SourcePackagePath);
+	if (PackageFolder.IsEmpty())
+	{
+		const UARDialogueEditorSettings* DialogueEditorSettings = GetDefault<UARDialogueEditorSettings>();
+		PackageFolder = DialogueEditorSettings ? DialogueEditorSettings->ConversationAssetsFolder.Path : FString();
+		if (PackageFolder.IsEmpty())
+		{
+			PackageFolder = TEXT("/Game/Data/Conversations");
+		}
+		if (!PackageFolder.StartsWith(TEXT("/")))
+		{
+			PackageFolder = FString(TEXT("/")) + PackageFolder;
+		}
+		PackageFolder.RemoveFromEnd(TEXT("/"));
+	}
+
+	if (!FPackageName::IsValidLongPackageName(PackageFolder))
+	{
+		AppendLogLine(FString::Printf(TEXT("Invalid conversation package folder '%s'."), *PackageFolder));
+		return FReply::Handled();
+	}
+
+	const FString BaseAssetName = SourceConversation->GetName() + TEXT("_Copy");
+	FString NewAssetName = BaseAssetName;
+	FString NewPackageName = FString::Printf(TEXT("%s/%s"), *PackageFolder, *NewAssetName);
+	for (int32 Suffix = 1; FPackageName::DoesPackageExist(NewPackageName); ++Suffix)
+	{
+		NewAssetName = FString::Printf(TEXT("%s_%d"), *BaseAssetName, Suffix);
+		NewPackageName = FString::Printf(TEXT("%s/%s"), *PackageFolder, *NewAssetName);
+	}
+
+	UPackage* NewPackage = CreatePackage(*NewPackageName);
+	if (!NewPackage)
+	{
+		AppendLogLine(FString::Printf(TEXT("Failed to create package '%s'."), *NewPackageName));
+		return FReply::Handled();
+	}
+
+	TSet<FGameplayTag> UsedConversationTags;
+	for (const FName ExistingRowName : ConversationLookupTable->GetRowNames())
+	{
+		const FARDialogueConversationAssetRow* ExistingRow = ConversationLookupTable->FindRow<FARDialogueConversationAssetRow>(
+			ExistingRowName,
+			TEXT("DialogueSpeakerEditorConversationTagScan"),
+			false);
+		if (!ExistingRow)
+		{
+			continue;
+		}
+
+		if (ExistingRow->ConversationTag.IsValid())
+		{
+			UsedConversationTags.Add(ExistingRow->ConversationTag);
+		}
+
+		if (UARDialogueConversationAsset* ExistingConversation = ExistingRow->Conversation.LoadSynchronous())
+		{
+			if (ExistingConversation->Header.ConversationTag.IsValid())
+			{
+				UsedConversationTags.Add(ExistingConversation->Header.ConversationTag);
+			}
+		}
+	}
+
+	const FGameplayTag PrimarySpeakerTag = SourceConversation->Header.PrimarySpeakerTag;
+	const FString ConversationTagPrefix = BuildSpeakerConversationTagFilter(Settings, PrimarySpeakerTag);
+	if (ConversationTagPrefix.IsEmpty())
+	{
+		AppendLogLine(TEXT("Failed to resolve conversation tag root for selected conversation speaker."));
+		return FReply::Handled();
+	}
+
+	FString EnsureTagError;
+	FGameplayTag NewConversationTag;
+	for (int32 Index = 1; Index < 100000; ++Index)
+	{
+		const FString CandidateTagPath = FString::Printf(TEXT("%s.%d"), *ConversationTagPrefix, Index);
+		const FGameplayTag CandidateTag = EnsureGameplayTagRegistered(
+			CandidateTagPath,
+			FString::Printf(TEXT("Auto-created conversation tag for speaker '%s'."), *PrimarySpeakerTag.ToString()),
+			EnsureTagError);
+		if (!CandidateTag.IsValid())
+		{
+			break;
+		}
+
+		if (!UsedConversationTags.Contains(CandidateTag))
+		{
+			NewConversationTag = CandidateTag;
+			break;
+		}
+	}
+
+	if (!NewConversationTag.IsValid())
+	{
+		AppendLogLine(FString::Printf(TEXT("Failed to allocate a duplicate conversation tag under '%s': %s"), *ConversationTagPrefix, *EnsureTagError));
+		return FReply::Handled();
+	}
+
+	FName NewLookupRowName(*NewAssetName);
+	for (int32 Suffix = 1; ConversationLookupTable->GetRowMap().Contains(NewLookupRowName); ++Suffix)
+	{
+		NewLookupRowName = FName(*FString::Printf(TEXT("%s_%d"), *NewAssetName, Suffix));
+	}
+
+	const FScopedTransaction Transaction(NSLOCTEXT("ARDialogueSpeakerEditor", "DuplicateConversation", "Duplicate Dialogue Conversation"));
+	ConversationLookupTable->Modify();
+
+	UARDialogueConversationAsset* NewConversation = DuplicateObject<UARDialogueConversationAsset>(
+		SourceConversation,
+		NewPackage,
+		*NewAssetName);
+	if (!NewConversation)
+	{
+		AppendLogLine(TEXT("Failed to duplicate conversation asset."));
+		return FReply::Handled();
+	}
+
+	NewConversation->SetFlags(RF_Public | RF_Standalone | RF_Transactional);
+	NewConversation->Modify();
+	NewConversation->Header.ConversationTag = NewConversationTag;
+	if (!NewConversation->Header.DisplayTitle.IsEmpty())
+	{
+		NewConversation->Header.DisplayTitle = FText::FromString(NewConversation->Header.DisplayTitle.ToString() + TEXT(" Copy"));
+	}
+	NewConversation->Header.ParticipatingSpeakerTags.AddUnique(NewConversation->Header.PrimarySpeakerTag);
+	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
+	{
+		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(PlayerSpeakerTag);
+	}
+
+	FARDialogueConversationAssetRow NewLookupRow;
+	NewLookupRow.ConversationTag = NewConversationTag;
+	NewLookupRow.Conversation = TSoftObjectPtr<UARDialogueConversationAsset>(NewConversation);
+	ConversationLookupTable->AddRow(NewLookupRowName, NewLookupRow);
+	ConversationLookupTable->MarkPackageDirty();
+
+	FAssetRegistryModule::AssetCreated(NewConversation);
+	NewPackage->MarkPackageDirty();
+	NewConversation->MarkPackageDirty();
+
+	AppendLogLine(FString::Printf(
+		TEXT("Duplicated conversation '%s' as '%s' (Tag=%s, LookupRow=%s)."),
+		*GetNameSafe(SourceConversation),
+		*NewPackageName,
+		*NewConversationTag.ToString(),
+		*NewLookupRowName.ToString()));
+
+	RefreshData();
+	SetSelectedSpeakerRow(SelectedSpeakerRowName);
+	if (ConversationListView.IsValid())
+	{
+		for (const TSharedPtr<FConversationEntry>& Entry : ConversationEntries)
+		{
+			if (Entry.IsValid() && !Entry->bIsBandHeader && Entry->Asset.Get() == NewConversation)
+			{
+				ConversationListView->SetSelection(Entry);
+				ConversationListView->RequestScrollIntoView(Entry);
+				break;
+			}
+		}
+	}
+
+	return FReply::Handled();
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleDeleteConversation()
+{
+	return HandleDeleteConversationInternal(false);
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleDeleteConversationAndAsset()
+{
+	return HandleDeleteConversationInternal(true);
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleDeleteConversationInternal(const bool bDeleteAssetFromContentBrowser)
+{
+	if (!ConversationListView.IsValid())
+	{
+		return FReply::Handled();
+	}
+
+	const TArray<TSharedPtr<FConversationEntry>> SelectedItems = ConversationListView->GetSelectedItems();
+	if (SelectedItems.IsEmpty() || !SelectedItems[0].IsValid() || SelectedItems[0]->bIsBandHeader || !SelectedItems[0]->Asset.IsValid())
+	{
+		AppendLogLine(TEXT("No conversation selected."));
+		return FReply::Handled();
+	}
+
+	UARDialogueConversationAsset* ConversationToDelete = SelectedItems[0]->Asset.Get();
+	if (!ConversationToDelete)
+	{
+		AppendLogLine(TEXT("Selected conversation asset is unavailable."));
+		return FReply::Handled();
+	}
+
+	const FString ConversationLabel = ConversationToDelete->Header.DisplayTitle.IsEmpty()
+		? GetNameSafe(ConversationToDelete)
+		: ConversationToDelete->Header.DisplayTitle.ToString();
+
+	const FText ConfirmMessage = bDeleteAssetFromContentBrowser
+		? FText::FromString(FString::Printf(TEXT("Delete asset '%s' from Content Browser and remove it from lookup?"), *ConversationLabel))
+		: FText::FromString(FString::Printf(TEXT("Remove conversation '%s' from lookup?"), *ConversationLabel));
+	const EAppReturnType::Type Confirm = FMessageDialog::Open(
+		EAppMsgType::YesNo,
+		ConfirmMessage);
+	if (Confirm != EAppReturnType::Yes)
+	{
+		return FReply::Handled();
+	}
+
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	if (!Settings || !Settings->ConversationDefinitionRootTag.IsValid())
+	{
+		AppendLogLine(TEXT("Dialogue settings/content lookup configuration are unavailable."));
+		return FReply::Handled();
+	}
+
+	UDataTable* ConversationLookupTable = nullptr;
+	FString LookupError;
+	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	{
+		AppendLogLine(LookupError);
+		return FReply::Handled();
+	}
+
+	if (!ConversationLookupTable || ConversationLookupTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
+	{
+		AppendLogLine(TEXT("Conversation lookup table is invalid."));
+		return FReply::Handled();
+	}
+
+	TArray<FName> RowsToRemove;
+	TSet<FGameplayTag> RemovedConversationTags;
+	const FGameplayTag ConversationTag = ConversationToDelete->Header.ConversationTag;
+	for (const FName RowName : ConversationLookupTable->GetRowNames())
+	{
+		const FARDialogueConversationAssetRow* Row = ConversationLookupTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorDeleteConversation"), false);
+		if (!Row)
+		{
+			continue;
+		}
+
+		const UARDialogueConversationAsset* RowConversation = Row->Conversation.LoadSynchronous();
+		const bool bMatchesAsset = RowConversation == ConversationToDelete;
+		const bool bMatchesTag = ConversationTag.IsValid() && Row->ConversationTag.IsValid() && Row->ConversationTag.MatchesTagExact(ConversationTag);
+		if (!bMatchesAsset && !bMatchesTag)
+		{
+			continue;
+		}
+
+		RowsToRemove.Add(RowName);
+		if (Row->ConversationTag.IsValid())
+		{
+			RemovedConversationTags.Add(Row->ConversationTag);
+		}
+	}
+
+	if (ConversationTag.IsValid())
+	{
+		RemovedConversationTags.Add(ConversationTag);
+	}
+
+	TArray<UARDialogueConversationAsset*> LoadedConversations;
+	for (const FName RowName : ConversationLookupTable->GetRowNames())
+	{
+		const FARDialogueConversationAssetRow* Row = ConversationLookupTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorDeleteConversationScan"), false);
+		if (!Row)
+		{
+			continue;
+		}
+
+		if (UARDialogueConversationAsset* LoadedConversation = Row->Conversation.LoadSynchronous())
+		{
+			LoadedConversations.AddUnique(LoadedConversation);
+		}
+	}
+
+	const FScopedTransaction Transaction(NSLOCTEXT("ARDialogueSpeakerEditor", "DeleteConversation", "Delete Dialogue Conversation"));
+	ConversationLookupTable->Modify();
+	for (const FName RowName : RowsToRemove)
+	{
+		ConversationLookupTable->RemoveRow(RowName);
+	}
+	ConversationLookupTable->MarkPackageDirty();
+
+	ConversationToDelete->Modify();
+	ConversationToDelete->Header.ConversationTag = FGameplayTag();
+	ConversationToDelete->MarkPackageDirty();
+
+	for (UARDialogueConversationAsset* LoadedConversation : LoadedConversations)
+	{
+		RemoveConversationTagReferencesFromConversation(LoadedConversation, RemovedConversationTags);
+	}
+
+	if (bDeleteAssetFromContentBrowser)
+	{
+		TArray<FAssetData> AssetsToDelete;
+		AssetsToDelete.Add(FAssetData(ConversationToDelete));
+		const int32 DeletedAssetCount = ObjectTools::DeleteAssets(AssetsToDelete, false);
+		AppendLogLine(FString::Printf(
+			TEXT("Asset delete requested for '%s' (Deleted=%d)."),
+			*GetNameSafe(ConversationToDelete),
+			DeletedAssetCount));
+	}
+
+	AppendLogLine(FString::Printf(
+		TEXT("%s '%s' (Rows=%d, TagsRemoved=%d)."),
+		bDeleteAssetFromContentBrowser ? TEXT("Deleted asset + removed lookup for") : TEXT("Removed lookup entry for"),
+		*ConversationLabel,
+		RowsToRemove.Num(),
+		RemovedConversationTags.Num()));
+
+	RefreshData();
+	SetSelectedSpeakerRow(SelectedSpeakerRowName);
+	return FReply::Handled();
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleCleanupGeneratedConversationTags()
+{
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	if (!Settings || !Settings->ConversationDefinitionRootTag.IsValid())
+	{
+		AppendLogLine(TEXT("Dialogue settings/content lookup configuration are unavailable."));
+		return FReply::Handled();
+	}
+
+	UDataTable* ConversationLookupTable = nullptr;
+	FString LookupError;
+	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	{
+		AppendLogLine(LookupError);
+		return FReply::Handled();
+	}
+
+	if (!ConversationLookupTable || ConversationLookupTable->GetRowStruct() != FARDialogueConversationAssetRow::StaticStruct())
+	{
+		AppendLogLine(TEXT("Conversation lookup table is invalid."));
+		return FReply::Handled();
+	}
+
+	TSet<FString> ReferencedTagPaths;
+	for (const FName RowName : ConversationLookupTable->GetRowNames())
+	{
+		const FARDialogueConversationAssetRow* Row = ConversationLookupTable->FindRow<FARDialogueConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorCleanupGeneratedTags"), false);
+		if (!Row)
+		{
+			continue;
+		}
+
+		if (Row->ConversationTag.IsValid())
+		{
+			ReferencedTagPaths.Add(Row->ConversationTag.ToString());
+		}
+
+		if (UARDialogueConversationAsset* Conversation = Row->Conversation.LoadSynchronous())
+		{
+			if (Conversation->Header.ConversationTag.IsValid())
+			{
+				ReferencedTagPaths.Add(Conversation->Header.ConversationTag.ToString());
+			}
+		}
+	}
+
+	const FString GeneratedConfigPath = FPaths::ProjectConfigDir() / DialogueAutoTagConfigRelativePath;
+	if (!FPaths::FileExists(GeneratedConfigPath))
+	{
+		AppendLogLine(TEXT("No generated dialogue conversation tag config file found; nothing to clean."));
+		return FReply::Handled();
+	}
+
+	FString ConfigText;
+	if (!FFileHelper::LoadFileToString(ConfigText, *GeneratedConfigPath))
+	{
+		AppendLogLine(FString::Printf(TEXT("Failed to load generated tag config '%s'."), *GeneratedConfigPath));
+		return FReply::Handled();
+	}
+
+	const FString ConversationRootPath = Settings->ConversationDefinitionRootTag.ToString();
+	const FString ConversationRootPrefix = ConversationRootPath + TEXT(".");
+
+	TArray<FString> Lines;
+	ConfigText.ParseIntoArrayLines(Lines);
+	int32 RemovedLineCount = 0;
+	for (int32 LineIndex = Lines.Num() - 1; LineIndex >= 0; --LineIndex)
+	{
+		const FString& Line = Lines[LineIndex];
+		const int32 TagTokenStart = Line.Find(TEXT("Tag=\""), ESearchCase::CaseSensitive);
+		if (TagTokenStart == INDEX_NONE)
+		{
+			continue;
+		}
+
+		const int32 TagValueStart = TagTokenStart + 5;
+		const int32 TagValueEnd = Line.Find(TEXT("\""), ESearchCase::CaseSensitive, ESearchDir::FromStart, TagValueStart);
+		if (TagValueEnd == INDEX_NONE || TagValueEnd < TagValueStart)
+		{
+			continue;
+		}
+
+		const FString TagPath = Line.Mid(TagValueStart, TagValueEnd - TagValueStart);
+		const bool bIsConversationTag = TagPath.Equals(ConversationRootPath, ESearchCase::CaseSensitive)
+			|| TagPath.StartsWith(ConversationRootPrefix, ESearchCase::CaseSensitive);
+		if (!bIsConversationTag)
+		{
+			continue;
+		}
+
+		if (!ReferencedTagPaths.Contains(TagPath))
+		{
+			Lines.RemoveAt(LineIndex);
+			++RemovedLineCount;
+		}
+	}
+
+	if (RemovedLineCount <= 0)
+	{
+		AppendLogLine(TEXT("Cleanup generated conversation tags: no stale generated tags found."));
+		return FReply::Handled();
+	}
+
+	const FString UpdatedText = FString::Join(Lines, LINE_TERMINATOR) + LINE_TERMINATOR;
+	if (!FFileHelper::SaveStringToFile(UpdatedText, *GeneratedConfigPath))
+	{
+		AppendLogLine(FString::Printf(TEXT("Failed to write generated tag config '%s'."), *GeneratedConfigPath));
+		return FReply::Handled();
+	}
+
+	UGameplayTagsManager::Get().EditorRefreshGameplayTagTree();
+	AppendLogLine(FString::Printf(
+		TEXT("Cleanup generated conversation tags completed: removed %d stale tag line(s) from '%s'."),
+		RemovedLineCount,
+		*GeneratedConfigPath));
 	return FReply::Handled();
 }
 
@@ -3156,22 +4200,77 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 
 	if (Item->bIsBandHeader)
 	{
-		const FLinearColor BandColor = (Item->RelationshipBand % 2 == 0)
-			? FLinearColor(0.11f, 0.18f, 0.28f, 1.0f)
-			: FLinearColor(0.12f, 0.14f, 0.22f, 1.0f);
+		const FLinearColor BandColor = FLinearColor(0.05f, 0.43f, 0.86f, 1.0f);
 
 		return SNew(STableRow<TSharedPtr<FConversationEntry>>, OwnerTable)
+		.Style(&GetConversationBandHeaderRowStyle())
+		.ShowSelection(false)
 		[
 			SNew(SBorder)
+			.OnMouseButtonDown_Lambda([](const FGeometry&, const FPointerEvent&)
+			{
+				return FReply::Handled();
+			})
 			.BorderBackgroundColor(BandColor)
-			.Padding(FMargin(8.0f, 5.0f))
+			.Padding(FMargin(8.0f, 6.0f))
 			[
 				SNew(STextBlock)
 				.Text(FText::FromString(Item->DisplayTitle))
 				.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
+				.ColorAndOpacity(FSlateColor(FLinearColor::White))
 			]
 		];
 	}
+
+	TSharedRef<SWrapBox> LockedByTagsWrap = SNew(SWrapBox).UseAllottedSize(true);
+	if (Item->LockedByConversationTags.IsEmpty())
+	{
+		LockedByTagsWrap->AddSlot()
+		.Padding(0.0f, 0.0f, 6.0f, 4.0f)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("-")))
+			.ColorAndOpacity(FSlateColor(FLinearColor(0.70f, 0.70f, 0.70f, 1.0f)))
+		];
+	}
+	else
+	{
+		for (int32 TagIndex = 0; TagIndex < Item->LockedByConversationTags.Num(); ++TagIndex)
+		{
+			const FGameplayTag LockedTag = Item->LockedByConversationTags[TagIndex];
+			LockedByTagsWrap->AddSlot()
+			.Padding(0.0f, 0.0f, 6.0f, 4.0f)
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+				[
+					SNew(SBox)
+					.WidthOverride(220.0f)
+					[
+						SNew(SGameplayTagCombo)
+						.Filter(Item->ConversationTagFilter)
+						.Tag(LockedTag)
+						.OnTagChanged_Lambda([this, WeakConversation = Item->Asset, TagIndex](const FGameplayTag NewTag)
+						{
+							const_cast<SDialogueSpeakerEditorPanel*>(this)->HandleConversationLockedByTagChanged(WeakConversation, TagIndex, NewTag);
+						})
+					]
+				]
+			];
+		}
+	}
+
+	LockedByTagsWrap->AddSlot()
+	.Padding(0.0f, 0.0f, 6.0f, 4.0f)
+	[
+		SNew(SButton)
+		.Text(FText::FromString(TEXT("Add Lock Tag")))
+		.ToolTipText(FText::FromString(TEXT("Add another required conversation tag lock for this conversation.")))
+		.OnClicked_Lambda([this, WeakConversation = Item->Asset]()
+		{
+			return const_cast<SDialogueSpeakerEditorPanel*>(this)->HandleAddConversationLockedByTag(WeakConversation);
+		})
+	];
 
 	return SNew(STableRow<TSharedPtr<FConversationEntry>>, OwnerTable)
 	[
@@ -3257,9 +4356,16 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 			]
 			+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 3.0f)
 			[
-				SNew(STextBlock)
-				.Text(FText::FromString(FString::Printf(TEXT("Locked by: %s"), *Item->LockedByText)))
-				.AutoWrapText(true)
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Top).Padding(0.0f, 1.0f, 6.0f, 0.0f)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(TEXT("Locked by")))
+				]
+				+ SHorizontalBox::Slot().FillWidth(1.0f)
+				[
+					LockedByTagsWrap
+				]
 			]
 			+ SVerticalBox::Slot().AutoHeight()
 			[
@@ -3270,12 +4376,11 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 				]
 				+ SHorizontalBox::Slot().FillWidth(1.0f)
 				[
-					SNew(SEditableTextBox)
-					.Text(FText::FromString(Item->RequiredTagsText))
-					.HintText(FText::FromString(TEXT("Tag.A, Tag.B")))
-					.OnTextCommitted_Lambda([this, WeakConversation = Item->Asset](const FText& NewText, ETextCommit::Type CommitType)
+					SNew(SGameplayTagContainerCombo)
+					.TagContainer(Item->RequiredTags)
+					.OnTagContainerChanged_Lambda([this, WeakConversation = Item->Asset](const FGameplayTagContainer& NewTags)
 					{
-						const_cast<SDialogueSpeakerEditorPanel*>(this)->CommitConversationRequiredTags(WeakConversation, NewText, CommitType);
+						const_cast<SDialogueSpeakerEditorPanel*>(this)->CommitConversationRequiredTags(WeakConversation, NewTags);
 					})
 				]
 			]
@@ -3302,28 +4407,34 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGeneratePortraitRow(TShared
 		: FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
 
 	return SNew(STableRow<TSharedPtr<FPortraitEntry>>, OwnerTable)
+		.Padding(FMargin(0.0f, 0.0f, 0.0f, 3.0f))
 	[
-		SNew(SHorizontalBox)
-		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 6.0f, 0.0f).VAlign(VAlign_Center)
+		SNew(SBorder)
+		.BorderBackgroundColor(FLinearColor(0.09f, 0.09f, 0.09f, 1.0f))
+		.Padding(FMargin(6.0f, 5.0f))
 		[
-			SNew(SBox)
-			.WidthOverride(32.0f)
-			.HeightOverride(32.0f)
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f).VAlign(VAlign_Center)
 			[
-				SNew(SImage)
-				.Image(RowBrush)
+				SNew(SBox)
+				.WidthOverride(32.0f)
+				.HeightOverride(32.0f)
+				[
+					SNew(SImage)
+					.Image(RowBrush)
+				]
 			]
-		]
-		+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
-		[
-			SNew(SVerticalBox)
-			+ SVerticalBox::Slot().AutoHeight()
+			+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
 			[
-				SNew(STextBlock).Text(FText::FromString(Item->Label))
-			]
-			+ SVerticalBox::Slot().AutoHeight()
-			[
-				SNew(STextBlock).Text(FText::FromString(TextureLabel))
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+				[
+					SNew(STextBlock).Text(FText::FromString(Item->Label))
+				]
+				+ SVerticalBox::Slot().AutoHeight()
+				[
+					SNew(STextBlock).Text(FText::FromString(TextureLabel))
+				]
 			]
 		]
 	];
@@ -3349,6 +4460,21 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateThresholdRow(TShare
 	return SNew(STableRow<TSharedPtr<FThresholdEntry>>, OwnerTable)
 	[
 		SNew(SBorder)
+		.OnMouseButtonDown_Lambda([this, ThresholdIndex = Item->ThresholdIndex](const FGeometry&, const FPointerEvent& MouseEvent)
+		{
+			if (!ThresholdListView.IsValid() || !ThresholdEntries.IsValidIndex(ThresholdIndex))
+			{
+				return FReply::Unhandled();
+			}
+
+			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton || MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+			{
+				const_cast<SDialogueSpeakerEditorPanel*>(this)->SelectedThresholdIndex = ThresholdIndex;
+				ThresholdListView->SetSelection(ThresholdEntries[ThresholdIndex], ESelectInfo::OnMouseClick);
+			}
+
+			return FReply::Unhandled();
+		})
 		.BorderBackgroundColor(FLinearColor(0.08f, 0.08f, 0.08f, 1.0f))
 		.Padding(FMargin(6.0f, 4.0f))
 		[
@@ -3425,6 +4551,17 @@ void SDialogueSpeakerEditorPanel::OnConversationDoubleClicked(TSharedPtr<FConver
 	}
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(Item->Asset.Get());
 	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+}
+
+void SDialogueSpeakerEditorPanel::OnConversationSelectionChanged(TSharedPtr<FConversationEntry> Item, ESelectInfo::Type SelectInfo)
+{
+	(void)SelectInfo;
+	if (!ConversationListView.IsValid() || !Item.IsValid() || !Item->bIsBandHeader)
+	{
+		return;
+	}
+
+	ConversationListView->ClearSelection();
 }
 
 void SDialogueSpeakerEditorPanel::OnPortraitSelectionChanged(TSharedPtr<FPortraitEntry> Item, ESelectInfo::Type SelectInfo)
