@@ -6,13 +6,12 @@
 
 #include "CoreMinimal.h"
 #include "ARPlayerTypes.h"
+#include "ARNPCTalkComponent.h"
 #include "GameFramework/Character.h"
 #include "GameplayTagContainer.h"
 #include "ARNPCCharacterBase.generated.h"
 
 class AARPlayerController;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnNpcTalkableStateChanged, bool, bNewTalkable);
 
 UCLASS()
 class ALIENRAMEN_API AARNPCCharacterBase : public ACharacter
@@ -26,10 +25,10 @@ public:
 	void InteractByController(AARPlayerController* InteractingController);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
-	FGameplayTag GetNpcTag() const { return NpcTag; }
+	FGameplayTag GetNpcTag() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
-	bool IsTalkable() const { return bIsTalkable; }
+	bool IsTalkable() const;
 
 	// Per-slot talkable state. Use this for per-player local interaction indicators.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
@@ -40,7 +39,7 @@ public:
 	bool IsTalkableForController(const AARPlayerController* QueryController) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
-	bool IsNpcLocalStateAllowingDialogue() const { return bNpcLocalStateAllowsDialogue; }
+	bool IsNpcLocalStateAllowingDialogue() const;
 
 	// Server-authoritative local state gate (for example ordering mode) applied on top of global dialogue availability.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
@@ -49,33 +48,30 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC")
 	FAROnNpcTalkableStateChanged OnNpcTalkableStateChanged;
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
+	UARNPCTalkComponent* GetNpcTalkComponent() const { return NpcTalkComponent; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
-	void OnRep_IsTalkable(bool bOldTalkable);
+	void HandleTalkComponentTalkableStateChanged(bool bNewTalkable);
 
 	UFUNCTION()
-	void OnRep_TalkablePlayerSlotMask(uint8 bOldTalkablePlayerSlotMask);
-
-	UFUNCTION()
-	void HandleNpcTalkableChanged(FGameplayTag ChangedNpcTag, bool bNewTalkable);
+	void OnRep_NpcLocalStateAllowsDialogue(bool bOldAllowsDialogue);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
 	void RefreshTalkableFromSubsystem();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UARNPCTalkComponent> NpcTalkComponent;
+
+	// Legacy serialized field kept for migration from actor-authored talk data to component-authored data.
+	UPROPERTY()
 	FGameplayTag NpcTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_NpcLocalStateAllowsDialogue, Category = "Alien Ramen|NPC")
 	bool bNpcLocalStateAllowsDialogue = true;
-
-	UPROPERTY(ReplicatedUsing=OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|NPC")
-	bool bIsTalkable = false;
-
-	// Bitmask of talkable slots (P1=bit0, P2=bit1).
-	UPROPERTY(ReplicatedUsing=OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Alien Ramen|NPC")
-	uint8 TalkablePlayerSlotMask = 0;
 };

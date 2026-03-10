@@ -1,8 +1,11 @@
 #include "SARDialogueInlineGraphNode.h"
 
 #include "ARDialogueEdGraphNode.h"
+#include "ARDialogueSettings.h"
 #include "ARFactionSettings.h"
 #include "ARDialogueTypes.h"
+#include "GameplayTagsManager.h"
+#include "TagContentResolverEditorHelpers.h"
 #include "DragAndDrop/DecoratedDragDropOp.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphUtilities.h"
@@ -30,6 +33,56 @@ namespace
 	constexpr float MutationMinWidth = 200.0f;
 	constexpr float SequenceMinWidth = 72.0f;
 	constexpr float SwitchMinWidth = 180.0f;
+	constexpr float CharacterRouteMinWidth = 260.0f;
+	constexpr float CharacterRoutePortraitSize = 28.0f;
+
+	static const FARDialogueSpeakerRow* ResolveSpeakerRowForTag(const FGameplayTag SpeakerTag)
+	{
+		if (!SpeakerTag.IsValid())
+		{
+			return nullptr;
+		}
+
+		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
+		if (!DialogueSettings || !DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		{
+			return nullptr;
+		}
+
+		UDataTable* SpeakerTable = nullptr;
+		FString LookupError;
+		if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
+		{
+			return nullptr;
+		}
+
+		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FARDialogueSpeakerRow::StaticStruct())
+		{
+			return nullptr;
+		}
+
+		FGameplayTag Candidate = SpeakerTag;
+		while (Candidate.IsValid())
+		{
+			const FString TagString = Candidate.ToString();
+			int32 DotIndex = INDEX_NONE;
+			if (!TagString.FindLastChar(TEXT('.'), DotIndex) || DotIndex + 1 >= TagString.Len())
+			{
+				break;
+			}
+
+			const FName RowName(*TagString.Mid(DotIndex + 1));
+			if (const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueInlineCharacterRoute"), false))
+			{
+				return Row;
+			}
+
+			const FString ParentTagPath = TagString.Left(DotIndex);
+			Candidate = UGameplayTagsManager::Get().RequestGameplayTag(FName(*ParentTagPath), false);
+		}
+
+		return nullptr;
+	}
 
 	class FARDialogueBranchDragDropOp final : public FDecoratedDragDropOp
 	{
@@ -171,6 +224,7 @@ namespace
 			case EDialogueNodeType::SwitchOnTagsByPriority:
 			case EDialogueNodeType::Random:
 			case EDialogueNodeType::Sequence:
+			case EDialogueNodeType::RouteByCharacter:
 			case EDialogueNodeType::RelationshipMutation:
 			case EDialogueNodeType::FactionMutation:
 				return SNew(SARDialogueInlineGraphNode, DialogueNode);
@@ -320,6 +374,8 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildInlineContent() const
 		return BuildRandomInlineContent();
 	case EDialogueNodeType::Sequence:
 		return BuildSequenceInlineContent();
+	case EDialogueNodeType::RouteByCharacter:
+		return BuildCharacterRouteInlineContent();
 	case EDialogueNodeType::RelationshipMutation:
 		return BuildRelationshipInlineContent();
 	case EDialogueNodeType::FactionMutation:
@@ -581,6 +637,77 @@ TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildSequenceInlineContent() con
 	return Content;
 }
 
+TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildCharacterRouteInlineContent() const
+{
+	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledCharacterRouteBranch>* CharacterBranches = DialogueNode ? &DialogueNode->RuntimeNode.CharacterRouteBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!CharacterBranches || CharacterBranches->IsEmpty())
+	{
+		// Keep compact footprint when no branches are authored yet.
+	}
+	else
+	{
+		for (int32 Index = 0; Index < CharacterBranches->Num(); ++Index)
+		{
+			const FDialogueCompiledCharacterRouteBranch& Branch = (*CharacterBranches)[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::RouteByCharacter)
+				.BranchId(Branch.BranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SARDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::RouteByCharacter)
+							.BranchId(Branch.BranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 6.0f, 0.0f)
+						[
+							SNew(SBox)
+							.WidthOverride(CharacterRoutePortraitSize)
+							.HeightOverride(CharacterRoutePortraitSize)
+							[
+								SNew(SImage)
+								.Image_Lambda([this, SpeakerTag = Branch.SpeakerTag]()
+								{
+									return GetCharacterRoutePortraitBrush(SpeakerTag);
+								})
+							]
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SGameplayTagCombo)
+							.Filter(TEXT("Dialogue.Speaker"))
+							.Tag(Branch.SpeakerTag)
+							.OnTagChanged(this, &SARDialogueInlineGraphNode::HandleCharacterRouteTagChanged, Branch.BranchId)
+						]
+					]
+				]
+			];
+		}
+	}
+
+	return Content;
+}
+
 TSharedRef<SWidget> SARDialogueInlineGraphNode::BuildMultiLineInlineContent() const
 {
 	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
@@ -774,6 +901,8 @@ float SARDialogueInlineGraphNode::GetInlineContentMinWidth() const
 		return RandomMinWidth;
 	case EDialogueNodeType::SwitchOnTagsByPriority:
 		return SwitchMinWidth;
+	case EDialogueNodeType::RouteByCharacter:
+		return CharacterRouteMinWidth;
 	case EDialogueNodeType::RelationshipMutation:
 	case EDialogueNodeType::FactionMutation:
 		return MutationMinWidth;
@@ -875,6 +1004,9 @@ bool SARDialogueInlineGraphNode::HandleBranchRowDropped(
 	case EDialogueNodeType::MultiLine:
 		bReordered = DialogueNode->ReorderMultiLineEntry(DraggedBranchId, TargetBranchId);
 		break;
+	case EDialogueNodeType::RouteByCharacter:
+		bReordered = DialogueNode->ReorderCharacterRouteBranch(DraggedBranchId, TargetBranchId);
+		break;
 	default:
 		break;
 	}
@@ -911,6 +1043,17 @@ void SARDialogueInlineGraphNode::HandleSwitchLabelCommitted(const FText& NewText
 	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
 		DialogueNode->SetSwitchBranchLabel(BranchId, NewText);
+	}
+}
+
+void SARDialogueInlineGraphNode::HandleCharacterRouteTagChanged(const FGameplayTag NewTag, const FGuid BranchId) const
+{
+	if (UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		if (DialogueNode->SetCharacterRouteBranchSpeakerTag(BranchId, NewTag))
+		{
+			RefreshNodeWidget();
+		}
 	}
 }
 
@@ -1029,6 +1172,72 @@ FString SARDialogueInlineGraphNode::GetFactionTagFilter() const
 	}
 
 	return FactionSettings->FactionDefinitionRootTag.ToString();
+}
+
+const FSlateBrush* SARDialogueInlineGraphNode::GetCharacterRoutePortraitBrush(const FGameplayTag SpeakerTag) const
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+	}
+
+	RefreshCharacterRoutePortraitBrush(SpeakerTag);
+	const FSlateBrush* CachedBrush = CharacterRoutePortraitBrushesBySpeaker.Find(SpeakerTag.GetTagName());
+	if (CachedBrush && CharacterRouteSpeakersWithPortrait.Contains(SpeakerTag.GetTagName()))
+	{
+		return CachedBrush;
+	}
+
+	return FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+}
+
+void SARDialogueInlineGraphNode::RefreshCharacterRoutePortraitBrush(const FGameplayTag SpeakerTag) const
+{
+	const FName TagName = SpeakerTag.IsValid() ? SpeakerTag.GetTagName() : NAME_None;
+	if (CharacterRoutePortraitBrushesBySpeaker.Contains(TagName))
+	{
+		return;
+	}
+
+	FSlateBrush PortraitBrush;
+	PortraitBrush.DrawAs = ESlateBrushDrawType::Image;
+	PortraitBrush.ImageSize = FVector2D(CharacterRoutePortraitSize, CharacterRoutePortraitSize);
+	bool bHasPortraitTexture = false;
+
+	const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag);
+	if (SpeakerRow)
+	{
+		UTexture2D* PortraitTexture = SpeakerRow->DefaultPortrait.PortraitTexture.LoadSynchronous();
+		if (!PortraitTexture)
+		{
+			for (const FSpeakerPortraitEntry& PortraitEntry : SpeakerRow->Portraits)
+			{
+				if (!PortraitEntry.PortraitTag.IsValid() || !PortraitEntry.PortraitTag.MatchesTagExact(SpeakerTag))
+				{
+					continue;
+				}
+
+				PortraitTexture = PortraitEntry.Portrait.PortraitTexture.LoadSynchronous();
+				if (PortraitTexture)
+				{
+					break;
+				}
+			}
+		}
+
+		if (PortraitTexture)
+		{
+			PortraitBrush.SetResourceObject(PortraitTexture);
+			bHasPortraitTexture = true;
+		}
+	}
+
+	if (bHasPortraitTexture)
+	{
+		CharacterRouteSpeakersWithPortrait.Add(TagName);
+	}
+
+	CharacterRoutePortraitBrushesBySpeaker.Add(TagName, MoveTemp(PortraitBrush));
 }
 
 FText SARDialogueInlineGraphNode::GetRelationshipDeltaText() const
