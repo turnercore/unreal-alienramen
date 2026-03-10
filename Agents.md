@@ -122,22 +122,30 @@ If a section starts growing again:
 - Save and travel logic are subsystem-owned, not scattered across Blueprint flows.
 - Canonical saves are blocked during active dialogue sessions.
 
+### Dialogue Plugin Boundary
+
+- Dialogue plugin ownership includes: dialogue runtime, speakers, dialogue editor tooling, conversations/lines, emotions, NPC dialogue/emotion components, dialogue-facing faction surfaces, and NPC relationship progression surfaces.
+- Dialogue plugin ownership excludes built-on-top systems: faction voting/election orchestration and ordering/customer-serving loops.
+
 ### Dialogue / NPC
 
 - `UARDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
 - `UARNPCSubsystem` owns NPC talkable-state resolution/cache.
 - `UARNPCTalkComponent` owns NPC-side dialogue interaction and replicated dialogue talkable-state fields.
+- `UAREmotionComponent` owns replicated overhead emotion display state (base state + dialogue override state), including per-player-slot variants and gameplay-tag-to-icon resolution.
 - `AARNPCCharacterBase` hosts `UARNPCTalkComponent` and owns non-dialogue local NPC gates (for example customer/serving state); NPC actors still do not own dialogue authority.
+- `AARNPCCharacterBase` and `AARPlayerCharacterBase` host `UAREmotionComponent`.
 - Seen state is transient only; completion and recorded choice results are persistent.
 
 ### Faction
 
-- `UARFactionSubsystem` owns faction election runtime and finalization flow.
+- `UARFactionSubsystem` election/voting runtime is built on top of dialogue-owned faction/relationship surfaces and remains outside dialogue plugin ownership.
 
 ### Tag Content Resolver
 
 - `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
+- Emotion icon lookups resolve through TagContentResolver row routes (`FAREmotionIconRow`) with fallback roots configured in `UAREmotionSettings`.
 
 ### Invader Runtime
 
@@ -188,10 +196,12 @@ If a section starts growing again:
 
 - Dialogue is **server-authoritative**.
 - Shop mode supports per-player sessions; Invader and Scrapyard use a shared session model.
+- Line `SpeakerTag` may include an emotion leaf (for example `Dialogue.Speaker.Fred.Angry`) and is used for both speaker resolution and emotion icon fallback resolution.
 - Important conversations/choices can force eavesdropping/participation rules.
 - Offer selection uses primary speaker + gating + priority + repeatability policy.
 - Completion persists only on completed-node execution.
 - Choice-memory persists completed conversation results and can lock replay branches when authored to do so.
+- Dialogue-applied emotion overrides are session-scoped and cleared when that session ends, revealing base emotion state again.
 
 Detailed behavior belongs in:
 

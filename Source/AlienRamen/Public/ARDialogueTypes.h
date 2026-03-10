@@ -287,7 +287,7 @@ struct ALIENRAMEN_API FDialogueConversationLine
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Sound", ToolTip = "Optional voice/audio clip played with this line."))
 	TObjectPtr<USoundBase> Sound = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Speaker used when presenting this line. Leave empty to fall back to conversation context."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Speaker used when presenting this line. Optional leaf segments can encode presentation emotion (for example Dialogue.Speaker.Fred.Angry). Leave empty to fall back to conversation context."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Length Seconds", ToolTip = "Optional explicit line duration in seconds for pacing/auto-advance logic."))

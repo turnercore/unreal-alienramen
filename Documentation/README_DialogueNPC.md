@@ -1,5 +1,7 @@
 # Dialogue + NPC Runtime (`UARDialogueSubsystem`, `UARNPCSubsystem`)
 
+Plugin ownership boundary reference: [Dialogue Plugin Ownership Boundary](README_DialoguePluginBoundary.md)
+
 ## Overview
 
 Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
@@ -7,6 +9,11 @@ Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
 - `UARDialogueSubsystem` is server-authoritative for offer selection, session execution, branching, eavesdrop, completion persistence, and choice-memory persistence.
 - `UARNPCSubsystem` is now talkable-cache-focused and derives NPC talkable state from dialogue unlock availability.
 - `AARNPCCharacterBase` remains the world interaction entrypoint and replicates `bIsTalkable`.
+
+Ownership reminder:
+
+- This runtime is inside the Dialogue plugin ownership boundary.
+- Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.
 
 ## Runtime Entry Points
 
@@ -75,6 +82,14 @@ Settings live in [`Source/AlienRamen/Public/ARDialogueSettings.h`](/c:/Projects/
 - execution guard `MaxExecutionStepsPerAdvance`
 
 Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `ConversationDefinitionRootTag=Dialogue.Conversation`.
+
+## Emotion Runtime
+
+- `UAREmotionComponent` provides replicated overhead-emotion display state for NPCs and player characters.
+- Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
+- Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
+- Dialogue line `SpeakerTag` may include an emotion leaf (example: `Dialogue.Speaker.Fred.Angry`).
+- Emotion icon lookup resolves the most specific tag first, then configured fallback roots (for example `Dialogue.Speaker.Emotion.*` or `Dialogue.Emotion.*`) through TagContentResolver row type `FAREmotionIconRow`.
 
 ## Offer + Execution Rules (Current Runtime)
 
