@@ -112,6 +112,8 @@ void AARInvaderGameState::GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrack
 		Entry.SlotIndex = SlotIndex;
 		Entry.UpgradeLevel = 1;
 		Entry.bHasUpgrade = false;
+		Entry.RemainingActivationUses = 0;
+		Entry.bInfiniteUses = false;
 		OutSlots.Add(MoveTemp(Entry));
 	}
 
@@ -130,6 +132,8 @@ void AARInvaderGameState::GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrack
 		Entry.UpgradeTag = Slot.UpgradeTag;
 		Entry.UpgradeLevel = Slot.UpgradeLevel;
 		Entry.bHasUpgrade = Slot.UpgradeTag.IsValid();
+		Entry.RemainingActivationUses = Slot.RemainingActivationUses;
+		Entry.bInfiniteUses = Slot.bInfiniteUses;
 		Entry.DisplayName = FText::GetEmpty();
 
 		if (Entry.bHasUpgrade)
@@ -1724,7 +1728,7 @@ bool AARInvaderGameState::CanPlayerActivateUpgrade(
 	}
 
 	if (!UpgradeDef.RequiredActivatedUpgradesForActivation.IsEmpty()
-		&& !RequestingPlayerState->GetActivatedInvaderUpgrades().HasAll(UpgradeDef.RequiredActivatedUpgradesForActivation))
+		&& !TeamActivatedTags.HasAll(UpgradeDef.RequiredActivatedUpgradesForActivation))
 	{
 		return false;
 	}
@@ -1749,21 +1753,52 @@ bool AARInvaderGameState::ApplyUpgradeActivation(AARPlayerStateBase* RequestingP
 		return false;
 	}
 
-	RequestingPlayerState->MarkInvaderUpgradeActivated(UpgradeDef.UpgradeTag);
-
-	if (UAbilitySystemComponent* ASC = RequestingPlayerState->GetASC())
+	if (!UpgradeDef.OnActivateGameplayEffect.IsNull())
 	{
-		if (UClass* EffectClass = UpgradeDef.OnActivateGameplayEffect.LoadSynchronous())
+		UAbilitySystemComponent* ASC = RequestingPlayerState->GetASC();
+		if (!ASC)
 		{
-			const FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
-			const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(EffectClass, 1.0f, Context);
-			if (Spec.IsValid())
-			{
-				ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
-			}
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' slot=%d tag='%s' reason=MissingASC"),
+				*GetNameSafe(RequestingPlayerState),
+				static_cast<int32>(RequestingPlayerState->GetPlayerSlot()),
+				*UpgradeDef.UpgradeTag.ToString());
+			return false;
 		}
+
+		UClass* EffectClass = UpgradeDef.OnActivateGameplayEffect.LoadSynchronous();
+		if (!EffectClass)
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' slot=%d tag='%s' reason=InvalidActivateEffectClass"),
+				*GetNameSafe(RequestingPlayerState),
+				static_cast<int32>(RequestingPlayerState->GetPlayerSlot()),
+				*UpgradeDef.UpgradeTag.ToString());
+			return false;
+		}
+
+		const FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+		const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(EffectClass, 1.0f, Context);
+		if (!Spec.IsValid() || !Spec.Data.IsValid())
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' slot=%d tag='%s' reason=InvalidGESpec"),
+				*GetNameSafe(RequestingPlayerState),
+				static_cast<int32>(RequestingPlayerState->GetPlayerSlot()),
+				*UpgradeDef.UpgradeTag.ToString());
+			return false;
+		}
+
+		ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 	}
 
+	RequestingPlayerState->MarkInvaderUpgradeActivated(UpgradeDef.UpgradeTag);
 	return true;
 }
 
