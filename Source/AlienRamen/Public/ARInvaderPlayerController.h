@@ -85,14 +85,20 @@ public:
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
 		FVector2D CursorNormalized,
-		bool bHasCursor);
+		bool bHasCursor,
+		FGameplayTag SelectedUpgradeTag,
+		int32 SelectedDestinationSlot,
+		bool bHasSelection);
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestSetOfferPresence(
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
 		FVector2D CursorNormalized,
-		bool bHasCursor);
+		bool bHasCursor,
+		FGameplayTag SelectedUpgradeTag,
+		int32 SelectedDestinationSlot,
+		bool bHasSelection);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
 	void RequestClearOfferPresence();
@@ -113,6 +119,7 @@ private:
 	void SyncFullBlastMenuFromGameState();
 	void BuildOfferDefinitionsForSession(const FARInvaderFullBlastSessionState& Session, TArray<FARInvaderUpgradeDefRow>& OutDefinitions) const;
 	bool ShouldDisplayFullBlastMenuForSession(const FARInvaderFullBlastSessionState& Session) const;
+	bool IsChooserForSession(const FARInvaderFullBlastSessionState& Session) const;
 	void ShowOrUpdateFullBlastMenu(const FARInvaderFullBlastSessionState& Session, const TArray<FARInvaderUpgradeDefRow>& OfferDefinitions);
 	void CloseFullBlastMenu();
 
