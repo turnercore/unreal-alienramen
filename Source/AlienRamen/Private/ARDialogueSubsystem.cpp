@@ -14,7 +14,6 @@
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameplayTagsManager.h"
-#include "Kismet/GameplayStatics.h"
 
 namespace
 {
@@ -35,37 +34,13 @@ namespace
 		FARDialogueNodeRow ActiveRow;
 	};
 
-	static bool IsAuthorityWorld(const UWorld* World)
+	static bool IsAuthorityWorld_Dialogue(const UWorld* World)
 	{
 		if (!World)
 		{
 			return false;
 		}
 		return World->GetNetMode() == NM_Standalone || World->GetAuthGameMode() != nullptr;
-	}
-
-	static bool IsGameplayTagContainerExactSuperset(const FGameplayTagContainer& Container, const FGameplayTagContainer& Required)
-	{
-		for (const FGameplayTag Tag : Required)
-		{
-			if (!Container.HasTag(Tag))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	static bool HasAnyBlockedTag(const FGameplayTagContainer& Container, const FGameplayTagContainer& Blocked)
-	{
-		for (const FGameplayTag Tag : Blocked)
-		{
-			if (Container.HasTag(Tag))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	static FString BuildSessionId()
@@ -90,13 +65,19 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TMap<EARPlayerSlot, EARPlayerSlot> ShopEavesdropTargetByViewer;
 };
 
-UARDialogueSubsystem::~UARDialogueSubsystem() = default;
+UARDialogueSubsystem::UARDialogueSubsystem() = default;
+
+UARDialogueSubsystem::~UARDialogueSubsystem()
+{
+	delete RuntimeState;
+	RuntimeState = nullptr;
+}
 
 UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState()
 {
-	if (!RuntimeState.IsValid())
+	if (!RuntimeState)
 	{
-		RuntimeState = MakeUnique<FARDialogueRuntimeState>();
+		RuntimeState = new FARDialogueRuntimeState();
 	}
 	return *RuntimeState;
 }
@@ -104,12 +85,13 @@ UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeS
 const UARDialogueSubsystem::FARDialogueRuntimeState& UARDialogueSubsystem::GetRuntimeState() const
 {
 	static const FARDialogueRuntimeState EmptyState;
-	return RuntimeState.IsValid() ? *RuntimeState : EmptyState;
+	return RuntimeState ? *RuntimeState : EmptyState;
 }
 
 void UARDialogueSubsystem::Deinitialize()
 {
-	RuntimeState.Reset();
+	delete RuntimeState;
+	RuntimeState = nullptr;
 	Super::Deinitialize();
 }
 
@@ -380,23 +362,23 @@ static bool EvaluateRowUnlocked(const UARDialogueSubsystem* Subsystem, const FAR
 	GetSaveSubsystem(Subsystem, SaveSubsystem);
 
 	const FGameplayTagContainer ProgressionTags = SaveSubsystem ? SaveSubsystem->GetProgressionTags() : FGameplayTagContainer();
-	if (!IsGameplayTagContainerExactSuperset(ProgressionTags, Row.RequiredProgressionTags))
+	if (!ProgressionTags.HasAll(Row.RequiredProgressionTags))
 	{
 		return false;
 	}
 
-	if (HasAnyBlockedTag(ProgressionTags, Row.BlockedProgressionTags))
+	if (ProgressionTags.HasAny(Row.BlockedProgressionTags))
 	{
 		return false;
 	}
 
 	const FGameplayTagContainer Unlocks = GS ? GS->GetUnlocks() : FGameplayTagContainer();
-	if (!IsGameplayTagContainerExactSuperset(Unlocks, Row.RequiredUnlockTags))
+	if (!Unlocks.HasAll(Row.RequiredUnlockTags))
 	{
 		return false;
 	}
 
-	if (HasAnyBlockedTag(Unlocks, Row.BlockedUnlockTags))
+	if (Unlocks.HasAny(Row.BlockedUnlockTags))
 	{
 		return false;
 	}
@@ -711,7 +693,10 @@ static void EndSession(UARDialogueSubsystem* Subsystem, FARActiveDialogueSession
 		{
 			if (IsModeInContainer(GetCurrentModeTag(Subsystem->GetWorld()), Settings->PauseOnDialogueModeTags))
 			{
-				UGameplayStatics::SetGamePaused(Subsystem->GetWorld(), false);
+				if (AARGameStateBase* ARGameState = Subsystem->GetWorld() ? Subsystem->GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+				{
+					ARGameState->SetExternalPauseReasonActive(EARPauseExternalReason::DialogueShared, false);
+				}
 			}
 		}
 	}
@@ -776,7 +761,7 @@ static bool TrySelectBestRowForSpeaker(const UARDialogueSubsystem* Subsystem, co
 bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag NpcTag)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController || !NpcTag.IsValid())
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController || !NpcTag.IsValid())
 	{
 		return false;
 	}
@@ -854,7 +839,10 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 
 		if (Settings && IsModeInContainer(ModeTag, Settings->PauseOnDialogueModeTags))
 		{
-			UGameplayStatics::SetGamePaused(World, true);
+			if (AARGameStateBase* ARGameState = World->GetGameState<AARGameStateBase>())
+			{
+				ARGameState->SetExternalPauseReasonActive(EARPauseExternalReason::DialogueShared, true);
+			}
 		}
 	}
 	else
@@ -885,7 +873,7 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingController)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController)
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController)
 	{
 		return false;
 	}
@@ -900,6 +888,12 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
 	FARActiveDialogueSession* Session = FindSessionForSlot(Runtime.ActiveSessions, Slot);
 	if (!Session)
+	{
+		return false;
+	}
+
+	// Per-player sessions are owned by a single speaker; eavesdroppers may not drive progression.
+	if (!Session->bIsSharedSession && Slot != Session->OwnerSlot)
 	{
 		return false;
 	}
@@ -979,7 +973,7 @@ bool UARDialogueSubsystem::AdvanceDialogue(AARPlayerController* RequestingContro
 bool UARDialogueSubsystem::SubmitDialogueChoice(AARPlayerController* RequestingController, FGameplayTag ChoiceTag)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController || !ChoiceTag.IsValid())
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController || !ChoiceTag.IsValid())
 	{
 		return false;
 	}
@@ -1089,7 +1083,7 @@ bool UARDialogueSubsystem::SubmitDialogueChoice(AARPlayerController* RequestingC
 bool UARDialogueSubsystem::SetShopEavesdropTarget(AARPlayerController* RequestingController, EARPlayerSlot TargetSlot, bool bEnable)
 {
 	UWorld* World = GetWorld();
-	if (!IsAuthorityWorld(World) || !RequestingController)
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController)
 	{
 		return false;
 	}
@@ -1132,10 +1126,16 @@ bool UARDialogueSubsystem::SetShopEavesdropTarget(AARPlayerController* Requestin
 	}
 
 	Runtime.ShopEavesdropTargetByViewer.Remove(ViewerSlot);
+	AARPlayerController* ViewerPC = FindPlayerControllerBySlot(GetWorld(), ViewerSlot);
 	for (FARActiveDialogueSession& Session : Runtime.ActiveSessions)
 	{
-		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot)
+		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot && Session.Participants.Contains(ViewerSlot))
 		{
+			// Notify the viewer that the eavesdropped session is no longer visible to them.
+			if (ViewerPC)
+			{
+				ViewerPC->ClientDialogueSessionEnded(Session.SessionId);
+			}
 			Session.Participants.Remove(ViewerSlot);
 			DispatchSessionUpdate(this, Session);
 		}

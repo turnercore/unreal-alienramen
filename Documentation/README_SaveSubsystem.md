@@ -95,6 +95,7 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `MarkSaveDirty()`
 - `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)`
 - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)`
+- `UARSaveTypesLibrary::GetTotalMeatAmount(FARMeatState)` (Blueprint pure helper for aggregate meat)
 
 ## Hydration helpers
 

@@ -3,10 +3,12 @@
 #include "AREnemyAuthoringPanel.h"
 #include "ARInvaderAuthoringEditorProxies.h"
 #include "ARInvaderAuthoringEditorSettings.h"
+#include "ARContentLookupSettings.h"
 #include "ARInvaderToolingSettings.h"
 #include "AREnemyBase.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
+#include "ContentLookupSubsystem.h"
 
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
@@ -77,6 +79,50 @@ namespace
 			MapPackageName = MapRef.ToString();
 		}
 		return MapPackageName;
+	}
+
+	static UDataTable* LoadTableByRowStructFromContentLookup(UScriptStruct* DesiredRowStruct)
+	{
+		if (!DesiredRowStruct)
+		{
+			return nullptr;
+		}
+
+		const UARContentLookupSettings* LookupSettings = GetDefault<UARContentLookupSettings>();
+		if (!LookupSettings || LookupSettings->RegistryAsset.IsNull())
+		{
+			return nullptr;
+		}
+
+		UContentLookupRegistry* Registry = LookupSettings->RegistryAsset.LoadSynchronous();
+		if (!Registry)
+		{
+			return nullptr;
+		}
+
+		UDataTable* Found = nullptr;
+		for (const FContentLookupRoute& Route : Registry->Routes)
+		{
+			if (Route.DataTable.IsNull())
+			{
+				continue;
+			}
+
+			UDataTable* Table = Route.DataTable.LoadSynchronous();
+			if (!Table || Table->GetRowStruct() != DesiredRowStruct)
+			{
+				continue;
+			}
+
+			if (Found && Found != Table)
+			{
+				return nullptr;
+			}
+
+			Found = Table;
+		}
+
+		return Found;
 	}
 
 class FInvaderSpawnDragDropOp : public FDecoratedDragDropOp
@@ -1140,6 +1186,11 @@ FReply SInvaderAuthoringPanel::OnKeyDown(const FGeometry& MyGeometry, const FKey
 {
 	(void)MyGeometry;
 	const FKey Key = InKeyEvent.GetKey();
+	if (InKeyEvent.IsControlDown() && !InKeyEvent.IsAltDown() && Key == EKeys::S)
+	{
+		return OnSaveTable();
+	}
+
 	if (Mode == EAuthoringMode::Waves && InKeyEvent.IsControlDown() && !InKeyEvent.IsAltDown())
 	{
 		if (Key == EKeys::C)
@@ -1697,21 +1748,17 @@ void SInvaderAuthoringPanel::RefreshTables()
 	EnemyTable = ToolingSettings->EnemyDataTable.LoadSynchronous();
 	if (!WaveTable || !StageTable || !EnemyTable)
 	{
-		const UARInvaderDirectorSettings* RuntimeSettings = GetDefault<UARInvaderDirectorSettings>();
-		if (RuntimeSettings)
+		if (!WaveTable)
 		{
-			if (!WaveTable)
-			{
-				WaveTable = RuntimeSettings->WaveDataTable.LoadSynchronous();
-			}
-			if (!StageTable)
-			{
-				StageTable = RuntimeSettings->StageDataTable.LoadSynchronous();
-			}
-			if (!EnemyTable)
-			{
-				EnemyTable = RuntimeSettings->EnemyDataTable.LoadSynchronous();
-			}
+			WaveTable = LoadTableByRowStructFromContentLookup(FARWaveDefRow::StaticStruct());
+		}
+		if (!StageTable)
+		{
+			StageTable = LoadTableByRowStructFromContentLookup(FARStageDefRow::StaticStruct());
+		}
+		if (!EnemyTable)
+		{
+			EnemyTable = LoadTableByRowStructFromContentLookup(FARInvaderEnemyDefRow::StaticStruct());
 		}
 	}
 
@@ -3816,6 +3863,7 @@ FText SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText() const
 	double TotalHealth = 0.0;
 	double TotalShield = 0.0;
 	double TotalDamageToClear = 0.0;
+	double TotalBaseSpiceAward = 0.0;
 	int32 MissingEnemyDefCount = 0;
 	int32 ZeroMitigationCount = 0;
 
@@ -3834,10 +3882,12 @@ FText SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText() const
 		const float Health = FMath::Max(0.f, EnemyDef->RuntimeInit.MaxHealth);
 		const float Shield = FMath::Max(0.f, TryExtractOptionalRuntimeInitFloat(*EnemyDef, TEXT("MaxShield"), 0.f));
 		const float DamageTakenMultiplier = FMath::Max(0.f, EnemyDef->RuntimeInit.DamageTakenMultiplier);
+		const float BaseSpiceKillValue = FMath::Max(1.f, EnemyDef->BaseSpiceKillValue);
 
 		const double EffectivePool = static_cast<double>(Health + Shield);
 		TotalHealth += Health;
 		TotalShield += Shield;
+		TotalBaseSpiceAward += static_cast<double>(BaseSpiceKillValue);
 
 		if (DamageTakenMultiplier <= KINDA_SMALL_NUMBER)
 		{
@@ -3866,13 +3916,14 @@ FText SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText() const
 	}
 
 	return FText::FromString(FString::Printf(
-		TEXT("Computed (approx)\n  Enemies: %d\n  Total HP: %.0f\n  Total Shield: %.0f\n  Damage to Clear: %.0f\n  Required DPS (WaveDuration %.1fs): %.1f/s%s"),
+		TEXT("Computed (approx)\n  Enemies: %d\n  Total HP: %.0f\n  Total Shield: %.0f\n  Damage to Clear: %.0f\n  Required DPS (WaveDuration %.1fs): %.1f/s\n  Max Base Spice Award (correct credit): %.1f%s"),
 		Row->EnemySpawns.Num(),
 		TotalHealth,
 		TotalShield,
 		TotalDamageToClear,
 		Row->WaveDuration,
 		RequiredDPS,
+		TotalBaseSpiceAward,
 		*Notes));
 }
 

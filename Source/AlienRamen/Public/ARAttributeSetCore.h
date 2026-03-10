@@ -280,10 +280,30 @@ public:
 	FGameplayAttributeData ReviveSpeed;
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, ReviveSpeed)
 
-		// Roguelike staple
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PickupRadius, Category = "AR|Support")
+	// Roguelike staple
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PickupRadius, Category = "AR|Support")
 	FGameplayAttributeData PickupRadius;
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, PickupRadius)
+
+	// Enemy-side baseline drop chance used for invader currency drops.
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DropChance, Category = "AR|Rewards|Drops")
+	FGameplayAttributeData DropChance;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, DropChance)
+
+	// Enemy-side baseline drop amount authored per definition.
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DropAmount, Category = "AR|Rewards|Drops")
+	FGameplayAttributeData DropAmount;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, DropAmount)
+
+	// Killer-side multiplier for meat drops.
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MeatDropMultiplier, Category = "AR|Rewards|Drops")
+	FGameplayAttributeData MeatDropMultiplier;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, MeatDropMultiplier)
+
+	// Killer-side multiplier for scrap drops.
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ScrapDropMultiplier, Category = "AR|Rewards|Drops")
+	FGameplayAttributeData ScrapDropMultiplier;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, ScrapDropMultiplier)
 
 protected:
 	// Rep notifies
@@ -350,6 +370,10 @@ protected:
 
 	UFUNCTION() void OnRep_ReviveSpeed(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_PickupRadius(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_DropChance(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_DropAmount(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_MeatDropMultiplier(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_ScrapDropMultiplier(const FGameplayAttributeData& OldValue);
 
 	// Helpers
 	static float Clamp01(float v) { return FMath::Clamp(v, 0.0f, 1.0f); }
