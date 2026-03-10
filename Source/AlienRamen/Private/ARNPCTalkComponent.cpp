@@ -187,7 +187,19 @@ void UARNPCTalkComponent::OnRep_IsTalkable(const bool bOldTalkable)
 
 void UARNPCTalkComponent::OnRep_TalkablePlayerSlotMask(const uint8 bOldTalkablePlayerSlotMask)
 {
-	(void)bOldTalkablePlayerSlotMask;
+	if (bOldTalkablePlayerSlotMask == TalkablePlayerSlotMask)
+	{
+		return;
+	}
+
+	// Slot-mask changes can alter per-player talkability while aggregate bIsTalkable stays true.
+	// Reuse the existing talkable-state delegate so UI/HUD listeners refresh their slot-specific queries.
+	const bool bOldMaskTalkable = bOldTalkablePlayerSlotMask != 0;
+	const bool bNewMaskTalkable = TalkablePlayerSlotMask != 0;
+	if (bOldMaskTalkable == bNewMaskTalkable)
+	{
+		OnNpcTalkableStateChanged.Broadcast(bIsTalkable);
+	}
 }
 
 bool UARNPCTalkComponent::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const

@@ -14,6 +14,7 @@ class STableViewBase;
 class SExpandableArea;
 class UARDialogueConversationAsset;
 class UDataTable;
+class UFont;
 class UTexture2D;
 struct FAssetData;
 struct FGeometry;
@@ -46,13 +47,15 @@ private:
 	struct FConversationEntry
 	{
 		bool bIsBandHeader = false;
+		bool bIsLevelZeroDropTarget = false;
 		FString DisplayTitle;
 		FString Label;
 		FString RelationshipBandLabel;
 		FString UnlocksSummary;
 		FString RequiresSummary;
-		FString RequiredTagsText;
-		FString LockedByText;
+		FGameplayTagContainer RequiredTags;
+		FString ConversationTagFilter;
+		TArray<FGameplayTag> LockedByConversationTags;
 		FGameplayTag ConversationTag;
 		FGameplayTag PrimarySpeakerTag;
 		int32 Priority = 0;
@@ -109,6 +112,8 @@ private:
 	void OnEditedSpeakerTagChanged(FGameplayTag NewTag);
 	FGameplayTag GetEditedFactionTag() const;
 	void OnEditedFactionTagChanged(FGameplayTag NewTag);
+	FString GetEditedLineFontPath() const;
+	void OnEditedLineFontChanged(const FAssetData& AssetData);
 	FString GetEditedDefaultPortraitTexturePath() const;
 	void OnEditedDefaultPortraitTextureChanged(const FAssetData& AssetData);
 	FGameplayTag GetEditedPortraitTag() const;
@@ -123,6 +128,7 @@ private:
 	void SetSortMode(ESpeakerSortMode NewMode);
 	void SetSelectedSpeakerRow(FName RowName);
 	TSharedPtr<SWidget> BuildSpeakerListContextMenu();
+	TSharedPtr<SWidget> BuildConversationListContextMenu();
 	TSharedPtr<SWidget> BuildThresholdContextMenu();
 	TSharedPtr<SWidget> BuildEmotionListContextMenu();
 	void HandleCopySpeaker();
@@ -134,12 +140,18 @@ private:
 	TArray<float> GetActiveThresholdsForConversationMap() const;
 	float GetMinimumRelationshipForBand(int32 BandIndex, const TArray<float>& Thresholds) const;
 	FReply HandleCycleConversationBand(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	FReply HandleSetConversationBand(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, int32 TargetBand);
 	void CommitConversationPriority(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
 	FReply HandleToggleConversationRepeatable(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
 	FReply HandleToggleConversationImportant(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
-	void CommitConversationRequiredTags(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
+	void CommitConversationDisplayName(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FText& NewText, ETextCommit::Type CommitType);
+	FReply HandleAddConversationLockedByTag(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset);
+	FReply HandleRemoveConversationLockedByTag(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, int32 TagIndex);
+	void HandleConversationLockedByTagChanged(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, int32 TagIndex, FGameplayTag NewTag);
+	void CommitConversationRequiredTags(TWeakObjectPtr<UARDialogueConversationAsset> ConversationAsset, const FGameplayTagContainer& NewTags);
 	FReply HandleThresholdListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent);
 	FReply HandleSpeakerListKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent);
+	void OnConversationSelectionChanged(TSharedPtr<FConversationEntry> Item, ESelectInfo::Type SelectInfo);
 	const FSlateBrush* GetDefaultPortraitFieldBrush() const;
 
 	FReply HandleRefresh();
@@ -150,6 +162,11 @@ private:
 	FReply HandleSaveSpeaker();
 	FReply HandleCreateConversation();
 	FReply HandleOpenConversation();
+	FReply HandleRenameConversation();
+	FReply HandleDuplicateConversation();
+	FReply HandleDeleteConversation();
+	FReply HandleDeleteConversationAndAsset();
+	FReply HandleCleanupGeneratedConversationTags();
 	FReply HandleFindBrokenConversations();
 	FReply HandleSortByName();
 	FReply HandleSortByConversationCount();
@@ -161,6 +178,7 @@ private:
 	FReply HandleAddEmotionSlot();
 	FReply HandleAddPortrait();
 	FReply HandleRemovePortrait();
+	FReply HandleDeleteConversationInternal(bool bDeleteAssetFromContentBrowser);
 
 	TSharedRef<ITableRow> OnGenerateSpeakerRow(TSharedPtr<FSpeakerEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
 	TSharedRef<ITableRow> OnGenerateConversationRow(TSharedPtr<FConversationEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
@@ -181,7 +199,7 @@ private:
 	TSharedPtr<SSearchBox> SearchTextBox;
 	TSharedPtr<SEditableTextBox> DisplayNameTextBox;
 	TSharedPtr<SEditableTextBox> DescriptionTextBox;
-	TSharedPtr<SEditableTextBox> LineFontStyleTextBox;
+	TSharedPtr<SObjectPropertyEntryBox> LineFontPicker;
 	TSharedPtr<SObjectPropertyEntryBox> DefaultPortraitTexturePicker;
 	TSharedPtr<SObjectPropertyEntryBox> PortraitTexturePicker;
 	TSharedPtr<SBox> EmotionTagComboHost;
@@ -195,7 +213,7 @@ private:
 	TWeakObjectPtr<UDataTable> SpeakerDataTable;
 	FGameplayTag EditedSpeakerTag;
 	FGameplayTag EditedFactionTag;
-	FName EditedLineFontStyleTag;
+	TSoftObjectPtr<UFont> EditedLineFontAsset;
 	TSoftObjectPtr<UTexture2D> EditedDefaultPortraitTexture;
 	FGameplayTag EditedPortraitTag;
 	TSoftObjectPtr<UTexture2D> EditedPortraitTexture;
@@ -216,4 +234,5 @@ private:
 	FARDialogueSpeakerRow SpeakerClipboardRow;
 	FString ValidationOutput;
 	mutable FSlateBrush DefaultPortraitFieldBrush;
+	TWeakObjectPtr<UARDialogueConversationAsset> RenamingConversationAsset;
 };

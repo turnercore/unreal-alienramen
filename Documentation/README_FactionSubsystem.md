@@ -10,8 +10,8 @@ Ownership note:
 ## Runtime Ownership
 
 - Primary runtime API: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`)
-- Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Alien Ramen Factions`)
-- Content source: `UTagContentResolverSubsystem` root `Faction.Definition`
+- Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen|NPC -> Factions`)
+- Content source: `UTagContentResolverSubsystem` root `Faction.Identity`
 - Persistence source: `UARSaveSubsystem` / `UARSaveGame`
 
 ## Core API Surface
@@ -97,9 +97,9 @@ Runtime state types:
 - Snapshot refresh fails:
   - verify authority context
   - verify `FactionDefinitionRootTag` in project settings
-  - verify content lookup registry route/table shape
+  - verify TagContentResolver route/table shape
 - Finalize blocked in Shop travel:
   - check `UARFactionSubsystem` exists
-  - inspect content lookup resolution warnings for faction rows
+  - inspect TagContentResolver resolution warnings for faction rows
 - Unexpected candidate list size:
   - verify `FactionClout` in current save and progression modifiers
