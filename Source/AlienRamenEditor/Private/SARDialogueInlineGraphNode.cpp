@@ -255,6 +255,11 @@ void SARDialogueInlineGraphNode::UpdateGraphNode()
 	[
 		SNew(SBorder)
 		.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.Body")))
+		.ToolTipText_Lambda([this]()
+		{
+			const UARDialogueEdGraphNode* Node = GetDialogueNode();
+			return Node ? Node->GetTooltipText() : FText::FromString(TEXT("Dialogue node."));
+		})
 		.Padding(4.0f)
 		[
 			SNew(SVerticalBox)

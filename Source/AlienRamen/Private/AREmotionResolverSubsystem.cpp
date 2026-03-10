@@ -6,10 +6,11 @@
 #include "Engine/DataTable.h"
 #include "Engine/Texture2D.h"
 #include "GameplayTagsManager.h"
+#include "HAL/IConsoleManager.h"
 
 namespace
 {
-	static bool AreTagsEqual(const FGameplayTag& Left, const FGameplayTag& Right)
+	static bool AreResolverTagsEqual(const FGameplayTag& Left, const FGameplayTag& Right)
 	{
 		if (!Left.IsValid() && !Right.IsValid())
 		{
@@ -107,7 +108,7 @@ namespace
 
 		if (!OutCandidates.ContainsByPredicate([&GenericCandidate](const FGameplayTag ExistingTag)
 			{
-				return AreTagsEqual(ExistingTag, GenericCandidate);
+				return AreResolverTagsEqual(ExistingTag, GenericCandidate);
 			}))
 		{
 			OutCandidates.Add(GenericCandidate);
@@ -224,15 +225,27 @@ namespace
 void UAREmotionResolverSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	RegisterDebugConsoleCommands();
 	RebuildCache();
 }
 
 void UAREmotionResolverSubsystem::Deinitialize()
 {
+	UnregisterDebugConsoleCommands();
+	UnbindDataTableChangedDelegate();
+
 	IconByEmotionTag.Reset();
 	RequestToResolvedTagCache.Reset();
 	RequestToResolvedIconCache.Reset();
 	RequestMissCache.Reset();
+	BoundDataTable.Reset();
+	CachedEmotionDataTablePath.Reset();
+	CachedGenericRootTag = FGameplayTag();
+	CacheBuildCount = 0;
+	LookupCount = 0;
+	CacheHitCount = 0;
+	CacheMissCount = 0;
+	CacheInvalidationCount = 0;
 	bCacheBuilt = false;
 	Super::Deinitialize();
 }
@@ -240,6 +253,24 @@ void UAREmotionResolverSubsystem::Deinitialize()
 void UAREmotionResolverSubsystem::RebuildCache()
 {
 	BuildCache();
+}
+
+void UAREmotionResolverSubsystem::LogCacheStats() const
+{
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[Emotion] CacheStats Built=%d BuildCount=%llu Invalidations=%llu Lookups=%llu Hits=%llu Misses=%llu IconMap=%d ResolvedCache=%d MissCache=%d DataTable=%s"),
+		bCacheBuilt ? 1 : 0,
+		CacheBuildCount,
+		CacheInvalidationCount,
+		LookupCount,
+		CacheHitCount,
+		CacheMissCount,
+		IconByEmotionTag.Num(),
+		RequestToResolvedTagCache.Num(),
+		RequestMissCache.Num(),
+		*CachedEmotionDataTablePath.ToString());
 }
 
 bool UAREmotionResolverSubsystem::TryResolveEmotionIcon(
@@ -255,15 +286,23 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIcon(
 		return false;
 	}
 
+	++LookupCount;
+
 	if (!EnsureCacheBuilt())
 	{
-		return TryResolveEmotionIconFromConfiguredData(RequestedEmotionTag, OutIconTexture, OutResolvedEmotionTag);
+		const bool bResolvedFromFallback = TryResolveEmotionIconFromConfiguredData(RequestedEmotionTag, OutIconTexture, OutResolvedEmotionTag);
+		if (!bResolvedFromFallback)
+		{
+			++CacheMissCount;
+		}
+		return bResolvedFromFallback;
 	}
 
 	if (const FGameplayTag* CachedResolvedTag = RequestToResolvedTagCache.Find(RequestedEmotionTag))
 	{
 		if (const TSoftObjectPtr<UTexture2D>* CachedIcon = RequestToResolvedIconCache.Find(RequestedEmotionTag))
 		{
+			++CacheHitCount;
 			OutResolvedEmotionTag = *CachedResolvedTag;
 			OutIconTexture = *CachedIcon;
 			return OutIconTexture.IsValid() || !OutIconTexture.IsNull();
@@ -272,6 +311,7 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIcon(
 
 	if (RequestMissCache.Contains(RequestedEmotionTag))
 	{
+		++CacheMissCount;
 		return false;
 	}
 
@@ -284,6 +324,7 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIcon(
 	}
 
 	RequestMissCache.Add(RequestedEmotionTag);
+	++CacheMissCount;
 	return false;
 }
 
@@ -305,9 +346,15 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIconFromConfiguredData(
 
 bool UAREmotionResolverSubsystem::EnsureCacheBuilt()
 {
-	if (bCacheBuilt)
+	const bool bConfigChanged = HasConfigInputsChanged();
+	if (bCacheBuilt && !bConfigChanged)
 	{
 		return true;
+	}
+
+	if (bCacheBuilt && bConfigChanged)
+	{
+		++CacheInvalidationCount;
 	}
 
 	return BuildCache();
@@ -315,10 +362,106 @@ bool UAREmotionResolverSubsystem::EnsureCacheBuilt()
 
 bool UAREmotionResolverSubsystem::BuildCache()
 {
+	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
+	const FSoftObjectPath CurrentDataTablePath = Settings ? Settings->EmotionDataTable.ToSoftObjectPath() : FSoftObjectPath();
+	const FGameplayTag CurrentGenericRootTag = Settings ? Settings->GenericEmotionRootTag : FGameplayTag();
+
 	IconByEmotionTag.Reset();
 	RequestToResolvedTagCache.Reset();
 	RequestToResolvedIconCache.Reset();
 	RequestMissCache.Reset();
+
+	UnbindDataTableChangedDelegate();
+
+	CachedEmotionDataTablePath = CurrentDataTablePath;
+	CachedGenericRootTag = CurrentGenericRootTag;
 	bCacheBuilt = BuildIconMapFromSettings(IconByEmotionTag);
+	BindToConfiguredDataTable();
+	++CacheBuildCount;
 	return bCacheBuilt;
+}
+
+void UAREmotionResolverSubsystem::RegisterDebugConsoleCommands()
+{
+	UnregisterDebugConsoleCommands();
+
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	CmdLogCacheStats = ConsoleManager.RegisterConsoleCommand(
+		TEXT("ar.emotion.LogCacheStats"),
+		TEXT("Logs emotion resolver cache hit/miss/build stats."),
+		FConsoleCommandDelegate::CreateUObject(this, &UAREmotionResolverSubsystem::LogCacheStats),
+		ECVF_Default);
+
+	CmdRebuildCache = ConsoleManager.RegisterConsoleCommand(
+		TEXT("ar.emotion.RebuildCache"),
+		TEXT("Forces an emotion resolver cache rebuild."),
+		FConsoleCommandDelegate::CreateUObject(this, &UAREmotionResolverSubsystem::RebuildCache),
+		ECVF_Default);
+}
+
+void UAREmotionResolverSubsystem::UnregisterDebugConsoleCommands()
+{
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+
+	// Teardown can invalidate console-object pointers before subsystem deinit.
+	// Unregister by name to avoid dereferencing stale pointers.
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.LogCacheStats"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.RebuildCache"), false);
+
+	CmdLogCacheStats = nullptr;
+	CmdRebuildCache = nullptr;
+}
+
+void UAREmotionResolverSubsystem::HandleEmotionDataTableChanged()
+{
+	++CacheInvalidationCount;
+	UE_LOG(ARLog, Verbose, TEXT("[Emotion] Source data table changed; rebuilding resolver cache."));
+	RebuildCache();
+}
+
+void UAREmotionResolverSubsystem::BindToConfiguredDataTable()
+{
+	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
+	if (!Settings || Settings->EmotionDataTable.IsNull())
+	{
+		return;
+	}
+
+	UDataTable* DataTable = Settings->EmotionDataTable.Get();
+	if (!DataTable)
+	{
+		DataTable = Settings->EmotionDataTable.LoadSynchronous();
+	}
+
+	if (!DataTable)
+	{
+		return;
+	}
+
+	BoundDataTable = DataTable;
+	DataTableChangedHandle = DataTable->OnDataTableChanged().AddUObject(this, &UAREmotionResolverSubsystem::HandleEmotionDataTableChanged);
+}
+
+void UAREmotionResolverSubsystem::UnbindDataTableChangedDelegate()
+{
+	if (UDataTable* DataTable = BoundDataTable.Get())
+	{
+		if (DataTableChangedHandle.IsValid())
+		{
+			DataTable->OnDataTableChanged().Remove(DataTableChangedHandle);
+		}
+	}
+
+	DataTableChangedHandle.Reset();
+	BoundDataTable.Reset();
+}
+
+bool UAREmotionResolverSubsystem::HasConfigInputsChanged() const
+{
+	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
+	const FSoftObjectPath CurrentDataTablePath = Settings ? Settings->EmotionDataTable.ToSoftObjectPath() : FSoftObjectPath();
+	const FGameplayTag CurrentGenericRootTag = Settings ? Settings->GenericEmotionRootTag : FGameplayTag();
+
+	return CurrentDataTablePath != CachedEmotionDataTablePath
+		|| !AreResolverTagsEqual(CurrentGenericRootTag, CachedGenericRootTag);
 }
