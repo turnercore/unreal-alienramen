@@ -7,7 +7,7 @@ Path: `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 
 ## Key Config Groups
 - Data:
-- `WaveDataTable`, `StageDataTable`, `InitialStageRow`
+- `WaveDefinitionRootTag`, `StageDefinitionRootTag`, `InitialStageRow`
 - Run:
 - `BaseThreatGainPerSecond`
 - `NewWaveDelayAfterClear`
@@ -15,7 +15,6 @@ Path: `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 - `StageTransitionDelay`
 - `StageChoiceAutoSelectSeconds`
 - `bStageChoiceAutoSelectLeft`
-- `LeakLossThreshold`
 - Spawn:
 - `SpawnOrigin`
 - `SpawnOffscreenDistance`
@@ -25,6 +24,20 @@ Path: `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 - `GameplayBoundsMin`, `GameplayBoundsMax`
 - `OffscreenCullSeconds`
 - `EnteredScreenInset`
+- `ProjectileOffscreenCullSeconds`, `PickupOffscreenCullSeconds`
+- Drops:
+- `DefaultEnemyDropChance` (enemy `DropChance` baseline)
+- `DefaultEnemyScrapDropChance`, `DefaultEnemyMeatDropChance` (per-drop-type chance baselines)
+- `DropAmountVarianceFraction` (default +/-25%)
+- `DropAmountVarianceCurve` (optional center-weighted custom distribution)
+- `ScrapDropAmountVarianceFraction` / `MeatDropAmountVarianceFraction`
+- `ScrapDropAmountVarianceCurve` / `MeatDropAmountVarianceCurve` (per-drop-type variance overrides)
+- `DropInitialLinearSpeedMin/Max`
+- `ScrapDropStacks`, `MeatDropStacks` (`Denomination + DropClass` stack definitions)
+- `DropPawnCollisionMode` (`CollideWithPawns` or `IgnoreAllPawns`)
+- `InvaderDesiredUpDirection`, `DropEarthGravityAcceleration` (shared gravity frame + debug-earth-gravity tuning)
+- `bUseCapsuleDerivedPlayerPickupRadius` (explicit toggle for capsule-derived player pickup radius seeding)
+- `DefaultPlayerPickupRadius` (manual pickup radius seed when capsule-derived mode is disabled)
 - Soft caps:
 - `SoftCapAliveEnemies`
 - `SoftCapActiveProjectiles`
@@ -34,4 +47,3 @@ Path: `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 
 ## Blueprint Exposure
 - All settings fields are `BlueprintReadOnly` for query/access patterns.
-

@@ -36,6 +36,18 @@ UARAttributeSetCore::UARAttributeSetCore()
 
 	CritMultiplier.SetBaseValue(1.0f);
 	CritMultiplier.SetCurrentValue(1.0f);
+
+	DropChance.SetBaseValue(0.0f);
+	DropChance.SetCurrentValue(0.0f);
+
+	DropAmount.SetBaseValue(0.0f);
+	DropAmount.SetCurrentValue(0.0f);
+
+	MeatDropMultiplier.SetBaseValue(1.0f);
+	MeatDropMultiplier.SetCurrentValue(1.0f);
+
+	ScrapDropMultiplier.SetBaseValue(1.0f);
+	ScrapDropMultiplier.SetCurrentValue(1.0f);
 }
 
 void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -59,12 +71,24 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 		NewValue = Clamp01(NewValue);
 	}
 
+	if (Attribute == GetDropChanceAttribute())
+	{
+		NewValue = Clamp01(NewValue);
+	}
+
 	// Multipliers that should never go negative
 	if (Attribute == GetDamageTakenMultiplierAttribute() ||
 		Attribute == GetHealingReceivedMultiplierAttribute() ||
 		Attribute == GetHealingDealtMultiplierAttribute() ||
 		Attribute == GetSpiceGainMultiplierAttribute() ||
-		Attribute == GetSpreadMultiplierAttribute())
+		Attribute == GetSpreadMultiplierAttribute() ||
+		Attribute == GetMeatDropMultiplierAttribute() ||
+		Attribute == GetScrapDropMultiplierAttribute())
+	{
+		NewValue = FMath::Max(0.0f, NewValue);
+	}
+
+	if (Attribute == GetDropAmountAttribute())
 	{
 		NewValue = FMath::Max(0.0f, NewValue);
 	}
@@ -174,6 +198,11 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 		SetCritChance(Clamp01(GetCritChance()));
 	}
 
+	if (Attr == GetDropChanceAttribute())
+	{
+		SetDropChance(Clamp01(GetDropChance()));
+	}
+
 	// Non-negative clamps
 	if (Attr == GetDamageTakenMultiplierAttribute())
 	{
@@ -194,6 +223,19 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 	else if (Attr == GetSpreadMultiplierAttribute())
 	{
 		SetSpreadMultiplier(FMath::Max(0.0f, GetSpreadMultiplier()));
+	}
+	else if (Attr == GetMeatDropMultiplierAttribute())
+	{
+		SetMeatDropMultiplier(FMath::Max(0.0f, GetMeatDropMultiplier()));
+	}
+	else if (Attr == GetScrapDropMultiplierAttribute())
+	{
+		SetScrapDropMultiplier(FMath::Max(0.0f, GetScrapDropMultiplier()));
+	}
+
+	if (Attr == GetDropAmountAttribute())
+	{
+		SetDropAmount(FMath::Max(0.0f, GetDropAmount()));
 	}
 
 	// Optional: keep crit multiplier sensible (>= 1)
@@ -271,6 +313,10 @@ void UARAttributeSetCore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ReviveSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, PickupRadius, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DropChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DropAmount, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MeatDropMultiplier, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ScrapDropMultiplier, COND_None, REPNOTIFY_Always);
 }
 
 // Rep notify implementations
@@ -343,5 +389,9 @@ AR_REP_NOTIFY(HatPower)
 
 AR_REP_NOTIFY(ReviveSpeed)
 AR_REP_NOTIFY(PickupRadius)
+AR_REP_NOTIFY(DropChance)
+AR_REP_NOTIFY(DropAmount)
+AR_REP_NOTIFY(MeatDropMultiplier)
+AR_REP_NOTIFY(ScrapDropMultiplier)
 
 #undef AR_REP_NOTIFY

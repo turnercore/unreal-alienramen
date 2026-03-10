@@ -9,6 +9,10 @@
 #include "AREnemyBase.h"
 #include "AREnemyIncomingDamageEffect.h"
 #include "ARAttributeSetCore.h"
+#include "ARInvaderDropBase.h"
+#include "ARInvaderCollisionChannels.h"
+#include "ARInvaderDirectorSettings.h"
+#include "ARPickupCollectorComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
@@ -21,6 +25,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameplayEffectExtension.h"
 
@@ -58,6 +63,11 @@ FGameplayTag AARPlayerCharacterInvader::GetTagRootHats()
 AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 {
 	bReplicates = true;
+	PickupCollectorComponent = CreateDefaultSubobject<UARPickupCollectorComponent>(TEXT("PickupCollectorComponent"));
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
+	}
 
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> FireRateGEClass(
 		TEXT("/Game/CodeAlong/Blueprints/GAS/GameplayEffects/GE_WeaponFireRate"));
@@ -281,6 +291,16 @@ bool AARPlayerCharacterInvader::ApplyDamageToTargetViaGAS(AActor* Target, float 
 
 	const float DamageToApply = (DamageOverride >= 0.f) ? DamageOverride : GetCurrentDamageFromGAS();
 	return ARPlayerCharacterInvaderLocal::ApplyDamageToActorViaGAS_Local(Target, DamageToApply, this);
+}
+
+void AARPlayerCharacterInvader::ServerRequestCollectInvaderDrop_Implementation(AARInvaderDropBase* Drop)
+{
+	if (!HasAuthority() || !Drop)
+	{
+		return;
+	}
+
+	Drop->TryCollectByPlayer(this);
 }
 
 // --------------------
@@ -535,9 +555,16 @@ static void GrantAbilitySet(
 // Possession / initialization
 // --------------------
 
+void AARPlayerCharacterInvader::BeginPlay()
+{
+	Super::BeginPlay();
+	ApplyInvaderGravityFrameFromSettings();
+}
+
 void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	ApplyInvaderGravityFrameFromSettings();
 
 	InitAbilityActorInfo();
 
@@ -574,6 +601,7 @@ void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 void AARPlayerCharacterInvader::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
+	ApplyInvaderGravityFrameFromSettings();
 	InitAbilityActorInfo();
 }
 
@@ -606,11 +634,45 @@ void AARPlayerCharacterInvader::InitAbilityActorInfo()
 
 	// Owner = PlayerState, Avatar = this pawn
 	ASC->InitAbilityActorInfo(PS, this);
+	EnsureDefaultPickupRadiusOnASC(ASC);
 	BindMoveSpeedChangeDelegate(ASC);
 	RefreshCharacterMovementSpeedFromAttributes();
 	ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, ASC);
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 
+}
+
+void AARPlayerCharacterInvader::EnsureDefaultPickupRadiusOnASC(UAbilitySystemComponent* ASC)
+{
+	if (!HasAuthority() || !ASC)
+	{
+		return;
+	}
+
+	const float ExistingRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetCore::GetPickupRadiusAttribute()));
+	if (ExistingRadius > 0.0f)
+	{
+		return;
+	}
+
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	const bool bUseCapsuleDerivedRadius = Settings ? Settings->bUseCapsuleDerivedPlayerPickupRadius : true;
+
+	float DesiredRadius = 0.0f;
+	if (bUseCapsuleDerivedRadius)
+	{
+		const UCapsuleComponent* Capsule = GetCapsuleComponent();
+		const float CapsuleRadius = Capsule ? FMath::Max(0.0f, Capsule->GetUnscaledCapsuleRadius()) : 50.0f;
+		const float CapsuleDiameter = CapsuleRadius * 2.0f;
+		DesiredRadius = CapsuleRadius + CapsuleDiameter;
+	}
+	else
+	{
+		DesiredRadius = Settings ? FMath::Max(0.0f, Settings->DefaultPlayerPickupRadius) : 150.0f;
+	}
+
+	DesiredRadius = FMath::Max(1.0f, DesiredRadius);
+	ASC->SetNumericAttributeBase(UARAttributeSetCore::GetPickupRadiusAttribute(), DesiredRadius);
 }
 
 void AARPlayerCharacterInvader::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
@@ -731,6 +793,22 @@ void AARPlayerCharacterInvader::RefreshCharacterMovementSpeedFromAttributes()
 	const float MoveSpeed = FMath::Max(0.f, ASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute()));
 	MoveComp->MaxWalkSpeed = MoveSpeed;
 	MoveComp->MaxFlySpeed = MoveSpeed;
+}
+
+void AARPlayerCharacterInvader::ApplyInvaderGravityFrameFromSettings()
+{
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	if (!MoveComp)
+	{
+		return;
+	}
+
+	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+	const FVector DesiredUp = Settings ? Settings->InvaderDesiredUpDirection : FVector(1.0f, 0.0f, 0.0f);
+	const FVector Up = DesiredUp.GetSafeNormal();
+	const FVector ResolvedUp = Up.IsNearlyZero() ? FVector(1.0f, 0.0f, 0.0f) : Up;
+	const FVector GravityDir = -ResolvedUp;
+	MoveComp->SetGravityDirection(GravityDir);
 }
 
 bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
