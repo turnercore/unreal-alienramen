@@ -14,8 +14,9 @@ class ALIENRAMEN_API UARNetworkUserSettings : public UObject
 	GENERATED_BODY()
 
 public:
-	// When true, runtime networking features are blocked (no host/find/join/advertise).
-	// Full Steam deactivation may still require restart when Steam was already initialized.
+	// When true, internet/platform session flows are blocked (host/find/join/invite + online PreLogin).
+	// LAN/local session flows remain available.
+	// Full backend module deactivation may still require restart when a platform OSS module was already initialized.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Network")
 	bool bStayOffline = false;
 
