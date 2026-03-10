@@ -117,7 +117,8 @@ AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
 		// Invader players should not body-block each other in co-op.
 		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
-		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+		// Keep generic Pawn overlap events available; only explicit player-vs-player should ignore.
+		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
 
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> FireRateGEClass(
@@ -617,7 +618,7 @@ void AARPlayerCharacterInvader::BeginPlay()
 	{
 		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
 		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
-		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
 }
 
