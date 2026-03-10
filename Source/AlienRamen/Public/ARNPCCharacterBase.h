@@ -12,6 +12,7 @@
 #include "ARNPCCharacterBase.generated.h"
 
 class AARPlayerController;
+class UARCustomerComponent;
 class UAREmotionComponent;
 
 UCLASS()
@@ -55,6 +56,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
 	UAREmotionComponent* GetEmotionComponent() const { return EmotionComponent; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
+	UARCustomerComponent* GetCustomerComponent() const { return CustomerComponent; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -74,6 +78,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAREmotionComponent> EmotionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UARCustomerComponent> CustomerComponent;
 
 	// Legacy serialized field kept for migration from actor-authored talk data to component-authored data.
 	UPROPERTY()

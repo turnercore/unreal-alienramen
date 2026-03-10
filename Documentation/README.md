@@ -11,6 +11,7 @@ This site is built with MkDocs Material + Doxygen. Everything under `Documentati
 - Progression + unlocks: [Progression + Unlocks](README_ProgressionUnlocks.md)
 - Dialogue plugin boundary: [Dialogue plugin ownership](README_DialoguePluginBoundary.md)
 - Dialogue/NPC system: [Dialogue + NPC runtime](README_DialogueNPC.md)
+- Shop ramen ordering/serving (built on top): [Shop ramen system](README_ShopRamenSystem.md)
 - Faction election system (built on top): [Faction subsystem](README_FactionSubsystem.md)
 - C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
 - API reference: [Doxygen HTML](/unreal-alienramen/doxygen/index.html)
