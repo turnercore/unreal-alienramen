@@ -80,7 +80,11 @@ void UARSessionSubsystem::Deinitialize()
 
 	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 	{
-		ClearDelegateHandles(DefaultSubsystem->GetSessionInterface());
+		const FName DefaultSubsystemName = DefaultSubsystem->GetSubsystemName();
+		if (DefaultSubsystemName != ActiveSubsystemName)
+		{
+			ClearDelegateHandles(DefaultSubsystem->GetSessionInterface());
+		}
 	}
 
 	CachedNativeSearchResults.Reset();
