@@ -133,6 +133,8 @@ If a section starts growing again:
 - `UARNPCSubsystem` owns NPC talkable-state resolution/cache.
 - `UARNPCTalkComponent` owns NPC-side dialogue interaction and replicated dialogue talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state (base state + dialogue override state), including per-player-slot variants and gameplay-tag-to-icon resolution.
+- `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache from the settings-configured emotion DataTable.
+- Emotion icon lookup for dialogue no longer depends on TagContentResolver routes; source table is configured directly in `UAREmotionSettings`.
 - `AARNPCCharacterBase` hosts `UARNPCTalkComponent` and owns non-dialogue local NPC gates (for example customer/serving state); NPC actors still do not own dialogue authority.
 - `AARNPCCharacterBase` and `AARPlayerCharacterBase` host `UAREmotionComponent`.
 - Seen state is transient only; completion and recorded choice results are persistent.
@@ -145,7 +147,6 @@ If a section starts growing again:
 
 - `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
-- Emotion icon lookups resolve through TagContentResolver row routes (`FAREmotionIconRow`) with fallback roots configured in `UAREmotionSettings`.
 
 ### Invader Runtime
 
