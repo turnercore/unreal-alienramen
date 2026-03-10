@@ -2,23 +2,21 @@
 
 #include "ARGameInstance.h"
 #include "ARLog.h"
+#include "ARNetworkRoutingSettings.h"
 #include "ARNetworkUserSettings.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "CreateSessionCallbackProxyAdvanced.h"
 #include "Engine/GameInstance.h"
-#include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
 #include "FindSessionsCallbackProxyAdvanced.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "Kismet/GameplayStatics.h"
-#include "OnlineSubsystem.h"
-#include "OnlineSubsystemNames.h"
+#include "Modules/ModuleManager.h"
 #include "Online/OnlineSessionNames.h"
 #include "OnlineSessionSettings.h"
-#include "Modules/ModuleManager.h"
+#include "OnlineSubsystem.h"
 
 namespace
 {
@@ -43,6 +41,19 @@ namespace
 	{
 		return World ? World->GetFirstPlayerController() : nullptr;
 	}
+
+	static void AddUniqueSubsystemName(TArray<FName>& Names, const FName Name)
+	{
+		if (Name.IsNone())
+		{
+			return;
+		}
+
+		if (!Names.Contains(Name))
+		{
+			Names.Add(Name);
+		}
+	}
 }
 
 void UARSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -51,58 +62,222 @@ void UARSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	BindInviteAcceptedDelegate();
 }
 
+FName UARSessionSubsystem::GetConfiguredInternetSubsystemName() const
+{
+	return GetConfiguredInternetSubsystemNameInternal();
+}
+
+FName UARSessionSubsystem::GetConfiguredLanSubsystemName() const
+{
+	return GetConfiguredLanSubsystemNameInternal();
+}
+
+TArray<FName> UARSessionSubsystem::GetConfiguredInternetSubsystemFallbackOrder() const
+{
+	TArray<FName> Result;
+	GetConfiguredInternetFallbackOrderInternal(Result);
+	return Result;
+}
+
+const UARNetworkRoutingSettings* UARSessionSubsystem::GetRoutingSettings() const
+{
+	return GetDefault<UARNetworkRoutingSettings>();
+}
+
+FName UARSessionSubsystem::GetConfiguredInternetSubsystemNameInternal() const
+{
+	if (const UARNetworkRoutingSettings* Settings = GetRoutingSettings())
+	{
+		if (!Settings->InternetSubsystemName.IsNone())
+		{
+			return Settings->InternetSubsystemName;
+		}
+	}
+
+	return FName(TEXT("Steam"));
+}
+
+FName UARSessionSubsystem::GetConfiguredLanSubsystemNameInternal() const
+{
+	if (const UARNetworkRoutingSettings* Settings = GetRoutingSettings())
+	{
+		if (!Settings->LanSubsystemName.IsNone())
+		{
+			return Settings->LanSubsystemName;
+		}
+	}
+
+	return FName(TEXT("NULL"));
+}
+
+void UARSessionSubsystem::GetConfiguredInternetFallbackOrderInternal(TArray<FName>& OutFallbackOrder) const
+{
+	OutFallbackOrder.Reset();
+
+	if (const UARNetworkRoutingSettings* Settings = GetRoutingSettings())
+	{
+		for (const FName Candidate : Settings->InternetSubsystemFallbackOrder)
+		{
+			AddUniqueSubsystemName(OutFallbackOrder, Candidate);
+		}
+	}
+}
+
+void UARSessionSubsystem::LogRouteDecision(
+	const TCHAR* RequestType,
+	const bool bPreferLAN,
+	const bool bStayOffline,
+	const FName& ChosenSubsystem,
+	const FString& Reason) const
+{
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[Session][Route] Request=%s UseLAN=%d StayOffline=%d ChosenSubsystem=%s Reason=%s"),
+		RequestType ? RequestType : TEXT("Unknown"),
+		bPreferLAN ? 1 : 0,
+		bStayOffline ? 1 : 0,
+		ChosenSubsystem.IsNone() ? TEXT("None") : *ChosenSubsystem.ToString(),
+		Reason.IsEmpty() ? TEXT("None") : *Reason);
+}
+
+IOnlineSessionPtr UARSessionSubsystem::GetSessionInterfaceForSubsystem(FName SubsystemName) const
+{
+	if (SubsystemName.IsNone())
+	{
+		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+		{
+			return DefaultSubsystem->GetSessionInterface();
+		}
+		return nullptr;
+	}
+
+	if (IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get(SubsystemName))
+	{
+		return Subsystem->GetSessionInterface();
+	}
+
+	return nullptr;
+}
+
+IOnlineSessionPtr UARSessionSubsystem::GetActiveSessionInterface() const
+{
+	return GetSessionInterfaceForSubsystem(ActiveSubsystemName);
+}
+
+void UARSessionSubsystem::ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, const bool bClearFindFriendHandle)
+{
+	if (!Session.IsValid())
+	{
+		return;
+	}
+
+	if (CreateSessionCompleteHandle.IsValid())
+	{
+		Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteHandle);
+		CreateSessionCompleteHandle.Reset();
+	}
+
+	if (UpdateSessionCompleteHandle.IsValid())
+	{
+		Session->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteHandle);
+		UpdateSessionCompleteHandle.Reset();
+	}
+
+	if (DestroySessionCompleteHandle.IsValid())
+	{
+		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteHandle);
+		DestroySessionCompleteHandle.Reset();
+	}
+
+	if (FindSessionsCompleteHandle.IsValid())
+	{
+		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
+		FindSessionsCompleteHandle.Reset();
+	}
+
+	if (CancelFindSessionsCompleteHandle.IsValid())
+	{
+		Session->ClearOnCancelFindSessionsCompleteDelegate_Handle(CancelFindSessionsCompleteHandle);
+		CancelFindSessionsCompleteHandle.Reset();
+	}
+
+	if (JoinSessionCompleteHandle.IsValid())
+	{
+		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteHandle);
+		JoinSessionCompleteHandle.Reset();
+	}
+
+	if (bClearFindFriendHandle && FindFriendSessionCompleteHandle.IsValid())
+	{
+		Session->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
+		FindFriendSessionCompleteHandle.Reset();
+	}
+}
+
+void UARSessionSubsystem::ResetOperationState()
+{
+	bOperationInFlight = false;
+	CurrentOperation = ESessionOperation::None;
+}
+
+void UARSessionSubsystem::ResetFindState()
+{
+	ActiveSessionSearch.Reset();
+	CachedNativeSearchResults.Reset();
+	LastFindResults.Reset();
+	bFindRetryWithoutFilters = false;
+	LastFindMaxResults = 50;
+}
+
 void UARSessionSubsystem::Deinitialize()
 {
 	ClearInviteAcceptedDelegate();
 
-	if (IOnlineSessionPtr Session = IOnlineSubsystem::Get() ? IOnlineSubsystem::Get()->GetSessionInterface() : nullptr)
+	IOnlineSubsystem* ActiveSubsystem = nullptr;
+	if (!ActiveSubsystemName.IsNone())
 	{
-		if (CreateSessionCompleteHandle.IsValid())
+		ActiveSubsystem = IOnlineSubsystem::Get(ActiveSubsystemName);
+		if (ActiveSubsystem)
 		{
-			Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteHandle);
-		}
-		if (UpdateSessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteHandle);
-		}
-		if (DestroySessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteHandle);
-		}
-		if (FindSessionsCompleteHandle.IsValid())
-		{
-			Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
-		}
-		if (CancelFindSessionsCompleteHandle.IsValid())
-		{
-			Session->ClearOnCancelFindSessionsCompleteDelegate_Handle(CancelFindSessionsCompleteHandle);
-		}
-		if (JoinSessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteHandle);
-		}
-		if (FindFriendSessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
+			ClearTrackedSessionDelegateHandles(ActiveSubsystem->GetSessionInterface(), false);
 		}
 	}
 
-	CachedNativeSearchResults.Reset();
-	LastFindResults.Reset();
-	ActiveSessionSearch.Reset();
+	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+	{
+		IOnlineSessionPtr DefaultSession = DefaultSubsystem->GetSessionInterface();
+
+		if (DefaultSubsystem != ActiveSubsystem)
+		{
+			ClearTrackedSessionDelegateHandles(DefaultSession, false);
+		}
+
+		if (DefaultSession.IsValid() && FindFriendSessionCompleteHandle.IsValid())
+		{
+			DefaultSession->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
+			FindFriendSessionCompleteHandle.Reset();
+		}
+	}
+
+	ResetFindState();
+
 	ActiveAdvancedCreateProxy = nullptr;
 	ActiveAdvancedFindProxy = nullptr;
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
-	LastFindMaxResults = 50;
-	bFindRetryWithoutFilters = false;
+
+	ResetOperationState();
+	ActiveSubsystemName = NAME_None;
+
 	bPendingInviteJoinAfterDestroy = false;
 	PendingInviteControllerId = 0;
 	PendingInviteSearchResult = FOnlineSessionSearchResult();
+
 	bPendingJoinAfterDestroy = false;
 	PendingJoinControllerId = 0;
 	PendingJoinSearchResult = FOnlineSessionSearchResult();
+
 	InviteDelegateSubsystemName = NAME_None;
+
 	Super::Deinitialize();
 }
 
@@ -153,9 +328,9 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 		BindInviteAcceptedDelegate();
 	}
 
-	if (IsStayOfflineEnabled())
+	if (!bUseLAN && IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnCreateSessionCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -169,13 +344,14 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bUseLAN, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bUseLAN, SubsystemName, TEXT("CreateSession"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
 		OnCreateSessionCompleted.Broadcast(OutResult);
 		return false;
 	}
+
 	UE_LOG(ARLog, Log, TEXT("[Session] CreateSession starting (LAN=%s, Subsystem=%s)."),
 		bUseLAN ? TEXT("true") : TEXT("false"),
 		*SubsystemName.ToString());
@@ -198,11 +374,11 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 		FOnUpdateSessionCompleteDelegate Delegate;
 		Delegate.BindUObject(this, &UARSessionSubsystem::HandleUpdateSessionComplete);
 		UpdateSessionCompleteHandle = Session->AddOnUpdateSessionCompleteDelegate_Handle(Delegate);
+
 		if (!Session->UpdateSession(GameSessionName, DesiredSettings, true))
 		{
-			Session->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteHandle);
-			UpdateSessionCompleteHandle.Reset();
-			bOperationInFlight = false;
+			ClearTrackedSessionDelegateHandles(Session, false);
+			ResetOperationState();
 			FillResult(OutResult, false, EARSessionResultCode::UpdateFailed, TEXT("UpdateSession failed to start."));
 			OnCreateSessionCompleted.Broadcast(OutResult);
 			return false;
@@ -216,6 +392,7 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 		{
 			TArray<FSessionPropertyKeyPair> ExtraSettings;
 			const FString ResolvedDisplayName = ResolveSessionDisplayName(SessionDisplayName);
+
 			FSessionPropertyKeyPair LobbyNameSetting;
 			LobbyNameSetting.Key = SessionSetting_ARLobbyName;
 			LobbyNameSetting.Data.SetValue(ResolvedDisplayName);
@@ -257,11 +434,11 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 		FOnCreateSessionCompleteDelegate Delegate;
 		Delegate.BindUObject(this, &UARSessionSubsystem::HandleCreateSessionComplete);
 		CreateSessionCompleteHandle = Session->AddOnCreateSessionCompleteDelegate_Handle(Delegate);
+
 		if (!Session->CreateSession(0, GameSessionName, DesiredSettings))
 		{
-			Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteHandle);
-			CreateSessionCompleteHandle.Reset();
-			bOperationInFlight = false;
+			ClearTrackedSessionDelegateHandles(Session, false);
+			ResetOperationState();
 			FillResult(OutResult, false, EARSessionResultCode::CreateFailed, TEXT("CreateSession failed to start."));
 			OnCreateSessionCompleted.Broadcast(OutResult);
 			return false;
@@ -279,9 +456,9 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 		BindInviteAcceptedDelegate();
 	}
 
-	if (IsStayOfflineEnabled())
+	if (!bLANQuery && IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		BroadcastFindCompleted(OutResult);
 		return false;
 	}
@@ -293,7 +470,7 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bLANQuery, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bLANQuery, SubsystemName, TEXT("FindSessions"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -337,8 +514,7 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 			return true;
 		}
 
-		bOperationInFlight = false;
-		CurrentOperation = ESessionOperation::None;
+		ResetOperationState();
 	}
 
 	ActiveSessionSearch = MakeShared<FOnlineSessionSearch>();
@@ -347,6 +523,7 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	ActiveSessionSearch->MaxSearchResults = LastFindMaxResults;
 	bLastFindWasLANQuery = bLANQuery;
 	bFindRetryWithoutFilters = false;
+
 	if (!bLANQuery)
 	{
 		ActiveSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
@@ -355,15 +532,15 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	bOperationInFlight = true;
 	CurrentOperation = ESessionOperation::Find;
 	ActiveSubsystemName = SubsystemName;
+
 	FOnFindSessionsCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleFindSessionsComplete);
 	FindSessionsCompleteHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(Delegate);
 
 	if (!Session->FindSessions(0, ActiveSessionSearch.ToSharedRef()))
 	{
-		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
-		FindSessionsCompleteHandle.Reset();
-		bOperationInFlight = false;
+		ClearTrackedSessionDelegateHandles(Session, false);
+		ResetOperationState();
 		FillResult(OutResult, false, EARSessionResultCode::FindFailed, TEXT("FindSessions failed to start."));
 		BroadcastFindCompleted(OutResult);
 		return false;
@@ -386,10 +563,10 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 		BindInviteAcceptedDelegate();
 	}
 
-	if (IsStayOfflineEnabled())
+	if (!bLastFindWasLANQuery && IsStayOfflineEnabled())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: Stay Offline is enabled."));
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: StayOffline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnJoinSessionCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -412,7 +589,7 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName, TEXT("JoinSessionByIndex"));
 	if (!Session.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: no session interface (LAN query=%s)."),
@@ -435,6 +612,7 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 	{
 		const FString ExistingId = ExistingSession->GetSessionIdStr();
 		const FString CandidateId = Candidate.GetSessionIdStr();
+
 		if (!ExistingId.IsEmpty() && ExistingId.Equals(CandidateId, ESearchCase::IgnoreCase))
 		{
 			UE_LOG(ARLog, Warning, TEXT("[Session] JoinSessionByIndex blocked: attempted to join current session (SessionId=%s)."),
@@ -444,7 +622,6 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 			return false;
 		}
 
-		// If we're in a different active session, tear it down first then retry join.
 		PendingJoinSearchResult = Candidate;
 		PendingJoinControllerId = 0;
 		bPendingJoinAfterDestroy = true;
@@ -458,10 +635,8 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 
 		if (!Session->DestroySession(GameSessionName))
 		{
-			Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteHandle);
-			DestroySessionCompleteHandle.Reset();
-			bOperationInFlight = false;
-			CurrentOperation = ESessionOperation::None;
+			ClearTrackedSessionDelegateHandles(Session, false);
+			ResetOperationState();
 			bPendingJoinAfterDestroy = false;
 			PendingJoinControllerId = 0;
 			PendingJoinSearchResult = FOnlineSessionSearchResult();
@@ -487,7 +662,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 {
 	if (IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnFindFriendSessionCompleted.Broadcast(OutResult, LastFindResults);
 		return false;
 	}
@@ -507,7 +682,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName, TEXT("FindFriendSession"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -518,16 +693,15 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 	bOperationInFlight = true;
 	CurrentOperation = ESessionOperation::Find;
 	ActiveSubsystemName = SubsystemName;
+
 	FOnFindFriendSessionCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleFindFriendSessionComplete);
 	FindFriendSessionCompleteHandle = Session->AddOnFindFriendSessionCompleteDelegate_Handle(0, Delegate);
 
 	if (!Session->FindFriendSession(0, *FriendNetId))
 	{
-		Session->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
-		FindFriendSessionCompleteHandle.Reset();
-		bOperationInFlight = false;
-		CurrentOperation = ESessionOperation::None;
+		ClearTrackedSessionDelegateHandles(Session, true);
+		ResetOperationState();
 		FillResult(OutResult, false, EARSessionResultCode::FindFailed, TEXT("FindFriendSession failed to start."));
 		OnFindFriendSessionCompleted.Broadcast(OutResult, LastFindResults);
 		return false;
@@ -541,7 +715,7 @@ bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniq
 {
 	if (IsStayOfflineEnabled())
 	{
-		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(OutResult, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnInviteFriendCompleted.Broadcast(OutResult);
 		return false;
 	}
@@ -555,7 +729,7 @@ bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniq
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName, TEXT("InviteFriendToSession"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -596,7 +770,12 @@ bool UARSessionSubsystem::DestroySession(FARSessionResult& OutResult)
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = FindSessionInterfaceOwningGameSession(SubsystemName);
+	if (!Session.IsValid())
+	{
+		Session = ResolveSessionInterface(false, SubsystemName, TEXT("DestroySession"));
+	}
+
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -614,15 +793,15 @@ bool UARSessionSubsystem::DestroySession(FARSessionResult& OutResult)
 	bOperationInFlight = true;
 	CurrentOperation = ESessionOperation::Destroy;
 	ActiveSubsystemName = SubsystemName;
+
 	FOnDestroySessionCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleDestroySessionComplete);
 	DestroySessionCompleteHandle = Session->AddOnDestroySessionCompleteDelegate_Handle(Delegate);
 
 	if (!Session->DestroySession(GameSessionName))
 	{
-		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteHandle);
-		DestroySessionCompleteHandle.Reset();
-		bOperationInFlight = false;
+		ClearTrackedSessionDelegateHandles(Session, false);
+		ResetOperationState();
 		FillResult(OutResult, false, EARSessionResultCode::DestroyFailed, TEXT("DestroySession failed to start."));
 		OnDestroySessionCompleted.Broadcast(OutResult);
 		return false;
@@ -641,7 +820,12 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(false, SubsystemName);
+	IOnlineSessionPtr Session = FindSessionInterfaceOwningGameSession(SubsystemName);
+	if (!Session.IsValid())
+	{
+		Session = ResolveSessionInterface(false, SubsystemName, TEXT("RefreshJoinability"));
+	}
+
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -658,7 +842,7 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	}
 
 	const int32 OpenConnections = ComputeOpenPublicConnections();
-	const bool bCanJoin = !IsStayOfflineEnabled() && (Existing->SessionSettings.bIsLANMatch || OpenConnections > 0);
+	const bool bCanJoin = (OpenConnections > 0) && (Existing->SessionSettings.bIsLANMatch || !IsStayOfflineEnabled());
 
 	FOnlineSessionSettings NewSettings = Existing->SessionSettings;
 	NewSettings.NumPublicConnections = MaxPublicPlayerConnections;
@@ -671,15 +855,15 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	bOperationInFlight = true;
 	CurrentOperation = ESessionOperation::Refresh;
 	ActiveSubsystemName = SubsystemName;
+
 	FOnUpdateSessionCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleUpdateSessionComplete);
 	UpdateSessionCompleteHandle = Session->AddOnUpdateSessionCompleteDelegate_Handle(Delegate);
 
 	if (!Session->UpdateSession(GameSessionName, NewSettings, true))
 	{
-		Session->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteHandle);
-		UpdateSessionCompleteHandle.Reset();
-		bOperationInFlight = false;
+		ClearTrackedSessionDelegateHandles(Session, false);
+		ResetOperationState();
 		FillResult(OutResult, false, EARSessionResultCode::UpdateFailed, TEXT("UpdateSession failed to start."));
 		OnRefreshJoinabilityCompleted.Broadcast(OutResult);
 		return false;
@@ -722,83 +906,127 @@ bool UARSessionSubsystem::AddLocalPlayer(FARSessionResult& OutResult)
 	return true;
 }
 
-IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface(const bool bPreferLAN, FName& OutSubsystemName) const
+IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface(const bool bPreferLAN, FName& OutSubsystemName, const TCHAR* RequestType) const
 {
 	OutSubsystemName = NAME_None;
 
+	const bool bStayOffline = IsStayOfflineEnabled();
+	TArray<FName> Candidates;
+	TArray<FString> CandidateReasons;
+	auto AddCandidate = [&Candidates, &CandidateReasons](const FName Name, const FString& Reason)
+	{
+		if (Name.IsNone() || Candidates.Contains(Name))
+		{
+			return;
+		}
+
+		Candidates.Add(Name);
+		CandidateReasons.Add(Reason);
+	};
+
 	if (bPreferLAN)
 	{
-		// Keep LAN host/find/join on one backend for the current runtime.
+		// LAN should prefer null-like services first, then fall back.
+		AddCandidate(GetConfiguredLanSubsystemNameInternal(), TEXT("ConfiguredLanSubsystem"));
+
+		AddCandidate(FName(TEXT("NULL")), TEXT("LanNullFallback"));
+
 		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 		{
-			OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-			if (IOnlineSessionPtr DefaultSession = DefaultSubsystem->GetSessionInterface())
-			{
-				return DefaultSession;
-			}
+			AddCandidate(DefaultSubsystem->GetSubsystemName(), TEXT("DefaultSubsystemFallback"));
 		}
+	}
+	else
+	{
+		AddCandidate(GetConfiguredInternetSubsystemNameInternal(), TEXT("ConfiguredInternetSubsystem"));
 
-		if (IOnlineSubsystem* NullSubsystem = IOnlineSubsystem::Get(NULL_SUBSYSTEM))
+		TArray<FName> InternetFallbacks;
+		GetConfiguredInternetFallbackOrderInternal(InternetFallbacks);
+		for (const FName Candidate : InternetFallbacks)
 		{
-			OutSubsystemName = NullSubsystem->GetSubsystemName();
-			return NullSubsystem->GetSessionInterface();
+			AddCandidate(Candidate, TEXT("ConfiguredInternetFallback"));
 		}
 
+		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+		{
+			AddCandidate(DefaultSubsystem->GetSubsystemName(), TEXT("DefaultSubsystemFallback"));
+		}
+	}
+
+	FString LastFailureReason = TEXT("No subsystem candidates were available.");
+
+	// Ensure null subsystem can be loaded for LAN and/or null fallback entries.
+	if (Candidates.Contains(FName(TEXT("NULL"))))
+	{
 		FModuleManager::Get().LoadModulePtr<IModuleInterface>(TEXT("OnlineSubsystemNull"));
-		if (IOnlineSubsystem* LoadedNullSubsystem = IOnlineSubsystem::Get(NULL_SUBSYSTEM))
+	}
+
+	for (int32 CandidateIndex = 0; CandidateIndex < Candidates.Num(); ++CandidateIndex)
+	{
+		const FName CandidateName = Candidates[CandidateIndex];
+		const FString CandidateReason = CandidateReasons.IsValidIndex(CandidateIndex)
+			? CandidateReasons[CandidateIndex]
+			: TEXT("Candidate");
+
+		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get(CandidateName);
+		if (!Subsystem)
 		{
-			OutSubsystemName = LoadedNullSubsystem->GetSubsystemName();
-			return LoadedNullSubsystem->GetSessionInterface();
+			LastFailureReason = FString::Printf(TEXT("%s unavailable (%s)."), *CandidateName.ToString(), *CandidateReason);
+			continue;
 		}
 
-		if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
+		IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
+		if (!Session.IsValid())
 		{
-			OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-			return DefaultSubsystem->GetSessionInterface();
+			LastFailureReason = FString::Printf(TEXT("%s has no session interface (%s)."), *CandidateName.ToString(), *CandidateReason);
+			continue;
 		}
-		return nullptr;
+
+		OutSubsystemName = Subsystem->GetSubsystemName();
+		const FString SuccessReason = FString::Printf(TEXT("%s selected (%s)."), *OutSubsystemName.ToString(), *CandidateReason);
+		LogRouteDecision(RequestType, bPreferLAN, bStayOffline, OutSubsystemName, SuccessReason);
+		return Session;
+	}
+
+	LogRouteDecision(RequestType, bPreferLAN, bStayOffline, NAME_None, LastFailureReason);
+	return nullptr;
+}
+
+IOnlineSessionPtr UARSessionSubsystem::FindSessionInterfaceOwningGameSession(FName& OutSubsystemName) const
+{
+	OutSubsystemName = NAME_None;
+
+	TArray<FName> Candidates;
+	AddUniqueSubsystemName(Candidates, ActiveSubsystemName);
+	AddUniqueSubsystemName(Candidates, GetConfiguredLanSubsystemNameInternal());
+	AddUniqueSubsystemName(Candidates, FName(TEXT("NULL")));
+	AddUniqueSubsystemName(Candidates, GetConfiguredInternetSubsystemNameInternal());
+
+	TArray<FName> InternetFallbacks;
+	GetConfiguredInternetFallbackOrderInternal(InternetFallbacks);
+	for (const FName Candidate : InternetFallbacks)
+	{
+		AddUniqueSubsystemName(Candidates, Candidate);
 	}
 
 	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 	{
-		OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-		const bool bDefaultIsNullLike = IsNullLikeSubsystemName(OutSubsystemName);
-
-		if (IsStayOfflineEnabled())
-		{
-			if (!bDefaultIsNullLike)
-			{
-				return nullptr;
-			}
-			return DefaultSubsystem->GetSessionInterface();
-		}
-
-		if (!bDefaultIsNullLike)
-		{
-			if (IOnlineSessionPtr DefaultSession = DefaultSubsystem->GetSessionInterface())
-			{
-				return DefaultSession;
-			}
-		}
+		AddUniqueSubsystemName(Candidates, DefaultSubsystem->GetSubsystemName());
 	}
 
-	// Fallback for environments where default service is Null but Steam is available.
-	if (!IsStayOfflineEnabled())
+	for (const FName CandidateName : Candidates)
 	{
-		if (IOnlineSubsystem* SteamSubsystem = IOnlineSubsystem::Get(STEAM_SUBSYSTEM))
+		IOnlineSessionPtr Session = GetSessionInterfaceForSubsystem(CandidateName);
+		if (!Session.IsValid())
 		{
-			OutSubsystemName = SteamSubsystem->GetSubsystemName();
-			if (IOnlineSessionPtr SteamSession = SteamSubsystem->GetSessionInterface())
-			{
-				return SteamSession;
-			}
+			continue;
 		}
-	}
 
-	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
-	{
-		OutSubsystemName = DefaultSubsystem->GetSubsystemName();
-		return DefaultSubsystem->GetSessionInterface();
+		if (Session->GetNamedSession(GameSessionName))
+		{
+			OutSubsystemName = CandidateName;
+			return Session;
+		}
 	}
 
 	return nullptr;
@@ -824,10 +1052,8 @@ bool UARSessionSubsystem::BeginJoinSession(IOnlineSessionPtr Session, const int3
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Session] BeginJoinSession failed to start (UserNum=%d, SessionId=%s)."),
 			LocalUserNum, *SearchResult.GetSessionIdStr());
-		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteHandle);
-		JoinSessionCompleteHandle.Reset();
-		bOperationInFlight = false;
-		CurrentOperation = ESessionOperation::None;
+		ClearTrackedSessionDelegateHandles(Session, false);
+		ResetOperationState();
 		FillResult(OutResult, false, EARSessionResultCode::JoinFailed, TEXT("JoinSession failed to start."));
 		OnJoinSessionCompleted.Broadcast(OutResult);
 		return false;
@@ -849,7 +1075,7 @@ bool UARSessionSubsystem::CancelFindSessions(FARSessionResult& OutResult)
 	}
 
 	FName SubsystemName = NAME_None;
-	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName);
+	IOnlineSessionPtr Session = ResolveSessionInterface(bLastFindWasLANQuery, SubsystemName, TEXT("CancelFindSessions"));
 	if (!Session.IsValid())
 	{
 		FillResult(OutResult, false, EARSessionResultCode::NoSessionInterface, TEXT("No online session interface available."));
@@ -858,14 +1084,19 @@ bool UARSessionSubsystem::CancelFindSessions(FARSessionResult& OutResult)
 	}
 
 	ActiveSubsystemName = SubsystemName;
+
 	FOnCancelFindSessionsCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleCancelFindSessionsComplete);
 	CancelFindSessionsCompleteHandle = Session->AddOnCancelFindSessionsCompleteDelegate_Handle(Delegate);
 
 	if (!Session->CancelFindSessions())
 	{
-		Session->ClearOnCancelFindSessionsCompleteDelegate_Handle(CancelFindSessionsCompleteHandle);
-		CancelFindSessionsCompleteHandle.Reset();
+		if (CancelFindSessionsCompleteHandle.IsValid())
+		{
+			Session->ClearOnCancelFindSessionsCompleteDelegate_Handle(CancelFindSessionsCompleteHandle);
+			CancelFindSessionsCompleteHandle.Reset();
+		}
+
 		FillResult(OutResult, false, EARSessionResultCode::CancelFailed, TEXT("CancelFindSessions failed to start."));
 		OnCancelFindSessionsCompleted.Broadcast(OutResult);
 		return false;
@@ -882,27 +1113,53 @@ void UARSessionSubsystem::BindInviteAcceptedDelegate()
 		return;
 	}
 
-	IOnlineSubsystem* InviteSubsystem = IOnlineSubsystem::Get(STEAM_SUBSYSTEM);
-	if (!InviteSubsystem)
+	TArray<FName> InviteCandidates;
+	AddUniqueSubsystemName(InviteCandidates, GetConfiguredInternetSubsystemNameInternal());
+
+	TArray<FName> InternetFallbacks;
+	GetConfiguredInternetFallbackOrderInternal(InternetFallbacks);
+	for (const FName Candidate : InternetFallbacks)
 	{
-		InviteSubsystem = IOnlineSubsystem::Get();
+		AddUniqueSubsystemName(InviteCandidates, Candidate);
 	}
 
-	if (!InviteSubsystem)
+	if (IOnlineSubsystem* DefaultSubsystem = IOnlineSubsystem::Get())
 	{
+		AddUniqueSubsystemName(InviteCandidates, DefaultSubsystem->GetSubsystemName());
+	}
+
+	FString FailureReason = TEXT("No internet subsystem candidates were available for invite delegate binding.");
+	for (const FName CandidateName : InviteCandidates)
+	{
+		IOnlineSubsystem* InviteSubsystem = IOnlineSubsystem::Get(CandidateName);
+		if (!InviteSubsystem)
+		{
+			FailureReason = FString::Printf(TEXT("Subsystem '%s' was unavailable."), *CandidateName.ToString());
+			continue;
+		}
+
+		if (IsNullLikeSubsystemName(InviteSubsystem->GetSubsystemName()))
+		{
+			FailureReason = FString::Printf(TEXT("Subsystem '%s' is null-like and does not support platform invites."), *CandidateName.ToString());
+			continue;
+		}
+
+		IOnlineSessionPtr Session = InviteSubsystem->GetSessionInterface();
+		if (!Session.IsValid())
+		{
+			FailureReason = FString::Printf(TEXT("Subsystem '%s' had no session interface."), *CandidateName.ToString());
+			continue;
+		}
+
+		FOnSessionUserInviteAcceptedDelegate Delegate;
+		Delegate.BindUObject(this, &UARSessionSubsystem::HandleSessionUserInviteAccepted);
+		SessionUserInviteAcceptedHandle = Session->AddOnSessionUserInviteAcceptedDelegate_Handle(Delegate);
+		InviteDelegateSubsystemName = InviteSubsystem->GetSubsystemName();
+		LogRouteDecision(TEXT("BindInviteAcceptedDelegate"), false, IsStayOfflineEnabled(), InviteDelegateSubsystemName, TEXT("Invite delegate bound to configured internet subsystem."));
 		return;
 	}
 
-	IOnlineSessionPtr Session = InviteSubsystem->GetSessionInterface();
-	if (!Session.IsValid())
-	{
-		return;
-	}
-
-	FOnSessionUserInviteAcceptedDelegate Delegate;
-	Delegate.BindUObject(this, &UARSessionSubsystem::HandleSessionUserInviteAccepted);
-	SessionUserInviteAcceptedHandle = Session->AddOnSessionUserInviteAcceptedDelegate_Handle(Delegate);
-	InviteDelegateSubsystemName = InviteSubsystem->GetSubsystemName();
+	LogRouteDecision(TEXT("BindInviteAcceptedDelegate"), false, IsStayOfflineEnabled(), NAME_None, FailureReason);
 }
 
 void UARSessionSubsystem::ClearInviteAcceptedDelegate()
@@ -913,6 +1170,7 @@ void UARSessionSubsystem::ClearInviteAcceptedDelegate()
 	}
 
 	IOnlineSessionPtr Session = nullptr;
+
 	if (!InviteDelegateSubsystemName.IsNone())
 	{
 		if (IOnlineSubsystem* InviteSubsystem = IOnlineSubsystem::Get(InviteDelegateSubsystemName))
@@ -935,6 +1193,7 @@ void UARSessionSubsystem::ClearInviteAcceptedDelegate()
 	}
 
 	SessionUserInviteAcceptedHandle.Reset();
+	InviteDelegateSubsystemName = NAME_None;
 }
 
 int32 UARSessionSubsystem::CountCurrentARPlayers() const
@@ -981,7 +1240,7 @@ bool UARSessionSubsystem::BuildDesiredSessionSettings(
 	}
 
 	const int32 OpenConnections = ComputeOpenPublicConnections();
-	const bool bCanJoin = !IsStayOfflineEnabled() && (bPreferLAN || OpenConnections > 0);
+	const bool bCanJoin = (OpenConnections > 0) && (bPreferLAN || !IsStayOfflineEnabled());
 
 	OutSettings = FOnlineSessionSettings();
 	OutSettings.bIsLANMatch = bPreferLAN;
@@ -996,9 +1255,11 @@ bool UARSessionSubsystem::BuildDesiredSessionSettings(
 	OutSettings.bAllowJoinViaPresenceFriendsOnly = false;
 	OutSettings.bUseLobbiesVoiceChatIfAvailable = !bPreferLAN;
 	OutSettings.Set(SETTING_MAPNAME, World->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
 	const FString ResolvedDisplayName = ResolveSessionDisplayName(SessionDisplayName);
 	OutSettings.Set(SessionSetting_ARLobbyName, ResolvedDisplayName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	OutSettings.Set(SETTING_SESSIONKEY, ResolvedDisplayName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
 	UARGameInstance::ApplyARProtocolSessionSetting(OutSettings);
 
 	FillResult(OutResult, true, EARSessionResultCode::Success);
@@ -1059,6 +1320,7 @@ void UARSessionSubsystem::RebuildLastFindResults()
 	{
 		FARSessionSearchResultData Row;
 		FString SessionDisplayName;
+
 		NativeResult.Session.SessionSettings.Get(SessionSetting_ARLobbyName, SessionDisplayName);
 		if (SessionDisplayName.IsEmpty())
 		{
@@ -1068,6 +1330,7 @@ void UARSessionSubsystem::RebuildLastFindResults()
 		{
 			SessionDisplayName = NativeResult.Session.OwningUserName;
 		}
+
 		Row.SessionId = NativeResult.GetSessionIdStr();
 		if (!Row.SessionId.IsEmpty())
 		{
@@ -1089,10 +1352,12 @@ void UARSessionSubsystem::RebuildLastFindResults()
 				SessionDisplayName = FString::Printf(TEXT("Session %d"), LastFindResults.Num() + 1);
 			}
 		}
+
 		SessionDisplayName = SessionDisplayName.Replace(TEXT("_"), TEXT(" "));
 		Row.SessionDisplayName = SessionDisplayName;
 		Row.OwningUserName = NativeResult.Session.OwningUserName;
 		Row.MaxPlayers = NativeResult.Session.SessionSettings.NumPublicConnections;
+
 		const int32 OpenConnections = NativeResult.Session.NumOpenPublicConnections;
 		Row.CurrentPlayers = FMath::Clamp(Row.MaxPlayers - OpenConnections, 0, Row.MaxPlayers);
 		Row.bIsLAN = NativeResult.Session.SessionSettings.bIsLANMatch;
@@ -1124,8 +1389,7 @@ void UARSessionSubsystem::DestroySessionBestEffort()
 void UARSessionSubsystem::HandleAdvancedCreateSuccess()
 {
 	ActiveAdvancedCreateProxy = nullptr;
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ResetOperationState();
 
 	FARSessionResult Result;
 	FillResult(Result, true, EARSessionResultCode::Success);
@@ -1135,8 +1399,7 @@ void UARSessionSubsystem::HandleAdvancedCreateSuccess()
 void UARSessionSubsystem::HandleAdvancedCreateFailure()
 {
 	ActiveAdvancedCreateProxy = nullptr;
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ResetOperationState();
 
 	FARSessionResult Result;
 	FillResult(Result, false, EARSessionResultCode::CreateFailed, TEXT("AdvancedSessions CreateAdvancedSession failed."));
@@ -1146,11 +1409,13 @@ void UARSessionSubsystem::HandleAdvancedCreateFailure()
 void UARSessionSubsystem::HandleAdvancedFindSuccess(const TArray<FBlueprintSessionResult>& Results)
 {
 	ActiveAdvancedFindProxy = nullptr;
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ResetOperationState();
+	bFindRetryWithoutFilters = false;
+	ActiveSessionSearch.Reset();
 
 	CachedNativeSearchResults.Reset();
 	CachedNativeSearchResults.Reserve(Results.Num());
+
 	for (const FBlueprintSessionResult& SessionResult : Results)
 	{
 		if (SessionResult.OnlineResult.IsValid())
@@ -1160,6 +1425,7 @@ void UARSessionSubsystem::HandleAdvancedFindSuccess(const TArray<FBlueprintSessi
 	}
 
 	RebuildLastFindResults();
+
 	FARSessionResult Result;
 	const bool bFoundAny = LastFindResults.Num() > 0;
 	FillResult(Result, true, bFoundAny ? EARSessionResultCode::Success : EARSessionResultCode::SessionNotFound, bFoundAny ? FString() : TEXT("No sessions found."));
@@ -1171,8 +1437,9 @@ void UARSessionSubsystem::HandleAdvancedFindFailure(const TArray<FBlueprintSessi
 	(void)Results;
 
 	ActiveAdvancedFindProxy = nullptr;
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ResetOperationState();
+	bFindRetryWithoutFilters = false;
+	ActiveSessionSearch.Reset();
 	CachedNativeSearchResults.Reset();
 	LastFindResults.Reset();
 
@@ -1186,22 +1453,14 @@ void UARSessionSubsystem::HandleCreateSessionComplete(FName SessionName, bool bW
 	FARSessionResult Result;
 	FillResult(Result, bWasSuccessful, bWasSuccessful ? EARSessionResultCode::Success : EARSessionResultCode::CreateFailed,
 		bWasSuccessful ? FString() : FString::Printf(TEXT("CreateSession failed for '%s'."), *SessionName.ToString()));
+
 	UE_LOG(ARLog, Log, TEXT("[Session] CreateSession completed (Success=%s, Subsystem=%s, SessionName=%s)."),
 		bWasSuccessful ? TEXT("true") : TEXT("false"),
 		*ActiveSubsystemName.ToString(),
 		*SessionName.ToString());
 
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && CreateSessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteHandle);
-			CreateSessionCompleteHandle.Reset();
-		}
-	}
-
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), false);
+	ResetOperationState();
 	OnCreateSessionCompleted.Broadcast(Result);
 }
 
@@ -1211,18 +1470,10 @@ void UARSessionSubsystem::HandleUpdateSessionComplete(FName SessionName, bool bW
 	FillResult(Result, bWasSuccessful, bWasSuccessful ? EARSessionResultCode::Success : EARSessionResultCode::UpdateFailed,
 		bWasSuccessful ? FString() : FString::Printf(TEXT("UpdateSession failed for '%s'."), *SessionName.ToString()));
 
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && UpdateSessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteHandle);
-			UpdateSessionCompleteHandle.Reset();
-		}
-	}
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), false);
 
-	bOperationInFlight = false;
 	const ESessionOperation CompletedOperation = CurrentOperation;
-	CurrentOperation = ESessionOperation::None;
+	ResetOperationState();
 
 	if (CompletedOperation == ESessionOperation::Create)
 	{
@@ -1242,22 +1493,14 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 	FillResult(Result, bWasSuccessful, bWasSuccessful ? EARSessionResultCode::Success : EARSessionResultCode::DestroyFailed,
 		bWasSuccessful ? FString() : FString::Printf(TEXT("DestroySession failed for '%s'."), *SessionName.ToString()));
 
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && DestroySessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteHandle);
-			DestroySessionCompleteHandle.Reset();
-		}
-	}
-
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), false);
+	ResetOperationState();
 
 	if (bPendingInviteJoinAfterDestroy)
 	{
 		const FOnlineSessionSearchResult InviteJoinResult = PendingInviteSearchResult;
 		const int32 InviteControllerId = PendingInviteControllerId;
+
 		bPendingInviteJoinAfterDestroy = false;
 		PendingInviteControllerId = 0;
 		PendingInviteSearchResult = FOnlineSessionSearchResult();
@@ -1271,7 +1514,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		}
 
 		FName JoinSubsystemName = NAME_None;
-		IOnlineSessionPtr JoinSession = ResolveSessionInterface(false, JoinSubsystemName);
+		IOnlineSessionPtr JoinSession = ResolveSessionInterface(false, JoinSubsystemName, TEXT("PendingInviteJoinAfterDestroy"));
 		ActiveSubsystemName = JoinSubsystemName;
 
 		FARSessionResult JoinStartResult;
@@ -1283,6 +1526,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 	{
 		const FOnlineSessionSearchResult JoinResult = PendingJoinSearchResult;
 		const int32 JoinControllerId = PendingJoinControllerId;
+
 		bPendingJoinAfterDestroy = false;
 		PendingJoinControllerId = 0;
 		PendingJoinSearchResult = FOnlineSessionSearchResult();
@@ -1296,7 +1540,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		}
 
 		FName JoinSubsystemName = NAME_None;
-		IOnlineSessionPtr JoinSession = ResolveSessionInterface(bLastFindWasLANQuery, JoinSubsystemName);
+		IOnlineSessionPtr JoinSession = ResolveSessionInterface(bLastFindWasLANQuery, JoinSubsystemName, TEXT("PendingJoinAfterDestroy"));
 		ActiveSubsystemName = JoinSubsystemName;
 
 		FARSessionResult JoinStartResult;
@@ -1310,19 +1554,13 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 void UARSessionSubsystem::HandleFindSessionsComplete(bool bWasSuccessful)
 {
 	FARSessionResult Result;
+	bool bFinalSuccess = bWasSuccessful;
 
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && FindSessionsCompleteHandle.IsValid())
-		{
-			Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
-			FindSessionsCompleteHandle.Reset();
-		}
-	}
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), false);
+	ResetOperationState();
 
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
 	CachedNativeSearchResults.Reset();
+
 	if (ActiveSessionSearch.IsValid())
 	{
 		for (const FOnlineSessionSearchResult& NativeResult : ActiveSessionSearch->SearchResults)
@@ -1336,52 +1574,58 @@ void UARSessionSubsystem::HandleFindSessionsComplete(bool bWasSuccessful)
 			CachedNativeSearchResults.Add(NativeResult);
 		}
 	}
+
 	RebuildLastFindResults();
 
 	if (bWasSuccessful && !bLastFindWasLANQuery && LastFindResults.Num() == 0 && !bFindRetryWithoutFilters)
 	{
-		if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
+		if (IOnlineSessionPtr Session = GetActiveSessionInterface(); Session.IsValid())
 		{
-			if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid())
+			UE_LOG(ARLog, Log, TEXT("[Session] FindSessions retrying without strict online query filters."));
+
+			bFindRetryWithoutFilters = true;
+			ActiveSessionSearch = MakeShared<FOnlineSessionSearch>();
+			ActiveSessionSearch->bIsLanQuery = false;
+			ActiveSessionSearch->MaxSearchResults = FMath::Max(1, LastFindMaxResults);
+			bOperationInFlight = true;
+			CurrentOperation = ESessionOperation::Find;
+
+			FOnFindSessionsCompleteDelegate RetryDelegate;
+			RetryDelegate.BindUObject(this, &UARSessionSubsystem::HandleFindSessionsComplete);
+			FindSessionsCompleteHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(RetryDelegate);
+
+			if (Session->FindSessions(0, ActiveSessionSearch.ToSharedRef()))
 			{
-				UE_LOG(ARLog, Log, TEXT("[Session] FindSessions retrying without strict online query filters."));
-				bFindRetryWithoutFilters = true;
-				ActiveSessionSearch = MakeShared<FOnlineSessionSearch>();
-				ActiveSessionSearch->bIsLanQuery = false;
-				ActiveSessionSearch->MaxSearchResults = FMath::Max(1, LastFindMaxResults);
-				bOperationInFlight = true;
-				CurrentOperation = ESessionOperation::Find;
-
-				FOnFindSessionsCompleteDelegate RetryDelegate;
-				RetryDelegate.BindUObject(this, &UARSessionSubsystem::HandleFindSessionsComplete);
-				FindSessionsCompleteHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(RetryDelegate);
-				if (Session->FindSessions(0, ActiveSessionSearch.ToSharedRef()))
-				{
-					return;
-				}
-
-				Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
-				FindSessionsCompleteHandle.Reset();
-				bOperationInFlight = false;
-				CurrentOperation = ESessionOperation::None;
+				return;
 			}
+
+			ClearTrackedSessionDelegateHandles(Session, false);
+			ResetOperationState();
+			bFinalSuccess = false;
+		}
+		else
+		{
+			bFinalSuccess = false;
 		}
 	}
 
 	const bool bFoundAny = LastFindResults.Num() > 0;
-	const EARSessionResultCode ResultCode = !bWasSuccessful
+	const EARSessionResultCode ResultCode = !bFinalSuccess
 		? EARSessionResultCode::FindFailed
 		: (bFoundAny ? EARSessionResultCode::Success : EARSessionResultCode::SessionNotFound);
-	const FString Error = !bWasSuccessful
+	const FString Error = !bFinalSuccess
 		? TEXT("FindSessions failed.")
 		: (bFoundAny ? FString() : TEXT("No sessions found."));
+
 	bFindRetryWithoutFilters = false;
-	FillResult(Result, bWasSuccessful, ResultCode, Error);
+	FillResult(Result, bFinalSuccess, ResultCode, Error);
+
 	UE_LOG(ARLog, Log, TEXT("[Session] FindSessions completed (Success=%s, Results=%d, LAN=%s, Subsystem=%s)."),
 		Result.bSuccess ? TEXT("true") : TEXT("false"),
 		LastFindResults.Num(),
 		bLastFindWasLANQuery ? TEXT("true") : TEXT("false"),
 		*ActiveSubsystemName.ToString());
+
 	BroadcastFindCompleted(Result);
 }
 
@@ -1389,26 +1633,13 @@ void UARSessionSubsystem::HandleCancelFindSessionsComplete(bool bWasSuccessful)
 {
 	FARSessionResult Result;
 
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && CancelFindSessionsCompleteHandle.IsValid())
-		{
-			Session->ClearOnCancelFindSessionsCompleteDelegate_Handle(CancelFindSessionsCompleteHandle);
-			CancelFindSessionsCompleteHandle.Reset();
-		}
-
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && FindSessionsCompleteHandle.IsValid())
-		{
-			Session->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteHandle);
-			FindSessionsCompleteHandle.Reset();
-		}
-	}
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), false);
 
 	if (bOperationInFlight && CurrentOperation == ESessionOperation::Find)
 	{
-		bOperationInFlight = false;
-		CurrentOperation = ESessionOperation::None;
+		ResetOperationState();
 	}
+
 	bFindRetryWithoutFilters = false;
 
 	FillResult(
@@ -1416,12 +1647,14 @@ void UARSessionSubsystem::HandleCancelFindSessionsComplete(bool bWasSuccessful)
 		bWasSuccessful,
 		bWasSuccessful ? EARSessionResultCode::Success : EARSessionResultCode::CancelFailed,
 		bWasSuccessful ? FString() : TEXT("CancelFindSessions failed."));
+
 	OnCancelFindSessionsCompleted.Broadcast(Result);
 }
 
 void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type ResultType)
 {
 	FARSessionResult Result;
+
 	auto JoinResultToString = [](EOnJoinSessionCompleteResult::Type InResultType) -> const TCHAR*
 	{
 		switch (InResultType)
@@ -1442,19 +1675,9 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 		}
 	};
 
-	IOnlineSessionPtr Session = nullptr;
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		Session = ActiveSubsystem->GetSessionInterface();
-	}
-	if (Session.IsValid() && JoinSessionCompleteHandle.IsValid())
-	{
-		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteHandle);
-		JoinSessionCompleteHandle.Reset();
-	}
-
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	IOnlineSessionPtr Session = GetActiveSessionInterface();
+	ClearTrackedSessionDelegateHandles(Session, false);
+	ResetOperationState();
 
 	if (!Session.IsValid())
 	{
@@ -1469,6 +1692,7 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 			JoinResultToString(ResultType),
 			*ActiveSubsystemName.ToString(),
 			*SessionName.ToString());
+
 		EARSessionResultCode FailureCode = EARSessionResultCode::JoinFailed;
 		if (ResultType == EOnJoinSessionCompleteResult::SessionIsFull)
 		{
@@ -1478,6 +1702,7 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 		{
 			FailureCode = EARSessionResultCode::SessionNotFound;
 		}
+
 		FillResult(Result, false, FailureCode, FString::Printf(TEXT("JoinSession failed: %s."), JoinResultToString(ResultType)));
 		OnJoinSessionCompleted.Broadcast(Result);
 		return;
@@ -1520,18 +1745,10 @@ void UARSessionSubsystem::HandleFindFriendSessionComplete(int32 LocalUserNum, bo
 {
 	(void)LocalUserNum;
 
-	if (IOnlineSubsystem* ActiveSubsystem = ActiveSubsystemName.IsNone() ? IOnlineSubsystem::Get() : IOnlineSubsystem::Get(ActiveSubsystemName))
-	{
-		if (IOnlineSessionPtr Session = ActiveSubsystem->GetSessionInterface(); Session.IsValid() && FindFriendSessionCompleteHandle.IsValid())
-		{
-			Session->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
-			FindFriendSessionCompleteHandle.Reset();
-		}
-	}
-
-	bOperationInFlight = false;
-	CurrentOperation = ESessionOperation::None;
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), true);
+	ResetOperationState();
 	CachedNativeSearchResults.Reset();
+
 	for (const FOnlineSessionSearchResult& NativeResult : SessionInfo)
 	{
 		if (NativeResult.IsValid())
@@ -1539,11 +1756,19 @@ void UARSessionSubsystem::HandleFindFriendSessionComplete(int32 LocalUserNum, bo
 			CachedNativeSearchResults.Add(NativeResult);
 		}
 	}
+
 	RebuildLastFindResults();
 
 	FARSessionResult Result;
 	const bool bFoundAny = LastFindResults.Num() > 0;
-	FillResult(Result, bWasSuccessful, bFoundAny ? EARSessionResultCode::Success : EARSessionResultCode::SessionNotFound, bFoundAny ? FString() : TEXT("Friend is not in a joinable session."));
+	const EARSessionResultCode ResultCode = !bWasSuccessful
+		? EARSessionResultCode::FindFailed
+		: (bFoundAny ? EARSessionResultCode::Success : EARSessionResultCode::SessionNotFound);
+	const FString Error = !bWasSuccessful
+		? TEXT("FindFriendSession failed.")
+		: (bFoundAny ? FString() : TEXT("Friend is not in a joinable session."));
+
+	FillResult(Result, bWasSuccessful, ResultCode, Error);
 	OnFindFriendSessionCompleted.Broadcast(Result, LastFindResults);
 }
 
@@ -1558,7 +1783,7 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 	if (IsStayOfflineEnabled())
 	{
 		FARSessionResult Result;
-		FillResult(Result, false, EARSessionResultCode::OfflineBlocked, TEXT("Stay Offline is enabled."));
+		FillResult(Result, false, EARSessionResultCode::OfflineBlocked, TEXT("StayOffline is enabled."));
 		OnJoinSessionCompleted.Broadcast(Result);
 		return;
 	}
@@ -1581,6 +1806,7 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 
 	FName SubsystemName = InviteDelegateSubsystemName;
 	IOnlineSessionPtr Session = nullptr;
+
 	if (!SubsystemName.IsNone())
 	{
 		if (IOnlineSubsystem* InviteSubsystem = IOnlineSubsystem::Get(SubsystemName))
@@ -1591,7 +1817,7 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 
 	if (!Session.IsValid())
 	{
-		Session = ResolveSessionInterface(false, SubsystemName);
+		Session = ResolveSessionInterface(false, SubsystemName, TEXT("InviteAcceptedFallbackJoin"));
 	}
 
 	if (!Session.IsValid())
@@ -1618,10 +1844,8 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 
 		if (!Session->DestroySession(GameSessionName))
 		{
-			Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteHandle);
-			DestroySessionCompleteHandle.Reset();
-			bOperationInFlight = false;
-			CurrentOperation = ESessionOperation::None;
+			ClearTrackedSessionDelegateHandles(Session, false);
+			ResetOperationState();
 			bPendingInviteJoinAfterDestroy = false;
 			PendingInviteControllerId = 0;
 			PendingInviteSearchResult = FOnlineSessionSearchResult();
@@ -1637,4 +1861,3 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 	FARSessionResult JoinStartResult;
 	BeginJoinSession(Session, FMath::Max(0, ControllerId), InviteResult, JoinStartResult);
 }
-
