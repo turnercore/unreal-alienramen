@@ -213,12 +213,13 @@ Speaker hub currently provides:
 - content-lookup-backed speaker table loading from `SpeakerDefinitionRootTag`
 - searchable/sortable speaker list with columns (display name/tag/thresholds/conversation count)
 - speaker CRUD (`New`, `Duplicate`, `Delete`) + `Save Speaker` + `Validate Speaker`
-- reorderable threshold editing/reset (`50,150,300,500` defaults)
+- reorderable threshold editing/reset (`5,15,30,50` defaults)
 - inline portrait list with add/update/remove operations
-- relationship-band grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
+- relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
+- conversation cards are draggable between level headers to change minimum-relationship level assignment (replaces level cycle toggle)
 - conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Dialogue.Conversation.Id.<Speaker>.*`)
 - conversation map `Required Tags` uses gameplay tag container editing (no CSV string entry)
-- conversation map rows expose right-click context actions for `Open`, `Duplicate`, `Remove From Lookup`, and `Delete Asset + Remove From Lookup`
+- conversation map rows expose right-click context actions for `Open`, `Rename`, `Duplicate`, `Remove From Lookup`, and `Delete Asset + Remove From Lookup`
 - speaker editor supports transaction-backed `Ctrl+Z` / `Ctrl+Y` (`Ctrl+Shift+Z`) undo/redo for conversation create/duplicate/delete flows
 - stale lookup rows are cleaned when referenced conversation assets are deleted; removed conversation tags are stripped from lock/block condition references in remaining conversations
 - generated conversation tag config cleanup is explicit via `Cleanup Tags` action (not implicit during delete), keeping undo/redo behavior predictable
