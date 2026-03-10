@@ -1,11 +1,13 @@
 #include "ARDialogueSubsystem.h"
 
 #include "ARDialogueConversationAsset.h"
+#include "AREmotionComponent.h"
 #include "ARDialogueSettings.h"
 #include "ARFactionSubsystem.h"
 #include "ARGameModeBase.h"
 #include "ARGameStateBase.h"
 #include "ARLog.h"
+#include "ARNPCTalkComponent.h"
 #include "ARNPCSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
@@ -15,7 +17,9 @@
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "GameplayTagsManager.h"
+#include "Engine/Texture2D.h"
 #include "Sound/SoundBase.h"
 #include "TimerManager.h"
 #include "UObject/UnrealType.h"
@@ -70,6 +74,7 @@ namespace
 		TArray<FGuid> PendingSequenceBranchNodeIds;
 		TMap<FGuid, int32> PendingMultiLineStartIndexByNode;
 		TSet<EARPlayerSlot> Participants;
+		TSet<TWeakObjectPtr<UAREmotionComponent>> EmotionComponentsWithDialogueOverride;
 		FTimerHandle AutoAdvanceTimerHandle;
 	};
 
@@ -3804,6 +3809,167 @@ static FDialogueRuntimeContext BuildSessionContext(
 	return Context;
 }
 
+static bool DoesSpeakerTagMatchPlayerState(const FGameplayTag& CandidateSpeakerTag, const AARPlayerStateBase* PlayerState)
+{
+	if (!CandidateSpeakerTag.IsValid() || !PlayerState)
+	{
+		return false;
+	}
+
+	const FGameplayTag ResolvedPlayerSpeakerTag = ResolvePlayerSpeakerTag(PlayerState);
+	if (!ResolvedPlayerSpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	return CandidateSpeakerTag.MatchesTag(ResolvedPlayerSpeakerTag)
+		|| ResolvedPlayerSpeakerTag.MatchesTag(CandidateSpeakerTag);
+}
+
+static UAREmotionComponent* FindEmotionComponentOnActor(AActor* Actor)
+{
+	return Actor ? Actor->FindComponentByClass<UAREmotionComponent>() : nullptr;
+}
+
+static UAREmotionComponent* ResolveEmotionComponentForSpeaker(const FDialogueRuntimeContext& Context, const FGameplayTag& ResolvedSpeakerTag)
+{
+	if (!Context.World || !ResolvedSpeakerTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	if (PlayerPlaceholderTag.IsValid() && ResolvedSpeakerTag.MatchesTag(PlayerPlaceholderTag))
+	{
+		if (UAREmotionComponent* ActiveEmotion = FindEmotionComponentOnActor(Context.ActivePawn))
+		{
+			return ActiveEmotion;
+		}
+	}
+
+	if (DoesSpeakerTagMatchPlayerState(ResolvedSpeakerTag, Cast<AARPlayerStateBase>(Context.ActivePlayerState)))
+	{
+		if (UAREmotionComponent* ActiveEmotion = FindEmotionComponentOnActor(Context.ActivePawn))
+		{
+			return ActiveEmotion;
+		}
+	}
+
+	if (DoesSpeakerTagMatchPlayerState(ResolvedSpeakerTag, Cast<AARPlayerStateBase>(Context.OtherPlayerState)))
+	{
+		if (UAREmotionComponent* OtherEmotion = FindEmotionComponentOnActor(Context.OtherPawn))
+		{
+			return OtherEmotion;
+		}
+	}
+
+	auto MatchesSpeakerTag = [&ResolvedSpeakerTag](const FGameplayTag& CandidateTag) -> bool
+	{
+		return CandidateTag.IsValid()
+			&& (ResolvedSpeakerTag.MatchesTag(CandidateTag) || CandidateTag.MatchesTag(ResolvedSpeakerTag));
+	};
+
+	if (AActor* PrimarySpeakerActor = Context.PrimarySpeakerActor)
+	{
+		if (const UARNPCTalkComponent* TalkComponent = PrimarySpeakerActor->FindComponentByClass<UARNPCTalkComponent>())
+		{
+			if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+			{
+				if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(PrimarySpeakerActor))
+				{
+					return EmotionComponent;
+				}
+			}
+		}
+	}
+
+	for (TActorIterator<AActor> It(Context.World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!Actor)
+		{
+			continue;
+		}
+
+		if (const UARNPCTalkComponent* TalkComponent = Actor->FindComponentByClass<UARNPCTalkComponent>())
+		{
+			if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+			{
+				if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(Actor))
+				{
+					return EmotionComponent;
+				}
+			}
+		}
+
+		if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(Actor))
+		{
+			if (MatchesSpeakerTag(EmotionComponent->GetRegisteredSpeakerTag()))
+			{
+				return EmotionComponent;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+static void ApplyDialogueEmotionForPresentedSpeaker(
+	FARActiveDialogueSession& Session,
+	const FDialogueRuntimeContext& Context,
+	const FGameplayTag& ResolvedSpeakerTag)
+{
+	if (!ResolvedSpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	UAREmotionComponent* EmotionComponent = ResolveEmotionComponentForSpeaker(Context, ResolvedSpeakerTag);
+	if (!EmotionComponent)
+	{
+		return;
+	}
+
+	TSoftObjectPtr<UTexture2D> IconTexture;
+	FGameplayTag ResolvedEmotionTag;
+	if (!EmotionComponent->TryResolveEmotionIconForTag(ResolvedSpeakerTag, IconTexture, ResolvedEmotionTag))
+	{
+		return;
+	}
+
+	if (Session.bIsSharedSession)
+	{
+		EmotionComponent->SetDialogueEmotionTag(ResolvedSpeakerTag);
+	}
+	else if (Session.OwnerSlot != EARPlayerSlot::Unknown)
+	{
+		EmotionComponent->SetDialogueEmotionTagForPlayerSlot(Session.OwnerSlot, ResolvedSpeakerTag);
+	}
+
+	Session.EmotionComponentsWithDialogueOverride.Add(EmotionComponent);
+}
+
+static void ClearDialogueEmotionOverridesForSession(const FARActiveDialogueSession& Session)
+{
+	for (const TWeakObjectPtr<UAREmotionComponent>& WeakEmotionComponent : Session.EmotionComponentsWithDialogueOverride)
+	{
+		UAREmotionComponent* EmotionComponent = WeakEmotionComponent.Get();
+		if (!EmotionComponent)
+		{
+			continue;
+		}
+
+		if (Session.bIsSharedSession)
+		{
+			EmotionComponent->ClearDialogueEmotionTag();
+		}
+		else if (Session.OwnerSlot != EARPlayerSlot::Unknown)
+		{
+			EmotionComponent->ClearDialogueEmotionTagForPlayerSlot(Session.OwnerSlot);
+		}
+	}
+}
+
 static void AddSessionParticipant(
 	FARActiveDialogueSession& Session,
 	TMap<EARPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
@@ -3958,6 +4124,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Line.Text,
 			Session.CurrentSpeakerLineFontStyleTag);
 		Session.CurrentSpeakerPortrait = ResolvePortraitForSpeaker(SpeakerRowsByTag, ResolvedSpeakerTag);
+		ApplyDialogueEmotionForPresentedSpeaker(Session, Context, ResolvedSpeakerTag);
 		Session.bWaitingForAdvanceInput = true;
 		Session.WaitingLineNodeId = WaitingNodeId;
 		Session.WaitingMultiLineEntryIndex = MultiLineEntryIndex;
@@ -4645,11 +4812,14 @@ static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARA
 	}
 
 	const FString SessionId = Sessions[SessionIndex].SessionId;
-	const TSet<EARPlayerSlot> ParticipantSlots = Sessions[SessionIndex].Participants;
+	FARActiveDialogueSession SessionSnapshot = Sessions[SessionIndex];
+	const TSet<EARPlayerSlot> ParticipantSlots = SessionSnapshot.Participants;
 	if (UWorld* World = DialogueSubsystem->GetWorld())
 	{
-		World->GetTimerManager().ClearTimer(Sessions[SessionIndex].AutoAdvanceTimerHandle);
+		World->GetTimerManager().ClearTimer(SessionSnapshot.AutoAdvanceTimerHandle);
 	}
+
+	ClearDialogueEmotionOverridesForSession(SessionSnapshot);
 
 	UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Session '%s' removed (Participants=%d)."), *SessionId, ParticipantSlots.Num());
 	Sessions.RemoveAtSwap(SessionIndex, 1, EAllowShrinking::No);
