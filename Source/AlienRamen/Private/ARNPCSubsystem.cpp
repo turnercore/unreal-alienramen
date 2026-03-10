@@ -39,6 +39,13 @@ namespace
 	}
 }
 
+void UARNPCSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	Collection.InitializeDependency<UARDialogueSubsystem>();
+	NpcTalkableCache.Reset();
+}
+
 void UARNPCSubsystem::Deinitialize()
 {
 	NpcTalkableCache.Reset();

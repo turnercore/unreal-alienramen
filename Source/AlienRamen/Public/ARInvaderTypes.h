@@ -23,6 +23,16 @@ enum class EARWavePhase : uint8
 	Berserk = 1
 };
 
+inline const TCHAR* ARInvaderWavePhaseToString(const EARWavePhase Phase)
+{
+	switch (Phase)
+	{
+	case EARWavePhase::Active: return TEXT("Active");
+	case EARWavePhase::Berserk: return TEXT("Berserk");
+	default: return TEXT("Unknown");
+	}
+}
+
 UENUM(BlueprintType)
 enum class EARInvaderFlowState : uint8
 {

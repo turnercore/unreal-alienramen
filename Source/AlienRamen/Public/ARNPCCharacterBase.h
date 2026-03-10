@@ -44,7 +44,7 @@ public:
 	bool IsNpcLocalStateAllowingDialogue() const;
 
 	// Server-authoritative local state gate (for example ordering mode) applied on top of global dialogue availability.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Alien Ramen|NPC")
 	void SetNpcLocalStateAllowsDialogue(bool bEnabled);
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC")

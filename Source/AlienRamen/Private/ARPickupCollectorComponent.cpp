@@ -126,8 +126,15 @@ void UARPickupCollectorComponent::RefreshDetectorRadius()
 
 void UARPickupCollectorComponent::StartRetryTimer()
 {
+	AARPlayerCharacterInvader* OwnerInvader = GetOwnerInvader();
 	UWorld* World = GetWorld();
-	if (!World || World->GetTimerManager().IsTimerActive(RetryTimerHandle))
+	if (!OwnerInvader || !World || World->GetTimerManager().IsTimerActive(RetryTimerHandle))
+	{
+		return;
+	}
+
+	// Retry processing is only useful for locally-controlled pawns or authority pawns.
+	if (!OwnerInvader->IsLocallyControlled() && !OwnerInvader->HasAuthority())
 	{
 		return;
 	}
@@ -182,7 +189,7 @@ void UARPickupCollectorComponent::HandleRetryTimerTick()
 void UARPickupCollectorComponent::ProcessAllOverlappingDrops()
 {
 	AARPlayerCharacterInvader* OwnerInvader = GetOwnerInvader();
-	if (!OwnerInvader || !OwnerInvader->IsLocallyControlled() && !OwnerInvader->HasAuthority())
+	if (!OwnerInvader || (!OwnerInvader->IsLocallyControlled() && !OwnerInvader->HasAuthority()))
 	{
 		return;
 	}
@@ -297,6 +304,7 @@ void UARPickupCollectorComponent::HandleDetectorBeginOverlap(
 	}
 
 	OverlappingDrops.Add(Drop);
+	StartRetryTimer();
 	TryProcessDrop(Drop);
 }
 

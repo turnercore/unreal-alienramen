@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AREnemyBase.h"
 #include "AREnemyAIController.h"
 #include "AREnemyAttributeSet.h"
@@ -1757,9 +1754,4 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AAREnemyBase, bHasFormationTargetWorldLocation);
 }
 
-void AAREnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 

@@ -17,6 +17,7 @@ class ALIENRAMEN_API UARNPCSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")

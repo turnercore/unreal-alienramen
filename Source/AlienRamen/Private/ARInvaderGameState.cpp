@@ -5,6 +5,7 @@
 #include "ARGameStateModeStructs.h"
 #include "ARInvaderDropBase.h"
 #include "ARInvaderDirectorSettings.h"
+#include "ARInvaderRuntimeStateComponent.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -20,6 +21,25 @@
 #include "GameFramework/Pawn.h"
 #include "HAL/IConsoleManager.h"
 #include "Net/UnrealNetwork.h"
+
+namespace ARInvaderGameStateInternal
+{
+	static constexpr int32 DefaultMaxTrackSlots = 4;
+	static constexpr uint32 OfferRngSeedSalt = 0x51F15EED;
+	static constexpr uint32 DropRngSeedSalt = 0xD09A5EED;
+
+	static int32 ResolveMaxTrackSlots(const UARInvaderSpicyTrackSettings* Settings)
+	{
+		return Settings
+			? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, DefaultMaxTrackSlots)
+			: DefaultMaxTrackSlots;
+	}
+
+	static int32 MakeSeedFromRunSeed(const int32 RunSeed, const uint32 Salt)
+	{
+		return static_cast<int32>(HashCombine(GetTypeHash(RunSeed), Salt));
+	}
+}
 
 AARInvaderGameState::AARInvaderGameState()
 {
@@ -39,7 +59,7 @@ void AARInvaderGameState::GetSharedTrackUpgradeDisplayNames(TArray<FText>& OutDi
 	OutDisplayNames.Reset();
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	if (MaxTrackSlots <= 0)
 	{
 		return;
@@ -99,7 +119,7 @@ void AARInvaderGameState::GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrack
 	OutSlots.Reset();
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	if (MaxTrackSlots <= 0)
 	{
 		return;
@@ -155,7 +175,7 @@ void AARInvaderGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OfferRng.Initialize(FMath::Rand());
+	RefreshDeterministicRngSeedsFromRunState();
 	if (HasAuthority())
 	{
 		RegisterDebugConsoleCommands();
@@ -644,7 +664,7 @@ void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args
 	const int32 RemainingUses = bInfiniteUses ? INDEX_NONE : FMath::Max(1, UsesArg);
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	if (MaxTrackSlots <= 0)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: MaxTrackSlots resolved to 0."));
@@ -835,6 +855,42 @@ const UARInvaderSpicyTrackSettings* AARInvaderGameState::GetSpicyTrackSettings()
 	return GetDefault<UARInvaderSpicyTrackSettings>();
 }
 
+int32 AARInvaderGameState::ResolveInvaderRunSeed() const
+{
+	const UARInvaderRuntimeStateComponent* RuntimeState = FindComponentByClass<UARInvaderRuntimeStateComponent>();
+	return RuntimeState ? RuntimeState->GetRuntimeSnapshot().Seed : 0;
+}
+
+int32 AARInvaderGameState::ResolveInvaderRunEndEventId() const
+{
+	const UARInvaderRuntimeStateComponent* RuntimeState = FindComponentByClass<UARInvaderRuntimeStateComponent>();
+	return RuntimeState ? RuntimeState->GetRuntimeSnapshot().RunEndEventId : 0;
+}
+
+void AARInvaderGameState::RefreshDeterministicRngSeedsFromRunState()
+{
+	const int32 RunSeed = ResolveInvaderRunSeed();
+	const int32 RunEndEventId = ResolveInvaderRunEndEventId();
+	if (CachedRngRunSeed == RunSeed && CachedRngRunEndEventId == RunEndEventId)
+	{
+		return;
+	}
+
+	CachedRngRunSeed = RunSeed;
+	CachedRngRunEndEventId = RunEndEventId;
+
+	if (RunSeed != 0)
+	{
+		OfferRng.Initialize(ARInvaderGameStateInternal::MakeSeedFromRunSeed(RunSeed, ARInvaderGameStateInternal::OfferRngSeedSalt));
+		DropRng.Initialize(ARInvaderGameStateInternal::MakeSeedFromRunSeed(RunSeed, ARInvaderGameStateInternal::DropRngSeedSalt));
+		return;
+	}
+
+	const int32 FallbackSeed = FMath::Rand();
+	OfferRng.Initialize(FallbackSeed);
+	DropRng.Initialize(static_cast<int32>(HashCombine(GetTypeHash(FallbackSeed), ARInvaderGameStateInternal::DropRngSeedSalt)));
+}
+
 int32 AARInvaderGameState::GetSharedMaxSpice() const
 {
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
@@ -851,7 +907,7 @@ int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(const AARPla
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
 	const int32 SpicePerTier = Settings ? FMath::Max(1, Settings->SpicePerTier) : 100;
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const int32 MaxUnlockedTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
 
 	const float CurrentSpice = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
@@ -976,7 +1032,7 @@ void AARInvaderGameState::NormalizeTrackSlotIndices()
 void AARInvaderGameState::TrimTrackToTierLimit()
 {
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const int32 AllowedSlotsByTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
 	if (SharedTrackSlots.Num() > AllowedSlotsByTier)
 	{
@@ -1078,12 +1134,18 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
 	if (!Settings)
 	{
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
 	if (!Settings->UpgradeDefinitionRootTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] UpgradeDefinitionRootTag is not configured."));
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
@@ -1091,6 +1153,9 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 	if (!TagContentResolver)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] TagContentResolverSubsystem unavailable while resolving upgrades."));
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
@@ -1104,13 +1169,25 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 			TEXT("[InvaderSpice] Failed to resolve upgrade table for root '%s': %s"),
 			*Settings->UpgradeDefinitionRootTag.ToString(),
 			*LookupError);
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
 	if (!UpgradeTable)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] Upgrade table resolved null for root '%s'."), *Settings->UpgradeDefinitionRootTag.ToString());
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
+	}
+
+	if (bUpgradeDefinitionCacheValid && CachedUpgradeDefinitionTable.Get() == UpgradeTable)
+	{
+		OutDefinitions = CachedUpgradeDefinitions;
+		return OutDefinitions.Num() > 0;
 	}
 
 	TArray<FARInvaderUpgradeDefRow*> Rows;
@@ -1124,6 +1201,10 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 
 		OutDefinitions.FindOrAdd(Row->UpgradeTag) = *Row;
 	}
+
+	CachedUpgradeDefinitionTable = UpgradeTable;
+	CachedUpgradeDefinitions = OutDefinitions;
+	bUpgradeDefinitionCacheValid = true;
 
 	return OutDefinitions.Num() > 0;
 }
@@ -1268,6 +1349,8 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 			HasAuthority() ? 1 : 0, *GetNameSafe(RequestingPlayerState), FullBlastSession.bIsActive ? 1 : 0);
 		return false;
 	}
+
+	RefreshDeterministicRngSeedsFromRunState();
 
 	const float RequiredSpice = static_cast<float>(GetSharedMaxSpice());
 	const float CurrentSpice = RequestingPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
@@ -1473,7 +1556,7 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
 	const float SpendAmount = static_cast<float>(GetSharedMaxSpice());
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const bool bAtTopTier = Settings && SharedFullBlastTier >= Settings->MaxFullBlastTier;
 	const int32 DestinationSlot = bAtTopTier
 		? DesiredDestinationSlot
@@ -2193,6 +2276,8 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		return;
 	}
 
+	RefreshDeterministicRngSeedsFromRunState();
+
 	UAbilitySystemComponent* EnemyASC = Enemy->GetASC();
 	if (!EnemyASC)
 	{
@@ -2209,7 +2294,7 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		EnemyASC->GetNumericAttribute(UARAttributeSetCore::GetDropChanceAttribute()),
 		0.0f,
 		1.0f);
-	if (DropChance <= 0.0f || FMath::FRand() > DropChance)
+	if (DropChance <= 0.0f || DropRng.FRand() > DropChance)
 	{
 		return;
 	}
@@ -2267,8 +2352,8 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 
 		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedDrop->GetRootComponent()))
 		{
-			const float AngleRadians = FMath::FRandRange(0.0f, 2.0f * PI);
-			const float Speed = FMath::FRandRange(MinSpeed, MaxSpeed);
+			const float AngleRadians = DropRng.FRandRange(0.0f, 2.0f * PI);
+			const float Speed = DropRng.FRandRange(MinSpeed, MaxSpeed);
 			const FVector InitialVelocity(FMath::Cos(AngleRadians) * Speed, FMath::Sin(AngleRadians) * Speed, 0.0f);
 			RootPrimitive->SetPhysicsLinearVelocity(InitialVelocity);
 		}
@@ -2294,7 +2379,7 @@ void AARInvaderGameState::SetDropEarthGravityEnabledForAll(const bool bEnabled)
 	}
 }
 
-float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount, const EARInvaderDropType DropType) const
+float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount, const EARInvaderDropType DropType)
 {
 	if (BaseDropAmount <= 0.0f)
 	{
@@ -2333,11 +2418,11 @@ float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount
 	}
 
 	// Default distribution is center-weighted triangular noise in [-1..1].
-	float SignedCenterWeightedNoise = (FMath::FRand() - FMath::FRand());
+	float SignedCenterWeightedNoise = (DropRng.FRand() - DropRng.FRand());
 
 	if (UCurveFloat* VarianceCurve = SelectedCurve.LoadSynchronous())
 	{
-		const float SampleX = FMath::FRandRange(0.0f, 1.0f);
+		const float SampleX = DropRng.FRandRange(0.0f, 1.0f);
 		SignedCenterWeightedNoise = FMath::Clamp(VarianceCurve->GetFloatValue(SampleX), -1.0f, 1.0f);
 	}
 
