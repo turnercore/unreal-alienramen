@@ -969,11 +969,6 @@ IOnlineSessionPtr UARSessionSubsystem::ResolveSessionInterface(const bool bPrefe
 			: TEXT("Candidate");
 
 		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get(CandidateName);
-		if (!Subsystem && CandidateName.IsNone())
-		{
-			Subsystem = IOnlineSubsystem::Get();
-		}
-
 		if (!Subsystem)
 		{
 			LastFailureReason = FString::Printf(TEXT("%s unavailable (%s)."), *CandidateName.ToString(), *CandidateReason);
