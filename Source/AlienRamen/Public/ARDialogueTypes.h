@@ -213,6 +213,15 @@ struct ALIENRAMEN_API FDialogueConversationHeader
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Offer-selection priority. Higher values are preferred when multiple conversations are eligible."))
 	int32 Priority = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Offer Weight", ClampMin = "1", UIMin = "1", ToolTip = "Weighted tie-breaker used when multiple eligible conversations have the same effective priority."))
+	int32 OfferWeight = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Chance Offered", ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0", ToolTip = "Chance roll applied during offer selection. 1.0 always offers, 0.0 always skips."))
+	float ChanceOffered = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Block Offer Per Cycle", ToolTip = "When true, once this conversation is seen or skipped for a player in the current cycle it will not be offered again until temporary cycle state is cleared."))
+	bool bBlockOfferPerCycle = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Repeatable", ToolTip = "If enabled, this conversation may be offered again after completion when other gates allow it."))
 	bool bRepeatable = false;
 

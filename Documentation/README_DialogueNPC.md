@@ -82,7 +82,11 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - unseen
   - game-seen/player-unseen catch-up
   - repeatable/other
-- Highest numeric priority wins inside the first non-empty bucket; equal priorities randomize.
+- Highest numeric priority wins inside the first non-empty bucket.
+- Equal-priority candidates resolve by weighted random using `OfferWeight` (default `1`).
+- `ChanceOffered` (`0..1`) is rolled per candidate during offer evaluation; failed rolls mark that conversation skipped for the player this cycle.
+- Per-cycle blockers are player-specific (`seen this cycle`, `skipped this cycle`), controlled by `bBlockOfferPerCycle` (default `true`).
+- Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority `1`.
 - Offer checks include:
   - mode enabled by `UARDialogueSettings` shared/per-player mode tags
   - primary speaker exact match
@@ -106,6 +110,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Seen state is transient only (game + per-slot runtime containers in `UARDialogueSubsystem`).
 - Completed state is persistent and save-backed.
 - Completion is written only when a `Completed` node executes.
+- Per-cycle offer blockers can be reset explicitly via `ClearConversationCycleOfferState(...)` (single slot or all slots).
 - Save system enforces no mid-conversation saves by checking active dialogue sessions before `SaveCurrentGame`.
 
 ## Choice Memory
