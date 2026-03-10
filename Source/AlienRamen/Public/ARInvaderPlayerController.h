@@ -32,6 +32,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void OnRep_PlayerState() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
 	void RequestActivateFullBlast();
@@ -131,4 +132,5 @@ private:
 
 	FTimerHandle BindInvaderGameStateRetryTimer;
 	bool bCachedShowMouseCursorForFullBlast = false;
+	bool bCapturedInputForFullBlast = false;
 };
