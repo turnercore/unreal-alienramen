@@ -58,7 +58,7 @@ Not yet implemented (open hardening work):
 - spice-per-tier and max full-blast tier,
 - skip scrap rewards per tier,
 - level-roll offset weights (`-3..+3`),
-- upgrade definition root tag (`Progression.InvaderUpgrade`) resolved through `UContentLookupSubsystem`,
+- upgrade definition root tag (`Progression.InvaderUpgrade`) resolved through `UTagContentResolverSubsystem`,
 - full-blast menu widget class (`FullBlastMenuWidgetClass`),
 - enemy projectile clear tag,
 - full-blast gameplay cue tag.

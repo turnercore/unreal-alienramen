@@ -41,157 +41,60 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	const FGameplayTag ValidNpcTag = FGameplayTag::RequestGameplayTag(FName(TEXT("NPC.Identity")), false);
-	const FGameplayTag ValidNodeTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Node")), false);
-	const FGameplayTag ValidChoiceTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue.Choice")), false);
-
-	if (!TestTrue(TEXT("Valid NPC tag exists"), ValidNpcTag.IsValid()) ||
-		!TestTrue(TEXT("Valid dialogue node tag exists"), ValidNodeTag.IsValid()) ||
-		!TestTrue(TEXT("Valid dialogue choice tag exists"), ValidChoiceTag.IsValid()))
 	{
-		return false;
+		FDialogueRelationshipState InvalidRelationship;
+		InvalidRelationship.RelationshipPoints = 10.0f;
+		Save->DialogueRelationshipStates.Add(InvalidRelationship);
+
+		FDialogueRelationshipState ValidRelationship;
+		ValidRelationship.SpeakerTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker")), false);
+		ValidRelationship.RelationshipPoints = 25.0f;
+		Save->DialogueRelationshipStates.Add(ValidRelationship);
 	}
 
-	// Invalid NPC entry should be removed, negative love should clamp.
 	{
-		FARNpcRelationshipState InvalidNpc;
-		InvalidNpc.LoveRating = 10;
-		Save->NpcRelationshipStates.Add(InvalidNpc);
-
-		FARNpcRelationshipState ValidNpc;
-		ValidNpc.NpcTag = ValidNpcTag;
-		ValidNpc.LoveRating = -3;
-		Save->NpcRelationshipStates.Add(ValidNpc);
-	}
-
-	// Invalid canonical choice entry should be removed.
-	{
-		FARDialogueCanonicalChoiceState Invalid;
-		Invalid.NodeTag = ValidNodeTag;
-		Save->DialogueCanonicalChoiceStates.Add(Invalid);
-	}
-
-	// Duplicate canonical node should dedupe down to one entry.
-	{
-		FARDialogueCanonicalChoiceState A;
-		A.NodeTag = ValidNodeTag;
-		A.ChoiceTag = ValidChoiceTag;
-		Save->DialogueCanonicalChoiceStates.Add(A);
-
-		FARDialogueCanonicalChoiceState B;
-		B.NodeTag = ValidNodeTag;
-		B.ChoiceTag = ValidChoiceTag;
-		Save->DialogueCanonicalChoiceStates.Add(B);
+		FDialoguePlayerPersistentState PlayerState;
+		FDialogueChoiceMemoryRecord InvalidRecord;
+		InvalidRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation")), false);
+		PlayerState.CompletedChoiceRecords.Add(InvalidRecord);
+		Save->DialoguePlayerPersistentStates.Add(PlayerState);
 	}
 
 	TArray<FString> Warnings;
 	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
 	TestTrue(TEXT("Sanitization performs at least one correction"), ClampedCount > 0);
-
-	TestEqual(TEXT("NPC relationship entries sanitized to one valid row"), Save->NpcRelationshipStates.Num(), 1);
-	if (Save->NpcRelationshipStates.Num() == 1)
-	{
-		TestTrue(TEXT("Remaining NPC tag is valid"), Save->NpcRelationshipStates[0].NpcTag.IsValid());
-		TestEqual(TEXT("Remaining NPC love clamped to non-negative"), Save->NpcRelationshipStates[0].LoveRating, 0);
-	}
-
-	TestEqual(TEXT("Canonical dialogue choice entries deduped to one row"), Save->DialogueCanonicalChoiceStates.Num(), 1);
-	if (Save->DialogueCanonicalChoiceStates.Num() == 1)
-	{
-		TestTrue(TEXT("Canonical node tag remains valid"), Save->DialogueCanonicalChoiceStates[0].NodeTag.IsValid());
-		TestTrue(TEXT("Canonical choice tag remains valid"), Save->DialogueCanonicalChoiceStates[0].ChoiceTag.IsValid());
-	}
-
-	TestTrue(TEXT("Warnings produced for invalid/duplicate dialogue data"), Warnings.Num() > 0);
+	TestEqual(TEXT("Invalid relationship rows removed"), Save->DialogueRelationshipStates.Num(), 1);
+	TestEqual(TEXT("Invalid choice memory rows removed"), Save->DialoguePlayerPersistentStates[0].CompletedChoiceRecords.Num(), 0);
+	TestTrue(TEXT("Warnings produced for invalid dialogue data"), Warnings.Num() > 0);
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARDialogueNodeDefaultsTest,
-	"AlienRamen.Dialogue.Types.NodeDefaults",
+	FDialogueTypesDefaultsTest,
+	"AlienRamen.Dialogue.Types.Defaults",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FARDialogueNodeDefaultsTest::RunTest(const FString& Parameters)
+bool FDialogueTypesDefaultsTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
-	const FARDialogueNodeRow Row;
-	TestEqual(TEXT("Default choice participation is InitiatorOnly"), Row.ChoiceParticipation, EARDialogueChoiceParticipation::InitiatorOnly);
-	TestFalse(TEXT("Important decision force-eavesdrop defaults false"), Row.bForceEavesdropForImportantDecision);
-	TestEqual(TEXT("Default priority is zero"), Row.Priority, 0);
-	TestEqual(TEXT("Default choices array is empty"), Row.Choices.Num(), 0);
-	TestFalse(TEXT("Allow repeat after seen defaults false"), Row.bAllowRepeatAfterSeen);
-	TestEqual(TEXT("Default min love rating is zero"), Row.MinLoveRating, 0);
-	TestFalse(TEXT("Requires want satisfied defaults false"), Row.bRequiresWantSatisfied);
-	return true;
-}
+	const FDialogueConversationHeader Header;
+	TestEqual(TEXT("Header default priority is zero"), Header.Priority, 0);
+	TestFalse(TEXT("Header default repeatable is false"), Header.bRepeatable);
+	TestFalse(TEXT("Header default important is false"), Header.bImportant);
+	TestEqual(TEXT("Header default character restriction is Any"), Header.CharacterRestriction, EDialogueActiveCharacterRestriction::Any);
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARDialogueClientViewDefaultsTest,
-	"AlienRamen.Dialogue.Types.ClientViewDefaults",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+	const FDialogueLineNodeData LineNodeData;
+	TestEqual(TEXT("Line node default character restriction is Any"), LineNodeData.CharacterRestriction, EDialogueActiveCharacterRestriction::Any);
 
-bool FARDialogueClientViewDefaultsTest::RunTest(const FString& Parameters)
-{
-	(void)Parameters;
+	const FDialogueClientView View;
+	TestFalse(TEXT("Default view waiting-for-choice is false"), View.bWaitingForChoice);
+	TestFalse(TEXT("Default view eavesdropping is false"), View.bIsEavesdropping);
+	TestEqual(TEXT("Default view choices array is empty"), View.Choices.Num(), 0);
 
-	const FARDialogueClientView View;
-	TestFalse(TEXT("Default bWaitingForChoice is false"), View.bWaitingForChoice);
-	TestFalse(TEXT("Default bIsSharedSession is false"), View.bIsSharedSession);
-	TestFalse(TEXT("Default bIsEavesdropping is false"), View.bIsEavesdropping);
-	TestEqual(TEXT("Default InitiatorSlot is Unknown"), View.InitiatorSlot, EARPlayerSlot::Unknown);
-	TestEqual(TEXT("Default OwnerSlot is Unknown"), View.OwnerSlot, EARPlayerSlot::Unknown);
-	TestTrue(TEXT("Default SessionId is empty"), View.SessionId.IsEmpty());
-	TestFalse(TEXT("Default NpcTag is invalid"), View.NpcTag.IsValid());
-	TestEqual(TEXT("Default Choices array is empty"), View.Choices.Num(), 0);
-	return true;
-}
-
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARNpcDefinitionRowDefaultsTest,
-	"AlienRamen.Dialogue.Types.NpcDefinitionRowDefaults",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-
-bool FARNpcDefinitionRowDefaultsTest::RunTest(const FString& Parameters)
-{
-	(void)Parameters;
-
-	const FARNpcDefinitionRow Row;
-	TestEqual(TEXT("Default starting love rating is zero"), Row.StartingLoveRating, 0);
-	TestEqual(TEXT("Default love increase on want delivery is 1"), Row.LoveIncreaseOnWantDelivery, 1);
-	TestFalse(TEXT("Default NpcTag is invalid"), Row.NpcTag.IsValid());
-	TestFalse(TEXT("Default InitialWantTag is invalid"), Row.InitialWantTag.IsValid());
-	return true;
-}
-
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARNpcRelationshipStateDefaultsTest,
-	"AlienRamen.Dialogue.Types.NpcRelationshipStateDefaults",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-
-bool FARNpcRelationshipStateDefaultsTest::RunTest(const FString& Parameters)
-{
-	(void)Parameters;
-
-	const FARNpcRelationshipState State;
-	TestEqual(TEXT("Default love rating is zero"), State.LoveRating, 0);
-	TestFalse(TEXT("Default want satisfied is false"), State.bCurrentWantSatisfied);
-	TestFalse(TEXT("Default NpcTag is invalid"), State.NpcTag.IsValid());
-	TestFalse(TEXT("Default CurrentWantTag is invalid"), State.CurrentWantTag.IsValid());
-	return true;
-}
-
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARPlayerDialogueHistoryStateDefaultsTest,
-	"AlienRamen.Dialogue.Types.PlayerHistoryStateDefaults",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-
-bool FARPlayerDialogueHistoryStateDefaultsTest::RunTest(const FString& Parameters)
-{
-	(void)Parameters;
-
-	const FARPlayerDialogueHistoryState State;
-	TestTrue(TEXT("Default seen node tags is empty"), State.SeenNodeTags.IsEmpty());
+	const FDialogueChoiceNodeData ChoiceNode;
+	TestEqual(TEXT("Choice default policy is locked"), ChoiceNode.CompletedChoicePolicy, EDialogueCompletedChoicePolicy::LockedToRecordedChoice);
+	TestEqual(TEXT("Choice default fallback text"), ChoiceNode.FallbackChoiceText.ToString(), FString(TEXT("...")));
 	return true;
 }
 

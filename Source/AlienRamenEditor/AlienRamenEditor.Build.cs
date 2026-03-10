@@ -13,15 +13,20 @@ public class AlienRamenEditor : ModuleRules
 			"Engine",
 			"Slate",
 			"SlateCore",
+			"ApplicationCore",
 			"InputCore",
 			"UnrealEd",
 			"LevelEditor",
+			"GraphEditor",
 			"PropertyEditor",
 			"ToolMenus",
 			"AssetRegistry",
 			"DeveloperSettings",
 			"GameplayAbilities",
 			"GameplayTags",
+			"GameplayTagsEditor",
+			"TagContentResolver",
+			"TagContentResolverEditor",
 			"AlienRamen"
 		});
 	}
