@@ -657,7 +657,7 @@
 - enemy death instigator resolution for kill-credit now prefers GAS effect-context `OriginalInstigator` and falls back to `EffectCauser` before `NotifyEnemyKilled`, improving attribution when projectile/effect chains omit original instigator.
 - enemy kill-credit attribution now also tracks a short-lived server-side recent damage instigator on `AAREnemyBase` and uses it as a fallback when death context arrives with null instigator; this reduces `NotifyEnemyKilled` attribution misses from context-loss race cases.
 - kill-credit FX multicast hook: `OnInvaderKillCreditFxEvent` (payload `FARInvaderKillCreditFxEvent`) fires when spice is actually awarded; includes target slot + spice + combo + enemy metadata + optional world origin for client cosmetic routing.
-- offer-presence APIs: `SetOfferPresence` / `ClearOfferPresence` support replicated UI cursor/highlight presence during active full-blast sessions.
+- offer-presence APIs: `SetOfferPresence` / `ClearOfferPresence` support replicated UI cursor/hover/selection presence during active full-blast sessions (selected upgrade + destination slot are replicated explicitly for teammate "presence select" highlighting).
 - full-blast resolve side effects in C++: execute configured gameplay cue and clear enemy projectiles by configured actor tag (pause clear is now handled by shared GameState pause resolver/external-reason path).
 - Automation coverage exists for spicy-track session/presence seams in `Source/AlienRamen/Private/Tests/ARInvaderSpicyTrackOfferSessionTest.cpp`:
 - `AlienRamen.Invader.SpiceTrack.OfferPresenceLifecycle`
@@ -699,7 +699,7 @@
 - Full-blast menu UI bridge is now native:
 - base widget class `UARInvaderFullBlastMenuWidget` (`Source/AlienRamen/Public/ARInvaderFullBlastMenuWidget.h`) with BP hooks `BP_OnFullBlastMenuUpdated(...)` and `BP_OnFullBlastMenuClosed()`, plus BP-callable actions (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
 - settings-driven widget class source: `UARInvaderSpicyTrackSettings::FullBlastMenuWidgetClass`.
-- local `AARInvaderPlayerController` binds to `AARInvaderGameState::OnInvaderFullBlastSessionChanged`, resolves offer defs via content lookup, and auto shows/hides the configured full-blast widget for the requesting player slot.
+- local `AARInvaderPlayerController` binds to `AARInvaderGameState::OnInvaderFullBlastSessionChanged`, resolves offer defs via content lookup, and auto shows/hides the configured full-blast widget for every local invader player while session is active; chooser permissions are requester-slot gated via `bIsChooser`.
 - controller signal for HUD/UI sync: `OnInvaderFullBlastMenuSessionUpdated(bIsActive, SessionState, OfferDefinitions)`.
 - Invader GameState exposes localized UI convenience getters for shared track upgrade names:
 - `GetSharedTrackUpgradeDisplayNames(...)` (fixed-length, max-track-slot-order array of localized `FText`; empty entries for unavailable/unresolved slots)
