@@ -1,6 +1,6 @@
 /**
  * @file ARSessionSubsystem.h
- * @brief Session subsystem for Steam/LAN/local multiplayer flow.
+ * @brief Session subsystem for platform/LAN/local multiplayer flow.
  */
 #pragma once
 
@@ -13,6 +13,7 @@
 
 class FOnlineSessionSearch;
 class FOnlineSessionSettings;
+class UARNetworkRoutingSettings;
 class UCreateSessionCallbackProxyAdvanced;
 class UFindSessionsCallbackProxyAdvanced;
 
@@ -92,7 +93,7 @@ struct ALIENRAMEN_API FARSessionSearchResultData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSessionActionCompleted, const FARSessionResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnSessionFindCompleted, const FARSessionResult&, Result, const TArray<FARSessionSearchResultData>&, Results);
 
-/** Server/client session orchestration surface for Steam/LAN/local multiplayer. */
+/** Server/client session orchestration surface for platform/LAN/local multiplayer. */
 UCLASS()
 class ALIENRAMEN_API UARSessionSubsystem : public UGameInstanceSubsystem
 {
@@ -141,6 +142,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session")
 	const TArray<FARSessionSearchResultData>& GetLastFindResults() const { return LastFindResults; }
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session|Routing")
+	FName GetConfiguredInternetSubsystemName() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session|Routing")
+	FName GetConfiguredLanSubsystemName() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Session|Routing")
+	TArray<FName> GetConfiguredInternetSubsystemFallbackOrder() const;
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Session")
 	FAROnSessionActionCompleted OnCreateSessionCompleted;
 
@@ -179,9 +189,10 @@ private:
 		Refresh
 	};
 
-	IOnlineSessionPtr ResolveSessionInterface(bool bPreferLAN, FName& OutSubsystemName) const;
+	IOnlineSessionPtr ResolveSessionInterface(bool bPreferLAN, FName& OutSubsystemName, const TCHAR* RequestType) const;
 	IOnlineSessionPtr GetSessionInterfaceForSubsystem(FName SubsystemName) const;
 	IOnlineSessionPtr GetActiveSessionInterface() const;
+	IOnlineSessionPtr FindSessionInterfaceOwningGameSession(FName& OutSubsystemName) const;
 
 	bool BeginJoinSession(IOnlineSessionPtr Session, int32 LocalUserNum, const FOnlineSessionSearchResult& SearchResult, FARSessionResult& OutResult);
 	int32 CountCurrentARPlayers() const;
@@ -196,6 +207,11 @@ private:
 	void ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, bool bClearFindFriendHandle);
 	void ResetOperationState();
 	void ResetFindState();
+	const UARNetworkRoutingSettings* GetRoutingSettings() const;
+	FName GetConfiguredInternetSubsystemNameInternal() const;
+	FName GetConfiguredLanSubsystemNameInternal() const;
+	void GetConfiguredInternetFallbackOrderInternal(TArray<FName>& OutFallbackOrder) const;
+	void LogRouteDecision(const TCHAR* RequestType, bool bPreferLAN, bool bStayOffline, const FName& ChosenSubsystem, const FString& Reason) const;
 
 	void BindInviteAcceptedDelegate();
 	void ClearInviteAcceptedDelegate();
