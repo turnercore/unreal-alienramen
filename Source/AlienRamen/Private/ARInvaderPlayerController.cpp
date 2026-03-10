@@ -2,12 +2,14 @@
 
 #include "ARInvaderFullBlastMenuWidget.h"
 #include "ARInvaderGameState.h"
+#include "ARPlayerCharacterInvader.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "TagContentResolverSubsystem.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
+#include "UObject/UnrealType.h"
 #include "TimerManager.h"
 
 AARInvaderPlayerController::AARInvaderPlayerController()
@@ -17,6 +19,7 @@ AARInvaderPlayerController::AARInvaderPlayerController()
 void AARInvaderPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	SyncLegacyShipReferenceFromPawn(GetPawn());
 	TryBindInvaderGameState();
 }
 
@@ -34,6 +37,18 @@ void AARInvaderPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	Super::EndPlay(EndPlayReason);
 }
 
+void AARInvaderPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	SyncFullBlastMenuFromGameState();
+}
+
+void AARInvaderPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+	SyncLegacyShipReferenceFromPawn(InPawn);
+}
+
 AARPlayerStateBase* AARInvaderPlayerController::GetInvaderPlayerState() const
 {
 	return GetPlayerState<AARPlayerStateBase>();
@@ -46,12 +61,18 @@ void AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged(const bool
 
 void AARInvaderPlayerController::TryBindInvaderGameState()
 {
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
 	AARInvaderGameState* CurrentGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr;
 	if (!CurrentGameState)
 	{
 		if (!BindInvaderGameStateRetryTimer.IsValid())
 		{
-			GetWorldTimerManager().SetTimer(
+			World->GetTimerManager().SetTimer(
 				BindInvaderGameStateRetryTimer,
 				this,
 				&AARInvaderPlayerController::TryBindInvaderGameState,
@@ -81,10 +102,17 @@ void AARInvaderPlayerController::TryBindInvaderGameState()
 
 void AARInvaderPlayerController::StopBindInvaderGameStateRetry()
 {
-	if (BindInvaderGameStateRetryTimer.IsValid())
+	if (!BindInvaderGameStateRetryTimer.IsValid())
 	{
-		GetWorldTimerManager().ClearTimer(BindInvaderGameStateRetryTimer);
+		return;
 	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(BindInvaderGameStateRetryTimer);
+	}
+
+	BindInvaderGameStateRetryTimer.Invalidate();
 }
 
 void AARInvaderPlayerController::SyncFullBlastMenuFromGameState()
@@ -181,13 +209,67 @@ bool AARInvaderPlayerController::ShouldDisplayFullBlastMenuForSession(const FARI
 		return false;
 	}
 
-	const EARPlayerSlot LocalSlot = InvaderPlayerState->GetPlayerSlot();
+	return true;
+}
+
+bool AARInvaderPlayerController::IsChooserForSession(const FARInvaderFullBlastSessionState& Session) const
+{
+	if (!IsLocalPlayerController() || !Session.bIsActive)
+	{
+		return false;
+	}
+
+	const AARPlayerStateBase* InvaderPlayerState = GetInvaderPlayerState();
+	if (!InvaderPlayerState)
+	{
+		return false;
+	}
+
 	if (Session.RequestingPlayerSlot == EARPlayerSlot::Unknown)
 	{
 		return true;
 	}
 
-	return LocalSlot == Session.RequestingPlayerSlot;
+	return InvaderPlayerState->GetPlayerSlot() == Session.RequestingPlayerSlot;
+}
+
+void AARInvaderPlayerController::SyncLegacyShipReferenceFromPawn(APawn* InPawn)
+{
+	FProperty* ShipProperty = GetClass()->FindPropertyByName(TEXT("Ship"));
+	FObjectProperty* ShipObjectProperty = CastField<FObjectProperty>(ShipProperty);
+	if (!ShipObjectProperty)
+	{
+		return;
+	}
+
+	UObject* ShipObject = Cast<AARPlayerCharacterInvader>(InPawn);
+	if (ShipObject && !ShipObject->IsA(ShipObjectProperty->PropertyClass))
+	{
+		ShipObject = nullptr;
+	}
+
+	if (InPawn && !ShipObject)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[InvaderController] Could not bind legacy Ship property on '%s' from pawn '%s' (PawnClass=%s ShipPropertyClass=%s)."),
+			*GetNameSafe(this),
+			*GetNameSafe(InPawn),
+			*GetNameSafe(InPawn->GetClass()),
+			*GetNameSafe(ShipObjectProperty->PropertyClass));
+	}
+
+	if (ShipObjectProperty->GetObjectPropertyValue_InContainer(this) != ShipObject)
+	{
+		ShipObjectProperty->SetObjectPropertyValue_InContainer(this, ShipObject);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[InvaderController] Legacy Ship binding updated on '%s': %s"),
+			*GetNameSafe(this),
+			*GetNameSafe(ShipObject));
+	}
 }
 
 void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(
@@ -220,16 +302,38 @@ void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(
 
 	if (!FullBlastMenuWidget->IsInViewport())
 	{
-		FullBlastMenuWidget->AddToViewport(100);
+		// In couch co-op, attach per local player first; fallback to global viewport.
+		if (!FullBlastMenuWidget->AddToPlayerScreen(100))
+		{
+			FullBlastMenuWidget->AddToViewport(100);
+		}
+	}
+
+	const bool bIsChooser = IsChooserForSession(Session);
+	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, bIsChooser);
+
+	// Only chooser needs UI input capture; observers should still see menu without forced input mode changes.
+	if (bIsChooser && !bCapturedInputForFullBlast)
+	{
 		bCachedShowMouseCursorForFullBlast = bShowMouseCursor;
 		bShowMouseCursor = true;
 		FInputModeUIOnly InputMode;
-		InputMode.SetWidgetToFocus(FullBlastMenuWidget->TakeWidget());
+		if (FullBlastMenuWidget->IsFocusable())
+		{
+			InputMode.SetWidgetToFocus(FullBlastMenuWidget->TakeWidget());
+		}
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		SetInputMode(InputMode);
+		bCapturedInputForFullBlast = true;
 	}
-
-	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, ShouldDisplayFullBlastMenuForSession(Session));
+	else if (!bIsChooser && bCapturedInputForFullBlast)
+	{
+		// Chooser role can change during session updates; release capture immediately.
+		FInputModeGameOnly InputMode;
+		SetInputMode(InputMode);
+		bShowMouseCursor = bCachedShowMouseCursorForFullBlast;
+		bCapturedInputForFullBlast = false;
+	}
 }
 
 void AARInvaderPlayerController::CloseFullBlastMenu()
@@ -238,9 +342,14 @@ void AARInvaderPlayerController::CloseFullBlastMenu()
 	{
 		FullBlastMenuWidget->NotifyMenuClosed();
 		FullBlastMenuWidget->RemoveFromParent();
+	}
+
+	if (bCapturedInputForFullBlast)
+	{
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
 		bShowMouseCursor = bCachedShowMouseCursorForFullBlast;
+		bCapturedInputForFullBlast = false;
 	}
 }
 
@@ -260,12 +369,21 @@ void AARInvaderPlayerController::RequestActivateFullBlast()
 
 void AARInvaderPlayerController::ServerRequestActivateFullBlast_Implementation()
 {
+	AARPlayerStateBase* RequestingPlayerState = GetInvaderPlayerState();
 	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateFullBlast controller='%s' playerState='%s'"),
-		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()));
+		*GetNameSafe(this), *GetNameSafe(RequestingPlayerState));
 
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
-		InvaderGameState->RequestActivateFullBlast(GetInvaderPlayerState());
+		const bool bActivated = InvaderGameState->RequestActivateFullBlast(RequestingPlayerState);
+		if (!bActivated)
+		{
+			const FString FailureMessage = FString::Printf(
+				TEXT("[InvaderSpice|Input] Full Blast activation failed for '%s'. Check prior [InvaderSpice] error log for rejection details."),
+				*GetNameSafe(RequestingPlayerState));
+			UE_LOG(ARLog, Error, TEXT("%s"), *FailureMessage);
+			ClientMessage(FailureMessage);
+		}
 	}
 }
 
@@ -335,12 +453,24 @@ void AARInvaderPlayerController::RequestActivateTrackUpgrade(const int32 SlotInd
 
 void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade_Implementation(const int32 SlotIndex)
 {
-	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' slot=%d"),
-		*GetNameSafe(this), *GetNameSafe(GetInvaderPlayerState()), SlotIndex);
+	AARPlayerStateBase* RequestingPlayerState = GetInvaderPlayerState();
+	const int32 RequestingSlot = RequestingPlayerState ? static_cast<int32>(RequestingPlayerState->GetPlayerSlot()) : static_cast<int32>(EARPlayerSlot::Unknown);
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' playerSlot=%d slot=%d"),
+		*GetNameSafe(this), *GetNameSafe(RequestingPlayerState), RequestingSlot, SlotIndex);
 
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
-		InvaderGameState->ActivateTrackUpgrade(GetInvaderPlayerState(), SlotIndex);
+		const bool bActivated = InvaderGameState->ActivateTrackUpgrade(RequestingPlayerState, SlotIndex);
+		if (!bActivated)
+		{
+			const FString FailureMessage = FString::Printf(
+				TEXT("[InvaderSpice|Input] Track upgrade activation failed for '%s' (PlayerSlot=%d) on slot %d. Check prior [InvaderSpice|Action] logs for rejection details."),
+				*GetNameSafe(RequestingPlayerState),
+				RequestingSlot,
+				SlotIndex);
+			UE_LOG(ARLog, Error, TEXT("%s"), *FailureMessage);
+			ClientMessage(FailureMessage);
+		}
 	}
 }
 
@@ -437,26 +567,54 @@ void AARInvaderPlayerController::RequestSetOfferPresence(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
 	const FVector2D CursorNormalized,
-	const bool bHasCursor)
+	const bool bHasCursor,
+	const FGameplayTag SelectedUpgradeTag,
+	const int32 SelectedDestinationSlot,
+	const bool bHasSelection)
 {
 	if (HasAuthority())
 	{
-		ServerRequestSetOfferPresence_Implementation(HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+		ServerRequestSetOfferPresence_Implementation(
+			HoveredUpgradeTag,
+			HoveredDestinationSlot,
+			CursorNormalized,
+			bHasCursor,
+			SelectedUpgradeTag,
+			SelectedDestinationSlot,
+			bHasSelection);
 		return;
 	}
 
-	ServerRequestSetOfferPresence(HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+	ServerRequestSetOfferPresence(
+		HoveredUpgradeTag,
+		HoveredDestinationSlot,
+		CursorNormalized,
+		bHasCursor,
+		SelectedUpgradeTag,
+		SelectedDestinationSlot,
+		bHasSelection);
 }
 
 void AARInvaderPlayerController::ServerRequestSetOfferPresence_Implementation(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
 	const FVector2D CursorNormalized,
-	const bool bHasCursor)
+	const bool bHasCursor,
+	const FGameplayTag SelectedUpgradeTag,
+	const int32 SelectedDestinationSlot,
+	const bool bHasSelection)
 {
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
-		InvaderGameState->SetOfferPresence(GetInvaderPlayerState(), HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+		InvaderGameState->SetOfferPresence(
+			GetInvaderPlayerState(),
+			HoveredUpgradeTag,
+			HoveredDestinationSlot,
+			CursorNormalized,
+			bHasCursor,
+			SelectedUpgradeTag,
+			SelectedDestinationSlot,
+			bHasSelection);
 	}
 }
 
