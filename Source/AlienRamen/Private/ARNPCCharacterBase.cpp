@@ -1,55 +1,37 @@
 #include "ARNPCCharacterBase.h"
 
-#include "ARDialogueSubsystem.h"
 #include "ARLog.h"
-#include "ARNPCSubsystem.h"
 #include "ARPlayerController.h"
-#include "ARPlayerStateBase.h"
 #include "Net/UnrealNetwork.h"
-
-namespace
-{
-	static uint8 GetTalkableMaskForSlot(const EARPlayerSlot Slot)
-	{
-		switch (Slot)
-		{
-		case EARPlayerSlot::P1:
-			return 1 << 0;
-		case EARPlayerSlot::P2:
-			return 1 << 1;
-		default:
-			return 0;
-		}
-	}
-}
 
 AARNPCCharacterBase::AARNPCCharacterBase()
 {
 	bReplicates = true;
+	NpcTalkComponent = CreateDefaultSubobject<UARNPCTalkComponent>(TEXT("NpcTalkComponent"));
 }
 
 void AARNPCCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	RefreshTalkableFromSubsystem();
 
-	if (HasAuthority())
+	if (NpcTalkComponent)
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
+		// Runtime migration path: if legacy actor fields were authored, hydrate the component once.
+		if (!NpcTalkComponent->GetNpcTag().IsValid() && NpcTag.IsValid())
 		{
-			NpcSubsystem->OnNpcTalkableChanged.AddDynamic(this, &AARNPCCharacterBase::HandleNpcTalkableChanged);
+			NpcTalkComponent->SetNpcTag(NpcTag);
 		}
+
+		NpcTalkComponent->OnNpcTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
+		NpcTalkComponent->OnNpcTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
 	}
 }
 
 void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (HasAuthority())
+	if (NpcTalkComponent)
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARNPCSubsystem>() : nullptr)
-		{
-			NpcSubsystem->OnNpcTalkableChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleNpcTalkableChanged);
-		}
+		NpcTalkComponent->OnNpcTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
 	}
 
 	Super::EndPlay(EndPlayReason);
@@ -57,145 +39,82 @@ void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingController)
 {
-	if (!HasAuthority() || !InteractingController)
-	{
-		return;
-	}
-
-	if (!NpcTag.IsValid())
-	{
-		UE_LOG(ARLog, Warning, TEXT("[NPC] Interact ignored: '%s' has no NpcTag."), *GetNameSafe(this));
-		return;
-	}
-
 	if (!bNpcLocalStateAllowsDialogue)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[NPC] Interact ignored for '%s': local state blocks dialogue."), *GetNameSafe(this));
 		return;
 	}
 
-	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+	if (NpcTalkComponent)
 	{
-		if (!DialogueSubsystem->TryStartDialogueWithNpc(InteractingController, NpcTag))
-		{
-			UE_LOG(ARLog, Verbose, TEXT("[NPC] TryStartDialogueWithNpc returned false for '%s' with NPC '%s'."), *GetNameSafe(InteractingController), *NpcTag.ToString());
-		}
+		NpcTalkComponent->InteractByController(InteractingController);
 	}
 }
 
-void AARNPCCharacterBase::SetNpcLocalStateAllowsDialogue(const bool bEnabled)
+FGameplayTag AARNPCCharacterBase::GetNpcTag() const
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	if (bNpcLocalStateAllowsDialogue == bEnabled)
-	{
-		return;
-	}
-
-	bNpcLocalStateAllowsDialogue = bEnabled;
-	RefreshTalkableFromSubsystem();
-	ForceNetUpdate();
+	return NpcTalkComponent ? NpcTalkComponent->GetNpcTag() : FGameplayTag();
 }
 
-void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
+bool AARNPCCharacterBase::IsTalkable() const
 {
-	if (!HasAuthority() || !NpcTag.IsValid())
-	{
-		return;
-	}
-
-	uint8 NewTalkableMask = 0;
-	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
-	{
-		if (bNpcLocalStateAllowsDialogue)
-		{
-			if (DialogueSubsystem->HasUnlockedDialogueForNpcForSlot(NpcTag, EARPlayerSlot::P1))
-			{
-				NewTalkableMask |= GetTalkableMaskForSlot(EARPlayerSlot::P1);
-			}
-
-			if (DialogueSubsystem->HasUnlockedDialogueForNpcForSlot(NpcTag, EARPlayerSlot::P2))
-			{
-				NewTalkableMask |= GetTalkableMaskForSlot(EARPlayerSlot::P2);
-			}
-		}
-	}
-
-	const uint8 OldMask = TalkablePlayerSlotMask;
-	const bool bMaskChanged = OldMask != NewTalkableMask;
-	TalkablePlayerSlotMask = NewTalkableMask;
-	if (bMaskChanged)
-	{
-		OnRep_TalkablePlayerSlotMask(OldMask);
-	}
-
-	const bool bNewTalkable = TalkablePlayerSlotMask != 0;
-	const bool bTalkableChanged = bIsTalkable != bNewTalkable;
-	if (bTalkableChanged)
-	{
-		const bool bOld = bIsTalkable;
-		bIsTalkable = bNewTalkable;
-		OnRep_IsTalkable(bOld);
-	}
-
-	if (bMaskChanged || bTalkableChanged)
-	{
-		ForceNetUpdate();
-	}
-}
-
-void AARNPCCharacterBase::HandleNpcTalkableChanged(FGameplayTag ChangedNpcTag, bool bNewTalkable)
-{
-	(void)bNewTalkable;
-	if (!HasAuthority() || !ChangedNpcTag.MatchesTagExact(NpcTag))
-	{
-		return;
-	}
-
-	RefreshTalkableFromSubsystem();
-}
-
-void AARNPCCharacterBase::OnRep_IsTalkable(bool bOldTalkable)
-{
-	if (bIsTalkable != bOldTalkable)
-	{
-		OnNpcTalkableStateChanged.Broadcast(bIsTalkable);
-	}
-}
-
-void AARNPCCharacterBase::OnRep_TalkablePlayerSlotMask(uint8 bOldTalkablePlayerSlotMask)
-{
-	(void)bOldTalkablePlayerSlotMask;
+	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkable();
 }
 
 bool AARNPCCharacterBase::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
 {
-	const uint8 SlotMask = GetTalkableMaskForSlot(PlayerSlot);
-	return SlotMask != 0 && (TalkablePlayerSlotMask & SlotMask) != 0;
+	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForPlayerSlot(PlayerSlot);
 }
 
 bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* QueryController) const
 {
-	if (!QueryController)
+	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForController(QueryController);
+}
+
+bool AARNPCCharacterBase::IsNpcLocalStateAllowingDialogue() const
+{
+	return bNpcLocalStateAllowsDialogue;
+}
+
+void AARNPCCharacterBase::SetNpcLocalStateAllowsDialogue(const bool bEnabled)
+{
+	if (!HasAuthority() || bNpcLocalStateAllowsDialogue == bEnabled)
 	{
-		return false;
+		return;
 	}
 
-	const AARPlayerStateBase* QueryPlayerState = QueryController->GetPlayerState<AARPlayerStateBase>();
-	if (!QueryPlayerState)
+	const bool bOldAllowsDialogue = bNpcLocalStateAllowsDialogue;
+	bNpcLocalStateAllowsDialogue = bEnabled;
+	OnRep_NpcLocalStateAllowsDialogue(bOldAllowsDialogue);
+	ForceNetUpdate();
+}
+
+void AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged(const bool bNewTalkable)
+{
+	(void)bNewTalkable;
+	OnNpcTalkableStateChanged.Broadcast(IsTalkable());
+}
+
+void AARNPCCharacterBase::OnRep_NpcLocalStateAllowsDialogue(const bool bOldAllowsDialogue)
+{
+	if (bNpcLocalStateAllowsDialogue == bOldAllowsDialogue)
 	{
-		return false;
+		return;
 	}
 
-	return IsTalkableForPlayerSlot(QueryPlayerState->GetPlayerSlot());
+	OnNpcTalkableStateChanged.Broadcast(IsTalkable());
+}
+
+void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
+{
+	if (NpcTalkComponent)
+	{
+		NpcTalkComponent->RefreshTalkableFromSubsystem();
+	}
 }
 
 void AARNPCCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AARNPCCharacterBase, bIsTalkable);
-	DOREPLIFETIME(AARNPCCharacterBase, TalkablePlayerSlotMask);
+	DOREPLIFETIME(AARNPCCharacterBase, bNpcLocalStateAllowsDialogue);
 }

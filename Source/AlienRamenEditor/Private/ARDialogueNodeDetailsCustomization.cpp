@@ -127,6 +127,7 @@ void FARDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& Detai
 		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bSwitchHasDefaultOutput), true);
 		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchDefaultNodeId), true);
 		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SequenceBranches), true);
+		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CharacterRouteBranches), true);
 	}
 }
 
@@ -243,5 +244,11 @@ void FARDialogueLineNodeDataCustomization::CustomizeChildren(
 	if (SkipBlockedHandle.IsValid() && SkipBlockedHandle->IsValidHandle())
 	{
 		ChildBuilder.AddProperty(SkipBlockedHandle.ToSharedRef());
+	}
+
+	const TSharedPtr<IPropertyHandle> CharacterRestrictionHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDialogueLineNodeData, CharacterRestriction));
+	if (CharacterRestrictionHandle.IsValid() && CharacterRestrictionHandle->IsValidHandle())
+	{
+		ChildBuilder.AddProperty(CharacterRestrictionHandle.ToSharedRef());
 	}
 }

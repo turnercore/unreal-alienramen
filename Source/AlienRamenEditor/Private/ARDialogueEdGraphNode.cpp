@@ -19,6 +19,7 @@ namespace
 	static const FString SwitchPinPrefix(TEXT("Switch_"));
 	static const FString RandomPinPrefix(TEXT("Random_"));
 	static const FString SequencePinPrefix(TEXT("Sequence_"));
+	static const FString CharacterRoutePinPrefix(TEXT("CharacterRoute_"));
 
 	static FEdGraphPinType MakeExecPinType()
 	{
@@ -57,6 +58,10 @@ namespace
 			return FText::FromString(TEXT("Sequence"));
 		case EDialogueNodeType::MultiLine:
 			return FText::FromString(TEXT("Multi-Line"));
+		case EDialogueNodeType::SplitLine:
+			return FText::FromString(TEXT("Split Line"));
+		case EDialogueNodeType::RouteByCharacter:
+			return FText::FromString(TEXT("Route Character"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
@@ -113,6 +118,11 @@ FName UARDialogueEdGraphNode::MakeSequencePinName(const FGuid& BranchId)
 	return FName(*FString::Printf(TEXT("%s%s"), *SequencePinPrefix, *BranchId.ToString(EGuidFormats::Digits)));
 }
 
+FName UARDialogueEdGraphNode::MakeCharacterRoutePinName(const FGuid& BranchId)
+{
+	return FName(*FString::Printf(TEXT("%s%s"), *CharacterRoutePinPrefix, *BranchId.ToString(EGuidFormats::Digits)));
+}
+
 void UARDialogueEdGraphNode::InitializeForNodeType(const EDialogueNodeType NodeType)
 {
 	RuntimeNode = FDialogueCompiledNode();
@@ -160,6 +170,10 @@ void UARDialogueEdGraphNode::ClearRuntimeLinks()
 	{
 		Branch.NextNodeId.Invalidate();
 	}
+	for (FDialogueCompiledCharacterRouteBranch& Branch : RuntimeNode.CharacterRouteBranches)
+	{
+		Branch.NextNodeId.Invalidate();
+	}
 }
 
 UEdGraphPin* UARDialogueEdGraphNode::GetExecInputPin() const
@@ -192,12 +206,18 @@ UEdGraphPin* UARDialogueEdGraphNode::GetSequenceOutputPin(const FGuid& BranchId)
 	return FindPin(MakeSequencePinName(BranchId), EGPD_Output);
 }
 
+UEdGraphPin* UARDialogueEdGraphNode::GetCharacterRouteOutputPin(const FGuid& BranchId) const
+{
+	return FindPin(MakeCharacterRoutePinName(BranchId), EGPD_Output);
+}
+
 bool UARDialogueEdGraphNode::SupportsDynamicBranchPins() const
 {
 	return RuntimeNode.NodeType == EDialogueNodeType::Choice
 		|| RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority
 		|| RuntimeNode.NodeType == EDialogueNodeType::Random
-		|| RuntimeNode.NodeType == EDialogueNodeType::Sequence;
+		|| RuntimeNode.NodeType == EDialogueNodeType::Sequence
+		|| RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter;
 }
 
 void UARDialogueEdGraphNode::AddDynamicBranchPin()
@@ -264,6 +284,18 @@ void UARDialogueEdGraphNode::AddDynamicBranchPin()
 		}
 		break;
 	}
+	case EDialogueNodeType::RouteByCharacter:
+	{
+		FDialogueCompiledCharacterRouteBranch NewBranch;
+		NewBranch.BranchId = FGuid::NewGuid();
+		const FDialogueCompiledCharacterRouteBranch& AddedBranch = RuntimeNode.CharacterRouteBranches.Add_GetRef(MoveTemp(NewBranch));
+		NewPin = CreatePin(EGPD_Output, MakeExecPinType(), MakeCharacterRoutePinName(AddedBranch.BranchId));
+		if (NewPin)
+		{
+			NewPin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Character %d"), RuntimeNode.CharacterRouteBranches.Num()));
+		}
+		break;
+	}
 	default:
 		return;
 	}
@@ -323,6 +355,12 @@ bool UARDialogueEdGraphNode::RemoveLastDynamicBranchPin()
 			return false;
 		}
 		return RemoveDynamicBranchPinByName(MakeSequencePinName(RuntimeNode.SequenceBranches.Last().BranchId));
+	case EDialogueNodeType::RouteByCharacter:
+		if (RuntimeNode.CharacterRouteBranches.IsEmpty())
+		{
+			return false;
+		}
+		return RemoveDynamicBranchPinByName(MakeCharacterRoutePinName(RuntimeNode.CharacterRouteBranches.Last().BranchId));
 	default:
 		return false;
 	}
@@ -384,6 +422,16 @@ bool UARDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinName)
 				}
 
 				const int32 RemovedCount = RuntimeNode.SequenceBranches.RemoveAll([BranchId](const FDialogueCompiledSequenceBranch& Branch)
+				{
+					return Branch.BranchId == BranchId;
+				});
+				return RemovedCount > 0;
+			}
+
+			if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter
+				&& TryParseBranchGuidFromPinName(PinName, CharacterRoutePinPrefix, BranchId))
+			{
+				const int32 RemovedCount = RuntimeNode.CharacterRouteBranches.RemoveAll([BranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
 				{
 					return Branch.BranchId == BranchId;
 				});
@@ -462,6 +510,52 @@ bool UARDialogueEdGraphNode::SetSwitchBranchLabel(const FGuid& BranchId, const F
 		if (UEdGraphPin* Pin = GetSwitchOutputPin(BranchId))
 		{
 			Pin->PinFriendlyName = NewLabel;
+		}
+	}
+	return bChanged;
+}
+
+bool UARDialogueEdGraphNode::SetCharacterRouteBranchSpeakerTag(const FGuid& BranchId, const FGameplayTag& NewSpeakerTag)
+{
+	const bool bChanged = CommitRuntimeNodeMutation(
+		LOCTEXT("SetCharacterRouteBranchSpeakerTag", "Set Character Route Branch Speaker Tag"),
+		[this, BranchId, NewSpeakerTag]() -> bool
+		{
+			for (FDialogueCompiledCharacterRouteBranch& Branch : RuntimeNode.CharacterRouteBranches)
+			{
+				if (Branch.BranchId != BranchId)
+				{
+					continue;
+				}
+
+				if (Branch.SpeakerTag.MatchesTagExact(NewSpeakerTag))
+				{
+					return false;
+				}
+
+				Branch.SpeakerTag = NewSpeakerTag;
+				return true;
+			}
+
+			return false;
+		},
+		true);
+
+	if (bChanged)
+	{
+		if (UEdGraphPin* Pin = GetCharacterRouteOutputPin(BranchId))
+		{
+			const int32 BranchIndex = RuntimeNode.CharacterRouteBranches.IndexOfByPredicate([BranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
+			{
+				return Branch.BranchId == BranchId;
+			});
+			const FDialogueCompiledCharacterRouteBranch* Branch = RuntimeNode.CharacterRouteBranches.FindByPredicate([BranchId](const FDialogueCompiledCharacterRouteBranch& Candidate)
+			{
+				return Candidate.BranchId == BranchId;
+			});
+			Pin->PinFriendlyName = Branch && Branch->SpeakerTag.IsValid()
+				? FText::FromString(Branch->SpeakerTag.ToString())
+				: FText::FromString(FString::Printf(TEXT("Character %d"), BranchIndex + 1));
 		}
 	}
 	return bChanged;
@@ -564,6 +658,33 @@ bool UARDialogueEdGraphNode::MoveSwitchBranch(const FGuid& BranchId, const bool 
 		true);
 }
 
+bool UARDialogueEdGraphNode::MoveCharacterRouteBranch(const FGuid& BranchId, const bool bMoveUp)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("MoveCharacterRouteBranch", "Reorder Character Route Branch"),
+		[this, BranchId, bMoveUp]() -> bool
+		{
+			const int32 CurrentIndex = RuntimeNode.CharacterRouteBranches.IndexOfByPredicate([BranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
+			{
+				return Branch.BranchId == BranchId;
+			});
+			if (CurrentIndex == INDEX_NONE)
+			{
+				return false;
+			}
+
+			const int32 TargetIndex = bMoveUp ? CurrentIndex - 1 : CurrentIndex + 1;
+			if (!RuntimeNode.CharacterRouteBranches.IsValidIndex(TargetIndex))
+			{
+				return false;
+			}
+
+			RuntimeNode.CharacterRouteBranches.Swap(CurrentIndex, TargetIndex);
+			return true;
+		},
+		true);
+}
+
 bool UARDialogueEdGraphNode::ReorderChoiceBranch(const FGuid& MovingChoiceBranchId, const FGuid& TargetChoiceBranchId)
 {
 	if (!MovingChoiceBranchId.IsValid() || !TargetChoiceBranchId.IsValid() || MovingChoiceBranchId == TargetChoiceBranchId)
@@ -658,6 +779,39 @@ bool UARDialogueEdGraphNode::ReorderRandomBranch(const FGuid& MovingBranchId, co
 			RuntimeNode.RandomBranches.RemoveAt(SourceIndex);
 			const int32 InsertIndex = SourceIndex < TargetIndex ? TargetIndex - 1 : TargetIndex;
 			RuntimeNode.RandomBranches.Insert(MoveTemp(MovingBranch), InsertIndex);
+			return true;
+		},
+		true);
+}
+
+bool UARDialogueEdGraphNode::ReorderCharacterRouteBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId)
+{
+	if (!MovingBranchId.IsValid() || !TargetBranchId.IsValid() || MovingBranchId == TargetBranchId)
+	{
+		return false;
+	}
+
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("ReorderCharacterRouteBranch", "Reorder Character Route Branch"),
+		[this, MovingBranchId, TargetBranchId]() -> bool
+		{
+			const int32 SourceIndex = RuntimeNode.CharacterRouteBranches.IndexOfByPredicate([MovingBranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
+			{
+				return Branch.BranchId == MovingBranchId;
+			});
+			const int32 TargetIndex = RuntimeNode.CharacterRouteBranches.IndexOfByPredicate([TargetBranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
+			{
+				return Branch.BranchId == TargetBranchId;
+			});
+			if (SourceIndex == INDEX_NONE || TargetIndex == INDEX_NONE || SourceIndex == TargetIndex)
+			{
+				return false;
+			}
+
+			FDialogueCompiledCharacterRouteBranch MovingBranch = MoveTemp(RuntimeNode.CharacterRouteBranches[SourceIndex]);
+			RuntimeNode.CharacterRouteBranches.RemoveAt(SourceIndex);
+			const int32 InsertIndex = SourceIndex < TargetIndex ? TargetIndex - 1 : TargetIndex;
+			RuntimeNode.CharacterRouteBranches.Insert(MoveTemp(MovingBranch), InsertIndex);
 			return true;
 		},
 		true);
@@ -778,7 +932,8 @@ bool UARDialogueEdGraphNode::AddMultiLineEntry()
 		LOCTEXT("AddMultiLineEntry", "Add Multi-Line Entry"),
 		[this]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -809,7 +964,8 @@ bool UARDialogueEdGraphNode::RemoveMultiLineEntry(const FGuid& EntryId)
 		LOCTEXT("RemoveMultiLineEntry", "Remove Multi-Line Entry"),
 		[this, EntryId]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -840,7 +996,8 @@ bool UARDialogueEdGraphNode::ReorderMultiLineEntry(const FGuid& MovingEntryId, c
 		LOCTEXT("ReorderMultiLineEntry", "Reorder Multi-Line Entry"),
 		[this, MovingEntryId, TargetEntryId]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -884,7 +1041,8 @@ bool UARDialogueEdGraphNode::SetMultiLineEntrySpeakerTag(const FGuid& EntryId, c
 		LOCTEXT("SetMultiLineEntrySpeakerTag", "Set Multi-Line Speaker Tag"),
 		[this, EntryId, NewSpeakerTag]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -924,7 +1082,8 @@ bool UARDialogueEdGraphNode::SetMultiLineEntryText(const FGuid& EntryId, const F
 		LOCTEXT("SetMultiLineEntryText", "Set Multi-Line Text"),
 		[this, EntryId, NewText]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -1048,6 +1207,23 @@ void UARDialogueEdGraphNode::AddSequencePins()
 	}
 }
 
+void UARDialogueEdGraphNode::AddCharacterRoutePins()
+{
+	for (int32 Index = 0; Index < RuntimeNode.CharacterRouteBranches.Num(); ++Index)
+	{
+		const FDialogueCompiledCharacterRouteBranch& Branch = RuntimeNode.CharacterRouteBranches[Index];
+		UEdGraphPin* Pin = CreatePin(EGPD_Output, MakeExecPinType(), MakeCharacterRoutePinName(Branch.BranchId));
+		if (Pin)
+		{
+			Pin->bHidden = false;
+			Pin->bAdvancedView = false;
+			Pin->PinFriendlyName = Branch.SpeakerTag.IsValid()
+				? FText::FromString(Branch.SpeakerTag.ToString())
+				: FText::FromString(FString::Printf(TEXT("Character %d"), Index + 1));
+		}
+	}
+}
+
 void UARDialogueEdGraphNode::AllocateDefaultPins()
 {
 	EnsureStableIds(false, false);
@@ -1062,6 +1238,7 @@ void UARDialogueEdGraphNode::AllocateDefaultPins()
 		break;
 	case EDialogueNodeType::Line:
 	case EDialogueNodeType::MultiLine:
+	case EDialogueNodeType::SplitLine:
 	case EDialogueNodeType::TagMutation:
 	case EDialogueNodeType::RelationshipMutation:
 	case EDialogueNodeType::FactionMutation:
@@ -1089,6 +1266,10 @@ void UARDialogueEdGraphNode::AllocateDefaultPins()
 	case EDialogueNodeType::Sequence:
 		AddInputPinIfNeeded();
 		AddSequencePins();
+		break;
+	case EDialogueNodeType::RouteByCharacter:
+		AddInputPinIfNeeded();
+		AddCharacterRoutePins();
 		break;
 	default:
 		AddInputPinIfNeeded();
@@ -1139,6 +1320,8 @@ FLinearColor UARDialogueEdGraphNode::GetNodeTitleColor() const
 		return FLinearColor(0.14f, 0.21f, 0.23f, 1.0f);
 	case EDialogueNodeType::MultiLine:
 		return FLinearColor(0.14f, 0.24f, 0.28f, 1.0f);
+	case EDialogueNodeType::SplitLine:
+		return FLinearColor(0.13f, 0.25f, 0.31f, 1.0f);
 	case EDialogueNodeType::Choice:
 		return FLinearColor(0.22f, 0.20f, 0.30f, 1.0f);
 	case EDialogueNodeType::Bool:
@@ -1156,6 +1339,9 @@ FLinearColor UARDialogueEdGraphNode::GetNodeTitleColor() const
 	case EDialogueNodeType::FactionMutation:
 		return FLinearColor(0.26f, 0.24f, 0.16f, 1.0f);
 	case EDialogueNodeType::Route:
+		return FLinearColor(0.18f, 0.18f, 0.18f, 1.0f);
+	case EDialogueNodeType::RouteByCharacter:
+		return FLinearColor(0.17f, 0.20f, 0.30f, 1.0f);
 	default:
 		return FLinearColor(0.18f, 0.18f, 0.18f, 1.0f);
 	}
@@ -1379,7 +1565,7 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 					return IsValid(MutableNode) && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter && MutableNode->CanUserDeleteNode();
 				}))));
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine || RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
 	{
 		FToolMenuSection& MultiLineSection = Menu->AddSection(
 			TEXT("ARDialogueMultiLine"),
@@ -1573,6 +1759,31 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 							{
 								MutableNode->RemoveDynamicBranchPinByName(PinName);
 							}
+					}))));
+			}
+		}
+		else if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+		{
+			for (int32 Index = 0; Index < RuntimeNode.CharacterRouteBranches.Num(); ++Index)
+			{
+				const FDialogueCompiledCharacterRouteBranch& Branch = RuntimeNode.CharacterRouteBranches[Index];
+				const FName PinName = MakeCharacterRoutePinName(Branch.BranchId);
+				const FText Label = Branch.SpeakerTag.IsValid()
+					? FText::FromString(FString::Printf(TEXT("Delete %s"), *Branch.SpeakerTag.ToString()))
+					: FText::FromString(FString::Printf(TEXT("Delete Character Branch %d"), Index + 1));
+				Section.AddEntry(FToolMenuEntry::InitMenuEntry(
+					*FString::Printf(TEXT("ARDialogueDeleteCharacterRoute_%d"), Index),
+					Label,
+					LOCTEXT("ARDialogueDeleteCharacterRouteTooltip", "Delete this character route branch pin."),
+					FSlateIcon(),
+					FUIAction(FExecuteAction::CreateWeakLambda(
+						MutableNode,
+						[MutableNode, PinName]()
+						{
+							if (IsValid(MutableNode))
+							{
+								MutableNode->RemoveDynamicBranchPinByName(PinName);
+							}
 						}))));
 			}
 		}
@@ -1602,6 +1813,10 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 	else if (RuntimeNode.NodeType == EDialogueNodeType::Sequence)
 	{
 		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, SequencePinPrefix, ParsedBranchId);
+	}
+	else if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+	{
+		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, CharacterRoutePinPrefix, ParsedBranchId);
 	}
 
 	if (!bCanDeletePin)
@@ -1643,6 +1858,14 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 		});
 		BranchCount = RuntimeNode.SequenceBranches.Num();
 	}
+	else if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+	{
+		BranchIndex = RuntimeNode.CharacterRouteBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
+		{
+			return Branch.BranchId == ParsedBranchId;
+		});
+		BranchCount = RuntimeNode.CharacterRouteBranches.Num();
+	}
 
 	if (RuntimeNode.NodeType != EDialogueNodeType::Sequence && BranchIndex > 0)
 	{
@@ -1672,6 +1895,10 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 						&& MutableNode->RuntimeNode.RandomBranches.IsValidIndex(BranchIndex - 1))
 					{
 						MutableNode->ReorderRandomBranch(ParsedBranchId, MutableNode->RuntimeNode.RandomBranches[BranchIndex - 1].BranchId);
+					}
+					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+					{
+						MutableNode->MoveCharacterRouteBranch(ParsedBranchId, true);
 					}
 				}))));
 	}
@@ -1704,6 +1931,10 @@ void UARDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNo
 						&& MutableNode->RuntimeNode.RandomBranches.IsValidIndex(BranchIndex + 1))
 					{
 						MutableNode->ReorderRandomBranch(ParsedBranchId, MutableNode->RuntimeNode.RandomBranches[BranchIndex + 1].BranchId);
+					}
+					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+					{
+						MutableNode->MoveCharacterRouteBranch(ParsedBranchId, false);
 					}
 				}))));
 	}
@@ -1840,6 +2071,7 @@ void UARDialogueEdGraphNode::EnsureNodeDataMatchesNodeType()
 		}
 		break;
 	case EDialogueNodeType::MultiLine:
+	case EDialogueNodeType::SplitLine:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueMultiLineNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueMultiLineNodeData>();
@@ -1888,7 +2120,7 @@ void UARDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBranch
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine || RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
 	{
 		FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
 		if (MultiLineData)
@@ -1915,6 +2147,26 @@ void UARDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBranch
 					Entry.LineData.Line.LocalLineGuid = FGuid::NewGuid();
 				}
 			}
+		}
+	}
+
+	if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+	{
+		if (RuntimeNode.CharacterRouteBranches.IsEmpty())
+		{
+			FDialogueCompiledCharacterRouteBranch DefaultBranch;
+			DefaultBranch.BranchId = FGuid::NewGuid();
+			RuntimeNode.CharacterRouteBranches.Add(MoveTemp(DefaultBranch));
+		}
+
+		TSet<FGuid> SeenBranchIds;
+		for (FDialogueCompiledCharacterRouteBranch& Branch : RuntimeNode.CharacterRouteBranches)
+		{
+			if (bRegenerateBranches || !Branch.BranchId.IsValid() || SeenBranchIds.Contains(Branch.BranchId))
+			{
+				Branch.BranchId = FGuid::NewGuid();
+			}
+			SeenBranchIds.Add(Branch.BranchId);
 		}
 	}
 
@@ -2018,6 +2270,13 @@ FString UARDialogueEdGraphNode::BuildInlineSummary() const
 			? FString::Printf(TEXT("Lines:%d"), MultiLineData->Lines.Num())
 			: TEXT("Invalid multiline payload");
 	}
+	case EDialogueNodeType::SplitLine:
+	{
+		const FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
+		return MultiLineData
+			? FString::Printf(TEXT("Split Lines:%d"), MultiLineData->Lines.Num())
+			: TEXT("Invalid split-line payload");
+	}
 	case EDialogueNodeType::Choice:
 		return FString::Printf(TEXT("Choices:%d Fallback:\"%s\" Important:%s"),
 			RuntimeNode.ChoiceBranches.Num(),
@@ -2063,6 +2322,8 @@ FString UARDialogueEdGraphNode::BuildInlineSummary() const
 		return FString::Printf(TEXT("Then Branches:%d"), RuntimeNode.SequenceBranches.Num());
 	case EDialogueNodeType::Route:
 		return TEXT("Wire organizer (no runtime side effects)");
+	case EDialogueNodeType::RouteByCharacter:
+		return FString::Printf(TEXT("Character Branches:%d"), RuntimeNode.CharacterRouteBranches.Num());
 	default:
 		return FString();
 	}

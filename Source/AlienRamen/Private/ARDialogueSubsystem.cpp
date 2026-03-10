@@ -295,6 +295,9 @@ static UTagContentResolverSubsystem* GetLookupSubsystem(const UARDialogueSubsyst
 	return nullptr;
 }
 
+static AARPlayerStateBase* FindPlayerStateBySlot(const UWorld* World, const EARPlayerSlot Slot);
+static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const UARSaveGame* SaveGame, const EARPlayerSlot Slot);
+
 static FARPlayerIdentity BuildPlayerIdentityFromState(const AARPlayerStateBase* PS)
 {
 	FARPlayerIdentity Identity;
@@ -321,15 +324,59 @@ static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const UARSa
 		return nullptr;
 	}
 
+	const FDialoguePlayerPersistentState* FirstIdentityMatch = nullptr;
 	for (const FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
 	{
-		if (Entry.Identity.Matches(Identity))
+		if (!Entry.Identity.Matches(Identity))
+		{
+			continue;
+		}
+
+		if (!FirstIdentityMatch)
+		{
+			FirstIdentityMatch = &Entry;
+		}
+
+		// Prefer slot-consistent match when multiple rows share one online identity
+		// (for example couch co-op players on one platform account).
+		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
+			&& Entry.Identity.PlayerSlot == Identity.PlayerSlot)
 		{
 			return &Entry;
 		}
 	}
 
-	return nullptr;
+	return FirstIdentityMatch;
+}
+
+static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(UARSaveGame* SaveGame, const FARPlayerIdentity& Identity)
+{
+	if (!SaveGame)
+	{
+		return nullptr;
+	}
+
+	FDialoguePlayerPersistentState* FirstIdentityMatch = nullptr;
+	for (FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
+	{
+		if (!Entry.Identity.Matches(Identity))
+		{
+			continue;
+		}
+
+		if (!FirstIdentityMatch)
+		{
+			FirstIdentityMatch = &Entry;
+		}
+
+		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
+			&& Entry.Identity.PlayerSlot == Identity.PlayerSlot)
+		{
+			return &Entry;
+		}
+	}
+
+	return FirstIdentityMatch;
 }
 
 static bool IsConversationCompletedByGame(const UARDialogueSubsystem* Subsystem, const FGameplayTag ConversationTag)
@@ -479,22 +526,172 @@ static bool EvaluateTagContainerCondition(const FGameplayTagContainer& Container
 
 static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(UARSaveGame* SaveGame, const FARPlayerIdentity& Identity)
 {
+	if (FDialoguePlayerPersistentState* Existing = FindPlayerDialogueStateMutable(SaveGame, Identity))
+	{
+		return Existing;
+	}
+
 	if (!SaveGame)
+	{
+		return nullptr;
+	}
+
+	FDialoguePlayerPersistentState& Added = SaveGame->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
+	Added.Identity = Identity;
+	return &Added;
+}
+
+static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
+	UARSaveGame* SaveGame,
+	const UARDialogueSubsystem* DialogueSubsystem,
+	const EARPlayerSlot Slot)
+{
+	if (!SaveGame || Slot == EARPlayerSlot::Unknown)
 	{
 		return nullptr;
 	}
 
 	for (FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
 	{
-		if (Entry.Identity.Matches(Identity))
+		if (Entry.Identity.PlayerSlot == Slot)
 		{
 			return &Entry;
 		}
 	}
 
+	const AARPlayerStateBase* PlayerState = FindPlayerStateBySlot(DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr, Slot);
+	if (PlayerState)
+	{
+		return FindOrAddPlayerDialogueState(SaveGame, BuildPlayerIdentityFromState(PlayerState));
+	}
+
 	FDialoguePlayerPersistentState& Added = SaveGame->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	Added.Identity = Identity;
+	Added.Identity.PlayerSlot = Slot;
 	return &Added;
+}
+
+static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
+{
+	return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
+}
+
+static void SyncCycleOfferStateFromSaveForSlot(
+	const UARDialogueSubsystem* DialogueSubsystem,
+	const EARPlayerSlot Slot,
+	TMap<EARPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
+	TMap<EARPlayerSlot, FGameplayTagContainer>& SkippedByPlayerTransient)
+{
+	if (Slot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	const UARSaveGame* SaveGame = GetCurrentSave(DialogueSubsystem);
+	if (!SaveGame)
+	{
+		SeenByPlayerTransient.Remove(Slot);
+		SkippedByPlayerTransient.Remove(Slot);
+		return;
+	}
+
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(SaveGame, Slot);
+	if (!PlayerState)
+	{
+		SeenByPlayerTransient.Remove(Slot);
+		SkippedByPlayerTransient.Remove(Slot);
+		return;
+	}
+
+	SeenByPlayerTransient.FindOrAdd(Slot) = PlayerState->SeenConversationTagsThisCycle;
+	SkippedByPlayerTransient.FindOrAdd(Slot) = PlayerState->SkippedConversationTagsThisCycle;
+}
+
+static void PersistCycleOfferStateForSlot(
+	UARDialogueSubsystem* DialogueSubsystem,
+	const EARPlayerSlot Slot,
+	const TMap<EARPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
+	const TMap<EARPlayerSlot, FGameplayTagContainer>& SkippedByPlayerTransient,
+	const bool bMarkSaveDirty)
+{
+	if (!DialogueSubsystem || Slot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	UARSaveGame* SaveGame = GetCurrentSave(DialogueSubsystem);
+	if (!SaveGame)
+	{
+		return;
+	}
+
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateBySlot(SaveGame, DialogueSubsystem, Slot);
+	if (!PlayerState)
+	{
+		return;
+	}
+
+	const FGameplayTagContainer* SeenRuntimeTags = SeenByPlayerTransient.Find(Slot);
+	const FGameplayTagContainer* SkippedRuntimeTags = SkippedByPlayerTransient.Find(Slot);
+	const FGameplayTagContainer NewSeenTags = SeenRuntimeTags ? *SeenRuntimeTags : FGameplayTagContainer();
+	const FGameplayTagContainer NewSkippedTags = SkippedRuntimeTags ? *SkippedRuntimeTags : FGameplayTagContainer();
+
+	const bool bSeenChanged = !AreTagContainersEquivalent(PlayerState->SeenConversationTagsThisCycle, NewSeenTags);
+	const bool bSkippedChanged = !AreTagContainersEquivalent(PlayerState->SkippedConversationTagsThisCycle, NewSkippedTags);
+	if (!bSeenChanged && !bSkippedChanged)
+	{
+		return;
+	}
+
+	PlayerState->SeenConversationTagsThisCycle = NewSeenTags;
+	PlayerState->SkippedConversationTagsThisCycle = NewSkippedTags;
+
+	if (bMarkSaveDirty)
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GetSaveSubsystem(DialogueSubsystem))
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+}
+
+static void PersistSeenCycleTagsForSlot(
+	UARDialogueSubsystem* DialogueSubsystem,
+	const EARPlayerSlot Slot,
+	const TMap<EARPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
+	const bool bMarkSaveDirty)
+{
+	if (!DialogueSubsystem || Slot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	UARSaveGame* SaveGame = GetCurrentSave(DialogueSubsystem);
+	if (!SaveGame)
+	{
+		return;
+	}
+
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateBySlot(SaveGame, DialogueSubsystem, Slot);
+	if (!PlayerState)
+	{
+		return;
+	}
+
+	const FGameplayTagContainer* SeenRuntimeTags = SeenByPlayerTransient.Find(Slot);
+	const FGameplayTagContainer NewSeenTags = SeenRuntimeTags ? *SeenRuntimeTags : FGameplayTagContainer();
+	if (AreTagContainersEquivalent(PlayerState->SeenConversationTagsThisCycle, NewSeenTags))
+	{
+		return;
+	}
+
+	PlayerState->SeenConversationTagsThisCycle = NewSeenTags;
+	if (bMarkSaveDirty)
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GetSaveSubsystem(DialogueSubsystem))
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
 }
 
 static FGameplayTag GetDialogueSpeakerPlayerPlaceholderTag()
@@ -510,6 +707,29 @@ static FGameplayTag GetDialogueSpeakerBrotherTag()
 static FGameplayTag GetDialogueSpeakerSisterTag()
 {
 	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
+}
+
+static bool PassesCharacterRestriction(
+	const EDialogueActiveCharacterRestriction Restriction,
+	const FGameplayTag& ResolvedPlayerSpeakerTag)
+{
+	switch (Restriction)
+	{
+	case EDialogueActiveCharacterRestriction::Any:
+		return true;
+	case EDialogueActiveCharacterRestriction::BrotherOnly:
+	{
+		const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
+		return BrotherTag.IsValid() && ResolvedPlayerSpeakerTag.MatchesTag(BrotherTag);
+	}
+	case EDialogueActiveCharacterRestriction::SisterOnly:
+	{
+		const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
+		return SisterTag.IsValid() && ResolvedPlayerSpeakerTag.MatchesTag(SisterTag);
+	}
+	default:
+		return true;
+	}
 }
 
 static FGameplayTag ResolvePlayerSpeakerTag(const AARPlayerStateBase* PlayerState)
@@ -667,6 +887,24 @@ static const FARDialogueSpeakerRow* ResolveSpeakerRowForPresentation(
 		if (SpeakerRow)
 		{
 			return SpeakerRow;
+		}
+	}
+
+	return nullptr;
+}
+
+static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const UARSaveGame* SaveGame, const EARPlayerSlot Slot)
+{
+	if (!SaveGame || Slot == EARPlayerSlot::Unknown)
+	{
+		return nullptr;
+	}
+
+	for (const FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
+	{
+		if (Entry.Identity.PlayerSlot == Slot)
+		{
+			return &Entry;
 		}
 	}
 
@@ -1480,6 +1718,11 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
 	Runtime.ConversationsByTag.Reset();
 	Runtime.SpeakerRowsByTag.Reset();
+	Runtime.ActiveSessions.Reset();
+	Runtime.SeenByPlayerTransient.Reset();
+	Runtime.SkippedByPlayerTransient.Reset();
+	Runtime.SeenByGameTransient.Reset();
+	Runtime.EavesdropTargetByViewer.Reset();
 
 	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
 	if (!Settings)
@@ -2153,12 +2396,13 @@ namespace
 	static FString BuildConversationOfferGatingSignature(const FDialogueConversationHeader& Header)
 	{
 		return FString::Printf(
-			TEXT("Speaker=%s|Pri=%d|Weight=%d|Chance=%s|CycleBlock=%d|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
+			TEXT("Speaker=%s|Pri=%d|Weight=%d|Chance=%s|CycleBlock=%d|CharRestrict=%d|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
 			*Header.PrimarySpeakerTag.ToString(),
 			Header.Priority,
 			Header.OfferWeight,
 			*FString::SanitizeFloat(Header.ChanceOffered),
 			Header.bBlockOfferPerCycle ? 1 : 0,
+			static_cast<int32>(Header.CharacterRestriction),
 			*FString::SanitizeFloat(Header.MinimumRelationshipPoints),
 			Header.bRepeatable ? 1 : 0,
 			Header.bSeenByGameBlocksReoffer ? 1 : 0,
@@ -2591,6 +2835,40 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Multi-line node next output"));
 			break;
 		}
+		case EDialogueNodeType::SplitLine:
+		{
+			const FDialogueMultiLineNodeData* SplitLineData = Node.NodeData.GetPtr<FDialogueMultiLineNodeData>();
+			if (!SplitLineData)
+			{
+				Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Split-line node payload mismatch."));
+			}
+			else
+			{
+				if (SplitLineData->Lines.Num() < 2)
+				{
+					Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Split-line node should author at least two lines."));
+				}
+
+				TSet<FGuid> SeenEntryIds;
+				for (const FDialogueMultiLineEntry& Entry : SplitLineData->Lines)
+				{
+					if (!Entry.EntryId.IsValid())
+					{
+						Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Split-line entry has invalid EntryId."));
+					}
+					else if (SeenEntryIds.Contains(Entry.EntryId))
+					{
+						Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Duplicate EntryId found in split-line node."));
+					}
+					SeenEntryIds.Add(Entry.EntryId);
+
+					ValidateLineEntry(Entry.LineData, Node.NodeId, TEXT("Split-line entry"));
+				}
+			}
+
+			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Split-line node next output"));
+			break;
+		}
 		case EDialogueNodeType::Choice:
 		{
 			TSet<FGuid> SeenChoiceBranches;
@@ -2784,6 +3062,65 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 			else if (ConnectedBranchCount == 0)
 			{
 				Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Sequence node has no connected branch outputs and will end non-completed."));
+			}
+			break;
+		}
+		case EDialogueNodeType::RouteByCharacter:
+		{
+			TSet<FGuid> SeenBranchIds;
+			TSet<FGameplayTag> SeenSpeakerTags;
+			int32 ConnectedBranchCount = 0;
+			for (int32 BranchIndex = 0; BranchIndex < Node.CharacterRouteBranches.Num(); ++BranchIndex)
+			{
+				const FDialogueCompiledCharacterRouteBranch& Branch = Node.CharacterRouteBranches[BranchIndex];
+				if (!Branch.BranchId.IsValid())
+				{
+					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Character route branch has invalid BranchId."));
+					continue;
+				}
+				if (SeenBranchIds.Contains(Branch.BranchId))
+				{
+					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Character route branch id is duplicated in node."));
+				}
+				SeenBranchIds.Add(Branch.BranchId);
+
+				if (!Branch.SpeakerTag.IsValid())
+				{
+					Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Character route branch requires a valid SpeakerTag."));
+				}
+				else if (!IsResolvableConversationSpeakerTag(ValidationSpeakerRows, Branch.SpeakerTag))
+				{
+					Add(
+						EDialogueValidationSeverity::Warning,
+						Node.NodeId,
+						FString::Printf(
+							TEXT("Character route branch speaker '%s' does not resolve to a known speaker."),
+							*Branch.SpeakerTag.ToString()));
+				}
+				else if (SeenSpeakerTags.Contains(Branch.SpeakerTag))
+				{
+					Add(
+						EDialogueValidationSeverity::Warning,
+						Node.NodeId,
+						FString::Printf(
+							TEXT("Character route branch ordering ambiguity: duplicate speaker tag '%s' found; first-match order controls routing."),
+							*Branch.SpeakerTag.ToString()));
+				}
+				SeenSpeakerTags.Add(Branch.SpeakerTag);
+
+				if (Branch.NextNodeId.IsValid())
+				{
+					++ConnectedBranchCount;
+				}
+				RegisterEdge(Node.NodeId, Branch.NextNodeId, true, TEXT("Character route branch output"));
+			}
+			if (Node.CharacterRouteBranches.IsEmpty())
+			{
+				Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Character route node has no branches."));
+			}
+			else if (ConnectedBranchCount == 0)
+			{
+				Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Character route node has no connected outputs and will end non-completed."));
 			}
 			break;
 		}
@@ -2999,6 +3336,11 @@ static bool PassesConversationOfferRules(
 	const FDialogueRuntimeContext& Context,
 	const FDialogueConversationHeader& Header)
 {
+	if (!PassesCharacterRestriction(Header.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	{
+		return false;
+	}
+
 	if (Context.RelationshipPointsForPrimarySpeaker < Header.MinimumRelationshipPoints)
 	{
 		return false;
@@ -3023,6 +3365,15 @@ static bool EvaluateConversationOfferRules(
 	const FDialogueConversationHeader& Header,
 	FString* OutFailureReason)
 {
+	if (!PassesCharacterRestriction(Header.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	{
+		if (OutFailureReason)
+		{
+			*OutFailureReason = TEXT("CharacterRestriction failed.");
+		}
+		return false;
+	}
+
 	if (Context.RelationshipPointsForPrimarySpeaker < Header.MinimumRelationshipPoints)
 	{
 		if (OutFailureReason)
@@ -3091,6 +3442,7 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		return false;
 	}
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	SyncCycleOfferStateFromSaveForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	const UWorld* World = GetWorld();
 	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
 	const FGameplayTag ModeTag = GetCurrentModeTag(World);
@@ -3216,6 +3568,7 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 				if (Conversation->Header.ConversationTag.IsValid())
 				{
 					SkippedForPlayer.AddTag(Conversation->Header.ConversationTag);
+					PersistCycleOfferStateForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
 				}
 				UE_LOG(ARLog, Verbose,
 					TEXT("[Dialogue] Offer chance skipped '%s': roll %.3f > chance %.3f."),
@@ -3645,8 +3998,35 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 
 	auto ShouldShowLineEntry = [&](const FDialogueLineNodeData& LineData, const FDialogueRuntimeContext& Context) -> bool
 	{
+		if (!PassesCharacterRestriction(LineData.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+		{
+			return false;
+		}
+
 		return PassesLockedConditions(DialogueSubsystem, LineData.SkipLockedConditions, Context)
 			&& PassesBlockedConditions(DialogueSubsystem, LineData.SkipBlockedConditions, Context);
+	};
+
+	auto DoesSpeakerTagMatchActivePlayer = [&](const FGameplayTag& CandidateSpeakerTag, const FDialogueRuntimeContext& Context) -> bool
+	{
+		if (!CandidateSpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		const FGameplayTag PlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+		if (PlaceholderTag.IsValid() && CandidateSpeakerTag.MatchesTagExact(PlaceholderTag))
+		{
+			return true;
+		}
+
+		if (!Context.ResolvedPlayerSpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		return CandidateSpeakerTag.MatchesTag(Context.ResolvedPlayerSpeakerTag)
+			|| Context.ResolvedPlayerSpeakerTag.MatchesTag(CandidateSpeakerTag);
 	};
 
 	auto RouteToNextOrPending = [&](const FGuid& NextNodeId, const TCHAR* MissingNextWarning, EDialogueExecutionResult& OutResult) -> bool
@@ -3826,6 +4206,40 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			}
 			break;
 		}
+		case EDialogueNodeType::SplitLine:
+		{
+			const FDialogueMultiLineNodeData* SplitLineData = Node->NodeData.GetPtr<FDialogueMultiLineNodeData>();
+			if (!SplitLineData)
+			{
+				LogRuntimeError(TEXT("Split-line node payload missing."));
+				return EDialogueExecutionResult::Failed;
+			}
+
+			for (const FDialogueMultiLineEntry& Entry : SplitLineData->Lines)
+			{
+				if (!ShouldShowLineEntry(Entry.LineData, Context))
+				{
+					continue;
+				}
+
+				if (!DoesSpeakerTagMatchActivePlayer(Entry.LineData.Line.SpeakerTag, Context))
+				{
+					continue;
+				}
+
+				return PresentLineAndWait(Entry.LineData.Line, Context, Node->NodeId, INDEX_NONE);
+			}
+
+			EDialogueExecutionResult RouteResult = EDialogueExecutionResult::Failed;
+			if (!RouteToNextOrPending(
+				Node->NextNodeId,
+				TEXT("Split-line node found no matching line for active character and no Next link; ending non-completed."),
+				RouteResult))
+			{
+				return RouteResult;
+			}
+			break;
+		}
 		case EDialogueNodeType::Choice:
 		{
 			ClearSessionPresentationState(Session);
@@ -3902,6 +4316,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 				for (const EARPlayerSlot Slot : SlottedPlayers)
 				{
 					AddSessionParticipant(Session, SeenByPlayerTransient, Slot);
+					PersistSeenCycleTagsForSlot(DialogueSubsystem, Slot, SeenByPlayerTransient, true);
 				}
 			}
 
@@ -3978,6 +4393,37 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 					break;
 				}
 				Session.CurrentNodeId = Node->SwitchDefaultNodeId;
+			}
+			break;
+		}
+		case EDialogueNodeType::RouteByCharacter:
+		{
+			bool bMatched = false;
+			for (const FDialogueCompiledCharacterRouteBranch& Branch : Node->CharacterRouteBranches)
+			{
+				if (!DoesSpeakerTagMatchActivePlayer(Branch.SpeakerTag, Context))
+				{
+					continue;
+				}
+
+				Session.CurrentNodeId = Branch.NextNodeId;
+				if (!Session.CurrentNodeId.IsValid())
+				{
+					LogRuntimeError(TEXT("Character route branch selected but has no connection."));
+					return EDialogueExecutionResult::Failed;
+				}
+
+				bMatched = true;
+				break;
+			}
+
+			if (!bMatched)
+			{
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Character route node has no matching branch for active player and no pending sequence branch; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
 			}
 			break;
 		}
@@ -4293,6 +4739,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	}
 
 	const FARPlayerIdentity RequesterIdentity = BuildPlayerIdentityFromState(RequesterPS);
+	SyncCycleOfferStateFromSaveForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	FDialogueRuntimeContext StartContext = BuildOfferContext(this, Conversation, RequesterPS, RequesterIdentity);
 	StartContext.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(ConversationTag);
 	if (const FGameplayTagContainer* SeenTags = Runtime.SeenByPlayerTransient.Find(RequesterSlot))
@@ -4356,6 +4803,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 			{
 				AddSessionParticipant(*Existing, Runtime.SeenByPlayerTransient, RequesterSlot);
 				Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).RemoveTag(ConversationTag);
+				PersistCycleOfferStateForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
 				BroadcastSessionUpdated(this, *Existing);
 				UE_LOG(ARLog, Verbose, TEXT("[Dialogue] StartConversation: player joined existing shared session for '%s'."), *ConversationTag.ToString());
 				return true;
@@ -4382,6 +4830,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	Session.bConversationImportant = Conversation->Header.bImportant;
 	AddSessionParticipant(Session, Runtime.SeenByPlayerTransient, RequesterSlot);
 	Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).RemoveTag(ConversationTag);
+	PersistCycleOfferStateForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
 
 	Runtime.SeenByGameTransient.AddTag(ConversationTag);
 
@@ -4393,6 +4842,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 		{
 			AddSessionParticipant(Session, Runtime.SeenByPlayerTransient, Slot);
 			Runtime.SkippedByPlayerTransient.FindOrAdd(Slot).RemoveTag(ConversationTag);
+			PersistCycleOfferStateForSlot(this, Slot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
 		}
 	}
 
@@ -4618,6 +5068,7 @@ bool UARDialogueSubsystem::ForceEavesdrop(AARPlayerController* RequestingControl
 		if (FARActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(Runtime.ActiveSessions, TargetSlot))
 		{
 			AddSessionParticipant(*TargetSession, Runtime.SeenByPlayerTransient, ViewerSlot);
+			PersistCycleOfferStateForSlot(this, ViewerSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
 			BroadcastSessionUpdated(this, *TargetSession);
 		}
 		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] ForceEavesdrop: viewer %s now eavesdropping owner %s."),
@@ -4875,17 +5326,63 @@ bool UARDialogueSubsystem::HasActiveDialogueSession() const
 void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot PlayerSlot)
 {
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	UARSaveGame* SaveGame = GetCurrentSave(this);
+	UARSaveSubsystem* SaveSubsystem = GetSaveSubsystem(this);
+	bool bSaveChanged = false;
 
 	if (PlayerSlot == EARPlayerSlot::Unknown)
 	{
 		Runtime.SeenByPlayerTransient.Reset();
 		Runtime.SkippedByPlayerTransient.Reset();
+
+		if (SaveGame)
+		{
+			for (FDialoguePlayerPersistentState& PlayerState : SaveGame->DialoguePlayerPersistentStates)
+			{
+				if (!PlayerState.SeenConversationTagsThisCycle.IsEmpty() || !PlayerState.SkippedConversationTagsThisCycle.IsEmpty())
+				{
+					PlayerState.SeenConversationTagsThisCycle.Reset();
+					PlayerState.SkippedConversationTagsThisCycle.Reset();
+					bSaveChanged = true;
+				}
+			}
+		}
+
+		if (bSaveChanged && SaveSubsystem)
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+
 		UE_LOG(ARLog, Log, TEXT("[Dialogue] Cleared conversation cycle offer state for all player slots."));
 		return;
 	}
 
 	Runtime.SeenByPlayerTransient.Remove(PlayerSlot);
 	Runtime.SkippedByPlayerTransient.Remove(PlayerSlot);
+
+	if (SaveGame)
+	{
+		for (FDialoguePlayerPersistentState& PlayerState : SaveGame->DialoguePlayerPersistentStates)
+		{
+			if (PlayerState.Identity.PlayerSlot != PlayerSlot)
+			{
+				continue;
+			}
+
+			if (!PlayerState.SeenConversationTagsThisCycle.IsEmpty() || !PlayerState.SkippedConversationTagsThisCycle.IsEmpty())
+			{
+				PlayerState.SeenConversationTagsThisCycle.Reset();
+				PlayerState.SkippedConversationTagsThisCycle.Reset();
+				bSaveChanged = true;
+			}
+		}
+	}
+
+	if (bSaveChanged && SaveSubsystem)
+	{
+		SaveSubsystem->MarkSaveDirty();
+	}
+
 	UE_LOG(ARLog, Log, TEXT("[Dialogue] Cleared conversation cycle offer state for slot %s."),
 		*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(PlayerSlot)));
 }

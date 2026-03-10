@@ -33,6 +33,7 @@ private:
 	TSharedRef<SWidget> BuildSwitchInlineContent() const;
 	TSharedRef<SWidget> BuildRandomInlineContent() const;
 	TSharedRef<SWidget> BuildSequenceInlineContent() const;
+	TSharedRef<SWidget> BuildCharacterRouteInlineContent() const;
 	TSharedRef<SWidget> BuildMultiLineInlineContent() const;
 	TSharedRef<SWidget> BuildRelationshipInlineContent() const;
 	TSharedRef<SWidget> BuildFactionInlineContent() const;
@@ -46,6 +47,7 @@ private:
 	void HandleChoiceTextCommitted(const FText& NewText, ETextCommit::Type CommitType, FGuid ChoiceBranchId) const;
 	void HandleFallbackTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 	void HandleSwitchLabelCommitted(const FText& NewText, ETextCommit::Type CommitType, FGuid BranchId) const;
+	void HandleCharacterRouteTagChanged(FGameplayTag NewTag, FGuid BranchId) const;
 	void HandleRandomWeightCommitted(float NewValue, ETextCommit::Type CommitType, FGuid BranchId) const;
 	FReply HandleAddMultiLineEntryClicked() const;
 	FReply HandleDeleteMultiLineEntryClicked(FGuid EntryId) const;
@@ -59,11 +61,15 @@ private:
 	FText GetNodeTitleText() const;
 	FSlateColor GetTitleColor() const;
 	FString GetFactionTagFilter() const;
+	const FSlateBrush* GetCharacterRoutePortraitBrush(FGameplayTag SpeakerTag) const;
+	void RefreshCharacterRoutePortraitBrush(FGameplayTag SpeakerTag) const;
 	FText GetRelationshipDeltaText() const;
 	FText GetFactionDeltaText() const;
 
 	TSharedPtr<SVerticalBox> LeftNodeBox;
 	TSharedPtr<SVerticalBox> RightNodeBox;
+	mutable TMap<FName, FSlateBrush> CharacterRoutePortraitBrushesBySpeaker;
+	mutable TSet<FName> CharacterRouteSpeakersWithPortrait;
 };
 
 TSharedRef<FGraphPanelNodeFactory> CreateARDialogueInlineGraphNodeFactory();
