@@ -171,6 +171,14 @@ NPC actor integration now routes through `UARNPCTalkComponent`:
 - `UARNPCTalkComponent` owns NPC-side dialogue interaction + replicated dialogue talkable mask/state.
 - `AARNPCCharacterBase` remains the owner of non-dialogue local NPC gates (for example serving/customer mode) and combines that with component talkability for public NPC talk checks.
 
+## Emotion Resolver Runtime
+
+- `UAREmotionResolverSubsystem` caches emotion tag->icon mappings from `UAREmotionSettings::EmotionDataTable`.
+- Resolver cache invalidates/rebuilds when configured settings inputs change or when the bound emotion DataTable broadcasts `OnDataTableChanged`.
+- Debug console commands:
+  - `ar.emotion.LogCacheStats`
+  - `ar.emotion.RebuildCache`
+
 ## Editor Tooling (Current)
 
 Registered editor tabs:
@@ -184,6 +192,7 @@ Conversation graph tooling now provides:
 - right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)
 - graph node classes/schema (`UARDialogueEdGraph`, `UARDialogueEdGraphNode`, `UARDialogueEdGraphSchema`)
 - line nodes now render with inline authoring UI: speaker portrait button (click to cycle speakers) + wrapped inline line-text edit
+- custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)
 - drag-link execution wiring with:
   - one outgoing link per output pin
   - multiple incoming links allowed per node input
@@ -196,7 +205,8 @@ Conversation graph tooling now provides:
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
-- speaker rows include optional `LineFontStyleTag` default used whenever that speaker is presenting a line
+- speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
+- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`
 
 Speaker hub currently provides:
 
@@ -206,4 +216,10 @@ Speaker hub currently provides:
 - reorderable threshold editing/reset (`50,150,300,500` defaults)
 - inline portrait list with add/update/remove operations
 - relationship-band grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
+- conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Dialogue.Conversation.Id.<Speaker>.*`)
+- conversation map `Required Tags` uses gameplay tag container editing (no CSV string entry)
+- conversation map rows expose right-click context actions for `Open`, `Duplicate`, `Remove From Lookup`, and `Delete Asset + Remove From Lookup`
+- speaker editor supports transaction-backed `Ctrl+Z` / `Ctrl+Y` (`Ctrl+Shift+Z`) undo/redo for conversation create/duplicate/delete flows
+- stale lookup rows are cleaned when referenced conversation assets are deleted; removed conversation tags are stripped from lock/block condition references in remaining conversations
+- generated conversation tag config cleanup is explicit via `Cleanup Tags` action (not implicit during delete), keeping undo/redo behavior predictable
 - conversation create/open actions and broken-conversation scan using runtime validator

@@ -66,6 +66,45 @@ namespace
 			return FText::FromString(TEXT("Unknown"));
 		}
 	}
+
+	static FString BuildNodeTypeTooltip(const EDialogueNodeType NodeType)
+	{
+		switch (NodeType)
+		{
+		case EDialogueNodeType::Enter:
+			return TEXT("Entry point for this conversation graph.");
+		case EDialogueNodeType::Completed:
+			return TEXT("Conversation completion node.");
+		case EDialogueNodeType::Line:
+			return TEXT("Single spoken line.");
+		case EDialogueNodeType::Choice:
+			return TEXT("Player choice branch node.");
+		case EDialogueNodeType::Bool:
+			return TEXT("Conditional true/false branch node.");
+		case EDialogueNodeType::SwitchOnTagsByPriority:
+			return TEXT("Priority switch branch node.");
+		case EDialogueNodeType::TagMutation:
+			return TEXT("Gameplay tag mutation node.");
+		case EDialogueNodeType::RelationshipMutation:
+			return TEXT("Relationship mutation node.");
+		case EDialogueNodeType::FactionMutation:
+			return TEXT("Faction mutation node.");
+		case EDialogueNodeType::Random:
+			return TEXT("Weighted random branch node.");
+		case EDialogueNodeType::Route:
+			return TEXT("Flow routing helper node.");
+		case EDialogueNodeType::Sequence:
+			return TEXT("Sequential branch node.");
+		case EDialogueNodeType::MultiLine:
+			return TEXT("Multi-line sequence node.");
+		case EDialogueNodeType::SplitLine:
+			return TEXT("Split-line variant node.");
+		case EDialogueNodeType::RouteByCharacter:
+			return TEXT("Route by active player character.");
+		default:
+			return TEXT("Dialogue node.");
+		}
+	}
 }
 
 FName UARDialogueEdGraphNode::GetPinNameIn()
@@ -1296,7 +1335,13 @@ FText UARDialogueEdGraphNode::GetTooltipText() const
 		return FText::FromString(ValidationMessage);
 	}
 
-	return FText::FromString(BuildInlineSummary());
+	const FString InlineSummary = BuildInlineSummary();
+	if (InlineSummary.IsEmpty())
+	{
+		return FText::FromString(BuildNodeTypeTooltip(RuntimeNode.NodeType));
+	}
+
+	return FText::FromString(FString::Printf(TEXT("%s\n%s"), *BuildNodeTypeTooltip(RuntimeNode.NodeType), *InlineSummary));
 }
 
 FLinearColor UARDialogueEdGraphNode::GetNodeTitleColor() const

@@ -11,6 +11,8 @@
 #include "AREmotionResolverSubsystem.generated.h"
 
 class UTexture2D;
+class UDataTable;
+class IConsoleObject;
 
 UCLASS()
 class ALIENRAMEN_API UAREmotionResolverSubsystem : public UGameInstanceSubsystem
@@ -25,6 +27,9 @@ public:
 	void RebuildCache();
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Emotion")
+	void LogCacheStats() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Emotion")
 	bool TryResolveEmotionIcon(
 		FGameplayTag RequestedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
@@ -37,6 +42,12 @@ public:
 		FGameplayTag& OutResolvedEmotionTag);
 
 private:
+	void RegisterDebugConsoleCommands();
+	void UnregisterDebugConsoleCommands();
+	void HandleEmotionDataTableChanged();
+	void BindToConfiguredDataTable();
+	void UnbindDataTableChangedDelegate();
+	bool HasConfigInputsChanged() const;
 	bool EnsureCacheBuilt();
 	bool BuildCache();
 
@@ -47,6 +58,19 @@ private:
 	TMap<FGameplayTag, FGameplayTag> RequestToResolvedTagCache;
 	TMap<FGameplayTag, TSoftObjectPtr<UTexture2D>> RequestToResolvedIconCache;
 	TSet<FGameplayTag> RequestMissCache;
+
+	TWeakObjectPtr<class UDataTable> BoundDataTable;
+	FDelegateHandle DataTableChangedHandle;
+	FSoftObjectPath CachedEmotionDataTablePath;
+	FGameplayTag CachedGenericRootTag;
+
+	IConsoleObject* CmdLogCacheStats = nullptr;
+	IConsoleObject* CmdRebuildCache = nullptr;
+	uint64 CacheBuildCount = 0;
+	uint64 LookupCount = 0;
+	uint64 CacheHitCount = 0;
+	uint64 CacheMissCount = 0;
+	uint64 CacheInvalidationCount = 0;
 
 	bool bCacheBuilt = false;
 };
