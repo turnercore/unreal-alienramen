@@ -530,6 +530,16 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 {
 	OutResult = FARSaveResult();
 
+	if (CurrentSaveGame)
+	{
+		OutResult.Error = FString::Printf(
+			TEXT("CreateNewSave blocked: active save '%s' is loaded. Call UnloadCurrentSave first."),
+			*CurrentSlotBaseName.ToString());
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
 	FName SlotBase = DesiredSlotBase.IsNone() ? GenerateRandomSlotBaseName(true) : NormalizeSlotBaseName(DesiredSlotBase);
 	SlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(SlotBase, bUseDebugSaves);
 	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
@@ -595,6 +605,52 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	OutResult.SlotNumber = 0;
 	OnSaveCompleted.Broadcast(OutResult);
 	return true;
+}
+
+void UARSaveSubsystem::UnloadCurrentSave()
+{
+	CurrentSaveGame = nullptr;
+	CurrentSlotBaseName = NAME_None;
+	LastSaveTimestampUtc = FDateTime();
+	bSaveDirty = false;
+	PendingTravelGameStateData.Reset();
+
+	UWorld* World = GetWorld();
+	AARGameStateBase* GameState = World ? World->GetGameState<AARGameStateBase>() : nullptr;
+	if (!GameState || !GameState->HasAuthority())
+	{
+		return;
+	}
+
+	const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
+	const FGameplayTagContainer DefaultUnlocks = LoadoutSettings
+		? LoadoutSettings->GetEffectiveDefaultStartingUnlocks()
+		: FGameplayTagContainer();
+
+	GameState->SetUnlocksFromSave(DefaultUnlocks);
+	GameState->SetMoneyFromSave(0);
+	GameState->SetScrapFromSave(0);
+	GameState->SetMeatFromSave(FARMeatState());
+	GameState->SyncCyclesFromSave(0);
+	GameState->SetActiveFactionTagFromSave(FGameplayTag());
+	GameState->SetActiveFactionEffectTagsFromSave(FGameplayTagContainer());
+	GameState->NotifyHydratedFromSave();
+
+	for (APlayerState* BasePlayerState : GameState->PlayerArray)
+	{
+		AARPlayerStateBase* PlayerState = Cast<AARPlayerStateBase>(BasePlayerState);
+		if (!PlayerState)
+		{
+			continue;
+		}
+
+		// Reset player identity/loadout runtime to first-join baseline for a fresh save flow.
+		PlayerState->SetLoadoutTags(FGameplayTagContainer());
+		PlayerState->InitializeForFirstSessionJoin();
+		PlayerState->SetReadyForRun(false);
+		PlayerState->SetDownedState(false);
+		PlayerState->SetDeadState(false);
+	}
 }
 
 bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBytes, FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult)

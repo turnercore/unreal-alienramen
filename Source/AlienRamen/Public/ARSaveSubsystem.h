@@ -46,6 +46,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool DeleteSave(FName SlotBaseName, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
+	// Clears active canonical save selection from memory. Does not delete any on-disk saves.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void UnloadCurrentSave();
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	UARSaveGame* GetCurrentSaveGame() const { return CurrentSaveGame; }
 

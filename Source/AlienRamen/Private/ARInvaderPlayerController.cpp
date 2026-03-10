@@ -34,6 +34,12 @@ void AARInvaderPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	Super::EndPlay(EndPlayReason);
 }
 
+void AARInvaderPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	SyncFullBlastMenuFromGameState();
+}
+
 AARPlayerStateBase* AARInvaderPlayerController::GetInvaderPlayerState() const
 {
 	return GetPlayerState<AARPlayerStateBase>();
@@ -46,12 +52,18 @@ void AARInvaderPlayerController::HandleInvaderFullBlastSessionChanged(const bool
 
 void AARInvaderPlayerController::TryBindInvaderGameState()
 {
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
 	AARInvaderGameState* CurrentGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr;
 	if (!CurrentGameState)
 	{
 		if (!BindInvaderGameStateRetryTimer.IsValid())
 		{
-			GetWorldTimerManager().SetTimer(
+			World->GetTimerManager().SetTimer(
 				BindInvaderGameStateRetryTimer,
 				this,
 				&AARInvaderPlayerController::TryBindInvaderGameState,
@@ -81,10 +93,17 @@ void AARInvaderPlayerController::TryBindInvaderGameState()
 
 void AARInvaderPlayerController::StopBindInvaderGameStateRetry()
 {
-	if (BindInvaderGameStateRetryTimer.IsValid())
+	if (!BindInvaderGameStateRetryTimer.IsValid())
 	{
-		GetWorldTimerManager().ClearTimer(BindInvaderGameStateRetryTimer);
+		return;
 	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(BindInvaderGameStateRetryTimer);
+	}
+
+	BindInvaderGameStateRetryTimer.Invalidate();
 }
 
 void AARInvaderPlayerController::SyncFullBlastMenuFromGameState()
@@ -235,16 +254,38 @@ void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(
 
 	if (!FullBlastMenuWidget->IsInViewport())
 	{
-		FullBlastMenuWidget->AddToViewport(100);
+		// In couch co-op, attach per local player first; fallback to global viewport.
+		if (!FullBlastMenuWidget->AddToPlayerScreen(100))
+		{
+			FullBlastMenuWidget->AddToViewport(100);
+		}
+	}
+
+	const bool bIsChooser = IsChooserForSession(Session);
+	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, bIsChooser);
+
+	// Only chooser needs UI input capture; observers should still see menu without forced input mode changes.
+	if (bIsChooser && !bCapturedInputForFullBlast)
+	{
 		bCachedShowMouseCursorForFullBlast = bShowMouseCursor;
 		bShowMouseCursor = true;
 		FInputModeUIOnly InputMode;
-		InputMode.SetWidgetToFocus(FullBlastMenuWidget->TakeWidget());
+		if (FullBlastMenuWidget->IsFocusable())
+		{
+			InputMode.SetWidgetToFocus(FullBlastMenuWidget->TakeWidget());
+		}
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		SetInputMode(InputMode);
+		bCapturedInputForFullBlast = true;
 	}
-
-	FullBlastMenuWidget->InitializeFullBlastMenu(this, Session, OfferDefinitions, IsChooserForSession(Session));
+	else if (!bIsChooser && bCapturedInputForFullBlast)
+	{
+		// Chooser role can change during session updates; release capture immediately.
+		FInputModeGameOnly InputMode;
+		SetInputMode(InputMode);
+		bShowMouseCursor = bCachedShowMouseCursorForFullBlast;
+		bCapturedInputForFullBlast = false;
+	}
 }
 
 void AARInvaderPlayerController::CloseFullBlastMenu()
@@ -253,9 +294,14 @@ void AARInvaderPlayerController::CloseFullBlastMenu()
 	{
 		FullBlastMenuWidget->NotifyMenuClosed();
 		FullBlastMenuWidget->RemoveFromParent();
+	}
+
+	if (bCapturedInputForFullBlast)
+	{
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
 		bShowMouseCursor = bCachedShowMouseCursorForFullBlast;
+		bCapturedInputForFullBlast = false;
 	}
 }
 
