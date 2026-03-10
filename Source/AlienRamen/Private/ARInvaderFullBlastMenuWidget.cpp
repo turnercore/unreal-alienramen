@@ -35,11 +35,21 @@ void UARInvaderFullBlastMenuWidget::PublishOfferPresence(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
 	const FVector2D CursorNormalized,
-	const bool bHasCursor)
+	const bool bHasCursor,
+	const FGameplayTag SelectedUpgradeTag,
+	const int32 SelectedDestinationSlot,
+	const bool bHasSelection)
 {
 	if (AARInvaderPlayerController* Controller = OwningInvaderController.Get())
 	{
-		Controller->RequestSetOfferPresence(HoveredUpgradeTag, HoveredDestinationSlot, CursorNormalized, bHasCursor);
+		Controller->RequestSetOfferPresence(
+			HoveredUpgradeTag,
+			HoveredDestinationSlot,
+			CursorNormalized,
+			bHasCursor,
+			SelectedUpgradeTag,
+			SelectedDestinationSlot,
+			bHasSelection);
 	}
 }
 
@@ -55,4 +65,3 @@ void UARInvaderFullBlastMenuWidget::NotifyMenuClosed()
 {
 	BP_OnFullBlastMenuClosed();
 }
-

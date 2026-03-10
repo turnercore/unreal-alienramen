@@ -26,6 +26,7 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameplayEffectExtension.h"
 
@@ -60,6 +61,53 @@ FGameplayTag AARPlayerCharacterInvader::GetTagRootHats()
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"));
 }
 
+namespace
+{
+	void NormalizeRangeTriggerCollision(AActor* OwnerActor)
+	{
+		if (!OwnerActor)
+		{
+			return;
+		}
+
+		TInlineComponentArray<UPrimitiveComponent*> PrimitiveComponents;
+		OwnerActor->GetComponents(PrimitiveComponents);
+
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (!Primitive)
+			{
+				continue;
+			}
+
+			// BP_BaseInvaderPawn range trigger components are blueprint-authored and may drift to blocking profiles.
+			if (!Primitive->GetName().Contains(TEXT("RangeTrigger"), ESearchCase::IgnoreCase))
+			{
+				continue;
+			}
+
+			const bool bWasBlockingPawn = Primitive->GetCollisionResponseToChannel(ECC_Pawn) == ECR_Block
+				|| Primitive->GetCollisionResponseToChannel(ARInvaderCollisionChannels::Player) == ECR_Block;
+			if (bWasBlockingPawn)
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[ShipCollision] Range trigger '%s' on '%s' was blocking pawn/player; forcing overlap-only."),
+					*GetNameSafe(Primitive),
+					*GetNameSafe(OwnerActor));
+			}
+
+			Primitive->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Primitive->SetCollisionObjectType(ECC_WorldDynamic);
+			Primitive->SetCollisionResponseToAllChannels(ECR_Ignore);
+			Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+			Primitive->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Overlap);
+			Primitive->SetGenerateOverlapEvents(true);
+		}
+	}
+}
+
 AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 {
 	bReplicates = true;
@@ -67,6 +115,10 @@ AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
 	{
 		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
+		// Invader players should not body-block each other in co-op.
+		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
+		// Keep generic Pawn overlap events available; only explicit player-vs-player should ignore.
+		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
 
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> FireRateGEClass(
@@ -559,6 +611,15 @@ void AARPlayerCharacterInvader::BeginPlay()
 {
 	Super::BeginPlay();
 	ApplyInvaderGravityFrameFromSettings();
+	NormalizeRangeTriggerCollision(this);
+
+	// Reapply in case BP defaults changed capsule responses.
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionObjectType(ARInvaderCollisionChannels::Player);
+		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
+		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	}
 }
 
 void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
