@@ -1,5 +1,6 @@
 #include "ARNPCTalkComponent.h"
 
+#include "AREmotionComponent.h"
 #include "ARDialogueSubsystem.h"
 #include "ARLog.h"
 #include "ARNPCSubsystem.h"
@@ -106,6 +107,14 @@ void UARNPCTalkComponent::SetNpcTag(const FGameplayTag NewNpcTag)
 	NpcTag = NewNpcTag;
 	if (IsAuthorityOwner())
 	{
+		if (AActor* OwnerActor = GetOwner())
+		{
+			if (UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>())
+			{
+				EmotionComponent->SetRegisteredSpeakerTag(NpcTag);
+			}
+		}
+
 		RefreshTalkableFromSubsystem();
 	}
 }

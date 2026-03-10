@@ -1,5 +1,6 @@
 #include "ARNPCCharacterBase.h"
 
+#include "AREmotionComponent.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "Net/UnrealNetwork.h"
@@ -8,6 +9,7 @@ AARNPCCharacterBase::AARNPCCharacterBase()
 {
 	bReplicates = true;
 	NpcTalkComponent = CreateDefaultSubobject<UARNPCTalkComponent>(TEXT("NpcTalkComponent"));
+	EmotionComponent = CreateDefaultSubobject<UAREmotionComponent>(TEXT("EmotionComponent"));
 }
 
 void AARNPCCharacterBase::BeginPlay()
@@ -24,6 +26,11 @@ void AARNPCCharacterBase::BeginPlay()
 
 		NpcTalkComponent->OnNpcTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
 		NpcTalkComponent->OnNpcTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
+
+		if (HasAuthority() && EmotionComponent)
+		{
+			EmotionComponent->SetRegisteredSpeakerTag(NpcTalkComponent->GetNpcTag());
+		}
 	}
 }
 
