@@ -10,6 +10,7 @@
 #include "ARDialogueSubsystem.generated.h"
 
 class AARPlayerController;
+class AActor;
 class UARDialogueConversationAsset;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionUpdated, const FDialogueClientView&, View);
@@ -56,6 +57,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool ApplyDialogueFactionMutation(const FDialogueFactionMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
+
+	// Shop/customer integration endpoint: applies relationship delta and emotion output in one call.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ApplyRamenServeOutcome(
+		FGameplayTag SpeakerTag,
+		int32 RelationshipDeltaPoints,
+		FGameplayTag ReactionEmotionTag,
+		AActor* PreferredSpeakerActor = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool ValidateConversation(UARDialogueConversationAsset* ConversationAsset, FDialogueValidationReport& OutReport) const;

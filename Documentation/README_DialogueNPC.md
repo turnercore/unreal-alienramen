@@ -14,6 +14,7 @@ Ownership reminder:
 
 - This runtime is inside the Dialogue plugin ownership boundary.
 - Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.
+- Shop/customer-serving built-on-top systems should route serving results through `ApplyRamenServeOutcome(...)` for relationship + emotion output.
 
 ## Runtime Entry Points
 
@@ -42,6 +43,7 @@ Core subsystem API:
 - `ValidateSpeaker(...)`
 - `PreviewConversation(...)`
 - `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
+- `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
 
 Compatibility wrappers still exist for gameplay BPs:
 
