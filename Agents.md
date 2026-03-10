@@ -57,19 +57,20 @@
   - `BP_OnARGameInstanceInitialized`
   - `BP_OnARGameInstanceShutdown`
 - `UARGameInstance` also exposes `GetARSessionSubsystem()`; `UARSessionSubsystem` (`Source/AlienRamen/Public/ARSessionSubsystem.h`) is the runtime owner for native OSS session lifecycle (`CreateSession*`/find/join/destroy/refresh) and local couch-coop join requests.
-- `UARSessionSubsystem` backend selection is config-driven for non-LAN flow: it prefers the current default online subsystem when that backend is non-null (for example Steam/EOS/Xbox), falls back to Steam when default is null but Steam is available, and finally uses default/null fallback.
+- `UARSessionSubsystem` backend routing is settings-driven via `UARNetworkRoutingSettings` (`Source/AlienRamen/Public/ARNetworkRoutingSettings.h`): `InternetSubsystemName` (default `Steam`), `LanSubsystemName` (default `NULL`), and optional `InternetSubsystemFallbackOrder`.
+- `UARSessionSubsystem` route logging is explicit (`[Session][Route]`): each resolution logs request type, LAN flag, `Stay Offline` state, chosen subsystem, and fallback reason.
 - Blueprint contract for networking should remain subsystem-based (`UARSessionSubsystem`) so backend expansion (Steam/EOS/Xbox/etc.) is primarily config/plugin/auth work; avoid backend-specific BP session node dependencies in gameplay/menu flows.
 - `UARSessionSubsystem` now supports friendly lobby-name advertisement via `CreateSessionNamed(...)`; if the name input is empty it derives from current save slot base name, then generated random slot name, then fallback `AlienRamenLobby`. Search results expose this on `FARSessionSearchResultData::SessionDisplayName`.
 - `UARSessionSubsystem::JoinSessionByIndex(...)` now handles active-session replacement by destroying the current named session first and then retrying the requested join automatically.
 - `UARSessionSubsystem` online find flow retries once without strict filters when the first non-LAN filtered query returns zero rows, reducing false-empty server lists on backend variance.
 - `UARSessionSubsystem` create/find runtime paths now integrate AdvancedSessions C++ proxies (`CreateAdvancedSession` / `FindSessionsAdvanced`) when local player context is available, while subsystem BP API names remain unchanged.
 - `AlienRamen.uproject` enables `AdvancedSessions` and `AdvancedSteamSessions`; this is required by `UARSessionSubsystem` C++ proxy integration (`CreateSessionCallbackProxyAdvanced` / `FindSessionsCallbackProxyAdvanced`) and matching Build.cs module dependencies.
-- `UARSessionSubsystem` exposes Steam/friends-first utilities in the same API surface: `FindFriendSession(...)` and `InviteFriendToSession(...)` with `OnFindFriendSessionCompleted` / `OnInviteFriendCompleted`.
+- `UARSessionSubsystem` exposes platform/friends-first utilities in the same API surface: `FindFriendSession(...)` and `InviteFriendToSession(...)` with `OnFindFriendSessionCompleted` / `OnInviteFriendCompleted`.
 - Session search cancel path is exposed natively via `CancelFindSessions(...)` + `OnCancelFindSessionsCompleted`.
 - Blueprint exec-flow wrappers now exist in `ARSessionAsyncActions` (`CreateSessionAsync`, `FindSessionsAsync`, `JoinSessionByIndexAsync`, `DestroySessionAsync`) with `OnSuccess` / `OnFailure` pins while existing subsystem multicast signals remain available.
-- Steam invite acceptance is native in `UARSessionSubsystem` (`OnSessionUserInviteAccepted` delegate): accepted invites route into the same join path; if an existing session is active it is destroyed first and invite-join is retried automatically.
+- Platform invite acceptance is native in `UARSessionSubsystem` (`OnSessionUserInviteAccepted` delegate) and binds against configured internet subsystem candidates (not Steam-hardcoded): accepted invites route into the same join path; if an existing session is active it is destroyed first and invite-join is retried automatically.
 - Windows build config override now lives at `Config/Windows/WindowsEngine.ini` with `DefaultPlatformService=Steam` (LAN still works via explicit LAN/null subsystem path).
-- Network user preference settings now include `UARNetworkUserSettings` (`Config=GameUserSettings`) with `bStayOffline` runtime gate; when enabled it blocks host/find/join/advertise and best-effort destroys active advertised sessions. Full Steam deactivation may still require restart.
+- Network user preference settings now include `UARNetworkUserSettings` (`Config=GameUserSettings`) with `bStayOffline` runtime gate; when enabled it blocks internet/platform session create/find/join/invite, while LAN/local session flow remains available. Full backend module deactivation may still require restart.
 - `UARNetworkUserSettings` defaults are seeded in `Config/DefaultGameUserSettings.ini`; per-user runtime overrides persist to platform Saved config (`Saved/Config/<Platform>/GameUserSettings.ini`).
     - `BP_OnARGameInstanceInitialized`
     - `BP_OnARGameInstanceShutdown`
@@ -359,7 +360,7 @@
 ## GameMode/GameState Player Lifecycle
 
 - `AARGameModeBase::PreLogin(...)` enforces the global 2-player cap server-authoritatively; when two AR player states already exist, additional incoming connections are rejected (`Server full.`).
-- `AARGameModeBase::PreLogin(...)` also enforces runtime offline policy: when `UARNetworkUserSettings::bStayOffline` is true, online-identity joins are rejected (`Server is offline.`) while local/null-id couch join flow remains allowed.
+- `AARGameModeBase::PreLogin(...)` also enforces runtime `Stay Offline` policy: when `UARNetworkUserSettings::bStayOffline` is true, online-identity joins are rejected (`Server has StayOffline enabled.`) while local/null-id couch join flow remains allowed.
 - `AARGameModeBase` refreshes advertised session joinability on player join/leave through `UARSessionSubsystem::RefreshJoinability(...)`, so open online seats stay aligned with authoritative `PlayerArray` occupancy.
 - `AARGameModeBase::HandleStartingNewPlayer_Implementation` owns authority-side join flow:
 - resolves joined `AARPlayerStateBase`
