@@ -152,6 +152,14 @@ enum class EDialogueComparisonOp : uint8
 	Absent
 };
 
+UENUM(BlueprintType)
+enum class EDialogueActiveCharacterRestriction : uint8
+{
+	Any = 0,
+	BrotherOnly,
+	SisterOnly
+};
+
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FDialogueCondition
 {
@@ -221,6 +229,9 @@ struct ALIENRAMEN_API FDialogueConversationHeader
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Block Offer Per Cycle", ToolTip = "When true, once this conversation is seen or skipped for a player in the current cycle it will not be offered again until temporary cycle state is cleared."))
 	bool bBlockOfferPerCycle = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Character Restriction", ToolTip = "Convenience filter for active player character. Use Any to allow all characters."))
+	EDialogueActiveCharacterRestriction CharacterRestriction = EDialogueActiveCharacterRestriction::Any;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Repeatable", ToolTip = "If enabled, this conversation may be offered again after completion when other gates allow it."))
 	bool bRepeatable = false;
@@ -298,7 +309,9 @@ enum class EDialogueNodeType : uint8
 	Random,
 	Route,
 	Sequence,
-	MultiLine
+	MultiLine,
+	SplitLine,
+	RouteByCharacter
 };
 
 USTRUCT(BlueprintType)
@@ -319,6 +332,9 @@ struct ALIENRAMEN_API FDialogueLineNodeData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Skip Blocked Conditions", ToolTip = "If this condition group passes, this line is skipped. Defaults to Match Any for convenience."))
 	FDialogueConditionGroup SkipBlockedConditions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Character Restriction", ToolTip = "Convenience skip filter for active player character. Use Any to allow all characters."))
+	EDialogueActiveCharacterRestriction CharacterRestriction = EDialogueActiveCharacterRestriction::Any;
 };
 
 USTRUCT(BlueprintType)
@@ -604,6 +620,21 @@ struct ALIENRAMEN_API FDialogueCompiledSequenceBranch
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FDialogueCompiledCharacterRouteBranch
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Branch ID (Compile Managed)", ToolTip = "Compile-managed branch identifier used to keep character route branches stable."))
+	FGuid BranchId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Player speaker tag this branch matches. The first matching branch routes."))
+	FGameplayTag SpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed link target for this character route branch output."))
+	FGuid NextNodeId;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FDialogueCompiledNode
 {
 	GENERATED_BODY()
@@ -619,7 +650,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 		EditAnywhere,
 		BlueprintReadWrite,
 		Category = "",
-		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
+		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::SplitLine || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
 	FInstancedStruct NodeData;
 
 	// Single output edge for Enter/Line/TagMutation/RelationshipMutation/FactionMutation.
@@ -628,7 +659,7 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 		BlueprintReadWrite,
 		Category = "",
 		AdvancedDisplay,
-		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/MultiLine/Mutation/Route nodes."))
+		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::SplitLine || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/MultiLine/SplitLine/Mutation/Route nodes."))
 	FGuid NextNodeId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Bool", EditConditionHides, DisplayName = "True Node ID (Compile Managed)", ToolTip = "Compile-managed output target when the Bool condition evaluates true."))
@@ -666,6 +697,9 @@ struct ALIENRAMEN_API FDialogueCompiledNode
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Sequence", EditConditionHides, DisplayName = "Sequence Branches (Compile Managed)", ToolTip = "Ordered sequence output branches executed first-to-last. Link targets are compile-managed from graph pin connections."))
 	TArray<FDialogueCompiledSequenceBranch> SequenceBranches;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::RouteByCharacter", EditConditionHides, DisplayName = "Character Route Branches (Compile Managed)", ToolTip = "Priority-ordered player character branches. First matching speaker tag routes to its linked output."))
+	TArray<FDialogueCompiledCharacterRouteBranch> CharacterRouteBranches;
 };
 
 USTRUCT(BlueprintType)
@@ -950,4 +984,12 @@ struct ALIENRAMEN_API FDialoguePlayerPersistentState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	TArray<FDialogueChoiceMemoryRecord> CompletedChoiceRecords;
+
+	// Per-player temporary cycle blockers for dialogue offer suppression.
+	// These persist in save until explicitly cleared by subsystem API.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FGameplayTagContainer SeenConversationTagsThisCycle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FGameplayTagContainer SkippedConversationTagsThisCycle;
 };

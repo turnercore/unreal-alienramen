@@ -126,7 +126,8 @@ If a section starts growing again:
 
 - `UARDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
 - `UARNPCSubsystem` owns NPC talkable-state resolution/cache.
-- NPC world actors expose replicated talkable state but do not own dialogue authority.
+- `UARNPCTalkComponent` owns NPC-side dialogue interaction and replicated dialogue talkable-state fields.
+- `AARNPCCharacterBase` hosts `UARNPCTalkComponent` and owns non-dialogue local NPC gates (for example customer/serving state); NPC actors still do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 
 ### Faction

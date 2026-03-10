@@ -41,6 +41,7 @@ public:
 	UEdGraphPin* GetSwitchOutputPin(const FGuid& BranchId) const;
 	UEdGraphPin* GetRandomOutputPin(const FGuid& BranchId) const;
 	UEdGraphPin* GetSequenceOutputPin(const FGuid& BranchId) const;
+	UEdGraphPin* GetCharacterRouteOutputPin(const FGuid& BranchId) const;
 
 	bool SupportsDynamicBranchPins() const;
 	void AddDynamicBranchPin();
@@ -49,12 +50,15 @@ public:
 
 	bool SetChoiceBranchText(const FGuid& ChoiceBranchId, const FText& NewText);
 	bool SetSwitchBranchLabel(const FGuid& BranchId, const FText& NewLabel);
+	bool SetCharacterRouteBranchSpeakerTag(const FGuid& BranchId, const FGameplayTag& NewSpeakerTag);
 	bool SetRandomBranchWeight(const FGuid& BranchId, float NewWeight);
 	bool MoveChoiceBranch(const FGuid& ChoiceBranchId, bool bMoveUp);
 	bool MoveSwitchBranch(const FGuid& BranchId, bool bMoveUp);
+	bool MoveCharacterRouteBranch(const FGuid& BranchId, bool bMoveUp);
 	bool ReorderChoiceBranch(const FGuid& MovingChoiceBranchId, const FGuid& TargetChoiceBranchId);
 	bool ReorderSwitchBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
 	bool ReorderRandomBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
+	bool ReorderCharacterRouteBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
 	bool SetChoiceFallbackText(const FText& NewFallbackText);
 	bool SetRelationshipTargetSpeakerTag(const FGameplayTag& NewTag);
 	bool SetRelationshipDeltaPoints(float NewDeltaPoints);
@@ -80,6 +84,7 @@ public:
 	static FName MakeSwitchPinName(const FGuid& BranchId);
 	static FName MakeRandomPinName(const FGuid& BranchId);
 	static FName MakeSequencePinName(const FGuid& BranchId);
+	static FName MakeCharacterRoutePinName(const FGuid& BranchId);
 
 private:
 	bool CommitRuntimeNodeMutation(const FText& TransactionText, TFunctionRef<bool()> MutateFn, bool bReconstructPins);
@@ -93,6 +98,7 @@ private:
 	void AddSwitchPins();
 	void AddRandomPins();
 	void AddSequencePins();
+	void AddCharacterRoutePins();
 	FString BuildInlineSummary() const;
 
 	EDialogueValidationSeverity ValidationSeverity = EDialogueValidationSeverity::Info;

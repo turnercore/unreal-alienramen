@@ -218,7 +218,8 @@ namespace
 			UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(InNode);
 			if (!DialogueNode
 				|| (DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Line
-					&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::MultiLine))
+					&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+					&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::SplitLine))
 			{
 				return nullptr;
 			}
@@ -396,7 +397,9 @@ const UARDialogueConversationAsset* SARDialogueLineGraphNode::GetOwningConversat
 bool SARDialogueLineGraphNode::IsMultiLineNode() const
 {
 	const UARDialogueEdGraphNode* DialogueNode = GetDialogueNode();
-	return DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine;
+	return DialogueNode
+		&& (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
+			|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine);
 }
 
 FReply SARDialogueLineGraphNode::HandlePortraitClicked()
@@ -438,7 +441,9 @@ void SARDialogueLineGraphNode::HandleLineTextCommittedForEntry(const FText& NewT
 FReply SARDialogueLineGraphNode::HandleAddMultiLineEntryClicked()
 {
 	UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
-	if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	if (DialogueNode
+		&& (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
+			|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine))
 	{
 		DialogueNode->AddMultiLineEntry();
 		UpdateGraphNode();
@@ -450,7 +455,9 @@ FReply SARDialogueLineGraphNode::HandleAddMultiLineEntryClicked()
 bool SARDialogueLineGraphNode::HandleMultiLineRowDropped(const FGuid DraggedEntryId, const FGuid TargetEntryId)
 {
 	UARDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
-	if (!DialogueNode || DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::MultiLine)
+	if (!DialogueNode
+		|| (DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::MultiLine
+			&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::SplitLine))
 	{
 		return false;
 	}
@@ -670,7 +677,8 @@ void SARDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId, co
 		return;
 	}
 
-	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
+		|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
 	{
 		if (EntryId.IsValid() && DialogueNode->SetMultiLineEntrySpeakerTag(EntryId, NewSpeakerTag))
 		{
@@ -705,7 +713,8 @@ void SARDialogueLineGraphNode::CommitLineTextForEntry(const FGuid EntryId, const
 		return;
 	}
 
-	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
+		|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
 	{
 		DialogueNode->SetMultiLineEntryText(EntryId, NewText);
 		return;
@@ -741,7 +750,8 @@ const FDialogueLineNodeData* SARDialogueLineGraphNode::GetLineDataForEntry(const
 		return nullptr;
 	}
 
-	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine)
+	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
+		|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
 	{
 		const FDialogueMultiLineNodeData* MultiLineData = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
 		if (!MultiLineData || MultiLineData->Lines.IsEmpty())

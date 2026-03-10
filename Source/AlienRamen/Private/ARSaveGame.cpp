@@ -72,6 +72,33 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		}
 	};
 
+	auto SanitizeTagContainer = [OutWarnings, &ClampedCount](FGameplayTagContainer& Container, const TCHAR* FieldName)
+	{
+		FGameplayTagContainer Sanitized;
+		bool bRemovedInvalidTag = false;
+		for (const FGameplayTag Tag : Container)
+		{
+			if (Tag.IsValid())
+			{
+				Sanitized.AddTag(Tag);
+			}
+			else
+			{
+				bRemovedInvalidTag = true;
+			}
+		}
+
+		if (bRemovedInvalidTag)
+		{
+			Container = Sanitized;
+			++ClampedCount;
+			if (OutWarnings)
+			{
+				OutWarnings->Add(FString::Printf(TEXT("%s contained invalid tags and they were removed."), FieldName));
+			}
+		}
+	};
+
 	ClampNonNegative(Money, TEXT("Money"));
 	ClampNonNegative(Scrap, TEXT("Scrap"));
 	ClampNonNegative(Cycles, TEXT("Cycles"));
@@ -92,6 +119,8 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
 	}
 
+	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));
+
 	for (int32 Index = DialogueRelationshipStates.Num() - 1; Index >= 0; --Index)
 	{
 		if (!DialogueRelationshipStates[Index].SpeakerTag.IsValid())
@@ -107,6 +136,11 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 	for (FDialoguePlayerPersistentState& PlayerDialogueState : DialoguePlayerPersistentStates)
 	{
+		SanitizeTagContainer(PlayerDialogueState.ProgressionTags, TEXT("DialoguePlayerPersistentStates.ProgressionTags"));
+		SanitizeTagContainer(PlayerDialogueState.CompletedConversationTags, TEXT("DialoguePlayerPersistentStates.CompletedConversationTags"));
+		SanitizeTagContainer(PlayerDialogueState.SeenConversationTagsThisCycle, TEXT("DialoguePlayerPersistentStates.SeenConversationTagsThisCycle"));
+		SanitizeTagContainer(PlayerDialogueState.SkippedConversationTagsThisCycle, TEXT("DialoguePlayerPersistentStates.SkippedConversationTagsThisCycle"));
+
 		for (int32 ChoiceIndex = PlayerDialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
 		{
 			const FDialogueChoiceMemoryRecord& Record = PlayerDialogueState.CompletedChoiceRecords[ChoiceIndex];
