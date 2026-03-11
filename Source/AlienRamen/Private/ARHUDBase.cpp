@@ -21,8 +21,26 @@ bool AARHUDBase::TryProjectEmotionForActor(
 	FGameplayTag& OutDisplayedEmotionTag,
 	TSoftObjectPtr<UTexture2D>& OutDisplayedIcon) const
 {
-	const UAREmotionComponent* EmotionComponent = TargetActor ? TargetActor->FindComponentByClass<UAREmotionComponent>() : nullptr;
-	return TryProjectEmotionForComponent(EmotionComponent, OutScreenPosition, OutDisplayedEmotionTag, OutDisplayedIcon);
+	OutScreenPosition = FVector2D::ZeroVector;
+	OutDisplayedEmotionTag = FGameplayTag();
+	OutDisplayedIcon.Reset();
+
+	if (!TargetActor)
+	{
+		return false;
+	}
+
+	TArray<UAREmotionComponent*> EmotionComponents;
+	TargetActor->GetComponents<UAREmotionComponent>(EmotionComponents);
+	for (const UAREmotionComponent* EmotionComponent : EmotionComponents)
+	{
+		if (TryProjectEmotionForComponent(EmotionComponent, OutScreenPosition, OutDisplayedEmotionTag, OutDisplayedIcon))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool AARHUDBase::TryProjectEmotionForComponent(
@@ -35,7 +53,7 @@ bool AARHUDBase::TryProjectEmotionForComponent(
 	OutDisplayedEmotionTag = FGameplayTag();
 	OutDisplayedIcon.Reset();
 
-	const AARPlayerController* LocalController = Cast<AARPlayerController>(PlayerOwner);
+	const APlayerController* LocalController = PlayerOwner;
 	if (!LocalController || !LocalController->IsLocalController() || !EmotionComponent)
 	{
 		return false;

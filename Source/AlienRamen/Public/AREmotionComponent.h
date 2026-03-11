@@ -13,8 +13,10 @@
 #include "AREmotionComponent.generated.h"
 
 class AARPlayerController;
+class AActor;
 class APlayerController;
 class UTexture2D;
+class USceneComponent;
 struct FPropertyChangedEvent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnEmotionDisplayStateChanged);
@@ -189,18 +191,18 @@ private:
 	void RefreshEditorPreviewBillboard();
 	void DestroyEditorPreviewBillboard();
 #endif
+	USceneComponent* ResolveExplicitAnchorComponent(const AActor* OwnerActor) const;
 
 	UPROPERTY(Replicated)
 	FGameplayTag RegisteredSpeakerTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Emotion", meta = (AllowPrivateAccess = "true", UseComponentPicker, ToolTip = "Optional explicit scene component anchor for the emotion icon."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Emotion", meta = (AllowPrivateAccess = "true", UseComponentPicker, AllowAnyActor = "true", AllowedClasses = "/Script/Engine.SceneComponent", ToolTip = "Optional explicit scene-component anchor. This is the primary authoring path for draggable anchor placement."))
 	FComponentReference AnchorComponent;
 
-	// Legacy anchor socket support for old assets; use AnchorComponent for new authoring.
-	UPROPERTY()
-	FName AnchorSocketName = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "Optional actor anchor used when AnchorComponent is unset. Uses the actor root-component transform when available."))
+	TObjectPtr<AActor> AnchorActor = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the resolved anchor (component or fallback socket/actor bounds)."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the resolved anchor (component, actor root, or owner-bounds fallback)."))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
