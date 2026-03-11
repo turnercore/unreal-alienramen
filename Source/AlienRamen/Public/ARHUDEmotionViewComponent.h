@@ -81,6 +81,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.1", UIMin = "0.1", ToolTip = "Additional scale multiplier applied to emotion icon draw size."))
 	float EmotionIconRenderScale = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling."))
+	float MinimumIconScreenSizePixels = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
 	bool bHideOwningPawnEmotion = true;
 
@@ -91,5 +94,6 @@ private:
 	TEnumAsByte<ECollisionChannel> OcclusionTraceChannel = ECollisionChannel::ECC_Visibility;
 
 	TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
+	TWeakObjectPtr<const APlayerController> ActiveProjectionController;
 	TSet<FName> SuppressionReasons;
 };
