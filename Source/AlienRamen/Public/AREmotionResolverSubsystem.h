@@ -45,7 +45,7 @@ private:
 	void RegisterDebugConsoleCommands();
 	void UnregisterDebugConsoleCommands();
 	void HandleEmotionDataTableChanged();
-	void BindToConfiguredDataTable();
+	void BindToConfiguredDataTable(class UDataTable* DataTable);
 	void UnbindDataTableChangedDelegate();
 	bool HasConfigInputsChanged() const;
 	bool EnsureCacheBuilt();
@@ -62,6 +62,7 @@ private:
 	TWeakObjectPtr<class UDataTable> BoundDataTable;
 	FDelegateHandle DataTableChangedHandle;
 	FSoftObjectPath CachedEmotionDataTablePath;
+	FGameplayTag CachedResolverRootTag;
 	FGameplayTag CachedGenericRootTag;
 
 	IConsoleObject* CmdLogCacheStats = nullptr;
