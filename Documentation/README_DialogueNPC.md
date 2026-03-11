@@ -95,7 +95,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Emotion icon lookup is resolved from a direct DataTable reference in `UAREmotionSettings` (row type `FAREmotionIconRow`) and cached by `UAREmotionResolverSubsystem`.
 - Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`).
 - `UAREmotionComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
-- Anchor transform authoring now resolves in this order: `AnchorComponent` (component picker, any scene component), then optional `AnchorActor` root transform, then owner-bounds fallback plus `AnchorWorldOffset`.
+- Anchor transform authoring now uses `AnchorTransformObject` (generic object reference): SceneComponent -> component transform, Actor -> actor transform, other objects -> owner-bounds fallback; `AnchorWorldOffset` is always applied.
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UAREmotionSettings::DefaultTimedSystemOverrideDurationSeconds`.
 
 ## Offer + Execution Rules (Current Runtime)
@@ -218,6 +218,7 @@ Conversation graph tooling now provides:
 - speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
 - compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`
+- NPC details authoring categories for actor/talk/emotion properties are grouped under `Alien Ramen|NPC|...` to avoid repeated `Alien Ramen|Dialogue` stacks in Blueprint class-default details.
 
 Speaker hub currently provides:
 
