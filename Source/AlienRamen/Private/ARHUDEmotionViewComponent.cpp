@@ -7,6 +7,7 @@
 #include "CanvasItem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Texture2D.h"
+#include "Camera/PlayerCameraManager.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/HUD.h"
 #include "GameFramework/Pawn.h"
