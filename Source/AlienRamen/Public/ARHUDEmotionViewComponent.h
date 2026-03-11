@@ -30,6 +30,10 @@ class ALIENRAMEN_API UARHUDEmotionViewComponent : public UActorComponent
 public:
 	UARHUDEmotionViewComponent();
 
+	// Called from HUD DrawHUD with that HUD's active canvas/context.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD|Emotion")
+	int32 RenderEmotionView(AHUD* HUD, UCanvas* InCanvas, const APlayerController* LocalController);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD|Emotion")
 	bool TryProjectEmotionForActor(
 		AActor* TargetActor,
@@ -68,12 +72,7 @@ public:
 
 private:
 	class AHUD* ResolveOwningHUD() const;
-	virtual void OnRegister() override;
-	virtual void OnUnregister() override;
 	bool IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionComponent, const APlayerController* LocalController) const;
-
-	void HandleHUDPostRender(AHUD* HUD, UCanvas* InCanvas);
-	int32 RenderEmotionView(AHUD* HUD, UCanvas* InCanvas, const APlayerController* LocalController);
 	static bool ShouldLogEmotionRenderVerbose();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
@@ -93,5 +92,4 @@ private:
 
 	TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	TSet<FName> SuppressionReasons;
-	FDelegateHandle HUDPostRenderHandle;
 };

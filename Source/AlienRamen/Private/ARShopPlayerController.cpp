@@ -16,7 +16,7 @@ namespace
 		return Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
 	}
 
-	static UPrimitiveComponent* ResolveCarryPhysicsPrimitive(AActor* Actor)
+	static UPrimitiveComponent* ResolveCarryPhysicsPrimitiveForController(AActor* Actor)
 	{
 		if (!Actor)
 		{
@@ -69,7 +69,7 @@ namespace
 			return;
 		}
 
-		UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ReleasedActor);
+		UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitiveForController(ReleasedActor);
 		if (!PhysicsPrimitive)
 		{
 			return;
@@ -179,6 +179,11 @@ void AARShopPlayerController::RequestShopPickupCarryItem(AARShopCarryItemBase* C
 		return;
 	}
 
+	if (!IsValid(CarryItemActor))
+	{
+		return;
+	}
+
 	if (HasAuthority())
 	{
 		APawn* ControlledPawn = GetPawn();
@@ -240,7 +245,7 @@ void AARShopPlayerController::RequestShopDropHeldCarryItem()
 			return;
 		}
 
-		if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ReleasedActor))
+		if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitiveForController(ReleasedActor))
 		{
 			if (!PhysicsPrimitive->IsSimulatingPhysics())
 			{

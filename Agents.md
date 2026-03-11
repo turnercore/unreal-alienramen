@@ -108,7 +108,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state.
 - Runtime overhead emotion rendering is owned by `UARHUDEmotionViewComponent`; `AARHUDBase` includes it as `EmotionView`.
-- `UARHUDEmotionViewComponent` renders via `AHUD::OnHUDPostRender` for its owning HUD, so HUDs opt in by adding the component (no custom draw glue required).
+- `AARHUDBase::DrawHUD` calls `EmotionView->RenderEmotionView(...)`; non-`AARHUDBase` HUDs that add the component must call `RenderEmotionView(...)` from their own `DrawHUD`.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
