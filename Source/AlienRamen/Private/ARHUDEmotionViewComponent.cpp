@@ -21,52 +21,14 @@ UARHUDEmotionViewComponent::UARHUDEmotionViewComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UARHUDEmotionViewComponent::OnRegister()
-{
-	Super::OnRegister();
-
-	if (!HUDPostRenderHandle.IsValid())
-	{
-		HUDPostRenderHandle = AHUD::OnHUDPostRender.AddUObject(this, &UARHUDEmotionViewComponent::HandleHUDPostRender);
-	}
-}
-
-void UARHUDEmotionViewComponent::OnUnregister()
-{
-	if (HUDPostRenderHandle.IsValid())
-	{
-		AHUD::OnHUDPostRender.Remove(HUDPostRenderHandle);
-		HUDPostRenderHandle.Reset();
-	}
-
-	Super::OnUnregister();
-}
-
-void UARHUDEmotionViewComponent::HandleHUDPostRender(AHUD* HUD, UCanvas* InCanvas)
-{
-	if (!HUD || !InCanvas || !bEnableEmotionView || IsEmotionViewSuppressed())
-	{
-		return;
-	}
-
-	AHUD* OwningHUD = ResolveOwningHUD();
-	if (!OwningHUD || HUD != OwningHUD)
-	{
-		return;
-	}
-
-	const APlayerController* LocalController = HUD->GetOwningPlayerController();
-	if (!LocalController || !LocalController->IsLocalController())
-	{
-		return;
-	}
-
-	RenderEmotionView(HUD, InCanvas, LocalController);
-}
-
 int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas, const APlayerController* LocalController)
 {
-	if (!HUD || !InCanvas || !LocalController)
+	if (!HUD || !InCanvas || !InCanvas->Canvas || !LocalController || !bEnableEmotionView || IsEmotionViewSuppressed())
+	{
+		return 0;
+	}
+
+	if (ResolveOwningHUD() != HUD)
 	{
 		return 0;
 	}
@@ -79,13 +41,13 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 	for (TObjectIterator<UAREmotionComponent> It; It; ++It)
 	{
 		const UAREmotionComponent* EmotionComponent = *It;
-		if (!EmotionComponent || EmotionComponent->IsTemplate() || EmotionComponent->GetWorld() != HUD->GetWorld())
+		if (!IsValid(EmotionComponent) || EmotionComponent->IsTemplate() || EmotionComponent->GetWorld() != HUD->GetWorld())
 		{
 			continue;
 		}
 
 		AActor* OwnerActor = EmotionComponent->GetOwner();
-		if (!OwnerActor || OwnerActor->IsHidden())
+		if (!IsValid(OwnerActor) || OwnerActor->IsHidden())
 		{
 			continue;
 		}
@@ -166,7 +128,13 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 
 		const FVector2D DrawPosition(ScreenPosition.X - (DrawExtent.X * 0.5f), ScreenPosition.Y - (DrawExtent.Y * 0.5f));
 
-		FCanvasTileItem TileItem(DrawPosition, IconTexture->GetResource(), DrawExtent, FLinearColor::White);
+		const FTexture* IconResource = IconTexture->GetResource();
+		if (!IconResource)
+		{
+			continue;
+		}
+
+		FCanvasTileItem TileItem(DrawPosition, IconResource, DrawExtent, FLinearColor::White);
 		TileItem.BlendMode = SE_BLEND_Translucent;
 		InCanvas->DrawItem(TileItem);
 		++DrawnEmotionCount;
