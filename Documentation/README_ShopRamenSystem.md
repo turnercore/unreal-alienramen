@@ -66,7 +66,10 @@ This document captures the runtime ownership and integration contract for the sh
   - loose world meat (dropped/thrown) that contacts an eligible empty station auto-slots through the same authoritative placement path as held-meat placement.
   - slotted meat presentation is anchored with physics/collision disabled regardless of whether the meat came from held placement or loose world contact.
 - Processing behavior:
+  - station-controlled input mode (`ProcessingInputMode`): `Hold` or `Tap`
   - hold-to-process (`StartProcessingByController`/`StopProcessingByController`)
+  - tap-to-process (`TapProcessByController`) advances progress by `TapProcessingSecondsPerPress / EffectiveProcessingDuration` per press.
+  - in `Tap` mode, `StartProcessingByController` consumes at most one pulse per press and requires `StopProcessingByController` (release) before the next pulse.
   - processing progress pauses/resumes and replicates to all players
   - slotted meat is consumed immediately when processing starts
   - processing `None` is blocked if station currently has colored processed stock
@@ -87,6 +90,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `RequestShopStationPlaceHeldMeat(AARShopStationActor*)`
   - `RequestShopStationPickupMeat(AARShopStationActor*)`
   - `RequestShopStationStartProcessing(AARShopStationActor*)`
+  - `RequestShopStationTapProcessing(AARShopStationActor*)`
   - `RequestShopStationStopProcessing(AARShopStationActor*)`
   - `RequestShopFillHeldBowlFromStation(AARShopStationActor*)`
   - `RequestShopStationInteract(AARShopStationActor*)` smart station route:

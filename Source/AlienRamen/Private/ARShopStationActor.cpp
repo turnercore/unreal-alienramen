@@ -268,6 +268,39 @@ bool AARShopStationActor::StartProcessingByController(AARPlayerController* Contr
 		return false;
 	}
 
+	if (ProcessingInputMode == EARRamenStationProcessingInputMode::Tap)
+	{
+		for (auto It = ActiveTapPressControllers.CreateIterator(); It; ++It)
+		{
+			if (!It->IsValid())
+			{
+				It.RemoveCurrent();
+			}
+		}
+
+		if (ActiveTapPressControllers.Contains(Controller))
+		{
+			UE_LOG(
+				ARLog,
+				VeryVerbose,
+				TEXT("[Shop|Station] StartProcessing tap ignored on '%s': controller '%s' is still held; release required before next pulse."),
+				*GetNameSafe(this),
+				*GetNameSafe(Controller));
+			return false;
+		}
+
+		ActiveTapPressControllers.Add(Controller);
+		const bool bTapped = TapProcessByController(Controller);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] StartProcessing tap pulse on '%s': controller '%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller),
+			bTapped ? 1 : 0);
+		return bTapped;
+	}
+
 	if (!IsStationUpgraded())
 	{
 		// Base station behavior serves None directly and does not use meat/processing.
@@ -301,11 +334,108 @@ bool AARShopStationActor::StartProcessingByController(AARPlayerController* Contr
 	return true;
 }
 
+bool AARShopStationActor::TapProcessByController(AARPlayerController* Controller)
+{
+	if (!HasAuthority() || !Controller)
+	{
+		return false;
+	}
+
+	if (!IsStationUpgraded())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TapProcess rejected on '%s': station not upgraded."),
+			*GetNameSafe(this));
+		return false;
+	}
+
+	if (RuntimeState == EARRamenStationRuntimeState::MeatReady)
+	{
+		if (!ConsumeSlottedMeatAndEnterProcessing())
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Shop|Station] TapProcess failed on '%s': could not consume slotted meat."),
+				*GetNameSafe(this));
+			return false;
+		}
+	}
+	else if (RuntimeState == EARRamenStationRuntimeState::Idle || RuntimeState == EARRamenStationRuntimeState::Processed)
+	{
+		if (!BeginProcessingNoneIfAllowed())
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Shop|Station] TapProcess rejected on '%s': could not begin processing from state '%s'."),
+				*GetNameSafe(this),
+				*StaticEnum<EARRamenStationRuntimeState>()->GetValueAsString(RuntimeState));
+			return false;
+		}
+	}
+
+	if (RuntimeState != EARRamenStationRuntimeState::Processing)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TapProcess rejected on '%s': station state is '%s', not Processing."),
+			*GetNameSafe(this),
+			*StaticEnum<EARRamenStationRuntimeState>()->GetValueAsString(RuntimeState));
+		return false;
+	}
+
+	const float Duration = ResolveEffectiveProcessingDuration();
+	const float TapSeconds = FMath::Max(0.0f, TapProcessingSecondsPerPress);
+	const float AddedProgress = Duration > KINDA_SMALL_NUMBER ? (TapSeconds / Duration) : 0.0f;
+	ProcessingProgress01 = FMath::Clamp(ProcessingProgress01 + AddedProgress, 0.0f, 1.0f);
+
+	if (ProcessingProgress01 >= 1.0f)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TapProcess complete on '%s': controller '%s' advanced to completion."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller));
+		CompleteProcessingCycle();
+		return true;
+	}
+
+	ForceNetUpdate();
+	BroadcastRuntimeChanged();
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] TapProcess progress on '%s': controller '%s' +%.3f -> %.3f."),
+		*GetNameSafe(this),
+		*GetNameSafe(Controller),
+		AddedProgress,
+		ProcessingProgress01);
+	return true;
+}
+
 bool AARShopStationActor::StopProcessingByController(AARPlayerController* Controller)
 {
 	if (!HasAuthority() || !Controller)
 	{
 		return false;
+	}
+
+	if (ProcessingInputMode == EARRamenStationProcessingInputMode::Tap)
+	{
+		const bool bReleased = ActiveTapPressControllers.Remove(Controller) > 0;
+		UE_LOG(
+			ARLog,
+			VeryVerbose,
+			TEXT("[Shop|Station] StopProcessing tap release on '%s': controller '%s' released=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller),
+			bReleased ? 1 : 0);
+		return bReleased;
 	}
 
 	if (ActiveProcessingControllers.Remove(Controller) <= 0)
@@ -327,6 +457,7 @@ void AARShopStationActor::StopAllProcessingControllers()
 	}
 
 	ActiveProcessingControllers.Reset();
+	ActiveTapPressControllers.Reset();
 	RefreshProcessingActiveFlag();
 	ForceNetUpdate();
 	BroadcastRuntimeChanged();
@@ -626,6 +757,8 @@ void AARShopStationActor::ApplyConfigFromRowIfAvailable()
 	RequiredUpgradeTags = Row->RequiredUpgradeTags;
 	MaxStock = FMath::Max(1, Row->MaxStock);
 	ProcessingDurationSeconds = FMath::Max(0.05f, Row->ProcessingDurationSeconds);
+	ProcessingInputMode = Row->ProcessingInputMode;
+	TapProcessingSecondsPerPress = FMath::Max(0.0f, Row->TapProcessingSecondsPerPress);
 }
 
 bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
