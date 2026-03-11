@@ -147,6 +147,16 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestShopStationStopProcessing(AARShopStationActor* StationActor);
 
+	// Smart station interact helper:
+	// - held bowl -> fill bowl from station
+	// - held meat and empty station meat slot -> place held meat
+	// - empty hands and station has slotted meat -> pickup slotted meat
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationInteract(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationInteract(AARShopStationActor* StationActor);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor);
 
