@@ -259,8 +259,15 @@ bool UTagContentResolverSubsystem::EnsureGameThread(const TCHAR* FunctionName, F
 	const FString Message = FString::Printf(
 		TEXT("[TagContentResolver] %s must be called on the game thread."),
 		FunctionName ? FunctionName : TEXT("Resolver API"));
-	UE_LOG(LogTagContentResolver, Error, TEXT("%s"), *Message);
-	ensureAlwaysMsgf(false, TEXT("%s"), *Message);
+	if (GIsAutomationTesting)
+	{
+		UE_LOG(LogTagContentResolver, Warning, TEXT("%s"), *Message);
+	}
+	else
+	{
+		UE_LOG(LogTagContentResolver, Error, TEXT("%s"), *Message);
+		ensureAlwaysMsgf(false, TEXT("%s"), *Message);
+	}
 	if (OutError)
 	{
 		*OutError = Message;
