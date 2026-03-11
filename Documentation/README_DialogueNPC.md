@@ -125,7 +125,10 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
 - Shop eavesdrop requests are immediate-only: `ForceEavesdrop` rejects enable requests when the target slot has no active dialogue session (no queued eavesdrop registration).
+- Conversations can be authored as private (`FDialogueConversationHeader::bPrivateConversation`): active private sessions reject eavesdrop requests by default.
+- Important choice flow overrides private-session eavesdrop lock while the choice is actively forcing all viewers.
 - Per-player mode supports optional busy-speaker lock (`UARDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`): when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
+- Busy query helpers are exposed for gameplay/UI traces: `UARDialogueSubsystem::IsSpeakerBusyForController(...)` and `AARNPCCharacterBase::IsSpeakerBusyForController(...)`.
 - Busy-speaker presentation routes through emotion-system source overrides (source `DialogueBusy`) using `UAREmotionSettings::BusyEmotionTag` and `BusyEmotionPriority`.
 - Line nodes (including multiline entries) support the same convenience active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`) before skip-conditions are evaluated.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
