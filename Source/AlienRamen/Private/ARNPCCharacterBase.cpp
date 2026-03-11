@@ -8,6 +8,7 @@
 #include "ARPlayerController.h"
 #include "Components/ActorComponent.h"
 #include "Engine/GameInstance.h"
+#include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
 
 namespace
@@ -18,15 +19,48 @@ namespace
 AARNPCCharacterBase::AARNPCCharacterBase()
 {
 	bReplicates = true;
-	SpeakerComponent = CreateDefaultSubobject<UARSpeakerComponent>(TEXT("SpeakerComponent"));
-	EmotionComponent = CreateDefaultSubobject<UAREmotionComponent>(TEXT("EmotionComponent"));
-	CustomerComponent = CreateDefaultSubobject<UARCustomerComponent>(TEXT("CustomerComponent"));
 }
 
 void AARNPCCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ResolveOptionalComponents();
+	if (!SpeakerComponent && !CustomerComponent && !EmotionComponent)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] '%s' has no optional speaker/customer/emotion components."), *GetNameSafe(this));
+	}
+
+	if (SpeakerComponent && !SpeakerComponent->GetSpeakerTag().IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Speaker] '%s' has a SpeakerComponent but no SpeakerTag configured."), *GetNameSafe(this));
+	}
+
+	if (!EmotionComponent && (SpeakerComponent || CustomerComponent))
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Emotion] '%s' has speaker/customer behavior but no EmotionComponent; overhead emotions will not render."),
+			*GetNameSafe(this));
+	}
+
+	if (SpeakerComponent)
+	{
+		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
+		SpeakerComponent->OnSpeakerTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
+
+		if (HasAuthority() && EmotionComponent)
+		{
+			EmotionComponent->SetRegisteredSpeakerTag(SpeakerComponent->GetSpeakerTag());
+		}
+	}
+
+	RefreshAutoWantsToTalkEmotion(IsTalkable());
+}
+
+void AARNPCCharacterBase::ResolveOptionalComponents()
+{
 	TArray<UARSpeakerComponent*> TalkComponents;
 	GetComponents(TalkComponents);
 	if (!TalkComponents.IsEmpty())
@@ -61,6 +95,10 @@ void AARNPCCharacterBase::BeginPlay()
 				*GetNameSafe(SpeakerComponent));
 		}
 	}
+	else
+	{
+		SpeakerComponent = nullptr;
+	}
 
 	TArray<UAREmotionComponent*> EmotionComponents;
 	GetComponents(EmotionComponents);
@@ -83,6 +121,10 @@ void AARNPCCharacterBase::BeginPlay()
 				EmotionComponents.Num(),
 				*GetNameSafe(EmotionComponent));
 		}
+	}
+	else
+	{
+		EmotionComponent = nullptr;
 	}
 
 	TArray<UARCustomerComponent*> CustomerComponents;
@@ -107,19 +149,10 @@ void AARNPCCharacterBase::BeginPlay()
 				*GetNameSafe(CustomerComponent));
 		}
 	}
-
-	if (SpeakerComponent)
+	else
 	{
-		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
-		SpeakerComponent->OnSpeakerTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
-
-		if (HasAuthority() && EmotionComponent)
-		{
-			EmotionComponent->SetRegisteredSpeakerTag(SpeakerComponent->GetSpeakerTag());
-		}
+		CustomerComponent = nullptr;
 	}
-
-	RefreshAutoWantsToTalkEmotion(IsTalkable());
 }
 
 void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -132,27 +165,86 @@ void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void AARNPCCharacterBase::ForwardUseToController(AActor* UsingActor)
+{
+	AARPlayerController* UsingController = ResolveUsingController(UsingActor);
+	if (!UsingController)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Use] '%s' could not resolve AARPlayerController from source '%s' (class '%s')."),
+			*GetNameSafe(this),
+			*GetNameSafe(UsingActor),
+			UsingActor ? *UsingActor->GetClass()->GetName() : TEXT("None"));
+		return;
+	}
+
+	UsingController->RequestInteractWithCharacter(this);
+}
+
+AARPlayerController* AARNPCCharacterBase::ResolveUsingController(AActor* UsingActor) const
+{
+	if (!UsingActor)
+	{
+		return nullptr;
+	}
+
+	if (AARPlayerController* UsingController = Cast<AARPlayerController>(UsingActor))
+	{
+		return UsingController;
+	}
+
+	const APawn* UsingPawn = Cast<APawn>(UsingActor);
+	if (!UsingPawn)
+	{
+		return nullptr;
+	}
+
+	return Cast<AARPlayerController>(UsingPawn->GetController());
+}
+
 void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingController)
 {
-	if (HasAuthority() && CustomerComponent && InteractingController)
+	if (!InteractingController)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Interact] '%s' interaction ignored: InteractingController is null."), *GetNameSafe(this));
+		return;
+	}
+
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	if (HasAuthority() && CustomerComponent)
 	{
 		FARRamenServeResult ServeResult;
 		if (CustomerComponent->TryServeHeldBowlFromController(InteractingController, ServeResult))
 		{
 			return;
 		}
+
+		if (bHasActiveCustomerOrder)
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Interact] '%s' has active customer order but no valid bowl was served by '%s'; trying speaker fallback."),
+				*GetNameSafe(this),
+				*GetNameSafe(InteractingController));
+		}
 	}
 
-	if (!bSpeakerLocalStateAllowsDialogue)
+	if (!SpeakerComponent)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] '%s' has no SpeakerComponent; interaction ended."), *GetNameSafe(this));
+		return;
+	}
+
+	if (!bSpeakerLocalStateAllowsDialogue && !bHasActiveCustomerOrder)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[Speaker] Interact ignored for '%s': local state blocks dialogue."), *GetNameSafe(this));
 		return;
 	}
 
-	if (SpeakerComponent)
-	{
-		SpeakerComponent->InteractByController(InteractingController);
-	}
+	SpeakerComponent->InteractByController(InteractingController);
 }
 
 FGameplayTag AARNPCCharacterBase::GetSpeakerTag() const

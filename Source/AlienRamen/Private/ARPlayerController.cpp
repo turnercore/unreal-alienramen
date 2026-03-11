@@ -304,25 +304,34 @@ void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag
 	RequestStartDialogue(SpeakerTag);
 }
 
-void AARPlayerController::RequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor)
+void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)
 {
-	if (!SpeakerActor)
+	if (!CharacterActor)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] RequestInteractWithCharacter ignored on '%s': target is null."), *GetNameSafe(this));
 		return;
 	}
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Interact] RequestInteractWithCharacter controller='%s' target='%s' authority=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(CharacterActor),
+		HasAuthority() ? TEXT("true") : TEXT("false"));
 
 	if (HasAuthority())
 	{
-		SpeakerActor->InteractByController(this);
+		CharacterActor->InteractByController(this);
 		return;
 	}
 
-	ServerRequestInteractWithSpeaker(SpeakerActor);
+	ServerRequestInteractWithCharacter(CharacterActor);
 }
 
-void AARPlayerController::ServerRequestInteractWithSpeaker_Implementation(AARNPCCharacterBase* SpeakerActor)
+void AARPlayerController::ServerRequestInteractWithCharacter_Implementation(AARNPCCharacterBase* CharacterActor)
 {
-	RequestInteractWithSpeaker(SpeakerActor);
+	RequestInteractWithCharacter(CharacterActor);
 }
 
 void AARPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor)
