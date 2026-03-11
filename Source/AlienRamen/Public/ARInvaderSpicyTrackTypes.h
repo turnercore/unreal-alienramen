@@ -170,14 +170,6 @@ struct ALIENRAMEN_API FARInvaderOfferPresenceState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
 	int32 HoveredDestinationSlot = -1;
 
-	// Optional normalized UI cursor position in [0..1]x[0..1].
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
-	FVector2D CursorNormalized = FVector2D::ZeroVector;
-
-	// Whether CursorNormalized should be interpreted by HUD.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
-	bool bHasCursor = false;
-
 	// Optional currently selected offer (for teammate "locked-in" selection preview).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
 	FGameplayTag SelectedUpgradeTag;

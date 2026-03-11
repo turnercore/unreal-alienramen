@@ -86,8 +86,6 @@ public:
 	void RequestSetOfferPresence(
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
-		FVector2D CursorNormalized,
-		bool bHasCursor,
 		FGameplayTag SelectedUpgradeTag,
 		int32 SelectedDestinationSlot,
 		bool bHasSelection);
@@ -96,8 +94,6 @@ public:
 	void ServerRequestSetOfferPresence(
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
-		FVector2D CursorNormalized,
-		bool bHasCursor,
 		FGameplayTag SelectedUpgradeTag,
 		int32 SelectedDestinationSlot,
 		bool bHasSelection);
