@@ -9,6 +9,7 @@
 #include "ARShopPlayerController.generated.h"
 
 class AARShopDispenserActor;
+class AARShopCarryItemBase;
 
 UCLASS()
 class ALIENRAMEN_API AARShopPlayerController : public AARPlayerController
@@ -23,4 +24,25 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, FGameplayTag ItemTag);
+
+	// Picks up a world carry item (for example meat/bowl) into this controller's pawn carry slot.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopPickupCarryItem(AARShopCarryItemBase* CarryItemActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopPickupCarryItem(AARShopCarryItemBase* CarryItemActor);
+
+	// Drops currently held carry item to world physics.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopDropHeldCarryItem();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopDropHeldCarryItem();
+
+	// Throws currently held carry item using physics impulse.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopThrowHeldCarryItem(float ThrowStrength = 900.0f);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopThrowHeldCarryItem(float ThrowStrength = 900.0f);
 };

@@ -21,11 +21,15 @@ Ownership reminder:
 Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 
 - `RequestStartDialogue(FGameplayTag SpeakerTag)`
-- `RequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor)`
+- `RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)`
 - `RequestAdvanceDialogue()`
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
 - `RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)`
 - `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (slot convenience wrapper)
+
+World actor convenience entrypoint:
+
+- `AARNPCCharacterBase::ForwardUseToController(AActor* UsingActor)` accepts either controller or pawn references (for example BI_Interactable payloads), resolves the owning `AARPlayerController`, and routes through `RequestInteractWithCharacter(...)`.
 
 Server runtime now pushes authoritative view snapshots back to client controllers via:
 
@@ -61,7 +65,7 @@ Runtime UI is intentionally separate from editor preview tooling.
   - cached view helpers: `GetCachedDialogueView(...)`, `QueryLocalDialogueView(...)`
   - widget lifecycle: `EnsureDialogueWidget()`, `RemoveDialogueWidget()`, `GetDialogueWidget()`
   - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
-- `UARDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithSpeaker`) back to the bound controller.
+- `UARDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithCharacter`) back to the bound controller.
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
 
 ## Content Model

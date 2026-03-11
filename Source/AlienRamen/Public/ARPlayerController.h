@@ -116,12 +116,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestStartDialogue(FGameplayTag SpeakerTag);
 
-	// Convenience interaction path for world speaker characters. Safe to call from client/UI/BP.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor);
+	// Convenience interaction path for world NPC characters. Safe to call from client/UI/BP.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor);
+	void ServerRequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor);

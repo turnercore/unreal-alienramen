@@ -149,6 +149,12 @@ void UARShopCarryComponent::ClearHoldPresentation(AActor* ActorToRelease, const 
 			if (UPrimitiveComponent* PrimitiveRoot = Cast<UPrimitiveComponent>(HeldRoot))
 			{
 				PrimitiveRoot->SetCollisionEnabled(bDropInWorld ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
+				if (bDropInWorld)
+				{
+					PrimitiveRoot->SetSimulatePhysics(true);
+					PrimitiveRoot->SetEnableGravity(true);
+					PrimitiveRoot->WakeAllRigidBodies();
+				}
 			}
 		}
 	}
