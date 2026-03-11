@@ -458,13 +458,6 @@ FVector UAREmotionComponent::GetEmotionAnchorWorldLocation() const
 	}
 
 	FName EffectiveSocketName = AnchorSocketName;
-	if (const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>())
-	{
-		if (EffectiveSocketName.IsNone() && !Settings->DefaultAnchorSocketName.IsNone())
-		{
-			EffectiveSocketName = Settings->DefaultAnchorSocketName;
-		}
-	}
 
 	const ACharacter* CharacterOwner = Cast<ACharacter>(OwnerActor);
 	if (CharacterOwner && !EffectiveSocketName.IsNone())

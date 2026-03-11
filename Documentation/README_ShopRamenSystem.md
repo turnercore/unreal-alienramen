@@ -16,7 +16,7 @@ This document captures the runtime ownership and integration contract for the sh
 
 ## Configuration Sources
 
-- `UARCustomerSettings` (`Project Settings -> Alien Ramen|Shop Settings -> Shop Settings`) provides:
+- `UARCustomerSettings` (`Project Settings -> Alien Ramen -> Shop Settings`) provides:
   - customer/station root tags for TagContentResolver
   - relationship point curve (`Hate/Ok/Like/Love`)
   - default reaction emotion tags
