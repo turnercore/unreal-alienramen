@@ -107,6 +107,8 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSpeakerSubsystem` owns speaker talkable-state resolution/cache.
 - `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state.
+- `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
+- `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
 - Dialogue-related settings pages are grouped under `Project Settings -> Dialogue` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
@@ -120,6 +122,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `UARCustomerComponent` is the authoritative customer/order runtime.
 - Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
+- `AARShopPlayerController` owns shop-only world carry interaction requests (`Pickup`/`Drop`/`Throw`) for `AARShopCarryItemBase` actors.
 - `AARShopStationActor` is server-authoritative for station state, processing progress, stock, and slot contents.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.

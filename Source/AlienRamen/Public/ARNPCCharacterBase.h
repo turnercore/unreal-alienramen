@@ -12,10 +12,11 @@
 #include "ARNPCCharacterBase.generated.h"
 
 class AARPlayerController;
+class AActor;
 class UARCustomerComponent;
 class UAREmotionComponent;
 
-UCLASS(meta = (DisplayName = "Speaker Character", ToolTip = "World speaker actor base with dialogue talk, emotion display, and optional shop-customer behavior."))
+UCLASS(meta = (DisplayName = "NPC Character", ToolTip = "Lean NPC character shell. Speaker, emotion, and customer behavior are provided by optional components."))
 class ALIENRAMEN_API AARNPCCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
@@ -23,7 +24,12 @@ class ALIENRAMEN_API AARNPCCharacterBase : public ACharacter
 public:
 	AARNPCCharacterBase();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
+	// Optional forwarding helper for BI_Interactable-style calls. Accepts controller or pawn and routes through controller RPCs.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Forward Use To Controller"))
+	void ForwardUseToController(AActor* UsingActor);
+
+	// Optional convenience interaction path. If a customer order can be served, it serves first; otherwise it falls back to speaker dialogue.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Interact (Auto)"))
 	void InteractByController(AARPlayerController* InteractingController);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag"))
@@ -78,14 +84,16 @@ protected:
 	void RefreshTalkableFromSubsystem();
 
 	void RefreshAutoWantsToTalkEmotion(bool bEffectiveTalkable);
+	void ResolveOptionalComponents();
+	AARPlayerController* ResolveUsingController(AActor* UsingActor) const;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Speaker-talk runtime component."))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Cached canonical speaker component (optional)."))
 	TObjectPtr<UARSpeakerComponent> SpeakerComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Emotion display runtime component."))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Cached canonical emotion component (optional)."))
 	TObjectPtr<UAREmotionComponent> EmotionComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Optional shop-customer runtime component."))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Cached canonical customer component (optional)."))
 	TObjectPtr<UARCustomerComponent> CustomerComponent;
 
 	UPROPERTY(
