@@ -61,6 +61,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool StartProcessingByController(AARPlayerController* Controller);
 
+	// Tap-processing entrypoint: starts processing when eligible and advances progress by a fixed tap amount.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
+	bool TapProcessByController(AARPlayerController* Controller);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool StopProcessingByController(AARPlayerController* Controller);
 
@@ -146,6 +150,13 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", ClampMin = "0.05", UIMin = "0.05"))
 	float ProcessingDurationSeconds = 1.5f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	EARRamenStationProcessingInputMode ProcessingInputMode = EARRamenStationProcessingInputMode::Hold;
+
+	// Tap-processing contribution in seconds per input press (scaled against effective processing duration).
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0"))
+	float TapProcessingSecondsPerPress = 0.20f;
+
 	// Optional config lookup tag. When valid, BeginPlay resolves FARShopStationConfigRow for this station and overrides station config fields.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag StationConfigTag;
@@ -179,4 +190,7 @@ private:
 
 	// Runtime-only non-replicated hold processors for hold-to-process behavior.
 	TSet<TWeakObjectPtr<AARPlayerController>> ActiveProcessingControllers;
+
+	// Runtime-only non-replicated tap latch per controller: in tap mode, a controller must release (stop) before next tap pulse.
+	TSet<TWeakObjectPtr<AARPlayerController>> ActiveTapPressControllers;
 };

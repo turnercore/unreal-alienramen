@@ -226,6 +226,35 @@ void AARShopPlayerController::ServerRequestShopStationStartProcessing_Implementa
 	RequestShopStationStartProcessing(StationActor);
 }
 
+void AARShopPlayerController::RequestShopStationTapProcessing(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] TapProcessing ignored on '%s': StationActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		const bool bTapped = StationActor->TapProcessByController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TapProcessing controller='%s' station='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StationActor),
+			bTapped ? 1 : 0);
+		return;
+	}
+
+	ServerRequestShopStationTapProcessing(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopStationTapProcessing_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationTapProcessing(StationActor);
+}
+
 void AARShopPlayerController::RequestShopStationStopProcessing(AARShopStationActor* StationActor)
 {
 	if (!StationActor)

@@ -36,6 +36,13 @@ enum class EARRamenStationRuntimeState : uint8
 	Processed
 };
 
+UENUM(BlueprintType)
+enum class EARRamenStationProcessingInputMode : uint8
+{
+	Hold = 0,
+	Tap
+};
+
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARRamenBowlSpec
 {
@@ -145,4 +152,10 @@ struct ALIENRAMEN_API FARShopStationConfigRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.05", UIMin = "0.05"))
 	float ProcessingDurationSeconds = 1.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARRamenStationProcessingInputMode ProcessingInputMode = EARRamenStationProcessingInputMode::Hold;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float TapProcessingSecondsPerPress = 0.20f;
 };

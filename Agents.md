@@ -107,8 +107,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSpeakerSubsystem` owns speaker talkable-state resolution/cache.
 - `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state.
-- Runtime overhead emotion rendering is owned by `UARHUDEmotionViewComponent`; `AARHUDBase` includes it as `EmotionView`.
-- `AARHUDBase::DrawHUD` calls `EmotionView->RenderEmotionView(...)`; non-`AARHUDBase` HUDs that add the component must call `RenderEmotionView(...)` from their own `DrawHUD`.
+- Runtime overhead emotion rendering is owned directly by `AARHUDBase` (`DrawHUD` + emotion projection/occlusion helpers), not by a separate HUD component.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
@@ -128,9 +127,11 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AARShopPlayerController::RequestShopUseOrDrop(AActor*)` is the preferred one-shot input entrypoint: forward-use valid targets, fallback drop when target is null.
 - `AARShopPlayerController::RequestShopPickupCarryItem(nullptr)` is the no-hit fallback path and drops the currently held carry item when one exists.
 - `AARShopPlayerController::RequestShopStationInteract(AARShopStationActor*)` is the smart station one-shot entrypoint: held bowl -> fill, held meat + empty slot -> place, empty hands + slotted meat -> pickup.
+- Station processing supports both hold (`RequestShopStationStartProcessing`/`RequestShopStationStopProcessing`) and tap (`RequestShopStationTapProcessing`) input models.
 - `AARShopStationActor` is server-authoritative for station state, processing progress, stock, and slot contents.
 - `AARShopStationActor` also auto-slots loose world meat on station contact when the station can accept meat and its slot is empty.
 - Manual/debug station authoring rule: if `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded (no unlock dependency).
+- Station processing input mode is station-configurable (`Hold`/`Tap`): in tap mode, each press consumes one pulse and release is required before the next pulse.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
