@@ -2,9 +2,11 @@
 
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
+#include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
 #include "ARShopDispenserActor.h"
+#include "ARShopStationActor.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/Pawn.h"
 
@@ -137,16 +139,245 @@ void AARShopPlayerController::ServerRequestShopUseOrDrop_Implementation(AActor* 
 	RequestShopUseOrDrop(InteractableActor);
 }
 
-void AARShopPlayerController::RequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, const FGameplayTag ItemTag)
+void AARShopPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor)
 {
-	if (!DispenserActor)
+	if (!StationActor)
 	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] PlaceHeldMeat ignored on '%s': StationActor is null."), *GetNameSafe(this));
 		return;
 	}
 
 	if (HasAuthority())
 	{
-		DispenserActor->TryDispenseToController(this, ItemTag);
+		const bool bPlaced = StationActor->TryPlaceHeldMeatFromController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] PlaceHeldMeat controller='%s' station='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StationActor),
+			bPlaced ? 1 : 0);
+		return;
+	}
+
+	ServerRequestShopStationPlaceHeldMeat(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopStationPlaceHeldMeat_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationPlaceHeldMeat(StationActor);
+}
+
+void AARShopPlayerController::RequestShopStationPickupMeat(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] PickupMeat ignored on '%s': StationActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		const bool bPickedUp = StationActor->TryPickupSlottedMeatToController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] PickupMeat controller='%s' station='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StationActor),
+			bPickedUp ? 1 : 0);
+		return;
+	}
+
+	ServerRequestShopStationPickupMeat(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopStationPickupMeat_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationPickupMeat(StationActor);
+}
+
+void AARShopPlayerController::RequestShopStationStartProcessing(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] StartProcessing ignored on '%s': StationActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		const bool bStarted = StationActor->StartProcessingByController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] StartProcessing controller='%s' station='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StationActor),
+			bStarted ? 1 : 0);
+		return;
+	}
+
+	ServerRequestShopStationStartProcessing(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopStationStartProcessing_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationStartProcessing(StationActor);
+}
+
+void AARShopPlayerController::RequestShopStationStopProcessing(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] StopProcessing ignored on '%s': StationActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		const bool bStopped = StationActor->StopProcessingByController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] StopProcessing controller='%s' station='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StationActor),
+			bStopped ? 1 : 0);
+		return;
+	}
+
+	ServerRequestShopStationStopProcessing(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopStationStopProcessing_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationStopProcessing(StationActor);
+}
+
+void AARShopPlayerController::RequestShopStationInteract(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] Interact ignored on '%s': StationActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		APawn* ControlledPawn = GetPawn();
+		UARShopCarryComponent* CarryComponent = ControlledPawn ? ControlledPawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
+		if (!CarryComponent)
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Shop|Station] Interact ignored on '%s': missing carry component (pawn='%s', station='%s')."),
+				*GetNameSafe(this),
+				*GetNameSafe(ControlledPawn),
+				*GetNameSafe(StationActor));
+			return;
+		}
+
+		if (CarryComponent->GetHeldBowlActor())
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Shop|Station] Interact route: held bowl -> fill station '%s'."), *GetNameSafe(StationActor));
+			RequestShopFillHeldBowlFromStation(StationActor);
+			return;
+		}
+
+		if (CarryComponent->GetHeldMeatActor())
+		{
+			if (!StationActor->GetSlottedMeatActor())
+			{
+				UE_LOG(ARLog, Verbose, TEXT("[Shop|Station] Interact route: held meat -> place into station '%s'."), *GetNameSafe(StationActor));
+				RequestShopStationPlaceHeldMeat(StationActor);
+			}
+			else
+			{
+				UE_LOG(
+					ARLog,
+					Verbose,
+					TEXT("[Shop|Station] Interact route blocked: held meat but station '%s' already has slotted meat '%s'."),
+					*GetNameSafe(StationActor),
+					*GetNameSafe(StationActor->GetSlottedMeatActor()));
+			}
+			return;
+		}
+
+		if (!CarryComponent->HasHeldActor() && StationActor->GetSlottedMeatActor())
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Shop|Station] Interact route: empty hands -> pickup slotted meat from station '%s'."), *GetNameSafe(StationActor));
+			RequestShopStationPickupMeat(StationActor);
+			return;
+		}
+
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] Interact no-op on '%s': HeldActor='%s' SlottedMeat='%s'."),
+			*GetNameSafe(StationActor),
+			*GetNameSafe(CarryComponent->GetHeldActor()),
+			*GetNameSafe(StationActor->GetSlottedMeatActor()));
+		return;
+	}
+
+	ServerRequestShopStationInteract(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopStationInteract_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationInteract(StationActor);
+}
+
+void AARShopPlayerController::RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Station] FillHeldBowl ignored on '%s': StationActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		const bool bFilled = StationActor->TryFillHeldBowlFromController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] FillHeldBowl controller='%s' station='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StationActor),
+			bFilled ? 1 : 0);
+		return;
+	}
+
+	ServerRequestShopFillHeldBowlFromStation(StationActor);
+}
+
+void AARShopPlayerController::ServerRequestShopFillHeldBowlFromStation_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopFillHeldBowlFromStation(StationActor);
+}
+
+void AARShopPlayerController::RequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, const FGameplayTag ItemTag)
+{
+	if (!DispenserActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Dispenser] Request ignored on '%s': DispenserActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		const bool bDispensed = DispenserActor->TryDispenseToController(this, ItemTag);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Dispenser] Request controller='%s' dispenser='%s' item='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(DispenserActor),
+			*ItemTag.ToString(),
+			bDispensed ? 1 : 0);
 		return;
 	}
 

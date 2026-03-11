@@ -58,10 +58,13 @@ This document captures the runtime ownership and integration contract for the sh
 - Base vs upgraded behavior:
   - unupgraded station output is direct `None` for bowl fill (no meat/process/stock required).
   - upgraded station uses the slot + processing + stock model.
-  - upgrade state is unlock-tag driven (`RequiredUpgradeTags`); there is no starts-upgraded override.
+  - upgrade state is unlock-tag driven (`RequiredUpgradeTags`).
+  - manual/debug authoring override: when `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded.
 - Meat slot behavior:
   - meat is physically slotted on station (`SlottedMeatActor`) and can be picked back up in `MeatReady`.
   - slot replacement is blocked while occupied.
+  - loose world meat (dropped/thrown) that contacts an eligible empty station auto-slots through the same authoritative placement path as held-meat placement.
+  - slotted meat presentation is anchored with physics/collision disabled regardless of whether the meat came from held placement or loose world contact.
 - Processing behavior:
   - hold-to-process (`StartProcessingByController`/`StopProcessingByController`)
   - processing progress pauses/resumes and replicates to all players
@@ -75,11 +78,21 @@ This document captures the runtime ownership and integration contract for the sh
 
 - World carryables (`AARShopCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
 - `ForwardUseToController(...)` resolves `AARShopPlayerController` (direct controller or pawn owner controller) and routes to `RequestShopPickupCarryItem(...)`.
-- Shop-only carry interaction requests live on `AARShopPlayerController`:
+- Shop station request APIs are intentionally owned by `AARShopPlayerController` (not `AARPlayerController`).
+- Shop-only interaction requests live on `AARShopPlayerController`:
   - `RequestShopUseOrDrop(AActor*)` for one-shot input routing (`ForwardUseToController` when target exists, fallback drop when null)
   - `RequestShopPickupCarryItem(AARShopCarryItemBase*)`
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
+  - `RequestShopStationPlaceHeldMeat(AARShopStationActor*)`
+  - `RequestShopStationPickupMeat(AARShopStationActor*)`
+  - `RequestShopStationStartProcessing(AARShopStationActor*)`
+  - `RequestShopStationStopProcessing(AARShopStationActor*)`
+  - `RequestShopFillHeldBowlFromStation(AARShopStationActor*)`
+  - `RequestShopStationInteract(AARShopStationActor*)` smart station route:
+    - held bowl -> `RequestShopFillHeldBowlFromStation(...)`
+    - held meat and station slot empty -> `RequestShopStationPlaceHeldMeat(...)`
+    - empty hands and station has slotted meat -> `RequestShopStationPickupMeat(...)`
 - `RequestShopPickupCarryItem(nullptr)` is treated as a no-hit fallback: if the controller currently holds a carry item, it drops it.
 - `AARPlayerCharacterShop` exposes BP helpers `IsCarryingShopItem()` and `GetHeldShopActor()` for pawn-side input/UI branching.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).

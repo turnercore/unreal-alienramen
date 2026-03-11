@@ -1,6 +1,7 @@
 #include "ARShopDispenserActor.h"
 
 #include "ARGameStateBase.h"
+#include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARSaveTypes.h"
 #include "ARRamenMeatActor.h"
@@ -23,12 +24,25 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 {
 	if (!HasAuthority())
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Dispenser] TryDispenseToController rejected on '%s': no authority (controller='%s', item='%s')."),
+			*GetNameSafe(this),
+			*GetNameSafe(RequestingController),
+			*RequestedItemTag.ToString());
 		return false;
 	}
 
 	const FARShopDispenseDefinition* ResolvedDefinition = ResolveDispenseDefinition(RequestedItemTag);
 	if (!ResolvedDefinition)
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Dispenser] TryDispenseToController rejected on '%s': no definition for item '%s'."),
+			*GetNameSafe(this),
+			*RequestedItemTag.ToString());
 		return false;
 	}
 
@@ -39,6 +53,15 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 	bool bUsedMeatReserve = false;
 	if (!ConsumeSource(Definition, DispenseAmount, bUsedMeatReserve, PreConsumeMeatState))
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Dispenser] TryDispenseToController rejected on '%s': source consume failed (item='%s' amount=%d sourceType=%d sourceColor=%d)."),
+			*GetNameSafe(this),
+			*Definition.ItemTag.ToString(),
+			DispenseAmount,
+			static_cast<int32>(Definition.SourceType),
+			static_cast<int32>(Definition.SourceColor));
 		return false;
 	}
 
@@ -50,6 +73,12 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 
 	if (!SpawnClass)
 	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Shop|Dispenser] TryDispenseToController failed on '%s': no spawn class for item '%s'. Rolling back source."),
+			*GetNameSafe(this),
+			*Definition.ItemTag.ToString());
 		RollbackSource(Definition, DispenseAmount, bUsedMeatReserve, PreConsumeMeatState);
 		return false;
 	}
@@ -62,6 +91,12 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(SpawnClass, SpawnLocation, SpawnRotation, SpawnParams);
 	if (!SpawnedActor)
 	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Shop|Dispenser] TryDispenseToController failed on '%s': spawn failed for class '%s'. Rolling back source."),
+			*GetNameSafe(this),
+			*GetNameSafe(SpawnClass.Get()));
 		RollbackSource(Definition, DispenseAmount, bUsedMeatReserve, PreConsumeMeatState);
 		return false;
 	}
@@ -77,9 +112,37 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 			{
 				CarryComponent->TrySetHeldActor(SpawnedActor);
 			}
+			else
+			{
+				UE_LOG(
+					ARLog,
+					Verbose,
+					TEXT("[Shop|Dispenser] Auto-place skipped on '%s': controller '%s' already holding '%s'."),
+					*GetNameSafe(this),
+					*GetNameSafe(RequestingController),
+					*GetNameSafe(CarryComponent->GetHeldActor()));
+			}
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Shop|Dispenser] Auto-place skipped on '%s': no carry component for controller '%s'."),
+				*GetNameSafe(this),
+				*GetNameSafe(RequestingController));
 		}
 	}
 
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Dispenser] Dispense success on '%s': actor='%s' controller='%s' item='%s' amount=%d."),
+		*GetNameSafe(this),
+		*GetNameSafe(SpawnedActor),
+		*GetNameSafe(RequestingController),
+		*Definition.ItemTag.ToString(),
+		DispenseAmount);
 	return true;
 }
 
