@@ -11,11 +11,13 @@
 #include "ARMeatStorageBoxActor.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
+#include "ARShopCarryComponent.h"
 #include "ARShopStationActor.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Blueprint/UserWidget.h"
+#include "GameFramework/Pawn.h"
 #include "TimerManager.h"
 
 AARPlayerController::AARPlayerController()
@@ -416,6 +418,53 @@ void AARPlayerController::RequestShopStationStopProcessing(AARShopStationActor* 
 void AARPlayerController::ServerRequestShopStationStopProcessing_Implementation(AARShopStationActor* StationActor)
 {
 	RequestShopStationStopProcessing(StationActor);
+}
+
+void AARPlayerController::RequestShopStationInteract(AARShopStationActor* StationActor)
+{
+	if (!StationActor)
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		APawn* ControlledPawn = GetPawn();
+		UARShopCarryComponent* CarryComponent = ControlledPawn ? ControlledPawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
+		if (!CarryComponent)
+		{
+			return;
+		}
+
+		if (CarryComponent->GetHeldBowlActor())
+		{
+			RequestShopFillHeldBowlFromStation(StationActor);
+			return;
+		}
+
+		if (CarryComponent->GetHeldMeatActor())
+		{
+			if (!StationActor->GetSlottedMeatActor())
+			{
+				RequestShopStationPlaceHeldMeat(StationActor);
+			}
+			return;
+		}
+
+		if (!CarryComponent->HasHeldActor() && StationActor->GetSlottedMeatActor())
+		{
+			RequestShopStationPickupMeat(StationActor);
+		}
+
+		return;
+	}
+
+	ServerRequestShopStationInteract(StationActor);
+}
+
+void AARPlayerController::ServerRequestShopStationInteract_Implementation(AARShopStationActor* StationActor)
+{
+	RequestShopStationInteract(StationActor);
 }
 
 void AARPlayerController::RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor)

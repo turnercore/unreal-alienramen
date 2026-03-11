@@ -28,12 +28,8 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 		return 0;
 	}
 
-	if (ResolveOwningHUD() != HUD)
-	{
-		return 0;
-	}
-
 	ActiveProjectionCanvas = InCanvas;
+	ActiveProjectionController = LocalController;
 
 	const APawn* LocalPawn = LocalController->GetPawn();
 	int32 DrawnEmotionCount = 0;
@@ -85,7 +81,9 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 		const float TextureWidth = static_cast<float>(FMath::Max(1, IconTexture->GetSurfaceWidth()));
 		const float TextureHeight = static_cast<float>(FMath::Max(1, IconTexture->GetSurfaceHeight()));
 		const float TextureMax = FMath::Max(TextureWidth, TextureHeight);
-		const float DesiredWorldMaxDimension = FMath::Max(1.0f, EmotionComponent->GetIconScreenSize() * EmotionIconRenderScale);
+		constexpr float RuntimeSizeCalibration = 3.5f;
+		const float EffectiveRenderScale = FMath::Max(0.01f, EmotionIconRenderScale * RuntimeSizeCalibration);
+		const float DesiredWorldMaxDimension = FMath::Max(1.0f, EmotionComponent->GetIconScreenSize() * EffectiveRenderScale);
 		const float BaseWidth = DesiredWorldMaxDimension * (TextureWidth / TextureMax);
 		const float BaseHeight = DesiredWorldMaxDimension * (TextureHeight / TextureMax);
 
@@ -126,6 +124,16 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 			DrawExtent.Y = FMath::Max(1.0f, FMath::Abs(DownPoint.Y - UpPoint.Y));
 		}
 
+		const float MinimumScreenDimension = FMath::Max(0.0f, MinimumIconScreenSizePixels);
+		if (MinimumScreenDimension > 0.0f)
+		{
+			const float CurrentMaxDimension = FMath::Max(DrawExtent.X, DrawExtent.Y);
+			if (CurrentMaxDimension > 0.0f && CurrentMaxDimension < MinimumScreenDimension)
+			{
+				DrawExtent *= (MinimumScreenDimension / CurrentMaxDimension);
+			}
+		}
+
 		const FVector2D DrawPosition(ScreenPosition.X - (DrawExtent.X * 0.5f), ScreenPosition.Y - (DrawExtent.Y * 0.5f));
 
 		const FTexture* IconResource = IconTexture->GetResource();
@@ -141,6 +149,7 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 	}
 
 	ActiveProjectionCanvas.Reset();
+	ActiveProjectionController.Reset();
 
 	if (ShouldLogEmotionRenderVerbose())
 	{
@@ -245,7 +254,11 @@ bool UARHUDEmotionViewComponent::TryProjectEmotionForComponent(
 	OutDisplayedIcon.Reset();
 
 	const AHUD* OwnerHUD = ResolveOwningHUD();
-	const APlayerController* LocalController = OwnerHUD ? OwnerHUD->GetOwningPlayerController() : nullptr;
+	const APlayerController* LocalController = ActiveProjectionController.Get();
+	if (!LocalController && OwnerHUD)
+	{
+		LocalController = OwnerHUD->GetOwningPlayerController();
+	}
 	if (!LocalController || !LocalController->IsLocalController() || !EmotionComponent)
 	{
 		if (ShouldLogEmotionRenderVerbose())
