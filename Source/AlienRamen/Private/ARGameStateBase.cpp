@@ -171,7 +171,10 @@ void AARGameStateBase::BeginPlay()
 
 void AARGameStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	UnregisterDebugConsoleCommands();
+	if (HasAuthority())
+	{
+		UnregisterDebugConsoleCommands();
+	}
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -672,12 +675,9 @@ void AARGameStateBase::RegisterDebugConsoleCommands()
 
 void AARGameStateBase::UnregisterDebugConsoleCommands()
 {
-	IConsoleManager& ConsoleManager = IConsoleManager::Get();
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug.add_meat"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Debug.AddMeat"), false);
-
 	if (CmdDebugAddMeat)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMeat, false);
 		CmdDebugAddMeat = nullptr;
 	}

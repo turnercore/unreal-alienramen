@@ -29,14 +29,15 @@ This document captures the runtime ownership and integration contract for the sh
 
 ## Speaker + Customer Flow
 
-- `AARNPCCharacterBase` now hosts `UARCustomerComponent`.
+- `AARNPCCharacterBase` is a lean shell; `UARCustomerComponent`, `UARSpeakerComponent`, and `UAREmotionComponent` are optional and can be authored independently per actor.
 - Customer runtime speaker identity comes from `UARCustomerComponent::GetSpeakerTag()`:
   - `SpeakerTagOverride` when explicitly authored on the customer component
   - otherwise the owning `UARSpeakerComponent` speaker tag
 - `FARCustomerDefinitionRow` is keyed by TagContentResolver row tag/row name route mapping and does not carry a separate identity/speaker field.
 - Interact priority is **delivery-first**:
   1. try serving held completed bowl via customer component
-  2. fallback to dialogue via `UARSpeakerComponent`
+  2. if serving fails, fallback to dialogue via `UARSpeakerComponent` (when present)
+- `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the preferred optional BP convenience entrypoint for BI_Interactable forwarding because it accepts either pawn or controller source references and routes to controller RPCs.
 - Speaker talkable queries stay true while an active customer order exists so interaction prompts can still route ramen delivery when dialogue is locally gated.
 - Customer evaluation rules:
   - unordered color matching
@@ -48,7 +49,7 @@ This document captures the runtime ownership and integration contract for the sh
   - optional auto-generation at spawn and after serve is preserved.
   - when finite budget is exhausted, customer marks done ordering and emits done signal.
   - runtime emits detailed signals for order generated, order served, and done-ordering states (counts + remaining budget).
-  - ordering blocks dialogue start via local speaker gate while an order is active.
+  - customer runtime still drives the local speaker gate while orders are active; convenience interact paths can still attempt speaker fallback after delivery attempt.
   - ordering emotion now routes through generic emotion-system overrides (state + timed reaction), so fallback returns to dialogue/base emotion automatically.
 
 ## Station Runtime Contract
@@ -69,6 +70,17 @@ This document captures the runtime ownership and integration contract for the sh
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill
   - bowl sequence is strict: `Noodles -> Broth -> Toppings`
+
+## World Carry Item Interaction
+
+- World carryables (`AARShopCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
+- `ForwardUseToController(...)` resolves `AARShopPlayerController` (direct controller or pawn owner controller) and routes to `RequestShopPickupCarryItem(...)`.
+- Shop-only carry interaction requests live on `AARShopPlayerController`:
+  - `RequestShopPickupCarryItem(AARShopCarryItemBase*)`
+  - `RequestShopDropHeldCarryItem()`
+  - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
+- Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
+- Drop/throw restore world physics and gravity on the released carry item.
 
 ## Persistence + Replication
 

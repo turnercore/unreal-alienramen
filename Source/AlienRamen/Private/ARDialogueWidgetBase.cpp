@@ -92,11 +92,11 @@ void UARDialogueWidgetBase::StartDialogueWithSpeakerTag(FGameplayTag SpeakerTag)
 	}
 }
 
-void UARDialogueWidgetBase::InteractWithSpeaker(AARNPCCharacterBase* SpeakerActor)
+void UARDialogueWidgetBase::InteractWithCharacter(AARNPCCharacterBase* CharacterActor)
 {
-	if (IsValid(BoundController) && SpeakerActor)
+	if (IsValid(BoundController) && CharacterActor)
 	{
-		BoundController->RequestInteractWithSpeaker(SpeakerActor);
+		BoundController->RequestInteractWithCharacter(CharacterActor);
 	}
 }
 

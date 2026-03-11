@@ -190,7 +190,10 @@ void AARInvaderGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	OnTrackedPlayersChanged.RemoveDynamic(this, &AARInvaderGameState::HandleTrackedPlayersChanged);
 	ClearWhileSlottedEffects();
 	ActiveSpiceSharers.Reset();
-	UnregisterDebugConsoleCommands();
+	if (HasAuthority())
+	{
+		UnregisterDebugConsoleCommands();
+	}
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -249,54 +252,45 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 
 void AARInvaderGameState::UnregisterDebugConsoleCommands()
 {
-	IConsoleManager& ConsoleManager = IConsoleManager::Get();
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_spice"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_spice"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_scrap"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_money"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_drop_earth_gravity"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_cursor"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.inject_upgrade"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetSpice"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddSpice"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddScrap"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddMoney"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetDropEarthGravity"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetCursor"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.InjectUpgrade"), false);
-
 	if (CmdDebugSetSpice)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetSpice, false);
 		CmdDebugSetSpice = nullptr;
 	}
 	if (CmdDebugAddSpice)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddSpice, false);
 		CmdDebugAddSpice = nullptr;
 	}
 	if (CmdDebugAddScrap)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddScrap, false);
 		CmdDebugAddScrap = nullptr;
 	}
 	if (CmdDebugAddMoney)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMoney, false);
 		CmdDebugAddMoney = nullptr;
 	}
 	if (CmdDebugSetDropEarthGravity)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetDropEarthGravity, false);
 		CmdDebugSetDropEarthGravity = nullptr;
 	}
 	if (CmdDebugSetCursor)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetCursor, false);
 		CmdDebugSetCursor = nullptr;
 	}
 	if (CmdDebugInjectUpgrade)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugInjectUpgrade, false);
 		CmdDebugInjectUpgrade = nullptr;
 	}
