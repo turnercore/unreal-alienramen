@@ -11,13 +11,10 @@
 #include "ARMeatStorageBoxActor.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
-#include "ARShopCarryComponent.h"
-#include "ARShopStationActor.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Blueprint/UserWidget.h"
-#include "GameFramework/Pawn.h"
 #include "TimerManager.h"
 
 AARPlayerController::AARPlayerController()
@@ -336,168 +333,24 @@ void AARPlayerController::ServerRequestInteractWithCharacter_Implementation(AARN
 	RequestInteractWithCharacter(CharacterActor);
 }
 
-void AARPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor)
-{
-	if (!StationActor)
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		StationActor->TryPlaceHeldMeatFromController(this);
-		return;
-	}
-
-	ServerRequestShopStationPlaceHeldMeat(StationActor);
-}
-
-void AARPlayerController::ServerRequestShopStationPlaceHeldMeat_Implementation(AARShopStationActor* StationActor)
-{
-	RequestShopStationPlaceHeldMeat(StationActor);
-}
-
-void AARPlayerController::RequestShopStationPickupMeat(AARShopStationActor* StationActor)
-{
-	if (!StationActor)
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		StationActor->TryPickupSlottedMeatToController(this);
-		return;
-	}
-
-	ServerRequestShopStationPickupMeat(StationActor);
-}
-
-void AARPlayerController::ServerRequestShopStationPickupMeat_Implementation(AARShopStationActor* StationActor)
-{
-	RequestShopStationPickupMeat(StationActor);
-}
-
-void AARPlayerController::RequestShopStationStartProcessing(AARShopStationActor* StationActor)
-{
-	if (!StationActor)
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		StationActor->StartProcessingByController(this);
-		return;
-	}
-
-	ServerRequestShopStationStartProcessing(StationActor);
-}
-
-void AARPlayerController::ServerRequestShopStationStartProcessing_Implementation(AARShopStationActor* StationActor)
-{
-	RequestShopStationStartProcessing(StationActor);
-}
-
-void AARPlayerController::RequestShopStationStopProcessing(AARShopStationActor* StationActor)
-{
-	if (!StationActor)
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		StationActor->StopProcessingByController(this);
-		return;
-	}
-
-	ServerRequestShopStationStopProcessing(StationActor);
-}
-
-void AARPlayerController::ServerRequestShopStationStopProcessing_Implementation(AARShopStationActor* StationActor)
-{
-	RequestShopStationStopProcessing(StationActor);
-}
-
-void AARPlayerController::RequestShopStationInteract(AARShopStationActor* StationActor)
-{
-	if (!StationActor)
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		APawn* ControlledPawn = GetPawn();
-		UARShopCarryComponent* CarryComponent = ControlledPawn ? ControlledPawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
-		if (!CarryComponent)
-		{
-			return;
-		}
-
-		if (CarryComponent->GetHeldBowlActor())
-		{
-			RequestShopFillHeldBowlFromStation(StationActor);
-			return;
-		}
-
-		if (CarryComponent->GetHeldMeatActor())
-		{
-			if (!StationActor->GetSlottedMeatActor())
-			{
-				RequestShopStationPlaceHeldMeat(StationActor);
-			}
-			return;
-		}
-
-		if (!CarryComponent->HasHeldActor() && StationActor->GetSlottedMeatActor())
-		{
-			RequestShopStationPickupMeat(StationActor);
-		}
-
-		return;
-	}
-
-	ServerRequestShopStationInteract(StationActor);
-}
-
-void AARPlayerController::ServerRequestShopStationInteract_Implementation(AARShopStationActor* StationActor)
-{
-	RequestShopStationInteract(StationActor);
-}
-
-void AARPlayerController::RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor)
-{
-	if (!StationActor)
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		StationActor->TryFillHeldBowlFromController(this);
-		return;
-	}
-
-	ServerRequestShopFillHeldBowlFromStation(StationActor);
-}
-
-void AARPlayerController::ServerRequestShopFillHeldBowlFromStation_Implementation(AARShopStationActor* StationActor)
-{
-	RequestShopFillHeldBowlFromStation(StationActor);
-}
-
 void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)
 {
 	if (!StorageActor)
 	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Storage] RequestShopDispenseMeat ignored on '%s': StorageActor is null."), *GetNameSafe(this));
 		return;
 	}
 
 	if (HasAuthority())
 	{
-		StorageActor->TryDispenseMeat(this);
+		const bool bDispensed = StorageActor->TryDispenseMeat(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Storage] RequestShopDispenseMeat controller='%s' storage='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StorageActor),
+			bDispensed ? 1 : 0);
 		return;
 	}
 

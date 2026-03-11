@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/EngineTypes.h"
 #include "GameplayTagContainer.h"
 #include "UObject/SoftObjectPtr.h"
 #include "GameFramework/HUD.h"
@@ -13,9 +14,10 @@
 class AARPlayerController;
 class AGameStateBase;
 class APlayerState;
+class APlayerController;
 class AActor;
 class UAREmotionComponent;
-class UARHUDEmotionViewComponent;
+class UCanvas;
 class UTexture2D;
 
 UCLASS()
@@ -46,21 +48,51 @@ public:
 		FGameplayTag& OutDisplayedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutDisplayedIcon) const;
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|HUD|Emotion")
-	UARHUDEmotionViewComponent* GetEmotionViewComponent() const { return EmotionViewComponent; }
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|HUD|Emotion")
-	UARHUDEmotionViewComponent* GetEmotionRenderComponent() const { return EmotionViewComponent; }
-
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD|Emotion")
 	void SetEmotionRenderingSuppressed(bool bSuppressed, FName Reason = NAME_None);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD|Emotion")
+	void SetEmotionRenderingEnabled(bool bEnabled) { bEnableEmotionView = bEnabled; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|HUD|Emotion")
+	bool IsEmotionRenderingEnabled() const { return bEnableEmotionView; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|HUD|Emotion")
+	bool IsEmotionRenderingSuppressed() const { return SuppressionReasons.Num() > 0; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|UI|HUD|Emotion")
+	int32 GetEmotionRenderingSuppressionReasonCount() const { return SuppressionReasons.Num(); }
 
 protected:
 	// Local-only BP hook for HUD/widget creation/rebind.
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
 	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UARHUDEmotionViewComponent> EmotionViewComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
+	bool bEnableEmotionView = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.1", UIMin = "0.1", ToolTip = "Additional scale multiplier applied to emotion icon draw size."))
+	float EmotionIconRenderScale = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling."))
+	float MinimumIconScreenSizePixels = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
+	bool bHideOwningPawnEmotion = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When enabled, emotion icons are hidden if actor body visibility is blocked for the local viewer."))
+	bool bHideOccludedEmotion = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<ECollisionChannel> OcclusionTraceChannel = ECollisionChannel::ECC_Visibility;
+
+private:
+	int32 RenderEmotionView();
+	bool IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionComponent, const APlayerController* LocalController) const;
+	static bool ShouldLogEmotionRenderVerbose();
+
+	mutable TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
+	mutable TWeakObjectPtr<const APlayerController> ActiveProjectionController;
+	TSet<FName> SuppressionReasons;
 };
 

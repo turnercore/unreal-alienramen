@@ -10,6 +10,7 @@
 
 class AARShopDispenserActor;
 class AARShopCarryItemBase;
+class AARShopStationActor;
 class AActor;
 
 UCLASS()
@@ -28,6 +29,46 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestShopUseOrDrop(AActor* InteractableActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationPickupMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationPickupMeat(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationStartProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationStartProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationStopProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationStopProcessing(AARShopStationActor* StationActor);
+
+	// Smart station interact helper:
+	// - held bowl -> fill bowl from station
+	// - held meat and empty station meat slot -> place held meat
+	// - empty hands and station has slotted meat -> pickup slotted meat
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationInteract(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationInteract(AARShopStationActor* StationActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopFillHeldBowlFromStation(AARShopStationActor* StationActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, FGameplayTag ItemTag);

@@ -8,6 +8,7 @@
 #include "Engine/Canvas.h"
 #include "Engine/Texture2D.h"
 #include "Camera/PlayerCameraManager.h"
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/HUD.h"
 #include "GameFramework/Pawn.h"
@@ -160,10 +161,12 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 			UE_LOG(
 				ARLog,
 				Verbose,
-				TEXT("[Emotion][HUD] Native draw summary: Drawn=%d HUD='%s' Controller='%s'."),
+				TEXT("[Emotion][HUD] Native draw summary: Drawn=%d HUD='%s' Controller='%s' HideOccluded=%d TraceChannel=%d."),
 				DrawnEmotionCount,
 				*GetNameSafe(HUD),
-				*GetNameSafe(LocalController));
+				*GetNameSafe(LocalController),
+				bHideOccludedEmotion ? 1 : 0,
+				static_cast<int32>(OcclusionTraceChannel));
 			LastVerboseSummarySeconds = NowSeconds;
 		}
 	}
@@ -179,40 +182,120 @@ bool UARHUDEmotionViewComponent::IsEmotionVisibleForViewer(const UAREmotionCompo
 	}
 
 	UWorld* World = GetWorld();
-	const APlayerCameraManager* CameraManager = LocalController->PlayerCameraManager;
 	const AActor* EmotionOwner = EmotionComponent->GetOwner();
-	if (!World || !CameraManager || !EmotionOwner)
+	if (!World || !EmotionOwner)
 	{
 		return true;
 	}
 
+	// Renderer-grounded guard: if none of the owner's primitives were recently visible on screen,
+	// treat the emotion as occluded.
+	bool bOwnerRecentlyRenderedOnScreen = false;
+	TInlineComponentArray<UPrimitiveComponent*> OwnerPrimitives;
+	EmotionOwner->GetComponents(OwnerPrimitives);
+	if (!OwnerPrimitives.IsEmpty())
+	{
+		const float CurrentWorldSeconds = World->GetTimeSeconds();
+		constexpr float RecentRenderThresholdSeconds = 0.20f;
+		for (const UPrimitiveComponent* Primitive : OwnerPrimitives)
+		{
+			if (!IsValid(Primitive) || !Primitive->IsVisible())
+			{
+				continue;
+			}
+
+			if ((CurrentWorldSeconds - Primitive->GetLastRenderTimeOnScreen()) <= RecentRenderThresholdSeconds)
+			{
+				bOwnerRecentlyRenderedOnScreen = true;
+				break;
+			}
+		}
+	}
+
+	if (!OwnerPrimitives.IsEmpty() && !bOwnerRecentlyRenderedOnScreen)
+	{
+		return false;
+	}
+
+	FVector ViewLocation = FVector::ZeroVector;
+	FRotator ViewRotation = FRotator::ZeroRotator;
+	LocalController->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
 	FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(ARHUDEmotionOcclusion), false);
+	QueryParams.bTraceComplex = true;
 	if (const APawn* LocalPawn = LocalController->GetPawn())
 	{
 		QueryParams.AddIgnoredActor(LocalPawn);
 	}
 
-	FHitResult Hit;
-	const bool bHit = World->LineTraceSingleByChannel(
-		Hit,
-		CameraManager->GetCameraLocation(),
-		EmotionComponent->GetEmotionAnchorWorldLocation(),
-		OcclusionTraceChannel,
-		QueryParams);
-	if (!bHit)
+	auto IsHitOnEmotionOwner = [&](const FHitResult& Hit) -> bool
 	{
+		const AActor* HitActor = Hit.GetActor();
+		if (!HitActor)
+		{
+			return false;
+		}
+
+		return HitActor == EmotionOwner
+			|| HitActor->IsAttachedTo(EmotionOwner)
+			|| EmotionOwner->IsAttachedTo(HitActor);
+	};
+
+	auto IsBlockedOnChannel = [&](const FVector& TargetPoint, const ECollisionChannel Channel) -> bool
+	{
+		FHitResult Hit;
+		const bool bHit = World->LineTraceSingleByChannel(Hit, ViewLocation, TargetPoint, Channel, QueryParams);
+		return bHit && !IsHitOnEmotionOwner(Hit);
+	};
+
+	auto IsBlockedByWorldObject = [&](const FVector& TargetPoint) -> bool
+	{
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+
+		FHitResult Hit;
+		const bool bHit = World->LineTraceSingleByObjectType(Hit, ViewLocation, TargetPoint, ObjectQueryParams, QueryParams);
+		return bHit && !IsHitOnEmotionOwner(Hit);
+	};
+
+	auto IsTargetVisible = [&](const FVector& TargetPoint) -> bool
+	{
+		if (IsBlockedByWorldObject(TargetPoint))
+		{
+			return false;
+		}
+
+		if (IsBlockedOnChannel(TargetPoint, OcclusionTraceChannel))
+		{
+			return false;
+		}
+
+		if (OcclusionTraceChannel != ECollisionChannel::ECC_Visibility
+			&& IsBlockedOnChannel(TargetPoint, ECollisionChannel::ECC_Visibility))
+		{
+			return false;
+		}
+
+		if (OcclusionTraceChannel != ECollisionChannel::ECC_Camera
+			&& IsBlockedOnChannel(TargetPoint, ECollisionChannel::ECC_Camera))
+		{
+			return false;
+		}
+
 		return true;
-	}
+	};
 
-	const AActor* HitActor = Hit.GetActor();
-	if (!HitActor)
-	{
-		return false;
-	}
+	FVector BoundsOrigin = FVector::ZeroVector;
+	FVector BoundsExtent = FVector::ZeroVector;
+	EmotionOwner->GetActorBounds(true, BoundsOrigin, BoundsExtent);
+	const FVector ActorCenter = EmotionOwner->GetActorLocation();
+	const FVector BodyCenter = BoundsOrigin;
+	const FVector UpperBody = BoundsOrigin + FVector(0.0f, 0.0f, BoundsExtent.Z * 0.35f);
 
-	return HitActor == EmotionOwner
-		|| HitActor->IsAttachedTo(EmotionOwner)
-		|| EmotionOwner->IsAttachedTo(HitActor);
+	// Body visibility gates HUD emotion rendering; anchor-only visibility above cover should not keep icon visible.
+	return IsTargetVisible(ActorCenter) || IsTargetVisible(BodyCenter) || IsTargetVisible(UpperBody);
 }
 
 bool UARHUDEmotionViewComponent::TryProjectEmotionForActor(
