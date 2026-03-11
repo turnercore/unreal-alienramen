@@ -10,7 +10,7 @@ Ownership note:
 ## Runtime Ownership
 
 - Primary runtime API: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`)
-- Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen|NPC -> Factions`)
+- Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen|Dialogue -> Factions`)
 - Content source: `UTagContentResolverSubsystem` root `Faction.Identity`
 - Persistence source: `UARSaveSubsystem` / `UARSaveGame`
 

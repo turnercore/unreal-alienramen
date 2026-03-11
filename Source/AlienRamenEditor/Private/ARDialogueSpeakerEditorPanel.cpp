@@ -4649,7 +4649,7 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 				+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
 				[
 					SNew(SBox)
-					.WidthOverride(90.0f)
+					.MinDesiredWidth(116.0f)
 					[
 						SNew(SButton)
 						.ContentPadding(FMargin(6.0f, 2.0f))
@@ -4665,7 +4665,7 @@ TSharedRef<ITableRow> SDialogueSpeakerEditorPanel::OnGenerateConversationRow(TSh
 				+ SWrapBox::Slot().Padding(0.0f, 0.0f, 4.0f, 4.0f)
 				[
 					SNew(SBox)
-					.WidthOverride(90.0f)
+					.MinDesiredWidth(98.0f)
 					[
 						SNew(SButton)
 						.ContentPadding(FMargin(6.0f, 2.0f))

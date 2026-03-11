@@ -109,6 +109,9 @@ public:
 	bool HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag PrimarySpeakerTag) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool IsSpeakerBusyForController(const AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool GetLocalViewForController(const AARPlayerController* RequestingController, FDialogueClientView& OutView) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")

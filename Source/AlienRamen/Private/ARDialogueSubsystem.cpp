@@ -2,6 +2,7 @@
 
 #include "ARDialogueConversationAsset.h"
 #include "AREmotionComponent.h"
+#include "AREmotionSettings.h"
 #include "ARDialogueSettings.h"
 #include "ARFactionSubsystem.h"
 #include "ARGameModeBase.h"
@@ -26,6 +27,8 @@
 
 namespace
 {
+	static const FName DialogueBusyEmotionSourceId(TEXT("DialogueBusy"));
+
 	struct FDialogueCandidateEval
 	{
 		TObjectPtr<UARDialogueConversationAsset> Conversation = nullptr;
@@ -417,6 +420,68 @@ static FARActiveDialogueSession* FindSessionByOwnerSlot(TArray<FARActiveDialogue
 			return &Session;
 		}
 	}
+	return nullptr;
+}
+
+static FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
+	TArray<FARActiveDialogueSession>& Sessions,
+	const FGameplayTag& PrimarySpeakerTag,
+	const EARPlayerSlot ExcludedOwnerSlot = EARPlayerSlot::Unknown)
+{
+	if (!PrimarySpeakerTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	for (FARActiveDialogueSession& Session : Sessions)
+	{
+		if (Session.bIsSharedSession)
+		{
+			continue;
+		}
+
+		if (ExcludedOwnerSlot != EARPlayerSlot::Unknown && Session.OwnerSlot == ExcludedOwnerSlot)
+		{
+			continue;
+		}
+
+		if (Session.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+		{
+			return &Session;
+		}
+	}
+
+	return nullptr;
+}
+
+static const FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
+	const TArray<FARActiveDialogueSession>& Sessions,
+	const FGameplayTag& PrimarySpeakerTag,
+	const EARPlayerSlot ExcludedOwnerSlot = EARPlayerSlot::Unknown)
+{
+	if (!PrimarySpeakerTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	for (const FARActiveDialogueSession& Session : Sessions)
+	{
+		if (Session.bIsSharedSession)
+		{
+			continue;
+		}
+
+		if (ExcludedOwnerSlot != EARPlayerSlot::Unknown && Session.OwnerSlot == ExcludedOwnerSlot)
+		{
+			continue;
+		}
+
+		if (Session.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+		{
+			return &Session;
+		}
+	}
+
 	return nullptr;
 }
 
@@ -1729,6 +1794,13 @@ static bool IsModeDialogueEnabled(const UARDialogueSettings* Settings, const FGa
 
 	return IsModeInContainer(ModeTag, Settings->SharedDialogueModeTags)
 		|| IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
+}
+
+static bool IsBusySpeakerLockEnabled(const UARDialogueSettings* Settings, const FGameplayTag& ModeTag)
+{
+	return Settings
+		&& Settings->bOnlyOneTalkerPerSpeakerInPerPlayerModes
+		&& IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
 }
 
 void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -3561,6 +3633,19 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		return false;
 	}
 
+	if (IsBusySpeakerLockEnabled(Settings, ModeTag))
+	{
+		if (const FARActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+		{
+			UE_LOG(ARLog, Verbose,
+				TEXT("[Dialogue] Offer blocked: speaker '%s' is busy in active session '%s' owned by slot %s."),
+				*PrimarySpeakerTag.ToString(),
+				*BusySession->SessionId,
+				*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(BusySession->OwnerSlot)));
+			return false;
+		}
+	}
+
 	TArray<FDialogueCandidateEval> Unseen;
 	TArray<FDialogueCandidateEval> Catchup;
 	TArray<FDialogueCandidateEval> Repeatable;
@@ -4073,6 +4158,87 @@ static void ClearDialogueEmotionOverridesForSession(const FARActiveDialogueSessi
 		{
 			EmotionComponent->ClearDialogueEmotionTagForPlayerSlot(Session.OwnerSlot);
 		}
+	}
+}
+
+static UAREmotionComponent* FindEmotionComponentForSpeakerTag(UWorld* World, const FGameplayTag& SpeakerTag)
+{
+	if (!World || !SpeakerTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	const auto MatchesSpeakerTag = [&SpeakerTag](const FGameplayTag& CandidateTag) -> bool
+	{
+		return CandidateTag.IsValid()
+			&& (SpeakerTag.MatchesTag(CandidateTag) || CandidateTag.MatchesTag(SpeakerTag));
+	};
+
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!Actor)
+		{
+			continue;
+		}
+
+		if (const UARNPCTalkComponent* TalkComponent = Actor->FindComponentByClass<UARNPCTalkComponent>())
+		{
+			if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+			{
+				if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(Actor))
+				{
+					return EmotionComponent;
+				}
+			}
+		}
+
+		if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(Actor))
+		{
+			if (MatchesSpeakerTag(EmotionComponent->GetRegisteredSpeakerTag()))
+			{
+				return EmotionComponent;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+static void RefreshBusyEmotionForSpeaker(
+	UARDialogueSubsystem* DialogueSubsystem,
+	const FGameplayTag& SpeakerTag,
+	const TArray<FARActiveDialogueSession>& Sessions)
+{
+	if (!DialogueSubsystem || !SpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	UWorld* World = DialogueSubsystem->GetWorld();
+	const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
+	const FGameplayTag ModeTag = GetCurrentModeTag(World);
+	const bool bBusyLockEnabled = IsBusySpeakerLockEnabled(DialogueSettings, ModeTag);
+	const bool bSpeakerBusy = bBusyLockEnabled
+		&& FindPerPlayerSessionByPrimarySpeaker(Sessions, SpeakerTag, EARPlayerSlot::Unknown) != nullptr;
+
+	UAREmotionComponent* EmotionComponent = FindEmotionComponentForSpeakerTag(World, SpeakerTag);
+	if (!EmotionComponent)
+	{
+		return;
+	}
+
+	const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+	const FGameplayTag BusyEmotionTag = EmotionSettings ? EmotionSettings->BusyEmotionTag : FGameplayTag();
+	const int32 BusyPriority = EmotionSettings ? EmotionSettings->BusyEmotionPriority : 3;
+
+	if (bSpeakerBusy && BusyEmotionTag.IsValid())
+	{
+		EmotionComponent->SetSystemEmotionTag(DialogueBusyEmotionSourceId, BusyEmotionTag, BusyPriority);
+	}
+	else
+	{
+		EmotionComponent->ClearSystemEmotionTag(DialogueBusyEmotionSourceId);
 	}
 }
 
@@ -4930,6 +5096,7 @@ static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARA
 
 	UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Session '%s' removed (Participants=%d)."), *SessionId, ParticipantSlots.Num());
 	Sessions.RemoveAtSwap(SessionIndex, 1, EAllowShrinking::No);
+	RefreshBusyEmotionForSpeaker(DialogueSubsystem, SessionSnapshot.PrimarySpeakerTag, Sessions);
 	DialogueSubsystem->OnDialogueSessionEnded.Broadcast(SessionId);
 	for (const EARPlayerSlot Slot : ParticipantSlots)
 	{
@@ -4952,6 +5119,69 @@ static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARA
 
 bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag)
 {
+	if (!RequestingController || !PrimarySpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	AARPlayerStateBase* RequestingPlayerState = RequestingController->GetPlayerState<AARPlayerStateBase>();
+	if (RequestingPlayerState)
+	{
+		FARDialogueRuntimeState& Runtime = GetRuntimeState();
+		const int32 ExistingSessionIndex = FindSessionIndexForSlot(Runtime.ActiveSessions, RequestingPlayerState->GetPlayerSlot());
+		if (Runtime.ActiveSessions.IsValidIndex(ExistingSessionIndex))
+		{
+			FARActiveDialogueSession& ExistingSession = Runtime.ActiveSessions[ExistingSessionIndex];
+			if (!ExistingSession.ConversationAsset || !ExistingSession.CurrentNodeId.IsValid())
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[Dialogue] Removing stale session '%s' while starting speaker '%s'."),
+					*ExistingSession.SessionId,
+					*PrimarySpeakerTag.ToString());
+				RemoveSessionAt(this, Runtime.ActiveSessions, ExistingSessionIndex);
+			}
+			else if (ExistingSession.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+			{
+				// Re-broadcast the active speaker session so interaction can reopen the same dialogue UI.
+				BroadcastSessionUpdated(this, ExistingSession);
+				return true;
+			}
+		}
+	}
+
+	if (RequestingPlayerState)
+	{
+		const EARPlayerSlot RequesterSlot = RequestingPlayerState->GetPlayerSlot();
+		const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+		const FGameplayTag ModeTag = GetCurrentModeTag(GetWorld());
+		if (RequesterSlot != EARPlayerSlot::Unknown && IsBusySpeakerLockEnabled(Settings, ModeTag))
+		{
+			FARDialogueRuntimeState& Runtime = GetRuntimeState();
+			if (FARActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+			{
+				UE_LOG(
+					ARLog,
+					Verbose,
+					TEXT("[Dialogue] Start-with-speaker blocked: speaker '%s' busy in session '%s' (owner=%s)."),
+					*PrimarySpeakerTag.ToString(),
+					*BusySession->SessionId,
+					*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(BusySession->OwnerSlot)));
+
+				if (Settings && Settings->bAutoEavesdropOnBusySpeakerByDefault)
+				{
+					if (ForceEavesdrop(RequestingController, true, BusySession->OwnerSlot))
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+		}
+	}
+
 	FDialogueConversationOffer Offer;
 	if (!GetAvailableConversationForNPC(RequestingController, PrimarySpeakerTag, Offer, /*bNpcLocalStateAllowsDialogue=*/ true))
 	{
@@ -5089,7 +5319,31 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 			return false;
 		}
 	}
-	else if (FindSessionByOwnerSlot(Runtime.ActiveSessions, RequesterSlot))
+	else if (IsBusySpeakerLockEnabled(Settings, ModeTag))
+	{
+		if (FARActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Dialogue] StartConversation blocked: speaker '%s' busy in session '%s' (owner=%s)."),
+				*PrimarySpeakerTag.ToString(),
+				*BusySession->SessionId,
+				*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(BusySession->OwnerSlot)));
+
+			if (Settings && Settings->bAutoEavesdropOnBusySpeakerByDefault)
+			{
+				if (ForceEavesdrop(RequestingController, true, BusySession->OwnerSlot))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	if (!bSharedMode && FindSessionByOwnerSlot(Runtime.ActiveSessions, RequesterSlot))
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] StartConversation rejected: slot already owns a session."));
 		return false;
@@ -5124,6 +5378,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	}
 
 	Runtime.ActiveSessions.Add(MoveTemp(Session));
+	RefreshBusyEmotionForSpeaker(this, PrimarySpeakerTag, Runtime.ActiveSessions);
 	const int32 NewSessionIndex = Runtime.ActiveSessions.Num() - 1;
 	EDialogueExecutionResult Result = ExecuteSessionUntilWait(
 		this,
@@ -5341,13 +5596,20 @@ bool UARDialogueSubsystem::ForceEavesdrop(AARPlayerController* RequestingControl
 				*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(TargetSlot)));
 			return false;
 		}
-		Runtime.EavesdropTargetByViewer.Add(ViewerSlot, TargetSlot);
-		if (FARActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(Runtime.ActiveSessions, TargetSlot))
+
+		FARActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(Runtime.ActiveSessions, TargetSlot);
+		if (!TargetSession)
 		{
-			AddSessionParticipant(*TargetSession, Runtime.SeenByPlayerTransient, ViewerSlot);
-			PersistCycleOfferStateForSlot(this, ViewerSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
-			BroadcastSessionUpdated(this, *TargetSession);
+			UE_LOG(ARLog, Verbose, TEXT("[Dialogue] ForceEavesdrop rejected: target slot %s has no active dialogue session."),
+				*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(TargetSlot)));
+			return false;
 		}
+
+		Runtime.EavesdropTargetByViewer.Add(ViewerSlot, TargetSlot);
+		AddSessionParticipant(*TargetSession, Runtime.SeenByPlayerTransient, ViewerSlot);
+		PersistCycleOfferStateForSlot(this, ViewerSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
+		BroadcastSessionUpdated(this, *TargetSession);
+
 		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] ForceEavesdrop: viewer %s now eavesdropping owner %s."),
 			*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(ViewerSlot)),
 			*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(TargetSlot)));
@@ -5355,12 +5617,21 @@ bool UARDialogueSubsystem::ForceEavesdrop(AARPlayerController* RequestingControl
 	}
 
 	Runtime.EavesdropTargetByViewer.Remove(ViewerSlot);
+	AARPlayerController* ViewerController = FindPlayerControllerBySlot(World, ViewerSlot);
 	for (FARActiveDialogueSession& Session : Runtime.ActiveSessions)
 	{
 		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot && !Session.bChoiceRequiresAllViewers)
 		{
-			Session.Participants.Remove(ViewerSlot);
-			BroadcastSessionUpdated(this, Session);
+			if (Session.Participants.Remove(ViewerSlot) > 0)
+			{
+				const FString RemovedSessionId = Session.SessionId;
+				BroadcastSessionUpdated(this, Session);
+				if (ViewerController)
+				{
+					// Viewer was removed before broadcast, so explicitly clear stale local UI/cache.
+					ViewerController->ClientDialogueSessionEnded(RemovedSessionId);
+				}
+			}
 		}
 	}
 	UE_LOG(ARLog, Verbose, TEXT("[Dialogue] ForceEavesdrop cleared for viewer %s."), *StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(ViewerSlot)));
@@ -5559,6 +5830,29 @@ bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag Pr
 	}
 
 	return false;
+}
+
+bool UARDialogueSubsystem::IsSpeakerBusyForController(const AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag) const
+{
+	if (!RequestingController || !PrimarySpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	const EARPlayerSlot RequesterSlot = GetSlotFromController(RequestingController);
+	if (RequesterSlot == EARPlayerSlot::Unknown)
+	{
+		return false;
+	}
+
+	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
+	const FGameplayTag ModeTag = GetCurrentModeTag(GetWorld());
+	if (!IsBusySpeakerLockEnabled(Settings, ModeTag))
+	{
+		return false;
+	}
+
+	return FindPerPlayerSessionByPrimarySpeaker(GetRuntimeState().ActiveSessions, PrimarySpeakerTag, RequesterSlot) != nullptr;
 }
 
 bool UARDialogueSubsystem::GetLocalViewForController(const AARPlayerController* RequestingController, FDialogueClientView& OutView) const
