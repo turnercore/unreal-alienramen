@@ -103,6 +103,10 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - `UAREmotionComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
 - Emotion anchor authoring is offset-only: `AnchorWorldOffset` is applied from owner actor top bounds fallback.
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UAREmotionSettings::DefaultTimedSystemOverrideDurationSeconds`.
+- Runtime overhead emotion rendering is now owned by `UARHUDEmotionViewComponent` (component name `EmotionView` on `AARHUDBase`).
+- `AARHUDBase::DrawHUD` calls `EmotionView->RenderEmotionView()`; HUD subclasses that override `DrawHUD` must call `Super::DrawHUD()` to preserve emotion rendering.
+- Non-`AARHUDBase` HUDs can opt in by adding `UARHUDEmotionViewComponent` and calling `RenderEmotionView()` from their draw path.
+- Runtime suppression (for example cutscenes) should use `SetEmotionViewSuppressed(...)` on the component or `AARHUDBase::SetEmotionRenderingSuppressed(...)`.
 
 ## Offer + Execution Rules (Current Runtime)
 

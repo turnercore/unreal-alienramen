@@ -770,13 +770,20 @@ void UAREmotionComponent::RefreshEditorPreviewBillboard()
 		EditorPreviewBillboardComponent->RegisterComponentWithWorld(World);
 	}
 
+	if (USceneComponent* RootComponent = OwnerActor->GetRootComponent())
+	{
+		if (EditorPreviewBillboardComponent->GetAttachParent() != RootComponent)
+		{
+			EditorPreviewBillboardComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+		}
+	}
+
 	EditorPreviewBillboardComponent->SetSprite(LoadedTexture);
 	EditorPreviewBillboardComponent->SetVisibility(true, true);
 
 	const float PreviewScale = FMath::Max(0.05f, IconScreenSize / 64.0f);
 	EditorPreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
 
-	EditorPreviewBillboardComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	EditorPreviewBillboardComponent->SetWorldLocation(GetEmotionAnchorWorldLocation());
 #endif
 }
