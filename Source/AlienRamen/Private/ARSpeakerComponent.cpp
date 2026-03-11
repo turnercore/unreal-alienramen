@@ -1,9 +1,9 @@
-#include "ARNPCTalkComponent.h"
+#include "ARSpeakerComponent.h"
 
 #include "AREmotionComponent.h"
 #include "ARDialogueSubsystem.h"
 #include "ARLog.h"
-#include "ARNPCSubsystem.h"
+#include "ARSpeakerSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "Engine/GameInstance.h"
@@ -27,12 +27,12 @@ namespace
 	}
 }
 
-UARNPCTalkComponent::UARNPCTalkComponent()
+UARSpeakerComponent::UARSpeakerComponent()
 {
 	SetIsReplicatedByDefault(true);
 }
 
-void UARNPCTalkComponent::BeginPlay()
+void UARSpeakerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -45,22 +45,22 @@ void UARNPCTalkComponent::BeginPlay()
 
 	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GameInstance->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->OnNpcTalkableChanged.AddDynamic(this, &UARNPCTalkComponent::HandleNpcTalkableChanged);
+			SpeakerSubsystem->OnSpeakerTalkableChanged.AddDynamic(this, &UARSpeakerComponent::HandleSpeakerTalkableChanged);
 		}
 	}
 }
 
-void UARNPCTalkComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void UARSpeakerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (IsAuthorityOwner())
 	{
 		if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 		{
-			if (UARNPCSubsystem* NpcSubsystem = GameInstance->GetSubsystem<UARNPCSubsystem>())
+			if (UARSpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UARSpeakerSubsystem>())
 			{
-				NpcSubsystem->OnNpcTalkableChanged.RemoveDynamic(this, &UARNPCTalkComponent::HandleNpcTalkableChanged);
+				SpeakerSubsystem->OnSpeakerTalkableChanged.RemoveDynamic(this, &UARSpeakerComponent::HandleSpeakerTalkableChanged);
 			}
 		}
 	}
@@ -68,16 +68,16 @@ void UARNPCTalkComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-void UARNPCTalkComponent::InteractByController(AARPlayerController* InteractingController)
+void UARSpeakerComponent::InteractByController(AARPlayerController* InteractingController)
 {
 	if (!IsAuthorityOwner() || !InteractingController)
 	{
 		return;
 	}
 
-	if (!NpcTag.IsValid())
+	if (!SpeakerTag.IsValid())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[NPC] Interact ignored: '%s' has no NpcTag."), *GetNameSafe(GetOwner()));
+		UE_LOG(ARLog, Warning, TEXT("[Speaker] Interact ignored: '%s' has no SpeakerTag."), *GetNameSafe(GetOwner()));
 		return;
 	}
 
@@ -85,34 +85,34 @@ void UARNPCTalkComponent::InteractByController(AARPlayerController* InteractingC
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>())
 		{
-			if (!DialogueSubsystem->TryStartDialogueWithNpc(InteractingController, NpcTag))
+			if (!DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, SpeakerTag))
 			{
 				UE_LOG(
 					ARLog,
 					Verbose,
-					TEXT("[NPC] TryStartDialogueWithNpc returned false for '%s' with NPC '%s'."),
+					TEXT("[Speaker] TryStartDialogueWithSpeaker returned false for '%s' with speaker '%s'."),
 					*GetNameSafe(InteractingController),
-					*NpcTag.ToString());
+					*SpeakerTag.ToString());
 			}
 		}
 	}
 }
 
-void UARNPCTalkComponent::SetNpcTag(const FGameplayTag NewNpcTag)
+void UARSpeakerComponent::SetSpeakerTag(const FGameplayTag NewSpeakerTag)
 {
-	if (NpcTag.MatchesTagExact(NewNpcTag))
+	if (SpeakerTag.MatchesTagExact(NewSpeakerTag))
 	{
 		return;
 	}
 
-	NpcTag = NewNpcTag;
+	SpeakerTag = NewSpeakerTag;
 	if (IsAuthorityOwner())
 	{
 		if (AActor* OwnerActor = GetOwner())
 		{
 			if (UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>())
 			{
-				EmotionComponent->SetRegisteredSpeakerTag(NpcTag);
+				EmotionComponent->SetRegisteredSpeakerTag(SpeakerTag);
 			}
 		}
 
@@ -120,31 +120,59 @@ void UARNPCTalkComponent::SetNpcTag(const FGameplayTag NewNpcTag)
 	}
 }
 
-void UARNPCTalkComponent::RefreshTalkableFromSubsystem()
+void UARSpeakerComponent::RefreshTalkableFromSubsystem()
 {
-	if (!IsAuthorityOwner() || !NpcTag.IsValid())
+	if (!IsAuthorityOwner() || !SpeakerTag.IsValid())
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Speaker] Component refresh skipped for '%s': Authority=%s SpeakerTagValid=%s"),
+			*GetNameSafe(GetOwner()),
+			IsAuthorityOwner() ? TEXT("true") : TEXT("false"),
+			SpeakerTag.IsValid() ? TEXT("true") : TEXT("false"));
 		return;
 	}
 
+	const uint8 OldMask = TalkablePlayerSlotMask;
 	uint8 NewTalkableMask = 0;
 	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>())
 		{
-			if (DialogueSubsystem->HasUnlockedDialogueForNpcForSlot(NpcTag, EARPlayerSlot::P1))
+			const bool bP1Talkable = DialogueSubsystem->HasUnlockedDialogueForSpeakerForSlot(SpeakerTag, EARPlayerSlot::P1);
+			const bool bP2Talkable = DialogueSubsystem->HasUnlockedDialogueForSpeakerForSlot(SpeakerTag, EARPlayerSlot::P2);
+			if (bP1Talkable)
 			{
 				NewTalkableMask |= GetTalkableMaskForSlot(EARPlayerSlot::P1);
 			}
 
-			if (DialogueSubsystem->HasUnlockedDialogueForNpcForSlot(NpcTag, EARPlayerSlot::P2))
+			if (bP2Talkable)
 			{
 				NewTalkableMask |= GetTalkableMaskForSlot(EARPlayerSlot::P2);
 			}
+
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Speaker] Component eval '%s' (%s): P1=%s P2=%s Mask=0x%02x->0x%02x"),
+				*GetNameSafe(GetOwner()),
+				*SpeakerTag.ToString(),
+				bP1Talkable ? TEXT("true") : TEXT("false"),
+				bP2Talkable ? TEXT("true") : TEXT("false"),
+				OldMask,
+				NewTalkableMask);
+		}
+		else
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[Speaker] Component refresh '%s': dialogue subsystem unavailable."), *GetNameSafe(GetOwner()));
 		}
 	}
+	else
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable."), *GetNameSafe(GetOwner()));
+	}
 
-	const uint8 OldMask = TalkablePlayerSlotMask;
 	const bool bMaskChanged = OldMask != NewTalkableMask;
 	TalkablePlayerSlotMask = NewTalkableMask;
 	if (bMaskChanged)
@@ -167,10 +195,10 @@ void UARNPCTalkComponent::RefreshTalkableFromSubsystem()
 	}
 }
 
-void UARNPCTalkComponent::HandleNpcTalkableChanged(const FGameplayTag ChangedNpcTag, const bool bNewTalkable)
+void UARSpeakerComponent::HandleSpeakerTalkableChanged(const FGameplayTag ChangedSpeakerTag, const bool bNewTalkable)
 {
 	(void)bNewTalkable;
-	if (!IsAuthorityOwner() || !ChangedNpcTag.MatchesTagExact(NpcTag))
+	if (!IsAuthorityOwner() || !ChangedSpeakerTag.MatchesTagExact(SpeakerTag))
 	{
 		return;
 	}
@@ -178,15 +206,15 @@ void UARNPCTalkComponent::HandleNpcTalkableChanged(const FGameplayTag ChangedNpc
 	RefreshTalkableFromSubsystem();
 }
 
-void UARNPCTalkComponent::OnRep_IsTalkable(const bool bOldTalkable)
+void UARSpeakerComponent::OnRep_IsTalkable(const bool bOldTalkable)
 {
 	if (bIsTalkable != bOldTalkable)
 	{
-		OnNpcTalkableStateChanged.Broadcast(bIsTalkable);
+		OnSpeakerTalkableStateChanged.Broadcast(bIsTalkable);
 	}
 }
 
-void UARNPCTalkComponent::OnRep_TalkablePlayerSlotMask(const uint8 bOldTalkablePlayerSlotMask)
+void UARSpeakerComponent::OnRep_TalkablePlayerSlotMask(const uint8 bOldTalkablePlayerSlotMask)
 {
 	if (bOldTalkablePlayerSlotMask == TalkablePlayerSlotMask)
 	{
@@ -195,16 +223,16 @@ void UARNPCTalkComponent::OnRep_TalkablePlayerSlotMask(const uint8 bOldTalkableP
 
 	// Always broadcast on slot-mask changes so listeners refresh per-slot indicators even
 	// if bIsTalkable replication is delayed or unchanged.
-	OnNpcTalkableStateChanged.Broadcast(TalkablePlayerSlotMask != 0);
+	OnSpeakerTalkableStateChanged.Broadcast(TalkablePlayerSlotMask != 0);
 }
 
-bool UARNPCTalkComponent::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
+bool UARSpeakerComponent::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
 {
 	const uint8 SlotMask = GetTalkableMaskForSlot(PlayerSlot);
 	return SlotMask != 0 && (TalkablePlayerSlotMask & SlotMask) != 0;
 }
 
-bool UARNPCTalkComponent::IsTalkableForController(const AARPlayerController* QueryController) const
+bool UARSpeakerComponent::IsTalkableForController(const AARPlayerController* QueryController) const
 {
 	if (!QueryController)
 	{
@@ -220,13 +248,13 @@ bool UARNPCTalkComponent::IsTalkableForController(const AARPlayerController* Que
 	return IsTalkableForPlayerSlot(QueryPlayerState->GetPlayerSlot());
 }
 
-bool UARNPCTalkComponent::IsAuthorityOwner() const
+bool UARSpeakerComponent::IsAuthorityOwner() const
 {
 	const AActor* OwnerActor = GetOwner();
 	return OwnerActor && OwnerActor->HasAuthority();
 }
 
-void UARNPCTalkComponent::ForceOwnerNetUpdate() const
+void UARSpeakerComponent::ForceOwnerNetUpdate() const
 {
 	if (AActor* OwnerActor = GetOwner())
 	{
@@ -234,9 +262,9 @@ void UARNPCTalkComponent::ForceOwnerNetUpdate() const
 	}
 }
 
-void UARNPCTalkComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void UARSpeakerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UARNPCTalkComponent, bIsTalkable);
-	DOREPLIFETIME(UARNPCTalkComponent, TalkablePlayerSlotMask);
+	DOREPLIFETIME(UARSpeakerComponent, bIsTalkable);
+	DOREPLIFETIME(UARSpeakerComponent, TalkablePlayerSlotMask);
 }

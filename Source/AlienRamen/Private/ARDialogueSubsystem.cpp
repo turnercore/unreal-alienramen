@@ -8,8 +8,8 @@
 #include "ARGameModeBase.h"
 #include "ARGameStateBase.h"
 #include "ARLog.h"
-#include "ARNPCTalkComponent.h"
-#include "ARNPCSubsystem.h"
+#include "ARSpeakerComponent.h"
+#include "ARSpeakerSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveGame.h"
@@ -28,6 +28,7 @@
 namespace
 {
 	static const FName DialogueBusyEmotionSourceId(TEXT("DialogueBusy"));
+	static const FName DialogueLineEmotionSourceId(TEXT("DialogueLine"));
 
 	struct FDialogueCandidateEval
 	{
@@ -1931,43 +1932,65 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 	{
-		TArray<FName> RowNames;
-		FString Error;
-		if (Lookup->TryGetRowNamesForRootTag(Settings->SpeakerDefinitionRootTag, RowNames, Error))
+		UDataTable* SpeakerTable = nullptr;
+		FGameplayTag MatchedRoot;
+		FString LookupError;
+		if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueSpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 		{
-			for (const FName RowName : RowNames)
+			LookupError.Empty();
+			if (Settings->SpeakerDefinitionRootTag.IsValid())
 			{
-				const FGameplayTag CandidateTag = BuildTagFromRootAndLeaf(Settings->SpeakerDefinitionRootTag, RowName);
-				if (!CandidateTag.IsValid())
-				{
-					continue;
-				}
-
-				FInstancedStruct RowData;
-				FString LookupError;
-				if (!Lookup->TryResolveRowForTag(CandidateTag, RowData, LookupError))
-				{
-					continue;
-				}
-
-				if (const FARDialogueSpeakerRow* Typed = RowData.GetPtr<FARDialogueSpeakerRow>())
-				{
-					FARDialogueSpeakerRow Row = *Typed;
-					if (!Row.SpeakerTag.IsValid())
-					{
-						Row.SpeakerTag = CandidateTag;
-					}
-
-					if (Runtime.SpeakerRowsByTag.Contains(Row.SpeakerTag))
-					{
-						UE_LOG(ARLog, Error, TEXT("[Dialogue] Duplicate SpeakerTag '%s' resolved from speaker content rows; later duplicate ignored."),
-							*Row.SpeakerTag.ToString());
-						continue;
-					}
-
-					Runtime.SpeakerRowsByTag.Add(Row.SpeakerTag, Row);
-				}
+				Lookup->TryResolveDataTableForRootTag(Settings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
+				MatchedRoot = Settings->SpeakerDefinitionRootTag;
 			}
+		}
+
+		FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
+		if (!EffectiveSpeakerRoot.IsValid() && Settings->SpeakerDefinitionRootTag.IsValid())
+		{
+			EffectiveSpeakerRoot = Settings->SpeakerDefinitionRootTag;
+		}
+
+		if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
+		{
+			for (const FName RowName : SpeakerTable->GetRowNames())
+			{
+				const FARDialogueSpeakerRow* Typed = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueSpeakerLookup"), false);
+				if (!Typed)
+				{
+					continue;
+				}
+
+				FARDialogueSpeakerRow Row = *Typed;
+				if (!Row.SpeakerTag.IsValid())
+				{
+					Row.SpeakerTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
+				}
+
+				if (!Row.SpeakerTag.IsValid())
+				{
+					UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Speaker row '%s' skipped: no valid SpeakerTag."), *RowName.ToString());
+					continue;
+				}
+
+				if (Runtime.SpeakerRowsByTag.Contains(Row.SpeakerTag))
+				{
+					UE_LOG(ARLog, Error, TEXT("[Dialogue] Duplicate SpeakerTag '%s' resolved from speaker content rows; later duplicate ignored."),
+						*Row.SpeakerTag.ToString());
+					continue;
+				}
+
+				Runtime.SpeakerRowsByTag.Add(Row.SpeakerTag, Row);
+			}
+		}
+		else if (!LookupError.IsEmpty())
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Dialogue] Speaker table resolution failed for root '%s': %s"),
+				*Settings->SpeakerDefinitionRootTag.ToString(),
+				*LookupError);
 		}
 	}
 	else
@@ -1981,7 +2004,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 	else
 	{
-		UE_LOG(ARLog, Log, TEXT("[Dialogue] Registered %d conversations (lookup) and %d speakers."),
+		UE_LOG(ARLog, Log, TEXT("[Dialogue] Registered %d conversations (lookup rows loaded=%d) and %d speakers."),
 			Runtime.ConversationsByTag.Num(),
 			ConversationsFromLookup,
 			Runtime.SpeakerRowsByTag.Num());
@@ -2301,9 +2324,9 @@ bool UARDialogueSubsystem::ApplyRamenServeOutcome(
 					continue;
 				}
 
-				if (const UARNPCTalkComponent* TalkComponent = Actor->FindComponentByClass<UARNPCTalkComponent>())
+				if (const UARSpeakerComponent* TalkComponent = Actor->FindComponentByClass<UARSpeakerComponent>())
 				{
-					if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+					if (MatchesSpeakerTag(TalkComponent->GetSpeakerTag()))
 					{
 						if (UAREmotionComponent* EmotionComponent = Actor->FindComponentByClass<UAREmotionComponent>())
 						{
@@ -3626,7 +3649,7 @@ static bool EvaluateConversationOfferRules(
 	return true;
 }
 
-bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bNpcLocalStateAllowsDialogue)
+bool UARDialogueSubsystem::GetAvailableConversationForSpeaker(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bSpeakerLocalStateAllowsDialogue)
 {
 	OutOffer = FDialogueConversationOffer();
 	if (!RequestingController)
@@ -3640,9 +3663,9 @@ bool UARDialogueSubsystem::GetAvailableConversationForNPC(AARPlayerController* R
 		return false;
 	}
 
-	if (!bNpcLocalStateAllowsDialogue)
+	if (!bSpeakerLocalStateAllowsDialogue)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Offer blocked: NPC local state disallows dialogue for speaker '%s'."), *PrimarySpeakerTag.ToString());
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Offer blocked: speaker local state disallows dialogue for speaker '%s'."), *PrimarySpeakerTag.ToString());
 		return false;
 	}
 
@@ -4100,9 +4123,9 @@ static UAREmotionComponent* ResolveEmotionComponentForSpeaker(const FDialogueRun
 
 	if (AActor* PrimarySpeakerActor = Context.PrimarySpeakerActor)
 	{
-		if (const UARNPCTalkComponent* TalkComponent = PrimarySpeakerActor->FindComponentByClass<UARNPCTalkComponent>())
+		if (const UARSpeakerComponent* TalkComponent = PrimarySpeakerActor->FindComponentByClass<UARSpeakerComponent>())
 		{
-			if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+			if (MatchesSpeakerTag(TalkComponent->GetSpeakerTag()))
 			{
 				if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(PrimarySpeakerActor))
 				{
@@ -4120,9 +4143,9 @@ static UAREmotionComponent* ResolveEmotionComponentForSpeaker(const FDialogueRun
 			continue;
 		}
 
-		if (const UARNPCTalkComponent* TalkComponent = Actor->FindComponentByClass<UARNPCTalkComponent>())
+		if (const UARSpeakerComponent* TalkComponent = Actor->FindComponentByClass<UARSpeakerComponent>())
 		{
-			if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+			if (MatchesSpeakerTag(TalkComponent->GetSpeakerTag()))
 			{
 				if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(Actor))
 				{
@@ -4150,12 +4173,14 @@ static void ApplyDialogueEmotionForPresentedSpeaker(
 {
 	if (!ResolvedSpeakerTag.IsValid())
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Emotion][DialogueLine] Skip apply: invalid resolved speaker tag."));
 		return;
 	}
 
 	UAREmotionComponent* EmotionComponent = ResolveEmotionComponentForSpeaker(Context, ResolvedSpeakerTag);
 	if (!EmotionComponent)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Emotion][DialogueLine] Skip apply for '%s': no emotion component resolved."), *ResolvedSpeakerTag.ToString());
 		return;
 	}
 
@@ -4163,22 +4188,45 @@ static void ApplyDialogueEmotionForPresentedSpeaker(
 	FGameplayTag ResolvedEmotionTag;
 	if (!EmotionComponent->TryResolveEmotionIconForTag(ResolvedSpeakerTag, IconTexture, ResolvedEmotionTag))
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Emotion][DialogueLine] Resolve miss: SpeakerTag=%s (line override not applied, lower-priority state remains)."),
+			*ResolvedSpeakerTag.ToString());
 		return;
 	}
 
+	const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+	const int32 BusyPriority = EmotionSettings ? EmotionSettings->BusyEmotionPriority : 3;
+	const int32 LinePriority = BusyPriority + 1;
+
 	if (Session.bIsSharedSession)
 	{
-		EmotionComponent->SetDialogueEmotionTag(ResolvedSpeakerTag);
+		EmotionComponent->SetSystemEmotionTag(DialogueLineEmotionSourceId, ResolvedEmotionTag, LinePriority);
 	}
 	else if (Session.OwnerSlot != EARPlayerSlot::Unknown)
 	{
-		EmotionComponent->SetDialogueEmotionTagForPlayerSlot(Session.OwnerSlot, ResolvedSpeakerTag);
+		EmotionComponent->SetSystemEmotionTagForPlayerSlot(DialogueLineEmotionSourceId, Session.OwnerSlot, ResolvedEmotionTag, LinePriority);
 	}
+	else
+	{
+		return;
+	}
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Emotion][DialogueLine] Applied: SpeakerTag=%s ResolvedEmotion=%s Priority=%d Shared=%s OwnerSlot=%s"),
+		*ResolvedSpeakerTag.ToString(),
+		*ResolvedEmotionTag.ToString(),
+		LinePriority,
+		Session.bIsSharedSession ? TEXT("true") : TEXT("false"),
+		*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(Session.OwnerSlot)));
 
 	Session.EmotionComponentsWithDialogueOverride.Add(EmotionComponent);
 }
 
-static void ClearDialogueEmotionOverridesForSession(const FARActiveDialogueSession& Session)
+static void ClearDialogueEmotionOverridesForSession(FARActiveDialogueSession& Session, const bool bResetTrackedComponents)
 {
 	for (const TWeakObjectPtr<UAREmotionComponent>& WeakEmotionComponent : Session.EmotionComponentsWithDialogueOverride)
 	{
@@ -4190,12 +4238,17 @@ static void ClearDialogueEmotionOverridesForSession(const FARActiveDialogueSessi
 
 		if (Session.bIsSharedSession)
 		{
-			EmotionComponent->ClearDialogueEmotionTag();
+			EmotionComponent->ClearSystemEmotionTag(DialogueLineEmotionSourceId);
 		}
 		else if (Session.OwnerSlot != EARPlayerSlot::Unknown)
 		{
-			EmotionComponent->ClearDialogueEmotionTagForPlayerSlot(Session.OwnerSlot);
+			EmotionComponent->ClearSystemEmotionTagForPlayerSlot(DialogueLineEmotionSourceId, Session.OwnerSlot);
 		}
+	}
+
+	if (bResetTrackedComponents)
+	{
+		Session.EmotionComponentsWithDialogueOverride.Reset();
 	}
 }
 
@@ -4220,9 +4273,9 @@ static UAREmotionComponent* FindEmotionComponentForSpeakerTag(UWorld* World, con
 			continue;
 		}
 
-		if (const UARNPCTalkComponent* TalkComponent = Actor->FindComponentByClass<UARNPCTalkComponent>())
+		if (const UARSpeakerComponent* TalkComponent = Actor->FindComponentByClass<UARSpeakerComponent>())
 		{
-			if (MatchesSpeakerTag(TalkComponent->GetNpcTag()))
+			if (MatchesSpeakerTag(TalkComponent->GetSpeakerTag()))
 			{
 				if (UAREmotionComponent* EmotionComponent = FindEmotionComponentOnActor(Actor))
 				{
@@ -4263,6 +4316,7 @@ static void RefreshBusyEmotionForSpeaker(
 	UAREmotionComponent* EmotionComponent = FindEmotionComponentForSpeakerTag(World, SpeakerTag);
 	if (!EmotionComponent)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Emotion][Busy] Skip '%s': no emotion component."), *SpeakerTag.ToString());
 		return;
 	}
 
@@ -4273,10 +4327,26 @@ static void RefreshBusyEmotionForSpeaker(
 	if (bSpeakerBusy && BusyEmotionTag.IsValid())
 	{
 		EmotionComponent->SetSystemEmotionTag(DialogueBusyEmotionSourceId, BusyEmotionTag, BusyPriority);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Emotion][Busy] Applied for '%s': Tag=%s Priority=%d (BusyLock=%s)."),
+			*SpeakerTag.ToString(),
+			*BusyEmotionTag.ToString(),
+			BusyPriority,
+			bBusyLockEnabled ? TEXT("true") : TEXT("false"));
 	}
 	else
 	{
 		EmotionComponent->ClearSystemEmotionTag(DialogueBusyEmotionSourceId);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Emotion][Busy] Cleared for '%s' (SpeakerBusy=%s BusyTagValid=%s BusyLock=%s)."),
+			*SpeakerTag.ToString(),
+			bSpeakerBusy ? TEXT("true") : TEXT("false"),
+			BusyEmotionTag.IsValid() ? TEXT("true") : TEXT("false"),
+			bBusyLockEnabled ? TEXT("true") : TEXT("false"));
 	}
 }
 
@@ -4341,12 +4411,12 @@ static bool PersistCompletedConversation(
 		*OwnerSlotString);
 	DialogueSubsystem->OnConversationCompleted.Broadcast(Session.ConversationTag);
 
-	// Keep NPC talkable icons/state in sync after completion changes offer availability.
+	// Keep speaker talkable icons/state in sync after completion changes offer availability.
 	if (UGameInstance* GI = DialogueSubsystem->GetGameInstance())
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->RefreshAllNpcTalkableStates();
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 	}
 
@@ -4415,6 +4485,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 
 	auto PresentLineAndWait = [&](const FDialogueConversationLine& Line, const FDialogueRuntimeContext& Context, const FGuid& WaitingNodeId, const int32 MultiLineEntryIndex) -> EDialogueExecutionResult
 	{
+		ClearDialogueEmotionOverridesForSession(Session, /*bResetTrackedComponents=*/ true);
 		ClearSessionPresentationState(Session);
 
 		FGameplayTag ResolvedSpeakerTag = Line.SpeakerTag;
@@ -5130,7 +5201,7 @@ static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARA
 		World->GetTimerManager().ClearTimer(SessionSnapshot.AutoAdvanceTimerHandle);
 	}
 
-	ClearDialogueEmotionOverridesForSession(SessionSnapshot);
+	ClearDialogueEmotionOverridesForSession(SessionSnapshot, /*bResetTrackedComponents=*/ true);
 
 	UE_LOG(ARLog, Verbose, TEXT("[Dialogue] Session '%s' removed (Participants=%d)."), *SessionId, ParticipantSlots.Num());
 	Sessions.RemoveAtSwap(SessionIndex, 1, EAllowShrinking::No);
@@ -5145,17 +5216,17 @@ static void RemoveSessionAt(UARDialogueSubsystem* DialogueSubsystem, TArray<FARA
 	}
 
 	// Session end can change offer availability even when conversation did not persist completion.
-	// Keep NPC talkable indicators in sync with current offer state.
+	// Keep speaker talkable indicators in sync with current offer state.
 	if (UGameInstance* GI = DialogueSubsystem->GetGameInstance())
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->RefreshAllNpcTalkableStates();
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 	}
 }
 
-bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag)
+bool UARDialogueSubsystem::TryStartDialogueWithSpeaker(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag)
 {
 	if (!RequestingController || !PrimarySpeakerTag.IsValid())
 	{
@@ -5221,7 +5292,7 @@ bool UARDialogueSubsystem::TryStartDialogueWithNpc(AARPlayerController* Requesti
 	}
 
 	FDialogueConversationOffer Offer;
-	if (!GetAvailableConversationForNPC(RequestingController, PrimarySpeakerTag, Offer, /*bNpcLocalStateAllowsDialogue=*/ true))
+	if (!GetAvailableConversationForSpeaker(RequestingController, PrimarySpeakerTag, Offer, /*bSpeakerLocalStateAllowsDialogue=*/ true))
 	{
 		return false;
 	}
@@ -5836,7 +5907,7 @@ bool UARDialogueSubsystem::PreviewConversation(UARDialogueConversationAsset* Con
 	return true;
 }
 
-bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForSlot(FGameplayTag PrimarySpeakerTag, EARPlayerSlot PlayerSlot) const
+bool UARDialogueSubsystem::HasUnlockedDialogueForSpeakerForSlot(FGameplayTag PrimarySpeakerTag, EARPlayerSlot PlayerSlot) const
 {
 	if (!PrimarySpeakerTag.IsValid() || PlayerSlot == EARPlayerSlot::Unknown)
 	{
@@ -5850,10 +5921,42 @@ bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForSlot(FGameplayTag Primary
 	}
 
 	FDialogueConversationOffer Offer;
-	return const_cast<UARDialogueSubsystem*>(this)->GetAvailableConversationForNPC(PC, PrimarySpeakerTag, Offer, /*bNpcLocalStateAllowsDialogue=*/ true);
+	return const_cast<UARDialogueSubsystem*>(this)->GetAvailableConversationForSpeaker(PC, PrimarySpeakerTag, Offer, /*bSpeakerLocalStateAllowsDialogue=*/ true);
 }
 
-bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag PrimarySpeakerTag) const
+void UARDialogueSubsystem::GetRegisteredPrimarySpeakerTags(TArray<FGameplayTag>& OutSpeakerTags) const
+{
+	OutSpeakerTags.Reset();
+
+	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	TSet<FGameplayTag> UniqueTags;
+	UniqueTags.Reserve(Runtime.SpeakerRowsByTag.Num() + Runtime.ConversationsByTag.Num());
+
+	for (const TPair<FGameplayTag, FARDialogueSpeakerRow>& Pair : Runtime.SpeakerRowsByTag)
+	{
+		if (Pair.Key.IsValid())
+		{
+			UniqueTags.Add(Pair.Key);
+		}
+	}
+
+	for (const TPair<FGameplayTag, TObjectPtr<UARDialogueConversationAsset>>& Pair : Runtime.ConversationsByTag)
+	{
+		const UARDialogueConversationAsset* Conversation = Pair.Value;
+		if (Conversation && Conversation->Header.PrimarySpeakerTag.IsValid())
+		{
+			UniqueTags.Add(Conversation->Header.PrimarySpeakerTag);
+		}
+	}
+
+	OutSpeakerTags.Reserve(UniqueTags.Num());
+	for (const FGameplayTag& Tag : UniqueTags)
+	{
+		OutSpeakerTags.Add(Tag);
+	}
+}
+
+bool UARDialogueSubsystem::HasUnlockedDialogueForSpeakerForAnyPlayer(FGameplayTag PrimarySpeakerTag) const
 {
 	if (!PrimarySpeakerTag.IsValid())
 	{
@@ -5873,7 +5976,7 @@ bool UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag Pr
 		{
 			continue;
 		}
-		if (HasUnlockedDialogueForNpcForSlot(PrimarySpeakerTag, ARPS->GetPlayerSlot()))
+		if (HasUnlockedDialogueForSpeakerForSlot(PrimarySpeakerTag, ARPS->GetPlayerSlot()))
 		{
 			return true;
 		}

@@ -5,7 +5,7 @@
 #include "AREmotionComponent.h"
 #include "AREmotionSettings.h"
 #include "ARNPCCharacterBase.h"
-#include "ARNPCTalkComponent.h"
+#include "ARSpeakerComponent.h"
 #include "ARPlayerController.h"
 #include "ARShopAIController.h"
 #include "ARShopCarryComponent.h"
@@ -78,7 +78,7 @@ void UARCustomerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CachedNpcIdentityTag = GetNpcIdentityTag();
+	CachedSpeakerTag = GetSpeakerTag();
 
 	if (!GetOwner() || !GetOwner()->HasAuthority())
 	{
@@ -104,16 +104,16 @@ void UARCustomerComponent::BeginPlay()
 	RefreshOrderingEmotionState();
 }
 
-FGameplayTag UARCustomerComponent::GetNpcIdentityTag() const
+FGameplayTag UARCustomerComponent::GetSpeakerTag() const
 {
-	if (NpcIdentityTagOverride.IsValid())
+	if (SpeakerTagOverride.IsValid())
 	{
-		return NpcIdentityTagOverride;
+		return SpeakerTagOverride;
 	}
 
 	const AActor* OwnerActor = GetOwner();
-	const UARNPCTalkComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UARNPCTalkComponent>() : nullptr;
-	return TalkComponent ? TalkComponent->GetNpcTag() : FGameplayTag();
+	const UARSpeakerComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UARSpeakerComponent>() : nullptr;
+	return TalkComponent ? TalkComponent->GetSpeakerTag() : FGameplayTag();
 }
 
 int32 UARCustomerComponent::GetRemainingOrdersToGenerate() const
@@ -140,9 +140,9 @@ bool UARCustomerComponent::GenerateNextOrder()
 		return false;
 	}
 
-	if (!CachedNpcIdentityTag.IsValid())
+	if (!CachedSpeakerTag.IsValid())
 	{
-		CachedNpcIdentityTag = GetNpcIdentityTag();
+		CachedSpeakerTag = GetSpeakerTag();
 	}
 
 	int32 RelationshipLevel = 0;
@@ -150,7 +150,7 @@ bool UARCustomerComponent::GenerateNextOrder()
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UARDialogueSubsystem>())
 		{
-			RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeaker(CachedNpcIdentityTag);
+			RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeaker(CachedSpeakerTag);
 		}
 	}
 
@@ -294,7 +294,7 @@ bool UARCustomerComponent::TryServeHeldBowlFromController(AARPlayerController* I
 	}
 
 	CarryComponent->ClearHeldActor(false);
-	HeldBowl->ReleasePickup();
+	HeldBowl->ReleaseCarryItem();
 	return true;
 }
 
@@ -491,8 +491,8 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 {
 	OutRow = FARCustomerDefinitionRow();
 
-	const FGameplayTag NpcTag = CachedNpcIdentityTag.IsValid() ? CachedNpcIdentityTag : GetNpcIdentityTag();
-	if (!NpcTag.IsValid())
+	const FGameplayTag SpeakerTag = CachedSpeakerTag.IsValid() ? CachedSpeakerTag : GetSpeakerTag();
+	if (!SpeakerTag.IsValid())
 	{
 		return false;
 	}
@@ -506,7 +506,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 
 	FInstancedStruct RowData;
 	FString Error;
-	if (Lookup->TryResolveRowForTag(NpcTag, RowData, Error))
+	if (Lookup->TryResolveRowForTag(SpeakerTag, RowData, Error))
 	{
 		if (const FARCustomerDefinitionRow* Row = RowData.GetPtr<FARCustomerDefinitionRow>())
 		{
@@ -521,7 +521,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 		return false;
 	}
 
-	const FGameplayTag CandidateTag = BuildTagFromRootAndLeaf(Settings->CustomerDefinitionRootTag, NpcTag);
+	const FGameplayTag CandidateTag = BuildTagFromRootAndLeaf(Settings->CustomerDefinitionRootTag, SpeakerTag);
 	if (!CandidateTag.IsValid())
 	{
 		return false;
@@ -629,7 +629,7 @@ void UARCustomerComponent::UpdateDialogueGateFromOrderState() const
 {
 	if (AARNPCCharacterBase* NPCOwner = Cast<AARNPCCharacterBase>(GetOwner()))
 	{
-		NPCOwner->SetNpcLocalStateAllowsDialogue(!bHasActiveOrder);
+		NPCOwner->SetSpeakerLocalStateAllowsDialogue(!bHasActiveOrder);
 	}
 }
 
@@ -696,8 +696,8 @@ bool UARCustomerComponent::ApplyServeOutcomeToDialogue(const FARRamenServeResult
 		return false;
 	}
 
-	const FGameplayTag NpcTag = CachedNpcIdentityTag.IsValid() ? CachedNpcIdentityTag : GetNpcIdentityTag();
-	return DialogueSubsystem->ApplyRamenServeOutcome(NpcTag, ServeResult.RelationshipDeltaPoints, ServeResult.AppliedReactionEmotionTag, GetOwner());
+	const FGameplayTag SpeakerTag = CachedSpeakerTag.IsValid() ? CachedSpeakerTag : GetSpeakerTag();
+	return DialogueSubsystem->ApplyRamenServeOutcome(SpeakerTag, ServeResult.RelationshipDeltaPoints, ServeResult.AppliedReactionEmotionTag, GetOwner());
 }
 
 void UARCustomerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -710,5 +710,5 @@ void UARCustomerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(UARCustomerComponent, OrdersGeneratedCount);
 	DOREPLIFETIME(UARCustomerComponent, OrdersServedCount);
 	DOREPLIFETIME(UARCustomerComponent, bDoneOrdering);
-	DOREPLIFETIME(UARCustomerComponent, CachedNpcIdentityTag);
+	DOREPLIFETIME(UARCustomerComponent, CachedSpeakerTag);
 }

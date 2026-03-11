@@ -25,22 +25,22 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|NPC|StateTree")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Customer|StateTree")
 	void TryStartStateTreeForCurrentPawn();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|NPC|StateTree")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Customer|StateTree")
 	bool SendShopStateTreeEventByTag(FGameplayTag EventTag, FName Origin = NAME_None);
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|NPC|StateTree")
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer|StateTree")
 	UARShopStateTreeAIComponent* GetShopStateTreeComponent() const { return StateTreeComponent; }
 
 protected:
 	void HandleShopActiveStateTagsChanged(const FGameplayTagContainer& AddedTags, const FGameplayTagContainer& RemovedTags);
-	void RefreshNpcDialogueGateFromStateTags();
+	void RefreshSpeakerDialogueGateFromStateTags();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|NPC|StateTree", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer|StateTree", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UARShopStateTreeAIComponent> StateTreeComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|NPC|StateTree", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer|StateTree", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStateTree> DefaultStateTree;
 };

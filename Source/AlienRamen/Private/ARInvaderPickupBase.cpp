@@ -1,17 +1,35 @@
-#include "ARPickupBase.h"
+#include "ARInvaderPickupBase.h"
 
+#include "ARInvaderGameMode.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
+#include "Engine/World.h"
+#include "GameFramework/GameModeBase.h"
 
-AARPickupBase::AARPickupBase()
+AARInvaderPickupBase::AARInvaderPickupBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 }
 
-void AARPickupBase::BeginPlay()
+void AARInvaderPickupBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		const UWorld* World = GetWorld();
+		const AGameModeBase* AuthGameMode = World ? World->GetAuthGameMode() : nullptr;
+		if (!AuthGameMode || !AuthGameMode->IsA<AARInvaderGameMode>())
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderPickupBase] '%s' is invader-only but active under non-invader game mode '%s'."),
+				*GetNameSafe(this),
+				*GetNameSafe(AuthGameMode));
+		}
+	}
 
 	if (bUseProjectSettingsOffscreenCullSeconds)
 	{
@@ -25,13 +43,13 @@ void AARPickupBase::BeginPlay()
 	EvaluateOffscreenRelease(0.f);
 }
 
-void AARPickupBase::Tick(float DeltaSeconds)
+void AARInvaderPickupBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	EvaluateOffscreenRelease(DeltaSeconds);
 }
 
-void AARPickupBase::EvaluateOffscreenRelease(float DeltaSeconds)
+void AARInvaderPickupBase::EvaluateOffscreenRelease(float DeltaSeconds)
 {
 	if (bReleased || !bReleaseWhenOutsideGameplayBounds)
 	{
@@ -57,7 +75,7 @@ void AARPickupBase::EvaluateOffscreenRelease(float DeltaSeconds)
 	}
 
 	bReleased = true;
-	UE_LOG(ARLog, Verbose, TEXT("[PickupBase] Offscreen release for '%s' after %.2fs at (%.1f, %.1f, %.1f)."),
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderPickupBase] Offscreen release for '%s' after %.2fs at (%.1f, %.1f, %.1f)."),
 		*GetNameSafe(this),
 		OffscreenSeconds,
 		GetActorLocation().X,
@@ -68,7 +86,7 @@ void AARPickupBase::EvaluateOffscreenRelease(float DeltaSeconds)
 	ReleasePickup();
 }
 
-bool AARPickupBase::IsOutsideGameplayBounds() const
+bool AARInvaderPickupBase::IsOutsideGameplayBounds() const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 	if (!Settings)
@@ -89,7 +107,7 @@ bool AARPickupBase::IsOutsideGameplayBounds() const
 		|| Location.Y > MaxY;
 }
 
-void AARPickupBase::ReleasePickup_Implementation()
+void AARInvaderPickupBase::ReleasePickup_Implementation()
 {
 	Destroy();
 }
