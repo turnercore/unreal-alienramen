@@ -107,14 +107,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
 	void NotifyEnemyKilled(AAREnemyBase* Enemy, AActor* InstigatorActor);
 
-	// Replicated live offer-presence state for HUD cursors/hover/selection during full-blast selection.
+	// Replicated live offer-presence state for HUD hover/selection intent during full-blast selection.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
 	bool SetOfferPresence(
 		AARPlayerStateBase* SourcePlayerState,
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
-		FVector2D CursorNormalized,
-		bool bHasCursor,
 		FGameplayTag SelectedUpgradeTag,
 		int32 SelectedDestinationSlot,
 		bool bHasSelection);
