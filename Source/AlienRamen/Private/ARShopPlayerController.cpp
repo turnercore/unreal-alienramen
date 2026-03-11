@@ -1,6 +1,7 @@
 #include "ARShopPlayerController.h"
 
 #include "ARLog.h"
+#include "ARNPCCharacterBase.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
 #include "ARShopDispenserActor.h"
@@ -89,6 +90,53 @@ AARShopPlayerController::AARShopPlayerController()
 {
 }
 
+void AARShopPlayerController::RequestShopUseOrDrop(AActor* InteractableActor)
+{
+	if (!InteractableActor)
+	{
+		RequestShopPickupCarryItem(nullptr);
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		static const FName ForwardUseFunctionName(TEXT("ForwardUseToController"));
+		if (UFunction* ForwardUseFunction = InteractableActor->FindFunction(ForwardUseFunctionName))
+		{
+			struct FForwardUseToControllerParams
+			{
+				AActor* UsingActor = nullptr;
+			};
+
+			FForwardUseToControllerParams Params;
+			Params.UsingActor = this;
+			InteractableActor->ProcessEvent(ForwardUseFunction, &Params);
+			return;
+		}
+
+		if (AARNPCCharacterBase* NPCCharacter = Cast<AARNPCCharacterBase>(InteractableActor))
+		{
+			RequestInteractWithCharacter(NPCCharacter);
+			return;
+		}
+
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Carry] UseOrDrop ignored on '%s': target '%s' has no ForwardUseToController handler."),
+			*GetNameSafe(this),
+			*GetNameSafe(InteractableActor));
+		return;
+	}
+
+	ServerRequestShopUseOrDrop(InteractableActor);
+}
+
+void AARShopPlayerController::ServerRequestShopUseOrDrop_Implementation(AActor* InteractableActor)
+{
+	RequestShopUseOrDrop(InteractableActor);
+}
+
 void AARShopPlayerController::RequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, const FGameplayTag ItemTag)
 {
 	if (!DispenserActor)
@@ -114,6 +162,20 @@ void AARShopPlayerController::RequestShopPickupCarryItem(AARShopCarryItemBase* C
 {
 	if (!CarryItemActor)
 	{
+		UARShopCarryComponent* CarryComponent = ResolveShopCarryComponentFromController(this);
+		if (!CarryComponent || !CarryComponent->HasHeldActor())
+		{
+			return;
+		}
+
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Carry] Pickup request on '%s' had no target; dropping currently held actor '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(CarryComponent->GetHeldActor()));
+
+		RequestShopDropHeldCarryItem();
 		return;
 	}
 

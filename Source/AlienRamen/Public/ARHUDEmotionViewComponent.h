@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/EngineTypes.h"
 #include "GameplayTagContainer.h"
 #include "UObject/SoftObjectPtr.h"
 #include "Components/ActorComponent.h"
@@ -69,6 +70,7 @@ private:
 	class AHUD* ResolveOwningHUD() const;
 	virtual void OnRegister() override;
 	virtual void OnUnregister() override;
+	bool IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionComponent, const APlayerController* LocalController) const;
 
 	void HandleHUDPostRender(AHUD* HUD, UCanvas* InCanvas);
 	int32 RenderEmotionView(AHUD* HUD, UCanvas* InCanvas, const APlayerController* LocalController);
@@ -81,7 +83,13 @@ private:
 	float EmotionIconRenderScale = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
-	bool bHideOwningPawnEmotion = false;
+	bool bHideOwningPawnEmotion = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When enabled, emotion icons are hidden if a visibility trace from viewer camera to emotion anchor is blocked."))
+	bool bHideOccludedEmotion = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<ECollisionChannel> OcclusionTraceChannel = ECollisionChannel::ECC_Visibility;
 
 	TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	TSet<FName> SuppressionReasons;

@@ -12,6 +12,7 @@
 #include "GameFramework/HUD.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
 #include "HAL/PlatformTime.h"
 #include "UObject/UObjectIterator.h"
 
@@ -94,6 +95,11 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 			continue;
 		}
 
+		if (bHideOccludedEmotion && !IsEmotionVisibleForViewer(EmotionComponent, LocalController))
+		{
+			continue;
+		}
+
 		FVector2D ScreenPosition = FVector2D::ZeroVector;
 		FGameplayTag DisplayedEmotionTag;
 		TSoftObjectPtr<UTexture2D> DisplayedIcon;
@@ -114,9 +120,12 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 		}
 
 		// Match editor preview sizing semantics by projecting a camera-facing world-space sprite.
-		const float IconScale = FMath::Max(0.01f, (EmotionComponent->GetIconScreenSize() / 64.0f) * EmotionIconRenderScale);
-		const float BaseWidth = static_cast<float>(FMath::Max(1, IconTexture->GetSurfaceWidth())) * IconScale;
-		const float BaseHeight = static_cast<float>(FMath::Max(1, IconTexture->GetSurfaceHeight())) * IconScale;
+		const float TextureWidth = static_cast<float>(FMath::Max(1, IconTexture->GetSurfaceWidth()));
+		const float TextureHeight = static_cast<float>(FMath::Max(1, IconTexture->GetSurfaceHeight()));
+		const float TextureMax = FMath::Max(TextureWidth, TextureHeight);
+		const float DesiredWorldMaxDimension = FMath::Max(1.0f, EmotionComponent->GetIconScreenSize() * EmotionIconRenderScale);
+		const float BaseWidth = DesiredWorldMaxDimension * (TextureWidth / TextureMax);
+		const float BaseHeight = DesiredWorldMaxDimension * (TextureHeight / TextureMax);
 
 		const FVector AnchorWorldLocation = EmotionComponent->GetEmotionAnchorWorldLocation();
 		const FVector CameraRight = LocalController->PlayerCameraManager ? LocalController->PlayerCameraManager->GetActorRightVector() : FVector::RightVector;
@@ -139,10 +148,10 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 			return LocalController->ProjectWorldLocationToScreen(WorldPoint, OutPoint, true);
 		};
 
-		FVector2D LeftPoint;
-		FVector2D RightPoint;
-		FVector2D UpPoint;
-		FVector2D DownPoint;
+		FVector2D LeftPoint = FVector2D::ZeroVector;
+		FVector2D RightPoint = FVector2D::ZeroVector;
+		FVector2D UpPoint = FVector2D::ZeroVector;
+		FVector2D DownPoint = FVector2D::ZeroVector;
 		FVector2D DrawExtent = FVector2D(BaseWidth, BaseHeight);
 		const bool bProjectedSprite =
 			ProjectPointToScreen(AnchorWorldLocation - (CameraRight * (BaseWidth * 0.5f)), LeftPoint)
@@ -183,6 +192,50 @@ int32 UARHUDEmotionViewComponent::RenderEmotionView(AHUD* HUD, UCanvas* InCanvas
 	}
 
 	return DrawnEmotionCount;
+}
+
+bool UARHUDEmotionViewComponent::IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionComponent, const APlayerController* LocalController) const
+{
+	if (!bHideOccludedEmotion || !EmotionComponent || !LocalController)
+	{
+		return true;
+	}
+
+	UWorld* World = GetWorld();
+	const APlayerCameraManager* CameraManager = LocalController->PlayerCameraManager;
+	const AActor* EmotionOwner = EmotionComponent->GetOwner();
+	if (!World || !CameraManager || !EmotionOwner)
+	{
+		return true;
+	}
+
+	FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(ARHUDEmotionOcclusion), false);
+	if (const APawn* LocalPawn = LocalController->GetPawn())
+	{
+		QueryParams.AddIgnoredActor(LocalPawn);
+	}
+
+	FHitResult Hit;
+	const bool bHit = World->LineTraceSingleByChannel(
+		Hit,
+		CameraManager->GetCameraLocation(),
+		EmotionComponent->GetEmotionAnchorWorldLocation(),
+		OcclusionTraceChannel,
+		QueryParams);
+	if (!bHit)
+	{
+		return true;
+	}
+
+	const AActor* HitActor = Hit.GetActor();
+	if (!HitActor)
+	{
+		return false;
+	}
+
+	return HitActor == EmotionOwner
+		|| HitActor->IsAttachedTo(EmotionOwner)
+		|| EmotionOwner->IsAttachedTo(HitActor);
 }
 
 bool UARHUDEmotionViewComponent::TryProjectEmotionForActor(
