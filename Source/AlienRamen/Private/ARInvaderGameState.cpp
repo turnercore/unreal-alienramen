@@ -205,50 +205,50 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 	UnregisterDebugConsoleCommands();
 
 	CmdDebugSetSpice = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.SetSpice"),
-		TEXT("Usage: AR.Invader.Debug.SetSpice <p1|p2> <value>"),
+		TEXT("ar.invader.debug.set_spice"),
+		TEXT("Usage: ar.invader.debug.set_spice <p1|p2> <value>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetSpice),
 		ECVF_Cheat);
 
 	CmdDebugAddSpice = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddSpice"),
-		TEXT("Usage: AR.Invader.Debug.AddSpice <p1|p2> <delta>"),
+		TEXT("ar.invader.debug.add_spice"),
+		TEXT("Usage: ar.invader.debug.add_spice <p1|p2> <delta>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddSpice),
 		ECVF_Cheat);
 
 	CmdDebugAddScrap = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddScrap"),
-		TEXT("Usage: AR.Invader.Debug.AddScrap <delta>"),
+		TEXT("ar.invader.debug.add_scrap"),
+		TEXT("Usage: ar.invader.debug.add_scrap <delta>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddScrap),
 		ECVF_Cheat);
 
 	CmdDebugAddMoney = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddMoney"),
-		TEXT("Usage: AR.Invader.Debug.AddMoney <delta>"),
+		TEXT("ar.invader.debug.add_money"),
+		TEXT("Usage: ar.invader.debug.add_money <delta>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMoney),
 		ECVF_Cheat);
 
 	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddMeat"),
-		TEXT("Usage: AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]"),
+		TEXT("ar.invader.debug.add_meat"),
+		TEXT("Usage: ar.invader.debug.add_meat <delta> [red|blue|white|unspecified]"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMeat),
 		ECVF_Cheat);
 
 	CmdDebugSetDropEarthGravity = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.SetDropEarthGravity"),
-		TEXT("Usage: AR.Invader.Debug.SetDropEarthGravity <0|1>"),
+		TEXT("ar.invader.debug.set_drop_earth_gravity"),
+		TEXT("Usage: ar.invader.debug.set_drop_earth_gravity <0|1>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetDropEarthGravity),
 		ECVF_Cheat);
 
 	CmdDebugSetCursor = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.SetCursor"),
-		TEXT("Usage: AR.Invader.Debug.SetCursor <p1|p2> <tier>"),
+		TEXT("ar.invader.debug.set_cursor"),
+		TEXT("Usage: ar.invader.debug.set_cursor <p1|p2> <tier>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetCursor),
 		ECVF_Cheat);
 
 	CmdDebugInjectUpgrade = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.InjectUpgrade"),
-		TEXT("Usage: AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]"),
+		TEXT("ar.invader.debug.inject_upgrade"),
+		TEXT("Usage: ar.invader.debug.inject_upgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleInjectUpgrade),
 		ECVF_Cheat);
 }
@@ -256,6 +256,23 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 void AARInvaderGameState::UnregisterDebugConsoleCommands()
 {
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_spice"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_spice"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_scrap"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_money"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_meat"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_drop_earth_gravity"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_cursor"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.inject_upgrade"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetSpice"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddSpice"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddScrap"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddMoney"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddMeat"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetDropEarthGravity"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetCursor"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.InjectUpgrade"), false);
+
 	if (CmdDebugSetSpice)
 	{
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetSpice, false);
@@ -454,7 +471,7 @@ void AARInvaderGameState::HandleConsoleSetSpice(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetSpice [p1|p2] <value>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: ar.invader.debug.set_spice [p1|p2] <value>"));
 		return;
 	}
 
@@ -478,7 +495,7 @@ void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.AddSpice [p1|p2] <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: ar.invader.debug.add_spice [p1|p2] <delta>"));
 		return;
 	}
 
@@ -503,7 +520,7 @@ void AARInvaderGameState::HandleConsoleAddScrap(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddScrap <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_scrap <delta>"));
 		return;
 	}
 
@@ -519,7 +536,7 @@ void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddMoney <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_money <delta>"));
 		return;
 	}
 
@@ -535,7 +552,7 @@ void AARInvaderGameState::HandleConsoleAddMeat(const TArray<FString>& Args, UWor
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_meat <delta> [red|blue|white|unspecified]"));
 		return;
 	}
 
@@ -608,7 +625,7 @@ void AARInvaderGameState::HandleConsoleSetDropEarthGravity(const TArray<FString>
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderDrop|Debug] Usage: AR.Invader.Debug.SetDropEarthGravity <0|1>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDrop|Debug] Usage: ar.invader.debug.set_drop_earth_gravity <0|1>"));
 		return;
 	}
 
@@ -623,7 +640,7 @@ void AARInvaderGameState::HandleConsoleSetCursor(const TArray<FString>& Args, UW
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetCursor [p1|p2] <tier>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: ar.invader.debug.set_cursor [p1|p2] <tier>"));
 		return;
 	}
 

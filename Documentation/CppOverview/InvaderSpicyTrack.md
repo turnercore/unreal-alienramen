@@ -77,10 +77,10 @@ Not yet implemented (open hardening work):
 - `OnInvaderKillCreditFxEvent` broadcasts on server + clients when kill credit awards spice (includes target slot, spice gained, combo, enemy metadata, optional origin).
 
 ## Debug Console Commands
-- `AR.Invader.Debug.SetSpice [p1|p2] <value>`
-- `AR.Invader.Debug.AddSpice [p1|p2] <delta>`
-- `AR.Invader.Debug.SetCursor [p1|p2] <tier>`
-- `AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]`
+- `ar.invader.debug.set_spice [p1|p2] <value>`
+- `ar.invader.debug.add_spice [p1|p2] <delta>`
+- `ar.invader.debug.set_cursor [p1|p2] <tier>`
+- `ar.invader.debug.inject_upgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]`
 - `InjectUpgrade` resolves token by:
 - row name first (exact/case-insensitive) from upgrade definition table,
 - then gameplay tag token,

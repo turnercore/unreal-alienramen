@@ -117,9 +117,6 @@ private:
 	EARRamenStationType StationType = EARRamenStationType::Noodles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
-	bool bStartsUpgraded = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer RequiredUpgradeTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", ClampMin = "1", UIMin = "1"))

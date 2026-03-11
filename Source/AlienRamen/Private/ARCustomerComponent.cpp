@@ -2,6 +2,8 @@
 
 #include "ARCustomerSettings.h"
 #include "ARDialogueSubsystem.h"
+#include "AREmotionComponent.h"
+#include "AREmotionSettings.h"
 #include "ARNPCCharacterBase.h"
 #include "ARNPCTalkComponent.h"
 #include "ARPlayerController.h"
@@ -17,6 +19,9 @@
 
 namespace
 {
+	static const FName OrderingStateEmotionSourceId(TEXT("OrderingState"));
+	static const FName OrderingReactionEmotionSourceId(TEXT("OrderingReaction"));
+
 	static EARAffinityColor SanitizeColor(const EARAffinityColor InColor)
 	{
 		return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
@@ -94,6 +99,9 @@ void UARCustomerComponent::BeginPlay()
 	{
 		GenerateNextOrder();
 	}
+
+	UpdateDialogueGateFromOrderState();
+	RefreshOrderingEmotionState();
 }
 
 FGameplayTag UARCustomerComponent::GetNpcIdentityTag() const
@@ -108,10 +116,27 @@ FGameplayTag UARCustomerComponent::GetNpcIdentityTag() const
 	return TalkComponent ? TalkComponent->GetNpcTag() : FGameplayTag();
 }
 
+int32 UARCustomerComponent::GetRemainingOrdersToGenerate() const
+{
+	if (MaxOrdersToGenerate <= 0)
+	{
+		return -1;
+	}
+
+	return FMath::Max(0, MaxOrdersToGenerate - OrdersGeneratedCount);
+}
+
 bool UARCustomerComponent::GenerateNextOrder()
 {
 	if (!GetOwner() || !GetOwner()->HasAuthority())
 	{
+		return false;
+	}
+
+	if (!CanGenerateAdditionalOrders())
+	{
+		ClearActiveOrder();
+		SetDoneOrdering(true);
 		return false;
 	}
 
@@ -153,12 +178,15 @@ bool UARCustomerComponent::GenerateNextOrder()
 	NormalizeOrderRequest(ChosenOrder, false);
 	ActiveOrder = ChosenOrder;
 	bHasActiveOrder = ActiveOrder.RequestedColors.Num() > 0;
-	OnRep_ActiveOrder();
-
-	if (AARNPCCharacterBase* NPCOwner = Cast<AARNPCCharacterBase>(GetOwner()))
+	if (bHasActiveOrder)
 	{
-		NPCOwner->SetNpcLocalStateAllowsDialogue(!bHasActiveOrder);
+		OrdersGeneratedCount = FMath::Max(0, OrdersGeneratedCount + 1);
 	}
+	SetDoneOrdering(false);
+	OnRep_ActiveOrder();
+	UpdateDialogueGateFromOrderState();
+	RefreshOrderingEmotionState();
+
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (AARShopAIController* ShopAI = Cast<AARShopAIController>(OwnerPawn ? OwnerPawn->GetController() : nullptr))
 	{
@@ -187,10 +215,11 @@ void UARCustomerComponent::ClearActiveOrder()
 	ActiveOrder = FARRamenOrderRequest();
 	bHasActiveOrder = false;
 	OnRep_ActiveOrder();
-
-	if (AARNPCCharacterBase* NPCOwner = Cast<AARNPCCharacterBase>(GetOwner()))
+	UpdateDialogueGateFromOrderState();
+	RefreshOrderingEmotionState();
+	if (!CanGenerateAdditionalOrders())
 	{
-		NPCOwner->SetNpcLocalStateAllowsDialogue(true);
+		SetDoneOrdering(true);
 	}
 
 	if (AActor* OwnerActor = GetOwner())
@@ -215,9 +244,12 @@ bool UARCustomerComponent::TryServeBowl(AARPlayerController* InteractingControll
 	OutResult = EvaluateServeResult(ActiveOrder, ServedBowl, bPickyExactMatch, HatePoints, OkPoints, LikePoints, LovePoints);
 	OutResult.AppliedReactionEmotionTag = ResolveReactionEmotionTag(OutResult.Reaction);
 	OutResult.RelationshipDeltaPoints = ResolveReactionRelationshipDelta(OutResult.Reaction);
+	OrdersServedCount = FMath::Max(0, OrdersServedCount + 1);
 
 	ApplyServeOutcomeToDialogue(OutResult);
+	ApplyOrderingReactionEmotion(OutResult.AppliedReactionEmotionTag);
 	OnCustomerOrderResolved.Broadcast(OutResult);
+	OnCustomerOrderServedDetailed.Broadcast(OutResult, OrdersGeneratedCount, OrdersServedCount, GetRemainingOrdersToGenerate());
 
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (AARShopAIController* ShopAI = Cast<AARShopAIController>(OwnerPawn ? OwnerPawn->GetController() : nullptr))
@@ -413,6 +445,23 @@ FARRamenServeResult UARCustomerComponent::EvaluateServeResult(
 void UARCustomerComponent::OnRep_ActiveOrder()
 {
 	OnCustomerOrderChanged.Broadcast(ActiveOrder);
+	if (ActiveOrder.RequestedColors.Num() > 0)
+	{
+		OnCustomerOrderGeneratedDetailed.Broadcast(ActiveOrder, OrdersGeneratedCount, OrdersServedCount, GetRemainingOrdersToGenerate());
+	}
+}
+
+void UARCustomerComponent::OnRep_DoneOrdering(const bool bOldDoneOrdering)
+{
+	if (bDoneOrdering == bOldDoneOrdering)
+	{
+		return;
+	}
+
+	if (bDoneOrdering)
+	{
+		OnCustomerDoneOrdering.Broadcast(OrdersGeneratedCount, OrdersServedCount, GetRemainingOrdersToGenerate());
+	}
 }
 
 void UARCustomerComponent::NormalizeOrderRequest(FARRamenOrderRequest& InOutOrder, const bool bPadToThreeSlots)
@@ -559,6 +608,85 @@ bool UARCustomerComponent::BuildProceduralFallbackOrder(FARRamenOrderRequest& Ou
 	return OutOrder.RequestedColors.Num() > 0;
 }
 
+bool UARCustomerComponent::CanGenerateAdditionalOrders() const
+{
+	return MaxOrdersToGenerate <= 0 || OrdersGeneratedCount < MaxOrdersToGenerate;
+}
+
+void UARCustomerComponent::SetDoneOrdering(const bool bNewDoneOrdering)
+{
+	if (bDoneOrdering == bNewDoneOrdering)
+	{
+		return;
+	}
+
+	const bool bOldDoneOrdering = bDoneOrdering;
+	bDoneOrdering = bNewDoneOrdering;
+	OnRep_DoneOrdering(bOldDoneOrdering);
+}
+
+void UARCustomerComponent::UpdateDialogueGateFromOrderState() const
+{
+	if (AARNPCCharacterBase* NPCOwner = Cast<AARNPCCharacterBase>(GetOwner()))
+	{
+		NPCOwner->SetNpcLocalStateAllowsDialogue(!bHasActiveOrder);
+	}
+}
+
+void UARCustomerComponent::RefreshOrderingEmotionState() const
+{
+	AActor* OwnerActor = GetOwner();
+	if (!OwnerActor || !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>();
+	if (!EmotionComponent)
+	{
+		return;
+	}
+
+	const UARCustomerSettings* CustomerSettings = GetDefault<UARCustomerSettings>();
+	const int32 OrderingPriority = CustomerSettings ? CustomerSettings->OrderingStateEmotionPriority : 1;
+
+	FGameplayTag ActiveOrderEmotionTag = CustomerSettings ? CustomerSettings->ActiveOrderEmotionTag : FGameplayTag();
+	if (!ActiveOrderEmotionTag.IsValid())
+	{
+		const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+		ActiveOrderEmotionTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
+	}
+
+	if (bHasActiveOrder && ActiveOrderEmotionTag.IsValid())
+	{
+		EmotionComponent->SetSystemEmotionTag(OrderingStateEmotionSourceId, ActiveOrderEmotionTag, OrderingPriority);
+	}
+	else
+	{
+		EmotionComponent->ClearSystemEmotionTag(OrderingStateEmotionSourceId);
+	}
+}
+
+void UARCustomerComponent::ApplyOrderingReactionEmotion(const FGameplayTag& ReactionEmotionTag) const
+{
+	AActor* OwnerActor = GetOwner();
+	if (!OwnerActor || !OwnerActor->HasAuthority() || !ReactionEmotionTag.IsValid())
+	{
+		return;
+	}
+
+	UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>();
+	if (!EmotionComponent)
+	{
+		return;
+	}
+
+	const UARCustomerSettings* CustomerSettings = GetDefault<UARCustomerSettings>();
+	const int32 ReactionPriority = CustomerSettings ? CustomerSettings->OrderingReactionEmotionPriority : 2;
+	const float ReactionDuration = CustomerSettings ? CustomerSettings->OrderingReactionEmotionDurationSeconds : -1.0f;
+	EmotionComponent->SetSystemEmotionTagForDuration(OrderingReactionEmotionSourceId, ReactionEmotionTag, ReactionDuration, ReactionPriority);
+}
+
 bool UARCustomerComponent::ApplyServeOutcomeToDialogue(const FARRamenServeResult& ServeResult) const
 {
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
@@ -579,5 +707,8 @@ void UARCustomerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(UARCustomerComponent, ActiveOrder);
 	DOREPLIFETIME(UARCustomerComponent, bHasActiveOrder);
 	DOREPLIFETIME(UARCustomerComponent, bPickyExactMatch);
+	DOREPLIFETIME(UARCustomerComponent, OrdersGeneratedCount);
+	DOREPLIFETIME(UARCustomerComponent, OrdersServedCount);
+	DOREPLIFETIME(UARCustomerComponent, bDoneOrdering);
 	DOREPLIFETIME(UARCustomerComponent, CachedNpcIdentityTag);
 }
