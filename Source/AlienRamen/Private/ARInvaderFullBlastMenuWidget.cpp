@@ -34,8 +34,6 @@ void UARInvaderFullBlastMenuWidget::SubmitSkip()
 void UARInvaderFullBlastMenuWidget::PublishOfferPresence(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
-	const FVector2D CursorNormalized,
-	const bool bHasCursor,
 	const FGameplayTag SelectedUpgradeTag,
 	const int32 SelectedDestinationSlot,
 	const bool bHasSelection)
@@ -45,8 +43,6 @@ void UARInvaderFullBlastMenuWidget::PublishOfferPresence(
 		Controller->RequestSetOfferPresence(
 			HoveredUpgradeTag,
 			HoveredDestinationSlot,
-			CursorNormalized,
-			bHasCursor,
 			SelectedUpgradeTag,
 			SelectedDestinationSlot,
 			bHasSelection);

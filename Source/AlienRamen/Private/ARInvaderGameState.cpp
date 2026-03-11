@@ -1676,8 +1676,6 @@ bool AARInvaderGameState::SetOfferPresence(
 	AARPlayerStateBase* SourcePlayerState,
 	FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
-	FVector2D CursorNormalized,
-	const bool bHasCursor,
 	FGameplayTag SelectedUpgradeTag,
 	const int32 SelectedDestinationSlot,
 	const bool bHasSelection)
@@ -1723,10 +1721,6 @@ bool AARInvaderGameState::SetOfferPresence(
 	NewPresenceState.PlayerSlot = SourceSlot;
 	NewPresenceState.HoveredUpgradeTag = HoveredUpgradeTag;
 	NewPresenceState.HoveredDestinationSlot = HoveredDestinationSlot > 0 ? HoveredDestinationSlot : -1;
-	NewPresenceState.bHasCursor = bHasCursor;
-	NewPresenceState.CursorNormalized = bHasCursor
-		? FVector2D(FMath::Clamp(CursorNormalized.X, 0.0f, 1.0f), FMath::Clamp(CursorNormalized.Y, 0.0f, 1.0f))
-		: FVector2D::ZeroVector;
 	NewPresenceState.bHasSelection = bHasSelection && SelectedUpgradeTag.IsValid();
 	NewPresenceState.SelectedUpgradeTag = NewPresenceState.bHasSelection ? SelectedUpgradeTag : FGameplayTag();
 	NewPresenceState.SelectedDestinationSlot = NewPresenceState.bHasSelection && SelectedDestinationSlot > 0 ? SelectedDestinationSlot : -1;
@@ -1743,8 +1737,6 @@ bool AARInvaderGameState::SetOfferPresence(
 		const FARInvaderOfferPresenceState& ExistingState = OfferPresenceStates[ExistingIndex];
 		const bool bUnchanged = ExistingState.HoveredUpgradeTag == NewPresenceState.HoveredUpgradeTag
 			&& ExistingState.HoveredDestinationSlot == NewPresenceState.HoveredDestinationSlot
-			&& ExistingState.bHasCursor == NewPresenceState.bHasCursor
-			&& ExistingState.CursorNormalized.Equals(NewPresenceState.CursorNormalized, KINDA_SMALL_NUMBER)
 			&& ExistingState.bHasSelection == NewPresenceState.bHasSelection
 			&& ExistingState.SelectedUpgradeTag == NewPresenceState.SelectedUpgradeTag
 			&& ExistingState.SelectedDestinationSlot == NewPresenceState.SelectedDestinationSlot;
@@ -2948,4 +2940,3 @@ void AARInvaderGameState::ClearWhileSlottedEffectsForPlayer(AARPlayerStateBase* 
 		}
 	}
 }
-

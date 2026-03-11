@@ -87,7 +87,7 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 
 	TestFalse(
 		TEXT("Presence update is rejected while session is inactive"),
-		InvaderGameState->SetOfferPresence(P1State, OfferedTag, 1, FVector2D(0.5f, 0.5f), true, OfferedTag, 1, true));
+		InvaderGameState->SetOfferPresence(P1State, OfferedTag, 1, OfferedTag, 1, true));
 
 	FARInvaderFullBlastSessionState ActiveSession = InvaderGameState->GetFullBlastSession();
 	ActiveSession = FARInvaderFullBlastSessionState();
@@ -104,7 +104,7 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 
 	TestTrue(
 		TEXT("Presence update accepted during active session"),
-		InvaderGameState->SetOfferPresence(P1State, NonOfferedTag, 2, FVector2D(2.0f, -1.0f), true, NonOfferedTag, 2, true));
+		InvaderGameState->SetOfferPresence(P1State, NonOfferedTag, 2, NonOfferedTag, 2, true));
 
 	const TArray<FARInvaderOfferPresenceState>& PresenceAfterInvalidHover = InvaderGameState->GetOfferPresenceStates();
 	if (!TestEqual(TEXT("Presence entry count after first update"), PresenceAfterInvalidHover.Num(), 1))
@@ -117,20 +117,13 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Presence player slot is P1"), PresenceAfterInvalidHover[0].PlayerSlot, EARPlayerSlot::P1);
 	TestFalse(TEXT("Non-offered hover tag is scrubbed"), PresenceAfterInvalidHover[0].HoveredUpgradeTag.IsValid());
 	TestEqual(TEXT("Hovered destination slot persisted"), PresenceAfterInvalidHover[0].HoveredDestinationSlot, 2);
-	TestTrue(TEXT("Presence cursor marked as present"), PresenceAfterInvalidHover[0].bHasCursor);
 	TestFalse(TEXT("Non-offered selection tag is scrubbed"), PresenceAfterInvalidHover[0].SelectedUpgradeTag.IsValid());
 	TestFalse(TEXT("Selection flag is cleared when selection is invalid"), PresenceAfterInvalidHover[0].bHasSelection);
 	TestEqual(TEXT("Selected destination slot reset when selection invalid"), PresenceAfterInvalidHover[0].SelectedDestinationSlot, -1);
-	TestTrue(
-		TEXT("Presence cursor X clamped to 1"),
-		FMath::IsNearlyEqual(PresenceAfterInvalidHover[0].CursorNormalized.X, 1.0, UE_KINDA_SMALL_NUMBER));
-	TestTrue(
-		TEXT("Presence cursor Y clamped to 0"),
-		FMath::IsNearlyEqual(PresenceAfterInvalidHover[0].CursorNormalized.Y, 0.0, UE_KINDA_SMALL_NUMBER));
 
 	TestTrue(
 		TEXT("Presence update accepts offered tag"),
-		InvaderGameState->SetOfferPresence(P1State, OfferedTag, 3, FVector2D(0.25f, 0.75f), false, OfferedTag, 4, true));
+		InvaderGameState->SetOfferPresence(P1State, OfferedTag, 3, OfferedTag, 4, true));
 	const TArray<FARInvaderOfferPresenceState>& PresenceAfterOfferHover = InvaderGameState->GetOfferPresenceStates();
 	TestEqual(TEXT("Presence entry count remains one after update"), PresenceAfterOfferHover.Num(), 1);
 	TestEqual(TEXT("Offered hover tag persisted"), PresenceAfterOfferHover[0].HoveredUpgradeTag, OfferedTag);
@@ -138,17 +131,10 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Selection flag persisted"), PresenceAfterOfferHover[0].bHasSelection);
 	TestEqual(TEXT("Selected tag persisted"), PresenceAfterOfferHover[0].SelectedUpgradeTag, OfferedTag);
 	TestEqual(TEXT("Selected destination slot persisted"), PresenceAfterOfferHover[0].SelectedDestinationSlot, 4);
-	TestFalse(TEXT("Presence cursor cleared when bHasCursor is false"), PresenceAfterOfferHover[0].bHasCursor);
-	TestTrue(
-		TEXT("Presence cursor reset X when disabled"),
-		FMath::IsNearlyEqual(PresenceAfterOfferHover[0].CursorNormalized.X, 0.0, UE_KINDA_SMALL_NUMBER));
-	TestTrue(
-		TEXT("Presence cursor reset Y when disabled"),
-		FMath::IsNearlyEqual(PresenceAfterOfferHover[0].CursorNormalized.Y, 0.0, UE_KINDA_SMALL_NUMBER));
 
 	TestTrue(
 		TEXT("Idempotent presence update still succeeds"),
-		InvaderGameState->SetOfferPresence(P1State, OfferedTag, 3, FVector2D(0.25f, 0.75f), false, OfferedTag, 4, true));
+		InvaderGameState->SetOfferPresence(P1State, OfferedTag, 3, OfferedTag, 4, true));
 	TestEqual(
 		TEXT("Presence entry count stays one after idempotent update"),
 		InvaderGameState->GetOfferPresenceStates().Num(),
