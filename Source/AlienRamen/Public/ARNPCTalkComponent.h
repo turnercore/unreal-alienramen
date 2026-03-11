@@ -47,7 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void RefreshTalkableFromSubsystem();
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Speaker")
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC|Talk")
 	FAROnNpcTalkableStateChanged OnNpcTalkableStateChanged;
 
 protected:
@@ -71,14 +71,14 @@ private:
 	UPROPERTY(
 		EditAnywhere,
 		BlueprintReadOnly,
-		Category = "Alien Ramen|Dialogue|Speaker",
+		Category = "Alien Ramen|NPC|Talk",
 		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Primary speaker identity tag used for dialogue lookup and speaker-bound emotion routing."))
 	FGameplayTag NpcTag;
 
-	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Speaker", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
+	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|NPC|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
 	bool bIsTalkable = false;
 
 	// Bitmask of talkable slots (P1=bit0, P2=bit1).
-	UPROPERTY(ReplicatedUsing = OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Speaker", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Player Slot Mask", ToolTip = "Per-player talkability mask (P1 bit 0, P2 bit 1)."))
+	UPROPERTY(ReplicatedUsing = OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Alien Ramen|NPC|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Player Slot Mask", ToolTip = "Per-player talkability mask (P1 bit 0, P2 bit 1)."))
 	uint8 TalkablePlayerSlotMask = 0;
 };
