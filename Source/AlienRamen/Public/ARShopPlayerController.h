@@ -48,6 +48,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestShopStationStartProcessing(AARShopStationActor* StationActor);
 
+	// Tap-processing entrypoint. Each call advances station processing progress by station tap amount.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopStationTapProcessing(AARShopStationActor* StationActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopStationTapProcessing(AARShopStationActor* StationActor);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopStationStopProcessing(AARShopStationActor* StationActor);
 
