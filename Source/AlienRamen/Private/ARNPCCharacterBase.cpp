@@ -14,6 +14,58 @@
 namespace
 {
 	static const FName TalkableStateEmotionSourceId(TEXT("TalkableState"));
+
+	static FString DescribeActorComponentsForDiagnostics(AActor* Actor)
+	{
+		if (!Actor)
+		{
+			return TEXT("<no-actor>");
+		}
+
+		TArray<UActorComponent*> Components;
+		Actor->GetComponents(Components);
+		if (Components.IsEmpty())
+		{
+			return TEXT("<none>");
+		}
+
+		FString Summary;
+		for (UActorComponent* Component : Components)
+		{
+			if (!Summary.IsEmpty())
+			{
+				Summary += TEXT(", ");
+			}
+
+			const FString EditorOnlySuffix = (Component && Component->IsEditorOnly()) ? TEXT(",EditorOnly") : TEXT("");
+			Summary += FString::Printf(
+				TEXT("%s<%s%s>"),
+				*GetNameSafe(Component),
+				*GetNameSafe(Component ? Component->GetClass() : nullptr),
+				*EditorOnlySuffix);
+		}
+
+		return Summary;
+	}
+
+	static void LogMissingSpeakerComponentDiagnostics(AARNPCCharacterBase* Actor)
+	{
+		if (!Actor)
+		{
+			return;
+		}
+
+		TArray<UARSpeakerComponent*> SpeakerComponents;
+		Actor->GetComponents(SpeakerComponents);
+
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Interact] '%s' missing UARSpeakerComponent after refresh. FoundTypedSpeakerComponents=%d Components=[%s]"),
+			*GetNameSafe(Actor),
+			SpeakerComponents.Num(),
+			*DescribeActorComponentsForDiagnostics(Actor));
+	}
 }
 
 AARNPCCharacterBase::AARNPCCharacterBase()
@@ -212,6 +264,13 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 		return;
 	}
 
+	// Runtime resilience: resolve optional components at interaction time in case this actor was reinstanced
+	// or component pointers became stale after hot reload/editor world transitions.
+	if (!SpeakerComponent || !CustomerComponent || !EmotionComponent)
+	{
+		ResolveOptionalComponents();
+	}
+
 	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
 	if (HasAuthority() && CustomerComponent)
 	{
@@ -234,7 +293,32 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 
 	if (!SpeakerComponent)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[Interact] '%s' has no SpeakerComponent; interaction ended."), *GetNameSafe(this));
+		// Compatibility fallback: customer-driven actors can still open dialogue using their customer speaker identity.
+		if (HasAuthority() && CustomerComponent)
+		{
+			const FGameplayTag CustomerSpeakerTag = CustomerComponent->GetSpeakerTag();
+			if (CustomerSpeakerTag.IsValid())
+			{
+				if (UGameInstance* GameInstance = GetGameInstance())
+				{
+					if (UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>())
+					{
+						if (DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, CustomerSpeakerTag))
+						{
+							UE_LOG(
+								ARLog,
+								Verbose,
+								TEXT("[Interact] '%s' started dialogue via customer speaker fallback '%s'."),
+								*GetNameSafe(this),
+								*CustomerSpeakerTag.ToString());
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		LogMissingSpeakerComponentDiagnostics(this);
 		return;
 	}
 

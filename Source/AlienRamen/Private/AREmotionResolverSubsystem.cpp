@@ -344,7 +344,8 @@ namespace
 		UDataTable*& OutResolvedDataTable,
 		FSoftObjectPath& OutResolvedDataTablePath,
 		FString& OutResolvedDataSource,
-		const bool bLogRowWarnings)
+		const bool bLogRowWarnings,
+		const bool bLogResolveSummary)
 	{
 		OutIconByEmotionTag.Reset();
 		OutResolvedDataTable = nullptr;
@@ -356,7 +357,7 @@ namespace
 		FString ResolveError;
 		if (!TryResolveEmotionDataTable(GameInstance, OutResolvedDataTable, Source, RouteRootTag, ResolveError))
 		{
-			if (bLogRowWarnings || ShouldLogResolverVerbose())
+			if (bLogRowWarnings || (bLogResolveSummary && ShouldLogResolverVerbose()))
 			{
 				UE_LOG(
 					ARLog,
@@ -375,7 +376,7 @@ namespace
 		const bool bBuilt = BuildIconMapFromDataTable(OutResolvedDataTable, OutIconByEmotionTag, bLogRowWarnings);
 		if (!bBuilt)
 		{
-			if (bLogRowWarnings || ShouldLogResolverVerbose())
+			if (bLogRowWarnings || (bLogResolveSummary && ShouldLogResolverVerbose()))
 			{
 				UE_LOG(
 					ARLog,
@@ -387,7 +388,7 @@ namespace
 			return false;
 		}
 
-		if (ShouldLogResolverVerbose())
+		if (bLogResolveSummary && ShouldLogResolverVerbose())
 		{
 			UE_LOG(
 				ARLog,
@@ -586,6 +587,7 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIconFromConfiguredData(
 		ResolvedDataTable,
 		ResolvedDataTablePath,
 		ResolvedDataSource,
+		false,
 		false))
 	{
 		OutIconTexture.Reset();
@@ -634,6 +636,7 @@ bool UAREmotionResolverSubsystem::BuildCache()
 		ResolvedDataTable,
 		ResolvedDataTablePath,
 		ResolvedDataSource,
+		true,
 		true);
 
 	CachedEmotionDataTablePath = ResolvedDataTablePath;
