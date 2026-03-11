@@ -7,6 +7,7 @@
 AARShopCarryItemBase::AARShopCarryItemBase()
 {
 	bReplicates = true;
+	SetReplicateMovement(true);
 }
 
 void AARShopCarryItemBase::ForwardUseToController(AActor* UsingActor)

@@ -7,6 +7,43 @@
 #include "GameFramework/Actor.h"
 #include "Net/UnrealNetwork.h"
 
+namespace
+{
+	static UPrimitiveComponent* ResolveCarryPhysicsPrimitive(AActor* Actor)
+	{
+		if (!Actor)
+		{
+			return nullptr;
+		}
+
+		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
+		{
+			return RootPrimitive;
+		}
+
+		TArray<UPrimitiveComponent*> PrimitiveComponents;
+		Actor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->IsSimulatingPhysics())
+			{
+				return Primitive;
+			}
+		}
+
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->GetCollisionEnabled() != ECollisionEnabled::NoCollision)
+			{
+				return Primitive;
+			}
+		}
+
+		return PrimitiveComponents.Num() > 0 ? PrimitiveComponents[0] : nullptr;
+	}
+}
+
 UARShopCarryComponent::UARShopCarryComponent()
 {
 	SetIsReplicatedByDefault(true);
@@ -114,6 +151,25 @@ void UARShopCarryComponent::ApplyHoldPresentation(AActor* ActorToHold) const
 	AActor* OwnerActor = GetOwner();
 	USceneComponent* OwnerRoot = OwnerActor ? OwnerActor->GetRootComponent() : nullptr;
 	USceneComponent* HeldRoot = ActorToHold->GetRootComponent();
+
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
+	ActorToHold->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	{
+		if (!Primitive)
+		{
+			continue;
+		}
+
+		if (Primitive->IsSimulatingPhysics())
+		{
+			Primitive->SetSimulatePhysics(false);
+		}
+
+		Primitive->SetEnableGravity(false);
+		Primitive->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
 	if (OwnerRoot && HeldRoot)
 	{
 		HeldRoot->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
@@ -122,12 +178,6 @@ void UARShopCarryComponent::ApplyHoldPresentation(AActor* ActorToHold) const
 		HeldRoot->SetRelativeRotation(HoldRelativeRotation);
 	}
 
-	if (UPrimitiveComponent* PrimitiveRoot = Cast<UPrimitiveComponent>(HeldRoot))
-	{
-		PrimitiveRoot->SetSimulatePhysics(false);
-		PrimitiveRoot->SetEnableGravity(false);
-		PrimitiveRoot->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
 	ActorToHold->SetActorEnableCollision(false);
 }
 
@@ -146,14 +196,32 @@ void UARShopCarryComponent::ClearHoldPresentation(AActor* ActorToRelease, const 
 		if (bWasAttachedToOwner)
 		{
 			HeldRoot->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			if (UPrimitiveComponent* PrimitiveRoot = Cast<UPrimitiveComponent>(HeldRoot))
+			TArray<UPrimitiveComponent*> PrimitiveComponents;
+			ActorToRelease->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+			for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 			{
-				PrimitiveRoot->SetCollisionEnabled(bDropInWorld ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
+				if (!Primitive)
+				{
+					continue;
+				}
+
+				Primitive->SetCollisionEnabled(bDropInWorld ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
+				Primitive->SetEnableGravity(bDropInWorld);
+			}
+
+			if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ActorToRelease))
+			{
 				if (bDropInWorld)
 				{
-					PrimitiveRoot->SetSimulatePhysics(true);
-					PrimitiveRoot->SetEnableGravity(true);
-					PrimitiveRoot->WakeAllRigidBodies();
+					if (!PhysicsPrimitive->IsSimulatingPhysics())
+					{
+						PhysicsPrimitive->SetSimulatePhysics(true);
+					}
+					PhysicsPrimitive->WakeAllRigidBodies();
+				}
+				else if (PhysicsPrimitive->IsSimulatingPhysics())
+				{
+					PhysicsPrimitive->SetSimulatePhysics(false);
 				}
 			}
 		}

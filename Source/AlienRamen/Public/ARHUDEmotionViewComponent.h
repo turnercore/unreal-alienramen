@@ -11,6 +11,8 @@
 #include "ARHUDEmotionViewComponent.generated.h"
 
 class AActor;
+class AHUD;
+class APlayerController;
 class UAREmotionComponent;
 class UCanvas;
 class UTexture2D;
@@ -26,10 +28,6 @@ class ALIENRAMEN_API UARHUDEmotionViewComponent : public UActorComponent
 
 public:
 	UARHUDEmotionViewComponent();
-
-	// Called from the owning HUD DrawHUD path to render overhead emotion icons.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD|Emotion")
-	int32 RenderEmotionView();
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD|Emotion")
 	bool TryProjectEmotionForActor(
@@ -69,6 +67,11 @@ public:
 
 private:
 	class AHUD* ResolveOwningHUD() const;
+	virtual void OnRegister() override;
+	virtual void OnUnregister() override;
+
+	void HandleHUDPostRender(AHUD* HUD, UCanvas* InCanvas);
+	int32 RenderEmotionView(AHUD* HUD, UCanvas* InCanvas, const APlayerController* LocalController);
 	static bool ShouldLogEmotionRenderVerbose();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
@@ -80,5 +83,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
 	bool bHideOwningPawnEmotion = false;
 
+	TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	TSet<FName> SuppressionReasons;
+	FDelegateHandle HUDPostRenderHandle;
 };
