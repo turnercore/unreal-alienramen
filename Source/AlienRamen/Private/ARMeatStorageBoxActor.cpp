@@ -1,5 +1,6 @@
 #include "ARMeatStorageBoxActor.h"
 
+#include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARRamenMeatActor.h"
 
@@ -16,7 +17,18 @@ void AARMeatStorageBoxActor::BeginPlay()
 bool AARMeatStorageBoxActor::TryDispenseMeat(AARPlayerController* RequestingController)
 {
 	SyncLegacyDefinition();
-	return TryDispenseToController(RequestingController, MeatItemTag);
+	const bool bDispensed = TryDispenseToController(RequestingController, MeatItemTag);
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Storage] TryDispenseMeat storage='%s' controller='%s' color=%d amountPerDispense=%d item='%s' success=%d."),
+		*GetNameSafe(this),
+		*GetNameSafe(RequestingController),
+		static_cast<int32>(MeatColor),
+		FMath::Max(1, MeatAmountPerDispense),
+		*MeatItemTag.ToString(),
+		bDispensed ? 1 : 0);
+	return bDispensed;
 }
 
 void AARMeatStorageBoxActor::SyncLegacyDefinition()

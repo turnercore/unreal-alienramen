@@ -2,11 +2,13 @@
 
 #include "ARCustomerSettings.h"
 #include "ARGameStateBase.h"
+#include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
 #include "TagContentResolverSubsystem.h"
+#include "Components/PrimitiveComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
@@ -32,6 +34,7 @@ void AARShopStationActor::BeginPlay()
 	if (HasAuthority())
 	{
 		ApplyConfigFromRowIfAvailable();
+		BindAutoSlotContactHandlers();
 	}
 
 	AttachSlottedMeatToSlot();
@@ -84,6 +87,14 @@ void AARShopStationActor::Tick(float DeltaSeconds)
 
 bool AARShopStationActor::IsStationUpgraded() const
 {
+	// Manual/debug authoring mode:
+	// When config lookup is disabled and no upgrade tags are authored, treat station as upgraded
+	// so station behavior can be tested without unlock dependencies.
+	if (!bResolveConfigFromData && RequiredUpgradeTags.IsEmpty())
+	{
+		return true;
+	}
+
 	if (RequiredUpgradeTags.IsEmpty())
 	{
 		return false;
@@ -97,12 +108,28 @@ bool AARShopStationActor::TryPlaceMeatActor(AARRamenMeatActor* MeatActor)
 {
 	if (!HasAuthority() || !IsValid(MeatActor) || !IsStationUpgraded())
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPlaceMeatActor rejected on '%s': authority=%d validMeat=%d upgraded=%d meat='%s'."),
+			*GetNameSafe(this),
+			HasAuthority() ? 1 : 0,
+			IsValid(MeatActor) ? 1 : 0,
+			IsStationUpgraded() ? 1 : 0,
+			*GetNameSafe(MeatActor));
 		return false;
 	}
 
 	if (SlottedMeatActor != nullptr || RuntimeState == EARRamenStationRuntimeState::Processing)
 	{
 		// Explicitly block slot replacement while a meat object is currently in station slot.
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPlaceMeatActor blocked on '%s': slotted='%s' state='%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(SlottedMeatActor),
+			*StaticEnum<EARRamenStationRuntimeState>()->GetValueAsString(RuntimeState));
 		return false;
 	}
 
@@ -114,6 +141,13 @@ bool AARShopStationActor::TryPlaceMeatActor(AARRamenMeatActor* MeatActor)
 	AttachSlottedMeatToSlot();
 	ForceNetUpdate();
 	BroadcastRuntimeChanged();
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] Meat '%s' slotted into station '%s' (state='%s')."),
+		*GetNameSafe(MeatActor),
+		*GetNameSafe(this),
+		*StaticEnum<EARRamenStationRuntimeState>()->GetValueAsString(RuntimeState));
 	return true;
 }
 
@@ -128,15 +162,36 @@ bool AARShopStationActor::TryPlaceHeldMeatFromController(AARPlayerController* Co
 	AARRamenMeatActor* HeldMeat = CarryComponent ? CarryComponent->GetHeldMeatActor() : nullptr;
 	if (!CarryComponent || !HeldMeat)
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPlaceHeldMeatFromController rejected on '%s': controller='%s' carry='%s' heldMeat='%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller),
+			*GetNameSafe(CarryComponent),
+			*GetNameSafe(HeldMeat));
 		return false;
 	}
 
 	if (!TryPlaceMeatActor(HeldMeat))
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPlaceHeldMeatFromController failed placement on '%s' for controller '%s' meat '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller),
+			*GetNameSafe(HeldMeat));
 		return false;
 	}
 
 	CarryComponent->ReleaseHeldActorForTransfer();
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] TryPlaceHeldMeatFromController success on '%s' for controller '%s'."),
+		*GetNameSafe(this),
+		*GetNameSafe(Controller));
 	return true;
 }
 
@@ -144,18 +199,41 @@ bool AARShopStationActor::TryPickupSlottedMeatToController(AARPlayerController* 
 {
 	if (!HasAuthority() || !Controller || RuntimeState != EARRamenStationRuntimeState::MeatReady || SlottedMeatActor == nullptr)
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPickupSlottedMeatToController rejected on '%s': authority=%d controller='%s' state='%s' slotted='%s'."),
+			*GetNameSafe(this),
+			HasAuthority() ? 1 : 0,
+			*GetNameSafe(Controller),
+			*StaticEnum<EARRamenStationRuntimeState>()->GetValueAsString(RuntimeState),
+			*GetNameSafe(SlottedMeatActor));
 		return false;
 	}
 
 	UARShopCarryComponent* CarryComponent = ResolveCarryComponentFromController(Controller);
 	if (!CarryComponent || CarryComponent->HasHeldActor())
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPickupSlottedMeatToController rejected on '%s': carry='%s' held='%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(CarryComponent),
+			*GetNameSafe(CarryComponent ? CarryComponent->GetHeldActor() : nullptr));
 		return false;
 	}
 
 	AARRamenMeatActor* MeatToPickup = SlottedMeatActor;
 	if (!CarryComponent->TrySetHeldActor(MeatToPickup))
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryPickupSlottedMeatToController failed hold-transfer on '%s' for controller '%s' meat '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller),
+			*GetNameSafe(MeatToPickup));
 		return false;
 	}
 
@@ -174,6 +252,12 @@ bool AARShopStationActor::TryPickupSlottedMeatToController(AARPlayerController* 
 
 	ForceNetUpdate();
 	BroadcastRuntimeChanged();
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] Controller '%s' picked up slotted meat from station '%s'."),
+		*GetNameSafe(Controller),
+		*GetNameSafe(this));
 	return true;
 }
 
@@ -259,17 +343,38 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 	AARRamenBowlActor* HeldBowl = CarryComponent ? CarryComponent->GetHeldBowlActor() : nullptr;
 	if (!HeldBowl)
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryFillHeldBowlFromController rejected on '%s': controller '%s' has no held bowl."),
+			*GetNameSafe(this),
+			*GetNameSafe(Controller));
 		return false;
 	}
 
 	if (HeldBowl->GetNextRequiredStationType() != StationType)
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryFillHeldBowlFromController rejected on '%s': bowl next='%s' station='%s'."),
+			*GetNameSafe(this),
+			*StaticEnum<EARRamenStationType>()->GetValueAsString(HeldBowl->GetNextRequiredStationType()),
+			*StaticEnum<EARRamenStationType>()->GetValueAsString(StationType));
 		return false;
 	}
 
 	EARAffinityColor ColorToApply = EARAffinityColor::None;
 	if (!TryConsumeForBowl(StationType, ColorToApply))
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryFillHeldBowlFromController consume failed on '%s': state='%s' stock=%d upgraded=%d."),
+			*GetNameSafe(this),
+			*StaticEnum<EARRamenStationRuntimeState>()->GetValueAsString(RuntimeState),
+			ProcessedStockAmount,
+			IsStationUpgraded() ? 1 : 0);
 		return false;
 	}
 
@@ -286,9 +391,20 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 		}
 		ForceNetUpdate();
 		BroadcastRuntimeChanged();
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] TryFillHeldBowlFromController apply failed on '%s': returned stock to station."),
+			*GetNameSafe(this));
 		return false;
 	}
 
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] TryFillHeldBowlFromController success on '%s' for controller '%s'."),
+		*GetNameSafe(this),
+		*GetNameSafe(Controller));
 	return true;
 }
 
@@ -364,6 +480,114 @@ UARShopCarryComponent* AARShopStationActor::ResolveCarryComponentFromController(
 {
 	APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
 	return Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
+}
+
+void AARShopStationActor::BindAutoSlotContactHandlers()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
+	GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+	int32 BoundCount = 0;
+	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	{
+		if (!Primitive || Primitive->GetOwner() != this)
+		{
+			continue;
+		}
+
+		Primitive->SetGenerateOverlapEvents(true);
+		Primitive->SetNotifyRigidBodyCollision(true);
+		Primitive->OnComponentBeginOverlap.AddDynamic(this, &AARShopStationActor::HandleStationPrimitiveBeginOverlap);
+		Primitive->OnComponentHit.AddDynamic(this, &AARShopStationActor::HandleStationPrimitiveHit);
+		++BoundCount;
+	}
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] Auto-slot contact handlers bound on '%s': primitives=%d."),
+		*GetNameSafe(this),
+		BoundCount);
+}
+
+bool AARShopStationActor::TryAutoSlotLooseMeatActor(AActor* CandidateActor)
+{
+	AARRamenMeatActor* LooseMeat = Cast<AARRamenMeatActor>(CandidateActor);
+	if (!HasAuthority() || !LooseMeat)
+	{
+		return false;
+	}
+
+	const USceneComponent* MeatRoot = LooseMeat->GetRootComponent();
+	const USceneComponent* AttachParent = MeatRoot ? MeatRoot->GetAttachParent() : nullptr;
+	if (AttachParent && AttachParent->GetOwner() != this)
+	{
+		// Ignore held/attached meat from non-station owners.
+		UE_LOG(
+			ARLog,
+			VeryVerbose,
+			TEXT("[Shop|Station] Auto-slot ignored on '%s': meat '%s' attached to '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(LooseMeat),
+			*GetNameSafe(AttachParent->GetOwner()));
+		return false;
+	}
+
+	const bool bPlaced = TryPlaceMeatActor(LooseMeat);
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Station] Auto-slot contact on '%s' with meat '%s': success=%d."),
+		*GetNameSafe(this),
+		*GetNameSafe(LooseMeat),
+		bPlaced ? 1 : 0);
+	return bPlaced;
+}
+
+void AARShopStationActor::HandleStationPrimitiveBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	UE_LOG(
+		ARLog,
+		VeryVerbose,
+		TEXT("[Shop|Station] BeginOverlap station='%s' overlappedComp='%s' otherActor='%s' otherComp='%s'."),
+		*GetNameSafe(this),
+		*GetNameSafe(OverlappedComponent),
+		*GetNameSafe(OtherActor),
+		*GetNameSafe(OtherComp));
+	(void)OtherBodyIndex;
+	(void)bFromSweep;
+	(void)SweepResult;
+	TryAutoSlotLooseMeatActor(OtherActor);
+}
+
+void AARShopStationActor::HandleStationPrimitiveHit(
+	UPrimitiveComponent* HitComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse,
+	const FHitResult& Hit)
+{
+	UE_LOG(
+		ARLog,
+		VeryVerbose,
+		TEXT("[Shop|Station] Hit station='%s' hitComp='%s' otherActor='%s' otherComp='%s'."),
+		*GetNameSafe(this),
+		*GetNameSafe(HitComponent),
+		*GetNameSafe(OtherActor),
+		*GetNameSafe(OtherComp));
+	(void)NormalImpulse;
+	(void)Hit;
+	TryAutoSlotLooseMeatActor(OtherActor);
 }
 
 void AARShopStationActor::BroadcastRuntimeChanged()
@@ -514,7 +738,26 @@ void AARShopStationActor::AttachSlottedMeatToSlot() const
 		return;
 	}
 
-	SlottedMeatActor->GetRootComponent()->AttachToComponent(MeatSlotAnchor, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
+	SlottedMeatActor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	{
+		if (!Primitive)
+		{
+			continue;
+		}
+
+		if (Primitive->IsSimulatingPhysics())
+		{
+			Primitive->SetSimulatePhysics(false);
+		}
+		Primitive->SetEnableGravity(false);
+		Primitive->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	USceneComponent* MeatRoot = SlottedMeatActor->GetRootComponent();
+	MeatRoot->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	MeatRoot->AttachToComponent(MeatSlotAnchor, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	SlottedMeatActor->SetActorEnableCollision(false);
 }
 

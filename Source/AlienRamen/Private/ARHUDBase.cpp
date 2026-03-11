@@ -1,7 +1,9 @@
 #include "ARHUDBase.h"
 
 #include "ARHUDEmotionViewComponent.h"
+#include "ARLog.h"
 #include "ARPlayerController.h"
+#include "HAL/PlatformTime.h"
 
 AARHUDBase::AARHUDBase()
 {
@@ -27,7 +29,19 @@ void AARHUDBase::DrawHUD()
 		return;
 	}
 
-	EmotionViewComponent->RenderEmotionView(this, Canvas, GetOwningPlayerController());
+	const int32 DrawnEmotionCount = EmotionViewComponent->RenderEmotionView(this, Canvas, GetOwningPlayerController());
+	static double LastHUDRenderLogSeconds = 0.0;
+	const double NowSeconds = FPlatformTime::Seconds();
+	if ((NowSeconds - LastHUDRenderLogSeconds) >= 1.0)
+	{
+		UE_LOG(
+			ARLog,
+			VeryVerbose,
+			TEXT("[Emotion][HUD] AARHUDBase::DrawHUD emitted DrawnEmotionCount=%d HUD='%s'."),
+			DrawnEmotionCount,
+			*GetNameSafe(this));
+		LastHUDRenderLogSeconds = NowSeconds;
+	}
 }
 
 bool AARHUDBase::TryProjectEmotionForActor(
