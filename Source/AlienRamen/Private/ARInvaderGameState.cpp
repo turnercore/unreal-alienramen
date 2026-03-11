@@ -228,12 +228,6 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMoney),
 		ECVF_Cheat);
 
-	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.invader.debug.add_meat"),
-		TEXT("Usage: ar.invader.debug.add_meat <delta> [red|blue|white|unspecified]"),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMeat),
-		ECVF_Cheat);
-
 	CmdDebugSetDropEarthGravity = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.debug.set_drop_earth_gravity"),
 		TEXT("Usage: ar.invader.debug.set_drop_earth_gravity <0|1>"),
@@ -260,7 +254,6 @@ void AARInvaderGameState::UnregisterDebugConsoleCommands()
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_spice"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_scrap"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_money"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.add_meat"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_drop_earth_gravity"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.set_cursor"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.invader.debug.inject_upgrade"), false);
@@ -268,7 +261,6 @@ void AARInvaderGameState::UnregisterDebugConsoleCommands()
 	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddSpice"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddScrap"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddMoney"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.AddMeat"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetDropEarthGravity"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.SetCursor"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Invader.Debug.InjectUpgrade"), false);
@@ -292,11 +284,6 @@ void AARInvaderGameState::UnregisterDebugConsoleCommands()
 	{
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMoney, false);
 		CmdDebugAddMoney = nullptr;
-	}
-	if (CmdDebugAddMeat)
-	{
-		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMeat, false);
-		CmdDebugAddMeat = nullptr;
 	}
 	if (CmdDebugSetDropEarthGravity)
 	{
@@ -546,79 +533,6 @@ void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWo
 	SetMoneyFromSave(NewMoney);
 
 	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddMoney %+d -> %d"), Delta, GetMoney());
-}
-
-void AARInvaderGameState::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* /*World*/)
-{
-	if (!HasAuthority() || Args.Num() < 1)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_meat <delta> [red|blue|white|unspecified]"));
-		return;
-	}
-
-	const int32 Delta = FCString::Atoi(*Args[0]);
-	EARAffinityColor ColorBucket = EARAffinityColor::None;
-	bool bUseUnspecifiedBucket = true;
-	if (Args.Num() > 1)
-	{
-		const FString ColorToken = Args[1].TrimStartAndEnd().ToLower();
-		if (ColorToken == TEXT("red"))
-		{
-			ColorBucket = EARAffinityColor::Red;
-			bUseUnspecifiedBucket = false;
-		}
-		else if (ColorToken == TEXT("blue"))
-		{
-			ColorBucket = EARAffinityColor::Blue;
-			bUseUnspecifiedBucket = false;
-		}
-		else if (ColorToken == TEXT("white"))
-		{
-			ColorBucket = EARAffinityColor::White;
-			bUseUnspecifiedBucket = false;
-		}
-		else if (ColorToken == TEXT("unspecified") || ColorToken == TEXT("none"))
-		{
-			bUseUnspecifiedBucket = true;
-		}
-		else
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[InvaderSave|Debug] Invalid meat color '%s'. Expected red|blue|white|unspecified."),
-				*Args[1]);
-			return;
-		}
-	}
-
-	FARMeatState MeatState = GetMeat();
-	if (bUseUnspecifiedBucket)
-	{
-		MeatState.UnspecifiedAmount += Delta;
-	}
-	else
-	{
-		switch (ColorBucket)
-		{
-		case EARAffinityColor::Red:
-			MeatState.RedAmount += Delta;
-			break;
-		case EARAffinityColor::Blue:
-			MeatState.BlueAmount += Delta;
-			break;
-		case EARAffinityColor::White:
-			MeatState.WhiteAmount += Delta;
-			break;
-		default:
-			MeatState.UnspecifiedAmount += Delta;
-			break;
-		}
-	}
-
-	SetMeatFromSave(MeatState);
-	const TCHAR* BucketLabel = bUseUnspecifiedBucket ? TEXT("unspecified") : *Args[1];
-	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddMeat bucket=%s %+d -> total=%d"), BucketLabel, Delta, GetMeat().GetTotalAmount());
 }
 
 void AARInvaderGameState::HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* /*World*/)

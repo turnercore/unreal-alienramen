@@ -3241,7 +3241,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	if (!FPackageName::IsValidLongPackageName(PackageFolder))
 	{
 		AppendLogLine(FString::Printf(
-			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Alien Ramen -> Dialogue Tooling."),
+			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Dialogue -> Dialogue Tooling."),
 			*PackageFolder));
 		return FReply::Handled();
 	}

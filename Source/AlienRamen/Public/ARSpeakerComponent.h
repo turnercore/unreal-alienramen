@@ -1,6 +1,6 @@
 /**
- * @file ARNPCTalkComponent.h
- * @brief Reusable NPC dialogue/talkability component.
+ * @file ARSpeakerComponent.h
+ * @brief Reusable dialogue speaker/talkability component.
  */
 #pragma once
 
@@ -8,32 +8,32 @@
 #include "ARPlayerTypes.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
-#include "ARNPCTalkComponent.generated.h"
+#include "ARSpeakerComponent.generated.h"
 
 class AARPlayerController;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnNpcTalkableStateChanged, bool, bNewTalkable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSpeakerTalkableStateChanged, bool, bNewTalkable);
 
 UCLASS(
 	ClassGroup=(AlienRamen),
 	BlueprintType,
 	Blueprintable,
-	meta=(BlueprintSpawnableComponent, DisplayName="Dialogue Speaker Talk Component", ToolTip="Server-authoritative talkability and interaction surface for a dialogue speaker."))
-class ALIENRAMEN_API UARNPCTalkComponent : public UActorComponent
+	meta=(BlueprintSpawnableComponent, DisplayName="Dialogue Speaker Component", ToolTip="Server-authoritative talkability and interaction surface for a dialogue speaker."))
+class ALIENRAMEN_API UARSpeakerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UARNPCTalkComponent();
+	UARSpeakerComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void InteractByController(AARPlayerController* InteractingController);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag"))
-	FGameplayTag GetNpcTag() const { return NpcTag; }
+	FGameplayTag GetSpeakerTag() const { return SpeakerTag; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Set Speaker Tag"))
-	void SetNpcTag(FGameplayTag NewNpcTag);
+	void SetSpeakerTag(FGameplayTag NewSpeakerTag);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkable() const { return bIsTalkable; }
@@ -48,7 +48,7 @@ public:
 	void RefreshTalkableFromSubsystem();
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Talk")
-	FAROnNpcTalkableStateChanged OnNpcTalkableStateChanged;
+	FAROnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -62,7 +62,7 @@ protected:
 	void OnRep_TalkablePlayerSlotMask(uint8 bOldTalkablePlayerSlotMask);
 
 	UFUNCTION()
-	void HandleNpcTalkableChanged(FGameplayTag ChangedNpcTag, bool bNewTalkable);
+	void HandleSpeakerTalkableChanged(FGameplayTag ChangedSpeakerTag, bool bNewTalkable);
 
 private:
 	bool IsAuthorityOwner() const;
@@ -73,7 +73,7 @@ private:
 		BlueprintReadOnly,
 		Category = "Alien Ramen|Talk",
 		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Primary speaker identity tag used for dialogue lookup and speaker-bound emotion routing."))
-	FGameplayTag NpcTag;
+	FGameplayTag SpeakerTag;
 
 	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
 	bool bIsTalkable = false;

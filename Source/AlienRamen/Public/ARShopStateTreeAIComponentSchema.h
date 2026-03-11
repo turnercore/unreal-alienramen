@@ -1,6 +1,6 @@
 /**
  * @file ARShopStateTreeAIComponentSchema.h
- * @brief StateTree schema for shop NPC AI runtime.
+ * @brief StateTree schema for shop customer/speaker AI runtime.
  */
 #pragma once
 

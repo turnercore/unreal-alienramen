@@ -16,6 +16,7 @@
 class AARPlayerStateBase;
 class APlayerController;
 class APawn;
+class IConsoleObject;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnTrackedPlayersChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnGameStateHydratedSignature);
@@ -308,6 +309,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void AddPlayerState(APlayerState* PlayerState) override;
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
@@ -373,6 +375,9 @@ protected:
 	bool ComputeAllPlayersPausedByMenu() const;
 	void RefreshPauseResolution();
 	void ClearPauseVoteForSlot(EARPlayerSlot PlayerSlot);
+	void RegisterDebugConsoleCommands();
+	void UnregisterDebugConsoleCommands();
+	void HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* World);
 
 	UPROPERTY(ReplicatedUsing = OnRep_AllPlayersTravelReady, BlueprintReadOnly, Category = "Alien Ramen|Players")
 	bool bAllPlayersTravelReady = false;
@@ -418,4 +423,6 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_EffectivePauseStateActive, BlueprintReadOnly, Category = "Alien Ramen|Pause")
 	bool bEffectivePauseStateActive = false;
+
+	IConsoleObject* CmdDebugAddMeat = nullptr;
 };

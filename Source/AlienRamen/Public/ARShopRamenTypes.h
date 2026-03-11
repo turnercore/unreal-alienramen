@@ -109,10 +109,6 @@ struct ALIENRAMEN_API FARCustomerDefinitionRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	// Optional explicit NPC identity. If unset, row name-derived identity can still be used.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "NPC.Identity"))
-	FGameplayTag NpcIdentityTag;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	bool bPickyExactMatch = false;
 

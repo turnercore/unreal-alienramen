@@ -5,12 +5,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ARPickupBase.h"
+#include "ARShopCarryItemBase.h"
 #include "ARShopRamenTypes.h"
 #include "ARRamenBowlActor.generated.h"
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARRamenBowlActor : public AARPickupBase
+class ALIENRAMEN_API AARRamenBowlActor : public AARShopCarryItemBase
 {
 	GENERATED_BODY()
 

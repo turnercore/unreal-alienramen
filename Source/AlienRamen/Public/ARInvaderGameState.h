@@ -182,7 +182,6 @@ private:
 	void HandleConsoleAddSpice(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleAddScrap(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleAddMoney(const TArray<FString>& Args, UWorld* World);
-	void HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleInjectUpgrade(const TArray<FString>& Args, UWorld* World);
@@ -277,7 +276,6 @@ private:
 	IConsoleObject* CmdDebugAddSpice = nullptr;
 	IConsoleObject* CmdDebugAddScrap = nullptr;
 	IConsoleObject* CmdDebugAddMoney = nullptr;
-	IConsoleObject* CmdDebugAddMeat = nullptr;
 	IConsoleObject* CmdDebugSetDropEarthGravity = nullptr;
 	IConsoleObject* CmdDebugSetCursor = nullptr;
 	IConsoleObject* CmdDebugInjectUpgrade = nullptr;

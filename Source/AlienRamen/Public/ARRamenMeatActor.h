@@ -6,11 +6,11 @@
 
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
-#include "ARPickupBase.h"
+#include "ARShopCarryItemBase.h"
 #include "ARRamenMeatActor.generated.h"
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARRamenMeatActor : public AARPickupBase
+class ALIENRAMEN_API AARRamenMeatActor : public AARShopCarryItemBase
 {
 	GENERATED_BODY()
 

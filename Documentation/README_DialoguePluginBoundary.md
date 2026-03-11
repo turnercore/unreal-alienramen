@@ -9,9 +9,9 @@ This page defines what is owned by the Dialogue plugin boundary (even if code cu
 - Dialogue editor tooling for speakers and conversations.
 - Conversations and line execution model.
 - Emotion runtime and content resolution (`UAREmotionComponent`, emotion tags/icons).
-- NPC dialogue/emotion components (`UARNPCTalkComponent`, `UAREmotionComponent` integration).
+- Speaker dialogue/emotion components (`UARSpeakerComponent`, `UAREmotionComponent` integration).
 - Dialogue-facing faction/relationship state used by dialogue mutations and gating.
-- NPC relationship progression surfaces used by dialogue flow.
+- Speaker relationship progression surfaces used by dialogue flow.
 
 ## Not Owned by Dialogue Plugin (Built On Top)
 

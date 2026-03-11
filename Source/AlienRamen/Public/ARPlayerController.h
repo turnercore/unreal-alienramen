@@ -111,17 +111,17 @@ public:
 	void ServerRequestRemoveUnlock(const FGameplayTag& UnlockTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestStartDialogue(FGameplayTag NpcTag);
+	void RequestStartDialogue(FGameplayTag SpeakerTag);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestStartDialogue(FGameplayTag NpcTag);
+	void ServerRequestStartDialogue(FGameplayTag SpeakerTag);
 
-	// Convenience interaction path for world NPC actors. Safe to call from client/UI/BP.
+	// Convenience interaction path for world speaker characters. Safe to call from client/UI/BP.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+	void RequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+	void ServerRequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor);

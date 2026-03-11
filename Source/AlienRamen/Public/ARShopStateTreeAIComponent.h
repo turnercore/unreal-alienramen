@@ -1,6 +1,6 @@
 /**
  * @file ARShopStateTreeAIComponent.h
- * @brief Shop NPC StateTree component exposing active runtime state tags.
+ * @brief Shop customer/speaker StateTree component exposing active runtime state tags.
  */
 #pragma once
 
@@ -29,7 +29,7 @@ public:
 	virtual void StopLogic(const FString& Reason) override;
 	virtual void Cleanup() override;
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|NPC|StateTree")
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer|StateTree")
 	FGameplayTagContainer GetCurrentActiveStateTags() const { return CurrentActiveStateTags; }
 
 	FAROnShopActiveStateTagsChangedNative OnActiveStateTagsChanged;
