@@ -62,6 +62,7 @@ namespace
 		EARPlayerSlot OwnerSlot = EARPlayerSlot::Unknown;
 		bool bIsSharedSession = false;
 		bool bConversationImportant = false;
+		bool bConversationPrivate = false;
 		bool bWaitingForChoice = false;
 		bool bChoiceRequiresAllViewers = false;
 		bool bWaitingForAdvanceInput = false;
@@ -1803,6 +1804,12 @@ static bool IsBusySpeakerLockEnabled(const UARDialogueSettings* Settings, const 
 		&& IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
 }
 
+static bool DoesSessionRejectEavesdrop(const FARActiveDialogueSession& Session)
+{
+	// Important choice flow can temporarily override privacy by forcing all viewers.
+	return Session.bConversationPrivate && !Session.bChoiceRequiresAllViewers;
+}
+
 void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -2679,6 +2686,13 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 			FString::Printf(
 				TEXT("ChanceOffered is %.3f. Runtime clamps this into [0,1]."),
 				ConversationAsset->Header.ChanceOffered));
+	}
+	if (ConversationAsset->Header.bPrivateConversation && ConversationAsset->Header.bImportant)
+	{
+		Add(
+			EDialogueValidationSeverity::Warning,
+			FGuid(),
+			TEXT("Conversation is both Private and Important. Important flow may override privacy and force additional viewers."));
 	}
 	if (!ConversationAsset->CompiledData.EnterNodeId.IsValid()) { Add(EDialogueValidationSeverity::Error, FGuid(), TEXT("Missing Enter node.")); }
 	if (ConversationAsset->CompiledData.Nodes.IsEmpty()) { Add(EDialogueValidationSeverity::Error, FGuid(), TEXT("Compiled graph has no nodes.")); }
@@ -5359,6 +5373,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	Session.OwnerSlot = RequesterSlot;
 	Session.bIsSharedSession = bSharedMode;
 	Session.bConversationImportant = Conversation->Header.bImportant;
+	Session.bConversationPrivate = Conversation->Header.bPrivateConversation;
 	AddSessionParticipant(Session, Runtime.SeenByPlayerTransient, RequesterSlot);
 	Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).RemoveTag(ConversationTag);
 	PersistCycleOfferStateForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
@@ -5604,6 +5619,16 @@ bool UARDialogueSubsystem::ForceEavesdrop(AARPlayerController* RequestingControl
 				*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(TargetSlot)));
 			return false;
 		}
+		if (DoesSessionRejectEavesdrop(*TargetSession))
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Dialogue] ForceEavesdrop rejected: target session '%s' is private (owner=%s)."),
+				*TargetSession->SessionId,
+				*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(TargetSlot)));
+			return false;
+		}
 
 		Runtime.EavesdropTargetByViewer.Add(ViewerSlot, TargetSlot);
 		AddSessionParticipant(*TargetSession, Runtime.SeenByPlayerTransient, ViewerSlot);
@@ -5664,6 +5689,7 @@ bool UARDialogueSubsystem::PreviewConversationTrace(
 	PreviewSession.ConversationAsset = ConversationAsset;
 	PreviewSession.CurrentNodeId = ConversationAsset->CompiledData.EnterNodeId;
 	PreviewSession.bConversationImportant = ConversationAsset->Header.bImportant;
+	PreviewSession.bConversationPrivate = ConversationAsset->Header.bPrivateConversation;
 	PreviewSession.OwnerSlot = EARPlayerSlot::P1;
 	PreviewSession.InitiatorSlot = EARPlayerSlot::P1;
 	PreviewSession.Participants.Add(EARPlayerSlot::P1);
