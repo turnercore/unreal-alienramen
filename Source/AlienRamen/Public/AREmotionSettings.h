@@ -7,10 +7,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
-#include "UObject/SoftObjectPtr.h"
 #include "AREmotionSettings.generated.h"
-
-class UDataTable;
 
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Emotion"))
 class ALIENRAMEN_API UAREmotionSettings : public UDeveloperSettings
@@ -21,13 +18,21 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 	virtual FName GetSectionName() const override { return TEXT("Dialogue - Emotion"); }
 
-	// Authoritative DataTable source for emotion tag->icon mappings.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content")
-	TSoftObjectPtr<UDataTable> EmotionDataTable;
+	// Preferred TagContentResolver route root used to resolve the emotion icon DataTable.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue"))
+	FGameplayTag EmotionResolverRootTag;
 
 	// Generic emotion root used for speaker-specific fallback (for example Dialogue.Speaker.Fred.Angry -> Dialogue.Emotion.Angry).
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue"))
 	FGameplayTag GenericEmotionRootTag;
+
+	// Enables extra resolver diagnostic logging for source selection and per-tag lookup outcomes.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Diagnostics")
+	bool bEnableVerboseResolverLogs = false;
+
+	// Enables extra HUD projection diagnostic logging for emotion icon render eligibility.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Diagnostics")
+	bool bEnableVerboseRenderLogs = false;
 
 	// Optional default offset used by emotion components when they do not override AnchorWorldOffset.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Presentation")

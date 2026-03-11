@@ -4,8 +4,6 @@
 #include "AREmotionSettings.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
-#include "Components/ActorComponent.h"
-#include "Components/SceneComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
 #include "Engine/World.h"
@@ -53,25 +51,6 @@ namespace
 UAREmotionComponent::UAREmotionComponent()
 {
 	SetIsReplicatedByDefault(true);
-#if WITH_EDITOR
-	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.bStartWithTickEnabled = true;
-	bTickInEditor = true;
-#endif
-}
-
-void UAREmotionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-#if WITH_EDITOR
-	const AActor* OwnerActor = GetOwner();
-	const UWorld* World = OwnerActor ? OwnerActor->GetWorld() : nullptr;
-	if (World && !World->IsGameWorld())
-	{
-		RefreshEditorPreviewBillboard();
-	}
-#endif
 }
 
 #if WITH_EDITOR
@@ -470,74 +449,10 @@ FVector UAREmotionComponent::GetEmotionAnchorWorldLocation() const
 		}
 	}
 
-	FTransform AnchorTransform = FTransform::Identity;
-	if (TryResolveAnchorTransformFromReference(OwnerActor, AnchorTransform))
-	{
-		return AnchorTransform.GetLocation() + EffectiveOffset;
-	}
-
 	FVector Origin = FVector::ZeroVector;
 	FVector Extent = FVector::ZeroVector;
 	OwnerActor->GetActorBounds(true, Origin, Extent);
 	return Origin + FVector(0.0f, 0.0f, Extent.Z) + EffectiveOffset;
-}
-
-bool UAREmotionComponent::TryResolveAnchorTransformFromReference(const AActor* OwnerActor, FTransform& OutAnchorTransform) const
-{
-	OutAnchorTransform = FTransform::Identity;
-
-	UObject* AnchorObject = AnchorTransformObject.Get();
-	if (!AnchorObject)
-	{
-		return false;
-	}
-
-	if (USceneComponent* SourceSceneComponent = Cast<USceneComponent>(AnchorObject))
-	{
-		USceneComponent* ResolvedSceneComponent = SourceSceneComponent;
-		if (OwnerActor && SourceSceneComponent->GetOwner() != OwnerActor)
-		{
-			const FName DesiredName = SourceSceneComponent->GetFName();
-			if (!DesiredName.IsNone())
-			{
-				TArray<USceneComponent*> OwnerSceneComponents;
-				const_cast<AActor*>(OwnerActor)->GetComponents(OwnerSceneComponents);
-				for (USceneComponent* Candidate : OwnerSceneComponents)
-				{
-					if (Candidate
-						&& Candidate->GetFName() == DesiredName
-						&& Candidate->GetClass() == SourceSceneComponent->GetClass())
-					{
-						ResolvedSceneComponent = Candidate;
-						break;
-					}
-				}
-			}
-		}
-
-		if (ResolvedSceneComponent)
-		{
-			OutAnchorTransform = ResolvedSceneComponent->GetComponentTransform();
-			return true;
-		}
-	}
-
-	if (const AActor* SourceActor = Cast<AActor>(AnchorObject))
-	{
-		OutAnchorTransform = SourceActor->GetActorTransform();
-		return true;
-	}
-
-	if (const UActorComponent* SourceActorComponent = Cast<UActorComponent>(AnchorObject))
-	{
-		if (const AActor* ComponentOwner = SourceActorComponent->GetOwner())
-		{
-			OutAnchorTransform = ComponentOwner->GetActorTransform();
-			return true;
-		}
-	}
-
-	return false;
 }
 
 bool UAREmotionComponent::GetEmotionFacingRotationForController(const APlayerController* ViewerController, FRotator& OutFacingRotation) const
@@ -861,38 +776,8 @@ void UAREmotionComponent::RefreshEditorPreviewBillboard()
 	const float PreviewScale = FMath::Max(0.05f, IconScreenSize / 64.0f);
 	EditorPreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
 
-	USceneComponent* AttachAnchor = Cast<USceneComponent>(AnchorTransformObject.Get());
-	if (AttachAnchor && OwnerActor && AttachAnchor->GetOwner() != OwnerActor)
-	{
-		const FName DesiredName = AttachAnchor->GetFName();
-		if (!DesiredName.IsNone())
-		{
-			TArray<USceneComponent*> OwnerSceneComponents;
-			OwnerActor->GetComponents(OwnerSceneComponents);
-			for (USceneComponent* Candidate : OwnerSceneComponents)
-			{
-				if (Candidate && Candidate->GetFName() == DesiredName && Candidate->GetClass() == AttachAnchor->GetClass())
-				{
-					AttachAnchor = Candidate;
-					break;
-				}
-			}
-		}
-	}
-
-	if (AttachAnchor)
-	{
-		if (EditorPreviewBillboardComponent->GetAttachParent() != AttachAnchor)
-		{
-			EditorPreviewBillboardComponent->AttachToComponent(AttachAnchor, FAttachmentTransformRules::KeepWorldTransform);
-		}
-		EditorPreviewBillboardComponent->SetRelativeLocation(AnchorWorldOffset);
-	}
-	else
-	{
-		EditorPreviewBillboardComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		EditorPreviewBillboardComponent->SetWorldLocation(GetEmotionAnchorWorldLocation());
-	}
+	EditorPreviewBillboardComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	EditorPreviewBillboardComponent->SetWorldLocation(GetEmotionAnchorWorldLocation());
 #endif
 }
 

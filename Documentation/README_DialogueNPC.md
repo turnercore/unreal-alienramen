@@ -92,10 +92,10 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
 - Dialogue line `SpeakerTag` may include an emotion leaf (example: `Dialogue.Speaker.Fred.Angry`).
-- Emotion icon lookup is resolved from a direct DataTable reference in `UAREmotionSettings` (row type `FAREmotionIconRow`) and cached by `UAREmotionResolverSubsystem`.
+- Emotion icon lookup resolves through `UTagContentResolverSubsystem` route root `UAREmotionSettings::EmotionResolverRootTag` (row type `FAREmotionIconRow`) and is cached by `UAREmotionResolverSubsystem`.
 - Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`).
 - `UAREmotionComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
-- Anchor transform authoring now uses `AnchorTransformObject` (generic object reference): SceneComponent -> component transform, Actor -> actor transform, other objects -> owner-bounds fallback; `AnchorWorldOffset` is always applied.
+- Emotion anchor authoring is offset-only: `AnchorWorldOffset` is applied from owner actor top bounds fallback.
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UAREmotionSettings::DefaultTimedSystemOverrideDurationSeconds`.
 
 ## Offer + Execution Rules (Current Runtime)
@@ -184,11 +184,14 @@ NPC actor integration now routes through `UARNPCTalkComponent`:
 
 ## Emotion Resolver Runtime
 
-- `UAREmotionResolverSubsystem` caches emotion tag->icon mappings from `UAREmotionSettings::EmotionDataTable`.
+- `UAREmotionResolverSubsystem` caches emotion tag->icon mappings from TagContentResolver route root `UAREmotionSettings::EmotionResolverRootTag` (default `Dialogue.Emotion`).
 - Resolver cache invalidates/rebuilds when configured settings inputs change or when the bound emotion DataTable broadcasts `OnDataTableChanged`.
 - Debug console commands:
   - `ar.emotion.log_cache_stats`
   - `ar.emotion.rebuild_cache`
+- Optional diagnostics toggles in `UAREmotionSettings`:
+  - `bEnableVerboseResolverLogs`
+  - `bEnableVerboseRenderLogs`
 
 ## Editor Tooling (Current)
 
@@ -218,7 +221,7 @@ Conversation graph tooling now provides:
 - speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
 - compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`
-- NPC details authoring categories for actor/talk/emotion properties are grouped under `Alien Ramen|NPC|...` to avoid repeated `Alien Ramen|Dialogue` stacks in Blueprint class-default details.
+- NPC details authoring categories for actor/talk/emotion properties use distinct roots (`Alien Ramen|Speaker`, `Alien Ramen|Talk`, `Alien Ramen|Emotion`) to avoid repeated same-name category buckets in Blueprint class-default details.
 
 Speaker hub currently provides:
 

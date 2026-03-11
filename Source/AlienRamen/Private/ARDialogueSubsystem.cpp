@@ -2380,14 +2380,26 @@ bool UARDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerR
 		int32 MatchingSpeakerTagCount = 0;
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
 		UDataTable* SpeakerTable = nullptr;
+		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (DialogueSettings
-			&& DialogueSettings->SpeakerDefinitionRootTag.IsValid()
-			&& UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
-				DialogueSettings->SpeakerDefinitionRootTag,
-				SpeakerTable,
-				LookupError))
+		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 		{
+			if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueSpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+			{
+				LookupError.Empty();
+				if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+				{
+					Lookup->TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
+					MatchedRoot = DialogueSettings->SpeakerDefinitionRootTag;
+				}
+			}
+
+			FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
+			if ((!EffectiveSpeakerRoot.IsValid()) && DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+			{
+				EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
+			}
+
 			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
@@ -2399,9 +2411,9 @@ bool UARDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerR
 					}
 
 					FGameplayTag CandidateTag = Row->SpeakerTag;
-					if (!CandidateTag.IsValid())
+					if (!CandidateTag.IsValid() && EffectiveSpeakerRoot.IsValid())
 					{
-						CandidateTag = BuildTagFromRootAndLeaf(DialogueSettings->SpeakerDefinitionRootTag, RowName);
+						CandidateTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
 					}
 
 					if (CandidateTag.IsValid() && CandidateTag.MatchesTagExact(SpeakerRow.SpeakerTag))
@@ -2787,14 +2799,26 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 	{
 		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
 		UDataTable* SpeakerTable = nullptr;
+		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (DialogueSettings
-			&& DialogueSettings->SpeakerDefinitionRootTag.IsValid()
-			&& UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
-				DialogueSettings->SpeakerDefinitionRootTag,
-				SpeakerTable,
-				LookupError))
+		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 		{
+			if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueSpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+			{
+				LookupError.Empty();
+				if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+				{
+					Lookup->TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
+					MatchedRoot = DialogueSettings->SpeakerDefinitionRootTag;
+				}
+			}
+
+			FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
+			if ((!EffectiveSpeakerRoot.IsValid()) && DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+			{
+				EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
+			}
+
 			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
@@ -2808,7 +2832,7 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 					FARDialogueSpeakerRow Copy = *SpeakerRow;
 					if (!Copy.SpeakerTag.IsValid())
 					{
-						Copy.SpeakerTag = BuildTagFromRootAndLeaf(DialogueSettings->SpeakerDefinitionRootTag, RowName);
+						Copy.SpeakerTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
 					}
 					if (Copy.SpeakerTag.IsValid())
 					{

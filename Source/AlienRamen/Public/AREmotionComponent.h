@@ -13,10 +13,8 @@
 #include "AREmotionComponent.generated.h"
 
 class AARPlayerController;
-class AActor;
 class APlayerController;
 class UTexture2D;
-class UObject;
 struct FPropertyChangedEvent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnEmotionDisplayStateChanged);
@@ -140,12 +138,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion")
 	FGameplayTag GetPreviewEmotionTag() const;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC|Emotion")
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion")
 	FAROnEmotionDisplayStateChanged OnEmotionDisplayStateChanged;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 #if WITH_EDITOR
 	virtual void OnRegister() override;
 	virtual void OnUnregister() override;
@@ -188,7 +185,6 @@ private:
 	void HandleTimedSystemOverrideClear(FName SourceId);
 	UFUNCTION()
 	void HandleTimedSystemOverrideSlotClear(FName SourceId, EARPlayerSlot Slot);
-	bool TryResolveAnchorTransformFromReference(const AActor* OwnerActor, FTransform& OutAnchorTransform) const;
 #if WITH_EDITOR
 	void RefreshEditorPreviewBillboard();
 	void DestroyEditorPreviewBillboard();
@@ -197,25 +193,22 @@ private:
 	UPROPERTY(Replicated)
 	FGameplayTag RegisteredSpeakerTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", UseComponentPicker, AllowAnyActor = "true", AllowedClasses = "/Script/Engine.SceneComponent,/Script/Engine.Actor", ToolTip = "Optional object reference used as anchor transform source. SceneComponent uses component transform, Actor uses actor transform, and unsupported objects fall back to owner offset."))
-	TObjectPtr<UObject> AnchorTransformObject = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the resolved anchor (component, actor root, or owner-bounds fallback)."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the actor top-bound anchor."))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
 	float IconScreenSize = 48.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue", ToolTip = "Editor/runtime preview emotion tag used when no active replicated emotion state is present."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue", ToolTip = "Editor/runtime preview emotion tag used when no active replicated emotion state is present."))
 	FGameplayTag PreviewEmotionTag;
 
-	UPROPERTY(ReplicatedUsing = OnRep_BaseEmotionState, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Base Emotion State", ToolTip = "Replicated base emotion state. Dialogue override state can temporarily supersede this."))
+	UPROPERTY(ReplicatedUsing = OnRep_BaseEmotionState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Base Emotion State", ToolTip = "Replicated base emotion state. Dialogue override state can temporarily supersede this."))
 	FAREmotionDisplayState BaseEmotionState;
 
-	UPROPERTY(ReplicatedUsing = OnRep_DialogueOverrideState, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Dialogue Override State", ToolTip = "Replicated dialogue-scoped override state (higher priority than base emotion state)."))
+	UPROPERTY(ReplicatedUsing = OnRep_DialogueOverrideState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Dialogue Override State", ToolTip = "Replicated dialogue-scoped override state (higher priority than base emotion state)."))
 	FAREmotionDisplayState DialogueOverrideState;
 
-	UPROPERTY(ReplicatedUsing = OnRep_SystemOverrideState, BlueprintReadOnly, Category = "Alien Ramen|NPC|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "System Override State", ToolTip = "Replicated top-priority runtime override state resolved from active system sources."))
+	UPROPERTY(ReplicatedUsing = OnRep_SystemOverrideState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "System Override State", ToolTip = "Replicated top-priority runtime override state resolved from active system sources."))
 	FAREmotionDisplayState SystemOverrideState;
 
 	TMap<FName, FSystemEmotionSourceState> SystemEmotionSources;

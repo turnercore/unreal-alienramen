@@ -3,13 +3,34 @@
 #include "AREmotionSettings.h"
 #include "AREmotionTypes.h"
 #include "ARLog.h"
+#include "TagContentResolverSubsystem.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
 #include "GameplayTagsManager.h"
 #include "HAL/IConsoleManager.h"
 
 namespace
 {
+	enum class EAREmotionTableSource : uint8
+	{
+		TagContentResolverRuntime,
+		TagContentResolverConfiguredRoutes
+	};
+
+	static const TCHAR* ToEmotionTableSourceText(const EAREmotionTableSource Source)
+	{
+		switch (Source)
+		{
+		case EAREmotionTableSource::TagContentResolverRuntime:
+			return TEXT("TagContentResolver(Runtime)");
+		case EAREmotionTableSource::TagContentResolverConfiguredRoutes:
+			return TEXT("TagContentResolver(ConfiguredRoutes)");
+		default:
+			return TEXT("TagContentResolver");
+		}
+	}
+
 	static bool AreResolverTagsEqual(const FGameplayTag& Left, const FGameplayTag& Right)
 	{
 		if (!Left.IsValid() && !Right.IsValid())
@@ -21,6 +42,12 @@ namespace
 			return false;
 		}
 		return Left.MatchesTagExact(Right);
+	}
+
+	static bool ShouldLogResolverVerbose()
+	{
+		const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
+		return Settings && Settings->bEnableVerboseResolverLogs;
 	}
 
 	static FString JoinSegments(const TArray<FString>& Segments, const int32 StartIndex)
@@ -39,6 +66,25 @@ namespace
 		return Joined;
 	}
 
+	static FGameplayTag ResolveEmotionResolverRootTag()
+	{
+		const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
+		if (Settings)
+		{
+			if (Settings->EmotionResolverRootTag.IsValid())
+			{
+				return Settings->EmotionResolverRootTag;
+			}
+
+			if (Settings->GenericEmotionRootTag.IsValid())
+			{
+				return Settings->GenericEmotionRootTag;
+			}
+		}
+
+		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Emotion")), false);
+	}
+
 	static FGameplayTag ResolveGenericEmotionRootTag()
 	{
 		const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
@@ -47,7 +93,7 @@ namespace
 			return Settings->GenericEmotionRootTag;
 		}
 
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Emotion")), false);
+		return ResolveEmotionResolverRootTag();
 	}
 
 	static void BuildLookupCandidatesInternal(const FGameplayTag& RequestedEmotionTag, TArray<FGameplayTag>& OutCandidates)
@@ -115,41 +161,119 @@ namespace
 		}
 	}
 
-	static bool BuildIconMapFromSettings(TMap<FGameplayTag, TSoftObjectPtr<UTexture2D>>& OutIconByEmotionTag)
+	static bool TryResolveEmotionDataTable(
+		UGameInstance* GameInstance,
+		UDataTable*& OutDataTable,
+		EAREmotionTableSource& OutSource,
+		FGameplayTag& OutRouteRootTag,
+		FString& OutResolveError)
+	{
+		OutDataTable = nullptr;
+		OutSource = EAREmotionTableSource::TagContentResolverConfiguredRoutes;
+		OutRouteRootTag = FGameplayTag();
+		OutResolveError.Reset();
+
+		auto AppendError = [&OutResolveError](const FString& Message)
+		{
+			if (Message.IsEmpty())
+			{
+				return;
+			}
+
+			if (!OutResolveError.IsEmpty())
+			{
+				OutResolveError += TEXT(" | ");
+			}
+			OutResolveError += Message;
+		};
+
+		const FGameplayTag ResolverRootTag = ResolveEmotionResolverRootTag();
+		if (ResolverRootTag.IsValid())
+		{
+			if (GameInstance)
+			{
+				if (UTagContentResolverSubsystem* ResolverSubsystem = GameInstance->GetSubsystem<UTagContentResolverSubsystem>())
+				{
+					FString ResolverError;
+					if (ResolverSubsystem->TryResolveDataTableForRootTag(ResolverRootTag, OutDataTable, ResolverError))
+					{
+						OutSource = EAREmotionTableSource::TagContentResolverRuntime;
+						OutRouteRootTag = ResolverRootTag;
+						return true;
+					}
+
+					AppendError(FString::Printf(
+						TEXT("Runtime resolver root '%s' failed: %s"),
+						*ResolverRootTag.ToString(),
+						ResolverError.IsEmpty() ? TEXT("<no error>") : *ResolverError));
+				}
+				else
+				{
+					AppendError(TEXT("Runtime resolver subsystem unavailable."));
+				}
+			}
+			else
+			{
+				AppendError(TEXT("Runtime resolver unavailable: no GameInstance."));
+			}
+
+			FString ConfiguredRouteError;
+			if (UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+				ResolverRootTag,
+				OutDataTable,
+				ConfiguredRouteError))
+			{
+				OutSource = EAREmotionTableSource::TagContentResolverConfiguredRoutes;
+				OutRouteRootTag = ResolverRootTag;
+				return true;
+			}
+
+			AppendError(FString::Printf(
+				TEXT("Configured-routes resolver root '%s' failed: %s"),
+				*ResolverRootTag.ToString(),
+				ConfiguredRouteError.IsEmpty() ? TEXT("<no error>") : *ConfiguredRouteError));
+		}
+		else
+		{
+			AppendError(TEXT("Emotion resolver root tag is invalid."));
+		}
+
+		AppendError(TEXT("No TagContentResolver route could resolve the configured emotion root."));
+		return false;
+	}
+
+	static bool BuildIconMapFromDataTable(
+		UDataTable* EmotionDataTable,
+		TMap<FGameplayTag, TSoftObjectPtr<UTexture2D>>& OutIconByEmotionTag,
+		const bool bLogRowWarnings)
 	{
 		OutIconByEmotionTag.Reset();
 
-		const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
-		if (!Settings)
-		{
-			return false;
-		}
-
-		if (Settings->EmotionDataTable.IsNull())
-		{
-			UE_LOG(ARLog, Warning, TEXT("[Emotion] No EmotionDataTable configured in UAREmotionSettings."));
-			return false;
-		}
-
-		UDataTable* EmotionDataTable = Settings->EmotionDataTable.LoadSynchronous();
 		if (!EmotionDataTable)
 		{
-			UE_LOG(ARLog, Warning, TEXT("[Emotion] Failed to load EmotionDataTable from settings."));
+			if (bLogRowWarnings)
+			{
+				UE_LOG(ARLog, Warning, TEXT("[Emotion] BuildIconMapFromDataTable failed: DataTable is null."));
+			}
 			return false;
 		}
 
 		const UScriptStruct* RowStruct = EmotionDataTable->GetRowStruct();
 		if (!RowStruct || !RowStruct->IsChildOf(FAREmotionIconRow::StaticStruct()))
 		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[Emotion] EmotionDataTable '%s' has incompatible row struct '%s' (expected FAREmotionIconRow)."),
-				*GetNameSafe(EmotionDataTable),
-				*GetNameSafe(RowStruct));
+			if (bLogRowWarnings)
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[Emotion] EmotionDataTable '%s' has incompatible row struct '%s' (expected FAREmotionIconRow)."),
+					*GetNameSafe(EmotionDataTable),
+					*GetNameSafe(RowStruct));
+			}
 			return false;
 		}
 
+		const bool bVerboseRowLogging = bLogRowWarnings || ShouldLogResolverVerbose();
 		const FGameplayTag GenericRootTag = ResolveGenericEmotionRootTag();
 		for (const FName RowName : EmotionDataTable->GetRowNames())
 		{
@@ -168,19 +292,28 @@ namespace
 
 			if (!EmotionTag.IsValid())
 			{
-				UE_LOG(ARLog, Warning, TEXT("[Emotion] Row '%s' skipped: missing valid EmotionTag."), *RowName.ToString());
+				if (bVerboseRowLogging)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[Emotion] Row '%s' skipped: missing valid EmotionTag."), *RowName.ToString());
+				}
 				continue;
 			}
 
 			if (Row->IconTexture.IsNull())
 			{
-				UE_LOG(ARLog, Warning, TEXT("[Emotion] Row '%s' (%s) skipped: IconTexture is empty."), *RowName.ToString(), *EmotionTag.ToString());
+				if (bVerboseRowLogging)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[Emotion] Row '%s' (%s) skipped: IconTexture is empty."), *RowName.ToString(), *EmotionTag.ToString());
+				}
 				continue;
 			}
 
 			if (OutIconByEmotionTag.Contains(EmotionTag))
 			{
-				UE_LOG(ARLog, Warning, TEXT("[Emotion] Duplicate EmotionTag '%s' in EmotionDataTable. First mapping kept."), *EmotionTag.ToString());
+				if (bVerboseRowLogging)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[Emotion] Duplicate EmotionTag '%s' in EmotionDataTable. First mapping kept."), *EmotionTag.ToString());
+				}
 				continue;
 			}
 
@@ -188,6 +321,70 @@ namespace
 		}
 
 		return !OutIconByEmotionTag.IsEmpty();
+	}
+
+	static bool BuildIconMapFromConfiguredSource(
+		UGameInstance* GameInstance,
+		TMap<FGameplayTag, TSoftObjectPtr<UTexture2D>>& OutIconByEmotionTag,
+		UDataTable*& OutResolvedDataTable,
+		FSoftObjectPath& OutResolvedDataTablePath,
+		FString& OutResolvedDataSource,
+		const bool bLogRowWarnings)
+	{
+		OutIconByEmotionTag.Reset();
+		OutResolvedDataTable = nullptr;
+		OutResolvedDataTablePath.Reset();
+		OutResolvedDataSource.Reset();
+
+		EAREmotionTableSource Source = EAREmotionTableSource::TagContentResolverConfiguredRoutes;
+		FGameplayTag RouteRootTag;
+		FString ResolveError;
+		if (!TryResolveEmotionDataTable(GameInstance, OutResolvedDataTable, Source, RouteRootTag, ResolveError))
+		{
+			if (bLogRowWarnings || ShouldLogResolverVerbose())
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[Emotion] Failed resolving icon DataTable from TagContentResolver routes: %s"),
+					ResolveError.IsEmpty() ? TEXT("<no error>") : *ResolveError);
+			}
+			return false;
+		}
+
+		OutResolvedDataTablePath = FSoftObjectPath(OutResolvedDataTable);
+		OutResolvedDataSource = RouteRootTag.IsValid()
+			? FString::Printf(TEXT("%s Root=%s"), ToEmotionTableSourceText(Source), *RouteRootTag.ToString())
+			: FString(ToEmotionTableSourceText(Source));
+
+		const bool bBuilt = BuildIconMapFromDataTable(OutResolvedDataTable, OutIconByEmotionTag, bLogRowWarnings);
+		if (!bBuilt)
+		{
+			if (bLogRowWarnings || ShouldLogResolverVerbose())
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[Emotion] Resolved icon DataTable '%s' from %s, but no valid icon rows were found."),
+					*GetNameSafe(OutResolvedDataTable),
+					*OutResolvedDataSource);
+			}
+			return false;
+		}
+
+		if (ShouldLogResolverVerbose())
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Emotion] Resolved icon DataTable '%s' via %s (Rows=%d, Icons=%d)."),
+				*GetNameSafe(OutResolvedDataTable),
+				*OutResolvedDataSource,
+				OutResolvedDataTable ? OutResolvedDataTable->GetRowNames().Num() : 0,
+				OutIconByEmotionTag.Num());
+		}
+
+		return true;
 	}
 
 	static bool ResolveIconFromMap(
@@ -240,6 +437,7 @@ void UAREmotionResolverSubsystem::Deinitialize()
 	RequestMissCache.Reset();
 	BoundDataTable.Reset();
 	CachedEmotionDataTablePath.Reset();
+	CachedResolverRootTag = FGameplayTag();
 	CachedGenericRootTag = FGameplayTag();
 	CacheBuildCount = 0;
 	LookupCount = 0;
@@ -295,6 +493,19 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIcon(
 		{
 			++CacheMissCount;
 		}
+
+		if (ShouldLogResolverVerbose())
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Emotion] Resolve fallback (%s): Requested=%s Resolved=%s Icon=%s"),
+				bResolvedFromFallback ? TEXT("hit") : TEXT("miss"),
+				*RequestedEmotionTag.ToString(),
+				*OutResolvedEmotionTag.ToString(),
+				OutIconTexture.IsNull() ? TEXT("<none>") : *OutIconTexture.ToSoftObjectPath().ToString());
+		}
+
 		return bResolvedFromFallback;
 	}
 
@@ -320,11 +531,28 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIcon(
 	{
 		RequestToResolvedTagCache.Add(RequestedEmotionTag, OutResolvedEmotionTag);
 		RequestToResolvedIconCache.Add(RequestedEmotionTag, OutIconTexture);
+
+		if (ShouldLogResolverVerbose())
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Emotion] Resolve hit: Requested=%s Resolved=%s Icon=%s"),
+				*RequestedEmotionTag.ToString(),
+				*OutResolvedEmotionTag.ToString(),
+				OutIconTexture.IsNull() ? TEXT("<none>") : *OutIconTexture.ToSoftObjectPath().ToString());
+		}
 		return true;
 	}
 
 	RequestMissCache.Add(RequestedEmotionTag);
 	++CacheMissCount;
+
+	if (ShouldLogResolverVerbose())
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Emotion] Resolve miss: Requested=%s"), *RequestedEmotionTag.ToString());
+	}
+
 	return false;
 }
 
@@ -333,8 +561,17 @@ bool UAREmotionResolverSubsystem::TryResolveEmotionIconFromConfiguredData(
 	TSoftObjectPtr<UTexture2D>& OutIconTexture,
 	FGameplayTag& OutResolvedEmotionTag)
 {
+	UDataTable* ResolvedDataTable = nullptr;
+	FSoftObjectPath ResolvedDataTablePath;
+	FString ResolvedDataSource;
 	TMap<FGameplayTag, TSoftObjectPtr<UTexture2D>> LocalIconMap;
-	if (!BuildIconMapFromSettings(LocalIconMap))
+	if (!BuildIconMapFromConfiguredSource(
+		nullptr,
+		LocalIconMap,
+		ResolvedDataTable,
+		ResolvedDataTablePath,
+		ResolvedDataSource,
+		false))
 	{
 		OutIconTexture.Reset();
 		OutResolvedEmotionTag = FGameplayTag();
@@ -363,7 +600,7 @@ bool UAREmotionResolverSubsystem::EnsureCacheBuilt()
 bool UAREmotionResolverSubsystem::BuildCache()
 {
 	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
-	const FSoftObjectPath CurrentDataTablePath = Settings ? Settings->EmotionDataTable.ToSoftObjectPath() : FSoftObjectPath();
+	const FGameplayTag CurrentResolverRootTag = ResolveEmotionResolverRootTag();
 	const FGameplayTag CurrentGenericRootTag = Settings ? Settings->GenericEmotionRootTag : FGameplayTag();
 
 	IconByEmotionTag.Reset();
@@ -373,11 +610,34 @@ bool UAREmotionResolverSubsystem::BuildCache()
 
 	UnbindDataTableChangedDelegate();
 
-	CachedEmotionDataTablePath = CurrentDataTablePath;
+	UDataTable* ResolvedDataTable = nullptr;
+	FSoftObjectPath ResolvedDataTablePath;
+	FString ResolvedDataSource;
+	bCacheBuilt = BuildIconMapFromConfiguredSource(
+		GetGameInstance(),
+		IconByEmotionTag,
+		ResolvedDataTable,
+		ResolvedDataTablePath,
+		ResolvedDataSource,
+		true);
+
+	CachedEmotionDataTablePath = ResolvedDataTablePath;
+	CachedResolverRootTag = CurrentResolverRootTag;
 	CachedGenericRootTag = CurrentGenericRootTag;
-	bCacheBuilt = BuildIconMapFromSettings(IconByEmotionTag);
-	BindToConfiguredDataTable();
+	BindToConfiguredDataTable(ResolvedDataTable);
 	++CacheBuildCount;
+
+	if (bCacheBuilt && ShouldLogResolverVerbose())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Emotion] Cache rebuilt from %s (DataTable=%s, Icons=%d)."),
+			*ResolvedDataSource,
+			*CachedEmotionDataTablePath.ToString(),
+			IconByEmotionTag.Num());
+	}
+
 	return bCacheBuilt;
 }
 
@@ -421,20 +681,8 @@ void UAREmotionResolverSubsystem::HandleEmotionDataTableChanged()
 	RebuildCache();
 }
 
-void UAREmotionResolverSubsystem::BindToConfiguredDataTable()
+void UAREmotionResolverSubsystem::BindToConfiguredDataTable(UDataTable* DataTable)
 {
-	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
-	if (!Settings || Settings->EmotionDataTable.IsNull())
-	{
-		return;
-	}
-
-	UDataTable* DataTable = Settings->EmotionDataTable.Get();
-	if (!DataTable)
-	{
-		DataTable = Settings->EmotionDataTable.LoadSynchronous();
-	}
-
 	if (!DataTable)
 	{
 		return;
@@ -461,9 +709,9 @@ void UAREmotionResolverSubsystem::UnbindDataTableChangedDelegate()
 bool UAREmotionResolverSubsystem::HasConfigInputsChanged() const
 {
 	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
-	const FSoftObjectPath CurrentDataTablePath = Settings ? Settings->EmotionDataTable.ToSoftObjectPath() : FSoftObjectPath();
+	const FGameplayTag CurrentResolverRootTag = ResolveEmotionResolverRootTag();
 	const FGameplayTag CurrentGenericRootTag = Settings ? Settings->GenericEmotionRootTag : FGameplayTag();
 
-	return CurrentDataTablePath != CachedEmotionDataTablePath
+	return !AreResolverTagsEqual(CurrentResolverRootTag, CachedResolverRootTag)
 		|| !AreResolverTagsEqual(CurrentGenericRootTag, CachedGenericRootTag);
 }
