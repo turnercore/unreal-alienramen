@@ -125,6 +125,8 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopPlayerController` owns shop-only world carry interaction requests (`Pickup`/`Drop`/`Throw`) for `AARShopCarryItemBase` actors.
+- `AARShopPlayerController::RequestShopUseOrDrop(AActor*)` is the preferred one-shot input entrypoint: forward-use valid targets, fallback drop when target is null.
+- `AARShopPlayerController::RequestShopPickupCarryItem(nullptr)` is the no-hit fallback path and drops the currently held carry item when one exists.
 - `AARShopStationActor` is server-authoritative for station state, processing progress, stock, and slot contents.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.

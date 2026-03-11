@@ -10,6 +10,7 @@
 
 class AARShopDispenserActor;
 class AARShopCarryItemBase;
+class AActor;
 
 UCLASS()
 class ALIENRAMEN_API AARShopPlayerController : public AARPlayerController
@@ -18,6 +19,15 @@ class ALIENRAMEN_API AARShopPlayerController : public AARPlayerController
 
 public:
 	AARShopPlayerController();
+
+	// Generic one-shot shop interact path:
+	// - valid target: routes to target ForwardUseToController(UsingActor=this) when available
+	// - null target: drops currently held carry item (if any)
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopUseOrDrop(AActor* InteractableActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopUseOrDrop(AActor* InteractableActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopDispenseFromDispenser(AARShopDispenserActor* DispenserActor, FGameplayTag ItemTag);

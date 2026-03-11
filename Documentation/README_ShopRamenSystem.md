@@ -76,9 +76,12 @@ This document captures the runtime ownership and integration contract for the sh
 - World carryables (`AARShopCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
 - `ForwardUseToController(...)` resolves `AARShopPlayerController` (direct controller or pawn owner controller) and routes to `RequestShopPickupCarryItem(...)`.
 - Shop-only carry interaction requests live on `AARShopPlayerController`:
+  - `RequestShopUseOrDrop(AActor*)` for one-shot input routing (`ForwardUseToController` when target exists, fallback drop when null)
   - `RequestShopPickupCarryItem(AARShopCarryItemBase*)`
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
+- `RequestShopPickupCarryItem(nullptr)` is treated as a no-hit fallback: if the controller currently holds a carry item, it drops it.
+- `AARPlayerCharacterShop` exposes BP helpers `IsCarryingShopItem()` and `GetHeldShopActor()` for pawn-side input/UI branching.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
 - Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
