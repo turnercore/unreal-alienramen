@@ -107,8 +107,8 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSpeakerSubsystem` owns speaker talkable-state resolution/cache.
 - `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state.
-- Runtime overhead emotion rendering is owned by `UARHUDEmotionViewComponent`; `AARHUDBase` includes it as `EmotionView` and calls `RenderEmotionView()` from `DrawHUD`.
-- Custom `AARHUDBase` subclasses must call `Super::DrawHUD()` to preserve emotion rendering; non-`AARHUDBase` HUDs must call `RenderEmotionView()` themselves if they add the component.
+- Runtime overhead emotion rendering is owned by `UARHUDEmotionViewComponent`; `AARHUDBase` includes it as `EmotionView`.
+- `UARHUDEmotionViewComponent` renders via `AHUD::OnHUDPostRender` for its owning HUD, so HUDs opt in by adding the component (no custom draw glue required).
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
@@ -127,6 +127,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AARShopPlayerController` owns shop-only world carry interaction requests (`Pickup`/`Drop`/`Throw`) for `AARShopCarryItemBase` actors.
 - `AARShopStationActor` is server-authoritative for station state, processing progress, stock, and slot contents.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
+- Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 
@@ -184,6 +185,8 @@ Valid examples:
 - required authored asset paths/settings that runtime assumes
 
 Remove items from this section once they become native or are documented elsewhere clearly enough to stop being handoff-critical.
+
+- Shop carryable actor Blueprints (for example bowl/meat) may keep `DefaultSceneRoot`, but must include at least one world-colliding `UPrimitiveComponent` so pickup/drop/throw physics can resolve correctly.
 
 ---
 
