@@ -12,8 +12,8 @@ class ALIENRAMENEDITOR_API UARDialogueEditorSettings : public UDeveloperSettings
 public:
 	UARDialogueEditorSettings();
 
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|Dialogue"); }
-	virtual FName GetSectionName() const override { return TEXT("Dialogue Tooling"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetSectionName() const override { return TEXT("Dialogue - Tooling"); }
 
 	// Long package path under /Game where Speaker Editor writes newly created conversation assets.
 	UPROPERTY(Config, EditAnywhere, Category="Speaker Editor")

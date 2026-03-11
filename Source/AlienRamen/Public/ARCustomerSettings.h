@@ -15,7 +15,7 @@ class ALIENRAMEN_API UARCustomerSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|Shop Settings"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 	virtual FName GetSectionName() const override { return TEXT("Shop Settings"); }
 
 	// Root tag used by TagContentResolver for FARCustomerDefinitionRow records.
