@@ -21,13 +21,6 @@ void AARHUDBase::RequestHUDInitialization(AARPlayerController* SourceController,
 void AARHUDBase::DrawHUD()
 {
 	Super::DrawHUD();
-
-	if (!EmotionViewComponent)
-	{
-		return;
-	}
-
-	EmotionViewComponent->RenderEmotionView();
 }
 
 bool AARHUDBase::TryProjectEmotionForActor(

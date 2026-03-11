@@ -15,6 +15,40 @@ namespace
 		return Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
 	}
 
+	static UPrimitiveComponent* ResolveCarryPhysicsPrimitive(AActor* Actor)
+	{
+		if (!Actor)
+		{
+			return nullptr;
+		}
+
+		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
+		{
+			return RootPrimitive;
+		}
+
+		TArray<UPrimitiveComponent*> PrimitiveComponents;
+		Actor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->IsSimulatingPhysics())
+			{
+				return Primitive;
+			}
+		}
+
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->GetCollisionEnabled() != ECollisionEnabled::NoCollision)
+			{
+				return Primitive;
+			}
+		}
+
+		return PrimitiveComponents.Num() > 0 ? PrimitiveComponents[0] : nullptr;
+	}
+
 	static bool IsAttachedToOtherActor(const AActor* ActorToCheck, const AActor* AllowedAttachParentActor)
 	{
 		if (!ActorToCheck)
@@ -34,20 +68,20 @@ namespace
 			return;
 		}
 
-		UPrimitiveComponent* PrimitiveRoot = Cast<UPrimitiveComponent>(ReleasedActor->GetRootComponent());
-		if (!PrimitiveRoot)
+		UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ReleasedActor);
+		if (!PhysicsPrimitive)
 		{
 			return;
 		}
 
-		if (!PrimitiveRoot->IsSimulatingPhysics())
+		if (!PhysicsPrimitive->IsSimulatingPhysics())
 		{
-			PrimitiveRoot->SetSimulatePhysics(true);
+			PhysicsPrimitive->SetSimulatePhysics(true);
 		}
 
-		PrimitiveRoot->SetEnableGravity(true);
-		PrimitiveRoot->WakeAllRigidBodies();
-		PrimitiveRoot->AddImpulse(ForwardDirection.GetSafeNormal() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
+		PhysicsPrimitive->SetEnableGravity(true);
+		PhysicsPrimitive->WakeAllRigidBodies();
+		PhysicsPrimitive->AddImpulse(ForwardDirection.GetSafeNormal() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
 	}
 }
 
@@ -144,14 +178,14 @@ void AARShopPlayerController::RequestShopDropHeldCarryItem()
 			return;
 		}
 
-		if (UPrimitiveComponent* PrimitiveRoot = Cast<UPrimitiveComponent>(ReleasedActor->GetRootComponent()))
+		if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ReleasedActor))
 		{
-			if (!PrimitiveRoot->IsSimulatingPhysics())
+			if (!PhysicsPrimitive->IsSimulatingPhysics())
 			{
-				PrimitiveRoot->SetSimulatePhysics(true);
+				PhysicsPrimitive->SetSimulatePhysics(true);
 			}
-			PrimitiveRoot->SetEnableGravity(true);
-			PrimitiveRoot->WakeAllRigidBodies();
+			PhysicsPrimitive->SetEnableGravity(true);
+			PhysicsPrimitive->WakeAllRigidBodies();
 		}
 
 		return;

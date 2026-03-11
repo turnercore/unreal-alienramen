@@ -80,6 +80,8 @@ This document captures the runtime ownership and integration contract for the sh
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
+- Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
+- Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
 - Drop/throw restore world physics and gravity on the released carry item.
 
 ## Persistence + Replication
