@@ -1,5 +1,6 @@
 #include "ARShopCarryComponent.h"
 
+#include "ARLog.h"
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
 #include "Components/PrimitiveComponent.h"
@@ -173,9 +174,22 @@ void UARShopCarryComponent::ApplyHoldPresentation(AActor* ActorToHold) const
 	if (OwnerRoot && HeldRoot)
 	{
 		HeldRoot->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		HeldRoot->AttachToComponent(OwnerRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale, HoldAttachSocketName);
-		HeldRoot->SetRelativeLocation(HoldRelativeLocation);
-		HeldRoot->SetRelativeRotation(HoldRelativeRotation);
+		const bool bAttached = HeldRoot->AttachToComponent(OwnerRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale, HoldAttachSocketName);
+		if (bAttached)
+		{
+			HeldRoot->SetRelativeLocation(HoldRelativeLocation);
+			HeldRoot->SetRelativeRotation(HoldRelativeRotation);
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Shop|Carry] Failed to attach '%s' to owner '%s'."),
+				*GetNameSafe(ActorToHold),
+				*GetNameSafe(OwnerActor));
+			ActorToHold->SetActorLocation(OwnerRoot->GetComponentTransform().TransformPosition(HoldRelativeLocation));
+		}
 	}
 
 	ActorToHold->SetActorEnableCollision(false);
@@ -189,13 +203,21 @@ void UARShopCarryComponent::ClearHoldPresentation(AActor* ActorToRelease, const 
 	}
 
 	bool bWasAttachedToOwner = false;
+	bool bShouldRestoreForWorldDrop = false;
 	if (USceneComponent* HeldRoot = ActorToRelease->GetRootComponent())
 	{
 		const USceneComponent* OwnerRoot = GetOwner() ? GetOwner()->GetRootComponent() : nullptr;
-		bWasAttachedToOwner = (HeldRoot->GetAttachParent() == OwnerRoot);
+		const USceneComponent* AttachParent = HeldRoot->GetAttachParent();
+		bWasAttachedToOwner = (AttachParent == OwnerRoot);
+		const bool bHasAttachParent = AttachParent != nullptr;
+		bShouldRestoreForWorldDrop = bWasAttachedToOwner || (bDropInWorld && !bHasAttachParent);
 		if (bWasAttachedToOwner)
 		{
 			HeldRoot->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		}
+
+		if (bShouldRestoreForWorldDrop)
+		{
 			TArray<UPrimitiveComponent*> PrimitiveComponents;
 			ActorToRelease->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
 			for (UPrimitiveComponent* Primitive : PrimitiveComponents)
@@ -227,7 +249,7 @@ void UARShopCarryComponent::ClearHoldPresentation(AActor* ActorToRelease, const 
 		}
 	}
 
-	if (bWasAttachedToOwner)
+	if (bShouldRestoreForWorldDrop)
 	{
 		ActorToRelease->SetActorEnableCollision(bDropInWorld);
 	}
