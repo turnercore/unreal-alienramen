@@ -5,9 +5,10 @@ This document captures the runtime ownership and integration contract for the sh
 ## Ownership Model
 
 - **Server-authoritative runtime**:
-  - `UARCustomerComponent` owns NPC customer order state and serving evaluation.
+  - `UARCustomerComponent` owns customer order state and serving evaluation.
   - `AARShopDispenserActor` owns generic item dispense flow (spawn + optional carry handoff + source consumption policy).
   - `AARShopStationActor` owns station slot/processing/stock runtime.
+  - `AARShopCarryItemBase` owns shared shop carry-item lifecycle (`ReleaseCarryItem`) for bowl/meat actors.
   - `AARRamenBowlActor` owns bowl fill progression (strict sequence).
   - `AARMeatStorageBoxActor` is the meat-reserve specialization of `AARShopDispenserActor`.
 - **Dialogue-owned outcomes**:
@@ -26,13 +27,17 @@ This document captures the runtime ownership and integration contract for the sh
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Shop.Station` -> `FARShopStationConfigRow`
 
-## NPC Customer Flow
+## Speaker + Customer Flow
 
 - `AARNPCCharacterBase` now hosts `UARCustomerComponent`.
+- Customer runtime speaker identity comes from `UARCustomerComponent::GetSpeakerTag()`:
+  - `SpeakerTagOverride` when explicitly authored on the customer component
+  - otherwise the owning `UARSpeakerComponent` speaker tag
+- `FARCustomerDefinitionRow` is keyed by TagContentResolver row tag/row name route mapping and does not carry a separate identity/speaker field.
 - Interact priority is **delivery-first**:
   1. try serving held completed bowl via customer component
-  2. fallback to dialogue via `UARNPCTalkComponent`
-- NPC talkable queries stay true while an active customer order exists so interaction prompts can still route ramen delivery when dialogue is locally gated.
+  2. fallback to dialogue via `UARSpeakerComponent`
+- Speaker talkable queries stay true while an active customer order exists so interaction prompts can still route ramen delivery when dialogue is locally gated.
 - Customer evaluation rules:
   - unordered color matching
   - `None` ignored for non-picky scoring
@@ -77,7 +82,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARShopStateTreeAIComponent`
   - `UARShopStateTreeAIComponentSchema`
   - `AARShopAIController` start/event helpers
-- `AARShopAIController` maps active `State.ShopNPC.*` tags to NPC dialogue gating:
+- `AARShopAIController` maps active `State.ShopNPC.*` tags to speaker dialogue gating:
   - dialogue allowed when `State.ShopNPC.DialogueWindow` is active
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
-- Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven NPC behavior.
+- Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.

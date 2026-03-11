@@ -1,15 +1,12 @@
-#include "ARNPCSubsystem.h"
+#include "ARSpeakerSubsystem.h"
 
-#include "ARDialogueSettings.h"
 #include "ARDialogueSubsystem.h"
 #include "ARLog.h"
-#include "TagContentResolverSubsystem.h"
 #include "Engine/GameInstance.h"
-#include "GameplayTagsManager.h"
 
 namespace
 {
-	static UARDialogueSubsystem* GetDialogueSubsystem(const UARNPCSubsystem* Subsystem)
+	static UARDialogueSubsystem* GetDialogueSubsystem(const UARSpeakerSubsystem* Subsystem)
 	{
 		if (UGameInstance* GI = Subsystem ? Subsystem->GetGameInstance() : nullptr)
 		{
@@ -17,49 +14,29 @@ namespace
 		}
 		return nullptr;
 	}
-
-	static UTagContentResolverSubsystem* GetLookupSubsystem(const UARNPCSubsystem* Subsystem)
-	{
-		if (UGameInstance* GI = Subsystem ? Subsystem->GetGameInstance() : nullptr)
-		{
-			return GI->GetSubsystem<UTagContentResolverSubsystem>();
-		}
-		return nullptr;
-	}
-
-	static FGameplayTag BuildTagFromRootAndLeaf(const FGameplayTag& RootTag, const FName LeafRowName)
-	{
-		if (!RootTag.IsValid() || LeafRowName.IsNone())
-		{
-			return FGameplayTag();
-		}
-
-		const FString Path = FString::Printf(TEXT("%s.%s"), *RootTag.ToString(), *LeafRowName.ToString());
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(*Path), false);
-	}
 }
 
-void UARNPCSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UARSpeakerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	Collection.InitializeDependency<UARDialogueSubsystem>();
-	NpcTalkableCache.Reset();
+	SpeakerTalkableCache.Reset();
 }
 
-void UARNPCSubsystem::Deinitialize()
+void UARSpeakerSubsystem::Deinitialize()
 {
-	NpcTalkableCache.Reset();
+	SpeakerTalkableCache.Reset();
 	Super::Deinitialize();
 }
 
-bool UARNPCSubsystem::IsNpcTalkable(FGameplayTag NpcTag) const
+bool UARSpeakerSubsystem::IsSpeakerTalkable(FGameplayTag SpeakerTag) const
 {
-	if (!NpcTag.IsValid())
+	if (!SpeakerTag.IsValid())
 	{
 		return false;
 	}
 
-	if (const bool* Cached = NpcTalkableCache.Find(NpcTag))
+	if (const bool* Cached = SpeakerTalkableCache.Find(SpeakerTag))
 	{
 		return *Cached;
 	}
@@ -67,55 +44,67 @@ bool UARNPCSubsystem::IsNpcTalkable(FGameplayTag NpcTag) const
 	return false;
 }
 
-bool UARNPCSubsystem::RefreshNpcTalkableState(FGameplayTag NpcTag)
+bool UARSpeakerSubsystem::RefreshSpeakerTalkableState(FGameplayTag SpeakerTag)
 {
-	if (!NpcTag.IsValid())
+	if (!SpeakerTag.IsValid())
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] Talkable refresh skipped: invalid speaker tag."));
 		return false;
 	}
 
 	UARDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystem(this);
 	if (!DialogueSubsystem)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] Talkable refresh skipped for '%s': dialogue subsystem unavailable."), *SpeakerTag.ToString());
 		return false;
 	}
 
-	const bool bNewTalkable = DialogueSubsystem->HasUnlockedDialogueForNpcForAnyPlayer(NpcTag);
-	const bool bHadExisting = NpcTalkableCache.Contains(NpcTag);
-	const bool bOldTalkable = NpcTalkableCache.FindRef(NpcTag);
-	NpcTalkableCache.Add(NpcTag, bNewTalkable);
+	const bool bNewTalkable = DialogueSubsystem->HasUnlockedDialogueForSpeakerForAnyPlayer(SpeakerTag);
+	const bool bHadExisting = SpeakerTalkableCache.Contains(SpeakerTag);
+	const bool bOldTalkable = SpeakerTalkableCache.FindRef(SpeakerTag);
+	SpeakerTalkableCache.Add(SpeakerTag, bNewTalkable);
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Speaker] Talkable refresh '%s': New=%s Old=%s HadCache=%s"),
+		*SpeakerTag.ToString(),
+		bNewTalkable ? TEXT("true") : TEXT("false"),
+		bOldTalkable ? TEXT("true") : TEXT("false"),
+		bHadExisting ? TEXT("true") : TEXT("false"));
 
 	if (!bHadExisting || bOldTalkable != bNewTalkable)
 	{
-		OnNpcTalkableChanged.Broadcast(NpcTag, bNewTalkable);
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] Talkable changed '%s' -> %s; broadcasting."), *SpeakerTag.ToString(), bNewTalkable ? TEXT("true") : TEXT("false"));
+		OnSpeakerTalkableChanged.Broadcast(SpeakerTag, bNewTalkable);
 	}
 
 	return true;
 }
 
-void UARNPCSubsystem::RefreshAllNpcTalkableStates()
+void UARSpeakerSubsystem::RefreshAllSpeakerTalkableStates()
 {
-	UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this);
-	const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
-	if (!Lookup || !DialogueSettings || !DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+	UARDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystem(this);
+	if (!DialogueSubsystem)
 	{
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] RefreshAll talkables skipped: dialogue subsystem unavailable."));
 		return;
 	}
 
-	TArray<FName> RowNames;
-	FString Error;
-	if (!Lookup->TryGetRowNamesForRootTag(DialogueSettings->SpeakerDefinitionRootTag, RowNames, Error))
+	TArray<FGameplayTag> SpeakerTags;
+	DialogueSubsystem->GetRegisteredPrimarySpeakerTags(SpeakerTags);
+	if (SpeakerTags.IsEmpty())
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[NPC] RefreshAll talkables failed to fetch speaker rows: %s"), *Error);
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] RefreshAll talkables: no registered dialogue speaker tags."));
 		return;
 	}
 
-	for (const FName RowName : RowNames)
+	UE_LOG(ARLog, Verbose, TEXT("[Speaker] RefreshAll talkables: evaluating %d registered dialogue speaker tags."), SpeakerTags.Num());
+	for (const FGameplayTag& SpeakerTag : SpeakerTags)
 	{
-		const FGameplayTag SpeakerTag = BuildTagFromRootAndLeaf(DialogueSettings->SpeakerDefinitionRootTag, RowName);
 		if (SpeakerTag.IsValid())
 		{
-			RefreshNpcTalkableState(SpeakerTag);
+			RefreshSpeakerTalkableState(SpeakerTag);
 		}
 	}
 }

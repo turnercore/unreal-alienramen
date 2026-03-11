@@ -414,7 +414,7 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 	PendingProcessColor = SanitizeColor(SlottedMeatActor->GetMeatColor());
 	PendingProcessAmount = FMath::Max(1, SlottedMeatActor->GetMeatAmount());
 
-	SlottedMeatActor->ReleasePickup();
+	SlottedMeatActor->ReleaseCarryItem();
 	SlottedMeatActor = nullptr;
 
 	ProcessingProgress01 = 0.0f;

@@ -50,6 +50,22 @@ namespace
 		return Settings && Settings->bEnableVerboseResolverLogs;
 	}
 
+	static void AddUniqueCandidate(TArray<FGameplayTag>& Candidates, const FGameplayTag CandidateTag)
+	{
+		if (!CandidateTag.IsValid())
+		{
+			return;
+		}
+
+		if (!Candidates.ContainsByPredicate([&CandidateTag](const FGameplayTag ExistingTag)
+			{
+				return AreResolverTagsEqual(ExistingTag, CandidateTag);
+			}))
+		{
+			Candidates.Add(CandidateTag);
+		}
+	}
+
 	static FString JoinSegments(const TArray<FString>& Segments, const int32 StartIndex)
 	{
 		if (!Segments.IsValidIndex(StartIndex))
@@ -104,7 +120,7 @@ namespace
 			return;
 		}
 
-		OutCandidates.Add(RequestedEmotionTag);
+		AddUniqueCandidate(OutCandidates, RequestedEmotionTag);
 
 		const FGameplayTag GenericRootTag = ResolveGenericEmotionRootTag();
 		if (!GenericRootTag.IsValid())
@@ -130,8 +146,11 @@ namespace
 			}
 		}
 
+		const bool bIsSpeakerTag = SpeakerIndex != INDEX_NONE;
+		const bool bHasSpeakerEmotionLeaf = bIsSpeakerTag && Segments.IsValidIndex(SpeakerIndex + 2);
+
 		FString SuffixPath;
-		if (SpeakerIndex != INDEX_NONE && Segments.IsValidIndex(SpeakerIndex + 2))
+		if (bHasSpeakerEmotionLeaf)
 		{
 			SuffixPath = JoinSegments(Segments, SpeakerIndex + 2);
 		}
@@ -149,15 +168,11 @@ namespace
 		const FGameplayTag GenericCandidate = UGameplayTagsManager::Get().RequestGameplayTag(FName(*CandidatePath), false);
 		if (!GenericCandidate.IsValid())
 		{
-			return;
+			// Keep exact-tag lookup only when no generic candidate exists.
 		}
-
-		if (!OutCandidates.ContainsByPredicate([&GenericCandidate](const FGameplayTag ExistingTag)
-			{
-				return AreResolverTagsEqual(ExistingTag, GenericCandidate);
-			}))
+		else
 		{
-			OutCandidates.Add(GenericCandidate);
+			AddUniqueCandidate(OutCandidates, GenericCandidate);
 		}
 	}
 

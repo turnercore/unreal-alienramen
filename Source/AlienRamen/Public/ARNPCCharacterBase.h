@@ -1,12 +1,12 @@
 /**
  * @file ARNPCCharacterBase.h
- * @brief World NPC actor base for dialogue interactions.
+ * @brief World speaker actor base for dialogue interactions.
  */
 #pragma once
 
 #include "CoreMinimal.h"
 #include "ARPlayerTypes.h"
-#include "ARNPCTalkComponent.h"
+#include "ARSpeakerComponent.h"
 #include "GameFramework/Character.h"
 #include "GameplayTagContainer.h"
 #include "ARNPCCharacterBase.generated.h"
@@ -15,7 +15,7 @@ class AARPlayerController;
 class UARCustomerComponent;
 class UAREmotionComponent;
 
-UCLASS(meta = (DisplayName = "Dialogue Speaker Character", ToolTip = "World NPC/speaker actor base with dialogue talk, emotion display, and optional shop-customer behavior."))
+UCLASS(meta = (DisplayName = "Speaker Character", ToolTip = "World speaker actor base with dialogue talk, emotion display, and optional shop-customer behavior."))
 class ALIENRAMEN_API AARNPCCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
@@ -27,7 +27,7 @@ public:
 	void InteractByController(AARPlayerController* InteractingController);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag"))
-	FGameplayTag GetNpcTag() const;
+	FGameplayTag GetSpeakerTag() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkable() const;
@@ -45,17 +45,17 @@ public:
 	bool IsSpeakerBusyForController(const AARPlayerController* QueryController) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Is Speaker Local State Allowing Dialogue"))
-	bool IsNpcLocalStateAllowingDialogue() const;
+	bool IsSpeakerLocalStateAllowingDialogue() const;
 
 	// Server-authoritative local state gate (for example ordering mode) applied on top of global dialogue availability.
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Set Speaker Local State Allows Dialogue"))
-	void SetNpcLocalStateAllowsDialogue(bool bEnabled);
+	void SetSpeakerLocalStateAllowsDialogue(bool bEnabled);
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Speaker")
-	FAROnNpcTalkableStateChanged OnNpcTalkableStateChanged;
+	FAROnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
-	UARNPCTalkComponent* GetNpcTalkComponent() const { return NpcTalkComponent; }
+	UARSpeakerComponent* GetSpeakerComponent() const { return SpeakerComponent; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion")
 	UAREmotionComponent* GetEmotionComponent() const { return EmotionComponent; }
@@ -69,10 +69,10 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
-	void HandleTalkComponentTalkableStateChanged(bool bNewTalkable);
+	void HandleSpeakerComponentTalkableStateChanged(bool bNewTalkable);
 
 	UFUNCTION()
-	void OnRep_NpcLocalStateAllowsDialogue(bool bOldAllowsDialogue);
+	void OnRep_SpeakerLocalStateAllowsDialogue(bool bOldAllowsDialogue);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void RefreshTalkableFromSubsystem();
@@ -80,7 +80,7 @@ protected:
 	void RefreshAutoWantsToTalkEmotion(bool bEffectiveTalkable);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Speaker-talk runtime component."))
-	TObjectPtr<UARNPCTalkComponent> NpcTalkComponent;
+	TObjectPtr<UARSpeakerComponent> SpeakerComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Emotion display runtime component."))
 	TObjectPtr<UAREmotionComponent> EmotionComponent;
@@ -88,17 +88,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Components", meta = (AllowPrivateAccess = "true", ToolTip = "Optional shop-customer runtime component."))
 	TObjectPtr<UARCustomerComponent> CustomerComponent;
 
-	// Legacy serialized field kept for migration from actor-authored talk data to component-authored data.
-	UPROPERTY()
-	FGameplayTag NpcTag;
-
 	UPROPERTY(
 		EditAnywhere,
 		BlueprintReadOnly,
-		ReplicatedUsing = OnRep_NpcLocalStateAllowsDialogue,
+		ReplicatedUsing = OnRep_SpeakerLocalStateAllowsDialogue,
 		Category = "Alien Ramen|Speaker",
 		meta = (DisplayName = "Speaker Local State Allows Dialogue", ToolTip = "Server-resolved local speaker gate (for example shop mode behavior windows)."))
-	bool bNpcLocalStateAllowsDialogue = true;
+	bool bSpeakerLocalStateAllowsDialogue = true;
 
 	bool bAutoWantsToTalkEmotionApplied = false;
 };

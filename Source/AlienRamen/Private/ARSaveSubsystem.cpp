@@ -6,7 +6,7 @@
 #include "ARPlayerStateBase.h"
 #include "ARLoadoutSettings.h"
 #include "ARDialogueSubsystem.h"
-#include "ARNPCSubsystem.h"
+#include "ARSpeakerSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
@@ -1552,12 +1552,12 @@ void UARSaveSubsystem::ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveRes
 		SaveIndex(IndexObj, IgnoreResult);
 	}
 
-	// Loading a save can change dialogue availability; refresh NPC talkable caches/widgets immediately.
+	// Loading a save can change dialogue availability; refresh speaker talkable caches/widgets immediately.
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->RefreshAllNpcTalkableStates();
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 	}
 }

@@ -285,44 +285,44 @@ void AARPlayerController::RequestRemoveUnlockInternal(const FGameplayTag& Unlock
 	UE_LOG(ARLog, Warning, TEXT("[Save] RequestRemoveUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
 }
 
-void AARPlayerController::RequestStartDialogue(FGameplayTag NpcTag)
+void AARPlayerController::RequestStartDialogue(FGameplayTag SpeakerTag)
 {
 	if (HasAuthority())
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->TryStartDialogueWithNpc(this, NpcTag);
+			DialogueSubsystem->TryStartDialogueWithSpeaker(this, SpeakerTag);
 		}
 		return;
 	}
 
-	ServerRequestStartDialogue(NpcTag);
+	ServerRequestStartDialogue(SpeakerTag);
 }
 
-void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag NpcTag)
+void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag SpeakerTag)
 {
-	RequestStartDialogue(NpcTag);
+	RequestStartDialogue(SpeakerTag);
 }
 
-void AARPlayerController::RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)
+void AARPlayerController::RequestInteractWithSpeaker(AARNPCCharacterBase* SpeakerActor)
 {
-	if (!NpcActor)
+	if (!SpeakerActor)
 	{
 		return;
 	}
 
 	if (HasAuthority())
 	{
-		NpcActor->InteractByController(this);
+		SpeakerActor->InteractByController(this);
 		return;
 	}
 
-	ServerRequestInteractWithNpc(NpcActor);
+	ServerRequestInteractWithSpeaker(SpeakerActor);
 }
 
-void AARPlayerController::ServerRequestInteractWithNpc_Implementation(AARNPCCharacterBase* NpcActor)
+void AARPlayerController::ServerRequestInteractWithSpeaker_Implementation(AARNPCCharacterBase* SpeakerActor)
 {
-	RequestInteractWithNpc(NpcActor);
+	RequestInteractWithSpeaker(SpeakerActor);
 }
 
 void AARPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActor* StationActor)
