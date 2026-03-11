@@ -18,8 +18,8 @@ class ALIENRAMEN_API UAREmotionSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|Dialogue"); }
-	virtual FName GetSectionName() const override { return TEXT("Emotion"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetSectionName() const override { return TEXT("Dialogue - Emotion"); }
 
 	// Authoritative DataTable source for emotion tag->icon mappings.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content")
@@ -28,10 +28,6 @@ public:
 	// Generic emotion root used for speaker-specific fallback (for example Dialogue.Speaker.Fred.Angry -> Dialogue.Emotion.Angry).
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue"))
 	FGameplayTag GenericEmotionRootTag;
-
-	// Optional default socket used by emotion components when they do not override AnchorSocketName.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Presentation")
-	FName DefaultAnchorSocketName = NAME_None;
 
 	// Optional default offset used by emotion components when they do not override AnchorWorldOffset.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Presentation")
