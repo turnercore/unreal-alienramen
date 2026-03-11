@@ -101,23 +101,27 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Pending travel overlay state may carry between maps when not persisting to disk.
 - Canonical saves are blocked during active dialogue sessions.
 
-### Dialogue / NPC
+### Dialogue / Speaker
 
 - `UARDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
-- `UARNPCSubsystem` owns NPC talkable-state resolution/cache.
-- `UARNPCTalkComponent` owns NPC-side dialogue interaction and replicated talkable-state fields.
+- `UARSpeakerSubsystem` owns speaker talkable-state resolution/cache.
+- `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
-- NPC actors do not own dialogue authority.
+- Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
+- Dialogue-related settings pages are grouped under `Project Settings -> Dialogue` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
+- Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 
 Docs: `Documentation/README_DialogueNPC.md`
 
 ### Shop
 
-- `UARCustomerComponent` is the authoritative NPC customer/order runtime.
+- `UARCustomerComponent` is the authoritative customer/order runtime.
+- Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopStationActor` is server-authoritative for station state, processing progress, stock, and slot contents.
+- `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 
@@ -139,6 +143,7 @@ Docs: `Documentation/README_FactionSubsystem.md`
 
 - `UARInvaderDirectorSubsystem` is the server-only invader run authority.
 - `AARInvaderGameState` owns replicated invader shared runtime state.
+- `AARInvaderPickupBase` is invader-pickup-only runtime base (not used by shop carryables).
 - Invader combat runtime should remain GAS-driven and server-authoritative.
 - Director exposes replicated/read-model state rather than relying on client simulation.
 - Spicy track / full blast is GameState-owned shared replicated runtime state.

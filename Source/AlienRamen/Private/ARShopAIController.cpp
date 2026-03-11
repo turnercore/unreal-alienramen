@@ -26,7 +26,7 @@ void AARShopAIController::OnPossess(APawn* InPawn)
 	}
 
 	TryStartStateTreeForCurrentPawn();
-	RefreshNpcDialogueGateFromStateTags();
+	RefreshSpeakerDialogueGateFromStateTags();
 }
 
 void AARShopAIController::OnUnPossess()
@@ -38,7 +38,7 @@ void AARShopAIController::OnUnPossess()
 
 	if (StateTreeComponent && StateTreeComponent->IsRunning())
 	{
-		StateTreeComponent->StopLogic(TEXT("Shop NPC unpossessed"));
+		StateTreeComponent->StopLogic(TEXT("Shop speaker pawn unpossessed"));
 	}
 
 	Super::OnUnPossess();
@@ -62,7 +62,7 @@ void AARShopAIController::TryStartStateTreeForCurrentPawn()
 	}
 
 	StateTreeComponent->StartLogic();
-	RefreshNpcDialogueGateFromStateTags();
+	RefreshSpeakerDialogueGateFromStateTags();
 }
 
 bool AARShopAIController::SendShopStateTreeEventByTag(const FGameplayTag EventTag, const FName Origin)
@@ -81,18 +81,18 @@ void AARShopAIController::HandleShopActiveStateTagsChanged(const FGameplayTagCon
 {
 	(void)AddedTags;
 	(void)RemovedTags;
-	RefreshNpcDialogueGateFromStateTags();
+	RefreshSpeakerDialogueGateFromStateTags();
 }
 
-void AARShopAIController::RefreshNpcDialogueGateFromStateTags()
+void AARShopAIController::RefreshSpeakerDialogueGateFromStateTags()
 {
 	if (!HasAuthority() || !StateTreeComponent)
 	{
 		return;
 	}
 
-	AARNPCCharacterBase* NpcPawn = Cast<AARNPCCharacterBase>(GetPawn());
-	if (!NpcPawn)
+	AARNPCCharacterBase* SpeakerPawn = Cast<AARNPCCharacterBase>(GetPawn());
+	if (!SpeakerPawn)
 	{
 		return;
 	}
@@ -106,5 +106,5 @@ void AARShopAIController::RefreshNpcDialogueGateFromStateTags()
 
 	const FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.DialogueWindow")), false);
 	const bool bDialogueWindow = DialogueWindowTag.IsValid() && ActiveTags.HasTagExact(DialogueWindowTag);
-	NpcPawn->SetNpcLocalStateAllowsDialogue(bDialogueWindow);
+	SpeakerPawn->SetSpeakerLocalStateAllowsDialogue(bDialogueWindow);
 }

@@ -16,7 +16,7 @@ class ALIENRAMEN_API UAREmotionSettings : public UDeveloperSettings
 
 public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
-	virtual FName GetSectionName() const override { return TEXT("Dialogue - Emotion"); }
+	virtual FName GetSectionName() const override { return TEXT("Emotion"); }
 
 	// Preferred TagContentResolver route root used to resolve the emotion icon DataTable.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue"))

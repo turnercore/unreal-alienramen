@@ -1,18 +1,18 @@
 /**
- * @file ARNPCSubsystem.h
- * @brief Server-authoritative NPC talkable-state runtime for Alien Ramen.
+ * @file ARSpeakerSubsystem.h
+ * @brief Server-authoritative speaker talkable-state runtime for Alien Ramen.
  */
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "ARNPCSubsystem.generated.h"
+#include "ARSpeakerSubsystem.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnNpcTalkableChanged, FGameplayTag, NpcTag, bool, bNewTalkable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnSpeakerTalkableChanged, FGameplayTag, SpeakerTag, bool, bNewTalkable);
 
 UCLASS()
-class ALIENRAMEN_API UARNPCSubsystem : public UGameInstanceSubsystem
+class ALIENRAMEN_API UARSpeakerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
@@ -21,18 +21,18 @@ public:
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
-	bool IsNpcTalkable(FGameplayTag NpcTag) const;
+	bool IsSpeakerTalkable(FGameplayTag SpeakerTag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
-	bool RefreshNpcTalkableState(FGameplayTag NpcTag);
+	bool RefreshSpeakerTalkableState(FGameplayTag SpeakerTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
-	void RefreshAllNpcTalkableStates();
+	void RefreshAllSpeakerTalkableStates();
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Speaker")
-	FAROnNpcTalkableChanged OnNpcTalkableChanged;
+	FAROnSpeakerTalkableChanged OnSpeakerTalkableChanged;
 
 private:
 	UPROPERTY(Transient)
-	TMap<FGameplayTag, bool> NpcTalkableCache;
+	TMap<FGameplayTag, bool> SpeakerTalkableCache;
 };

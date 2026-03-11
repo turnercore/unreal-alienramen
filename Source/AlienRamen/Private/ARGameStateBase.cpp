@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -83,6 +84,48 @@ namespace
 
 		return true;
 	}
+
+	static bool TryParseMeatColorToken(const FString& Token, EARAffinityColor& OutColor)
+	{
+		const FString Normalized = Token.TrimStartAndEnd().ToLower();
+		if (Normalized == TEXT("red"))
+		{
+			OutColor = EARAffinityColor::Red;
+			return true;
+		}
+		if (Normalized == TEXT("blue"))
+		{
+			OutColor = EARAffinityColor::Blue;
+			return true;
+		}
+		if (Normalized == TEXT("white"))
+		{
+			OutColor = EARAffinityColor::White;
+			return true;
+		}
+		if (Normalized == TEXT("none") || Normalized == TEXT("unspecified"))
+		{
+			OutColor = EARAffinityColor::None;
+			return true;
+		}
+
+		return false;
+	}
+
+	static const TCHAR* GetMeatBucketLabel(const EARAffinityColor Color)
+	{
+		switch (Color)
+		{
+		case EARAffinityColor::Red:
+			return TEXT("red");
+		case EARAffinityColor::Blue:
+			return TEXT("blue");
+		case EARAffinityColor::White:
+			return TEXT("white");
+		default:
+			return TEXT("none");
+		}
+	}
 }
 
 AARGameStateBase::AARGameStateBase()
@@ -115,6 +158,8 @@ void AARGameStateBase::BeginPlay()
 		return;
 	}
 
+	RegisterDebugConsoleCommands();
+
 	if (UGameInstance* GI = GetGameInstance())
 	{
 		if (UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>())
@@ -122,6 +167,12 @@ void AARGameStateBase::BeginPlay()
 			SaveSubsystem->RequestGameStateHydration(this);
 		}
 	}
+}
+
+void AARGameStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnregisterDebugConsoleCommands();
+	Super::EndPlay(EndPlayReason);
 }
 
 void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -600,6 +651,99 @@ void AARGameStateBase::OnRep_AnyExternalPauseActive(const bool bOldAnyExternalPa
 void AARGameStateBase::OnRep_EffectivePauseStateActive(const bool bOldEffectivePauseStateActive)
 {
 	OnEffectivePauseStateChanged.Broadcast(bEffectivePauseStateActive, bOldEffectivePauseStateActive);
+}
+
+void AARGameStateBase::RegisterDebugConsoleCommands()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	UnregisterDebugConsoleCommands();
+
+	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
+		TEXT("ar.debug.add_meat"),
+		TEXT("Usage: ar.debug.add_meat [delta] [red|blue|white|none]"),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARGameStateBase::HandleConsoleAddMeat),
+		ECVF_Cheat);
+}
+
+void AARGameStateBase::UnregisterDebugConsoleCommands()
+{
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug.add_meat"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("AR.Debug.AddMeat"), false);
+
+	if (CmdDebugAddMeat)
+	{
+		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMeat, false);
+		CmdDebugAddMeat = nullptr;
+	}
+}
+
+void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* /*World*/)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	int32 Delta = 1;
+	EARAffinityColor ColorBucket = EARAffinityColor::None;
+
+	if (Args.Num() > 0)
+	{
+		int32 ParsedDelta = 0;
+		if (LexTryParseString(ParsedDelta, *Args[0]))
+		{
+			Delta = ParsedDelta;
+
+			if (Args.Num() > 1)
+			{
+				if (!TryParseMeatColorToken(Args[1], ColorBucket))
+				{
+					UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Invalid meat color '%s'. Expected red|blue|white|none."), *Args[1]);
+					return;
+				}
+			}
+		}
+		else
+		{
+			if (!TryParseMeatColorToken(Args[0], ColorBucket))
+			{
+				UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Usage: ar.debug.add_meat [delta] [red|blue|white|none]"));
+				return;
+			}
+		}
+	}
+
+	FARMeatState MeatState = GetMeat();
+	switch (ColorBucket)
+	{
+	case EARAffinityColor::Red:
+		MeatState.RedAmount += Delta;
+		break;
+	case EARAffinityColor::Blue:
+		MeatState.BlueAmount += Delta;
+		break;
+	case EARAffinityColor::White:
+		MeatState.WhiteAmount += Delta;
+		break;
+	default:
+		MeatState.UnspecifiedAmount += Delta;
+		break;
+	}
+
+	SetMeatFromSave(MeatState);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[Save|Debug] AddMeat bucket=%s %+d -> total=%d"),
+		GetMeatBucketLabel(ColorBucket),
+		Delta,
+		GetMeat().GetTotalAmount());
 }
 
 bool AARGameStateBase::IsPlayerPauseMenuVoteActive(const EARPlayerSlot PlayerSlot) const

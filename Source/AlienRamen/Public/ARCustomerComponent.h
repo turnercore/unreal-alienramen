@@ -1,6 +1,6 @@
 /**
  * @file ARCustomerComponent.h
- * @brief Server-authoritative NPC customer/order runtime for shop serving.
+ * @brief Server-authoritative customer/order runtime for shop serving.
  */
 #pragma once
 
@@ -22,7 +22,7 @@ UCLASS(
 	ClassGroup=(AlienRamen),
 	BlueprintType,
 	Blueprintable,
-	meta=(BlueprintSpawnableComponent, DisplayName="Shop Customer Component", ToolTip="Server-authoritative shop customer/order runtime that can optionally map to a dialogue speaker identity."))
+	meta=(BlueprintSpawnableComponent, DisplayName="Shop Customer Component", ToolTip="Server-authoritative shop customer/order runtime keyed by speaker identity."))
 class ALIENRAMEN_API UARCustomerComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -52,7 +52,7 @@ public:
 	int32 GetRemainingOrdersToGenerate() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer")
-	FGameplayTag GetNpcIdentityTag() const;
+	FGameplayTag GetSpeakerTag() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Customer", meta = (BlueprintAuthorityOnly))
 	bool GenerateNextOrder();
@@ -123,8 +123,8 @@ private:
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Alien Ramen|Shop|Customer",
-		meta = (AllowPrivateAccess = "true", Categories = "NPC.Identity", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from ARNPCTalkComponent."))
-	FGameplayTag NpcIdentityTagOverride;
+		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from ARSpeakerComponent."))
+	FGameplayTag SpeakerTagOverride;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", ToolTip = "If true, this customer auto-generates an order at BeginPlay on authority."))
 	bool bGenerateOrderOnBeginPlay = true;
@@ -153,8 +153,8 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_DoneOrdering, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true"))
 	bool bDoneOrdering = false;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", Categories = "NPC.Identity"))
-	FGameplayTag CachedNpcIdentityTag;
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker"))
+	FGameplayTag CachedSpeakerTag;
 
 	UPROPERTY()
 	FGameplayTag HateEmotionOverride;

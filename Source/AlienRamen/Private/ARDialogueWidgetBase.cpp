@@ -84,19 +84,19 @@ void UARDialogueWidgetBase::SetEavesdropOtherPlayer(bool bEnable)
 	}
 }
 
-void UARDialogueWidgetBase::StartDialogueWithNpcTag(FGameplayTag NpcTag)
+void UARDialogueWidgetBase::StartDialogueWithSpeakerTag(FGameplayTag SpeakerTag)
 {
-	if (IsValid(BoundController) && NpcTag.IsValid())
+	if (IsValid(BoundController) && SpeakerTag.IsValid())
 	{
-		BoundController->RequestStartDialogue(NpcTag);
+		BoundController->RequestStartDialogue(SpeakerTag);
 	}
 }
 
-void UARDialogueWidgetBase::InteractWithNpc(AARNPCCharacterBase* NpcActor)
+void UARDialogueWidgetBase::InteractWithSpeaker(AARNPCCharacterBase* SpeakerActor)
 {
-	if (IsValid(BoundController) && NpcActor)
+	if (IsValid(BoundController) && SpeakerActor)
 	{
-		BoundController->RequestInteractWithNpc(NpcActor);
+		BoundController->RequestInteractWithSpeaker(SpeakerActor);
 	}
 }
 
