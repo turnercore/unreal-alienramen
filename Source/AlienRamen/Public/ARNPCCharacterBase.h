@@ -51,7 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Set Speaker Local State Allows Dialogue"))
 	void SetNpcLocalStateAllowsDialogue(bool bEnabled);
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC|Speaker")
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Speaker")
 	FAROnNpcTalkableStateChanged OnNpcTalkableStateChanged;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
@@ -96,7 +96,7 @@ protected:
 		EditAnywhere,
 		BlueprintReadOnly,
 		ReplicatedUsing = OnRep_NpcLocalStateAllowsDialogue,
-		Category = "Alien Ramen|NPC|Speaker",
+		Category = "Alien Ramen|Speaker",
 		meta = (DisplayName = "Speaker Local State Allows Dialogue", ToolTip = "Server-resolved local speaker gate (for example shop mode behavior windows)."))
 	bool bNpcLocalStateAllowsDialogue = true;
 

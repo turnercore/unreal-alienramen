@@ -107,7 +107,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARNPCSubsystem` owns NPC talkable-state resolution/cache.
 - `UARNPCTalkComponent` owns NPC-side dialogue interaction and replicated talkable-state fields.
 - `UAREmotionComponent` owns replicated overhead emotion display state.
-- `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache from configured emotion data.
+- `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - NPC actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 
