@@ -5,12 +5,10 @@
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "Components/SceneComponent.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
 #include "GameplayTagsManager.h"
@@ -452,27 +450,35 @@ FVector UAREmotionComponent::GetEmotionAnchorWorldLocation() const
 		}
 	}
 
-	if (USceneComponent* ExplicitAnchor = Cast<USceneComponent>(AnchorComponent.GetComponent(const_cast<AActor*>(OwnerActor))))
+	if (USceneComponent* ExplicitAnchor = ResolveExplicitAnchorComponent(OwnerActor))
 	{
 		return ExplicitAnchor->GetComponentLocation() + EffectiveOffset;
 	}
 
-	FName EffectiveSocketName = AnchorSocketName;
-
-	const ACharacter* CharacterOwner = Cast<ACharacter>(OwnerActor);
-	if (CharacterOwner && !EffectiveSocketName.IsNone())
+	if (const AActor* ExplicitAnchorActor = AnchorActor.Get())
 	{
-		const USkeletalMeshComponent* Mesh = CharacterOwner->GetMesh();
-		if (Mesh && Mesh->DoesSocketExist(EffectiveSocketName))
+		if (const USceneComponent* AnchorRoot = ExplicitAnchorActor->GetRootComponent())
 		{
-			return Mesh->GetSocketLocation(EffectiveSocketName) + EffectiveOffset;
+			return AnchorRoot->GetComponentLocation() + EffectiveOffset;
 		}
+
+		return ExplicitAnchorActor->GetActorLocation() + EffectiveOffset;
 	}
 
 	FVector Origin = FVector::ZeroVector;
 	FVector Extent = FVector::ZeroVector;
 	OwnerActor->GetActorBounds(true, Origin, Extent);
 	return Origin + FVector(0.0f, 0.0f, Extent.Z) + EffectiveOffset;
+}
+
+USceneComponent* UAREmotionComponent::ResolveExplicitAnchorComponent(const AActor* OwnerActor) const
+{
+	if (!OwnerActor)
+	{
+		return nullptr;
+	}
+
+	return Cast<USceneComponent>(AnchorComponent.GetComponent(const_cast<AActor*>(OwnerActor)));
 }
 
 bool UAREmotionComponent::GetEmotionFacingRotationForController(const APlayerController* ViewerController, FRotator& OutFacingRotation) const
@@ -796,11 +802,17 @@ void UAREmotionComponent::RefreshEditorPreviewBillboard()
 	const float PreviewScale = FMath::Max(0.05f, IconScreenSize / 64.0f);
 	EditorPreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
 
-	if (USceneComponent* ExplicitAnchor = Cast<USceneComponent>(AnchorComponent.GetComponent(OwnerActor)))
+	USceneComponent* AttachAnchor = ResolveExplicitAnchorComponent(OwnerActor);
+	if (!AttachAnchor && AnchorActor)
 	{
-		if (EditorPreviewBillboardComponent->GetAttachParent() != ExplicitAnchor)
+		AttachAnchor = AnchorActor->GetRootComponent();
+	}
+
+	if (AttachAnchor)
+	{
+		if (EditorPreviewBillboardComponent->GetAttachParent() != AttachAnchor)
 		{
-			EditorPreviewBillboardComponent->AttachToComponent(ExplicitAnchor, FAttachmentTransformRules::KeepWorldTransform);
+			EditorPreviewBillboardComponent->AttachToComponent(AttachAnchor, FAttachmentTransformRules::KeepWorldTransform);
 		}
 		EditorPreviewBillboardComponent->SetRelativeLocation(AnchorWorldOffset);
 	}
