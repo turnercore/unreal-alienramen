@@ -4,6 +4,8 @@
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
+#include "HAL/IConsoleManager.h"
+#include "Engine/Engine.h"
 #include "Misc/App.h"
 #include "Misc/ConfigCacheIni.h"
 #include "OnlineSessionSettings.h"
@@ -11,12 +13,14 @@
 void UARGameInstance::Init()
 {
 	Super::Init();
+	RegisterDebugConsoleCommands();
 	UE_LOG(ARLog, Log, TEXT("[GameInstance] Initialized: %s"), *GetNameSafe(this));
 	BP_OnARGameInstanceInitialized();
 }
 
 void UARGameInstance::Shutdown()
 {
+	UnregisterDebugConsoleCommands();
 	UE_LOG(ARLog, Log, TEXT("[GameInstance] Shutdown: %s"), *GetNameSafe(this));
 	BP_OnARGameInstanceShutdown();
 	Super::Shutdown();
@@ -96,4 +100,79 @@ void UARGameInstance::BP_OnARGameInstanceInitialized_Implementation()
 
 void UARGameInstance::BP_OnARGameInstanceShutdown_Implementation()
 {
+}
+
+void UARGameInstance::RegisterDebugConsoleCommands()
+{
+	UnregisterDebugConsoleCommands();
+
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	CmdArDebug = ConsoleManager.RegisterConsoleCommand(
+		TEXT("ar.debug"),
+		TEXT("Usage: ar.debug <veryverbose|verbose|log|warning|error|off|reset>. Applies to ARLog."),
+		FConsoleCommandWithArgsDelegate::CreateUObject(this, &UARGameInstance::HandleConsoleArDebug),
+		ECVF_Default);
+}
+
+void UARGameInstance::UnregisterDebugConsoleCommands()
+{
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug"), false);
+	CmdArDebug = nullptr;
+}
+
+void UARGameInstance::HandleConsoleArDebug(const TArray<FString>& Args)
+{
+	const FString LevelArg = (Args.Num() > 0 ? Args[0] : FString()).TrimStartAndEnd().ToLower();
+	FString TargetVerbosity;
+	if (LevelArg == TEXT("veryverbose") || LevelArg == TEXT("vv"))
+	{
+		TargetVerbosity = TEXT("veryverbose");
+	}
+	else if (LevelArg == TEXT("verbose") || LevelArg == TEXT("v"))
+	{
+		TargetVerbosity = TEXT("verbose");
+	}
+	else if (LevelArg == TEXT("log") || LevelArg == TEXT("l") || LevelArg == TEXT("default"))
+	{
+		TargetVerbosity = TEXT("log");
+	}
+	else if (LevelArg == TEXT("warning") || LevelArg == TEXT("warn") || LevelArg == TEXT("w"))
+	{
+		TargetVerbosity = TEXT("warning");
+	}
+	else if (LevelArg == TEXT("error") || LevelArg == TEXT("e"))
+	{
+		TargetVerbosity = TEXT("error");
+	}
+	else if (LevelArg == TEXT("off") || LevelArg == TEXT("none"))
+	{
+		TargetVerbosity = TEXT("off");
+	}
+	else if (LevelArg == TEXT("reset"))
+	{
+		TargetVerbosity = TEXT("log");
+	}
+	else
+	{
+		UE_LOG(ARLog, Log, TEXT("[Debug] Usage: ar.debug <veryverbose|verbose|log|warning|error|off|reset>"));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	bool bApplied = false;
+	if (GEngine && World)
+	{
+		const FString ExecCommand = FString::Printf(TEXT("log arlog %s"), *TargetVerbosity);
+		bApplied = GEngine->Exec(World, *ExecCommand);
+	}
+
+	if (bApplied)
+	{
+		UE_LOG(ARLog, Log, TEXT("[Debug] ARLog verbosity set to '%s' via ar.debug."), *TargetVerbosity);
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Debug] ar.debug could not apply verbosity '%s' (no active world/console context)."), *TargetVerbosity);
+	}
 }

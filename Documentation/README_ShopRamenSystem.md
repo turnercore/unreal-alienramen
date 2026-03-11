@@ -16,14 +16,14 @@ This document captures the runtime ownership and integration contract for the sh
 
 ## Configuration Sources
 
-- `UARCustomerSettings` (`Project Settings -> Alien Ramen|NPC -> Customer`) provides:
+- `UARCustomerSettings` (`Project Settings -> Alien Ramen|Shop Settings -> Shop Settings`) provides:
   - customer/station root tags for TagContentResolver
   - relationship point curve (`Hate/Ok/Like/Love`)
   - default reaction emotion tags
   - default station processing duration and stock cap
   - fallback-order policy
 - TagContentResolver routes are expected for:
-  - `NPC.Customer` -> `FARCustomerDefinitionRow`
+  - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Shop.Station` -> `FARShopStationConfigRow`
 
 ## NPC Customer Flow
@@ -38,6 +38,13 @@ This document captures the runtime ownership and integration contract for the sh
   - `None` ignored for non-picky scoring
   - picky mode requires strict unordered exact composition (with implied `None` fill)
   - reaction mapping remains `0/1/2/3 matches => Hate/Ok/Like/Love`
+- Customer lifecycle controls:
+  - customers can be configured with finite order budgets (`MaxOrdersToGenerate`; `0` = unlimited).
+  - optional auto-generation at spawn and after serve is preserved.
+  - when finite budget is exhausted, customer marks done ordering and emits done signal.
+  - runtime emits detailed signals for order generated, order served, and done-ordering states (counts + remaining budget).
+  - ordering blocks dialogue start via local speaker gate while an order is active.
+  - ordering emotion now routes through generic emotion-system overrides (state + timed reaction), so fallback returns to dialogue/base emotion automatically.
 
 ## Station Runtime Contract
 
@@ -45,6 +52,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Base vs upgraded behavior:
   - unupgraded station output is direct `None` for bowl fill (no meat/process/stock required).
   - upgraded station uses the slot + processing + stock model.
+  - upgrade state is unlock-tag driven (`RequiredUpgradeTags`); there is no starts-upgraded override.
 - Meat slot behavior:
   - meat is physically slotted on station (`SlottedMeatActor`) and can be picked back up in `MeatReady`.
   - slot replacement is blocked while occupied.

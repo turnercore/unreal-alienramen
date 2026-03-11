@@ -89,11 +89,13 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 
 - `UAREmotionComponent` provides replicated overhead-emotion display state for NPCs and player characters.
 - Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
+- Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
 - Dialogue line `SpeakerTag` may include an emotion leaf (example: `Dialogue.Speaker.Fred.Angry`).
 - Emotion icon lookup is resolved from a direct DataTable reference in `UAREmotionSettings` (row type `FAREmotionIconRow`) and cached by `UAREmotionResolverSubsystem`.
 - Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`).
 - `UAREmotionComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
+- Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UAREmotionSettings::DefaultTimedSystemOverrideDurationSeconds`.
 
 ## Offer + Execution Rules (Current Runtime)
 
@@ -122,6 +124,9 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
   - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
+- Shop eavesdrop requests are immediate-only: `ForceEavesdrop` rejects enable requests when the target slot has no active dialogue session (no queued eavesdrop registration).
+- Per-player mode supports optional busy-speaker lock (`UARDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`): when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
+- Busy-speaker presentation routes through emotion-system source overrides (source `DialogueBusy`) using `UAREmotionSettings::BusyEmotionTag` and `BusyEmotionPriority`.
 - Line nodes (including multiline entries) support the same convenience active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`) before skip-conditions are evaluated.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
@@ -178,8 +183,8 @@ NPC actor integration now routes through `UARNPCTalkComponent`:
 - `UAREmotionResolverSubsystem` caches emotion tag->icon mappings from `UAREmotionSettings::EmotionDataTable`.
 - Resolver cache invalidates/rebuilds when configured settings inputs change or when the bound emotion DataTable broadcasts `OnDataTableChanged`.
 - Debug console commands:
-  - `ar.emotion.LogCacheStats`
-  - `ar.emotion.RebuildCache`
+  - `ar.emotion.log_cache_stats`
+  - `ar.emotion.rebuild_cache`
 
 ## Editor Tooling (Current)
 

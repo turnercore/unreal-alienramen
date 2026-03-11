@@ -142,9 +142,6 @@ struct ALIENRAMEN_API FARShopStationConfigRow : public FTableRowBase
 	EARRamenStationType StationType = EARRamenStationType::Noodles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	bool bStartsUpgraded = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FGameplayTagContainer RequiredUpgradeTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "1", UIMin = "1"))

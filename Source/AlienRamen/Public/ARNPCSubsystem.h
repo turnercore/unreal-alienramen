@@ -20,16 +20,16 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|NPC")
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsNpcTalkable(FGameplayTag NpcTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	bool RefreshNpcTalkableState(FGameplayTag NpcTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|NPC")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void RefreshAllNpcTalkableStates();
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|NPC")
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Speaker")
 	FAROnNpcTalkableChanged OnNpcTalkableChanged;
 
 private:
