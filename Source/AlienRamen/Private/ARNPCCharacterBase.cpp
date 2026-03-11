@@ -1,9 +1,13 @@
 #include "ARNPCCharacterBase.h"
 
 #include "ARCustomerComponent.h"
+#include "ARDialogueSubsystem.h"
 #include "AREmotionComponent.h"
+#include "AREmotionSettings.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
+#include "Components/ActorComponent.h"
+#include "Engine/GameInstance.h"
 #include "Net/UnrealNetwork.h"
 
 AARNPCCharacterBase::AARNPCCharacterBase()
@@ -17,6 +21,87 @@ AARNPCCharacterBase::AARNPCCharacterBase()
 void AARNPCCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TArray<UARNPCTalkComponent*> TalkComponents;
+	GetComponents(TalkComponents);
+	if (!TalkComponents.IsEmpty())
+	{
+		UARNPCTalkComponent* PreferredTalkComponent = NpcTalkComponent;
+		if (!PreferredTalkComponent || !TalkComponents.Contains(PreferredTalkComponent))
+		{
+			PreferredTalkComponent = TalkComponents[0];
+		}
+
+		if (PreferredTalkComponent && !PreferredTalkComponent->GetNpcTag().IsValid())
+		{
+			for (UARNPCTalkComponent* Candidate : TalkComponents)
+			{
+				if (Candidate && Candidate->GetNpcTag().IsValid())
+				{
+					PreferredTalkComponent = Candidate;
+					break;
+				}
+			}
+		}
+
+		NpcTalkComponent = PreferredTalkComponent;
+		if (TalkComponents.Num() > 1)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Speaker] '%s' has %d UARNPCTalkComponent instances. Using '%s' as canonical."),
+				*GetNameSafe(this),
+				TalkComponents.Num(),
+				*GetNameSafe(NpcTalkComponent));
+		}
+	}
+
+	TArray<UAREmotionComponent*> EmotionComponents;
+	GetComponents(EmotionComponents);
+	if (!EmotionComponents.IsEmpty())
+	{
+		UAREmotionComponent* PreferredEmotionComponent = EmotionComponent;
+		if (!PreferredEmotionComponent || !EmotionComponents.Contains(PreferredEmotionComponent))
+		{
+			PreferredEmotionComponent = EmotionComponents[0];
+		}
+
+		EmotionComponent = PreferredEmotionComponent;
+		if (EmotionComponents.Num() > 1)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Speaker] '%s' has %d UAREmotionComponent instances. Using '%s' as canonical."),
+				*GetNameSafe(this),
+				EmotionComponents.Num(),
+				*GetNameSafe(EmotionComponent));
+		}
+	}
+
+	TArray<UARCustomerComponent*> CustomerComponents;
+	GetComponents(CustomerComponents);
+	if (!CustomerComponents.IsEmpty())
+	{
+		UARCustomerComponent* PreferredCustomerComponent = CustomerComponent;
+		if (!PreferredCustomerComponent || !CustomerComponents.Contains(PreferredCustomerComponent))
+		{
+			PreferredCustomerComponent = CustomerComponents[0];
+		}
+
+		CustomerComponent = PreferredCustomerComponent;
+		if (CustomerComponents.Num() > 1)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Speaker] '%s' has %d UARCustomerComponent instances. Using '%s' as canonical."),
+				*GetNameSafe(this),
+				CustomerComponents.Num(),
+				*GetNameSafe(CustomerComponent));
+		}
+	}
 
 	if (NpcTalkComponent)
 	{
@@ -34,6 +119,8 @@ void AARNPCCharacterBase::BeginPlay()
 			EmotionComponent->SetRegisteredSpeakerTag(NpcTalkComponent->GetNpcTag());
 		}
 	}
+
+	RefreshAutoWantsToTalkEmotion(IsTalkable());
 }
 
 void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -92,6 +179,29 @@ bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* Que
 	return bHasActiveCustomerOrder || (bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForController(QueryController));
 }
 
+bool AARNPCCharacterBase::IsSpeakerBusyForController(const AARPlayerController* QueryController) const
+{
+	if (!QueryController || !NpcTalkComponent)
+	{
+		return false;
+	}
+
+	const FGameplayTag SpeakerTag = NpcTalkComponent->GetNpcTag();
+	if (!SpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	const UGameInstance* GameInstance = GetGameInstance();
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	const UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>();
+	return DialogueSubsystem && DialogueSubsystem->IsSpeakerBusyForController(QueryController, SpeakerTag);
+}
+
 bool AARNPCCharacterBase::IsNpcLocalStateAllowingDialogue() const
 {
 	return bNpcLocalStateAllowsDialogue;
@@ -114,6 +224,7 @@ void AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged(const bool bNe
 {
 	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
 	const bool bEffectiveTalkable = bHasActiveCustomerOrder || (bNpcLocalStateAllowsDialogue && bNewTalkable);
+	RefreshAutoWantsToTalkEmotion(bEffectiveTalkable);
 	OnNpcTalkableStateChanged.Broadcast(bEffectiveTalkable);
 }
 
@@ -124,6 +235,7 @@ void AARNPCCharacterBase::OnRep_NpcLocalStateAllowsDialogue(const bool bOldAllow
 		return;
 	}
 
+	RefreshAutoWantsToTalkEmotion(IsTalkable());
 	OnNpcTalkableStateChanged.Broadcast(IsTalkable());
 }
 
@@ -133,6 +245,36 @@ void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
 	{
 		NpcTalkComponent->RefreshTalkableFromSubsystem();
 	}
+}
+
+void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTalkable)
+{
+	if (!HasAuthority() || !EmotionComponent)
+	{
+		return;
+	}
+
+	const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+	const FGameplayTag WantsToTalkTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
+	if (!WantsToTalkTag.IsValid())
+	{
+		bAutoWantsToTalkEmotionApplied = false;
+		return;
+	}
+
+	if (bEffectiveTalkable)
+	{
+		EmotionComponent->SetEmotionTag(WantsToTalkTag);
+		bAutoWantsToTalkEmotionApplied = true;
+		return;
+	}
+
+	if (bAutoWantsToTalkEmotionApplied && EmotionComponent->GetBaseEmotionTag().MatchesTagExact(WantsToTalkTag))
+	{
+		EmotionComponent->ClearEmotionTag();
+	}
+
+	bAutoWantsToTalkEmotionApplied = false;
 }
 
 void AARNPCCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

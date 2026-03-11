@@ -387,13 +387,13 @@ void UAREmotionResolverSubsystem::RegisterDebugConsoleCommands()
 
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	CmdLogCacheStats = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.emotion.LogCacheStats"),
+		TEXT("ar.emotion.log_cache_stats"),
 		TEXT("Logs emotion resolver cache hit/miss/build stats."),
 		FConsoleCommandDelegate::CreateUObject(this, &UAREmotionResolverSubsystem::LogCacheStats),
 		ECVF_Default);
 
 	CmdRebuildCache = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.emotion.RebuildCache"),
+		TEXT("ar.emotion.rebuild_cache"),
 		TEXT("Forces an emotion resolver cache rebuild."),
 		FConsoleCommandDelegate::CreateUObject(this, &UAREmotionResolverSubsystem::RebuildCache),
 		ECVF_Default);
@@ -405,6 +405,8 @@ void UAREmotionResolverSubsystem::UnregisterDebugConsoleCommands()
 
 	// Teardown can invalidate console-object pointers before subsystem deinit.
 	// Unregister by name to avoid dereferencing stale pointers.
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.log_cache_stats"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.rebuild_cache"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.LogCacheStats"), false);
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.RebuildCache"), false);
 

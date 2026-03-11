@@ -84,11 +84,6 @@ void AARShopStationActor::Tick(float DeltaSeconds)
 
 bool AARShopStationActor::IsStationUpgraded() const
 {
-	if (bStartsUpgraded)
-	{
-		return true;
-	}
-
 	if (RequiredUpgradeTags.IsEmpty())
 	{
 		return false;
@@ -404,7 +399,6 @@ void AARShopStationActor::ApplyConfigFromRowIfAvailable()
 	}
 
 	StationType = Row->StationType;
-	bStartsUpgraded = Row->bStartsUpgraded;
 	RequiredUpgradeTags = Row->RequiredUpgradeTags;
 	MaxStock = FMath::Max(1, Row->MaxStock);
 	ProcessingDurationSeconds = FMath::Max(0.05f, Row->ProcessingDurationSeconds);

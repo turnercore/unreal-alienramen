@@ -23,13 +23,13 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Emotion")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion")
 	void RebuildCache();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Emotion")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion")
 	void LogCacheStats() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Emotion")
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion")
 	bool TryResolveEmotionIcon(
 		FGameplayTag RequestedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
