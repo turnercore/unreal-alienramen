@@ -1,12 +1,15 @@
 #include "ARShopPlayerController.h"
 
 #include "ARLog.h"
+#include "ARAttributeSetCore.h"
 #include "ARNPCCharacterBase.h"
+#include "ARPlayerStateBase.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
 #include "ARShopDispenserActor.h"
 #include "ARShopStationActor.h"
+#include "AbilitySystemComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/Pawn.h"
 
@@ -85,6 +88,24 @@ namespace
 		PhysicsPrimitive->SetEnableGravity(true);
 		PhysicsPrimitive->WakeAllRigidBodies();
 		PhysicsPrimitive->AddImpulse(ForwardDirection.GetSafeNormal() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
+	}
+
+	static float ResolveThrowStrengthForController(const AARShopPlayerController* Controller, const float RequestedThrowStrength)
+	{
+		if (RequestedThrowStrength > 0.0f)
+		{
+			return RequestedThrowStrength;
+		}
+
+		float Strength = 10.0f;
+		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const UAbilitySystemComponent* ASC = PlayerState ? PlayerState->GetASC() : nullptr;
+		if (ASC)
+		{
+			Strength = ASC->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
+		}
+
+		return FMath::Max(0.0f, Strength) * 100.0f;
 	}
 }
 
@@ -594,7 +615,8 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 		}
 
 		const FVector ThrowDirection = GetControlRotation().Vector();
-		ApplyThrowImpulse(ReleasedActor, ThrowDirection, ThrowStrength);
+		const float EffectiveThrowStrength = ResolveThrowStrengthForController(this, ThrowStrength);
+		ApplyThrowImpulse(ReleasedActor, ThrowDirection, EffectiveThrowStrength);
 		return;
 	}
 
