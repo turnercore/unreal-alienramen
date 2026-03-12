@@ -166,6 +166,7 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 ### Scrapyard
 
 - `AARScrapyardGameState` owns server-authoritative scrapyard timer/state, reserve/refund accounting, deterministic overspend trim, and reward grant finalization.
+- `AARScrapyardGameState` also owns the replicated Scrapyard run-buff snapshot read model consumed by HUD/widgets.
 - `AARScrapyardExitZoneActor` owns deposited-item + in-zone player tracking, replicated per-exit reserved scrap value, and reports reserve/refund deltas to Scrapyard GameState.
 - `AARScrapyardHUD` is the local UI binding owner for Scrapyard runtime delegates (timer/summary/run-active + run-buff snapshot).
 - `UARScrapyardHUDWidgetBase` and `UARScrapyardExitZoneWidgetBase` are reusable Blueprint-facing widget bridges for Scrapyard HUD state and per-exit reserved scrap state.
