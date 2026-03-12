@@ -18,6 +18,8 @@ class UInputMappingContext;
 class UARDialogueWidgetBase;
 class UUserWidget;
 class AARNPCCharacterBase;
+class AARMeatStorageBoxActor;
+class AActor;
 
 USTRUCT(BlueprintType)
 struct FARControllerInputMapping
@@ -109,17 +111,23 @@ public:
 	void ServerRequestRemoveUnlock(const FGameplayTag& UnlockTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestStartDialogue(FGameplayTag NpcTag);
+	void RequestStartDialogue(FGameplayTag SpeakerTag);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestStartDialogue(FGameplayTag NpcTag);
+	void ServerRequestStartDialogue(FGameplayTag SpeakerTag);
 
-	// Convenience interaction path for world NPC actors. Safe to call from client/UI/BP.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+	// Convenience interaction path for world NPC characters. Safe to call from client/UI/BP.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestInteractWithNpc(AARNPCCharacterBase* NpcActor);
+	void ServerRequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void RequestAdvanceDialogue();
@@ -343,6 +351,12 @@ protected:
 	/** Automatically switches input mode and cursor visibility while local dialogue is active. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
 	bool bAutoManageDialogueInputMode = true;
+
+	// Authoritative anti-cheat interaction bound for server RPC actor targets.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (ClampMin = "50.0", UIMin = "50.0"))
+	float ServerInteractionMaxDistance = 450.0f;
+
+	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 
 private:
 	void LeaveSessionInternal();

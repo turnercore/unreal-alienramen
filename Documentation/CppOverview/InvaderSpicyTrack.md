@@ -22,7 +22,7 @@ Paths:
 | `SharedTrackSlots` | `AARInvaderGameState` | Server | Replicated to all | Team-shared slotted upgrades. |
 | `SharedFullBlastTier` | `AARInvaderGameState` | Server | Replicated to all | Tier progression (default max 5). |
 | `FullBlastSession` (`bIsActive`, `Offers`, `RequestingPlayerSlot`, `ActivationTier`) | `AARInvaderGameState` | Server | Replicated to all | Authoritative offer session snapshot. |
-| `OfferPresenceStates` (`PlayerSlot`, hovered offer, destination slot, cursor, selected offer, selected destination`) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session, including teammate "presence select" highlights. |
+| `OfferPresenceStates` (`PlayerSlot`, hovered offer, destination slot, selected offer, selected destination`) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session, including teammate "presence select" highlights. |
 | `ActiveSpiceSharers` | `AARInvaderGameState` | Server | Not replicated | Server tick loop membership for hold-to-share transfer. |
 | `PredictedSpiceValue`, `bHasPredictedSpiceValue` | `AARPlayerStateBase` | Client local | Not replicated | Cosmetic HUD prediction overlay only. |
 | Kill-credit FX event (`FARInvaderKillCreditFxEvent`) | `AARInvaderGameState` | Server emit | NetMulticast to all | Cosmetic hook for enemy->meter particles/cues with target player slot. |
@@ -73,14 +73,14 @@ Not yet implemented (open hardening work):
 - `StartSharingSpice(...)` / `StopSharingSpice(...)` drive hold-to-share transfer loop.
 - `AwardKillCredit(...)` supports explicit scripted credit.
 - `NotifyEnemyKilled(...)` is the automatic ingestion entry called from enemy death.
-- `SetOfferPresence(...)` / `ClearOfferPresence(...)` publish/clear replicated per-player offer UI presence (hover + cursor + optional selected offer/destination).
+- `SetOfferPresence(...)` / `ClearOfferPresence(...)` publish/clear replicated per-player offer UI presence (hover + optional selected offer/destination).
 - `OnInvaderKillCreditFxEvent` broadcasts on server + clients when kill credit awards spice (includes target slot, spice gained, combo, enemy metadata, optional origin).
 
 ## Debug Console Commands
-- `AR.Invader.Debug.SetSpice [p1|p2] <value>`
-- `AR.Invader.Debug.AddSpice [p1|p2] <delta>`
-- `AR.Invader.Debug.SetCursor [p1|p2] <tier>`
-- `AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]`
+- `ar.invader.debug.set_spice [p1|p2] <value>`
+- `ar.invader.debug.add_spice [p1|p2] <delta>`
+- `ar.invader.debug.set_cursor [p1|p2] <tier>`
+- `ar.invader.debug.inject_upgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]`
 - `InjectUpgrade` resolves token by:
 - row name first (exact/case-insensitive) from upgrade definition table,
 - then gameplay tag token,

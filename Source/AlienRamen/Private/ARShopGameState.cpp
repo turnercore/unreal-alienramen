@@ -8,5 +8,5 @@ AARShopGameState::AARShopGameState()
 
 UScriptStruct* AARShopGameState::GetStateStruct_Implementation() const
 {
-	return FARShopGameStateData::StaticStruct();
+	return ClassStateStruct ? ClassStateStruct.Get() : FARShopGameStateData::StaticStruct();
 }

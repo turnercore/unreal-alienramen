@@ -11,6 +11,7 @@ This site is built with MkDocs Material + Doxygen. Everything under `Documentati
 - Progression + unlocks: [Progression + Unlocks](README_ProgressionUnlocks.md)
 - Dialogue plugin boundary: [Dialogue plugin ownership](README_DialoguePluginBoundary.md)
 - Dialogue/NPC system: [Dialogue + NPC runtime](README_DialogueNPC.md)
+- Shop ramen ordering/serving (built on top): [Shop ramen system](README_ShopRamenSystem.md)
 - Faction election system (built on top): [Faction subsystem](README_FactionSubsystem.md)
 - C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
 - API reference: [Doxygen HTML](/unreal-alienramen/doxygen/index.html)
@@ -37,11 +38,12 @@ Use the in-game console (`~`).
     - `ar.invader.force_stage <StageRowName>`
     - `ar.invader.choose_stage <left|right>`
     - `ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`
-    - `AR.Invader.Debug.SetSpice [p1|p2] <value>`
-    - `AR.Invader.Debug.AddSpice [p1|p2] <delta>`
-    - `AR.Invader.Debug.AddScrap <delta>`
-    - `AR.Invader.Debug.AddMoney <delta>`
-    - `AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]`
+    - `ar.invader.debug.set_spice [p1|p2] <value>`
+    - `ar.invader.debug.add_spice [p1|p2] <delta>`
+    - `ar.invader.debug.add_scrap <delta>`
+    - `ar.invader.debug.add_money <delta>`
+    - `ar.debug.add_meat [delta] [red|blue|white|none]`
+    - `ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`
 
 ### Expected behavior (authoritative server)
 
@@ -54,8 +56,9 @@ Use the in-game console (`~`).
 7. **`ar.invader.force_stage <StageRowName>`** - switches stage immediately if row exists; does not despawn current enemies.
 8. **`ar.invader.choose_stage <left|right>`** - submits choice only during `StageChoice`; otherwise no-op.
 9. **`ar.invader.capture_bounds [apply] [PlaneZ] [Margin]`** - logs suggested bounds; `apply` writes+saves into director settings; optional PlaneZ and XY margin.
-10. **`AR.Invader.Debug.SetSpice [p1|p2] <value>`** - sets a player spice meter directly (`p1` default).
-11. **`AR.Invader.Debug.AddSpice [p1|p2] <delta>`** - adds/subtracts player spice (`p1` default).
-12. **`AR.Invader.Debug.AddScrap <delta>`** - adds/subtracts replicated scrap on GameState.
-13. **`AR.Invader.Debug.AddMoney <delta>`** - adds/subtracts replicated money on GameState.
-14. **`AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]`** - adds/subtracts replicated meat in the selected bucket (`unspecified` default).
+10. **`ar.invader.debug.set_spice [p1|p2] <value>`** - sets a player spice meter directly (`p1` default).
+11. **`ar.invader.debug.add_spice [p1|p2] <delta>`** - adds/subtracts player spice (`p1` default).
+12. **`ar.invader.debug.add_scrap <delta>`** - adds/subtracts replicated scrap on GameState.
+13. **`ar.invader.debug.add_money <delta>`** - adds/subtracts replicated money on GameState.
+14. **`ar.debug.add_meat [delta] [red|blue|white|none]`** - adds/subtracts replicated meat in the selected bucket (`none` default; can also pass color first without delta).
+15. **`ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`** - sets runtime `ARLog` verbosity via a lowercase shortcut.

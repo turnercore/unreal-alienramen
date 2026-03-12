@@ -566,8 +566,6 @@ void AARInvaderPlayerController::ServerRequestStopSharingSpice_Implementation()
 void AARInvaderPlayerController::RequestSetOfferPresence(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
-	const FVector2D CursorNormalized,
-	const bool bHasCursor,
 	const FGameplayTag SelectedUpgradeTag,
 	const int32 SelectedDestinationSlot,
 	const bool bHasSelection)
@@ -577,8 +575,6 @@ void AARInvaderPlayerController::RequestSetOfferPresence(
 		ServerRequestSetOfferPresence_Implementation(
 			HoveredUpgradeTag,
 			HoveredDestinationSlot,
-			CursorNormalized,
-			bHasCursor,
 			SelectedUpgradeTag,
 			SelectedDestinationSlot,
 			bHasSelection);
@@ -588,8 +584,6 @@ void AARInvaderPlayerController::RequestSetOfferPresence(
 	ServerRequestSetOfferPresence(
 		HoveredUpgradeTag,
 		HoveredDestinationSlot,
-		CursorNormalized,
-		bHasCursor,
 		SelectedUpgradeTag,
 		SelectedDestinationSlot,
 		bHasSelection);
@@ -598,8 +592,6 @@ void AARInvaderPlayerController::RequestSetOfferPresence(
 void AARInvaderPlayerController::ServerRequestSetOfferPresence_Implementation(
 	const FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
-	const FVector2D CursorNormalized,
-	const bool bHasCursor,
 	const FGameplayTag SelectedUpgradeTag,
 	const int32 SelectedDestinationSlot,
 	const bool bHasSelection)
@@ -610,8 +602,6 @@ void AARInvaderPlayerController::ServerRequestSetOfferPresence_Implementation(
 			GetInvaderPlayerState(),
 			HoveredUpgradeTag,
 			HoveredDestinationSlot,
-			CursorNormalized,
-			bHasCursor,
 			SelectedUpgradeTag,
 			SelectedDestinationSlot,
 			bHasSelection);
@@ -636,4 +626,3 @@ void AARInvaderPlayerController::ServerRequestClearOfferPresence_Implementation(
 		InvaderGameState->ClearOfferPresence(GetInvaderPlayerState());
 	}
 }
-

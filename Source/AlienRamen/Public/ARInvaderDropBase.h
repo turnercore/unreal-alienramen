@@ -7,7 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
 #include "ARInvaderDropTypes.h"
-#include "ARPickupBase.h"
+#include "ARInvaderPickupBase.h"
 #include "GameplayTagContainer.h"
 #include "ARInvaderDropBase.generated.h"
 
@@ -21,7 +21,7 @@ class USphereComponent;
  * - Collection transitions to short homing lerp and then destroys.
  */
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARInvaderDropBase : public AARPickupBase
+class ALIENRAMEN_API AARInvaderDropBase : public AARInvaderPickupBase
 {
 	GENERATED_BODY()
 

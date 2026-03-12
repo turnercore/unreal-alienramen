@@ -15,7 +15,7 @@ class ALIENRAMEN_API UARDialogueSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen|NPC"); }
+	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 	virtual FName GetSectionName() const override { return TEXT("Dialogue"); }
 
 	// TagContentResolver root tag used to resolve FARDialogueSpeakerRow records.
@@ -41,4 +41,12 @@ public:
 	// Safety guard for runtime node traversal loops.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ClampMin="16", UIMin="16"))
 	int32 MaxExecutionStepsPerAdvance = 1024;
+
+	// In per-player dialogue modes, allow only one active owner session per primary speaker at a time.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime")
+	bool bOnlyOneTalkerPerSpeakerInPerPlayerModes = true;
+
+	// When a speaker is busy and one-talker mode blocks starting a new session, attempt auto-eavesdrop to the active owner by default.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime")
+	bool bAutoEavesdropOnBusySpeakerByDefault = true;
 };

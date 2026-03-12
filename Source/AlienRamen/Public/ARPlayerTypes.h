@@ -30,5 +30,6 @@ enum class EARCoreAttributeType : uint8
 	MaxHealth,
 	Spice,
 	MaxSpice,
-	MoveSpeed
+	MoveSpeed,
+	Strength
 };
