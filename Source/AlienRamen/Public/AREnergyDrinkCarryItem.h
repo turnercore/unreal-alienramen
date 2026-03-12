@@ -27,6 +27,8 @@ public:
 	bool TryConsumeFromController(AARShopPlayerController* ShopController);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink")
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink")
 	FGameplayTag EnergyDrinkItemTag;
 };

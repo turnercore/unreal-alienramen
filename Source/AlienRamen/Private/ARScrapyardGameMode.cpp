@@ -44,6 +44,10 @@ AARScrapyardGameMode::AARScrapyardGameMode()
 	ensureMsgf(ModeTag.IsValid(), TEXT("[ScrapyardGameMode] Required gameplay tag 'Mode.Scrapyard' is missing."));
 	bAllowManualSaveInMode = false;
 	bShareLocalPauseAcrossControllersInMode = true;
+	bRouteModeTravelThroughTransitionMap = true;
+	TransitionTravelMapURL = TEXT("/Game/Maps/Lvl_Loading");
+	TransitionSourceMode = EARTransitionSourceMode::Scrapyard;
+	TransitionReason = EARTransitionReason::ScrapyardToShop;
 }
 
 void AARScrapyardGameMode::BeginPlay()

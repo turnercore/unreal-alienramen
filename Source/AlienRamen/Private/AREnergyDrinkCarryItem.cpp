@@ -8,6 +8,7 @@
 #include "ARShopPlayerController.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
+#include "Net/UnrealNetwork.h"
 
 void AAREnergyDrinkCarryItem::SetEnergyDrinkItemTag(const FGameplayTag NewItemTag)
 {
@@ -16,7 +17,13 @@ void AAREnergyDrinkCarryItem::SetEnergyDrinkItemTag(const FGameplayTag NewItemTa
 		return;
 	}
 
+	if (EnergyDrinkItemTag == NewItemTag)
+	{
+		return;
+	}
+
 	EnergyDrinkItemTag = NewItemTag;
+	ForceNetUpdate();
 }
 
 bool AAREnergyDrinkCarryItem::TryConsumeFromController(AARShopPlayerController* ShopController)
@@ -62,4 +69,10 @@ bool AAREnergyDrinkCarryItem::TryConsumeFromController(AARShopPlayerController* 
 
 	ReleaseCarryItem();
 	return true;
+}
+
+void AAREnergyDrinkCarryItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AAREnergyDrinkCarryItem, EnergyDrinkItemTag);
 }

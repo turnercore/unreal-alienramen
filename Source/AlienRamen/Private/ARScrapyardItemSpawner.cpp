@@ -208,14 +208,10 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::SpawnItemByDefinition(const 
 		return nullptr;
 	}
 
-	// Seed is kept for potential future per-spawn randomization; use it to initialize RNG to avoid unused warnings.
-	if (OverrideSeed != 0)
-	{
-		FMath::RandInit(OverrideSeed);
-	}
+	(void)OverrideSeed;
 
 	UClass* SpawnClass = FallbackCarryItemClass.Get();
-	if (ItemDef.ItemModelClass.IsValid())
+	if (!ItemDef.ItemModelClass.IsNull())
 	{
 		UClass* AuthoredClass = ItemDef.ItemModelClass.LoadSynchronous();
 		if (AuthoredClass && AuthoredClass->IsChildOf(AARScrapyardCarryItemBase::StaticClass()))
