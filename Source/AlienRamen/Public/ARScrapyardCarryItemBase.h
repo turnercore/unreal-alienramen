@@ -16,6 +16,7 @@ class ALIENRAMEN_API AARScrapyardCarryItemBase : public AARShopCarryItemBase
 
 public:
 	AARScrapyardCarryItemBase();
+	virtual void ForwardUseToController(AActor* UsingActor) override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Item")
 	FGameplayTag GetScrapyardItemTag() const { return ScrapyardItemTag; }
@@ -30,11 +31,13 @@ public:
 	int32 GetFallbackScrapCost() const { return FallbackScrapCost; }
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	// Tag key resolved through Scrapyard.Item route.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item")
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item")
 	FGameplayTag ScrapyardItemTag;
 
 	// Used only when item definition resolution fails.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ClampMin = "0", UIMin = "0"))
 	int32 FallbackScrapCost = 0;
 };

@@ -12,6 +12,7 @@
 #include "ARSaveSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARShopCarryComponent.h"
+#include "ARGameModeBase.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
@@ -282,7 +283,7 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 	}
 
 	const int32 LeftoverScrap = FMath::Max(0, InitialScrapBudget - PurchasedCostTotal);
-	const int32 WastedScrap = FMath::Max(0, InitialScrapBudget - (PurchasedCostTotal + LeftoverScrap));
+	const int32 WastedScrap = TrimmedCostTotal;
 
 	ReservedCostByItem.Reset();
 	SetRunLedgerScrap(LeftoverScrap);
@@ -335,8 +336,8 @@ bool AARScrapyardGameState::FinalizeScrapyardRunAndTravelToShop(const FString& I
 		return false;
 	}
 
-	const FString TravelURL = InShopTravelURL.IsEmpty() ? DefaultShopTravelURL : InShopTravelURL;
-	if (TravelURL.IsEmpty())
+	const FString ShopTravelURL = InShopTravelURL.IsEmpty() ? DefaultShopTravelURL : InShopTravelURL;
+	if (ShopTravelURL.IsEmpty())
 	{
 		return FinalizeScrapyardRun();
 	}
@@ -357,9 +358,21 @@ bool AARScrapyardGameState::FinalizeScrapyardRunAndTravelToShop(const FString& I
 	// Scrapyard finalization mutates authoritative runtime state and reward inventory first.
 	// Travel uses captured pending GameState data and intentionally skips pre-travel canonical save
 	// so SaveSubsystem dialogue/throttle guards cannot strand the host after run consumption.
-	if (!SaveSubsystem->RequestServerTravel(TravelURL, true, false, false, false))
+	FString FinalTravelURL = ShopTravelURL;
+	if (const AARGameModeBase* GameMode = GetWorld() ? Cast<AARGameModeBase>(GetWorld()->GetAuthGameMode()) : nullptr)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization travel failed for URL '%s'."), *TravelURL);
+		FinalTravelURL = GameMode->BuildModeTravelURL(ShopTravelURL);
+	}
+
+	if (FinalTravelURL.IsEmpty())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization travel aborted: destination URL is empty."));
+		return false;
+	}
+
+	if (!SaveSubsystem->RequestServerTravel(FinalTravelURL, true, false, false, false))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization travel failed for URL '%s'."), *FinalTravelURL);
 		return false;
 	}
 

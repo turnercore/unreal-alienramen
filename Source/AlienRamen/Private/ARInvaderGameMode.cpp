@@ -34,6 +34,10 @@ AARInvaderGameMode::AARInvaderGameMode()
 	bAutosaveOnQuit = false;
 	bAllowManualSaveInMode = false;
 	bShareLocalPauseAcrossControllersInMode = true;
+	bRouteModeTravelThroughTransitionMap = true;
+	TransitionTravelMapURL = TEXT("/Game/Maps/Lvl_Loading");
+	TransitionSourceMode = EARTransitionSourceMode::Invader;
+	TransitionReason = EARTransitionReason::InvaderToScrapyard;
 }
 
 void AARInvaderGameMode::BeginPlay()

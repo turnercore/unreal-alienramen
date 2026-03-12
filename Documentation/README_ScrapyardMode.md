@@ -18,12 +18,17 @@ This document captures the server-authoritative runtime contract for:
   - Deposited-item tracking + in-zone player tracking.
   - Per-zone replicated reserved-scrap read model.
   - Reserve/refund mutation entrypoint into Scrapyard GameState.
+- `AARScrapyardCarryItemBase`
+  - Scrapyard world-carryable base actor for extraction items.
+  - `ForwardUseToController` routes BI_Interactable-style use to scrapyard pickup (`AARScrapyardPlayerController`) instead of shop pickup.
+  - Replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI resolution.
 - `UARInvaderDirectorSubsystem`
   - End-of-run authority (loss, unanimous early-bail, stop reasons).
   - Death-penalty application to run ledger.
 - `UARRunBuffSubsystem`
   - Save-backed per-character stored/queued/active run-buff state.
   - Consume/apply/clear authority for energy-drink buffs.
+  - Extracted energy drinks route to stored inventory only when `Unlock.Shop.Storage.EnergyDrink` is active; otherwise they route to queued next-run stacks.
 - `UARItemDefinitionSubsystem`
   - Shared item-definition resolver facade used by Scrapyard + Shop.
   - Delegates row resolution to `UTagContentResolverSubsystem`.
@@ -65,6 +70,14 @@ This document captures the server-authoritative runtime contract for:
   - clamp by economy max storage settings.
   - clear run ledger after deposit.
 
+## Transition Handoff
+
+- Scrapyard finalization now defaults to transition-map routing:
+  - `Scrapyard -> Transition -> Shop`
+- `AARScrapyardGameState` resolves final travel URL through `AARGameModeBase::BuildModeTravelURL` so it shares the same transition routing/config contract as Shop/Invader.
+- Context is passed in URL options (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`) and hydrated into `AARTransitionGameState`.
+- Transition-map routing is configured per mode on `AARGameModeBase` (`bRouteModeTravelThroughTransitionMap`, `TransitionTravelMapURL`, `TransitionSourceMode`, `TransitionReason`).
+
 ## Scrapyard Finalization Rules
 
 - Candidate set:
@@ -99,6 +112,7 @@ This document captures the server-authoritative runtime contract for:
 
 - Shop consume scope:
   - `AAREnergyDrinkCarryItem` consume is accepted in `Mode.Shop` only.
+  - `AAREnergyDrinkCarryItem` replicates `EnergyDrinkItemTag` so remote UI can resolve drink content from spawned world actors.
 - Spawn ownership:
   - stored drink inventory is authoritative pre-spawn.
   - when spawned into shop anchors, inventory count is decremented.

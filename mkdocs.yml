@@ -21,6 +21,7 @@ nav:
       - Dialogue & NPC Runtime: README_DialogueNPC.md
   - Shop Ramen System: README_ShopRamenSystem.md
   - Scrapyard Mode: README_ScrapyardMode.md
+  - Transition Mode: README_TransitionMode.md
   - C++ Overview:
       - Overview: CppOverview/README.md
       - Enemy Base: CppOverview/AAREnemyBase.md
