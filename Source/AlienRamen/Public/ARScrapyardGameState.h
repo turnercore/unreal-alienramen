@@ -6,15 +6,18 @@
 
 #include "CoreMinimal.h"
 #include "ARGameStateBase.h"
+#include "ARRunBuffTypes.h"
 #include "ARScrapyardTypes.h"
 #include "ARScrapyardGameState.generated.h"
 
 class AARScrapyardCarryItemBase;
 class AARScrapyardExitZoneActor;
+class UARRunBuffSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardExtractionSummaryChangedSignature, const FARScrapyardExtractionSummary&, Summary);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunTimerChangedSignature, float, RemainingSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunActiveChangedSignature, bool, bIsRunActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunBuffSnapshotChangedSignature, const FARRunBuffStateSnapshot&, Snapshot);
 
 UCLASS()
 class ALIENRAMEN_API AARScrapyardGameState : public AARGameStateBase
@@ -40,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
 	float GetScrapyardRunRemainingSeconds() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
+	const FARRunBuffStateSnapshot& GetRunBuffStateSnapshot() const { return RunBuffStateSnapshot; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
 	void StartScrapyardRun(float RunDurationSeconds, int32 InRunSeed = 0);
@@ -80,8 +86,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Scrapyard")
 	FAROnScrapyardRunActiveChangedSignature OnScrapyardRunActiveChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Scrapyard")
+	FAROnScrapyardRunBuffSnapshotChangedSignature OnScrapyardRunBuffSnapshotChanged;
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -90,6 +100,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_ExtractionSummary(const FARScrapyardExtractionSummary& OldSummary);
+
+	UFUNCTION()
+	void OnRep_RunBuffStateSnapshot(const FARRunBuffStateSnapshot& OldSnapshot);
 
 private:
 	struct FScrapyardExtractionCandidate
@@ -107,6 +120,12 @@ private:
 	bool ResolveItemDefinitionForTag(FGameplayTag ItemTag, FARScrapyardItemDefRow& OutDef) const;
 	bool GrantRewardForCandidate(const FScrapyardExtractionCandidate& Candidate, FARScrapyardRewardGrant& OutGrantedReward);
 	void CleanupCandidateActor(const FScrapyardExtractionCandidate& Candidate);
+	void BindRunBuffSubsystem();
+	void UnbindRunBuffSubsystem();
+	void RefreshRunBuffStateSnapshot(bool bBroadcast);
+
+	UFUNCTION()
+	void HandleRunBuffStateChanged(const FARRunBuffStateSnapshot& Snapshot);
 
 	UPROPERTY(ReplicatedUsing = OnRep_ScrapyardRunActive, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	bool bScrapyardRunActive = false;
@@ -123,6 +142,9 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_ExtractionSummary, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	FARScrapyardExtractionSummary ExtractionSummary;
 
+	UPROPERTY(ReplicatedUsing = OnRep_RunBuffStateSnapshot, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
+	FARRunBuffStateSnapshot RunBuffStateSnapshot;
+
 	// Map URL used when finalizing and returning to shop.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	FString DefaultShopTravelURL = TEXT("/Game/Maps/Lvl_RamenShop");
@@ -135,6 +157,9 @@ private:
 
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<AARScrapyardExitZoneActor>> RegisteredExitZones;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<UARRunBuffSubsystem> BoundRunBuffSubsystem;
 
 	UPROPERTY(Transient)
 	int32 LastBroadcastWholeRemainingSeconds = INDEX_NONE;

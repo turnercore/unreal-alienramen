@@ -3,6 +3,7 @@
 #include "ARGameStateModeStructs.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ARRunBuffTypes.h"
 #include "ARRunBuffSubsystem.h"
 #include "ARScrapyardCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
@@ -102,52 +103,86 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 
 	TArray<FARScrapyardRewardGrant> GrantedRewards;
 	GrantedRewards.Reserve(KeptCandidates.Num());
+	TArray<FScrapyardExtractionCandidate> SuccessfulKeptCandidates;
+	SuccessfulKeptCandidates.Reserve(KeptCandidates.Num());
+	TArray<FScrapyardExtractionCandidate> FailedRewardCandidates;
+	FailedRewardCandidates.Reserve(KeptCandidates.Num());
 
-	auto GrantKeptByRewardType = [this, &KeptCandidates, &GrantedRewards](const EARScrapyardRewardType RewardTypeFilter)
+	struct FResolvedCandidateState
 	{
-		for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
+		FScrapyardExtractionCandidate Candidate;
+		FARScrapyardItemDefRow ItemDef;
+		bool bHasValidDefinition = false;
+		bool bProcessed = false;
+	};
+
+	TArray<FResolvedCandidateState> CandidateStates;
+	CandidateStates.Reserve(KeptCandidates.Num());
+	for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
+	{
+		FResolvedCandidateState& State = CandidateStates.AddDefaulted_GetRef();
+		State.Candidate = Candidate;
+		State.bHasValidDefinition = ResolveItemDefinitionForTag(Candidate.ItemTag, State.ItemDef);
+	}
+
+	auto ProcessCandidatesByRewardType = [this, &CandidateStates, &GrantedRewards, &SuccessfulKeptCandidates, &FailedRewardCandidates](const EARScrapyardRewardType RewardTypeFilter)
+	{
+		for (FResolvedCandidateState& State : CandidateStates)
 		{
-			FARScrapyardItemDefRow ItemDef;
-			if (!ResolveItemDefinitionForTag(Candidate.ItemTag, ItemDef))
+			if (State.bProcessed)
 			{
 				continue;
 			}
 
-			if (ItemDef.RewardType != RewardTypeFilter)
+			if (!State.bHasValidDefinition)
 			{
+				FailedRewardCandidates.Add(State.Candidate);
+				State.bProcessed = true;
+				continue;
+			}
+
+			if (State.ItemDef.RewardType != RewardTypeFilter)
+			{
+				continue;
+			}
+
+			State.bProcessed = true;
+			if (RewardTypeFilter == EARScrapyardRewardType::None)
+			{
+				SuccessfulKeptCandidates.Add(State.Candidate);
 				continue;
 			}
 
 			FARScrapyardRewardGrant RewardGrant;
-			if (GrantRewardForCandidate(Candidate, RewardGrant))
+			if (GrantRewardForCandidate(State.Candidate, RewardGrant))
 			{
 				GrantedRewards.Add(MoveTemp(RewardGrant));
+				SuccessfulKeptCandidates.Add(State.Candidate);
+			}
+			else
+			{
+				FailedRewardCandidates.Add(State.Candidate);
 			}
 		}
 	};
 
 	// Reward order is deterministic: unlocks first, then consumables, so unlock-gated
 	// routing (for example energy drink storage) is consistent regardless of item order.
-	GrantKeptByRewardType(EARScrapyardRewardType::LicenseUnlock);
-	GrantKeptByRewardType(EARScrapyardRewardType::EnergyDrink);
+	ProcessCandidatesByRewardType(EARScrapyardRewardType::LicenseUnlock);
+	ProcessCandidatesByRewardType(EARScrapyardRewardType::EnergyDrink);
+	ProcessCandidatesByRewardType(EARScrapyardRewardType::None);
 
-	for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
+	if (FailedRewardCandidates.Num() > 0)
 	{
-		FARScrapyardItemDefRow ItemDef;
-		if (!ResolveItemDefinitionForTag(Candidate.ItemTag, ItemDef))
-		{
-			continue;
-		}
-
-		if (ItemDef.RewardType == EARScrapyardRewardType::None)
-		{
-			FARScrapyardRewardGrant RewardGrant;
-			if (GrantRewardForCandidate(Candidate, RewardGrant))
-			{
-				GrantedRewards.Add(MoveTemp(RewardGrant));
-			}
-		}
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Scrapyard] Reclassified %d kept extraction candidates as trimmed due to reward delivery failures."),
+			FailedRewardCandidates.Num());
 	}
+
+	KeptCandidates = MoveTemp(SuccessfulKeptCandidates);
+	TrimmedCandidates.Append(FailedRewardCandidates);
 
 	for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
 	{
@@ -190,26 +225,29 @@ bool AARScrapyardGameState::FinalizeScrapyardRunAndTravelToShop(const FString& I
 		return false;
 	}
 
-	if (!FinalizeScrapyardRun())
-	{
-		return false;
-	}
-
 	const FString TravelURL = InShopTravelURL.IsEmpty() ? DefaultShopTravelURL : InShopTravelURL;
 	if (TravelURL.IsEmpty())
 	{
-		return true;
+		return FinalizeScrapyardRun();
 	}
 
 	UGameInstance* GameInstance = GetGameInstance();
 	UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
 	if (!SaveSubsystem)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization could not travel: SaveSubsystem missing."));
+		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization skipped: SaveSubsystem missing."));
 		return false;
 	}
 
-	if (!SaveSubsystem->RequestServerTravel(TravelURL, true, false, false, true))
+	if (!FinalizeScrapyardRun())
+	{
+		return false;
+	}
+
+	// Scrapyard finalization mutates authoritative runtime state and reward inventory first.
+	// Travel uses captured pending GameState data and intentionally skips pre-travel canonical save
+	// so SaveSubsystem dialogue/throttle guards cannot strand the host after run consumption.
+	if (!SaveSubsystem->RequestServerTravel(TravelURL, true, false, false, false))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization travel failed for URL '%s'."), *TravelURL);
 		return false;
@@ -340,8 +378,16 @@ void AARScrapyardGameState::BeginPlay()
 
 	if (HasAuthority())
 	{
+		BindRunBuffSubsystem();
 		StartScrapyardRun(DefaultRunDurationSeconds, 0);
+		RefreshRunBuffStateSnapshot(true);
 	}
+}
+
+void AARScrapyardGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnbindRunBuffSubsystem();
+	Super::EndPlay(EndPlayReason);
 }
 
 void AARScrapyardGameState::Tick(float DeltaSeconds)
@@ -370,6 +416,7 @@ void AARScrapyardGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunDurationSeconds);
 	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunSeed);
 	DOREPLIFETIME(AARScrapyardGameState, ExtractionSummary);
+	DOREPLIFETIME(AARScrapyardGameState, RunBuffStateSnapshot);
 }
 
 void AARScrapyardGameState::OnRep_ScrapyardRunActive(bool bOldRunActive)
@@ -386,6 +433,12 @@ void AARScrapyardGameState::OnRep_ExtractionSummary(const FARScrapyardExtraction
 {
 	(void)OldSummary;
 	OnScrapyardExtractionSummaryChanged.Broadcast(ExtractionSummary);
+}
+
+void AARScrapyardGameState::OnRep_RunBuffStateSnapshot(const FARRunBuffStateSnapshot& OldSnapshot)
+{
+	(void)OldSnapshot;
+	OnScrapyardRunBuffSnapshotChanged.Broadcast(RunBuffStateSnapshot);
 }
 
 void AARScrapyardGameState::SetScrapyardSharedScrap(int32 NewScrapValue)
@@ -651,4 +704,72 @@ void AARScrapyardGameState::CleanupCandidateActor(const FScrapyardExtractionCand
 
 		ItemActor->ReleaseCarryItem();
 	}
+}
+
+void AARScrapyardGameState::BindRunBuffSubsystem()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UARRunBuffSubsystem* RunBuffSubsystem = GameInstance ? GameInstance->GetSubsystem<UARRunBuffSubsystem>() : nullptr;
+	if (BoundRunBuffSubsystem.Get() == RunBuffSubsystem)
+	{
+		return;
+	}
+
+	UnbindRunBuffSubsystem();
+	BoundRunBuffSubsystem = RunBuffSubsystem;
+	if (RunBuffSubsystem)
+	{
+		RunBuffSubsystem->OnRunBuffStateChanged.AddUniqueDynamic(this, &AARScrapyardGameState::HandleRunBuffStateChanged);
+	}
+}
+
+void AARScrapyardGameState::UnbindRunBuffSubsystem()
+{
+	UARRunBuffSubsystem* RunBuffSubsystem = BoundRunBuffSubsystem.Get();
+	if (RunBuffSubsystem)
+	{
+		RunBuffSubsystem->OnRunBuffStateChanged.RemoveDynamic(this, &AARScrapyardGameState::HandleRunBuffStateChanged);
+	}
+
+	BoundRunBuffSubsystem.Reset();
+}
+
+void AARScrapyardGameState::RefreshRunBuffStateSnapshot(const bool bBroadcast)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FARRunBuffStateSnapshot NewSnapshot;
+	if (UARRunBuffSubsystem* RunBuffSubsystem = BoundRunBuffSubsystem.Get())
+	{
+		NewSnapshot = RunBuffSubsystem->GetRunBuffStateSnapshot();
+	}
+
+	const FARRunBuffStateSnapshot OldSnapshot = RunBuffStateSnapshot;
+	RunBuffStateSnapshot = MoveTemp(NewSnapshot);
+	if (bBroadcast)
+	{
+		OnRep_RunBuffStateSnapshot(OldSnapshot);
+	}
+	ForceNetUpdate();
+}
+
+void AARScrapyardGameState::HandleRunBuffStateChanged(const FARRunBuffStateSnapshot& Snapshot)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FARRunBuffStateSnapshot OldSnapshot = RunBuffStateSnapshot;
+	RunBuffStateSnapshot = Snapshot;
+	OnRep_RunBuffStateSnapshot(OldSnapshot);
+	ForceNetUpdate();
 }

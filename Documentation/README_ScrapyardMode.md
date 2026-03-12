@@ -9,6 +9,7 @@ This document captures the C++ runtime contracts for Scrapyard extraction econom
   - Shared scrap reserve/refund accounting (negative allowed only here).
   - Exit-zone registration and extraction candidate aggregation.
   - Deterministic overspend trim + reward grant finalization.
+  - Replicated run-buff snapshot read model for Scrapyard HUD/widgets.
 - `AARScrapyardExitZoneActor`
   - Tracks deposited carry items.
   - Tracks player occupancy in exit volume.
@@ -29,6 +30,7 @@ This document captures the C++ runtime contracts for Scrapyard extraction econom
 - Scrapyard allows negative shared scrap during extraction accounting.
 - Invader/Shop remain clamped non-negative because they use `AARGameStateBase::SetScrapFromSave`.
 - Scrapyard finalization always sets shared scrap to `0` before travel.
+- Scrapyard travel uses captured pending GameState overlay and skips pre-travel canonical save persistence (`bPersistSaveBeforeTravel=false`) to avoid dialogue/throttle save guards stranding a consumed run.
 
 ## Extraction Candidate Set
 
@@ -109,7 +111,7 @@ Idempotency guard:
     - `OnScrapyardExtractionSummaryChanged`
     - `OnScrapyardRunTimerChanged`
     - `OnScrapyardRunActiveChanged`
-  - Binds to `UARRunBuffSubsystem::OnRunBuffStateChanged`.
+    - `OnScrapyardRunBuffSnapshotChanged`
   - Caches latest summary/timer/run-active/run-buff snapshot and rebroadcasts through Blueprint events + assignable delegates.
   - Entry points:
     - `InitializeScrapyardHUD`
@@ -137,9 +139,11 @@ Idempotency guard:
 - `AARScrapyardGameState`
   - `GetExtractionSummary`
   - `GetScrapyardRunRemainingSeconds`
+  - `GetRunBuffStateSnapshot`
   - `OnScrapyardExtractionSummaryChanged`
   - `OnScrapyardRunTimerChanged`
   - `OnScrapyardRunActiveChanged`
+  - `OnScrapyardRunBuffSnapshotChanged`
 - `AARScrapyardExitZoneActor`
   - `GetDepositedReservedScrapValue`
   - `OnExitZoneChanged`

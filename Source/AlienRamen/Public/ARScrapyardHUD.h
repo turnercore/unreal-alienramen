@@ -14,7 +14,6 @@ class AARPlayerController;
 class AARScrapyardGameState;
 class AGameStateBase;
 class APlayerState;
-class UARRunBuffSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardHUDExtractionSummaryChangedSignature, const FARScrapyardExtractionSummary&, Summary);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardHUDRunTimerChangedSignature, float, RemainingSeconds);
@@ -40,9 +39,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
 	AARScrapyardGameState* GetBoundScrapyardGameState() const { return BoundScrapyardGameState.Get(); }
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
-	UARRunBuffSubsystem* GetBoundRunBuffSubsystem() const { return BoundRunBuffSubsystem.Get(); }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
 	bool GetCachedExtractionSummary(FARScrapyardExtractionSummary& OutSummary) const;
@@ -92,8 +88,6 @@ protected:
 private:
 	void BindScrapyardGameState(AARScrapyardGameState* InGameState);
 	void UnbindScrapyardGameState();
-	void BindRunBuffSubsystem(UARRunBuffSubsystem* InRunBuffSubsystem);
-	void UnbindRunBuffSubsystem();
 	void RefreshCachedState();
 
 	UFUNCTION()
@@ -113,9 +107,6 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
 	TWeakObjectPtr<AARScrapyardGameState> BoundScrapyardGameState;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
-	TWeakObjectPtr<UARRunBuffSubsystem> BoundRunBuffSubsystem;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
 	FARScrapyardExtractionSummary CachedExtractionSummary;
