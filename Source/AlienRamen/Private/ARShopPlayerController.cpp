@@ -609,14 +609,6 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 			return;
 		}
 
-		if (AAREnergyDrinkCarryItem* HeldDrink = Cast<AAREnergyDrinkCarryItem>(CarryComponent->GetHeldActor()))
-		{
-			if (HeldDrink->TryConsumeFromController(this))
-			{
-				return;
-			}
-		}
-
 		AActor* ReleasedActor = CarryComponent->ClearHeldActor(true);
 		if (!ReleasedActor)
 		{
