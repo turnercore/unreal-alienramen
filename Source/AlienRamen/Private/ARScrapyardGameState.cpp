@@ -1,6 +1,8 @@
 #include "ARScrapyardGameState.h"
 
+#include "AREconomySettings.h"
 #include "ARGameStateModeStructs.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARRunBuffTypes.h"
@@ -8,13 +10,12 @@
 #include "ARScrapyardCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
 #include "ARSaveSubsystem.h"
+#include "ARSaveGame.h"
 #include "ARShopCarryComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
-#include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
 
 AARScrapyardGameState::AARScrapyardGameState()
 {
@@ -36,8 +37,20 @@ float AARScrapyardGameState::GetScrapyardRunRemainingSeconds() const
 		return 0.0f;
 	}
 
-	const float Elapsed = GetServerWorldTimeSeconds() - ScrapyardRunStartServerTime;
+	const float Elapsed = ResolveScrapyardRunElapsedSeconds();
 	return FMath::Max(0.0f, ScrapyardRunDurationSeconds - Elapsed);
+}
+
+float AARScrapyardGameState::ResolveScrapyardRunElapsedSeconds() const
+{
+	float Elapsed = GetServerWorldTimeSeconds() - ScrapyardRunStartServerTime;
+	Elapsed -= ScrapyardRunAccumulatedPauseSeconds;
+	if (bScrapyardRunTimerPaused && ScrapyardRunPauseStartServerTime > 0.0f)
+	{
+		Elapsed -= FMath::Max(0.0f, GetServerWorldTimeSeconds() - ScrapyardRunPauseStartServerTime);
+	}
+
+	return FMath::Max(0.0f, Elapsed);
 }
 
 void AARScrapyardGameState::StartScrapyardRun(float RunDurationSeconds, int32 InRunSeed)
@@ -47,16 +60,77 @@ void AARScrapyardGameState::StartScrapyardRun(float RunDurationSeconds, int32 In
 		return;
 	}
 
+	const UAREconomySettings* EconomySettings = GetDefault<UAREconomySettings>();
 	const bool bOldRunActive = bScrapyardRunActive;
 	bScrapyardRunActive = true;
+	if (RunDurationSeconds <= 0.0f && EconomySettings)
+	{
+		RunDurationSeconds = EconomySettings->DefaultScrapyardDurationSeconds;
+	}
 	ScrapyardRunDurationSeconds = FMath::Max(1.0f, RunDurationSeconds);
 	ScrapyardRunStartServerTime = GetServerWorldTimeSeconds();
-	ScrapyardRunSeed = (InRunSeed != 0) ? InRunSeed : FMath::Rand();
+	ScrapyardRunSeed = (InRunSeed != 0)
+		? InRunSeed
+		: static_cast<int32>(HashCombine(GetTypeHash(FMath::Rand()), GetTypeHash(EconomySettings ? EconomySettings->ScrapyardSpawnSeedSalt : 1337)));
+	bScrapyardRunTimerPaused = false;
+	ScrapyardRunPauseStartServerTime = 0.0f;
+	ScrapyardRunAccumulatedPauseSeconds = 0.0f;
 	ReservedCostByItem.Reset();
 	LastBroadcastWholeRemainingSeconds = INDEX_NONE;
+	SetScrapyardSharedScrap(GetScrap() + GetRunLedgerScrap());
 
 	RefreshExtractionSummary(true);
 	OnRep_ScrapyardRunActive(bOldRunActive);
+	OnRep_ScrapyardRunTimerPaused(false);
+	BroadcastTimerIfNeeded(true);
+	ForceNetUpdate();
+}
+
+void AARScrapyardGameState::AddScrapyardTime(float AddedSeconds)
+{
+	if (!HasAuthority() || !bScrapyardRunActive)
+	{
+		return;
+	}
+
+	if (AddedSeconds <= 0.0f)
+	{
+		return;
+	}
+
+	ScrapyardRunDurationSeconds = FMath::Max(1.0f, ScrapyardRunDurationSeconds + AddedSeconds);
+	RefreshExtractionSummary(true);
+	BroadcastTimerIfNeeded(true);
+	ForceNetUpdate();
+}
+
+void AARScrapyardGameState::SetScrapyardRunTimerPaused(const bool bPaused)
+{
+	if (!HasAuthority() || !bScrapyardRunActive)
+	{
+		return;
+	}
+
+	if (bScrapyardRunTimerPaused == bPaused)
+	{
+		return;
+	}
+
+	const bool bOldPaused = bScrapyardRunTimerPaused;
+	const float Now = GetServerWorldTimeSeconds();
+	if (bPaused)
+	{
+		ScrapyardRunPauseStartServerTime = Now;
+	}
+	else if (ScrapyardRunPauseStartServerTime > 0.0f)
+	{
+		ScrapyardRunAccumulatedPauseSeconds += FMath::Max(0.0f, Now - ScrapyardRunPauseStartServerTime);
+		ScrapyardRunPauseStartServerTime = 0.0f;
+	}
+
+	bScrapyardRunTimerPaused = bPaused;
+	RefreshExtractionSummary(true);
+	OnRep_ScrapyardRunTimerPaused(bOldPaused);
 	BroadcastTimerIfNeeded(true);
 	ForceNetUpdate();
 }
@@ -169,6 +243,8 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 	// Reward order is deterministic: unlocks first, then consumables, so unlock-gated
 	// routing (for example energy drink storage) is consistent regardless of item order.
 	ProcessCandidatesByRewardType(EARScrapyardRewardType::LicenseUnlock);
+	ProcessCandidatesByRewardType(EARScrapyardRewardType::UnlockTag);
+	ProcessCandidatesByRewardType(EARScrapyardRewardType::ProgressionTag);
 	ProcessCandidatesByRewardType(EARScrapyardRewardType::EnergyDrink);
 	ProcessCandidatesByRewardType(EARScrapyardRewardType::None);
 
@@ -193,8 +269,36 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 		CleanupCandidateActor(Candidate);
 	}
 
+	int32 PurchasedCostTotal = 0;
+	for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
+	{
+		PurchasedCostTotal += FMath::Max(0, Candidate.ScrapCost);
+	}
+
+	int32 TrimmedCostTotal = 0;
+	for (const FScrapyardExtractionCandidate& Candidate : TrimmedCandidates)
+	{
+		TrimmedCostTotal += FMath::Max(0, Candidate.ScrapCost);
+	}
+
+	const int32 LeftoverScrap = FMath::Max(0, InitialScrapBudget - PurchasedCostTotal);
+	const int32 WastedScrap = FMath::Max(0, InitialScrapBudget - (PurchasedCostTotal + LeftoverScrap));
+
 	ReservedCostByItem.Reset();
+	SetRunLedgerScrap(LeftoverScrap);
 	SetScrapyardSharedScrap(0);
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* CurrentSave = SaveSubsystem->GetCurrentSaveGame())
+			{
+				CurrentSave->ShopTransientCarryables.Reset();
+				CurrentSave->bClearShopTransientCarryablesOnNextShopLoad = true;
+				SaveSubsystem->MarkSaveDirty();
+			}
+		}
+	}
 
 	const bool bOldRunActive = bScrapyardRunActive;
 	bScrapyardRunActive = false;
@@ -207,6 +311,12 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 	NewSummary.bRunActive = false;
 	NewSummary.KeptItemCount = KeptCandidates.Num();
 	NewSummary.TrimmedItemCount = TrimmedCandidates.Num();
+	NewSummary.LeftoverScrap = LeftoverScrap;
+	NewSummary.TrimmedScrap = TrimmedCostTotal;
+	NewSummary.WastedScrap = WastedScrap;
+	NewSummary.PurchasedItemCount = KeptCandidates.Num();
+	NewSummary.DiscardedItemCount = TrimmedCandidates.Num();
+	NewSummary.ConvertedMoney = 0;
 	NewSummary.GrantedRewards = MoveTemp(GrantedRewards);
 
 	const FARScrapyardExtractionSummary OldSummary = ExtractionSummary;
@@ -401,8 +511,13 @@ void AARScrapyardGameState::Tick(float DeltaSeconds)
 		return;
 	}
 
+	if (bScrapyardRunActive)
+	{
+		SetScrapyardRunTimerPaused(IsEffectivePauseStateActive());
+	}
+
 	PruneInvalidReservedItems();
-	if (bScrapyardRunActive && GetScrapyardRunRemainingSeconds() <= 0.0f)
+	if (bScrapyardRunActive && !bScrapyardRunTimerPaused && GetScrapyardRunRemainingSeconds() <= 0.0f)
 	{
 		FinalizeScrapyardRunAndTravelToShop(DefaultShopTravelURL);
 	}
@@ -415,6 +530,9 @@ void AARScrapyardGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunStartServerTime);
 	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunDurationSeconds);
 	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunSeed);
+	DOREPLIFETIME(AARScrapyardGameState, bScrapyardRunTimerPaused);
+	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunPauseStartServerTime);
+	DOREPLIFETIME(AARScrapyardGameState, ScrapyardRunAccumulatedPauseSeconds);
 	DOREPLIFETIME(AARScrapyardGameState, ExtractionSummary);
 	DOREPLIFETIME(AARScrapyardGameState, RunBuffStateSnapshot);
 }
@@ -433,6 +551,14 @@ void AARScrapyardGameState::OnRep_ExtractionSummary(const FARScrapyardExtraction
 {
 	(void)OldSummary;
 	OnScrapyardExtractionSummaryChanged.Broadcast(ExtractionSummary);
+}
+
+void AARScrapyardGameState::OnRep_ScrapyardRunTimerPaused(bool bOldPaused)
+{
+	if (bOldPaused != bScrapyardRunTimerPaused)
+	{
+		OnScrapyardRunTimerPausedChanged.Broadcast(bScrapyardRunTimerPaused);
+	}
 }
 
 void AARScrapyardGameState::OnRep_RunBuffStateSnapshot(const FARRunBuffStateSnapshot& OldSnapshot)
@@ -477,6 +603,12 @@ void AARScrapyardGameState::RefreshExtractionSummary(bool bBroadcast)
 	{
 		NewSummary.KeptItemCount = ExtractionSummary.KeptItemCount;
 		NewSummary.TrimmedItemCount = ExtractionSummary.TrimmedItemCount;
+		NewSummary.LeftoverScrap = ExtractionSummary.LeftoverScrap;
+		NewSummary.TrimmedScrap = ExtractionSummary.TrimmedScrap;
+		NewSummary.WastedScrap = ExtractionSummary.WastedScrap;
+		NewSummary.PurchasedItemCount = ExtractionSummary.PurchasedItemCount;
+		NewSummary.DiscardedItemCount = ExtractionSummary.DiscardedItemCount;
+		NewSummary.ConvertedMoney = ExtractionSummary.ConvertedMoney;
 		NewSummary.GrantedRewards = ExtractionSummary.GrantedRewards;
 	}
 
@@ -596,44 +728,9 @@ bool AARScrapyardGameState::ResolveItemDefinitionForTag(const FGameplayTag ItemT
 {
 	OutDef = FARScrapyardItemDefRow();
 
-	if (!ItemTag.IsValid())
-	{
-		return false;
-	}
-
 	UGameInstance* GameInstance = GetGameInstance();
-	UTagContentResolverSubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
-	if (!Resolver)
-	{
-		return false;
-	}
-
-	FInstancedStruct ResolvedRow;
-	FString ResolveError;
-	if (!Resolver->TryResolveRowForTag(ItemTag, ResolvedRow, ResolveError))
-	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[Scrapyard] Failed to resolve item row for '%s': %s"),
-			*ItemTag.ToString(),
-			*ResolveError);
-		return false;
-	}
-
-	const FARScrapyardItemDefRow* TypedRow = ResolvedRow.GetPtr<FARScrapyardItemDefRow>();
-	if (!TypedRow)
-	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[Scrapyard] Item row for '%s' was not FARScrapyardItemDefRow."),
-			*ItemTag.ToString());
-		return false;
-	}
-
-	OutDef = *TypedRow;
-	return true;
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	return ItemDefinitions && ItemDefinitions->ResolveItemDefinition(ItemTag, OutDef);
 }
 
 bool AARScrapyardGameState::GrantRewardForCandidate(const FScrapyardExtractionCandidate& Candidate, FARScrapyardRewardGrant& OutGrantedReward)
@@ -651,6 +748,7 @@ bool AARScrapyardGameState::GrantRewardForCandidate(const FScrapyardExtractionCa
 	switch (ItemDef.RewardType)
 	{
 	case EARScrapyardRewardType::LicenseUnlock:
+	case EARScrapyardRewardType::UnlockTag:
 		if (!ItemDef.LicenseUnlockTag.IsValid())
 		{
 			return false;
@@ -679,8 +777,26 @@ bool AARScrapyardGameState::GrantRewardForCandidate(const FScrapyardExtractionCa
 		return true;
 	}
 
+	case EARScrapyardRewardType::ProgressionTag:
+	{
+		if (!ItemDef.ProgressionRewardTag.IsValid())
+		{
+			return false;
+		}
+
+		UGameInstance* GameInstance = GetGameInstance();
+		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+		if (!SaveSubsystem || !SaveSubsystem->AddProgressionTag(ItemDef.ProgressionRewardTag))
+		{
+			return false;
+		}
+
+		OutGrantedReward.ProgressionRewardTag = ItemDef.ProgressionRewardTag;
+		return true;
+	}
+
 	default:
-		return false;
+		return ItemDef.RewardType == EARScrapyardRewardType::None;
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "ARShopPlayerController.h"
 
+#include "AREnergyDrinkCarryItem.h"
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
 #include "ARRamenMeatActor.h"
@@ -537,6 +538,14 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 			return;
 		}
 
+		if (AAREnergyDrinkCarryItem* HeldDrink = Cast<AAREnergyDrinkCarryItem>(CarryComponent->GetHeldActor()))
+		{
+			if (HeldDrink->TryConsumeFromController(this))
+			{
+				return;
+			}
+		}
+
 		AActor* ReleasedActor = CarryComponent->ClearHeldActor(true);
 		if (!ReleasedActor)
 		{
@@ -554,4 +563,34 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 void AARShopPlayerController::ServerRequestShopThrowHeldCarryItem_Implementation(const float ThrowStrength)
 {
 	RequestShopThrowHeldCarryItem(ThrowStrength);
+}
+
+void AARShopPlayerController::RequestConsumeHeldEnergyDrink()
+{
+	if (HasAuthority())
+	{
+		UARShopCarryComponent* CarryComponent = ResolveShopCarryComponentFromController(this);
+		AAREnergyDrinkCarryItem* HeldDrink = CarryComponent ? Cast<AAREnergyDrinkCarryItem>(CarryComponent->GetHeldActor()) : nullptr;
+		if (!HeldDrink)
+		{
+			return;
+		}
+
+		const bool bConsumed = HeldDrink->TryConsumeFromController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|EnergyDrink] Consume controller='%s' actor='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(HeldDrink),
+			bConsumed ? 1 : 0);
+		return;
+	}
+
+	ServerRequestConsumeHeldEnergyDrink();
+}
+
+void AARShopPlayerController::ServerRequestConsumeHeldEnergyDrink_Implementation()
+{
+	RequestConsumeHeldEnergyDrink();
 }

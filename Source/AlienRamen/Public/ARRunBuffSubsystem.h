@@ -35,6 +35,9 @@ public:
 	int32 GetStoredEnergyDrinkCount(FGameplayTag ItemTag) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Run Buff")
+	int32 GetStoredEnergyDrinkCountForCharacter(FGameplayTag ItemTag, FGameplayTag CharacterTag) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Run Buff")
 	int32 GetQueuedEnergyDrinkCount(FGameplayTag ItemTag) const;
 
 	/** True when storage unlock is active; extracted drinks route to storage instead of queue. */
@@ -55,6 +58,29 @@ public:
 	/** Queue additional drink stack directly for next Invader run rotation. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
 	bool QueueEnergyDrinkForNextRun(FGameplayTag ItemTag, int32 Count = 1);
+
+	/** Shop-only consume path: applies one drink payload immediately for this character. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
+	bool ConsumeEnergyDrinkForCharacter(FGameplayTag ItemTag, FGameplayTag CharacterTag);
+
+	/** Convenience consume wrapper that resolves character key from PlayerState. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
+	bool ConsumeEnergyDrinkForPlayerState(FGameplayTag ItemTag, AARPlayerStateBase* PlayerState);
+
+	/** Shop-world consume path for spawned carry actors (does not require stored inventory count). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
+	bool ConsumeSpawnedEnergyDrinkForPlayerState(FGameplayTag ItemTag, AARPlayerStateBase* PlayerState);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Run Buff")
+	bool IsEnergyDrinkActiveForCharacter(FGameplayTag ItemTag, FGameplayTag CharacterTag) const;
+
+	/** Shop-entry hard clear for run-only buff payloads (keeps stored inventory). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
+	void ClearRunBuffsForShopEntry();
+
+	/** Invader-end clear for persisted queued buffers while keeping active payload until shop cleanup. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
+	void ClearQueuedRunBuffsAtInvaderEnd();
 
 	/** Sell stored drink(s) for money based on scrapyard item definition sell values. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Run Buff")
@@ -88,26 +114,28 @@ private:
 	const UARSaveGame* ResolveSave() const;
 	AARGameStateBase* ResolveGameState() const;
 	bool ResolveScrapyardItemDefinition(FGameplayTag ItemTag, struct FARScrapyardItemDefRow& OutDef) const;
+	bool ResolveEnergyDrinkDefinition(FGameplayTag ItemTag, struct FAREnergyDrinkDefRow& OutDef) const;
 	int32 ResolveMaxStackCountForItem(FGameplayTag ItemTag) const;
 	FGameplayTag ResolveEnergyDrinkStorageUnlockTag() const;
-	static int32 GetStackCount(const TArray<FARRunBuffItemStack>& Stacks, FGameplayTag ItemTag);
-	static int32 UpsertStackCount(TArray<FARRunBuffItemStack>& Stacks, FGameplayTag ItemTag, int32 Delta);
+	FGameplayTag ResolveCharacterTagFromPlayerState(const AARPlayerStateBase* PlayerState) const;
+	static int32 GetStackCount(const TArray<FARRunBuffItemStack>& Stacks, FGameplayTag ItemTag, FGameplayTag CharacterTag = FGameplayTag());
+	static int32 UpsertStackCount(TArray<FARRunBuffItemStack>& Stacks, FGameplayTag ItemTag, FGameplayTag CharacterTag, int32 Delta);
+	static bool IsMatchingStackKey(const FARRunBuffItemStack& Stack, FGameplayTag ItemTag, FGameplayTag CharacterTag);
+	static bool IsMatchingPayloadKey(const FARRunBuffActivePayload& Payload, FGameplayTag ItemTag, FGameplayTag CharacterTag);
 	static void NormalizeStacks(TArray<FARRunBuffItemStack>& Stacks);
+	static void NormalizePayloads(TArray<FARRunBuffActivePayload>& Payloads);
 	void MarkSaveDirty() const;
 	void BroadcastSnapshotChanged() const;
 	void ResetRuntimeApplications();
 	void RemoveRuntimeApplicationsFromPlayer(AARPlayerStateBase* PlayerState);
 	void ApplyPayloadToPlayer(AARPlayerStateBase* PlayerState, const FARRunBuffActivePayload& Payload);
+	bool ApplyEnergyDrinkPayloadForCharacter(UARSaveGame* SaveGame, FGameplayTag ItemTag, FGameplayTag CharacterTag);
 
-	UPROPERTY(Transient)
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, TArray<FActiveGameplayEffectHandle>> AppliedEffectHandlesByPlayer;
 
-	UPROPERTY(Transient)
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, TArray<FAppliedTagCount>> AppliedTagCountsByPlayer;
 
-	UPROPERTY(Transient)
 	TWeakObjectPtr<UWorld> LastRotationWorld;
 
-	UPROPERTY(Transient)
 	int32 LastRotationCycleId = INDEX_NONE;
 };

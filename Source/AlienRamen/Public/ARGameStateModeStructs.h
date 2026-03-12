@@ -27,6 +27,12 @@ struct ALIENRAMEN_API FARInvaderGameStateData
 	FARMeatState Meat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
@@ -52,6 +58,12 @@ struct ALIENRAMEN_API FARScrapyardGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FARMeatState Meat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
@@ -81,6 +93,12 @@ struct ALIENRAMEN_API FARShopGameStateData
 	FARMeatState Meat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
@@ -106,6 +124,12 @@ struct ALIENRAMEN_API FARLobbyGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FARMeatState Meat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;

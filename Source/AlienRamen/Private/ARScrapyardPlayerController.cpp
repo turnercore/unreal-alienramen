@@ -17,7 +17,7 @@ namespace
 		return Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
 	}
 
-	static UPrimitiveComponent* ResolveCarryPhysicsPrimitive(AActor* Actor)
+	static UPrimitiveComponent* ResolveScrapyardCarryPhysicsPrimitive(AActor* Actor)
 	{
 		if (!Actor)
 		{
@@ -107,7 +107,7 @@ void AARScrapyardPlayerController::RequestScrapyardDropHeldCarryItem()
 			return;
 		}
 
-		if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ReleasedActor))
+		if (UPrimitiveComponent* PhysicsPrimitive = ResolveScrapyardCarryPhysicsPrimitive(ReleasedActor))
 		{
 			if (!PhysicsPrimitive->IsSimulatingPhysics())
 			{
@@ -132,8 +132,8 @@ void AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem(float Thro
 	if (HasAuthority())
 	{
 		UARShopCarryComponent* CarryComponent = ResolveScrapyardCarryComponent(this);
-		APawn* Pawn = GetPawn();
-		if (!CarryComponent || !Pawn)
+		APawn* ControlledPawn = GetPawn();
+		if (!CarryComponent || !ControlledPawn)
 		{
 			return;
 		}
@@ -144,7 +144,7 @@ void AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem(float Thro
 			return;
 		}
 
-		if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ReleasedActor))
+		if (UPrimitiveComponent* PhysicsPrimitive = ResolveScrapyardCarryPhysicsPrimitive(ReleasedActor))
 		{
 			if (!PhysicsPrimitive->IsSimulatingPhysics())
 			{
@@ -152,7 +152,7 @@ void AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem(float Thro
 			}
 			PhysicsPrimitive->SetEnableGravity(true);
 			PhysicsPrimitive->WakeAllRigidBodies();
-			PhysicsPrimitive->AddImpulse(Pawn->GetActorForwardVector() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
+			PhysicsPrimitive->AddImpulse(ControlledPawn->GetActorForwardVector() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
 		}
 		return;
 	}

@@ -106,7 +106,7 @@ namespace
 		}
 
 		auto& DepositedItems =
-			const_cast<TArray<TObjectPtr<AARScrapyardCarryItemBase>>&>(OutExitZone->GetDepositedItems());
+			const_cast<TArray<TObjectPtr<AARScrapyardCarryItemBase>>&>(OutExitZone->GetDepositedItemsRef());
 		for (AARScrapyardCarryItemBase* ItemActor : OutItems)
 		{
 			DepositedItems.Add(ItemActor);

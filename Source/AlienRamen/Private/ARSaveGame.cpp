@@ -1,4 +1,5 @@
 #include "ARSaveGame.h"
+#include "GameplayEffect.h"
 
 UARSaveGame::UARSaveGame()
 {
@@ -102,7 +103,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	auto SanitizeStackArray =
 		[OutWarnings, &ClampedCount](TArray<FARRunBuffItemStack>& Stacks, const TCHAR* FieldName)
 	{
-		TMap<FGameplayTag, int32> Aggregated;
+		TMap<FString, FARRunBuffItemStack> Aggregated;
 		bool bChanged = false;
 
 		for (const FARRunBuffItemStack& Stack : Stacks)
@@ -120,21 +121,35 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				continue;
 			}
 
-			Aggregated.FindOrAdd(Stack.ItemTag) += Count;
+			const FString StackKey = FString::Printf(TEXT("%s|%s"), *Stack.CharacterTag.ToString(), *Stack.ItemTag.ToString());
+			FARRunBuffItemStack& AggregatedStack = Aggregated.FindOrAdd(StackKey);
+			AggregatedStack.CharacterTag = Stack.CharacterTag;
+			AggregatedStack.ItemTag = Stack.ItemTag;
+			AggregatedStack.Count += Count;
 		}
 
 		TArray<FARRunBuffItemStack> Sanitized;
 		Sanitized.Reserve(Aggregated.Num());
-		for (const TPair<FGameplayTag, int32>& Pair : Aggregated)
+		for (const TPair<FString, FARRunBuffItemStack>& Pair : Aggregated)
 		{
-			FARRunBuffItemStack Stack;
-			Stack.ItemTag = Pair.Key;
-			Stack.Count = Pair.Value;
-			Sanitized.Add(Stack);
+			if (Pair.Value.Count <= 0 || !Pair.Value.ItemTag.IsValid())
+			{
+				bChanged = true;
+				continue;
+			}
+
+			Sanitized.Add(Pair.Value);
 		}
 
 		Sanitized.Sort([](const FARRunBuffItemStack& A, const FARRunBuffItemStack& B)
 		{
+			const FString CharA = A.CharacterTag.ToString();
+			const FString CharB = B.CharacterTag.ToString();
+			if (CharA != CharB)
+			{
+				return CharA < CharB;
+			}
+
 			return A.ItemTag.ToString() < B.ItemTag.ToString();
 		});
 
@@ -146,6 +161,39 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			{
 				OutWarnings->Add(FString::Printf(TEXT("%s contained invalid entries and was normalized."), FieldName));
 			}
+		}
+	};
+
+	auto SanitizeShopTransientCarryables =
+		[OutWarnings, &ClampedCount](TArray<FARShopTransientCarryableSnapshot>& Snapshots)
+	{
+		bool bChanged = false;
+		for (int32 SnapshotIndex = Snapshots.Num() - 1; SnapshotIndex >= 0; --SnapshotIndex)
+		{
+			FARShopTransientCarryableSnapshot& Snapshot = Snapshots[SnapshotIndex];
+			if (Snapshot.ActorClass.IsNull() || !Snapshot.WorldTransform.IsValid())
+			{
+				Snapshots.RemoveAtSwap(SnapshotIndex);
+				bChanged = true;
+				continue;
+			}
+
+			if (Snapshot.MeatAmount < 1)
+			{
+				Snapshot.MeatAmount = 1;
+				bChanged = true;
+			}
+		}
+
+		if (!bChanged)
+		{
+			return;
+		}
+
+		++ClampedCount;
+		if (OutWarnings)
+		{
+			OutWarnings->Add(TEXT("ShopTransientCarryables contained invalid data and was sanitized."));
 		}
 	};
 
@@ -173,6 +221,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));
 	SanitizeStackArray(StoredEnergyDrinkStacks, TEXT("StoredEnergyDrinkStacks"));
 	SanitizeStackArray(QueuedEnergyDrinkStacks, TEXT("QueuedEnergyDrinkStacks"));
+	SanitizeShopTransientCarryables(ShopTransientCarryables);
 
 	for (int32 PayloadIndex = ActiveRunBuffPayloads.Num() - 1; PayloadIndex >= 0; --PayloadIndex)
 	{
