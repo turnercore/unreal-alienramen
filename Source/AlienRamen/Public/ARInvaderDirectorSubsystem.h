@@ -48,6 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader", meta = (BlueprintAuthorityOnly))
 	void StopInvaderRun();
 
+	// Marks/unmarks this player's intent to end the run early. Run ends when all active players vote yes.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader", meta = (BlueprintAuthorityOnly))
+	bool SubmitEarlyBailVote(AARPlayerStateBase* PlayerState, bool bVoteYes);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
 	bool IsRunActive() const { return bRunActive; }
 
@@ -161,6 +165,7 @@ private:
 	void StopInvaderRunWithReason(EARInvaderRunEndReason EndReason);
 	void ResetRunState(bool bForActiveRunStart);
 	void RefreshPlayerStatusSignals();
+	void EvaluateEarlyBailVotes();
 	void RebuildPlayerStatusBindings();
 	void ClearPlayerStatusBindings();
 
@@ -252,6 +257,7 @@ private:
 	int32 DeadPlayerCountCached = 0;
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDownedCache;
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDeadCache;
+	TSet<EARPlayerSlot> EarlyBailVotesBySlot;
 
 	struct FPlayerStatusBinding
 	{

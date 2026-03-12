@@ -49,31 +49,23 @@ void AARShopStationActor::Tick(float DeltaSeconds)
 		return;
 	}
 
-	if (RuntimeState != EARRamenStationRuntimeState::Processing || !bProcessingActive)
+	if (RuntimeState != EARRamenStationRuntimeState::Processing)
 	{
-		if (RuntimeState == EARRamenStationRuntimeState::Processing)
-		{
-			const bool bWasProcessingActive = bProcessingActive;
-			RefreshProcessingActiveFlag();
-			if (bWasProcessingActive != bProcessingActive)
-			{
-				ForceNetUpdate();
-				BroadcastRuntimeChanged();
-			}
-		}
-
 		return;
 	}
 
+	// Keep activation refresh and progress advancement in one flow so resumed processing
+	// can advance in the same frame controllers become active again.
 	const bool bWasProcessingActive = bProcessingActive;
 	RefreshProcessingActiveFlag();
+	if (bWasProcessingActive != bProcessingActive)
+	{
+		ForceNetUpdate();
+		BroadcastRuntimeChanged();
+	}
+
 	if (!bProcessingActive)
 	{
-		if (bWasProcessingActive != bProcessingActive)
-		{
-			ForceNetUpdate();
-			BroadcastRuntimeChanged();
-		}
 		return;
 	}
 

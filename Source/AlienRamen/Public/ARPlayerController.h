@@ -9,6 +9,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "ARDialogueTypes.h"
+#include "ARTransitionTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "TimerManager.h"
 #include "ARPlayerController.generated.h"
@@ -91,11 +92,11 @@ public:
 
 	// Controller travel entrypoint for UI/BP. Routes to server when called by clients.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
-	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
+	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
 
 	// Server-side travel request handler.
 	UFUNCTION(Server, Reliable)
-	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
+	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
 
 	// Unlock mutation entrypoints for UI/BP. Route to server when called by clients.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -352,17 +353,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
 	bool bAutoManageDialogueInputMode = true;
 
-	// Authoritative anti-cheat interaction bound for server RPC actor targets.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (ClampMin = "50.0", UIMin = "50.0"))
-	float ServerInteractionMaxDistance = 450.0f;
-
-	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
+	/** Max server-side distance allowed for direct interaction requests (NPC/storage/etc). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction")
+	float ServerInteractionMaxDistance = 300.0f;
 
 private:
 	void LeaveSessionInternal();
-	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE);
+	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
+	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 	void RequestHUDInitializationInternal(bool bForceBroadcast);
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
