@@ -113,7 +113,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
-- Dialogue-related settings pages are grouped under `Project Settings -> Dialogue` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
+- Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 
