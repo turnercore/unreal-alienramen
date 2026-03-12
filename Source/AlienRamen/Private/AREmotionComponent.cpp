@@ -4,18 +4,24 @@
 #include "AREmotionSettings.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
+#include "Engine/World.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
 #include "GameplayTagsManager.h"
 #include "Net/UnrealNetwork.h"
+#include "TimerManager.h"
+#if WITH_EDITOR
+#include "Components/BillboardComponent.h"
+#include "UObject/UnrealType.h"
+#endif
 
 namespace
 {
+	static const FName DialogueEmotionSourceId(TEXT("Dialogue"));
+
 	static EARPlayerSlot ResolveViewerSlot(const AARPlayerController* ViewerController)
 	{
 		if (!ViewerController)
@@ -46,6 +52,26 @@ UAREmotionComponent::UAREmotionComponent()
 {
 	SetIsReplicatedByDefault(true);
 }
+
+#if WITH_EDITOR
+void UAREmotionComponent::OnRegister()
+{
+	Super::OnRegister();
+	RefreshEditorPreviewBillboard();
+}
+
+void UAREmotionComponent::OnUnregister()
+{
+	DestroyEditorPreviewBillboard();
+	Super::OnUnregister();
+}
+
+void UAREmotionComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	RefreshEditorPreviewBillboard();
+}
+#endif
 
 void UAREmotionComponent::SetEmotionTag(const FGameplayTag NewEmotionTag)
 {
@@ -111,68 +137,216 @@ void UAREmotionComponent::ClearAllEmotionTags()
 
 void UAREmotionComponent::SetDialogueEmotionTag(const FGameplayTag NewEmotionTag)
 {
-	if (!IsAuthorityOwner() || AreTagsEqual(DialogueOverrideState.SharedEmotionTag, NewEmotionTag))
-	{
-		return;
-	}
-
-	const FAREmotionDisplayState OldDialogueState = DialogueOverrideState;
-	DialogueOverrideState.SharedEmotionTag = NewEmotionTag;
-	OnRep_DialogueOverrideState(OldDialogueState);
-	ForceOwnerNetUpdate();
+	SetSystemEmotionTag(DialogueEmotionSourceId, NewEmotionTag, 0);
 }
 
 void UAREmotionComponent::SetDialogueEmotionTagForPlayerSlot(const EARPlayerSlot PlayerSlot, const FGameplayTag NewEmotionTag)
 {
-	if (!IsAuthorityOwner())
-	{
-		return;
-	}
-
-	const FGameplayTag Existing = GetStateSlotTag(DialogueOverrideState, PlayerSlot);
-	if (AreTagsEqual(Existing, NewEmotionTag))
-	{
-		return;
-	}
-
-	const FAREmotionDisplayState OldDialogueState = DialogueOverrideState;
-	SetStateSlotTag(DialogueOverrideState, PlayerSlot, NewEmotionTag);
-	OnRep_DialogueOverrideState(OldDialogueState);
-	ForceOwnerNetUpdate();
+	SetSystemEmotionTagForPlayerSlot(DialogueEmotionSourceId, PlayerSlot, NewEmotionTag, 0);
 }
 
 void UAREmotionComponent::ClearDialogueEmotionTag()
 {
-	SetDialogueEmotionTag(FGameplayTag());
+	ClearSystemEmotionTag(DialogueEmotionSourceId);
 }
 
 void UAREmotionComponent::ClearDialogueEmotionTagForPlayerSlot(const EARPlayerSlot PlayerSlot)
 {
-	SetDialogueEmotionTagForPlayerSlot(PlayerSlot, FGameplayTag());
+	ClearSystemEmotionTagForPlayerSlot(DialogueEmotionSourceId, PlayerSlot);
 }
 
 void UAREmotionComponent::ClearAllDialogueEmotionTags()
 {
-	if (!IsAuthorityOwner())
+	ClearAllSystemEmotionTagsForSource(DialogueEmotionSourceId);
+}
+
+void UAREmotionComponent::SetSystemEmotionTag(const FName SourceId, const FGameplayTag NewEmotionTag, const int32 Priority)
+{
+	if (!IsAuthorityOwner() || SourceId.IsNone())
 	{
 		return;
 	}
 
-	if (!DialogueOverrideState.SharedEmotionTag.IsValid()
-		&& !DialogueOverrideState.P1EmotionTag.IsValid()
-		&& !DialogueOverrideState.P2EmotionTag.IsValid())
+	FSystemEmotionSourceState& SourceState = SystemEmotionSources.FindOrAdd(SourceId);
+	SourceState.Priority = Priority;
+	SourceState.LastWriteSerial = NextSystemEmotionWriteSerial++;
+	SourceState.State.SharedEmotionTag = NewEmotionTag;
+	if (!HasAnyStateTag(SourceState.State))
+	{
+		ClearAllTimedSystemOverrideTimersForSource(SourceId);
+		SystemEmotionSources.Remove(SourceId);
+	}
+
+	if (RebuildSystemOverrideStateFromSources())
+	{
+		ForceOwnerNetUpdate();
+	}
+}
+
+void UAREmotionComponent::SetSystemEmotionTagForDuration(const FName SourceId, const FGameplayTag NewEmotionTag, const float DurationSeconds, const int32 Priority)
+{
+	SetSystemEmotionTag(SourceId, NewEmotionTag, Priority);
+	if (!IsAuthorityOwner() || SourceId.IsNone())
 	{
 		return;
 	}
 
-	const FAREmotionDisplayState OldDialogueState = DialogueOverrideState;
-	DialogueOverrideState = FAREmotionDisplayState();
-	OnRep_DialogueOverrideState(OldDialogueState);
-	ForceOwnerNetUpdate();
+	if (!NewEmotionTag.IsValid())
+	{
+		ClearTimedSystemOverrideTimer(SourceId);
+		return;
+	}
+
+	const float EffectiveDuration = ResolveTimedSystemOverrideDurationSeconds(DurationSeconds);
+	SetTimedSystemOverrideClearTimer(SourceId, EffectiveDuration);
+}
+
+void UAREmotionComponent::SetSystemEmotionTagForPlayerSlot(const FName SourceId, const EARPlayerSlot PlayerSlot, const FGameplayTag NewEmotionTag, const int32 Priority)
+{
+	if (!IsAuthorityOwner() || SourceId.IsNone())
+	{
+		return;
+	}
+
+	FSystemEmotionSourceState& SourceState = SystemEmotionSources.FindOrAdd(SourceId);
+	SourceState.Priority = Priority;
+	SourceState.LastWriteSerial = NextSystemEmotionWriteSerial++;
+	SetStateSlotTag(SourceState.State, PlayerSlot, NewEmotionTag);
+	if (!HasAnyStateTag(SourceState.State))
+	{
+		ClearAllTimedSystemOverrideTimersForSource(SourceId);
+		SystemEmotionSources.Remove(SourceId);
+	}
+
+	if (RebuildSystemOverrideStateFromSources())
+	{
+		ForceOwnerNetUpdate();
+	}
+}
+
+void UAREmotionComponent::SetSystemEmotionTagForPlayerSlotForDuration(
+	const FName SourceId,
+	const EARPlayerSlot PlayerSlot,
+	const FGameplayTag NewEmotionTag,
+	const float DurationSeconds,
+	const int32 Priority)
+{
+	SetSystemEmotionTagForPlayerSlot(SourceId, PlayerSlot, NewEmotionTag, Priority);
+	if (!IsAuthorityOwner() || SourceId.IsNone())
+	{
+		return;
+	}
+
+	if (!NewEmotionTag.IsValid())
+	{
+		ClearTimedSystemOverrideSlotTimer(SourceId, PlayerSlot);
+		return;
+	}
+
+	const float EffectiveDuration = ResolveTimedSystemOverrideDurationSeconds(DurationSeconds);
+	SetTimedSystemOverrideSlotClearTimer(SourceId, PlayerSlot, EffectiveDuration);
+}
+
+void UAREmotionComponent::ClearSystemEmotionTag(const FName SourceId)
+{
+	if (!IsAuthorityOwner() || SourceId.IsNone())
+	{
+		return;
+	}
+
+	ClearTimedSystemOverrideTimer(SourceId);
+	if (FSystemEmotionSourceState* SourceState = SystemEmotionSources.Find(SourceId))
+	{
+		SourceState->LastWriteSerial = NextSystemEmotionWriteSerial++;
+		SourceState->State.SharedEmotionTag = FGameplayTag();
+		if (!HasAnyStateTag(SourceState->State))
+		{
+			SystemEmotionSources.Remove(SourceId);
+		}
+	}
+
+	if (RebuildSystemOverrideStateFromSources())
+	{
+		ForceOwnerNetUpdate();
+	}
+}
+
+void UAREmotionComponent::ClearSystemEmotionTagForPlayerSlot(const FName SourceId, const EARPlayerSlot PlayerSlot)
+{
+	if (!IsAuthorityOwner() || SourceId.IsNone())
+	{
+		return;
+	}
+
+	ClearTimedSystemOverrideSlotTimer(SourceId, PlayerSlot);
+	if (FSystemEmotionSourceState* SourceState = SystemEmotionSources.Find(SourceId))
+	{
+		SourceState->LastWriteSerial = NextSystemEmotionWriteSerial++;
+		SetStateSlotTag(SourceState->State, PlayerSlot, FGameplayTag());
+		if (!HasAnyStateTag(SourceState->State))
+		{
+			SystemEmotionSources.Remove(SourceId);
+		}
+	}
+
+	if (RebuildSystemOverrideStateFromSources())
+	{
+		ForceOwnerNetUpdate();
+	}
+}
+
+void UAREmotionComponent::ClearAllSystemEmotionTagsForSource(const FName SourceId)
+{
+	if (!IsAuthorityOwner() || SourceId.IsNone())
+	{
+		return;
+	}
+
+	ClearAllTimedSystemOverrideTimersForSource(SourceId);
+	if (SystemEmotionSources.Remove(SourceId) <= 0)
+	{
+		return;
+	}
+
+	if (RebuildSystemOverrideStateFromSources())
+	{
+		ForceOwnerNetUpdate();
+	}
+}
+
+void UAREmotionComponent::ClearAllSystemEmotionTags()
+{
+	if (!IsAuthorityOwner() || SystemEmotionSources.IsEmpty())
+	{
+		return;
+	}
+
+	TArray<FName> SourceIds;
+	SystemEmotionSources.GetKeys(SourceIds);
+	for (const FName SourceId : SourceIds)
+	{
+		ClearAllTimedSystemOverrideTimersForSource(SourceId);
+	}
+	SystemEmotionSources.Reset();
+	if (RebuildSystemOverrideStateFromSources())
+	{
+		ForceOwnerNetUpdate();
+	}
 }
 
 FGameplayTag UAREmotionComponent::GetDisplayedEmotionTagForPlayerSlot(const EARPlayerSlot PlayerSlot) const
 {
+	const FGameplayTag SystemSlotTag = GetStateSlotTag(SystemOverrideState, PlayerSlot);
+	if (SystemSlotTag.IsValid())
+	{
+		return SystemSlotTag;
+	}
+
+	if (SystemOverrideState.SharedEmotionTag.IsValid())
+	{
+		return SystemOverrideState.SharedEmotionTag;
+	}
+
 	const FGameplayTag DialogueSlotTag = GetStateSlotTag(DialogueOverrideState, PlayerSlot);
 	if (DialogueSlotTag.IsValid())
 	{
@@ -266,27 +440,12 @@ FVector UAREmotionComponent::GetEmotionAnchorWorldLocation() const
 		return FVector::ZeroVector;
 	}
 
-	FName EffectiveSocketName = AnchorSocketName;
 	FVector EffectiveOffset = AnchorWorldOffset;
 	if (const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>())
 	{
-		if (EffectiveSocketName.IsNone() && !Settings->DefaultAnchorSocketName.IsNone())
-		{
-			EffectiveSocketName = Settings->DefaultAnchorSocketName;
-		}
 		if (EffectiveOffset.IsNearlyZero() && !Settings->DefaultAnchorWorldOffset.IsNearlyZero())
 		{
 			EffectiveOffset = Settings->DefaultAnchorWorldOffset;
-		}
-	}
-
-	const ACharacter* CharacterOwner = Cast<ACharacter>(OwnerActor);
-	if (CharacterOwner && !EffectiveSocketName.IsNone())
-	{
-		const USkeletalMeshComponent* Mesh = CharacterOwner->GetMesh();
-		if (Mesh && Mesh->DoesSocketExist(EffectiveSocketName))
-		{
-			return Mesh->GetSocketLocation(EffectiveSocketName) + EffectiveOffset;
 		}
 	}
 
@@ -356,6 +515,155 @@ bool UAREmotionComponent::AreDisplayStatesEqual(const FAREmotionDisplayState& Le
 		&& AreTagsEqual(Left.P2EmotionTag, Right.P2EmotionTag);
 }
 
+bool UAREmotionComponent::HasAnyStateTag(const FAREmotionDisplayState& State)
+{
+	return State.SharedEmotionTag.IsValid() || State.P1EmotionTag.IsValid() || State.P2EmotionTag.IsValid();
+}
+
+FName UAREmotionComponent::MakeTimedSlotKey(const FName SourceId, const EARPlayerSlot Slot)
+{
+	return FName(*FString::Printf(TEXT("%s|%d"), *SourceId.ToString(), static_cast<int32>(Slot)));
+}
+
+bool UAREmotionComponent::RebuildSystemOverrideStateFromSources()
+{
+	FAREmotionDisplayState ResolvedState;
+	int32 SharedPriority = TNumericLimits<int32>::Lowest();
+	uint64 SharedSerial = 0;
+	int32 P1Priority = TNumericLimits<int32>::Lowest();
+	uint64 P1Serial = 0;
+	int32 P2Priority = TNumericLimits<int32>::Lowest();
+	uint64 P2Serial = 0;
+
+	for (const TPair<FName, FSystemEmotionSourceState>& Pair : SystemEmotionSources)
+	{
+		const FSystemEmotionSourceState& SourceState = Pair.Value;
+		auto ShouldReplace = [](const int32 CandidatePriority, const uint64 CandidateSerial, const int32 CurrentPriority, const uint64 CurrentSerial)
+		{
+			return CandidatePriority > CurrentPriority || (CandidatePriority == CurrentPriority && CandidateSerial > CurrentSerial);
+		};
+
+		if (SourceState.State.SharedEmotionTag.IsValid()
+			&& ShouldReplace(SourceState.Priority, SourceState.LastWriteSerial, SharedPriority, SharedSerial))
+		{
+			ResolvedState.SharedEmotionTag = SourceState.State.SharedEmotionTag;
+			SharedPriority = SourceState.Priority;
+			SharedSerial = SourceState.LastWriteSerial;
+		}
+
+		if (SourceState.State.P1EmotionTag.IsValid()
+			&& ShouldReplace(SourceState.Priority, SourceState.LastWriteSerial, P1Priority, P1Serial))
+		{
+			ResolvedState.P1EmotionTag = SourceState.State.P1EmotionTag;
+			P1Priority = SourceState.Priority;
+			P1Serial = SourceState.LastWriteSerial;
+		}
+
+		if (SourceState.State.P2EmotionTag.IsValid()
+			&& ShouldReplace(SourceState.Priority, SourceState.LastWriteSerial, P2Priority, P2Serial))
+		{
+			ResolvedState.P2EmotionTag = SourceState.State.P2EmotionTag;
+			P2Priority = SourceState.Priority;
+			P2Serial = SourceState.LastWriteSerial;
+		}
+	}
+
+	if (AreDisplayStatesEqual(SystemOverrideState, ResolvedState))
+	{
+		return false;
+	}
+
+	const FAREmotionDisplayState OldState = SystemOverrideState;
+	SystemOverrideState = ResolvedState;
+	OnRep_SystemOverrideState(OldState);
+	return true;
+}
+
+float UAREmotionComponent::ResolveTimedSystemOverrideDurationSeconds(const float RequestedDurationSeconds) const
+{
+	if (RequestedDurationSeconds > 0.0f)
+	{
+		return RequestedDurationSeconds;
+	}
+
+	const UAREmotionSettings* Settings = GetDefault<UAREmotionSettings>();
+	const float DefaultDuration = Settings ? Settings->DefaultTimedSystemOverrideDurationSeconds : 1.5f;
+	return FMath::Max(0.01f, DefaultDuration);
+}
+
+void UAREmotionComponent::SetTimedSystemOverrideClearTimer(const FName SourceId, const float DurationSeconds)
+{
+	UWorld* World = GetWorld();
+	if (!World || SourceId.IsNone())
+	{
+		return;
+	}
+
+	FTimerHandle& Handle = TimedSystemOverrideClearHandles.FindOrAdd(SourceId);
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, GET_FUNCTION_NAME_CHECKED(UAREmotionComponent, HandleTimedSystemOverrideClear), SourceId);
+	World->GetTimerManager().SetTimer(Handle, Delegate, FMath::Max(0.01f, DurationSeconds), false);
+}
+
+void UAREmotionComponent::SetTimedSystemOverrideSlotClearTimer(const FName SourceId, const EARPlayerSlot Slot, const float DurationSeconds)
+{
+	UWorld* World = GetWorld();
+	if (!World || SourceId.IsNone() || Slot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	const FName TimerKey = MakeTimedSlotKey(SourceId, Slot);
+	FTimerHandle& Handle = TimedSystemOverrideSlotClearHandles.FindOrAdd(TimerKey);
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, GET_FUNCTION_NAME_CHECKED(UAREmotionComponent, HandleTimedSystemOverrideSlotClear), SourceId, Slot);
+	World->GetTimerManager().SetTimer(Handle, Delegate, FMath::Max(0.01f, DurationSeconds), false);
+}
+
+void UAREmotionComponent::ClearTimedSystemOverrideTimer(const FName SourceId)
+{
+	UWorld* World = GetWorld();
+	FTimerHandle* Handle = TimedSystemOverrideClearHandles.Find(SourceId);
+	if (World && Handle)
+	{
+		World->GetTimerManager().ClearTimer(*Handle);
+	}
+
+	TimedSystemOverrideClearHandles.Remove(SourceId);
+}
+
+void UAREmotionComponent::ClearTimedSystemOverrideSlotTimer(const FName SourceId, const EARPlayerSlot Slot)
+{
+	const FName TimerKey = MakeTimedSlotKey(SourceId, Slot);
+	UWorld* World = GetWorld();
+	FTimerHandle* Handle = TimedSystemOverrideSlotClearHandles.Find(TimerKey);
+	if (World && Handle)
+	{
+		World->GetTimerManager().ClearTimer(*Handle);
+	}
+
+	TimedSystemOverrideSlotClearHandles.Remove(TimerKey);
+}
+
+void UAREmotionComponent::ClearAllTimedSystemOverrideTimersForSource(const FName SourceId)
+{
+	ClearTimedSystemOverrideTimer(SourceId);
+	ClearTimedSystemOverrideSlotTimer(SourceId, EARPlayerSlot::P1);
+	ClearTimedSystemOverrideSlotTimer(SourceId, EARPlayerSlot::P2);
+}
+
+void UAREmotionComponent::HandleTimedSystemOverrideClear(const FName SourceId)
+{
+	ClearTimedSystemOverrideTimer(SourceId);
+	ClearSystemEmotionTag(SourceId);
+}
+
+void UAREmotionComponent::HandleTimedSystemOverrideSlotClear(const FName SourceId, const EARPlayerSlot Slot)
+{
+	ClearTimedSystemOverrideSlotTimer(SourceId, Slot);
+	ClearSystemEmotionTagForPlayerSlot(SourceId, Slot);
+}
+
 bool UAREmotionComponent::IsAuthorityOwner() const
 {
 	const AActor* OwnerActor = GetOwner();
@@ -375,6 +683,9 @@ void UAREmotionComponent::OnRep_BaseEmotionState(const FAREmotionDisplayState Ol
 	if (!AreDisplayStatesEqual(OldState, BaseEmotionState))
 	{
 		OnEmotionDisplayStateChanged.Broadcast();
+#if WITH_EDITOR
+		RefreshEditorPreviewBillboard();
+#endif
 	}
 }
 
@@ -383,6 +694,20 @@ void UAREmotionComponent::OnRep_DialogueOverrideState(const FAREmotionDisplaySta
 	if (!AreDisplayStatesEqual(OldState, DialogueOverrideState))
 	{
 		OnEmotionDisplayStateChanged.Broadcast();
+#if WITH_EDITOR
+		RefreshEditorPreviewBillboard();
+#endif
+	}
+}
+
+void UAREmotionComponent::OnRep_SystemOverrideState(const FAREmotionDisplayState OldState)
+{
+	if (!AreDisplayStatesEqual(OldState, SystemOverrideState))
+	{
+		OnEmotionDisplayStateChanged.Broadcast();
+#if WITH_EDITOR
+		RefreshEditorPreviewBillboard();
+#endif
 	}
 }
 
@@ -392,4 +717,85 @@ void UAREmotionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(UAREmotionComponent, RegisteredSpeakerTag);
 	DOREPLIFETIME(UAREmotionComponent, BaseEmotionState);
 	DOREPLIFETIME(UAREmotionComponent, DialogueOverrideState);
+	DOREPLIFETIME(UAREmotionComponent, SystemOverrideState);
 }
+
+#if WITH_EDITOR
+void UAREmotionComponent::RefreshEditorPreviewBillboard()
+{
+#if WITH_EDITORONLY_DATA
+	AActor* OwnerActor = GetOwner();
+	UWorld* World = OwnerActor ? OwnerActor->GetWorld() : nullptr;
+	if (!OwnerActor
+		|| !World
+		|| World->IsGameWorld()
+		|| OwnerActor->HasAnyFlags(RF_ClassDefaultObject))
+	{
+		DestroyEditorPreviewBillboard();
+		return;
+	}
+
+	TSoftObjectPtr<UTexture2D> PreviewIconTexture;
+	FGameplayTag ResolvedPreviewTag;
+	if (!TryResolvePreviewEmotionIcon(PreviewIconTexture, ResolvedPreviewTag) || PreviewIconTexture.IsNull())
+	{
+		DestroyEditorPreviewBillboard();
+		return;
+	}
+
+	UTexture2D* LoadedTexture = PreviewIconTexture.Get();
+	if (!LoadedTexture)
+	{
+		LoadedTexture = PreviewIconTexture.LoadSynchronous();
+	}
+	if (!LoadedTexture)
+	{
+		DestroyEditorPreviewBillboard();
+		return;
+	}
+
+	if (!EditorPreviewBillboardComponent)
+	{
+		EditorPreviewBillboardComponent = NewObject<UBillboardComponent>(OwnerActor, NAME_None, RF_Transient | RF_TextExportTransient);
+		if (!EditorPreviewBillboardComponent)
+		{
+			return;
+		}
+
+		EditorPreviewBillboardComponent->CreationMethod = EComponentCreationMethod::Instance;
+		EditorPreviewBillboardComponent->bIsEditorOnly = true;
+		EditorPreviewBillboardComponent->SetHiddenInGame(true);
+		EditorPreviewBillboardComponent->SetMobility(EComponentMobility::Movable);
+		OwnerActor->AddInstanceComponent(EditorPreviewBillboardComponent);
+		EditorPreviewBillboardComponent->RegisterComponentWithWorld(World);
+	}
+
+	if (USceneComponent* RootComponent = OwnerActor->GetRootComponent())
+	{
+		if (EditorPreviewBillboardComponent->GetAttachParent() != RootComponent)
+		{
+			EditorPreviewBillboardComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+		}
+	}
+
+	EditorPreviewBillboardComponent->SetSprite(LoadedTexture);
+	EditorPreviewBillboardComponent->SetVisibility(true, true);
+
+	const float PreviewScale = FMath::Max(0.05f, IconScreenSize / 64.0f);
+	EditorPreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
+
+	EditorPreviewBillboardComponent->SetWorldLocation(GetEmotionAnchorWorldLocation());
+#endif
+}
+
+void UAREmotionComponent::DestroyEditorPreviewBillboard()
+{
+#if WITH_EDITORONLY_DATA
+	if (EditorPreviewBillboardComponent)
+	{
+		EditorPreviewBillboardComponent->DestroyComponent();
+		EditorPreviewBillboardComponent = nullptr;
+	}
+#endif
+}
+#endif

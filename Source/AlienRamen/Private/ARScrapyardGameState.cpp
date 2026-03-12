@@ -8,5 +8,5 @@ AARScrapyardGameState::AARScrapyardGameState()
 
 UScriptStruct* AARScrapyardGameState::GetStateStruct_Implementation() const
 {
-	return FARScrapyardGameStateData::StaticStruct();
+	return ClassStateStruct ? ClassStateStruct.Get() : FARScrapyardGameStateData::StaticStruct();
 }

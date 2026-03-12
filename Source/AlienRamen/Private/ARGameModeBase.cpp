@@ -3,7 +3,7 @@
 #include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARNetworkUserSettings.h"
-#include "ARNPCSubsystem.h"
+#include "ARSpeakerSubsystem.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
@@ -92,9 +92,9 @@ void AARGameModeBase::BeginPlay()
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->RefreshAllNpcTalkableStates();
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 
 		if (UARSessionSubsystem* SessionSubsystem = GI->GetSubsystem<UARSessionSubsystem>())
@@ -493,9 +493,9 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	NormalizeConnectedPlayersIdentity(GS);
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->RefreshAllNpcTalkableStates();
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 	}
 
@@ -526,9 +526,9 @@ void AARGameModeBase::Logout(AController* Exiting)
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARNPCSubsystem* NpcSubsystem = GI->GetSubsystem<UARNPCSubsystem>())
+		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
-			NpcSubsystem->RefreshAllNpcTalkableStates();
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 
 		if (UARSessionSubsystem* SessionSubsystem = GI->GetSubsystem<UARSessionSubsystem>())

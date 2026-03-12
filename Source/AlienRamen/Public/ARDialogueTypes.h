@@ -244,6 +244,9 @@ struct ALIENRAMEN_API FDialogueConversationHeader
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Important", ToolTip = "Marks this conversation as important for systems that treat priority conversations differently."))
 	bool bImportant = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Private Conversation", ToolTip = "When enabled, this conversation rejects eavesdrop while active. Important choice moments can still override this and force all viewers."))
+	bool bPrivateConversation = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Minimum Relationship Points", ToolTip = "Minimum relationship points required with the primary speaker before this conversation can be offered."))
 	float MinimumRelationshipPoints = 0.0f;
 

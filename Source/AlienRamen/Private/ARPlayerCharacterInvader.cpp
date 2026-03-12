@@ -43,8 +43,6 @@ const FName AARPlayerCharacterInvader::NAME_ShipTags(TEXT("ShipTags"));
 const FName AARPlayerCharacterInvader::NAME_Stats(TEXT("Stats"));
 const FName AARPlayerCharacterInvader::NAME_MovementType(TEXT("MovementType"));
 const FName AARPlayerCharacterInvader::NAME_LoadoutTags(TEXT("LoadoutTags"));
-static const FName NAME_LegacyASC(TEXT("ASC"));
-static const FName NAME_LegacyBasePrimaryFireRateEffect(TEXT("BasePrimaryFireRateEffect"));
 
 FGameplayTag AARPlayerCharacterInvader::GetTagRootShips()
 {
@@ -63,6 +61,8 @@ FGameplayTag AARPlayerCharacterInvader::GetTagRootHats()
 
 namespace
 {
+	const FName RangeTriggerComponentTag(TEXT("AR.RangeTrigger"));
+
 	void NormalizeRangeTriggerCollision(AActor* OwnerActor)
 	{
 		if (!OwnerActor)
@@ -80,10 +80,22 @@ namespace
 				continue;
 			}
 
-			// BP_BaseInvaderPawn range trigger components are blueprint-authored and may drift to blocking profiles.
-			if (!Primitive->GetName().Contains(TEXT("RangeTrigger"), ESearchCase::IgnoreCase))
+			const bool bTaggedAsRangeTrigger = Primitive->ComponentHasTag(RangeTriggerComponentTag);
+			const bool bLegacyNameMatch = Primitive->GetName().Contains(TEXT("RangeTrigger"), ESearchCase::IgnoreCase);
+			if (!bTaggedAsRangeTrigger && !bLegacyNameMatch)
 			{
 				continue;
+			}
+
+			if (!bTaggedAsRangeTrigger && bLegacyNameMatch)
+			{
+				UE_LOG(
+					ARLog,
+					Verbose,
+					TEXT("[ShipCollision] Range trigger '%s' on '%s' matched legacy name path. Add component tag '%s'."),
+					*GetNameSafe(Primitive),
+					*GetNameSafe(OwnerActor),
+					*RangeTriggerComponentTag.ToString());
 			}
 
 			const bool bWasBlockingPawn = Primitive->GetCollisionResponseToChannel(ECC_Pawn) == ECR_Block
@@ -174,7 +186,7 @@ const UARWeaponDefinition* AARPlayerCharacterInvader::GetPrimaryWeaponDefinition
 	if (UARWeaponDefinition* ResolvedWeapon = ExtractWeaponDef(StructType, StructData, NAME_PrimaryWeapon))
 	{
 		// Cache for subsequent calls.
-		const_cast<AARPlayerCharacterInvader*>(this)->CurrentPrimaryWeapon = ResolvedWeapon;
+		CurrentPrimaryWeapon = ResolvedWeapon;
 		return ResolvedWeapon;
 	}
 
@@ -215,48 +227,6 @@ namespace ARPlayerCharacterInvaderLocal
 		{
 			ASC->RemoveLooseGameplayTags(Tags);
 		}
-	}
-
-	static void SyncLegacyASCProperty(AARPlayerCharacterInvader* Ship, UAbilitySystemComponent* InASC)
-	{
-		if (!Ship)
-		{
-			return;
-		}
-
-		FProperty* P = Ship->GetClass()->FindPropertyByName(NAME_LegacyASC);
-		FObjectProperty* OP = CastField<FObjectProperty>(P);
-		if (!OP || !OP->PropertyClass || !OP->PropertyClass->IsChildOf(UAbilitySystemComponent::StaticClass()))
-		{
-			return;
-		}
-
-		OP->SetObjectPropertyValue_InContainer(Ship, InASC);
-	}
-
-	static void SyncLegacyBasePrimaryFireRateHandle(
-		AARPlayerCharacterInvader* Ship,
-		const FActiveGameplayEffectHandle& InHandle)
-	{
-		if (!Ship)
-		{
-			return;
-		}
-
-		FProperty* P = Ship->GetClass()->FindPropertyByName(NAME_LegacyBasePrimaryFireRateEffect);
-		FStructProperty* SP = CastField<FStructProperty>(P);
-		if (!SP || SP->Struct != FActiveGameplayEffectHandle::StaticStruct())
-		{
-			return;
-		}
-
-		void* HandlePtr = SP->ContainerPtrToValuePtr<void>(Ship);
-		if (!HandlePtr)
-		{
-			return;
-		}
-
-		*reinterpret_cast<FActiveGameplayEffectHandle*>(HandlePtr) = InHandle;
 	}
 
 	static bool ApplyDamageToActorViaGAS_Local(AActor* Target, float Damage, AActor* Offender)
@@ -673,7 +643,6 @@ void AARPlayerCharacterInvader::InitAbilityActorInfo()
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
-		ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, nullptr);
 		return;
 	}
 
@@ -682,7 +651,6 @@ void AARPlayerCharacterInvader::InitAbilityActorInfo()
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
-		ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, nullptr);
 		return;
 	}
 
@@ -698,7 +666,6 @@ void AARPlayerCharacterInvader::InitAbilityActorInfo()
 	EnsureDefaultPickupRadiusOnASC(ASC);
 	BindMoveSpeedChangeDelegate(ASC);
 	RefreshCharacterMovementSpeedFromAttributes();
-	ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, ASC);
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
 
 }
@@ -770,7 +737,6 @@ void AARPlayerCharacterInvader::ApplyOrRefreshPrimaryWeaponRuntimeEffects()
 	}
 
 	BasePrimaryFireRateEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
-	ARPlayerCharacterInvaderLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
 }
 
 void AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects()
@@ -784,7 +750,6 @@ void AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects()
 	}
 
 	BasePrimaryFireRateEffectHandle.Invalidate();
-	ARPlayerCharacterInvaderLocal::SyncLegacyBasePrimaryFireRateHandle(this, BasePrimaryFireRateEffectHandle);
 }
 
 void AARPlayerCharacterInvader::UnPossessed()
@@ -793,7 +758,6 @@ void AARPlayerCharacterInvader::UnPossessed()
 	ClearPrimaryWeaponRuntimeEffects();
 	UnbindMoveSpeedChangeDelegate(CachedASC);
 	CachedASC = nullptr;
-	ARPlayerCharacterInvaderLocal::SyncLegacyASCProperty(this, nullptr);
 	bServerLoadoutApplied = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())

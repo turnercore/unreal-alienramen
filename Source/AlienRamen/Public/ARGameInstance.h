@@ -12,6 +12,7 @@ class UARSaveSubsystem;
 class UARSessionSubsystem;
 class FOnlineSessionSettings;
 class FOnlineSessionSearchResult;
+class IConsoleObject;
 
 /** GameInstance root that owns the save subsystem and build/network compatibility helpers. */
 UCLASS(BlueprintType, Blueprintable)
@@ -60,6 +61,10 @@ public:
 private:
 	static constexpr int32 ARProtocolVersion = 1; // bump when a breaking network change ships
 	static constexpr int32 ARMinCompatibleProtocol = 1; // oldest protocol accepted by this build
+	void RegisterDebugConsoleCommands();
+	void UnregisterDebugConsoleCommands();
+	void HandleConsoleArDebug(const TArray<FString>& Args);
+	IConsoleObject* CmdArDebug = nullptr;
 
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Game Instance")

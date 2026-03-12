@@ -33,13 +33,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Full Blast")
 	void SubmitSkip();
 
-	// Optional live hover/cursor/selection presence publishing during offer session.
+	// Optional live hover/selection presence publishing during offer session.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track|Full Blast")
 	void PublishOfferPresence(
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
-		FVector2D CursorNormalized,
-		bool bHasCursor,
 		FGameplayTag SelectedUpgradeTag,
 		int32 SelectedDestinationSlot,
 		bool bHasSelection);

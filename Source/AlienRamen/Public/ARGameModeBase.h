@@ -5,7 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ARInvaderSpicyTrackTypes.h"
+#include "ARColorTypes.h"
 #include "ARPlayerTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameplayTagContainer.h"
