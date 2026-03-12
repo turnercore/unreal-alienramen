@@ -24,9 +24,21 @@ DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Candidates"), STAT_AREmotionHUD
 DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Drawn"), STAT_AREmotionHUD_Drawn, STATGROUP_AREmotionHUD);
 DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Occlusion Traces"), STAT_AREmotionHUD_OcclusionTraces, STATGROUP_AREmotionHUD);
 DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Async Requests"), STAT_AREmotionHUD_AsyncRequests, STATGROUP_AREmotionHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Distance Culled"), STAT_AREmotionHUD_DistanceCulled, STATGROUP_AREmotionHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD FOV Culled"), STAT_AREmotionHUD_FOVCulled, STATGROUP_AREmotionHUD);
 
 AARHUDBase::AARHUDBase()
 {
+}
+
+void AARHUDBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	CleanupAsyncEmotionLoads();
+	CachedEmotionComponents.Reset();
+	PendingAsyncIconLoads.Reset();
+	ActiveProjectionCanvas.Reset();
+	ActiveProjectionController.Reset();
+	Super::EndPlay(EndPlayReason);
 }
 
 void AARHUDBase::RefreshEmotionComponentCacheIfNeeded()
@@ -57,6 +69,12 @@ void AARHUDBase::RefreshEmotionComponentCacheIfNeeded()
 
 void AARHUDBase::QueueAsyncIconLoad(const TSoftObjectPtr<UTexture2D>& IconPtr)
 {
+	UWorld* World = GetWorld();
+	if (!World || World->bIsTearingDown || HasAnyFlags(RF_BeginDestroyed | RF_FinishDestroyed))
+	{
+		return;
+	}
+
 	if (IconPtr.IsNull())
 	{
 		return;
@@ -91,6 +109,19 @@ void AARHUDBase::QueueAsyncIconLoad(const TSoftObjectPtr<UTexture2D>& IconPtr)
 	}
 }
 
+void AARHUDBase::CleanupAsyncEmotionLoads()
+{
+	for (const TSharedPtr<FStreamableHandle>& Handle : ActiveAsyncIconHandles)
+	{
+		if (Handle.IsValid())
+		{
+			Handle->CancelHandle();
+		}
+	}
+
+	ActiveAsyncIconHandles.Reset();
+}
+
 int32 AARHUDBase::RenderEmotionView()
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(ARHUD_EmotionRender);
@@ -111,7 +142,18 @@ int32 AARHUDBase::RenderEmotionView()
 
 	RefreshEmotionComponentCacheIfNeeded();
 
+	FVector ViewLocation = FVector::ZeroVector;
+	FRotator ViewRotation = FRotator::ZeroRotator;
+	LocalController->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	const FVector ViewForward = ViewRotation.Vector();
+	const float MaxDistanceSq = (bEnableDistanceCull && MaxEmotionRenderDistance > 0.0f) ? FMath::Square(MaxEmotionRenderDistance) : 0.0f;
+	const float MinViewDot = (bEnableFOVCull && MaxEmotionViewAngleDegrees < 180.0f)
+		? FMath::Cos(FMath::DegreesToRadians(FMath::Max(0.0f, MaxEmotionViewAngleDegrees)))
+		: -1.0f;
+
 	uint32 CandidateCount = 0;
+	uint32 DistanceCulledCount = 0;
+	uint32 FOVCulledCount = 0;
 	const APawn* LocalPawn = LocalController->GetPawn();
 	int32 DrawnEmotionCount = 0;
 	OcclusionTraceCountThisFrame = 0;
@@ -135,6 +177,31 @@ int32 AARHUDBase::RenderEmotionView()
 		if (bHideOwningPawnEmotion && OwnerActor == LocalPawn)
 		{
 			continue;
+		}
+
+		const FVector AnchorWorldLocation = EmotionComponent->GetEmotionAnchorWorldLocation();
+		if (MaxDistanceSq > 0.0f)
+		{
+			const float DistanceSq = FVector::DistSquared(ViewLocation, AnchorWorldLocation);
+			if (DistanceSq > MaxDistanceSq)
+			{
+				++DistanceCulledCount;
+				continue;
+			}
+		}
+
+		if (MinViewDot > -1.0f)
+		{
+			const FVector ToAnchor = AnchorWorldLocation - ViewLocation;
+			if (!ToAnchor.IsNearlyZero())
+			{
+				const float ViewDot = FVector::DotProduct(ViewForward, ToAnchor.GetSafeNormal());
+				if (ViewDot < MinViewDot)
+				{
+					++FOVCulledCount;
+					continue;
+				}
+			}
 		}
 
 		FVector2D ScreenPosition = FVector2D::ZeroVector;
@@ -171,7 +238,6 @@ int32 AARHUDBase::RenderEmotionView()
 		const float BaseWidth = DesiredWorldMaxDimension * (TextureWidth / TextureMax);
 		const float BaseHeight = DesiredWorldMaxDimension * (TextureHeight / TextureMax);
 
-		const FVector AnchorWorldLocation = EmotionComponent->GetEmotionAnchorWorldLocation();
 		const FVector CameraRight = LocalController->PlayerCameraManager ? LocalController->PlayerCameraManager->GetActorRightVector() : FVector::RightVector;
 		const FVector CameraUp = LocalController->PlayerCameraManager ? LocalController->PlayerCameraManager->GetActorUpVector() : FVector::UpVector;
 
@@ -236,6 +302,8 @@ int32 AARHUDBase::RenderEmotionView()
 	SET_DWORD_STAT(STAT_AREmotionHUD_Candidates, CandidateCount);
 	SET_DWORD_STAT(STAT_AREmotionHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
 	SET_DWORD_STAT(STAT_AREmotionHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
+	SET_DWORD_STAT(STAT_AREmotionHUD_DistanceCulled, DistanceCulledCount);
+	SET_DWORD_STAT(STAT_AREmotionHUD_FOVCulled, FOVCulledCount);
 
 	if (ShouldLogEmotionRenderVerbose())
 	{

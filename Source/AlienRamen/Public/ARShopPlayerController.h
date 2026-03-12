@@ -98,9 +98,10 @@ public:
 	void ServerRequestShopDropHeldCarryItem();
 
 	// Throws currently held carry item using physics impulse.
+	// ThrowStrength <= 0 uses thrower Strength attribute mapping (Strength * 100.0f).
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
-	void RequestShopThrowHeldCarryItem(float ThrowStrength = 900.0f);
+	void RequestShopThrowHeldCarryItem(float ThrowStrength = -1.0f);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestShopThrowHeldCarryItem(float ThrowStrength = 900.0f);
+	void ServerRequestShopThrowHeldCarryItem(float ThrowStrength = -1.0f);
 };
