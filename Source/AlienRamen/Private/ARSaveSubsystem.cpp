@@ -448,6 +448,10 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->DialogueRelationshipStates = CurrentSaveGame->DialogueRelationshipStates;
 		SaveObject->DialogueCompletedConversationTagsByGame = CurrentSaveGame->DialogueCompletedConversationTagsByGame;
 		SaveObject->DialoguePlayerPersistentStates = CurrentSaveGame->DialoguePlayerPersistentStates;
+		SaveObject->StoredEnergyDrinkStacks = CurrentSaveGame->StoredEnergyDrinkStacks;
+		SaveObject->QueuedEnergyDrinkStacks = CurrentSaveGame->QueuedEnergyDrinkStacks;
+		SaveObject->ActiveRunBuffPayloads = CurrentSaveGame->ActiveRunBuffPayloads;
+		SaveObject->ActiveRunBuffCycleId = CurrentSaveGame->ActiveRunBuffCycleId;
 	}
 
 	SaveObject->PlayerStates.Reset();

@@ -8,6 +8,7 @@
 #include "GameFramework/SaveGame.h"
 #include "ARDialogueTypes.h"
 #include "ARFactionTypes.h"
+#include "ARRunBuffTypes.h"
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
 
@@ -18,7 +19,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 7;
+	static constexpr int32 CurrentSchemaVersion = 8;
 	static constexpr int32 MinSupportedSchemaVersion = 7;
 
 	UARSaveGame();
@@ -68,6 +69,22 @@ public:
 	// Persistent background popularity state for faction ranking/drift.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
 	TArray<FARFactionRuntimeState> FactionPopularityStates;
+
+	// Stored inventory of extracted energy drinks (counted, save-persistent).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")
+	TArray<FARRunBuffItemStack> StoredEnergyDrinkStacks;
+
+	// Queued energy drinks to be rotated into active buffs at next invader init.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")
+	TArray<FARRunBuffItemStack> QueuedEnergyDrinkStacks;
+
+	// Active run-buff payload currently applied for this run cycle.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")
+	TArray<FARRunBuffActivePayload> ActiveRunBuffPayloads;
+
+	// Monotonic cycle marker incremented each time queued drinks rotate into active payload.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")
+	int32 ActiveRunBuffCycleId = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FName SaveSlot = NAME_None;
