@@ -30,7 +30,7 @@ public:
 
 	// Optional forwarding helper for BI_Interactable-style calls. Accepts pawn/controller and routes to pickup request.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Forward Use To Controller"))
-	void ForwardUseToController(AActor* UsingActor);
+	virtual void ForwardUseToController(AActor* UsingActor);
 
 	// Final lifecycle release step for shop carry item cleanup. Override for pooling.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Alien Ramen|Shop|Carry|Lifecycle")

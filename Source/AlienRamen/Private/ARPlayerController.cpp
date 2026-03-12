@@ -194,29 +194,29 @@ void AARPlayerController::LeaveSessionInternal()
 	ClientReturnToMainMenuWithTextReason(FText::FromString(TEXT("Leaving session")));
 }
 
-void AARPlayerController::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+void AARPlayerController::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy)
 {
 	if (HasAuthority())
 	{
-		TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE);
+		TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, RoutePolicy);
 		return;
 	}
 
-	ServerTryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE);
+	ServerTryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, RoutePolicy);
 }
 
-void AARPlayerController::ServerTryStartTravel_Implementation(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+void AARPlayerController::ServerTryStartTravel_Implementation(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy)
 {
-	TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE);
+	TryStartTravelInternal(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, RoutePolicy);
 }
 
-void AARPlayerController::TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+void AARPlayerController::TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy)
 {
 	if (AARGameModeBase* ARGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AARGameModeBase>() : nullptr)
 	{
-		if (!ARGameMode->TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE))
+		if (!ARGameMode->TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, RoutePolicy))
 		{
-			UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel failed. URL='%s' Options='%s'"), *GetNameSafe(this), *URL, *Options);
+			UE_LOG(ARLog, Warning, TEXT("[Travel] Controller '%s' TryStartTravel failed. URL='%s' Options='%s' RoutePolicy=%s"), *GetNameSafe(this), *URL, *Options, *ARTransition::LexToString(RoutePolicy));
 		}
 		return;
 	}
@@ -406,14 +406,14 @@ void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* Storag
 			return;
 		}
 
-		const bool bDispensed = StorageActor->TryDispenseMeat(this);
+		const bool bInteracted = StorageActor->TryHandleStorageInteraction(this);
 		UE_LOG(
 			ARLog,
 			Verbose,
 			TEXT("[Shop|Storage] RequestShopDispenseMeat controller='%s' storage='%s' success=%d."),
 			*GetNameSafe(this),
 			*GetNameSafe(StorageActor),
-			bDispensed ? 1 : 0);
+			bInteracted ? 1 : 0);
 		return;
 	}
 

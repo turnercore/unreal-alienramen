@@ -105,6 +105,10 @@ This document captures the runtime ownership and integration contract for the sh
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
 - Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
 - Drop/throw restore world physics and gravity on the released carry item.
+- Meat storage interaction contract:
+  - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
+  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color.
+  - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
 - `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
 
 ## Persistence + Replication
@@ -112,6 +116,19 @@ This document captures the runtime ownership and integration contract for the sh
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
 - Meat-reserve dispenser entries decrement replicated GameState meat buckets and spawn world meat actors.
+- Returning meat to storage (held interact or world-hit auto-store) increments replicated GameState meat buckets and releases the world meat actor.
+- Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
+- Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
+- Starting a run clears transient loose-carryable snapshots; invader/scrapyard completion marks a one-shot clear on next shop entry.
+
+## Energy Drinks in Shop
+
+- `AAREnergyDrinkCarryItem` is a replicated shop carryable (pickup/drop/throw via existing carry pipeline).
+- Secondary action consume path is routed by `AARShopPlayerController::RequestConsumeHeldEnergyDrink`.
+- Consume authority is shop-mode only.
+- Stored drink inventory is authoritative pre-spawn; drinks spawned into shop anchors become world-owned instances and are removed from stored inventory count.
+- Consuming a spawned world drink applies run-buff payload through `UARRunBuffSubsystem` using per-character ownership rules (no per-character duplicate of the same drink type).
+- Shared item metadata (for example spawn actor class/weight) should resolve through `UARItemDefinitionSubsystem` so Shop and Scrapyard consume the same authored item rows.
 
 ## StateTree Integration
 

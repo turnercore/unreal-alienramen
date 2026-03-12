@@ -1,21 +1,29 @@
 #include "ARSaveSubsystem.h"
 
 #include "ARGameStateBase.h"
+#include "ARGameModeBase.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARLoadoutSettings.h"
 #include "ARDialogueSubsystem.h"
+#include "AREnergyDrinkCarryItem.h"
+#include "ARRamenMeatActor.h"
 #include "ARSpeakerSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
+#include "ARShopCarryComponent.h"
+#include "ARShopCarryItemBase.h"
+#include "Components/SceneComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
 #include "Engine/Engine.h"
+#include "EngineUtils.h"
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/ScopeExit.h"
+#include "GameFramework/Pawn.h"
 #include "Templates/UnrealTemplate.h"
 #include "StructSerializable.h"
 
@@ -112,6 +120,124 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	GameState->SetMeatFromSave(SaveGame->Meat);
 	GameState->SetActiveFactionTagFromSave(SaveGame->ActiveFactionTag);
 	GameState->SetActiveFactionEffectTagsFromSave(SaveGame->ActiveFactionEffectTags);
+}
+
+static bool IsShopModeWorld(const UWorld* World)
+{
+	if (!World)
+	{
+		return false;
+	}
+
+	const AARGameModeBase* GameMode = Cast<AARGameModeBase>(World->GetAuthGameMode());
+	const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+	return GameMode && ShopModeTag.IsValid() && GameMode->GetModeTag() == ShopModeTag;
+}
+
+static void BuildHeldShopCarrySet(const UWorld* World, TSet<const AActor*>& OutHeldActors)
+{
+	OutHeldActors.Reset();
+	if (!World)
+	{
+		return;
+	}
+
+	const AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>();
+	if (!GameState)
+	{
+		return;
+	}
+
+	for (APlayerState* PlayerStateBase : GameState->PlayerArray)
+	{
+		const AARPlayerStateBase* PlayerState = Cast<AARPlayerStateBase>(PlayerStateBase);
+		const APawn* Pawn = PlayerState ? PlayerState->GetPawn() : nullptr;
+		const UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
+		const AActor* HeldActor = CarryComponent ? CarryComponent->GetHeldActor() : nullptr;
+		if (HeldActor)
+		{
+			OutHeldActors.Add(HeldActor);
+		}
+	}
+}
+
+static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransientCarryableSnapshot>& OutSnapshots)
+{
+	OutSnapshots.Reset();
+	if (!World)
+	{
+		return;
+	}
+
+	TSet<const AActor*> HeldActors;
+	BuildHeldShopCarrySet(World, HeldActors);
+
+	for (TActorIterator<AARShopCarryItemBase> It(World); It; ++It)
+	{
+		AARShopCarryItemBase* CarryActor = *It;
+		if (!CarryActor || !IsValid(CarryActor))
+		{
+			continue;
+		}
+
+		const AAREnergyDrinkCarryItem* EnergyDrinkActor = Cast<AAREnergyDrinkCarryItem>(CarryActor);
+		const AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(CarryActor);
+		if (!EnergyDrinkActor && !MeatActor)
+		{
+			continue;
+		}
+
+		if (HeldActors.Contains(CarryActor))
+		{
+			continue;
+		}
+
+		const USceneComponent* RootComponent = CarryActor->GetRootComponent();
+		if (RootComponent && RootComponent->GetAttachParent() != nullptr)
+		{
+			continue;
+		}
+
+		FARShopTransientCarryableSnapshot& Snapshot = OutSnapshots.AddDefaulted_GetRef();
+		Snapshot.ActorClass = CarryActor->GetClass();
+		Snapshot.WorldTransform = CarryActor->GetActorTransform();
+		if (EnergyDrinkActor)
+		{
+			Snapshot.EnergyDrinkItemTag = EnergyDrinkActor->GetEnergyDrinkItemTag();
+		}
+		if (MeatActor)
+		{
+			Snapshot.MeatColor = MeatActor->GetMeatColor();
+			Snapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
+		}
+	}
+
+	OutSnapshots.Sort([](const FARShopTransientCarryableSnapshot& A, const FARShopTransientCarryableSnapshot& B)
+	{
+		const FString ClassA = A.ActorClass.ToSoftObjectPath().ToString();
+		const FString ClassB = B.ActorClass.ToSoftObjectPath().ToString();
+		if (ClassA != ClassB)
+		{
+			return ClassA < ClassB;
+		}
+
+		const FVector LocA = A.WorldTransform.GetLocation();
+		const FVector LocB = B.WorldTransform.GetLocation();
+		if (!LocA.Equals(LocB, KINDA_SMALL_NUMBER))
+		{
+			if (!FMath::IsNearlyEqual(LocA.X, LocB.X, KINDA_SMALL_NUMBER))
+			{
+				return LocA.X < LocB.X;
+			}
+			if (!FMath::IsNearlyEqual(LocA.Y, LocB.Y, KINDA_SMALL_NUMBER))
+			{
+				return LocA.Y < LocB.Y;
+			}
+			return LocA.Z < LocB.Z;
+		}
+
+		return A.EnergyDrinkItemTag.ToString() < B.EnergyDrinkItemTag.ToString();
+	});
 }
 
 static FARPlayerIdentity BuildPlayerIdentityFromPlayerState(const APlayerState* PlayerState)
@@ -448,6 +574,17 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->DialogueRelationshipStates = CurrentSaveGame->DialogueRelationshipStates;
 		SaveObject->DialogueCompletedConversationTagsByGame = CurrentSaveGame->DialogueCompletedConversationTagsByGame;
 		SaveObject->DialoguePlayerPersistentStates = CurrentSaveGame->DialoguePlayerPersistentStates;
+		SaveObject->StoredEnergyDrinkStacks = CurrentSaveGame->StoredEnergyDrinkStacks;
+		SaveObject->QueuedEnergyDrinkStacks = CurrentSaveGame->QueuedEnergyDrinkStacks;
+		SaveObject->ActiveRunBuffPayloads = CurrentSaveGame->ActiveRunBuffPayloads;
+		SaveObject->ActiveRunBuffCycleId = CurrentSaveGame->ActiveRunBuffCycleId;
+		SaveObject->ShopTransientCarryables = CurrentSaveGame->ShopTransientCarryables;
+		SaveObject->bClearShopTransientCarryablesOnNextShopLoad = CurrentSaveGame->bClearShopTransientCarryablesOnNextShopLoad;
+	}
+
+	if (ARSaveInternal::IsShopModeWorld(World))
+	{
+		ARSaveInternal::CaptureShopTransientCarryables(World, SaveObject->ShopTransientCarryables);
 	}
 
 	SaveObject->PlayerStates.Reset();

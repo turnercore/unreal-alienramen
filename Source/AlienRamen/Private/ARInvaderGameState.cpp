@@ -506,11 +506,10 @@ void AARInvaderGameState::HandleConsoleAddScrap(const TArray<FString>& Args, UWo
 	}
 
 	const int32 Delta = FCString::Atoi(*Args[0]);
-	const int32 OldScrap = GetScrap();
-	const int32 NewScrap = OldScrap + Delta;
-	SetScrapFromSave(NewScrap);
+	const int32 OldScrap = GetRunLedgerScrap();
+	AddRunLedgerScrap(Delta);
 
-	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddScrap %+d -> %d"), Delta, GetScrap());
+	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddRunLedgerScrap %+d -> %d"), Delta, GetRunLedgerScrap());
 }
 
 void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWorld* /*World*/)
@@ -1583,7 +1582,7 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 	const int32 SkipReward = Settings ? Settings->GetSkipScrapRewardForTier(OldSession.ActivationTier) : 0;
 	if (SkipReward > 0)
 	{
-		SetScrapFromSave(GetScrap() + SkipReward);
+		AddRunLedgerScrap(SkipReward);
 	}
 
 	ConsumeSpiceForPlayer(RequestingPlayerState, SpendAmount);
