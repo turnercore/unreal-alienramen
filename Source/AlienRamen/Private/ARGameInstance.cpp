@@ -108,8 +108,8 @@ void UARGameInstance::RegisterDebugConsoleCommands()
 
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	CmdArDebug = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.debug"),
-		TEXT("Usage: ar.debug <veryverbose|verbose|log|warning|error|off|reset>. Applies to ARLog."),
+		TEXT("ar.debug.log"),
+		TEXT("Usage: ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>. Applies to ARLog."),
 		FConsoleCommandWithArgsDelegate::CreateUObject(this, &UARGameInstance::HandleConsoleArDebug),
 		ECVF_Default);
 }
@@ -117,7 +117,7 @@ void UARGameInstance::RegisterDebugConsoleCommands()
 void UARGameInstance::UnregisterDebugConsoleCommands()
 {
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug.log"), false);
 	CmdArDebug = nullptr;
 }
 
@@ -155,7 +155,7 @@ void UARGameInstance::HandleConsoleArDebug(const TArray<FString>& Args)
 	}
 	else
 	{
-		UE_LOG(ARLog, Log, TEXT("[Debug] Usage: ar.debug <veryverbose|verbose|log|warning|error|off|reset>"));
+		UE_LOG(ARLog, Log, TEXT("[Debug] Usage: ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>"));
 		return;
 	}
 
@@ -169,10 +169,10 @@ void UARGameInstance::HandleConsoleArDebug(const TArray<FString>& Args)
 
 	if (bApplied)
 	{
-		UE_LOG(ARLog, Log, TEXT("[Debug] ARLog verbosity set to '%s' via ar.debug."), *TargetVerbosity);
+		UE_LOG(ARLog, Log, TEXT("[Debug] ARLog verbosity set to '%s' via ar.debug.log."), *TargetVerbosity);
 	}
 	else
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Debug] ar.debug could not apply verbosity '%s' (no active world/console context)."), *TargetVerbosity);
+		UE_LOG(ARLog, Warning, TEXT("[Debug] ar.debug.log could not apply verbosity '%s' (no active world/console context)."), *TargetVerbosity);
 	}
 }
