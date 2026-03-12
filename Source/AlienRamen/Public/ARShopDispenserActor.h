@@ -34,6 +34,10 @@ struct ALIENRAMEN_API FARShopDispenseDefinition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	TSubclassOf<AActor> SpawnActorClass;
 
+	// When true and SpawnActorClass is unset, resolve spawn actor class from shared item definition table.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	bool bResolveSpawnActorClassFromItemDefinition = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "1", UIMin = "1"))
 	int32 AmountPerDispense = 1;
 

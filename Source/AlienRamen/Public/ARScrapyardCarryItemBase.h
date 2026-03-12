@@ -20,6 +20,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Item")
 	FGameplayTag GetScrapyardItemTag() const { return ScrapyardItemTag; }
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Item", meta = (BlueprintAuthorityOnly))
+	void SetScrapyardItemTag(FGameplayTag NewItemTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Item", meta = (BlueprintAuthorityOnly))
+	void SetFallbackScrapCost(int32 NewFallbackCost);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Item")
 	int32 GetFallbackScrapCost() const { return FallbackScrapCost; }
 

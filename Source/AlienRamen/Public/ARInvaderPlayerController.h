@@ -104,6 +104,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestClearOfferPresence();
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
+	void RequestVoteEndRunEarly(bool bVoteYes = true);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestVoteEndRunEarly(bool bVoteYes = true);
+
 	// Broadcast whenever full-blast menu state/data is refreshed for this local controller.
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Full Blast")
 	FAROnInvaderFullBlastMenuSessionUpdatedSignature OnInvaderFullBlastMenuSessionUpdated;
