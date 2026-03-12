@@ -110,6 +110,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Runtime overhead emotion rendering is owned directly by `AARHUDBase` (`DrawHUD` + emotion projection/occlusion helpers), not by a separate HUD component.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
+- `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
 - Dialogue-related settings pages are grouped under `Project Settings -> Dialogue` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
@@ -124,6 +125,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopPlayerController` owns shop-only interaction requests for carryables and stations (including `Pickup`/`Drop`/`Throw` plus station place/pickup/process/fill routes).
+- Actor-targeted interaction RPC requests on `AARPlayerController`/`AARShopPlayerController` must pass server-side reachability validation against the controller pawn (`ServerInteractionMaxDistance`) before authority gameplay mutation.
 - `AARShopPlayerController::RequestShopUseOrDrop(AActor*)` is the preferred one-shot input entrypoint: forward-use valid targets, fallback drop when target is null.
 - `AARShopPlayerController::RequestShopPickupCarryItem(nullptr)` is the no-hit fallback path and drops the currently held carry item when one exists.
 - `AARShopPlayerController::RequestShopStationInteract(AARShopStationActor*)` is the smart station one-shot entrypoint: held bowl -> fill, held meat + empty slot -> place, empty hands + slotted meat -> pickup.

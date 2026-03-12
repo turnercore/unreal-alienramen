@@ -19,6 +19,7 @@ class UARDialogueWidgetBase;
 class UUserWidget;
 class AARNPCCharacterBase;
 class AARMeatStorageBoxActor;
+class AActor;
 
 USTRUCT(BlueprintType)
 struct FARControllerInputMapping
@@ -350,6 +351,12 @@ protected:
 	/** Automatically switches input mode and cursor visibility while local dialogue is active. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
 	bool bAutoManageDialogueInputMode = true;
+
+	// Authoritative anti-cheat interaction bound for server RPC actor targets.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (ClampMin = "50.0", UIMin = "50.0"))
+	float ServerInteractionMaxDistance = 450.0f;
+
+	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 
 private:
 	void LeaveSessionInternal();

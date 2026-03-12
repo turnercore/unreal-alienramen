@@ -31,6 +31,13 @@ void AARShopAIController::OnPossess(APawn* InPawn)
 
 void AARShopAIController::OnUnPossess()
 {
+	AARNPCCharacterBase* SpeakerPawn = Cast<AARNPCCharacterBase>(GetPawn());
+	if (HasAuthority() && SpeakerPawn)
+	{
+		// Ensure dialogue gate is restored when this AI controller detaches from the speaker pawn.
+		SpeakerPawn->SetSpeakerLocalStateAllowsDialogue(true);
+	}
+
 	if (StateTreeComponent)
 	{
 		StateTreeComponent->OnActiveStateTagsChanged.RemoveAll(this);
@@ -99,12 +106,12 @@ void AARShopAIController::RefreshSpeakerDialogueGateFromStateTags()
 
 	const FGameplayTagContainer ActiveTags = StateTreeComponent->GetCurrentActiveStateTags();
 	const FGameplayTag ShopStateRootTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC")), false);
-	if (!ShopStateRootTag.IsValid() || !ActiveTags.HasTag(ShopStateRootTag))
+	bool bAllowsDialogue = true;
+	if (ShopStateRootTag.IsValid() && ActiveTags.HasTag(ShopStateRootTag))
 	{
-		return;
+		const FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.DialogueWindow")), false);
+		bAllowsDialogue = DialogueWindowTag.IsValid() && ActiveTags.HasTagExact(DialogueWindowTag);
 	}
 
-	const FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.DialogueWindow")), false);
-	const bool bDialogueWindow = DialogueWindowTag.IsValid() && ActiveTags.HasTagExact(DialogueWindowTag);
-	SpeakerPawn->SetSpeakerLocalStateAllowsDialogue(bDialogueWindow);
+	SpeakerPawn->SetSpeakerLocalStateAllowsDialogue(bAllowsDialogue);
 }
