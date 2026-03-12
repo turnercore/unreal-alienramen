@@ -313,7 +313,26 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 		return A.GetName() < B.GetName();
 	});
 
+	TMap<FGameplayTag, int32> ExistingWorldDrinkCounts;
+	for (TActorIterator<AAREnergyDrinkCarryItem> It(World); It; ++It)
+	{
+		const AAREnergyDrinkCarryItem* ExistingDrink = *It;
+		if (!ExistingDrink)
+		{
+			continue;
+		}
+
+		const FGameplayTag ExistingTag = ExistingDrink->GetEnergyDrinkItemTag();
+		if (!ExistingTag.IsValid())
+		{
+			continue;
+		}
+
+		ExistingWorldDrinkCounts.FindOrAdd(ExistingTag) += 1;
+	}
+
 	bool bSpawnedAny = false;
+	bool bMutatedInventory = false;
 	int32 SpawnSequence = 0;
 	for (FARRunBuffItemStack& Stack : SaveGame->StoredEnergyDrinkStacks)
 	{
@@ -328,6 +347,23 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 			continue;
 		}
 		if (ItemDef.ItemType != EARScrapyardItemType::EnergyDrink)
+		{
+			continue;
+		}
+
+		if (int32* ExistingCountPtr = ExistingWorldDrinkCounts.Find(Stack.ItemTag))
+		{
+			const int32 CountAlreadyMaterialized = FMath::Max(0, *ExistingCountPtr);
+			if (CountAlreadyMaterialized > 0)
+			{
+				const int32 ConsumedCount = FMath::Min(Stack.Count, CountAlreadyMaterialized);
+				Stack.Count -= ConsumedCount;
+				*ExistingCountPtr -= ConsumedCount;
+				bMutatedInventory = bMutatedInventory || ConsumedCount > 0;
+			}
+		}
+
+		if (Stack.Count <= 0)
 		{
 			continue;
 		}
@@ -381,6 +417,7 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 			Snapshot.EnergyDrinkItemTag = Stack.ItemTag;
 
 			--Stack.Count;
+			bMutatedInventory = true;
 			++SpawnSequence;
 			bSpawnedAny = true;
 		}
@@ -391,7 +428,7 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 		return !Stack.ItemTag.IsValid() || Stack.Count <= 0;
 	});
 
-	if (!bSpawnedAny)
+	if (!bSpawnedAny && !bMutatedInventory)
 	{
 		return false;
 	}
