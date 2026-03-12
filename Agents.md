@@ -155,6 +155,7 @@ Docs: `Documentation/README_FactionSubsystem.md`
 
 - `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
+- `UARItemDefinitionSubsystem` is the shared resolver facade for item/energy-drink definitions and shared item physics metadata; it delegates to `UTagContentResolverSubsystem` and is consumed by both Shop and Scrapyard runtime paths.
 
 ### Invader
 

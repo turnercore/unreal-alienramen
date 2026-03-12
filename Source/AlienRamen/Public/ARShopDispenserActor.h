@@ -28,7 +28,7 @@ struct ALIENRAMEN_API FARShopDispenseDefinition
 	GENERATED_BODY()
 
 	// Optional lookup key for this output. If Request uses an invalid tag, first entry is used.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Scrapyard.Item"))
 	FGameplayTag ItemTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")

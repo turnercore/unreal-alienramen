@@ -120,6 +120,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Consume authority is shop-mode only.
 - Stored drink inventory is authoritative pre-spawn; drinks spawned into shop anchors become world-owned instances and are removed from stored inventory count.
 - Consuming a spawned world drink applies run-buff payload through `UARRunBuffSubsystem` using per-character ownership rules (no per-character duplicate of the same drink type).
+- Shared item metadata (for example spawn actor class/weight) should resolve through `UARItemDefinitionSubsystem` so Shop and Scrapyard consume the same authored item rows.
 
 ## StateTree Integration
 
