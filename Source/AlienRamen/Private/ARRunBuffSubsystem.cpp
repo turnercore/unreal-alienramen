@@ -1,6 +1,7 @@
 #include "ARRunBuffSubsystem.h"
 
 #include "ARGameStateBase.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARScrapyardTypes.h"
@@ -53,13 +54,24 @@ FARRunBuffStateSnapshot UARRunBuffSubsystem::GetRunBuffStateSnapshot() const
 int32 UARRunBuffSubsystem::GetStoredEnergyDrinkCount(const FGameplayTag ItemTag) const
 {
 	const UARSaveGame* SaveGame = ResolveSave();
-	return SaveGame ? GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag) : 0;
+	return SaveGame ? GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag()) : 0;
+}
+
+int32 UARRunBuffSubsystem::GetStoredEnergyDrinkCountForCharacter(const FGameplayTag ItemTag, const FGameplayTag CharacterTag) const
+{
+	if (!CharacterTag.IsValid())
+	{
+		return GetStoredEnergyDrinkCount(ItemTag);
+	}
+
+	const UARSaveGame* SaveGame = ResolveSave();
+	return SaveGame ? GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, CharacterTag) : 0;
 }
 
 int32 UARRunBuffSubsystem::GetQueuedEnergyDrinkCount(const FGameplayTag ItemTag) const
 {
 	const UARSaveGame* SaveGame = ResolveSave();
-	return SaveGame ? GetStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag) : 0;
+	return SaveGame ? GetStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, FGameplayTag()) : 0;
 }
 
 bool UARRunBuffSubsystem::HasEnergyDrinkStorageUnlock() const
@@ -88,12 +100,10 @@ bool UARRunBuffSubsystem::AddExtractedEnergyDrink(const FGameplayTag ItemTag, in
 		return false;
 	}
 
-	TArray<FARRunBuffItemStack>& TargetStacks = HasEnergyDrinkStorageUnlock()
-		? SaveGame->StoredEnergyDrinkStacks
-		: SaveGame->QueuedEnergyDrinkStacks;
+	TArray<FARRunBuffItemStack>& TargetStacks = SaveGame->StoredEnergyDrinkStacks;
 
 	const int32 MaxStackCount = ResolveMaxStackCountForItem(ItemTag);
-	const int32 CurrentCount = GetStackCount(TargetStacks, ItemTag);
+	const int32 CurrentCount = GetStackCount(TargetStacks, ItemTag, FGameplayTag());
 	const int32 AvailableCapacity = FMath::Max(0, MaxStackCount - CurrentCount);
 	if (AvailableCapacity <= 0)
 	{
@@ -101,7 +111,7 @@ bool UARRunBuffSubsystem::AddExtractedEnergyDrink(const FGameplayTag ItemTag, in
 	}
 
 	const int32 CountToAdd = FMath::Min(Count, AvailableCapacity);
-	if (UpsertStackCount(TargetStacks, ItemTag, CountToAdd) <= 0)
+	if (UpsertStackCount(TargetStacks, ItemTag, FGameplayTag(), CountToAdd) <= 0)
 	{
 		return false;
 	}
@@ -131,20 +141,20 @@ bool UARRunBuffSubsystem::UseStoredEnergyDrink(const FGameplayTag ItemTag, int32
 		return false;
 	}
 
-	if (GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag) < Count)
+	if (GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag()) < Count)
 	{
 		return false;
 	}
 
 	const int32 MaxQueuedCount = ResolveMaxStackCountForItem(ItemTag);
-	const int32 QueuedCount = GetStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag);
+	const int32 QueuedCount = GetStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, FGameplayTag());
 	if (QueuedCount + Count > MaxQueuedCount)
 	{
 		return false;
 	}
 
-	UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, -Count);
-	UpsertStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, Count);
+	UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag(), -Count);
+	UpsertStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, FGameplayTag(), Count);
 	NormalizeStacks(SaveGame->StoredEnergyDrinkStacks);
 	NormalizeStacks(SaveGame->QueuedEnergyDrinkStacks);
 	MarkSaveDirty();
@@ -172,7 +182,7 @@ bool UARRunBuffSubsystem::QueueEnergyDrinkForNextRun(const FGameplayTag ItemTag,
 	}
 
 	const int32 MaxQueuedCount = ResolveMaxStackCountForItem(ItemTag);
-	const int32 CurrentQueuedCount = GetStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag);
+	const int32 CurrentQueuedCount = GetStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, FGameplayTag());
 	const int32 AvailableCapacity = FMath::Max(0, MaxQueuedCount - CurrentQueuedCount);
 	if (AvailableCapacity <= 0)
 	{
@@ -180,7 +190,7 @@ bool UARRunBuffSubsystem::QueueEnergyDrinkForNextRun(const FGameplayTag ItemTag,
 	}
 
 	const int32 CountToQueue = FMath::Min(Count, AvailableCapacity);
-	if (UpsertStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, CountToQueue) <= 0)
+	if (UpsertStackCount(SaveGame->QueuedEnergyDrinkStacks, ItemTag, FGameplayTag(), CountToQueue) <= 0)
 	{
 		return false;
 	}
@@ -189,6 +199,175 @@ bool UARRunBuffSubsystem::QueueEnergyDrinkForNextRun(const FGameplayTag ItemTag,
 	MarkSaveDirty();
 	BroadcastSnapshotChanged();
 	return true;
+}
+
+bool UARRunBuffSubsystem::ConsumeEnergyDrinkForCharacter(const FGameplayTag ItemTag, const FGameplayTag CharacterTag)
+{
+	if (!EnsureAuthorityWorld(TEXT("ConsumeEnergyDrinkForCharacter")))
+	{
+		return false;
+	}
+
+	if (!ItemTag.IsValid() || !CharacterTag.IsValid())
+	{
+		return false;
+	}
+
+	UARSaveGame* SaveGame = ResolveMutableSave();
+	if (!SaveGame)
+	{
+		return false;
+	}
+
+	if (IsEnergyDrinkActiveForCharacter(ItemTag, CharacterTag))
+	{
+		return false;
+	}
+
+	const int32 SharedStoredCount = GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag());
+	const int32 CharacterStoredCount = GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, CharacterTag);
+	if (SharedStoredCount <= 0 && CharacterStoredCount <= 0)
+	{
+		return false;
+	}
+
+	if (SharedStoredCount > 0)
+	{
+		UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag(), -1);
+	}
+	else
+	{
+		UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, CharacterTag, -1);
+	}
+
+	if (!ApplyEnergyDrinkPayloadForCharacter(SaveGame, ItemTag, CharacterTag))
+	{
+		// Revert inventory mutation when payload application fails.
+		if (SharedStoredCount > 0)
+		{
+			UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag(), 1);
+		}
+		else
+		{
+			UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, CharacterTag, 1);
+		}
+		NormalizeStacks(SaveGame->StoredEnergyDrinkStacks);
+		return false;
+	}
+
+	NormalizeStacks(SaveGame->StoredEnergyDrinkStacks);
+	MarkSaveDirty();
+	BroadcastSnapshotChanged();
+	return true;
+}
+
+bool UARRunBuffSubsystem::ConsumeEnergyDrinkForPlayerState(const FGameplayTag ItemTag, AARPlayerStateBase* PlayerState)
+{
+	if (!PlayerState)
+	{
+		return false;
+	}
+
+	return ConsumeEnergyDrinkForCharacter(ItemTag, ResolveCharacterTagFromPlayerState(PlayerState));
+}
+
+bool UARRunBuffSubsystem::ConsumeSpawnedEnergyDrinkForPlayerState(const FGameplayTag ItemTag, AARPlayerStateBase* PlayerState)
+{
+	if (!EnsureAuthorityWorld(TEXT("ConsumeSpawnedEnergyDrinkForPlayerState")))
+	{
+		return false;
+	}
+
+	if (!PlayerState)
+	{
+		return false;
+	}
+
+	const FGameplayTag CharacterTag = ResolveCharacterTagFromPlayerState(PlayerState);
+	if (!CharacterTag.IsValid())
+	{
+		return false;
+	}
+
+	UARSaveGame* SaveGame = ResolveMutableSave();
+	if (!SaveGame)
+	{
+		return false;
+	}
+
+	if (!ApplyEnergyDrinkPayloadForCharacter(SaveGame, ItemTag, CharacterTag))
+	{
+		return false;
+	}
+
+	MarkSaveDirty();
+	BroadcastSnapshotChanged();
+	return true;
+}
+
+bool UARRunBuffSubsystem::IsEnergyDrinkActiveForCharacter(const FGameplayTag ItemTag, const FGameplayTag CharacterTag) const
+{
+	if (!ItemTag.IsValid() || !CharacterTag.IsValid())
+	{
+		return false;
+	}
+
+	const UARSaveGame* SaveGame = ResolveSave();
+	if (!SaveGame)
+	{
+		return false;
+	}
+
+	return SaveGame->ActiveRunBuffPayloads.ContainsByPredicate(
+		[ItemTag, CharacterTag](const FARRunBuffActivePayload& Payload)
+		{
+			return IsMatchingPayloadKey(Payload, ItemTag, CharacterTag);
+		});
+}
+
+void UARRunBuffSubsystem::ClearRunBuffsForShopEntry()
+{
+	if (!EnsureAuthorityWorld(TEXT("ClearRunBuffsForShopEntry")))
+	{
+		return;
+	}
+
+	UARSaveGame* SaveGame = ResolveMutableSave();
+	if (!SaveGame)
+	{
+		return;
+	}
+
+	SaveGame->QueuedEnergyDrinkStacks.Reset();
+	SaveGame->ActiveRunBuffPayloads.Reset();
+	SaveGame->ActiveRunBuffCycleId = FMath::Max(0, SaveGame->ActiveRunBuffCycleId) + 1;
+	LastRotationCycleId = INDEX_NONE;
+	ResetRuntimeApplications();
+	MarkSaveDirty();
+	BroadcastSnapshotChanged();
+}
+
+void UARRunBuffSubsystem::ClearQueuedRunBuffsAtInvaderEnd()
+{
+	if (!EnsureAuthorityWorld(TEXT("ClearQueuedRunBuffsAtInvaderEnd")))
+	{
+		return;
+	}
+
+	UARSaveGame* SaveGame = ResolveMutableSave();
+	if (!SaveGame)
+	{
+		return;
+	}
+
+	if (SaveGame->QueuedEnergyDrinkStacks.IsEmpty())
+	{
+		return;
+	}
+
+	SaveGame->QueuedEnergyDrinkStacks.Reset();
+	MarkSaveDirty();
+	BroadcastSnapshotChanged();
 }
 
 bool UARRunBuffSubsystem::SellStoredEnergyDrink(const FGameplayTag ItemTag, int32 Count, int32& OutMoneyAwarded)
@@ -211,7 +390,7 @@ bool UARRunBuffSubsystem::SellStoredEnergyDrink(const FGameplayTag ItemTag, int3
 		return false;
 	}
 
-	if (GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag) < Count)
+	if (GetStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag()) < Count)
 	{
 		return false;
 	}
@@ -228,7 +407,7 @@ bool UARRunBuffSubsystem::SellStoredEnergyDrink(const FGameplayTag ItemTag, int3
 		return false;
 	}
 
-	UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, -Count);
+	UpsertStackCount(SaveGame->StoredEnergyDrinkStacks, ItemTag, FGameplayTag(), -Count);
 	NormalizeStacks(SaveGame->StoredEnergyDrinkStacks);
 
 	OutMoneyAwarded = SellValue * Count;
@@ -267,8 +446,7 @@ bool UARRunBuffSubsystem::RotateRunBuffsAtInvaderInit()
 	}
 
 	ResetRuntimeApplications();
-	SaveGame->ActiveRunBuffPayloads.Reset();
-
+	bool bMutatedSave = false;
 	for (const FARRunBuffItemStack& QueuedStack : SaveGame->QueuedEnergyDrinkStacks)
 	{
 		if (!QueuedStack.ItemTag.IsValid() || QueuedStack.Count <= 0)
@@ -276,28 +454,43 @@ bool UARRunBuffSubsystem::RotateRunBuffsAtInvaderInit()
 			continue;
 		}
 
-		FARScrapyardItemDefRow ItemDef;
-		if (!ResolveScrapyardItemDefinition(QueuedStack.ItemTag, ItemDef))
+		if (IsEnergyDrinkActiveForCharacter(QueuedStack.ItemTag, QueuedStack.CharacterTag))
+		{
+			continue;
+		}
+
+		FAREnergyDrinkDefRow DrinkDef;
+		if (!ResolveEnergyDrinkDefinition(QueuedStack.ItemTag, DrinkDef))
 		{
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[RunBuff] Invader-init rotation skipped unresolved queued energy drink '%s'."),
+				TEXT("[RunBuff] Invader-init skipped unresolved queued energy drink '%s'."),
 				*QueuedStack.ItemTag.ToString());
 			continue;
 		}
 
-		FARRunBuffActivePayload Payload;
-		Payload.ItemTag = ItemDef.EnergyDrinkTag.IsValid() ? ItemDef.EnergyDrinkTag : QueuedStack.ItemTag;
+		FARRunBuffActivePayload& Payload = SaveGame->ActiveRunBuffPayloads.AddDefaulted_GetRef();
+		Payload.CharacterTag = QueuedStack.CharacterTag;
+		Payload.ItemTag = QueuedStack.ItemTag;
 		Payload.AppliedCount = FMath::Clamp(QueuedStack.Count, 1, ResolveMaxStackCountForItem(QueuedStack.ItemTag));
-		Payload.GameplayEffects = ItemDef.RunBuffGameplayEffects;
-		Payload.GrantedTags = ItemDef.RunBuffGrantedTags;
-		SaveGame->ActiveRunBuffPayloads.Add(MoveTemp(Payload));
+		Payload.GameplayEffects = DrinkDef.RunBuffGameplayEffects;
+		Payload.GrantedTags = DrinkDef.RunBuffGrantedTags;
+		bMutatedSave = true;
 	}
 
-	SaveGame->QueuedEnergyDrinkStacks.Reset();
-	SaveGame->ActiveRunBuffCycleId = FMath::Max(0, SaveGame->ActiveRunBuffCycleId) + 1;
-	MarkSaveDirty();
+	if (SaveGame->QueuedEnergyDrinkStacks.Num() > 0)
+	{
+		SaveGame->QueuedEnergyDrinkStacks.Reset();
+		bMutatedSave = true;
+	}
+
+	NormalizePayloads(SaveGame->ActiveRunBuffPayloads);
+	if (bMutatedSave)
+	{
+		SaveGame->ActiveRunBuffCycleId = FMath::Max(0, SaveGame->ActiveRunBuffCycleId) + 1;
+		MarkSaveDirty();
+	}
 
 	if (AARGameStateBase* GameState = ResolveGameState())
 	{
@@ -334,9 +527,15 @@ bool UARRunBuffSubsystem::ApplyActiveRunBuffsToPlayerState(AARPlayerStateBase* P
 		return false;
 	}
 
+	const FGameplayTag PlayerCharacterTag = ResolveCharacterTagFromPlayerState(PlayerState);
 	RemoveRuntimeApplicationsFromPlayer(PlayerState);
 	for (const FARRunBuffActivePayload& Payload : SaveGame->ActiveRunBuffPayloads)
 	{
+		if (Payload.CharacterTag.IsValid() && Payload.CharacterTag != PlayerCharacterTag)
+		{
+			continue;
+		}
+
 		ApplyPayloadToPlayer(PlayerState, Payload);
 	}
 
@@ -383,54 +582,33 @@ bool UARRunBuffSubsystem::ResolveScrapyardItemDefinition(const FGameplayTag Item
 {
 	OutDef = FARScrapyardItemDefRow();
 
-	if (!ItemTag.IsValid())
-	{
-		return false;
-	}
+	UGameInstance* GameInstance = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	return ItemDefinitions && ItemDefinitions->ResolveItemDefinition(ItemTag, OutDef);
+}
+
+bool UARRunBuffSubsystem::ResolveEnergyDrinkDefinition(const FGameplayTag ItemTag, FAREnergyDrinkDefRow& OutDef) const
+{
+	OutDef = FAREnergyDrinkDefRow();
 
 	UGameInstance* GameInstance = GetGameInstance();
-	if (!GameInstance)
-	{
-		return false;
-	}
-
-	UTagContentResolverSubsystem* Resolver = GameInstance->GetSubsystem<UTagContentResolverSubsystem>();
-	if (!Resolver)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[RunBuff] TagContentResolverSubsystem unavailable while resolving '%s'."), *ItemTag.ToString());
-		return false;
-	}
-
-	FInstancedStruct RowData;
-	FString ResolveError;
-	if (!Resolver->TryResolveRowForTag(ItemTag, RowData, ResolveError))
-	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[RunBuff] Failed resolving scrapyard item row for '%s': %s"),
-			*ItemTag.ToString(),
-			*ResolveError);
-		return false;
-	}
-
-	const FARScrapyardItemDefRow* TypedRow = RowData.GetPtr<FARScrapyardItemDefRow>();
-	if (!TypedRow)
-	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[RunBuff] Scrapyard item row for '%s' was not FARScrapyardItemDefRow."),
-			*ItemTag.ToString());
-		return false;
-	}
-
-	OutDef = *TypedRow;
-	return true;
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	return ItemDefinitions && ItemDefinitions->ResolveEnergyDrinkDefinition(ItemTag, OutDef);
 }
 
 int32 UARRunBuffSubsystem::ResolveMaxStackCountForItem(const FGameplayTag ItemTag) const
 {
+	FAREnergyDrinkDefRow DrinkDef;
+	if (ResolveEnergyDrinkDefinition(ItemTag, DrinkDef))
+	{
+		if (DrinkDef.StackRule == EARScrapyardStackRule::Unique)
+		{
+			return 1;
+		}
+
+		return FMath::Max(1, DrinkDef.MaxStackCount);
+	}
+
 	FARScrapyardItemDefRow ItemDef;
 	if (!ResolveScrapyardItemDefinition(ItemTag, ItemDef))
 	{
@@ -450,25 +628,90 @@ FGameplayTag UARRunBuffSubsystem::ResolveEnergyDrinkStorageUnlockTag() const
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Shop.Storage.EnergyDrink"), false);
 }
 
-int32 UARRunBuffSubsystem::GetStackCount(const TArray<FARRunBuffItemStack>& Stacks, const FGameplayTag ItemTag)
+FGameplayTag UARRunBuffSubsystem::ResolveCharacterTagFromPlayerState(const AARPlayerStateBase* PlayerState) const
+{
+	if (!PlayerState)
+	{
+		return FGameplayTag();
+	}
+
+	static const FGameplayTag CharacterRootTag = FGameplayTag::RequestGameplayTag(TEXT("Player.Character"), false);
+	if (CharacterRootTag.IsValid())
+	{
+		for (const FGameplayTag LoadoutTag : PlayerState->LoadoutTags)
+		{
+			if (LoadoutTag.IsValid() && LoadoutTag.MatchesTag(CharacterRootTag))
+			{
+				return LoadoutTag;
+			}
+		}
+	}
+
+	switch (PlayerState->GetCharacterPicked())
+	{
+	case EARCharacterChoice::Brother:
+		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false);
+	case EARCharacterChoice::Sister:
+		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
+	default:
+		return FGameplayTag();
+	}
+}
+
+bool UARRunBuffSubsystem::IsMatchingStackKey(const FARRunBuffItemStack& Stack, const FGameplayTag ItemTag, const FGameplayTag CharacterTag)
+{
+	if (!ItemTag.IsValid() || Stack.ItemTag != ItemTag)
+	{
+		return false;
+	}
+
+	if (!CharacterTag.IsValid())
+	{
+		return true;
+	}
+
+	return Stack.CharacterTag == CharacterTag;
+}
+
+bool UARRunBuffSubsystem::IsMatchingPayloadKey(const FARRunBuffActivePayload& Payload, const FGameplayTag ItemTag, const FGameplayTag CharacterTag)
+{
+	if (!ItemTag.IsValid() || Payload.ItemTag != ItemTag)
+	{
+		return false;
+	}
+
+	if (!CharacterTag.IsValid())
+	{
+		return true;
+	}
+
+	return !Payload.CharacterTag.IsValid() || Payload.CharacterTag == CharacterTag;
+}
+
+int32 UARRunBuffSubsystem::GetStackCount(const TArray<FARRunBuffItemStack>& Stacks, const FGameplayTag ItemTag, const FGameplayTag CharacterTag)
 {
 	if (!ItemTag.IsValid())
 	{
 		return 0;
 	}
 
+	int32 TotalCount = 0;
 	for (const FARRunBuffItemStack& Stack : Stacks)
 	{
-		if (Stack.ItemTag == ItemTag)
+		if (IsMatchingStackKey(Stack, ItemTag, CharacterTag))
 		{
-			return FMath::Max(0, Stack.Count);
+			TotalCount += FMath::Max(0, Stack.Count);
+			if (CharacterTag.IsValid())
+			{
+				break;
+			}
 		}
 	}
 
-	return 0;
+	return TotalCount;
 }
 
-int32 UARRunBuffSubsystem::UpsertStackCount(TArray<FARRunBuffItemStack>& Stacks, const FGameplayTag ItemTag, const int32 Delta)
+int32 UARRunBuffSubsystem::UpsertStackCount(TArray<FARRunBuffItemStack>& Stacks, const FGameplayTag ItemTag, const FGameplayTag CharacterTag, const int32 Delta)
 {
 	if (!ItemTag.IsValid() || Delta == 0)
 	{
@@ -478,7 +721,7 @@ int32 UARRunBuffSubsystem::UpsertStackCount(TArray<FARRunBuffItemStack>& Stacks,
 	for (int32 Index = 0; Index < Stacks.Num(); ++Index)
 	{
 		FARRunBuffItemStack& Existing = Stacks[Index];
-		if (Existing.ItemTag != ItemTag)
+		if (Existing.ItemTag != ItemTag || Existing.CharacterTag != CharacterTag)
 		{
 			continue;
 		}
@@ -499,6 +742,7 @@ int32 UARRunBuffSubsystem::UpsertStackCount(TArray<FARRunBuffItemStack>& Stacks,
 	}
 
 	FARRunBuffItemStack& Added = Stacks.AddDefaulted_GetRef();
+	Added.CharacterTag = CharacterTag;
 	Added.ItemTag = ItemTag;
 	Added.Count = Delta;
 	return Added.Count;
@@ -520,7 +764,45 @@ void UARRunBuffSubsystem::NormalizeStacks(TArray<FARRunBuffItemStack>& Stacks)
 
 	Stacks.Sort([](const FARRunBuffItemStack& A, const FARRunBuffItemStack& B)
 	{
-		return A.ItemTag.ToString() < B.ItemTag.ToString();
+		const FString CharA = A.CharacterTag.ToString();
+		const FString CharB = B.CharacterTag.ToString();
+		if (CharA == CharB)
+		{
+			return A.ItemTag.ToString() < B.ItemTag.ToString();
+		}
+
+		return CharA < CharB;
+	});
+}
+
+void UARRunBuffSubsystem::NormalizePayloads(TArray<FARRunBuffActivePayload>& Payloads)
+{
+	for (int32 Index = Payloads.Num() - 1; Index >= 0; --Index)
+	{
+		FARRunBuffActivePayload& Payload = Payloads[Index];
+		if (!Payload.ItemTag.IsValid())
+		{
+			Payloads.RemoveAtSwap(Index);
+			continue;
+		}
+
+		Payload.AppliedCount = FMath::Max(1, Payload.AppliedCount);
+		Payload.GameplayEffects.RemoveAll([](const TSubclassOf<UGameplayEffect>& EffectClass)
+		{
+			return EffectClass == nullptr;
+		});
+	}
+
+	Payloads.Sort([](const FARRunBuffActivePayload& A, const FARRunBuffActivePayload& B)
+	{
+		const FString CharA = A.CharacterTag.ToString();
+		const FString CharB = B.CharacterTag.ToString();
+		if (CharA == CharB)
+		{
+			return A.ItemTag.ToString() < B.ItemTag.ToString();
+		}
+
+		return CharA < CharB;
 	});
 }
 
@@ -668,4 +950,66 @@ void UARRunBuffSubsystem::ApplyPayloadToPlayer(AARPlayerStateBase* PlayerState, 
 			}
 		}
 	}
+}
+
+bool UARRunBuffSubsystem::ApplyEnergyDrinkPayloadForCharacter(
+	UARSaveGame* SaveGame,
+	const FGameplayTag ItemTag,
+	const FGameplayTag CharacterTag)
+{
+	if (!SaveGame || !ItemTag.IsValid() || !CharacterTag.IsValid())
+	{
+		return false;
+	}
+
+	if (IsEnergyDrinkActiveForCharacter(ItemTag, CharacterTag))
+	{
+		return false;
+	}
+
+	FAREnergyDrinkDefRow EnergyDrinkDef;
+	if (!ResolveEnergyDrinkDefinition(ItemTag, EnergyDrinkDef))
+	{
+		return false;
+	}
+
+	FARRunBuffActivePayload Payload;
+	Payload.CharacterTag = CharacterTag;
+	Payload.ItemTag = ItemTag;
+	Payload.AppliedCount = 1;
+	Payload.GameplayEffects = EnergyDrinkDef.RunBuffGameplayEffects;
+	Payload.GrantedTags = EnergyDrinkDef.RunBuffGrantedTags;
+	SaveGame->ActiveRunBuffPayloads.Add(MoveTemp(Payload));
+
+	NormalizePayloads(SaveGame->ActiveRunBuffPayloads);
+	SaveGame->ActiveRunBuffCycleId = FMath::Max(0, SaveGame->ActiveRunBuffCycleId) + 1;
+	LastRotationCycleId = INDEX_NONE;
+
+	if (AARGameStateBase* GameState = ResolveGameState())
+	{
+		for (AARPlayerStateBase* PlayerState : GameState->GetPlayerStates())
+		{
+			if (!PlayerState)
+			{
+				continue;
+			}
+
+			if (ResolveCharacterTagFromPlayerState(PlayerState) != CharacterTag)
+			{
+				continue;
+			}
+
+			const FARRunBuffActivePayload* ActivePayload = SaveGame->ActiveRunBuffPayloads.FindByPredicate(
+				[ItemTag, CharacterTag](const FARRunBuffActivePayload& Candidate)
+				{
+					return Candidate.ItemTag == ItemTag && Candidate.CharacterTag == CharacterTag;
+				});
+			if (ActivePayload)
+			{
+				ApplyPayloadToPlayer(PlayerState, *ActivePayload);
+			}
+		}
+	}
+
+	return true;
 }

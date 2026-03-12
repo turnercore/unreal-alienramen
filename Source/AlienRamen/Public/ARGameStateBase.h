@@ -61,6 +61,18 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FARMeatState,
 	OldMeat);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnRunLedgerScrapChangedSignature,
+	int32,
+	NewRunLedgerScrap,
+	int32,
+	OldRunLedgerScrap);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnRunLedgerMeatChangedSignature,
+	FARMeatState,
+	NewRunLedgerMeat,
+	FARMeatState,
+	OldRunLedgerMeat);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnCyclesChangedSignature,
 	int32,
 	NewCycles,
@@ -174,6 +186,12 @@ public:
 	FAROnMeatChangedSignature OnMeatChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnRunLedgerScrapChangedSignature OnRunLedgerScrapChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
+	FAROnRunLedgerMeatChangedSignature OnRunLedgerMeatChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnCyclesChangedSignature OnCyclesChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Faction")
@@ -212,6 +230,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	const FARMeatState& GetMeat() const { return Meat; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	int32 GetRunLedgerScrap() const { return RunLedgerScrap; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	const FARMeatState& GetRunLedgerMeat() const { return RunLedgerMeat; }
 
 	/** Returns whether manual save actions (for example pause-menu save) are allowed in the current mode. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
@@ -285,6 +309,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetMeatFromSave(const FARMeatState& NewMeat);
 
+	/** Writes run-ledger scrap state for current run cycle. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetRunLedgerScrap(int32 NewRunLedgerScrap);
+
+	/** Writes run-ledger meat state for current run cycle. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetRunLedgerMeat(const FARMeatState& NewRunLedgerMeat);
+
+	/** Adds delta to run-ledger scrap (clamped at >=0). Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void AddRunLedgerScrap(int32 ScrapDelta);
+
+	/** Adds meat into run ledger by affinity color bucket. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void AddRunLedgerMeat(EARAffinityColor ColorBucket, int32 MeatAmount);
+
+	/** Applies a percentage loss to run-ledger values (0.25 => lose 25%). Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void ApplyRunLedgerPercentPenalty(float PenaltyFraction);
+
+	/** Clears run-ledger scrap + meat for next cycle setup. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void ClearRunLedger();
+
 	/** Writes elected faction identity from save/runtime and notifies listeners. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction", meta = (BlueprintAuthorityOnly))
 	void SetActiveFactionTagFromSave(FGameplayTag NewActiveFactionTag);
@@ -342,6 +390,12 @@ protected:
 	void OnRep_Meat(FARMeatState OldMeat);
 
 	UFUNCTION()
+	void OnRep_RunLedgerScrap(int32 OldRunLedgerScrap);
+
+	UFUNCTION()
+	void OnRep_RunLedgerMeat(FARMeatState OldRunLedgerMeat);
+
+	UFUNCTION()
 	void OnRep_ActiveFactionTag(FGameplayTag OldActiveFactionTag);
 
 	UFUNCTION()
@@ -393,6 +447,12 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Meat, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	FARMeatState Meat;
+
+	UPROPERTY(ReplicatedUsing = OnRep_RunLedgerScrap, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_RunLedgerMeat, BlueprintReadOnly, Category = "Alien Ramen|Save")
+	FARMeatState RunLedgerMeat;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Cycles, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 Cycles = 0;

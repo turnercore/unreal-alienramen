@@ -2,6 +2,7 @@
 
 #include "AREnemyBase.h"
 #include "AREnemyAIController.h"
+#include "AREconomySettings.h"
 #include "ARAttributeSetCore.h"
 #include "TagContentResolverSubsystem.h"
 #include "ARInvaderDirectorSettings.h"
@@ -9,6 +10,9 @@
 #include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ARRunBuffSubsystem.h"
+#include "ARSaveGame.h"
+#include "ARSaveSubsystem.h"
 
 #include "AbilitySystemComponent.h"
 #include "Algo/StableSort.h"
@@ -178,11 +182,68 @@ void UARInvaderDirectorSubsystem::StopInvaderRun()
 	StopInvaderRunWithReason(EARInvaderRunEndReason::ManualStop);
 }
 
+bool UARInvaderDirectorSubsystem::SubmitEarlyBailVote(AARPlayerStateBase* PlayerState, const bool bVoteYes)
+{
+	if (!GetWorld() || !GetWorld()->GetAuthGameMode() || !bRunActive || !PlayerState)
+	{
+		return false;
+	}
+
+	const EARPlayerSlot PlayerSlot = PlayerState->GetPlayerSlot();
+	if (PlayerSlot == EARPlayerSlot::Unknown)
+	{
+		return false;
+	}
+
+	if (bVoteYes)
+	{
+		EarlyBailVotesBySlot.Add(PlayerSlot);
+	}
+	else
+	{
+		EarlyBailVotesBySlot.Remove(PlayerSlot);
+	}
+
+	EvaluateEarlyBailVotes();
+	return true;
+}
+
 void UARInvaderDirectorSubsystem::StopInvaderRunWithReason(EARInvaderRunEndReason EndReason)
 {
 	if (!bRunActive)
 	{
 		return;
+	}
+
+	if (AARGameStateBase* GameState = GetWorld() ? Cast<AARGameStateBase>(GetWorld()->GetGameState()) : nullptr)
+	{
+		if (EndReason == EARInvaderRunEndReason::LossAllPlayersDown)
+		{
+			const UAREconomySettings* EconomySettings = GetDefault<UAREconomySettings>();
+			const float PenaltyPercent = EconomySettings ? EconomySettings->InvaderDeathPenaltyPercent : 0.0f;
+			GameState->ApplyRunLedgerPercentPenalty(PenaltyPercent);
+		}
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (UGameInstance* GameInstance = World->GetGameInstance())
+		{
+			if (UARRunBuffSubsystem* RunBuffSubsystem = GameInstance->GetSubsystem<UARRunBuffSubsystem>())
+			{
+				RunBuffSubsystem->ClearQueuedRunBuffsAtInvaderEnd();
+			}
+
+			if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+			{
+				if (UARSaveGame* CurrentSave = SaveSubsystem->GetCurrentSaveGame())
+				{
+					CurrentSave->ShopTransientCarryables.Reset();
+					CurrentSave->bClearShopTransientCarryablesOnNextShopLoad = true;
+					SaveSubsystem->MarkSaveDirty();
+				}
+			}
+		}
 	}
 
 	DestroyManagedInvaderEnemies();
@@ -233,6 +294,7 @@ void UARInvaderDirectorSubsystem::ResetRunState(const bool bForActiveRunStart)
 	DeadPlayerCountCached = 0;
 	PlayerDownedCache.Reset();
 	PlayerDeadCache.Reset();
+	EarlyBailVotesBySlot.Reset();
 
 	EnemyDefinitionCache.Reset();
 	EnemyClassPreloadHandles.Reset();
@@ -521,6 +583,8 @@ void UARInvaderDirectorSubsystem::TickDirector(float DeltaTime)
 		break;
 	}
 
+	EvaluateLossConditions();
+	EvaluateEarlyBailVotes();
 	PushSnapshotToGameState();
 }
 
@@ -856,7 +920,63 @@ void UARInvaderDirectorSubsystem::RecountAliveAndHandleLeaks()
 
 void UARInvaderDirectorSubsystem::EvaluateLossConditions()
 {
-	// Player status is event-driven; this is intentionally a no-op.
+	if (!bRunActive)
+	{
+		return;
+	}
+
+	if (bAllPlayersDeadCached || bAllPlayersDownCached)
+	{
+		StopInvaderRunWithReason(EARInvaderRunEndReason::LossAllPlayersDown);
+	}
+}
+
+void UARInvaderDirectorSubsystem::EvaluateEarlyBailVotes()
+{
+	if (!bRunActive)
+	{
+		return;
+	}
+
+	const UWorld* World = GetWorld();
+	const AGameStateBase* GS = World ? World->GetGameState() : nullptr;
+	if (!GS)
+	{
+		return;
+	}
+
+	TSet<EARPlayerSlot> ActiveSlots;
+	for (APlayerState* PSBase : GS->PlayerArray)
+	{
+		const AARPlayerStateBase* PS = Cast<AARPlayerStateBase>(PSBase);
+		if (!PS || PS->IsOnlyASpectator() || PS->GetPlayerSlot() == EARPlayerSlot::Unknown)
+		{
+			continue;
+		}
+
+		const UAbilitySystemComponent* ASC = PS->GetASC();
+		if (!ASC || ASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute()) <= 0.0f)
+		{
+			continue;
+		}
+
+		ActiveSlots.Add(PS->GetPlayerSlot());
+	}
+
+	if (ActiveSlots.Num() <= 0)
+	{
+		return;
+	}
+
+	for (const EARPlayerSlot Slot : ActiveSlots)
+	{
+		if (!EarlyBailVotesBySlot.Contains(Slot))
+		{
+			return;
+		}
+	}
+
+	StopInvaderRunWithReason(EARInvaderRunEndReason::ManualStop);
 }
 
 void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings()

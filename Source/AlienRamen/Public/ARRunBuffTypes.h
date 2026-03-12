@@ -15,6 +15,10 @@ struct ALIENRAMEN_API FARRunBuffItemStack
 {
 	GENERATED_BODY()
 
+	// Optional owning character key. Invalid tag means shared/global stack.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Run Buff")
+	FGameplayTag CharacterTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Run Buff")
 	FGameplayTag ItemTag;
 
@@ -26,6 +30,9 @@ USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARRunBuffActivePayload
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Run Buff")
+	FGameplayTag CharacterTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Run Buff")
 	FGameplayTag ItemTag;

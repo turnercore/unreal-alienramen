@@ -17,6 +17,7 @@ class UARRunBuffSubsystem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardExtractionSummaryChangedSignature, const FARScrapyardExtractionSummary&, Summary);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunTimerChangedSignature, float, RemainingSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunActiveChangedSignature, bool, bIsRunActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunTimerPausedChangedSignature, bool, bIsPaused);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardRunBuffSnapshotChangedSignature, const FARRunBuffStateSnapshot&, Snapshot);
 
 UCLASS()
@@ -45,10 +46,19 @@ public:
 	float GetScrapyardRunRemainingSeconds() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
+	bool IsScrapyardRunTimerPaused() const { return bScrapyardRunTimerPaused; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
 	const FARRunBuffStateSnapshot& GetRunBuffStateSnapshot() const { return RunBuffStateSnapshot; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
 	void StartScrapyardRun(float RunDurationSeconds, int32 InRunSeed = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
+	void AddScrapyardTime(float AddedSeconds);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
+	void SetScrapyardRunTimerPaused(bool bPaused);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
 	bool FinalizeScrapyardRun();
@@ -87,6 +97,9 @@ public:
 	FAROnScrapyardRunActiveChangedSignature OnScrapyardRunActiveChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Scrapyard")
+	FAROnScrapyardRunTimerPausedChangedSignature OnScrapyardRunTimerPausedChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Scrapyard")
 	FAROnScrapyardRunBuffSnapshotChangedSignature OnScrapyardRunBuffSnapshotChanged;
 
 protected:
@@ -100,6 +113,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_ExtractionSummary(const FARScrapyardExtractionSummary& OldSummary);
+
+	UFUNCTION()
+	void OnRep_ScrapyardRunTimerPaused(bool bOldPaused);
 
 	UFUNCTION()
 	void OnRep_RunBuffStateSnapshot(const FARRunBuffStateSnapshot& OldSnapshot);
@@ -123,6 +139,7 @@ private:
 	void BindRunBuffSubsystem();
 	void UnbindRunBuffSubsystem();
 	void RefreshRunBuffStateSnapshot(bool bBroadcast);
+	float ResolveScrapyardRunElapsedSeconds() const;
 
 	UFUNCTION()
 	void HandleRunBuffStateChanged(const FARRunBuffStateSnapshot& Snapshot);
@@ -138,6 +155,15 @@ private:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	int32 ScrapyardRunSeed = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ScrapyardRunTimerPaused, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
+	bool bScrapyardRunTimerPaused = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
+	float ScrapyardRunPauseStartServerTime = 0.0f;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
+	float ScrapyardRunAccumulatedPauseSeconds = 0.0f;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ExtractionSummary, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	FARScrapyardExtractionSummary ExtractionSummary;

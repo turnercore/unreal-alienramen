@@ -186,6 +186,8 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, Money);
 	DOREPLIFETIME(AARGameStateBase, Scrap);
 	DOREPLIFETIME(AARGameStateBase, Meat);
+	DOREPLIFETIME(AARGameStateBase, RunLedgerScrap);
+	DOREPLIFETIME(AARGameStateBase, RunLedgerMeat);
 	DOREPLIFETIME(AARGameStateBase, Cycles);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionTag);
 	DOREPLIFETIME(AARGameStateBase, ActiveFactionEffectTags);
@@ -502,6 +504,117 @@ void AARGameStateBase::SetMeatFromSave(const FARMeatState& NewMeat)
 	ForceNetUpdate();
 }
 
+void AARGameStateBase::SetRunLedgerScrap(int32 NewRunLedgerScrap)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 Clamped = FMath::Max(0, NewRunLedgerScrap);
+	if (RunLedgerScrap == Clamped)
+	{
+		return;
+	}
+
+	const int32 OldRunLedgerScrap = RunLedgerScrap;
+	RunLedgerScrap = Clamped;
+	OnRep_RunLedgerScrap(OldRunLedgerScrap);
+	ForceNetUpdate();
+}
+
+void AARGameStateBase::SetRunLedgerMeat(const FARMeatState& NewRunLedgerMeat)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FARMeatState Sanitized = SanitizeMeatState(NewRunLedgerMeat);
+	if (AreMeatStatesEqual(RunLedgerMeat, Sanitized))
+	{
+		return;
+	}
+
+	const FARMeatState OldRunLedgerMeat = RunLedgerMeat;
+	RunLedgerMeat = Sanitized;
+	OnRep_RunLedgerMeat(OldRunLedgerMeat);
+	ForceNetUpdate();
+}
+
+void AARGameStateBase::AddRunLedgerScrap(const int32 ScrapDelta)
+{
+	if (!HasAuthority() || ScrapDelta == 0)
+	{
+		return;
+	}
+
+	SetRunLedgerScrap(RunLedgerScrap + ScrapDelta);
+}
+
+void AARGameStateBase::AddRunLedgerMeat(const EARAffinityColor ColorBucket, const int32 MeatAmount)
+{
+	if (!HasAuthority() || MeatAmount <= 0)
+	{
+		return;
+	}
+
+	FARMeatState NewLedger = RunLedgerMeat;
+	switch (ColorBucket)
+	{
+	case EARAffinityColor::Red:
+		NewLedger.RedAmount += MeatAmount;
+		break;
+	case EARAffinityColor::Blue:
+		NewLedger.BlueAmount += MeatAmount;
+		break;
+	case EARAffinityColor::White:
+		NewLedger.WhiteAmount += MeatAmount;
+		break;
+	default:
+		NewLedger.UnspecifiedAmount += MeatAmount;
+		break;
+	}
+
+	SetRunLedgerMeat(NewLedger);
+}
+
+void AARGameStateBase::ApplyRunLedgerPercentPenalty(const float PenaltyFraction)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const float ClampedPenalty = FMath::Clamp(PenaltyFraction, 0.0f, 1.0f);
+	const float KeepFraction = 1.0f - ClampedPenalty;
+
+	SetRunLedgerScrap(FMath::FloorToInt(RunLedgerScrap * KeepFraction));
+
+	FARMeatState PenalizedMeat = RunLedgerMeat;
+	PenalizedMeat.RedAmount = FMath::FloorToInt(PenalizedMeat.RedAmount * KeepFraction);
+	PenalizedMeat.BlueAmount = FMath::FloorToInt(PenalizedMeat.BlueAmount * KeepFraction);
+	PenalizedMeat.WhiteAmount = FMath::FloorToInt(PenalizedMeat.WhiteAmount * KeepFraction);
+	PenalizedMeat.UnspecifiedAmount = FMath::FloorToInt(PenalizedMeat.UnspecifiedAmount * KeepFraction);
+	for (FARMeatTypeAmount& Entry : PenalizedMeat.AdditionalAmountsByType)
+	{
+		Entry.Amount = FMath::FloorToInt(Entry.Amount * KeepFraction);
+	}
+	PenalizedMeat.NormalizeAdditionalAmounts();
+	SetRunLedgerMeat(PenalizedMeat);
+}
+
+void AARGameStateBase::ClearRunLedger()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetRunLedgerScrap(0);
+	SetRunLedgerMeat(FARMeatState());
+}
+
 void AARGameStateBase::SetActiveFactionTagFromSave(FGameplayTag NewActiveFactionTag)
 {
 	if (!HasAuthority())
@@ -609,6 +722,23 @@ void AARGameStateBase::OnRep_Meat(FARMeatState OldMeat)
 		OldMeat.GetTotalAmount(),
 		Meat.GetTotalAmount());
 	OnMeatChanged.Broadcast(Meat, OldMeat);
+}
+
+void AARGameStateBase::OnRep_RunLedgerScrap(int32 OldRunLedgerScrap)
+{
+	UE_LOG(ARLog, Verbose, TEXT("[Save|RunLedger] Scrap changed old=%d new=%d"), OldRunLedgerScrap, RunLedgerScrap);
+	OnRunLedgerScrapChanged.Broadcast(RunLedgerScrap, OldRunLedgerScrap);
+}
+
+void AARGameStateBase::OnRep_RunLedgerMeat(FARMeatState OldRunLedgerMeat)
+{
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Save|RunLedger] Meat changed oldTotal=%d newTotal=%d"),
+		OldRunLedgerMeat.GetTotalAmount(),
+		RunLedgerMeat.GetTotalAmount());
+	OnRunLedgerMeatChanged.Broadcast(RunLedgerMeat, OldRunLedgerMeat);
 }
 
 void AARGameStateBase::OnRep_ActiveFactionTag(FGameplayTag OldActiveFactionTag)
