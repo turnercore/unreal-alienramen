@@ -102,6 +102,11 @@ void AARShopPlayerController::RequestShopUseOrDrop(AActor* InteractableActor)
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(InteractableActor, TEXT("Shop|UseOrDrop")))
+		{
+			return;
+		}
+
 		static const FName ForwardUseFunctionName(TEXT("ForwardUseToController"));
 		if (UFunction* ForwardUseFunction = InteractableActor->FindFunction(ForwardUseFunctionName))
 		{
@@ -149,6 +154,11 @@ void AARShopPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActo
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|PlaceHeldMeat")))
+		{
+			return;
+		}
+
 		const bool bPlaced = StationActor->TryPlaceHeldMeatFromController(this);
 		UE_LOG(
 			ARLog,
@@ -178,6 +188,11 @@ void AARShopPlayerController::RequestShopStationPickupMeat(AARShopStationActor* 
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|PickupMeat")))
+		{
+			return;
+		}
+
 		const bool bPickedUp = StationActor->TryPickupSlottedMeatToController(this);
 		UE_LOG(
 			ARLog,
@@ -207,6 +222,11 @@ void AARShopPlayerController::RequestShopStationStartProcessing(AARShopStationAc
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|StartProcessing")))
+		{
+			return;
+		}
+
 		const bool bStarted = StationActor->StartProcessingByController(this);
 		UE_LOG(
 			ARLog,
@@ -236,6 +256,11 @@ void AARShopPlayerController::RequestShopStationTapProcessing(AARShopStationActo
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|TapProcessing")))
+		{
+			return;
+		}
+
 		const bool bTapped = StationActor->TapProcessByController(this);
 		UE_LOG(
 			ARLog,
@@ -265,6 +290,11 @@ void AARShopPlayerController::RequestShopStationStopProcessing(AARShopStationAct
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|StopProcessing")))
+		{
+			return;
+		}
+
 		const bool bStopped = StationActor->StopProcessingByController(this);
 		UE_LOG(
 			ARLog,
@@ -294,6 +324,11 @@ void AARShopPlayerController::RequestShopStationInteract(AARShopStationActor* St
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|Interact")))
+		{
+			return;
+		}
+
 		APawn* ControlledPawn = GetPawn();
 		UARShopCarryComponent* CarryComponent = ControlledPawn ? ControlledPawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
 		if (!CarryComponent)
@@ -369,6 +404,11 @@ void AARShopPlayerController::RequestShopFillHeldBowlFromStation(AARShopStationA
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|FillHeldBowl")))
+		{
+			return;
+		}
+
 		const bool bFilled = StationActor->TryFillHeldBowlFromController(this);
 		UE_LOG(
 			ARLog,
@@ -398,6 +438,11 @@ void AARShopPlayerController::RequestShopDispenseFromDispenser(AARShopDispenserA
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(DispenserActor, TEXT("Shop|Dispenser")))
+		{
+			return;
+		}
+
 		const bool bDispensed = DispenserActor->TryDispenseToController(this, ItemTag);
 		UE_LOG(
 			ARLog,
@@ -446,6 +491,11 @@ void AARShopPlayerController::RequestShopPickupCarryItem(AARShopCarryItemBase* C
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(CarryItemActor, TEXT("Shop|Carry|Pickup")))
+		{
+			return;
+		}
+
 		APawn* ControlledPawn = GetPawn();
 		UARShopCarryComponent* CarryComponent = ResolveShopCarryComponentFromController(this);
 		if (!ControlledPawn || !CarryComponent)
