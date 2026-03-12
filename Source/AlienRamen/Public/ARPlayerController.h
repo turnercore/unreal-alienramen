@@ -20,6 +20,7 @@ class UARDialogueWidgetBase;
 class UUserWidget;
 class AARNPCCharacterBase;
 class AARMeatStorageBoxActor;
+class AActor;
 
 USTRUCT(BlueprintType)
 struct FARControllerInputMapping

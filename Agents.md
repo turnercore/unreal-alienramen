@@ -114,9 +114,10 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Runtime overhead emotion rendering is owned directly by `AARHUDBase` (`DrawHUD` + emotion projection/occlusion helpers), not by a separate HUD component.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
+- `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
-- Dialogue-related settings pages are grouped under `Project Settings -> Dialogue` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
+- Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 
@@ -128,6 +129,8 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopPlayerController` owns shop-only interaction requests for carryables and stations (including `Pickup`/`Drop`/`Throw` plus station place/pickup/process/fill routes).
+- Shop throw strength defaults to thrower GAS `Strength` mapping (`Strength * 100`) when `RequestShopThrowHeldCarryItem` is called with `ThrowStrength <= 0`.
+- Actor-targeted interaction RPC requests on `AARPlayerController`/`AARShopPlayerController` must pass server-side reachability validation against the controller pawn (`ServerInteractionMaxDistance`) before authority gameplay mutation.
 - `AARShopPlayerController::RequestShopUseOrDrop(AActor*)` is the preferred one-shot input entrypoint: forward-use valid targets, fallback drop when target is null.
 - `AARShopPlayerController::RequestShopPickupCarryItem(nullptr)` is the no-hit fallback path and drops the currently held carry item when one exists.
 - `AARShopPlayerController::RequestShopStationInteract(AARShopStationActor*)` is the smart station one-shot entrypoint: held bowl -> fill, held meat + empty slot -> place, empty hands + slotted meat -> pickup.
@@ -137,6 +140,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Manual/debug station authoring rule: if `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded (no unlock dependency).
 - Station processing input mode is station-configurable (`Hold`/`Tap`): in tap mode, each press consumes one pulse and release is required before the next pulse.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
+- Shop carryables expose shared `WeightKg` runtime (`0` = native primitive mass, `>0` = explicit mass override) so bowl/meat physics weight can be tuned per actor/Blueprint.
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
 - `AARMeatStorageBoxActor` handles smart meat storage interaction: held meat + interact stores back to `GameState::Meat`; empty hands + interact dispenses from reserve.

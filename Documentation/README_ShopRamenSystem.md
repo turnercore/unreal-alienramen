@@ -87,6 +87,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `RequestShopPickupCarryItem(AARShopCarryItemBase*)`
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
+    - when `ThrowStrength <= 0`, server resolves throw power from thrower GAS `Strength` (`Strength * 100`, so default Strength `10` => throw strength `1000`)
   - `RequestShopStationPlaceHeldMeat(AARShopStationActor*)`
   - `RequestShopStationPickupMeat(AARShopStationActor*)`
   - `RequestShopStationStartProcessing(AARShopStationActor*)`
@@ -98,6 +99,7 @@ This document captures the runtime ownership and integration contract for the sh
     - held meat and station slot empty -> `RequestShopStationPlaceHeldMeat(...)`
     - empty hands and station has slotted meat -> `RequestShopStationPickupMeat(...)`
 - `RequestShopPickupCarryItem(nullptr)` is treated as a no-hit fallback: if the controller currently holds a carry item, it drops it.
+- Actor-targeted shop RPC requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before any station/dispenser/carry mutation runs.
 - `AARPlayerCharacterShop` exposes BP helpers `IsCarryingShopItem()` and `GetHeldShopActor()` for pawn-side input/UI branching.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
@@ -107,6 +109,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
   - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
+- `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
 
 ## Persistence + Replication
 
@@ -136,4 +139,5 @@ This document captures the runtime ownership and integration contract for the sh
 - `AARShopAIController` maps active `State.ShopNPC.*` tags to speaker dialogue gating:
   - dialogue allowed when `State.ShopNPC.DialogueWindow` is active
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
+  - dialogue gate automatically reopens when `State.ShopNPC` is not active and on controller unpossess cleanup.
 - Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.
