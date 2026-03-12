@@ -26,6 +26,7 @@ Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
 - `RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)`
 - `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (slot convenience wrapper)
+- Actor-targeted interaction requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
 
 World actor convenience entrypoint:
 
