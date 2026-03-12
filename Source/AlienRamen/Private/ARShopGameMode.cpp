@@ -99,6 +99,10 @@ AARShopGameMode::AARShopGameMode()
 {
 	ModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
 	ensureMsgf(ModeTag.IsValid(), TEXT("[ShopGameMode] Required gameplay tag 'Mode.Shop' is missing."));
+	bRouteModeTravelThroughTransitionMap = true;
+	TransitionTravelMapURL = TEXT("/Game/Maps/Lvl_Loading");
+	TransitionSourceMode = EARTransitionSourceMode::Shop;
+	TransitionReason = EARTransitionReason::ShopToInvader;
 }
 
 void AARShopGameMode::BeginPlay()

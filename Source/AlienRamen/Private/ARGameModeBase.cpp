@@ -7,15 +7,110 @@
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
+#include "ARTransitionTypes.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/GameSession.h"
 
+namespace
+{
+	static bool ShouldRouteViaTransitionMap(const bool bModeDefaultRouteEnabled, const EARTravelRoutePolicy RoutePolicy)
+	{
+		switch (RoutePolicy)
+		{
+		case EARTravelRoutePolicy::ForceTransitionMap:
+			return true;
+		case EARTravelRoutePolicy::ForceDirect:
+			return false;
+		case EARTravelRoutePolicy::ModeDefault:
+		default:
+			return bModeDefaultRouteEnabled;
+		}
+	}
+
+	static FString AppendTravelOptions(const FString& BaseURL, const FString& Options)
+	{
+		if (Options.IsEmpty())
+		{
+			return BaseURL;
+		}
+
+		FString TrimmedOptions = Options.TrimStartAndEnd();
+		if (TrimmedOptions.IsEmpty())
+		{
+			return BaseURL;
+		}
+
+		if (TrimmedOptions.StartsWith(TEXT("?")) || TrimmedOptions.StartsWith(TEXT("&")))
+		{
+			return BaseURL + TrimmedOptions;
+		}
+
+		const TCHAR Joiner = BaseURL.Contains(TEXT("?")) ? TEXT('&') : TEXT('?');
+		return FString::Printf(TEXT("%s%c%s"), *BaseURL, Joiner, *TrimmedOptions);
+	}
+}
+
 AARGameModeBase::AARGameModeBase()
 {
 	bUseSeamlessTravel = true;
 	DefaultPlayerName = FText::FromString(TEXT("Tenshu"));
+}
+
+FString AARGameModeBase::BuildModeTravelURL(const FString& DestinationURL, const EARTravelRoutePolicy RoutePolicy) const
+{
+	if (!ShouldRouteViaTransitionMap(bRouteModeTravelThroughTransitionMap, RoutePolicy))
+	{
+		return DestinationURL;
+	}
+
+	if (DestinationURL.IsEmpty() || TransitionTravelMapURL.IsEmpty())
+	{
+		return DestinationURL;
+	}
+
+	const FString TransitionOptionTokenA = FString::Printf(TEXT("?%s="), ARTransition::OptionDestinationURL);
+	const FString TransitionOptionTokenB = FString::Printf(TEXT("&%s="), ARTransition::OptionDestinationURL);
+	if (DestinationURL.Contains(TransitionOptionTokenA, ESearchCase::IgnoreCase) || DestinationURL.Contains(TransitionOptionTokenB, ESearchCase::IgnoreCase))
+	{
+		return DestinationURL;
+	}
+
+	auto ExtractMapPath = [](const FString& URL) -> FString
+	{
+		int32 QueryIndex = INDEX_NONE;
+		if (URL.FindChar(TEXT('?'), QueryIndex))
+		{
+			return URL.Left(QueryIndex);
+		}
+
+		return URL;
+	};
+
+	const FString DestinationMapPath = ExtractMapPath(DestinationURL);
+	const FString TransitionMapPath = ExtractMapPath(TransitionTravelMapURL);
+	if (DestinationMapPath.Equals(TransitionMapPath, ESearchCase::IgnoreCase))
+	{
+		return DestinationURL;
+	}
+
+	FARTransitionContext TransitionContext;
+	TransitionContext.SourceMode = TransitionSourceMode;
+	TransitionContext.Reason = TransitionReason;
+	TransitionContext.DestinationURL = DestinationURL;
+	const FString WrappedURL = ARTransition::BuildTransitionTravelURL(TransitionTravelMapURL, TransitionContext);
+	return WrappedURL.IsEmpty() ? DestinationURL : WrappedURL;
+}
+
+bool AARGameModeBase::EndModeAndTravel(const FString& URL, const FString& Options, const bool bSkipReadyChecks, const bool bAbsolute, const bool bSkipGameNotify, const bool bUseOpenLevelInPIE)
+{
+	return TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, EARTravelRoutePolicy::ForceTransitionMap);
+}
+
+bool AARGameModeBase::TravelDirectInMode(const FString& URL, const FString& Options, const bool bSkipReadyChecks, const bool bAbsolute, const bool bSkipGameNotify, const bool bUseOpenLevelInPIE)
+{
+	return TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, EARTravelRoutePolicy::ForceDirect);
 }
 
 TSubclassOf<AGameSession> AARGameModeBase::GetGameSessionClass() const
@@ -566,7 +661,7 @@ void AARGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE)
+bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, const EARTravelRoutePolicy RoutePolicy)
 {
 	if (!HasAuthority())
 	{
@@ -601,11 +696,8 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		return false;
 	}
 
-	FString TravelURL = URL;
-	if (!Options.IsEmpty())
-	{
-		TravelURL += Options;
-	}
+	FString TravelURL = BuildModeTravelURL(URL, RoutePolicy);
+	TravelURL = AppendTravelOptions(TravelURL, Options);
 
 	UARSaveSubsystem* SaveSubsystem = nullptr;
 	if (UGameInstance* GI = GetGameInstance())
@@ -622,16 +714,13 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 #if WITH_EDITOR
 	if (bUseOpenLevelInPIE && GetWorld() && GetWorld()->WorldType == EWorldType::PIE)
 	{
-		FString LevelName = URL;
-		FString OpenLevelOptions = Options;
+		FString LevelName = TravelURL;
+		FString OpenLevelOptions;
 		int32 QueryIndex = INDEX_NONE;
-		if (URL.FindChar(TEXT('?'), QueryIndex))
+		if (TravelURL.FindChar(TEXT('?'), QueryIndex))
 		{
-			LevelName = URL.Left(QueryIndex);
-			if (OpenLevelOptions.IsEmpty())
-			{
-				OpenLevelOptions = URL.Mid(QueryIndex + 1);
-			}
+			LevelName = TravelURL.Left(QueryIndex);
+			OpenLevelOptions = TravelURL.Mid(QueryIndex + 1);
 		}
 
 		bool bHasListenOption = false;
@@ -664,9 +753,11 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[GameMode] TryStartTravel -> URL='%s' Options='%s' SkipReady=%s SaveOnExit=%s"),
+		TEXT("[GameMode] TryStartTravel -> RequestedURL='%s' FinalURL='%s' Options='%s' RoutePolicy=%s SkipReady=%s SaveOnExit=%s"),
 		*URL,
+		*TravelURL,
 		*Options,
+		*ARTransition::LexToString(RoutePolicy),
 		bSkipReadyChecks ? TEXT("true") : TEXT("false"),
 		bSaveOnModeExit ? TEXT("true") : TEXT("false"));
 	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bSaveOnModeExit);
