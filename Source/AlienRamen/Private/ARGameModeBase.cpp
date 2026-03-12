@@ -44,22 +44,13 @@ namespace
 
 		if (TrimmedOptions.StartsWith(TEXT("?")) || TrimmedOptions.StartsWith(TEXT("&")))
 		{
-			const bool bBaseHasQuery = BaseURL.Contains(TEXT("?"));
-			if (bBaseHasQuery)
-			{
-				// BaseURL already has a query string — force a joining separator.
-				TrimmedOptions[0] = TEXT('&');
-			}
-			else if (TrimmedOptions.StartsWith(TEXT("&")))
-			{
-				// No existing query string — promote & to ? for the first option.
-				TrimmedOptions[0] = TEXT('?');
-			}
+			// Normalize any leading '&' to '?' — UE travel URLs use repeated '?' (Map?A=1?B=2).
+			TrimmedOptions[0] = TEXT('?');
 			return BaseURL + TrimmedOptions;
 		}
 
-		const TCHAR Joiner = BaseURL.Contains(TEXT("?")) ? TEXT('&') : TEXT('?');
-		return FString::Printf(TEXT("%s%c%s"), *BaseURL, Joiner, *TrimmedOptions);
+		// Always use '?' as the joiner for travel options (Map?A=1?B=2).
+		return FString::Printf(TEXT("%s?%s"), *BaseURL, *TrimmedOptions);
 	}
 }
 
