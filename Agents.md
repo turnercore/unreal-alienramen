@@ -70,6 +70,8 @@ Key docs:
 - `Documentation/README_DialogueNPC.md`
 - `Documentation/README_ProgressionUnlocks.md`
 - `Documentation/README_ShopRamenSystem.md`
+- `Documentation/README_ScrapyardMode.md`
+- `Documentation/README_TransitionMode.md`
 - `Documentation/CppOverview/InvaderSpicyTrack.md`
 
 ---
@@ -100,6 +102,8 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Hydration and state application are authority-only.
 - Pending travel overlay state may carry between maps when not persisting to disk.
 - Canonical saves are blocked during active dialogue sessions.
+- Shop loose carryables (energy drinks/meat) persist as transient save snapshots (`ShopTransientCarryables`) only for reload-before-run continuity.
+- Run-start and post-run shop-entry flows clear transient loose-carryable snapshots via save-backed one-shot clear gate.
 
 ### Dialogue / Speaker
 
@@ -139,7 +143,12 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Shop carryables expose shared `WeightKg` runtime (`0` = native primitive mass, `>0` = explicit mass override) so bowl/meat physics weight can be tuned per actor/Blueprint.
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
+- `AARMeatStorageBoxActor` handles smart meat storage interaction: held meat + interact stores back to `GameState::Meat`; empty hands + interact dispenses from reserve.
+- `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap, but only after it has moved beyond storage-return arm distance (prevents instant re-store on spawn).
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
+- `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.
+- `AAREnergyDrinkCarryItem` replicates `EnergyDrinkItemTag` so remote clients can resolve drink UI/content from world actors.
+- Stored energy-drink inventory is authoritative before shop spawn; once spawned at shop anchors, drink instances are world-owned carryables until consumed/stored/sold by shop systems.
 
 Docs: `Documentation/README_ShopRamenSystem.md`
 
@@ -154,6 +163,7 @@ Docs: `Documentation/README_FactionSubsystem.md`
 
 - `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
+- `UARItemDefinitionSubsystem` is the shared resolver facade for item/energy-drink definitions and shared item physics metadata; it delegates to `UTagContentResolverSubsystem` and is consumed by both Shop and Scrapyard runtime paths.
 
 ### Invader
 
@@ -163,8 +173,48 @@ Docs: `Documentation/README_FactionSubsystem.md`
 - Invader combat runtime should remain GAS-driven and server-authoritative.
 - Director exposes replicated/read-model state rather than relying on client simulation.
 - Spicy track / full blast is GameState-owned shared replicated runtime state.
+- Run-earned scrap/meat accrues in GameState run-ledger fields (not persistent storage) until shop re-entry deposit.
+- Director owns all-players-downed loss end and unanimous early-bail vote resolution.
 
 Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
+
+### Transition
+
+- `AARGameModeBase` owns optional transition-map travel routing for mode exits via `bRouteModeTravelThroughTransitionMap` + `TransitionTravelMapURL` + transition context (`TransitionSourceMode`, `TransitionReason`).
+- `AARGameModeBase::TryStartTravel` accepts per-call `EARTravelRoutePolicy` override (`ModeDefault`, `ForceTransitionMap`, `ForceDirect`) so runtime can choose transition-map vs same-mode direct travel without mutating class defaults.
+- `AARGameModeBase` provides `EndModeAndTravel(...)` and `TravelDirectInMode(...)` Blueprint helpers for explicit routing intent.
+- `AARTransitionGameMode` owns transition-map continue gating and destination travel start.
+- `AARTransitionGameState` owns replicated transition context (`FARTransitionContext`) for transition/result UI.
+- `AARTransitionPlayerController` is the controller entrypoint for continue votes.
+- `UARTransitionBlueprintLibrary` is the BP-safe builder/parser for transition travel URLs and context payloads.
+- Transition mode is no-pawn by design; it should not spawn gameplay pawns.
+
+Docs: `Documentation/README_TransitionMode.md`
+
+### Scrapyard
+
+- `AARScrapyardGameState` owns server-authoritative scrapyard timer/state, reserve/refund accounting, deterministic overspend trim, and reward grant finalization.
+- `AARScrapyardGameState` also owns the replicated Scrapyard run-buff snapshot read model consumed by HUD/widgets.
+- `AARScrapyardExitZoneActor` owns deposited-item + in-zone player tracking, replicated per-exit reserved scrap value, and reports reserve/refund deltas to Scrapyard GameState.
+- `AARScrapyardHUD` is the local UI binding owner for Scrapyard runtime delegates (timer/summary/run-active + run-buff snapshot).
+- `UARScrapyardHUDWidgetBase` and `UARScrapyardExitZoneWidgetBase` are reusable Blueprint-facing widget bridges for Scrapyard HUD state and per-exit reserved scrap state.
+- `AARScrapyardCarryItemBase` overrides `ForwardUseToController` to route BI_Interactable-style use into `AARScrapyardPlayerController::RequestScrapyardPickupCarryItem` (not shop pickup).
+- `AARScrapyardCarryItemBase` replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI paths.
+- Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
+- Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
+- Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` using travel option context (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`).
+- When `SpawnRuleSet` is set on `AARScrapyardGameMode`, scrapyard item spawn orchestration is GameMode-owned (Perlin noise + spawner weight + rarity budgets + `bAlwaysSpawn`). Managed flow only runs when the rule asset is set; leave it unset only for maps that should intentionally have no scrapyard spawns. Set spawner `bSpawnOnBeginPlay=false` when relying on managed flow. Docs: `Documentation/README_ScrapyardMode.md` and `Documentation/Assets/README_ScrapyardSpawnRules.md`.
+
+Docs: `Documentation/README_ScrapyardMode.md`
+
+### Temp Run Buffs
+
+- `UARRunBuffSubsystem` owns save-backed temp-buff storage/queue/active state and authority mutation APIs.
+- Run-buff ownership is keyed by loadout character gameplay tag; active payloads are per-character.
+- Run-buff rotation happens at Invader initialization: remove previous active runtime payload, consume queued drinks into new active payload, apply once to player ASC state.
+- Active payload re-application for late-join/respawn flows is handled from Invader + Scrapyard GameMode integration.
+- Lifecycle split is fixed: queued save buffers clear at invader end, active payload survives through scrapyard, and queued+active clear on first shop entry.
 
 ---
 

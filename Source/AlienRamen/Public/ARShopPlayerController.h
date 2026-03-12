@@ -11,6 +11,7 @@
 class AARShopDispenserActor;
 class AARShopCarryItemBase;
 class AARShopStationActor;
+class AAREnergyDrinkCarryItem;
 class AActor;
 
 UCLASS()
@@ -104,4 +105,11 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestShopThrowHeldCarryItem(float ThrowStrength = -1.0f);
+
+	// Consumes held energy drink in shop mode. Returns false/no-op if held actor is not a drink.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestConsumeHeldEnergyDrink();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestConsumeHeldEnergyDrink();
 };
