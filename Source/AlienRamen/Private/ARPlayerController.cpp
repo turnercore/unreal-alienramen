@@ -303,6 +303,59 @@ void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag
 	RequestStartDialogue(SpeakerTag);
 }
 
+bool AARPlayerController::IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const
+{
+	const TCHAR* SafeContextLabel = ContextLabel ? ContextLabel : TEXT("Interaction");
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[%s] Validation called without authority on controller '%s'."), SafeContextLabel, *GetNameSafe(this));
+		return false;
+	}
+
+	if (!IsValid(TargetActor))
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': target is invalid."), SafeContextLabel, *GetNameSafe(this));
+		return false;
+	}
+
+	const APawn* ControlledPawn = GetPawn();
+	if (!ControlledPawn)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': missing controlled pawn."), SafeContextLabel, *GetNameSafe(this));
+		return false;
+	}
+
+	if (TargetActor->GetWorld() != GetWorld())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[%s] Validation failed on '%s': target '%s' is in different world."),
+			SafeContextLabel,
+			*GetNameSafe(this),
+			*GetNameSafe(TargetActor));
+		return false;
+	}
+
+	const float MaxDistance = FMath::Max(50.0f, ServerInteractionMaxDistance);
+	const float DistanceSq = FVector::DistSquared(ControlledPawn->GetActorLocation(), TargetActor->GetActorLocation());
+	if (DistanceSq > FMath::Square(MaxDistance))
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (distance=%.1f max=%.1f)."),
+			SafeContextLabel,
+			*GetNameSafe(this),
+			*GetNameSafe(TargetActor),
+			FMath::Sqrt(DistanceSq),
+			MaxDistance);
+		return false;
+	}
+
+	return true;
+}
+
 void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)
 {
 	if (!CharacterActor)
@@ -321,6 +374,11 @@ void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* Char
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(CharacterActor, TEXT("Interact")))
+		{
+			return;
+		}
+
 		CharacterActor->InteractByController(this);
 		return;
 	}
@@ -343,6 +401,11 @@ void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* Storag
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StorageActor, TEXT("Shop|Storage")))
+		{
+			return;
+		}
+
 		const bool bInteracted = StorageActor->TryHandleStorageInteraction(this);
 		UE_LOG(
 			ARLog,
