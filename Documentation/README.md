@@ -44,7 +44,7 @@ Use the in-game console (`~`).
     - `ar.invader.debug.add_scrap <delta>`
     - `ar.invader.debug.add_money <delta>`
     - `ar.debug.add_meat [delta] [red|blue|white|none]`
-    - `ar.debug <veryverbose|verbose|log|warning|error|off|reset>`
+    - `ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`
 
 ### Expected behavior (authoritative server)
 
@@ -62,4 +62,4 @@ Use the in-game console (`~`).
 12. **`ar.invader.debug.add_scrap <delta>`** - adds/subtracts replicated scrap on GameState.
 13. **`ar.invader.debug.add_money <delta>`** - adds/subtracts replicated money on GameState.
 14. **`ar.debug.add_meat [delta] [red|blue|white|none]`** - adds/subtracts replicated meat in the selected bucket (`none` default; can also pass color first without delta).
-15. **`ar.debug <veryverbose|verbose|log|warning|error|off|reset>`** - sets runtime `ARLog` verbosity via a lowercase shortcut.
+15. **`ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`** - sets runtime `ARLog` verbosity via a lowercase shortcut.
