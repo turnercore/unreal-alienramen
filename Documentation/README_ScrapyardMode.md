@@ -75,6 +75,7 @@ This document captures the server-authoritative runtime contract for:
 - Scrapyard finalization now defaults to transition-map routing:
   - `Scrapyard -> Transition -> Shop`
 - `AARScrapyardGameState` resolves final travel URL through `AARGameModeBase::BuildModeTravelURL` so it shares the same transition routing/config contract as Shop/Invader.
+- Travel routing can be overridden per call with `EARTravelRoutePolicy` (`ModeDefault`, `ForceTransitionMap`, `ForceDirect`) for same-mode multi-map flows.
 - Context is passed in URL options (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`) and hydrated into `AARTransitionGameState`.
 - Transition-map routing is configured per mode on `AARGameModeBase` (`bRouteModeTravelThroughTransitionMap`, `TransitionTravelMapURL`, `TransitionSourceMode`, `TransitionReason`).
 

@@ -44,6 +44,10 @@ namespace
 
 		if (TrimmedOptions.StartsWith(TEXT("?")) || TrimmedOptions.StartsWith(TEXT("&")))
 		{
+			if (TrimmedOptions.StartsWith(TEXT("&")) && !BaseURL.Contains(TEXT("?")))
+			{
+				TrimmedOptions[0] = TEXT('?');
+			}
 			return BaseURL + TrimmedOptions;
 		}
 
@@ -672,6 +676,12 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 	if (!PreStartTravel(URL, Options, bSkipReadyChecks))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel blocked by PreStartTravel hook."));
+		return false;
+	}
+
+	if (!GameState)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel failed: missing GameState."));
 		return false;
 	}
 
