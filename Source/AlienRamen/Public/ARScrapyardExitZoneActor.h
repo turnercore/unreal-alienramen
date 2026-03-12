@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Exit")
 	bool TryWithdrawDepositedItem(AARScrapyardPlayerController* Controller, AARScrapyardCarryItemBase* ItemActor);
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit")
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit", meta = (BlueprintAuthorityOnly))
 	TArray<AARScrapyardCarryItemBase*> GetDepositedItems() const;
 
 	const TArray<TObjectPtr<AARScrapyardCarryItemBase>>& GetDepositedItemsRef() const;
