@@ -124,24 +124,47 @@ bool UARItemDefinitionSubsystem::ApplyItemPhysicsProperties(AActor* Actor, const
 
 	TArray<UPrimitiveComponent*> PrimitiveComponents;
 	Actor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
-
-	bool bAppliedAny = false;
-	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	if (PrimitiveComponents.IsEmpty())
 	{
-		if (!Primitive)
-		{
-			continue;
-		}
-
-		Primitive->SetMassOverrideInKg(NAME_None, SanitizedWeight, true);
-		if (Primitive->IsSimulatingPhysics())
-		{
-			Primitive->WakeAllRigidBodies();
-		}
-		bAppliedAny = true;
+		return false;
 	}
 
-	return bAppliedAny;
+	UPrimitiveComponent* TargetPrimitive = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
+	if (!TargetPrimitive)
+	{
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->IsSimulatingPhysics())
+			{
+				TargetPrimitive = Primitive;
+				break;
+			}
+		}
+	}
+
+	if (!TargetPrimitive)
+	{
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->GetCollisionEnabled() != ECollisionEnabled::NoCollision)
+			{
+				TargetPrimitive = Primitive;
+				break;
+			}
+		}
+	}
+
+	if (!TargetPrimitive)
+	{
+		TargetPrimitive = PrimitiveComponents[0];
+	}
+
+	TargetPrimitive->SetMassOverrideInKg(NAME_None, SanitizedWeight, true);
+	if (TargetPrimitive->IsSimulatingPhysics())
+	{
+		TargetPrimitive->WakeAllRigidBodies();
+	}
+	return true;
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(

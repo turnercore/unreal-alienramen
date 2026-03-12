@@ -1,6 +1,6 @@
 /**
  * @file ARScrapyardTypes.h
- * @brief Shared scrapyard authoring/runtime structs.
+ * @brief Shared item authoring/runtime structs used by Scrapyard + Shop.
  */
 #pragma once
 
@@ -54,6 +54,8 @@ USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARScrapyardItemDefRow : public FTableRowBase
 {
 	GENERATED_BODY()
+
+	// Canonical shared item row consumed by both Scrapyard and Shop systems.
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	FGameplayTag ItemTag;
