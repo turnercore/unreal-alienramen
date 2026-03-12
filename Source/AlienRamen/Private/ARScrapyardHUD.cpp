@@ -1,9 +1,7 @@
 #include "ARScrapyardHUD.h"
 
-#include "ARRunBuffSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARScrapyardGameState.h"
-#include "Engine/GameInstance.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 
@@ -32,9 +30,6 @@ void AARScrapyardHUD::InitializeScrapyardHUD(AARPlayerController* SourceControll
 
 	BoundPlayerController = SourceController;
 	BindScrapyardGameState(CurrentScrapyardGameState);
-
-	UGameInstance* GameInstance = SourceController->GetGameInstance();
-	BindRunBuffSubsystem(GameInstance ? GameInstance->GetSubsystem<UARRunBuffSubsystem>() : nullptr);
 	RefreshCachedState();
 	BP_OnScrapyardHUDInitialized(SourceController, CurrentScrapyardGameState);
 }
@@ -44,14 +39,12 @@ void AARScrapyardHUD::DeinitializeScrapyardHUD()
 	const bool bHadAnyBindingOrState =
 		BoundPlayerController.IsValid()
 		|| BoundScrapyardGameState.IsValid()
-		|| BoundRunBuffSubsystem.IsValid()
 		|| bHasCachedExtractionSummary
 		|| bHasCachedRunTimer
 		|| bHasCachedRunActive
 		|| bHasCachedRunBuffStateSnapshot;
 
 	UnbindScrapyardGameState();
-	UnbindRunBuffSubsystem();
 
 	BoundPlayerController.Reset();
 	CachedExtractionSummary = FARScrapyardExtractionSummary();
@@ -116,6 +109,7 @@ void AARScrapyardHUD::BindScrapyardGameState(AARScrapyardGameState* InGameState)
 	InGameState->OnScrapyardExtractionSummaryChanged.AddUniqueDynamic(this, &AARScrapyardHUD::HandleScrapyardExtractionSummaryChanged);
 	InGameState->OnScrapyardRunTimerChanged.AddUniqueDynamic(this, &AARScrapyardHUD::HandleScrapyardRunTimerChanged);
 	InGameState->OnScrapyardRunActiveChanged.AddUniqueDynamic(this, &AARScrapyardHUD::HandleScrapyardRunActiveChanged);
+	InGameState->OnScrapyardRunBuffSnapshotChanged.AddUniqueDynamic(this, &AARScrapyardHUD::HandleRunBuffStateChanged);
 }
 
 void AARScrapyardHUD::UnbindScrapyardGameState()
@@ -130,37 +124,8 @@ void AARScrapyardHUD::UnbindScrapyardGameState()
 	CurrentGameState->OnScrapyardExtractionSummaryChanged.RemoveDynamic(this, &AARScrapyardHUD::HandleScrapyardExtractionSummaryChanged);
 	CurrentGameState->OnScrapyardRunTimerChanged.RemoveDynamic(this, &AARScrapyardHUD::HandleScrapyardRunTimerChanged);
 	CurrentGameState->OnScrapyardRunActiveChanged.RemoveDynamic(this, &AARScrapyardHUD::HandleScrapyardRunActiveChanged);
+	CurrentGameState->OnScrapyardRunBuffSnapshotChanged.RemoveDynamic(this, &AARScrapyardHUD::HandleRunBuffStateChanged);
 	BoundScrapyardGameState.Reset();
-}
-
-void AARScrapyardHUD::BindRunBuffSubsystem(UARRunBuffSubsystem* InRunBuffSubsystem)
-{
-	if (BoundRunBuffSubsystem.Get() == InRunBuffSubsystem)
-	{
-		return;
-	}
-
-	UnbindRunBuffSubsystem();
-	BoundRunBuffSubsystem = InRunBuffSubsystem;
-	if (!InRunBuffSubsystem)
-	{
-		return;
-	}
-
-	InRunBuffSubsystem->OnRunBuffStateChanged.AddUniqueDynamic(this, &AARScrapyardHUD::HandleRunBuffStateChanged);
-}
-
-void AARScrapyardHUD::UnbindRunBuffSubsystem()
-{
-	UARRunBuffSubsystem* CurrentSubsystem = BoundRunBuffSubsystem.Get();
-	if (!CurrentSubsystem)
-	{
-		BoundRunBuffSubsystem.Reset();
-		return;
-	}
-
-	CurrentSubsystem->OnRunBuffStateChanged.RemoveDynamic(this, &AARScrapyardHUD::HandleRunBuffStateChanged);
-	BoundRunBuffSubsystem.Reset();
 }
 
 void AARScrapyardHUD::RefreshCachedState()
@@ -170,11 +135,7 @@ void AARScrapyardHUD::RefreshCachedState()
 		HandleScrapyardExtractionSummaryChanged(CurrentGameState->GetExtractionSummary());
 		HandleScrapyardRunTimerChanged(CurrentGameState->GetScrapyardRunRemainingSeconds());
 		HandleScrapyardRunActiveChanged(CurrentGameState->IsScrapyardRunActive());
-	}
-
-	if (UARRunBuffSubsystem* RunBuffSubsystem = BoundRunBuffSubsystem.Get())
-	{
-		HandleRunBuffStateChanged(RunBuffSubsystem->GetRunBuffStateSnapshot());
+		HandleRunBuffStateChanged(CurrentGameState->GetRunBuffStateSnapshot());
 	}
 }
 
