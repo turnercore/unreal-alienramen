@@ -2,12 +2,15 @@
 
 #include "AREnergyDrinkCarryItem.h"
 #include "ARLog.h"
+#include "ARAttributeSetCore.h"
 #include "ARNPCCharacterBase.h"
+#include "ARPlayerStateBase.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
 #include "ARShopDispenserActor.h"
 #include "ARShopStationActor.h"
+#include "AbilitySystemComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/Pawn.h"
 
@@ -87,6 +90,24 @@ namespace
 		PhysicsPrimitive->WakeAllRigidBodies();
 		PhysicsPrimitive->AddImpulse(ForwardDirection.GetSafeNormal() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
 	}
+
+	static float ResolveThrowStrengthForController(const AARShopPlayerController* Controller, const float RequestedThrowStrength)
+	{
+		if (RequestedThrowStrength > 0.0f)
+		{
+			return RequestedThrowStrength;
+		}
+
+		float Strength = 10.0f;
+		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const UAbilitySystemComponent* ASC = PlayerState ? PlayerState->GetASC() : nullptr;
+		if (ASC)
+		{
+			Strength = ASC->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
+		}
+
+		return FMath::Max(0.0f, Strength) * 100.0f;
+	}
 }
 
 AARShopPlayerController::AARShopPlayerController()
@@ -103,6 +124,11 @@ void AARShopPlayerController::RequestShopUseOrDrop(AActor* InteractableActor)
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(InteractableActor, TEXT("Shop|UseOrDrop")))
+		{
+			return;
+		}
+
 		static const FName ForwardUseFunctionName(TEXT("ForwardUseToController"));
 		if (UFunction* ForwardUseFunction = InteractableActor->FindFunction(ForwardUseFunctionName))
 		{
@@ -150,6 +176,11 @@ void AARShopPlayerController::RequestShopStationPlaceHeldMeat(AARShopStationActo
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|PlaceHeldMeat")))
+		{
+			return;
+		}
+
 		const bool bPlaced = StationActor->TryPlaceHeldMeatFromController(this);
 		UE_LOG(
 			ARLog,
@@ -179,6 +210,11 @@ void AARShopPlayerController::RequestShopStationPickupMeat(AARShopStationActor* 
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|PickupMeat")))
+		{
+			return;
+		}
+
 		const bool bPickedUp = StationActor->TryPickupSlottedMeatToController(this);
 		UE_LOG(
 			ARLog,
@@ -208,6 +244,11 @@ void AARShopPlayerController::RequestShopStationStartProcessing(AARShopStationAc
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|StartProcessing")))
+		{
+			return;
+		}
+
 		const bool bStarted = StationActor->StartProcessingByController(this);
 		UE_LOG(
 			ARLog,
@@ -237,6 +278,11 @@ void AARShopPlayerController::RequestShopStationTapProcessing(AARShopStationActo
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|TapProcessing")))
+		{
+			return;
+		}
+
 		const bool bTapped = StationActor->TapProcessByController(this);
 		UE_LOG(
 			ARLog,
@@ -266,6 +312,11 @@ void AARShopPlayerController::RequestShopStationStopProcessing(AARShopStationAct
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|StopProcessing")))
+		{
+			return;
+		}
+
 		const bool bStopped = StationActor->StopProcessingByController(this);
 		UE_LOG(
 			ARLog,
@@ -295,6 +346,11 @@ void AARShopPlayerController::RequestShopStationInteract(AARShopStationActor* St
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|Interact")))
+		{
+			return;
+		}
+
 		APawn* ControlledPawn = GetPawn();
 		UARShopCarryComponent* CarryComponent = ControlledPawn ? ControlledPawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
 		if (!CarryComponent)
@@ -370,6 +426,11 @@ void AARShopPlayerController::RequestShopFillHeldBowlFromStation(AARShopStationA
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(StationActor, TEXT("Shop|Station|FillHeldBowl")))
+		{
+			return;
+		}
+
 		const bool bFilled = StationActor->TryFillHeldBowlFromController(this);
 		UE_LOG(
 			ARLog,
@@ -399,6 +460,11 @@ void AARShopPlayerController::RequestShopDispenseFromDispenser(AARShopDispenserA
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(DispenserActor, TEXT("Shop|Dispenser")))
+		{
+			return;
+		}
+
 		const bool bDispensed = DispenserActor->TryDispenseToController(this, ItemTag);
 		UE_LOG(
 			ARLog,
@@ -447,6 +513,11 @@ void AARShopPlayerController::RequestShopPickupCarryItem(AARShopCarryItemBase* C
 
 	if (HasAuthority())
 	{
+		if (!IsServerInteractionTargetReachable(CarryItemActor, TEXT("Shop|Carry|Pickup")))
+		{
+			return;
+		}
+
 		APawn* ControlledPawn = GetPawn();
 		UARShopCarryComponent* CarryComponent = ResolveShopCarryComponentFromController(this);
 		if (!ControlledPawn || !CarryComponent)
@@ -553,7 +624,8 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 		}
 
 		const FVector ThrowDirection = GetControlRotation().Vector();
-		ApplyThrowImpulse(ReleasedActor, ThrowDirection, ThrowStrength);
+		const float EffectiveThrowStrength = ResolveThrowStrengthForController(this, ThrowStrength);
+		ApplyThrowImpulse(ReleasedActor, ThrowDirection, EffectiveThrowStrength);
 		return;
 	}
 

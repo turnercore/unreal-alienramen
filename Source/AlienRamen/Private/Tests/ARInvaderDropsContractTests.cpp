@@ -65,6 +65,8 @@ bool FARInvaderDropAttributeClampTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
+	TestEqual(TEXT("Strength defaults to 10"), AttrSet->GetStrength(), 10.0f);
+
 	float Candidate = -1.0f;
 	AttrSet->PreAttributeChange(UARAttributeSetCore::GetDropChanceAttribute(), Candidate);
 	TestEqual(TEXT("DropChance clamps to 0"), Candidate, 0.0f);
@@ -84,6 +86,10 @@ bool FARInvaderDropAttributeClampTest::RunTest(const FString& Parameters)
 	Candidate = -7.0f;
 	AttrSet->PreAttributeChange(UARAttributeSetCore::GetScrapDropMultiplierAttribute(), Candidate);
 	TestEqual(TEXT("ScrapDropMultiplier clamps to non-negative"), Candidate, 0.0f);
+
+	Candidate = -9.0f;
+	AttrSet->PreAttributeChange(UARAttributeSetCore::GetStrengthAttribute(), Candidate);
+	TestEqual(TEXT("Strength clamps to non-negative"), Candidate, 0.0f);
 
 	return true;
 }

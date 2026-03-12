@@ -37,6 +37,9 @@ struct FARPlayerCoreAttributeSnapshot
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
 	float MoveSpeed = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
+	float Strength = 0.f;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
@@ -170,7 +173,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAbilitySystemComponent* GetASC() const { return AbilitySystemComponent; }
 
-	/** Returns the current value of a core attribute (health/spice/move speed). */
+	/** Returns the current value of a core attribute (health/spice/move speed/strength). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	float GetCoreAttributeValue(EARCoreAttributeType AttributeType) const;
 
@@ -272,6 +275,15 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetSpiceMeter(float NewSpiceValue);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
+	float GetStrength() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Attributes")
+	void SetStrength(float NewStrength);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetStrength(float NewStrength);
 
 	// ---- INVADER SPICY TRACK RUNTIME (non-persistent) ----
 
@@ -423,6 +435,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
 	FAROnScalarAttributeChangedSignature OnMoveSpeedChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
+	FAROnScalarAttributeChangedSignature OnStrengthChanged;
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnPlayerSlotChangedSignature OnPlayerSlotChanged;
 
@@ -535,6 +550,7 @@ protected:
 	void HandleSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData);
+	void HandleStrengthAttributeChanged(const FOnAttributeChangeData& ChangeData);
 	void HandleDownedTagChanged(const FGameplayTag Tag, int32 NewCount);
 	void HandleDeadTagChanged(const FGameplayTag Tag, int32 NewCount);
 	void HandleInvaderColorOverrideTagChanged(const FGameplayTag Tag, int32 NewCount);
@@ -545,6 +561,7 @@ protected:
 	void EvaluateLifeStateFromASC();
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
+	void SetStrength_Internal(float NewStrength);
 	bool EnsureReadyPrerequisitesForRun();
 	void EvaluateTravelReadinessAndBroadcast();
 
@@ -614,6 +631,7 @@ protected:
 	FDelegateHandle SpiceChangedDelegateHandle;
 	FDelegateHandle MaxSpiceChangedDelegateHandle;
 	FDelegateHandle MoveSpeedChangedDelegateHandle;
+	FDelegateHandle StrengthChangedDelegateHandle;
 	FDelegateHandle DownedTagChangedDelegateHandle;
 	FDelegateHandle DeadTagChangedDelegateHandle;
 	FDelegateHandle ColorNoneTagChangedDelegateHandle;

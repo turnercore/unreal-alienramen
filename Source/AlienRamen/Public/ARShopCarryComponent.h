@@ -72,6 +72,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Carry", meta = (AllowPrivateAccess = "true"))
 	FRotator HoldRelativeRotation = FRotator::ZeroRotator;
 
+	// Replicated release mode used by OnRep_HeldActor when old held actor is cleared.
+	// true = world drop/throw (restore collision/physics), false = transfer/consume (keep non-world presentation).
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Carry", meta = (AllowPrivateAccess = "true"))
+	bool bLastReleaseDroppedInWorld = true;
+
 	UPROPERTY(ReplicatedUsing = OnRep_HeldActor, BlueprintReadOnly, Category = "Alien Ramen|Shop|Carry", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<AActor> HeldActor = nullptr;
 };

@@ -103,6 +103,10 @@ public:
 	FGameplayAttributeData MoveSpeed;
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, MoveSpeed)
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "AR|Support")
+	FGameplayAttributeData Strength;
+	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, Strength)
+
 		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DodgeDistance, Category = "AR|Movement")
 	FGameplayAttributeData DodgeDistance;
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, DodgeDistance)
@@ -323,6 +327,7 @@ protected:
 	UFUNCTION() void OnRep_RepairRate(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION() void OnRep_MoveSpeed(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_Strength(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_DodgeDistance(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_DodgeDuration(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_JumpDistance(const FGameplayAttributeData& OldValue);
