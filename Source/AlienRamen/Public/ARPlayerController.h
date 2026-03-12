@@ -352,11 +352,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input")
 	bool bAutoManageDialogueInputMode = true;
 
+	/** Max server-side distance allowed for direct interaction requests (NPC/storage/etc). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction")
+	float ServerInteractionMaxDistance = 300.0f;
+
 private:
 	void LeaveSessionInternal();
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
+	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 	void RequestHUDInitializationInternal(bool bForceBroadcast);
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
