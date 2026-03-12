@@ -6,6 +6,7 @@
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "CanvasItem.h"
+#include "Engine/AssetManager.h"
 #include "Engine/Canvas.h"
 #include "Engine/Texture2D.h"
 #include "Engine/World.h"
@@ -13,14 +14,88 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "HAL/PlatformTime.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
+#include "Stats/Stats.h"
 #include "UObject/UObjectIterator.h"
+
+DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_AREmotionHUD, STATCAT_Advanced);
+DECLARE_CYCLE_STAT(TEXT("Emotion HUD Render"), STAT_AREmotionHUD_Render, STATGROUP_AREmotionHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Candidates"), STAT_AREmotionHUD_Candidates, STATGROUP_AREmotionHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Drawn"), STAT_AREmotionHUD_Drawn, STATGROUP_AREmotionHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Occlusion Traces"), STAT_AREmotionHUD_OcclusionTraces, STATGROUP_AREmotionHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Async Requests"), STAT_AREmotionHUD_AsyncRequests, STATGROUP_AREmotionHUD);
 
 AARHUDBase::AARHUDBase()
 {
 }
 
+void AARHUDBase::RefreshEmotionComponentCacheIfNeeded()
+{
+	const double NowSeconds = FPlatformTime::Seconds();
+	const bool bNeedsRefresh = EmotionComponentCacheRefreshSeconds <= 0.0f
+		|| LastEmotionComponentCacheRefreshTimeSeconds < 0.0
+		|| (NowSeconds - LastEmotionComponentCacheRefreshTimeSeconds) >= static_cast<double>(EmotionComponentCacheRefreshSeconds);
+
+	if (!bNeedsRefresh)
+	{
+		return;
+	}
+
+	LastEmotionComponentCacheRefreshTimeSeconds = NowSeconds;
+	CachedEmotionComponents.Reset();
+
+	UWorld* World = GetWorld();
+	for (TObjectIterator<UAREmotionComponent> It; It; ++It)
+	{
+		UAREmotionComponent* EmotionComponent = *It;
+		if (IsValid(EmotionComponent) && !EmotionComponent->IsTemplate() && EmotionComponent->GetWorld() == World)
+		{
+			CachedEmotionComponents.Add(EmotionComponent);
+		}
+	}
+}
+
+void AARHUDBase::QueueAsyncIconLoad(const TSoftObjectPtr<UTexture2D>& IconPtr)
+{
+	if (IconPtr.IsNull())
+	{
+		return;
+	}
+
+	const FSoftObjectPath IconPath = IconPtr.ToSoftObjectPath();
+	if (!IconPath.IsValid() || PendingAsyncIconLoads.Contains(IconPath))
+	{
+		return;
+	}
+
+	PendingAsyncIconLoads.Add(IconPath);
+	INC_DWORD_STAT(STAT_AREmotionHUD_AsyncRequests);
+	TWeakObjectPtr<AARHUDBase> WeakThis(this);
+	TSharedPtr<FStreamableHandle> Handle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
+		IconPath,
+		FStreamableDelegate::CreateLambda([WeakThis, IconPath]()
+			{
+				if (AARHUDBase* HUD = WeakThis.Get())
+				{
+					HUD->PendingAsyncIconLoads.Remove(IconPath);
+				}
+			}));
+
+	if (Handle.IsValid())
+	{
+		ActiveAsyncIconHandles.Add(Handle);
+	}
+	else
+	{
+		PendingAsyncIconLoads.Remove(IconPath);
+	}
+}
+
 int32 AARHUDBase::RenderEmotionView()
 {
+	TRACE_CPUPROFILER_EVENT_SCOPE(ARHUD_EmotionRender);
+	SCOPE_CYCLE_COUNTER(STAT_AREmotionHUD_Render);
+
 	const APlayerController* LocalController = GetOwningPlayerController();
 	if (!Canvas || !Canvas->Canvas || !LocalController || !bEnableEmotionView || IsEmotionRenderingSuppressed())
 	{
@@ -29,18 +104,28 @@ int32 AARHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas = Canvas;
 	ActiveProjectionController = LocalController;
+	ActiveAsyncIconHandles.RemoveAll([](const TSharedPtr<FStreamableHandle>& Handle)
+		{
+			return !Handle.IsValid() || Handle->HasLoadCompleted();
+		});
 
+	RefreshEmotionComponentCacheIfNeeded();
+
+	uint32 CandidateCount = 0;
 	const APawn* LocalPawn = LocalController->GetPawn();
 	int32 DrawnEmotionCount = 0;
+	OcclusionTraceCountThisFrame = 0;
 
-	for (TObjectIterator<UAREmotionComponent> It; It; ++It)
+	for (int32 Index = CachedEmotionComponents.Num() - 1; Index >= 0; --Index)
 	{
-		const UAREmotionComponent* EmotionComponent = *It;
+		UAREmotionComponent* EmotionComponent = CachedEmotionComponents[Index].Get();
 		if (!IsValid(EmotionComponent) || EmotionComponent->IsTemplate() || EmotionComponent->GetWorld() != GetWorld())
 		{
+			CachedEmotionComponents.RemoveAtSwap(Index);
 			continue;
 		}
 
+		++CandidateCount;
 		AActor* OwnerActor = EmotionComponent->GetOwner();
 		if (!IsValid(OwnerActor) || OwnerActor->IsHidden())
 		{
@@ -63,6 +148,12 @@ int32 AARHUDBase::RenderEmotionView()
 		UTexture2D* IconTexture = DisplayedIcon.Get();
 		if (!IconTexture)
 		{
+			if (bAsyncLoadEmotionIcons)
+			{
+				QueueAsyncIconLoad(DisplayedIcon);
+				continue;
+			}
+
 			IconTexture = DisplayedIcon.LoadSynchronous();
 		}
 
@@ -142,6 +233,9 @@ int32 AARHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
+	SET_DWORD_STAT(STAT_AREmotionHUD_Candidates, CandidateCount);
+	SET_DWORD_STAT(STAT_AREmotionHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
+	SET_DWORD_STAT(STAT_AREmotionHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
 
 	if (ShouldLogEmotionRenderVerbose())
 	{
@@ -207,6 +301,7 @@ bool AARHUDBase::IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionCom
 	auto IsBlockedOnChannel = [&](const ECollisionChannel Channel) -> bool
 	{
 		FHitResult Hit;
+		++OcclusionTraceCountThisFrame;
 		const bool bHit = World->LineTraceSingleByChannel(Hit, ViewLocation, AnchorTarget, Channel, QueryParams);
 		return bHit && !IsHitOnEmotionOwner(Hit);
 	};
@@ -219,6 +314,7 @@ bool AARHUDBase::IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionCom
 		ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
 
 		FHitResult Hit;
+		++OcclusionTraceCountThisFrame;
 		const bool bHit = World->LineTraceSingleByObjectType(Hit, ViewLocation, AnchorTarget, ObjectQueryParams, QueryParams);
 		return bHit && !IsHitOnEmotionOwner(Hit);
 	};
@@ -233,13 +329,15 @@ bool AARHUDBase::IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionCom
 		return false;
 	}
 
-	if (OcclusionTraceChannel != ECollisionChannel::ECC_Visibility
+	if (bUseOcclusionFallbackChannels
+		&& OcclusionTraceChannel != ECollisionChannel::ECC_Visibility
 		&& IsBlockedOnChannel(ECollisionChannel::ECC_Visibility))
 	{
 		return false;
 	}
 
-	if (OcclusionTraceChannel != ECollisionChannel::ECC_Camera
+	if (bUseOcclusionFallbackChannels
+		&& OcclusionTraceChannel != ECollisionChannel::ECC_Camera
 		&& IsBlockedOnChannel(ECollisionChannel::ECC_Camera))
 	{
 		return false;

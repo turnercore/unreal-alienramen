@@ -16,6 +16,7 @@ class AGameStateBase;
 class APlayerState;
 class APlayerController;
 class AActor;
+struct FStreamableHandle;
 class UAREmotionComponent;
 class UCanvas;
 class UTexture2D;
@@ -86,13 +87,29 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
 	TEnumAsByte<ECollisionChannel> OcclusionTraceChannel = ECollisionChannel::ECC_Visibility;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "How often (seconds) to rebuild the runtime emotion component cache. 0 disables caching and scans every frame."))
+	float EmotionComponentCacheRefreshSeconds = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When true, unresolved icon soft references are requested asynchronously and skipped until loaded instead of synchronously loading during DrawHUD."))
+	bool bAsyncLoadEmotionIcons = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When true, runs extra fallback occlusion traces on Visibility and Camera channels in addition to OcclusionTraceChannel. Disable for lower trace cost."))
+	bool bUseOcclusionFallbackChannels = false;
+
 private:
 	int32 RenderEmotionView();
+	void RefreshEmotionComponentCacheIfNeeded();
+	void QueueAsyncIconLoad(const TSoftObjectPtr<UTexture2D>& IconPtr);
 	bool IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionComponent, const APlayerController* LocalController) const;
 	static bool ShouldLogEmotionRenderVerbose();
 
 	mutable TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	mutable TWeakObjectPtr<const APlayerController> ActiveProjectionController;
+	TArray<TWeakObjectPtr<UAREmotionComponent>> CachedEmotionComponents;
+	TSet<FSoftObjectPath> PendingAsyncIconLoads;
+	TArray<TSharedPtr<FStreamableHandle>> ActiveAsyncIconHandles;
+	double LastEmotionComponentCacheRefreshTimeSeconds = -1.0;
+	mutable uint32 OcclusionTraceCountThisFrame = 0;
 	TSet<FName> SuppressionReasons;
 };
 
