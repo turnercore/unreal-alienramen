@@ -177,6 +177,8 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 ### Transition
 
 - `AARGameModeBase` owns optional transition-map travel routing for mode exits via `bRouteModeTravelThroughTransitionMap` + `TransitionTravelMapURL` + transition context (`TransitionSourceMode`, `TransitionReason`).
+- `AARGameModeBase::TryStartTravel` accepts per-call `EARTravelRoutePolicy` override (`ModeDefault`, `ForceTransitionMap`, `ForceDirect`) so runtime can choose transition-map vs same-mode direct travel without mutating class defaults.
+- `AARGameModeBase` provides `EndModeAndTravel(...)` and `TravelDirectInMode(...)` Blueprint helpers for explicit routing intent.
 - `AARTransitionGameMode` owns transition-map continue gating and destination travel start.
 - `AARTransitionGameState` owns replicated transition context (`FARTransitionContext`) for transition/result UI.
 - `AARTransitionPlayerController` is the controller entrypoint for continue votes.
