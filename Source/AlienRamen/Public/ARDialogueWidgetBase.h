@@ -39,10 +39,10 @@ public:
 	void SetEavesdropOtherPlayer(bool bEnable);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
-	void StartDialogueWithNpcTag(FGameplayTag NpcTag);
+	void StartDialogueWithSpeakerTag(FGameplayTag SpeakerTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
-	void InteractWithNpc(AARNPCCharacterBase* NpcActor);
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction|UI")
+	void InteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
 	// Toggles local player's dialogue auto-advance preference through the bound controller.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")

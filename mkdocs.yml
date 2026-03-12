@@ -19,6 +19,7 @@ nav:
   - Dialogue Plugin:
       - Ownership Boundary: README_DialoguePluginBoundary.md
       - Dialogue & NPC Runtime: README_DialogueNPC.md
+  - Shop Ramen System: README_ShopRamenSystem.md
   - C++ Overview:
       - Overview: CppOverview/README.md
       - Enemy Base: CppOverview/AAREnemyBase.md

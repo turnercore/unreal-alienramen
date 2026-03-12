@@ -8,6 +8,9 @@
 #include "ARPlayerCharacterBase.h"
 #include "ARPlayerCharacterShop.generated.h"
 
+class UARShopCarryComponent;
+class AActor;
+
 UCLASS()
 class ALIENRAMEN_API AARPlayerCharacterShop : public AARPlayerCharacterBase
 {
@@ -15,4 +18,17 @@ class ALIENRAMEN_API AARPlayerCharacterShop : public AARPlayerCharacterBase
 
 public:
 	AARPlayerCharacterShop();
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Carry")
+	UARShopCarryComponent* GetShopCarryComponent() const { return ShopCarryComponent; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Carry")
+	bool IsCarryingShopItem() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Carry")
+	AActor* GetHeldShopActor() const;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Carry")
+	TObjectPtr<UARShopCarryComponent> ShopCarryComponent;
 };

@@ -159,6 +159,7 @@ private:
 	void TickStageChoice(float DeltaTime);
 	void TickTransition(float DeltaTime);
 	void StopInvaderRunWithReason(EARInvaderRunEndReason EndReason);
+	void ResetRunState(bool bForActiveRunStart);
 	void RefreshPlayerStatusSignals();
 	void RebuildPlayerStatusBindings();
 	void ClearPlayerStatusBindings();

@@ -1,127 +1,471 @@
 #include "ARNPCCharacterBase.h"
 
+#include "ARCustomerComponent.h"
+#include "ARDialogueSubsystem.h"
 #include "AREmotionComponent.h"
+#include "AREmotionSettings.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
+#include "Components/ActorComponent.h"
+#include "Engine/GameInstance.h"
+#include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
+
+namespace
+{
+	static const FName TalkableStateEmotionSourceId(TEXT("TalkableState"));
+
+	static FString DescribeActorComponentsForDiagnostics(AActor* Actor)
+	{
+		if (!Actor)
+		{
+			return TEXT("<no-actor>");
+		}
+
+		TArray<UActorComponent*> Components;
+		Actor->GetComponents(Components);
+		if (Components.IsEmpty())
+		{
+			return TEXT("<none>");
+		}
+
+		FString Summary;
+		for (UActorComponent* Component : Components)
+		{
+			if (!Summary.IsEmpty())
+			{
+				Summary += TEXT(", ");
+			}
+
+			const FString EditorOnlySuffix = (Component && Component->IsEditorOnly()) ? TEXT(",EditorOnly") : TEXT("");
+			Summary += FString::Printf(
+				TEXT("%s<%s%s>"),
+				*GetNameSafe(Component),
+				*GetNameSafe(Component ? Component->GetClass() : nullptr),
+				*EditorOnlySuffix);
+		}
+
+		return Summary;
+	}
+
+	static void LogMissingSpeakerComponentDiagnostics(AARNPCCharacterBase* Actor)
+	{
+		if (!Actor)
+		{
+			return;
+		}
+
+		TArray<UARSpeakerComponent*> SpeakerComponents;
+		Actor->GetComponents(SpeakerComponents);
+
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Interact] '%s' missing UARSpeakerComponent after refresh. FoundTypedSpeakerComponents=%d Components=[%s]"),
+			*GetNameSafe(Actor),
+			SpeakerComponents.Num(),
+			*DescribeActorComponentsForDiagnostics(Actor));
+	}
+}
 
 AARNPCCharacterBase::AARNPCCharacterBase()
 {
 	bReplicates = true;
-	NpcTalkComponent = CreateDefaultSubobject<UARNPCTalkComponent>(TEXT("NpcTalkComponent"));
-	EmotionComponent = CreateDefaultSubobject<UAREmotionComponent>(TEXT("EmotionComponent"));
 }
 
 void AARNPCCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (NpcTalkComponent)
+	ResolveOptionalComponents();
+	if (!SpeakerComponent && !CustomerComponent && !EmotionComponent)
 	{
-		// Runtime migration path: if legacy actor fields were authored, hydrate the component once.
-		if (!NpcTalkComponent->GetNpcTag().IsValid() && NpcTag.IsValid())
-		{
-			NpcTalkComponent->SetNpcTag(NpcTag);
-		}
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] '%s' has no optional speaker/customer/emotion components."), *GetNameSafe(this));
+	}
 
-		NpcTalkComponent->OnNpcTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
-		NpcTalkComponent->OnNpcTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
+	if (SpeakerComponent && !SpeakerComponent->GetSpeakerTag().IsValid())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Speaker] '%s' has a SpeakerComponent but no SpeakerTag configured."), *GetNameSafe(this));
+	}
+
+	if (!EmotionComponent && (SpeakerComponent || CustomerComponent))
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Emotion] '%s' has speaker/customer behavior but no EmotionComponent; overhead emotions will not render."),
+			*GetNameSafe(this));
+	}
+
+	if (SpeakerComponent)
+	{
+		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
+		SpeakerComponent->OnSpeakerTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
 
 		if (HasAuthority() && EmotionComponent)
 		{
-			EmotionComponent->SetRegisteredSpeakerTag(NpcTalkComponent->GetNpcTag());
+			EmotionComponent->SetRegisteredSpeakerTag(SpeakerComponent->GetSpeakerTag());
 		}
+	}
+
+	RefreshAutoWantsToTalkEmotion(IsTalkable());
+}
+
+void AARNPCCharacterBase::ResolveOptionalComponents()
+{
+	TArray<UARSpeakerComponent*> TalkComponents;
+	GetComponents(TalkComponents);
+	if (!TalkComponents.IsEmpty())
+	{
+		UARSpeakerComponent* PreferredTalkComponent = SpeakerComponent;
+		if (!PreferredTalkComponent || !TalkComponents.Contains(PreferredTalkComponent))
+		{
+			PreferredTalkComponent = TalkComponents[0];
+		}
+
+		if (PreferredTalkComponent && !PreferredTalkComponent->GetSpeakerTag().IsValid())
+		{
+			for (UARSpeakerComponent* Candidate : TalkComponents)
+			{
+				if (Candidate && Candidate->GetSpeakerTag().IsValid())
+				{
+					PreferredTalkComponent = Candidate;
+					break;
+				}
+			}
+		}
+
+		SpeakerComponent = PreferredTalkComponent;
+		if (TalkComponents.Num() > 1)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Speaker] '%s' has %d UARSpeakerComponent instances. Using '%s' as canonical."),
+				*GetNameSafe(this),
+				TalkComponents.Num(),
+				*GetNameSafe(SpeakerComponent));
+		}
+	}
+	else
+	{
+		SpeakerComponent = nullptr;
+	}
+
+	TArray<UAREmotionComponent*> EmotionComponents;
+	GetComponents(EmotionComponents);
+	if (!EmotionComponents.IsEmpty())
+	{
+		UAREmotionComponent* PreferredEmotionComponent = EmotionComponent;
+		if (!PreferredEmotionComponent || !EmotionComponents.Contains(PreferredEmotionComponent))
+		{
+			PreferredEmotionComponent = EmotionComponents[0];
+		}
+
+		EmotionComponent = PreferredEmotionComponent;
+		if (EmotionComponents.Num() > 1)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Speaker] '%s' has %d UAREmotionComponent instances. Using '%s' as canonical."),
+				*GetNameSafe(this),
+				EmotionComponents.Num(),
+				*GetNameSafe(EmotionComponent));
+		}
+	}
+	else
+	{
+		EmotionComponent = nullptr;
+	}
+
+	TArray<UARCustomerComponent*> CustomerComponents;
+	GetComponents(CustomerComponents);
+	if (!CustomerComponents.IsEmpty())
+	{
+		UARCustomerComponent* PreferredCustomerComponent = CustomerComponent;
+		if (!PreferredCustomerComponent || !CustomerComponents.Contains(PreferredCustomerComponent))
+		{
+			PreferredCustomerComponent = CustomerComponents[0];
+		}
+
+		CustomerComponent = PreferredCustomerComponent;
+		if (CustomerComponents.Num() > 1)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Speaker] '%s' has %d UARCustomerComponent instances. Using '%s' as canonical."),
+				*GetNameSafe(this),
+				CustomerComponents.Num(),
+				*GetNameSafe(CustomerComponent));
+		}
+	}
+	else
+	{
+		CustomerComponent = nullptr;
 	}
 }
 
 void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (NpcTalkComponent)
+	if (SpeakerComponent)
 	{
-		NpcTalkComponent->OnNpcTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged);
+		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
 	}
 
 	Super::EndPlay(EndPlayReason);
 }
 
-void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingController)
+void AARNPCCharacterBase::ForwardUseToController(AActor* UsingActor)
 {
-	if (!bNpcLocalStateAllowsDialogue)
+	AARPlayerController* UsingController = ResolveUsingController(UsingActor);
+	if (!UsingController)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[NPC] Interact ignored for '%s': local state blocks dialogue."), *GetNameSafe(this));
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Use] '%s' could not resolve AARPlayerController from source '%s' (class '%s')."),
+			*GetNameSafe(this),
+			*GetNameSafe(UsingActor),
+			UsingActor ? *UsingActor->GetClass()->GetName() : TEXT("None"));
 		return;
 	}
 
-	if (NpcTalkComponent)
-	{
-		NpcTalkComponent->InteractByController(InteractingController);
-	}
+	UsingController->RequestInteractWithCharacter(this);
 }
 
-FGameplayTag AARNPCCharacterBase::GetNpcTag() const
+AARPlayerController* AARNPCCharacterBase::ResolveUsingController(AActor* UsingActor) const
 {
-	return NpcTalkComponent ? NpcTalkComponent->GetNpcTag() : FGameplayTag();
+	if (!UsingActor)
+	{
+		return nullptr;
+	}
+
+	if (AARPlayerController* UsingController = Cast<AARPlayerController>(UsingActor))
+	{
+		return UsingController;
+	}
+
+	const APawn* UsingPawn = Cast<APawn>(UsingActor);
+	if (!UsingPawn)
+	{
+		return nullptr;
+	}
+
+	return Cast<AARPlayerController>(UsingPawn->GetController());
+}
+
+void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingController)
+{
+	if (!InteractingController)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Interact] '%s' interaction ignored: InteractingController is null."), *GetNameSafe(this));
+		return;
+	}
+
+	// Runtime resilience: resolve optional components at interaction time in case this actor was reinstanced
+	// or component pointers became stale after hot reload/editor world transitions.
+	if (!SpeakerComponent || !CustomerComponent || !EmotionComponent)
+	{
+		ResolveOptionalComponents();
+	}
+
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	if (HasAuthority() && CustomerComponent)
+	{
+		FARRamenServeResult ServeResult;
+		if (CustomerComponent->TryServeHeldBowlFromController(InteractingController, ServeResult))
+		{
+			return;
+		}
+
+		if (bHasActiveCustomerOrder)
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Interact] '%s' has active customer order but no valid bowl was served by '%s'; trying speaker fallback."),
+				*GetNameSafe(this),
+				*GetNameSafe(InteractingController));
+		}
+	}
+
+	if (!SpeakerComponent)
+	{
+		// Compatibility fallback: customer-driven actors can still open dialogue using their customer speaker identity.
+		if (HasAuthority() && CustomerComponent)
+		{
+			const FGameplayTag CustomerSpeakerTag = CustomerComponent->GetSpeakerTag();
+			if (CustomerSpeakerTag.IsValid())
+			{
+				if (UGameInstance* GameInstance = GetGameInstance())
+				{
+					if (UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>())
+					{
+						if (DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, CustomerSpeakerTag))
+						{
+							UE_LOG(
+								ARLog,
+								Verbose,
+								TEXT("[Interact] '%s' started dialogue via customer speaker fallback '%s'."),
+								*GetNameSafe(this),
+								*CustomerSpeakerTag.ToString());
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		LogMissingSpeakerComponentDiagnostics(this);
+		return;
+	}
+
+	if (!bSpeakerLocalStateAllowsDialogue && !bHasActiveCustomerOrder)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Speaker] Interact ignored for '%s': local state blocks dialogue."), *GetNameSafe(this));
+		return;
+	}
+
+	SpeakerComponent->InteractByController(InteractingController);
+}
+
+FGameplayTag AARNPCCharacterBase::GetSpeakerTag() const
+{
+	return SpeakerComponent ? SpeakerComponent->GetSpeakerTag() : FGameplayTag();
 }
 
 bool AARNPCCharacterBase::IsTalkable() const
 {
-	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkable();
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	return bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && SpeakerComponent && SpeakerComponent->IsTalkable());
 }
 
 bool AARNPCCharacterBase::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
 {
-	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForPlayerSlot(PlayerSlot);
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	return bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && SpeakerComponent && SpeakerComponent->IsTalkableForPlayerSlot(PlayerSlot));
 }
 
 bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* QueryController) const
 {
-	return bNpcLocalStateAllowsDialogue && NpcTalkComponent && NpcTalkComponent->IsTalkableForController(QueryController);
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	return bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && SpeakerComponent && SpeakerComponent->IsTalkableForController(QueryController));
 }
 
-bool AARNPCCharacterBase::IsNpcLocalStateAllowingDialogue() const
+bool AARNPCCharacterBase::IsSpeakerBusyForController(const AARPlayerController* QueryController) const
 {
-	return bNpcLocalStateAllowsDialogue;
+	if (!QueryController || !SpeakerComponent)
+	{
+		return false;
+	}
+
+	const FGameplayTag SpeakerTag = SpeakerComponent->GetSpeakerTag();
+	if (!SpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	const UGameInstance* GameInstance = GetGameInstance();
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	const UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>();
+	return DialogueSubsystem && DialogueSubsystem->IsSpeakerBusyForController(QueryController, SpeakerTag);
 }
 
-void AARNPCCharacterBase::SetNpcLocalStateAllowsDialogue(const bool bEnabled)
+bool AARNPCCharacterBase::IsSpeakerLocalStateAllowingDialogue() const
 {
-	if (!HasAuthority() || bNpcLocalStateAllowsDialogue == bEnabled)
+	return bSpeakerLocalStateAllowsDialogue;
+}
+
+void AARNPCCharacterBase::SetSpeakerLocalStateAllowsDialogue(const bool bEnabled)
+{
+	if (!HasAuthority() || bSpeakerLocalStateAllowsDialogue == bEnabled)
 	{
 		return;
 	}
 
-	const bool bOldAllowsDialogue = bNpcLocalStateAllowsDialogue;
-	bNpcLocalStateAllowsDialogue = bEnabled;
-	OnRep_NpcLocalStateAllowsDialogue(bOldAllowsDialogue);
+	const bool bOldAllowsDialogue = bSpeakerLocalStateAllowsDialogue;
+	bSpeakerLocalStateAllowsDialogue = bEnabled;
+	OnRep_SpeakerLocalStateAllowsDialogue(bOldAllowsDialogue);
 	ForceNetUpdate();
 }
 
-void AARNPCCharacterBase::HandleTalkComponentTalkableStateChanged(const bool bNewTalkable)
+void AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged(const bool bNewTalkable)
 {
-	(void)bNewTalkable;
-	OnNpcTalkableStateChanged.Broadcast(IsTalkable());
+	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
+	const bool bEffectiveTalkable = bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && bNewTalkable);
+	RefreshAutoWantsToTalkEmotion(bEffectiveTalkable);
+	OnSpeakerTalkableStateChanged.Broadcast(bEffectiveTalkable);
 }
 
-void AARNPCCharacterBase::OnRep_NpcLocalStateAllowsDialogue(const bool bOldAllowsDialogue)
+void AARNPCCharacterBase::OnRep_SpeakerLocalStateAllowsDialogue(const bool bOldAllowsDialogue)
 {
-	if (bNpcLocalStateAllowsDialogue == bOldAllowsDialogue)
+	if (bSpeakerLocalStateAllowsDialogue == bOldAllowsDialogue)
 	{
 		return;
 	}
 
-	OnNpcTalkableStateChanged.Broadcast(IsTalkable());
+	RefreshAutoWantsToTalkEmotion(IsTalkable());
+	OnSpeakerTalkableStateChanged.Broadcast(IsTalkable());
 }
 
 void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
 {
-	if (NpcTalkComponent)
+	if (SpeakerComponent)
 	{
-		NpcTalkComponent->RefreshTalkableFromSubsystem();
+		SpeakerComponent->RefreshTalkableFromSubsystem();
 	}
+}
+
+void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTalkable)
+{
+	if (!HasAuthority() || !EmotionComponent)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Emotion][Talkable] Skip auto wants-to-talk for '%s': Authority=%s EmotionComponent=%s"),
+			*GetNameSafe(this),
+			HasAuthority() ? TEXT("true") : TEXT("false"),
+			EmotionComponent ? TEXT("valid") : TEXT("null"));
+		return;
+	}
+
+	const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+	const FGameplayTag WantsToTalkTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
+	if (!WantsToTalkTag.IsValid())
+	{
+		EmotionComponent->ClearSystemEmotionTag(TalkableStateEmotionSourceId);
+		bAutoWantsToTalkEmotionApplied = false;
+		UE_LOG(ARLog, Verbose, TEXT("[Emotion][Talkable] '%s' no WantsToTalkEmotionTag configured; cleared TalkableState source."), *GetNameSafe(this));
+		return;
+	}
+
+	if (bEffectiveTalkable)
+	{
+		EmotionComponent->SetSystemEmotionTag(TalkableStateEmotionSourceId, WantsToTalkTag, 0);
+		bAutoWantsToTalkEmotionApplied = true;
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Emotion][Talkable] '%s' apply TalkableState=%s (effective talkable=true)."),
+			*GetNameSafe(this),
+			*WantsToTalkTag.ToString());
+		return;
+	}
+
+	EmotionComponent->ClearSystemEmotionTag(TalkableStateEmotionSourceId);
+	UE_LOG(ARLog, Verbose, TEXT("[Emotion][Talkable] '%s' cleared TalkableState (effective talkable=false)."), *GetNameSafe(this));
+	bAutoWantsToTalkEmotionApplied = false;
 }
 
 void AARNPCCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AARNPCCharacterBase, bNpcLocalStateAllowsDialogue);
+	DOREPLIFETIME(AARNPCCharacterBase, bSpeakerLocalStateAllowsDialogue);
 }

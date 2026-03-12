@@ -8,5 +8,5 @@ AARLobbyGameState::AARLobbyGameState()
 
 UScriptStruct* AARLobbyGameState::GetStateStruct_Implementation() const
 {
-	return FARLobbyGameStateData::StaticStruct();
+	return ClassStateStruct ? ClassStateStruct.Get() : FARLobbyGameStateData::StaticStruct();
 }
