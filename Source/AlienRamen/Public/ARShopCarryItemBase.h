@@ -18,6 +18,16 @@ class ALIENRAMEN_API AARShopCarryItemBase : public AActor
 public:
 	AARShopCarryItemBase();
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Carry|Physics")
+	float GetWeightKg() const { return WeightKg; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Carry|Physics")
+	float GetResolvedWeightKg() const;
+
+	// Set <= 0 to restore native component mass behavior (no explicit override).
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Carry|Physics", meta = (BlueprintAuthorityOnly))
+	void SetWeightKg(float NewWeightKg);
+
 	// Optional forwarding helper for BI_Interactable-style calls. Accepts pawn/controller and routes to pickup request.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Forward Use To Controller"))
 	virtual void ForwardUseToController(AActor* UsingActor);
@@ -27,5 +37,18 @@ public:
 	void ReleaseCarryItem();
 
 protected:
+	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	void ReleaseCarryItem_Implementation();
+
+	UFUNCTION()
+	void OnRep_WeightKg();
+
+	void ApplyWeightToPrimitiveComponents() const;
+	float ResolveDefaultWeightKg() const;
+
+	// 0 uses native primitive default mass. >0 applies explicit mass override in kg.
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_WeightKg, BlueprintReadOnly, Category = "Alien Ramen|Shop|Carry|Physics", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float WeightKg = 0.0f;
 };

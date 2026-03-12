@@ -74,6 +74,8 @@ float AARPlayerStateBase::GetCoreAttributeValue(EARCoreAttributeType AttributeTy
 		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
 	case EARCoreAttributeType::MoveSpeed:
 		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute());
+	case EARCoreAttributeType::Strength:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
 	default:
 		return 0.f;
 	}
@@ -87,6 +89,7 @@ FARPlayerCoreAttributeSnapshot AARPlayerStateBase::GetCoreAttributeSnapshot() co
 	Snapshot.Spice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	Snapshot.MaxSpice = GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
 	Snapshot.MoveSpeed = GetCoreAttributeValue(EARCoreAttributeType::MoveSpeed);
+	Snapshot.Strength = GetCoreAttributeValue(EARCoreAttributeType::Strength);
 	return Snapshot;
 }
 
@@ -342,6 +345,27 @@ void AARPlayerStateBase::ClearSpiceMeter()
 void AARPlayerStateBase::ServerSetSpiceMeter_Implementation(float NewSpiceValue)
 {
 	SetSpiceMeter_Internal(NewSpiceValue);
+}
+
+float AARPlayerStateBase::GetStrength() const
+{
+	return GetCoreAttributeValue(EARCoreAttributeType::Strength);
+}
+
+void AARPlayerStateBase::SetStrength(const float NewStrength)
+{
+	if (HasAuthority())
+	{
+		SetStrength_Internal(NewStrength);
+		return;
+	}
+
+	ServerSetStrength(NewStrength);
+}
+
+void AARPlayerStateBase::ServerSetStrength_Implementation(const float NewStrength)
+{
+	SetStrength_Internal(NewStrength);
 }
 
 void AARPlayerStateBase::SetSpiceSharingActive(bool bNewIsSharing)
@@ -1323,6 +1347,12 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 			.AddUObject(this, &AARPlayerStateBase::HandleMoveSpeedAttributeChanged);
 	}
 
+	if (!StrengthChangedDelegateHandle.IsValid())
+	{
+		StrengthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetStrengthAttribute())
+			.AddUObject(this, &AARPlayerStateBase::HandleStrengthAttributeChanged);
+	}
+
 	if (!DownedTagChangedDelegateHandle.IsValid())
 	{
 		const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
@@ -1406,6 +1436,7 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 		SpiceChangedDelegateHandle.Reset();
 		MaxSpiceChangedDelegateHandle.Reset();
 		MoveSpeedChangedDelegateHandle.Reset();
+		StrengthChangedDelegateHandle.Reset();
 		DownedTagChangedDelegateHandle.Reset();
 		DeadTagChangedDelegateHandle.Reset();
 		ColorNoneTagChangedDelegateHandle.Reset();
@@ -1444,6 +1475,12 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute()).Remove(MoveSpeedChangedDelegateHandle);
 		MoveSpeedChangedDelegateHandle.Reset();
+	}
+
+	if (StrengthChangedDelegateHandle.IsValid())
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetStrengthAttribute()).Remove(StrengthChangedDelegateHandle);
+		StrengthChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
@@ -1504,12 +1541,14 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, Snapshot.Spice, Snapshot.Spice);
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::Strength, Snapshot.Strength, Snapshot.Strength);
 
 	OnHealthChanged.Broadcast(this, PlayerSlot, Snapshot.Health, Snapshot.Health);
 	OnMaxHealthChanged.Broadcast(this, PlayerSlot, Snapshot.MaxHealth, Snapshot.MaxHealth);
 	OnSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.Spice, Snapshot.Spice);
 	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+	OnStrengthChanged.Broadcast(this, PlayerSlot, Snapshot.Strength, Snapshot.Strength);
 	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, SpicyTrackCursorTier);
 }
 
@@ -1565,6 +1604,12 @@ void AARPlayerStateBase::HandleMoveSpeedAttributeChanged(const FOnAttributeChang
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, ChangeData.NewValue, ChangeData.OldValue);
 	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+}
+
+void AARPlayerStateBase::HandleStrengthAttributeChanged(const FOnAttributeChangeData& ChangeData)
+{
+	BroadcastCoreAttributeChanged(EARCoreAttributeType::Strength, ChangeData.NewValue, ChangeData.OldValue);
+	OnStrengthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleDownedTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
@@ -1728,6 +1773,16 @@ void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)
 	const float MaxSpice = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
 	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.f, FMath::Max(0.f, MaxSpice));
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
+}
+
+void AARPlayerStateBase::SetStrength_Internal(const float NewStrength)
+{
+	if (!HasAuthority() || !AbilitySystemComponent)
+	{
+		return;
+	}
+
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetStrengthAttribute(), FMath::Max(0.0f, NewStrength));
 }
 
 bool AARPlayerStateBase::IsTravelReady() const
