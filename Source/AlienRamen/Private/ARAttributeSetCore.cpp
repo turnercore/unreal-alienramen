@@ -37,6 +37,9 @@ UARAttributeSetCore::UARAttributeSetCore()
 	CritMultiplier.SetBaseValue(1.0f);
 	CritMultiplier.SetCurrentValue(1.0f);
 
+	Strength.SetBaseValue(10.0f);
+	Strength.SetCurrentValue(10.0f);
+
 	DropChance.SetBaseValue(0.0f);
 	DropChance.SetCurrentValue(0.0f);
 
@@ -82,6 +85,7 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 		Attribute == GetHealingDealtMultiplierAttribute() ||
 		Attribute == GetSpiceGainMultiplierAttribute() ||
 		Attribute == GetSpreadMultiplierAttribute() ||
+		Attribute == GetStrengthAttribute() ||
 		Attribute == GetMeatDropMultiplierAttribute() ||
 		Attribute == GetScrapDropMultiplierAttribute())
 	{
@@ -224,6 +228,10 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 	{
 		SetSpreadMultiplier(FMath::Max(0.0f, GetSpreadMultiplier()));
 	}
+	else if (Attr == GetStrengthAttribute())
+	{
+		SetStrength(FMath::Max(0.0f, GetStrength()));
+	}
 	else if (Attr == GetMeatDropMultiplierAttribute())
 	{
 		SetMeatDropMultiplier(FMath::Max(0.0f, GetMeatDropMultiplier()));
@@ -266,6 +274,7 @@ void UARAttributeSetCore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, RepairRate, COND_None, REPNOTIFY_Always);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MoveSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Strength, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DodgeDistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DodgeDuration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, JumpDistance, COND_None, REPNOTIFY_Always);
@@ -342,6 +351,7 @@ AR_REP_NOTIFY(HealingDealtMultiplier)
 AR_REP_NOTIFY(RepairRate)
 
 AR_REP_NOTIFY(MoveSpeed)
+AR_REP_NOTIFY(Strength)
 AR_REP_NOTIFY(DodgeDistance)
 AR_REP_NOTIFY(DodgeDuration)
 AR_REP_NOTIFY(JumpDistance)

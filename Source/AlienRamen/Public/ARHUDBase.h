@@ -30,6 +30,7 @@ public:
 	AARHUDBase();
 
 	virtual void DrawHUD() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	// Local-only HUD init entrypoint called by AARPlayerController.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD")
@@ -96,10 +97,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When true, runs extra fallback occlusion traces on Visibility and Camera channels in addition to OcclusionTraceChannel. Disable for lower trace cost."))
 	bool bUseOcclusionFallbackChannels = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When enabled, icons beyond MaxEmotionRenderDistance are skipped before projection/occlusion work."))
+	bool bEnableDistanceCull = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Maximum camera-to-anchor distance (cm) for HUD emotion rendering. 0 disables distance culling."))
+	float MaxEmotionRenderDistance = 8000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When enabled, icons outside MaxEmotionViewAngleDegrees from the view forward vector are skipped before projection/occlusion work."))
+	bool bEnableFOVCull = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", ClampMax = "180.0", UIMin = "0.0", UIMax = "180.0", ToolTip = "Maximum off-center angle in degrees from camera forward to the emotion anchor for rendering."))
+	float MaxEmotionViewAngleDegrees = 95.0f;
+
 private:
 	int32 RenderEmotionView();
 	void RefreshEmotionComponentCacheIfNeeded();
 	void QueueAsyncIconLoad(const TSoftObjectPtr<UTexture2D>& IconPtr);
+	void CleanupAsyncEmotionLoads();
 	bool IsEmotionVisibleForViewer(const UAREmotionComponent* EmotionComponent, const APlayerController* LocalController) const;
 	static bool ShouldLogEmotionRenderVerbose();
 
