@@ -24,6 +24,9 @@ This document captures the server-authoritative runtime contract for:
 - `UARRunBuffSubsystem`
   - Save-backed per-character stored/queued/active run-buff state.
   - Consume/apply/clear authority for energy-drink buffs.
+- `UARItemDefinitionSubsystem`
+  - Shared item-definition resolver facade used by Scrapyard + Shop.
+  - Delegates row resolution to `UTagContentResolverSubsystem`.
 - `AARShopGameMode`
   - Run-ledger deposit to storage with clamps.
   - First-shop-entry run-buff cleanup.
@@ -130,3 +133,5 @@ This document captures the server-authoritative runtime contract for:
   - converted money
   - granted reward list
 - `AARScrapyardHUD`, `UARScrapyardHUDWidgetBase`, `UARScrapyardExitZoneWidgetBase` bind to replicated summary/timer/run-active/run-buff snapshot delegates.
+- Shared resolve path:
+  - systems should resolve item/energy-drink rows through `UARItemDefinitionSubsystem` instead of duplicating direct `UTagContentResolverSubsystem` calls.

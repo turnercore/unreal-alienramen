@@ -36,7 +36,7 @@ protected:
 	TSubclassOf<AARRamenMeatActor> MeatActorClass;
 
 	// Optional typed item tag forwarded into generic dispenser lookup.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Shop.Item"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Scrapyard.Item"))
 	FGameplayTag MeatItemTag;
 
 private:

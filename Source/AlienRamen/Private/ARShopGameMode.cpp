@@ -4,6 +4,7 @@
 #include "AREnergyDrinkCarryItem.h"
 #include "ARGameStateBase.h"
 #include "ARFactionSubsystem.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARRamenMeatActor.h"
 #include "ARRunBuffSubsystem.h"
@@ -14,53 +15,9 @@
 #include "EngineUtils.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
-#include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
 
 namespace
 {
-	static bool ResolveScrapyardItemDefForTag(UGameInstance* GameInstance, const FGameplayTag ItemTag, FARScrapyardItemDefRow& OutDef)
-	{
-		OutDef = FARScrapyardItemDefRow();
-		if (!GameInstance || !ItemTag.IsValid())
-		{
-			return false;
-		}
-
-		UTagContentResolverSubsystem* Resolver = GameInstance->GetSubsystem<UTagContentResolverSubsystem>();
-		if (!Resolver)
-		{
-			return false;
-		}
-
-		FInstancedStruct ResolvedRow;
-		FString ResolveError;
-		if (!Resolver->TryResolveRowForTag(ItemTag, ResolvedRow, ResolveError))
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[Shop|EnergyDrink] Failed to resolve scrapyard item '%s': %s"),
-				*ItemTag.ToString(),
-				*ResolveError);
-			return false;
-		}
-
-		const FARScrapyardItemDefRow* ItemDef = ResolvedRow.GetPtr<FARScrapyardItemDefRow>();
-		if (!ItemDef)
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[Shop|EnergyDrink] Item '%s' did not resolve to FARScrapyardItemDefRow."),
-				*ItemTag.ToString());
-			return false;
-		}
-
-		OutDef = *ItemDef;
-		return true;
-	}
-
 	static FARMeatState MergeMeatStates(const FARMeatState& A, const FARMeatState& B)
 	{
 		FARMeatState Out = A;
@@ -197,15 +154,14 @@ void AARShopGameMode::BeginPlay()
 	}
 
 	const int32 TransientCountBeforeRestore = SaveGame->ShopTransientCarryables.Num();
-	const bool bRestoredTransientCarryables = RestoreTransientShopCarryables(SaveGame);
+	RestoreTransientShopCarryables(SaveGame);
 	if (SaveGame->ShopTransientCarryables.Num() != TransientCountBeforeRestore)
 	{
 		SaveSubsystem->MarkSaveDirty();
 	}
-	if (!bRestoredTransientCarryables)
-	{
-		SpawnStoredEnergyDrinksAtAnchors(SaveGame, SaveSubsystem);
-	}
+	// Always evaluate anchor spawning so shared stored inventory can still materialize
+	// even when non-drink transient carryables were restored.
+	SpawnStoredEnergyDrinksAtAnchors(SaveGame, SaveSubsystem);
 }
 
 bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)
@@ -251,6 +207,8 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 	}
 
 	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
 	if (!World)
 	{
 		return false;
@@ -273,6 +231,17 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 			continue;
 		}
 
+		const bool bEnergyDrinkClass = SpawnClass->IsChildOf(AAREnergyDrinkCarryItem::StaticClass());
+		if (bEnergyDrinkClass && !Snapshot.EnergyDrinkItemTag.IsValid())
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[ShopGameMode] Skipping transient energy drink '%s': missing item tag."),
+				*Snapshot.ActorClass.ToSoftObjectPath().ToString());
+			continue;
+		}
+
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 		AARShopCarryItemBase* Spawned = World->SpawnActor<AARShopCarryItemBase>(SpawnClass, Snapshot.WorldTransform, SpawnParams);
@@ -284,6 +253,10 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 		if (AAREnergyDrinkCarryItem* EnergyDrink = Cast<AAREnergyDrinkCarryItem>(Spawned))
 		{
 			EnergyDrink->SetEnergyDrinkItemTag(Snapshot.EnergyDrinkItemTag);
+			if (ItemDefinitions)
+			{
+				ItemDefinitions->ApplyItemPhysicsProperties(EnergyDrink, Snapshot.EnergyDrinkItemTag);
+			}
 		}
 		else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(Spawned))
 		{
@@ -311,7 +284,8 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = GetGameInstance();
-	if (!World || !GameInstance)
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	if (!World || !GameInstance || !ItemDefinitions)
 	{
 		return false;
 	}
@@ -349,21 +323,20 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 		}
 
 		FARScrapyardItemDefRow ItemDef;
-		if (!ResolveScrapyardItemDefForTag(GameInstance, Stack.ItemTag, ItemDef))
+		if (!ItemDefinitions->ResolveItemDefinition(Stack.ItemTag, ItemDef))
+		{
+			continue;
+		}
+		if (ItemDef.ItemType != EARScrapyardItemType::EnergyDrink)
 		{
 			continue;
 		}
 
 		UClass* SpawnClass = FallbackEnergyDrinkCarryItemClass ? FallbackEnergyDrinkCarryItemClass.Get() : AAREnergyDrinkCarryItem::StaticClass();
-		if (!ItemDef.ItemModelClass.IsNull())
+		TSubclassOf<AActor> ResolvedItemClass;
+		if (ItemDefinitions->ResolveItemActorClass(Stack.ItemTag, ResolvedItemClass) && ResolvedItemClass)
 		{
-			if (UClass* AuthoredClass = ItemDef.ItemModelClass.LoadSynchronous())
-			{
-				if (AuthoredClass->IsChildOf(AAREnergyDrinkCarryItem::StaticClass()))
-				{
-					SpawnClass = AuthoredClass;
-				}
-			}
+			SpawnClass = ResolvedItemClass.Get();
 		}
 
 		if (!SpawnClass || !SpawnClass->IsChildOf(AAREnergyDrinkCarryItem::StaticClass()))
@@ -401,6 +374,7 @@ bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UA
 			}
 
 			SpawnedDrink->SetEnergyDrinkItemTag(Stack.ItemTag);
+			ItemDefinitions->ApplyItemPhysicsProperties(SpawnedDrink, Stack.ItemTag);
 			FARShopTransientCarryableSnapshot& Snapshot = SaveGame->ShopTransientCarryables.AddDefaulted_GetRef();
 			Snapshot.ActorClass = SpawnClass;
 			Snapshot.WorldTransform = SpawnTransform;

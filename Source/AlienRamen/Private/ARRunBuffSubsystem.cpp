@@ -10,8 +10,6 @@
 #include "AbilitySystemComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
-#include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
 
 namespace
 {
