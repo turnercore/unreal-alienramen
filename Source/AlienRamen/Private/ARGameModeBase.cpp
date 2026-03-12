@@ -44,8 +44,15 @@ namespace
 
 		if (TrimmedOptions.StartsWith(TEXT("?")) || TrimmedOptions.StartsWith(TEXT("&")))
 		{
-			if (TrimmedOptions.StartsWith(TEXT("&")) && !BaseURL.Contains(TEXT("?")))
+			const bool bBaseHasQuery = BaseURL.Contains(TEXT("?"));
+			if (bBaseHasQuery)
 			{
+				// BaseURL already has a query string — force a joining separator.
+				TrimmedOptions[0] = TEXT('&');
+			}
+			else if (TrimmedOptions.StartsWith(TEXT("&")))
+			{
+				// No existing query string — promote & to ? for the first option.
 				TrimmedOptions[0] = TEXT('?');
 			}
 			return BaseURL + TrimmedOptions;
@@ -71,6 +78,10 @@ FString AARGameModeBase::BuildModeTravelURL(const FString& DestinationURL, const
 
 	if (DestinationURL.IsEmpty() || TransitionTravelMapURL.IsEmpty())
 	{
+		if (TransitionTravelMapURL.IsEmpty() && RoutePolicy == EARTravelRoutePolicy::ForceTransitionMap)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[GameMode] BuildModeTravelURL: ForceTransitionMap requested but TransitionTravelMapURL is empty on '%s'; falling back to direct travel."), *GetNameSafe(this));
+		}
 		return DestinationURL;
 	}
 
@@ -239,7 +250,12 @@ EARPlayerSlot AARGameModeBase::DetermineNextPlayerSlot(const AARGameStateBase* G
 		return EARPlayerSlot::P1;
 	}
 
-	return EARPlayerSlot::P2;
+	if (!bHasP2)
+	{
+		return EARPlayerSlot::P2;
+	}
+
+	return EARPlayerSlot::Unknown;
 }
 
 EARPlayerSlot AARGameModeBase::FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState)
@@ -670,6 +686,12 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 	if (!HasAuthority())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel ignored: not authority."));
+		return false;
+	}
+
+	if (URL.IsEmpty())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel failed: URL is empty."));
 		return false;
 	}
 
