@@ -1,6 +1,7 @@
 #include "ARInvaderPlayerController.h"
 
 #include "ARInvaderFullBlastMenuWidget.h"
+#include "ARInvaderDirectorSubsystem.h"
 #include "ARInvaderGameState.h"
 #include "ARPlayerCharacterInvader.h"
 #include "ARInvaderSpicyTrackSettings.h"
@@ -625,4 +626,27 @@ void AARInvaderPlayerController::ServerRequestClearOfferPresence_Implementation(
 	{
 		InvaderGameState->ClearOfferPresence(GetInvaderPlayerState());
 	}
+}
+
+void AARInvaderPlayerController::RequestVoteEndRunEarly(const bool bVoteYes)
+{
+	if (HasAuthority())
+	{
+		ServerRequestVoteEndRunEarly_Implementation(bVoteYes);
+		return;
+	}
+
+	ServerRequestVoteEndRunEarly(bVoteYes);
+}
+
+void AARInvaderPlayerController::ServerRequestVoteEndRunEarly_Implementation(const bool bVoteYes)
+{
+	UWorld* World = GetWorld();
+	UARInvaderDirectorSubsystem* DirectorSubsystem = World ? World->GetSubsystem<UARInvaderDirectorSubsystem>() : nullptr;
+	if (!DirectorSubsystem)
+	{
+		return;
+	}
+
+	DirectorSubsystem->SubmitEarlyBailVote(GetInvaderPlayerState(), bVoteYes);
 }

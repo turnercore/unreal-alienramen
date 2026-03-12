@@ -4,10 +4,14 @@
  */
 #pragma once
 
+#include "ARColorTypes.h"
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "UObject/SoftObjectPtr.h"
 #include "ARPlayerTypes.h"
 #include "ARSaveTypes.generated.h"
+
+class AActor;
 
 UENUM(BlueprintType)
 enum class EARSaveResultCode : uint8
@@ -196,6 +200,27 @@ struct ALIENRAMEN_API FARSaveSlotDescriptor
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Money = 0;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARShopTransientCarryableSnapshot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	TSoftClassPtr<AActor> ActorClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	FTransform WorldTransform = FTransform::Identity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	FGameplayTag EnergyDrinkItemTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	EARAffinityColor MeatColor = EARAffinityColor::Red;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1"))
+	int32 MeatAmount = 1;
 };
 
 USTRUCT(BlueprintType)

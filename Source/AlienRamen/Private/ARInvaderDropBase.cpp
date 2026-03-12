@@ -283,47 +283,29 @@ void AARInvaderDropBase::ApplyDropReward_Implementation()
 
 	if (DropType == EARInvaderDropType::Scrap)
 	{
-		const int32 OldScrap = GameState->GetScrap();
-		const int32 NewScrap = OldScrap + DropAmount;
-		GameState->SetScrapFromSave(NewScrap);
+		const int32 OldRunLedgerScrap = GameState->GetRunLedgerScrap();
+		GameState->AddRunLedgerScrap(DropAmount);
 		UE_LOG(
 			ARLog,
 			Log,
-			TEXT("[InvaderDrop|Reward] Scrap +%d old=%d new=%d drop='%s'"),
+			TEXT("[InvaderDrop|Reward] ScrapLedger +%d old=%d new=%d drop='%s'"),
 			DropAmount,
-			OldScrap,
-			GameState->GetScrap(),
+			OldRunLedgerScrap,
+			GameState->GetRunLedgerScrap(),
 			*GetNameSafe(this));
 		return;
 	}
 
-	FARMeatState MeatState = GameState->GetMeat();
-	const int32 OldTotalMeat = MeatState.GetTotalAmount();
-	switch (DropColor)
-	{
-	case EARAffinityColor::Red:
-		MeatState.RedAmount += DropAmount;
-		break;
-	case EARAffinityColor::Blue:
-		MeatState.BlueAmount += DropAmount;
-		break;
-	case EARAffinityColor::White:
-		MeatState.WhiteAmount += DropAmount;
-		break;
-	default:
-		MeatState.UnspecifiedAmount += DropAmount;
-		break;
-	}
-
-	GameState->SetMeatFromSave(MeatState);
+	const FARMeatState OldRunLedgerMeat = GameState->GetRunLedgerMeat();
+	GameState->AddRunLedgerMeat(DropColor, DropAmount);
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderDrop|Reward] Meat +%d color=%d oldTotal=%d newTotal=%d drop='%s'"),
+		TEXT("[InvaderDrop|Reward] MeatLedger +%d color=%d oldTotal=%d newTotal=%d drop='%s'"),
 		DropAmount,
 		static_cast<int32>(DropColor),
-		OldTotalMeat,
-		GameState->GetMeat().GetTotalAmount(),
+		OldRunLedgerMeat.GetTotalAmount(),
+		GameState->GetRunLedgerMeat().GetTotalAmount(),
 		*GetNameSafe(this));
 }
 

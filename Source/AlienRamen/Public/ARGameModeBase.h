@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
 #include "ARPlayerTypes.h"
+#include "ARTransitionTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameplayTagContainer.h"
 #include "ARGameModeBase.generated.h"
@@ -34,8 +35,19 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Mode")
 	FGameplayTag GetModeTag() const { return ModeTag; }
 
+	// Returns the final travel URL for mode-driven travel, optionally routing through transition map context.
+	FString BuildModeTravelURL(const FString& DestinationURL, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault) const;
+
 	// Authority helper: readiness + optional save + travel in one call (C++ entrypoint; Blueprint should use AARPlayerController::TryStartTravel).
-	bool TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
+	bool TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
+
+	// Convenience helper for ending the current mode and routing through transition map regardless of mode default.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
+	bool EndModeAndTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
+
+	// Convenience helper for map-to-map travel while staying in the same mode (bypasses transition map regardless of mode default).
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
+	bool TravelDirectInMode(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
 protected:
 	// Authoritative mode identity tag for this GameMode class/instance.
@@ -57,6 +69,22 @@ protected:
 	// When true, local pause open/close requests fan out across all local controllers on the same machine.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Pause")
 	bool bShareLocalPauseAcrossControllersInMode = false;
+
+	// When true, mode travel to destination URLs is routed through TransitionTravelMapURL with FARTransitionContext payload.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition")
+	bool bRouteModeTravelThroughTransitionMap = false;
+
+	// Transition map URL used when bRouteModeTravelThroughTransitionMap is enabled.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition", meta = (EditCondition = "bRouteModeTravelThroughTransitionMap"))
+	FString TransitionTravelMapURL = TEXT("/Game/Maps/Lvl_Loading");
+
+	// Transition context source mode emitted when routing through transition map.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition", meta = (EditCondition = "bRouteModeTravelThroughTransitionMap"))
+	EARTransitionSourceMode TransitionSourceMode = EARTransitionSourceMode::Unknown;
+
+	// Transition context reason emitted when routing through transition map.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition", meta = (EditCondition = "bRouteModeTravelThroughTransitionMap"))
+	EARTransitionReason TransitionReason = EARTransitionReason::GenericContinue;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Players")
 	void BP_OnPlayerJoined(AARPlayerStateBase* JoinedPlayerState);

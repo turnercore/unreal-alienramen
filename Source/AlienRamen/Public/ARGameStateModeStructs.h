@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "ARSaveTypes.h"
+#include "ARTransitionTypes.h"
 #include "GameplayTagContainer.h"
 #include "ARGameStateModeStructs.generated.h"
 
@@ -25,6 +26,12 @@ struct ALIENRAMEN_API FARInvaderGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FARMeatState Meat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
@@ -54,6 +61,12 @@ struct ALIENRAMEN_API FARScrapyardGameStateData
 	FARMeatState Meat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
@@ -79,6 +92,12 @@ struct ALIENRAMEN_API FARShopGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FARMeatState Meat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
@@ -108,6 +127,12 @@ struct ALIENRAMEN_API FARLobbyGameStateData
 	FARMeatState Meat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Cycles = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
@@ -115,4 +140,40 @@ struct ALIENRAMEN_API FARLobbyGameStateData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FGameplayTagContainer ActiveFactionEffectTags;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARTransitionGameStateData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTagContainer Unlocks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 Money = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 Scrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState Meat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 RunLedgerScrap = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FARMeatState RunLedgerMeat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	int32 Cycles = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTag ActiveFactionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	FGameplayTagContainer ActiveFactionEffectTags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Transition")
+	FARTransitionContext TransitionContext;
 };
