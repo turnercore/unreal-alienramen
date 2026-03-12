@@ -19,7 +19,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 8;
+	static constexpr int32 CurrentSchemaVersion = 10;
 	static constexpr int32 MinSupportedSchemaVersion = 7;
 
 	UARSaveGame();
@@ -85,6 +85,14 @@ public:
 	// Monotonic cycle marker incremented each time queued drinks rotate into active payload.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")
 	int32 ActiveRunBuffCycleId = 0;
+
+	// Transient loose shop carryables (for example world energy drinks/meat) restored on pre-run shop reload.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	TArray<FARShopTransientCarryableSnapshot> ShopTransientCarryables;
+
+	// One-shot gate to clear loose shop carryables on first shop entry after a completed run/results transition.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	bool bClearShopTransientCarryablesOnNextShopLoad = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FName SaveSlot = NAME_None;

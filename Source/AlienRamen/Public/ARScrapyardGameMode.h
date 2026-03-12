@@ -12,7 +12,8 @@ class AController;
 class APawn;
 class APlayerController;
 class FProperty;
-struct UScriptStruct;
+class UScriptStruct;
+class UClass;
 
 UCLASS()
 class ALIENRAMEN_API AARScrapyardGameMode : public AARGameModeBase
@@ -26,7 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
-	virtual TSubclassOf<APawn> GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard")
 	TSubclassOf<APawn> FallbackScrapyardPawnClass;

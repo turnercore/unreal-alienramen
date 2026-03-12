@@ -10,7 +10,7 @@
 
 namespace
 {
-	static UPrimitiveComponent* ResolveCarryPhysicsPrimitive(AActor* Actor)
+	static UPrimitiveComponent* ResolveShopCarryPhysicsPrimitive(AActor* Actor)
 	{
 		if (!Actor)
 		{
@@ -231,7 +231,7 @@ void UARShopCarryComponent::ClearHoldPresentation(AActor* ActorToRelease, const 
 				Primitive->SetEnableGravity(bDropInWorld);
 			}
 
-			if (UPrimitiveComponent* PhysicsPrimitive = ResolveCarryPhysicsPrimitive(ActorToRelease))
+			if (UPrimitiveComponent* PhysicsPrimitive = ResolveShopCarryPhysicsPrimitive(ActorToRelease))
 			{
 				if (bDropInWorld)
 				{

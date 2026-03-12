@@ -1,153 +1,132 @@
-# Scrapyard Mode + Temp Buff Runtime Contract
+# Scrapyard + Invader Economy Contract
 
-This document captures the C++ runtime contracts for Scrapyard extraction economy and temporary run buffs.
+This document captures the server-authoritative runtime contract for:
+
+- Scrapyard extraction/resolution
+- Invader run-ledger flow into Scrapyard
+- Shop re-entry cleanup/deposit
+- Temp run-buff ownership and energy-drink behavior
 
 ## Ownership
 
 - `AARScrapyardGameState`
-  - Authoritative Scrapyard run timer/state.
-  - Shared scrap reserve/refund accounting (negative allowed only here).
-  - Exit-zone registration and extraction candidate aggregation.
-  - Deterministic overspend trim + reward grant finalization.
-  - Replicated run-buff snapshot read model for Scrapyard HUD/widgets.
+  - Scrapyard timer authority (including pause + additive time).
+  - Reserve/refund accounting for extraction items.
+  - Deterministic overspend trim and reward finalization.
+  - Replicated extraction summary and run-buff snapshot for HUD/widgets.
 - `AARScrapyardExitZoneActor`
-  - Tracks deposited carry items.
-  - Tracks player occupancy in exit volume.
-  - Tracks replicated per-exit reserved scrap value for deposited items.
-  - Reports reserve/refund mutations to `AARScrapyardGameState`.
+  - Deposited-item tracking + in-zone player tracking.
+  - Per-zone replicated reserved-scrap read model.
+  - Reserve/refund mutation entrypoint into Scrapyard GameState.
+- `UARInvaderDirectorSubsystem`
+  - End-of-run authority (loss, unanimous early-bail, stop reasons).
+  - Death-penalty application to run ledger.
 - `UARRunBuffSubsystem`
-  - Save-backed storage/queue/active temp-buff state.
-  - Invader-init run-buff rotation.
-  - Active payload apply/remove runtime integration on `AARPlayerStateBase` ASC.
+  - Save-backed per-character stored/queued/active run-buff state.
+  - Consume/apply/clear authority for energy-drink buffs.
+- `AARShopGameMode`
+  - Run-ledger deposit to storage with clamps.
+  - First-shop-entry run-buff cleanup.
+  - Shop loose-carryable restore/spawn policy for energy drinks/meat.
 
-## Scrapyard Scrap Rules
+## Data + Resolver Routes
 
-- Scrapyard reserve/refund uses `AARScrapyardGameState` authority APIs:
-  - `ReserveScrapForItem`
-  - `RefundScrapForItem`
-- Reserve subtracts item cost from shared scrap immediately.
-- Refund adds cost back immediately.
-- Scrapyard allows negative shared scrap during extraction accounting.
-- Invader/Shop remain clamped non-negative because they use `AARGameStateBase::SetScrapFromSave`.
-- Scrapyard finalization always sets shared scrap to `0` before travel.
-- Scrapyard travel uses captured pending GameState overlay and skips pre-travel canonical save persistence (`bPersistSaveBeforeTravel=false`) to avoid dialogue/throttle save guards stranding a consumed run.
+- Scrapyard item definitions: route root `Scrapyard.Item` (`FARScrapyardItemDefRow`).
+  - Includes item type/rarity, main/alt text, knowledge gates, spawn conditions, rewards, sell value, stack/weight/model metadata.
+- Energy drink definitions: route root `Scrapyard.EnergyDrink` (`FAREnergyDrinkDefRow`).
+  - Includes icon + per-run GE/tag payload + stack rules.
+- Economy tuning: `UAREconomySettings`.
+  - `InvaderDeathPenaltyPercent`
+  - `MaxScrapStorage`
+  - `MaxMeatStorage`
+  - `DefaultScrapyardDurationSeconds`
+  - `ScrapyardSpawnSeedSalt`
 
-## Extraction Candidate Set
+## Run Ledger Flow
 
-Finalization uses the global candidate set:
+- Invader drops write to run ledger only (`AARGameStateBase::RunLedgerScrap/RunLedgerMeat`).
+- Loss handling:
+  - all-players-downed/dead ends run with loss reason.
+  - configurable percent death penalty is applied to run ledger (not persistent storage).
+- Early-bail:
+  - vote is tracked per active player slot.
+  - unanimous yes ends run early without death-loss penalty path.
+- Scrapyard budget start:
+  - `ScrapyardSharedScrap = ShopStoredScrap + RunLedgerScrap`.
+- Scrapyard finalization:
+  - deterministic trim remains seed-based.
+  - shared scrap is set to `0` before travel.
+  - leftover scrap is preserved via run ledger for shop deposit.
+- Shop entry:
+  - deposit leftover scrap + run-ledger meat into storage.
+  - clamp by economy max storage settings.
+  - clear run ledger after deposit.
 
-1. All deposited items in all registered exit zones.
-2. Any carry item currently held by players standing inside an exit zone.
+## Scrapyard Finalization Rules
 
-Candidates are de-duplicated by actor pointer and evaluated against available budget.
+- Candidate set:
+  - deposited items in exit zones.
+  - held items carried by players currently inside exit zones.
+- Trim:
+  - when total kept cost exceeds budget, random removal uses deterministic run seed.
+- Reward support:
+  - unlock tag rewards
+  - progression tag rewards
+  - energy drink rewards (to run-buff storage inventory)
+- Text fallback safety:
+  - knowledge-gated rows missing alt-name/alt-description fall back to primary text with warning logs.
 
-## Deterministic Overspend Trim
+## Temp Buff / Energy Drink Contract
 
-- Budget = `CurrentScrap + ReservedCostTotal` (pre-reserve equivalent).
-- If total candidate cost exceeds budget:
-  - candidates are trimmed using a seeded deterministic RNG (`ScrapyardRunSeed`) until affordable.
-- Kept candidates grant rewards.
-- Trimmed candidates are removed with no reward.
+- Character key:
+  - loadout character gameplay tag is the ownership key for active payloads.
+- Consume semantics:
+  - duplicate consume of same drink type for same character is blocked.
+  - shop-world drink consume path is separate from inventory consume path.
+- Lifecycle:
+  - invader end clears queued persisted stacks.
+  - active payload stays runtime-valid through Scrapyard.
+  - first shop entry clears queued + active payloads (runtime + save).
+- Reapply:
+  - active payload reapplies on join/respawn in Invader + Scrapyard.
+- Save schema:
+  - run-buff + shop transient fields are in `UARSaveGame` schema `v10`.
 
-## Reward Routing
+## Shop Energy Drink + Transient Carryables
 
-- `LicenseUnlock` reward:
-  - Adds unlock tag through GameState unlock surface.
-- `EnergyDrink` reward:
-  - Routed into `UARRunBuffSubsystem::AddExtractedEnergyDrink`.
-  - If `Unlock.Shop.Storage.EnergyDrink` is owned, reward goes to stored inventory.
-  - Otherwise it is queued for next Invader run.
-- Grant order is deterministic: `LicenseUnlock` rewards resolve before `EnergyDrink` rewards, so unlock-gated routing in the same finalization pass is stable.
+- Shop consume scope:
+  - `AAREnergyDrinkCarryItem` consume is accepted in `Mode.Shop` only.
+- Spawn ownership:
+  - stored drink inventory is authoritative pre-spawn.
+  - when spawned into shop anchors, inventory count is decremented.
+  - spawned drink actors are world-owned carryables.
+- Loose carryable persistence:
+  - `UARSaveGame::ShopTransientCarryables` stores loose shop energy-drink/meat world state.
+  - shop saves capture loose carryables (excluding held/attached items).
+  - shop load restores transient carryables before pre-run continuation.
+  - run start clears transient loose list.
+  - invader/scrapyard end marks next-shop-load clear gate (`bClearShopTransientCarryablesOnNextShopLoad`) so stale pre-run loose items do not survive completed-run transitions.
 
-Item definitions are resolved through TagContentResolver route root `Scrapyard.Item` with row type `FARScrapyardItemDefRow`.
+## Scrapyard Timer + Spawner
 
-## Temp Buff Persistence + Rotation
+- Timer:
+  - replicated paused state and accumulated pause time.
+  - `SetScrapyardRunTimerPaused` + `AddScrapyardTime` are authority APIs.
+  - game-state effective pause drives scrapyard timer pause.
+- Spawner (`AARScrapyardItemSpawner`):
+  - allowed item tags
+  - required runtime tags (unlock/loadout)
+  - spawn chance
+  - rarity cap
+  - weighted selection by item weight
+  - deterministic RNG from run seed + economy seed salt
 
-Save fields (`UARSaveGame`, schema v8):
+## UI Read Model Surface
 
-- `StoredEnergyDrinkStacks`
-- `QueuedEnergyDrinkStacks`
-- `ActiveRunBuffPayloads`
-- `ActiveRunBuffCycleId`
-
-Rotation behavior (`UARRunBuffSubsystem::RotateRunBuffsAtInvaderInit`):
-
-1. Remove previously active runtime-applied effects/tags.
-2. Consume queued drinks into new active payload snapshot.
-3. Increment `ActiveRunBuffCycleId`.
-4. Apply new active payload to all current player states.
-
-Idempotency guard:
-
-- Rotation skips duplicate apply when same world + same active cycle is already processed.
-
-## Invader Integration
-
-- `AARInvaderGameMode::BeginPlay` triggers run-buff rotation (authority).
-- `AARInvaderGameMode::HandleStartingNewPlayer_Implementation` reapplies active payload for late joins.
-- `AARInvaderGameMode::RestartPlayer` reapplies active payload for respawn/restart paths.
-
-## Scrapyard Buff Continuity
-
-- Rotation still occurs only during Invader initialization.
-- `AARScrapyardGameMode::BeginPlay` reapplies the current active payload snapshot to connected players.
-- `AARScrapyardGameMode::HandleStartingNewPlayer_Implementation` and `RestartPlayer` reapply active payload for join/respawn continuity in Scrapyard.
-
-## Scrapyard Pawn Resolution from Loadout
-
-- `AARScrapyardGameMode::GetDefaultPawnClassForController_Implementation` resolves player ship tag from loadout.
-- Ship row lookup is done through TagContentResolver (`Unlock.Ship.*`).
-- Scrapyard pawn class is read from ship row field `ScrapyardPawnClass` (reflection-based).
-- Safe fallback order:
-  1. Ship row `ScrapyardPawnClass`
-  2. `FallbackScrapyardPawnClass` on Scrapyard GameMode
-  3. GameMode default pawn class path
-
-## UI Hook Surface
-
-- `AARScrapyardHUD`
-  - Local HUD-side binding layer for Scrapyard runtime UI.
-  - Binds to `AARScrapyardGameState` delegates:
-    - `OnScrapyardExtractionSummaryChanged`
-    - `OnScrapyardRunTimerChanged`
-    - `OnScrapyardRunActiveChanged`
-    - `OnScrapyardRunBuffSnapshotChanged`
-  - Caches latest summary/timer/run-active/run-buff snapshot and rebroadcasts through Blueprint events + assignable delegates.
-  - Entry points:
-    - `InitializeScrapyardHUD`
-    - `DeinitializeScrapyardHUD`
-    - `GetCachedExtractionSummary`
-    - `GetCachedRunRemainingSeconds`
-    - `GetCachedRunActive`
-    - `GetCachedRunBuffStateSnapshot`
-
-- `UARScrapyardHUDWidgetBase`
-  - Reusable widget bridge for Scrapyard HUD state.
-  - Binds to `AARScrapyardHUD` delegate surface and exposes BP update hooks:
-    - extraction summary
-    - timer
-    - run active state
-    - run-buff snapshot
-  - Supports auto-bind to owning Scrapyard HUD on construct (`bAutoBindOwningScrapyardHUDOnConstruct`).
-
-- `UARScrapyardExitZoneWidgetBase`
-  - Reusable widget bridge for a single `AARScrapyardExitZoneActor`.
-  - Binds to `OnExitZoneChanged`.
-  - Caches replicated `DepositedReservedScrapValue` and forwards updates to BP hooks/delegates.
-  - Supports auto-observing an initial exit zone (`InitialObservedExitZone`, `bAutoObserveInitialExitZoneOnConstruct`).
-
-- `AARScrapyardGameState`
-  - `GetExtractionSummary`
-  - `GetScrapyardRunRemainingSeconds`
-  - `GetRunBuffStateSnapshot`
-  - `OnScrapyardExtractionSummaryChanged`
-  - `OnScrapyardRunTimerChanged`
-  - `OnScrapyardRunActiveChanged`
-  - `OnScrapyardRunBuffSnapshotChanged`
-- `AARScrapyardExitZoneActor`
-  - `GetDepositedReservedScrapValue`
-  - `OnExitZoneChanged`
-- `UARRunBuffSubsystem`
-  - `GetRunBuffStateSnapshot`
-  - `OnRunBuffStateChanged`
-  - stored/queued count query helpers
+- `AARScrapyardGameState::FARScrapyardExtractionSummary` exposes:
+  - kept/trimmed counts
+  - leftover/trimmed/wasted scrap
+  - purchased/discarded counts
+  - converted money
+  - granted reward list
+- `AARScrapyardHUD`, `UARScrapyardHUDWidgetBase`, `UARScrapyardExitZoneWidgetBase` bind to replicated summary/timer/run-active/run-buff snapshot delegates.

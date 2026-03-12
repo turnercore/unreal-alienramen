@@ -1,12 +1,14 @@
 #include "ARShopDispenserActor.h"
 
 #include "ARGameStateBase.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARSaveTypes.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
 #include "Components/SceneComponent.h"
+#include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 
 AARShopDispenserActor::AARShopDispenserActor()
@@ -66,6 +68,27 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 	}
 
 	TSubclassOf<AActor> SpawnClass = Definition.SpawnActorClass;
+	const FGameplayTag SharedItemRootTag = FGameplayTag::RequestGameplayTag(TEXT("Scrapyard.Item"), false);
+	const bool bCanResolveSharedItemClass =
+		Definition.ItemTag.IsValid()
+		&& Definition.bResolveSpawnActorClassFromItemDefinition
+		&& SharedItemRootTag.IsValid()
+		&& Definition.ItemTag.MatchesTag(SharedItemRootTag);
+	if (!SpawnClass && bCanResolveSharedItemClass)
+	{
+		if (UGameInstance* GameInstance = GetGameInstance())
+		{
+			if (UARItemDefinitionSubsystem* ItemDefinitionSubsystem = GameInstance->GetSubsystem<UARItemDefinitionSubsystem>())
+			{
+				TSubclassOf<AActor> ResolvedItemClass;
+				if (ItemDefinitionSubsystem->ResolveItemActorClass(Definition.ItemTag, ResolvedItemClass) && ResolvedItemClass)
+				{
+					SpawnClass = ResolvedItemClass;
+				}
+			}
+		}
+	}
+
 	if (!SpawnClass && Definition.SourceType == EARShopDispenserSourceType::GameStateMeatReserve)
 	{
 		SpawnClass = AARRamenMeatActor::StaticClass();
@@ -102,6 +125,16 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 	}
 
 	InitializeSpawnedActorFromDefinition(SpawnedActor, Definition, DispenseAmount);
+	if (bCanResolveSharedItemClass)
+	{
+		if (UGameInstance* GameInstance = GetGameInstance())
+		{
+			if (UARItemDefinitionSubsystem* ItemDefinitionSubsystem = GameInstance->GetSubsystem<UARItemDefinitionSubsystem>())
+			{
+				ItemDefinitionSubsystem->ApplyItemPhysicsProperties(SpawnedActor, Definition.ItemTag);
+			}
+		}
+	}
 	BP_OnDispensedActorSpawned(SpawnedActor, Definition, DispenseAmount, RequestingController);
 
 	if (Definition.bAutoPlaceIntoCarry)

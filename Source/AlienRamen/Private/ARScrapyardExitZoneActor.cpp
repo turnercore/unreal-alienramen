@@ -22,6 +22,26 @@ AARScrapyardExitZoneActor::AARScrapyardExitZoneActor()
 	ExitVolume->SetGenerateOverlapEvents(true);
 }
 
+TArray<AARScrapyardCarryItemBase*> AARScrapyardExitZoneActor::GetDepositedItems() const
+{
+	TArray<AARScrapyardCarryItemBase*> Result;
+	Result.Reserve(DepositedItems.Num());
+	for (const TObjectPtr<AARScrapyardCarryItemBase>& Item : DepositedItems)
+	{
+		if (Item)
+		{
+			Result.Add(Item.Get());
+		}
+	}
+
+	return Result;
+}
+
+const TArray<TObjectPtr<AARScrapyardCarryItemBase>>& AARScrapyardExitZoneActor::GetDepositedItemsRef() const
+{
+	return DepositedItems;
+}
+
 void AARScrapyardExitZoneActor::BeginPlay()
 {
 	Super::BeginPlay();

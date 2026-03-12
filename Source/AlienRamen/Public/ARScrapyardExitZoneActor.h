@@ -14,7 +14,7 @@ class AARScrapyardGameState;
 class AARPlayerStateBase;
 class UBoxComponent;
 class UPrimitiveComponent;
-struct FLifetimeProperty;
+class FLifetimeProperty;
 struct FHitResult;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnScrapyardExitZoneChangedSignature);
@@ -36,7 +36,9 @@ public:
 	bool TryWithdrawDepositedItem(AARScrapyardPlayerController* Controller, AARScrapyardCarryItemBase* ItemActor);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit")
-	const TArray<TObjectPtr<AARScrapyardCarryItemBase>>& GetDepositedItems() const { return DepositedItems; }
+	TArray<AARScrapyardCarryItemBase*> GetDepositedItems() const;
+
+	const TArray<TObjectPtr<AARScrapyardCarryItemBase>>& GetDepositedItemsRef() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit")
 	bool IsPlayerStateInsideExit(const AARPlayerStateBase* PlayerState) const;

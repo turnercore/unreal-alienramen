@@ -37,6 +37,8 @@ AARScrapyardGameMode::AARScrapyardGameMode()
 {
 	ModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Scrapyard"), false);
 	ensureMsgf(ModeTag.IsValid(), TEXT("[ScrapyardGameMode] Required gameplay tag 'Mode.Scrapyard' is missing."));
+	bAllowManualSaveInMode = false;
+	bShareLocalPauseAcrossControllersInMode = true;
 }
 
 void AARScrapyardGameMode::BeginPlay()
@@ -58,9 +60,9 @@ void AARScrapyardGameMode::BeginPlay()
 	{
 		if (UARRunBuffSubsystem* RunBuffSubsystem = GameInstance->GetSubsystem<UARRunBuffSubsystem>())
 		{
-			if (AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+			if (AARGameStateBase* SharedGameState = World->GetGameState<AARGameStateBase>())
 			{
-				for (AARPlayerStateBase* PlayerState : GameState->GetPlayerStates())
+				for (AARPlayerStateBase* PlayerState : SharedGameState->GetPlayerStates())
 				{
 					RunBuffSubsystem->ApplyActiveRunBuffsToPlayerState(PlayerState);
 				}
@@ -81,7 +83,7 @@ void AARScrapyardGameMode::RestartPlayer(AController* NewPlayer)
 	ApplyActiveRunBuffsForController(this, NewPlayer);
 }
 
-TSubclassOf<APawn> AARScrapyardGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+UClass* AARScrapyardGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
 	if (InController)
 	{
@@ -95,7 +97,7 @@ TSubclassOf<APawn> AARScrapyardGameMode::GetDefaultPawnClassForController_Implem
 			TSubclassOf<APawn> ResolvedPawnClass;
 			if (ResolveScrapyardPawnClassFromShipTag(ShipTag, ResolvedPawnClass) && ResolvedPawnClass)
 			{
-				return ResolvedPawnClass;
+				return ResolvedPawnClass.Get();
 			}
 
 			UE_LOG(
@@ -108,7 +110,7 @@ TSubclassOf<APawn> AARScrapyardGameMode::GetDefaultPawnClassForController_Implem
 
 	if (FallbackScrapyardPawnClass)
 	{
-		return FallbackScrapyardPawnClass;
+		return FallbackScrapyardPawnClass.Get();
 	}
 
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
