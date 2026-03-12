@@ -12,13 +12,6 @@
 
 namespace
 {
-	struct FEligibleScrapyardSpawn
-	{
-		FGameplayTag ItemTag;
-		FARScrapyardItemDefRow ItemDef;
-		float Weight = 1.0f;
-	};
-
 	static bool HasAnyRuntimeTagSource(const AARGameStateBase* GameState, const FGameplayTag Tag)
 	{
 		if (!GameState || !Tag.IsValid())
@@ -66,7 +59,7 @@ void AARScrapyardItemSpawner::BeginPlay()
 
 AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 OverrideSeed)
 {
-	if (!HasAuthority() || SpawnChance <= 0.0f)
+	if (!HasAuthority() || SpawnChance <= 0.0f || bHasSpawned)
 	{
 		return nullptr;
 	}
@@ -91,6 +84,12 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 Ove
 		}
 	}
 
+	TArray<FARScrapyardSpawnCandidate> Candidates;
+	if (!BuildEligibleItems(GameState, GameInstance, Candidates))
+	{
+		return nullptr;
+	}
+
 	const int32 BaseSeed = OverrideSeed != 0
 		? OverrideSeed
 		: (World->GetGameState<AARScrapyardGameState>() ? World->GetGameState<AARScrapyardGameState>()->GetScrapyardRunSeed() : FMath::Rand());
@@ -102,7 +101,62 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 Ove
 		return nullptr;
 	}
 
-	TArray<FEligibleScrapyardSpawn> Eligible;
+	float TotalWeight = 0.0f;
+	for (const FARScrapyardSpawnCandidate& Entry : Candidates)
+	{
+		TotalWeight += Entry.ItemWeight;
+	}
+	if (TotalWeight <= 0.0f)
+	{
+		return nullptr;
+	}
+
+	const float PickValue = Rng.FRandRange(0.0f, TotalWeight);
+	float RunningWeight = 0.0f;
+	const FARScrapyardSpawnCandidate* Selected = nullptr;
+	for (const FARScrapyardSpawnCandidate& Entry : Candidates)
+	{
+		RunningWeight += Entry.ItemWeight;
+		if (PickValue <= RunningWeight)
+		{
+			Selected = &Entry;
+			break;
+		}
+	}
+	if (!Selected)
+	{
+		Selected = &Candidates.Last();
+	}
+
+	AARScrapyardCarryItemBase* SpawnedItem = SpawnItemByDefinition(Selected->ItemDef, Selected->ItemTag, Rng.RandHelper(INT32_MAX));
+	return SpawnedItem;
+}
+
+bool AARScrapyardItemSpawner::BuildEligibleItems(const AARGameStateBase* GameState, UGameInstance* GameInstance, TArray<FARScrapyardSpawnCandidate>& OutCandidates) const
+{
+	OutCandidates.Reset();
+	if (bHasSpawned || !GameInstance)
+	{
+		return false;
+	}
+
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance->GetSubsystem<UARItemDefinitionSubsystem>();
+	if (!ItemDefinitions)
+	{
+		return false;
+	}
+
+	if (!RequiredRuntimeTags.IsEmpty())
+	{
+		for (const FGameplayTag RequiredTag : RequiredRuntimeTags)
+		{
+			if (!HasAnyRuntimeTagSource(GameState, RequiredTag))
+			{
+				return false;
+			}
+		}
+	}
+
 	for (const FGameplayTag AllowedTag : AllowedItemTags)
 	{
 		FARScrapyardItemDefRow Row;
@@ -130,48 +184,40 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 Ove
 			continue;
 		}
 
-		FEligibleScrapyardSpawn& Entry = Eligible.AddDefaulted_GetRef();
+		FARScrapyardSpawnCandidate& Entry = OutCandidates.AddDefaulted_GetRef();
+		Entry.Spawner = const_cast<AARScrapyardItemSpawner*>(this);
 		Entry.ItemTag = AllowedTag;
 		Entry.ItemDef = Row;
-		Entry.Weight = FMath::Max(0.01f, Row.Weight);
+		Entry.ItemWeight = FMath::Max(0.01f, Row.Weight);
+		Entry.Rarity = Row.Rarity;
 	}
 
-	if (Eligible.IsEmpty())
+	return !OutCandidates.IsEmpty();
+}
+
+AARScrapyardCarryItemBase* AARScrapyardItemSpawner::SpawnItemByDefinition(const FARScrapyardItemDefRow& ItemDef, const FGameplayTag& ItemTag, const int32 OverrideSeed)
+{
+	if (!HasAuthority() || bHasSpawned)
 	{
 		return nullptr;
 	}
 
-	float TotalWeight = 0.0f;
-	for (const FEligibleScrapyardSpawn& Entry : Eligible)
-	{
-		TotalWeight += Entry.Weight;
-	}
-	if (TotalWeight <= 0.0f)
+	UWorld* World = GetWorld();
+	if (!World)
 	{
 		return nullptr;
 	}
 
-	const float PickValue = Rng.FRandRange(0.0f, TotalWeight);
-	float RunningWeight = 0.0f;
-	const FEligibleScrapyardSpawn* Selected = nullptr;
-	for (const FEligibleScrapyardSpawn& Entry : Eligible)
+	// Seed is kept for potential future per-spawn randomization; use it to initialize RNG to avoid unused warnings.
+	if (OverrideSeed != 0)
 	{
-		RunningWeight += Entry.Weight;
-		if (PickValue <= RunningWeight)
-		{
-			Selected = &Entry;
-			break;
-		}
-	}
-	if (!Selected)
-	{
-		Selected = &Eligible.Last();
+		FMath::RandInit(OverrideSeed);
 	}
 
 	UClass* SpawnClass = FallbackCarryItemClass.Get();
-	if (Selected->ItemDef.ItemModelClass.IsValid())
+	if (ItemDef.ItemModelClass.IsValid())
 	{
-		UClass* AuthoredClass = Selected->ItemDef.ItemModelClass.LoadSynchronous();
+		UClass* AuthoredClass = ItemDef.ItemModelClass.LoadSynchronous();
 		if (AuthoredClass && AuthoredClass->IsChildOf(AARScrapyardCarryItemBase::StaticClass()))
 		{
 			SpawnClass = AuthoredClass;
@@ -195,8 +241,15 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 Ove
 		return nullptr;
 	}
 
-	SpawnedItem->SetScrapyardItemTag(Selected->ItemTag);
-	SpawnedItem->SetFallbackScrapCost(FMath::Max(0, Selected->ItemDef.ScrapCost));
-	ItemDefinitions->ApplyItemPhysicsProperties(SpawnedItem, Selected->ItemTag);
+	SpawnedItem->SetScrapyardItemTag(ItemTag);
+	SpawnedItem->SetFallbackScrapCost(FMath::Max(0, ItemDef.ScrapCost));
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARItemDefinitionSubsystem* ItemDefinitions = GameInstance->GetSubsystem<UARItemDefinitionSubsystem>())
+		{
+			ItemDefinitions->ApplyItemPhysicsProperties(SpawnedItem, ItemTag);
+		}
+	}
+	bHasSpawned = true;
 	return SpawnedItem;
 }

@@ -11,6 +11,7 @@
 
 class AARPlayerController;
 class AARRamenMeatActor;
+class AActor;
 
 UCLASS(Blueprintable)
 class ALIENRAMEN_API AARMeatStorageBoxActor : public AARShopDispenserActor
@@ -22,6 +23,21 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseMeat(AARPlayerController* RequestingController);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
+	bool TryStoreHeldMeat(AARPlayerController* RequestingController);
+
+	// Stores a loose world meat actor back into reserve storage (typically on storage collision/hit).
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
+	bool TryStoreWorldMeat(AARRamenMeatActor* MeatActor);
+
+	// Smart interaction path used by controller/BP use flow:
+	// held meat -> store back into reserve, empty hands -> dispense.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Forward Use To Controller", BlueprintAuthorityOnly))
+	void ForwardUseToController(AActor* UsingActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
+	bool TryHandleStorageInteraction(AARPlayerController* RequestingController);
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,6 +55,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Scrapyard.Item"))
 	FGameplayTag MeatItemTag;
 
+	// World-hit auto-store is blocked until meat has moved at least this far from spawn.
+	// Prevents freshly dispensed meat from instantly snapping back into storage when spawned near/inside the container.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MinWorldAutoStoreTravelDistance = 200.0f;
+
 private:
 	void SyncLegacyDefinition();
+	bool TryStoreMeatActorInternal(AARRamenMeatActor* MeatActor, AARPlayerController* RequestingController, bool bRequireWorldReturnArmed);
 };
