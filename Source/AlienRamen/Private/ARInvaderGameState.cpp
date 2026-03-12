@@ -5,6 +5,7 @@
 #include "ARGameStateModeStructs.h"
 #include "ARInvaderDropBase.h"
 #include "ARInvaderDirectorSettings.h"
+#include "ARInvaderRuntimeStateComponent.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -20,6 +21,25 @@
 #include "GameFramework/Pawn.h"
 #include "HAL/IConsoleManager.h"
 #include "Net/UnrealNetwork.h"
+
+namespace ARInvaderGameStateInternal
+{
+	static constexpr int32 DefaultMaxTrackSlots = 4;
+	static constexpr uint32 OfferRngSeedSalt = 0x51F15EED;
+	static constexpr uint32 DropRngSeedSalt = 0xD09A5EED;
+
+	static int32 ResolveMaxTrackSlots(const UARInvaderSpicyTrackSettings* Settings)
+	{
+		return Settings
+			? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, DefaultMaxTrackSlots)
+			: DefaultMaxTrackSlots;
+	}
+
+	static int32 MakeSeedFromRunSeed(const int32 RunSeed, const uint32 Salt)
+	{
+		return static_cast<int32>(HashCombine(GetTypeHash(RunSeed), Salt));
+	}
+}
 
 AARInvaderGameState::AARInvaderGameState()
 {
@@ -39,7 +59,7 @@ void AARInvaderGameState::GetSharedTrackUpgradeDisplayNames(TArray<FText>& OutDi
 	OutDisplayNames.Reset();
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	if (MaxTrackSlots <= 0)
 	{
 		return;
@@ -99,7 +119,7 @@ void AARInvaderGameState::GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrack
 	OutSlots.Reset();
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	if (MaxTrackSlots <= 0)
 	{
 		return;
@@ -155,7 +175,7 @@ void AARInvaderGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OfferRng.Initialize(FMath::Rand());
+	RefreshDeterministicRngSeedsFromRunState();
 	if (HasAuthority())
 	{
 		RegisterDebugConsoleCommands();
@@ -170,7 +190,10 @@ void AARInvaderGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	OnTrackedPlayersChanged.RemoveDynamic(this, &AARInvaderGameState::HandleTrackedPlayersChanged);
 	ClearWhileSlottedEffects();
 	ActiveSpiceSharers.Reset();
-	UnregisterDebugConsoleCommands();
+	if (HasAuthority())
+	{
+		UnregisterDebugConsoleCommands();
+	}
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -185,94 +208,89 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 	UnregisterDebugConsoleCommands();
 
 	CmdDebugSetSpice = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.SetSpice"),
-		TEXT("Usage: AR.Invader.Debug.SetSpice <p1|p2> <value>"),
+		TEXT("ar.invader.debug.set_spice"),
+		TEXT("Usage: ar.invader.debug.set_spice <p1|p2> <value>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetSpice),
 		ECVF_Cheat);
 
 	CmdDebugAddSpice = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddSpice"),
-		TEXT("Usage: AR.Invader.Debug.AddSpice <p1|p2> <delta>"),
+		TEXT("ar.invader.debug.add_spice"),
+		TEXT("Usage: ar.invader.debug.add_spice <p1|p2> <delta>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddSpice),
 		ECVF_Cheat);
 
 	CmdDebugAddScrap = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddScrap"),
-		TEXT("Usage: AR.Invader.Debug.AddScrap <delta>"),
+		TEXT("ar.invader.debug.add_scrap"),
+		TEXT("Usage: ar.invader.debug.add_scrap <delta>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddScrap),
 		ECVF_Cheat);
 
 	CmdDebugAddMoney = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddMoney"),
-		TEXT("Usage: AR.Invader.Debug.AddMoney <delta>"),
+		TEXT("ar.invader.debug.add_money"),
+		TEXT("Usage: ar.invader.debug.add_money <delta>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMoney),
 		ECVF_Cheat);
 
-	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.AddMeat"),
-		TEXT("Usage: AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]"),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddMeat),
-		ECVF_Cheat);
-
 	CmdDebugSetDropEarthGravity = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.SetDropEarthGravity"),
-		TEXT("Usage: AR.Invader.Debug.SetDropEarthGravity <0|1>"),
+		TEXT("ar.invader.debug.set_drop_earth_gravity"),
+		TEXT("Usage: ar.invader.debug.set_drop_earth_gravity <0|1>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetDropEarthGravity),
 		ECVF_Cheat);
 
 	CmdDebugSetCursor = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.SetCursor"),
-		TEXT("Usage: AR.Invader.Debug.SetCursor <p1|p2> <tier>"),
+		TEXT("ar.invader.debug.set_cursor"),
+		TEXT("Usage: ar.invader.debug.set_cursor <p1|p2> <tier>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleSetCursor),
 		ECVF_Cheat);
 
 	CmdDebugInjectUpgrade = ConsoleManager.RegisterConsoleCommand(
-		TEXT("AR.Invader.Debug.InjectUpgrade"),
-		TEXT("Usage: AR.Invader.Debug.InjectUpgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]"),
+		TEXT("ar.invader.debug.inject_upgrade"),
+		TEXT("Usage: ar.invader.debug.inject_upgrade [UpgradeTagOrRowName] [Level] [Uses|-1 for infinite]"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleInjectUpgrade),
 		ECVF_Cheat);
 }
 
 void AARInvaderGameState::UnregisterDebugConsoleCommands()
 {
-	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	if (CmdDebugSetSpice)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetSpice, false);
 		CmdDebugSetSpice = nullptr;
 	}
 	if (CmdDebugAddSpice)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddSpice, false);
 		CmdDebugAddSpice = nullptr;
 	}
 	if (CmdDebugAddScrap)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddScrap, false);
 		CmdDebugAddScrap = nullptr;
 	}
 	if (CmdDebugAddMoney)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMoney, false);
 		CmdDebugAddMoney = nullptr;
 	}
-	if (CmdDebugAddMeat)
-	{
-		ConsoleManager.UnregisterConsoleObject(CmdDebugAddMeat, false);
-		CmdDebugAddMeat = nullptr;
-	}
 	if (CmdDebugSetDropEarthGravity)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetDropEarthGravity, false);
 		CmdDebugSetDropEarthGravity = nullptr;
 	}
 	if (CmdDebugSetCursor)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugSetCursor, false);
 		CmdDebugSetCursor = nullptr;
 	}
 	if (CmdDebugInjectUpgrade)
 	{
+		IConsoleManager& ConsoleManager = IConsoleManager::Get();
 		ConsoleManager.UnregisterConsoleObject(CmdDebugInjectUpgrade, false);
 		CmdDebugInjectUpgrade = nullptr;
 	}
@@ -434,7 +452,7 @@ void AARInvaderGameState::HandleConsoleSetSpice(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetSpice [p1|p2] <value>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: ar.invader.debug.set_spice [p1|p2] <value>"));
 		return;
 	}
 
@@ -458,7 +476,7 @@ void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.AddSpice [p1|p2] <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: ar.invader.debug.add_spice [p1|p2] <delta>"));
 		return;
 	}
 
@@ -483,7 +501,7 @@ void AARInvaderGameState::HandleConsoleAddScrap(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddScrap <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_scrap <delta>"));
 		return;
 	}
 
@@ -499,7 +517,7 @@ void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddMoney <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_money <delta>"));
 		return;
 	}
 
@@ -511,84 +529,11 @@ void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWo
 	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddMoney %+d -> %d"), Delta, GetMoney());
 }
 
-void AARInvaderGameState::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* /*World*/)
-{
-	if (!HasAuthority() || Args.Num() < 1)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: AR.Invader.Debug.AddMeat <delta> [red|blue|white|unspecified]"));
-		return;
-	}
-
-	const int32 Delta = FCString::Atoi(*Args[0]);
-	EARAffinityColor ColorBucket = EARAffinityColor::None;
-	bool bUseUnspecifiedBucket = true;
-	if (Args.Num() > 1)
-	{
-		const FString ColorToken = Args[1].TrimStartAndEnd().ToLower();
-		if (ColorToken == TEXT("red"))
-		{
-			ColorBucket = EARAffinityColor::Red;
-			bUseUnspecifiedBucket = false;
-		}
-		else if (ColorToken == TEXT("blue"))
-		{
-			ColorBucket = EARAffinityColor::Blue;
-			bUseUnspecifiedBucket = false;
-		}
-		else if (ColorToken == TEXT("white"))
-		{
-			ColorBucket = EARAffinityColor::White;
-			bUseUnspecifiedBucket = false;
-		}
-		else if (ColorToken == TEXT("unspecified") || ColorToken == TEXT("none"))
-		{
-			bUseUnspecifiedBucket = true;
-		}
-		else
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[InvaderSave|Debug] Invalid meat color '%s'. Expected red|blue|white|unspecified."),
-				*Args[1]);
-			return;
-		}
-	}
-
-	FARMeatState MeatState = GetMeat();
-	if (bUseUnspecifiedBucket)
-	{
-		MeatState.UnspecifiedAmount += Delta;
-	}
-	else
-	{
-		switch (ColorBucket)
-		{
-		case EARAffinityColor::Red:
-			MeatState.RedAmount += Delta;
-			break;
-		case EARAffinityColor::Blue:
-			MeatState.BlueAmount += Delta;
-			break;
-		case EARAffinityColor::White:
-			MeatState.WhiteAmount += Delta;
-			break;
-		default:
-			MeatState.UnspecifiedAmount += Delta;
-			break;
-		}
-	}
-
-	SetMeatFromSave(MeatState);
-	const TCHAR* BucketLabel = bUseUnspecifiedBucket ? TEXT("unspecified") : *Args[1];
-	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddMeat bucket=%s %+d -> total=%d"), BucketLabel, Delta, GetMeat().GetTotalAmount());
-}
-
 void AARInvaderGameState::HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* /*World*/)
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderDrop|Debug] Usage: AR.Invader.Debug.SetDropEarthGravity <0|1>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderDrop|Debug] Usage: ar.invader.debug.set_drop_earth_gravity <0|1>"));
 		return;
 	}
 
@@ -603,7 +548,7 @@ void AARInvaderGameState::HandleConsoleSetCursor(const TArray<FString>& Args, UW
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: AR.Invader.Debug.SetCursor [p1|p2] <tier>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] Usage: ar.invader.debug.set_cursor [p1|p2] <tier>"));
 		return;
 	}
 
@@ -644,7 +589,7 @@ void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args
 	const int32 RemainingUses = bInfiniteUses ? INDEX_NONE : FMath::Max(1, UsesArg);
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	if (MaxTrackSlots <= 0)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: MaxTrackSlots resolved to 0."));
@@ -835,6 +780,42 @@ const UARInvaderSpicyTrackSettings* AARInvaderGameState::GetSpicyTrackSettings()
 	return GetDefault<UARInvaderSpicyTrackSettings>();
 }
 
+int32 AARInvaderGameState::ResolveInvaderRunSeed() const
+{
+	const UARInvaderRuntimeStateComponent* RuntimeState = FindComponentByClass<UARInvaderRuntimeStateComponent>();
+	return RuntimeState ? RuntimeState->GetRuntimeSnapshot().Seed : 0;
+}
+
+int32 AARInvaderGameState::ResolveInvaderRunEndEventId() const
+{
+	const UARInvaderRuntimeStateComponent* RuntimeState = FindComponentByClass<UARInvaderRuntimeStateComponent>();
+	return RuntimeState ? RuntimeState->GetRuntimeSnapshot().RunEndEventId : 0;
+}
+
+void AARInvaderGameState::RefreshDeterministicRngSeedsFromRunState()
+{
+	const int32 RunSeed = ResolveInvaderRunSeed();
+	const int32 RunEndEventId = ResolveInvaderRunEndEventId();
+	if (CachedRngRunSeed == RunSeed && CachedRngRunEndEventId == RunEndEventId)
+	{
+		return;
+	}
+
+	CachedRngRunSeed = RunSeed;
+	CachedRngRunEndEventId = RunEndEventId;
+
+	if (RunSeed != 0)
+	{
+		OfferRng.Initialize(ARInvaderGameStateInternal::MakeSeedFromRunSeed(RunSeed, ARInvaderGameStateInternal::OfferRngSeedSalt));
+		DropRng.Initialize(ARInvaderGameStateInternal::MakeSeedFromRunSeed(RunSeed, ARInvaderGameStateInternal::DropRngSeedSalt));
+		return;
+	}
+
+	const int32 FallbackSeed = FMath::Rand();
+	OfferRng.Initialize(FallbackSeed);
+	DropRng.Initialize(static_cast<int32>(HashCombine(GetTypeHash(FallbackSeed), ARInvaderGameStateInternal::DropRngSeedSalt)));
+}
+
 int32 AARInvaderGameState::GetSharedMaxSpice() const
 {
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
@@ -851,7 +832,7 @@ int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(const AARPla
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
 	const int32 SpicePerTier = Settings ? FMath::Max(1, Settings->SpicePerTier) : 100;
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const int32 MaxUnlockedTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
 
 	const float CurrentSpice = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
@@ -976,7 +957,7 @@ void AARInvaderGameState::NormalizeTrackSlotIndices()
 void AARInvaderGameState::TrimTrackToTierLimit()
 {
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const int32 AllowedSlotsByTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
 	if (SharedTrackSlots.Num() > AllowedSlotsByTier)
 	{
@@ -1078,12 +1059,18 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
 	if (!Settings)
 	{
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
 	if (!Settings->UpgradeDefinitionRootTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] UpgradeDefinitionRootTag is not configured."));
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
@@ -1091,6 +1078,9 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 	if (!TagContentResolver)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] TagContentResolverSubsystem unavailable while resolving upgrades."));
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
@@ -1104,13 +1094,25 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 			TEXT("[InvaderSpice] Failed to resolve upgrade table for root '%s': %s"),
 			*Settings->UpgradeDefinitionRootTag.ToString(),
 			*LookupError);
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
 	}
 
 	if (!UpgradeTable)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] Upgrade table resolved null for root '%s'."), *Settings->UpgradeDefinitionRootTag.ToString());
+		bUpgradeDefinitionCacheValid = false;
+		CachedUpgradeDefinitionTable.Reset();
+		CachedUpgradeDefinitions.Reset();
 		return false;
+	}
+
+	if (bUpgradeDefinitionCacheValid && CachedUpgradeDefinitionTable.Get() == UpgradeTable)
+	{
+		OutDefinitions = CachedUpgradeDefinitions;
+		return OutDefinitions.Num() > 0;
 	}
 
 	TArray<FARInvaderUpgradeDefRow*> Rows;
@@ -1124,6 +1126,10 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 
 		OutDefinitions.FindOrAdd(Row->UpgradeTag) = *Row;
 	}
+
+	CachedUpgradeDefinitionTable = UpgradeTable;
+	CachedUpgradeDefinitions = OutDefinitions;
+	bUpgradeDefinitionCacheValid = true;
 
 	return OutDefinitions.Num() > 0;
 }
@@ -1268,6 +1274,8 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 			HasAuthority() ? 1 : 0, *GetNameSafe(RequestingPlayerState), FullBlastSession.bIsActive ? 1 : 0);
 		return false;
 	}
+
+	RefreshDeterministicRngSeedsFromRunState();
 
 	const float RequiredSpice = static_cast<float>(GetSharedMaxSpice());
 	const float CurrentSpice = RequestingPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
@@ -1473,7 +1481,7 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 
 	const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
 	const float SpendAmount = static_cast<float>(GetSharedMaxSpice());
-	const int32 MaxTrackSlots = Settings ? FMath::Clamp(Settings->MaxFullBlastTier - 1, 0, 4) : 4;
+	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const bool bAtTopTier = Settings && SharedFullBlastTier >= Settings->MaxFullBlastTier;
 	const int32 DestinationSlot = bAtTopTier
 		? DesiredDestinationSlot
@@ -1593,8 +1601,6 @@ bool AARInvaderGameState::SetOfferPresence(
 	AARPlayerStateBase* SourcePlayerState,
 	FGameplayTag HoveredUpgradeTag,
 	const int32 HoveredDestinationSlot,
-	FVector2D CursorNormalized,
-	const bool bHasCursor,
 	FGameplayTag SelectedUpgradeTag,
 	const int32 SelectedDestinationSlot,
 	const bool bHasSelection)
@@ -1640,10 +1646,6 @@ bool AARInvaderGameState::SetOfferPresence(
 	NewPresenceState.PlayerSlot = SourceSlot;
 	NewPresenceState.HoveredUpgradeTag = HoveredUpgradeTag;
 	NewPresenceState.HoveredDestinationSlot = HoveredDestinationSlot > 0 ? HoveredDestinationSlot : -1;
-	NewPresenceState.bHasCursor = bHasCursor;
-	NewPresenceState.CursorNormalized = bHasCursor
-		? FVector2D(FMath::Clamp(CursorNormalized.X, 0.0f, 1.0f), FMath::Clamp(CursorNormalized.Y, 0.0f, 1.0f))
-		: FVector2D::ZeroVector;
 	NewPresenceState.bHasSelection = bHasSelection && SelectedUpgradeTag.IsValid();
 	NewPresenceState.SelectedUpgradeTag = NewPresenceState.bHasSelection ? SelectedUpgradeTag : FGameplayTag();
 	NewPresenceState.SelectedDestinationSlot = NewPresenceState.bHasSelection && SelectedDestinationSlot > 0 ? SelectedDestinationSlot : -1;
@@ -1660,8 +1662,6 @@ bool AARInvaderGameState::SetOfferPresence(
 		const FARInvaderOfferPresenceState& ExistingState = OfferPresenceStates[ExistingIndex];
 		const bool bUnchanged = ExistingState.HoveredUpgradeTag == NewPresenceState.HoveredUpgradeTag
 			&& ExistingState.HoveredDestinationSlot == NewPresenceState.HoveredDestinationSlot
-			&& ExistingState.bHasCursor == NewPresenceState.bHasCursor
-			&& ExistingState.CursorNormalized.Equals(NewPresenceState.CursorNormalized, KINDA_SMALL_NUMBER)
 			&& ExistingState.bHasSelection == NewPresenceState.bHasSelection
 			&& ExistingState.SelectedUpgradeTag == NewPresenceState.SelectedUpgradeTag
 			&& ExistingState.SelectedDestinationSlot == NewPresenceState.SelectedDestinationSlot;
@@ -2193,6 +2193,8 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		return;
 	}
 
+	RefreshDeterministicRngSeedsFromRunState();
+
 	UAbilitySystemComponent* EnemyASC = Enemy->GetASC();
 	if (!EnemyASC)
 	{
@@ -2209,7 +2211,7 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		EnemyASC->GetNumericAttribute(UARAttributeSetCore::GetDropChanceAttribute()),
 		0.0f,
 		1.0f);
-	if (DropChance <= 0.0f || FMath::FRand() > DropChance)
+	if (DropChance <= 0.0f || DropRng.FRand() > DropChance)
 	{
 		return;
 	}
@@ -2267,8 +2269,8 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 
 		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedDrop->GetRootComponent()))
 		{
-			const float AngleRadians = FMath::FRandRange(0.0f, 2.0f * PI);
-			const float Speed = FMath::FRandRange(MinSpeed, MaxSpeed);
+			const float AngleRadians = DropRng.FRandRange(0.0f, 2.0f * PI);
+			const float Speed = DropRng.FRandRange(MinSpeed, MaxSpeed);
 			const FVector InitialVelocity(FMath::Cos(AngleRadians) * Speed, FMath::Sin(AngleRadians) * Speed, 0.0f);
 			RootPrimitive->SetPhysicsLinearVelocity(InitialVelocity);
 		}
@@ -2294,7 +2296,7 @@ void AARInvaderGameState::SetDropEarthGravityEnabledForAll(const bool bEnabled)
 	}
 }
 
-float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount, const EARInvaderDropType DropType) const
+float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount, const EARInvaderDropType DropType)
 {
 	if (BaseDropAmount <= 0.0f)
 	{
@@ -2333,11 +2335,11 @@ float AARInvaderGameState::RollDropAmountWithVariance(const float BaseDropAmount
 	}
 
 	// Default distribution is center-weighted triangular noise in [-1..1].
-	float SignedCenterWeightedNoise = (FMath::FRand() - FMath::FRand());
+	float SignedCenterWeightedNoise = (DropRng.FRand() - DropRng.FRand());
 
 	if (UCurveFloat* VarianceCurve = SelectedCurve.LoadSynchronous())
 	{
-		const float SampleX = FMath::FRandRange(0.0f, 1.0f);
+		const float SampleX = DropRng.FRandRange(0.0f, 1.0f);
 		SignedCenterWeightedNoise = FMath::Clamp(VarianceCurve->GetFloatValue(SampleX), -1.0f, 1.0f);
 	}
 
@@ -2863,4 +2865,3 @@ void AARInvaderGameState::ClearWhileSlottedEffectsForPlayer(AARPlayerStateBase* 
 		}
 	}
 }
-

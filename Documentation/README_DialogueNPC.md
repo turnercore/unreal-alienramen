@@ -1,4 +1,4 @@
-# Dialogue + NPC Runtime (`UARDialogueSubsystem`, `UARNPCSubsystem`)
+# Dialogue + Speaker Runtime (`UARDialogueSubsystem`, `UARSpeakerSubsystem`)
 
 Plugin ownership boundary reference: [Dialogue Plugin Ownership Boundary](README_DialoguePluginBoundary.md)
 
@@ -7,24 +7,30 @@ Plugin ownership boundary reference: [Dialogue Plugin Ownership Boundary](README
 Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
 
 - `UARDialogueSubsystem` is server-authoritative for offer selection, session execution, branching, eavesdrop, completion persistence, and choice-memory persistence.
-- `UARNPCSubsystem` is now talkable-cache-focused and derives NPC talkable state from dialogue unlock availability.
-- `AARNPCCharacterBase` remains the world interaction entrypoint; replicated dialogue talkable state is owned by `UARNPCTalkComponent` (`bIsTalkable` + per-slot mask).
+- `UARSpeakerSubsystem` is now talkable-cache-focused and derives speaker talkable state from dialogue unlock availability.
+- `AARNPCCharacterBase` remains the world interaction entrypoint; replicated dialogue talkable state is owned by `UARSpeakerComponent` (`bIsTalkable` + per-slot mask).
 
 Ownership reminder:
 
 - This runtime is inside the Dialogue plugin ownership boundary.
 - Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.
+- Shop/customer-serving built-on-top systems should route serving results through `ApplyRamenServeOutcome(...)` for relationship + emotion output.
 
 ## Runtime Entry Points
 
 Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 
-- `RequestStartDialogue(FGameplayTag NpcTag)`
-- `RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)`
+- `RequestStartDialogue(FGameplayTag SpeakerTag)`
+- `RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)`
 - `RequestAdvanceDialogue()`
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
 - `RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)`
 - `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (slot convenience wrapper)
+- Actor-targeted interaction requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
+
+World actor convenience entrypoint:
+
+- `AARNPCCharacterBase::ForwardUseToController(AActor* UsingActor)` accepts either controller or pawn references (for example BI_Interactable payloads), resolves the owning `AARPlayerController`, and routes through `RequestInteractWithCharacter(...)`.
 
 Server runtime now pushes authoritative view snapshots back to client controllers via:
 
@@ -33,7 +39,7 @@ Server runtime now pushes authoritative view snapshots back to client controller
 
 Core subsystem API:
 
-- `GetAvailableConversationForNPC(...)`
+- `GetAvailableConversationForSpeaker(...)`
 - `StartConversation(...)`
 - `AdvanceConversation(...)`
 - `SubmitChoice(...)`
@@ -42,10 +48,11 @@ Core subsystem API:
 - `ValidateSpeaker(...)`
 - `PreviewConversation(...)`
 - `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
+- `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
 
 Compatibility wrappers still exist for gameplay BPs:
 
-- `TryStartDialogueWithNpc(...)`
+- `TryStartDialogueWithSpeaker(...)`
 - `SubmitDialogueChoice(...)` (routes to `SubmitChoice`)
 - `SetShopEavesdropTarget(...)` (routes to `ForceEavesdrop`)
 
@@ -59,7 +66,7 @@ Runtime UI is intentionally separate from editor preview tooling.
   - cached view helpers: `GetCachedDialogueView(...)`, `QueryLocalDialogueView(...)`
   - widget lifecycle: `EnsureDialogueWidget()`, `RemoveDialogueWidget()`, `GetDialogueWidget()`
   - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
-- `UARDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithNpcTag`, `InteractWithNpc`) back to the bound controller.
+- `UARDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithCharacter`) back to the bound controller.
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
 
 ## Content Model
@@ -85,13 +92,21 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 
 ## Emotion Runtime
 
-- `UAREmotionComponent` provides replicated overhead-emotion display state for NPCs and player characters.
+- `UAREmotionComponent` provides replicated overhead-emotion display state for speaker actors and player characters.
 - Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
+- Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
+- Dialogue line emotion is written as a system source (`DialogueLine`) with priority above `BusyEmotionPriority`; if line-tag resolve fails, no line source is written so lower-priority state (for example busy) remains visible.
+- Dialogue clears prior line-emotion source entries when presenting the next line, so line emotion holds until next line or session end.
 - Dialogue line `SpeakerTag` may include an emotion leaf (example: `Dialogue.Speaker.Fred.Angry`).
-- Emotion icon lookup is resolved from a direct DataTable reference in `UAREmotionSettings` (row type `FAREmotionIconRow`) and cached by `UAREmotionResolverSubsystem`.
-- Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`).
+- Emotion icon lookup resolves through `UTagContentResolverSubsystem` route root `UAREmotionSettings::EmotionResolverRootTag` (row type `FAREmotionIconRow`) and is cached by `UAREmotionResolverSubsystem`.
+- Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`) when a speaker tag includes an explicit emotion leaf (for example `Dialogue.Speaker.Fred.Angry` -> `Dialogue.Emotion.Angry`).
 - `UAREmotionComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
+- Emotion anchor authoring is offset-only: `AnchorWorldOffset` is applied from owner actor top bounds fallback.
+- Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UAREmotionSettings::DefaultTimedSystemOverrideDurationSeconds`.
+- Runtime overhead emotion rendering is owned directly by `AARHUDBase` (no separate HUD emotion component).
+- `AARHUDBase::DrawHUD` renders overhead emotions natively and applies projection/size/occlusion policy from HUD properties.
+- Runtime suppression (for example cutscenes) should use `AARHUDBase::SetEmotionRenderingSuppressed(...)`.
 
 ## Offer + Execution Rules (Current Runtime)
 
@@ -120,6 +135,12 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
   - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
   - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
+- Shop eavesdrop requests are immediate-only: `ForceEavesdrop` rejects enable requests when the target slot has no active dialogue session (no queued eavesdrop registration).
+- Conversations can be authored as private (`FDialogueConversationHeader::bPrivateConversation`): active private sessions reject eavesdrop requests by default.
+- Important choice flow overrides private-session eavesdrop lock while the choice is actively forcing all viewers.
+- Per-player mode supports optional busy-speaker lock (`UARDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`): when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
+- Busy query helpers are exposed for gameplay/UI traces: `UARDialogueSubsystem::IsSpeakerBusyForController(...)` and `AARNPCCharacterBase::IsSpeakerBusyForController(...)`.
+- Busy-speaker presentation routes through emotion-system source overrides (source `DialogueBusy`) using `UAREmotionSettings::BusyEmotionTag` and `BusyEmotionPriority`.
 - Line nodes (including multiline entries) support the same convenience active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`) before skip-conditions are evaluated.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
@@ -157,27 +178,32 @@ Removed legacy dialogue save fields:
 - `DialogueCanonicalChoiceStates`
 - `PlayerDialogueHistoryStates`
 
-## NPC Talkable Runtime
+## Speaker Talkable Runtime
 
-`UARNPCSubsystem` no longer owns ramen/want mutation logic. It now:
+`UARSpeakerSubsystem` no longer owns ramen/want mutation logic. It now:
 
-- caches `NpcTag -> bTalkable`
-- refreshes from `UARDialogueSubsystem::HasUnlockedDialogueForNpcForAnyPlayer(...)`
-- broadcasts `OnNpcTalkableChanged`
-- combines subsystem talkable state with `AARNPCCharacterBase::bNpcLocalStateAllowsDialogue` (local NPC runtime gate, for example ordering-mode lockouts)
+- caches `SpeakerTag -> bTalkable`
+- refreshes from `UARDialogueSubsystem::HasUnlockedDialogueForSpeakerForAnyPlayer(...)`
+- enumerates refresh targets from dialogue runtime registered speaker tags (conversation primaries + speaker registry), not synthesized DataTable row-name tags
+- broadcasts `OnSpeakerTalkableChanged`
+- combines subsystem talkable state with `AARNPCCharacterBase::bSpeakerLocalStateAllowsDialogue` (local speaker runtime gate, for example ordering-mode lockouts)
 
-NPC actor integration now routes through `UARNPCTalkComponent`:
+Speaker actor integration now routes through `UARSpeakerComponent`:
 
-- `UARNPCTalkComponent` owns NPC-side dialogue interaction + replicated dialogue talkable mask/state.
-- `AARNPCCharacterBase` remains the owner of non-dialogue local NPC gates (for example serving/customer mode) and combines that with component talkability for public NPC talk checks.
+- `UARSpeakerComponent` owns speaker-side dialogue interaction + replicated dialogue talkable mask/state.
+- `AARNPCCharacterBase` remains the owner of non-dialogue local speaker gates (for example serving/customer mode) and combines that with component talkability for public speaker talk checks.
+- effective talkable state drives a persistent emotion-system override source `TalkableState` using `UAREmotionSettings::WantsToTalkEmotionTag` (set while talkable, cleared when not talkable).
 
 ## Emotion Resolver Runtime
 
-- `UAREmotionResolverSubsystem` caches emotion tag->icon mappings from `UAREmotionSettings::EmotionDataTable`.
+- `UAREmotionResolverSubsystem` caches emotion tag->icon mappings from TagContentResolver route root `UAREmotionSettings::EmotionResolverRootTag` (default `Dialogue.Emotion`).
 - Resolver cache invalidates/rebuilds when configured settings inputs change or when the bound emotion DataTable broadcasts `OnDataTableChanged`.
 - Debug console commands:
-  - `ar.emotion.LogCacheStats`
-  - `ar.emotion.RebuildCache`
+  - `ar.emotion.log_cache_stats`
+  - `ar.emotion.rebuild_cache`
+- Optional diagnostics toggles in `UAREmotionSettings`:
+  - `bEnableVerboseResolverLogs`
+  - `bEnableVerboseRenderLogs`
 
 ## Editor Tooling (Current)
 
@@ -207,6 +233,7 @@ Conversation graph tooling now provides:
 - speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
 - compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`
+- Speaker details authoring categories for actor/talk/emotion properties use distinct roots (`Alien Ramen|Speaker`, `Alien Ramen|Talk`, `Alien Ramen|Emotion`) to avoid repeated same-name category buckets in Blueprint class-default details.
 
 Speaker hub currently provides:
 

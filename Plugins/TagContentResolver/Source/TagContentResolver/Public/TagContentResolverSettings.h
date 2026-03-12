@@ -19,6 +19,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Controls which route tables are preloaded at subsystem startup."))
 	ETagContentResolverPreloadPolicy PreloadPolicy = ETagContentResolverPreloadPolicy::CriticalRoots;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Async Loading", meta=(ToolTip="When enabled, successful row resolves request async loads for unresolved soft object/class references found in the resolved row data."))
+	bool bAutoPreloadRowSoftReferences = true;
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Diagnostics", meta=(ToolTip="When enabled, repeated identical resolver failures are logged once to reduce spam."))
 	bool bDeduplicateFailureLogs = true;
 

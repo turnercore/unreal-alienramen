@@ -164,7 +164,7 @@ protected:
 
 	// Current primary weapon (resolved from ship row)
 	UPROPERTY(Transient)
-	TObjectPtr<UARWeaponDefinition> CurrentPrimaryWeapon;
+	mutable TObjectPtr<UARWeaponDefinition> CurrentPrimaryWeapon;
 
 	// ---- Tracking so we can remove things on swap ----
 	UPROPERTY(Transient)

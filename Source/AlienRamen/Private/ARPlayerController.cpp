@@ -8,6 +8,7 @@
 #include "ARLobbyPlayerController.h"
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
+#include "ARMeatStorageBoxActor.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "EnhancedInputSubsystems.h"
@@ -283,44 +284,145 @@ void AARPlayerController::RequestRemoveUnlockInternal(const FGameplayTag& Unlock
 	UE_LOG(ARLog, Warning, TEXT("[Save] RequestRemoveUnlock ignored: no AARGameStateBase for '%s'."), *GetNameSafe(this));
 }
 
-void AARPlayerController::RequestStartDialogue(FGameplayTag NpcTag)
+void AARPlayerController::RequestStartDialogue(FGameplayTag SpeakerTag)
 {
 	if (HasAuthority())
 	{
 		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->TryStartDialogueWithNpc(this, NpcTag);
+			DialogueSubsystem->TryStartDialogueWithSpeaker(this, SpeakerTag);
 		}
 		return;
 	}
 
-	ServerRequestStartDialogue(NpcTag);
+	ServerRequestStartDialogue(SpeakerTag);
 }
 
-void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag NpcTag)
+void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag SpeakerTag)
 {
-	RequestStartDialogue(NpcTag);
+	RequestStartDialogue(SpeakerTag);
 }
 
-void AARPlayerController::RequestInteractWithNpc(AARNPCCharacterBase* NpcActor)
+bool AARPlayerController::IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const
 {
-	if (!NpcActor)
+	const TCHAR* SafeContextLabel = ContextLabel ? ContextLabel : TEXT("Interaction");
+	if (!HasAuthority())
 	{
+		UE_LOG(ARLog, Warning, TEXT("[%s] Validation called without authority on controller '%s'."), SafeContextLabel, *GetNameSafe(this));
+		return false;
+	}
+
+	if (!IsValid(TargetActor))
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': target is invalid."), SafeContextLabel, *GetNameSafe(this));
+		return false;
+	}
+
+	const APawn* ControlledPawn = GetPawn();
+	if (!ControlledPawn)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': missing controlled pawn."), SafeContextLabel, *GetNameSafe(this));
+		return false;
+	}
+
+	if (TargetActor->GetWorld() != GetWorld())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[%s] Validation failed on '%s': target '%s' is in different world."),
+			SafeContextLabel,
+			*GetNameSafe(this),
+			*GetNameSafe(TargetActor));
+		return false;
+	}
+
+	const float MaxDistance = FMath::Max(50.0f, ServerInteractionMaxDistance);
+	const float DistanceSq = FVector::DistSquared(ControlledPawn->GetActorLocation(), TargetActor->GetActorLocation());
+	if (DistanceSq > FMath::Square(MaxDistance))
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (distance=%.1f max=%.1f)."),
+			SafeContextLabel,
+			*GetNameSafe(this),
+			*GetNameSafe(TargetActor),
+			FMath::Sqrt(DistanceSq),
+			MaxDistance);
+		return false;
+	}
+
+	return true;
+}
+
+void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)
+{
+	if (!CharacterActor)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] RequestInteractWithCharacter ignored on '%s': target is null."), *GetNameSafe(this));
+		return;
+	}
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Interact] RequestInteractWithCharacter controller='%s' target='%s' authority=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(CharacterActor),
+		HasAuthority() ? TEXT("true") : TEXT("false"));
+
+	if (HasAuthority())
+	{
+		if (!IsServerInteractionTargetReachable(CharacterActor, TEXT("Interact")))
+		{
+			return;
+		}
+
+		CharacterActor->InteractByController(this);
+		return;
+	}
+
+	ServerRequestInteractWithCharacter(CharacterActor);
+}
+
+void AARPlayerController::ServerRequestInteractWithCharacter_Implementation(AARNPCCharacterBase* CharacterActor)
+{
+	RequestInteractWithCharacter(CharacterActor);
+}
+
+void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)
+{
+	if (!StorageActor)
+	{
+		UE_LOG(ARLog, VeryVerbose, TEXT("[Shop|Storage] RequestShopDispenseMeat ignored on '%s': StorageActor is null."), *GetNameSafe(this));
 		return;
 	}
 
 	if (HasAuthority())
 	{
-		NpcActor->InteractByController(this);
+		if (!IsServerInteractionTargetReachable(StorageActor, TEXT("Shop|Storage")))
+		{
+			return;
+		}
+
+		const bool bDispensed = StorageActor->TryDispenseMeat(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Storage] RequestShopDispenseMeat controller='%s' storage='%s' success=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(StorageActor),
+			bDispensed ? 1 : 0);
 		return;
 	}
 
-	ServerRequestInteractWithNpc(NpcActor);
+	ServerRequestShopDispenseMeat(StorageActor);
 }
 
-void AARPlayerController::ServerRequestInteractWithNpc_Implementation(AARNPCCharacterBase* NpcActor)
+void AARPlayerController::ServerRequestShopDispenseMeat_Implementation(AARMeatStorageBoxActor* StorageActor)
 {
-	RequestInteractWithNpc(NpcActor);
+	RequestShopDispenseMeat(StorageActor);
 }
 
 void AARPlayerController::RequestAdvanceDialogue()

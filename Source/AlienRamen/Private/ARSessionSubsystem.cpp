@@ -55,6 +55,22 @@ namespace
 			Names.Add(Name);
 		}
 	}
+
+	static FString ResolveAdvertisedMapName(const UWorld* World)
+	{
+		if (!World)
+		{
+			return FString();
+		}
+
+		FString AdvertisedMapName = UGameplayStatics::GetCurrentLevelName(World, true);
+		if (AdvertisedMapName.IsEmpty())
+		{
+			AdvertisedMapName = World->GetMapName();
+		}
+
+		return AdvertisedMapName;
+	}
 }
 
 void UARSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -853,13 +869,7 @@ bool UARSessionSubsystem::RefreshJoinability(FARSessionResult& OutResult)
 	NewSettings.bAllowInvites = bCanJoin;
 	if (const UWorld* World = GetWorld())
 	{
-		FString AdvertisedMapName = UGameplayStatics::GetCurrentLevelName(World, true);
-		if (AdvertisedMapName.IsEmpty())
-		{
-			AdvertisedMapName = World->GetMapName();
-		}
-
-		NewSettings.Set(SETTING_MAPNAME, AdvertisedMapName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+		NewSettings.Set(SETTING_MAPNAME, ResolveAdvertisedMapName(World), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	}
 	UARGameInstance::ApplyARProtocolSessionSetting(NewSettings);
 
@@ -1265,7 +1275,7 @@ bool UARSessionSubsystem::BuildDesiredSessionSettings(
 	OutSettings.bAllowJoinViaPresence = bCanJoin;
 	OutSettings.bAllowJoinViaPresenceFriendsOnly = false;
 	OutSettings.bUseLobbiesVoiceChatIfAvailable = !bPreferLAN;
-	OutSettings.Set(SETTING_MAPNAME, World->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	OutSettings.Set(SETTING_MAPNAME, ResolveAdvertisedMapName(World), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	const FString ResolvedDisplayName = ResolveSessionDisplayName(SessionDisplayName);
 	OutSettings.Set(SessionSetting_ARLobbyName, ResolvedDisplayName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);

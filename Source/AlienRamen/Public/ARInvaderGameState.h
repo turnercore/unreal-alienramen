@@ -16,6 +16,7 @@ class AAREnemyBase;
 class AARInvaderDropBase;
 class UARInvaderSpicyTrackSettings;
 class IConsoleObject;
+class UDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderSharedTrackChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderFullBlastSessionChangedSignature, bool, bIsActive);
@@ -106,14 +107,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
 	void NotifyEnemyKilled(AAREnemyBase* Enemy, AActor* InstigatorActor);
 
-	// Replicated live offer-presence state for HUD cursors/hover/selection during full-blast selection.
+	// Replicated live offer-presence state for HUD hover/selection intent during full-blast selection.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
 	bool SetOfferPresence(
 		AARPlayerStateBase* SourcePlayerState,
 		FGameplayTag HoveredUpgradeTag,
 		int32 HoveredDestinationSlot,
-		FVector2D CursorNormalized,
-		bool bHasCursor,
 		FGameplayTag SelectedUpgradeTag,
 		int32 SelectedDestinationSlot,
 		bool bHasSelection);
@@ -183,13 +182,15 @@ private:
 	void HandleConsoleAddSpice(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleAddScrap(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleAddMoney(const TArray<FString>& Args, UWorld* World);
-	void HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetDropEarthGravity(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleSetCursor(const TArray<FString>& Args, UWorld* World);
 	void HandleConsoleInjectUpgrade(const TArray<FString>& Args, UWorld* World);
 	AARPlayerStateBase* ResolvePlayerStateFromDebugToken(const FString& Token) const;
 	bool ResolveUpgradeTagForDebugInject(const FString& TagToken, FGameplayTag& OutUpgradeTag) const;
 	void ReconcilePlayerCursorSelection();
+	int32 ResolveInvaderRunSeed() const;
+	int32 ResolveInvaderRunEndEventId() const;
+	void RefreshDeterministicRngSeedsFromRunState();
 
 	const UARInvaderSpicyTrackSettings* GetSpicyTrackSettings() const;
 	void InitializeSpicyTrackState();
@@ -227,7 +228,7 @@ private:
 		bool bHasEffectOrigin,
 		FGameplayTag EnemyIdentifierTag);
 	void TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateBase* KillerPlayerState);
-	float RollDropAmountWithVariance(float BaseDropAmount, EARInvaderDropType DropType) const;
+	float RollDropAmountWithVariance(float BaseDropAmount, EARInvaderDropType DropType);
 	float ResolveKillerDropMultiplier(const AARPlayerStateBase* KillerPlayerState, EARInvaderDropType DropType) const;
 	void ResolveDropStackDefinitions(EARInvaderDropType DropType, TArray<FResolvedDropStackEntry>& OutDefinitions) const;
 	bool BuildDropSpawnPlan(EARInvaderDropType DropType, int32 TotalAmount, TArray<FDropSpawnPlanEntry>& OutPlan) const;
@@ -258,11 +259,23 @@ private:
 	UPROPERTY(Transient)
 	FRandomStream OfferRng;
 
+	UPROPERTY(Transient)
+	FRandomStream DropRng;
+
+	UPROPERTY(Transient)
+	int32 CachedRngRunSeed = TNumericLimits<int32>::Min();
+
+	UPROPERTY(Transient)
+	int32 CachedRngRunEndEventId = TNumericLimits<int32>::Min();
+
+	mutable bool bUpgradeDefinitionCacheValid = false;
+	mutable TWeakObjectPtr<UDataTable> CachedUpgradeDefinitionTable;
+	mutable TMap<FGameplayTag, FARInvaderUpgradeDefRow> CachedUpgradeDefinitions;
+
 	IConsoleObject* CmdDebugSetSpice = nullptr;
 	IConsoleObject* CmdDebugAddSpice = nullptr;
 	IConsoleObject* CmdDebugAddScrap = nullptr;
 	IConsoleObject* CmdDebugAddMoney = nullptr;
-	IConsoleObject* CmdDebugAddMeat = nullptr;
 	IConsoleObject* CmdDebugSetDropEarthGravity = nullptr;
 	IConsoleObject* CmdDebugSetCursor = nullptr;
 	IConsoleObject* CmdDebugInjectUpgrade = nullptr;

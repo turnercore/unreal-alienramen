@@ -54,7 +54,7 @@ void UARDialogueWidgetBase::DeinitializeDialogueWidget()
 
 void UARDialogueWidgetBase::AdvanceDialogue()
 {
-	if (BoundController)
+	if (IsValid(BoundController))
 	{
 		BoundController->RequestAdvanceDialogue();
 	}
@@ -62,7 +62,7 @@ void UARDialogueWidgetBase::AdvanceDialogue()
 
 void UARDialogueWidgetBase::SubmitChoice(FGuid ChoiceBranchId)
 {
-	if (BoundController && ChoiceBranchId.IsValid())
+	if (IsValid(BoundController) && ChoiceBranchId.IsValid())
 	{
 		BoundController->RequestSubmitDialogueChoice(ChoiceBranchId);
 	}
@@ -70,7 +70,7 @@ void UARDialogueWidgetBase::SubmitChoice(FGuid ChoiceBranchId)
 
 void UARDialogueWidgetBase::SetEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)
 {
-	if (BoundController)
+	if (IsValid(BoundController))
 	{
 		BoundController->RequestSetDialogueEavesdrop(bEnable, TargetSlot);
 	}
@@ -78,31 +78,31 @@ void UARDialogueWidgetBase::SetEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)
 
 void UARDialogueWidgetBase::SetEavesdropOtherPlayer(bool bEnable)
 {
-	if (BoundController)
+	if (IsValid(BoundController))
 	{
 		BoundController->RequestSetDialogueEavesdropOtherPlayer(bEnable);
 	}
 }
 
-void UARDialogueWidgetBase::StartDialogueWithNpcTag(FGameplayTag NpcTag)
+void UARDialogueWidgetBase::StartDialogueWithSpeakerTag(FGameplayTag SpeakerTag)
 {
-	if (BoundController && NpcTag.IsValid())
+	if (IsValid(BoundController) && SpeakerTag.IsValid())
 	{
-		BoundController->RequestStartDialogue(NpcTag);
+		BoundController->RequestStartDialogue(SpeakerTag);
 	}
 }
 
-void UARDialogueWidgetBase::InteractWithNpc(AARNPCCharacterBase* NpcActor)
+void UARDialogueWidgetBase::InteractWithCharacter(AARNPCCharacterBase* CharacterActor)
 {
-	if (BoundController && NpcActor)
+	if (IsValid(BoundController) && CharacterActor)
 	{
-		BoundController->RequestInteractWithNpc(NpcActor);
+		BoundController->RequestInteractWithCharacter(CharacterActor);
 	}
 }
 
 void UARDialogueWidgetBase::ToggleAutoAdvance()
 {
-	if (BoundController)
+	if (IsValid(BoundController))
 	{
 		BoundController->RequestToggleDialogueAutoAdvance();
 	}
@@ -110,7 +110,7 @@ void UARDialogueWidgetBase::ToggleAutoAdvance()
 
 void UARDialogueWidgetBase::AdvanceOrSubmitDialogue()
 {
-	if (BoundController)
+	if (IsValid(BoundController))
 	{
 		BoundController->RequestAdvanceOrSubmitDialogue();
 	}
@@ -118,7 +118,7 @@ void UARDialogueWidgetBase::AdvanceOrSubmitDialogue()
 
 void UARDialogueWidgetBase::ChoiceDelta(const int32 Delta)
 {
-	if (BoundController)
+	if (IsValid(BoundController))
 	{
 		BoundController->RequestDialogueChoiceDelta(Delta);
 	}
@@ -132,6 +132,12 @@ bool UARDialogueWidgetBase::GetCurrentDialogueView(FDialogueClientView& OutView)
 
 void UARDialogueWidgetBase::HandleControllerDialogueViewUpdated(const FDialogueClientView& View)
 {
+	if (!IsValid(BoundController))
+	{
+		DeinitializeDialogueWidget();
+		return;
+	}
+
 	CurrentDialogueView = View;
 	bHasActiveDialogueView = true;
 	if (bAutoToggleVisibilityFromSessionState)
@@ -143,6 +149,12 @@ void UARDialogueWidgetBase::HandleControllerDialogueViewUpdated(const FDialogueC
 
 void UARDialogueWidgetBase::HandleControllerDialogueSessionEnded(const FString& SessionId)
 {
+	if (!IsValid(BoundController))
+	{
+		DeinitializeDialogueWidget();
+		return;
+	}
+
 	if (bHasActiveDialogueView && CurrentDialogueView.SessionId == SessionId)
 	{
 		CurrentDialogueView = FDialogueClientView();
@@ -157,7 +169,7 @@ void UARDialogueWidgetBase::HandleControllerDialogueSessionEnded(const FString& 
 
 void UARDialogueWidgetBase::BindControllerDelegates()
 {
-	if (!BoundController)
+	if (!IsValid(BoundController))
 	{
 		return;
 	}
@@ -173,13 +185,19 @@ void UARDialogueWidgetBase::UnbindControllerDelegates()
 		return;
 	}
 
+	if (!IsValid(BoundController))
+	{
+		BoundController = nullptr;
+		return;
+	}
+
 	BoundController->OnDialogueViewUpdated.RemoveDynamic(this, &UARDialogueWidgetBase::HandleControllerDialogueViewUpdated);
 	BoundController->OnDialogueSessionEndedSignal.RemoveDynamic(this, &UARDialogueWidgetBase::HandleControllerDialogueSessionEnded);
 }
 
 void UARDialogueWidgetBase::PushInitialViewFromController()
 {
-	if (!BoundController)
+	if (!IsValid(BoundController))
 	{
 		return;
 	}

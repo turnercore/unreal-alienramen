@@ -10,6 +10,7 @@
 #include "ARDialogueSubsystem.generated.h"
 
 class AARPlayerController;
+class AActor;
 class UARDialogueConversationAsset;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnDialogueSessionUpdated, const FDialogueClientView&, View);
@@ -28,7 +29,7 @@ public:
 	// ---- Required runtime API contracts ----
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool GetAvailableConversationForNPC(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bNpcLocalStateAllowsDialogue = true);
+	bool GetAvailableConversationForSpeaker(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bSpeakerLocalStateAllowsDialogue = true);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool StartConversation(AARPlayerController* RequestingController, FGameplayTag ConversationTag, FGameplayTag PrimarySpeakerTag);
@@ -57,6 +58,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool ApplyDialogueFactionMutation(const FDialogueFactionMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
 
+	// Shop/customer integration endpoint: applies relationship delta and emotion output in one call.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
+	bool ApplyRamenServeOutcome(
+		FGameplayTag SpeakerTag,
+		int32 RelationshipDeltaPoints,
+		FGameplayTag ReactionEmotionTag,
+		AActor* PreferredSpeakerActor = nullptr);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool ValidateConversation(UARDialogueConversationAsset* ConversationAsset, FDialogueValidationReport& OutReport) const;
 
@@ -79,7 +88,7 @@ public:
 	// ---- Compatibility wrappers used by gameplay code ----
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	bool TryStartDialogueWithNpc(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag);
+	bool TryStartDialogueWithSpeaker(AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	bool SubmitDialogueChoice(AARPlayerController* RequestingController, FGuid ChoiceBranchId)
@@ -94,10 +103,17 @@ public:
 	}
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool HasUnlockedDialogueForNpcForSlot(FGameplayTag PrimarySpeakerTag, EARPlayerSlot PlayerSlot) const;
+	bool HasUnlockedDialogueForSpeakerForSlot(FGameplayTag PrimarySpeakerTag, EARPlayerSlot PlayerSlot) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool HasUnlockedDialogueForNpcForAnyPlayer(FGameplayTag PrimarySpeakerTag) const;
+	bool HasUnlockedDialogueForSpeakerForAnyPlayer(FGameplayTag PrimarySpeakerTag) const;
+
+	// Returns the union of registered speaker tags known to dialogue runtime (conversation primaries + speaker records).
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	void GetRegisteredPrimarySpeakerTags(TArray<FGameplayTag>& OutSpeakerTags) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool IsSpeakerBusyForController(const AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool GetLocalViewForController(const AARPlayerController* RequestingController, FDialogueClientView& OutView) const;
@@ -126,9 +142,13 @@ public:
 
 private:
 	struct FARDialogueRuntimeState;
+	struct FARDialogueRuntimeStateDeleter
+	{
+		void operator()(FARDialogueRuntimeState* Ptr) const;
+	};
 
 	FARDialogueRuntimeState& GetRuntimeState();
 	const FARDialogueRuntimeState& GetRuntimeState() const;
 
-	mutable FARDialogueRuntimeState* RuntimeState = nullptr;
+	TUniquePtr<FARDialogueRuntimeState, FARDialogueRuntimeStateDeleter> RuntimeState;
 };

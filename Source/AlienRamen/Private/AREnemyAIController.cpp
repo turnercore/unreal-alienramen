@@ -7,18 +7,6 @@
 #include "StateTreeExecutionTypes.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-namespace AREnemyAIControllerInternal
-{
-	static const TCHAR* ToPhaseName(EARWavePhase Phase)
-	{
-		switch (Phase)
-		{
-		case EARWavePhase::Active: return TEXT("Active");
-		case EARWavePhase::Berserk: return TEXT("Berserk");
-		default: return TEXT("Unknown");
-		}
-	}
-}
 
 AAREnemyAIController::AAREnemyAIController()
 {
@@ -568,14 +556,14 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 	if (!IsStateTreeRunning())
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Wave phase event skipped on '%s': StateTree not running (WaveId=%d Phase=%s)."),
-			*GetNameSafe(this), WaveInstanceId, AREnemyAIControllerInternal::ToPhaseName(NewPhase));
+			*GetNameSafe(this), WaveInstanceId, ARInvaderWavePhaseToString(NewPhase));
 		return;
 	}
 
 	if (LastSentWavePhaseWaveId == WaveInstanceId && LastSentWavePhase == NewPhase)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[EnemyAI] Wave phase event deduped on '%s' (WaveId=%d Phase=%s)."),
-			*GetNameSafe(this), WaveInstanceId, AREnemyAIControllerInternal::ToPhaseName(NewPhase));
+			*GetNameSafe(this), WaveInstanceId, ARInvaderWavePhaseToString(NewPhase));
 		return;
 	}
 
@@ -597,7 +585,7 @@ void AAREnemyAIController::NotifyWavePhaseChanged(int32 WaveInstanceId, EARWaveP
 	LastSentWavePhaseWaveId = WaveInstanceId;
 	LastSentWavePhase = NewPhase;
 	UE_LOG(ARLog, Log, TEXT("[EnemyAI] Entered wave phase '%s' for WaveId=%d on '%s' (Event=%s)."),
-		AREnemyAIControllerInternal::ToPhaseName(NewPhase), WaveInstanceId, *GetNameSafe(this), *EventTag.ToString());
+		ARInvaderWavePhaseToString(NewPhase), WaveInstanceId, *GetNameSafe(this), *EventTag.ToString());
 }
 
 void AAREnemyAIController::NotifyEnemyEnteredScreen(int32 WaveInstanceId)
