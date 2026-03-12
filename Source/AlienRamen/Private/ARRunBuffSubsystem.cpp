@@ -98,7 +98,9 @@ bool UARRunBuffSubsystem::AddExtractedEnergyDrink(const FGameplayTag ItemTag, in
 		return false;
 	}
 
-	TArray<FARRunBuffItemStack>& TargetStacks = SaveGame->StoredEnergyDrinkStacks;
+	TArray<FARRunBuffItemStack>& TargetStacks = HasEnergyDrinkStorageUnlock()
+		? SaveGame->StoredEnergyDrinkStacks
+		: SaveGame->QueuedEnergyDrinkStacks;
 
 	const int32 MaxStackCount = ResolveMaxStackCountForItem(ItemTag);
 	const int32 CurrentCount = GetStackCount(TargetStacks, ItemTag, FGameplayTag());

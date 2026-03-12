@@ -71,6 +71,7 @@ Key docs:
 - `Documentation/README_ProgressionUnlocks.md`
 - `Documentation/README_ShopRamenSystem.md`
 - `Documentation/README_ScrapyardMode.md`
+- `Documentation/README_TransitionMode.md`
 - `Documentation/CppOverview/InvaderSpicyTrack.md`
 
 ---
@@ -142,6 +143,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap, but only after it has moved beyond storage-return arm distance (prevents instant re-store on spawn).
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 - `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.
+- `AAREnergyDrinkCarryItem` replicates `EnergyDrinkItemTag` so remote clients can resolve drink UI/content from world actors.
 - Stored energy-drink inventory is authoritative before shop spawn; once spawned at shop anchors, drink instances are world-owned carryables until consumed/stored/sold by shop systems.
 
 Docs: `Documentation/README_ShopRamenSystem.md`
@@ -172,6 +174,17 @@ Docs: `Documentation/README_FactionSubsystem.md`
 
 Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 
+### Transition
+
+- `AARGameModeBase` owns optional transition-map travel routing for mode exits via `bRouteModeTravelThroughTransitionMap` + `TransitionTravelMapURL` + transition context (`TransitionSourceMode`, `TransitionReason`).
+- `AARTransitionGameMode` owns transition-map continue gating and destination travel start.
+- `AARTransitionGameState` owns replicated transition context (`FARTransitionContext`) for transition/result UI.
+- `AARTransitionPlayerController` is the controller entrypoint for continue votes.
+- `UARTransitionBlueprintLibrary` is the BP-safe builder/parser for transition travel URLs and context payloads.
+- Transition mode is no-pawn by design; it should not spawn gameplay pawns.
+
+Docs: `Documentation/README_TransitionMode.md`
+
 ### Scrapyard
 
 - `AARScrapyardGameState` owns server-authoritative scrapyard timer/state, reserve/refund accounting, deterministic overspend trim, and reward grant finalization.
@@ -179,9 +192,12 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 - `AARScrapyardExitZoneActor` owns deposited-item + in-zone player tracking, replicated per-exit reserved scrap value, and reports reserve/refund deltas to Scrapyard GameState.
 - `AARScrapyardHUD` is the local UI binding owner for Scrapyard runtime delegates (timer/summary/run-active + run-buff snapshot).
 - `UARScrapyardHUDWidgetBase` and `UARScrapyardExitZoneWidgetBase` are reusable Blueprint-facing widget bridges for Scrapyard HUD state and per-exit reserved scrap state.
+- `AARScrapyardCarryItemBase` overrides `ForwardUseToController` to route BI_Interactable-style use into `AARScrapyardPlayerController::RequestScrapyardPickupCarryItem` (not shop pickup).
+- `AARScrapyardCarryItemBase` replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI paths.
 - Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
 - Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
 - Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` using travel option context (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`).
 - When `SpawnRuleSet` is set on `AARScrapyardGameMode`, scrapyard item spawn orchestration is GameMode-owned (Perlin noise + spawner weight + rarity budgets + `bAlwaysSpawn`). Managed flow only runs when the rule asset is set; leave it unset only for maps that should intentionally have no scrapyard spawns. Set spawner `bSpawnOnBeginPlay=false` when relying on managed flow. Docs: `Documentation/README_ScrapyardMode.md` and `Documentation/Assets/README_ScrapyardSpawnRules.md`.
 
 Docs: `Documentation/README_ScrapyardMode.md`

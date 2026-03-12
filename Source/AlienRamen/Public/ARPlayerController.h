@@ -9,6 +9,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "ARDialogueTypes.h"
+#include "ARTransitionTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "TimerManager.h"
 #include "ARPlayerController.generated.h"
@@ -90,11 +91,11 @@ public:
 
 	// Controller travel entrypoint for UI/BP. Routes to server when called by clients.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
-	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
+	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
 
 	// Server-side travel request handler.
 	UFUNCTION(Server, Reliable)
-	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
+	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
 
 	// Unlock mutation entrypoints for UI/BP. Route to server when called by clients.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -353,7 +354,7 @@ protected:
 
 private:
 	void LeaveSessionInternal();
-	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE);
+	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestHUDInitializationInternal(bool bForceBroadcast);
