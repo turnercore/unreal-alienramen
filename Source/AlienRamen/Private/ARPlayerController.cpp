@@ -343,14 +343,14 @@ void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* Storag
 
 	if (HasAuthority())
 	{
-		const bool bDispensed = StorageActor->TryDispenseMeat(this);
+		const bool bInteracted = StorageActor->TryHandleStorageInteraction(this);
 		UE_LOG(
 			ARLog,
 			Verbose,
 			TEXT("[Shop|Storage] RequestShopDispenseMeat controller='%s' storage='%s' success=%d."),
 			*GetNameSafe(this),
 			*GetNameSafe(StorageActor),
-			bDispensed ? 1 : 0);
+			bInteracted ? 1 : 0);
 		return;
 	}
 

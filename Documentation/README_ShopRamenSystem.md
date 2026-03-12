@@ -103,12 +103,17 @@ This document captures the runtime ownership and integration contract for the sh
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
 - Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
 - Drop/throw restore world physics and gravity on the released carry item.
+- Meat storage interaction contract:
+  - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
+  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color.
+  - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
 
 ## Persistence + Replication
 
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
 - Meat-reserve dispenser entries decrement replicated GameState meat buckets and spawn world meat actors.
+- Returning meat to storage (held interact or world-hit auto-store) increments replicated GameState meat buckets and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
 - Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
 - Starting a run clears transient loose-carryable snapshots; invader/scrapyard completion marks a one-shot clear on next shop entry.

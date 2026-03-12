@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "ARGameModeBase.h"
+#include "ARScrapyardSpawnRules.h"
 #include "ARScrapyardGameMode.generated.h"
 
 class AController;
@@ -32,8 +33,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard")
 	TSubclassOf<APawn> FallbackScrapyardPawnClass;
 
+	// Optional per-map spawn rule asset. When set, GameMode orchestrates scrapyard spawns.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawns")
+	TSoftObjectPtr<UARScrapyardSpawnRuleSet> SpawnRuleSet;
+
 private:
 	static FProperty* FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix);
 	bool ResolveScrapyardPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
 	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);
+	void InitializeScrapyardSpawns();
 };
