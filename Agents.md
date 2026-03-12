@@ -70,6 +70,7 @@ Key docs:
 - `Documentation/README_DialogueNPC.md`
 - `Documentation/README_ProgressionUnlocks.md`
 - `Documentation/README_ShopRamenSystem.md`
+- `Documentation/README_ScrapyardMode.md`
 - `Documentation/CppOverview/InvaderSpicyTrack.md`
 
 ---
@@ -161,6 +162,24 @@ Docs: `Documentation/README_FactionSubsystem.md`
 - Spicy track / full blast is GameState-owned shared replicated runtime state.
 
 Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
+
+### Scrapyard
+
+- `AARScrapyardGameState` owns server-authoritative scrapyard timer/state, reserve/refund accounting, deterministic overspend trim, and reward grant finalization.
+- `AARScrapyardExitZoneActor` owns deposited-item + in-zone player tracking, replicated per-exit reserved scrap value, and reports reserve/refund deltas to Scrapyard GameState.
+- `AARScrapyardHUD` is the local UI binding owner for Scrapyard runtime delegates (timer/summary/run-active + run-buff snapshot).
+- `UARScrapyardHUDWidgetBase` and `UARScrapyardExitZoneWidgetBase` are reusable Blueprint-facing widget bridges for Scrapyard HUD state and per-exit reserved scrap state.
+- Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
+- Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`.
+
+Docs: `Documentation/README_ScrapyardMode.md`
+
+### Temp Run Buffs
+
+- `UARRunBuffSubsystem` owns save-backed temp-buff storage/queue/active state and authority mutation APIs.
+- Run-buff rotation happens at Invader initialization: remove previous active runtime payload, consume queued drinks into new active payload, apply once to player ASC state.
+- Active payload re-application for late-join/respawn flows is handled from Invader + Scrapyard GameMode integration.
+- No manual Blueprint reset/apply control path is required for correctness in the current runtime contract.
 
 ---
 

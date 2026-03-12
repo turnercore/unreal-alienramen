@@ -8,6 +8,9 @@
 #include "ARGameModeBase.h"
 #include "ARInvaderGameMode.generated.h"
 
+class AController;
+class APlayerController;
+
 UCLASS()
 class ALIENRAMEN_API AARInvaderGameMode : public AARGameModeBase
 {
@@ -15,4 +18,9 @@ class ALIENRAMEN_API AARInvaderGameMode : public AARGameModeBase
 
 public:
 	AARInvaderGameMode();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	virtual void RestartPlayer(AController* NewPlayer) override;
 };
