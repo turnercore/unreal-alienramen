@@ -123,6 +123,27 @@ This document captures the server-authoritative runtime contract for:
   - rarity cap
   - weighted selection by item weight
   - deterministic RNG from run seed + economy seed salt
+  - `bAlwaysSpawn` bypasses noise/quotas but still respects runtime tag gates and rarity cap.
+  - `SpawnerWeight` biases managed selection when GameMode orchestrates spawns.
+
+## Managed Scrapyard Spawns (GameMode-owned)
+
+- `AARScrapyardGameMode` orchestrates scrapyard spawns when `SpawnRuleSet` is set.
+- Rule asset: `UARScrapyardSpawnRuleSet` ➜ `FARScrapyardSpawnRules`
+  - `MinTotalSpawns`, `MaxTotalSpawns`
+  - `NoiseScale`, `NoiseThreshold`, `NoiseJitter`
+  - `RarityBudgets` map (`EARScrapyardItemRarity` → `{MinCount, MaxCount}`)
+- Algorithm (authority, deterministic):
+  1. Collect all `AARScrapyardItemSpawner` actors that have not already spawned.
+  2. Build each spawner’s eligible items (using item definitions + spawn condition tags).
+  3. Compute seeded Perlin noise per spawner; apply `NoiseThreshold` gate unless `bAlwaysSpawn` is true.
+  4. Phase 0: fire all `bAlwaysSpawn` spawners (counting toward budgets).
+  5. Phase 1: satisfy per-rarity `MinCount`.
+  6. Phase 2: fill until `MaxTotalSpawns` and per-rarity `MaxCount`.
+  7. Each spawn uses a deterministic seed from run seed + spawner identity.
+- Authoring guidance:
+  - Set `bSpawnOnBeginPlay=false` on spawners when using managed mode to avoid double spawns.
+  - Use `bAlwaysSpawn` for guaranteed hero pieces; adjust `SpawnerWeight` to bias selection.
 
 ## UI Read Model Surface
 

@@ -138,6 +138,8 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
+- `AARMeatStorageBoxActor` handles smart meat storage interaction: held meat + interact stores back to `GameState::Meat`; empty hands + interact dispenses from reserve.
+- `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap, but only after it has moved beyond storage-return arm distance (prevents instant re-store on spawn).
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 - `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.
 - Stored energy-drink inventory is authoritative before shop spawn; once spawned at shop anchors, drink instances are world-owned carryables until consumed/stored/sold by shop systems.
@@ -180,6 +182,7 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 - Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
 - Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
 - Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- When `SpawnRuleSet` is set on `AARScrapyardGameMode`, scrapyard item spawn orchestration is GameMode-owned (Perlin noise + spawner weight + rarity budgets + `bAlwaysSpawn`). Managed flow only runs when the rule asset is set; leave it unset only for maps that should intentionally have no scrapyard spawns. Set spawner `bSpawnOnBeginPlay=false` when relying on managed flow. Docs: `Documentation/README_ScrapyardMode.md` and `Documentation/Assets/README_ScrapyardSpawnRules.md`.
 
 Docs: `Documentation/README_ScrapyardMode.md`
 
