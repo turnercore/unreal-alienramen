@@ -19,6 +19,7 @@ class ALIENRAMEN_API AARScrapyardPlayerController : public AARPlayerController
 public:
 	AARScrapyardPlayerController();
 
+	/** Authority-routed pickup request for scrapyard carryables in reach. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
 	void RequestScrapyardPickupCarryItem(AARScrapyardCarryItemBase* CarryItemActor);
 
@@ -37,6 +38,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestScrapyardThrowHeldCarryItem(float ThrowStrength = 900.0f);
 
+	/** Deposit a reserved item into an exit zone (consumes reserved scrap). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
 	void RequestScrapyardDepositToExit(AARScrapyardExitZoneActor* ExitZone);
 

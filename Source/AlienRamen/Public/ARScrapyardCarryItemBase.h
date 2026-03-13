@@ -46,14 +46,14 @@ protected:
 	void DestroyVisualModelActor();
 
 	// Tag key resolved through Scrapyard.Item route.
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item")
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ToolTip = "Item identity tag looked up via Scrapyard.Item route to resolve definitions/rewards."))
 	FGameplayTag ScrapyardItemTag;
 
 	// Used only when item definition resolution fails.
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ClampMin = "0", UIMin = "0", ToolTip = "Fallback scrap cost applied if item definition lookup fails at runtime."))
 	int32 FallbackScrapCost = 0;
 
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_VisualModelClass, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item")
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_VisualModelClass, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ToolTip = "Optional model class spawned for cosmetics when the resolved item class is not itself a carryable."))
 	TSoftClassPtr<AActor> VisualModelClass;
 
 	UPROPERTY(Transient)

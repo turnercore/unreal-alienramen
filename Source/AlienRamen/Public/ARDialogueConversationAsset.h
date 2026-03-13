@@ -32,9 +32,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "", AdvancedDisplay, meta = (ToolTip = "Incremented each time compile output is regenerated. Useful for tracking compile freshness and debugging stale data."))
 	int32 CompileVersion = 0;
 
+	/** Returns true when compiled data is present and matches the latest editor graph. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool IsCompiledGraphValid() const;
 
+	/** Clear compiled data (forces a recompile on next save). Editor/debug helper. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void ClearCompiledData();
 

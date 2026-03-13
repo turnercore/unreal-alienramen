@@ -43,12 +43,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")
 	bool bSpawnOnBeginPlay = true;
 
+	/** Allowed item tags for this spawner (empty = any, filtered by AllowedItemTags only). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")
 	FGameplayTagContainer AllowedItemTags;
 
+	/** Runtime tags required to allow spawning (e.g., progression/phase). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")
 	FGameplayTagContainer RequiredRuntimeTags;
 
+	/** Chance for this spawner to attempt a spawn when selected. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float SpawnChance = 1.0f;
 
