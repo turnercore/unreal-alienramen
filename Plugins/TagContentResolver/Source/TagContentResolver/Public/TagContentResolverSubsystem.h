@@ -80,6 +80,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver")
 	bool ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError);
 
+	/**
+	 * Preloads a root's DataTable and all soft object/class references found in its rows.
+	 * Optionally recurses into DataTables referenced by those soft paths (depth-limited).
+	 * @param RootTag						Resolver root to load.
+	 * @param MaxRecursiveTableDepth		How many levels of referenced DataTables to walk (0 = only the root table).
+	 * @param MaxAssetsToLoad				Guard rail to prevent runaway recursion; early-outs if exceeded.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver")
+	bool PreloadRootTableAndSoftReferences(
+		FGameplayTag RootTag,
+		int32 MaxRecursiveTableDepth,
+		int32 MaxAssetsToLoad,
+		FString& OutError);
+
 	static bool TryResolveDataTableForRootTagFromConfiguredRoutes(
 		FGameplayTag RootTag,
 		UDataTable*& OutDataTable,
