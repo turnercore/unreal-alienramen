@@ -285,8 +285,8 @@ struct ALIENRAMEN_API FARSaveSlotDescriptor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FName SlotName = NAME_None;
 
-	/** Human-friendly slot number (0-based in debug saves; UI can add 1). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	/** Zero-based save revision number used as the on-disk slot suffix (e.g., \"Base__Rev\"). Not a human-facing slot index. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Zero-based save revision number used as the on-disk slot suffix (e.g., \"Base__Rev\"). Not a human-facing slot index."))
 	int32 SlotNumber = 0;
 
 	/** Save schema version recorded for this slot revision. */
