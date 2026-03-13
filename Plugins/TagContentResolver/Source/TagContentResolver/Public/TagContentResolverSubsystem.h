@@ -34,18 +34,27 @@ public:
 
 	// Copy-owning resolve: returns an InstancedStruct copy (safe to keep after table unload).
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a gameplay tag to a DataTable row and copies that row into an InstancedStruct for Blueprint use. Use this when you need row data payload from a content tag and do not know row struct type at compile time. Returns false with OutError if route/table/row cannot be resolved."))
-	bool TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError);
+	bool TryResolveRowStructForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError);
 
 	// View-only resolve: returns a const struct view into the loaded table (no copy, only valid while table stays loaded).
-	bool TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a gameplay tag to a DataTable row and returns a view into the loaded table (no copy). Only valid while the table remains loaded."))
+	bool TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
 
-	// Deprecated wrapper: use TryResolveRowForTag instead.
-	UE_DEPRECATED(5.3, "Use TryResolveRowForTag")
-	bool TryResolveRowForContentTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowForTag(Tag, OutRow, OutError); }
+	// Deprecated wrapper: use TryResolveRowStructForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowStructForTag")
+	bool TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowStructForTag(Tag, OutRow, OutError); }
 
-	// Deprecated wrapper: use TryResolveRowViewForTag instead.
-	UE_DEPRECATED(5.3, "Use TryResolveRowViewForTag")
-	bool TryResolveRowViewForContentTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError) { return TryResolveRowViewForTag(Tag, OutRowView, OutError); }
+	// Deprecated wrapper: use TryResolveRowRefForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowRefForTag")
+	bool TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError) { return TryResolveRowRefForTag(Tag, OutRowView, OutError); }
+
+	// Deprecated wrapper: use TryResolveRowStructForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowStructForTag")
+	bool TryResolveRowForContentTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowStructForTag(Tag, OutRow, OutError); }
+
+	// Deprecated wrapper: use TryResolveRowRefForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowRefForTag")
+	bool TryResolveRowViewForContentTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError) { return TryResolveRowRefForTag(Tag, OutRowView, OutError); }
 
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Returns all row names from the DataTable mapped to an exact root tag. Row names are sorted alphabetically. Use this when you want to iterate a family of definitions under one root (for example validation, menus, random selection, or authoring tools)."))
 	bool TryGetRowNamesForRootTag(FGameplayTag RootTag, TArray<FName>& OutRowNames, FString& OutError);
