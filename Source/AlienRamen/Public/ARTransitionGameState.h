@@ -21,9 +21,11 @@ public:
 
 	virtual UScriptStruct* GetStateStruct_Implementation() const override;
 
+	/** Current transition payload (source/reason/destination) replicated for transition UI. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Transition")
 	const FARTransitionContext& GetTransitionContext() const { return TransitionContext; }
 
+	/** Authority-only setter for transition payload. Triggers OnTransitionContextChanged. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Transition", meta = (BlueprintAuthorityOnly))
 	void SetTransitionContext(const FARTransitionContext& NewContext);
 

@@ -41,12 +41,15 @@ public:
 
 	UARSaveGame();
 
+	/** Schema version baked into this build. Bump when save layout changes. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
 	static int32 GetCurrentSchemaVersion() { return CurrentSchemaVersion; }
 
+	/** Oldest schema version we can still load (for migration). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
 	static int32 GetMinSupportedSchemaVersion() { return MinSupportedSchemaVersion; }
 
+	/** Returns true when a save schema version is loadable by this build. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
 	static bool IsSchemaVersionSupported(int32 InSchemaVersion)
 	{
@@ -147,12 +150,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Legacy dialogue state array retained only for migration from older save versions."))
 	TArray<FDialoguePlayerPersistentState> DialoguePlayerPersistentStates;
 
+	/** Finds a player save row by coop slot (P1/P2). Returns false when not found. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataBySlot(EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const;
 
+	/** Finds a player save row by identity (platform/user + display name). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const;
 
+	/** Finds a character save row by canonical tag. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindCharacterStateDataByTag(FGameplayTag CharacterTag, FARCharacterSaveData& OutData, int32& OutIndex) const;
 

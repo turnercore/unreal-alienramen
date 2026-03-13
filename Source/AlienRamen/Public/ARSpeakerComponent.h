@@ -26,24 +26,31 @@ class ALIENRAMEN_API UARSpeakerComponent : public UActorComponent
 public:
 	UARSpeakerComponent();
 
+	/** Primary interaction entrypoint: routes to dialogue subsystem using this speaker tag and controller. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void InteractByController(AARPlayerController* InteractingController);
 
+	/** Speaker identity tag used for dialogue lookups (GameplayTag). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag"))
 	FGameplayTag GetSpeakerTag() const { return SpeakerTag; }
 
+	/** Update the speaker tag at runtime (authority only recommended). Also refreshes talkable state. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Set Speaker Tag"))
 	void SetSpeakerTag(FGameplayTag NewSpeakerTag);
 
+	/** True when any player can currently start a conversation with this speaker. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkable() const { return bIsTalkable; }
 
+	/** Slot-specific talkable query (P1/P2). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkableForPlayerSlot(EARPlayerSlot PlayerSlot) const;
 
+	/** Controller-aware talkable query (uses controller player slot mapping). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkableForController(const AARPlayerController* QueryController) const;
 
+	/** Ask the dialogue subsystem to recompute talkability (use after unlocking content or clearing blockers). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void RefreshTalkableFromSubsystem();
 
