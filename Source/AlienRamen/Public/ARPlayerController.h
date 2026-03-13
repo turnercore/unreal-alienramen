@@ -75,6 +75,7 @@ public:
 	const UARAbilitySet* GetCommonAbilitySet() const { return CommonAbilitySet; }
 
 	// Client endpoint for persisting server-canonical save snapshots locally.
+	// Call on client after server sends canonical save bytes; writes to local slot.
 	UFUNCTION(Client, Reliable)
 	void ClientPersistCanonicalSave(const TArray<uint8>& SaveBytes, FName SlotBaseName, int32 SlotNumber);
 
@@ -83,6 +84,7 @@ public:
 	void ServerRequestCanonicalSaveSync();
 
 	// Session leave entrypoint for UI/BP. Routes to server when called by clients.
+	// Safe to call from pause/menus; controller will clean up and return to frontend map.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
 	void LeaveSession();
 
@@ -91,6 +93,7 @@ public:
 	void ServerLeaveSession();
 
 	// Controller travel entrypoint for UI/BP. Routes to server when called by clients.
+	// Use for menu-driven travel; respects travel readiness unless bSkipReadyChecks is true.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
 	void TryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
 
@@ -99,9 +102,11 @@ public:
 	void ServerTryStartTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false, EARTravelRoutePolicy RoutePolicy = EARTravelRoutePolicy::ModeDefault);
 
 	// Unlock mutation entrypoints for UI/BP. Route to server when called by clients.
+	// Adds a progression tag to shared unlocks (authority validated).
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestAddUnlock(const FGameplayTag& UnlockTag);
 
+	// Removes a progression tag from shared unlocks (authority validated).
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestRemoveUnlock(const FGameplayTag& UnlockTag);
 
