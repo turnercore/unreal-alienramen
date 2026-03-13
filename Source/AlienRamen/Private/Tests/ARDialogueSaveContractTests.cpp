@@ -21,7 +21,6 @@ bool FARDialogueSchemaVersionTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Current schema version is positive"), CurrentSchemaVersion > 0);
 	TestTrue(TEXT("Min supported schema version is positive"), MinSupportedSchemaVersion > 0);
 	TestTrue(TEXT("Current schema version is >= min supported schema"), CurrentSchemaVersion >= MinSupportedSchemaVersion);
-	TestEqual(TEXT("Without migrations, current schema equals min supported schema"), CurrentSchemaVersion, MinSupportedSchemaVersion);
 	TestTrue(TEXT("Current schema is supported"), UARSaveGame::IsSchemaVersionSupported(CurrentSchemaVersion));
 	return true;
 }
@@ -53,19 +52,75 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 	}
 
 	{
-		FDialoguePlayerPersistentState PlayerState;
+		FARCharacterSaveData CharacterState;
+		CharacterState.CharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
+
+		FDialoguePlayerPersistentState& PlayerState = CharacterState.DialogueState;
 		FDialogueChoiceMemoryRecord InvalidRecord;
 		InvalidRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation")), false);
 		PlayerState.CompletedChoiceRecords.Add(InvalidRecord);
-		Save->DialoguePlayerPersistentStates.Add(PlayerState);
+		Save->CharacterStates.Add(CharacterState);
 	}
 
 	TArray<FString> Warnings;
 	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
 	TestTrue(TEXT("Sanitization performs at least one correction"), ClampedCount > 0);
 	TestEqual(TEXT("Invalid relationship rows removed"), Save->DialogueRelationshipStates.Num(), 1);
-	TestEqual(TEXT("Invalid choice memory rows removed"), Save->DialoguePlayerPersistentStates[0].CompletedChoiceRecords.Num(), 0);
+	TestEqual(TEXT("Invalid choice memory rows removed"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 0);
 	TestTrue(TEXT("Warnings produced for invalid dialogue data"), Warnings.Num() > 0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARDialogueSaveMigrationTest,
+	"AlienRamen.Dialogue.Save.MigrateOwnershipModel",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	UARSaveGame* Save = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(UARSaveGame::StaticClass()));
+	if (!TestNotNull(TEXT("Created save object"), Save))
+	{
+		return false;
+	}
+
+	Save->SaveGameVersion = 10;
+
+	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
+	PlayerState.Identity.PlayerSlot = EARPlayerSlot::P1;
+	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
+	PlayerState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
+
+	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
+	LegacyDialogueState.Identity.PlayerSlot = EARPlayerSlot::P1;
+	LegacyDialogueState.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother.Default")), false));
+	LegacyDialogueState.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false));
+
+	FDialogueChoiceMemoryRecord ChoiceRecord;
+	ChoiceRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false);
+	ChoiceRecord.ChoiceNodeId = FGuid::NewGuid();
+	ChoiceRecord.SelectedBranchId = FGuid::NewGuid();
+	LegacyDialogueState.CompletedChoiceRecords.Add(ChoiceRecord);
+
+	TArray<FString> Warnings;
+	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
+
+	TestTrue(TEXT("Migration performed at least one correction"), ClampedCount > 0);
+	TestEqual(TEXT("Schema migrated to current version"), Save->SaveGameVersion, UARSaveGame::GetCurrentSchemaVersion());
+	TestEqual(TEXT("Legacy dialogue array cleared after migration"), Save->DialoguePlayerPersistentStates.Num(), 0);
+
+	TestEqual(TEXT("One character row created"), Save->CharacterStates.Num(), 1);
+	TestEqual(TEXT("Character row keyed by Brother tag"), Save->CharacterStates[0].CharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
+	TestTrue(TEXT("Dialogue progression migrated to character row"), Save->CharacterStates[0].DialogueState.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother.Default")), false)));
+	TestTrue(TEXT("Dialogue completion migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false)));
+	TestEqual(TEXT("Dialogue choice memory migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 1);
+
+	TestEqual(TEXT("One player-character loadout row created"), Save->PlayerStates[0].CharacterStates.Num(), 1);
+	TestEqual(TEXT("Current character tag resolved"), Save->PlayerStates[0].CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
+	TestTrue(TEXT("Loadout migrated into player-character row"), Save->PlayerStates[0].CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false)));
+	TestTrue(TEXT("Migration warnings emitted"), Warnings.Num() > 0);
 	return true;
 }
 
