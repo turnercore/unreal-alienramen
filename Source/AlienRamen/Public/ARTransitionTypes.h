@@ -62,6 +62,7 @@ namespace ARTransition
 	ALIENRAMEN_API extern const TCHAR* OptionDestinationURL;
 	ALIENRAMEN_API extern const TCHAR* OptionFreshLoad;
 
+	ALIENRAMEN_API FString AppendTransitionContextOptions(const FString& URL, const FARTransitionContext& Context);
 	ALIENRAMEN_API FString BuildTransitionTravelURL(const FString& TransitionMapURL, const FARTransitionContext& Context);
 	ALIENRAMEN_API void ApplyTransitionContextFromTravelOptions(const FString& OptionsString, FARTransitionContext& InOutContext);
 	ALIENRAMEN_API FString LexToString(EARTransitionSourceMode SourceMode);

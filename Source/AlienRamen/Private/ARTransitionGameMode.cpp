@@ -199,13 +199,14 @@ bool AARTransitionGameMode::TryAdvanceToDestination()
 	}
 
 	bTransitionTravelStarted = true;
-	if (!TryStartTravel(TransitionContext.DestinationURL, TEXT(""), false, false, false, false, EARTravelRoutePolicy::ForceDirect))
+	const FString DestinationTravelURL = ARTransition::AppendTransitionContextOptions(TransitionContext.DestinationURL, TransitionContext);
+	if (!TryStartTravel(DestinationTravelURL, TEXT(""), false, false, false, false, EARTravelRoutePolicy::ForceDirect))
 	{
 		bTransitionTravelStarted = false;
-		UE_LOG(ARLog, Warning, TEXT("[Transition] Advance travel failed to '%s'."), *TransitionContext.DestinationURL);
+		UE_LOG(ARLog, Warning, TEXT("[Transition] Advance travel failed to '%s'."), *DestinationTravelURL);
 		return false;
 	}
 
-	UE_LOG(ARLog, Log, TEXT("[Transition] Advancing to destination '%s'."), *TransitionContext.DestinationURL);
+	UE_LOG(ARLog, Log, TEXT("[Transition] Advancing to destination '%s'."), *DestinationTravelURL);
 	return true;
 }

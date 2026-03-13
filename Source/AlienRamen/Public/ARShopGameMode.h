@@ -9,8 +9,11 @@
 #include "ARShopGameMode.generated.h"
 
 class AAREnergyDrinkCarryItem;
+class AARRamenBowlActor;
+class UARShopCarryComponent;
 class UARSaveGame;
 class UARSaveSubsystem;
+struct FARCharacterHeldShopItemSnapshot;
 
 UCLASS()
 class ALIENRAMEN_API AARShopGameMode : public AARGameModeBase
@@ -22,19 +25,28 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void RestartPlayer(AController* NewPlayer) override;
 	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink")
+	// Actor tag used to find shop anchor actors where stored energy drinks should materialize on shop entry.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink", meta = (ToolTip = "Actor tag used to find energy-drink spawn anchors in the shop."))
 	FName EnergyDrinkSpawnAnchorActorTag = TEXT("Shop.EnergyDrink.Spawn");
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	// Vertical spacing applied when multiple stored drinks stack on the same anchor.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink", meta = (ClampMin = "0.0", UIMin = "0.0", ToolTip = "Vertical spacing used when multiple stored drinks stack on the same spawn anchor."))
 	float EnergyDrinkStackedSpawnZOffset = 12.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink")
+	// Fallback actor class used when an item definition does not provide a more specific energy-drink actor class.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink", meta = (ToolTip = "Fallback class to spawn when a stored energy drink does not resolve a specific actor class from item definitions."))
 	TSubclassOf<AAREnergyDrinkCarryItem> FallbackEnergyDrinkCarryItemClass;
 
 private:
+	bool ShouldApplyFreshLoadCharacterRestore(const UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
+	bool TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
+	bool TryRestoreCharacterShopStateForController(AController* Controller, UARSaveGame* SaveGame) const;
 	bool RestoreTransientShopCarryables(UARSaveGame* SaveGame) const;
+	bool RestoreHeldShopItemSnapshot(class UARShopCarryComponent* CarryComponent, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
+	bool RestoreBowlSnapshot(class AARRamenBowlActor* BowlActor, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
 	bool SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
 	void ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* SaveSubsystem) const;
 };
