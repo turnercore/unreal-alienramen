@@ -811,6 +811,201 @@ void UTagContentResolverSubsystem::GetResolverDiagnostics(FTagContentResolverDia
 	OutDiagnostics.LoggedFailureCount = LoggedFailureMessages.Num();
 }
 
+bool UTagContentResolverSubsystem::IsRootTableLoaded(FGameplayTag RootTag) const
+{
+	return LoadedTablesByRootTag.Contains(RootTag);
+}
+
+bool UTagContentResolverSubsystem::ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError)
+{
+	OutError.Reset();
+	if (!EnsureGameThread(TEXT("ResetLoadedTablesToExactRoots"), &OutError))
+	{
+		return false;
+	}
+
+	// Build keep set of valid roots.
+	TSet<FGameplayTag> KeepSet;
+	for (const FGameplayTag& Root : RootsToKeep)
+	{
+		if (Root.IsValid())
+		{
+			KeepSet.Add(Root);
+		}
+	}
+
+	// Remove any loaded tables not in the keep set.
+	TArray<FGameplayTag> LoadedRoots;
+	LoadedTablesByRootTag.GetKeys(LoadedRoots);
+	for (const FGameplayTag& LoadedRoot : LoadedRoots)
+	{
+		if (!KeepSet.Contains(LoadedRoot))
+		{
+			LoadedTablesByRootTag.Remove(LoadedRoot);
+		}
+	}
+
+	// Clear caches that may reference unloaded tables; routes remain intact.
+	CachedMatchedRootByTag.Reset();
+	CachedLeafRowNamesByTag.Reset();
+
+	// Load any keep-roots that are not currently cached.
+	TArray<FGameplayTag> MissingRoots;
+	for (const FGameplayTag& Root : KeepSet)
+	{
+		if (!LoadedTablesByRootTag.Contains(Root))
+		{
+			MissingRoots.Add(Root);
+		}
+	}
+
+	if (!MissingRoots.IsEmpty())
+	{
+		if (!PreloadDataTablesForRoots(MissingRoots, OutError))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+namespace
+{
+	void GatherSoftObjectPathsFromStruct(const UStruct* StructType, const void* StructMemory, TSet<FSoftObjectPath>& OutPaths);
+	void GatherSoftObjectPathsFromPropertyValue(const FProperty* Property, const void* ValuePtr, TSet<FSoftObjectPath>& OutPaths);
+
+	void GatherSoftObjectPathsFromObject(const UObject* Object, TSet<FSoftObjectPath>& OutPaths)
+	{
+		if (!Object)
+		{
+			return;
+		}
+
+		for (TFieldIterator<const FProperty> PropertyIt(Object->GetClass()); PropertyIt; ++PropertyIt)
+		{
+			const FProperty* Property = *PropertyIt;
+			if (!Property)
+			{
+				continue;
+			}
+			const void* PropertyValuePtr = Property->ContainerPtrToValuePtr<void>(Object);
+			GatherSoftObjectPathsFromPropertyValue(Property, PropertyValuePtr, OutPaths);
+		}
+	}
+}
+
+bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
+	FGameplayTag RootTag,
+	int32 MaxRecursiveTableDepth,
+	int32 MaxAssetsToLoad,
+	FString& OutError)
+{
+	OutError.Reset();
+	if (!EnsureGameThread(TEXT("PreloadRootTableAndSoftReferences"), &OutError))
+	{
+		return false;
+	}
+
+	if (!EnsureRouteCacheFresh(OutError))
+	{
+		return false;
+	}
+
+	if (MaxAssetsToLoad <= 0)
+	{
+		OutError = TEXT("MaxAssetsToLoad must be > 0.");
+		return false;
+	}
+
+	// Load root table (will cache it).
+	UDataTable* RootTable = nullptr;
+	if (!TryResolveDataTableForRootTag(RootTag, RootTable, OutError) || !RootTable)
+	{
+		return false;
+	}
+
+	TSet<FSoftObjectPath> PathsToLoad;
+	TSet<FGameplayTag> VisitedTables;
+	TSet<FSoftObjectPath> VisitedAssets;
+
+	TFunction<bool(UDataTable*, int32)> GatherTableSoftRefsRecursive =
+		[&](UDataTable* Table, int32 DepthRemaining) -> bool
+	{
+		if (!Table || DepthRemaining < 0)
+		{
+			return true;
+		}
+
+		for (const auto& Pair : Table->GetRowMap())
+		{
+			const uint8* RowData = reinterpret_cast<const uint8*>(Pair.Value);
+			GatherSoftObjectPathsFromStruct(Table->GetRowStruct(), RowData, PathsToLoad);
+		}
+
+		if (DepthRemaining == 0)
+		{
+			return true;
+		}
+
+		// Optionally recurse into DataTables referenced by soft paths.
+		TArray<FSoftObjectPath> CurrentPaths = PathsToLoad.Array();
+		for (const FSoftObjectPath& Path : CurrentPaths)
+		{
+			if (VisitedAssets.Contains(Path))
+			{
+				continue;
+			}
+			VisitedAssets.Add(Path);
+
+			if (VisitedAssets.Num() > MaxAssetsToLoad)
+			{
+				OutError = TEXT("PreloadRootTableAndSoftReferences aborted: MaxAssetsToLoad exceeded.");
+				return false;
+			}
+
+			if (Path.IsNull())
+			{
+				continue;
+			}
+
+			if (UDataTable* SubTable = Cast<UDataTable>(Path.TryLoad()))
+			{
+				// Only walk each DataTable once.
+				FGameplayTag SubTag = FGameplayTag::RequestGameplayTag(Path.GetAssetPathName());
+				if (!VisitedTables.Contains(SubTag))
+				{
+					VisitedTables.Add(SubTag);
+					if (!GatherTableSoftRefsRecursive(SubTable, DepthRemaining - 1))
+					{
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	};
+
+	VisitedTables.Add(RootTag);
+	if (!GatherTableSoftRefsRecursive(RootTable, MaxRecursiveTableDepth))
+	{
+		return false;
+	}
+
+	if (!PathsToLoad.IsEmpty())
+	{
+		// Preload all gathered assets asynchronously (non-blocking for soft refs).
+		TArray<FSoftObjectPath> Paths = PathsToLoad.Array();
+		UAssetManager::GetStreamableManager().RequestAsyncLoad(
+			Paths,
+			FStreamableDelegate(),
+			FStreamableManager::DefaultAsyncLoadPriority,
+			true);
+	}
+
+	return true;
+}
 bool UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 	FGameplayTag RootTag,
 	UDataTable*& OutDataTable,
