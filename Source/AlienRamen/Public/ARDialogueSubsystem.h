@@ -127,6 +127,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool HasUnlockedDialogueForSpeakerForAnyPlayer(FGameplayTag PrimarySpeakerTag) const;
 
+	/** Returns true when this primary speaker currently has any active dialogue session (any slot). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool IsPrimarySpeakerInActiveSession(FGameplayTag PrimarySpeakerTag) const;
+
+	/** Resolves primary speaker tag for a conversation tag from registered runtime conversation data. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
+	bool GetPrimarySpeakerForConversation(FGameplayTag ConversationTag, FGameplayTag& OutPrimarySpeakerTag) const;
+
 	// Returns the union of registered speaker tags known to dialogue runtime (conversation primaries + speaker records).
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	void GetRegisteredPrimarySpeakerTags(TArray<FGameplayTag>& OutSpeakerTags) const;

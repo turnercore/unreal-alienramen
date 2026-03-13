@@ -24,6 +24,11 @@ void AARRamenMeatActor::SetMeatData(const EARAffinityColor NewColor, const int32
 
 bool AARRamenMeatActor::HasMovedAwayForStorageReturn(const float RequiredDistance) const
 {
+	if (bStorageReturnArmedByPickup)
+	{
+		return true;
+	}
+
 	if (RequiredDistance <= KINDA_SMALL_NUMBER)
 	{
 		return true;
@@ -32,11 +37,22 @@ bool AARRamenMeatActor::HasMovedAwayForStorageReturn(const float RequiredDistanc
 	return MaxDistanceFromSpawnSq >= FMath::Square(RequiredDistance);
 }
 
+void AARRamenMeatActor::ArmStorageReturn()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bStorageReturnArmedByPickup = true;
+}
+
 void AARRamenMeatActor::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnLocationForStorageReturn = GetActorLocation();
 	MaxDistanceFromSpawnSq = 0.0f;
+	bStorageReturnArmedByPickup = false;
 }
 
 void AARRamenMeatActor::Tick(const float DeltaSeconds)

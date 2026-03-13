@@ -428,19 +428,7 @@ void AARHUDBase::DrawHUD()
 {
 	Super::DrawHUD();
 
-	const int32 DrawnEmotionCount = RenderEmotionView();
-	static double LastHUDRenderLogSeconds = 0.0;
-	const double NowSeconds = FPlatformTime::Seconds();
-	if ((NowSeconds - LastHUDRenderLogSeconds) >= 1.0)
-	{
-		UE_LOG(
-			ARLog,
-			VeryVerbose,
-			TEXT("[Emotion][HUD] AARHUDBase::DrawHUD emitted DrawnEmotionCount=%d HUD='%s'."),
-			DrawnEmotionCount,
-			*GetNameSafe(this));
-		LastHUDRenderLogSeconds = NowSeconds;
-	}
+	RenderEmotionView();
 }
 
 bool AARHUDBase::TryProjectEmotionForActor(

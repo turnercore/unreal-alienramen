@@ -106,6 +106,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestShopThrowHeldCarryItem(float ThrowStrength = -1.0f);
 
+	// Generic held secondary action route. Defers behavior to currently held carry item.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
+	void RequestUseSecondaryOnHeldCarryItem();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestUseSecondaryOnHeldCarryItem();
+
 	// Consumes held energy drink in shop mode. Returns false/no-op if held actor is not a drink.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestConsumeHeldEnergyDrink();

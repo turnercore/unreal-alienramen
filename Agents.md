@@ -120,6 +120,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
+- `AARShopAIController` bridges shop-NPC dialogue lifecycle into StateTree events (`Event.ShopNPC.ConversationOffered`, `Event.ShopNPC.DialogueStarted`, `Event.ShopNPC.DialogueEnded`, `Event.ShopNPC.ConversationCompleted`) for animation/state transitions.
 - `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
 - Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
@@ -133,10 +134,16 @@ Docs: `Documentation/README_DialogueNPC.md`
 
 - `UARCustomerComponent` is the authoritative customer/order runtime.
 - Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
+- Customer order UI style is component-authored via `UARCustomerComponent::OrderWidgetClass` (`UARCustomerOrderWidgetBase` subclass); runtime should use `CreateAndInitializeOrderWidget(...)` / `InitializeOrderWidget(...)` so widget binding stays delegate-driven from customer state.
+- Shop NPC StateTree binding should use `AARNPCCharacterBase` cached actor bools (`bST_HasActiveOrder`, `bST_HasDialogueToSay`) for branch conditions; these are component-optional safe and refreshed from customer/speaker state changes.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopPlayerController` owns shop-only interaction requests for carryables and stations (including `Pickup`/`Drop`/`Throw` plus station place/pickup/process/fill routes).
 - Shop throw strength defaults to thrower GAS `Strength` mapping (`Strength * 100`) when `RequestShopThrowHeldCarryItem` is called with `ThrowStrength <= 0`.
 - Actor-targeted interaction RPC requests on `AARPlayerController`/`AARShopPlayerController` must pass server-side reachability validation against the controller pawn (`ServerInteractionMaxDistance`) before authority gameplay mutation.
+- `AARPlayerController` tracks active primary/secondary interaction targets (`ActiveInteractable`, `ActiveSecondaryInteractable`) plus shared latch state (`bIsInteracting`) for hold-style input flows; when both active targets clear (including out-of-range interruption), controller auto-clears `bIsInteracting`.
+- Server-side controller tick re-validates active interaction targets at `ActiveInteractionRangeCheckInterval` and notifies opted-in interactables through `IARInteractableRangeListener::OnPlayerOutOfRange(...)` before clearing out-of-range targets.
+- `AARPlayerController::OnInteractionActionCue` is the shared animation/UI cue stream for interaction outcomes (for example `Throw`, `Consume`, `Kick`, `Slap`); gameplay paths should emit cues via `NotifyInteractionActionCue(...)` when actions are successfully performed.
+- `AARPlayerController::RequestKickActor(...)` emits `Kick` vs `Slap` cue using target height relative to pawn (`SlapCueMinHeightDeltaCm`) while keeping kick/slap physics behavior identical.
 - `AARShopPlayerController::RequestShopUseOrDrop(AActor*)` is the preferred one-shot input entrypoint: forward-use valid targets, fallback drop when target is null.
 - `AARShopPlayerController::RequestShopPickupCarryItem(nullptr)` is the no-hit fallback path and drops the currently held carry item when one exists.
 - `AARShopPlayerController::RequestShopStationInteract(AARShopStationActor*)` is the smart station one-shot entrypoint: held bowl -> fill, held meat + empty slot -> place, empty hands + slotted meat -> pickup.
@@ -146,11 +153,16 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Manual/debug station authoring rule: if `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded (no unlock dependency).
 - Station processing input mode is station-configurable (`Hold`/`Tap`): in tap mode, each press consumes one pulse and release is required before the next pulse.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
+- Held-item secondary actions route through `AARShopCarryItemBase::UseSecondaryByController(...)`; controller input should call `RequestUseSecondaryOnHeldCarryItem()` and let the held item decide behavior (default throw, item-specific overrides such as energy-drink consume).
+- Carry-item world secondary actions route through `AARShopCarryItemBase::UseSecondaryInWorldByController(...)`; default behavior is a strength-scaled kick impulse (`Strength * 100`) for non-held world items.
+- `AARShopCarryItemBase::ForwardSecondaryUseToController(AActor*)` is the BI-style held-secondary forwarding helper and only routes when the item is currently held by the interacting controller (throw/consume/etc via item override).
+- `AARShopCarryItemBase::ForwardKickToController(AActor*)` is the BI-style world-item kick forwarding helper and routes to `AARPlayerController::RequestKickActor(...)`.
 - Shop carryables expose shared `WeightKg` runtime (`0` = native primitive mass, `>0` = explicit mass override) so bowl/meat physics weight can be tuned per actor/Blueprint.
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
 - `AARMeatStorageBoxActor` handles smart meat storage interaction: held meat + interact stores back to `GameState::Meat`; empty hands + interact dispenses from reserve.
 - `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap, but only after it has moved beyond storage-return arm distance (prevents instant re-store on spawn).
+- Intentional player pickup of `AARRamenMeatActor` arms storage return, so throw-back interactions are not blocked by initial spawn-distance gating.
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 - `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.
 - `AAREnergyDrinkCarryItem` replicates `EnergyDrinkItemTag` so remote clients can resolve drink UI/content from world actors.
@@ -207,6 +219,8 @@ Docs: `Documentation/README_TransitionMode.md`
 - `UARScrapyardHUDWidgetBase` and `UARScrapyardExitZoneWidgetBase` are reusable Blueprint-facing widget bridges for Scrapyard HUD state and per-exit reserved scrap state.
 - `AARScrapyardCarryItemBase` overrides `ForwardUseToController` to route BI_Interactable-style use into `AARScrapyardPlayerController::RequestScrapyardPickupCarryItem` (not shop pickup).
 - `AARScrapyardCarryItemBase` replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI paths.
+- `AARScrapyardPlayerController::RequestUseSecondaryOnHeldCarryItem()` mirrors shop held-secondary dispatch and delegates behavior to held `AARShopCarryItemBase::UseSecondaryByController(...)` (default throw unless item override).
+- Scrapyard hold-style interactions should use `AARPlayerController` active interaction tracking and optional `IARInteractableRangeListener` callbacks for server-authoritative out-of-range interruption.
 - Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
 - Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
 - Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.

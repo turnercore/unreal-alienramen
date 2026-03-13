@@ -33,7 +33,17 @@ This document captures the runtime ownership and integration contract for the sh
 - Customer runtime speaker identity comes from `UARCustomerComponent::GetSpeakerTag()`:
   - `SpeakerTagOverride` when explicitly authored on the customer component
   - otherwise the owning `UARSpeakerComponent` speaker tag
+- Customer order UI can be authored per-NPC via `UARCustomerComponent::OrderWidgetClass` (`UARCustomerOrderWidgetBase` subclass). Runtime helpers:
+  - `CreateAndInitializeOrderWidget(APlayerController*)`
+  - `InitializeOrderWidget(UARCustomerOrderWidgetBase*)`
+  - Widget base binds to customer delegates (`OnCustomerOrderChanged`/`GeneratedDetailed`/`Resolved`/`DoneOrdering`) and exposes BP events for styling.
 - `FARCustomerDefinitionRow` is keyed by TagContentResolver row tag/row name route mapping and does not carry a separate identity/speaker field.
+- StateTree-facing gate helpers:
+  - `UARCustomerComponent::HasOrderForInteraction()` reports active order availability for serve-first interaction branches.
+  - `UARSpeakerComponent::HasDialogueToSay()` reports dialogue talkability.
+- `AARNPCCharacterBase` exposes cached actor-level bools for direct StateTree condition binding (safe when optional components are missing):
+  - `bST_HasActiveOrder`
+  - `bST_HasDialogueToSay`
 - Interact priority is **delivery-first**:
   1. try serving held completed bowl via customer component
   2. if serving fails, fallback to dialogue via `UARSpeakerComponent` (when present)
@@ -80,6 +90,8 @@ This document captures the runtime ownership and integration contract for the sh
 ## World Carry Item Interaction
 
 - World carryables (`AARShopCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
+- World carryables expose `ForwardSecondaryUseToController(AActor* UsingActor)` for BI-style held-secondary forwarding (consume/throw/etc via held-item secondary behavior).
+- World carryables expose `ForwardKickToController(AActor* UsingActor)` for BI-style world-item kick forwarding to controller kick requests (`AARPlayerController::RequestKickActor`).
 - `ForwardUseToController(...)` resolves `AARShopPlayerController` (direct controller or pawn owner controller) and routes to `RequestShopPickupCarryItem(...)`.
 - Shop station request APIs are intentionally owned by `AARShopPlayerController` (not `AARPlayerController`).
 - Shop-only interaction requests live on `AARShopPlayerController`:
@@ -88,6 +100,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
     - when `ThrowStrength <= 0`, server resolves throw power from thrower GAS `Strength` (`Strength * 100`, so default Strength `10` => throw strength `1000`)
+  - `RequestUseSecondaryOnHeldCarryItem()` generic held-secondary dispatch (routes to held item `AARShopCarryItemBase::UseSecondaryByController(...)`)
   - `RequestShopStationPlaceHeldMeat(AARShopStationActor*)`
   - `RequestShopStationPickupMeat(AARShopStationActor*)`
   - `RequestShopStationStartProcessing(AARShopStationActor*)`
@@ -100,7 +113,12 @@ This document captures the runtime ownership and integration contract for the sh
     - empty hands and station has slotted meat -> `RequestShopStationPickupMeat(...)`
 - `RequestShopPickupCarryItem(nullptr)` is treated as a no-hit fallback: if the controller currently holds a carry item, it drops it.
 - Actor-targeted shop RPC requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before any station/dispenser/carry mutation runs.
+- Hold-style interaction input should set/clear `AARPlayerController` active target fields (`ActiveInteractable`, `ActiveSecondaryInteractable`) and shared latch state (`bIsInteracting`) on press/release.
+- While a hold-style target is active, `AARPlayerController` performs server-side periodic range validation (`ActiveInteractionRangeCheckInterval`) and triggers `IARInteractableRangeListener::OnPlayerOutOfRange(...)` on opted-in interactables before clearing active targets.
+- Interaction outcome animation cues are emitted through `AARPlayerController::OnInteractionActionCue` (`NotifyInteractionActionCue(...)`), with current secondary defaults emitting `Throw`, `Consume`, and kick-style cues that classify as `Kick` vs `Slap` by target height delta above pawn (`SlapCueMinHeightDeltaCm`).
 - `AARPlayerCharacterShop` exposes BP helpers `IsCarryingShopItem()` and `GetHeldShopActor()` for pawn-side input/UI branching.
+- `AARShopCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
+- `AARShopCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
 - Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
@@ -109,6 +127,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
   - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
+  - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
 - `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
 
 ## Persistence + Replication
@@ -147,3 +166,8 @@ This document captures the runtime ownership and integration contract for the sh
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
   - dialogue gate automatically reopens when `State.ShopNPC` is not active and on controller unpossess cleanup.
 - Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.
+- Shop AI controller also bridges dialogue lifecycle into ShopNPC StateTree tags for the possessed speaker:
+  - `Event.ShopNPC.ConversationOffered` when talkable becomes true.
+  - `Event.ShopNPC.DialogueStarted` when a session starts for that speaker.
+  - `Event.ShopNPC.DialogueEnded` when the speaker no longer has an active session.
+  - `Event.ShopNPC.ConversationCompleted` when a completed conversation belongs to that speaker.

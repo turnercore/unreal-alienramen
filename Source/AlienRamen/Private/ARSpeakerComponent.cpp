@@ -1,5 +1,6 @@
 #include "ARSpeakerComponent.h"
 
+#include "ARCustomerComponent.h"
 #include "AREmotionComponent.h"
 #include "ARDialogueSubsystem.h"
 #include "ARLog.h"
@@ -246,6 +247,18 @@ bool UARSpeakerComponent::IsTalkableForController(const AARPlayerController* Que
 	}
 
 	return IsTalkableForPlayerSlot(QueryPlayerState->GetPlayerSlot());
+}
+
+bool UARSpeakerComponent::HasSomethingToSay() const
+{
+	if (bIsTalkable)
+	{
+		return true;
+	}
+
+	const AActor* OwnerActor = GetOwner();
+	const UARCustomerComponent* CustomerComponent = OwnerActor ? OwnerActor->FindComponentByClass<UARCustomerComponent>() : nullptr;
+	return CustomerComponent && CustomerComponent->HasOrderForInteraction();
 }
 
 bool UARSpeakerComponent::IsAuthorityOwner() const

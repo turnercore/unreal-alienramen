@@ -8,6 +8,7 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
+#include "ARInteractionTypes.h"
 #include "ARDialogueTypes.h"
 #include "ARTransitionTypes.h"
 #include "GameFramework/PlayerState.h"
@@ -56,6 +57,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	NewChoiceIndex,
 	int32,
 	OldChoiceIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnInteractionActionCueSignature,
+	EARInteractionActionCue,
+	ActionCue,
+	AActor*,
+	ActionTarget);
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
@@ -128,6 +135,42 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
+
+	/** Requests a strength-scaled kick impulse on a target actor in interaction range. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void RequestKickActor(AActor* TargetActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestKickActor(AActor* TargetActor);
+
+	/** Sets the current primary interactable being actively interacted with (hold/ongoing flows). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void SetActiveInteractable(AActor* InteractableActor);
+
+	/** Sets the current secondary interactable being actively interacted with (hold/ongoing flows). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void SetActiveSecondaryInteractable(AActor* InteractableActor);
+
+	/** Clears active primary interactable and optionally notifies target as out-of-range interrupted. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void ClearActiveInteractable(bool bNotifyOutOfRange = false);
+
+	/** Clears active secondary interactable and optionally notifies target as out-of-range interrupted. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void ClearActiveSecondaryInteractable(bool bNotifyOutOfRange = false);
+
+	/** Shared interaction latch for input handlers to bail when already in an interaction flow. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void SetIsInteracting(bool bInIsInteracting);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
+	bool GetIsInteracting() const { return bIsInteracting; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
+	AActor* GetActiveInteractable() const { return ActiveInteractable; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
+	AActor* GetActiveSecondaryInteractable() const { return ActiveSecondaryInteractable; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor);
@@ -207,6 +250,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Input")
 	FAROnDialogueChoiceSelectionChangedSignature OnDialogueChoiceSelectionChanged;
+
+	// Animation/UI cue stream for performed interaction actions (throw/consume/kick/slap/etc).
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Interaction|Animation")
+	FAROnInteractionActionCueSignature OnInteractionActionCue;
+
+	// Emits an interaction action cue for local animation/UI listeners.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction|Animation")
+	void NotifyInteractionActionCue(EARInteractionActionCue ActionCue, AActor* ActionTarget = nullptr);
 
 	// Optional auto-created dialogue widget for local controllers.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
@@ -362,10 +413,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction")
 	float ServerInteractionMaxDistance = 300.0f;
 
+	/** Tick rate used to validate active hold interactions and interrupt out-of-range interactables. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (ClampMin = "0.02", UIMin = "0.02"))
+	float ActiveInteractionRangeCheckInterval = 0.10f;
+
+	/** Target height delta above pawn origin (cm) at/above which kick-style actions emit Slap cue instead of Kick. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction|Animation", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SlapCueMinHeightDeltaCm = 80.0f;
+
 	// Shared server-side validation helper for controller interaction RPCs.
 	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 
 private:
+	bool IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, bool bLogFailures) const;
+	void TickActiveInteractionRangeValidation(float DeltaTime);
+	void NotifyInteractableOutOfRange(AActor* InteractableActor, bool bWasSecondaryInteraction);
+	void RefreshInteractionGateFromActiveTargets();
 	void LeaveSessionInternal();
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
@@ -395,6 +458,18 @@ private:
 
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AActor> ActiveInteractable = nullptr;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AActor> ActiveSecondaryInteractable = nullptr;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (AllowPrivateAccess = "true"))
+	bool bIsInteracting = false;
+
+	UPROPERTY(Transient)
+	float ActiveInteractionRangeCheckAccumulator = 0.0f;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (AllowPrivateAccess = "true"))
 	FDialogueClientView CachedDialogueView;
