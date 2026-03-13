@@ -109,6 +109,7 @@ private:
 	TWeakObjectPtr<AARScrapyardGameState> BoundScrapyardGameState;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
+	/** Cached summary for widgets that poll instead of binding delegates. */
 	FARScrapyardExtractionSummary CachedExtractionSummary;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))

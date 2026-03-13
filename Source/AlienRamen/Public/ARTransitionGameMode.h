@@ -32,12 +32,15 @@ protected:
 	UFUNCTION()
 	void HandleAllPlayersTravelReadyChanged(bool bNewAllPlayersTravelReady, bool bOldAllPlayersTravelReady);
 
+	/** When true, transition map will auto-trigger travel once every connected player is ready. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition")
 	bool bAutoAdvanceWhenAllPlayersReady = true;
 
+	/** When true, resets player ready flags on enter so players must actively continue. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition")
 	bool bResetPlayerReadyOnBeginPlay = true;
 
+	/** Destination to fall back to when transition context does not provide a URL. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition")
 	FString FallbackDestinationURL = TEXT("/Game/Maps/Lvl_RamenShop");
 

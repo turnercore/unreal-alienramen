@@ -17,20 +17,20 @@ class UTexture2D;
 UENUM(BlueprintType)
 enum class EARScrapyardRewardType : uint8
 {
-	None = 0,
-	LicenseUnlock,
-	EnergyDrink,
-	ProgressionTag,
-	UnlockTag
+	None = 0,        // no reward (invalid/default)
+	LicenseUnlock,   // grants a license unlock tag
+	EnergyDrink,     // grants an energy drink item tag
+	ProgressionTag,  // grants a progression tag
+	UnlockTag        // grants a generic unlock tag (shared with save unlocks)
 };
 
 UENUM(BlueprintType)
 enum class EARScrapyardItemType : uint8
 {
-	Garbage = 0,
-	EnergyDrink,
-	License,
-	Other
+	Garbage = 0,   // flavor-only scrapable items
+	EnergyDrink,   // energy drink consumables
+	License,       // unlock tokens/licenses
+	Other          // everything else (use RewardType for behavior)
 };
 
 UENUM(BlueprintType)
@@ -46,8 +46,8 @@ enum class EARScrapyardItemRarity : uint8
 UENUM(BlueprintType)
 enum class EARScrapyardStackRule : uint8
 {
-	Unique = 0,
-	Stackable
+	Unique = 0,  // only one instance allowed per inventory slot
+	Stackable    // can stack up to MaxStackCount
 };
 
 USTRUCT(BlueprintType)
@@ -159,18 +159,23 @@ struct ALIENRAMEN_API FARScrapyardRewardGrant
 {
 	GENERATED_BODY()
 
+	/** Item tag associated with the grant (mirrors item def tag). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	FGameplayTag ItemTag;
 
+	/** Reward category that determines which field below is used. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	EARScrapyardRewardType RewardType = EARScrapyardRewardType::None;
 
+	/** License unlock to apply when RewardType = LicenseUnlock. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	FGameplayTag LicenseUnlockTag;
 
+	/** Energy drink tag granted when RewardType = EnergyDrink. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	FGameplayTag EnergyDrinkTag;
 
+	/** Progression tag granted when RewardType = ProgressionTag or UnlockTag. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	FGameplayTag ProgressionRewardTag;
 };

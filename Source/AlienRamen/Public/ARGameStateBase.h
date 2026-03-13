@@ -152,12 +152,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	bool AreAllPlayersTravelReady() const;
 
+	/** Convenience: returns the other coop player (or nullptr) given one player state. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetOtherPlayerStateFromPlayerState(const AARPlayerStateBase* CurrentPlayerState) const;
 
+	/** Convenience: other coop player from controller context. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetOtherPlayerStateFromController(const APlayerController* CurrentPlayerController) const;
 
+	/** Convenience: other coop player from pawn context. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	AARPlayerStateBase* GetOtherPlayerStateFromPawn(const APawn* CurrentPlayerPawn) const;
 
