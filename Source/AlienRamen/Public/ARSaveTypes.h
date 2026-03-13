@@ -32,9 +32,11 @@ struct ALIENRAMEN_API FARMeatTypeAmount
 {
 	GENERATED_BODY()
 
+	/** Meat type tag (e.g., Shop.Meat.Red). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FGameplayTag MeatType;
 
+	/** Amount stored for this meat type. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Amount = 0;
 };
@@ -121,18 +123,23 @@ struct ALIENRAMEN_API FARPlayerIdentity
 {
 	GENERATED_BODY()
 
+	/** Legacy numeric id used only for older saves; online ids are preferred. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 LegacyId = 0;
 
+	/** Display name at time of save (for UI/debug). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
+	/** Coop slot fallback when no platform id exists. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
 
+	/** Platform-specific unique id string (primary identity key). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FString UniqueNetIdString;
 
+	/** Unique id type (e.g., Steam, EOS); used with UniqueNetIdString. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FString UniqueNetIdType;
 
@@ -229,12 +236,15 @@ struct ALIENRAMEN_API FARCharacterHeldShopItemSnapshot
 {
 	GENERATED_BODY()
 
+	/** Actor class to respawn into hands when re-entering shop (must be a supported carryable). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Supported carryable class to restore into the character's hands when loading directly back into the shop."))
 	TSoftClassPtr<AActor> ActorClass;
 
+	/** Energy drink identity when the held item is a drink. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Energy-drink item tag used when the held item snapshot is an energy drink."))
 	FGameplayTag EnergyDrinkItemTag;
 
+	/** Meat color when the held item is meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Meat color used when the held item snapshot is meat."))
 	EARAffinityColor MeatColor = EARAffinityColor::Red;
 
@@ -271,21 +281,27 @@ struct ALIENRAMEN_API FARSaveSlotDescriptor
 {
 	GENERATED_BODY()
 
+	/** Base slot name (without revision suffix). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FName SlotName = NAME_None;
 
+	/** Human-friendly slot number (0-based in debug saves; UI can add 1). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 SlotNumber = 0;
 
+	/** Save schema version recorded for this slot revision. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 SaveVersion = 0;
 
+	/** Cycles completed at time of save (for UI sorting/filters). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 CyclesPlayed = 0;
 
+	/** Timestamp of this revision (UTC). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FDateTime LastSavedTime;
 
+	/** Money recorded for preview cards. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Money = 0;
 };
@@ -295,18 +311,23 @@ struct ALIENRAMEN_API FARShopTransientCarryableSnapshot
 {
 	GENERATED_BODY()
 
+	/** Actor class to respawn as a loose carryable on shop reload. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
 	TSoftClassPtr<AActor> ActorClass;
 
+	/** World transform to spawn the carryable at. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
 	FTransform WorldTransform = FTransform::Identity;
 
+	/** Item identity when this snapshot represents an energy drink. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
 	FGameplayTag EnergyDrinkItemTag;
 
+	/** Meat color when this snapshot represents meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
 	EARAffinityColor MeatColor = EARAffinityColor::Red;
 
+	/** Meat amount when this snapshot represents meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1"))
 	int32 MeatAmount = 1;
 };
@@ -316,21 +337,27 @@ struct ALIENRAMEN_API FARSaveResult
 {
 	GENERATED_BODY()
 
+	/** True when the save operation succeeded. */
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	bool bSuccess = false;
 
+	/** Error message when bSuccess is false (or empty on success). */
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	FString Error;
 
+	/** Number of fields clamped/sanitized during save/load. */
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 ClampedFieldCount = 0;
 
+	/** Slot base name involved in this result (if any). */
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	FName SlotName = NAME_None;
 
+	/** Slot revision number involved in this result (if any). */
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 SlotNumber = 0;
 
+	/** Coded result reason for diagnostics/UI. */
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Save")
 	EARSaveResultCode ResultCode = EARSaveResultCode::Unknown;
 };

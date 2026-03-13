@@ -19,8 +19,8 @@ class UGameplayEffect;
 UENUM(BlueprintType)
 enum class EARWavePhase : uint8
 {
-	Active = 0,
-	Berserk = 1
+	Active = 0,  // normal behavior
+	Berserk = 1  // high-pressure phase (used for leaks/overrun)
 };
 
 inline const TCHAR* ARInvaderWavePhaseToString(const EARWavePhase Phase)
@@ -40,7 +40,7 @@ enum class EARInvaderFlowState : uint8
 	AwaitStageClear = 1,
 	StageChoice = 2,
 	Transition = 3,
-	Stopped = 4
+	Stopped = 4   // director inactive
 };
 
 UENUM(BlueprintType)
@@ -48,8 +48,8 @@ enum class EARInvaderRunEndReason : uint8
 {
 	None = 0,
 	ManualStop = 1,
-	LossLeaks = 2,
-	LossAllPlayersDown = 3
+	LossLeaks = 2,           // leak count exceeded
+	LossAllPlayersDown = 3   // both players downed
 };
 
 UENUM(BlueprintType)

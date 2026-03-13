@@ -34,6 +34,7 @@ public:
 	int32 GetCurrentCandidateCount() const { return CurrentCandidates.Num(); }
 
 	// Server-authoritative vote submission.
+	// Returns false if slot already voted or selection is not in CurrentCandidates.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
 	bool SubmitVote(EARPlayerSlot PlayerSlot, FGameplayTag SelectedFactionTag);
 
@@ -42,10 +43,12 @@ public:
 	void ClearVotes();
 
 	// Applies an immediate popularity delta to a faction runtime state in save data.
+	// Use for scripted events or debug commands that bump a faction up/down before next election.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
 	bool ModifyFactionPopularity(FGameplayTag FactionTag, float DeltaPopularity);
 
 	// Finalizes election and applies elected faction/effects to save + replicated GameState state.
+	// Call once per election cycle (typically on travel) after votes are collected.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
 	bool FinalizeElectionForTravel(FGameplayTag& OutWinnerFactionTag, EARFactionWinnerReason& OutReason);
 

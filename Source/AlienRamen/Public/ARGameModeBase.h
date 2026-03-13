@@ -32,6 +32,7 @@ public:
 	virtual void Logout(AController* Exiting) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	/** Mode identity gameplay tag (used by transition context and runtime checks). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Mode")
 	FGameplayTag GetModeTag() const { return ModeTag; }
 
@@ -46,6 +47,7 @@ public:
 	bool EndModeAndTravel(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
 	// Convenience helper for map-to-map travel while staying in the same mode (bypasses transition map regardless of mode default).
+	// Designer note: set URL to destination map; Options should include ?listen in listen-host cases.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
 	bool TravelDirectInMode(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
