@@ -811,6 +811,65 @@ void UTagContentResolverSubsystem::GetResolverDiagnostics(FTagContentResolverDia
 	OutDiagnostics.LoggedFailureCount = LoggedFailureMessages.Num();
 }
 
+bool UTagContentResolverSubsystem::IsRootTableLoaded(FGameplayTag RootTag) const
+{
+	return LoadedTablesByRootTag.Contains(RootTag);
+}
+
+bool UTagContentResolverSubsystem::ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError)
+{
+	OutError.Reset();
+	if (!EnsureGameThread(TEXT("ResetLoadedTablesToExactRoots"), &OutError))
+	{
+		return false;
+	}
+
+	// Build keep set of valid roots.
+	TSet<FGameplayTag> KeepSet;
+	for (const FGameplayTag& Root : RootsToKeep)
+	{
+		if (Root.IsValid())
+		{
+			KeepSet.Add(Root);
+		}
+	}
+
+	// Remove any loaded tables not in the keep set.
+	TArray<FGameplayTag> LoadedRoots;
+	LoadedTablesByRootTag.GetKeys(LoadedRoots);
+	for (const FGameplayTag& LoadedRoot : LoadedRoots)
+	{
+		if (!KeepSet.Contains(LoadedRoot))
+		{
+			LoadedTablesByRootTag.Remove(LoadedRoot);
+		}
+	}
+
+	// Clear caches that may reference unloaded tables; routes remain intact.
+	CachedMatchedRootByTag.Reset();
+	CachedLeafRowNamesByTag.Reset();
+
+	// Load any keep-roots that are not currently cached.
+	TArray<FGameplayTag> MissingRoots;
+	for (const FGameplayTag& Root : KeepSet)
+	{
+		if (!LoadedTablesByRootTag.Contains(Root))
+		{
+			MissingRoots.Add(Root);
+		}
+	}
+
+	if (!MissingRoots.IsEmpty())
+	{
+		if (!PreloadDataTablesForRoots(MissingRoots, OutError))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 	FGameplayTag RootTag,
 	UDataTable*& OutDataTable,
