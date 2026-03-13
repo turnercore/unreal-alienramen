@@ -37,7 +37,7 @@ public:
 	bool TryResolveRowStructForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError);
 
 	// View-only resolve: returns a const struct view into the loaded table (no copy, only valid while table stays loaded).
-	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a gameplay tag to a DataTable row and returns a view into the loaded table (no copy). Only valid while the table remains loaded."))
+	// Native-only because FConstStructView is not a Blueprint/UHT-reflected parameter type.
 	bool TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
 
 	// Deprecated wrapper: use TryResolveRowStructForTag instead.

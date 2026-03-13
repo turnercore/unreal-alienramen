@@ -2,6 +2,7 @@
 #include "ARDialogueSubsystem.h"
 #include "ARDialogueWidgetBase.h"
 #include "ARHUDBase.h"
+#include "ARInteractableRangeListener.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARInvaderGameState.h"
@@ -11,11 +12,62 @@
 #include "ARMeatStorageBoxActor.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
+#include "ARAttributeSetCore.h"
+#include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Blueprint/UserWidget.h"
 #include "TimerManager.h"
+
+namespace
+{
+	static UPrimitiveComponent* ResolveInteractionPhysicsPrimitive(AActor* Actor)
+	{
+		if (!Actor)
+		{
+			return nullptr;
+		}
+
+		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
+		{
+			return RootPrimitive;
+		}
+
+		TArray<UPrimitiveComponent*> PrimitiveComponents;
+		Actor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->IsSimulatingPhysics())
+			{
+				return Primitive;
+			}
+		}
+
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+		{
+			if (Primitive && Primitive->GetCollisionEnabled() != ECollisionEnabled::NoCollision)
+			{
+				return Primitive;
+			}
+		}
+
+		return PrimitiveComponents.Num() > 0 ? PrimitiveComponents[0] : nullptr;
+	}
+
+	static float ResolveKickStrengthForController(const AARPlayerController* Controller)
+	{
+		float Strength = 10.0f;
+		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const UAbilitySystemComponent* ASC = PlayerState ? PlayerState->GetASC() : nullptr;
+		if (ASC)
+		{
+			Strength = ASC->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
+		}
+
+		return FMath::Max(0.0f, Strength) * 100.0f;
+	}
+}
 
 AARPlayerController::AARPlayerController()
 {
@@ -62,6 +114,8 @@ void AARPlayerController::PlayerTick(const float DeltaTime)
 	{
 		RequestClosePauseMenu();
 	}
+
+	TickActiveInteractionRangeValidation(DeltaTime);
 }
 
 void AARPlayerController::InitializeCustomCursor()
@@ -305,35 +359,52 @@ void AARPlayerController::ServerRequestStartDialogue_Implementation(FGameplayTag
 
 bool AARPlayerController::IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const
 {
+	return IsServerInteractionTargetReachableInternal(TargetActor, ContextLabel, true);
+}
+
+bool AARPlayerController::IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, const bool bLogFailures) const
+{
 	const TCHAR* SafeContextLabel = ContextLabel ? ContextLabel : TEXT("Interaction");
 	if (!HasAuthority())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[%s] Validation called without authority on controller '%s'."), SafeContextLabel, *GetNameSafe(this));
+		if (bLogFailures)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[%s] Validation called without authority on controller '%s'."), SafeContextLabel, *GetNameSafe(this));
+		}
 		return false;
 	}
 
 	if (!IsValid(TargetActor))
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': target is invalid."), SafeContextLabel, *GetNameSafe(this));
+		if (bLogFailures)
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': target is invalid."), SafeContextLabel, *GetNameSafe(this));
+		}
 		return false;
 	}
 
 	const APawn* ControlledPawn = GetPawn();
 	if (!ControlledPawn)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': missing controlled pawn."), SafeContextLabel, *GetNameSafe(this));
+		if (bLogFailures)
+		{
+			UE_LOG(ARLog, Verbose, TEXT("[%s] Validation failed on '%s': missing controlled pawn."), SafeContextLabel, *GetNameSafe(this));
+		}
 		return false;
 	}
 
 	if (TargetActor->GetWorld() != GetWorld())
 	{
-		UE_LOG(
-			ARLog,
-			Verbose,
-			TEXT("[%s] Validation failed on '%s': target '%s' is in different world."),
-			SafeContextLabel,
-			*GetNameSafe(this),
-			*GetNameSafe(TargetActor));
+		if (bLogFailures)
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[%s] Validation failed on '%s': target '%s' is in different world."),
+				SafeContextLabel,
+				*GetNameSafe(this),
+				*GetNameSafe(TargetActor));
+		}
 		return false;
 	}
 
@@ -341,19 +412,112 @@ bool AARPlayerController::IsServerInteractionTargetReachable(const AActor* Targe
 	const float DistanceSq = FVector::DistSquared(ControlledPawn->GetActorLocation(), TargetActor->GetActorLocation());
 	if (DistanceSq > FMath::Square(MaxDistance))
 	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (distance=%.1f max=%.1f)."),
-			SafeContextLabel,
-			*GetNameSafe(this),
-			*GetNameSafe(TargetActor),
-			FMath::Sqrt(DistanceSq),
-			MaxDistance);
+		if (bLogFailures)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (distance=%.1f max=%.1f)."),
+				SafeContextLabel,
+				*GetNameSafe(this),
+				*GetNameSafe(TargetActor),
+				FMath::Sqrt(DistanceSq),
+				MaxDistance);
+		}
 		return false;
 	}
 
 	return true;
+}
+
+void AARPlayerController::SetActiveInteractable(AActor* InteractableActor)
+{
+	ActiveInteractable = InteractableActor;
+}
+
+void AARPlayerController::SetActiveSecondaryInteractable(AActor* InteractableActor)
+{
+	ActiveSecondaryInteractable = InteractableActor;
+}
+
+void AARPlayerController::ClearActiveInteractable(const bool bNotifyOutOfRange)
+{
+	if (bNotifyOutOfRange)
+	{
+		NotifyInteractableOutOfRange(ActiveInteractable, false);
+	}
+	ActiveInteractable = nullptr;
+	RefreshInteractionGateFromActiveTargets();
+}
+
+void AARPlayerController::ClearActiveSecondaryInteractable(const bool bNotifyOutOfRange)
+{
+	if (bNotifyOutOfRange)
+	{
+		NotifyInteractableOutOfRange(ActiveSecondaryInteractable, true);
+	}
+	ActiveSecondaryInteractable = nullptr;
+	RefreshInteractionGateFromActiveTargets();
+}
+
+void AARPlayerController::SetIsInteracting(const bool bInIsInteracting)
+{
+	bIsInteracting = bInIsInteracting;
+}
+
+void AARPlayerController::TickActiveInteractionRangeValidation(const float DeltaTime)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	ActiveInteractionRangeCheckAccumulator += FMath::Max(0.0f, DeltaTime);
+	const float CheckInterval = FMath::Max(0.02f, ActiveInteractionRangeCheckInterval);
+	if (ActiveInteractionRangeCheckAccumulator < CheckInterval)
+	{
+		return;
+	}
+	ActiveInteractionRangeCheckAccumulator = 0.0f;
+
+	if (ActiveInteractable && !IsServerInteractionTargetReachableInternal(ActiveInteractable, TEXT("Interact|Active"), false))
+	{
+		NotifyInteractableOutOfRange(ActiveInteractable, false);
+		ActiveInteractable = nullptr;
+	}
+
+	if (ActiveSecondaryInteractable && !IsServerInteractionTargetReachableInternal(ActiveSecondaryInteractable, TEXT("Interact|SecondaryActive"), false))
+	{
+		NotifyInteractableOutOfRange(ActiveSecondaryInteractable, true);
+		ActiveSecondaryInteractable = nullptr;
+	}
+
+	RefreshInteractionGateFromActiveTargets();
+}
+
+void AARPlayerController::NotifyInteractableOutOfRange(AActor* InteractableActor, const bool bWasSecondaryInteraction)
+{
+	if (!IsValid(InteractableActor))
+	{
+		return;
+	}
+
+	if (!InteractableActor->GetClass()->ImplementsInterface(UARInteractableRangeListener::StaticClass()))
+	{
+		return;
+	}
+
+	IARInteractableRangeListener::Execute_OnPlayerOutOfRange(InteractableActor, this, bWasSecondaryInteraction);
+}
+
+void AARPlayerController::RefreshInteractionGateFromActiveTargets()
+{
+	if (ActiveInteractable || ActiveSecondaryInteractable)
+	{
+		return;
+	}
+
+	bIsInteracting = false;
 }
 
 void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)
@@ -389,6 +553,76 @@ void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* Char
 void AARPlayerController::ServerRequestInteractWithCharacter_Implementation(AARNPCCharacterBase* CharacterActor)
 {
 	RequestInteractWithCharacter(CharacterActor);
+}
+
+void AARPlayerController::RequestKickActor(AActor* TargetActor)
+{
+	if (!TargetActor)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact|Kick] Request ignored on '%s': TargetActor is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		if (!IsServerInteractionTargetReachable(TargetActor, TEXT("Interact|Kick")))
+		{
+			return;
+		}
+
+		UPrimitiveComponent* PhysicsPrimitive = ResolveInteractionPhysicsPrimitive(TargetActor);
+		if (!PhysicsPrimitive)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[Interact|Kick] Request failed on '%s': target '%s' has no physics primitive."),
+				*GetNameSafe(this),
+				*GetNameSafe(TargetActor));
+			return;
+		}
+
+		if (!PhysicsPrimitive->IsSimulatingPhysics())
+		{
+			PhysicsPrimitive->SetSimulatePhysics(true);
+		}
+		PhysicsPrimitive->SetEnableGravity(true);
+		PhysicsPrimitive->WakeAllRigidBodies();
+
+		const float KickStrength = FMath::Max(50.0f, ResolveKickStrengthForController(this));
+		const FVector KickDirection = GetControlRotation().Vector().GetSafeNormal();
+		PhysicsPrimitive->AddImpulse(KickDirection * KickStrength, NAME_None, true);
+
+		const APawn* ControlledPawn = GetPawn();
+		const float PawnZ = ControlledPawn ? ControlledPawn->GetActorLocation().Z : 0.0f;
+		FVector TargetOrigin = TargetActor->GetActorLocation();
+		FVector TargetExtent = FVector::ZeroVector;
+		TargetActor->GetActorBounds(true, TargetOrigin, TargetExtent);
+		const float HeightDelta = TargetOrigin.Z - PawnZ;
+		const EARInteractionActionCue KickOrSlapCue =
+			HeightDelta >= FMath::Max(0.0f, SlapCueMinHeightDeltaCm)
+			? EARInteractionActionCue::Slap
+			: EARInteractionActionCue::Kick;
+
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Interact|Kick] Applied impulse controller='%s' target='%s' strength=%.1f heightDelta=%.1f cue=%s."),
+			*GetNameSafe(this),
+			*GetNameSafe(TargetActor),
+			KickStrength,
+			HeightDelta,
+			*StaticEnum<EARInteractionActionCue>()->GetValueAsString(KickOrSlapCue));
+		NotifyInteractionActionCue(KickOrSlapCue, TargetActor);
+		return;
+	}
+
+	ServerRequestKickActor(TargetActor);
+}
+
+void AARPlayerController::ServerRequestKickActor_Implementation(AActor* TargetActor)
+{
+	RequestKickActor(TargetActor);
 }
 
 void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)
@@ -1226,6 +1460,11 @@ void AARPlayerController::SetSelectedDialogueChoiceIndex(const int32 NewIndex)
 	const int32 OldIndex = SelectedDialogueChoiceIndex;
 	SelectedDialogueChoiceIndex = NewIndex;
 	OnDialogueChoiceSelectionChanged.Broadcast(SelectedDialogueChoiceIndex, OldIndex);
+}
+
+void AARPlayerController::NotifyInteractionActionCue(const EARInteractionActionCue ActionCue, AActor* ActionTarget)
+{
+	OnInteractionActionCue.Broadcast(ActionCue, ActionTarget);
 }
 
 bool AARPlayerController::ShowPauseOverlayWidget()

@@ -21,7 +21,13 @@ This document captures the server-authoritative runtime contract for:
 - `AARScrapyardCarryItemBase`
   - Scrapyard world-carryable base actor for extraction items.
   - `ForwardUseToController` routes BI_Interactable-style use to scrapyard pickup (`AARScrapyardPlayerController`) instead of shop pickup.
+  - Inherits `ForwardSecondaryUseToController` / `UseSecondaryInWorldByController` default behavior from `AARShopCarryItemBase` for secondary world-item kick handling.
   - Replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI resolution.
+- `AARScrapyardPlayerController`
+  - `RequestUseSecondaryOnHeldCarryItem()` provides generic held-secondary dispatch through held `AARShopCarryItemBase::UseSecondaryByController(...)` (default throw unless item override).
+- `AARPlayerController` (shared interaction runtime used by `AARScrapyardPlayerController`)
+  - Tracks active hold targets (`ActiveInteractable`, `ActiveSecondaryInteractable`) plus latch state (`bIsInteracting`) for hold-style interaction input.
+  - Performs server-side periodic range re-validation (`ActiveInteractionRangeCheckInterval`) for active targets and calls `IARInteractableRangeListener::OnPlayerOutOfRange(...)` on opted-in interactables before clearing target state.
 - `UARInvaderDirectorSubsystem`
   - End-of-run authority (loss, unanimous early-bail, stop reasons).
   - Death-penalty application to run ledger.

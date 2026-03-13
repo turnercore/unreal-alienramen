@@ -12,7 +12,8 @@ public class TagContentResolver : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"DeveloperSettings",
-			"GameplayTags"
+			"GameplayTags",
+			"StructUtils"
 		});
 	}
 }

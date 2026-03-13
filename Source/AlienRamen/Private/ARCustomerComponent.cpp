@@ -1,5 +1,6 @@
 #include "ARCustomerComponent.h"
 
+#include "ARCustomerOrderWidgetBase.h"
 #include "ARCustomerSettings.h"
 #include "ARDialogueSubsystem.h"
 #include "AREmotionComponent.h"
@@ -16,6 +17,7 @@
 #include "Net/UnrealNetwork.h"
 #include "StructUtils/InstancedStruct.h"
 #include "TagContentResolverSubsystem.h"
+#include "Blueprint/UserWidget.h"
 
 namespace
 {
@@ -114,6 +116,30 @@ FGameplayTag UARCustomerComponent::GetSpeakerTag() const
 	const AActor* OwnerActor = GetOwner();
 	const UARSpeakerComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UARSpeakerComponent>() : nullptr;
 	return TalkComponent ? TalkComponent->GetSpeakerTag() : FGameplayTag();
+}
+
+UARCustomerOrderWidgetBase* UARCustomerComponent::CreateAndInitializeOrderWidget(APlayerController* OwningPlayer) const
+{
+	if (!OwningPlayer || !OrderWidgetClass)
+	{
+		return nullptr;
+	}
+
+	UARCustomerOrderWidgetBase* Widget = CreateWidget<UARCustomerOrderWidgetBase>(OwningPlayer, OrderWidgetClass);
+	if (Widget)
+	{
+		Widget->InitializeFromCustomer(const_cast<UARCustomerComponent*>(this));
+	}
+
+	return Widget;
+}
+
+void UARCustomerComponent::InitializeOrderWidget(UARCustomerOrderWidgetBase* WidgetInstance) const
+{
+	if (WidgetInstance)
+	{
+		WidgetInstance->InitializeFromCustomer(const_cast<UARCustomerComponent*>(this));
+	}
 }
 
 int32 UARCustomerComponent::GetRemainingOrdersToGenerate() const

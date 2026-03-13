@@ -11,6 +11,12 @@
   "IsExperimentalVersion": false,
   "Installed": false,
   "EnabledByDefault": true,
+  "Plugins": [
+    {
+      "Name": "StructUtils",
+      "Enabled": true
+    }
+  ],
   "Modules": [
     {
       "Name": "TagContentResolver",

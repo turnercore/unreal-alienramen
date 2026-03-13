@@ -34,6 +34,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
 	bool HasMovedAwayForStorageReturn(float RequiredDistance) const;
 
+	// Marks world auto-return as armed after intentional player pickup/interaction.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Meat", meta = (BlueprintAuthorityOnly))
+	void ArmStorageReturn();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -60,4 +64,5 @@ private:
 
 	FVector SpawnLocationForStorageReturn = FVector::ZeroVector;
 	float MaxDistanceFromSpawnSq = 0.0f;
+	bool bStorageReturnArmedByPickup = false;
 };

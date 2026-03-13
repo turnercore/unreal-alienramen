@@ -108,6 +108,17 @@ void AARNPCCharacterBase::BeginPlay()
 		}
 	}
 
+	if (CustomerComponent)
+	{
+		CustomerComponent->OnCustomerOrderChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleCustomerOrderChanged);
+		CustomerComponent->OnCustomerOrderChanged.AddDynamic(this, &AARNPCCharacterBase::HandleCustomerOrderChanged);
+		CustomerComponent->OnCustomerOrderResolved.RemoveDynamic(this, &AARNPCCharacterBase::HandleCustomerOrderResolved);
+		CustomerComponent->OnCustomerOrderResolved.AddDynamic(this, &AARNPCCharacterBase::HandleCustomerOrderResolved);
+		CustomerComponent->OnCustomerDoneOrdering.RemoveDynamic(this, &AARNPCCharacterBase::HandleCustomerDoneOrdering);
+		CustomerComponent->OnCustomerDoneOrdering.AddDynamic(this, &AARNPCCharacterBase::HandleCustomerDoneOrdering);
+	}
+
+	RefreshStateTreeInteractionFlags();
 	RefreshAutoWantsToTalkEmotion(IsTalkable());
 }
 
@@ -213,6 +224,12 @@ void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
 	}
+	if (CustomerComponent)
+	{
+		CustomerComponent->OnCustomerOrderChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleCustomerOrderChanged);
+		CustomerComponent->OnCustomerOrderResolved.RemoveDynamic(this, &AARNPCCharacterBase::HandleCustomerOrderResolved);
+		CustomerComponent->OnCustomerDoneOrdering.RemoveDynamic(this, &AARNPCCharacterBase::HandleCustomerDoneOrdering);
+	}
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -269,6 +286,7 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 	if (!SpeakerComponent || !CustomerComponent || !EmotionComponent)
 	{
 		ResolveOptionalComponents();
+		RefreshStateTreeInteractionFlags();
 	}
 
 	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
@@ -399,6 +417,7 @@ void AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged(const bool 
 {
 	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
 	const bool bEffectiveTalkable = bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && bNewTalkable);
+	RefreshStateTreeInteractionFlags();
 	RefreshAutoWantsToTalkEmotion(bEffectiveTalkable);
 	OnSpeakerTalkableStateChanged.Broadcast(bEffectiveTalkable);
 }
@@ -410,8 +429,29 @@ void AARNPCCharacterBase::OnRep_SpeakerLocalStateAllowsDialogue(const bool bOldA
 		return;
 	}
 
+	RefreshStateTreeInteractionFlags();
 	RefreshAutoWantsToTalkEmotion(IsTalkable());
 	OnSpeakerTalkableStateChanged.Broadcast(IsTalkable());
+}
+
+void AARNPCCharacterBase::HandleCustomerOrderChanged(const FARRamenOrderRequest& NewOrder)
+{
+	(void)NewOrder;
+	RefreshStateTreeInteractionFlags();
+}
+
+void AARNPCCharacterBase::HandleCustomerOrderResolved(const FARRamenServeResult& ServeResult)
+{
+	(void)ServeResult;
+	RefreshStateTreeInteractionFlags();
+}
+
+void AARNPCCharacterBase::HandleCustomerDoneOrdering(const int32 OrdersGeneratedCount, const int32 OrdersServedCount, const int32 RemainingOrdersToGenerate)
+{
+	(void)OrdersGeneratedCount;
+	(void)OrdersServedCount;
+	(void)RemainingOrdersToGenerate;
+	RefreshStateTreeInteractionFlags();
 }
 
 void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
@@ -420,6 +460,12 @@ void AARNPCCharacterBase::RefreshTalkableFromSubsystem()
 	{
 		SpeakerComponent->RefreshTalkableFromSubsystem();
 	}
+}
+
+void AARNPCCharacterBase::RefreshStateTreeInteractionFlags()
+{
+	bST_HasActiveOrder = CustomerComponent && CustomerComponent->HasOrderForInteraction();
+	bST_HasDialogueToSay = bSpeakerLocalStateAllowsDialogue && SpeakerComponent && SpeakerComponent->HasDialogueToSay();
 }
 
 void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTalkable)

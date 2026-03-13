@@ -6006,6 +6006,36 @@ bool UARDialogueSubsystem::HasUnlockedDialogueForSpeakerForAnyPlayer(FGameplayTa
 	return false;
 }
 
+bool UARDialogueSubsystem::IsPrimarySpeakerInActiveSession(FGameplayTag PrimarySpeakerTag) const
+{
+	if (!PrimarySpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	return FindPerPlayerSessionByPrimarySpeaker(GetRuntimeState().ActiveSessions, PrimarySpeakerTag, EARPlayerSlot::Unknown) != nullptr;
+}
+
+bool UARDialogueSubsystem::GetPrimarySpeakerForConversation(FGameplayTag ConversationTag, FGameplayTag& OutPrimarySpeakerTag) const
+{
+	OutPrimarySpeakerTag = FGameplayTag();
+	if (!ConversationTag.IsValid())
+	{
+		return false;
+	}
+
+	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	const TObjectPtr<UARDialogueConversationAsset>* ConversationPtr = Runtime.ConversationsByTag.Find(ConversationTag);
+	const UARDialogueConversationAsset* Conversation = ConversationPtr ? ConversationPtr->Get() : nullptr;
+	if (!Conversation || !Conversation->Header.PrimarySpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	OutPrimarySpeakerTag = Conversation->Header.PrimarySpeakerTag;
+	return true;
+}
+
 bool UARDialogueSubsystem::IsSpeakerBusyForController(const AARPlayerController* RequestingController, FGameplayTag PrimarySpeakerTag) const
 {
 	if (!RequestingController || !PrimarySpeakerTag.IsValid())

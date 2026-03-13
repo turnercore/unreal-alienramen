@@ -42,6 +42,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkable() const { return bIsTalkable; }
 
+	// StateTree-friendly dialogue-only gate. True when this speaker currently has dialogue available for at least one slot.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
+	bool HasDialogueToSay() const { return bIsTalkable; }
+
 	/** Slot-specific talkable query (P1/P2). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkableForPlayerSlot(EARPlayerSlot PlayerSlot) const;
@@ -49,6 +53,10 @@ public:
 	/** Controller-aware talkable query (uses controller player slot mapping). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsTalkableForController(const AARPlayerController* QueryController) const;
+
+	// Composite StateTree gate: dialogue talkable OR active customer order on the same owner.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
+	bool HasSomethingToSay() const;
 
 	/** Ask the dialogue subsystem to recompute talkability (use after unlocking content or clearing blockers). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")

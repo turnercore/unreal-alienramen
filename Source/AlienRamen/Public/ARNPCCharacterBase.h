@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "ARPlayerTypes.h"
+#include "ARShopRamenTypes.h"
 #include "ARSpeakerComponent.h"
 #include "GameFramework/Character.h"
 #include "GameplayTagContainer.h"
@@ -80,10 +81,20 @@ protected:
 	UFUNCTION()
 	void OnRep_SpeakerLocalStateAllowsDialogue(bool bOldAllowsDialogue);
 
+	UFUNCTION()
+	void HandleCustomerOrderChanged(const FARRamenOrderRequest& NewOrder);
+
+	UFUNCTION()
+	void HandleCustomerOrderResolved(const FARRamenServeResult& ServeResult);
+
+	UFUNCTION()
+	void HandleCustomerDoneOrdering(int32 OrdersGeneratedCount, int32 OrdersServedCount, int32 RemainingOrdersToGenerate);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void RefreshTalkableFromSubsystem();
 
 	void RefreshAutoWantsToTalkEmotion(bool bEffectiveTalkable);
+	void RefreshStateTreeInteractionFlags();
 	void ResolveOptionalComponents();
 	AARPlayerController* ResolveUsingController(AActor* UsingActor) const;
 
@@ -103,6 +114,12 @@ protected:
 		Category = "Alien Ramen|Speaker",
 		meta = (DisplayName = "Speaker Local State Allows Dialogue", ToolTip = "Server-resolved local speaker gate (for example shop mode behavior windows)."))
 	bool bSpeakerLocalStateAllowsDialogue = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Alien Ramen|StateTree", meta = (AllowPrivateAccess = "true", DisplayName = "ST Has Active Order", ToolTip = "Cached StateTree gate. True when owner currently has an active customer order."))
+	bool bST_HasActiveOrder = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Alien Ramen|StateTree", meta = (AllowPrivateAccess = "true", DisplayName = "ST Has Dialogue To Say", ToolTip = "Cached StateTree gate. True when speaker dialogue is currently available."))
+	bool bST_HasDialogueToSay = false;
 
 	bool bAutoWantsToTalkEmotionApplied = false;
 };

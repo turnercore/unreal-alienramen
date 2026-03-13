@@ -425,17 +425,17 @@ bool UTagContentResolverSubsystem::TryValidateRouteConfiguration(FString& OutErr
 	return TryValidateRoutes(Routes, OutError);
 }
 
-bool UTagContentResolverSubsystem::TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError)
+bool UTagContentResolverSubsystem::TryResolveRowStructForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError)
 {
 	OutRow.Reset();
 	OutError.Reset();
-	if (!EnsureGameThread(TEXT("TryResolveRowForTag"), &OutError))
+	if (!EnsureGameThread(TEXT("TryResolveRowStructForTag"), &OutError))
 	{
 		return false;
 	}
 
 	FConstStructView RowView;
-	if (!TryResolveRowViewForTag(Tag, RowView, OutError))
+	if (!TryResolveRowRefForTag(Tag, RowView, OutError))
 	{
 		return false;
 	}
@@ -454,11 +454,11 @@ bool UTagContentResolverSubsystem::TryResolveRowForTag(FGameplayTag Tag, FInstan
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError)
+bool UTagContentResolverSubsystem::TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError)
 {
 	OutRowView = FConstStructView();
 	OutError.Reset();
-	if (!EnsureGameThread(TEXT("TryResolveRowViewForTag"), &OutError))
+	if (!EnsureGameThread(TEXT("TryResolveRowRefForTag"), &OutError))
 	{
 		return false;
 	}
@@ -926,7 +926,7 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 	}
 
 	TSet<FSoftObjectPath> PathsToLoad;
-	TSet<FGameplayTag> VisitedTables;
+	TSet<FSoftObjectPath> VisitedTables;
 	TSet<FSoftObjectPath> VisitedAssets;
 
 	TFunction<bool(UDataTable*, int32)> GatherTableSoftRefsRecursive =
@@ -972,10 +972,10 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 			if (UDataTable* SubTable = Cast<UDataTable>(Path.TryLoad()))
 			{
 				// Only walk each DataTable once.
-				FGameplayTag SubTag = FGameplayTag::RequestGameplayTag(Path.GetAssetPathName());
-				if (!VisitedTables.Contains(SubTag))
+				const FSoftObjectPath SubTablePath(SubTable);
+				if (!VisitedTables.Contains(SubTablePath))
 				{
-					VisitedTables.Add(SubTag);
+					VisitedTables.Add(SubTablePath);
 					if (!GatherTableSoftRefsRecursive(SubTable, DepthRemaining - 1))
 					{
 						return false;
@@ -987,7 +987,7 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 		return true;
 	};
 
-	VisitedTables.Add(RootTag);
+	VisitedTables.Add(FSoftObjectPath(RootTable));
 	if (!GatherTableSoftRefsRecursive(RootTable, MaxRecursiveTableDepth))
 	{
 		return false;

@@ -38,6 +38,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestScrapyardThrowHeldCarryItem(float ThrowStrength = 900.0f);
 
+	/** Generic held secondary action route. Defers behavior to currently held carry item. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
+	void RequestUseSecondaryOnHeldCarryItem();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestUseSecondaryOnHeldCarryItem();
+
 	/** Deposit a reserved item into an exit zone (consumes reserved scrap). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
 	void RequestScrapyardDepositToExit(AARScrapyardExitZoneActor* ExitZone);

@@ -2,6 +2,7 @@
 
 #include "ARGameModeBase.h"
 #include "ARLog.h"
+#include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARRunBuffSubsystem.h"
 #include "ARShopCarryComponent.h"
@@ -24,6 +25,18 @@ void AAREnergyDrinkCarryItem::SetEnergyDrinkItemTag(const FGameplayTag NewItemTa
 
 	EnergyDrinkItemTag = NewItemTag;
 	ForceNetUpdate();
+}
+
+bool AAREnergyDrinkCarryItem::UseSecondaryByController_Implementation(AARPlayerController* UsingController)
+{
+	AARShopPlayerController* ShopController = Cast<AARShopPlayerController>(UsingController);
+	if (!ShopController)
+	{
+		return false;
+	}
+
+	ShopController->RequestConsumeHeldEnergyDrink();
+	return true;
 }
 
 bool AAREnergyDrinkCarryItem::TryConsumeFromController(AARShopPlayerController* ShopController)

@@ -4,6 +4,7 @@
 #include "ARScrapyardCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
 #include "ARScrapyardGameState.h"
+#include "ARShopCarryItemBase.h"
 #include "ARShopCarryComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
@@ -154,6 +155,7 @@ void AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem(float Thro
 			PhysicsPrimitive->WakeAllRigidBodies();
 			PhysicsPrimitive->AddImpulse(ControlledPawn->GetActorForwardVector() * FMath::Max(50.0f, ThrowStrength), NAME_None, true);
 		}
+		NotifyInteractionActionCue(EARInteractionActionCue::Throw, ReleasedActor);
 		return;
 	}
 
@@ -163,6 +165,36 @@ void AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem(float Thro
 void AARScrapyardPlayerController::ServerRequestScrapyardThrowHeldCarryItem_Implementation(float ThrowStrength)
 {
 	RequestScrapyardThrowHeldCarryItem(ThrowStrength);
+}
+
+void AARScrapyardPlayerController::RequestUseSecondaryOnHeldCarryItem()
+{
+	if (HasAuthority())
+	{
+		UARShopCarryComponent* CarryComponent = ResolveScrapyardCarryComponent(this);
+		AARShopCarryItemBase* HeldCarryItem = CarryComponent ? Cast<AARShopCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
+		if (!HeldCarryItem)
+		{
+			return;
+		}
+
+		const bool bHandled = HeldCarryItem->UseSecondaryByController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Scrapyard|Carry] SecondaryUse controller='%s' actor='%s' handled=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(HeldCarryItem),
+			bHandled ? 1 : 0);
+		return;
+	}
+
+	ServerRequestUseSecondaryOnHeldCarryItem();
+}
+
+void AARScrapyardPlayerController::ServerRequestUseSecondaryOnHeldCarryItem_Implementation()
+{
+	RequestUseSecondaryOnHeldCarryItem();
 }
 
 void AARScrapyardPlayerController::RequestScrapyardDepositToExit(AARScrapyardExitZoneActor* ExitZone)

@@ -1,5 +1,6 @@
 #include "ARRamenBowlActor.h"
 
+#include "ARLog.h"
 #include "Net/UnrealNetwork.h"
 
 AARRamenBowlActor::AARRamenBowlActor()
@@ -24,6 +25,15 @@ bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType Statio
 {
 	if (!HasAuthority() || IsComplete() || StationType != GetNextRequiredStationType())
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Bowl] Fill rejected bowl='%s' authority=%d complete=%d station='%s' required='%s'."),
+			*GetNameSafe(this),
+			HasAuthority() ? 1 : 0,
+			IsComplete() ? 1 : 0,
+			*StaticEnum<EARRamenStationType>()->GetValueAsString(StationType),
+			*StaticEnum<EARRamenStationType>()->GetValueAsString(GetNextRequiredStationType()));
 		return false;
 	}
 
@@ -44,6 +54,15 @@ bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType Statio
 
 	++FillStep;
 	ForceNetUpdate();
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Bowl] Fill applied bowl='%s' step=%d station='%s' color=%d complete=%d."),
+		*GetNameSafe(this),
+		FillStep,
+		*StaticEnum<EARRamenStationType>()->GetValueAsString(StationType),
+		static_cast<int32>(StationColor),
+		IsComplete() ? 1 : 0);
 	return true;
 }
 
@@ -57,6 +76,7 @@ void AARRamenBowlActor::ClearBowl()
 	BowlSpec = FARRamenBowlSpec();
 	FillStep = 0;
 	ForceNetUpdate();
+	UE_LOG(ARLog, Verbose, TEXT("[Shop|Bowl] Cleared bowl '%s'."), *GetNameSafe(this));
 }
 
 void AARRamenBowlActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
