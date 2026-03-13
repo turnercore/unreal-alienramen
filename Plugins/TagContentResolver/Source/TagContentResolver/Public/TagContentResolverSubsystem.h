@@ -68,6 +68,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Returns resolver runtime diagnostics, including route count, loaded table cache size, matched/unresolved tag cache sizes, and deduplicated failure log count. Use this for debug UI, telemetry, and performance verification."))
 	void GetResolverDiagnostics(FTagContentResolverDiagnostics& OutDiagnostics) const;
 
+	/** Returns true when a table for the given root is currently loaded in cache (no loading side effects). */
+	UFUNCTION(BlueprintPure, Category = "Tag Content Resolver")
+	bool IsRootTableLoaded(FGameplayTag RootTag) const;
+
+	/**
+	 * Keeps only the provided roots loaded: unloads any other cached tables, clears dependent caches,
+	 * and loads any missing tables for the provided roots.
+	 * Returns false if loading any keep-root fails (see OutError).
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver")
+	bool ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError);
+
 	static bool TryResolveDataTableForRootTagFromConfiguredRoutes(
 		FGameplayTag RootTag,
 		UDataTable*& OutDataTable,
