@@ -28,36 +28,47 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	/** Station category (noodles, broth, toppings). Useful for UI labeling and bowl validation. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	EARRamenStationType GetStationType() const { return StationType; }
 
+	/** Current runtime state (idle/processing/has stock). Drives lights/audio in BP. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	EARRamenStationRuntimeState GetRuntimeState() const { return RuntimeState; }
 
+	/** Returns true when required upgrades are met or the station is authored as always upgraded. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	bool IsStationUpgraded() const;
 
+	/** Number of processed servings currently buffered on this station. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	int32 GetProcessedStockAmount() const { return ProcessedStockAmount; }
 
+	/** Color of the buffered stock (None when empty). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	EARAffinityColor GetProcessedStockColor() const { return ProcessedStockColor; }
 
+	/** Processing progress in [0..1]; designers can bind this to progress bars. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	float GetProcessingProgress01() const { return ProcessingProgress01; }
 
+	/** Returns the meat actor currently slotted for processing, if any. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	AARRamenMeatActor* GetSlottedMeatActor() const { return SlottedMeatActor; }
 
+	/** Authority-only: slot a meat actor manually (used by pickup/overlap flows). Fails if slot occupied or wrong type. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool TryPlaceMeatActor(AARRamenMeatActor* MeatActor);
 
+	/** Authority-only helper: pulls the controller's held meat and attempts to slot it. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool TryPlaceHeldMeatFromController(AARPlayerController* Controller);
 
+	/** Authority-only: hands the slotted meat back to the controller's carry component. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool TryPickupSlottedMeatToController(AARPlayerController* Controller);
 
+	/** Authority-only hold-processing start. Call when input pressed in Hold mode. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool StartProcessingByController(AARPlayerController* Controller);
 
@@ -65,12 +76,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool TapProcessByController(AARPlayerController* Controller);
 
+	/** Authority-only stop for hold processing. Call on input release. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool StopProcessingByController(AARPlayerController* Controller);
 
+	/** Authority-only hard stop for all controllers (e.g., when disabling station). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	void StopAllProcessingControllers();
 
+	/** Authority-only: attempt to fill the controller's held bowl from processed stock (consumes one unit). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
 	bool TryFillHeldBowlFromController(AARPlayerController* Controller);
 
@@ -141,12 +155,15 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	EARRamenStationType StationType = EARRamenStationType::Noodles;
 
+	/** Upgrade tags that must be unlocked for this station to act upgraded (empty means always upgraded). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer RequiredUpgradeTags;
 
+	/** Maximum processed servings that can be buffered. Designers can lower for early-game pressure. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", ClampMin = "1", UIMin = "1"))
 	int32 MaxStock = 5;
 
+	/** Base time to process one serving when upgraded requirements are met. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", ClampMin = "0.05", UIMin = "0.05"))
 	float ProcessingDurationSeconds = 1.5f;
 
@@ -158,9 +175,11 @@ private:
 	float TapProcessingSecondsPerPress = 0.20f;
 
 	// Optional config lookup tag. When valid, BeginPlay resolves FARShopStationConfigRow for this station and overrides station config fields.
+	// Example: StationConfigTag = "Shop.Station.Broth.Fast" to drive a data-table row for tuned timings.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag StationConfigTag;
 
+	/** When true (default), station settings are pulled from data using StationConfigTag. Disable for manual authoring. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	bool bResolveConfigFromData = true;
 

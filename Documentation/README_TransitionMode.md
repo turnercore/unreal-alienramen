@@ -42,6 +42,7 @@ Transition context is passed by travel URL options:
 Helpers live in `ARTransitionTypes`:
 
 - `ARTransition::BuildTransitionTravelURL`
+- `ARTransition::AppendTransitionContextOptions`
 - `ARTransition::ApplyTransitionContextFromTravelOptions`
 
 Blueprint wrappers:
@@ -57,6 +58,7 @@ Blueprint wrappers:
 3. Transition map displays results/loading UI.
 4. Players submit continue-ready votes.
 5. Transition mode auto-travels to `TransitionContext.DestinationURL` when all are ready.
+6. The final gameplay map receives the same transition context in its own travel options.
 
 ## Direct Same-Mode Travel
 
@@ -86,3 +88,12 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
     1. `MakeTransitionContext(SourceMode, Reason, DestinationURL, bFreshLoadEntry)`
     2. `BuildTransitionTravelURL(TransitionMapURL, Context)`
   - Host/listen server then opens that URL.
+
+## Save-Load Entry
+
+- `UARSaveSubsystem::TravelToLoadedSaveDestination(...)` is the standard gameplay-entry path after `LoadGame(...)`.
+- It builds transition context with:
+  - `SourceMode=SaveLoad`
+  - `Reason=SaveLoadEntry`
+  - `bFreshLoadEntry=true`
+- Fresh-load-only gameplay restore logic should key off this context and the matching save-subsystem one-shot signal instead of inventing separate load-entry flags per mode.

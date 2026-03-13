@@ -635,6 +635,11 @@ FGameplayTag UARRunBuffSubsystem::ResolveCharacterTagFromPlayerState(const AARPl
 		return FGameplayTag();
 	}
 
+	if (PlayerState->GetCurrentCharacterTag().IsValid())
+	{
+		return PlayerState->GetCurrentCharacterTag();
+	}
+
 	static const FGameplayTag CharacterRootTag = FGameplayTag::RequestGameplayTag(TEXT("Player.Character"), false);
 	if (CharacterRootTag.IsValid())
 	{
@@ -647,15 +652,7 @@ FGameplayTag UARRunBuffSubsystem::ResolveCharacterTagFromPlayerState(const AARPl
 		}
 	}
 
-	switch (PlayerState->GetCharacterPicked())
-	{
-	case EARCharacterChoice::Brother:
-		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false);
-	case EARCharacterChoice::Sister:
-		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
-	default:
-		return FGameplayTag();
-	}
+	return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
 }
 
 bool UARRunBuffSubsystem::IsMatchingStackKey(const FARRunBuffItemStack& Stack, const FGameplayTag ItemTag, const FGameplayTag CharacterTag)

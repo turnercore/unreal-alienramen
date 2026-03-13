@@ -6,12 +6,16 @@
 #include "ARFactionSubsystem.h"
 #include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
+#include "ARPlayerStateBase.h"
 #include "ARRamenMeatActor.h"
+#include "ARRamenBowlActor.h"
 #include "ARRunBuffSubsystem.h"
 #include "ARScrapyardTypes.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
+#include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -93,6 +97,23 @@ namespace
 
 		InOutMeat.NormalizeAdditionalAmounts();
 	}
+
+	static bool TryParseSaveLoadEntryTransitionOptions(const FString& OptionsString, bool& bOutHasTransitionOptions)
+	{
+		bOutHasTransitionOptions = OptionsString.Contains(ARTransition::OptionSourceMode)
+			|| OptionsString.Contains(ARTransition::OptionReason)
+			|| OptionsString.Contains(ARTransition::OptionFreshLoad);
+		if (!bOutHasTransitionOptions)
+		{
+			return false;
+		}
+
+		FARTransitionContext TransitionContext;
+		ARTransition::ApplyTransitionContextFromTravelOptions(OptionsString, TransitionContext);
+		return TransitionContext.SourceMode == EARTransitionSourceMode::SaveLoad
+			&& TransitionContext.Reason == EARTransitionReason::SaveLoadEntry
+			&& TransitionContext.bFreshLoadEntry;
+	}
 }
 
 AARShopGameMode::AARShopGameMode()
@@ -166,6 +187,21 @@ void AARShopGameMode::BeginPlay()
 	// Always evaluate anchor spawning so shared stored inventory can still materialize
 	// even when non-drink transient carryables were restored.
 	SpawnStoredEnergyDrinksAtAnchors(SaveGame, SaveSubsystem);
+	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
+}
+
+void AARShopGameMode::RestartPlayer(AController* NewPlayer)
+{
+	Super::RestartPlayer(NewPlayer);
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
 }
 
 bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)
@@ -277,6 +313,225 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 	}
 
 	return bRestoredAny;
+}
+
+bool AARShopGameMode::ShouldApplyFreshLoadCharacterRestore(const UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const
+{
+	if (!HasAuthority() || !SaveSubsystem || !SaveGame || !SaveSubsystem->HasPendingFreshLoadEntry())
+	{
+		return false;
+	}
+
+	const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+	if (!ShopModeTag.IsValid() || !SaveGame->LastSavedModeTag.MatchesTagExact(ShopModeTag))
+	{
+		return false;
+	}
+
+	bool bHasTransitionOptions = false;
+	if (!TryParseSaveLoadEntryTransitionOptions(OptionsString, bHasTransitionOptions) && bHasTransitionOptions)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool AARShopGameMode::TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const
+{
+	if (!ShouldApplyFreshLoadCharacterRestore(SaveSubsystem, SaveGame))
+	{
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	TArray<AController*> ControllersToRestore;
+	bool bHasDeferredRestore = false;
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		AController* Controller = It->Get();
+		AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
+		UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
+		if (!PlayerState)
+		{
+			continue;
+		}
+
+		if (!Pawn || !CarryComponent)
+		{
+			bHasDeferredRestore = true;
+			continue;
+		}
+
+		ControllersToRestore.Add(Controller);
+	}
+
+	if (ControllersToRestore.IsEmpty())
+	{
+		return false;
+	}
+
+	bool bRestoredAny = false;
+	for (AController* Controller : ControllersToRestore)
+	{
+		bRestoredAny = TryRestoreCharacterShopStateForController(Controller, SaveGame) || bRestoredAny;
+	}
+
+	if (!bHasDeferredRestore)
+	{
+		SaveSubsystem->ClearPendingFreshLoadEntry();
+	}
+
+	return bRestoredAny;
+}
+
+bool AARShopGameMode::TryRestoreCharacterShopStateForController(AController* Controller, UARSaveGame* SaveGame) const
+{
+	if (!Controller || !SaveGame)
+	{
+		return false;
+	}
+
+	AARPlayerStateBase* PlayerState = Controller->GetPlayerState<AARPlayerStateBase>();
+	APawn* Pawn = Controller->GetPawn();
+	UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
+	if (!PlayerState || !Pawn || !CarryComponent)
+	{
+		return false;
+	}
+
+	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
+	int32 CharacterIndex = INDEX_NONE;
+	FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterIndex);
+	if (!CharacterState)
+	{
+		return false;
+	}
+
+	const FARCharacterShopSnapshot& Snapshot = CharacterState->ShopSnapshot;
+	bool bAppliedAny = false;
+
+	if (Snapshot.bHasCharacterTransform)
+	{
+		Pawn->SetActorTransform(Snapshot.CharacterTransform, false, nullptr, ETeleportType::TeleportPhysics);
+		bAppliedAny = true;
+	}
+
+	if (AActor* ExistingHeldActor = CarryComponent->ClearHeldActor(false))
+	{
+		ExistingHeldActor->Destroy();
+	}
+
+	if (Snapshot.bHasHeldItem)
+	{
+		bAppliedAny = RestoreHeldShopItemSnapshot(CarryComponent, Snapshot.HeldItem) || bAppliedAny;
+	}
+
+	if (bAppliedAny)
+	{
+		CharacterState->ShopSnapshot = FARCharacterShopSnapshot();
+	}
+
+	return bAppliedAny;
+}
+
+bool AARShopGameMode::RestoreHeldShopItemSnapshot(UARShopCarryComponent* CarryComponent, const FARCharacterHeldShopItemSnapshot& Snapshot) const
+{
+	if (!CarryComponent)
+	{
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	AActor* OwnerActor = CarryComponent->GetOwner();
+	if (!World || !OwnerActor)
+	{
+		return false;
+	}
+
+	UClass* SpawnClass = Snapshot.ActorClass.LoadSynchronous();
+	if (!SpawnClass || !SpawnClass->IsChildOf(AARShopCarryItemBase::StaticClass()))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Skipping invalid held item restore class '%s'."),
+			*Snapshot.ActorClass.ToSoftObjectPath().ToString());
+		return false;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AARShopCarryItemBase* SpawnedItem = World->SpawnActor<AARShopCarryItemBase>(SpawnClass, OwnerActor->GetActorTransform(), SpawnParams);
+	if (!SpawnedItem)
+	{
+		return false;
+	}
+
+	bool bConfigured = true;
+	if (AAREnergyDrinkCarryItem* EnergyDrink = Cast<AAREnergyDrinkCarryItem>(SpawnedItem))
+	{
+		if (!Snapshot.EnergyDrinkItemTag.IsValid())
+		{
+			bConfigured = false;
+		}
+		else
+		{
+			EnergyDrink->SetEnergyDrinkItemTag(Snapshot.EnergyDrinkItemTag);
+			if (ItemDefinitions)
+			{
+				ItemDefinitions->ApplyItemPhysicsProperties(EnergyDrink, Snapshot.EnergyDrinkItemTag);
+			}
+		}
+	}
+	else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(SpawnedItem))
+	{
+		MeatActor->SetMeatData(Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
+	}
+	else if (AARRamenBowlActor* BowlActor = Cast<AARRamenBowlActor>(SpawnedItem))
+	{
+		bConfigured = RestoreBowlSnapshot(BowlActor, Snapshot);
+	}
+
+	if (!bConfigured || !CarryComponent->TrySetHeldActor(SpawnedItem))
+	{
+		SpawnedItem->Destroy();
+		return false;
+	}
+
+	return true;
+}
+
+bool AARShopGameMode::RestoreBowlSnapshot(AARRamenBowlActor* BowlActor, const FARCharacterHeldShopItemSnapshot& Snapshot) const
+{
+	if (!BowlActor)
+	{
+		return false;
+	}
+
+	BowlActor->ClearBowl();
+	const int32 FillStep = FMath::Clamp(Snapshot.BowlFillStep, 0, 3);
+	if (FillStep >= 1 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, Snapshot.BowlSpec.NoodlesColor))
+	{
+		return false;
+	}
+
+	if (FillStep >= 2 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, Snapshot.BowlSpec.BrothColor))
+	{
+		return false;
+	}
+
+	if (FillStep >= 3 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, Snapshot.BowlSpec.ToppingsColor))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const

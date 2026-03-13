@@ -7,9 +7,14 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Primary runtime API: `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`)
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
-- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARMeatState`, `FARNpcRelationshipState`, `FARDialogueCanonicalChoiceState`, `FARPlayerDialogueHistoryState`
-- Save schema version is `v6`; minimum supported is also `v6`.
+- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARPlayerCharacterSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
+- Save schema version is `v12`; minimum supported is `v10`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
+- Save ownership is explicit:
+  - shared world state -> `UARSaveGame`
+  - player-owned state -> `PlayerStates[]` keyed by player identity
+  - character-owned state -> `CharacterStates[]` keyed by canonical character gameplay tag
+  - player-character-owned state -> nested `PlayerStates[].CharacterStates[]`
 
 ## Persisted Payload Contract (`UARSaveGame`)
 
@@ -27,20 +32,35 @@ Authoritative persisted fields currently include:
   - `ActiveFactionTag`
   - `ActiveFactionEffectTags`
   - `FactionPopularityStates`
+- Shared dialogue/run payload:
+  - `DialogueCompletedConversationTagsByGame`
+  - `DialogueRelationshipStates`
+  - `StoredEnergyDrinkStacks`
+  - `QueuedEnergyDrinkStacks`
+  - `ActiveRunBuffPayloads`
+  - `ActiveRunBuffCycleId`
+  - `ShopTransientCarryables`
 - Player payload:
   - `PlayerStates[]`:
     - `Identity` (`PlayerSlot`, optional online id/type, legacy id/name)
-    - `CharacterPicked`
-    - `LoadoutTags`
-- Dialogue/NPC payload:
-  - `NpcRelationshipStates`
-  - `DialogueCanonicalChoiceStates`
-  - `PlayerDialogueHistoryStates`
+    - canonical `CurrentCharacterTag`
+    - compatibility `CharacterPicked`
+    - `bDialogueAutoAdvanceEnabled`
+    - player-owned `ProgressionTags`
+    - compatibility `LoadoutTags` for the active character
+    - nested `CharacterStates[]` for player-character-owned state (currently per-character loadouts)
+- Character payload:
+  - `CharacterStates[]`:
+    - canonical `CharacterTag`
+    - dialogue progression/completion/choice-memory state
+    - shop-only character world snapshot (`CharacterTransform`, held supported carryable snapshot)
 - Save metadata:
   - `SaveSlot`
   - `SaveGameVersion`
   - `SaveSlotNumber`
   - `LastSaved`
+  - `LastSavedModeTag`
+  - `LastSavedMapPath`
 
 For progression/unlock usage details, see [Progression + Unlocks Guide](README_ProgressionUnlocks.md).
 
@@ -95,6 +115,10 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `MarkSaveDirty()`
 - `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)`
 - `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)`
+- `GetPlayerProgressionTags(Requester, OutTags, bAllowSlotFallback)`
+- `HasPlayerProgressionTag(Requester, Tag, bAllowSlotFallback)`
+- `AddPlayerProgressionTag(Requester, Tag)`
+- `RemovePlayerProgressionTag(Requester, Tag)`
 - `UARSaveTypesLibrary::GetTotalMeatAmount(FARMeatState)` (Blueprint pure helper for aggregate meat)
 
 ## Hydration helpers
@@ -102,6 +126,10 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `RequestGameStateHydration(Requester)`
 - `TryHydratePlayerStateFromCurrentSave(Requester, bAllowSlotFallback)`
 - `SetPendingTravelGameStateData(PendingStateData)`
+- `HasPendingFreshLoadEntry()`
+- `GetPendingLoadedSaveModeTag()`
+- `GetPendingLoadedSaveMapPath()`
+- `ClearPendingFreshLoadEntry()`
 
 Hydration identity policy:
 - If requester has a strict online identity (`UniqueNetIdString` + non-null provider type), hydration requires identity match and does not slot-fallback.
@@ -118,10 +146,17 @@ Hydration identity policy:
 
 - `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bPersistSaveBeforeTravel)`
 - `RequestOpenLevel(LevelName, Options, bSkipReadyChecks, bAbsolute, bPersistSaveBeforeTravel)`
+- `TravelToLoadedSaveDestination(bUseOpenLevelInPIE, TransitionMapURL)`
 
 Both capture one-shot `PendingTravelGameStateData` before map travel:
 - If `bPersistSaveBeforeTravel=true`, travel saves to disk first, then clears pending travel data.
 - If `bPersistSaveBeforeTravel=false`, travel skips disk save and carries pending travel data to next map hydration.
+
+`TravelToLoadedSaveDestination(...)` is the standard save-load gameplay entry path:
+- it reads the loaded save's recorded destination map
+- builds a `FARTransitionContext` with `SourceMode=SaveLoad`, `Reason=SaveLoadEntry`, `bFreshLoadEntry=true`
+- routes through the transition map URL by default so downstream gameplay maps receive the same fresh-load signal
+- when older migrated saves are missing explicit location metadata, load attempts backfill compatible mode/map metadata before this travel step
 
 ## BP Events
 
@@ -142,6 +177,10 @@ GameState hydration (`RequestGameStateHydration`) is authority-only and runs at 
 PlayerState hydration is split by lifecycle:
 - First join path (GameMode): `TryHydratePlayerStateFromCurrentSave(...)` if possible, else `InitializeForFirstSessionJoin()`.
 - Seamless travel path: `AARPlayerStateBase::CopyProperties(...)` copies runtime struct + key replicated fields.
+- Player hydration is two-stage:
+  1. hydrate player-owned fields by identity (or slot fallback for local-only identities)
+  2. resolve active `CurrentCharacterTag` and project character-owned plus player-character-owned state onto `AARPlayerStateBase`
+- `AARPlayerStateBase` remains the runtime owner surface, but character-owned persistence is not keyed by player id.
 
 ## Typical Blueprint Flows
 
@@ -166,18 +205,19 @@ PlayerState hydration is split by lifecycle:
 ## Extend Save Data
 
 When adding new persisted data:
-1. Add field to `UARSaveGame` (or `FARPlayerStateSaveData` for player-scoped values).
-2. Populate in `UARSaveSubsystem::GatherRuntimeData(...)`.
-3. Apply in hydration flow.
-4. If BP-facing, add reflected `UPROPERTY`.
-5. Extend `UARSaveGame::ValidateAndSanitize(...)` for validation/clamping.
+1. Decide the ownership bucket first: shared world, player-owned, character-owned, or player-character-owned.
+2. Add the field to `UARSaveGame`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, or `FARPlayerCharacterSaveData` accordingly.
+3. Populate in `UARSaveSubsystem::GatherRuntimeData(...)`.
+4. Apply in the correct hydration/projection flow.
+5. If BP-facing, add reflected `UPROPERTY`.
+6. Extend `UARSaveGame::ValidateAndSanitize(...)` and migration logic when schema compatibility requires it.
 
 ## Schema Versioning
 
 When changing schema in a breaking way:
 1. Bump `UARSaveGame::CurrentSchemaVersion`.
 2. Update `UARSaveGame::MinSupportedSchemaVersion` policy as needed.
-3. Add migration behavior only if supporting older schema versions.
+3. Add migration behavior when supporting older schema versions.
 
 ## Troubleshooting
 

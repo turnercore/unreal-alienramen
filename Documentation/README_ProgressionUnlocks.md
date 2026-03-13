@@ -7,18 +7,20 @@ This document defines how progression tags and unlock tags are stored, mutated, 
 - Save owner: `UARSaveSubsystem` / `UARSaveGame`
 - Runtime mirror owner for unlocks: `AARGameStateBase`
 - Persisted fields:
-  - `ProgressionTags`
+  - shared `ProgressionTags`
+  - player-owned `PlayerStates[].ProgressionTags`
   - `Unlocks`
   - `FactionClout`
   - `ActiveFactionTag`
   - `ActiveFactionEffectTags`
   - `FactionPopularityStates`
 
-`ProgressionTags` and `Unlocks` are long-lived save state. They are not transient per-map runtime flags.
+Shared/player progression tags and unlocks are long-lived save state. They are not transient per-map runtime flags.
 
 ## Semantic Split
 
-- `ProgressionTags`: narrative/progression milestones and world-state gates.
+- shared `ProgressionTags`: narrative/world-state milestones that apply to the whole save
+- player-owned `PlayerStates[].ProgressionTags`: milestones that should follow a specific player identity regardless of active character
 - `Unlocks`: gameplay inventory/loadout/content-unlock surface used by mode systems and player setup.
 
 Keep the split intentional:
@@ -32,6 +34,10 @@ Save-owned progression APIs on `UARSaveSubsystem`:
 - `HasProgressionTag(Tag)`
 - `AddProgressionTag(Tag)`
 - `RemoveProgressionTag(Tag)`
+- `GetPlayerProgressionTags(PlayerState, OutTags)`
+- `HasPlayerProgressionTag(PlayerState, Tag)`
+- `AddPlayerProgressionTag(PlayerState, Tag)`
+- `RemovePlayerProgressionTag(PlayerState, Tag)`
 - `GetFactionClout()`
 - `SetFactionClout(NewClout)`
 

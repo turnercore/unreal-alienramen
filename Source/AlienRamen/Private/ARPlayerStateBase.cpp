@@ -5,12 +5,71 @@
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLoadoutSettings.h"
 #include "ARLog.h"
+#include "ARSaveGame.h"
 #include "AbilitySystemComponent.h"
 #include "ARSaveSubsystem.h"
 #include "GameplayTagUtilities.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
+
+namespace
+{
+	static FARPlayerIdentity BuildPlayerIdentityForSave(const AARPlayerStateBase* PlayerState)
+	{
+		FARPlayerIdentity Identity;
+		if (!PlayerState)
+		{
+			return Identity;
+		}
+
+		Identity.LegacyId = PlayerState->GetPlayerId();
+		Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
+		Identity.PlayerSlot = PlayerState->GetPlayerSlot();
+		if (PlayerState->GetUniqueId().IsValid())
+		{
+			Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+			Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+		}
+
+		return Identity;
+	}
+
+	static FARPlayerStateSaveData* FindOrAddCurrentSavePlayerData(AARPlayerStateBase* PlayerState)
+	{
+		if (!PlayerState)
+		{
+			return nullptr;
+		}
+
+		UGameInstance* GameInstance = PlayerState->GetGameInstance();
+		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+		UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+		if (!SaveGame)
+		{
+			return nullptr;
+		}
+
+		const FARPlayerIdentity Identity = BuildPlayerIdentityForSave(PlayerState);
+		FARPlayerStateSaveData ExistingData;
+		int32 ExistingIndex = INDEX_NONE;
+		if (SaveGame->FindPlayerStateDataByIdentity(Identity, ExistingData, ExistingIndex) && SaveGame->PlayerStates.IsValidIndex(ExistingIndex))
+		{
+			return &SaveGame->PlayerStates[ExistingIndex];
+		}
+
+		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
+			&& SaveGame->FindPlayerStateDataBySlot(Identity.PlayerSlot, ExistingData, ExistingIndex)
+			&& SaveGame->PlayerStates.IsValidIndex(ExistingIndex))
+		{
+			return &SaveGame->PlayerStates[ExistingIndex];
+		}
+
+		FARPlayerStateSaveData& Added = SaveGame->PlayerStates.AddDefaulted_GetRef();
+		Added.Identity = Identity;
+		return &Added;
+	}
+}
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -19,6 +78,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
 	DOREPLIFETIME(AARPlayerStateBase, PlayerSlot);
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
+	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterTag);
 	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
 	DOREPLIFETIME(AARPlayerStateBase, bIsReady);
 	DOREPLIFETIME(AARPlayerStateBase, bIsDowned);
@@ -145,6 +205,22 @@ void AARPlayerStateBase::ServerPickCharacter_Implementation(EARCharacterChoice N
 	SetCharacterPicked_Internal(NewCharacter);
 }
 
+void AARPlayerStateBase::SetCurrentCharacterTag(FGameplayTag NewCharacterTag)
+{
+	if (HasAuthority())
+	{
+		SetCurrentCharacterTag_Internal(NewCharacterTag);
+		return;
+	}
+
+	ServerSetCurrentCharacterTag(NewCharacterTag);
+}
+
+void AARPlayerStateBase::ServerSetCurrentCharacterTag_Implementation(FGameplayTag NewCharacterTag)
+{
+	SetCurrentCharacterTag_Internal(NewCharacterTag);
+}
+
 void AARPlayerStateBase::SetDisplayNameValue(const FString& NewDisplayName)
 {
 	if (HasAuthority())
@@ -177,6 +253,31 @@ void AARPlayerStateBase::ServerUpdateReady_Implementation(bool bNewReady)
 	SetReady_Internal(bNewReady);
 }
 
+void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& PlayerData)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetDisplayName_Internal(PlayerData.Identity.DisplayName.ToString());
+	SetDialogueAutoAdvanceEnabled_Internal(PlayerData.bDialogueAutoAdvanceEnabled);
+	SetCurrentCharacterTag_Internal(PlayerData.ResolveCurrentCharacterTag(), false);
+
+	FGameplayTagContainer ProjectedLoadout;
+	int32 CharacterIndex = INDEX_NONE;
+	if (const FARPlayerCharacterSaveData* CharacterState = PlayerData.FindCharacterStateData(CurrentCharacterTag, CharacterIndex))
+	{
+		ProjectedLoadout = CharacterState->LoadoutTags;
+	}
+	else
+	{
+		ProjectedLoadout = PlayerData.LoadoutTags;
+	}
+
+	SetLoadoutTags_Internal(ProjectedLoadout, false);
+}
+
 void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
 {
 	if (!HasAuthority() || bIsSetup == bNewIsSetup)
@@ -199,7 +300,7 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 
 	const EARCharacterChoice DefaultCharacter =
 		(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
-	SetCharacterPicked(DefaultCharacter);
+	SetCurrentCharacterTag_Internal(ARPlayer::GetCharacterTagForChoice(DefaultCharacter), false);
 	ResetInvaderCombo();
 	ClearActivatedInvaderUpgrades();
 	ResetSpicyTrackCursor();
@@ -656,6 +757,19 @@ void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
 void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		if (CurrentCharacterTag.IsValid())
+		{
+			CharacterPicked = ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag);
+		}
+		else if (CharacterPicked != EARCharacterChoice::None)
+		{
+			CurrentCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
+		}
+	}
+
 	EnsureDefaultLoadoutIfEmpty();
 	if (HasAuthority() && InvaderPlayerColor == EARAffinityColor::None)
 	{
@@ -683,6 +797,19 @@ void AARPlayerStateBase::OnRep_CharacterPicked(EARCharacterChoice OldCharacter)
 {
 	OnCharacterPickedChanged.Broadcast(this, PlayerSlot, CharacterPicked, OldCharacter);
 	EvaluateTravelReadinessAndBroadcast();
+}
+
+void AARPlayerStateBase::OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag)
+{
+	(void)OldCharacterTag;
+
+	const EARCharacterChoice ResolvedChoice = ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag);
+	if (ResolvedChoice != EARCharacterChoice::None && CharacterPicked != ResolvedChoice)
+	{
+		const EARCharacterChoice OldCharacter = CharacterPicked;
+		CharacterPicked = ResolvedChoice;
+		OnRep_CharacterPicked(OldCharacter);
+	}
 }
 
 void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
@@ -754,17 +881,73 @@ void AARPlayerStateBase::OnRep_SpicyTrackCursorTier(int32 OldCursorTier)
 
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
 {
-	if (!HasAuthority() || CharacterPicked == NewCharacter)
+	if (!HasAuthority())
 	{
 		return;
 	}
 
+	SetCurrentCharacterTag_Internal(ARPlayer::GetCharacterTagForChoice(NewCharacter));
+}
+
+void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharacterTag, const bool bMarkSaveDirty)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(NewCharacterTag, PlayerSlot);
+	const EARCharacterChoice NewCharacter = ARPlayer::GetCharacterChoiceForTag(NormalizedTag);
+	if (CurrentCharacterTag == NormalizedTag && CharacterPicked == NewCharacter)
+	{
+		return;
+	}
+
+	FGameplayTagContainer NextProjectedLoadout = LoadoutTags;
+	if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
+	{
+		PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
+		PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+
+		if (CurrentCharacterTag.IsValid())
+		{
+			FARPlayerCharacterSaveData& CurrentCharacterState = PlayerSaveData->FindOrAddCharacterStateData(CurrentCharacterTag);
+			CurrentCharacterState.LoadoutTags = LoadoutTags;
+		}
+
+		PlayerSaveData->CurrentCharacterTag = NormalizedTag;
+		PlayerSaveData->CharacterPicked = NewCharacter;
+		int32 NextCharacterIndex = INDEX_NONE;
+		if (const FARPlayerCharacterSaveData* NextCharacterState = PlayerSaveData->FindCharacterStateData(NormalizedTag, NextCharacterIndex))
+		{
+			NextProjectedLoadout = NextCharacterState->LoadoutTags;
+		}
+		else
+		{
+			NextProjectedLoadout.Reset();
+		}
+
+		PlayerSaveData->SyncCompatibilityLoadoutFromCurrentCharacter();
+	}
+
 	const EARCharacterChoice OldCharacter = CharacterPicked;
+	const FGameplayTag OldCharacterTag = CurrentCharacterTag;
+	CurrentCharacterTag = NormalizedTag;
 	CharacterPicked = NewCharacter;
 	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(NewCharacter));
-	OnRep_CharacterPicked(OldCharacter);
+
+	if (OldCharacter != CharacterPicked)
+	{
+		OnRep_CharacterPicked(OldCharacter);
+	}
+	else if (OldCharacterTag != CurrentCharacterTag)
+	{
+		EvaluateTravelReadinessAndBroadcast();
+	}
+
+	SetLoadoutTags_Internal(NextProjectedLoadout, bMarkSaveDirty);
+	EnsureDefaultLoadoutIfEmpty();
 	ForceNetUpdate();
-	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, const bool bForceBroadcast)
@@ -1003,6 +1186,15 @@ void AARPlayerStateBase::SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled)
 	bDialogueAutoAdvanceEnabled = bEnabled;
 	OnRep_DialogueAutoAdvanceEnabled(bOldEnabled);
 	ForceNetUpdate();
+
+	if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
+	{
+		PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
+		PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+		PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
+		PlayerSaveData->CharacterPicked = CharacterPicked;
+		PlayerSaveData->SyncCompatibilityLoadoutFromCurrentCharacter();
+	}
 }
 
 bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
@@ -1105,7 +1297,7 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 	return true;
 }
 
-void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags)
+void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags, const bool bMarkSaveDirty)
 {
 	if (!HasAuthority())
 	{
@@ -1125,12 +1317,29 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
-	// Mark save dirty so autosave can persist new loadout.
+	// Mirror the projected runtime loadout into the active player-character save row.
 	if (UGameInstance* GI = GetGameInstance())
 	{
 		if (UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>())
 		{
-			SaveSubsystem->MarkSaveDirty();
+			if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
+			{
+				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
+				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
+				PlayerSaveData->CharacterPicked = CharacterPicked;
+				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+				if (CurrentCharacterTag.IsValid())
+				{
+					FARPlayerCharacterSaveData& ActiveCharacterState = PlayerSaveData->FindOrAddCharacterStateData(CurrentCharacterTag);
+					ActiveCharacterState.LoadoutTags = LoadoutTags;
+				}
+				PlayerSaveData->SyncCompatibilityLoadoutFromCurrentCharacter();
+			}
+
+			if (bMarkSaveDirty)
+			{
+				SaveSubsystem->MarkSaveDirty();
+			}
 		}
 	}
 }
