@@ -32,10 +32,29 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Validates configured routes without mutating runtime state. Detects invalid root tags, null table references, duplicate roots, and empty route sets. Use this in setup/validation flows to surface configuration issues early."))
 	bool TryValidateRouteConfiguration(FString& OutError);
 
+	// Copy-owning resolve: returns an InstancedStruct copy (safe to keep after table unload).
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a gameplay tag to a DataTable row and copies that row into an InstancedStruct for Blueprint use. Use this when you need row data payload from a content tag and do not know row struct type at compile time. Returns false with OutError if route/table/row cannot be resolved."))
-	bool TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError);
+	bool TryResolveRowStructForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError);
 
-	bool TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
+	// View-only resolve: returns a const struct view into the loaded table (no copy, only valid while table stays loaded).
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Resolves a gameplay tag to a DataTable row and returns a view into the loaded table (no copy). Only valid while the table remains loaded."))
+	bool TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
+
+	// Deprecated wrapper: use TryResolveRowStructForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowStructForTag")
+	bool TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowStructForTag(Tag, OutRow, OutError); }
+
+	// Deprecated wrapper: use TryResolveRowRefForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowRefForTag")
+	bool TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError) { return TryResolveRowRefForTag(Tag, OutRowView, OutError); }
+
+	// Deprecated wrapper: use TryResolveRowStructForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowStructForTag")
+	bool TryResolveRowForContentTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowStructForTag(Tag, OutRow, OutError); }
+
+	// Deprecated wrapper: use TryResolveRowRefForTag instead.
+	UE_DEPRECATED(5.3, "Use TryResolveRowRefForTag")
+	bool TryResolveRowViewForContentTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError) { return TryResolveRowRefForTag(Tag, OutRowView, OutError); }
 
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Returns all row names from the DataTable mapped to an exact root tag. Row names are sorted alphabetically. Use this when you want to iterate a family of definitions under one root (for example validation, menus, random selection, or authoring tools)."))
 	bool TryGetRowNamesForRootTag(FGameplayTag RootTag, TArray<FName>& OutRowNames, FString& OutError);
@@ -67,6 +86,32 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(ToolTip="Returns resolver runtime diagnostics, including route count, loaded table cache size, matched/unresolved tag cache sizes, and deduplicated failure log count. Use this for debug UI, telemetry, and performance verification."))
 	void GetResolverDiagnostics(FTagContentResolverDiagnostics& OutDiagnostics) const;
+
+	/** Returns true when a table for the given root is currently loaded in cache (no loading side effects). */
+	UFUNCTION(BlueprintPure, Category = "Tag Content Resolver")
+	bool IsRootTableLoaded(FGameplayTag RootTag) const;
+
+	/**
+	 * Keeps only the provided roots loaded: unloads any other cached tables, clears dependent caches,
+	 * and loads any missing tables for the provided roots.
+	 * Returns false if loading any keep-root fails (see OutError).
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver")
+	bool ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError);
+
+	/**
+	 * Preloads a root's DataTable and all soft object/class references found in its rows.
+	 * Optionally recurses into DataTables referenced by those soft paths (depth-limited).
+	 * @param RootTag						Resolver root to load.
+	 * @param MaxRecursiveTableDepth		How many levels of referenced DataTables to walk (0 = only the root table).
+	 * @param MaxAssetsToLoad				Guard rail to prevent runaway recursion; early-outs if exceeded.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver")
+	bool PreloadRootTableAndSoftReferences(
+		FGameplayTag RootTag,
+		int32 MaxRecursiveTableDepth,
+		int32 MaxAssetsToLoad,
+		FString& OutError);
 
 	static bool TryResolveDataTableForRootTagFromConfiguredRoutes(
 		FGameplayTag RootTag,
