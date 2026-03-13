@@ -123,6 +123,7 @@ This document captures the runtime ownership and integration contract for the sh
   - shop character transform
   - held supported carryable snapshot (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`)
 - Character shop restore applies only when re-entering `Mode.Shop` from a fresh save load of a save that was itself made in `Mode.Shop`.
+- Fresh-load character restore skips controllers that are not ready yet and retries on later `RestartPlayer(...)` calls until the pending fresh-load entry is fully consumed.
 - Clean shop entry from new game / invader / scrapyard does not apply character transform or held-item restore snapshots.
 - Starting a run clears transient loose-carryable snapshots; invader/scrapyard completion marks a one-shot clear on next shop entry.
 

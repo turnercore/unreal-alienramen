@@ -757,14 +757,19 @@ void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
 void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (CurrentCharacterTag.IsValid())
+
+	if (HasAuthority())
 	{
-		CharacterPicked = ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag);
+		if (CurrentCharacterTag.IsValid())
+		{
+			CharacterPicked = ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag);
+		}
+		else if (CharacterPicked != EARCharacterChoice::None)
+		{
+			CurrentCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
+		}
 	}
-	else if (CharacterPicked != EARCharacterChoice::None)
-	{
-		CurrentCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
-	}
+
 	EnsureDefaultLoadoutIfEmpty();
 	if (HasAuthority() && InvaderPlayerColor == EARAffinityColor::None)
 	{

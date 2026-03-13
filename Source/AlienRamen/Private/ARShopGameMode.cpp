@@ -351,15 +351,22 @@ bool AARShopGameMode::TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, 
 	}
 
 	TArray<AController*> ControllersToRestore;
+	bool bHasDeferredRestore = false;
 	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
 	{
 		AController* Controller = It->Get();
 		AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
 		APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
 		UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
-		if (!PlayerState || !Pawn || !CarryComponent)
+		if (!PlayerState)
 		{
-			return false;
+			continue;
+		}
+
+		if (!Pawn || !CarryComponent)
+		{
+			bHasDeferredRestore = true;
+			continue;
 		}
 
 		ControllersToRestore.Add(Controller);
@@ -376,7 +383,11 @@ bool AARShopGameMode::TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, 
 		bRestoredAny = TryRestoreCharacterShopStateForController(Controller, SaveGame) || bRestoredAny;
 	}
 
-	SaveSubsystem->ClearPendingFreshLoadEntry();
+	if (!bHasDeferredRestore)
+	{
+		SaveSubsystem->ClearPendingFreshLoadEntry();
+	}
+
 	return bRestoredAny;
 }
 
@@ -420,6 +431,11 @@ bool AARShopGameMode::TryRestoreCharacterShopStateForController(AController* Con
 	if (Snapshot.bHasHeldItem)
 	{
 		bAppliedAny = RestoreHeldShopItemSnapshot(CarryComponent, Snapshot.HeldItem) || bAppliedAny;
+	}
+
+	if (bAppliedAny)
+	{
+		CharacterState->ShopSnapshot = FARCharacterShopSnapshot();
 	}
 
 	return bAppliedAny;

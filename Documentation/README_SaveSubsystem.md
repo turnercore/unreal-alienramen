@@ -156,6 +156,7 @@ Both capture one-shot `PendingTravelGameStateData` before map travel:
 - it reads the loaded save's recorded destination map
 - builds a `FARTransitionContext` with `SourceMode=SaveLoad`, `Reason=SaveLoadEntry`, `bFreshLoadEntry=true`
 - routes through the transition map URL by default so downstream gameplay maps receive the same fresh-load signal
+- when older migrated saves are missing explicit location metadata, load attempts backfill compatible mode/map metadata before this travel step
 
 ## BP Events
 
