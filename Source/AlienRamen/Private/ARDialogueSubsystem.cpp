@@ -313,6 +313,7 @@ static UTagContentResolverSubsystem* GetLookupSubsystem(const UARDialogueSubsyst
 
 static AARPlayerStateBase* FindPlayerStateBySlot(const UWorld* World, const EARPlayerSlot Slot);
 static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const UARSaveGame* SaveGame, const EARPlayerSlot Slot);
+static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const UARSaveGame* SaveGame, const FARPlayerIdentity& Identity);
 
 static FARPlayerIdentity BuildPlayerIdentityFromState(const AARPlayerStateBase* PS)
 {
@@ -333,6 +334,48 @@ static FARPlayerIdentity BuildPlayerIdentityFromState(const AARPlayerStateBase* 
 	return Identity;
 }
 
+static FGameplayTag ResolveDialogueCharacterTagFromPlayerState(const AARPlayerStateBase* PlayerState)
+{
+	if (!PlayerState)
+	{
+		return FGameplayTag();
+	}
+
+	if (PlayerState->GetCurrentCharacterTag().IsValid())
+	{
+		return PlayerState->GetCurrentCharacterTag();
+	}
+
+	return ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked()), PlayerState->GetPlayerSlot());
+}
+
+static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const UARSaveGame* SaveGame, const FARPlayerIdentity& Identity)
+{
+	if (!SaveGame)
+	{
+		return FGameplayTag();
+	}
+
+	FARPlayerStateSaveData PlayerStateData;
+	int32 PlayerIndex = INDEX_NONE;
+	if (SaveGame->FindPlayerStateDataByIdentity(Identity, PlayerStateData, PlayerIndex))
+	{
+		return PlayerStateData.ResolveCurrentCharacterTag();
+	}
+
+	if (Identity.PlayerSlot != EARPlayerSlot::Unknown)
+	{
+		if (SaveGame->FindPlayerStateDataBySlot(Identity.PlayerSlot, PlayerStateData, PlayerIndex))
+		{
+			return PlayerStateData.ResolveCurrentCharacterTag();
+		}
+
+		return ARPlayer::GetDefaultCharacterTagForSlot(Identity.PlayerSlot);
+	}
+
+	return FGameplayTag();
+}
+
 static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const UARSaveGame* SaveGame, const FARPlayerIdentity& Identity)
 {
 	if (!SaveGame)
@@ -340,29 +383,16 @@ static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const UARSa
 		return nullptr;
 	}
 
-	const FDialoguePlayerPersistentState* FirstIdentityMatch = nullptr;
-	for (const FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
+	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(SaveGame, Identity);
+	FARCharacterSaveData CharacterState;
+	int32 CharacterIndex = INDEX_NONE;
+	if (!SaveGame->FindCharacterStateDataByTag(CharacterTag, CharacterState, CharacterIndex)
+		|| !SaveGame->CharacterStates.IsValidIndex(CharacterIndex))
 	{
-		if (!Entry.Identity.Matches(Identity))
-		{
-			continue;
-		}
-
-		if (!FirstIdentityMatch)
-		{
-			FirstIdentityMatch = &Entry;
-		}
-
-		// Prefer slot-consistent match when multiple rows share one online identity
-		// (for example couch co-op players on one platform account).
-		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
-			&& Entry.Identity.PlayerSlot == Identity.PlayerSlot)
-		{
-			return &Entry;
-		}
+		return nullptr;
 	}
 
-	return FirstIdentityMatch;
+	return &SaveGame->CharacterStates[CharacterIndex].DialogueState;
 }
 
 static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(UARSaveGame* SaveGame, const FARPlayerIdentity& Identity)
@@ -372,27 +402,10 @@ static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(UARSaveGam
 		return nullptr;
 	}
 
-	FDialoguePlayerPersistentState* FirstIdentityMatch = nullptr;
-	for (FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
-	{
-		if (!Entry.Identity.Matches(Identity))
-		{
-			continue;
-		}
-
-		if (!FirstIdentityMatch)
-		{
-			FirstIdentityMatch = &Entry;
-		}
-
-		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
-			&& Entry.Identity.PlayerSlot == Identity.PlayerSlot)
-		{
-			return &Entry;
-		}
-	}
-
-	return FirstIdentityMatch;
+	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(SaveGame, Identity);
+	int32 CharacterIndex = INDEX_NONE;
+	FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterIndex);
+	return CharacterState ? &CharacterState->DialogueState : nullptr;
 }
 
 static bool IsConversationCompletedByGame(const UARDialogueSubsystem* Subsystem, const FGameplayTag ConversationTag)
@@ -614,9 +627,14 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(UARSaveGame*
 		return nullptr;
 	}
 
-	FDialoguePlayerPersistentState& Added = SaveGame->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	Added.Identity = Identity;
-	return &Added;
+	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(SaveGame, Identity);
+	if (!CharacterTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+	return &CharacterState.DialogueState;
 }
 
 static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
@@ -629,23 +647,20 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
 		return nullptr;
 	}
 
-	for (FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
-	{
-		if (Entry.Identity.PlayerSlot == Slot)
-		{
-			return &Entry;
-		}
-	}
-
 	const AARPlayerStateBase* PlayerState = FindPlayerStateBySlot(DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr, Slot);
 	if (PlayerState)
 	{
 		return FindOrAddPlayerDialogueState(SaveGame, BuildPlayerIdentityFromState(PlayerState));
 	}
 
-	FDialoguePlayerPersistentState& Added = SaveGame->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	Added.Identity.PlayerSlot = Slot;
-	return &Added;
+	const FGameplayTag CharacterTag = ARPlayer::GetDefaultCharacterTagForSlot(Slot);
+	if (!CharacterTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+	return &CharacterState.DialogueState;
 }
 
 static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
@@ -817,7 +832,8 @@ static FGameplayTag ResolvePlayerSpeakerTag(const AARPlayerStateBase* PlayerStat
 		return FGameplayTag();
 	}
 
-	switch (PlayerState->GetCharacterPicked())
+	const FGameplayTag CurrentCharacterTag = ResolveDialogueCharacterTagFromPlayerState(PlayerState);
+	switch (ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag))
 	{
 	case EARCharacterChoice::Brother:
 		return GetDialogueSpeakerBrotherTag();
@@ -978,15 +994,20 @@ static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const
 		return nullptr;
 	}
 
-	for (const FDialoguePlayerPersistentState& Entry : SaveGame->DialoguePlayerPersistentStates)
+	if (const AARPlayerStateBase* PlayerState = FindPlayerStateBySlot(GWorld, Slot))
 	{
-		if (Entry.Identity.PlayerSlot == Slot)
-		{
-			return &Entry;
-		}
+		return FindPlayerDialogueState(SaveGame, BuildPlayerIdentityFromState(PlayerState));
 	}
 
-	return nullptr;
+	FARCharacterSaveData CharacterState;
+	int32 CharacterIndex = INDEX_NONE;
+	if (!SaveGame->FindCharacterStateDataByTag(ARPlayer::GetDefaultCharacterTagForSlot(Slot), CharacterState, CharacterIndex)
+		|| !SaveGame->CharacterStates.IsValidIndex(CharacterIndex))
+	{
+		return nullptr;
+	}
+
+	return &SaveGame->CharacterStates[CharacterIndex].DialogueState;
 }
 
 static FSpeakerPortraitData ResolvePortraitForSpeaker(
@@ -6062,8 +6083,9 @@ void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot 
 
 		if (SaveGame)
 		{
-			for (FDialoguePlayerPersistentState& PlayerState : SaveGame->DialoguePlayerPersistentStates)
+			for (FARCharacterSaveData& CharacterState : SaveGame->CharacterStates)
 			{
+				FDialoguePlayerPersistentState& PlayerState = CharacterState.DialogueState;
 				if (!PlayerState.SeenConversationTagsThisCycle.IsEmpty() || !PlayerState.SkippedConversationTagsThisCycle.IsEmpty())
 				{
 					PlayerState.SeenConversationTagsThisCycle.Reset();
@@ -6087,17 +6109,18 @@ void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot 
 
 	if (SaveGame)
 	{
-		for (FDialoguePlayerPersistentState& PlayerState : SaveGame->DialoguePlayerPersistentStates)
+		const AARPlayerStateBase* PlayerState = FindPlayerStateBySlot(GetWorld(), PlayerSlot);
+		const FGameplayTag CharacterTag = PlayerState
+			? ResolveDialogueCharacterTagFromPlayerState(PlayerState)
+			: ARPlayer::GetDefaultCharacterTagForSlot(PlayerSlot);
+		int32 CharacterIndex = INDEX_NONE;
+		if (FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterIndex))
 		{
-			if (PlayerState.Identity.PlayerSlot != PlayerSlot)
+			FDialoguePlayerPersistentState& CharacterDialogueState = CharacterState->DialogueState;
+			if (!CharacterDialogueState.SeenConversationTagsThisCycle.IsEmpty() || !CharacterDialogueState.SkippedConversationTagsThisCycle.IsEmpty())
 			{
-				continue;
-			}
-
-			if (!PlayerState.SeenConversationTagsThisCycle.IsEmpty() || !PlayerState.SkippedConversationTagsThisCycle.IsEmpty())
-			{
-				PlayerState.SeenConversationTagsThisCycle.Reset();
-				PlayerState.SkippedConversationTagsThisCycle.Reset();
+				CharacterDialogueState.SeenConversationTagsThisCycle.Reset();
+				CharacterDialogueState.SkippedConversationTagsThisCycle.Reset();
 				bSaveChanged = true;
 			}
 		}

@@ -1,5 +1,115 @@
 #include "ARSaveGame.h"
+
 #include "GameplayEffect.h"
+
+namespace
+{
+	static void AddWarning(TArray<FString>* OutWarnings, const TCHAR* Message)
+	{
+		if (OutWarnings)
+		{
+			OutWarnings->Add(Message);
+		}
+	}
+
+	static void AddWarningf(TArray<FString>* OutWarnings, const FString& Message)
+	{
+		if (OutWarnings)
+		{
+			OutWarnings->Add(Message);
+		}
+	}
+
+	static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
+	{
+		return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
+	}
+
+	static bool ContainsChoiceRecord(
+		const TArray<FDialogueChoiceMemoryRecord>& Records,
+		const FDialogueChoiceMemoryRecord& Candidate)
+	{
+		for (const FDialogueChoiceMemoryRecord& Existing : Records)
+		{
+			if (Existing.ConversationTag == Candidate.ConversationTag
+				&& Existing.ChoiceNodeId == Candidate.ChoiceNodeId
+				&& Existing.SelectedBranchId == Candidate.SelectedBranchId)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	static int32 MergeDialoguePersistentState(
+		FDialoguePlayerPersistentState& Target,
+		const FDialoguePlayerPersistentState& Source)
+	{
+		int32 ChangeCount = 0;
+
+		const int32 OldProgressionCount = Target.ProgressionTags.Num();
+		Target.ProgressionTags.AppendTags(Source.ProgressionTags);
+		ChangeCount += (Target.ProgressionTags.Num() != OldProgressionCount) ? 1 : 0;
+
+		const int32 OldCompletedCount = Target.CompletedConversationTags.Num();
+		Target.CompletedConversationTags.AppendTags(Source.CompletedConversationTags);
+		ChangeCount += (Target.CompletedConversationTags.Num() != OldCompletedCount) ? 1 : 0;
+
+		const int32 OldSeenCount = Target.SeenConversationTagsThisCycle.Num();
+		Target.SeenConversationTagsThisCycle.AppendTags(Source.SeenConversationTagsThisCycle);
+		ChangeCount += (Target.SeenConversationTagsThisCycle.Num() != OldSeenCount) ? 1 : 0;
+
+		const int32 OldSkippedCount = Target.SkippedConversationTagsThisCycle.Num();
+		Target.SkippedConversationTagsThisCycle.AppendTags(Source.SkippedConversationTagsThisCycle);
+		ChangeCount += (Target.SkippedConversationTagsThisCycle.Num() != OldSkippedCount) ? 1 : 0;
+
+		for (const FDialogueChoiceMemoryRecord& Record : Source.CompletedChoiceRecords)
+		{
+			if (!ContainsChoiceRecord(Target.CompletedChoiceRecords, Record))
+			{
+				Target.CompletedChoiceRecords.Add(Record);
+				++ChangeCount;
+			}
+		}
+
+		return ChangeCount;
+	}
+
+	static bool IsValidCharacterTag(const FGameplayTag CharacterTag)
+	{
+		return ARPlayer::GetCharacterChoiceForTag(CharacterTag) != EARCharacterChoice::None;
+	}
+
+	static FGameplayTag ResolveLegacyDialogueCharacterTag(
+		UARSaveGame* SaveGame,
+		const FDialoguePlayerPersistentState& LegacyState)
+	{
+		if (!SaveGame)
+		{
+			return FGameplayTag();
+		}
+
+		FARPlayerStateSaveData MatchedPlayerState;
+		int32 PlayerIndex = INDEX_NONE;
+		if (SaveGame->FindPlayerStateDataByIdentity(LegacyState.Identity, MatchedPlayerState, PlayerIndex))
+		{
+			return MatchedPlayerState.ResolveCurrentCharacterTag();
+		}
+
+		if (LegacyState.Identity.PlayerSlot != EARPlayerSlot::Unknown)
+		{
+			if (SaveGame->FindPlayerStateDataBySlot(LegacyState.Identity.PlayerSlot, MatchedPlayerState, PlayerIndex))
+			{
+				return MatchedPlayerState.ResolveCurrentCharacterTag();
+			}
+
+			return ARPlayer::GetDefaultCharacterTagForSlot(LegacyState.Identity.PlayerSlot);
+		}
+
+		return FGameplayTag();
+	}
+}
 
 UARSaveGame::UARSaveGame()
 {
@@ -57,9 +167,151 @@ bool UARSaveGame::FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identit
 	return false;
 }
 
+bool UARSaveGame::FindCharacterStateDataByTag(const FGameplayTag CharacterTag, FARCharacterSaveData& OutData, int32& OutIndex) const
+{
+	OutIndex = INDEX_NONE;
+	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedTag.IsValid())
+	{
+		return false;
+	}
+
+	for (int32 Index = 0; Index < CharacterStates.Num(); ++Index)
+	{
+		if (CharacterStates[Index].CharacterTag == NormalizedTag)
+		{
+			OutData = CharacterStates[Index];
+			OutIndex = Index;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+FARCharacterSaveData* UARSaveGame::FindCharacterStateDataMutable(const FGameplayTag CharacterTag, int32& OutIndex)
+{
+	OutIndex = INDEX_NONE;
+	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	for (int32 Index = 0; Index < CharacterStates.Num(); ++Index)
+	{
+		if (CharacterStates[Index].CharacterTag == NormalizedTag)
+		{
+			OutIndex = Index;
+			return &CharacterStates[Index];
+		}
+	}
+
+	return nullptr;
+}
+
+FARCharacterSaveData& UARSaveGame::FindOrAddCharacterStateData(const FGameplayTag CharacterTag)
+{
+	int32 ExistingIndex = INDEX_NONE;
+	if (FARCharacterSaveData* Existing = FindCharacterStateDataMutable(CharacterTag, ExistingIndex))
+	{
+		return *Existing;
+	}
+
+	FARCharacterSaveData& Added = CharacterStates.AddDefaulted_GetRef();
+	Added.CharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	return Added;
+}
+
+int32 UARSaveGame::MigrateToCurrentSchema(TArray<FString>* OutWarnings)
+{
+	int32 ChangeCount = 0;
+	if (SaveGameVersion >= CurrentSchemaVersion)
+	{
+		return ChangeCount;
+	}
+
+	if (SaveGameVersion <= 11)
+	{
+		for (FARPlayerStateSaveData& PlayerData : PlayerStates)
+		{
+			const FGameplayTag ResolvedCharacterTag = PlayerData.ResolveCurrentCharacterTag();
+			if (PlayerData.CurrentCharacterTag != ResolvedCharacterTag)
+			{
+				PlayerData.CurrentCharacterTag = ResolvedCharacterTag;
+				++ChangeCount;
+			}
+
+			if (ResolvedCharacterTag.IsValid())
+			{
+				FARPlayerCharacterSaveData& CharacterRow = PlayerData.FindOrAddCharacterStateData(ResolvedCharacterTag);
+				if (!AreTagContainersEquivalent(CharacterRow.LoadoutTags, PlayerData.LoadoutTags))
+				{
+					CharacterRow.LoadoutTags = PlayerData.LoadoutTags;
+					++ChangeCount;
+				}
+			}
+
+			PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
+		}
+
+		int32 MigratedDialogueRows = 0;
+		int32 MergedDialogueRows = 0;
+		int32 DroppedDialogueRows = 0;
+		for (const FDialoguePlayerPersistentState& LegacyState : DialoguePlayerPersistentStates)
+		{
+			const FGameplayTag CharacterTag = ResolveLegacyDialogueCharacterTag(this, LegacyState);
+			if (!IsValidCharacterTag(CharacterTag))
+			{
+				++DroppedDialogueRows;
+				continue;
+			}
+
+			int32 ExistingIndex = INDEX_NONE;
+			FARCharacterSaveData* Existing = FindCharacterStateDataMutable(CharacterTag, ExistingIndex);
+			FARCharacterSaveData& CharacterData = Existing ? *Existing : FindOrAddCharacterStateData(CharacterTag);
+			if (Existing)
+			{
+				++MergedDialogueRows;
+			}
+			else
+			{
+				++MigratedDialogueRows;
+			}
+
+			ChangeCount += MergeDialoguePersistentState(CharacterData.DialogueState, LegacyState);
+		}
+
+		if (!DialoguePlayerPersistentStates.IsEmpty())
+		{
+			DialoguePlayerPersistentStates.Reset();
+			++ChangeCount;
+		}
+
+		if (MigratedDialogueRows > 0 || MergedDialogueRows > 0 || DroppedDialogueRows > 0)
+		{
+			AddWarningf(
+				OutWarnings,
+				FString::Printf(
+					TEXT("Migrated legacy dialogue player state rows to character state (created=%d merged=%d dropped=%d)."),
+					MigratedDialogueRows,
+					MergedDialogueRows,
+					DroppedDialogueRows));
+		}
+
+		SaveGameVersion = CurrentSchemaVersion;
+		++ChangeCount;
+		AddWarning(OutWarnings, TEXT("Save schema was migrated to the current ownership model."));
+	}
+
+	return ChangeCount;
+}
+
 int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 {
 	int32 ClampedCount = 0;
+	ClampedCount += MigrateToCurrentSchema(OutWarnings);
+
 	auto ClampNonNegative = [OutWarnings, &ClampedCount](int32& Value, const TCHAR* FieldName)
 	{
 		if (Value < 0)
@@ -185,15 +437,28 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			}
 		}
 
-		if (!bChanged)
+		if (bChanged)
 		{
-			return;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("ShopTransientCarryables contained invalid data and was sanitized."));
+		}
+	};
+
+	auto SanitizeHeldShopItem =
+		[OutWarnings, &ClampedCount](FARCharacterHeldShopItemSnapshot& Snapshot, const TCHAR* FieldName)
+	{
+		if (Snapshot.MeatAmount < 1)
+		{
+			Snapshot.MeatAmount = 1;
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.MeatAmount was clamped to 1."), FieldName));
 		}
 
-		++ClampedCount;
-		if (OutWarnings)
+		if (Snapshot.BowlFillStep < 0)
 		{
-			OutWarnings->Add(TEXT("ShopTransientCarryables contained invalid data and was sanitized."));
+			Snapshot.BowlFillStep = 0;
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlFillStep was clamped to 0."), FieldName));
 		}
 	};
 
@@ -216,8 +481,69 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 	{
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
+		SanitizeTagContainer(PlayerData.ProgressionTags, TEXT("PlayerState.ProgressionTags"));
+		SanitizeTagContainer(PlayerData.LoadoutTags, TEXT("PlayerState.LoadoutTags"));
+
+		const FGameplayTag ResolvedCharacterTag = PlayerData.ResolveCurrentCharacterTag();
+		if (PlayerData.CurrentCharacterTag != ResolvedCharacterTag)
+		{
+			PlayerData.CurrentCharacterTag = ResolvedCharacterTag;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("PlayerState.CurrentCharacterTag was normalized from compatibility fields."));
+		}
+
+		for (int32 CharacterIndex = PlayerData.CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)
+		{
+			FARPlayerCharacterSaveData& CharacterState = PlayerData.CharacterStates[CharacterIndex];
+			const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterState.CharacterTag, PlayerData.Identity.PlayerSlot);
+			if (!NormalizedTag.IsValid())
+			{
+				PlayerData.CharacterStates.RemoveAtSwap(CharacterIndex);
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("PlayerState.CharacterStates contained an invalid CharacterTag and it was removed."));
+				continue;
+			}
+
+			if (CharacterState.CharacterTag != NormalizedTag)
+			{
+				CharacterState.CharacterTag = NormalizedTag;
+				++ClampedCount;
+			}
+
+			SanitizeTagContainer(CharacterState.LoadoutTags, TEXT("PlayerState.CharacterStates.LoadoutTags"));
+		}
+
+		for (int32 CharacterIndex = PlayerData.CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)
+		{
+			FARPlayerCharacterSaveData& CharacterState = PlayerData.CharacterStates[CharacterIndex];
+			for (int32 EarlierIndex = 0; EarlierIndex < CharacterIndex; ++EarlierIndex)
+			{
+				FARPlayerCharacterSaveData& EarlierState = PlayerData.CharacterStates[EarlierIndex];
+				if (EarlierState.CharacterTag != CharacterState.CharacterTag)
+				{
+					continue;
+				}
+
+				const int32 OldLoadoutCount = EarlierState.LoadoutTags.Num();
+				EarlierState.LoadoutTags.AppendTags(CharacterState.LoadoutTags);
+				if (EarlierState.LoadoutTags.Num() != OldLoadoutCount)
+				{
+					++ClampedCount;
+				}
+
+				PlayerData.CharacterStates.RemoveAtSwap(CharacterIndex);
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("PlayerState.CharacterStates contained duplicate rows for one character and they were merged."));
+				break;
+			}
+		}
+
+		PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
 	}
 
+	SanitizeTagContainer(Unlocks, TEXT("Unlocks"));
+	SanitizeTagContainer(ProgressionTags, TEXT("ProgressionTags"));
+	SanitizeTagContainer(ActiveFactionEffectTags, TEXT("ActiveFactionEffectTags"));
 	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));
 	SanitizeStackArray(StoredEnergyDrinkStacks, TEXT("StoredEnergyDrinkStacks"));
 	SanitizeStackArray(QueuedEnergyDrinkStacks, TEXT("QueuedEnergyDrinkStacks"));
@@ -230,10 +556,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		{
 			ActiveRunBuffPayloads.RemoveAtSwap(PayloadIndex);
 			++ClampedCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("ActiveRunBuffPayloads contained an invalid ItemTag and was removed."));
-			}
+			AddWarning(OutWarnings, TEXT("ActiveRunBuffPayloads contained an invalid ItemTag and was removed."));
 			continue;
 		}
 
@@ -241,10 +564,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		{
 			Payload.AppliedCount = 1;
 			++ClampedCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("ActiveRunBuffPayloads.AppliedCount was clamped to 1."));
-			}
+			AddWarning(OutWarnings, TEXT("ActiveRunBuffPayloads.AppliedCount was clamped to 1."));
 		}
 
 		Payload.GameplayEffects.RemoveAll([](const TSubclassOf<UGameplayEffect>& EffectClass)
@@ -260,13 +580,66 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		{
 			DialogueRelationshipStates.RemoveAtSwap(Index);
 			++ClampedCount;
-			if (OutWarnings)
+			AddWarning(OutWarnings, TEXT("DialogueRelationshipStates contained an invalid SpeakerTag and was removed."));
+		}
+	}
+
+	for (int32 CharacterIndex = CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)
+	{
+		FARCharacterSaveData& CharacterState = CharacterStates[CharacterIndex];
+		const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterState.CharacterTag);
+		if (!NormalizedTag.IsValid())
+		{
+			CharacterStates.RemoveAtSwap(CharacterIndex);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("CharacterStates contained an invalid CharacterTag and it was removed."));
+			continue;
+		}
+
+		if (CharacterState.CharacterTag != NormalizedTag)
+		{
+			CharacterState.CharacterTag = NormalizedTag;
+			++ClampedCount;
+		}
+
+		SanitizeTagContainer(CharacterState.DialogueState.ProgressionTags, TEXT("CharacterStates.DialogueState.ProgressionTags"));
+		SanitizeTagContainer(CharacterState.DialogueState.CompletedConversationTags, TEXT("CharacterStates.DialogueState.CompletedConversationTags"));
+		SanitizeTagContainer(CharacterState.DialogueState.SeenConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SeenConversationTagsThisCycle"));
+		SanitizeTagContainer(CharacterState.DialogueState.SkippedConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SkippedConversationTagsThisCycle"));
+
+		for (int32 ChoiceIndex = CharacterState.DialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
+		{
+			const FDialogueChoiceMemoryRecord& Record = CharacterState.DialogueState.CompletedChoiceRecords[ChoiceIndex];
+			if (!Record.ConversationTag.IsValid() || !Record.ChoiceNodeId.IsValid() || !Record.SelectedBranchId.IsValid())
 			{
-				OutWarnings->Add(TEXT("DialogueRelationshipStates contained an invalid SpeakerTag and was removed."));
+				CharacterState.DialogueState.CompletedChoiceRecords.RemoveAtSwap(ChoiceIndex);
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("CharacterStates contained an invalid choice-memory record and it was removed."));
+			}
+		}
+
+		if (CharacterState.ShopSnapshot.bHasCharacterTransform && !CharacterState.ShopSnapshot.CharacterTransform.IsValid())
+		{
+			CharacterState.ShopSnapshot.bHasCharacterTransform = false;
+			CharacterState.ShopSnapshot.CharacterTransform = FTransform::Identity;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("CharacterStates.ShopSnapshot contained an invalid transform and it was cleared."));
+		}
+
+		if (CharacterState.ShopSnapshot.bHasHeldItem)
+		{
+			SanitizeHeldShopItem(CharacterState.ShopSnapshot.HeldItem, TEXT("CharacterStates.ShopSnapshot.HeldItem"));
+			if (CharacterState.ShopSnapshot.HeldItem.ActorClass.IsNull())
+			{
+				CharacterState.ShopSnapshot.bHasHeldItem = false;
+				CharacterState.ShopSnapshot.HeldItem = FARCharacterHeldShopItemSnapshot();
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("CharacterStates.ShopSnapshot had bHasHeldItem=true with no actor class and it was cleared."));
 			}
 		}
 	}
 
+	// Legacy root retained only for migration compatibility; sanitize and clear if stale rows remain.
 	for (FDialoguePlayerPersistentState& PlayerDialogueState : DialoguePlayerPersistentStates)
 	{
 		SanitizeTagContainer(PlayerDialogueState.ProgressionTags, TEXT("DialoguePlayerPersistentStates.ProgressionTags"));
@@ -281,10 +654,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			{
 				PlayerDialogueState.CompletedChoiceRecords.RemoveAtSwap(ChoiceIndex);
 				++ClampedCount;
-				if (OutWarnings)
-				{
-					OutWarnings->Add(TEXT("DialoguePlayerPersistentStates contained an invalid choice-memory record and it was removed."));
-				}
+				AddWarning(OutWarnings, TEXT("DialoguePlayerPersistentStates contained an invalid choice-memory record and it was removed."));
 			}
 		}
 	}
@@ -297,10 +667,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		{
 			FactionPopularityStates.RemoveAtSwap(Index);
 			++ClampedCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("FactionPopularityStates contained an invalid FactionTag and was removed."));
-			}
+			AddWarning(OutWarnings, TEXT("FactionPopularityStates contained an invalid FactionTag and was removed."));
 			continue;
 		}
 
@@ -308,10 +675,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		{
 			FactionPopularityStates.RemoveAtSwap(Index);
 			++ClampedCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("FactionPopularityStates contained duplicate FactionTag entries and extras were removed."));
-			}
+			AddWarning(OutWarnings, TEXT("FactionPopularityStates contained duplicate FactionTag entries and extras were removed."));
 			continue;
 		}
 
@@ -324,20 +688,14 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		ActiveEntry.FactionTag = ActiveFactionTag;
 		FactionPopularityStates.Add(ActiveEntry);
 		++ClampedCount;
-		if (OutWarnings)
-		{
-			OutWarnings->Add(TEXT("ActiveFactionTag was missing from FactionPopularityStates and was auto-added."));
-		}
+		AddWarning(OutWarnings, TEXT("ActiveFactionTag was missing from FactionPopularityStates and was auto-added."));
 	}
 
 	if (SaveSlotNumber < 0)
 	{
 		SaveSlotNumber = 0;
 		++ClampedCount;
-		if (OutWarnings)
-		{
-			OutWarnings->Add(TEXT("SaveSlotNumber was negative and clamped to 0."));
-		}
+		AddWarning(OutWarnings, TEXT("SaveSlotNumber was negative and clamped to 0."));
 	}
 
 	return ClampedCount;

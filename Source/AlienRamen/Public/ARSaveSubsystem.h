@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSaveTypes.h"
+#include "ARTransitionTypes.h"
 #include "StructUtils/InstancedStruct.h"
 #include "ARSaveSubsystem.generated.h"
 
@@ -39,6 +40,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult, bool bUseDebugSaves = false);
+
+	/**
+	 * Authority-only helper that travels into the map recorded by the currently loaded save using a standard SaveLoad transition context.
+	 * Use this after a successful LoadGame call so fresh-load-only gameplay logic can key off the same signal in all maps.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool TravelToLoadedSaveDestination(bool bUseOpenLevelInPIE = false, const FString& TransitionMapURL = TEXT("/Game/Maps/Lvl_Loading"));
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult, bool bUseDebugSaves = false) const;
@@ -103,6 +111,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
 	bool RemoveProgressionTag(FGameplayTag ProgressionTag);
 
+	/** Returns player-owned progression tags saved for this player identity. These do not switch when the player swaps characters. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags, bool bAllowSlotFallback = true) const;
+
+	/** Checks a player-owned progression tag saved for this player identity. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
+	bool HasPlayerProgressionTag(AARPlayerStateBase* Requester, FGameplayTag ProgressionTag, bool bAllowSlotFallback = true) const;
+
+	/** Adds a player-owned progression tag to this player's save row and marks the save dirty. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool AddPlayerProgressionTag(AARPlayerStateBase* Requester, FGameplayTag ProgressionTag);
+
+	/** Removes a player-owned progression tag from this player's save row and marks the save dirty when something changed. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool RemovePlayerProgressionTag(AARPlayerStateBase* Requester, FGameplayTag ProgressionTag);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
 	int32 GetFactionClout() const;
 
@@ -155,6 +179,22 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool HasPendingTravelGameStateData() const { return PendingTravelGameStateData.IsValid(); }
 
+	/** True only during the one-shot window immediately after a save has been loaded and before fresh-load entry logic has consumed it. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool HasPendingFreshLoadEntry() const { return bPendingFreshLoadEntry; }
+
+	/** Mode tag recorded by the loaded save, useful for restore rules such as shop-only direct restore. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	FGameplayTag GetPendingLoadedSaveModeTag() const { return PendingLoadedSaveModeTag; }
+
+	/** Map path recorded by the loaded save, useful for restore rules and debugging. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	FString GetPendingLoadedSaveMapPath() const { return PendingLoadedSaveMapPath; }
+
+	/** Clears the one-shot fresh-load entry signal after any load-only restore logic has finished. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
+	void ClearPendingFreshLoadEntry();
+
 	// Applies player-specific save payload onto Requester if identity (or optional slot fallback) is found in CurrentSaveGame.
 	// Returns true when a matching player row was found and applied.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -194,10 +234,12 @@ private:
 	bool ArePlayersReadyForTravel(bool bSkipReadyChecks, FString& OutError) const;
 	bool CaptureGameStateForTravel(UWorld* World);
 	static FString EnsureListenOption(const FString& InURLOrOptions);
+	static bool SplitTravelURL(const FString& InTravelURL, FString& OutLevelName, FString& OutOptions);
 
 	static FName NormalizeSlotBaseName(FName SlotBaseName);
 	static FName BuildRevisionSlotName(FName SlotBaseName, int32 SlotNumber);
 	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber);
+	static bool ResolvePlayerSaveDataIndex(const UARSaveGame* SaveGame, const FARPlayerIdentity& Identity, EARPlayerSlot FallbackSlot, bool bAllowSlotFallback, int32& OutIndex);
 
 	bool LoadOrCreateIndexForSlot(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
 	bool SaveIndexForSlot(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
@@ -227,6 +269,15 @@ private:
 
 	UPROPERTY(Transient)
 	FInstancedStruct PendingTravelGameStateData;
+
+	UPROPERTY(Transient)
+	bool bPendingFreshLoadEntry = false;
+
+	UPROPERTY(Transient)
+	FGameplayTag PendingLoadedSaveModeTag;
+
+	UPROPERTY(Transient)
+	FString PendingLoadedSaveMapPath;
 
 	UPROPERTY(Transient)
 	bool bSaveInProgress = false;

@@ -1,0 +1,280 @@
+# Persistence Guide
+
+This page is the top-level reference for how persistence works in Alien Ramen.
+
+Use this document when you need to answer:
+
+- what gets saved
+- who owns a piece of saved data
+- how save/load hydration works
+- how travel interacts with persisted state
+- which API to call from gameplay or Blueprint
+
+For subsystem detail, also see:
+
+- [Save System](README_SaveSubsystem.md)
+- [Transition Mode](README_TransitionMode.md)
+- [Progression & Unlocks](README_ProgressionUnlocks.md)
+- [Dialogue & NPC Runtime](README_DialogueNPC.md)
+- [Shop Ramen System](README_ShopRamenSystem.md)
+
+## Ownership Model
+
+Persistence is split into four buckets. The key rule is to choose the owner by what the data follows.
+
+### 1. Shared world state
+
+Owner:
+- `UARSaveGame`
+- runtime mirror: `AARGameStateBase`
+
+Use this for:
+- economy (`Money`, `Scrap`, `Meat`, `Cycles`)
+- shared progression/unlocks
+- faction state
+- shared dialogue relationship state
+- shared run-buff storage/queue/active payloads
+- loose shop carryable reload snapshots
+
+If the whole save slot/world should see one authoritative value, it belongs here.
+
+### 2. Player-owned state
+
+Owner:
+- `UARSaveGame::PlayerStates[]`
+- keyed by `FARPlayerIdentity`
+- runtime mirror/projection: `AARPlayerStateBase`
+
+Use this for:
+- display name / identity
+- player preferences such as dialogue auto-advance
+- player-owned progression tags
+- active or last-selected character pointer
+
+If the data should follow the player identity even when they swap characters, it belongs here.
+
+### 3. Character-owned state
+
+Owner:
+- `UARSaveGame::CharacterStates[]`
+- keyed by canonical character gameplay tag
+
+Use this for:
+- character dialogue history / completion / choice memory
+- character-specific inventory/equipment state
+- shop-only character world restore snapshot
+
+If the data should stay with the character regardless of which player controls them, it belongs here.
+
+### 4. Player-character-owned state
+
+Owner:
+- `UARSaveGame::PlayerStates[].CharacterStates[]`
+- keyed by player identity + character gameplay tag
+- runtime mirror/projection: active `AARPlayerStateBase`
+
+Use this for:
+- per-player-per-character loadouts
+
+If the data is character-specific but still belongs to the player profile, it belongs here.
+
+## Canonical Identity Rules
+
+- Character identity is canonical as a gameplay tag.
+- `EARCharacterChoice` is a compatibility mirror for existing Blueprint logic.
+- Runtime control still projects through `AARPlayerStateBase`.
+- New logic should prefer `CurrentCharacterTag` over `CharacterPicked`.
+
+## Runtime Flow
+
+### Save flow
+
+Primary entrypoint:
+- `UARSaveSubsystem::SaveCurrentGame(...)`
+
+High-level sequence:
+1. gather current runtime state into a fresh `UARSaveGame`
+2. merge in persisted state that does not have a live runtime mirror in the current map
+3. sanitize/migrate payload
+4. write save to disk
+5. update current in-memory canonical save
+6. send canonical save bytes to remote clients
+
+Important expectations:
+- save is authority-only
+- canonical saves are blocked during active dialogue
+- revisioned saves use `<SlotBase>__<Revision>`
+
+### Load flow
+
+Primary entrypoint:
+- `UARSaveSubsystem::LoadGame(...)`
+
+High-level sequence:
+1. load save object from disk with rollback support
+2. validate schema support
+3. run migration + sanitize
+4. install the loaded save as the current canonical save
+5. raise load-complete events
+6. gameplay then travels into the saved destination using `TravelToLoadedSaveDestination(...)`
+
+Important expectations:
+- `LoadGame(...)` loads the save into memory; it does not by itself hydrate a gameplay map
+- travel into gameplay from a loaded save should use the standard save-load entry path
+
+## Hydration Flow
+
+### GameState hydration
+
+Primary entrypoint:
+- `UARSaveSubsystem::RequestGameStateHydration(...)`
+
+Order:
+1. start from runtime defaults
+2. apply current save shared fields
+3. if pending travel overlay exists, apply that on top once
+
+### PlayerState hydration
+
+Primary entrypoint:
+- `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)`
+
+Order:
+1. resolve player row by identity, with slot fallback only for local-only identities
+2. apply player-owned fields to `AARPlayerStateBase`
+3. resolve active `CurrentCharacterTag`
+4. project character-owned and player-character-owned state onto runtime `PlayerState`
+5. keep Blueprint compatibility mirrors synchronized
+
+### Seamless travel
+
+Primary runtime carry path:
+- `AARPlayerStateBase::CopyProperties(...)`
+
+Expectation:
+- seamless travel keeps the active projected runtime state alive without requiring disk save/load
+
+## Travel and Persistence
+
+### Normal mode travel
+
+Primary entrypoints:
+- `AARGameModeBase::TryStartTravel(...)`
+- `UARSaveSubsystem::RequestServerTravel(...)`
+- `UARSaveSubsystem::RequestOpenLevel(...)`
+
+What happens:
+1. readiness is checked unless skipped
+2. shared `GameState` travel overlay is captured
+3. optional disk save runs when the mode is configured to save on exit
+4. travel starts
+
+### Save-load gameplay entry
+
+Primary entrypoint:
+- `UARSaveSubsystem::TravelToLoadedSaveDestination(...)`
+
+This is the standard path after `LoadGame(...)`.
+
+What it does:
+1. reads the loaded save's recorded destination map
+2. builds `FARTransitionContext` with:
+   - `SourceMode=SaveLoad`
+   - `Reason=SaveLoadEntry`
+   - `bFreshLoadEntry=true`
+3. routes through transition map by default
+4. transition mode preserves that same context on the continue leg
+5. final gameplay map receives the same save-load entry signal in travel options
+
+Use this path for any load-only gameplay behavior.
+
+## Fresh-Load-Only Logic
+
+Two signals exist for fresh-load-only behavior:
+
+- explicit transition context in travel options
+- save-subsystem one-shot flag:
+  - `HasPendingFreshLoadEntry()`
+  - `GetPendingLoadedSaveModeTag()`
+  - `GetPendingLoadedSaveMapPath()`
+  - `ClearPendingFreshLoadEntry()`
+
+Design expectation:
+- new gameplay restore logic should key off the standard save-load entry contract
+- do not invent one-off per-mode load-entry booleans when the transition context already expresses the reason for entry
+
+Current example:
+- shop character transform / held-item restore only applies when loading back into a save that was saved in `Mode.Shop`
+
+## Blueprint Usage
+
+### Create a new save
+
+1. Get `ARSaveSubsystem` from `GameInstance`.
+2. Call `CreateNewSave(...)`.
+3. On success, start normal game flow/travel.
+
+### Save current game
+
+1. Get `ARSaveSubsystem`.
+2. Call `SaveCurrentGame(...)`.
+3. Use `FARSaveResult` and save events for feedback.
+
+### Load a save and enter gameplay
+
+1. Get `ARSaveSubsystem`.
+2. Call `LoadGame(...)`.
+3. On success, call `TravelToLoadedSaveDestination(...)`.
+
+### Query player-owned progression
+
+Use:
+- `GetPlayerProgressionTags(...)`
+- `HasPlayerProgressionTag(...)`
+- `AddPlayerProgressionTag(...)`
+- `RemovePlayerProgressionTag(...)`
+
+Use this for:
+- first-time cinematics per player
+- profile-specific milestones
+- tutorial completion per player identity
+
+Do not use shared `ProgressionTags` for those.
+
+## What To Expect
+
+### Things that persist
+
+- save-owned shared state
+- player-owned state keyed by identity
+- character-owned state keyed by character tag
+- player-character loadouts
+
+### Things that do not persist unless explicitly modeled
+
+- arbitrary transient actor state
+- generic per-map runtime scratch state
+- station processing runtime
+- anything not extracted into save structs or travel overlay structs
+
+### Common pitfalls
+
+- putting character-owned data on `GameState`
+- keying player-owned data by character tag
+- mutating persistence on clients
+- loading a save and then entering gameplay through an ad hoc travel path instead of `TravelToLoadedSaveDestination(...)`
+
+## Rules For New Persistence
+
+When adding something new:
+1. choose the ownership bucket first
+2. add the field to the correct save struct
+3. decide whether it hydrates to `GameState`, `PlayerState`, or a runtime actor/component
+4. update gather, hydrate, sanitize, and migration
+5. update docs in the same pass
+
+If ownership is unclear, ask:
+- does this follow the save/world?
+- the player identity?
+- the character identity?
+- the player-character pairing?

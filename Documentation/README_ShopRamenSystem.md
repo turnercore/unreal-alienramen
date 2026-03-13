@@ -119,6 +119,11 @@ This document captures the runtime ownership and integration contract for the sh
 - Returning meat to storage (held interact or world-hit auto-store) increments replicated GameState meat buckets and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
 - Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
+- Character-owned shop restore snapshots live in `UARSaveGame::CharacterStates[]` and currently capture:
+  - shop character transform
+  - held supported carryable snapshot (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`)
+- Character shop restore applies only when re-entering `Mode.Shop` from a fresh save load of a save that was itself made in `Mode.Shop`.
+- Clean shop entry from new game / invader / scrapyard does not apply character transform or held-item restore snapshots.
 - Starting a run clears transient loose-carryable snapshots; invader/scrapyard completion marks a one-shot clear on next shop entry.
 
 ## Energy Drinks in Shop

@@ -74,6 +74,33 @@ namespace ARTransition
 			OutValue = static_cast<uint8>(FMath::Clamp(ParsedValue, 0, 255));
 			return true;
 		}
+
+		static FString NormalizeTravelOptionsInput(const FString& OptionsOrURL)
+		{
+			int32 OptionsStart = INDEX_NONE;
+			if (OptionsOrURL.FindChar(TEXT('?'), OptionsStart))
+			{
+				return OptionsOrURL.Mid(OptionsStart);
+			}
+
+			return OptionsOrURL;
+		}
+	}
+
+	FString AppendTransitionContextOptions(const FString& URL, const FARTransitionContext& Context)
+	{
+		if (URL.IsEmpty())
+		{
+			return URL;
+		}
+
+		const FString EncodedDestinationValue = EncodeOptionValue(Context.DestinationURL);
+		FString TravelURL = URL;
+		AppendTravelOption(TravelURL, OptionSourceMode, FString::FromInt(static_cast<int32>(Context.SourceMode)));
+		AppendTravelOption(TravelURL, OptionReason, FString::FromInt(static_cast<int32>(Context.Reason)));
+		AppendTravelOption(TravelURL, OptionDestinationURL, EncodedDestinationValue);
+		AppendTravelOption(TravelURL, OptionFreshLoad, Context.bFreshLoadEntry ? TEXT("1") : TEXT("0"));
+		return TravelURL;
 	}
 
 	FString BuildTransitionTravelURL(const FString& TransitionMapURL, const FARTransitionContext& Context)
@@ -83,39 +110,31 @@ namespace ARTransition
 			return Context.DestinationURL;
 		}
 
-		const FString EncodedDestinationValue = EncodeOptionValue(Context.DestinationURL);
-
-		FString TravelURL = TransitionMapURL;
-		AppendTravelOption(TravelURL, OptionSourceMode, FString::FromInt(static_cast<int32>(Context.SourceMode)));
-		AppendTravelOption(TravelURL, OptionReason, FString::FromInt(static_cast<int32>(Context.Reason)));
-		AppendTravelOption(TravelURL, OptionDestinationURL, EncodedDestinationValue);
-		// Always append this option so any transport-level suffixing (for example "&listen")
-		// is absorbed by a non-critical value instead of destination URL.
-		AppendTravelOption(TravelURL, OptionFreshLoad, Context.bFreshLoadEntry ? TEXT("1") : TEXT("0"));
-
-		return TravelURL;
+		return AppendTransitionContextOptions(TransitionMapURL, Context);
 	}
 
 	void ApplyTransitionContextFromTravelOptions(const FString& OptionsString, FARTransitionContext& InOutContext)
 	{
+		const FString NormalizedOptions = NormalizeTravelOptionsInput(OptionsString);
+
 		uint8 EnumValue = 0;
-		if (TryParseEnumOption(OptionsString, OptionSourceMode, EnumValue))
+		if (TryParseEnumOption(NormalizedOptions, OptionSourceMode, EnumValue))
 		{
 			InOutContext.SourceMode = static_cast<EARTransitionSourceMode>(EnumValue);
 		}
 
-		if (TryParseEnumOption(OptionsString, OptionReason, EnumValue))
+		if (TryParseEnumOption(NormalizedOptions, OptionReason, EnumValue))
 		{
 			InOutContext.Reason = static_cast<EARTransitionReason>(EnumValue);
 		}
 
-		const FString DestinationURL = DecodeOptionValue(NormalizeParsedOptionValue(UGameplayStatics::ParseOption(OptionsString, OptionDestinationURL)));
+		const FString DestinationURL = DecodeOptionValue(NormalizeParsedOptionValue(UGameplayStatics::ParseOption(NormalizedOptions, OptionDestinationURL)));
 		if (!DestinationURL.IsEmpty())
 		{
 			InOutContext.DestinationURL = DestinationURL;
 		}
 
-		const FString FreshLoadString = NormalizeParsedOptionValue(UGameplayStatics::ParseOption(OptionsString, OptionFreshLoad));
+		const FString FreshLoadString = NormalizeParsedOptionValue(UGameplayStatics::ParseOption(NormalizedOptions, OptionFreshLoad));
 		if (!FreshLoadString.IsEmpty())
 		{
 			InOutContext.bFreshLoadEntry = FreshLoadString.StartsWith(TEXT("1"), ESearchCase::IgnoreCase)

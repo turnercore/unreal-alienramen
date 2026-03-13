@@ -193,6 +193,18 @@ void AARGameModeBase::BeginPlay()
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
+		if (UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>())
+		{
+			const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
+			const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+			if (SaveSubsystem->HasPendingFreshLoadEntry()
+				&& ModeTag != TransitionModeTag
+				&& ModeTag != ShopModeTag)
+			{
+				SaveSubsystem->ClearPendingFreshLoadEntry();
+			}
+		}
+
 		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
 		{
 			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
