@@ -12,6 +12,23 @@
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
 
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARCharacterSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Canonical gameplay-tag identity for the character this save row belongs to."))
+	FGameplayTag CharacterTag;
+
+	// Character-owned dialogue progression/completion/choice-memory state.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Persistent dialogue progression, completion, and choice memory that belongs to this character."))
+	FDialoguePlayerPersistentState DialogueState;
+
+	// Shop-only world snapshot used when loading directly back into the saved shop state.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Shop-only world snapshot restored when loading directly back into the saved shop state."))
+	FARCharacterShopSnapshot ShopSnapshot;
+};
+
 /** Canonical save payload persisted to disk; schema is versioned manually via CurrentSchemaVersion. */
 UCLASS(BlueprintType)
 class ALIENRAMEN_API UARSaveGame : public USaveGame
@@ -19,7 +36,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 10;
+	static constexpr int32 CurrentSchemaVersion = 12;
 	static constexpr int32 MinSupportedSchemaVersion = 10;
 
 	UARSaveGame();
@@ -106,8 +123,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FDateTime LastSaved;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta", meta = (ToolTip = "Gameplay mode tag the save was created in, used for restore validation."))
+	FGameplayTag LastSavedModeTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta", meta = (ToolTip = "Map path the save was created in, used for restore validation and debugging."))
+	FString LastSavedMapPath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Player-owned save rows keyed by player identity."))
 	TArray<FARPlayerStateSaveData> PlayerStates;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Character-owned save rows keyed by canonical character gameplay tag."))
+	TArray<FARCharacterSaveData> CharacterStates;
 
 	// Global speaker relationship points.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
@@ -117,8 +143,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
 	FGameplayTagContainer DialogueCompletedConversationTagsByGame;
 
-	// Per-player dialogue progression/completion/choice-memory state.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
+	// Legacy compatibility root retained only for migration of older save schema versions.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Legacy dialogue state array retained only for migration from older save versions."))
 	TArray<FDialoguePlayerPersistentState> DialoguePlayerPersistentStates;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
@@ -127,5 +153,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const;
 
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool FindCharacterStateDataByTag(FGameplayTag CharacterTag, FARCharacterSaveData& OutData, int32& OutIndex) const;
+
+	FARCharacterSaveData* FindCharacterStateDataMutable(FGameplayTag CharacterTag, int32& OutIndex);
+	FARCharacterSaveData& FindOrAddCharacterStateData(FGameplayTag CharacterTag);
+	int32 MigrateToCurrentSchema(TArray<FString>* OutWarnings);
 	int32 ValidateAndSanitize(TArray<FString>* OutWarnings);
 };
