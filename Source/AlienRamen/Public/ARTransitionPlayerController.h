@@ -16,6 +16,7 @@ class ALIENRAMEN_API AARTransitionPlayerController : public AARPlayerController
 public:
 	AARTransitionPlayerController();
 
+	/** Toggle this player's ready state in the transition map. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Transition")
 	void RequestTransitionContinue(bool bReady = true);
 

@@ -103,15 +103,19 @@ private:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true"))
 	EARAffinityColor DropColor = EARAffinityColor::None;
 
+	/** Time (sec) to lerp from world physics to player during collection. Shorter = snappier pickup. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true", ClampMin = "0.01"))
 	float CollectionDuration = 0.12f;
 
+	/** Pickup radius used when capsule-derived sizing is disabled. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true", ClampMin = "0.0"))
 	float FallbackPickupRadius = 150.0f;
 
+	/** Gameplay cue tag fired on collection (for VFX/SFX). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag CollectionGameplayCueTag;
 
+	/** Z offset added to collection target location (lifts pickup toward screen). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true"))
 	float CollectionTargetZOffset = 0.0f;
 
@@ -126,6 +130,7 @@ private:
 	bool bPredictedLocalCollectionVisual = false;
 	float PredictedLocalCollectionElapsed = 0.0f;
 
+	/** How long to keep client-side predicted collect visuals before rollback if server rejects. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true", ClampMin = "0.05"))
 	float PredictedCollectionRollbackSeconds = 0.35f;
 

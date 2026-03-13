@@ -147,12 +147,15 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_ScrapyardRunActive, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	bool bScrapyardRunActive = false;
 
+	/** Server time when the run started (seconds). */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	float ScrapyardRunStartServerTime = 0.0f;
 
+	/** Configured duration for this run (seconds). */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	float ScrapyardRunDurationSeconds = 0.0f;
 
+	/** Seed used for deterministic spawns/flows during this run. */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard", meta = (AllowPrivateAccess = "true"))
 	int32 ScrapyardRunSeed = 0;
 

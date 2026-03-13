@@ -73,9 +73,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
 	bool bEnableEmotionView = true;
 
+	/** Additional scale multiplier applied to emotion icon draw size. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.1", UIMin = "0.1", ToolTip = "Additional scale multiplier applied to emotion icon draw size."))
 	float EmotionIconRenderScale = 1.0f;
 
+	/** Minimum screen size (pixels) after projection; icons smaller than this are culled. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling."))
 	float MinimumIconScreenSizePixels = 0.0f;
 
@@ -88,9 +90,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true"))
 	TEnumAsByte<ECollisionChannel> OcclusionTraceChannel = ECollisionChannel::ECC_Visibility;
 
+	/** How often (seconds) to rebuild the cached list of emotion components. 0 = scan every frame. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "How often (seconds) to rebuild the runtime emotion component cache. 0 disables caching and scans every frame."))
 	float EmotionComponentCacheRefreshSeconds = 0.5f;
 
+	/** Asynchronous icon loads instead of blocking DrawHUD for missing textures. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When true, unresolved icon soft references are requested asynchronously and skipped until loaded instead of synchronously loading during DrawHUD."))
 	bool bAsyncLoadEmotionIcons = true;
 

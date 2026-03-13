@@ -19,6 +19,7 @@ public:
 	virtual FName GetSectionName() const override { return TEXT("Emotion"); }
 
 	// Preferred TagContentResolver route root used to resolve the emotion icon DataTable.
+	// Example: Dialogue.Emotion (row names should match emotion tags).
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue"))
 	FGameplayTag EmotionResolverRootTag;
 
@@ -39,10 +40,12 @@ public:
 	FVector DefaultAnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
 
 	// Emotion tag applied by speaker runtime when a speaker is currently talkable/offerable.
+	// Used by NPCs when they have an active offer; sets overhead icon if available.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (Categories = "Dialogue.Emotion"))
 	FGameplayTag WantsToTalkEmotionTag;
 
 	// Emotion tag applied by dialogue runtime when one-talker-per-speaker mode marks a speaker as busy.
+	// Shown while another player is talking to this speaker.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (Categories = "Dialogue.Emotion"))
 	FGameplayTag BusyEmotionTag;
 
