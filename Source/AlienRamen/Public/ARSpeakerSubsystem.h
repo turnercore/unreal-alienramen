@@ -20,12 +20,15 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
+	/** True when the speaker is currently talkable (resolved from dialogue runtime). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker")
 	bool IsSpeakerTalkable(FGameplayTag SpeakerTag) const;
 
+	/** Recompute talkable state for a single speaker tag (call after unlocks/state changes). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	bool RefreshSpeakerTalkableState(FGameplayTag SpeakerTag);
 
+	/** Recompute talkable state for all registered speakers. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker")
 	void RefreshAllSpeakerTalkableStates();
 

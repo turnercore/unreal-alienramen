@@ -35,9 +35,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
+	/** Saves current runtime state to disk (optionally creating a new revision). Blocks if a save is already in progress. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
+	/** Loads a save by base name + revision (RevisionOrLatest=-1 uses most recent). Leaves save in memory for later hydrate/travel. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
@@ -58,12 +60,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void UnloadCurrentSave();
 
+	/** Current loaded save object (nullptr when nothing is loaded). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	UARSaveGame* GetCurrentSaveGame() const { return CurrentSaveGame; }
 
+	/** True when a save is loaded in memory. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool HasCurrentSave() const { return CurrentSaveGame != nullptr; }
 
+	/** Slot base name of the currently loaded save (empty when none). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	FName GetCurrentSlotBaseName() const { return CurrentSlotBaseName; }
 
@@ -99,15 +104,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void MarkSaveDirty();
 
+	/** Global progression tags (shared world unlocks). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
 	FGameplayTagContainer GetProgressionTags() const;
 
+	/** Checks a shared progression tag. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
 	bool HasProgressionTag(FGameplayTag ProgressionTag) const;
 
+	/** Adds a shared progression tag and marks save dirty. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
 	bool AddProgressionTag(FGameplayTag ProgressionTag);
 
+	/** Removes a shared progression tag and marks save dirty when changed. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
 	bool RemoveProgressionTag(FGameplayTag ProgressionTag);
 
@@ -170,6 +179,7 @@ public:
 
 	// Sets travel-transient GameState data to be overlaid on next RequestGameStateHydration call
 	// (after persisted save fields when a current save exists).
+	// Use for transition flows where you need temporary data to survive travel without touching disk.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void SetPendingTravelGameStateData(const FInstancedStruct& PendingStateData);
 
