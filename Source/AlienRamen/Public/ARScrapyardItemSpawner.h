@@ -43,7 +43,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")
 	bool bSpawnOnBeginPlay = true;
 
-	/** Allowed item tags for this spawner (empty = any, filtered by AllowedItemTags only). */
+	/** Allowed item tags for this spawner (empty = no tag-based restriction; other constraints such as MaxRarity and RequiredRuntimeTags still apply). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")
 	FGameplayTagContainer AllowedItemTags;
 

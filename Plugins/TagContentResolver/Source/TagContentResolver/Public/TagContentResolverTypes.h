@@ -28,8 +28,8 @@ struct TAGCONTENTRESOLVER_API FTagContentResolverProjectRoute
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Tag Content Resolver", meta=(ToolTip="Root gameplay tag prefix this route handles. Example: Dialogue.Speaker"))
 	FGameplayTag RootTag;
 
-	/** When true, this route is preloaded when PreloadPolicy = CriticalRoots. */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Tag Content Resolver", meta=(ToolTip="When PreloadPolicy is set to Critical Routes, this route's table is loaded during subsystem startup."))
+	/** When true, this route is preloaded when PreloadPolicy = Only Routes Marked as Preload. */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Tag Content Resolver", meta=(ToolTip="When PreloadPolicy is set to Only Routes Marked as Preload, this route's table is loaded during subsystem startup."))
 	bool bPreload = false;
 
 	/** DataTable soft reference resolved for this route. Row names are expected to match tag leaf strings. */
