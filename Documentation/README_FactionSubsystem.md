@@ -13,6 +13,7 @@ Ownership note:
 - Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Factions`)
 - Content source: `UTagContentResolverSubsystem` root `Faction.Identity`
 - Persistence source: `UARSaveSubsystem` / `UARSaveGame`
+- Authoring table: `FARFactionDefinitionRow` (DataTable) under TagContentResolver route `Faction.Identity`
 
 ## Core API Surface
 
@@ -86,6 +87,9 @@ Faction definition row type: `FARFactionDefinitionRow`
 - drift range
 - elected `EffectTags`
 - progression-based modifier rules
+  - each `FARFactionPopularityModifierRule` checks a progression tag (e.g., `Progression.Faction.CorpFriendly`) and adds a delta when present
+  - use negative delta to down-rank a faction when a tag is present
+  - values are additive with drift and saved popularity, then clamped to min/max
 
 Runtime state types:
 - `FARFactionRuntimeState` (tag + popularity)

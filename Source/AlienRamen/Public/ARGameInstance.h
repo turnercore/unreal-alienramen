@@ -24,9 +24,11 @@ public:
 	virtual void Init() override;
 	virtual void Shutdown() override;
 
+	/** Accessor for the save subsystem (authority for save/load/hydration). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
 	UARSaveSubsystem* GetARSaveSubsystem() const;
 
+	/** Accessor for the session subsystem (authority for session join/host flows). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
 	UARSessionSubsystem* GetARSessionSubsystem() const;
 
@@ -55,6 +57,7 @@ public:
 	static FString GetARProjectVersion();
 
 	// Composite fingerprint: "<ProjectVersion> | NetProto:<proto> | SaveSchema:<schema>".
+	// Useful for bug reports and displaying build info in menus.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Build")
 	static FString GetARBuildFingerprint();
 

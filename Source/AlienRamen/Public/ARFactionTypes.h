@@ -58,6 +58,7 @@ struct ALIENRAMEN_API FARFactionDefinitionRow : public FTableRowBase
 	FGameplayTagContainer EffectTags;
 
 	// Additive popularity rules evaluated against SaveSubsystem ProgressionTags.
+	// Example: ConditionTag=Progression.Faction.CorpFriendly, Delta=+5 raises this faction when player unlocked that tag.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	TArray<FARFactionPopularityModifierRule> PopularityModifierRules;
 };
@@ -67,9 +68,11 @@ struct ALIENRAMEN_API FARFactionRuntimeState
 {
 	GENERATED_BODY()
 
+	/** Faction identity tag matching FactionDefinition row. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	FGameplayTag FactionTag;
 
+	/** Current popularity score (clamped to Min/Max from definition). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	float Popularity = 0.0f;
 };
@@ -79,12 +82,15 @@ struct ALIENRAMEN_API FARFactionVoteSelection
 {
 	GENERATED_BODY()
 
+	/** Player slot casting this vote (P1/P2). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
 
+	/** Faction tag chosen by the player (must be in CurrentCandidates). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	FGameplayTag SelectedFactionTag;
 
+	/** True once the player made a selection; false = abstain. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	bool bHasSelection = false;
 };

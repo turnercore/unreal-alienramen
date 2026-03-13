@@ -63,6 +63,7 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Enemy|Abilities")
 	TArray<FAREnemyArchetypeAbilitySetEntry> EnemyArchetypeAbilitySets;
 
+	/** First stage row to load when an Invader run begins. Leave empty to use the first row in the stage table. */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	FName InitialStageRow;
 
