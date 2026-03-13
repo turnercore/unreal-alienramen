@@ -98,9 +98,16 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 		return false;
 	}
 
-	const EARAffinityColor HeldColor = MeatActor->GetMeatColor();
+	const EARAffinityColor HeldColor = (MeatActor->GetMeatColor() == EARAffinityColor::Unknown)
+		? EARAffinityColor::None
+		: MeatActor->GetMeatColor();
 	const int32 HeldAmount = FMath::Max(1, MeatActor->GetMeatAmount());
-	if (MeatColor != EARAffinityColor::None && HeldColor != MeatColor)
+	const EARAffinityColor StorageColor = (MeatColor == EARAffinityColor::Unknown)
+		? EARAffinityColor::None
+		: MeatColor;
+	if (StorageColor != EARAffinityColor::None
+		&& HeldColor != EARAffinityColor::None
+		&& HeldColor != StorageColor)
 	{
 		UE_LOG(
 			ARLog,
@@ -108,9 +115,13 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 			TEXT("[Shop|Storage] TryStoreHeldMeat rejected storage='%s': held color (%d) does not match storage color (%d)."),
 			*GetNameSafe(this),
 			static_cast<int32>(HeldColor),
-			static_cast<int32>(MeatColor));
+			static_cast<int32>(StorageColor));
 		return false;
 	}
+
+	const EARAffinityColor DepositColor = (HeldColor != EARAffinityColor::None)
+		? HeldColor
+		: StorageColor;
 
 	if (bRequireWorldReturnArmed && !MeatActor->HasMovedAwayForStorageReturn(MinWorldAutoStoreTravelDistance))
 	{
@@ -131,7 +142,7 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 	}
 
 	FARMeatState NewMeatState = GameState->GetMeat();
-	int32* Bucket = ResolveMeatBucketForColor(NewMeatState, HeldColor);
+	int32* Bucket = ResolveMeatBucketForColor(NewMeatState, DepositColor);
 	if (!Bucket)
 	{
 		return false;
@@ -158,7 +169,7 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 		*GetNameSafe(this),
 		*GetNameSafe(RequestingController),
 		*GetNameSafe(MeatActor),
-		static_cast<int32>(HeldColor),
+		static_cast<int32>(DepositColor),
 		HeldAmount,
 		bRequireWorldReturnArmed ? 1 : 0);
 	return true;

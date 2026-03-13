@@ -91,7 +91,6 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
 	PlayerState.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
-	PlayerState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
 
 	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
 	LegacyDialogueState.Identity.PlayerSlot = EARPlayerSlot::P1;
@@ -117,9 +116,8 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Dialogue completion migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false)));
 	TestEqual(TEXT("Dialogue choice memory migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 1);
 
-	TestEqual(TEXT("One player-character loadout row created"), Save->PlayerStates[0].CharacterStates.Num(), 1);
 	TestEqual(TEXT("Current character tag resolved"), Save->PlayerStates[0].CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
-	TestTrue(TEXT("Loadout migrated into player-character row"), Save->PlayerStates[0].CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false)));
+	TestEqual(TEXT("Character selection enum mirrors canonical tag"), Save->PlayerStates[0].CharacterPicked, EARCharacterChoice::Brother);
 	TestTrue(TEXT("Migration warnings emitted"), Warnings.Num() > 0);
 	return true;
 }

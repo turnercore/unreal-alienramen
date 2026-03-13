@@ -918,6 +918,12 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 		return false;
 	}
 
+	if (MaxRecursiveTableDepth < 0)
+	{
+		OutError = TEXT("MaxRecursiveTableDepth must be >= 0.");
+		return false;
+	}
+
 	// Load root table (will cache it).
 	UDataTable* RootTable = nullptr;
 	if (!TryResolveDataTableForRootTag(RootTag, RootTable, OutError) || !RootTable)
@@ -952,6 +958,11 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 		TArray<FSoftObjectPath> CurrentPaths = PathsToLoad.Array();
 		for (const FSoftObjectPath& Path : CurrentPaths)
 		{
+			if (Path.IsNull())
+			{
+				continue;
+			}
+
 			if (VisitedAssets.Contains(Path))
 			{
 				continue;
@@ -962,11 +973,6 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 			{
 				OutError = TEXT("PreloadRootTableAndSoftReferences aborted: MaxAssetsToLoad exceeded.");
 				return false;
-			}
-
-			if (Path.IsNull())
-			{
-				continue;
 			}
 
 			if (UDataTable* SubTable = Cast<UDataTable>(Path.TryLoad()))

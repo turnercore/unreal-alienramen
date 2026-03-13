@@ -78,6 +78,11 @@ struct ALIENRAMEN_API FARDialogueSpeakerRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	TArray<float> RelationshipThresholds = { 50.0f, 150.0f, 300.0f, 500.0f };
+
+	// Per-cycle interaction cap for this speaker per character state.
+	// 0 means unlimited.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0", UIMin = "0", DisplayName = "Max Offers Per Cycle", ToolTip = "Maximum number of times this speaker can be offered/started in one cycle for a single character state. 0 means unlimited."))
+	int32 MaxOffersPerCycle = 0;
 };
 
 UENUM(BlueprintType)
@@ -980,6 +985,18 @@ struct ALIENRAMEN_API FDialogueChoiceMemoryRecord
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FDialogueSpeakerCycleOfferCount
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FGameplayTag SpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0", UIMin = "0"))
+	int32 OfferCount = 0;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FDialoguePlayerPersistentState
 {
 	GENERATED_BODY()
@@ -996,11 +1013,15 @@ struct ALIENRAMEN_API FDialoguePlayerPersistentState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	TArray<FDialogueChoiceMemoryRecord> CompletedChoiceRecords;
 
-	// Per-player temporary cycle blockers for dialogue offer suppression.
+	// Character-owned temporary cycle blockers for dialogue offer suppression.
 	// These persist in save until explicitly cleared by subsystem API.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FGameplayTagContainer SeenConversationTagsThisCycle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FGameplayTagContainer SkippedConversationTagsThisCycle;
+
+	// Per-speaker offer/start counters for the current cycle (character-owned state).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	TArray<FDialogueSpeakerCycleOfferCount> SpeakerOfferCountsThisCycle;
 };

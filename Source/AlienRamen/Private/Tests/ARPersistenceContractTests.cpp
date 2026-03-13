@@ -18,19 +18,10 @@ bool FARPersistencePlayerProjectionTest::RunTest(const FString& Parameters)
 	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
 	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
-
-	FARPlayerCharacterSaveData& BrotherState = PlayerData.FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
-	BrotherState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false));
-
-	FARPlayerCharacterSaveData& SisterState = PlayerData.FindOrAddCharacterStateData(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Sister")), false));
-	SisterState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false));
-
-	PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
+	PlayerData.SyncCharacterSelectionFromCurrentTag();
 
 	TestEqual(TEXT("Current character resolves to brother tag"), PlayerData.ResolveCurrentCharacterTag(), FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
 	TestEqual(TEXT("Compatibility enum mirrors canonical tag"), PlayerData.CharacterPicked, EARCharacterChoice::Brother);
-	TestTrue(TEXT("Compatibility loadout mirrors active brother row"), PlayerData.LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
-	TestFalse(TEXT("Compatibility loadout does not mirror inactive sister row"), PlayerData.LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false)));
 	TestTrue(TEXT("Player-owned progression tags remain on the player row"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
 	return true;
 }
@@ -56,10 +47,11 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 	PlayerData.ProgressionTags.AddTag(FGameplayTag());
 	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
 
-	FARPlayerCharacterSaveData& ValidCharacterState = PlayerData.FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
+	FARCharacterSaveData& ValidCharacterState = Save->CharacterStates.AddDefaulted_GetRef();
+	ValidCharacterState.CharacterTag = PlayerData.CurrentCharacterTag;
 	ValidCharacterState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false));
 
-	FARPlayerCharacterSaveData& InvalidCharacterState = PlayerData.CharacterStates.AddDefaulted_GetRef();
+	FARCharacterSaveData& InvalidCharacterState = Save->CharacterStates.AddDefaulted_GetRef();
 	InvalidCharacterState.CharacterTag = FGameplayTag();
 	InvalidCharacterState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false));
 
@@ -68,9 +60,9 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 
 	TestTrue(TEXT("Sanitize performs corrections"), ClampedCount > 0);
 	TestTrue(TEXT("Valid player-owned progression tag preserved"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
-	TestEqual(TEXT("Duplicate player-character rows collapse to one canonical row"), PlayerData.CharacterStates.Num(), 1);
-	TestTrue(TEXT("Merged character row keeps original loadout tags"), PlayerData.CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
-	TestTrue(TEXT("Merged character row keeps normalized duplicate loadout tags"), PlayerData.CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false)));
+	TestEqual(TEXT("Invalid character-owned row removed"), Save->CharacterStates.Num(), 1);
+	TestTrue(TEXT("Remaining character row keeps original loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
+	TestFalse(TEXT("Removed invalid row does not leak loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false)));
 	TestEqual(TEXT("Current character tag remains canonical brother tag"), PlayerData.CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
 	TestTrue(TEXT("Warnings emitted for sanitization"), Warnings.Num() > 0);
 	return true;

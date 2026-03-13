@@ -24,6 +24,10 @@ struct ALIENRAMEN_API FARCharacterSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Persistent dialogue progression, completion, and choice memory that belongs to this character."))
 	FDialoguePlayerPersistentState DialogueState;
 
+	// Canonical character-owned loadout state keyed by CharacterTag.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character", meta = (ToolTip = "Canonical loadout state owned by this character and reused when any player takes control of the same character."))
+	FGameplayTagContainer LoadoutTags;
+
 	// Shop-only world snapshot used when loading directly back into the saved shop state.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Shop-only world snapshot restored when loading directly back into the saved shop state."))
 	FARCharacterShopSnapshot ShopSnapshot;
@@ -36,7 +40,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 12;
+	static constexpr int32 CurrentSchemaVersion = 14;
 	static constexpr int32 MinSupportedSchemaVersion = 10;
 
 	UARSaveGame();

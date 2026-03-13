@@ -99,8 +99,9 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSaveSubsystem` is the authoritative save/load/hydration/travel entry point.
 - `UARSaveGame` owns save schema versioning in native code.
 - Save/travel logic must remain subsystem-owned, not scattered across Blueprints.
-- Save files persist four ownership buckets: shared world state, player-owned state, character-owned state, and player-character-owned state.
+- Save files persist three ownership buckets: shared world state, player-owned state, and character-owned state.
 - Canonical character identity is a gameplay tag; `EARCharacterChoice` remains a compatibility mirror for existing Blueprints.
+- Character loadout is canonical character-owned state (`CharacterStates[].LoadoutTags`), not player-owned save data.
 - `AARPlayerStateBase` is the runtime projection surface for the currently controlled character; character-owned save data hydrates onto `PlayerState`, not `GameState`.
 - Hydration and state application are authority-only.
 - Pending travel overlay state may carry between maps when not persisting to disk.
@@ -127,6 +128,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 - Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; relationship values and game-completed conversations remain shared save state.
+- Dialogue cycle gating is character-owned: seen/skipped-this-cycle and per-speaker cycle offer counts (`MaxOffersPerCycle` on speaker rows) are persisted on character dialogue state.
 
 Docs: `Documentation/README_DialogueNPC.md`
 
@@ -152,6 +154,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AARShopStationActor` also auto-slots loose world meat on station contact when the station can accept meat and its slot is empty.
 - Manual/debug station authoring rule: if `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded (no unlock dependency).
 - Station processing input mode is station-configurable (`Hold`/`Tap`): in tap mode, each press consumes one pulse and release is required before the next pulse.
+- Station processing is blocked when buffered stock already matches the incoming meat color (or incoming color is `None`); processing with existing stock is only allowed for a different non-`None` color swap.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
 - Held-item secondary actions route through `AARShopCarryItemBase::UseSecondaryByController(...)`; controller input should call `RequestUseSecondaryOnHeldCarryItem()` and let the held item decide behavior (default throw, item-specific overrides such as energy-drink consume).
 - Carry-item world secondary actions route through `AARShopCarryItemBase::UseSecondaryInWorldByController(...)`; default behavior is a strength-scaled kick impulse (`Strength * 100`) for non-held world items.
@@ -161,7 +164,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
 - `AARMeatStorageBoxActor` handles smart meat storage interaction: held meat + interact stores back to `GameState::Meat`; empty hands + interact dispenses from reserve.
-- `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap, but only after it has moved beyond storage-return arm distance (prevents instant re-store on spawn).
+- `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap; `None`/unspecified meat is accepted by color-specific storage and deposited using the storage color. Auto-return still requires moving beyond storage-return arm distance (prevents instant re-store on spawn).
 - Intentional player pickup of `AARRamenMeatActor` arms storage return, so throw-back interactions are not blocked by initial spawn-distance gating.
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 - `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.

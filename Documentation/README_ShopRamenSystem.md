@@ -82,7 +82,8 @@ This document captures the runtime ownership and integration contract for the sh
   - in `Tap` mode, `StartProcessingByController` consumes at most one pulse per press and requires `StopProcessingByController` (release) before the next pulse.
   - processing progress pauses/resumes and replicates to all players
   - slotted meat is consumed immediately when processing starts
-  - processing `None` is blocked if station currently has colored processed stock
+  - when stock already exists, processing is blocked for same-color meat and blocked for `None`; processing only starts for a different non-`None` color swap
+  - processing `None` is blocked whenever the station already has any buffered stock (colored or `None`); it is only allowed when stock is fully empty
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill
   - bowl sequence is strict: `Noodles -> Broth -> Toppings`
@@ -125,7 +126,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Drop/throw restore world physics and gravity on the released carry item.
 - Meat storage interaction contract:
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
-  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color.
+  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
   - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
 - `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
