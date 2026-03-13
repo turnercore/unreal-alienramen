@@ -34,7 +34,8 @@ public:
 	int32 GetCurrentCandidateCount() const { return CurrentCandidates.Num(); }
 
 	// Server-authoritative vote submission.
-	// Returns false if slot already voted or selection is not in CurrentCandidates.
+	// Re-voting for the same slot overwrites the previous selection and still returns true.
+	// Returns false for invalid slot/tag or when the selection is not in CurrentCandidates.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction")
 	bool SubmitVote(EARPlayerSlot PlayerSlot, FGameplayTag SelectedFactionTag);
 
