@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
-	/** Saves current runtime state to disk (optionally creating a new revision). Blocks if a save is already in progress. */
+	/** Saves current runtime state to disk (optionally creating a new revision). Returns false immediately with ResultCode=InProgress if a save is already running. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
