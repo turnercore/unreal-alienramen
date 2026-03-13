@@ -66,6 +66,7 @@ Detailed behavior belongs in `Documentation/` and should be maintained there.
 Key docs:
 
 - `Documentation/README_SessionSubsystem.md`
+- `Documentation/README_Persistence.md`
 - `Documentation/README_FactionSubsystem.md`
 - `Documentation/README_DialogueNPC.md`
 - `Documentation/README_ProgressionUnlocks.md`
@@ -98,12 +99,16 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSaveSubsystem` is the authoritative save/load/hydration/travel entry point.
 - `UARSaveGame` owns save schema versioning in native code.
 - Save/travel logic must remain subsystem-owned, not scattered across Blueprints.
-- Save files persist canonical progression/player/world state, not every transient runtime detail.
+- Save files persist four ownership buckets: shared world state, player-owned state, character-owned state, and player-character-owned state.
+- Canonical character identity is a gameplay tag; `EARCharacterChoice` remains a compatibility mirror for existing Blueprints.
+- `AARPlayerStateBase` is the runtime projection surface for the currently controlled character; character-owned save data hydrates onto `PlayerState`, not `GameState`.
 - Hydration and state application are authority-only.
 - Pending travel overlay state may carry between maps when not persisting to disk.
+- Save-load gameplay entry should route through a standard transition context (`SaveLoad` / `SaveLoadEntry` / `bFreshLoadEntry=true`) so load-only restore logic can key off the same signal across maps.
 - Canonical saves are blocked during active dialogue sessions.
 - Shop loose carryables (energy drinks/meat) persist as transient save snapshots (`ShopTransientCarryables`) only for reload-before-run continuity.
 - Run-start and post-run shop-entry flows clear transient loose-carryable snapshots via save-backed one-shot clear gate.
+- Shop character transform/held-item restore is character-owned save data and only applies on fresh save-load re-entry into `Mode.Shop`; clean shop entries ignore it.
 
 ### Dialogue / Speaker
 
@@ -120,6 +125,7 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
+- Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; relationship values and game-completed conversations remain shared save state.
 
 Docs: `Documentation/README_DialogueNPC.md`
 
@@ -149,6 +155,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.
 - `AAREnergyDrinkCarryItem` replicates `EnergyDrinkItemTag` so remote clients can resolve drink UI/content from world actors.
 - Stored energy-drink inventory is authoritative before shop spawn; once spawned at shop anchors, drink instances are world-owned carryables until consumed/stored/sold by shop systems.
+- Shop save-load restore for held items is intentionally limited to supported carryables (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`) plus character transform; it is not a generic arbitrary actor persistence system.
 
 Docs: `Documentation/README_ShopRamenSystem.md`
 

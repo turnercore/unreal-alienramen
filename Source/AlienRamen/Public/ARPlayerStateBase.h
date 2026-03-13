@@ -195,12 +195,23 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
 
+	/** Canonical gameplay-tag identity for the currently controlled character. Prefer this over CharacterPicked in new logic. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FGameplayTag GetCurrentCharacterTag() const { return CurrentCharacterTag; }
+
 	/** Sets picked character; client calls route to server. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
 	void SetCharacterPicked(EARCharacterChoice NewCharacter);
 
 	UFUNCTION(Server, Reliable)
 	void ServerPickCharacter(EARCharacterChoice NewCharacter);
+
+	/** Sets the active character using the canonical gameplay tag; the compatibility enum is mirrored automatically. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void SetCurrentCharacterTag(FGameplayTag NewCharacterTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetCurrentCharacterTag(FGameplayTag NewCharacterTag);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	FString GetDisplayNameValue() const { return DisplayName; }
@@ -223,6 +234,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool IsDialogueAutoAdvanceEnabled() const { return bDialogueAutoAdvanceEnabled; }
 
+	/** Designer/UI preference for whether dialogue should advance automatically for this player. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void SetDialogueAutoAdvanceEnabled(bool bEnabled);
 
@@ -261,6 +273,10 @@ public:
 	// Intentionally keeps display name untouched and resets character choice to None.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void InitializeForFirstSessionJoin();
+
+	/** Applies a hydrated save row onto this runtime PlayerState, including active character projection and compatibility mirrors. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void ApplyPlayerSaveData(const struct FARPlayerStateSaveData& PlayerData);
 
 	// UI-friendly slot index for local co-op style displays (0-based, from GameState PlayerArray order).
 	// Returns INDEX_NONE if not currently resolvable.
@@ -522,7 +538,10 @@ protected:
 	void OnRep_IsSharingSpice(bool bOldIsSharingSpice);
 	UFUNCTION()
 	void OnRep_SpicyTrackCursorTier(int32 OldCursorTier);
+	UFUNCTION()
+	void OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
+	void SetCurrentCharacterTag_Internal(FGameplayTag NewCharacterTag, bool bMarkSaveDirty = true);
 	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
 	void SetSpiceSharingActive_Internal(bool bNewIsSharing, bool bForceBroadcast = false);
 	void SetSpicyTrackCursorTier_Internal(int32 NewCursorTier, bool bForceBroadcast = false);
@@ -536,7 +555,7 @@ protected:
 	void SetDowned_Internal(bool bNewDowned);
 	void SetDead_Internal(bool bNewDead);
 	void SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled);
-	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags);
+	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags, bool bMarkSaveDirty = true);
 	void UpdateLoadoutWithTag_Internal(FGameplayTag NewTag);
 	void RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove);
 	void NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const;
@@ -574,6 +593,10 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_CharacterPicked, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	EARCharacterChoice CharacterPicked = EARCharacterChoice::None;
 
+	// Canonical runtime character identity used for save ownership and new gameplay logic.
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentCharacterTag, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player", meta = (ToolTip = "Canonical gameplay-tag identity for the active character. New systems should use this instead of CharacterPicked."))
+	FGameplayTag CurrentCharacterTag;
+
 	UPROPERTY(ReplicatedUsing=OnRep_DisplayName, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	FString DisplayName;
 
@@ -589,7 +612,7 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsSetup = false;
 
-	UPROPERTY(ReplicatedUsing=OnRep_DialogueAutoAdvanceEnabled, Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue")
+	UPROPERTY(ReplicatedUsing=OnRep_DialogueAutoAdvanceEnabled, Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (ToolTip = "Per-player preference controlling whether dialogue lines auto-advance when possible."))
 	bool bDialogueAutoAdvanceEnabled = false;
 
 	UPROPERTY(ReplicatedUsing=OnRep_InvaderPlayerColor, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")

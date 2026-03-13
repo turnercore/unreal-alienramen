@@ -13,6 +13,7 @@ nav:
       - GAS Blueprint Attributes: README_GAS_Blueprint_Attributes.md
   - Session System: README_SessionSubsystem.md
   - Faction System (Built On Top): README_FactionSubsystem.md
+  - Persistence: README_Persistence.md
   - Save System: README_SaveSubsystem.md
   - Invader Drops: README_InvaderDrops.md
   - Progression & Unlocks: README_ProgressionUnlocks.md

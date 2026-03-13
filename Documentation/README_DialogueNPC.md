@@ -117,7 +117,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Highest numeric priority wins inside the first non-empty bucket.
 - Equal-priority candidates resolve by weighted random using `OfferWeight` (default `1`).
 - `ChanceOffered` (`0..1`) is rolled per candidate during offer evaluation; failed rolls mark that conversation skipped for the player this cycle.
-- Per-cycle blockers are player-specific (`seen this cycle`, `skipped this cycle`), controlled by `bBlockOfferPerCycle` (default `true`).
+- Per-cycle blockers are character-specific (`seen this cycle`, `skipped this cycle`), controlled by `bBlockOfferPerCycle` (default `true`).
 - Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority `1`.
 - Offer checks include:
   - mode enabled by `UARDialogueSettings` shared/per-player mode tags
@@ -129,6 +129,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Runtime executes compiled nodes server-side with a step cap from settings.
 - Implemented node execution: enter/completed/line/multiline/split-line/choice/bool/switch/route/route-by-character/tag-mutation/relationship-mutation/faction-mutation/random/sequence.
 - Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
+  - that preference is persisted as player-owned save data
 - Runtime line presentation supports token + style parsing at execute time (source `FText` is kept authored/localized, formatting is applied on the delivered view text):
   - lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcuts `[Speaker]`, `[Brother]`, `[Sister]`
   - unknown/failed commands fail loudly: unresolved bracket commands are replaced with `UNKNOWN` and logged as runtime errors
@@ -147,7 +148,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 
 ## Seen vs Completed
 
-- Per-cycle player offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per player in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
+- Per-cycle offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per character in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
 - Runtime still keeps active-session transient containers for fast gating/evaluation.
 - Completed state is persistent and save-backed.
 - Completion is written only when a `Completed` node executes.
@@ -159,24 +160,22 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Runtime choice picks are tracked per session (`ChoiceNodeId -> BranchId`).
 - On completed conversation:
   - game completion tag is persisted
-  - initiating player completion tag is persisted
-  - per-choice memory records are persisted (`FDialogueChoiceMemoryRecord`)
+  - initiating character completion tag is persisted
+  - per-choice memory records are persisted on character-owned save rows (`FDialogueChoiceMemoryRecord`)
 - Choice nodes in `LockedToRecordedChoice` mode auto-route to persisted branch when encountered after completion.
 - If a completed conversation is replayed and a locked choice record is missing/unroutable, runtime now fails closed (ends non-completed) instead of reopening free choice.
 
 ## Persistence
 
-Save schema is now `v7`:
+Save schema is now `v11` with dialogue split by ownership:
 
-- `DialogueRelationshipStates`
-- `DialogueCompletedConversationTagsByGame`
-- `DialoguePlayerPersistentStates`
+- shared:
+  - `DialogueRelationshipStates`
+  - `DialogueCompletedConversationTagsByGame`
+- character-owned:
+  - `CharacterStates[].DialogueState`
 
-Removed legacy dialogue save fields:
-
-- `NpcRelationshipStates`
-- `DialogueCanonicalChoiceStates`
-- `PlayerDialogueHistoryStates`
+Legacy `DialoguePlayerPersistentStates` rows migrate into `CharacterStates[]` by resolving the saved active character for the matching player identity/slot.
 
 ## Speaker Talkable Runtime
 
