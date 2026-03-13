@@ -20,7 +20,7 @@ For subsystem detail, also see:
 
 ## Ownership Model
 
-Persistence is split into four buckets. The key rule is to choose the owner by what the data follows.
+Persistence is split into three buckets. The key rule is to choose the owner by what the data follows.
 
 ### 1. Shared world state
 
@@ -61,22 +61,11 @@ Owner:
 
 Use this for:
 - character dialogue history / completion / choice memory
+- character-owned loadouts
 - character-specific inventory/equipment state
 - shop-only character world restore snapshot
 
 If the data should stay with the character regardless of which player controls them, it belongs here.
-
-### 4. Player-character-owned state
-
-Owner:
-- `UARSaveGame::PlayerStates[].CharacterStates[]`
-- keyed by player identity + character gameplay tag
-- runtime mirror/projection: active `AARPlayerStateBase`
-
-Use this for:
-- per-player-per-character loadouts
-
-If the data is character-specific but still belongs to the player profile, it belongs here.
 
 ## Canonical Identity Rules
 
@@ -143,8 +132,8 @@ Order:
 1. resolve player row by identity, with slot fallback only for local-only identities
 2. apply player-owned fields to `AARPlayerStateBase`
 3. resolve active `CurrentCharacterTag`
-4. project character-owned and player-character-owned state onto runtime `PlayerState`
-5. keep Blueprint compatibility mirrors synchronized
+4. project character-owned state onto runtime `PlayerState`
+5. keep character identity fields synchronized
 
 ### Seamless travel
 
@@ -248,7 +237,6 @@ Do not use shared `ProgressionTags` for those.
 - save-owned shared state
 - player-owned state keyed by identity
 - character-owned state keyed by character tag
-- player-character loadouts
 
 ### Things that do not persist unless explicitly modeled
 
@@ -277,4 +265,3 @@ If ownership is unclear, ask:
 - does this follow the save/world?
 - the player identity?
 - the character identity?
-- the player-character pairing?

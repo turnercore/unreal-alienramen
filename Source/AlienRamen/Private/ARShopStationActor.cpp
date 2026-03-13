@@ -760,7 +760,20 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 		return false;
 	}
 
-	PendingProcessColor = SanitizeColor(SlottedMeatActor->GetMeatColor());
+	const EARAffinityColor NextColor = SanitizeColor(SlottedMeatActor->GetMeatColor());
+	const EARAffinityColor ExistingColor = SanitizeColor(ProcessedStockColor);
+
+	// If stock is already buffered, only allow processing when explicitly swapping
+	// to a different non-None color. This blocks redundant same-color refills.
+	if (ProcessedStockAmount > 0)
+	{
+		if (NextColor == EARAffinityColor::None || NextColor == ExistingColor)
+		{
+			return false;
+		}
+	}
+
+	PendingProcessColor = NextColor;
 	PendingProcessAmount = FMath::Max(1, SlottedMeatActor->GetMeatAmount());
 
 	SlottedMeatActor->ReleaseCarryItem();
@@ -773,13 +786,9 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 
 bool AARShopStationActor::BeginProcessingNoneIfAllowed()
 {
-	if (HasColoredProcessedStock())
-	{
-		return false;
-	}
-
-	const int32 EffectiveMaxStock = ResolveEffectiveMaxStock();
-	if (ProcessedStockColor == EARAffinityColor::None && ProcessedStockAmount >= EffectiveMaxStock)
+	// None-processing is only valid from an empty stock state.
+	// If any stock is already buffered (colored or None), require bowl consumption first.
+	if (ProcessedStockAmount > 0 || HasColoredProcessedStock())
 	{
 		return false;
 	}

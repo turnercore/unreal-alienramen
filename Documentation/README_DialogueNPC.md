@@ -122,6 +122,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Offer checks include:
   - mode enabled by `UARDialogueSettings` shared/per-player mode tags
   - primary speaker exact match
+  - per-speaker cycle offer cap (`FARDialogueSpeakerRow::MaxOffersPerCycle`, `0` = unlimited) evaluated per character state
   - optional conversation-level active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`)
   - relationship minimum
   - locked/blocked condition groups
@@ -149,6 +150,7 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 ## Seen vs Completed
 
 - Per-cycle offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per character in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
+- Per-cycle speaker offer counts are also persisted per character (`SpeakerOfferCountsThisCycle`) and gate speaker offer/start paths when `MaxOffersPerCycle > 0`.
 - Runtime still keeps active-session transient containers for fast gating/evaluation.
 - Completed state is persistent and save-backed.
 - Completion is written only when a `Completed` node executes.

@@ -829,14 +829,12 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 
 		const FARPlayerIdentity RuntimeIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(PS);
 		FARPlayerStateSaveData PlayerData;
-		bool bFoundExistingPlayerData = false;
 		for (const FARPlayerStateSaveData& ExistingPlayerData : ExistingPlayerStates)
 		{
 			if (ExistingPlayerData.Identity.Matches(RuntimeIdentity)
 				|| (RuntimeIdentity.PlayerSlot != EARPlayerSlot::Unknown && ExistingPlayerData.Identity.PlayerSlot == RuntimeIdentity.PlayerSlot))
 			{
 				PlayerData = ExistingPlayerData;
-				bFoundExistingPlayerData = true;
 				break;
 			}
 		}
@@ -847,14 +845,10 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		PlayerData.bDialogueAutoAdvanceEnabled = ARPS->IsDialogueAutoAdvanceEnabled();
 		if (PlayerData.CurrentCharacterTag.IsValid())
 		{
-			FARPlayerCharacterSaveData& ActiveCharacterState = PlayerData.FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
+			FARCharacterSaveData& ActiveCharacterState = SaveObject->FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
 			ActiveCharacterState.LoadoutTags = ARPS->LoadoutTags;
 		}
-		else if (!bFoundExistingPlayerData)
-		{
-			PlayerData.LoadoutTags = ARPS->LoadoutTags;
-		}
-		PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
+		PlayerData.SyncCharacterSelectionFromCurrentTag();
 
 		SaveObject->PlayerStates.Add(MoveTemp(PlayerData));
 
@@ -1983,10 +1977,10 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 		AddedPlayerData.bDialogueAutoAdvanceEnabled = Requester->IsDialogueAutoAdvanceEnabled();
 		if (AddedPlayerData.CurrentCharacterTag.IsValid())
 		{
-			FARPlayerCharacterSaveData& ActiveCharacterState = AddedPlayerData.FindOrAddCharacterStateData(AddedPlayerData.CurrentCharacterTag);
+			FARCharacterSaveData& ActiveCharacterState = CurrentSaveGame->FindOrAddCharacterStateData(AddedPlayerData.CurrentCharacterTag);
 			ActiveCharacterState.LoadoutTags = Requester->LoadoutTags;
 		}
-		AddedPlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
+		AddedPlayerData.SyncCharacterSelectionFromCurrentTag();
 		PlayerIndex = CurrentSaveGame->PlayerStates.Num() - 1;
 	}
 

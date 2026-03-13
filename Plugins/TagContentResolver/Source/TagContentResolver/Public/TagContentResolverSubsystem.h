@@ -41,6 +41,7 @@ public:
 	bool TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError);
 
 	// Deprecated wrapper: use TryResolveRowStructForTag instead.
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(DeprecatedFunction, DeprecationMessage="Use TryResolveRowStructForTag", ToolTip="Deprecated wrapper kept for Blueprint migration. Use TryResolveRowStructForTag instead."))
 	UE_DEPRECATED(5.3, "Use TryResolveRowStructForTag")
 	bool TryResolveRowForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowStructForTag(Tag, OutRow, OutError); }
 
@@ -49,6 +50,7 @@ public:
 	bool TryResolveRowViewForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError) { return TryResolveRowRefForTag(Tag, OutRowView, OutError); }
 
 	// Deprecated wrapper: use TryResolveRowStructForTag instead.
+	UFUNCTION(BlueprintCallable, Category = "Tag Content Resolver", meta=(DeprecatedFunction, DeprecationMessage="Use TryResolveRowStructForTag", ToolTip="Deprecated wrapper kept for Blueprint migration. Use TryResolveRowStructForTag instead."))
 	UE_DEPRECATED(5.3, "Use TryResolveRowStructForTag")
 	bool TryResolveRowForContentTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError) { return TryResolveRowStructForTag(Tag, OutRow, OutError); }
 

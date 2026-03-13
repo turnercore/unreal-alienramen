@@ -179,6 +179,7 @@ struct UARDialogueSubsystem::FARDialogueRuntimeState
 	TArray<FARActiveDialogueSession> ActiveSessions;
 	TMap<EARPlayerSlot, FGameplayTagContainer> SeenByPlayerTransient;
 	TMap<EARPlayerSlot, FGameplayTagContainer> SkippedByPlayerTransient;
+	TMap<EARPlayerSlot, TMap<FGameplayTag, int32>> SpeakerOfferCountsByPlayerTransient;
 	FGameplayTagContainer SeenByGameTransient;
 	TMap<EARPlayerSlot, EARPlayerSlot> EavesdropTargetByViewer;
 };
@@ -663,10 +664,65 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
 	return &CharacterState.DialogueState;
 }
 
-static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
-{
-	return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
-}
+	static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
+	{
+		return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
+	}
+
+	static void BuildSpeakerOfferCountMap(
+		const TArray<FDialogueSpeakerCycleOfferCount>& Source,
+		TMap<FGameplayTag, int32>& OutMap)
+	{
+		OutMap.Reset();
+		for (const FDialogueSpeakerCycleOfferCount& Entry : Source)
+		{
+			if (!Entry.SpeakerTag.IsValid() || Entry.OfferCount <= 0)
+			{
+				continue;
+			}
+
+			const int32 Existing = OutMap.FindRef(Entry.SpeakerTag);
+			OutMap.Add(Entry.SpeakerTag, FMath::Max(Existing, Entry.OfferCount));
+		}
+	}
+
+	static void BuildSpeakerOfferCountArray(
+		const TMap<FGameplayTag, int32>& Source,
+		TArray<FDialogueSpeakerCycleOfferCount>& OutArray)
+	{
+		OutArray.Reset();
+		for (const TPair<FGameplayTag, int32>& Pair : Source)
+		{
+			if (!Pair.Key.IsValid() || Pair.Value <= 0)
+			{
+				continue;
+			}
+
+			FDialogueSpeakerCycleOfferCount& Added = OutArray.AddDefaulted_GetRef();
+			Added.SpeakerTag = Pair.Key;
+			Added.OfferCount = Pair.Value;
+		}
+	}
+
+	static bool AreSpeakerOfferCountMapsEquivalent(
+		const TMap<FGameplayTag, int32>& Left,
+		const TMap<FGameplayTag, int32>& Right)
+	{
+		if (Left.Num() != Right.Num())
+		{
+			return false;
+		}
+
+		for (const TPair<FGameplayTag, int32>& Pair : Left)
+		{
+			if (Right.FindRef(Pair.Key) != Pair.Value)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 static void SyncCycleOfferStateFromSaveForSlot(
 	const UARDialogueSubsystem* DialogueSubsystem,
@@ -697,6 +753,35 @@ static void SyncCycleOfferStateFromSaveForSlot(
 
 	SeenByPlayerTransient.FindOrAdd(Slot) = PlayerState->SeenConversationTagsThisCycle;
 	SkippedByPlayerTransient.FindOrAdd(Slot) = PlayerState->SkippedConversationTagsThisCycle;
+}
+
+static void SyncSpeakerOfferCountsFromSaveForSlot(
+	const UARDialogueSubsystem* DialogueSubsystem,
+	const EARPlayerSlot Slot,
+	TMap<EARPlayerSlot, TMap<FGameplayTag, int32>>& SpeakerOfferCountsByPlayerTransient)
+{
+	if (Slot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	const UARSaveGame* SaveGame = GetCurrentSave(DialogueSubsystem);
+	if (!SaveGame)
+	{
+		SpeakerOfferCountsByPlayerTransient.Remove(Slot);
+		return;
+	}
+
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(SaveGame, Slot);
+	if (!PlayerState)
+	{
+		SpeakerOfferCountsByPlayerTransient.Remove(Slot);
+		return;
+	}
+
+	TMap<FGameplayTag, int32> CountMap;
+	BuildSpeakerOfferCountMap(PlayerState->SpeakerOfferCountsThisCycle, CountMap);
+	SpeakerOfferCountsByPlayerTransient.FindOrAdd(Slot) = MoveTemp(CountMap);
 }
 
 static void PersistCycleOfferStateForSlot(
@@ -738,6 +823,53 @@ static void PersistCycleOfferStateForSlot(
 	PlayerState->SeenConversationTagsThisCycle = NewSeenTags;
 	PlayerState->SkippedConversationTagsThisCycle = NewSkippedTags;
 
+	if (bMarkSaveDirty)
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GetSaveSubsystem(DialogueSubsystem))
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+}
+
+static void PersistSpeakerOfferCountsForSlot(
+	UARDialogueSubsystem* DialogueSubsystem,
+	const EARPlayerSlot Slot,
+	const TMap<EARPlayerSlot, TMap<FGameplayTag, int32>>& SpeakerOfferCountsByPlayerTransient,
+	const bool bMarkSaveDirty)
+{
+	if (!DialogueSubsystem || Slot == EARPlayerSlot::Unknown)
+	{
+		return;
+	}
+
+	UARSaveGame* SaveGame = GetCurrentSave(DialogueSubsystem);
+	if (!SaveGame)
+	{
+		return;
+	}
+
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateBySlot(SaveGame, DialogueSubsystem, Slot);
+	if (!PlayerState)
+	{
+		return;
+	}
+
+	const TMap<FGameplayTag, int32>* RuntimeMap = SpeakerOfferCountsByPlayerTransient.Find(Slot);
+	TMap<FGameplayTag, int32> NewMap;
+	if (RuntimeMap)
+	{
+		NewMap = *RuntimeMap;
+	}
+
+	TMap<FGameplayTag, int32> ExistingMap;
+	BuildSpeakerOfferCountMap(PlayerState->SpeakerOfferCountsThisCycle, ExistingMap);
+	if (AreSpeakerOfferCountMapsEquivalent(ExistingMap, NewMap))
+	{
+		return;
+	}
+
+	BuildSpeakerOfferCountArray(NewMap, PlayerState->SpeakerOfferCountsThisCycle);
 	if (bMarkSaveDirty)
 	{
 		if (UARSaveSubsystem* SaveSubsystem = GetSaveSubsystem(DialogueSubsystem))
@@ -1844,6 +1976,7 @@ void UARDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Runtime.ActiveSessions.Reset();
 	Runtime.SeenByPlayerTransient.Reset();
 	Runtime.SkippedByPlayerTransient.Reset();
+	Runtime.SpeakerOfferCountsByPlayerTransient.Reset();
 	Runtime.SeenByGameTransient.Reset();
 	Runtime.EavesdropTargetByViewer.Reset();
 
@@ -3706,6 +3839,23 @@ bool UARDialogueSubsystem::GetAvailableConversationForSpeaker(AARPlayerControlle
 	}
 	FARDialogueRuntimeState& Runtime = GetRuntimeState();
 	SyncCycleOfferStateFromSaveForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
+	SyncSpeakerOfferCountsFromSaveForSlot(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
+
+	const FARDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
+	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
+	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Dialogue] Offer blocked for speaker '%s': cycle offer cap reached (%d/%d) for slot %s."),
+			*PrimarySpeakerTag.ToString(),
+			ExistingOfferCount,
+			MaxOffersPerCycle,
+			*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(RequesterSlot)));
+		return false;
+	}
 	const UWorld* World = GetWorld();
 	const UARDialogueSettings* Settings = GetDefault<UARDialogueSettings>();
 	const FGameplayTag ModeTag = GetCurrentModeTag(World);
@@ -5377,6 +5527,7 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 
 	const FARPlayerIdentity RequesterIdentity = BuildPlayerIdentityFromState(RequesterPS);
 	SyncCycleOfferStateFromSaveForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
+	SyncSpeakerOfferCountsFromSaveForSlot(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
 	FDialogueRuntimeContext StartContext = BuildOfferContext(this, Conversation, RequesterPS, RequesterIdentity);
 	StartContext.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(ConversationTag);
 	if (const FGameplayTagContainer* SeenTags = Runtime.SeenByPlayerTransient.Find(RequesterSlot))
@@ -5419,6 +5570,22 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 			*ConversationTag.ToString(),
 			StartContext.bSeenByPlayer ? 1 : 0,
 			bSkippedThisCycle ? 1 : 0);
+		return false;
+	}
+
+	const FARDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
+	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
+	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversation blocked: speaker '%s' cycle offer cap reached (%d/%d) for slot %s."),
+			*PrimarySpeakerTag.ToString(),
+			ExistingOfferCount,
+			MaxOffersPerCycle,
+			*StaticEnum<EARPlayerSlot>()->GetNameStringByValue(static_cast<int64>(RequesterSlot)));
 		return false;
 	}
 
@@ -5509,6 +5676,8 @@ bool UARDialogueSubsystem::StartConversation(AARPlayerController* RequestingCont
 	}
 
 	Runtime.ActiveSessions.Add(MoveTemp(Session));
+	Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindOrAdd(PrimarySpeakerTag) += 1;
+	PersistSpeakerOfferCountsForSlot(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient, true);
 	RefreshBusyEmotionForSpeaker(this, PrimarySpeakerTag, Runtime.ActiveSessions);
 	const int32 NewSessionIndex = Runtime.ActiveSessions.Num() - 1;
 	EDialogueExecutionResult Result = ExecuteSessionUntilWait(
@@ -6110,6 +6279,7 @@ void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot 
 	{
 		Runtime.SeenByPlayerTransient.Reset();
 		Runtime.SkippedByPlayerTransient.Reset();
+		Runtime.SpeakerOfferCountsByPlayerTransient.Reset();
 
 		if (SaveGame)
 		{
@@ -6120,6 +6290,11 @@ void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot 
 				{
 					PlayerState.SeenConversationTagsThisCycle.Reset();
 					PlayerState.SkippedConversationTagsThisCycle.Reset();
+					bSaveChanged = true;
+				}
+				if (!PlayerState.SpeakerOfferCountsThisCycle.IsEmpty())
+				{
+					PlayerState.SpeakerOfferCountsThisCycle.Reset();
 					bSaveChanged = true;
 				}
 			}
@@ -6136,6 +6311,7 @@ void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot 
 
 	Runtime.SeenByPlayerTransient.Remove(PlayerSlot);
 	Runtime.SkippedByPlayerTransient.Remove(PlayerSlot);
+	Runtime.SpeakerOfferCountsByPlayerTransient.Remove(PlayerSlot);
 
 	if (SaveGame)
 	{
@@ -6151,6 +6327,11 @@ void UARDialogueSubsystem::ClearConversationCycleOfferState(const EARPlayerSlot 
 			{
 				CharacterDialogueState.SeenConversationTagsThisCycle.Reset();
 				CharacterDialogueState.SkippedConversationTagsThisCycle.Reset();
+				bSaveChanged = true;
+			}
+			if (!CharacterDialogueState.SpeakerOfferCountsThisCycle.IsEmpty())
+			{
+				CharacterDialogueState.SpeakerOfferCountsThisCycle.Reset();
 				bSaveChanged = true;
 			}
 		}

@@ -274,7 +274,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void InitializeForFirstSessionJoin();
 
-	/** Applies a hydrated save row onto this runtime PlayerState, including active character projection and compatibility mirrors. */
+	/** Applies a hydrated player row onto this runtime PlayerState, then projects character-owned runtime data by CurrentCharacterTag. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void ApplyPlayerSaveData(const struct FARPlayerStateSaveData& PlayerData);
 
