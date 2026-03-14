@@ -805,9 +805,29 @@ namespace ARDebugSaveEditor
 				return FReply::Handled();
 			}
 
-			for (FARPlayerStateSaveData& PlayerData : CurrentSaveObject->PlayerStates)
+			TSet<FGameplayTag> UpdatedCharacterTags;
+			for (FARCharacterSaveData& CharacterData : CurrentSaveObject->CharacterStates)
 			{
-				PlayerData.LoadoutTags = DefaultLoadout;
+				CharacterData.LoadoutTags = DefaultLoadout;
+				if (CharacterData.CharacterTag.IsValid())
+				{
+					UpdatedCharacterTags.Add(CharacterData.CharacterTag);
+				}
+			}
+
+			// Ensure active character rows referenced by player identities are updated even if the
+			// save currently has no pre-existing character row for that tag.
+			for (const FARPlayerStateSaveData& PlayerData : CurrentSaveObject->PlayerStates)
+			{
+				const FGameplayTag ActiveCharacterTag = PlayerData.ResolveCurrentCharacterTag();
+				if (!ActiveCharacterTag.IsValid())
+				{
+					continue;
+				}
+
+				FARCharacterSaveData& CharacterData = CurrentSaveObject->FindOrAddCharacterStateData(ActiveCharacterTag);
+				CharacterData.LoadoutTags = DefaultLoadout;
+				UpdatedCharacterTags.Add(ActiveCharacterTag);
 			}
 
 			if (SaveDetailsView.IsValid())
@@ -815,7 +835,7 @@ namespace ARDebugSaveEditor
 				SaveDetailsView->ForceRefresh();
 			}
 
-			SetStatus(FString::Printf(TEXT("Applied default loadout to %d player state entries. Press Save Current to persist."), CurrentSaveObject->PlayerStates.Num()));
+			SetStatus(FString::Printf(TEXT("Applied default loadout to %d character state entries. Press Save Current to persist."), UpdatedCharacterTags.Num()));
 			return FReply::Handled();
 		}
 

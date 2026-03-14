@@ -8,7 +8,7 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
 - Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
-- Save schema version is `v14`; minimum supported is `v10`.
+- Save schema version is `v15`; minimum supported is `v10`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 - Save ownership is explicit:
   - shared world state -> `UARSaveGame`
