@@ -15,7 +15,7 @@ TSharedRef<IDetailCustomization> FParleyDialogueEdGraphNodeDetails::MakeInstance
 
 void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 {
-	EDialogueNodeType NodeType = EDialogueNodeType::Line;
+	EDialogueEditorNodeType NodeType = EDialogueEditorNodeType::Line;
 	{
 		TArray<TWeakObjectPtr<UObject>> ObjectsBeingCustomized;
 		DetailBuilder.GetObjectsBeingCustomized(ObjectsBeingCustomized);
@@ -24,7 +24,7 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 			const UParleyDialogueEdGraphNode* NodeObject = Cast<UParleyDialogueEdGraphNode>(ObjectPtr.Get());
 			if (NodeObject)
 			{
-				NodeType = NodeObject->RuntimeNode.NodeType;
+				NodeType = NodeObject->EditorNodeType;
 				break;
 			}
 		}
@@ -32,6 +32,7 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 
 	TSharedRef<IPropertyHandle> RuntimeNodeHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(UParleyDialogueEdGraphNode, RuntimeNode));
 	DetailBuilder.HideProperty(RuntimeNodeHandle);
+	DetailBuilder.HideProperty(DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(UParleyDialogueEdGraphNode, EditorNodeType)));
 
 	IDetailCategoryBuilder& Category = DetailBuilder.EditCategory(TEXT(""), FText::GetEmpty(), ECategoryPriority::Important);
 
@@ -85,8 +86,14 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 			}
 
 			const FName ChildName = ChildHandle->GetProperty() ? ChildHandle->GetProperty()->GetFName() : NAME_None;
-			const bool bFlattenInnerStruct = ChildName == GET_MEMBER_NAME_CHECKED(FDialogueLineNodeData, Line)
-				|| ChildName == GET_MEMBER_NAME_CHECKED(FDialogueBoolNodeData, Condition);
+			const bool bFlattenInnerStruct = ChildName == GET_MEMBER_NAME_CHECKED(FDialogueLineNodeData, Line);
+			const bool bSkipBranchInputs = NodeType == EDialogueEditorNodeType::Branch
+				&& ChildName == GET_MEMBER_NAME_CHECKED(FDialogueEditorBranchNodeData, Inputs);
+
+			if (bSkipBranchInputs)
+			{
+				continue;
+			}
 
 			if (bFlattenInnerStruct)
 			{
@@ -111,80 +118,34 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 
 	AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, RandomBranches), false);
 
-	if (NodeType != EDialogueNodeType::Enter && NodeType != EDialogueNodeType::Completed)
+	const bool bHideCompileManagedBranchFields = NodeType == EDialogueEditorNodeType::Branch
+		|| NodeType == EDialogueEditorNodeType::CheckTags
+		|| NodeType == EDialogueEditorNodeType::CheckRelationship
+		|| NodeType == EDialogueEditorNodeType::CheckProgress
+		|| NodeType == EDialogueEditorNodeType::CheckStats
+		|| NodeType == EDialogueEditorNodeType::CheckLoadout
+		|| NodeType == EDialogueEditorNodeType::CheckCharacter
+		|| NodeType == EDialogueEditorNodeType::CheckVariable;
+
+	if (NodeType != EDialogueEditorNodeType::Enter && NodeType != EDialogueEditorNodeType::Completed)
 	{
 		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, NodeId), true);
 		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, NodeType), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, NextNodeId), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, TrueNodeId), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, FalseNodeId), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, ChoiceBranches), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, FallbackNodeId), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, FallbackChoiceText), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bChoiceNodeImportant), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CompletedChoicePolicy), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchBranches), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bSwitchHasDefaultOutput), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchDefaultNodeId), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SequenceBranches), true);
-		AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CharacterRouteBranches), true);
-	}
-}
-
-TSharedRef<IPropertyTypeCustomization> FParleyDialogueBoolNodeDataCustomization::MakeInstance()
-{
-	return MakeShared<FParleyDialogueBoolNodeDataCustomization>();
-}
-
-void FParleyDialogueBoolNodeDataCustomization::CustomizeHeader(
-	TSharedRef<IPropertyHandle> StructPropertyHandle,
-	FDetailWidgetRow& HeaderRow,
-	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
-{
-	(void)StructCustomizationUtils;
-
-	HeaderRow
-	.NameContent()
-	[
-		StructPropertyHandle->CreatePropertyNameWidget()
-	]
-	.ValueContent()
-	[
-		StructPropertyHandle->CreatePropertyValueWidget()
-	];
-}
-
-void FParleyDialogueBoolNodeDataCustomization::CustomizeChildren(
-	TSharedRef<IPropertyHandle> StructPropertyHandle,
-	IDetailChildrenBuilder& ChildBuilder,
-	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
-{
-	(void)StructCustomizationUtils;
-
-	const TSharedPtr<IPropertyHandle> ConditionHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDialogueBoolNodeData, Condition));
-	if (ConditionHandle.IsValid() && ConditionHandle->IsValidHandle())
-	{
-		uint32 NumConditionChildren = 0;
-		ConditionHandle->GetNumChildren(NumConditionChildren);
-		for (uint32 ChildIndex = 0; ChildIndex < NumConditionChildren; ++ChildIndex)
+		if (!bHideCompileManagedBranchFields)
 		{
-			const TSharedPtr<IPropertyHandle> ChildHandle = ConditionHandle->GetChildHandle(ChildIndex);
-			if (ChildHandle.IsValid() && ChildHandle->IsValidHandle())
-			{
-				ChildBuilder.AddProperty(ChildHandle.ToSharedRef());
-			}
-		}
-		return;
-	}
-
-	uint32 NumChildren = 0;
-	StructPropertyHandle->GetNumChildren(NumChildren);
-	for (uint32 ChildIndex = 0; ChildIndex < NumChildren; ++ChildIndex)
-	{
-		const TSharedPtr<IPropertyHandle> ChildHandle = StructPropertyHandle->GetChildHandle(ChildIndex);
-		if (ChildHandle.IsValid() && ChildHandle->IsValidHandle())
-		{
-			ChildBuilder.AddProperty(ChildHandle.ToSharedRef());
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, NextNodeId), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, TrueNodeId), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, FalseNodeId), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, ChoiceBranches), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, FallbackNodeId), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, FallbackChoiceText), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bChoiceNodeImportant), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CompletedChoicePolicy), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchBranches), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bSwitchHasDefaultOutput), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchDefaultNodeId), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SequenceBranches), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CharacterRouteBranches), true);
 		}
 	}
 }

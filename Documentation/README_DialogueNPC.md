@@ -274,6 +274,8 @@ Conversation graph tooling now provides:
 - blueprint-style `SGraphEditor` canvas with right-click node creation
 - right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)
 - graph node classes/schema (`UParleyDialogueEdGraph`, `UParleyDialogueEdGraphNode`, `UParleyDialogueEdGraphSchema`)
+- conditional graph authoring uses editor-only `Branch` + `Check*` nodes (`CheckTags`, `CheckRelationship`, `CheckProgress`, `CheckStats`, `CheckLoadout`, `CheckCharacter`, `CheckVariable`) with dedicated bool wires; compile flattens them into existing runtime switch/condition-group data and emits no runtime nodes for the `Check*` sources
+- graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)
@@ -282,7 +284,7 @@ Conversation graph tooling now provides:
   - multiple incoming links allowed per node input
 - full toolbar flow: Save / Validate / Compile Runtime Graph / Focus Enter / Auto Layout / Preview
 - details-panel editing for selected node or conversation root
-- dynamic branch-pin behavior for choice/switch/random/route-by-character nodes driven by stable branch GUIDs
+- dynamic branch-pin behavior for choice/branch/switch/random/route-by-character nodes driven by stable branch GUIDs
 - split-line node authoring uses multiline-style inline line rows, but runtime selects only the first row matching the active player character and otherwise skips to `Next`
 - compile-from-editor-graph into `CompiledData` with node-level validation markers
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running

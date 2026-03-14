@@ -218,15 +218,23 @@ namespace
 				return nullptr;
 			}
 
-			switch (DialogueNode->RuntimeNode.NodeType)
+			switch (DialogueNode->EditorNodeType)
 			{
-			case EDialogueNodeType::Choice:
-			case EDialogueNodeType::SwitchOnTagsByPriority:
-			case EDialogueNodeType::Random:
-			case EDialogueNodeType::Sequence:
-			case EDialogueNodeType::RouteByCharacter:
-			case EDialogueNodeType::RelationshipMutation:
-			case EDialogueNodeType::FactionMutation:
+			case EDialogueEditorNodeType::Choice:
+			case EDialogueEditorNodeType::Branch:
+			case EDialogueEditorNodeType::SwitchOnTagsByPriority:
+			case EDialogueEditorNodeType::Random:
+			case EDialogueEditorNodeType::Sequence:
+			case EDialogueEditorNodeType::RouteByCharacter:
+			case EDialogueEditorNodeType::RelationshipMutation:
+			case EDialogueEditorNodeType::FactionMutation:
+			case EDialogueEditorNodeType::CheckTags:
+			case EDialogueEditorNodeType::CheckRelationship:
+			case EDialogueEditorNodeType::CheckProgress:
+			case EDialogueEditorNodeType::CheckStats:
+			case EDialogueEditorNodeType::CheckLoadout:
+			case EDialogueEditorNodeType::CheckCharacter:
+			case EDialogueEditorNodeType::CheckVariable:
 				return SNew(SParleyDialogueInlineGraphNode, DialogueNode);
 			default:
 				return nullptr;
@@ -369,25 +377,150 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildInlineContent() const
 		return SNew(STextBlock).Text(FText::FromString(TEXT("Invalid dialogue node.")));
 	}
 
-	switch (DialogueNode->RuntimeNode.NodeType)
+	switch (DialogueNode->EditorNodeType)
 	{
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 		return BuildChoiceInlineContent();
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::Branch:
+		return BuildBranchInlineContent();
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 		return BuildSwitchInlineContent();
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Random:
 		return BuildRandomInlineContent();
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 		return BuildSequenceInlineContent();
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 		return BuildCharacterRouteInlineContent();
-	case EDialogueNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::RelationshipMutation:
 		return BuildRelationshipInlineContent();
-	case EDialogueNodeType::FactionMutation:
+	case EDialogueEditorNodeType::FactionMutation:
 		return BuildFactionInlineContent();
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckStats:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+		return BuildConditionSourceInlineContent();
 	default:
 		return SNew(STextBlock).Text(FText::FromString(TEXT("Inline editing unavailable for this node type.")));
 	}
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildBranchInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const FDialogueEditorBranchNodeData* BranchData = DialogueNode ? DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorBranchNodeData>() : nullptr;
+	const bool bIsAll = !BranchData || BranchData->MatchMode == EDialogueConditionMatchMode::All;
+	const int32 ConditionCount = BranchData ? BranchData->Inputs.Num() : 0;
+
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+			[
+				SNew(SButton)
+				.ButtonColorAndOpacity(bIsAll ? FLinearColor(0.22f, 0.58f, 0.40f, 1.0f) : FLinearColor(0.18f, 0.18f, 0.18f, 1.0f))
+				.Text(FText::FromString(TEXT("AND")))
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleSetBranchAllClicked)
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			[
+				SNew(SButton)
+				.ButtonColorAndOpacity(!bIsAll ? FLinearColor(0.22f, 0.58f, 0.40f, 1.0f) : FLinearColor(0.18f, 0.18f, 0.18f, 1.0f))
+				.Text(FText::FromString(TEXT("OR")))
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleSetBranchAnyClicked)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 6.0f, 0.0f, 0.0f)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(FString::Printf(TEXT("%d condition inputs"), ConditionCount)))
+		];
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	if (!DialogueNode)
+	{
+		return SNew(STextBlock).Text(FText::FromString(TEXT("Invalid condition node.")));
+	}
+
+	FString Summary = TEXT("Select this node to edit details.");
+	switch (DialogueNode->EditorNodeType)
+	{
+	case EDialogueEditorNodeType::CheckTags:
+	{
+		if (const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>())
+		{
+			Summary = Data->TagValue.IsValid() ? Data->TagValue.ToString() : TEXT("Tag check");
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::CheckRelationship:
+	{
+		if (const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>())
+		{
+			Summary = FString::Printf(TEXT("%.2f"), Data->NumericValue);
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::CheckProgress:
+	{
+		if (const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>())
+		{
+			Summary = Data->bExpectedValue ? TEXT("Expected True") : TEXT("Expected False");
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::CheckStats:
+	{
+		if (const FDialogueEditorCheckStatsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckStatsNodeData>())
+		{
+			Summary = FString::Printf(TEXT("%.2f"), Data->NumericValue);
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::CheckLoadout:
+	{
+		if (const FDialogueEditorCheckLoadoutNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>())
+		{
+			Summary = Data->TagValue.IsValid() ? Data->TagValue.ToString() : TEXT("Loadout tag");
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::CheckCharacter:
+	{
+		if (const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>())
+		{
+			Summary = Data->Character == EDialogueEditorCharacterCondition::Brother ? TEXT("Brother") : TEXT("Sister");
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::CheckVariable:
+	{
+		if (const FDialogueEditorCheckVariableNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>())
+		{
+			Summary = Data->VariableName.IsNone() ? TEXT("Variable") : Data->VariableName.ToString();
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return SNew(STextBlock)
+		.Text(FText::FromString(Summary))
+		.WrapTextAt(160.0f);
 }
 
 TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildChoiceInlineContent() const
@@ -898,21 +1031,31 @@ float SParleyDialogueInlineGraphNode::GetInlineContentMinWidth() const
 		return CompactMinWidth;
 	}
 
-	switch (DialogueNode->RuntimeNode.NodeType)
+	switch (DialogueNode->EditorNodeType)
 	{
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 		return ChoiceMinWidth;
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Branch:
+		return 180.0f;
+	case EDialogueEditorNodeType::Random:
 		return RandomMinWidth;
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 		return SwitchMinWidth;
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 		return CharacterRouteMinWidth;
-	case EDialogueNodeType::RelationshipMutation:
-	case EDialogueNodeType::FactionMutation:
+	case EDialogueEditorNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::FactionMutation:
 		return MutationMinWidth;
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 		return SequenceMinWidth;
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckStats:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+		return 170.0f;
 	default:
 		return CompactMinWidth;
 	}
@@ -939,7 +1082,12 @@ void SParleyDialogueInlineGraphNode::AddDynamicPinButtonIfSupported()
 		SNew(SButton)
 		.ButtonStyle(FAppStyle::Get(), "NoBorder")
 		.ContentPadding(FMargin(2.0f, 1.0f))
-		.ToolTipText(FText::FromString(TEXT("Add another output branch pin.")))
+		.ToolTipText_Lambda([DialogueNode]()
+		{
+			return FText::FromString(DialogueNode && DialogueNode->EditorNodeType == EDialogueEditorNodeType::Branch
+				? TEXT("Add another condition input pin.")
+				: TEXT("Add another output branch pin."));
+		})
 		.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleAddBranchPinClicked)
 		[
 			SNew(SHorizontalBox)
@@ -967,6 +1115,28 @@ FReply SParleyDialogueInlineGraphNode::HandleAddBranchPinClicked() const
 	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
 		DialogueNode->AddDynamicBranchPin();
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleSetBranchAllClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetBranchMatchMode(EDialogueConditionMatchMode::All);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleSetBranchAnyClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetBranchMatchMode(EDialogueConditionMatchMode::Any);
 		RefreshNodeWidget();
 	}
 

@@ -8,6 +8,7 @@
 namespace
 {
 	static const FName DialogueSchemaPinCategoryExec(TEXT("DialogueExec"));
+	static const FName DialogueSchemaPinCategoryConditionBool(TEXT("DialogueConditionBool"));
 
 	static bool GraphHasEnterNode(const UEdGraph* Graph)
 	{
@@ -19,7 +20,7 @@ namespace
 		for (const UEdGraphNode* GraphNode : Graph->Nodes)
 		{
 			const UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(GraphNode);
-			if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+			if (DialogueNode && DialogueNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 			{
 				return true;
 			}
@@ -27,82 +28,110 @@ namespace
 		return false;
 	}
 
-	static FText GetNodeDisplayName(const EDialogueNodeType NodeType)
+	static FText GetNodeDisplayName(const EDialogueEditorNodeType NodeType)
 	{
 		switch (NodeType)
 		{
-		case EDialogueNodeType::Enter:
+		case EDialogueEditorNodeType::Enter:
 			return FText::FromString(TEXT("Enter"));
-		case EDialogueNodeType::Completed:
+		case EDialogueEditorNodeType::Completed:
 			return FText::FromString(TEXT("Completed"));
-		case EDialogueNodeType::Line:
+		case EDialogueEditorNodeType::Line:
 			return FText::FromString(TEXT("Line"));
-		case EDialogueNodeType::Choice:
+		case EDialogueEditorNodeType::Choice:
 			return FText::FromString(TEXT("Choice"));
-		case EDialogueNodeType::Bool:
-			return FText::FromString(TEXT("Bool"));
-		case EDialogueNodeType::SwitchOnTagsByPriority:
+		case EDialogueEditorNodeType::Branch:
+			return FText::FromString(TEXT("Branch"));
+		case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 			return FText::FromString(TEXT("Switch On Tags By Priority"));
-		case EDialogueNodeType::TagMutation:
+		case EDialogueEditorNodeType::TagMutation:
 			return FText::FromString(TEXT("Add / Remove Tag"));
-		case EDialogueNodeType::RelationshipMutation:
+		case EDialogueEditorNodeType::RelationshipMutation:
 			return FText::FromString(TEXT("Modify Relationship"));
-		case EDialogueNodeType::FactionMutation:
+		case EDialogueEditorNodeType::FactionMutation:
 			return FText::FromString(TEXT("Modify Faction Popularity"));
-		case EDialogueNodeType::Signal:
+		case EDialogueEditorNodeType::Signal:
 			return FText::FromString(TEXT("Signal"));
-		case EDialogueNodeType::Random:
+		case EDialogueEditorNodeType::Random:
 			return FText::FromString(TEXT("Random"));
-		case EDialogueNodeType::Route:
+		case EDialogueEditorNodeType::Route:
 			return FText::FromString(TEXT("Route"));
-		case EDialogueNodeType::Sequence:
+		case EDialogueEditorNodeType::Sequence:
 			return FText::FromString(TEXT("Sequence"));
-		case EDialogueNodeType::MultiLine:
+		case EDialogueEditorNodeType::MultiLine:
 			return FText::FromString(TEXT("Multi-Line"));
-		case EDialogueNodeType::SplitLine:
+		case EDialogueEditorNodeType::SplitLine:
 			return FText::FromString(TEXT("Split Line"));
-		case EDialogueNodeType::RouteByCharacter:
+		case EDialogueEditorNodeType::RouteByCharacter:
 			return FText::FromString(TEXT("Route By Character"));
+		case EDialogueEditorNodeType::CheckTags:
+			return FText::FromString(TEXT("Check Tags"));
+		case EDialogueEditorNodeType::CheckRelationship:
+			return FText::FromString(TEXT("Check Relationship"));
+		case EDialogueEditorNodeType::CheckProgress:
+			return FText::FromString(TEXT("Check Progress"));
+		case EDialogueEditorNodeType::CheckStats:
+			return FText::FromString(TEXT("Check Stats"));
+		case EDialogueEditorNodeType::CheckLoadout:
+			return FText::FromString(TEXT("Check Loadout"));
+		case EDialogueEditorNodeType::CheckCharacter:
+			return FText::FromString(TEXT("Check Character"));
+		case EDialogueEditorNodeType::CheckVariable:
+			return FText::FromString(TEXT("Check Variable"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
 	}
 
-	static FText GetNodeTooltip(const EDialogueNodeType NodeType)
+	static FText GetNodeTooltip(const EDialogueEditorNodeType NodeType)
 	{
 		switch (NodeType)
 		{
-		case EDialogueNodeType::Completed:
+		case EDialogueEditorNodeType::Completed:
 			return FText::FromString(TEXT("Ends the conversation and commits completion/memory results."));
-		case EDialogueNodeType::Line:
+		case EDialogueEditorNodeType::Line:
 			return FText::FromString(TEXT("Presents one dialogue line and waits for advance input."));
-		case EDialogueNodeType::Choice:
+		case EDialogueEditorNodeType::Choice:
 			return FText::FromString(TEXT("Presents player choices and routes to the selected branch."));
-		case EDialogueNodeType::Bool:
-			return FText::FromString(TEXT("Evaluates one condition and routes to True or False."));
-		case EDialogueNodeType::SwitchOnTagsByPriority:
+		case EDialogueEditorNodeType::Branch:
+			return FText::FromString(TEXT("Combines connected bool condition sources and routes to True or False."));
+		case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 			return FText::FromString(TEXT("Evaluates branch conditions in order and routes to the first passing branch."));
-		case EDialogueNodeType::TagMutation:
+		case EDialogueEditorNodeType::TagMutation:
 			return FText::FromString(TEXT("Adds/removes gameplay tags on configured dialogue targets."));
-		case EDialogueNodeType::RelationshipMutation:
+		case EDialogueEditorNodeType::RelationshipMutation:
 			return FText::FromString(TEXT("Adjusts relationship points for a target speaker."));
-		case EDialogueNodeType::FactionMutation:
+		case EDialogueEditorNodeType::FactionMutation:
 			return FText::FromString(TEXT("Adjusts popularity for a target faction."));
-		case EDialogueNodeType::Signal:
+		case EDialogueEditorNodeType::Signal:
 			return FText::FromString(TEXT("Broadcasts a gameplay tag signal for game systems."));
-		case EDialogueNodeType::Random:
+		case EDialogueEditorNodeType::Random:
 			return FText::FromString(TEXT("Selects an outgoing branch by authored weights."));
-		case EDialogueNodeType::Route:
+		case EDialogueEditorNodeType::Route:
 			return FText::FromString(TEXT("Organizes graph flow without adding runtime side effects."));
-		case EDialogueNodeType::Sequence:
+		case EDialogueEditorNodeType::Sequence:
 			return FText::FromString(TEXT("Runs each connected branch in order."));
-		case EDialogueNodeType::MultiLine:
+		case EDialogueEditorNodeType::MultiLine:
 			return FText::FromString(TEXT("Presents multiple lines from one node in authored order."));
-		case EDialogueNodeType::SplitLine:
+		case EDialogueEditorNodeType::SplitLine:
 			return FText::FromString(TEXT("Presents line entries that can be split/filtered by conditions."));
-		case EDialogueNodeType::RouteByCharacter:
+		case EDialogueEditorNodeType::RouteByCharacter:
 			return FText::FromString(TEXT("Routes execution based on the active player speaker tag."));
-		case EDialogueNodeType::Enter:
+		case EDialogueEditorNodeType::CheckTags:
+			return FText::FromString(TEXT("Produces a bool from one tag-based condition."));
+		case EDialogueEditorNodeType::CheckRelationship:
+			return FText::FromString(TEXT("Produces a bool from relationship points or level."));
+		case EDialogueEditorNodeType::CheckProgress:
+			return FText::FromString(TEXT("Produces a bool from seen/completed dialogue progress."));
+		case EDialogueEditorNodeType::CheckStats:
+			return FText::FromString(TEXT("Produces a bool from player stat checks."));
+		case EDialogueEditorNodeType::CheckLoadout:
+			return FText::FromString(TEXT("Produces a bool from loadout tag checks."));
+		case EDialogueEditorNodeType::CheckCharacter:
+			return FText::FromString(TEXT("Produces a bool from the active character check."));
+		case EDialogueEditorNodeType::CheckVariable:
+			return FText::FromString(TEXT("Produces a bool from an injected variable check."));
+		case EDialogueEditorNodeType::Enter:
 		default:
 			return FText::FromString(TEXT("Conversation entry node."));
 		}
@@ -115,7 +144,7 @@ namespace
 		{
 		}
 
-		FParleyDialogueGraphSchemaAction_NewNode(const FText& Category, const FText& MenuDesc, const FText& ToolTip, const int32 Grouping, const EDialogueNodeType InNodeType)
+		FParleyDialogueGraphSchemaAction_NewNode(const FText& Category, const FText& MenuDesc, const FText& ToolTip, const int32 Grouping, const EDialogueEditorNodeType InNodeType)
 			: FEdGraphSchemaAction(Category, MenuDesc, ToolTip, Grouping)
 			, NodeType(InNodeType)
 		{
@@ -127,7 +156,7 @@ namespace
 			{
 				return nullptr;
 			}
-			if (NodeType == EDialogueNodeType::Enter && GraphHasEnterNode(ParentGraph))
+			if (NodeType == EDialogueEditorNodeType::Enter && GraphHasEnterNode(ParentGraph))
 			{
 				return nullptr;
 			}
@@ -151,7 +180,7 @@ namespace
 			return NewNode;
 		}
 
-		EDialogueNodeType NodeType = EDialogueNodeType::Line;
+		EDialogueEditorNodeType NodeType = EDialogueEditorNodeType::Line;
 	};
 
 	struct FParleyDialogueGraphSchemaAction_NewComment final : public FEdGraphSchemaAction
@@ -185,7 +214,7 @@ void UParleyDialogueEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) c
 	Graph.Modify();
 	UParleyDialogueEdGraphNode* EnterNode = NewObject<UParleyDialogueEdGraphNode>(&Graph);
 	EnterNode->SetFlags(RF_Transactional);
-	EnterNode->InitializeForNodeType(EDialogueNodeType::Enter);
+	EnterNode->InitializeForNodeType(EDialogueEditorNodeType::Enter);
 	EnterNode->NodePosX = -300;
 	EnterNode->NodePosY = 0;
 	EnterNode->CreateNewGuid();
@@ -197,25 +226,32 @@ void UParleyDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 {
 	ContextMenuBuilder.AddAction(GetCreateCommentAction());
 
-	static const TArray<EDialogueNodeType> NodeTypes = {
-		EDialogueNodeType::Completed,
-		EDialogueNodeType::Line,
-		EDialogueNodeType::Choice,
-		EDialogueNodeType::Bool,
-		EDialogueNodeType::SwitchOnTagsByPriority,
-		EDialogueNodeType::TagMutation,
-		EDialogueNodeType::RelationshipMutation,
-		EDialogueNodeType::FactionMutation,
-		EDialogueNodeType::Signal,
-		EDialogueNodeType::Random,
-		EDialogueNodeType::Route,
-		EDialogueNodeType::Sequence,
-		EDialogueNodeType::MultiLine,
-		EDialogueNodeType::SplitLine,
-		EDialogueNodeType::RouteByCharacter
+	static const TArray<EDialogueEditorNodeType> NodeTypes = {
+		EDialogueEditorNodeType::Completed,
+		EDialogueEditorNodeType::Line,
+		EDialogueEditorNodeType::Choice,
+		EDialogueEditorNodeType::Branch,
+		EDialogueEditorNodeType::CheckTags,
+		EDialogueEditorNodeType::CheckRelationship,
+		EDialogueEditorNodeType::CheckProgress,
+		EDialogueEditorNodeType::CheckStats,
+		EDialogueEditorNodeType::CheckLoadout,
+		EDialogueEditorNodeType::CheckCharacter,
+		EDialogueEditorNodeType::CheckVariable,
+		EDialogueEditorNodeType::SwitchOnTagsByPriority,
+		EDialogueEditorNodeType::TagMutation,
+		EDialogueEditorNodeType::RelationshipMutation,
+		EDialogueEditorNodeType::FactionMutation,
+		EDialogueEditorNodeType::Signal,
+		EDialogueEditorNodeType::Random,
+		EDialogueEditorNodeType::Route,
+		EDialogueEditorNodeType::Sequence,
+		EDialogueEditorNodeType::MultiLine,
+		EDialogueEditorNodeType::SplitLine,
+		EDialogueEditorNodeType::RouteByCharacter
 	};
 
-	for (const EDialogueNodeType NodeType : NodeTypes)
+	for (const EDialogueEditorNodeType NodeType : NodeTypes)
 	{
 		const FText DisplayName = GetNodeDisplayName(NodeType);
 		TSharedPtr<FParleyDialogueGraphSchemaAction_NewNode> NewAction = MakeShared<FParleyDialogueGraphSchemaAction_NewNode>(
@@ -250,17 +286,47 @@ const FPinConnectionResponse UParleyDialogueEdGraphSchema::CanCreateConnection(c
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Pins must have opposite direction."));
 	}
 
-	if (A->PinType.PinCategory != DialogueSchemaPinCategoryExec || B->PinType.PinCategory != DialogueSchemaPinCategoryExec)
+	const bool bBothExec = A->PinType.PinCategory == DialogueSchemaPinCategoryExec && B->PinType.PinCategory == DialogueSchemaPinCategoryExec;
+	const bool bBothCondition = A->PinType.PinCategory == DialogueSchemaPinCategoryConditionBool && B->PinType.PinCategory == DialogueSchemaPinCategoryConditionBool;
+	if (!bBothExec && !bBothCondition)
 	{
-		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Only dialogue exec pins can be connected."));
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Pins must share the same dialogue category."));
 	}
 
 	const UEdGraphPin* OutputPin = A->Direction == EGPD_Output ? A : B;
-	if (OutputPin->LinkedTo.Num() > 0)
+	const UEdGraphPin* InputPin = A->Direction == EGPD_Input ? A : B;
+
+	if (bBothExec && OutputPin->LinkedTo.Num() > 0)
 	{
 		return A->Direction == EGPD_Output
 			? FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_A, TEXT("Output pin only supports one outgoing connection."))
 			: FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_B, TEXT("Output pin only supports one outgoing connection."));
+	}
+
+	if (bBothCondition)
+	{
+		const UParleyDialogueEdGraphNode* OutputNode = OutputPin ? Cast<UParleyDialogueEdGraphNode>(OutputPin->GetOwningNode()) : nullptr;
+		const UParleyDialogueEdGraphNode* InputNode = InputPin ? Cast<UParleyDialogueEdGraphNode>(InputPin->GetOwningNode()) : nullptr;
+		const bool bOutputIsConditionSource = OutputNode
+			&& (OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckTags
+				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckRelationship
+				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckProgress
+				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckStats
+				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckLoadout
+				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckCharacter
+				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckVariable);
+		const bool bInputIsBranch = InputNode && InputNode->EditorNodeType == EDialogueEditorNodeType::Branch;
+		if (!bOutputIsConditionSource || !bInputIsBranch)
+		{
+			return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Condition wires only connect from Check* nodes into Branch condition inputs."));
+		}
+
+		if (InputPin && InputPin->LinkedTo.Num() > 0)
+		{
+			return A->Direction == EGPD_Input
+				? FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_A, TEXT("Branch condition inputs only support one incoming connection."))
+				: FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_B, TEXT("Branch condition inputs only support one incoming connection."));
+		}
 	}
 
 	return FPinConnectionResponse(CONNECT_RESPONSE_MAKE, TEXT(""));
@@ -271,6 +337,10 @@ FLinearColor UParleyDialogueEdGraphSchema::GetPinTypeColor(const FEdGraphPinType
 	if (PinType.PinCategory == DialogueSchemaPinCategoryExec)
 	{
 		return FLinearColor(0.82f, 0.82f, 0.82f, 1.0f);
+	}
+	if (PinType.PinCategory == DialogueSchemaPinCategoryConditionBool)
+	{
+		return FLinearColor(0.23f, 0.69f, 0.64f, 1.0f);
 	}
 
 	return FLinearColor::White;
