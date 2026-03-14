@@ -9,6 +9,72 @@
 #include "ParleyFactionSubsystem.h"
 #include "ParleyPlayerSlotHelpers.h"
 
+namespace
+{
+	static FGameplayTag GetPlayerPlaceholderSpeakerTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Player"), false);
+	}
+
+	static bool IsPlayerCharacterSpeakerTag(const FGameplayTag& SpeakerTag)
+	{
+		return SpeakerTag.MatchesTagExact(ARPlayer::GetBrotherCharacterTag())
+			|| SpeakerTag.MatchesTagExact(ARPlayer::GetSisterCharacterTag())
+			|| SpeakerTag.MatchesTagExact(GetPlayerPlaceholderSpeakerTag());
+	}
+
+	static void AddMirrorVariants(const FGameplayTag& SpeakerTag, TArray<FGameplayTag>& OutVariants)
+	{
+		if (!SpeakerTag.IsValid())
+		{
+			return;
+		}
+
+		OutVariants.AddUnique(SpeakerTag);
+		if (SpeakerTag.MatchesTagExact(ARPlayer::GetBrotherCharacterTag()))
+		{
+			OutVariants.AddUnique(ARPlayer::GetSisterCharacterTag());
+		}
+		else if (SpeakerTag.MatchesTagExact(ARPlayer::GetSisterCharacterTag()))
+		{
+			OutVariants.AddUnique(ARPlayer::GetBrotherCharacterTag());
+		}
+		else if (SpeakerTag.MatchesTagExact(GetPlayerPlaceholderSpeakerTag()))
+		{
+			OutVariants.AddUnique(ARPlayer::GetBrotherCharacterTag());
+			OutVariants.AddUnique(ARPlayer::GetSisterCharacterTag());
+		}
+	}
+
+	static bool UpsertSpeakerRelationshipState(UARSaveGame* SaveGame, const FGameplayTag SourceSpeakerTag, const FGameplayTag TargetSpeakerTag, const float NewTotal)
+	{
+		if (!SaveGame || !SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		for (FDialogueSpeakerRelationshipState& State : SaveGame->DialogueSpeakerRelationshipStates)
+		{
+			if (State.SourceSpeakerTag.MatchesTagExact(SourceSpeakerTag)
+				&& State.TargetSpeakerTag.MatchesTagExact(TargetSpeakerTag))
+			{
+				if (!FMath::IsNearlyEqual(State.RelationshipPoints, NewTotal))
+				{
+					State.RelationshipPoints = NewTotal;
+					return true;
+				}
+				return false;
+			}
+		}
+
+		FDialogueSpeakerRelationshipState& Added = SaveGame->DialogueSpeakerRelationshipStates.AddDefaulted_GetRef();
+		Added.SourceSpeakerTag = SourceSpeakerTag;
+		Added.TargetSpeakerTag = TargetSpeakerTag;
+		Added.RelationshipPoints = NewTotal;
+		return true;
+	}
+}
+
 void UARParleySaveBridge::Initialize(UARSaveSubsystem* InSaveSubsystem, UParleyDialogueSubsystem* InParleySubsystem, UParleyFactionSubsystem* InFactionSubsystem)
 {
 	Shutdown();
@@ -25,7 +91,7 @@ void UARParleySaveBridge::Initialize(UARSaveSubsystem* InSaveSubsystem, UParleyD
 	if (ParleySubsystem)
 	{
 		ParleySubsystem->OnParleyConversationCompleted.AddDynamic(this, &UARParleySaveBridge::HandleConversationCompleted);
-		ParleySubsystem->OnRelationshipChanged.AddDynamic(this, &UARParleySaveBridge::HandleRelationshipChanged);
+		ParleySubsystem->OnSpeakerRelationshipChanged.AddDynamic(this, &UARParleySaveBridge::HandleSpeakerRelationshipChanged);
 		ParleySubsystem->OnProgressionTagMutated.AddDynamic(this, &UARParleySaveBridge::HandleProgressionTagMutated);
 		ParleySubsystem->OnQueryConversationCompleted.BindUObject(this, &UARParleySaveBridge::IsConversationCompletedForPlayer);
 		ParleySubsystem->OnQueryCurrentModeTag.BindUObject(this, &UARParleySaveBridge::ResolveCurrentModeTag);
@@ -50,7 +116,7 @@ void UARParleySaveBridge::Shutdown()
 	if (ParleySubsystem)
 	{
 		ParleySubsystem->OnParleyConversationCompleted.RemoveDynamic(this, &UARParleySaveBridge::HandleConversationCompleted);
-		ParleySubsystem->OnRelationshipChanged.RemoveDynamic(this, &UARParleySaveBridge::HandleRelationshipChanged);
+		ParleySubsystem->OnSpeakerRelationshipChanged.RemoveDynamic(this, &UARParleySaveBridge::HandleSpeakerRelationshipChanged);
 		ParleySubsystem->OnProgressionTagMutated.RemoveDynamic(this, &UARParleySaveBridge::HandleProgressionTagMutated);
 		ParleySubsystem->OnQueryConversationCompleted.Unbind();
 		ParleySubsystem->OnQueryCurrentModeTag.Unbind();
@@ -91,30 +157,42 @@ void UARParleySaveBridge::HandleConversationCompleted(FGameplayTag ConversationT
 	SaveSubsystem->MarkSaveDirty();
 }
 
-void UARParleySaveBridge::HandleRelationshipChanged(FGameplayTag SpeakerTag, FGameplayTag PlayerSlotTag, float Delta, float NewTotal)
+void UARParleySaveBridge::HandleSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag PlayerSlotTag, float Delta, float NewTotal)
 {
 	(void)PlayerSlotTag;
 	(void)Delta;
 	UARSaveGame* SaveGame = GetCurrentSave();
-	if (!SaveGame || !SpeakerTag.IsValid())
+	if (!SaveGame || !SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
 	{
 		return;
 	}
 
-	for (FDialogueRelationshipState& State : SaveGame->DialogueRelationshipStates)
+	TArray<FGameplayTag> SourceVariants;
+	TArray<FGameplayTag> TargetVariants;
+	AddMirrorVariants(SourceSpeakerTag, SourceVariants);
+	AddMirrorVariants(TargetSpeakerTag, TargetVariants);
+
+	if (!IsPlayerCharacterSpeakerTag(SourceSpeakerTag) && !IsPlayerCharacterSpeakerTag(TargetSpeakerTag))
 	{
-		if (State.SpeakerTag.MatchesTagExact(SpeakerTag))
+		SourceVariants.Reset();
+		TargetVariants.Reset();
+		SourceVariants.Add(SourceSpeakerTag);
+		TargetVariants.Add(TargetSpeakerTag);
+	}
+
+	bool bChanged = false;
+	for (const FGameplayTag SourceVariant : SourceVariants)
+	{
+		for (const FGameplayTag TargetVariant : TargetVariants)
 		{
-			State.RelationshipPoints = NewTotal;
-			SaveSubsystem->MarkSaveDirty();
-			return;
+			bChanged |= UpsertSpeakerRelationshipState(SaveGame, SourceVariant, TargetVariant, NewTotal);
 		}
 	}
 
-	FDialogueRelationshipState& Added = SaveGame->DialogueRelationshipStates.AddDefaulted_GetRef();
-	Added.SpeakerTag = SpeakerTag;
-	Added.RelationshipPoints = NewTotal;
-	SaveSubsystem->MarkSaveDirty();
+	if (bChanged)
+	{
+		SaveSubsystem->MarkSaveDirty();
+	}
 }
 
 void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag PlayerSlotTag)
@@ -272,7 +350,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 
 	ParleySubsystem->SetGameProgressionTags(SaveGame->ProgressionTags);
 	ParleySubsystem->SetCompletedConversationTagsByGame(SaveGame->DialogueCompletedConversationTagsByGame);
-	ParleySubsystem->SetRelationshipStates(SaveGame->DialogueRelationshipStates);
+	ParleySubsystem->SetSpeakerRelationshipStates(SaveGame->DialogueSpeakerRelationshipStates);
 
 	for (const EARPlayerSlot Slot : { EARPlayerSlot::P1, EARPlayerSlot::P2 })
 	{

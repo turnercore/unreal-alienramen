@@ -1,6 +1,25 @@
 // Split from ParleyDialogueSubsystem.cpp for maintainability.
 
-bool UParleyDialogueSubsystem::GetAvailableConversationForSpeaker(APlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bSpeakerLocalStateAllowsDialogue)
+bool UParleyDialogueSubsystem::GetAvailableConversationForSpeaker(
+	APlayerController* RequestingController,
+	FGameplayTag PrimarySpeakerTag,
+	FDialogueConversationOffer& OutOffer,
+	const bool bSpeakerLocalStateAllowsDialogue)
+{
+	return GetAvailableConversationForSpeakerInternal(
+		RequestingController,
+		PrimarySpeakerTag,
+		OutOffer,
+		bSpeakerLocalStateAllowsDialogue,
+		FGameplayTag());
+}
+
+bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
+	APlayerController* RequestingController,
+	FGameplayTag PrimarySpeakerTag,
+	FDialogueConversationOffer& OutOffer,
+	const bool bSpeakerLocalStateAllowsDialogue,
+	const FGameplayTag SourceSpeakerTagOverride)
 {
 	OutOffer = FDialogueConversationOffer();
 	if (!RequestingController)
@@ -107,7 +126,7 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeaker(APlayerControl
 			continue;
 		}
 
-		FDialogueRuntimeContext Context = BuildOfferContext(this, Conversation, RequesterPS, PlayerIdentity);
+		FDialogueRuntimeContext Context = BuildOfferContext(this, Conversation, RequesterPS, PlayerIdentity, SourceSpeakerTagOverride);
 		Context.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(Conversation->Header.ConversationTag);
 		if (const FGameplayTagContainer* SeenForPlayer = Runtime.SeenByPlayerTransient.Find(RequesterSlot))
 		{
@@ -405,6 +424,9 @@ static FDialogueRuntimeContext BuildSessionContext(
 		Context.ResolvedPlayerSpeakerTag = ResolvePlayerSpeakerTag(ActiveARPS);
 		GetLoadoutTagsFromPlayerState(ActiveARPS, Context.LoadoutView.LoadoutTags);
 	}
+	Context.SourceSpeakerTag = Session.SourceSpeakerTag.IsValid()
+		? ResolveSpeakerTagForContext(Session.SourceSpeakerTag, Context, Context.ResolvedPlayerSpeakerTag)
+		: Context.ResolvedPlayerSpeakerTag;
 
 	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
 	if (ProgressionStore)
@@ -427,8 +449,8 @@ static FDialogueRuntimeContext BuildSessionContext(
 		Context.bSeenByPlayer = SeenForOwner->HasTagExact(Session.ConversationTag);
 	}
 
-	Context.RelationshipPointsForPrimarySpeaker = DialogueSubsystem->GetRelationshipPointsForSpeaker(Session.PrimarySpeakerTag);
-	Context.RelationshipLevelForPrimarySpeaker = DialogueSubsystem->GetRelationshipLevelForSpeaker(Session.PrimarySpeakerTag);
+	Context.RelationshipPointsForPrimarySpeaker = DialogueSubsystem->GetRelationshipPointsForSpeakerPair(Context.SourceSpeakerTag, Session.PrimarySpeakerTag);
+	Context.RelationshipLevelForPrimarySpeaker = DialogueSubsystem->GetRelationshipLevelForSpeakerPair(Context.SourceSpeakerTag, Session.PrimarySpeakerTag);
 	return Context;
 }
 
@@ -1810,12 +1832,26 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 
 bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* RequestingController, FGameplayTag PrimarySpeakerTag)
 {
-	if (!RequestingController || !PrimarySpeakerTag.IsValid())
+	APlayerState* RequestingPlayerState = RequestingController ? RequestingController->GetPlayerState<APlayerState>() : nullptr;
+	const FGameplayTag SourceSpeakerTag = ResolvePlayerSpeakerTag(RequestingPlayerState);
+	return TryStartDialogueBetweenSpeakers(RequestingController, SourceSpeakerTag, PrimarySpeakerTag);
+}
+
+bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(
+	APlayerController* RequestingController,
+	FGameplayTag SourceSpeakerTag,
+	FGameplayTag TargetSpeakerTag)
+{
+	if (!RequestingController || !TargetSpeakerTag.IsValid())
 	{
 		return false;
 	}
 
 	APlayerState* RequestingPlayerState = RequestingController->GetPlayerState<APlayerState>();
+	if (!SourceSpeakerTag.IsValid())
+	{
+		SourceSpeakerTag = ResolvePlayerSpeakerTag(RequestingPlayerState);
+	}
 	if (RequestingPlayerState)
 	{
 		FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
@@ -1830,10 +1866,10 @@ bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* Re
 					Warning,
 					TEXT("[Dialogue] Removing stale session '%s' while starting speaker '%s'."),
 					*ExistingSession.SessionId,
-					*PrimarySpeakerTag.ToString());
+					*TargetSpeakerTag.ToString());
 				RemoveSessionAt(this, Runtime.ActiveSessions, ExistingSessionIndex, false);
 			}
-			else if (ExistingSession.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+			else if (ExistingSession.PrimarySpeakerTag.MatchesTagExact(TargetSpeakerTag))
 			{
 				// Re-broadcast the active speaker session so interaction can reopen the same dialogue UI.
 				BroadcastSessionUpdated(this, ExistingSession);
@@ -1850,13 +1886,13 @@ bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* Re
 		if (RequesterSlot != EParleyPlayerSlot::Unknown && IsBusySpeakerLockEnabled(Settings, ModeTag))
 		{
 			FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
-			if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+			if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, TargetSpeakerTag, RequesterSlot))
 			{
 				UE_LOG(
 					ParleyLog,
 					Verbose,
 					TEXT("[Dialogue] Start-with-speaker blocked: speaker '%s' busy in session '%s' (owner=%s)."),
-					*PrimarySpeakerTag.ToString(),
+					*TargetSpeakerTag.ToString(),
 					*BusySession->SessionId,
 					*StaticEnum<EParleyPlayerSlot>()->GetNameStringByValue(static_cast<int64>(BusySession->OwnerSlot)));
 
@@ -1874,14 +1910,35 @@ bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* Re
 	}
 
 	FDialogueConversationOffer Offer;
-	if (!GetAvailableConversationForSpeaker(RequestingController, PrimarySpeakerTag, Offer, /*bSpeakerLocalStateAllowsDialogue=*/ true))
+	if (!GetAvailableConversationForSpeakerInternal(
+		RequestingController,
+		TargetSpeakerTag,
+		Offer,
+		/*bSpeakerLocalStateAllowsDialogue=*/ true,
+		SourceSpeakerTag))
 	{
 		return false;
 	}
-	return StartConversation(RequestingController, Offer.ConversationTag, PrimarySpeakerTag);
+	return StartConversationInternal(RequestingController, Offer.ConversationTag, TargetSpeakerTag, SourceSpeakerTag);
 }
 
-bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingController, FGameplayTag ConversationTag, FGameplayTag PrimarySpeakerTag)
+bool UParleyDialogueSubsystem::StartConversation(
+	APlayerController* RequestingController,
+	FGameplayTag ConversationTag,
+	FGameplayTag PrimarySpeakerTag)
+{
+	return StartConversationInternal(
+		RequestingController,
+		ConversationTag,
+		PrimarySpeakerTag,
+		FGameplayTag());
+}
+
+bool UParleyDialogueSubsystem::StartConversationInternal(
+	APlayerController* RequestingController,
+	FGameplayTag ConversationTag,
+	FGameplayTag PrimarySpeakerTag,
+	const FGameplayTag SourceSpeakerTagOverride)
 {
 	UWorld* World = GetWorld();
 	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController || !ConversationTag.IsValid())
@@ -1939,7 +1996,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 	const FParleyPlayerIdentity RequesterIdentity = BuildPlayerIdentityFromState(RequesterPS);
 	SyncCycleOfferStateFromProgressionStoreForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	SyncSpeakerOfferCountsFromProgressionStoreForSlot(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
-	FDialogueRuntimeContext StartContext = BuildOfferContext(this, Conversation, RequesterPS, RequesterIdentity);
+	FDialogueRuntimeContext StartContext = BuildOfferContext(this, Conversation, RequesterPS, RequesterIdentity, SourceSpeakerTagOverride);
 	StartContext.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(ConversationTag);
 	if (const FGameplayTagContainer* SeenTags = Runtime.SeenByPlayerTransient.Find(RequesterSlot))
 	{
@@ -2061,6 +2118,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 	Session.SessionId = BuildSessionId();
 	Session.ConversationTag = ConversationTag;
 	Session.PrimarySpeakerTag = PrimarySpeakerTag;
+	Session.SourceSpeakerTag = StartContext.SourceSpeakerTag;
 	Session.ConversationAsset = Conversation;
 	Session.CurrentNodeId = Conversation->CompiledData.EnterNodeId;
 	Session.InitiatorSlot = RequesterSlot;

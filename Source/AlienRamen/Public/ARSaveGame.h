@@ -40,8 +40,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 16;
-	static constexpr int32 MinSupportedSchemaVersion = 10;
+	static constexpr int32 CurrentSchemaVersion = 17;
+	static constexpr int32 MinSupportedSchemaVersion = 17;
 
 	UARSaveGame();
 
@@ -146,9 +146,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Character-owned save rows keyed by canonical character gameplay tag."))
 	TArray<FARCharacterSaveData> CharacterStates;
 
-	// Global speaker relationship points.
+	// Global directed speaker relationship points.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
-	TArray<FDialogueRelationshipState> DialogueRelationshipStates;
+	TArray<FDialogueSpeakerRelationshipState> DialogueSpeakerRelationshipStates;
 
 	// Persistent game-scope completed conversations.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")

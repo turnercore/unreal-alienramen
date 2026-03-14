@@ -124,10 +124,10 @@ struct FDialogueEditorCheckRelationshipNodeData
 	UPROPERTY(EditAnywhere, Category = "", meta = (DisplayName = "Comparison", ToolTip = "Numeric comparison operation."))
 	EDialogueComparisonOp Operator = EDialogueComparisonOp::GreaterOrEqual;
 
-	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Speaker whose relationship/reputation value is evaluated. If unset, conversation primary speaker is used."))
+	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Speaker whose relationship/reputation value is evaluated. If unset, conversation primary speaker is used."))
 	FGameplayTag TargetSpeakerTag;
 
-	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Faction.Identity", DisplayName = "Faction Tag", ToolTip = "Faction to query when Source is Faction Speaker Reputation."))
+	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Parley.Factions", DisplayName = "Faction Tag", ToolTip = "Faction to query when Source is Faction Speaker Reputation."))
 	FGameplayTag FactionTag;
 
 	UPROPERTY(EditAnywhere, Category = "", meta = (DisplayName = "Numeric Value", ToolTip = "Numeric operand used by the comparison."))
@@ -257,10 +257,13 @@ public:
 	bool ReorderRandomBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
 	bool ReorderCharacterRouteBranch(const FGuid& MovingBranchId, const FGuid& TargetBranchId);
 	bool SetChoiceFallbackText(const FText& NewFallbackText);
+	bool SetRelationshipSourceSpeakerTag(const FGameplayTag& NewTag);
 	bool SetRelationshipTargetSpeakerTag(const FGameplayTag& NewTag);
 	bool SetRelationshipDeltaPoints(float NewDeltaPoints);
 	bool SetFactionTag(const FGameplayTag& NewTag);
 	bool SetFactionDeltaPopularity(float NewDeltaPopularity);
+	bool SetFactionTargetSpeakerTag(const FGameplayTag& NewTag);
+	bool SetFactionDeltaSpeakerReputation(float NewDeltaSpeakerReputation);
 	bool SetPrimaryTagMutationTarget(EDialogueTagMutationTarget NewTarget);
 	bool SetPrimaryTagMutationOperation(EDialogueTagMutationOp NewOperation);
 	bool SetPrimaryTagMutationTag(const FGameplayTag& NewTag);
@@ -324,3 +327,4 @@ private:
 	EDialogueValidationSeverity ValidationSeverity = EDialogueValidationSeverity::Info;
 	FString ValidationMessage;
 };
+

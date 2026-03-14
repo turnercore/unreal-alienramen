@@ -75,6 +75,10 @@ namespace ParleyDialogueConditionCompile
 				OutCondition.Source = EDialogueConditionSource::RelationshipLevel;
 				OutCondition.TagValue = Data->TargetSpeakerTag;
 				break;
+			case EDialogueEditorRelationshipConditionSource::FactionPopularity:
+				OutCondition.Source = EDialogueConditionSource::FactionPopularity;
+				OutCondition.TagValue = Data->FactionTag;
+				break;
 			case EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation:
 				OutCondition.Source = EDialogueConditionSource::FactionSpeakerReputation;
 				OutCondition.TagValue = Data->FactionTag;
@@ -144,7 +148,7 @@ namespace ParleyDialogueConditionCompile
 			OutCondition.Source = EDialogueConditionSource::ActiveCharacter;
 			OutCondition.Operator = EDialogueComparisonOp::Present;
 			OutCondition.TagValue = UGameplayTagsManager::Get().RequestGameplayTag(
-				Data->Character == EDialogueEditorCharacterCondition::Brother ? FName(TEXT("Dialogue.Speaker.Brother")) : FName(TEXT("Dialogue.Speaker.Sister")),
+				Data->Character == EDialogueEditorCharacterCondition::Brother ? FName(TEXT("Parley.Speaker.Brother")) : FName(TEXT("Parley.Speaker.Sister")),
 				false);
 			return true;
 		}
@@ -238,3 +242,4 @@ namespace ParleyDialogueConditionCompile
 		return OutErrors.IsEmpty();
 	}
 }
+

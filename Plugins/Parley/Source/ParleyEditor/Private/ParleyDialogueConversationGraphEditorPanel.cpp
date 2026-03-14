@@ -107,7 +107,7 @@ namespace
 		};
 
 		AddUniqueTag(ConversationAsset->Header.PrimarySpeakerTag);
-		if (const FGameplayTag PlayerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false); PlayerTag.IsValid())
+		if (const FGameplayTag PlayerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false); PlayerTag.IsValid())
 		{
 			AddUniqueTag(PlayerTag);
 		}
@@ -781,6 +781,8 @@ FReply SDialogueConversationGraphEditorPanel::HandleSave()
 		return FReply::Handled();
 	}
 
+	ValidationOutput.Empty();
+
 	FDialogueValidationReport ValidationReport;
 	const bool bCompiled = CompileEditorGraphToRuntime(Conversation, ValidationReport);
 	const bool bHasErrors = ValidationReport.HasErrors();
@@ -914,6 +916,8 @@ FReply SDialogueConversationGraphEditorPanel::HandleCompile()
 		SetStatusMessage(TEXT("Compile failed: no conversation selected."), EEditorStatusType::Error);
 		return FReply::Handled();
 	}
+
+	ValidationOutput.Empty();
 
 	FDialogueValidationReport ValidationReport;
 	const bool bCompiled = CompileEditorGraphToRuntime(Conversation, ValidationReport);
@@ -1669,3 +1673,4 @@ void SDialogueConversationGraphEditorPanel::ApplyValidationToEditorNodes(UParley
 
 	Graph->NotifyGraphChanged();
 }
+

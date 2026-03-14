@@ -27,7 +27,7 @@ public:
 	void HandleConversationCompleted(FGameplayTag ConversationTag, FGameplayTag PlayerSlotTag, FGameplayTag CharacterTag);
 
 	UFUNCTION()
-	void HandleRelationshipChanged(FGameplayTag SpeakerTag, FGameplayTag PlayerSlotTag, float Delta, float NewTotal);
+	void HandleSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag PlayerSlotTag, float Delta, float NewTotal);
 
 	UFUNCTION()
 	void HandleProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag PlayerSlotTag);

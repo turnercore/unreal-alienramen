@@ -58,10 +58,13 @@ private:
 	FReply HandleDeleteMultiLineEntryClicked(FGuid EntryId) const;
 	void HandleMultiLineSpeakerTagChanged(FGameplayTag NewTag, FGuid EntryId) const;
 	void HandleMultiLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType, FGuid EntryId) const;
+	void HandleRelationshipSourceSpeakerTagChanged(FGameplayTag NewTag) const;
 	void HandleRelationshipSpeakerTagChanged(FGameplayTag NewTag) const;
 	void HandleRelationshipDeltaTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 	void HandleFactionTagChanged(FGameplayTag NewTag) const;
+	void HandleFactionSpeakerTagChanged(FGameplayTag NewTag) const;
 	void HandleFactionDeltaTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
+	void HandleFactionSpeakerDeltaTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 	FReply HandleCycleTagMutationTargetClicked() const;
 	FReply HandleCycleTagMutationOperationClicked() const;
 	void HandleTagMutationTagChanged(FGameplayTag NewTag) const;
@@ -81,6 +84,7 @@ private:
 	void RefreshCharacterRoutePortraitBrush(FGameplayTag SpeakerTag) const;
 	FText GetRelationshipDeltaText() const;
 	FText GetFactionDeltaText() const;
+	FText GetFactionSpeakerDeltaText() const;
 
 	TSharedPtr<SVerticalBox> LeftNodeBox;
 	TSharedPtr<SVerticalBox> RightNodeBox;

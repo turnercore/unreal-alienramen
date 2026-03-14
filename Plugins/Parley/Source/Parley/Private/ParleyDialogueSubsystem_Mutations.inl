@@ -33,23 +33,61 @@ bool UParleyDialogueSubsystem::EvaluateDialogueCondition(const FDialogueConditio
 	}
 	case EDialogueConditionSource::RelationshipPoints:
 	{
-		const FGameplayTag TargetSpeakerTag = Condition.TagValue.IsValid() ? Condition.TagValue : Context.PrimarySpeakerTag;
-		if (!TargetSpeakerTag.IsValid())
+		const FGameplayTag DefaultSourceSpeakerTag = Context.SourceSpeakerTag.IsValid()
+			? Context.SourceSpeakerTag
+			: Context.ResolvedPlayerSpeakerTag;
+		const FGameplayTag SourceSpeakerTag = ResolveSpeakerTagForContext(
+			FGameplayTag(),
+			Context,
+			DefaultSourceSpeakerTag);
+		const FGameplayTag TargetSpeakerTag = ResolveSpeakerTagForContext(
+			Condition.TagValue,
+			Context,
+			Context.PrimarySpeakerTag);
+		if (!SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
 		{
 			return false;
 		}
 
-		return CompareNumeric(GetRelationshipPointsForSpeaker(TargetSpeakerTag), Condition.Operator, Condition.NumericValue);
+		return CompareNumeric(GetRelationshipPointsForSpeakerPair(SourceSpeakerTag, TargetSpeakerTag), Condition.Operator, Condition.NumericValue);
 	}
 	case EDialogueConditionSource::RelationshipLevel:
 	{
-		const FGameplayTag TargetSpeakerTag = Condition.TagValue.IsValid() ? Condition.TagValue : Context.PrimarySpeakerTag;
-		if (!TargetSpeakerTag.IsValid())
+		const FGameplayTag DefaultSourceSpeakerTag = Context.SourceSpeakerTag.IsValid()
+			? Context.SourceSpeakerTag
+			: Context.ResolvedPlayerSpeakerTag;
+		const FGameplayTag SourceSpeakerTag = ResolveSpeakerTagForContext(
+			FGameplayTag(),
+			Context,
+			DefaultSourceSpeakerTag);
+		const FGameplayTag TargetSpeakerTag = ResolveSpeakerTagForContext(
+			Condition.TagValue,
+			Context,
+			Context.PrimarySpeakerTag);
+		if (!SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
 		{
 			return false;
 		}
 
-		return CompareNumeric(static_cast<float>(GetRelationshipLevelForSpeaker(TargetSpeakerTag)), Condition.Operator, Condition.NumericValue);
+		return CompareNumeric(static_cast<float>(GetRelationshipLevelForSpeakerPair(SourceSpeakerTag, TargetSpeakerTag)), Condition.Operator, Condition.NumericValue);
+	}
+	case EDialogueConditionSource::FactionPopularity:
+	{
+		if (!Condition.TagValue.IsValid())
+		{
+			return false;
+		}
+
+		if (UGameInstance* GI = GetGameInstance())
+		{
+			if (UParleyFactionSubsystem* FactionSubsystem = GI->GetSubsystem<UParleyFactionSubsystem>())
+			{
+				const float Popularity = FactionSubsystem->GetFactionPopularity(Condition.TagValue);
+				return CompareNumeric(Popularity, Condition.Operator, Condition.NumericValue);
+			}
+		}
+
+		return false;
 	}
 	case EDialogueConditionSource::FactionSpeakerReputation:
 	{
@@ -58,9 +96,10 @@ bool UParleyDialogueSubsystem::EvaluateDialogueCondition(const FDialogueConditio
 			return false;
 		}
 
-		const FGameplayTag SpeakerTag = Condition.SecondaryTagValue.IsValid()
-			? Condition.SecondaryTagValue
-			: Context.PrimarySpeakerTag;
+		const FGameplayTag SpeakerTag = ResolveSpeakerTagForContext(
+			Condition.SecondaryTagValue,
+			Context,
+			Context.PrimarySpeakerTag);
 		if (!SpeakerTag.IsValid())
 		{
 			return false;
@@ -276,17 +315,28 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 		return false;
 	}
 
-	const FGameplayTag TargetSpeakerTag = Mutation.TargetSpeakerTag.IsValid() ? Mutation.TargetSpeakerTag : Context.PrimarySpeakerTag;
-	if (!TargetSpeakerTag.IsValid())
+	const FGameplayTag DefaultSourceSpeakerTag = Context.SourceSpeakerTag.IsValid()
+		? Context.SourceSpeakerTag
+		: Context.ResolvedPlayerSpeakerTag;
+	const FGameplayTag SourceSpeakerTag = ResolveSpeakerTagForContext(
+		Mutation.SourceSpeakerTag,
+		Context,
+		DefaultSourceSpeakerTag);
+	const FGameplayTag TargetSpeakerTag = ResolveSpeakerTagForContext(
+		Mutation.TargetSpeakerTag,
+		Context,
+		Context.PrimarySpeakerTag);
+	if (!SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Relationship mutation skipped: target speaker tag invalid."));
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Relationship mutation skipped: source/target speaker tag invalid."));
 		return false;
 	}
 
-	FDialogueRelationshipState* RelationshipState = nullptr;
-	for (FDialogueRelationshipState& Entry : ProgressionStore->DialogueRelationshipStates)
+	FDialogueSpeakerRelationshipState* RelationshipState = nullptr;
+	for (FDialogueSpeakerRelationshipState& Entry : ProgressionStore->DialogueSpeakerRelationshipStates)
 	{
-		if (Entry.SpeakerTag.MatchesTagExact(TargetSpeakerTag))
+		if (Entry.SourceSpeakerTag.MatchesTagExact(SourceSpeakerTag)
+			&& Entry.TargetSpeakerTag.MatchesTagExact(TargetSpeakerTag))
 		{
 			RelationshipState = &Entry;
 			break;
@@ -294,31 +344,47 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 	}
 	if (!RelationshipState)
 	{
-		FDialogueRelationshipState& Added = ProgressionStore->DialogueRelationshipStates.AddDefaulted_GetRef();
-		Added.SpeakerTag = TargetSpeakerTag;
+		FDialogueSpeakerRelationshipState& Added = ProgressionStore->DialogueSpeakerRelationshipStates.AddDefaulted_GetRef();
+		Added.SourceSpeakerTag = SourceSpeakerTag;
+		Added.TargetSpeakerTag = TargetSpeakerTag;
 		RelationshipState = &Added;
 	}
 
-	const int32 OldLevel = GetRelationshipLevelForSpeaker(TargetSpeakerTag);
+	const int32 OldLevel = GetRelationshipLevelForSpeakerPair(SourceSpeakerTag, TargetSpeakerTag);
 	RelationshipState->RelationshipPoints += Mutation.DeltaPoints;
-	const int32 NewLevel = GetRelationshipLevelForSpeaker(TargetSpeakerTag);
+	const int32 NewLevel = GetRelationshipLevelForSpeakerPair(SourceSpeakerTag, TargetSpeakerTag);
 	EParleyPlayerSlot PlayerSlot = EParleyPlayerSlot::Unknown;
 	if (const APlayerState* ActivePS = Cast<APlayerState>(Context.ActivePlayerState))
 	{
 		PlayerSlot = GetPlayerSlotFromPlayerState(ActivePS);
 	}
+	const FGameplayTag PlayerSlotTag = ParleyPlayerSlot::SlotToTag(PlayerSlot);
+
+	OnSpeakerRelationshipChanged.Broadcast(
+		SourceSpeakerTag,
+		TargetSpeakerTag,
+		PlayerSlotTag,
+		Mutation.DeltaPoints,
+		RelationshipState->RelationshipPoints);
 
 	OnRelationshipChanged.Broadcast(
 		TargetSpeakerTag,
-		ParleyPlayerSlot::SlotToTag(PlayerSlot),
+		PlayerSlotTag,
 		Mutation.DeltaPoints,
 		RelationshipState->RelationshipPoints);
 
 	if (OldLevel != NewLevel)
 	{
+		OnSpeakerRelationshipLevelChanged.Broadcast(
+			SourceSpeakerTag,
+			TargetSpeakerTag,
+			PlayerSlotTag,
+			OldLevel,
+			NewLevel,
+			RelationshipState->RelationshipPoints);
 		OnRelationshipLevelChanged.Broadcast(
 			TargetSpeakerTag,
-			ParleyPlayerSlot::SlotToTag(PlayerSlot),
+			PlayerSlotTag,
 			OldLevel,
 			NewLevel);
 	}
@@ -345,11 +411,10 @@ bool UParleyDialogueSubsystem::ApplyDialogueFactionMutation(const FDialogueFacti
 
 			if (!FMath::IsNearlyZero(Mutation.DeltaSpeakerReputation))
 			{
-				FGameplayTag TargetSpeakerTag = Mutation.TargetSpeakerTag;
-				if (!TargetSpeakerTag.IsValid())
-				{
-					TargetSpeakerTag = Context.PrimarySpeakerTag;
-				}
+				const FGameplayTag TargetSpeakerTag = ResolveSpeakerTagForContext(
+					Mutation.TargetSpeakerTag,
+					Context,
+					Context.PrimarySpeakerTag);
 
 				if (TargetSpeakerTag.IsValid())
 				{
@@ -394,6 +459,8 @@ bool UParleyDialogueSubsystem::ApplyRamenServeOutcome(
 		FDialogueRuntimeContext Context;
 		Context.PrimarySpeakerTag = SpeakerTag;
 		Context.PrimarySpeakerActor = PreferredSpeakerActor;
+		Context.ResolvedPlayerSpeakerTag = GetDialogueSpeakerPlayerPlaceholderTag();
+		Context.SourceSpeakerTag = Context.ResolvedPlayerSpeakerTag;
 		Context.World = GetWorld();
 		bApplied |= ApplyDialogueRelationshipMutation(RelationshipMutation, Context);
 	}

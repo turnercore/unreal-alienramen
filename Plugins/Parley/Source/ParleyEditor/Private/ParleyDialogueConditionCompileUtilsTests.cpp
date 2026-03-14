@@ -93,7 +93,7 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 		FDialogueEditorCheckRelationshipNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
 		Data->Source = EDialogueEditorRelationshipConditionSource::RelationshipLevel;
 		Data->Operator = EDialogueComparisonOp::GreaterOrEqual;
-		Data->TargetSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Test")), false);
+		Data->TargetSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Test")), false);
 		Data->NumericValue = 3.0f;
 		TestTrue(TEXT("CheckRelationship condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
 		TestEqual(TEXT("CheckRelationship source"), Condition.Source, EDialogueConditionSource::RelationshipLevel);
@@ -107,8 +107,8 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 		FDialogueEditorCheckRelationshipNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
 		Data->Source = EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation;
 		Data->Operator = EDialogueComparisonOp::LessOrEqual;
-		Data->FactionTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Faction.Identity.Test")), false);
-		Data->TargetSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Speaker.TestB")), false);
+		Data->FactionTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Factions.Test")), false);
+		Data->TargetSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.TestB")), false);
 		Data->NumericValue = 7.0f;
 		TestTrue(TEXT("CheckRelationship faction condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
 		TestEqual(TEXT("CheckRelationship faction source"), Condition.Source, EDialogueConditionSource::FactionSpeakerReputation);
@@ -116,6 +116,20 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 		TestEqual(TEXT("CheckRelationship faction tag"), Condition.TagValue, Data->FactionTag);
 		TestEqual(TEXT("CheckRelationship faction speaker tag"), Condition.SecondaryTagValue, Data->TargetSpeakerTag);
 		TestEqual(TEXT("CheckRelationship faction numeric"), Condition.NumericValue, 7.0f);
+	}
+
+	{
+		UParleyDialogueEdGraphNode* Node = AddTestNode(Graph, EDialogueEditorNodeType::CheckRelationship);
+		FDialogueEditorCheckRelationshipNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+		Data->Source = EDialogueEditorRelationshipConditionSource::FactionPopularity;
+		Data->Operator = EDialogueComparisonOp::GreaterThan;
+		Data->FactionTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Factions.TestPop")), false);
+		Data->NumericValue = 12.0f;
+		TestTrue(TEXT("CheckRelationship faction popularity condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
+		TestEqual(TEXT("CheckRelationship faction popularity source"), Condition.Source, EDialogueConditionSource::FactionPopularity);
+		TestEqual(TEXT("CheckRelationship faction popularity operator"), Condition.Operator, EDialogueComparisonOp::GreaterThan);
+		TestEqual(TEXT("CheckRelationship faction popularity faction tag"), Condition.TagValue, Data->FactionTag);
+		TestEqual(TEXT("CheckRelationship faction popularity numeric"), Condition.NumericValue, 12.0f);
 	}
 
 	{
@@ -154,7 +168,7 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 		UParleyDialogueEdGraphNode* Node = AddTestNode(Graph, EDialogueEditorNodeType::CheckCharacter);
 		FDialogueEditorCheckCharacterNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckCharacterNodeData>();
 		Data->Character = EDialogueEditorCharacterCondition::Sister;
-		const FGameplayTag ExpectedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Sister")), false);
+		const FGameplayTag ExpectedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
 		TestTrue(TEXT("CheckCharacter condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
 		TestEqual(TEXT("CheckCharacter source"), Condition.Source, EDialogueConditionSource::ActiveCharacter);
 		TestEqual(TEXT("CheckCharacter operator"), Condition.Operator, EDialogueComparisonOp::Present);
@@ -417,3 +431,4 @@ bool FParleyConditionSchemaRulesTest::RunTest(const FString& Parameters)
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
+

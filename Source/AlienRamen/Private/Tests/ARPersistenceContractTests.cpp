@@ -17,11 +17,11 @@ bool FARPersistencePlayerProjectionTest::RunTest(const FString& Parameters)
 
 	FARPlayerStateSaveData PlayerData;
 	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
-	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
+	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
 	PlayerData.SyncCharacterSelectionFromCurrentTag();
 
-	TestEqual(TEXT("Current character resolves to brother tag"), PlayerData.ResolveCurrentCharacterTag(), FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
+	TestEqual(TEXT("Current character resolves to brother tag"), PlayerData.ResolveCurrentCharacterTag(), FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
 	TestEqual(TEXT("Compatibility enum mirrors canonical tag"), PlayerData.CharacterPicked, EARCharacterChoice::Brother);
 	TestTrue(TEXT("Player-owned progression tags remain on the player row"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
 	return true;
@@ -44,7 +44,7 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 
 	FARPlayerStateSaveData& PlayerData = Save->PlayerStates.AddDefaulted_GetRef();
 	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
-	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
+	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 	PlayerData.ProgressionTags.AddTag(FGameplayTag());
 	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
 
@@ -64,7 +64,7 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 	TestEqual(TEXT("Invalid character-owned row removed"), Save->CharacterStates.Num(), 1);
 	TestTrue(TEXT("Remaining character row keeps original loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
 	TestFalse(TEXT("Removed invalid row does not leak loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false)));
-	TestEqual(TEXT("Current character tag remains canonical brother tag"), PlayerData.CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
+	TestEqual(TEXT("Current character tag remains canonical brother tag"), PlayerData.CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
 	TestTrue(TEXT("Warnings emitted for sanitization"), Warnings.Num() > 0);
 	return true;
 }
@@ -126,14 +126,14 @@ bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Paramete
 	P1.Identity.UniqueNetIdType = TEXT("LOCAL");
 	P1.Identity.DisplayName = FText::FromString(TEXT("Player One"));
 	P1.Identity.PlayerSlot = EARPlayerSlot::P1;
-	P1.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
+	P1.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 
 	FARPlayerStateSaveData& P2 = Save->PlayerStates.AddDefaulted_GetRef();
 	P2.Identity.UniqueNetIdString = TEXT("SharedLocalId");
 	P2.Identity.UniqueNetIdType = TEXT("LOCAL");
 	P2.Identity.DisplayName = FText::FromString(TEXT("Player Two"));
 	P2.Identity.PlayerSlot = EARPlayerSlot::P2;
-	P2.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Sister")), false);
+	P2.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
 
 	FARPlayerStateSaveData Matched;
 	int32 MatchedIndex = INDEX_NONE;
@@ -173,16 +173,16 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 
 	FARPlayerStateSaveData& PlayerData = Save->PlayerStates.AddDefaulted_GetRef();
 	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
-	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
+	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 	PlayerData.CharacterPicked = EARCharacterChoice::Brother;
 
 	FDialoguePlayerPersistentState& LegacyA = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
 	LegacyA.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
 	LegacyA.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
-	LegacyA.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false));
+	LegacyA.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false));
 
 	FDialogueChoiceMemoryRecord SharedRecord;
-	SharedRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false);
+	SharedRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false);
 	SharedRecord.ChoiceNodeId = FGuid::NewGuid();
 	SharedRecord.SelectedBranchId = FGuid::NewGuid();
 	LegacyA.CompletedChoiceRecords.Add(SharedRecord);
@@ -190,11 +190,11 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 	FDialoguePlayerPersistentState& LegacyB = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
 	LegacyB.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
 	LegacyB.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue.Choice")), false));
-	LegacyB.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.2")), false));
+	LegacyB.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.2")), false));
 	LegacyB.CompletedChoiceRecords.Add(SharedRecord);
 
 	FDialogueChoiceMemoryRecord UniqueRecord;
-	UniqueRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.2")), false);
+	UniqueRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.2")), false);
 	UniqueRecord.ChoiceNodeId = FGuid::NewGuid();
 	UniqueRecord.SelectedBranchId = FGuid::NewGuid();
 	LegacyB.CompletedChoiceRecords.Add(UniqueRecord);
@@ -207,11 +207,12 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Merged legacy rows collapse into one character row"), Save->CharacterStates.Num(), 1);
 	TestTrue(TEXT("Merged row keeps first progression tag"), Save->CharacterStates[0].DialogueState.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
 	TestTrue(TEXT("Merged row keeps second progression tag"), Save->CharacterStates[0].DialogueState.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue.Choice")), false)));
-	TestTrue(TEXT("Merged row keeps first completed conversation"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false)));
-	TestTrue(TEXT("Merged row keeps second completed conversation"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.2")), false)));
+	TestTrue(TEXT("Merged row keeps first completed conversation"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false)));
+	TestTrue(TEXT("Merged row keeps second completed conversation"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.2")), false)));
 	TestEqual(TEXT("Duplicate choice-memory rows are deduplicated during merge"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 2);
 	TestTrue(TEXT("Migration emits merge warning summary"), Warnings.Num() > 0);
 	return true;
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
+

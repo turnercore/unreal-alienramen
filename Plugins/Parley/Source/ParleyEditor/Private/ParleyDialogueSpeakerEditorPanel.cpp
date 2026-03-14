@@ -1002,7 +1002,7 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
 					[
 						SNew(SGameplayTagCombo)
-						.Filter(TEXT("Dialogue.Speaker"))
+						.Filter(TEXT("Parley.Speaker"))
 						.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedSpeakerTag)
 						.OnTagChanged(this, &SDialogueSpeakerEditorPanel::OnEditedSpeakerTagChanged)
 					]
@@ -2015,7 +2015,7 @@ FString SDialogueSpeakerEditorPanel::GetEmotionTagFilter() const
 {
 	if (!EditedSpeakerTag.IsValid())
 	{
-		return TEXT("Dialogue.Speaker");
+		return TEXT("Parley.Speaker");
 	}
 
 	return EditedSpeakerTag.ToString();
@@ -3264,7 +3264,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	NewConversation->Header.DisplayTitle = FText::FromString(AssetName);
 	NewConversation->Header.PrimarySpeakerTag = SpeakerRow->SpeakerTag;
 	NewConversation->Header.ParticipatingSpeakerTags.AddUnique(SpeakerRow->SpeakerTag);
-	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
+	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
 	{
 		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(PlayerSpeakerTag);
 	}
@@ -3613,7 +3613,7 @@ FReply SDialogueSpeakerEditorPanel::HandleDuplicateConversation()
 		NewConversation->Header.DisplayTitle = FText::FromString(NewConversation->Header.DisplayTitle.ToString() + TEXT(" Copy"));
 	}
 	NewConversation->Header.ParticipatingSpeakerTags.AddUnique(NewConversation->Header.PrimarySpeakerTag);
-	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
+	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
 	{
 		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(PlayerSpeakerTag);
 	}
@@ -4933,3 +4933,4 @@ void SDialogueSpeakerEditorPanel::OnThresholdDoubleClicked(TSharedPtr<FThreshold
 
 	BeginInlineThresholdEdit(Item->ThresholdIndex);
 }
+

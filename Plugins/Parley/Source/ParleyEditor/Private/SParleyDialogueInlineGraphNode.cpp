@@ -584,6 +584,7 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineCo
 					switch (Data->Source)
 					{
 					case EDialogueEditorRelationshipConditionSource::RelationshipLevel: return FText::FromString(TEXT("Source: Relationship Level"));
+					case EDialogueEditorRelationshipConditionSource::FactionPopularity: return FText::FromString(TEXT("Source: Faction Popularity"));
 					case EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation: return FText::FromString(TEXT("Source: Faction Speaker Reputation"));
 					case EDialogueEditorRelationshipConditionSource::RelationshipPoints:
 					default: return FText::FromString(TEXT("Source: Relationship Points"));
@@ -596,8 +597,16 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineCo
 			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
 			[
 				SNew(SGameplayTagCombo)
-				.Filter(TEXT("Dialogue.Speaker"))
+				.Filter(TEXT("Parley.Speaker"))
 				.Tag(Data ? Data->TargetSpeakerTag : FGameplayTag())
+				.Visibility_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
+					return (NodeData && NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionPopularity)
+						? EVisibility::Collapsed
+						: EVisibility::Visible;
+				})
 				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionSecondaryTagChanged)
 			]
 			+ SVerticalBox::Slot()
@@ -605,13 +614,17 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineCo
 			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
 			[
 				SNew(SGameplayTagCombo)
-				.Filter(TEXT("Faction.Identity"))
+				.Filter(TEXT("Parley.Factions"))
 				.Tag(Data ? Data->FactionTag : FGameplayTag())
 				.Visibility_Lambda([this]()
 				{
 					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
 					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
-					return (NodeData && NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation) ? EVisibility::Visible : EVisibility::Collapsed;
+					return (NodeData
+						&& (NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+							|| NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionPopularity))
+						? EVisibility::Visible
+						: EVisibility::Collapsed;
 				})
 				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionFactionTagChanged)
 			]
@@ -625,7 +638,11 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineCo
 				{
 					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
 					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
-					return (NodeData && NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation) ? EVisibility::Collapsed : EVisibility::Visible;
+					return (NodeData
+						&& (NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+							|| NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionPopularity))
+						? EVisibility::Collapsed
+						: EVisibility::Visible;
 				})
 			]
 			+ SVerticalBox::Slot()
@@ -1113,7 +1130,7 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildCharacterRouteInlineCon
 						.FillWidth(1.0f)
 						[
 							SNew(SGameplayTagCombo)
-							.Filter(TEXT("Dialogue.Speaker"))
+							.Filter(TEXT("Parley.Speaker"))
 							.Tag(Branch.SpeakerTag)
 							.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleCharacterRouteTagChanged, Branch.BranchId)
 						]
@@ -1186,7 +1203,7 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildMultiLineInlineContent(
 							.WidthOverride(180.0f)
 							[
 								SNew(SGameplayTagCombo)
-								.Filter(TEXT("Dialogue.Speaker"))
+								.Filter(TEXT("Parley.Speaker"))
 								.Tag(Entry.LineData.Line.SpeakerTag)
 								.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleMultiLineSpeakerTagChanged, Entry.EntryId)
 							]
@@ -1239,11 +1256,43 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildRelationshipInlineConte
 		+ SVerticalBox::Slot()
 		.AutoHeight()
 		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("Source Speaker (optional override)")))
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 2.0f, 0.0f, 0.0f)
+		[
 			SNew(SBox)
 			.WidthOverride(200.0f)
 			[
 				SNew(SGameplayTagCombo)
-				.Filter(TEXT("Dialogue.Speaker"))
+				.Filter(TEXT("Parley.Speaker"))
+				.Tag_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
+					return Data ? Data->SourceSpeakerTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleRelationshipSourceSpeakerTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("Target Speaker")))
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Speaker"))
 				.Tag_Lambda([this]()
 				{
 					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
@@ -1293,12 +1342,43 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildFactionInlineContent() 
 		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
 		[
 			SNew(SBox)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Speaker"))
+				.Tag_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+					return Data ? Data->TargetSpeakerTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleFactionSpeakerTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
 			.WidthOverride(84.0f)
 			[
 				SNew(SEditableTextBox)
 				.Text(this, &SParleyDialogueInlineGraphNode::GetFactionDeltaText)
 				.HintText(FText::FromString(TEXT("Delta")))
 				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleFactionDeltaTextCommitted)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(84.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(this, &SParleyDialogueInlineGraphNode::GetFactionSpeakerDeltaText)
+				.HintText(FText::FromString(TEXT("Speaker Delta")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleFactionSpeakerDeltaTextCommitted)
 			]
 		];
 }
@@ -1568,6 +1648,14 @@ void SParleyDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged(const F
 	}
 }
 
+void SParleyDialogueInlineGraphNode::HandleRelationshipSourceSpeakerTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetRelationshipSourceSpeakerTag(NewTag);
+	}
+}
+
 void SParleyDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
 {
 	(void)CommitType;
@@ -1591,6 +1679,14 @@ void SParleyDialogueInlineGraphNode::HandleFactionTagChanged(const FGameplayTag 
 	}
 }
 
+void SParleyDialogueInlineGraphNode::HandleFactionSpeakerTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetFactionTargetSpeakerTag(NewTag);
+	}
+}
+
 void SParleyDialogueInlineGraphNode::HandleFactionDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
 {
 	(void)CommitType;
@@ -1603,6 +1699,21 @@ void SParleyDialogueInlineGraphNode::HandleFactionDeltaTextCommitted(const FText
 	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
 		DialogueNode->SetFactionDeltaPopularity(ParsedValue);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleFactionSpeakerDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetFactionDeltaSpeakerReputation(ParsedValue);
 	}
 }
 
@@ -1676,8 +1787,10 @@ FReply SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked() const
 			const EDialogueEditorRelationshipConditionSource Next = Current == EDialogueEditorRelationshipConditionSource::RelationshipPoints
 				? EDialogueEditorRelationshipConditionSource::RelationshipLevel
 				: (Current == EDialogueEditorRelationshipConditionSource::RelationshipLevel
-					? EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
-					: EDialogueEditorRelationshipConditionSource::RelationshipPoints);
+					? EDialogueEditorRelationshipConditionSource::FactionPopularity
+					: (Current == EDialogueEditorRelationshipConditionSource::FactionPopularity
+						? EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+						: EDialogueEditorRelationshipConditionSource::RelationshipPoints));
 			DialogueNode->SetCheckRelationshipSource(Next);
 			break;
 		}
@@ -1945,7 +2058,15 @@ FText SParleyDialogueInlineGraphNode::GetFactionDeltaText() const
 	return FText::AsNumber(Data ? Data->DeltaPopularity : 0.0f);
 }
 
+FText SParleyDialogueInlineGraphNode::GetFactionSpeakerDeltaText() const
+{
+	const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+	const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+	return FText::AsNumber(Data ? Data->DeltaSpeakerReputation : 0.0f);
+}
+
 TSharedRef<FGraphPanelNodeFactory> CreateARDialogueInlineGraphNodeFactory()
 {
 	return MakeShared<FParleyDialogueInlineGraphNodeFactory>();
 }
+

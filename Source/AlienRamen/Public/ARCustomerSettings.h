@@ -51,7 +51,7 @@ public:
 	FGameplayTag LoveEmotionTag;
 
 	// Optional emotion while this customer has an active order. If unset, Emotion Settings -> WantsToTalkEmotionTag is used.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Emotion", meta = (Categories = "Dialogue.Emotion"))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Emotion", meta = (Categories = "Parley.Emotion"))
 	FGameplayTag ActiveOrderEmotionTag;
 
 	// Priority used for active-order system emotion overrides (higher wins over dialogue/base).
@@ -78,3 +78,4 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Fallback")
 	bool bAllowProceduralFallbackOrders = true;
 };
+

@@ -18,7 +18,7 @@ struct ALIENRAMEN_API FARFactionVotingDefinitionRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	/** Faction identity tag owned by Parley (for example Faction.Identity.DebugFaction). */
+	/** Faction identity tag owned by Parley (for example Parley.Factions.DebugFaction). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction|Voting", meta = (ToolTip = "Faction identity tag owned by Parley that this voting row targets."))
 	FGameplayTag FactionTag;
 
@@ -80,3 +80,4 @@ struct ALIENRAMEN_API FARFactionVoteEntry
 	UPROPERTY(BlueprintReadOnly, Category = "Faction|Voting", meta = (ToolTip = "Faction tag this player slot is currently voting for."))
 	FGameplayTag VotedFactionTag;
 };
+

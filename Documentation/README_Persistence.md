@@ -32,7 +32,7 @@ Use this for:
 - economy (`Money`, `Scrap`, `Meat`, `Cycles`)
 - shared progression/unlocks
 - faction state
-- shared dialogue relationship state
+- shared directed dialogue relationship matrix (`SourceSpeakerTag -> TargetSpeakerTag`)
 - shared run-buff storage/queue/active payloads
 - loose shop carryable reload snapshots
 

@@ -6,6 +6,7 @@
 #include "ARRamenMeatActor.h"
 #include "ARSaveTypes.h"
 #include "ARShopCarryComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/Pawn.h"
 
 namespace
@@ -40,6 +41,18 @@ namespace
 
 AARMeatStorageBoxActor::AARMeatStorageBoxActor()
 {
+	StorageRootMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StorageRootMesh"));
+	SetRootComponent(StorageRootMesh);
+
+	if (SceneRoot)
+	{
+		SceneRoot->SetupAttachment(StorageRootMesh);
+	}
+
+	if (SpawnAnchor)
+	{
+		SpawnAnchor->SetupAttachment(StorageRootMesh);
+	}
 }
 
 void AARMeatStorageBoxActor::BeginPlay()

@@ -10,6 +10,7 @@
 #include "ParleySpeakerComponent.generated.h"
 
 class APlayerController;
+class UParleySpeakerComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerTalkableStateChanged, bool, bNewTalkable);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionRequested, FGameplayTag, EmotionTag, FGameplayTag, PlayerSlotTag, bool, bIsDialogueLine);
@@ -31,6 +32,10 @@ public:
 	/** Primary interaction entrypoint: routes to dialogue subsystem using this speaker tag and controller. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
 	void InteractByController(APlayerController* InteractingController);
+
+	/** Explicit speaker-to-speaker interaction entrypoint. Uses this component as source speaker and target as conversation owner speaker. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
+	void InteractWithSpeakerByController(APlayerController* InteractingController, UParleySpeakerComponent* TargetSpeakerComponent);
 
 	/** Speaker identity tag used for dialogue lookups (GameplayTag). */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag", ToolTip = "Returns this speaker component's canonical speaker identity tag."))
@@ -98,7 +103,7 @@ private:
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Parley|Talk",
-		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Primary speaker identity tag used for dialogue lookup and speaker-bound emotion routing."))
+		meta = (AllowPrivateAccess = "true", Categories = "Parley.Speaker", DisplayName = "Speaker Tag", ToolTip = "Primary speaker identity tag used for dialogue lookup and speaker-bound emotion routing."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
@@ -108,3 +113,4 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Player Slot Mask", ToolTip = "Per-player talkability mask (P1 bit 0, P2 bit 1)."))
 	uint8 TalkablePlayerSlotMask = 0;
 };
+

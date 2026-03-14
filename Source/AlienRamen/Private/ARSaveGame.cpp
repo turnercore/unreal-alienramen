@@ -647,14 +647,28 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		SanitizeTagContainer(Payload.GrantedTags, TEXT("ActiveRunBuffPayloads.GrantedTags"));
 	}
 
-	for (int32 Index = DialogueRelationshipStates.Num() - 1; Index >= 0; --Index)
+	TSet<FString> SeenRelationshipPairs;
+	for (int32 Index = DialogueSpeakerRelationshipStates.Num() - 1; Index >= 0; --Index)
 	{
-		if (!DialogueRelationshipStates[Index].SpeakerTag.IsValid())
+		FDialogueSpeakerRelationshipState& State = DialogueSpeakerRelationshipStates[Index];
+		if (!State.SourceSpeakerTag.IsValid() || !State.TargetSpeakerTag.IsValid())
 		{
-			DialogueRelationshipStates.RemoveAtSwap(Index);
+			DialogueSpeakerRelationshipStates.RemoveAtSwap(Index);
 			++ClampedCount;
-			AddWarning(OutWarnings, TEXT("DialogueRelationshipStates contained an invalid SpeakerTag and was removed."));
+			AddWarning(OutWarnings, TEXT("DialogueSpeakerRelationshipStates contained an invalid source/target speaker pair and was removed."));
+			continue;
 		}
+
+		const FString PairKey = FString::Printf(TEXT("%s|%s"), *State.SourceSpeakerTag.ToString(), *State.TargetSpeakerTag.ToString());
+		if (SeenRelationshipPairs.Contains(PairKey))
+		{
+			DialogueSpeakerRelationshipStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("DialogueSpeakerRelationshipStates contained duplicate source/target entries and extras were removed."));
+			continue;
+		}
+
+		SeenRelationshipPairs.Add(PairKey);
 	}
 
 	for (int32 CharacterIndex = CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)

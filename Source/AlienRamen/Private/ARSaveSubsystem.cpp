@@ -778,7 +778,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->FactionClout = CurrentSaveGame->FactionClout;
 		SaveObject->FactionPopularityStates = CurrentSaveGame->FactionPopularityStates;
 		SaveObject->FactionSpeakerReputationStates = CurrentSaveGame->FactionSpeakerReputationStates;
-		SaveObject->DialogueRelationshipStates = CurrentSaveGame->DialogueRelationshipStates;
+		SaveObject->DialogueSpeakerRelationshipStates = CurrentSaveGame->DialogueSpeakerRelationshipStates;
 		SaveObject->DialogueCompletedConversationTagsByGame = CurrentSaveGame->DialogueCompletedConversationTagsByGame;
 		SaveObject->CharacterStates = CurrentSaveGame->CharacterStates;
 		SaveObject->StoredEnergyDrinkStacks = CurrentSaveGame->StoredEnergyDrinkStacks;

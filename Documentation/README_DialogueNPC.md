@@ -49,6 +49,7 @@ Core subsystem API:
 
 - `GetAvailableConversationForSpeaker(...)`
 - `StartConversation(...)`
+- `TryStartDialogueBetweenSpeakers(...)` (explicit source-speaker + target-speaker start, still slot-owned authority)
 - `AdvanceConversation(...)`
 - `SubmitChoice(...)`
 - `ForceEavesdrop(...)`
@@ -225,13 +226,15 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 
 ## Persistence
 
-Save schema is now `v11` with dialogue split by ownership:
+Save schema is now `v17` with dialogue split by ownership:
 
 - shared:
-  - `DialogueRelationshipStates`
+  - `DialogueSpeakerRelationshipStates` (directed `SourceSpeakerTag -> TargetSpeakerTag` matrix)
   - `DialogueCompletedConversationTagsByGame`
 - character-owned:
   - `CharacterStates[].DialogueState`
+
+Alien Ramen game-layer bridge mirrors Brother/Sister matrix edges so player-facing relationship values remain shared across player characters; Parley plugin core stays game-agnostic.
 
 Legacy `DialoguePlayerPersistentStates` rows migrate into `CharacterStates[]` by resolving the saved active character for the matching player identity/slot.
 
@@ -266,8 +269,8 @@ Speaker actor integration now routes through `UParleySpeakerComponent`:
 
 Registered editor tabs:
 
-- `Dialogue Speaker Editor` (`SDialogueSpeakerEditorPanel`)
-- `Dialogue Conversation Graph Editor` (`SDialogueConversationGraphEditorPanel`)
+- `Parley Speaker Editor` (`SDialogueSpeakerEditorPanel`)
+- `Parley Conversation Graph` (`SDialogueConversationGraphEditorPanel`)
 
 Conversation graph tooling now provides:
 
@@ -275,6 +278,11 @@ Conversation graph tooling now provides:
 - right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)
 - graph node classes/schema (`UParleyDialogueEdGraph`, `UParleyDialogueEdGraphNode`, `UParleyDialogueEdGraphSchema`)
 - conditional graph authoring uses editor-only `Branch` + `Check*` nodes (`CheckTags`, `CheckRelationship`, `CheckProgress`, `CheckLoadout`, `CheckCharacter`, `CheckVariable`) with dedicated bool wires; compile flattens them into existing runtime switch/condition-group data and emits no runtime nodes for the `Check*` sources
+- `CheckRelationship` source options now include speaker relationship points/level (optional target speaker tag, defaulting to conversation primary speaker), faction popularity, and faction-speaker reputation (faction tag + optional speaker tag)
+- `Relationship Mutation` authoring supports directed `SourceSpeakerTag -> TargetSpeakerTag` edits (source optional override, target optional fallback to conversation primary speaker)
+- `Faction Mutation` inline authoring now supports both faction popularity delta and faction-speaker reputation delta (`FactionTag` + optional `TargetSpeakerTag`)
+- when a speaker-target field uses `Parley.Speaker.Player`, runtime resolves it to the active player's current character speaker tag (`Brother`/`Sister`) for relationship/faction condition and mutation evaluation; unresolved player fallback remains conversation primary speaker
+- character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit
