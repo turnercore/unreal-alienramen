@@ -15,7 +15,7 @@ class EMO_API UEmoSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetCategoryName() const override { return TEXT("Emo"); }
 	virtual FName GetSectionName() const override { return TEXT("Emotion"); }
 
 	// Preferred TagContentResolver route root used to resolve the emotion icon DataTable.

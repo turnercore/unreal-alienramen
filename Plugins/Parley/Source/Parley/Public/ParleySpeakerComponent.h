@@ -14,9 +14,10 @@ class APlayerController;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerTalkableStateChanged, bool, bNewTalkable);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionRequested, FGameplayTag, EmotionTag, FGameplayTag, PlayerSlotTag, bool, bIsDialogueLine);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerEmotionCleared, FGameplayTag, PlayerSlotTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionPreviewRequested, FGameplayTag, EmotionTag, FGameplayTag, PlayerSlotTag, FGuid, ChoiceBranchId);
 
 UCLASS(
-	ClassGroup=(AlienRamen),
+	ClassGroup=(Parley),
 	BlueprintType,
 	Blueprintable,
 	meta=(BlueprintSpawnableComponent, DisplayName="Dialogue Speaker Component", ToolTip="Server-authoritative talkability and interaction surface for a dialogue speaker."))
@@ -71,6 +72,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker emotion override to clear. Game module should bridge this to Emo component."))
 	FParleyOnSpeakerEmotionCleared OnSpeakerEmotionCleared;
+
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when highlighted-choice lookahead resolves or clears a preview emotion for this speaker."))
+	FParleyOnSpeakerEmotionPreviewRequested OnSpeakerEmotionPreviewRequested;
 
 protected:
 	virtual void BeginPlay() override;

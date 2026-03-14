@@ -12,7 +12,7 @@ class PARLEYEDITOR_API UParleyDialogueEditorSettings : public UDeveloperSettings
 public:
 	UParleyDialogueEditorSettings();
 
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetCategoryName() const override { return TEXT("Parley"); }
 	virtual FName GetSectionName() const override { return TEXT("Dialogue Tooling"); }
 
 	// Long package path under /Game where Speaker Editor writes newly created conversation assets.
