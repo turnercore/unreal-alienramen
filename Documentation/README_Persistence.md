@@ -12,11 +12,11 @@ Use this document when you need to answer:
 
 For subsystem detail, also see:
 
-- [Save System](README_SaveSubsystem.md)
+- [Saving, Loading, and Hydration](README_SaveSubsystem.md)
 - [Transition Mode](README_TransitionMode.md)
 - [Progression & Unlocks](README_ProgressionUnlocks.md)
-- [Dialogue & NPC Runtime](README_DialogueNPC.md)
-- [Shop Ramen System](README_ShopRamenSystem.md)
+- [Parley Runtime](README_DialogueNPC.md)
+- [Shop Game Mode Runtime](README_ShopRamenSystem.md)
 
 ## Ownership Model
 
