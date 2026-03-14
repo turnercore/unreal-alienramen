@@ -93,11 +93,29 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 		FDialogueEditorCheckRelationshipNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
 		Data->Source = EDialogueEditorRelationshipConditionSource::RelationshipLevel;
 		Data->Operator = EDialogueComparisonOp::GreaterOrEqual;
+		Data->TargetSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Test")), false);
 		Data->NumericValue = 3.0f;
 		TestTrue(TEXT("CheckRelationship condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
 		TestEqual(TEXT("CheckRelationship source"), Condition.Source, EDialogueConditionSource::RelationshipLevel);
 		TestEqual(TEXT("CheckRelationship operator"), Condition.Operator, EDialogueComparisonOp::GreaterOrEqual);
+		TestEqual(TEXT("CheckRelationship target speaker"), Condition.TagValue, Data->TargetSpeakerTag);
 		TestEqual(TEXT("CheckRelationship numeric"), Condition.NumericValue, 3.0f);
+	}
+
+	{
+		UParleyDialogueEdGraphNode* Node = AddTestNode(Graph, EDialogueEditorNodeType::CheckRelationship);
+		FDialogueEditorCheckRelationshipNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+		Data->Source = EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation;
+		Data->Operator = EDialogueComparisonOp::LessOrEqual;
+		Data->FactionTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Faction.Identity.Test")), false);
+		Data->TargetSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Speaker.TestB")), false);
+		Data->NumericValue = 7.0f;
+		TestTrue(TEXT("CheckRelationship faction condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
+		TestEqual(TEXT("CheckRelationship faction source"), Condition.Source, EDialogueConditionSource::FactionSpeakerReputation);
+		TestEqual(TEXT("CheckRelationship faction operator"), Condition.Operator, EDialogueComparisonOp::LessOrEqual);
+		TestEqual(TEXT("CheckRelationship faction tag"), Condition.TagValue, Data->FactionTag);
+		TestEqual(TEXT("CheckRelationship faction speaker tag"), Condition.SecondaryTagValue, Data->TargetSpeakerTag);
+		TestEqual(TEXT("CheckRelationship faction numeric"), Condition.NumericValue, 7.0f);
 	}
 
 	{
@@ -113,15 +131,14 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 	}
 
 	{
-		UParleyDialogueEdGraphNode* Node = AddTestNode(Graph, EDialogueEditorNodeType::CheckStats);
-		FDialogueEditorCheckStatsNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckStatsNodeData>();
-		Data->Source = EDialogueEditorStatsConditionSource::TimePlayed;
-		Data->Operator = EDialogueComparisonOp::LessThan;
-		Data->NumericValue = 120.0f;
-		TestTrue(TEXT("CheckStats condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
-		TestEqual(TEXT("CheckStats source"), Condition.Source, EDialogueConditionSource::TimePlayed);
-		TestEqual(TEXT("CheckStats operator"), Condition.Operator, EDialogueComparisonOp::LessThan);
-		TestEqual(TEXT("CheckStats numeric"), Condition.NumericValue, 120.0f);
+		UParleyDialogueEdGraphNode* Node = AddTestNode(Graph, EDialogueEditorNodeType::CheckTags);
+		FDialogueEditorCheckTagsNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckTagsNodeData>();
+		Data->Source = EDialogueEditorTagConditionSource::PlayerTags;
+		Data->Operator = EDialogueComparisonOp::Present;
+		Data->TagValue = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.TestTag")), false);
+		TestTrue(TEXT("Second CheckTags condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
+		TestEqual(TEXT("Second CheckTags source"), Condition.Source, EDialogueConditionSource::PlayerTags);
+		TestEqual(TEXT("Second CheckTags operator"), Condition.Operator, EDialogueComparisonOp::Present);
 	}
 
 	{
@@ -180,11 +197,11 @@ bool FParleyBranchConditionGroupAndOrTest::RunTest(const FString& Parameters)
 
 	UParleyDialogueEdGraphNode* BranchNode = AddTestNode(Graph, EDialogueEditorNodeType::Branch);
 	UParleyDialogueEdGraphNode* CheckProgressNode = AddTestNode(Graph, EDialogueEditorNodeType::CheckProgress);
-	UParleyDialogueEdGraphNode* CheckStatsNode = AddTestNode(Graph, EDialogueEditorNodeType::CheckStats);
+	UParleyDialogueEdGraphNode* CheckTagsNode = AddTestNode(Graph, EDialogueEditorNodeType::CheckTags);
 	TestNotNull(TEXT("Branch node created"), BranchNode);
 	TestNotNull(TEXT("CheckProgress node created"), CheckProgressNode);
-	TestNotNull(TEXT("CheckStats node created"), CheckStatsNode);
-	if (!BranchNode || !CheckProgressNode || !CheckStatsNode)
+	TestNotNull(TEXT("CheckTags node created"), CheckTagsNode);
+	if (!BranchNode || !CheckProgressNode || !CheckTagsNode)
 	{
 		return false;
 	}
@@ -194,15 +211,15 @@ bool FParleyBranchConditionGroupAndOrTest::RunTest(const FString& Parameters)
 	ProgressData->Operator = EDialogueComparisonOp::Equals;
 	ProgressData->bExpectedValue = true;
 
-	FDialogueEditorCheckStatsNodeData* StatsData = CheckStatsNode->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckStatsNodeData>();
-	StatsData->Source = EDialogueEditorStatsConditionSource::PlayerKills;
-	StatsData->Operator = EDialogueComparisonOp::GreaterOrEqual;
-	StatsData->NumericValue = 5.0f;
+	FDialogueEditorCheckTagsNodeData* TagsData = CheckTagsNode->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckTagsNodeData>();
+	TagsData->Source = EDialogueEditorTagConditionSource::CombinedTags;
+	TagsData->Operator = EDialogueComparisonOp::Present;
+	TagsData->TagValue = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.TestCondition")), false);
 
 	BranchNode->AddDynamicBranchPin();
 	TestNotNull(TEXT("Second condition input pin exists"), GetBranchConditionInputPin(BranchNode, 1));
 	LinkSourceToBranchInput(CheckProgressNode, BranchNode, 0);
-	LinkSourceToBranchInput(CheckStatsNode, BranchNode, 1);
+	LinkSourceToBranchInput(CheckTagsNode, BranchNode, 1);
 
 	FDialogueEditorBranchNodeData* BranchData = BranchNode->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorBranchNodeData>();
 	TestNotNull(TEXT("Branch payload is valid"), BranchData);
@@ -222,7 +239,7 @@ bool FParleyBranchConditionGroupAndOrTest::RunTest(const FString& Parameters)
 		if (Group.Conditions.Num() == 2)
 		{
 			TestEqual(TEXT("AND first source preserves pin order"), Group.Conditions[0].Source, EDialogueConditionSource::SeenByPlayer);
-			TestEqual(TEXT("AND second source preserves pin order"), Group.Conditions[1].Source, EDialogueConditionSource::PlayerKills);
+			TestEqual(TEXT("AND second source preserves pin order"), Group.Conditions[1].Source, EDialogueConditionSource::CombinedTags);
 		}
 	}
 
@@ -275,7 +292,7 @@ bool FParleyBranchConditionValidationTest::RunTest(const FString& Parameters)
 		}));
 
 	UParleyDialogueEdGraphNode* SourceA = AddTestNode(Graph, EDialogueEditorNodeType::CheckProgress);
-	UParleyDialogueEdGraphNode* SourceB = AddTestNode(Graph, EDialogueEditorNodeType::CheckStats);
+	UParleyDialogueEdGraphNode* SourceB = AddTestNode(Graph, EDialogueEditorNodeType::CheckTags);
 	TestNotNull(TEXT("Validation source A created"), SourceA);
 	TestNotNull(TEXT("Validation source B created"), SourceB);
 	if (!SourceA || !SourceB)
@@ -339,7 +356,7 @@ bool FParleyConditionSchemaRulesTest::RunTest(const FString& Parameters)
 	UParleyDialogueEdGraphNode* BranchA = AddTestNode(Graph, EDialogueEditorNodeType::Branch);
 	UParleyDialogueEdGraphNode* BranchB = AddTestNode(Graph, EDialogueEditorNodeType::Branch);
 	UParleyDialogueEdGraphNode* SourceA = AddTestNode(Graph, EDialogueEditorNodeType::CheckProgress);
-	UParleyDialogueEdGraphNode* SourceB = AddTestNode(Graph, EDialogueEditorNodeType::CheckStats);
+	UParleyDialogueEdGraphNode* SourceB = AddTestNode(Graph, EDialogueEditorNodeType::CheckTags);
 	TestNotNull(TEXT("Route node created"), RouteNode);
 	TestNotNull(TEXT("Branch A created"), BranchA);
 	TestNotNull(TEXT("Branch B created"), BranchB);

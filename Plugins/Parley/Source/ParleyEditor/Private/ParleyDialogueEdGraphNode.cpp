@@ -1178,6 +1178,396 @@ bool UParleyDialogueEdGraphNode::SetFactionDeltaPopularity(const float NewDeltaP
 		false);
 }
 
+bool UParleyDialogueEdGraphNode::SetPrimaryTagMutationTarget(const EDialogueTagMutationTarget NewTarget)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetPrimaryTagMutationTarget", "Set Tag Mutation Target"),
+		[this, NewTarget]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::TagMutation)
+			{
+				return false;
+			}
+
+			FDialogueTagMutationNodeData* MutationData = RuntimeNode.NodeData.GetMutablePtr<FDialogueTagMutationNodeData>();
+			if (!MutationData)
+			{
+				return false;
+			}
+
+			if (MutationData->Mutations.IsEmpty())
+			{
+				MutationData->Mutations.AddDefaulted();
+			}
+
+			FDialogueTagMutation& Mutation = MutationData->Mutations[0];
+			if (Mutation.Target == NewTarget)
+			{
+				return false;
+			}
+
+			Mutation.Target = NewTarget;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetPrimaryTagMutationOperation(const EDialogueTagMutationOp NewOperation)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetPrimaryTagMutationOperation", "Set Tag Mutation Operation"),
+		[this, NewOperation]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::TagMutation)
+			{
+				return false;
+			}
+
+			FDialogueTagMutationNodeData* MutationData = RuntimeNode.NodeData.GetMutablePtr<FDialogueTagMutationNodeData>();
+			if (!MutationData)
+			{
+				return false;
+			}
+
+			if (MutationData->Mutations.IsEmpty())
+			{
+				MutationData->Mutations.AddDefaulted();
+			}
+
+			FDialogueTagMutation& Mutation = MutationData->Mutations[0];
+			if (Mutation.Operation == NewOperation)
+			{
+				return false;
+			}
+
+			Mutation.Operation = NewOperation;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetPrimaryTagMutationTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetPrimaryTagMutationTag", "Set Tag Mutation Tag"),
+		[this, NewTag]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::TagMutation)
+			{
+				return false;
+			}
+
+			FDialogueTagMutationNodeData* MutationData = RuntimeNode.NodeData.GetMutablePtr<FDialogueTagMutationNodeData>();
+			if (!MutationData)
+			{
+				return false;
+			}
+
+			if (MutationData->Mutations.IsEmpty())
+			{
+				MutationData->Mutations.AddDefaulted();
+			}
+
+			FDialogueTagMutation& Mutation = MutationData->Mutations[0];
+			if (Mutation.Tag.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			Mutation.Tag = NewTag;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckTagsSource(const EDialogueEditorTagConditionSource NewSource)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckTagsSource", "Set Check Tags Source"),
+		[this, NewSource]() -> bool
+		{
+			FDialogueEditorCheckTagsNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckTagsNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckTags || !Data || Data->Source == NewSource)
+			{
+				return false;
+			}
+
+			Data->Source = NewSource;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckTagsOperator(const EDialogueComparisonOp NewOperator)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckTagsOperator", "Set Check Tags Operator"),
+		[this, NewOperator]() -> bool
+		{
+			FDialogueEditorCheckTagsNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckTagsNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckTags || !Data || Data->Operator == NewOperator)
+			{
+				return false;
+			}
+
+			Data->Operator = NewOperator;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckTagsTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckTagsTag", "Set Check Tags Tag"),
+		[this, NewTag]() -> bool
+		{
+			FDialogueEditorCheckTagsNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckTagsNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckTags || !Data || Data->TagValue.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			Data->TagValue = NewTag;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckRelationshipSource(const EDialogueEditorRelationshipConditionSource NewSource)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckRelationshipSource", "Set Check Relationship Source"),
+		[this, NewSource]() -> bool
+		{
+			FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckRelationship || !Data || Data->Source == NewSource)
+			{
+				return false;
+			}
+
+			Data->Source = NewSource;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckRelationshipOperator(const EDialogueComparisonOp NewOperator)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckRelationshipOperator", "Set Check Relationship Operator"),
+		[this, NewOperator]() -> bool
+		{
+			FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckRelationship || !Data || Data->Operator == NewOperator)
+			{
+				return false;
+			}
+
+			Data->Operator = NewOperator;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckRelationshipTargetSpeakerTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckRelationshipTargetSpeakerTag", "Set Check Relationship Speaker"),
+		[this, NewTag]() -> bool
+		{
+			FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckRelationship || !Data || Data->TargetSpeakerTag.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			Data->TargetSpeakerTag = NewTag;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckRelationshipFactionTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckRelationshipFactionTag", "Set Check Relationship Faction"),
+		[this, NewTag]() -> bool
+		{
+			FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckRelationship || !Data || Data->FactionTag.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			Data->FactionTag = NewTag;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckRelationshipNumericValue(const float NewValue)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckRelationshipNumericValue", "Set Check Relationship Value"),
+		[this, NewValue]() -> bool
+		{
+			FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckRelationshipNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckRelationship || !Data || FMath::IsNearlyEqual(Data->NumericValue, NewValue))
+			{
+				return false;
+			}
+
+			Data->NumericValue = NewValue;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckProgressSource(const EDialogueEditorProgressConditionSource NewSource)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckProgressSource", "Set Check Progress Source"),
+		[this, NewSource]() -> bool
+		{
+			FDialogueEditorCheckProgressNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckProgressNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckProgress || !Data || Data->Source == NewSource)
+			{
+				return false;
+			}
+
+			Data->Source = NewSource;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckProgressOperator(const EDialogueComparisonOp NewOperator)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckProgressOperator", "Set Check Progress Operator"),
+		[this, NewOperator]() -> bool
+		{
+			FDialogueEditorCheckProgressNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckProgressNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckProgress || !Data || Data->Operator == NewOperator)
+			{
+				return false;
+			}
+
+			Data->Operator = NewOperator;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckProgressExpectedValue(const bool bExpectedValue)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckProgressExpectedValue", "Set Check Progress Expected Value"),
+		[this, bExpectedValue]() -> bool
+		{
+			FDialogueEditorCheckProgressNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckProgressNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckProgress || !Data || Data->bExpectedValue == bExpectedValue)
+			{
+				return false;
+			}
+
+			Data->bExpectedValue = bExpectedValue;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckLoadoutOperator(const EDialogueComparisonOp NewOperator)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckLoadoutOperator", "Set Check Loadout Operator"),
+		[this, NewOperator]() -> bool
+		{
+			FDialogueEditorCheckLoadoutNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckLoadoutNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckLoadout || !Data || Data->Operator == NewOperator)
+			{
+				return false;
+			}
+
+			Data->Operator = NewOperator;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckLoadoutTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckLoadoutTag", "Set Check Loadout Tag"),
+		[this, NewTag]() -> bool
+		{
+			FDialogueEditorCheckLoadoutNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckLoadoutNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckLoadout || !Data || Data->TagValue.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			Data->TagValue = NewTag;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckCharacterCondition(const EDialogueEditorCharacterCondition NewCharacter)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckCharacterCondition", "Set Check Character"),
+		[this, NewCharacter]() -> bool
+		{
+			FDialogueEditorCheckCharacterNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckCharacterNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckCharacter || !Data || Data->Character == NewCharacter)
+			{
+				return false;
+			}
+
+			Data->Character = NewCharacter;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckVariableName(const FName NewVariableName)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckVariableName", "Set Check Variable Name"),
+		[this, NewVariableName]() -> bool
+		{
+			FDialogueEditorCheckVariableNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckVariableNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckVariable || !Data || Data->VariableName == NewVariableName)
+			{
+				return false;
+			}
+
+			Data->VariableName = NewVariableName;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetCheckVariableOperator(const EDialogueComparisonOp NewOperator)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetCheckVariableOperator", "Set Check Variable Operator"),
+		[this, NewOperator]() -> bool
+		{
+			FDialogueEditorCheckVariableNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckVariableNodeData>();
+			if (EditorNodeType != EDialogueEditorNodeType::CheckVariable || !Data || Data->Operator == NewOperator)
+			{
+				return false;
+			}
+
+			Data->Operator = NewOperator;
+			return true;
+		},
+		false);
+}
+
 bool UParleyDialogueEdGraphNode::AddMultiLineEntry()
 {
 	return CommitRuntimeNodeMutation(
@@ -2747,7 +3137,11 @@ FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 	{
 		const FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
 		return Data
-			? FString::Printf(TEXT("Source:%d Value:%.2f"), static_cast<int32>(Data->Source), Data->NumericValue)
+			? FString::Printf(TEXT("Source:%d Speaker:%s Faction:%s Value:%.2f"),
+				static_cast<int32>(Data->Source),
+				*Data->TargetSpeakerTag.ToString(),
+				*Data->FactionTag.ToString(),
+				Data->NumericValue)
 			: TEXT("Invalid relationship check payload");
 	}
 	case EDialogueEditorNodeType::CheckProgress:

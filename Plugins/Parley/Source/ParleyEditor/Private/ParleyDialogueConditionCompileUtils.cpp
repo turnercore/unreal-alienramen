@@ -11,7 +11,6 @@ namespace ParleyDialogueConditionCompile
 		return NodeType == EDialogueEditorNodeType::CheckTags
 			|| NodeType == EDialogueEditorNodeType::CheckRelationship
 			|| NodeType == EDialogueEditorNodeType::CheckProgress
-			|| NodeType == EDialogueEditorNodeType::CheckStats
 			|| NodeType == EDialogueEditorNodeType::CheckLoadout
 			|| NodeType == EDialogueEditorNodeType::CheckCharacter
 			|| NodeType == EDialogueEditorNodeType::CheckVariable;
@@ -70,9 +69,23 @@ namespace ParleyDialogueConditionCompile
 				return false;
 			}
 
-			OutCondition.Source = Data->Source == EDialogueEditorRelationshipConditionSource::RelationshipLevel
-				? EDialogueConditionSource::RelationshipLevel
-				: EDialogueConditionSource::RelationshipPoints;
+			switch (Data->Source)
+			{
+			case EDialogueEditorRelationshipConditionSource::RelationshipLevel:
+				OutCondition.Source = EDialogueConditionSource::RelationshipLevel;
+				OutCondition.TagValue = Data->TargetSpeakerTag;
+				break;
+			case EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation:
+				OutCondition.Source = EDialogueConditionSource::FactionSpeakerReputation;
+				OutCondition.TagValue = Data->FactionTag;
+				OutCondition.SecondaryTagValue = Data->TargetSpeakerTag;
+				break;
+			case EDialogueEditorRelationshipConditionSource::RelationshipPoints:
+			default:
+				OutCondition.Source = EDialogueConditionSource::RelationshipPoints;
+				OutCondition.TagValue = Data->TargetSpeakerTag;
+				break;
+			}
 			OutCondition.Operator = Data->Operator;
 			OutCondition.NumericValue = Data->NumericValue;
 			return true;
@@ -103,22 +116,6 @@ namespace ParleyDialogueConditionCompile
 			}
 			OutCondition.Operator = Data->Operator;
 			OutCondition.NumericValue = Data->bExpectedValue ? 1.0f : 0.0f;
-			return true;
-		}
-		case EDialogueEditorNodeType::CheckStats:
-		{
-			const FDialogueEditorCheckStatsNodeData* Data = SourceNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckStatsNodeData>();
-			if (!Data)
-			{
-				OutError = TEXT("CheckStats payload missing.");
-				return false;
-			}
-
-			OutCondition.Source = Data->Source == EDialogueEditorStatsConditionSource::TimePlayed
-				? EDialogueConditionSource::TimePlayed
-				: EDialogueConditionSource::PlayerKills;
-			OutCondition.Operator = Data->Operator;
-			OutCondition.NumericValue = Data->NumericValue;
 			return true;
 		}
 		case EDialogueEditorNodeType::CheckLoadout:

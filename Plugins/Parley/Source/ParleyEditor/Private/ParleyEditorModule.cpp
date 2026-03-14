@@ -48,7 +48,7 @@ void FParleyEditorModule::StartupModule()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 		ParleyDialogueSpeakerEditor::TabName,
 		FOnSpawnTab::CreateRaw(this, &FParleyEditorModule::SpawnDialogueSpeakerTab))
-		.SetDisplayName(FText::FromString(TEXT("AR Dialogue Speaker Editor")))
+		.SetDisplayName(FText::FromString(TEXT("Parley Speaker Editor")))
 		.SetTooltipText(FText::FromString(TEXT("Speaker-centric dialogue authoring hub.")))
 		.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
@@ -56,7 +56,7 @@ void FParleyEditorModule::StartupModule()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 		ParleyDialogueConversationGraphEditor::TabName,
 		FOnSpawnTab::CreateRaw(this, &FParleyEditorModule::SpawnDialogueConversationGraphTab))
-		.SetDisplayName(FText::FromString(TEXT("AR Dialogue Conversation Graph Editor")))
+		.SetDisplayName(FText::FromString(TEXT("Parley Conversation Graph")))
 		.SetTooltipText(FText::FromString(TEXT("Conversation graph validation, compile, and preview workflow.")))
 		.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
@@ -121,13 +121,13 @@ void FParleyEditorModule::RegisterMenus()
 	FToolMenuSection& Section = Menu->FindOrAddSection(TEXT("WindowLayout"));
 	Section.AddMenuEntry(
 		TEXT("OpenARDialogueSpeakerEditor"),
-		FText::FromString(TEXT("AR Dialogue Speaker Editor")),
+		FText::FromString(TEXT("Parley Speaker Editor")),
 		FText::FromString(TEXT("Open the dialogue speaker-centric authoring tab.")),
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"),
 		FToolMenuExecuteAction::CreateRaw(this, &FParleyEditorModule::OpenDialogueSpeakerTab));
 	Section.AddMenuEntry(
 		TEXT("OpenARDialogueConversationGraphEditor"),
-		FText::FromString(TEXT("AR Dialogue Conversation Graph Editor")),
+		FText::FromString(TEXT("Parley Conversation Graph")),
 		FText::FromString(TEXT("Open the conversation graph authoring and preview tab.")),
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"),
 		FToolMenuExecuteAction::CreateRaw(this, &FParleyEditorModule::OpenDialogueConversationGraphTab));

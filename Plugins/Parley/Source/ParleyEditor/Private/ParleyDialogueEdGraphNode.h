@@ -49,7 +49,9 @@ UENUM(meta = (ToolTip = "Editor-only source selector for CheckRelationship nodes
 enum class EDialogueEditorRelationshipConditionSource : uint8
 {
 	RelationshipPoints = 0 UMETA(DisplayName = "Relationship Points"),
-	RelationshipLevel UMETA(DisplayName = "Relationship Level")
+	RelationshipLevel UMETA(DisplayName = "Relationship Level"),
+	FactionPopularity UMETA(DisplayName = "Faction Popularity"),
+	FactionSpeakerReputation UMETA(DisplayName = "Faction Speaker Reputation")
 };
 
 UENUM(meta = (ToolTip = "Editor-only source selector for CheckProgress nodes."))
@@ -121,6 +123,12 @@ struct FDialogueEditorCheckRelationshipNodeData
 
 	UPROPERTY(EditAnywhere, Category = "", meta = (DisplayName = "Comparison", ToolTip = "Numeric comparison operation."))
 	EDialogueComparisonOp Operator = EDialogueComparisonOp::GreaterOrEqual;
+
+	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Speaker whose relationship/reputation value is evaluated. If unset, conversation primary speaker is used."))
+	FGameplayTag TargetSpeakerTag;
+
+	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Faction.Identity", DisplayName = "Faction Tag", ToolTip = "Faction to query when Source is Faction Speaker Reputation."))
+	FGameplayTag FactionTag;
 
 	UPROPERTY(EditAnywhere, Category = "", meta = (DisplayName = "Numeric Value", ToolTip = "Numeric operand used by the comparison."))
 	float NumericValue = 0.0f;
@@ -253,6 +261,25 @@ public:
 	bool SetRelationshipDeltaPoints(float NewDeltaPoints);
 	bool SetFactionTag(const FGameplayTag& NewTag);
 	bool SetFactionDeltaPopularity(float NewDeltaPopularity);
+	bool SetPrimaryTagMutationTarget(EDialogueTagMutationTarget NewTarget);
+	bool SetPrimaryTagMutationOperation(EDialogueTagMutationOp NewOperation);
+	bool SetPrimaryTagMutationTag(const FGameplayTag& NewTag);
+	bool SetCheckTagsSource(EDialogueEditorTagConditionSource NewSource);
+	bool SetCheckTagsOperator(EDialogueComparisonOp NewOperator);
+	bool SetCheckTagsTag(const FGameplayTag& NewTag);
+	bool SetCheckRelationshipSource(EDialogueEditorRelationshipConditionSource NewSource);
+	bool SetCheckRelationshipOperator(EDialogueComparisonOp NewOperator);
+	bool SetCheckRelationshipTargetSpeakerTag(const FGameplayTag& NewTag);
+	bool SetCheckRelationshipFactionTag(const FGameplayTag& NewTag);
+	bool SetCheckRelationshipNumericValue(float NewValue);
+	bool SetCheckProgressSource(EDialogueEditorProgressConditionSource NewSource);
+	bool SetCheckProgressOperator(EDialogueComparisonOp NewOperator);
+	bool SetCheckProgressExpectedValue(bool bExpectedValue);
+	bool SetCheckLoadoutOperator(EDialogueComparisonOp NewOperator);
+	bool SetCheckLoadoutTag(const FGameplayTag& NewTag);
+	bool SetCheckCharacterCondition(EDialogueEditorCharacterCondition NewCharacter);
+	bool SetCheckVariableName(FName NewVariableName);
+	bool SetCheckVariableOperator(EDialogueComparisonOp NewOperator);
 	bool AddMultiLineEntry();
 	bool RemoveMultiLineEntry(const FGuid& EntryId);
 	bool ReorderMultiLineEntry(const FGuid& MovingEntryId, const FGuid& TargetEntryId);
@@ -294,6 +321,4 @@ private:
 	void AddCharacterRoutePins();
 	FString BuildInlineSummary() const;
 
-	EDialogueValidationSeverity ValidationSeverity = EDialogueValidationSeverity::Info;
-	FString ValidationMessage;
-};
+	EDialogueValidationSeverity ValidationSeverity = EDialog

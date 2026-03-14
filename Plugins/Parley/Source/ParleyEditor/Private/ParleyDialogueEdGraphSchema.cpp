@@ -70,8 +70,6 @@ namespace
 			return FText::FromString(TEXT("Check Relationship"));
 		case EDialogueEditorNodeType::CheckProgress:
 			return FText::FromString(TEXT("Check Progress"));
-		case EDialogueEditorNodeType::CheckStats:
-			return FText::FromString(TEXT("Check Stats"));
 		case EDialogueEditorNodeType::CheckLoadout:
 			return FText::FromString(TEXT("Check Loadout"));
 		case EDialogueEditorNodeType::CheckCharacter:
@@ -123,8 +121,6 @@ namespace
 			return FText::FromString(TEXT("Produces a bool from relationship points or level."));
 		case EDialogueEditorNodeType::CheckProgress:
 			return FText::FromString(TEXT("Produces a bool from seen/completed dialogue progress."));
-		case EDialogueEditorNodeType::CheckStats:
-			return FText::FromString(TEXT("Produces a bool from player stat checks."));
 		case EDialogueEditorNodeType::CheckLoadout:
 			return FText::FromString(TEXT("Produces a bool from loadout tag checks."));
 		case EDialogueEditorNodeType::CheckCharacter:
@@ -135,6 +131,16 @@ namespace
 		default:
 			return FText::FromString(TEXT("Conversation entry node."));
 		}
+	}
+
+	static bool IsConditionNodeType(const EDialogueEditorNodeType NodeType)
+	{
+		return NodeType == EDialogueEditorNodeType::CheckTags
+			|| NodeType == EDialogueEditorNodeType::CheckRelationship
+			|| NodeType == EDialogueEditorNodeType::CheckProgress
+			|| NodeType == EDialogueEditorNodeType::CheckLoadout
+			|| NodeType == EDialogueEditorNodeType::CheckCharacter
+			|| NodeType == EDialogueEditorNodeType::CheckVariable;
 	}
 
 	struct FParleyDialogueGraphSchemaAction_NewNode final : public FEdGraphSchemaAction
@@ -234,7 +240,6 @@ void UParleyDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 		EDialogueEditorNodeType::CheckTags,
 		EDialogueEditorNodeType::CheckRelationship,
 		EDialogueEditorNodeType::CheckProgress,
-		EDialogueEditorNodeType::CheckStats,
 		EDialogueEditorNodeType::CheckLoadout,
 		EDialogueEditorNodeType::CheckCharacter,
 		EDialogueEditorNodeType::CheckVariable,
@@ -254,8 +259,11 @@ void UParleyDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 	for (const EDialogueEditorNodeType NodeType : NodeTypes)
 	{
 		const FText DisplayName = GetNodeDisplayName(NodeType);
+		const FText Category = IsConditionNodeType(NodeType)
+			? FText::FromString(TEXT("Conditions"))
+			: FText::GetEmpty();
 		TSharedPtr<FParleyDialogueGraphSchemaAction_NewNode> NewAction = MakeShared<FParleyDialogueGraphSchemaAction_NewNode>(
-			FText::GetEmpty(),
+			Category,
 			DisplayName,
 			GetNodeTooltip(NodeType),
 			0,
@@ -311,7 +319,6 @@ const FPinConnectionResponse UParleyDialogueEdGraphSchema::CanCreateConnection(c
 			&& (OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckTags
 				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckRelationship
 				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckProgress
-				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckStats
 				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckLoadout
 				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckCharacter
 				|| OutputNode->EditorNodeType == EDialogueEditorNodeType::CheckVariable);
@@ -340,7 +347,7 @@ FLinearColor UParleyDialogueEdGraphSchema::GetPinTypeColor(const FEdGraphPinType
 	}
 	if (PinType.PinCategory == DialogueSchemaPinCategoryConditionBool)
 	{
-		return FLinearColor(0.23f, 0.69f, 0.64f, 1.0f);
+		return FLinearColor(0.82f, 0.22f, 0.22f, 1.0f);
 	}
 
 	return FLinearColor::White;
