@@ -13,19 +13,19 @@
 
 namespace
 {
-	enum class EAREmotionTableSource : uint8
+	enum class EEmoEmotionTableSource : uint8
 	{
 		TagContentResolverRuntime,
 		TagContentResolverConfiguredRoutes
 	};
 
-	static const TCHAR* ToEmotionTableSourceText(const EAREmotionTableSource Source)
+	static const TCHAR* ToEmotionTableSourceText(const EEmoEmotionTableSource Source)
 	{
 		switch (Source)
 		{
-		case EAREmotionTableSource::TagContentResolverRuntime:
+		case EEmoEmotionTableSource::TagContentResolverRuntime:
 			return TEXT("TagContentResolver(Runtime)");
-		case EAREmotionTableSource::TagContentResolverConfiguredRoutes:
+		case EEmoEmotionTableSource::TagContentResolverConfiguredRoutes:
 			return TEXT("TagContentResolver(ConfiguredRoutes)");
 		default:
 			return TEXT("TagContentResolver");
@@ -180,12 +180,12 @@ namespace
 	static bool TryResolveEmotionDataTable(
 		UGameInstance* GameInstance,
 		UDataTable*& OutDataTable,
-		EAREmotionTableSource& OutSource,
+		EEmoEmotionTableSource& OutSource,
 		FGameplayTag& OutRouteRootTag,
 		FString& OutResolveError)
 	{
 		OutDataTable = nullptr;
-		OutSource = EAREmotionTableSource::TagContentResolverConfiguredRoutes;
+		OutSource = EEmoEmotionTableSource::TagContentResolverConfiguredRoutes;
 		OutRouteRootTag = FGameplayTag();
 		OutResolveError.Reset();
 
@@ -213,7 +213,7 @@ namespace
 					FString ResolverError;
 					if (ResolverSubsystem->TryResolveDataTableForRootTag(ResolverRootTag, OutDataTable, ResolverError))
 					{
-						OutSource = EAREmotionTableSource::TagContentResolverRuntime;
+						OutSource = EEmoEmotionTableSource::TagContentResolverRuntime;
 						OutRouteRootTag = ResolverRootTag;
 						return true;
 					}
@@ -239,7 +239,7 @@ namespace
 				OutDataTable,
 				ConfiguredRouteError))
 			{
-				OutSource = EAREmotionTableSource::TagContentResolverConfiguredRoutes;
+				OutSource = EEmoEmotionTableSource::TagContentResolverConfiguredRoutes;
 				OutRouteRootTag = ResolverRootTag;
 				return true;
 			}
@@ -353,7 +353,7 @@ namespace
 		OutResolvedDataTablePath.Reset();
 		OutResolvedDataSource.Reset();
 
-		EAREmotionTableSource Source = EAREmotionTableSource::TagContentResolverConfiguredRoutes;
+		EEmoEmotionTableSource Source = EEmoEmotionTableSource::TagContentResolverConfiguredRoutes;
 		FGameplayTag RouteRootTag;
 		FString ResolveError;
 		if (!TryResolveEmotionDataTable(GameInstance, OutResolvedDataTable, Source, RouteRootTag, ResolveError))
@@ -676,13 +676,13 @@ void UEmoResolverSubsystem::RegisterDebugConsoleCommands()
 
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	CmdLogCacheStats = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.emotion.log_cache_stats"),
+		TEXT("emo.log_cache_stats"),
 		TEXT("Logs emotion resolver cache hit/miss/build stats."),
 		FConsoleCommandDelegate::CreateUObject(this, &UEmoResolverSubsystem::LogCacheStats),
 		ECVF_Default);
 
 	CmdRebuildCache = ConsoleManager.RegisterConsoleCommand(
-		TEXT("ar.emotion.rebuild_cache"),
+		TEXT("emo.rebuild_cache"),
 		TEXT("Forces an emotion resolver cache rebuild."),
 		FConsoleCommandDelegate::CreateUObject(this, &UEmoResolverSubsystem::RebuildCache),
 		ECVF_Default);
@@ -694,10 +694,10 @@ void UEmoResolverSubsystem::UnregisterDebugConsoleCommands()
 
 	// Teardown can invalidate console-object pointers before subsystem deinit.
 	// Unregister by name to avoid dereferencing stale pointers.
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.log_cache_stats"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.rebuild_cache"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.LogCacheStats"), false);
-	ConsoleManager.UnregisterConsoleObject(TEXT("ar.emotion.RebuildCache"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("emo.log_cache_stats"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("emo.rebuild_cache"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("emo.LogCacheStats"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("emo.RebuildCache"), false);
 
 	CmdLogCacheStats = nullptr;
 	CmdRebuildCache = nullptr;

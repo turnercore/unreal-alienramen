@@ -495,7 +495,7 @@ bool AAREnemyBase::ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString
 	}
 
 	FInstancedStruct ResolvedRow;
-	if (!Lookup->TryResolveRowForTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	if (!Lookup->TryResolveRowStructForTag(EnemyIdentifierTag, ResolvedRow, OutError))
 	{
 		return false;
 	}

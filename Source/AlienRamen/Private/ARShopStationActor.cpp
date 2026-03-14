@@ -734,7 +734,7 @@ void AARShopStationActor::ApplyConfigFromRowIfAvailable()
 
 	FInstancedStruct RowData;
 	FString Error;
-	if (!Lookup->TryResolveRowForTag(StationConfigTag, RowData, Error))
+	if (!Lookup->TryResolveRowStructForTag(StationConfigTag, RowData, Error))
 	{
 		return;
 	}

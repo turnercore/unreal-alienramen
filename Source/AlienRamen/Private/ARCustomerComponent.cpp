@@ -532,7 +532,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 
 	FInstancedStruct RowData;
 	FString Error;
-	if (Lookup->TryResolveRowForTag(SpeakerTag, RowData, Error))
+	if (Lookup->TryResolveRowStructForTag(SpeakerTag, RowData, Error))
 	{
 		if (const FARCustomerDefinitionRow* Row = RowData.GetPtr<FARCustomerDefinitionRow>())
 		{
@@ -553,7 +553,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 		return false;
 	}
 
-	if (!Lookup->TryResolveRowForTag(CandidateTag, RowData, Error))
+	if (!Lookup->TryResolveRowStructForTag(CandidateTag, RowData, Error))
 	{
 		return false;
 	}

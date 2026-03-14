@@ -2634,7 +2634,7 @@ float AARInvaderGameState::ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy)
 
 	FInstancedStruct RowData;
 	FString LookupError;
-	if (!TagContentResolver->TryResolveRowForTag(EnemyIdentifier, RowData, LookupError))
+	if (!TagContentResolver->TryResolveRowStructForTag(EnemyIdentifier, RowData, LookupError))
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: lookup failed for '%s' (%s). Fallback=%.2f"),
 			*EnemyIdentifier.ToString(), *LookupError, FallbackValue);

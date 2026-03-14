@@ -92,7 +92,7 @@ public:
 
 	// Persistent background popularity state for faction ranking/drift.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
-	TArray<FARFactionRuntimeState> FactionPopularityStates;
+	TArray<FParleyFactionRuntimeState> FactionPopularityStates;
 
 	// Persistent faction reputation keyed by (FactionTag, SpeakerTag).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")

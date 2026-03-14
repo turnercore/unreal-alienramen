@@ -36,7 +36,7 @@ namespace
 		}
 	}
 
-	struct FARPlayerIdentity
+	struct FParleyPlayerIdentity
 	{
 		int32 LegacyId = 0;
 		FText DisplayName;
@@ -72,7 +72,7 @@ namespace
 		TArray<FParleyCharacterProgressionData> CharacterStates;
 		TMap<EParleyPlayerSlot, FGameplayTag> CharacterTagBySlot;
 
-		bool FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FParleyPlayerStateProgressionData& OutData, int32& OutIndex) const
+		bool FindPlayerStateDataByIdentity(const FParleyPlayerIdentity& Identity, FParleyPlayerStateProgressionData& OutData, int32& OutIndex) const
 		{
 			return FindPlayerStateDataBySlot(Identity.PlayerSlot, OutData, OutIndex);
 		}
@@ -216,7 +216,7 @@ namespace
 		return Lhs.EffectivePriority > Rhs.EffectivePriority;
 	}
 
-	struct FARActiveDialogueSession
+	struct FParleyActiveDialogueSession
 	{
 		FString SessionId;
 		FGameplayTag ConversationTag;
@@ -471,11 +471,11 @@ namespace
 	}
 }
 
-struct UParleyDialogueSubsystem::FARDialogueRuntimeState
+struct UParleyDialogueSubsystem::FParleyDialogueRuntimeState
 {
 	TMap<FGameplayTag, TObjectPtr<UParleyConversationAsset>> ConversationsByTag;
-	TMap<FGameplayTag, FARDialogueSpeakerRow> SpeakerRowsByTag;
-	TArray<FARActiveDialogueSession> ActiveSessions;
+	TMap<FGameplayTag, FParleySpeakerRow> SpeakerRowsByTag;
+	TArray<FParleyActiveDialogueSession> ActiveSessions;
 	TMap<EParleyPlayerSlot, FGameplayTagContainer> SeenByPlayerTransient;
 	TMap<EParleyPlayerSlot, FGameplayTagContainer> SkippedByPlayerTransient;
 	TMap<EParleyPlayerSlot, TMap<FGameplayTag, int32>> SpeakerOfferCountsByPlayerTransient;
@@ -485,7 +485,7 @@ struct UParleyDialogueSubsystem::FARDialogueRuntimeState
 	FParleyProgressionMutator ProgressionMutator;
 };
 
-void UParleyDialogueSubsystem::FARDialogueRuntimeStateDeleter::operator()(FARDialogueRuntimeState* Ptr) const
+void UParleyDialogueSubsystem::FParleyDialogueRuntimeStateDeleter::operator()(FParleyDialogueRuntimeState* Ptr) const
 {
 	delete Ptr;
 }
@@ -554,20 +554,20 @@ static bool AddConversationToRuntimeRegistry(
 	return true;
 }
 
-UParleyDialogueSubsystem::FARDialogueRuntimeState& UParleyDialogueSubsystem::GetRuntimeState()
+UParleyDialogueSubsystem::FParleyDialogueRuntimeState& UParleyDialogueSubsystem::GetRuntimeState()
 {
 	if (!RuntimeState.IsValid())
 	{
-		RuntimeState.Reset(new FARDialogueRuntimeState());
+		RuntimeState.Reset(new FParleyDialogueRuntimeState());
 		RuntimeState->ProgressionMutator.Owner = this;
 		RuntimeState->ProgressionMutator.ProgressionStore = &RuntimeState->ProgressionStoreState;
 	}
 	return *RuntimeState.Get();
 }
 
-const UParleyDialogueSubsystem::FARDialogueRuntimeState& UParleyDialogueSubsystem::GetRuntimeState() const
+const UParleyDialogueSubsystem::FParleyDialogueRuntimeState& UParleyDialogueSubsystem::GetRuntimeState() const
 {
-	static const FARDialogueRuntimeState EmptyState;
+	static const FParleyDialogueRuntimeState EmptyState;
 	return RuntimeState.IsValid() ? *RuntimeState.Get() : EmptyState;
 }
 
@@ -601,11 +601,11 @@ static UTagContentResolverSubsystem* GetLookupSubsystem(const UParleyDialogueSub
 
 static APlayerState* FindPlayerStateBySlot(const UWorld* World, const EParleyPlayerSlot Slot);
 static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const FParleyProgressionStore* ProgressionStore, const EParleyPlayerSlot Slot);
-static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgressionStore* ProgressionStore, const FARPlayerIdentity& Identity);
+static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity);
 
-static FARPlayerIdentity BuildPlayerIdentityFromState(const APlayerState* PS)
+static FParleyPlayerIdentity BuildPlayerIdentityFromState(const APlayerState* PS)
 {
-	FARPlayerIdentity Identity;
+	FParleyPlayerIdentity Identity;
 	if (!PS)
 	{
 		return Identity;
@@ -632,7 +632,7 @@ static FGameplayTag ResolveDialogueCharacterTagFromPlayerState(const APlayerStat
 	return GetCurrentCharacterTagFromPlayerState(PlayerState);
 }
 
-static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgressionStore* ProgressionStore, const FARPlayerIdentity& Identity)
+static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
 {
 	if (!ProgressionStore)
 	{
@@ -659,7 +659,7 @@ static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgres
 	return FGameplayTag();
 }
 
-static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const FParleyProgressionStore* ProgressionStore, const FARPlayerIdentity& Identity)
+static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
 {
 	if (!ProgressionStore)
 	{
@@ -678,7 +678,7 @@ static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const FParl
 	return &ProgressionStore->CharacterStates[CharacterIndex].DialogueState;
 }
 
-static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(FParleyProgressionStore* ProgressionStore, const FARPlayerIdentity& Identity)
+static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
 {
 	if (!ProgressionStore)
 	{
@@ -697,7 +697,7 @@ static bool IsConversationCompletedByGame(const UParleyDialogueSubsystem* Subsys
 	return ProgressionStore && ConversationTag.IsValid() && ProgressionStore->DialogueCompletedConversationTagsByGame.HasTagExact(ConversationTag);
 }
 
-static bool IsConversationCompletedByPlayer(const UParleyDialogueSubsystem* Subsystem, const FARPlayerIdentity& Identity, const FGameplayTag ConversationTag)
+static bool IsConversationCompletedByPlayer(const UParleyDialogueSubsystem* Subsystem, const FParleyPlayerIdentity& Identity, const FGameplayTag ConversationTag)
 {
 	if (Subsystem && Subsystem->OnQueryConversationCompleted.IsBound())
 	{
@@ -714,9 +714,9 @@ static bool IsConversationCompletedByPlayer(const UParleyDialogueSubsystem* Subs
 	return PlayerState && PlayerState->CompletedConversationTags.HasTagExact(ConversationTag);
 }
 
-static FARActiveDialogueSession* FindSessionByOwnerSlot(TArray<FARActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static FParleyActiveDialogueSession* FindSessionByOwnerSlot(TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
 {
-	for (FARActiveDialogueSession& Session : Sessions)
+	for (FParleyActiveDialogueSession& Session : Sessions)
 	{
 		if (!Session.bIsSharedSession && Session.OwnerSlot == Slot)
 		{
@@ -726,8 +726,8 @@ static FARActiveDialogueSession* FindSessionByOwnerSlot(TArray<FARActiveDialogue
 	return nullptr;
 }
 
-static FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
-	TArray<FARActiveDialogueSession>& Sessions,
+static FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
+	TArray<FParleyActiveDialogueSession>& Sessions,
 	const FGameplayTag& PrimarySpeakerTag,
 	const EParleyPlayerSlot ExcludedOwnerSlot = EParleyPlayerSlot::Unknown)
 {
@@ -736,7 +736,7 @@ static FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 		return nullptr;
 	}
 
-	for (FARActiveDialogueSession& Session : Sessions)
+	for (FParleyActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.bIsSharedSession)
 		{
@@ -757,8 +757,8 @@ static FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 	return nullptr;
 }
 
-static const FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
-	const TArray<FARActiveDialogueSession>& Sessions,
+static const FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
+	const TArray<FParleyActiveDialogueSession>& Sessions,
 	const FGameplayTag& PrimarySpeakerTag,
 	const EParleyPlayerSlot ExcludedOwnerSlot = EParleyPlayerSlot::Unknown)
 {
@@ -767,7 +767,7 @@ static const FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 		return nullptr;
 	}
 
-	for (const FARActiveDialogueSession& Session : Sessions)
+	for (const FParleyActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.bIsSharedSession)
 		{
@@ -788,9 +788,9 @@ static const FARActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 	return nullptr;
 }
 
-static FARActiveDialogueSession* FindSharedSession(TArray<FARActiveDialogueSession>& Sessions)
+static FParleyActiveDialogueSession* FindSharedSession(TArray<FParleyActiveDialogueSession>& Sessions)
 {
-	for (FARActiveDialogueSession& Session : Sessions)
+	for (FParleyActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.bIsSharedSession)
 		{
@@ -800,9 +800,9 @@ static FARActiveDialogueSession* FindSharedSession(TArray<FARActiveDialogueSessi
 	return nullptr;
 }
 
-static FARActiveDialogueSession* FindSessionForSlot(TArray<FARActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static FParleyActiveDialogueSession* FindSessionForSlot(TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
 {
-	for (FARActiveDialogueSession& Session : Sessions)
+	for (FParleyActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.Participants.Contains(Slot))
 		{
@@ -812,9 +812,9 @@ static FARActiveDialogueSession* FindSessionForSlot(TArray<FARActiveDialogueSess
 	return nullptr;
 }
 
-static const FARActiveDialogueSession* FindSessionForSlot(const TArray<FARActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static const FParleyActiveDialogueSession* FindSessionForSlot(const TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
 {
-	for (const FARActiveDialogueSession& Session : Sessions)
+	for (const FParleyActiveDialogueSession& Session : Sessions)
 	{
 		if (Session.Participants.Contains(Slot))
 		{
@@ -903,7 +903,7 @@ static bool EvaluateTagContainerCondition(const FGameplayTagContainer& Container
 	}
 }
 
-static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(FParleyProgressionStore* ProgressionStore, const FARPlayerIdentity& Identity)
+static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
 {
 	if (FDialoguePlayerPersistentState* Existing = FindPlayerDialogueStateMutable(ProgressionStore, Identity))
 	{
@@ -1299,8 +1299,8 @@ static FGameplayTag StripLeafGameplayTag(const FGameplayTag& Tag)
 	return UGameplayTagsManager::Get().RequestGameplayTag(FName(*Path), false);
 }
 
-static const FARDialogueSpeakerRow* FindSpeakerRowByConversationSpeakerTag(
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+static const FParleySpeakerRow* FindSpeakerRowByConversationSpeakerTag(
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& LineSpeakerTag,
 	FGameplayTag& OutResolvedSpeakerRowTag)
 {
@@ -1309,7 +1309,7 @@ static const FARDialogueSpeakerRow* FindSpeakerRowByConversationSpeakerTag(
 
 	while (Candidate.IsValid())
 	{
-		if (const FARDialogueSpeakerRow* Found = SpeakerRowsByTag.Find(Candidate))
+		if (const FParleySpeakerRow* Found = SpeakerRowsByTag.Find(Candidate))
 		{
 			OutResolvedSpeakerRowTag = Candidate;
 			return Found;
@@ -1349,7 +1349,7 @@ static bool IsBuiltInDialogueSpeakerTag(const FGameplayTag& SpeakerTag)
 }
 
 static bool IsResolvableConversationSpeakerTag(
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& SpeakerTag)
 {
 	if (!SpeakerTag.IsValid())
@@ -1383,12 +1383,12 @@ static bool IsStructurallyValidConversationSpeakerTag(
 	return SpeakerRootTag.IsValid() && SpeakerTag.MatchesTag(SpeakerRootTag);
 }
 
-static const FARDialogueSpeakerRow* ResolveSpeakerRowForPresentation(
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+static const FParleySpeakerRow* ResolveSpeakerRowForPresentation(
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& RequestedSpeakerTag,
 	FGameplayTag& OutResolvedSpeakerRowTag)
 {
-	const FARDialogueSpeakerRow* SpeakerRow = FindSpeakerRowByConversationSpeakerTag(
+	const FParleySpeakerRow* SpeakerRow = FindSpeakerRowByConversationSpeakerTag(
 		SpeakerRowsByTag,
 		RequestedSpeakerTag,
 		OutResolvedSpeakerRowTag);
@@ -1455,12 +1455,12 @@ static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const
 }
 
 static FSpeakerPortraitData ResolvePortraitForSpeaker(
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& LineSpeakerTag)
 {
 	FSpeakerPortraitData ResolvedPortrait;
 	FGameplayTag SpeakerRowTag;
-	const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, LineSpeakerTag, SpeakerRowTag);
+	const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, LineSpeakerTag, SpeakerRowTag);
 	if (!SpeakerRow)
 	{
 		return ResolvedPortrait;
@@ -1505,7 +1505,7 @@ static FString NormalizeDialogueFieldToken(const FString& RawFieldToken)
 }
 
 static bool ResolveSpeakerFieldValue(
-	const FARDialogueSpeakerRow& SpeakerRow,
+	const FParleySpeakerRow& SpeakerRow,
 	const FGameplayTag& ResolvedSpeakerRowTag,
 	const FString& RequestedFieldToken,
 	FString& OutValue)
@@ -1659,7 +1659,7 @@ static bool ResolveInstancedStructFieldValue(
 
 static FGameplayTag ResolveGameplayTagFromToken(
 	const FString& RawTagToken,
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag)
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag)
 {
 	FString TagToken = RawTagToken;
 	TagToken.TrimStartAndEndInline();
@@ -1674,7 +1674,7 @@ static FGameplayTag ResolveGameplayTagFromToken(
 		return Requested;
 	}
 
-	for (const TPair<FGameplayTag, FARDialogueSpeakerRow>& Pair : SpeakerRowsByTag)
+	for (const TPair<FGameplayTag, FParleySpeakerRow>& Pair : SpeakerRowsByTag)
 	{
 		if (Pair.Key.ToString().Equals(TagToken, ESearchCase::IgnoreCase))
 		{
@@ -1687,7 +1687,7 @@ static FGameplayTag ResolveGameplayTagFromToken(
 
 static bool ResolveDialogueTagFieldValue(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& RequestedTag,
 	const FString& RequestedFieldToken,
 	FString& OutValue,
@@ -1715,7 +1715,7 @@ static bool ResolveDialogueTagFieldValue(
 
 	FString SpeakerFieldFailure;
 	FGameplayTag ResolvedSpeakerRowTag;
-	if (const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, RequestedTag, ResolvedSpeakerRowTag))
+	if (const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, RequestedTag, ResolvedSpeakerRowTag))
 	{
 		if (ResolveSpeakerFieldValue(*SpeakerRow, ResolvedSpeakerRowTag, RequestedFieldToken, OutValue))
 		{
@@ -1743,7 +1743,7 @@ static bool ResolveDialogueTagFieldValue(
 
 	FInstancedStruct RowData;
 	FString LookupError;
-	if (!Lookup->TryResolveRowForTag(RequestedTag, RowData, LookupError))
+	if (!Lookup->TryResolveRowStructForTag(RequestedTag, RowData, LookupError))
 	{
 		if (LookupError.IsEmpty())
 		{
@@ -1775,7 +1775,7 @@ static bool ResolveDialogueTagFieldValue(
 static FString ApplyDialogueLookupTokens(
 	const FString& SourceText,
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FDialogueRuntimeContext& Context,
 	const FGameplayTag& CurrentLineSpeakerTag)
 {
@@ -2080,7 +2080,7 @@ static FString ApplyBasicDialogueStyleMarkup(const FString& SourceText)
 
 static FText BuildFormattedDialogueLineText(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FDialogueRuntimeContext& Context,
 	const FGameplayTag& ResolvedSpeakerTag,
 	const FText& SourceLineText,
@@ -2097,7 +2097,7 @@ static FText BuildFormattedDialogueLineText(
 	}
 
 	FGameplayTag SpeakerRowTag;
-	if (const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag))
+	if (const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag))
 	{
 		OutSpeakerLineFont = SpeakerRow->LineFont;
 		OutSpeakerLineFontStyleTag = SpeakerRow->LineFontStyleTag;
@@ -2119,7 +2119,7 @@ static FText BuildFormattedDialogueLineText(
 	return FText::FromString(Formatted);
 }
 
-static const FDialogueCompiledNode* FindNodeById(const FARActiveDialogueSession& Session, const FGuid& NodeId)
+static const FDialogueCompiledNode* FindNodeById(const FParleyActiveDialogueSession& Session, const FGuid& NodeId)
 {
 	if (!Session.ConversationAsset)
 	{
@@ -2129,7 +2129,7 @@ static const FDialogueCompiledNode* FindNodeById(const FARActiveDialogueSession&
 	return Session.ConversationAsset->FindCompiledNode(NodeId);
 }
 
-static bool GetProgressionTagsForIdentity(const FParleyProgressionStore* ProgressionStore, const FARPlayerIdentity& Identity, FGameplayTagContainer& OutTags)
+static bool GetProgressionTagsForIdentity(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity, FGameplayTagContainer& OutTags)
 {
 	OutTags.Reset();
 	if (!ProgressionStore)
@@ -2270,7 +2270,7 @@ static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings, co
 		&& IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
 }
 
-static bool DoesSessionRejectEavesdrop(const FARActiveDialogueSession& Session)
+static bool DoesSessionRejectEavesdrop(const FParleyActiveDialogueSession& Session)
 {
 	// Important choice flow can temporarily override privacy by forcing all viewers.
 	return Session.bConversationPrivate && !Session.bChoiceRequiresAllViewers;
@@ -2281,8 +2281,8 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 	Collection.InitializeDependency<UTagContentResolverSubsystem>();
 
-	RuntimeState.Reset(new FARDialogueRuntimeState());
-	FARDialogueRuntimeState& Runtime = *RuntimeState.Get();
+	RuntimeState.Reset(new FParleyDialogueRuntimeState());
+	FParleyDialogueRuntimeState& Runtime = *RuntimeState.Get();
 	Runtime.ProgressionMutator.Owner = this;
 	Runtime.ProgressionMutator.ProgressionStore = &Runtime.ProgressionStoreState;
 	Runtime.ConversationsByTag.Reset();
@@ -2403,7 +2403,7 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueSpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+		if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 		{
 			LookupError.Empty();
 			if (Settings->SpeakerDefinitionRootTag.IsValid())
@@ -2419,17 +2419,17 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 			EffectiveSpeakerRoot = Settings->SpeakerDefinitionRootTag;
 		}
 
-		if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
+		if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
 		{
 			for (const FName RowName : SpeakerTable->GetRowNames())
 			{
-				const FARDialogueSpeakerRow* Typed = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueSpeakerLookup"), false);
+				const FParleySpeakerRow* Typed = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueSpeakerLookup"), false);
 				if (!Typed)
 				{
 					continue;
 				}
 
-				FARDialogueSpeakerRow Row = *Typed;
+				FParleySpeakerRow Row = *Typed;
 				if (!Row.SpeakerTag.IsValid())
 				{
 					Row.SpeakerTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);

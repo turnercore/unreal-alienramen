@@ -131,12 +131,12 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 	}
 }
 
-TSharedRef<IPropertyTypeCustomization> FARDialogueBoolNodeDataCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> FParleyDialogueBoolNodeDataCustomization::MakeInstance()
 {
-	return MakeShared<FARDialogueBoolNodeDataCustomization>();
+	return MakeShared<FParleyDialogueBoolNodeDataCustomization>();
 }
 
-void FARDialogueBoolNodeDataCustomization::CustomizeHeader(
+void FParleyDialogueBoolNodeDataCustomization::CustomizeHeader(
 	TSharedRef<IPropertyHandle> StructPropertyHandle,
 	FDetailWidgetRow& HeaderRow,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
@@ -154,7 +154,7 @@ void FARDialogueBoolNodeDataCustomization::CustomizeHeader(
 	];
 }
 
-void FARDialogueBoolNodeDataCustomization::CustomizeChildren(
+void FParleyDialogueBoolNodeDataCustomization::CustomizeChildren(
 	TSharedRef<IPropertyHandle> StructPropertyHandle,
 	IDetailChildrenBuilder& ChildBuilder,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
@@ -189,12 +189,12 @@ void FARDialogueBoolNodeDataCustomization::CustomizeChildren(
 	}
 }
 
-TSharedRef<IPropertyTypeCustomization> FARDialogueLineNodeDataCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> FParleyDialogueLineNodeDataCustomization::MakeInstance()
 {
-	return MakeShared<FARDialogueLineNodeDataCustomization>();
+	return MakeShared<FParleyDialogueLineNodeDataCustomization>();
 }
 
-void FARDialogueLineNodeDataCustomization::CustomizeHeader(
+void FParleyDialogueLineNodeDataCustomization::CustomizeHeader(
 	TSharedRef<IPropertyHandle> StructPropertyHandle,
 	FDetailWidgetRow& HeaderRow,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
@@ -212,7 +212,7 @@ void FARDialogueLineNodeDataCustomization::CustomizeHeader(
 	];
 }
 
-void FARDialogueLineNodeDataCustomization::CustomizeChildren(
+void FParleyDialogueLineNodeDataCustomization::CustomizeChildren(
 	TSharedRef<IPropertyHandle> StructPropertyHandle,
 	IDetailChildrenBuilder& ChildBuilder,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)

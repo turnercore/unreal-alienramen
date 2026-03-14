@@ -19,14 +19,14 @@
 #include "UObject/UnrealType.h"
 #include "UObject/UObjectIterator.h"
 
-DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_AREmotionHUD, STATCAT_Advanced);
-DECLARE_CYCLE_STAT(TEXT("Emotion HUD Render"), STAT_AREmotionHUD_Render, STATGROUP_AREmotionHUD);
-DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Candidates"), STAT_AREmotionHUD_Candidates, STATGROUP_AREmotionHUD);
-DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Drawn"), STAT_AREmotionHUD_Drawn, STATGROUP_AREmotionHUD);
-DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Occlusion Traces"), STAT_AREmotionHUD_OcclusionTraces, STATGROUP_AREmotionHUD);
-DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Async Requests"), STAT_AREmotionHUD_AsyncRequests, STATGROUP_AREmotionHUD);
-DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Distance Culled"), STAT_AREmotionHUD_DistanceCulled, STATGROUP_AREmotionHUD);
-DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD FOV Culled"), STAT_AREmotionHUD_FOVCulled, STATGROUP_AREmotionHUD);
+DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_EmoHUD, STATCAT_Advanced);
+DECLARE_CYCLE_STAT(TEXT("Emotion HUD Render"), STAT_EmoHUD_Render, STATGROUP_EmoHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Candidates"), STAT_EmoHUD_Candidates, STATGROUP_EmoHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Drawn"), STAT_EmoHUD_Drawn, STATGROUP_EmoHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Occlusion Traces"), STAT_EmoHUD_OcclusionTraces, STATGROUP_EmoHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Async Requests"), STAT_EmoHUD_AsyncRequests, STATGROUP_EmoHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Distance Culled"), STAT_EmoHUD_DistanceCulled, STATGROUP_EmoHUD);
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD FOV Culled"), STAT_EmoHUD_FOVCulled, STATGROUP_EmoHUD);
 
 namespace
 {
@@ -149,7 +149,7 @@ void AEmoHUDBase::QueueAsyncIconLoad(const TSoftObjectPtr<UTexture2D>& IconPtr)
 	}
 
 	PendingAsyncIconLoads.Add(IconPath);
-	INC_DWORD_STAT(STAT_AREmotionHUD_AsyncRequests);
+	INC_DWORD_STAT(STAT_EmoHUD_AsyncRequests);
 	TWeakObjectPtr<AEmoHUDBase> WeakThis(this);
 	TSharedPtr<FStreamableHandle> Handle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
 		IconPath,
@@ -186,8 +186,8 @@ void AEmoHUDBase::CleanupAsyncEmotionLoads()
 
 int32 AEmoHUDBase::RenderEmotionView()
 {
-	TRACE_CPUPROFILER_EVENT_SCOPE(ARHUD_EmotionRender);
-	SCOPE_CYCLE_COUNTER(STAT_AREmotionHUD_Render);
+	TRACE_CPUPROFILER_EVENT_SCOPE(EmoHUD_EmotionRender);
+	SCOPE_CYCLE_COUNTER(STAT_EmoHUD_Render);
 
 	const APlayerController* LocalController = GetOwningPlayerController();
 	if (!Canvas || !Canvas->Canvas || !LocalController || !bEnableEmotionView || IsEmotionRenderingSuppressed())
@@ -361,11 +361,11 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
-	SET_DWORD_STAT(STAT_AREmotionHUD_Candidates, CandidateCount);
-	SET_DWORD_STAT(STAT_AREmotionHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
-	SET_DWORD_STAT(STAT_AREmotionHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
-	SET_DWORD_STAT(STAT_AREmotionHUD_DistanceCulled, DistanceCulledCount);
-	SET_DWORD_STAT(STAT_AREmotionHUD_FOVCulled, FOVCulledCount);
+	SET_DWORD_STAT(STAT_EmoHUD_Candidates, CandidateCount);
+	SET_DWORD_STAT(STAT_EmoHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
+	SET_DWORD_STAT(STAT_EmoHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
+	SET_DWORD_STAT(STAT_EmoHUD_DistanceCulled, DistanceCulledCount);
+	SET_DWORD_STAT(STAT_EmoHUD_FOVCulled, FOVCulledCount);
 
 	if (ShouldLogEmotionRenderVerbose())
 	{
@@ -408,7 +408,7 @@ bool AEmoHUDBase::IsEmotionVisibleForViewer(const UEmoComponent* EmotionComponen
 	LocalController->GetPlayerViewPoint(ViewLocation, ViewRotation);
 	const FVector AnchorTarget = EmotionComponent->GetEmotionAnchorWorldLocation();
 
-	FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(ARHUDEmotionOcclusion), false);
+	FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(EmoHUDEmotionOcclusion), false);
 	QueryParams.bTraceComplex = true;
 	if (const APawn* LocalPawn = LocalController->GetPawn())
 	{

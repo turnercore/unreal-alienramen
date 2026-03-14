@@ -1563,7 +1563,7 @@ bool UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag(FGameplayTag Enemy
 	}
 
 	FInstancedStruct ResolvedRow;
-	if (!Lookup->TryResolveRowForTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	if (!Lookup->TryResolveRowStructForTag(EnemyIdentifierTag, ResolvedRow, OutError))
 	{
 		return false;
 	}

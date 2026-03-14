@@ -397,7 +397,7 @@ bool UARFactionVotingSubsystem::TryResolveCandidateFromVotingRow(
 		return false;
 	}
 
-	FARFactionDefinitionRow Definition;
+	FParleyFactionDefinitionRow Definition;
 	if (!FactionSubsystem->GetFactionDefinition(Row.FactionTag, Definition))
 	{
 		UE_LOG(

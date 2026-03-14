@@ -33,7 +33,7 @@ bool UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition(
 
 		FInstancedStruct RowData;
 		FString ResolveError;
-		if (!Resolver->TryResolveRowForTag(TagToResolve, RowData, ResolveError))
+		if (!Resolver->TryResolveRowStructForTag(TagToResolve, RowData, ResolveError))
 		{
 			return false;
 		}
@@ -186,7 +186,7 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 
 	FInstancedStruct RowData;
 	FString ResolveError;
-	if (!Resolver->TryResolveRowForTag(ItemTag, RowData, ResolveError))
+	if (!Resolver->TryResolveRowStructForTag(ItemTag, RowData, ResolveError))
 	{
 		UE_LOG(
 			ARLog,

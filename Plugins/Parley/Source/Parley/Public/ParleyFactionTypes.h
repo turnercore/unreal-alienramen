@@ -13,7 +13,7 @@
 class UTexture2D;
 
 USTRUCT(BlueprintType)
-struct PARLEY_API FARFactionPopularityModifierRule
+struct PARLEY_API FParleyFactionPopularityModifierRule
 {
 	GENERATED_BODY()
 
@@ -27,7 +27,7 @@ struct PARLEY_API FARFactionPopularityModifierRule
 };
 
 USTRUCT(BlueprintType)
-struct PARLEY_API FARFactionDefinitionRow : public FTableRowBase
+struct PARLEY_API FParleyFactionDefinitionRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -70,11 +70,11 @@ struct PARLEY_API FARFactionDefinitionRow : public FTableRowBase
 
 	/** Additive popularity rules evaluated against game-provided progression tags. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (ToolTip = "Additive popularity modifiers evaluated against injected progression tags."))
-	TArray<FARFactionPopularityModifierRule> PopularityModifierRules;
+	TArray<FParleyFactionPopularityModifierRule> PopularityModifierRules;
 };
 
 USTRUCT(BlueprintType)
-struct PARLEY_API FARFactionRuntimeState
+struct PARLEY_API FParleyFactionRuntimeState
 {
 	GENERATED_BODY()
 

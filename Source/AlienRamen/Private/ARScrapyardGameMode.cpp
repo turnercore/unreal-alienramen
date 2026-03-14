@@ -440,7 +440,7 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 
 	FInstancedStruct ShipRow;
 	FString ResolveError;
-	if (!Resolver->TryResolveRowForTag(ShipTag, ShipRow, ResolveError))
+	if (!Resolver->TryResolveRowStructForTag(ShipTag, ShipRow, ResolveError))
 	{
 		UE_LOG(
 			ARLog,

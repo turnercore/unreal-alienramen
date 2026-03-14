@@ -44,7 +44,7 @@ struct PARLEY_API FSpeakerPortraitEntry
 };
 
 USTRUCT(BlueprintType)
-struct PARLEY_API FARDialogueSpeakerRow : public FTableRowBase
+struct PARLEY_API FParleySpeakerRow : public FTableRowBase
 {
 	GENERATED_BODY()
 

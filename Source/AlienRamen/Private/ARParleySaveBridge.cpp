@@ -167,7 +167,7 @@ void UARParleySaveBridge::HandleFactionPopularityChanged(FGameplayTag FactionTag
 		return;
 	}
 
-	for (FARFactionRuntimeState& State : SaveGame->FactionPopularityStates)
+	for (FParleyFactionRuntimeState& State : SaveGame->FactionPopularityStates)
 	{
 		if (State.FactionTag.MatchesTagExact(FactionTag))
 		{
@@ -177,7 +177,7 @@ void UARParleySaveBridge::HandleFactionPopularityChanged(FGameplayTag FactionTag
 		}
 	}
 
-	FARFactionRuntimeState& Added = SaveGame->FactionPopularityStates.AddDefaulted_GetRef();
+	FParleyFactionRuntimeState& Added = SaveGame->FactionPopularityStates.AddDefaulted_GetRef();
 	Added.FactionTag = FactionTag;
 	Added.Popularity = NewTotal;
 	SaveSubsystem->MarkSaveDirty();
@@ -301,7 +301,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 
 	TArray<FParleyFactionState> FactionStates;
 	FactionStates.Reserve(SaveGame->FactionPopularityStates.Num());
-	for (const FARFactionRuntimeState& SavedState : SaveGame->FactionPopularityStates)
+	for (const FParleyFactionRuntimeState& SavedState : SaveGame->FactionPopularityStates)
 	{
 		if (!SavedState.FactionTag.IsValid())
 		{

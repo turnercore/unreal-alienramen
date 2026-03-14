@@ -250,7 +250,7 @@ namespace
 		return SanitizeTagSegment(TagString);
 	}
 
-	static FString GetSpeakerAssetNameSegment(const FARDialogueSpeakerRow& SpeakerRow, const FName SpeakerRowName)
+	static FString GetSpeakerAssetNameSegment(const FParleySpeakerRow& SpeakerRow, const FName SpeakerRowName)
 	{
 		const FString DisplayName = SpeakerRow.DisplayName.ToString().TrimStartAndEnd();
 		if (!DisplayName.IsEmpty())
@@ -1270,10 +1270,10 @@ bool SDialogueSpeakerEditorPanel::ResolveSpeakerDataTable(UDataTable*& OutTable,
 		return false;
 	}
 
-	if (OutTable->GetRowStruct() != FARDialogueSpeakerRow::StaticStruct())
+	if (OutTable->GetRowStruct() != FParleySpeakerRow::StaticStruct())
 	{
 		OutError = FString::Printf(TEXT("Speaker data table row struct mismatch. Expected '%s', got '%s'."),
-			*FARDialogueSpeakerRow::StaticStruct()->GetName(),
+			*FParleySpeakerRow::StaticStruct()->GetName(),
 			*GetNameSafe(OutTable->GetRowStruct()));
 		return false;
 	}
@@ -1330,7 +1330,7 @@ void SDialogueSpeakerEditorPanel::RefreshData()
 	const TArray<FName> RowNames = SpeakerTable->GetRowNames();
 	for (const FName RowName : RowNames)
 	{
-		const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueSpeakerEditor"), false);
+		const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueSpeakerEditor"), false);
 		if (!Row)
 		{
 			continue;
@@ -1650,7 +1650,7 @@ void SDialogueSpeakerEditorPanel::RefreshPortraitList()
 		return;
 	}
 
-	const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!Row)
 	{
 		if (PortraitListView.IsValid())
@@ -1792,7 +1792,7 @@ bool SDialogueSpeakerEditorPanel::ValidateConversationWithBestAvailable(UParleyC
 	return false;
 }
 
-bool SDialogueSpeakerEditorPanel::ValidateSpeakerWithBestAvailable(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
+bool SDialogueSpeakerEditorPanel::ValidateSpeakerWithBestAvailable(const FParleySpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
 {
 	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemFromPIESpeakerPanel())
 	{
@@ -1855,7 +1855,7 @@ FString SDialogueSpeakerEditorPanel::BuildThresholdSummary(const TArray<float>& 
 	return Result;
 }
 
-bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& OutRow, FString& OutError) const
+bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FParleySpeakerRow& OutRow, FString& OutError) const
 {
 	OutError.Empty();
 
@@ -1866,7 +1866,7 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FARDialogueSpeakerRow& O
 		return false;
 	}
 
-	const FARDialogueSpeakerRow* CurrentRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	const FParleySpeakerRow* CurrentRow = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!CurrentRow)
 	{
 		OutError = TEXT("Selected speaker row could not be resolved in table.");
@@ -1927,14 +1927,14 @@ bool SDialogueSpeakerEditorPanel::CommitEditedSpeakerRow(FString& OutError)
 		return false;
 	}
 
-	FARDialogueSpeakerRow* MutableRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	FParleySpeakerRow* MutableRow = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!MutableRow)
 	{
 		OutError = TEXT("Selected speaker row could not be resolved in table.");
 		return false;
 	}
 
-	FARDialogueSpeakerRow EditedRow;
+	FParleySpeakerRow EditedRow;
 	if (!BuildEditedSpeakerRow(EditedRow, OutError))
 	{
 		return false;
@@ -2078,7 +2078,7 @@ void SDialogueSpeakerEditorPanel::AppendLogLine(const FString& Message)
 
 void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 {
-	FARDialogueSpeakerRow SelectedRow;
+	FParleySpeakerRow SelectedRow;
 	bool bHasSelection = false;
 
 	for (const TSharedPtr<FSpeakerEntry>& Entry : AllSpeakerEntries)
@@ -2270,7 +2270,7 @@ void SDialogueSpeakerEditorPanel::HandleCopySpeaker()
 		return;
 	}
 
-	const FARDialogueSpeakerRow* SourceRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	const FParleySpeakerRow* SourceRow = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!SourceRow)
 	{
 		return;
@@ -2311,7 +2311,7 @@ void SDialogueSpeakerEditorPanel::HandlePasteSpeaker()
 		NewRowName = FName(*FString::Printf(TEXT("%s_Copy%d"), *SourceName, Suffix));
 	}
 
-	FARDialogueSpeakerRow NewRow = SpeakerClipboardRow;
+	FParleySpeakerRow NewRow = SpeakerClipboardRow;
 	NewRow.DisplayName = FText::FromString(NewRow.DisplayName.ToString() + TEXT(" Copy"));
 
 	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
@@ -3011,7 +3011,7 @@ FReply SDialogueSpeakerEditorPanel::HandleNewSpeaker()
 		NewRowName = FName(*FString::Printf(TEXT("Speaker_%d"), Suffix));
 	}
 
-	FARDialogueSpeakerRow NewRow;
+	FParleySpeakerRow NewRow;
 	NewRow.DisplayName = FText::FromString(NewRowName.ToString());
 	NewRow.Description = FText::GetEmpty();
 	NewRow.RelationshipThresholds = { 5.0f, 15.0f, 30.0f, 50.0f };
@@ -3040,7 +3040,7 @@ FReply SDialogueSpeakerEditorPanel::HandleDuplicateSpeaker()
 		return FReply::Handled();
 	}
 
-	const FARDialogueSpeakerRow* SourceRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	const FParleySpeakerRow* SourceRow = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!SourceRow)
 	{
 		AppendLogLine(TEXT("Selected speaker row could not be loaded."));
@@ -3053,7 +3053,7 @@ FReply SDialogueSpeakerEditorPanel::HandleDuplicateSpeaker()
 		NewRowName = FName(*FString::Printf(TEXT("%s_Copy%d"), *SelectedSpeakerRowName.ToString(), Suffix));
 	}
 
-	FARDialogueSpeakerRow NewRow = *SourceRow;
+	FParleySpeakerRow NewRow = *SourceRow;
 	NewRow.DisplayName = FText::FromString(NewRow.DisplayName.ToString() + TEXT(" Copy"));
 
 	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
@@ -3109,7 +3109,7 @@ FReply SDialogueSpeakerEditorPanel::HandleValidateSpeaker()
 	ValidationOutput.Empty();
 
 	FString ParseError;
-	FARDialogueSpeakerRow EditedRow;
+	FParleySpeakerRow EditedRow;
 	if (!BuildEditedSpeakerRow(EditedRow, ParseError))
 	{
 		AppendLogLine(FString::Printf(TEXT("Validation failed: %s"), *ParseError));
@@ -3133,7 +3133,7 @@ FReply SDialogueSpeakerEditorPanel::HandleValidateSpeaker()
 FReply SDialogueSpeakerEditorPanel::HandleSaveSpeaker()
 {
 	FString ParseError;
-	FARDialogueSpeakerRow EditedRow;
+	FParleySpeakerRow EditedRow;
 	if (!BuildEditedSpeakerRow(EditedRow, ParseError))
 	{
 		AppendLogLine(FString::Printf(TEXT("Save failed: %s"), *ParseError));
@@ -3183,7 +3183,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		return FReply::Handled();
 	}
 
-	FARDialogueSpeakerRow* SpeakerRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	FParleySpeakerRow* SpeakerRow = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!SpeakerRow || !SpeakerRow->SpeakerTag.IsValid())
 	{
 		AppendLogLine(TEXT("Selected speaker is invalid. Save/validate the speaker first."));
@@ -4238,7 +4238,7 @@ FReply SDialogueSpeakerEditorPanel::HandleAddEmotionSlot()
 		return FReply::Handled();
 	}
 
-	FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!Row)
 	{
 		AppendLogLine(TEXT("Selected speaker row could not be loaded."));
@@ -4277,7 +4277,7 @@ FReply SDialogueSpeakerEditorPanel::HandleAddPortrait()
 		return FReply::Handled();
 	}
 
-	FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!Row)
 	{
 		AppendLogLine(TEXT("Selected speaker row could not be loaded."));
@@ -4327,7 +4327,7 @@ FReply SDialogueSpeakerEditorPanel::HandleRemovePortrait()
 		return FReply::Handled();
 	}
 
-	FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!Row)
 	{
 		AppendLogLine(TEXT("Selected speaker row could not be loaded."));
@@ -4919,7 +4919,7 @@ void SDialogueSpeakerEditorPanel::OnPortraitSelectionChanged(TSharedPtr<FPortrai
 	{
 		return;
 	}
-	const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
+	const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(SelectedSpeakerRowName, TEXT("DialogueSpeakerEditor"), false);
 	if (!Row || !Row->Portraits.IsValidIndex(SelectedPortraitIndex))
 	{
 		return;

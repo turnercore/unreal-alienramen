@@ -29,7 +29,7 @@ public:
 	struct FSpeakerEntry
 	{
 		FName RowName = NAME_None;
-		FARDialogueSpeakerRow Row;
+		FParleySpeakerRow Row;
 		int32 ConversationCount = 0;
 		int32 EmotionCount = 1;
 		FString ThresholdSummary;
@@ -102,11 +102,11 @@ private:
 	void RefreshPortraitList();
 	void ApplySpeakerFilterAndSort();
 	bool ValidateConversationWithBestAvailable(UParleyConversationAsset* Conversation, FDialogueValidationReport& OutReport) const;
-	bool ValidateSpeakerWithBestAvailable(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const;
+	bool ValidateSpeakerWithBestAvailable(const FParleySpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const;
 	int32 ComputeRelationshipBand(float MinimumRelationshipPoints, const TArray<float>& Thresholds) const;
 	FString BuildRelationshipBandLabel(int32 BandIndex, const TArray<float>& Thresholds) const;
 	FString BuildThresholdSummary(const TArray<float>& Thresholds) const;
-	bool BuildEditedSpeakerRow(FARDialogueSpeakerRow& OutRow, FString& OutError) const;
+	bool BuildEditedSpeakerRow(FParleySpeakerRow& OutRow, FString& OutError) const;
 	bool CommitEditedSpeakerRow(FString& OutError);
 	FGameplayTag GetEditedSpeakerTag() const;
 	void OnEditedSpeakerTagChanged(FGameplayTag NewTag);
@@ -231,7 +231,7 @@ private:
 	bool bThresholdsExpanded = true;
 	int32 EditingThresholdIndex = INDEX_NONE;
 	FName SpeakerClipboardSourceRowName = NAME_None;
-	FARDialogueSpeakerRow SpeakerClipboardRow;
+	FParleySpeakerRow SpeakerClipboardRow;
 	FString ValidationOutput;
 	mutable FSlateBrush DefaultPortraitFieldBrush;
 	TWeakObjectPtr<UParleyConversationAsset> RenamingConversationAsset;

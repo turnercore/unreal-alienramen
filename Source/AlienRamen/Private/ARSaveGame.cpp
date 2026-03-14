@@ -756,7 +756,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	TSet<FGameplayTag> SeenFactions;
 	for (int32 Index = FactionPopularityStates.Num() - 1; Index >= 0; --Index)
 	{
-		FARFactionRuntimeState& State = FactionPopularityStates[Index];
+		FParleyFactionRuntimeState& State = FactionPopularityStates[Index];
 		if (!State.FactionTag.IsValid())
 		{
 			FactionPopularityStates.RemoveAtSwap(Index);
@@ -778,7 +778,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 	if (ActiveFactionTag.IsValid() && !SeenFactions.Contains(ActiveFactionTag))
 	{
-		FARFactionRuntimeState ActiveEntry;
+		FParleyFactionRuntimeState ActiveEntry;
 		ActiveEntry.FactionTag = ActiveFactionTag;
 		FactionPopularityStates.Add(ActiveEntry);
 		++ClampedCount;
