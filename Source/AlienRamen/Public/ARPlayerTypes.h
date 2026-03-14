@@ -106,12 +106,12 @@ namespace ARPlayer
 
 	static inline FGameplayTag GetBrotherCharacterTag()
 	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false);
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
 	}
 
 	static inline FGameplayTag GetSisterCharacterTag()
 	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
 	}
 
 	static inline FGameplayTag GetCharacterTagForChoice(const EARCharacterChoice Choice)
@@ -176,3 +176,4 @@ namespace ARPlayer
 		return FGameplayTag();
 	}
 }
+

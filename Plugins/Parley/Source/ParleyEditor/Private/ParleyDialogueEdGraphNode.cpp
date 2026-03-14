@@ -1086,6 +1086,29 @@ bool UParleyDialogueEdGraphNode::SetChoiceFallbackText(const FText& NewFallbackT
 		true);
 }
 
+bool UParleyDialogueEdGraphNode::SetRelationshipSourceSpeakerTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetRelationshipSourceSpeakerTag", "Set Relationship Source Speaker Tag"),
+		[this, NewTag]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::RelationshipMutation)
+			{
+				return false;
+			}
+
+			FDialogueRelationshipMutationNodeData* MutationData = RuntimeNode.NodeData.GetMutablePtr<FDialogueRelationshipMutationNodeData>();
+			if (!MutationData || MutationData->SourceSpeakerTag.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			MutationData->SourceSpeakerTag = NewTag;
+			return true;
+		},
+		false);
+}
+
 bool UParleyDialogueEdGraphNode::SetRelationshipTargetSpeakerTag(const FGameplayTag& NewTag)
 {
 	return CommitRuntimeNodeMutation(
@@ -1173,6 +1196,52 @@ bool UParleyDialogueEdGraphNode::SetFactionDeltaPopularity(const float NewDeltaP
 			}
 
 			MutationData->DeltaPopularity = NewDeltaPopularity;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetFactionTargetSpeakerTag(const FGameplayTag& NewTag)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetFactionTargetSpeakerTag", "Set Faction Target Speaker Tag"),
+		[this, NewTag]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::FactionMutation)
+			{
+				return false;
+			}
+
+			FDialogueFactionMutationNodeData* MutationData = RuntimeNode.NodeData.GetMutablePtr<FDialogueFactionMutationNodeData>();
+			if (!MutationData || MutationData->TargetSpeakerTag.MatchesTagExact(NewTag))
+			{
+				return false;
+			}
+
+			MutationData->TargetSpeakerTag = NewTag;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetFactionDeltaSpeakerReputation(const float NewDeltaSpeakerReputation)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetFactionDeltaSpeakerReputation", "Set Faction Speaker Reputation Delta"),
+		[this, NewDeltaSpeakerReputation]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::FactionMutation)
+			{
+				return false;
+			}
+
+			FDialogueFactionMutationNodeData* MutationData = RuntimeNode.NodeData.GetMutablePtr<FDialogueFactionMutationNodeData>();
+			if (!MutationData || FMath::IsNearlyEqual(MutationData->DeltaSpeakerReputation, NewDeltaSpeakerReputation))
+			{
+				return false;
+			}
+
+			MutationData->DeltaSpeakerReputation = NewDeltaSpeakerReputation;
 			return true;
 		},
 		false);
@@ -3096,14 +3165,22 @@ FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 	{
 		const FDialogueRelationshipMutationNodeData* MutationData = RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>();
 		return MutationData
-			? FString::Printf(TEXT("Target:%s Delta:%+.2f"), *MutationData->TargetSpeakerTag.ToString(), MutationData->DeltaPoints)
+			? FString::Printf(
+				TEXT("Source:%s Target:%s Delta:%+.2f"),
+				*MutationData->SourceSpeakerTag.ToString(),
+				*MutationData->TargetSpeakerTag.ToString(),
+				MutationData->DeltaPoints)
 			: TEXT("Invalid relationship payload");
 	}
 	case EDialogueEditorNodeType::FactionMutation:
 	{
 		const FDialogueFactionMutationNodeData* MutationData = RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>();
 		return MutationData
-			? FString::Printf(TEXT("Faction:%s Delta:%+.2f"), *MutationData->FactionTag.ToString(), MutationData->DeltaPopularity)
+			? FString::Printf(TEXT("Faction:%s Pop:%+.2f Speaker:%s Rep:%+.2f"),
+				*MutationData->FactionTag.ToString(),
+				MutationData->DeltaPopularity,
+				*MutationData->TargetSpeakerTag.ToString(),
+				MutationData->DeltaSpeakerReputation)
 			: TEXT("Invalid faction payload");
 	}
 	case EDialogueEditorNodeType::Signal:

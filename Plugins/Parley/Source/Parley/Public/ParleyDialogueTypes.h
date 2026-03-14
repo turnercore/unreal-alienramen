@@ -36,7 +36,7 @@ struct PARLEY_API FSpeakerPortraitEntry
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", ToolTip = "Speaker identity tag used by dialogue authoring and runtime lookups."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Speaker identity tag used by dialogue authoring and runtime lookups."))
 	FGameplayTag PortraitTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
@@ -48,7 +48,7 @@ struct PARLEY_API FParleySpeakerRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", ToolTip = "Speaker identity tag used by dialogue authoring and runtime lookups."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Speaker identity tag used by dialogue authoring and runtime lookups."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
@@ -225,10 +225,10 @@ struct PARLEY_API FDialogueConversationHeader
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Display Title", ToolTip = "Editor-facing title for authoring and debugging. Does not control spoken line text."))
 	FText DisplayTitle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Primary Speaker Tag", ToolTip = "Primary speaker for gating and runtime context resolution."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Primary Speaker Tag", ToolTip = "Primary speaker for gating and runtime context resolution."))
 	FGameplayTag PrimarySpeakerTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Participating Speaker Tags", ToolTip = "Additional speakers that may participate in this conversation."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Participating Speaker Tags", ToolTip = "Additional speakers that may participate in this conversation."))
 	TArray<FGameplayTag> ParticipatingSpeakerTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Offer-selection priority. Higher values are preferred when multiple conversations are eligible."))
@@ -303,7 +303,7 @@ struct PARLEY_API FDialogueConversationLine
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Sound", ToolTip = "Optional voice/audio clip played with this line."))
 	TObjectPtr<USoundBase> Sound = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Speaker used when presenting this line. Optional leaf segments can encode presentation emotion (for example Dialogue.Speaker.Fred.Angry). Leave empty to fall back to conversation context."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Speaker Tag", ToolTip = "Speaker used when presenting this line. Optional leaf segments can encode presentation emotion (for example Parley.Speaker.Fred.Angry). Leave empty to fall back to conversation context."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Length Seconds", ToolTip = "Optional explicit line duration in seconds for pacing/auto-advance logic."))
@@ -514,7 +514,10 @@ struct PARLEY_API FDialogueRelationshipMutationNodeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Speaker whose relationship points are modified."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Source Speaker Tag", ToolTip = "Optional relationship source speaker override. When unset, runtime uses the active source speaker from dialogue context."))
+	FGameplayTag SourceSpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Speaker whose relationship points are modified."))
 	FGameplayTag TargetSpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Delta Points", ToolTip = "Signed amount added to relationship points for the target speaker."))
@@ -532,7 +535,7 @@ struct PARLEY_API FDialogueFactionMutationNodeData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Delta Popularity", ToolTip = "Signed amount added to faction popularity."))
 	float DeltaPopularity = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Optional speaker tag to mutate faction reputation for. If unset and Delta Speaker Reputation is non-zero, runtime falls back to primary speaker in context."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Target Speaker Tag", ToolTip = "Optional speaker tag to mutate faction reputation for. If unset and Delta Speaker Reputation is non-zero, runtime falls back to primary speaker in context."))
 	FGameplayTag TargetSpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Delta Speaker Reputation", ToolTip = "Signed amount added to faction reputation for Target Speaker Tag."))
@@ -662,7 +665,7 @@ struct PARLEY_API FDialogueCompiledCharacterRouteBranch
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Branch ID (Compile Managed)", ToolTip = "Compile-managed branch identifier used to keep character route branches stable."))
 	FGuid BranchId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Player speaker tag this branch matches. The first matching branch routes."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Speaker Tag", ToolTip = "Player speaker tag this branch matches. The first matching branch routes."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed link target for this character route branch output."))
@@ -801,6 +804,9 @@ struct PARLEY_API FDialogueRuntimeContext
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
 	FGameplayTag ResolvedPlayerSpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Resolved source speaker for relationship-style runtime evaluation."))
+	FGameplayTag SourceSpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
 	FGameplayTagContainer PlayerOnlyProgressionTags;
@@ -992,6 +998,21 @@ struct PARLEY_API FDialogueRelationshipState
 };
 
 USTRUCT(BlueprintType)
+struct PARLEY_API FDialogueSpeakerRelationshipState
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Source speaker identity for this directed relationship edge."))
+	FGameplayTag SourceSpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Target speaker identity for this directed relationship edge."))
+	FGameplayTag TargetSpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Current relationship points stored for this source-target edge."))
+	float RelationshipPoints = 0.0f;
+};
+
+USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueChoiceMemoryRecord
 {
 	GENERATED_BODY()
@@ -1026,7 +1047,7 @@ struct PARLEY_API FDialoguePlayerPersistentState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Owning player slot tag for this progression state (for example Player.Slot.P1)."))
 	FGameplayTag OwnerPlayerSlotTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", ToolTip = "Canonical speaker/character tag that owns this progression state."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Canonical speaker/character tag that owns this progression state."))
 	FGameplayTag CharacterTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
@@ -1074,6 +1095,7 @@ struct PARLEY_API FParleyProgressionState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Per-speaker offer/start counters for the current cycle."))
 	TArray<FDialogueSpeakerCycleOfferCount> SpeakerOfferCountsThisCycle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Speaker", ToolTip = "Canonical speaker/character tag for this progression state."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Canonical speaker/character tag for this progression state."))
 	FGameplayTag CharacterTag;
 };
+

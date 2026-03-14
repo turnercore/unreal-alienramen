@@ -133,8 +133,11 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
-- Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; relationship values and game-completed conversations remain shared save state.
+- Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; game-completed conversations remain shared save state.
+- Parley relationship runtime is a directed speaker matrix (`SourceSpeakerTag -> TargetSpeakerTag`); Alien Ramen bridge applies game-specific Brother/Sister mirroring so player-facing relationships remain shared.
 - Dialogue cycle gating is character-owned: seen/skipped-this-cycle and per-speaker cycle offer counts (`MaxOffersPerCycle` on speaker rows) are persisted on character dialogue state.
+- Dialogue progression resolution must prioritize live `PlayerState.CurrentCharacterTag` for the active slot/controller; slot-mapped cache is fallback only for detached/offline restore paths.
+- `Dialogue.Speaker.Player` is a placeholder tag resolved by dialogue runtime to the active player's current character speaker tag (`Brother`/`Sister`) from `PlayerState` (`CurrentCharacterTag`, with slot fallback), and speaker-targeted relationship/faction checks/mutations should use that resolved tag.
 - Parley `Signal` graph nodes are single-output passthrough nodes that broadcast `UParleyDialogueSubsystem::OnDialogueSignalFired` (`SignalTag`, optional payload tags, conversation/speaker/player-slot context); game systems should react in game layer listeners instead of embedding behavior in dialogue graphs.
 - `UARParleySaveBridge` is the game-owned persistence adapter for Parley/ParleyFaction events; plugin events mark save dirty only and never force autosave directly.
 

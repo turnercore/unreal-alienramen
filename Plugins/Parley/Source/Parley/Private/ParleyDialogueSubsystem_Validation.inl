@@ -139,6 +139,7 @@ namespace
 		{
 		case EDialogueConditionSource::RelationshipPoints:
 		case EDialogueConditionSource::RelationshipLevel:
+		case EDialogueConditionSource::FactionPopularity:
 		case EDialogueConditionSource::FactionSpeakerReputation:
 		case EDialogueConditionSource::PlayerKills:
 		case EDialogueConditionSource::TimePlayed:
@@ -322,9 +323,11 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 				Add(EDialogueValidationSeverity::Error, NodeId, TEXT("Condition operator is invalid for numeric source."));
 			}
 
-			if (Condition.Source == EDialogueConditionSource::FactionSpeakerReputation && !Condition.TagValue.IsValid())
+			if ((Condition.Source == EDialogueConditionSource::FactionSpeakerReputation
+				|| Condition.Source == EDialogueConditionSource::FactionPopularity)
+				&& !Condition.TagValue.IsValid())
 			{
-				Add(EDialogueValidationSeverity::Error, NodeId, TEXT("Faction speaker reputation condition requires Faction Tag in TagValue."));
+				Add(EDialogueValidationSeverity::Error, NodeId, TEXT("Faction numeric condition requires Faction Tag in TagValue."));
 			}
 			return;
 		}
@@ -579,15 +582,15 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 	TMap<FGuid, const FDialogueCompiledNode*> NodeById;
 	TMap<FGuid, TArray<FGuid>> OutgoingEdges;
 	TMap<FGuid, int32> IncomingCountByNode;
-	bool bCanEndNonCompleted = false;
+	TSet<FGuid> NodesWithOptionalDeadEnd;
 
-	auto RegisterEdge = [&Add, &NodeById, &OutgoingEdges, &IncomingCountByNode, &bCanEndNonCompleted](const FGuid& FromNodeId, const FGuid& ToNodeId, const bool bOptional, const FString& EdgeLabel)
+	auto RegisterEdge = [&Add, &NodeById, &OutgoingEdges, &IncomingCountByNode, &NodesWithOptionalDeadEnd](const FGuid& FromNodeId, const FGuid& ToNodeId, const bool bOptional, const FString& EdgeLabel)
 	{
 		if (!ToNodeId.IsValid())
 		{
 			if (bOptional)
 			{
-				bCanEndNonCompleted = true;
+				NodesWithOptionalDeadEnd.Add(FromNodeId);
 			}
 			return;
 		}
@@ -1136,11 +1139,6 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		}
 	}
 
-	if (bCanEndNonCompleted)
-	{
-		Add(EDialogueValidationSeverity::Warning, FGuid(), TEXT("Conversation has at least one path that can end non-completed."));
-	}
-
 	// Loop diagnostics: warn for reachable cycles that have no path to a Completed node.
 	TMap<FGuid, TArray<FGuid>> ReverseEdges;
 	for (const TPair<FGuid, TArray<FGuid>>& Pair : OutgoingEdges)
@@ -1172,6 +1170,34 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 				}
 			}
 		}
+	}
+
+	bool bCanEndNonCompleted = false;
+	for (const FGuid ReachableNodeId : ReachableNodeIds)
+	{
+		if (!ReachableNodeId.IsValid())
+		{
+			continue;
+		}
+
+		// Reachable node that cannot reach any Completed node is a potential non-completed terminal path.
+		if (!CanReachCompleted.Contains(ReachableNodeId))
+		{
+			bCanEndNonCompleted = true;
+			break;
+		}
+
+		// Explicit optional dead-end edge (missing next/default/fallback) also creates non-completed termination.
+		if (NodesWithOptionalDeadEnd.Contains(ReachableNodeId))
+		{
+			bCanEndNonCompleted = true;
+			break;
+		}
+	}
+
+	if (bCanEndNonCompleted)
+	{
+		Add(EDialogueValidationSeverity::Warning, FGuid(), TEXT("Conversation has at least one path that can end non-completed."));
 	}
 
 	TSet<FGuid> VisitedNodes;
@@ -1229,7 +1255,8 @@ static FDialogueRuntimeContext BuildOfferContext(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
 	const UParleyConversationAsset* Conversation,
 	APlayerState* RequesterPS,
-	const FParleyPlayerIdentity& PlayerIdentity)
+	const FParleyPlayerIdentity& PlayerIdentity,
+	const FGameplayTag SourceSpeakerTagOverride = FGameplayTag())
 {
 	FDialogueRuntimeContext Context;
 	Context.World = DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr;
@@ -1240,8 +1267,15 @@ static FDialogueRuntimeContext BuildOfferContext(
 	Context.ActivePlayerState = RequesterPS;
 	Context.ActivePlayerController = RequesterPS ? Cast<APlayerController>(RequesterPS->GetOwner()) : nullptr;
 	Context.ResolvedPlayerSpeakerTag = ResolvePlayerSpeakerTag(RequesterPS);
-	Context.RelationshipPointsForPrimarySpeaker = DialogueSubsystem ? DialogueSubsystem->GetRelationshipPointsForSpeaker(Context.PrimarySpeakerTag) : 0.0f;
-	Context.RelationshipLevelForPrimarySpeaker = DialogueSubsystem ? DialogueSubsystem->GetRelationshipLevelForSpeaker(Context.PrimarySpeakerTag) : 0;
+	Context.SourceSpeakerTag = SourceSpeakerTagOverride.IsValid()
+		? ResolveSpeakerTagForContext(SourceSpeakerTagOverride, Context, Context.ResolvedPlayerSpeakerTag)
+		: Context.ResolvedPlayerSpeakerTag;
+	Context.RelationshipPointsForPrimarySpeaker = DialogueSubsystem
+		? DialogueSubsystem->GetRelationshipPointsForSpeakerPair(Context.SourceSpeakerTag, Context.PrimarySpeakerTag)
+		: 0.0f;
+	Context.RelationshipLevelForPrimarySpeaker = DialogueSubsystem
+		? DialogueSubsystem->GetRelationshipLevelForSpeakerPair(Context.SourceSpeakerTag, Context.PrimarySpeakerTag)
+		: 0;
 	if (RequesterPS)
 	{
 		GetLoadoutTagsFromPlayerState(RequesterPS, Context.LoadoutView.LoadoutTags);

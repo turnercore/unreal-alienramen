@@ -12,6 +12,7 @@
 class AARPlayerController;
 class AARRamenMeatActor;
 class AActor;
+class UStaticMeshComponent;
 
 UCLASS(Blueprintable)
 class ALIENRAMEN_API AARMeatStorageBoxActor : public AARShopDispenserActor
@@ -41,6 +42,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	// Native visual/physics root for meat storage actors.
+	// This replaces the inherited SceneRoot as the actor root component.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
+	TObjectPtr<UStaticMeshComponent> StorageRootMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
 	EARAffinityColor MeatColor = EARAffinityColor::Red;

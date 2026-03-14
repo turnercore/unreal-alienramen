@@ -141,7 +141,7 @@ private:
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Alien Ramen|Shop|Customer",
-		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from UParleySpeakerComponent."))
+		meta = (AllowPrivateAccess = "true", Categories = "Parley.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from UParleySpeakerComponent."))
 	FGameplayTag SpeakerTagOverride;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer|UI", meta = (AllowPrivateAccess = "true", DisplayName = "Order Widget Class", ToolTip = "Optional widget class used for this customer's order display. Must derive from ARCustomerOrderWidgetBase."))
@@ -174,7 +174,7 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_DoneOrdering, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true"))
 	bool bDoneOrdering = false;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker"))
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", Categories = "Parley.Speaker"))
 	FGameplayTag CachedSpeakerTag;
 
 	UPROPERTY()
@@ -189,3 +189,4 @@ private:
 	UPROPERTY()
 	FGameplayTag LoveEmotionOverride;
 };
+

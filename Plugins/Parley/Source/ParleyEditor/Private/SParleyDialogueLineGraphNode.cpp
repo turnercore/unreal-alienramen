@@ -732,7 +732,7 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildQuickSpeakerCycleList(co
 
 	if (Result.IsEmpty())
 	{
-		const FGameplayTag SpeakerRoot = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker"), false);
+		const FGameplayTag SpeakerRoot = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker"), false);
 		if (SpeakerRoot.IsValid())
 		{
 			const FGameplayTagContainer SpeakerChildren = UGameplayTagsManager::Get().RequestGameplayTagChildrenInDictionary(SpeakerRoot);
@@ -1100,3 +1100,4 @@ TSharedRef<FGraphPanelNodeFactory> CreateARDialogueLineGraphNodeFactory()
 {
 	return MakeShared<FParleyDialogueLineGraphNodeFactory>();
 }
+

@@ -21,14 +21,14 @@ void FParleyModule::StartupModule()
 		TEXT("Player.Slot"),
 		TEXT("Player.Slot.P1"),
 		TEXT("Player.Slot.P2"),
-		TEXT("Dialogue.Speaker"),
-		TEXT("Dialogue.Speaker.Player"),
-		TEXT("Dialogue.Speaker.Brother"),
-		TEXT("Dialogue.Speaker.Sister"),
-		TEXT("Dialogue.Conversation"),
-		TEXT("Dialogue.Emotion"),
-		TEXT("Dialogue.Emotion.Busy"),
-		TEXT("Faction.Identity")
+		TEXT("Parley.Speaker"),
+		TEXT("Parley.Speaker.Player"),
+		TEXT("Parley.Speaker.Brother"),
+		TEXT("Parley.Speaker.Sister"),
+		TEXT("Parley.Conversations"),
+		TEXT("Parley.Emotion"),
+		TEXT("Parley.Emotion.Busy"),
+		TEXT("Parley.Factions")
 	};
 
 	for (const TCHAR* RequiredTag : RequiredTags)
@@ -47,3 +47,4 @@ void FParleyModule::StartupModule()
 void FParleyModule::ShutdownModule()
 {
 }
+

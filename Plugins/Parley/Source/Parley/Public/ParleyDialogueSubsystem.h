@@ -21,8 +21,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnConversationEnded, FGamep
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnLineDelivered, FGameplayTag, SpeakerTag, FGameplayTag, ConversationTag, FGameplayTag, PlayerSlotTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnImportantChoiceMade, FGuid, ChoiceBranchId, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnRelationshipLevelChanged, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag, int32, OldLevel, int32, NewLevel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FParleyOnSpeakerRelationshipLevelChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, PlayerSlotTag, int32, OldLevel, int32, NewLevel, float, NewTotal);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnConversationCompleted, FGameplayTag, ConversationTag, FGameplayTag, PlayerSlotTag, FGameplayTag, CharacterTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnRelationshipChanged, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag, float, Delta, float, NewTotal);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnSpeakerRelationshipChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, PlayerSlotTag, float, Delta, float, NewTotal);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnProgressionTagMutated, FGameplayTag, ProgressionTag, bool, bAdded, FGameplayTag, PlayerSlotTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnChoiceLookaheadEmotion, FGameplayTag, PrimarySpeakerTag, FGameplayTag, PreviewEmotionTag, FGuid, ChoiceBranchId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnChoiceLookaheadCleared, FGameplayTag, PlayerSlotTag);
@@ -124,6 +126,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	bool TryStartDialogueWithSpeaker(APlayerController* RequestingController, FGameplayTag PrimarySpeakerTag);
 
+	/** Starts dialogue using explicit source and target speaker identities while keeping player-slot ownership authority. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	bool TryStartDialogueBetweenSpeakers(APlayerController* RequestingController, FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag);
+
 	/** Backwards-compatible alias for SubmitChoice. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	bool SubmitDialogueChoice(APlayerController* RequestingController, FGuid ChoiceBranchId)
@@ -183,6 +189,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
 	int32 GetRelationshipLevelForSpeaker(FGameplayTag SpeakerTag) const;
 
+	/** Current directed relationship points for Source -> Target speakers. */
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
+	float GetRelationshipPointsForSpeakerPair(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag) const;
+
+	/** Current directed relationship level bucket for Source -> Target speakers. */
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
+	int32 GetRelationshipLevelForSpeakerPair(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag) const;
+
 	/** Injects persistent progression state for a player slot from an external save system bridge. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	void SetProgressionStateForPlayer(FGameplayTag PlayerSlotTag, const FParleyProgressionState& State);
@@ -202,6 +216,10 @@ public:
 	/** Injects relationship states from an external save system bridge. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	void SetRelationshipStates(const TArray<FDialogueRelationshipState>& States);
+
+	/** Injects directed speaker relationship states from an external save system bridge. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	void SetSpeakerRelationshipStates(const TArray<FDialogueSpeakerRelationshipState>& States);
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast delegate exposed to Blueprint for dialogue lifecycle updates."))
 	FParleyOnDialogueSessionUpdated OnDialogueSessionUpdated;
@@ -227,11 +245,17 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when relationship level threshold changes for a speaker. Params: SpeakerTag, PlayerSlotTag, OldLevel, NewLevel."))
 	FParleyOnRelationshipLevelChanged OnRelationshipLevelChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when directed relationship level threshold changes for a source-target speaker pair."))
+	FParleyOnSpeakerRelationshipLevelChanged OnSpeakerRelationshipLevelChanged;
+
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation is completed for a player slot. Save bridges should persist and mark dirty."))
 	FParleyOnConversationCompleted OnParleyConversationCompleted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when relationship points are mutated by dialogue. Save bridges should persist and mark dirty."))
 	FParleyOnRelationshipChanged OnRelationshipChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when directed relationship points are mutated by dialogue. Save bridges should persist and mark dirty."))
+	FParleyOnSpeakerRelationshipChanged OnSpeakerRelationshipChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when progression tags are added/removed by dialogue. Save bridges should persist and mark dirty."))
 	FParleyOnProgressionTagMutated OnProgressionTagMutated;
@@ -254,6 +278,18 @@ public:
 	const FParleyDialogueRuntimeState& GetRuntimeState() const;
 
 private:
+	bool GetAvailableConversationForSpeakerInternal(
+		APlayerController* RequestingController,
+		FGameplayTag PrimarySpeakerTag,
+		FDialogueConversationOffer& OutOffer,
+		bool bSpeakerLocalStateAllowsDialogue,
+		FGameplayTag SourceSpeakerTagOverride);
+	bool StartConversationInternal(
+		APlayerController* RequestingController,
+		FGameplayTag ConversationTag,
+		FGameplayTag PrimarySpeakerTag,
+		FGameplayTag SourceSpeakerTagOverride);
+
 	struct FParleyDialogueRuntimeStateDeleter
 	{
 		void operator()(FParleyDialogueRuntimeState* Ptr) const;

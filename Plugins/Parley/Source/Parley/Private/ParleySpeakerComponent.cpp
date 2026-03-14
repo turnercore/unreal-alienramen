@@ -9,6 +9,7 @@
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
 
@@ -86,7 +87,20 @@ void UParleySpeakerComponent::InteractByController(APlayerController* Interactin
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			if (!DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, SpeakerTag))
+			// Prefer explicit source->target speaker identity when the interacting pawn has a speaker component.
+			FGameplayTag SourceSpeakerTag;
+			if (const APawn* InteractingPawn = InteractingController->GetPawn())
+			{
+				if (const UParleySpeakerComponent* SourceSpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
+				{
+					SourceSpeakerTag = SourceSpeakerComponent->GetSpeakerTag();
+				}
+			}
+
+			const bool bStarted = SourceSpeakerTag.IsValid()
+				? DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, SpeakerTag)
+				: DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, SpeakerTag);
+			if (!bStarted)
 			{
 				UE_LOG(
 					ParleyLog,
@@ -94,6 +108,43 @@ void UParleySpeakerComponent::InteractByController(APlayerController* Interactin
 					TEXT("[Speaker] TryStartDialogueWithSpeaker returned false for '%s' with speaker '%s'."),
 					*GetNameSafe(InteractingController),
 					*SpeakerTag.ToString());
+			}
+		}
+	}
+}
+
+void UParleySpeakerComponent::InteractWithSpeakerByController(APlayerController* InteractingController, UParleySpeakerComponent* TargetSpeakerComponent)
+{
+	if (!IsAuthorityOwner() || !InteractingController || !TargetSpeakerComponent)
+	{
+		return;
+	}
+
+	const FGameplayTag SourceSpeakerTag = GetSpeakerTag();
+	const FGameplayTag TargetSpeakerTag = TargetSpeakerComponent->GetSpeakerTag();
+	if (!SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Speaker] InteractWithSpeakerByController ignored on '%s': invalid source/target speaker tags."),
+			*GetNameSafe(GetOwner()));
+		return;
+	}
+
+	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
+	{
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
+		{
+			if (!DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, TargetSpeakerTag))
+			{
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Speaker] TryStartDialogueBetweenSpeakers returned false for '%s' source='%s' target='%s'."),
+					*GetNameSafe(InteractingController),
+					*SourceSpeakerTag.ToString(),
+					*TargetSpeakerTag.ToString());
 			}
 		}
 	}

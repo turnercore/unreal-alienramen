@@ -28,9 +28,9 @@ namespace
 		switch (Slot)
 		{
 		case EParleyPlayerSlot::P1:
-			return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false);
+			return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
 		case EParleyPlayerSlot::P2:
-			return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
+			return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
 		default:
 			return FGameplayTag();
 		}
@@ -68,7 +68,7 @@ namespace
 	{
 		FGameplayTagContainer ProgressionTags;
 		FGameplayTagContainer DialogueCompletedConversationTagsByGame;
-		TArray<FDialogueRelationshipState> DialogueRelationshipStates;
+		TArray<FDialogueSpeakerRelationshipState> DialogueSpeakerRelationshipStates;
 		TArray<FParleyCharacterProgressionData> CharacterStates;
 		TMap<EParleyPlayerSlot, FGameplayTag> CharacterTagBySlot;
 
@@ -221,6 +221,7 @@ namespace
 		FString SessionId;
 		FGameplayTag ConversationTag;
 		FGameplayTag PrimarySpeakerTag;
+		FGameplayTag SourceSpeakerTag;
 		TObjectPtr<UParleyConversationAsset> ConversationAsset = nullptr;
 		FGuid CurrentNodeId;
 		FGuid WaitingChoiceNodeId;
@@ -637,6 +638,20 @@ static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgres
 	if (!ProgressionStore)
 	{
 		return FGameplayTag();
+	}
+
+	// Character-owned dialogue state should follow the currently controlled character first.
+	// Slot mapping in progression store is retained as fallback for detached/offline contexts.
+	if (Identity.PlayerSlot != EParleyPlayerSlot::Unknown)
+	{
+		if (const APlayerState* LivePlayerState = FindPlayerStateBySlot(GWorld, Identity.PlayerSlot))
+		{
+			const FGameplayTag LiveCharacterTag = ResolveDialogueCharacterTagFromPlayerState(LivePlayerState);
+			if (LiveCharacterTag.IsValid())
+			{
+				return LiveCharacterTag;
+			}
+		}
 	}
 
 	FParleyPlayerStateProgressionData PlayerStateData;
@@ -1214,17 +1229,17 @@ static void PersistSeenCycleTagsForSlot(
 
 static FGameplayTag GetDialogueSpeakerPlayerPlaceholderTag()
 {
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Player"), false);
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false);
 }
 
 static FGameplayTag GetDialogueSpeakerBrotherTag()
 {
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false);
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
 }
 
 static FGameplayTag GetDialogueSpeakerSisterTag()
 {
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Dialogue.Speaker.Sister"), false);
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
 }
 
 static bool PassesCharacterRestriction(
@@ -1279,6 +1294,31 @@ static FGameplayTag ResolvePlayerSpeakerTag(const APlayerState* PlayerState)
 	default:
 		return FGameplayTag();
 	}
+}
+
+static FGameplayTag ResolveSpeakerTagForContext(
+	const FGameplayTag& RequestedSpeakerTag,
+	const FDialogueRuntimeContext& Context,
+	const FGameplayTag& FallbackSpeakerTag = FGameplayTag())
+{
+	if (RequestedSpeakerTag.IsValid())
+	{
+		const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+		if (PlayerPlaceholderTag.IsValid()
+			&& RequestedSpeakerTag.MatchesTagExact(PlayerPlaceholderTag))
+		{
+			if (Context.ResolvedPlayerSpeakerTag.IsValid())
+			{
+				return Context.ResolvedPlayerSpeakerTag;
+			}
+
+			return FallbackSpeakerTag;
+		}
+
+		return RequestedSpeakerTag;
+	}
+
+	return FallbackSpeakerTag;
 }
 
 static FGameplayTag StripLeafGameplayTag(const FGameplayTag& Tag)
@@ -2490,3 +2530,4 @@ void UParleyDialogueSubsystem::Deinitialize()
 #include "ParleyDialogueSubsystem_Validation.inl"
 #include "ParleyDialogueSubsystem_Runtime.inl"
 #include "ParleyDialogueSubsystem_API.inl"
+

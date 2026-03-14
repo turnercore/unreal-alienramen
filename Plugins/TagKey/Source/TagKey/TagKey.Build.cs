@@ -12,8 +12,7 @@ public class TagKey : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"DeveloperSettings",
-			"GameplayTags",
-			"StructUtils"
+			"GameplayTags"
 		});
 	}
 }

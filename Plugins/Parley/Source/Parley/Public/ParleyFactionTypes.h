@@ -31,7 +31,7 @@ struct PARLEY_API FParleyFactionDefinitionRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	/** Canonical faction identity tag. Expected format: Faction.Definition.<Leaf>. */
+	/** Canonical faction identity tag. Expected format: Parley.Factions.<Leaf>. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (ToolTip = "Canonical faction identity gameplay tag."))
 	FGameplayTag FactionTag;
 
@@ -107,9 +107,10 @@ struct PARLEY_API FParleyFactionSpeakerReputationState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (ToolTip = "Faction tag for this speaker reputation record."))
 	FGameplayTag FactionTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (Categories = "Dialogue.Speaker", ToolTip = "Speaker tag for this reputation record (for example Dialogue.Speaker.Player or Dialogue.Speaker.Brother)."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (Categories = "Parley.Speaker", ToolTip = "Speaker tag for this reputation record (for example Parley.Speaker.Player or Parley.Speaker.Brother)."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (ToolTip = "Persisted reputation value for this faction-speaker pair."))
 	float Reputation = 0.0f;
 };
+
