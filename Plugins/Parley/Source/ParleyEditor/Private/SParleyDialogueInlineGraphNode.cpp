@@ -1,0 +1,2072 @@
+#include "SParleyDialogueInlineGraphNode.h"
+
+#include "ParleyDialogueEdGraphNode.h"
+#include "ParleyDialogueSettings.h"
+#include "ParleyFactionSettings.h"
+#include "ParleyDialogueTypes.h"
+#include "GameplayTagsManager.h"
+#include "TagKeyEditorHelpers.h"
+#include "DragAndDrop/DecoratedDragDropOp.h"
+#include "EdGraph/EdGraphPin.h"
+#include "EdGraphUtilities.h"
+#include "InputCoreTypes.h"
+#include "Misc/DefaultValueHelper.h"
+#include "SGameplayTagCombo.h"
+#include "SGraphPin.h"
+#include "Styling/AppStyle.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/SCompoundWidget.h"
+#include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SEditableTextBox.h"
+#include "Widgets/Input/SSpinBox.h"
+#include "Widgets/Layout/SBorder.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/SBoxPanel.h"
+#include "Widgets/SOverlay.h"
+#include "Widgets/Text/STextBlock.h"
+
+namespace
+{
+	constexpr float ChoiceMinWidth = 320.0f;
+	constexpr float CompactMinWidth = 260.0f;
+	constexpr float RandomMinWidth = 140.0f;
+	constexpr float MutationMinWidth = 200.0f;
+	constexpr float SequenceMinWidth = 72.0f;
+	constexpr float SwitchMinWidth = 180.0f;
+	constexpr float CharacterRouteMinWidth = 260.0f;
+	constexpr float CharacterRoutePortraitSize = 28.0f;
+
+	static FText ToOperatorLabel(const EDialogueComparisonOp Op)
+	{
+		switch (Op)
+		{
+		case EDialogueComparisonOp::Equals: return FText::FromString(TEXT("="));
+		case EDialogueComparisonOp::NotEquals: return FText::FromString(TEXT("!="));
+		case EDialogueComparisonOp::GreaterThan: return FText::FromString(TEXT(">"));
+		case EDialogueComparisonOp::GreaterOrEqual: return FText::FromString(TEXT(">="));
+		case EDialogueComparisonOp::LessThan: return FText::FromString(TEXT("<"));
+		case EDialogueComparisonOp::LessOrEqual: return FText::FromString(TEXT("<="));
+		case EDialogueComparisonOp::Contains: return FText::FromString(TEXT("Contains"));
+		case EDialogueComparisonOp::NotContains: return FText::FromString(TEXT("Not Contains"));
+		case EDialogueComparisonOp::Present: return FText::FromString(TEXT("Present"));
+		case EDialogueComparisonOp::Absent: return FText::FromString(TEXT("Absent"));
+		default: return FText::FromString(TEXT("?"));
+		}
+	}
+
+	static EDialogueComparisonOp CycleOperator(
+		const EDialogueComparisonOp Current,
+		const TArray<EDialogueComparisonOp>& Allowed)
+	{
+		if (Allowed.IsEmpty())
+		{
+			return Current;
+		}
+
+		const int32 CurrentIndex = Allowed.IndexOfByKey(Current);
+		const int32 NextIndex = CurrentIndex == INDEX_NONE ? 0 : (CurrentIndex + 1) % Allowed.Num();
+		return Allowed[NextIndex];
+	}
+
+	static const TArray<EDialogueComparisonOp>& GetTagOperators()
+	{
+		static const TArray<EDialogueComparisonOp> Ops = {
+			EDialogueComparisonOp::Present,
+			EDialogueComparisonOp::Absent,
+			EDialogueComparisonOp::Contains,
+			EDialogueComparisonOp::NotContains,
+			EDialogueComparisonOp::Equals,
+			EDialogueComparisonOp::NotEquals
+		};
+		return Ops;
+	}
+
+	static const TArray<EDialogueComparisonOp>& GetNumericOperators()
+	{
+		static const TArray<EDialogueComparisonOp> Ops = {
+			EDialogueComparisonOp::Equals,
+			EDialogueComparisonOp::NotEquals,
+			EDialogueComparisonOp::GreaterThan,
+			EDialogueComparisonOp::GreaterOrEqual,
+			EDialogueComparisonOp::LessThan,
+			EDialogueComparisonOp::LessOrEqual
+		};
+		return Ops;
+	}
+
+	static const TArray<EDialogueComparisonOp>& GetBoolOperators()
+	{
+		static const TArray<EDialogueComparisonOp> Ops = {
+			EDialogueComparisonOp::Equals,
+			EDialogueComparisonOp::NotEquals
+		};
+		return Ops;
+	}
+
+	static const FParleySpeakerRow* ResolveSpeakerRowForTag(const FGameplayTag SpeakerTag)
+	{
+		if (!SpeakerTag.IsValid())
+		{
+			return nullptr;
+		}
+
+		const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
+		if (!DialogueSettings || !DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		{
+			return nullptr;
+		}
+
+		UDataTable* SpeakerTable = nullptr;
+		FString LookupError;
+		if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
+		{
+			return nullptr;
+		}
+
+		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FParleySpeakerRow::StaticStruct())
+		{
+			return nullptr;
+		}
+
+		FGameplayTag Candidate = SpeakerTag;
+		while (Candidate.IsValid())
+		{
+			const FString TagString = Candidate.ToString();
+			int32 DotIndex = INDEX_NONE;
+			if (!TagString.FindLastChar(TEXT('.'), DotIndex) || DotIndex + 1 >= TagString.Len())
+			{
+				break;
+			}
+
+			const FName RowName(*TagString.Mid(DotIndex + 1));
+			if (const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueInlineCharacterRoute"), false))
+			{
+				return Row;
+			}
+
+			const FString ParentTagPath = TagString.Left(DotIndex);
+			Candidate = UGameplayTagsManager::Get().RequestGameplayTag(FName(*ParentTagPath), false);
+		}
+
+		return nullptr;
+	}
+
+	class FParleyDialogueBranchDragDropOp final : public FDecoratedDragDropOp
+	{
+	public:
+		DRAG_DROP_OPERATOR_TYPE(FParleyDialogueBranchDragDropOp, FDecoratedDragDropOp)
+
+		static TSharedRef<FParleyDialogueBranchDragDropOp> New(const EDialogueNodeType InBranchNodeType, const FGuid InBranchId)
+		{
+			TSharedRef<FParleyDialogueBranchDragDropOp> Op = MakeShared<FParleyDialogueBranchDragDropOp>();
+			Op->BranchNodeType = InBranchNodeType;
+			Op->BranchId = InBranchId;
+			Op->DefaultHoverText = FText::FromString(TEXT("Reorder Branch"));
+			Op->Construct();
+			return Op;
+		}
+
+		EDialogueNodeType BranchNodeType = EDialogueNodeType::Line;
+		FGuid BranchId;
+	};
+
+	DECLARE_DELEGATE_RetVal_ThreeParams(bool, FOnDialogueBranchDropped, EDialogueNodeType, FGuid, FGuid);
+
+	class SARDialogueBranchDragRow final : public SCompoundWidget
+	{
+	public:
+		SLATE_BEGIN_ARGS(SARDialogueBranchDragRow) {}
+			SLATE_ARGUMENT(EDialogueNodeType, BranchNodeType)
+			SLATE_ARGUMENT(FGuid, BranchId)
+			SLATE_EVENT(FOnDialogueBranchDropped, OnBranchDropped)
+			SLATE_DEFAULT_SLOT(FArguments, Content)
+		SLATE_END_ARGS()
+
+		void Construct(const FArguments& InArgs)
+		{
+			BranchNodeType = InArgs._BranchNodeType;
+			BranchId = InArgs._BranchId;
+			OnBranchDropped = InArgs._OnBranchDropped;
+
+			ChildSlot
+			[
+				InArgs._Content.Widget
+			];
+		}
+
+		virtual FReply OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
+		{
+			(void)MyGeometry;
+			const TSharedPtr<FParleyDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FParleyDialogueBranchDragDropOp>();
+			if (DragOperation.IsValid() && DragOperation->BranchNodeType == BranchNodeType)
+			{
+				return FReply::Handled();
+			}
+			return FReply::Unhandled();
+		}
+
+		virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
+		{
+			(void)MyGeometry;
+			const TSharedPtr<FParleyDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FParleyDialogueBranchDragDropOp>();
+			if (!DragOperation.IsValid() || DragOperation->BranchNodeType != BranchNodeType || DragOperation->BranchId == BranchId)
+			{
+				return FReply::Unhandled();
+			}
+
+			if (OnBranchDropped.IsBound() && OnBranchDropped.Execute(BranchNodeType, DragOperation->BranchId, BranchId))
+			{
+				return FReply::Handled();
+			}
+
+			return FReply::Unhandled();
+		}
+
+	private:
+		EDialogueNodeType BranchNodeType = EDialogueNodeType::Line;
+		FGuid BranchId;
+		FOnDialogueBranchDropped OnBranchDropped;
+	};
+
+	class SARDialogueBranchDragHandle final : public SCompoundWidget
+	{
+	public:
+		SLATE_BEGIN_ARGS(SARDialogueBranchDragHandle) {}
+			SLATE_ARGUMENT(EDialogueNodeType, BranchNodeType)
+			SLATE_ARGUMENT(FGuid, BranchId)
+		SLATE_END_ARGS()
+
+		void Construct(const FArguments& InArgs)
+		{
+			BranchNodeType = InArgs._BranchNodeType;
+			BranchId = InArgs._BranchId;
+
+			ChildSlot
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("::")))
+				.ToolTipText(FText::FromString(TEXT("Drag to reorder this branch.")))
+				.ColorAndOpacity(FSlateColor(FLinearColor(0.65f, 0.65f, 0.65f, 1.0f)))
+			];
+		}
+
+		virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
+		{
+			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+			{
+				return FReply::Handled().DetectDrag(AsShared(), EKeys::LeftMouseButton);
+			}
+			return SCompoundWidget::OnMouseButtonDown(MyGeometry, MouseEvent);
+		}
+
+		virtual FReply OnDragDetected(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override
+		{
+			(void)MyGeometry;
+			if (MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+			{
+				return FReply::Handled().BeginDragDrop(FParleyDialogueBranchDragDropOp::New(BranchNodeType, BranchId));
+			}
+			return FReply::Unhandled();
+		}
+
+	private:
+		EDialogueNodeType BranchNodeType = EDialogueNodeType::Line;
+		FGuid BranchId;
+	};
+
+	class FParleyDialogueInlineGraphNodeFactory final : public FGraphPanelNodeFactory
+	{
+	public:
+		virtual TSharedPtr<SGraphNode> CreateNode(UEdGraphNode* InNode) const override
+		{
+			UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(InNode);
+			if (!DialogueNode)
+			{
+				return nullptr;
+			}
+
+			switch (DialogueNode->EditorNodeType)
+			{
+			case EDialogueEditorNodeType::Choice:
+			case EDialogueEditorNodeType::Branch:
+			case EDialogueEditorNodeType::SwitchOnTagsByPriority:
+			case EDialogueEditorNodeType::Random:
+			case EDialogueEditorNodeType::Sequence:
+			case EDialogueEditorNodeType::RouteByCharacter:
+			case EDialogueEditorNodeType::TagMutation:
+			case EDialogueEditorNodeType::RelationshipMutation:
+			case EDialogueEditorNodeType::FactionMutation:
+			case EDialogueEditorNodeType::CheckTags:
+			case EDialogueEditorNodeType::CheckRelationship:
+			case EDialogueEditorNodeType::CheckProgress:
+			case EDialogueEditorNodeType::CheckLoadout:
+			case EDialogueEditorNodeType::CheckCharacter:
+			case EDialogueEditorNodeType::CheckVariable:
+				return SNew(SParleyDialogueInlineGraphNode, DialogueNode);
+			default:
+				return nullptr;
+			}
+		}
+	};
+}
+
+void SParleyDialogueInlineGraphNode::Construct(const FArguments& InArgs, UParleyDialogueEdGraphNode* InNode)
+{
+	(void)InArgs;
+	GraphNode = InNode;
+	SetCursor(EMouseCursor::CardinalCross);
+	UpdateGraphNode();
+}
+
+void SParleyDialogueInlineGraphNode::UpdateGraphNode()
+{
+	InputPins.Reset();
+	OutputPins.Reset();
+	LeftNodeBox.Reset();
+	RightNodeBox.Reset();
+
+	ContentScale.Bind(this, &SGraphNode::GetContentScale);
+	GetOrAddSlot(ENodeZone::Center)
+	[
+		SNew(SBorder)
+		.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.Body")))
+		.ToolTipText_Lambda([this]()
+		{
+			const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+			return Node ? Node->GetTooltipText() : FText::FromString(TEXT("Dialogue node."));
+		})
+		.Padding(4.0f)
+		[
+			SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SBorder)
+					.BorderImage(FAppStyle::GetBrush(TEXT("Graph.Node.TitleBackground")))
+					.BorderBackgroundColor(this, &SParleyDialogueInlineGraphNode::GetTitleColor)
+					.Padding(FMargin(6.0f, 2.0f))
+					[
+						SNew(STextBlock)
+						.Text(this, &SParleyDialogueInlineGraphNode::GetNodeTitleText)
+						.ColorAndOpacity(FSlateColor(FLinearColor::White))
+					]
+				]
+				+ SOverlay::Slot()
+				[
+					SNew(SImage)
+					.Image(FAppStyle::GetBrush(TEXT("Graph.Node.TitleGloss")))
+					.ColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 0.35f)))
+				]
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SAssignNew(LeftNodeBox, SVerticalBox)
+				]
+				+ SHorizontalBox::Slot()
+				.FillWidth(1.0f)
+				.Padding(6.0f, 0.0f)
+				[
+					SNew(SBox)
+					.MinDesiredWidth(GetInlineContentMinWidth())
+					[
+						BuildInlineContent()
+					]
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SAssignNew(RightNodeBox, SVerticalBox)
+				]
+			]
+		]
+	];
+
+	CreatePinWidgets();
+	AddDynamicPinButtonIfSupported();
+}
+
+void SParleyDialogueInlineGraphNode::AddPin(const TSharedRef<SGraphPin>& PinToAdd)
+{
+	PinToAdd->SetOwner(SharedThis(this));
+
+	if (PinToAdd->GetDirection() == EGPD_Input)
+	{
+		InputPins.Add(PinToAdd);
+		if (LeftNodeBox.IsValid())
+		{
+			LeftNodeBox->AddSlot()
+			.AutoHeight()
+			.VAlign(VAlign_Center)
+			[
+				PinToAdd
+			];
+		}
+		return;
+	}
+
+	OutputPins.Add(PinToAdd);
+	if (RightNodeBox.IsValid())
+	{
+		RightNodeBox->AddSlot()
+		.AutoHeight()
+		.HAlign(HAlign_Right)
+		.VAlign(VAlign_Center)
+		[
+			PinToAdd
+		];
+	}
+}
+
+const UParleyDialogueEdGraphNode* SParleyDialogueInlineGraphNode::GetDialogueNode() const
+{
+	return Cast<UParleyDialogueEdGraphNode>(GraphNode);
+}
+
+UParleyDialogueEdGraphNode* SParleyDialogueInlineGraphNode::GetDialogueNodeMutable() const
+{
+	return Cast<UParleyDialogueEdGraphNode>(GraphNode);
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	if (!DialogueNode)
+	{
+		return SNew(STextBlock).Text(FText::FromString(TEXT("Invalid dialogue node.")));
+	}
+
+	switch (DialogueNode->EditorNodeType)
+	{
+	case EDialogueEditorNodeType::Choice:
+		return BuildChoiceInlineContent();
+	case EDialogueEditorNodeType::Branch:
+		return BuildBranchInlineContent();
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
+		return BuildSwitchInlineContent();
+	case EDialogueEditorNodeType::Random:
+		return BuildRandomInlineContent();
+	case EDialogueEditorNodeType::Sequence:
+		return BuildSequenceInlineContent();
+	case EDialogueEditorNodeType::RouteByCharacter:
+		return BuildCharacterRouteInlineContent();
+	case EDialogueEditorNodeType::TagMutation:
+		return BuildTagMutationInlineContent();
+	case EDialogueEditorNodeType::RelationshipMutation:
+		return BuildRelationshipInlineContent();
+	case EDialogueEditorNodeType::FactionMutation:
+		return BuildFactionInlineContent();
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+		return BuildConditionSourceInlineContent();
+	default:
+		return SNew(STextBlock).Text(FText::FromString(TEXT("Inline editing unavailable for this node type.")));
+	}
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildBranchInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const FDialogueEditorBranchNodeData* BranchData = DialogueNode ? DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorBranchNodeData>() : nullptr;
+	const bool bIsAll = !BranchData || BranchData->MatchMode == EDialogueConditionMatchMode::All;
+	const int32 ConditionCount = BranchData ? BranchData->Inputs.Num() : 0;
+
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+			[
+				SNew(SButton)
+				.ButtonColorAndOpacity(bIsAll ? FLinearColor(0.22f, 0.58f, 0.40f, 1.0f) : FLinearColor(0.18f, 0.18f, 0.18f, 1.0f))
+				.Text(FText::FromString(TEXT("AND")))
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleSetBranchAllClicked)
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			[
+				SNew(SButton)
+				.ButtonColorAndOpacity(!bIsAll ? FLinearColor(0.22f, 0.58f, 0.40f, 1.0f) : FLinearColor(0.18f, 0.18f, 0.18f, 1.0f))
+				.Text(FText::FromString(TEXT("OR")))
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleSetBranchAnyClicked)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 6.0f, 0.0f, 0.0f)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(FString::Printf(TEXT("%d condition inputs"), ConditionCount)))
+		];
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	if (!DialogueNode)
+	{
+		return SNew(STextBlock).Text(FText::FromString(TEXT("Invalid condition node.")));
+	}
+
+	switch (DialogueNode->EditorNodeType)
+	{
+	case EDialogueEditorNodeType::CheckTags:
+	{
+		const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					if (!Data)
+					{
+						return FText::FromString(TEXT("Source: Combined Tags"));
+					}
+					switch (Data->Source)
+					{
+					case EDialogueEditorTagConditionSource::PlayerTags: return FText::FromString(TEXT("Source: Player Tags"));
+					case EDialogueEditorTagConditionSource::GameTags: return FText::FromString(TEXT("Source: Game Tags"));
+					case EDialogueEditorTagConditionSource::TransientConversationTags: return FText::FromString(TEXT("Source: Transient Tags"));
+					case EDialogueEditorTagConditionSource::CombinedTags:
+					default: return FText::FromString(TEXT("Source: Combined Tags"));
+					}
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Present).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Tag(Data ? Data->TagValue : FGameplayTag())
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionTagChanged)
+			];
+	}
+	case EDialogueEditorNodeType::CheckRelationship:
+	{
+		const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					if (!Data)
+					{
+						return FText::FromString(TEXT("Source: Relationship Points"));
+					}
+					switch (Data->Source)
+					{
+					case EDialogueEditorRelationshipConditionSource::RelationshipLevel: return FText::FromString(TEXT("Source: Relationship Level"));
+					case EDialogueEditorRelationshipConditionSource::FactionPopularity: return FText::FromString(TEXT("Source: Faction Popularity"));
+					case EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation: return FText::FromString(TEXT("Source: Faction Speaker Reputation"));
+					case EDialogueEditorRelationshipConditionSource::RelationshipPoints:
+					default: return FText::FromString(TEXT("Source: Relationship Points"));
+					}
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Speaker"))
+				.Tag(Data ? Data->TargetSpeakerTag : FGameplayTag())
+				.Visibility_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
+					return (NodeData && NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionPopularity)
+						? EVisibility::Collapsed
+						: EVisibility::Visible;
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionSecondaryTagChanged)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Factions"))
+				.Tag(Data ? Data->FactionTag : FGameplayTag())
+				.Visibility_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
+					return (NodeData
+						&& (NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+							|| NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionPopularity))
+						? EVisibility::Visible
+						: EVisibility::Collapsed;
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionFactionTagChanged)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("Target speaker defaults to conversation owner when unset.")))
+				.Visibility_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
+					return (NodeData
+						&& (NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+							|| NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionPopularity))
+						? EVisibility::Collapsed
+						: EVisibility::Visible;
+				})
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::GreaterOrEqual).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(FText::AsNumber(Data ? Data->NumericValue : 0.0f))
+				.HintText(FText::FromString(TEXT("0.0")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleConditionNumericTextCommitted)
+			];
+	}
+	case EDialogueEditorNodeType::CheckProgress:
+	{
+		const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					if (!Data)
+					{
+						return FText::FromString(TEXT("Source: Seen By Player"));
+					}
+					switch (Data->Source)
+					{
+					case EDialogueEditorProgressConditionSource::SeenByGame: return FText::FromString(TEXT("Source: Seen By Game"));
+					case EDialogueEditorProgressConditionSource::CompletedByPlayer: return FText::FromString(TEXT("Source: Completed By Player"));
+					case EDialogueEditorProgressConditionSource::CompletedByGame: return FText::FromString(TEXT("Source: Completed By Game"));
+					case EDialogueEditorProgressConditionSource::SeenByPlayer:
+					default: return FText::FromString(TEXT("Source: Seen By Player"));
+					}
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Equals).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(Data && Data->bExpectedValue ? TEXT("Expected: True") : TEXT("Expected: False"));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked)
+			];
+	}
+	case EDialogueEditorNodeType::CheckLoadout:
+	{
+		const FDialogueEditorCheckLoadoutNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Present).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Tag(Data ? Data->TagValue : FGameplayTag())
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionTagChanged)
+			];
+	}
+	case EDialogueEditorNodeType::CheckCharacter:
+	{
+		const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
+		return SNew(SButton)
+			.Text(FText::FromString(Data && Data->Character == EDialogueEditorCharacterCondition::Sister ? TEXT("Character: Sister") : TEXT("Character: Brother")))
+			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked);
+	}
+	case EDialogueEditorNodeType::CheckVariable:
+	{
+		const FDialogueEditorCheckVariableNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SEditableTextBox)
+				.Text(FText::FromName(Data ? Data->VariableName : NAME_None))
+				.HintText(FText::FromString(TEXT("Variable Name")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleConditionVariableNameCommitted)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Equals).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			];
+	}
+	default:
+		break;
+	}
+
+	return SNew(STextBlock).Text(FText::FromString(TEXT("Condition editor unavailable.")));
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildTagMutationInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const FDialogueTagMutationNodeData* Data = DialogueNode ? DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>() : nullptr;
+	const FDialogueTagMutation* Mutation = (Data && Data->Mutations.Num() > 0) ? &Data->Mutations[0] : nullptr;
+
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[ SNew(SButton)
+			.Text_Lambda([Mutation]()
+			{
+				if (!Mutation)
+				{
+					return FText::FromString(TEXT("Target: Game Progression"));
+				}
+
+				switch (Mutation->Target)
+				{
+				case EDialogueTagMutationTarget::ActivePlayerProgression: return FText::FromString(TEXT("Target: Player Progression"));
+				case EDialogueTagMutationTarget::ActivePlayerTransientConversation: return FText::FromString(TEXT("Target: Transient Conversation"));
+				case EDialogueTagMutationTarget::GameStateProgression:
+				default: return FText::FromString(TEXT("Target: Game Progression"));
+				}
+			})
+			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleTagMutationTargetClicked)
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[ SNew(SButton)
+			.Text_Lambda([Mutation]()
+			{
+				if (!Mutation)
+				{
+					return FText::FromString(TEXT("Operation: Add"));
+				}
+				return FText::FromString(Mutation->Operation == EDialogueTagMutationOp::Remove ? TEXT("Operation: Remove") : TEXT("Operation: Add"));
+			})
+			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleTagMutationOperationClicked)
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SGameplayTagCombo)
+			.Tag(Mutation ? Mutation->Tag : FGameplayTag())
+			.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleTagMutationTagChanged)
+		];
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildChoiceInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledChoiceBranch>* ChoiceBranches = DialogueNode ? &DialogueNode->RuntimeNode.ChoiceBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!ChoiceBranches || ChoiceBranches->IsEmpty())
+	{
+		// Intentionally empty: keep compact footprint when no choices are authored yet.
+	}
+	else
+	{
+		for (int32 Index = 0; Index < ChoiceBranches->Num(); ++Index)
+		{
+			const FDialogueCompiledChoiceBranch& Branch = (*ChoiceBranches)[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::Choice)
+				.BranchId(Branch.ChoiceBranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SParleyDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::Choice)
+							.BranchId(Branch.ChoiceBranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(Branch.ChoiceText)
+							.HintText(FText::FromString(TEXT("Choice text")))
+							.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleChoiceTextCommitted, Branch.ChoiceBranchId)
+						]
+					]
+				]
+			];
+		}
+	}
+
+	Content->AddSlot()
+	.AutoHeight()
+	.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+	[
+		SNew(SEditableTextBox)
+		.Text_Lambda([this]()
+		{
+			const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+			return Node ? Node->RuntimeNode.FallbackChoiceText : FText::GetEmpty();
+		})
+		.HintText(FText::FromString(TEXT("Fallback text")))
+		.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleFallbackTextCommitted)
+	];
+
+	return Content;
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildSwitchInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledSwitchBranch>* SwitchBranches = DialogueNode ? &DialogueNode->RuntimeNode.SwitchBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!SwitchBranches || SwitchBranches->IsEmpty())
+	{
+		// Intentionally empty: keep compact footprint when no branches are authored yet.
+	}
+	else
+	{
+		for (int32 Index = 0; Index < SwitchBranches->Num(); ++Index)
+		{
+			const FDialogueCompiledSwitchBranch& Branch = (*SwitchBranches)[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::SwitchOnTagsByPriority)
+				.BranchId(Branch.BranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SParleyDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::SwitchOnTagsByPriority)
+							.BranchId(Branch.BranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(Branch.Label)
+							.HintText(FText::FromString(TEXT("Branch label")))
+							.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleSwitchLabelCommitted, Branch.BranchId)
+						]
+					]
+				]
+			];
+		}
+	}
+
+	return Content;
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildRandomInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledRandomBranch>* RandomBranches = DialogueNode ? &DialogueNode->RuntimeNode.RandomBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!RandomBranches || RandomBranches->IsEmpty())
+	{
+		Content->AddSlot()
+		.AutoHeight()
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("No random branches yet. Use Add pin to create one.")))
+		];
+	}
+	else
+	{
+		for (int32 Index = 0; Index < RandomBranches->Num(); ++Index)
+		{
+			const FDialogueCompiledRandomBranch& Branch = (*RandomBranches)[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::Random)
+				.BranchId(Branch.BranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SParleyDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::Random)
+							.BranchId(Branch.BranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(SBox)
+							.WidthOverride(76.0f)
+							[
+								SNew(SEditableTextBox)
+								.Text(FText::AsNumber(Branch.Weight))
+								.HintText(FText::FromString(TEXT("1.0")))
+								.OnTextCommitted_Lambda([this, BranchId = Branch.BranchId](const FText& NewText, const ETextCommit::Type CommitType)
+								{
+									(void)CommitType;
+									float ParsedValue = 0.0f;
+									if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+									{
+										return;
+									}
+
+									if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+									{
+										DialogueNode->SetRandomBranchWeight(BranchId, ParsedValue);
+									}
+								})
+							]
+						]
+					]
+				]
+			];
+		}
+	}
+
+	return Content;
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildSequenceInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledSequenceBranch>* SequenceBranches = DialogueNode ? &DialogueNode->RuntimeNode.SequenceBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!SequenceBranches || SequenceBranches->IsEmpty())
+	{
+		// No helper text for sequence by design.
+	}
+	else
+	{
+		for (int32 Index = 0; Index < SequenceBranches->Num(); ++Index)
+		{
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(FString::Printf(TEXT("Then %d"), Index + 1)))
+			];
+		}
+	}
+
+	return Content;
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildCharacterRouteInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const TArray<FDialogueCompiledCharacterRouteBranch>* CharacterBranches = DialogueNode ? &DialogueNode->RuntimeNode.CharacterRouteBranches : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!CharacterBranches || CharacterBranches->IsEmpty())
+	{
+		// Keep compact footprint when no branches are authored yet.
+	}
+	else
+	{
+		for (int32 Index = 0; Index < CharacterBranches->Num(); ++Index)
+		{
+			const FDialogueCompiledCharacterRouteBranch& Branch = (*CharacterBranches)[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::RouteByCharacter)
+				.BranchId(Branch.BranchId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SParleyDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::RouteByCharacter)
+							.BranchId(Branch.BranchId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 6.0f, 0.0f)
+						[
+							SNew(SBox)
+							.WidthOverride(CharacterRoutePortraitSize)
+							.HeightOverride(CharacterRoutePortraitSize)
+							[
+								SNew(SImage)
+								.Image_Lambda([this, SpeakerTag = Branch.SpeakerTag]()
+								{
+									return GetCharacterRoutePortraitBrush(SpeakerTag);
+								})
+							]
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SGameplayTagCombo)
+							.Filter(TEXT("Parley.Speaker"))
+							.Tag(Branch.SpeakerTag)
+							.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleCharacterRouteTagChanged, Branch.BranchId)
+						]
+					]
+				]
+			];
+		}
+	}
+
+	return Content;
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildMultiLineInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const FDialogueMultiLineNodeData* MultiLineData = DialogueNode ? DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>() : nullptr;
+
+	TSharedRef<SVerticalBox> Content = SNew(SVerticalBox);
+	if (!MultiLineData || MultiLineData->Lines.IsEmpty())
+	{
+		Content->AddSlot()
+		.AutoHeight()
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("No lines yet. Add a line to author this node.")))
+		];
+	}
+	else
+	{
+		const bool bCanDeleteEntries = MultiLineData->Lines.Num() > 1;
+		for (int32 Index = 0; Index < MultiLineData->Lines.Num(); ++Index)
+		{
+			const FDialogueMultiLineEntry& Entry = MultiLineData->Lines[Index];
+			Content->AddSlot()
+			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
+			[
+				SNew(SARDialogueBranchDragRow)
+				.BranchNodeType(EDialogueNodeType::MultiLine)
+				.BranchId(Entry.EntryId)
+				.OnBranchDropped(FOnDialogueBranchDropped::CreateSP(this, &SParleyDialogueInlineGraphNode::HandleBranchRowDropped))
+				[
+					SNew(SBorder)
+					.Padding(FMargin(2.0f, 1.0f))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 4.0f, 0.0f)
+						[
+							SNew(SARDialogueBranchDragHandle)
+							.BranchNodeType(EDialogueNodeType::MultiLine)
+							.BranchId(Entry.EntryId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.VAlign(VAlign_Center)
+						.Padding(0.0f, 0.0f, 6.0f, 0.0f)
+						[
+							SNew(STextBlock)
+							.Text(FText::FromString(FString::Printf(TEXT("%d."), Index + 1)))
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(0.0f, 0.0f, 6.0f, 0.0f)
+						[
+							SNew(SBox)
+							.WidthOverride(180.0f)
+							[
+								SNew(SGameplayTagCombo)
+								.Filter(TEXT("Parley.Speaker"))
+								.Tag(Entry.LineData.Line.SpeakerTag)
+								.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleMultiLineSpeakerTagChanged, Entry.EntryId)
+							]
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SEditableTextBox)
+							.Text(Entry.LineData.Line.Text)
+							.HintText(FText::FromString(TEXT("Line text")))
+							.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleMultiLineTextCommitted, Entry.EntryId)
+						]
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(6.0f, 0.0f, 0.0f, 0.0f)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SButton)
+							.Text(FText::FromString(TEXT("X")))
+							.ToolTipText(FText::FromString(TEXT("Delete this line entry.")))
+							.IsEnabled(bCanDeleteEntries)
+							.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleDeleteMultiLineEntryClicked, Entry.EntryId)
+						]
+					]
+				]
+			];
+		}
+	}
+
+	Content->AddSlot()
+	.AutoHeight()
+	.HAlign(HAlign_Right)
+	.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+	[
+		SNew(SButton)
+		.ToolTipText(FText::FromString(TEXT("Append a new line entry to this multi-line node.")))
+		.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleAddMultiLineEntryClicked)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("Add Line +")))
+		]
+	];
+
+	return Content;
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildRelationshipInlineContent() const
+{
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("Source Speaker (optional override)")))
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 2.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Speaker"))
+				.Tag_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
+					return Data ? Data->SourceSpeakerTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleRelationshipSourceSpeakerTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+		[
+			SNew(STextBlock)
+			.Text(FText::FromString(TEXT("Target Speaker")))
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Speaker"))
+				.Tag_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
+					return Data ? Data->TargetSpeakerTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(84.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(this, &SParleyDialogueInlineGraphNode::GetRelationshipDeltaText)
+				.HintText(FText::FromString(TEXT("Delta")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted)
+			]
+		];
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildFactionInlineContent() const
+{
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(SBox)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(GetFactionTagFilter())
+				.Tag_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+					return Data ? Data->FactionTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleFactionTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(200.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Parley.Speaker"))
+				.Tag_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+					return Data ? Data->TargetSpeakerTag : FGameplayTag();
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleFactionSpeakerTagChanged)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(84.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(this, &SParleyDialogueInlineGraphNode::GetFactionDeltaText)
+				.HintText(FText::FromString(TEXT("Delta")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleFactionDeltaTextCommitted)
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox)
+			.WidthOverride(84.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(this, &SParleyDialogueInlineGraphNode::GetFactionSpeakerDeltaText)
+				.HintText(FText::FromString(TEXT("Speaker Delta")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleFactionSpeakerDeltaTextCommitted)
+			]
+		];
+}
+
+float SParleyDialogueInlineGraphNode::GetInlineContentMinWidth() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	if (!DialogueNode)
+	{
+		return CompactMinWidth;
+	}
+
+	switch (DialogueNode->EditorNodeType)
+	{
+	case EDialogueEditorNodeType::Choice:
+		return ChoiceMinWidth;
+	case EDialogueEditorNodeType::Branch:
+		return 180.0f;
+	case EDialogueEditorNodeType::Random:
+		return RandomMinWidth;
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
+		return SwitchMinWidth;
+	case EDialogueEditorNodeType::RouteByCharacter:
+		return CharacterRouteMinWidth;
+	case EDialogueEditorNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::FactionMutation:
+	case EDialogueEditorNodeType::TagMutation:
+		return MutationMinWidth;
+	case EDialogueEditorNodeType::Sequence:
+		return SequenceMinWidth;
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+		return 170.0f;
+	default:
+		return CompactMinWidth;
+	}
+}
+
+void SParleyDialogueInlineGraphNode::AddDynamicPinButtonIfSupported()
+{
+	if (!RightNodeBox.IsValid())
+	{
+		return;
+	}
+
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	if (!DialogueNode || !DialogueNode->SupportsDynamicBranchPins())
+	{
+		return;
+	}
+
+	RightNodeBox->AddSlot()
+	.AutoHeight()
+	.HAlign(HAlign_Right)
+	.Padding(0.0f, 4.0f, 0.0f, 0.0f)
+	[
+		SNew(SButton)
+		.ButtonStyle(FAppStyle::Get(), "NoBorder")
+		.ContentPadding(FMargin(2.0f, 1.0f))
+		.ToolTipText_Lambda([DialogueNode]()
+		{
+			return FText::FromString(DialogueNode && DialogueNode->EditorNodeType == EDialogueEditorNodeType::Branch
+				? TEXT("Add another condition input pin.")
+				: TEXT("Add another output branch pin."));
+		})
+		.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleAddBranchPinClicked)
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.VAlign(VAlign_Center)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("Add")))
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.VAlign(VAlign_Center)
+			.Padding(4.0f, 0.0f, 0.0f, 0.0f)
+			[
+				SNew(SImage)
+				.Image(FAppStyle::GetBrush(TEXT("Plus")))
+			]
+		]
+	];
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleAddBranchPinClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->AddDynamicBranchPin();
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleSetBranchAllClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetBranchMatchMode(EDialogueConditionMatchMode::All);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleSetBranchAnyClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetBranchMatchMode(EDialogueConditionMatchMode::Any);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SParleyDialogueInlineGraphNode::RefreshNodeWidget() const
+{
+	const_cast<SParleyDialogueInlineGraphNode*>(this)->UpdateGraphNode();
+}
+
+bool SParleyDialogueInlineGraphNode::HandleBranchRowDropped(
+	const EDialogueNodeType BranchNodeType,
+	const FGuid DraggedBranchId,
+	const FGuid TargetBranchId) const
+{
+	if (!DraggedBranchId.IsValid() || !TargetBranchId.IsValid() || DraggedBranchId == TargetBranchId)
+	{
+		return false;
+	}
+
+	UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
+	if (!DialogueNode)
+	{
+		return false;
+	}
+
+	bool bReordered = false;
+	switch (BranchNodeType)
+	{
+	case EDialogueNodeType::Choice:
+		bReordered = DialogueNode->ReorderChoiceBranch(DraggedBranchId, TargetBranchId);
+		break;
+	case EDialogueNodeType::SwitchOnTagsByPriority:
+		bReordered = DialogueNode->ReorderSwitchBranch(DraggedBranchId, TargetBranchId);
+		break;
+	case EDialogueNodeType::Random:
+		bReordered = DialogueNode->ReorderRandomBranch(DraggedBranchId, TargetBranchId);
+		break;
+	case EDialogueNodeType::MultiLine:
+		bReordered = DialogueNode->ReorderMultiLineEntry(DraggedBranchId, TargetBranchId);
+		break;
+	case EDialogueNodeType::RouteByCharacter:
+		bReordered = DialogueNode->ReorderCharacterRouteBranch(DraggedBranchId, TargetBranchId);
+		break;
+	default:
+		break;
+	}
+
+	if (bReordered)
+	{
+		RefreshNodeWidget();
+	}
+
+	return bReordered;
+}
+
+void SParleyDialogueInlineGraphNode::HandleChoiceTextCommitted(const FText& NewText, const ETextCommit::Type CommitType, const FGuid ChoiceBranchId) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetChoiceBranchText(ChoiceBranchId, NewText);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleFallbackTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetChoiceFallbackText(NewText);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleSwitchLabelCommitted(const FText& NewText, const ETextCommit::Type CommitType, const FGuid BranchId) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetSwitchBranchLabel(BranchId, NewText);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleCharacterRouteTagChanged(const FGameplayTag NewTag, const FGuid BranchId) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		if (DialogueNode->SetCharacterRouteBranchSpeakerTag(BranchId, NewTag))
+		{
+			RefreshNodeWidget();
+		}
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleRandomWeightCommitted(const float NewValue, const ETextCommit::Type CommitType, const FGuid BranchId) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetRandomBranchWeight(BranchId, NewValue);
+	}
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleAddMultiLineEntryClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->AddMultiLineEntry();
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleDeleteMultiLineEntryClicked(const FGuid EntryId) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->RemoveMultiLineEntry(EntryId);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SParleyDialogueInlineGraphNode::HandleMultiLineSpeakerTagChanged(const FGameplayTag NewTag, const FGuid EntryId) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetMultiLineEntrySpeakerTag(EntryId, NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleMultiLineTextCommitted(const FText& NewText, const ETextCommit::Type CommitType, const FGuid EntryId) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetMultiLineEntryText(EntryId, NewText);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleRelationshipSpeakerTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetRelationshipTargetSpeakerTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleRelationshipSourceSpeakerTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetRelationshipSourceSpeakerTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleRelationshipDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetRelationshipDeltaPoints(ParsedValue);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleFactionTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetFactionTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleFactionSpeakerTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetFactionTargetSpeakerTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleFactionDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetFactionDeltaPopularity(ParsedValue);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleFactionSpeakerDeltaTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetFactionDeltaSpeakerReputation(ParsedValue);
+	}
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleTagMutationTargetClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		const FDialogueTagMutationNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>();
+		const EDialogueTagMutationTarget Current = (Data && Data->Mutations.Num() > 0)
+			? Data->Mutations[0].Target
+			: EDialogueTagMutationTarget::GameStateProgression;
+		const EDialogueTagMutationTarget Next = Current == EDialogueTagMutationTarget::GameStateProgression
+			? EDialogueTagMutationTarget::ActivePlayerProgression
+			: (Current == EDialogueTagMutationTarget::ActivePlayerProgression
+				? EDialogueTagMutationTarget::ActivePlayerTransientConversation
+				: EDialogueTagMutationTarget::GameStateProgression);
+		DialogueNode->SetPrimaryTagMutationTarget(Next);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleTagMutationOperationClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		const FDialogueTagMutationNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>();
+		const EDialogueTagMutationOp Current = (Data && Data->Mutations.Num() > 0)
+			? Data->Mutations[0].Operation
+			: EDialogueTagMutationOp::Add;
+		DialogueNode->SetPrimaryTagMutationOperation(Current == EDialogueTagMutationOp::Add ? EDialogueTagMutationOp::Remove : EDialogueTagMutationOp::Add);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SParleyDialogueInlineGraphNode::HandleTagMutationTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetPrimaryTagMutationTag(NewTag);
+	}
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		switch (DialogueNode->EditorNodeType)
+		{
+		case EDialogueEditorNodeType::CheckTags:
+		{
+			const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+			const EDialogueEditorTagConditionSource Current = Data ? Data->Source : EDialogueEditorTagConditionSource::CombinedTags;
+			const EDialogueEditorTagConditionSource Next = Current == EDialogueEditorTagConditionSource::CombinedTags
+				? EDialogueEditorTagConditionSource::PlayerTags
+				: (Current == EDialogueEditorTagConditionSource::PlayerTags
+					? EDialogueEditorTagConditionSource::GameTags
+					: (Current == EDialogueEditorTagConditionSource::GameTags
+						? EDialogueEditorTagConditionSource::TransientConversationTags
+						: EDialogueEditorTagConditionSource::CombinedTags));
+			DialogueNode->SetCheckTagsSource(Next);
+			break;
+		}
+		case EDialogueEditorNodeType::CheckRelationship:
+		{
+			const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+			const EDialogueEditorRelationshipConditionSource Current = Data ? Data->Source : EDialogueEditorRelationshipConditionSource::RelationshipPoints;
+			const EDialogueEditorRelationshipConditionSource Next = Current == EDialogueEditorRelationshipConditionSource::RelationshipPoints
+				? EDialogueEditorRelationshipConditionSource::RelationshipLevel
+				: (Current == EDialogueEditorRelationshipConditionSource::RelationshipLevel
+					? EDialogueEditorRelationshipConditionSource::FactionPopularity
+					: (Current == EDialogueEditorRelationshipConditionSource::FactionPopularity
+						? EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+						: EDialogueEditorRelationshipConditionSource::RelationshipPoints));
+			DialogueNode->SetCheckRelationshipSource(Next);
+			break;
+		}
+		case EDialogueEditorNodeType::CheckProgress:
+		{
+			const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+			const EDialogueEditorProgressConditionSource Current = Data ? Data->Source : EDialogueEditorProgressConditionSource::SeenByPlayer;
+			const EDialogueEditorProgressConditionSource Next = Current == EDialogueEditorProgressConditionSource::SeenByPlayer
+				? EDialogueEditorProgressConditionSource::SeenByGame
+				: (Current == EDialogueEditorProgressConditionSource::SeenByGame
+					? EDialogueEditorProgressConditionSource::CompletedByPlayer
+					: (Current == EDialogueEditorProgressConditionSource::CompletedByPlayer
+						? EDialogueEditorProgressConditionSource::CompletedByGame
+						: EDialogueEditorProgressConditionSource::SeenByPlayer));
+			DialogueNode->SetCheckProgressSource(Next);
+			break;
+		}
+		default:
+			break;
+		}
+
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		switch (DialogueNode->EditorNodeType)
+		{
+		case EDialogueEditorNodeType::CheckTags:
+		{
+			const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Present;
+			DialogueNode->SetCheckTagsOperator(CycleOperator(Current, GetTagOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckRelationship:
+		{
+			const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::GreaterOrEqual;
+			DialogueNode->SetCheckRelationshipOperator(CycleOperator(Current, GetNumericOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckProgress:
+		{
+			const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Equals;
+			DialogueNode->SetCheckProgressOperator(CycleOperator(Current, GetBoolOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckLoadout:
+		{
+			const FDialogueEditorCheckLoadoutNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Present;
+			DialogueNode->SetCheckLoadoutOperator(CycleOperator(Current, GetTagOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckVariable:
+		{
+			const FDialogueEditorCheckVariableNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Equals;
+			DialogueNode->SetCheckVariableOperator(CycleOperator(Current, GetNumericOperators()));
+			break;
+		}
+		default:
+			break;
+		}
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		switch (DialogueNode->EditorNodeType)
+		{
+		case EDialogueEditorNodeType::CheckProgress:
+		{
+			const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+			DialogueNode->SetCheckProgressExpectedValue(!(Data && Data->bExpectedValue));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckCharacter:
+		{
+			const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
+			const EDialogueEditorCharacterCondition Next = (Data && Data->Character == EDialogueEditorCharacterCondition::Brother)
+				? EDialogueEditorCharacterCondition::Sister
+				: EDialogueEditorCharacterCondition::Brother;
+			DialogueNode->SetCheckCharacterCondition(Next);
+			break;
+		}
+		default:
+			break;
+		}
+
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::CheckTags)
+		{
+			DialogueNode->SetCheckTagsTag(NewTag);
+		}
+		else if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::CheckLoadout)
+		{
+			DialogueNode->SetCheckLoadoutTag(NewTag);
+		}
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionSecondaryTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetCheckRelationshipTargetSpeakerTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionFactionTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetCheckRelationshipFactionTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionNumericTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetCheckRelationshipNumericValue(ParsedValue);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionVariableNameCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		const FString Trimmed = NewText.ToString().TrimStartAndEnd();
+		DialogueNode->SetCheckVariableName(Trimmed.IsEmpty() ? NAME_None : FName(*Trimmed));
+	}
+}
+
+FText SParleyDialogueInlineGraphNode::GetNodeTitleText() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	return DialogueNode ? DialogueNode->GetNodeTitle(ENodeTitleType::ListView) : FText::FromString(TEXT("Dialogue Node"));
+}
+
+FSlateColor SParleyDialogueInlineGraphNode::GetTitleColor() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	return DialogueNode ? FSlateColor(DialogueNode->GetNodeTitleColor()) : FSlateColor(FLinearColor::Black);
+}
+
+FString SParleyDialogueInlineGraphNode::GetFactionTagFilter() const
+{
+	const UParleyFactionSettings* FactionSettings = GetDefault<UParleyFactionSettings>();
+	if (!FactionSettings || !FactionSettings->FactionDefinitionRootTag.IsValid())
+	{
+		return FString();
+	}
+
+	return FactionSettings->FactionDefinitionRootTag.ToString();
+}
+
+const FSlateBrush* SParleyDialogueInlineGraphNode::GetCharacterRoutePortraitBrush(const FGameplayTag SpeakerTag) const
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+	}
+
+	RefreshCharacterRoutePortraitBrush(SpeakerTag);
+	const FSlateBrush* CachedBrush = CharacterRoutePortraitBrushesBySpeaker.Find(SpeakerTag.GetTagName());
+	if (CachedBrush && CharacterRouteSpeakersWithPortrait.Contains(SpeakerTag.GetTagName()))
+	{
+		return CachedBrush;
+	}
+
+	return FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+}
+
+void SParleyDialogueInlineGraphNode::RefreshCharacterRoutePortraitBrush(const FGameplayTag SpeakerTag) const
+{
+	const FName TagName = SpeakerTag.IsValid() ? SpeakerTag.GetTagName() : NAME_None;
+	if (CharacterRoutePortraitBrushesBySpeaker.Contains(TagName))
+	{
+		return;
+	}
+
+	FSlateBrush PortraitBrush;
+	PortraitBrush.DrawAs = ESlateBrushDrawType::Image;
+	PortraitBrush.ImageSize = FVector2D(CharacterRoutePortraitSize, CharacterRoutePortraitSize);
+	bool bHasPortraitTexture = false;
+
+	const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag);
+	if (SpeakerRow)
+	{
+		UTexture2D* PortraitTexture = SpeakerRow->DefaultPortrait.PortraitTexture.LoadSynchronous();
+		if (!PortraitTexture)
+		{
+			for (const FSpeakerPortraitEntry& PortraitEntry : SpeakerRow->Portraits)
+			{
+				if (!PortraitEntry.PortraitTag.IsValid() || !PortraitEntry.PortraitTag.MatchesTagExact(SpeakerTag))
+				{
+					continue;
+				}
+
+				PortraitTexture = PortraitEntry.Portrait.PortraitTexture.LoadSynchronous();
+				if (PortraitTexture)
+				{
+					break;
+				}
+			}
+		}
+
+		if (PortraitTexture)
+		{
+			PortraitBrush.SetResourceObject(PortraitTexture);
+			bHasPortraitTexture = true;
+		}
+	}
+
+	if (bHasPortraitTexture)
+	{
+		CharacterRouteSpeakersWithPortrait.Add(TagName);
+	}
+
+	CharacterRoutePortraitBrushesBySpeaker.Add(TagName, MoveTemp(PortraitBrush));
+}
+
+FText SParleyDialogueInlineGraphNode::GetRelationshipDeltaText() const
+{
+	const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+	const FDialogueRelationshipMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>() : nullptr;
+	return FText::AsNumber(Data ? Data->DeltaPoints : 0.0f);
+}
+
+FText SParleyDialogueInlineGraphNode::GetFactionDeltaText() const
+{
+	const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+	const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+	return FText::AsNumber(Data ? Data->DeltaPopularity : 0.0f);
+}
+
+FText SParleyDialogueInlineGraphNode::GetFactionSpeakerDeltaText() const
+{
+	const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+	const FDialogueFactionMutationNodeData* Data = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>() : nullptr;
+	return FText::AsNumber(Data ? Data->DeltaSpeakerReputation : 0.0f);
+}
+
+TSharedRef<FGraphPanelNodeFactory> CreateARDialogueInlineGraphNodeFactory()
+{
+	return MakeShared<FParleyDialogueInlineGraphNodeFactory>();
+}
+

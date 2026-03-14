@@ -10,7 +10,7 @@
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARProjectileBase.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "AbilitySystemComponent.h"
 #include "Curves/CurveFloat.h"
 #include "Components/PrimitiveComponent.h"
@@ -338,14 +338,14 @@ bool AARInvaderGameState::ResolveUpgradeTagForDebugInject(const FString& TagToke
 	{
 		OutTable = nullptr;
 		const UARInvaderSpicyTrackSettings* Settings = GetSpicyTrackSettings();
-		UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
-		if (!Settings || !Settings->UpgradeDefinitionRootTag.IsValid() || !TagContentResolver)
+		UTagKeySubsystem* TagKey = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagKeySubsystem>() : nullptr;
+		if (!Settings || !Settings->UpgradeDefinitionRootTag.IsValid() || !TagKey)
 		{
 			return false;
 		}
 
 		FString LookupError;
-		return TagContentResolver->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, OutTable, LookupError) && OutTable;
+		return TagKey->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, OutTable, LookupError) && OutTable;
 	};
 
 	const auto ResolveByRowName = [](UDataTable* UpgradeTable, const FString& RowToken, FGameplayTag& OutTag) -> bool
@@ -578,7 +578,7 @@ void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args
 	const FString TagToken = Args.Num() > 0 ? Args[0] : FString();
 	if (!ResolveUpgradeTagForDebugInject(TagToken, UpgradeTag))
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: no valid upgrade tag resolved. Provide gameplay tag or row name, or ensure the TagContentResolver root for upgrades has rows."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice|Debug] InjectUpgrade failed: no valid upgrade tag resolved. Provide gameplay tag or row name, or ensure the TagKey root for upgrades has rows."));
 		return;
 	}
 
@@ -1073,10 +1073,10 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 		return false;
 	}
 
-	UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
-	if (!TagContentResolver)
+	UTagKeySubsystem* TagKey = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagKeySubsystem>() : nullptr;
+	if (!TagKey)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] TagContentResolverSubsystem unavailable while resolving upgrades."));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] TagKeySubsystem unavailable while resolving upgrades."));
 		bUpgradeDefinitionCacheValid = false;
 		CachedUpgradeDefinitionTable.Reset();
 		CachedUpgradeDefinitions.Reset();
@@ -1085,7 +1085,7 @@ bool AARInvaderGameState::BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvade
 
 	FString LookupError;
 	UDataTable* UpgradeTable = nullptr;
-	if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError))
+	if (!TagKey->TryResolveDataTableForRootTag(Settings->UpgradeDefinitionRootTag, UpgradeTable, LookupError))
 	{
 		UE_LOG(
 			ARLog,
@@ -2625,16 +2625,16 @@ float AARInvaderGameState::ResolveEnemyBaseSpiceValue(const AAREnemyBase* Enemy)
 		return FallbackValue;
 	}
 
-	UTagContentResolverSubsystem* TagContentResolver = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
-	if (!TagContentResolver)
+	UTagKeySubsystem* TagKey = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTagKeySubsystem>() : nullptr;
+	if (!TagKey)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: missing TagContentResolverSubsystem. Fallback=%.2f"), FallbackValue);
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: missing TagKeySubsystem. Fallback=%.2f"), FallbackValue);
 		return FallbackValue;
 	}
 
 	FInstancedStruct RowData;
 	FString LookupError;
-	if (!TagContentResolver->TryResolveRowForTag(EnemyIdentifier, RowData, LookupError))
+	if (!TagKey->TryResolveRowStructForTag(EnemyIdentifier, RowData, LookupError))
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] ResolveEnemyBaseSpiceValue fallback: lookup failed for '%s' (%s). Fallback=%.2f"),
 			*EnemyIdentifier.ToString(), *LookupError, FallbackValue);

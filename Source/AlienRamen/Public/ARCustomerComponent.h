@@ -11,6 +11,8 @@
 #include "ARCustomerComponent.generated.h"
 
 class AARPlayerController;
+class APlayerController;
+class UARCustomerOrderWidgetBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnCustomerOrderChanged, const FARRamenOrderRequest&, NewOrder);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnCustomerOrderResolved, const FARRamenServeResult&, ServeResult);
@@ -33,6 +35,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer")
 	bool HasActiveOrder() const { return bHasActiveOrder; }
 
+	// StateTree-friendly alias for gating interaction branches.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer")
+	bool HasOrderForInteraction() const { return bHasActiveOrder; }
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer")
 	const FARRamenOrderRequest& GetActiveOrder() const { return ActiveOrder; }
 
@@ -53,6 +59,18 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer")
 	FGameplayTag GetSpeakerTag() const;
+
+	// Optional per-customer UI style class used to create an order widget instance.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Customer|UI")
+	TSubclassOf<UARCustomerOrderWidgetBase> GetOrderWidgetClass() const { return OrderWidgetClass; }
+
+	// Creates the configured order widget class for a player and initializes it from this component.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Customer|UI")
+	UARCustomerOrderWidgetBase* CreateAndInitializeOrderWidget(APlayerController* OwningPlayer) const;
+
+	// Initializes an existing order widget instance from this component.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Customer|UI")
+	void InitializeOrderWidget(UARCustomerOrderWidgetBase* WidgetInstance) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Customer", meta = (BlueprintAuthorityOnly))
 	bool GenerateNextOrder();
@@ -123,8 +141,11 @@ private:
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Alien Ramen|Shop|Customer",
-		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from ARSpeakerComponent."))
+		meta = (AllowPrivateAccess = "true", Categories = "Parley.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from UParleySpeakerComponent."))
 	FGameplayTag SpeakerTagOverride;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer|UI", meta = (AllowPrivateAccess = "true", DisplayName = "Order Widget Class", ToolTip = "Optional widget class used for this customer's order display. Must derive from ARCustomerOrderWidgetBase."))
+	TSubclassOf<UARCustomerOrderWidgetBase> OrderWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", ToolTip = "If true, this customer auto-generates an order at BeginPlay on authority."))
 	bool bGenerateOrderOnBeginPlay = true;
@@ -153,7 +174,7 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_DoneOrdering, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true"))
 	bool bDoneOrdering = false;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker"))
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer", meta = (AllowPrivateAccess = "true", Categories = "Parley.Speaker"))
 	FGameplayTag CachedSpeakerTag;
 
 	UPROPERTY()
@@ -168,3 +189,4 @@ private:
 	UPROPERTY()
 	FGameplayTag LoveEmotionOverride;
 };
+

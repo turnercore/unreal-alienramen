@@ -1,11 +1,12 @@
 #include "ARCustomerComponent.h"
 
+#include "ARCustomerOrderWidgetBase.h"
 #include "ARCustomerSettings.h"
-#include "ARDialogueSubsystem.h"
-#include "AREmotionComponent.h"
-#include "AREmotionSettings.h"
+#include "ParleyDialogueSubsystem.h"
+#include "EmoComponent.h"
+#include "EmoSettings.h"
 #include "ARNPCCharacterBase.h"
-#include "ARSpeakerComponent.h"
+#include "ParleySpeakerComponent.h"
 #include "ARPlayerController.h"
 #include "ARShopAIController.h"
 #include "ARShopCarryComponent.h"
@@ -15,7 +16,8 @@
 #include "GameplayTagsManager.h"
 #include "Net/UnrealNetwork.h"
 #include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
+#include "Blueprint/UserWidget.h"
 
 namespace
 {
@@ -112,8 +114,32 @@ FGameplayTag UARCustomerComponent::GetSpeakerTag() const
 	}
 
 	const AActor* OwnerActor = GetOwner();
-	const UARSpeakerComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UARSpeakerComponent>() : nullptr;
+	const UParleySpeakerComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UParleySpeakerComponent>() : nullptr;
 	return TalkComponent ? TalkComponent->GetSpeakerTag() : FGameplayTag();
+}
+
+UARCustomerOrderWidgetBase* UARCustomerComponent::CreateAndInitializeOrderWidget(APlayerController* OwningPlayer) const
+{
+	if (!OwningPlayer || !OrderWidgetClass)
+	{
+		return nullptr;
+	}
+
+	UARCustomerOrderWidgetBase* Widget = CreateWidget<UARCustomerOrderWidgetBase>(OwningPlayer, OrderWidgetClass);
+	if (Widget)
+	{
+		Widget->InitializeFromCustomer(const_cast<UARCustomerComponent*>(this));
+	}
+
+	return Widget;
+}
+
+void UARCustomerComponent::InitializeOrderWidget(UARCustomerOrderWidgetBase* WidgetInstance) const
+{
+	if (WidgetInstance)
+	{
+		WidgetInstance->InitializeFromCustomer(const_cast<UARCustomerComponent*>(this));
+	}
 }
 
 int32 UARCustomerComponent::GetRemainingOrdersToGenerate() const
@@ -148,9 +174,21 @@ bool UARCustomerComponent::GenerateNextOrder()
 	int32 RelationshipLevel = 0;
 	if (UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UARDialogueSubsystem>())
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeaker(CachedSpeakerTag);
+			const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Player")), false);
+			if (PlayerSpeakerTag.IsValid())
+			{
+				RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeakerPair(PlayerSpeakerTag, CachedSpeakerTag);
+			}
+			else
+			{
+				const FGameplayTag BrotherTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+				const FGameplayTag SisterTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+				RelationshipLevel = FMath::Max(
+					DialogueSubsystem->GetRelationshipLevelForSpeakerPair(BrotherTag, CachedSpeakerTag),
+					DialogueSubsystem->GetRelationshipLevelForSpeakerPair(SisterTag, CachedSpeakerTag));
+			}
 		}
 	}
 
@@ -498,7 +536,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 	}
 
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UTagContentResolverSubsystem* Lookup = GI ? GI->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Lookup = GI ? GI->GetSubsystem<UTagKeySubsystem>() : nullptr;
 	if (!Lookup)
 	{
 		return false;
@@ -506,7 +544,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 
 	FInstancedStruct RowData;
 	FString Error;
-	if (Lookup->TryResolveRowForTag(SpeakerTag, RowData, Error))
+	if (Lookup->TryResolveRowStructForTag(SpeakerTag, RowData, Error))
 	{
 		if (const FARCustomerDefinitionRow* Row = RowData.GetPtr<FARCustomerDefinitionRow>())
 		{
@@ -527,7 +565,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 		return false;
 	}
 
-	if (!Lookup->TryResolveRowForTag(CandidateTag, RowData, Error))
+	if (!Lookup->TryResolveRowStructForTag(CandidateTag, RowData, Error))
 	{
 		return false;
 	}
@@ -641,7 +679,7 @@ void UARCustomerComponent::RefreshOrderingEmotionState() const
 		return;
 	}
 
-	UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>();
+	UEmoComponent* EmotionComponent = OwnerActor->FindComponentByClass<UEmoComponent>();
 	if (!EmotionComponent)
 	{
 		return;
@@ -653,7 +691,7 @@ void UARCustomerComponent::RefreshOrderingEmotionState() const
 	FGameplayTag ActiveOrderEmotionTag = CustomerSettings ? CustomerSettings->ActiveOrderEmotionTag : FGameplayTag();
 	if (!ActiveOrderEmotionTag.IsValid())
 	{
-		const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+		const UEmoSettings* EmotionSettings = GetDefault<UEmoSettings>();
 		ActiveOrderEmotionTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
 	}
 
@@ -675,7 +713,7 @@ void UARCustomerComponent::ApplyOrderingReactionEmotion(const FGameplayTag& Reac
 		return;
 	}
 
-	UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>();
+	UEmoComponent* EmotionComponent = OwnerActor->FindComponentByClass<UEmoComponent>();
 	if (!EmotionComponent)
 	{
 		return;
@@ -690,7 +728,7 @@ void UARCustomerComponent::ApplyOrderingReactionEmotion(const FGameplayTag& Reac
 bool UARCustomerComponent::ApplyServeOutcomeToDialogue(const FARRamenServeResult& ServeResult) const
 {
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UARDialogueSubsystem* DialogueSubsystem = GI ? GI->GetSubsystem<UARDialogueSubsystem>() : nullptr;
+	UParleyDialogueSubsystem* DialogueSubsystem = GI ? GI->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
 	if (!DialogueSubsystem)
 	{
 		return false;

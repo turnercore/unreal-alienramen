@@ -9,6 +9,7 @@ Paths:
 - Shared track/full-blast state is replicated from GameState.
 - Per-player runtime spicy metadata (color/combo/activated-upgrade ledger) lives on `AARPlayerStateBase`.
 - System is runtime-only for Invader and is not persisted in save/hydration structs.
+- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via ship-row `InvaderPawnClass` with `DummyPawnClass` fallback.
 
 ## Runtime Ownership Matrix
 | State | Class | Authority | Replication | Notes |
@@ -58,7 +59,7 @@ Not yet implemented (open hardening work):
 - spice-per-tier and max full-blast tier,
 - skip scrap rewards per tier,
 - level-roll offset weights (`-3..+3`),
-- upgrade definition root tag (`Progression.InvaderUpgrade`) resolved through `UTagContentResolverSubsystem`,
+- upgrade definition root tag (`Progression.InvaderUpgrade`) resolved through `UTagKeySubsystem`,
 - full-blast menu widget class (`FullBlastMenuWidgetClass`),
 - enemy projectile clear tag,
 - full-blast gameplay cue tag.

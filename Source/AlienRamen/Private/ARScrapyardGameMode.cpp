@@ -13,7 +13,7 @@
 #include "GameFramework/Controller.h"
 #include "Kismet/GameplayStatics.h"
 #include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "UObject/UnrealType.h"
 
 namespace
@@ -432,7 +432,7 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 	}
 
 	UGameInstance* GameInstance = GetGameInstance();
-	UTagContentResolverSubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagKeySubsystem>() : nullptr;
 	if (!Resolver)
 	{
 		return false;
@@ -440,7 +440,7 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 
 	FInstancedStruct ShipRow;
 	FString ResolveError;
-	if (!Resolver->TryResolveRowForTag(ShipTag, ShipRow, ResolveError))
+	if (!Resolver->TryResolveRowStructForTag(ShipTag, ShipRow, ResolveError))
 	{
 		UE_LOG(
 			ARLog,
@@ -458,7 +458,23 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 		return false;
 	}
 
-	FProperty* PawnClassProperty = FindPropertyByNamePrefix(StructType, TEXT("ScrapyardPawnClass"));
+	static const TCHAR* PawnClassPrefixes[] = {
+		TEXT("ScrapyardPawnClass"),
+		TEXT("DummyPawnClass"),
+		TEXT("PawnClass"),
+		TEXT("PlayerPawnClass")
+	};
+
+	FProperty* PawnClassProperty = nullptr;
+	for (const TCHAR* Prefix : PawnClassPrefixes)
+	{
+		PawnClassProperty = FindPropertyByNamePrefix(StructType, Prefix);
+		if (PawnClassProperty)
+		{
+			break;
+		}
+	}
+
 	if (!PawnClassProperty)
 	{
 		return false;

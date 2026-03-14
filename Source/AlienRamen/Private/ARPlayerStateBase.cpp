@@ -69,6 +69,18 @@ namespace
 		Added.Identity = Identity;
 		return &Added;
 	}
+
+	static UARSaveGame* GetCurrentSaveGame(AARPlayerStateBase* PlayerState)
+	{
+		if (!PlayerState)
+		{
+			return nullptr;
+		}
+
+		UGameInstance* GameInstance = PlayerState->GetGameInstance();
+		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+		return SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	}
 }
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -76,6 +88,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
+	DOREPLIFETIME(AARPlayerStateBase, PlayerSlotTag);
 	DOREPLIFETIME(AARPlayerStateBase, PlayerSlot);
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
 	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterTag);
@@ -177,16 +190,129 @@ int32 AARPlayerStateBase::GetHUDPlayerSlotIndex() const
 
 void AARPlayerStateBase::SetPlayerSlot(EARPlayerSlot NewSlot)
 {
-	if (!HasAuthority() || PlayerSlot == NewSlot)
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetPlayerSlot_Internal(NewSlot);
+}
+
+void AARPlayerStateBase::SetPlayerSlotTag(FGameplayTag NewSlotTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetPlayerSlotTag_Internal(NewSlotTag);
+}
+
+void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, const bool bBroadcastSlotChanged)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const EARPlayerSlot ResolvedSlot = ARPlayer::GetPlayerSlotForTag(NewSlotTag);
+	const FGameplayTag ResolvedTag = ARPlayer::GetPlayerSlotTag(ResolvedSlot);
+	if (PlayerSlot == ResolvedSlot && PlayerSlotTag.MatchesTagExact(ResolvedTag))
+	{
+		return;
+	}
+
+	// Hard uniqueness guard: reject duplicate concrete slot assignment even if caller bypasses GameMode normalization.
+	if (ResolvedSlot != EARPlayerSlot::Unknown)
+	{
+		const AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
+		if (GS)
+		{
+			for (APlayerState* PS : GS->PlayerArray)
+			{
+				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
+				if (!OtherPlayer || OtherPlayer == this)
+				{
+					continue;
+				}
+
+				if (OtherPlayer->GetPlayerSlot() == ResolvedSlot
+					|| OtherPlayer->GetPlayerSlotTag().MatchesTagExact(ResolvedTag))
+				{
+					UE_LOG(
+						ARLog,
+						Warning,
+						TEXT("[PlayerState] Rejected duplicate slot assignment for '%s': requested %s is already used by '%s'."),
+						*GetNameSafe(this),
+						*ResolvedTag.ToString(),
+						*GetNameSafe(OtherPlayer));
+					return;
+				}
+			}
+		}
+	}
+
+	const EARPlayerSlot OldSlot = PlayerSlot;
+	PlayerSlot = ResolvedSlot;
+	PlayerSlotTag = ResolvedTag;
+
+	if (bBroadcastSlotChanged && OldSlot != PlayerSlot)
+	{
+		OnRep_PlayerSlot(OldSlot);
+	}
+	else
+	{
+		EvaluateTravelReadinessAndBroadcast();
+	}
+
+	ForceNetUpdate();
+}
+
+void AARPlayerStateBase::SetPlayerSlot_Internal(const EARPlayerSlot NewSlot, const bool bBroadcastSlotChanged)
+{
+	SetPlayerSlotTag_Internal(ARPlayer::GetPlayerSlotTag(NewSlot), bBroadcastSlotChanged);
+}
+
+void AARPlayerStateBase::SyncPlayerSlotMirrorsFromTag(const bool bBroadcastSlotChanged)
+{
+	const EARPlayerSlot ResolvedSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
+	if (PlayerSlot == ResolvedSlot)
 	{
 		return;
 	}
 
 	const EARPlayerSlot OldSlot = PlayerSlot;
-	PlayerSlot = NewSlot;
-	OnRep_PlayerSlot(OldSlot);
-	ForceNetUpdate();
-	EvaluateTravelReadinessAndBroadcast();
+	PlayerSlot = ResolvedSlot;
+
+	if (bBroadcastSlotChanged && OldSlot != PlayerSlot)
+	{
+		OnRep_PlayerSlot(OldSlot);
+	}
+	else
+	{
+		EvaluateTravelReadinessAndBroadcast();
+	}
+}
+
+void AARPlayerStateBase::SyncPlayerSlotMirrorsFromEnum(const bool bBroadcastSlotChanged)
+{
+	const FGameplayTag ResolvedTag = ARPlayer::GetPlayerSlotTag(PlayerSlot);
+	if (PlayerSlotTag.MatchesTagExact(ResolvedTag))
+	{
+		return;
+	}
+
+	const EARPlayerSlot OldSlot = PlayerSlot;
+	PlayerSlotTag = ResolvedTag;
+
+	if (bBroadcastSlotChanged && OldSlot != PlayerSlot)
+	{
+		OnRep_PlayerSlot(OldSlot);
+	}
+	else
+	{
+		EvaluateTravelReadinessAndBroadcast();
+	}
 }
 
 void AARPlayerStateBase::SetCharacterPicked(EARCharacterChoice NewCharacter)
@@ -265,14 +391,14 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	SetCurrentCharacterTag_Internal(PlayerData.ResolveCurrentCharacterTag(), false);
 
 	FGameplayTagContainer ProjectedLoadout;
-	int32 CharacterIndex = INDEX_NONE;
-	if (const FARPlayerCharacterSaveData* CharacterState = PlayerData.FindCharacterStateData(CurrentCharacterTag, CharacterIndex))
+	if (UARSaveGame* SaveGame = GetCurrentSaveGame(this))
 	{
-		ProjectedLoadout = CharacterState->LoadoutTags;
-	}
-	else
-	{
-		ProjectedLoadout = PlayerData.LoadoutTags;
+		FARCharacterSaveData CharacterState;
+		int32 CharacterIndex = INDEX_NONE;
+		if (SaveGame->FindCharacterStateDataByTag(CurrentCharacterTag, CharacterState, CharacterIndex))
+		{
+			ProjectedLoadout = CharacterState.LoadoutTags;
+		}
 	}
 
 	SetLoadoutTags_Internal(ProjectedLoadout, false);
@@ -299,7 +425,7 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 	}
 
 	const EARCharacterChoice DefaultCharacter =
-		(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		(ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
 	SetCurrentCharacterTag_Internal(ARPlayer::GetCharacterTagForChoice(DefaultCharacter), false);
 	ResetInvaderCombo();
 	ClearActivatedInvaderUpgrades();
@@ -758,6 +884,15 @@ void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (PlayerSlotTag.IsValid())
+	{
+		SyncPlayerSlotMirrorsFromTag(false);
+	}
+	else if (PlayerSlot != EARPlayerSlot::Unknown)
+	{
+		SyncPlayerSlotMirrorsFromEnum(false);
+	}
+
 	if (HasAuthority())
 	{
 		if (CurrentCharacterTag.IsValid())
@@ -787,9 +922,21 @@ void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void AARPlayerStateBase::OnRep_PlayerSlotTag(FGameplayTag OldSlotTag)
+{
+	(void)OldSlotTag;
+	SyncPlayerSlotMirrorsFromTag(true);
+}
+
 void AARPlayerStateBase::OnRep_PlayerSlot(EARPlayerSlot OldSlot)
 {
-	OnPlayerSlotChanged.Broadcast(PlayerSlot, OldSlot);
+	SyncPlayerSlotMirrorsFromEnum(false);
+
+	if (OldSlot != PlayerSlot)
+	{
+		OnPlayerSlotChanged.Broadcast(PlayerSlot, OldSlot);
+	}
+
 	EvaluateTravelReadinessAndBroadcast();
 }
 
@@ -896,7 +1043,7 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		return;
 	}
 
-	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(NewCharacterTag, PlayerSlot);
+	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(NewCharacterTag, ARPlayer::GetPlayerSlotForTag(PlayerSlotTag));
 	const EARCharacterChoice NewCharacter = ARPlayer::GetCharacterChoiceForTag(NormalizedTag);
 	if (CurrentCharacterTag == NormalizedTag && CharacterPicked == NewCharacter)
 	{
@@ -904,30 +1051,35 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 	}
 
 	FGameplayTagContainer NextProjectedLoadout = LoadoutTags;
+	UARSaveGame* SaveGame = GetCurrentSaveGame(this);
+	if (SaveGame && CurrentCharacterTag.IsValid())
+	{
+		FARCharacterSaveData& CurrentCharacterState = SaveGame->FindOrAddCharacterStateData(CurrentCharacterTag);
+		CurrentCharacterState.LoadoutTags = LoadoutTags;
+	}
+
 	if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
 	{
 		PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
 		PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
 
-		if (CurrentCharacterTag.IsValid())
-		{
-			FARPlayerCharacterSaveData& CurrentCharacterState = PlayerSaveData->FindOrAddCharacterStateData(CurrentCharacterTag);
-			CurrentCharacterState.LoadoutTags = LoadoutTags;
-		}
-
 		PlayerSaveData->CurrentCharacterTag = NormalizedTag;
 		PlayerSaveData->CharacterPicked = NewCharacter;
+		PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
+	}
+
+	if (SaveGame)
+	{
+		FARCharacterSaveData NextCharacterState;
 		int32 NextCharacterIndex = INDEX_NONE;
-		if (const FARPlayerCharacterSaveData* NextCharacterState = PlayerSaveData->FindCharacterStateData(NormalizedTag, NextCharacterIndex))
+		if (SaveGame->FindCharacterStateDataByTag(NormalizedTag, NextCharacterState, NextCharacterIndex))
 		{
-			NextProjectedLoadout = NextCharacterState->LoadoutTags;
+			NextProjectedLoadout = NextCharacterState.LoadoutTags;
 		}
 		else
 		{
 			NextProjectedLoadout.Reset();
 		}
-
-		PlayerSaveData->SyncCompatibilityLoadoutFromCurrentCharacter();
 	}
 
 	const EARCharacterChoice OldCharacter = CharacterPicked;
@@ -1066,7 +1218,7 @@ EARAffinityColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharact
 		return EARAffinityColor::Red;
 	default:
 		// Keep a deterministic non-white baseline even when character is not yet assigned.
-		return (PlayerSlot == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
+		return (ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
 	}
 }
 
@@ -1193,7 +1345,7 @@ void AARPlayerStateBase::SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled)
 		PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
 		PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
 		PlayerSaveData->CharacterPicked = CharacterPicked;
-		PlayerSaveData->SyncCompatibilityLoadoutFromCurrentCharacter();
+		PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 	}
 }
 
@@ -1210,7 +1362,7 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		return false;
 	}
 
-	if (PlayerSlot == EARPlayerSlot::Unknown)
+	if (ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) == EARPlayerSlot::Unknown)
 	{
 		bool bP1Taken = false;
 		bool bP2Taken = false;
@@ -1242,6 +1394,7 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		SetPlayerSlot(ResolvedSlot);
 	}
 
+	const EARPlayerSlot EffectiveSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
 	if (CharacterPicked == EARCharacterChoice::None)
 	{
 		const auto IsCharacterTakenByOther = [this, GS](EARCharacterChoice Choice) -> bool
@@ -1269,7 +1422,7 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		};
 
 		const EARCharacterChoice PreferredChoice =
-			(PlayerSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+			(EffectiveSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
 		const EARCharacterChoice AlternateChoice =
 			(PreferredChoice == EARCharacterChoice::Brother) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
 
@@ -1317,23 +1470,24 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
-	// Mirror the projected runtime loadout into the active player-character save row.
+	// Mirror the projected runtime loadout into the canonical character-owned save row.
 	if (UGameInstance* GI = GetGameInstance())
 	{
 		if (UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>())
 		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame(); SaveGame && CurrentCharacterTag.IsValid())
+			{
+				FARCharacterSaveData& ActiveCharacterState = SaveGame->FindOrAddCharacterStateData(CurrentCharacterTag);
+				ActiveCharacterState.LoadoutTags = LoadoutTags;
+			}
+
 			if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
 			{
 				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
 				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
 				PlayerSaveData->CharacterPicked = CharacterPicked;
 				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
-				if (CurrentCharacterTag.IsValid())
-				{
-					FARPlayerCharacterSaveData& ActiveCharacterState = PlayerSaveData->FindOrAddCharacterStateData(CurrentCharacterTag);
-					ActiveCharacterState.LoadoutTags = LoadoutTags;
-				}
-				PlayerSaveData->SyncCompatibilityLoadoutFromCurrentCharacter();
+				PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 			}
 
 			if (bMarkSaveDirty)
@@ -1464,7 +1618,7 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 		IStructSerializable::Execute_ApplyStateFromStruct(TargetPS, CurrentState);
 	}
 
-	TargetPS->SetPlayerSlot(PlayerSlot);
+	TargetPS->SetPlayerSlotTag(PlayerSlotTag);
 	TargetPS->SetLoadoutTags(LoadoutTags);
 	TargetPS->SetCharacterPicked(CharacterPicked);
 	TargetPS->SetDisplayNameValue(DisplayName);
@@ -1996,7 +2150,9 @@ void AARPlayerStateBase::SetStrength_Internal(const float NewStrength)
 
 bool AARPlayerStateBase::IsTravelReady() const
 {
-	return PlayerSlot != EARPlayerSlot::Unknown && CharacterPicked != EARCharacterChoice::None && bIsReady;
+	return ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) != EARPlayerSlot::Unknown
+		&& CharacterPicked != EARCharacterChoice::None
+		&& bIsReady;
 }
 
 void AARPlayerStateBase::EvaluateTravelReadinessAndBroadcast()

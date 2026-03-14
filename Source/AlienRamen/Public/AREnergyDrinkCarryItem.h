@@ -10,6 +10,7 @@
 #include "AREnergyDrinkCarryItem.generated.h"
 
 class AARShopPlayerController;
+class AARPlayerController;
 
 UCLASS(Blueprintable)
 class ALIENRAMEN_API AAREnergyDrinkCarryItem : public AARShopCarryItemBase
@@ -27,6 +28,7 @@ public:
 	bool TryConsumeFromController(AARShopPlayerController* ShopController);
 
 protected:
+	virtual bool UseSecondaryByController_Implementation(AARPlayerController* UsingController) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink")

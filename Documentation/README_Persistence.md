@@ -20,7 +20,7 @@ For subsystem detail, also see:
 
 ## Ownership Model
 
-Persistence is split into four buckets. The key rule is to choose the owner by what the data follows.
+Persistence is split into three buckets. The key rule is to choose the owner by what the data follows.
 
 ### 1. Shared world state
 
@@ -32,7 +32,7 @@ Use this for:
 - economy (`Money`, `Scrap`, `Meat`, `Cycles`)
 - shared progression/unlocks
 - faction state
-- shared dialogue relationship state
+- shared directed dialogue relationship matrix (`SourceSpeakerTag -> TargetSpeakerTag`)
 - shared run-buff storage/queue/active payloads
 - loose shop carryable reload snapshots
 
@@ -61,27 +61,18 @@ Owner:
 
 Use this for:
 - character dialogue history / completion / choice memory
+- character-owned loadouts
 - character-specific inventory/equipment state
 - shop-only character world restore snapshot
 
 If the data should stay with the character regardless of which player controls them, it belongs here.
 
-### 4. Player-character-owned state
-
-Owner:
-- `UARSaveGame::PlayerStates[].CharacterStates[]`
-- keyed by player identity + character gameplay tag
-- runtime mirror/projection: active `AARPlayerStateBase`
-
-Use this for:
-- per-player-per-character loadouts
-
-If the data is character-specific but still belongs to the player profile, it belongs here.
-
 ## Canonical Identity Rules
 
 - Character identity is canonical as a gameplay tag.
 - `EARCharacterChoice` is a compatibility mirror for existing Blueprint logic.
+- Player slot identity is canonical as `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`).
+- `EARPlayerSlot` is a compatibility mirror that stays synchronized with `PlayerSlotTag`.
 - Runtime control still projects through `AARPlayerStateBase`.
 - New logic should prefer `CurrentCharacterTag` over `CharacterPicked`.
 
@@ -104,6 +95,9 @@ Important expectations:
 - save is authority-only
 - canonical saves are blocked during active dialogue
 - revisioned saves use `<SlotBase>__<Revision>`
+- save-facing `AARGameStateBase` mutations mark the canonical save dirty when they change live authoritative state, so quit/leave autosaves can persist shop/shared-economy changes without each gameplay system hand-marking dirtiness
+- Parley/ParleyFaction runtime is save-agnostic; `UARParleySaveBridge` listens to plugin events and marks dirty (no forced autosave).
+- Important conversation completion should only mark save dirty through the bridge policy; it does not directly force autosave from Parley.
 
 ### Load flow
 
@@ -143,8 +137,8 @@ Order:
 1. resolve player row by identity, with slot fallback only for local-only identities
 2. apply player-owned fields to `AARPlayerStateBase`
 3. resolve active `CurrentCharacterTag`
-4. project character-owned and player-character-owned state onto runtime `PlayerState`
-5. keep Blueprint compatibility mirrors synchronized
+4. project character-owned state onto runtime `PlayerState`
+5. keep character identity fields synchronized
 
 ### Seamless travel
 
@@ -153,6 +147,8 @@ Primary runtime carry path:
 
 Expectation:
 - seamless travel keeps the active projected runtime state alive without requiring disk save/load
+- authoritative mode join/travel normalization ensures `CurrentCharacterTag` remains valid (`Brother`/`Sister`) and resolves non-taken fallback selection when a tag is missing/invalid
+- authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
 
 ## Travel and Persistence
 
@@ -168,6 +164,10 @@ What happens:
 2. shared `GameState` travel overlay is captured
 3. optional disk save runs when the mode is configured to save on exit
 4. travel starts
+
+Additional durability rules:
+- first authoritative entry into `Mode.Shop` persists an immediate canonical save when the current save still points at a different mode/map (for example fresh new-game start or shop re-entry after non-shop save state)
+- `Scrapyard -> Transition -> Shop` now commits a canonical save immediately after finalization and before travel so rewards/economy survive transition-map crashes or immediate post-run host quits
 
 ### Save-load gameplay entry
 
@@ -248,7 +248,6 @@ Do not use shared `ProgressionTags` for those.
 - save-owned shared state
 - player-owned state keyed by identity
 - character-owned state keyed by character tag
-- player-character loadouts
 
 ### Things that do not persist unless explicitly modeled
 
@@ -277,4 +276,3 @@ If ownership is unclear, ask:
 - does this follow the save/world?
 - the player identity?
 - the character identity?
-- the player-character pairing?

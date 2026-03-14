@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
+	/** C++ helper that bypasses save throttling for critical durability points such as post-finalization handoffs. */
+	bool SaveCurrentGameUnthrottled(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
+
 	/** Loads a save by base name + revision (RevisionOrLatest=-1 uses most recent). Leaves save in memory for later hydrate/travel. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult, bool bUseDebugSaves = false);
@@ -259,6 +262,7 @@ private:
 	UARSaveGame* LoadSaveObjectWithRollback(FName SlotBaseName, int32 RevisionOrLatest, int32& OutResolvedSlotNumber, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
 	void PruneOldRevisions(FName SlotBaseName, int32 LatestRevision) const;
 	void GatherRuntimeData(UARSaveGame* SaveObject);
+	bool SaveCurrentGameInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, bool bIgnoreThrottle);
 	void BroadcastSaveFailure(const FARSaveResult& Result);
 	void BroadcastLoadFailure(const FARSaveResult& Result);
 	void ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveResult& LoadResult);

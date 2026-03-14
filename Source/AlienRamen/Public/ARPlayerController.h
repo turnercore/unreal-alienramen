@@ -8,7 +8,9 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
-#include "ARDialogueTypes.h"
+#include "ARInteractionTypes.h"
+#include "ParleyDialogueTypes.h"
+#include "ParleyPlayerControllerInterface.h"
 #include "ARTransitionTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "TimerManager.h"
@@ -16,7 +18,7 @@
 
 class UARAbilitySet;
 class UInputMappingContext;
-class UARDialogueWidgetBase;
+class UParleyDialogueWidgetBase;
 class UUserWidget;
 class AARNPCCharacterBase;
 class AARMeatStorageBoxActor;
@@ -56,15 +58,36 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	NewChoiceIndex,
 	int32,
 	OldChoiceIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FAROnInteractionActionCueSignature,
+	EARInteractionActionCue,
+	ActionCue,
+	AActor*,
+	ActionTarget);
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
-class ALIENRAMEN_API AARPlayerController : public APlayerController
+class ALIENRAMEN_API AARPlayerController : public APlayerController, public IParleyPlayerControllerInterface
 {
 	GENERATED_BODY()
 
 public:
 	AARPlayerController();
+
+	virtual FGameplayTag GetPlayerSlotTag() const override;
+	virtual bool IsDialogueAutoAdvanceEnabled() const override;
+	virtual FGameplayTag GetCharacterTag() const override;
+	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
+	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
+	virtual void RequestInteractWithActor(AActor* Actor) override;
+	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) override;
+	virtual void RequestAdvanceDialogueInput() override;
+	virtual void RequestSubmitDialogueChoiceInput(FGuid ChoiceBranchId) override;
+	virtual void RequestSetDialogueEavesdropInput(bool bEnable, FGameplayTag TargetSlotTag) override;
+	virtual void RequestSetDialogueEavesdropOtherPlayerInput(bool bEnable) override;
+	virtual void RequestToggleDialogueAutoAdvanceInput() override;
+	virtual void RequestAdvanceOrSubmitDialogueInput() override;
+	virtual void RequestDialogueChoiceDeltaInput(int32 Delta) override;
 
 	// Common abilities/effects every pawn gets when possessed (server grants via pawn).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Abilities")
@@ -129,6 +152,42 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
+	/** Requests a strength-scaled kick impulse on a target actor in interaction range. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void RequestKickActor(AActor* TargetActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestKickActor(AActor* TargetActor);
+
+	/** Sets the current primary interactable being actively interacted with (hold/ongoing flows). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void SetActiveInteractable(AActor* InteractableActor);
+
+	/** Sets the current secondary interactable being actively interacted with (hold/ongoing flows). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void SetActiveSecondaryInteractable(AActor* InteractableActor);
+
+	/** Clears active primary interactable and optionally notifies target as out-of-range interrupted. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void ClearActiveInteractable(bool bNotifyOutOfRange = false);
+
+	/** Clears active secondary interactable and optionally notifies target as out-of-range interrupted. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void ClearActiveSecondaryInteractable(bool bNotifyOutOfRange = false);
+
+	/** Shared interaction latch for input handlers to bail when already in an interaction flow. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void SetIsInteracting(bool bInIsInteracting);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
+	bool GetIsInteracting() const { return bIsInteracting; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
+	AActor* GetActiveInteractable() const { return ActiveInteractable; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
+	AActor* GetActiveSecondaryInteractable() const { return ActiveSecondaryInteractable; }
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
 	void RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor);
 
@@ -178,11 +237,11 @@ public:
 
 	// Runtime dialogue-view cache for late-bound widgets/UI.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool GetCachedDialogueView(FDialogueClientView& OutView) const;
+	bool GetCachedDialogueView(FDialogueClientView& OutView) const override;
 
 	// Queries current local dialogue view directly from subsystem.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool QueryLocalDialogueView(FDialogueClientView& OutView) const;
+	bool QueryLocalDialogueView(FDialogueClientView& OutView) const override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool HasCachedDialogueView() const { return bHasCachedDialogueView; }
@@ -208,6 +267,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Input")
 	FAROnDialogueChoiceSelectionChangedSignature OnDialogueChoiceSelectionChanged;
 
+	// Animation/UI cue stream for performed interaction actions (throw/consume/kick/slap/etc).
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Interaction|Animation")
+	FAROnInteractionActionCueSignature OnInteractionActionCue;
+
+	// Emits an interaction action cue for local animation/UI listeners.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction|Animation")
+	void NotifyInteractionActionCue(EARInteractionActionCue ActionCue, AActor* ActionTarget = nullptr);
+
 	// Optional auto-created dialogue widget for local controllers.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
 	void EnsureDialogueWidget();
@@ -216,7 +283,7 @@ public:
 	void RemoveDialogueWidget();
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI")
-	UARDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
+	UParleyDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
 
 	// Initializes a custom default cursor widget on local controllers only.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
@@ -310,9 +377,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI")
 	bool bAutoCreateDialogueWidget = false;
 
-	// Widget class for dialogue presentation/input (typically deriving from UARDialogueWidgetBase).
+	// Widget class for dialogue presentation/input (typically deriving from UParleyDialogueWidgetBase).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
-	TSubclassOf<UARDialogueWidgetBase> DialogueWidgetClass;
+	TSubclassOf<UParleyDialogueWidgetBase> DialogueWidgetClass;
 
 	// Viewport z-order for auto-created dialogue widget.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
@@ -362,10 +429,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction")
 	float ServerInteractionMaxDistance = 300.0f;
 
+	/** Tick rate used to validate active hold interactions and interrupt out-of-range interactables. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (ClampMin = "0.02", UIMin = "0.02"))
+	float ActiveInteractionRangeCheckInterval = 0.10f;
+
+	/** Target height delta above pawn origin (cm) at/above which kick-style actions emit Slap cue instead of Kick. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Interaction|Animation", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SlapCueMinHeightDeltaCm = 80.0f;
+
 	// Shared server-side validation helper for controller interaction RPCs.
 	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 
 private:
+	bool IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, bool bLogFailures) const;
+	void TickActiveInteractionRangeValidation(float DeltaTime);
+	void NotifyInteractableOutOfRange(AActor* InteractableActor, bool bWasSecondaryInteraction);
+	void RefreshInteractionGateFromActiveTargets();
 	void LeaveSessionInternal();
 	void TryStartTravelInternal(const FString& URL, const FString& Options, bool bSkipReadyChecks, bool bAbsolute, bool bSkipGameNotify, bool bUseOpenLevelInPIE, EARTravelRoutePolicy RoutePolicy);
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
@@ -395,6 +474,18 @@ private:
 
 	UPROPERTY(Transient)
 	bool bRequestedInitialCanonicalSaveSync = false;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AActor> ActiveInteractable = nullptr;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AActor> ActiveSecondaryInteractable = nullptr;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Interaction", meta = (AllowPrivateAccess = "true"))
+	bool bIsInteracting = false;
+
+	UPROPERTY(Transient)
+	float ActiveInteractionRangeCheckAccumulator = 0.0f;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (AllowPrivateAccess = "true"))
 	FDialogueClientView CachedDialogueView;
@@ -444,7 +535,7 @@ private:
 	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UARDialogueWidgetBase> DialogueWidget = nullptr;
+	TObjectPtr<UParleyDialogueWidgetBase> DialogueWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input", meta = (AllowPrivateAccess = "true"))
 	int32 SelectedDialogueChoiceIndex = INDEX_NONE;

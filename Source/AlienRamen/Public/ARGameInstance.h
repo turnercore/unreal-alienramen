@@ -10,6 +10,8 @@
 
 class UARSaveSubsystem;
 class UARSessionSubsystem;
+class UARParleySaveBridge;
+class UARFactionVotingSubsystem;
 class FOnlineSessionSettings;
 class FOnlineSessionSearchResult;
 class IConsoleObject;
@@ -31,6 +33,10 @@ public:
 	/** Accessor for the session subsystem (authority for session join/host flows). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
 	UARSessionSubsystem* GetARSessionSubsystem() const;
+
+	/** Accessor for the AR-owned faction voting subsystem (election/vote runtime). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
+	UARFactionVotingSubsystem* GetARFactionVotingSubsystem() const;
 
 	// ---- Network compatibility helpers ----
 
@@ -68,6 +74,9 @@ private:
 	void UnregisterDebugConsoleCommands();
 	void HandleConsoleArDebug(const TArray<FString>& Args);
 	IConsoleObject* CmdArDebug = nullptr;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UARParleySaveBridge> ParleySaveBridge;
 
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Game Instance")
