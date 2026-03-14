@@ -113,6 +113,23 @@ namespace
 			&& TransitionContext.Reason == EARTransitionReason::SaveLoadEntry
 			&& TransitionContext.bFreshLoadEntry;
 	}
+
+	static FGameplayTag ResolveCharacterTagForController(const AController* Controller)
+	{
+		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		if (!PlayerState)
+		{
+			return FGameplayTag();
+		}
+
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
+		if (CharacterTag.IsValid())
+		{
+			return CharacterTag;
+		}
+
+		return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
+	}
 }
 
 AARShopGameMode::AARShopGameMode()
@@ -202,6 +219,37 @@ void AARShopGameMode::RestartPlayer(AController* NewPlayer)
 	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
 	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
 	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
+}
+
+UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	const FGameplayTag CharacterTag = ResolveCharacterTagForController(InController);
+	if (CharacterTag.IsValid())
+	{
+		if (const TSubclassOf<APawn>* PawnClassByTag = ShopPawnClassByCharacterTag.Find(CharacterTag))
+		{
+			if (*PawnClassByTag)
+			{
+				return PawnClassByTag->Get();
+			}
+		}
+
+		// Allow parent-tag keyed entries (for example Parley.Speaker.Brother root variants).
+		for (const TPair<FGameplayTag, TSubclassOf<APawn>>& Entry : ShopPawnClassByCharacterTag)
+		{
+			if (Entry.Key.IsValid() && CharacterTag.MatchesTag(Entry.Key) && Entry.Value)
+			{
+				return Entry.Value.Get();
+			}
+		}
+	}
+
+	if (FallbackShopPawnClass)
+	{
+		return FallbackShopPawnClass.Get();
+	}
+
+	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
 bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)

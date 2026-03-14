@@ -13,6 +13,8 @@ class AARRamenBowlActor;
 class UARShopCarryComponent;
 class UARSaveGame;
 class UARSaveSubsystem;
+class AController;
+class APawn;
 struct FARCharacterHeldShopItemSnapshot;
 
 UCLASS()
@@ -26,7 +28,16 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks) override;
+
+	// Pawn-class overrides keyed by canonical character tag (for example Parley.Speaker.Brother / Parley.Speaker.Sister).
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Spawn")
+	TMap<FGameplayTag, TSubclassOf<APawn>> ShopPawnClassByCharacterTag;
+
+	// Fallback pawn class used when no character-tag override is configured.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Spawn")
+	TSubclassOf<APawn> FallbackShopPawnClass;
 
 	// Actor tag used to find shop anchor actors where stored energy drinks should materialize on shop entry.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Energy Drink", meta = (ToolTip = "Actor tag used to find energy-drink spawn anchors in the shop."))

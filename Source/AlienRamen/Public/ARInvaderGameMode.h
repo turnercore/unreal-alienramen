@@ -9,7 +9,10 @@
 #include "ARInvaderGameMode.generated.h"
 
 class AController;
+class APawn;
+class FProperty;
 class APlayerController;
+class UScriptStruct;
 
 UCLASS()
 class ALIENRAMEN_API AARInvaderGameMode : public AARGameModeBase
@@ -23,4 +26,10 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
+private:
+	static FProperty* FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix);
+	bool ResolveInvaderPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
+	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);
 };

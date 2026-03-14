@@ -105,6 +105,8 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Canonical player slot identity is `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`); `EARPlayerSlot` remains a compatibility mirror.
 - Character loadout is canonical character-owned state (`CharacterStates[].LoadoutTags`), not player-owned save data.
 - `AARPlayerStateBase` is the runtime projection surface for the currently controlled character; character-owned save data hydrates onto `PlayerState`, not `GameState`.
+- Authoritative mode identity normalization must ensure each connected player has a valid canonical `CurrentCharacterTag` (`Brother`/`Sister`) and apply non-taken fallback selection when one is missing/invalid.
+- Authoritative gameplay-mode identity normalization must ensure each connected player loadout includes at least one `Unlock.Ship.*` tag; missing ship tags are repaired from `LoadoutSettings.DefaultPlayerLoadoutTags`.
 - Hydration and state application are authority-only.
 - Pending travel overlay state may carry between maps when not persisting to disk.
 - Save-load gameplay entry should route through a standard transition context (`SaveLoad` / `SaveLoadEntry` / `bFreshLoadEntry=true`) so load-only restore logic can key off the same signal across maps.
@@ -151,6 +153,7 @@ Docs: `Documentation/README_DialogueNPC.md`
 - Shop NPC StateTree binding should use `AARNPCCharacterBase` cached actor bools (`bST_HasActiveOrder`, `bST_HasDialogueToSay`) for branch conditions; these are component-optional safe and refreshed from customer/speaker state changes.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopPlayerController` owns shop-only interaction requests for carryables and stations (including `Pickup`/`Drop`/`Throw` plus station place/pickup/process/fill routes).
+- `AARShopGameMode` owns native shop pawn-class resolution from canonical character identity via gameplay-tag map (`ShopPawnClassByCharacterTag`) with fallback (`FallbackShopPawnClass`); redundant BP join-spawn/possess flows should be removed.
 - Shop throw strength defaults to thrower GAS `Strength` mapping (`Strength * 100`) when `RequestShopThrowHeldCarryItem` is called with `ThrowStrength <= 0`.
 - Actor-targeted interaction RPC requests on `AARPlayerController`/`AARShopPlayerController` must pass server-side reachability validation against the controller pawn (`ServerInteractionMaxDistance`) before authority gameplay mutation.
 - `AARPlayerController` tracks active primary/secondary interaction targets (`ActiveInteractable`, `ActiveSecondaryInteractable`) plus shared latch state (`bIsInteracting`) for hold-style input flows; when both active targets clear (including out-of-range interruption), controller auto-clears `bIsInteracting`.
@@ -204,6 +207,7 @@ Docs: `Documentation/README_FactionSubsystem.md`
 
 - `UARInvaderDirectorSubsystem` is the server-only invader run authority.
 - `AARInvaderGameState` owns replicated invader shared runtime state.
+- `AARInvaderGameMode` resolves player pawn class from canonical ship loadout tags (`Unlock.Ship.*`) using ship-row `InvaderPawnClass` with fallback to `DummyPawnClass`.
 - `AARInvaderPickupBase` is invader-pickup-only runtime base (not used by shop carryables).
 - Invader combat runtime should remain GAS-driven and server-authoritative.
 - Director exposes replicated/read-model state rather than relying on client simulation.
@@ -218,6 +222,7 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 - `AARGameModeBase` owns optional transition-map travel routing for mode exits via `bRouteModeTravelThroughTransitionMap` + `TransitionTravelMapURL` + transition context (`TransitionSourceMode`, `TransitionReason`).
 - `AARGameModeBase::TryStartTravel` accepts per-call `EARTravelRoutePolicy` override (`ModeDefault`, `ForceTransitionMap`, `ForceDirect`) so runtime can choose transition-map vs same-mode direct travel without mutating class defaults.
 - `AARGameModeBase` provides `EndModeAndTravel(...)` and `TravelDirectInMode(...)` Blueprint helpers for explicit routing intent.
+- `AARGameModeBase::ChoosePlayerStart_Implementation(...)` resolves tagged starts (`AARTaggedPlayerStart`) by canonical player slot tag first, then canonical character tag, then falls back to default UE start selection.
 - `AARGameModeBase::HandleSeamlessTravelPlayer(...)` is the gameplay-mode handoff guard that clears carried spectator state and restarts possession when needed after seamless travel from transition maps.
 - `AARTransitionGameMode` owns transition-map continue gating and destination travel start; native class is abstract and maps should use a Blueprint subclass.
 - `AARTransitionGameState` owns replicated transition context (`FARTransitionContext`) for transition/result UI.
@@ -241,6 +246,7 @@ Docs: `Documentation/README_TransitionMode.md`
 - Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
 - Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
 - Scrapyard item definitions are TagKey-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- `AARScrapyardGameMode` resolves player pawn class from canonical ship loadout tags using ship-row `ScrapyardPawnClass` with fallback to `DummyPawnClass`.
 - Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` using travel option context (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`).
 - When `SpawnRuleSet` is set on `AARScrapyardGameMode`, scrapyard item spawn orchestration is GameMode-owned (Perlin noise + spawner weight + rarity budgets + `bAlwaysSpawn`). Managed flow only runs when the rule asset is set; leave it unset only for maps that should intentionally have no scrapyard spawns. Set spawner `bSpawnOnBeginPlay=false` when relying on managed flow. Docs: `Documentation/README_ScrapyardMode.md` and `Documentation/Assets/README_ScrapyardSpawnRules.md`.
 

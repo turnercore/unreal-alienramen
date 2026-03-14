@@ -1,16 +1,20 @@
 #include "ARGameModeBase.h"
 
 #include "ARGameStateBase.h"
+#include "ARLoadoutSettings.h"
 #include "ARLog.h"
 #include "ARNetworkUserSettings.h"
+#include "ARTaggedPlayerStart.h"
 #include "ParleySpeakerSubsystem.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
 #include "ARTransitionTypes.h"
+#include "EngineUtils.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "GameFramework/SpectatorPawn.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/GameSession.h"
 
@@ -561,6 +565,116 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 		ResolveCharacterChoiceConflict(InGameState, Player);
 	}
 
+	// Canonical-tag normalization: never leave CurrentCharacterTag invalid, and keep Brother/Sister unique when possible.
+	for (AARPlayerStateBase* Player : Players)
+	{
+		if (!Player)
+		{
+			continue;
+		}
+
+		const EARPlayerSlot Slot = Player->GetPlayerSlot();
+		const EARCharacterChoice PreferredChoice =
+			(Slot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		const EARCharacterChoice AlternateChoice = GetAlternateCharacterChoice(PreferredChoice);
+
+		EARCharacterChoice ResolvedChoice = ARPlayer::GetCharacterChoiceForTag(
+			ARPlayer::NormalizeCharacterTag(Player->GetCurrentCharacterTag(), Slot));
+		if (ResolvedChoice == EARCharacterChoice::None)
+		{
+			ResolvedChoice = PreferredChoice;
+		}
+
+		if (IsCharacterChoiceTakenByOther(InGameState, Player, ResolvedChoice))
+		{
+			if (AlternateChoice != EARCharacterChoice::None && !IsCharacterChoiceTakenByOther(InGameState, Player, AlternateChoice))
+			{
+				ResolvedChoice = AlternateChoice;
+			}
+			else
+			{
+				ResolvedChoice = PreferredChoice;
+			}
+		}
+
+		const FGameplayTag ResolvedTag = ARPlayer::GetCharacterTagForChoice(ResolvedChoice);
+		if (ResolvedTag.IsValid() && !Player->GetCurrentCharacterTag().MatchesTagExact(ResolvedTag))
+		{
+			Player->SetCurrentCharacterTag(ResolvedTag);
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[GameMode] Identity normalize character tag for '%s': -> %s"),
+				*GetNameSafe(Player),
+				*ResolvedTag.ToString());
+		}
+	}
+
+	// Loadout normalization: gameplay modes require at least one ship tag in loadout.
+	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
+	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
+	if (!bIsTransitionMode)
+	{
+		const FGameplayTag ShipRootTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"), false);
+		const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
+		FGameplayTag DefaultShipTag;
+		if (ShipRootTag.IsValid() && LoadoutSettings)
+		{
+			for (const FGameplayTag& DefaultTag : LoadoutSettings->DefaultPlayerLoadoutTags)
+			{
+				if (DefaultTag.IsValid() && DefaultTag.MatchesTag(ShipRootTag))
+				{
+					DefaultShipTag = DefaultTag;
+					break;
+				}
+			}
+		}
+
+		for (AARPlayerStateBase* Player : Players)
+		{
+			if (!Player)
+			{
+				continue;
+			}
+
+			bool bHasShipTag = false;
+			TArray<FGameplayTag> PlayerLoadoutTags;
+			Player->LoadoutTags.GetGameplayTagArray(PlayerLoadoutTags);
+			for (const FGameplayTag& LoadoutTag : PlayerLoadoutTags)
+			{
+				if (LoadoutTag.IsValid() && ShipRootTag.IsValid() && LoadoutTag.MatchesTag(ShipRootTag))
+				{
+					bHasShipTag = true;
+					break;
+				}
+			}
+
+			if (bHasShipTag)
+			{
+				continue;
+			}
+
+			if (DefaultShipTag.IsValid())
+			{
+				Player->UpdateLoadoutWithTag(DefaultShipTag);
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[GameMode] Repaired missing ship loadout tag for '%s' by applying default '%s'."),
+					*GetNameSafe(Player),
+					*DefaultShipTag.ToString());
+			}
+			else
+			{
+				UE_LOG(
+					ARLog,
+					Error,
+					TEXT("[GameMode] Player '%s' has no ship loadout tag and no default ship tag is configured in LoadoutSettings."),
+					*GetNameSafe(Player));
+			}
+		}
+	}
+
 	// Color normalization: keep player color synchronized with character assignment.
 	for (AARPlayerStateBase* Player : Players)
 	{
@@ -654,11 +768,94 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 		PlayerController->PlayerState->SetIsSpectator(false);
 	}
 
+	const bool bWasSpectating = PlayerController->IsInState(NAME_Spectating);
 	PlayerController->ChangeState(NAME_Playing);
-	if (!PlayerController->GetPawn())
+
+	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
+	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
+	APawn* ExistingPawn = PlayerController->GetPawn();
+	const bool bHasSpectatorPawn = ExistingPawn && ExistingPawn->IsA(ASpectatorPawn::StaticClass());
+	const bool bNeedsGameplayPawn = !bIsTransitionMode && (!ExistingPawn || bHasSpectatorPawn || bWasSpectating);
+	if (bNeedsGameplayPawn)
 	{
+		if (ExistingPawn)
+		{
+			PlayerController->UnPossess();
+			ExistingPawn->Destroy();
+		}
+
 		RestartPlayer(PlayerController);
 	}
+}
+
+AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+{
+	if (!Player)
+	{
+		return Super::ChoosePlayerStart_Implementation(Player);
+	}
+
+	const AARPlayerStateBase* PlayerState = Player->GetPlayerState<AARPlayerStateBase>();
+	if (!PlayerState)
+	{
+		return Super::ChoosePlayerStart_Implementation(Player);
+	}
+
+	const FGameplayTag PlayerSlotTag = ARPlayer::NormalizePlayerSlotTag(PlayerState->GetPlayerSlotTag(), PlayerState->GetPlayerSlot());
+	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
+
+	TArray<AARTaggedPlayerStart*> TaggedStarts;
+	if (UWorld* World = GetWorld())
+	{
+		for (TActorIterator<AARTaggedPlayerStart> It(World); It; ++It)
+		{
+			AARTaggedPlayerStart* Start = *It;
+			if (IsValid(Start))
+			{
+				TaggedStarts.Add(Start);
+			}
+		}
+	}
+
+	auto FindMatchingStart = [&TaggedStarts](const FGameplayTag& QueryTag, const bool bRequireExact) -> AActor*
+	{
+		if (!QueryTag.IsValid())
+		{
+			return nullptr;
+		}
+
+		for (AARTaggedPlayerStart* Start : TaggedStarts)
+		{
+			if (IsValid(Start) && Start->MatchesSpawnIdentityTag(QueryTag, bRequireExact))
+			{
+				return Start;
+			}
+		}
+
+		return nullptr;
+	};
+
+	if (AActor* SlotExact = FindMatchingStart(PlayerSlotTag, true))
+	{
+		return SlotExact;
+	}
+
+	if (AActor* SlotLoose = FindMatchingStart(PlayerSlotTag, false))
+	{
+		return SlotLoose;
+	}
+
+	if (AActor* CharacterExact = FindMatchingStart(CharacterTag, true))
+	{
+		return CharacterExact;
+	}
+
+	if (AActor* CharacterLoose = FindMatchingStart(CharacterTag, false))
+	{
+		return CharacterLoose;
+	}
+
+	return Super::ChoosePlayerStart_Implementation(Player);
 }
 
 void AARGameModeBase::Logout(AController* Exiting)

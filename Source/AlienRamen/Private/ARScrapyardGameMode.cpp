@@ -458,7 +458,23 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 		return false;
 	}
 
-	FProperty* PawnClassProperty = FindPropertyByNamePrefix(StructType, TEXT("ScrapyardPawnClass"));
+	static const TCHAR* PawnClassPrefixes[] = {
+		TEXT("ScrapyardPawnClass"),
+		TEXT("DummyPawnClass"),
+		TEXT("PawnClass"),
+		TEXT("PlayerPawnClass")
+	};
+
+	FProperty* PawnClassProperty = nullptr;
+	for (const TCHAR* Prefix : PawnClassPrefixes)
+	{
+		PawnClassProperty = FindPropertyByNamePrefix(StructType, Prefix);
+		if (PawnClassProperty)
+		{
+			break;
+		}
+	}
+
 	if (!PawnClassProperty)
 	{
 		return false;
