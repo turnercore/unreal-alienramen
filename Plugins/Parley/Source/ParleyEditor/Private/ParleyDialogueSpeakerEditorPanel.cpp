@@ -31,7 +31,6 @@
 #include "Styling/CoreStyle.h"
 #include "Styling/SlateBrush.h"
 #include "Styling/SlateTypes.h"
-#include "Subsystems/AssetEditorSubsystem.h"
 #include "ObjectTools.h"
 #include "UObject/Package.h"
 #include "Engine/Font.h"
@@ -1843,6 +1842,53 @@ FString SDialogueSpeakerEditorPanel::BuildThresholdSummary(const TArray<float>& 
 	return Result;
 }
 
+bool SDialogueSpeakerEditorPanel::TryFindConflictingSpeakerTagRow(const FGameplayTag& CandidateTag, FName& OutConflictingRowName) const
+{
+	OutConflictingRowName = NAME_None;
+	if (!CandidateTag.IsValid())
+	{
+		return false;
+	}
+
+	UDataTable* SpeakerTable = SpeakerDataTable.Get();
+	if (!SpeakerTable)
+	{
+		return false;
+	}
+
+	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
+	const FGameplayTag SpeakerRootTag = DialogueSettings ? DialogueSettings->SpeakerDefinitionRootTag : FGameplayTag();
+
+	for (const FName RowName : SpeakerTable->GetRowNames())
+	{
+		if (RowName == SelectedSpeakerRowName)
+		{
+			continue;
+		}
+
+		const FParleySpeakerRow* ExistingRow = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueSpeakerEditor"), false);
+		if (!ExistingRow)
+		{
+			continue;
+		}
+
+		FGameplayTag ExistingSpeakerTag = ExistingRow->SpeakerTag;
+		if (!ExistingSpeakerTag.IsValid() && SpeakerRootTag.IsValid())
+		{
+			const FString BuiltPath = FString::Printf(TEXT("%s.%s"), *SpeakerRootTag.ToString(), *RowName.ToString());
+			ExistingSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*BuiltPath), false);
+		}
+
+		if (ExistingSpeakerTag.IsValid() && ExistingSpeakerTag.MatchesTagExact(CandidateTag))
+		{
+			OutConflictingRowName = RowName;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FParleySpeakerRow& OutRow, FString& OutError) const
 {
 	OutError.Empty();
@@ -1872,6 +1918,16 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FParleySpeakerRow& OutRo
 	if (!EditedSpeakerTag.IsValid())
 	{
 		OutError = TEXT("Speaker Tag is required.");
+		return false;
+	}
+
+	FName ConflictingRowName = NAME_None;
+	if (TryFindConflictingSpeakerTagRow(EditedSpeakerTag, ConflictingRowName))
+	{
+		OutError = FString::Printf(
+			TEXT("Speaker Tag '%s' is already assigned to row '%s'."),
+			*EditedSpeakerTag.ToString(),
+			*ConflictingRowName.ToString());
 		return false;
 	}
 
@@ -1928,8 +1984,28 @@ bool SDialogueSpeakerEditorPanel::CommitEditedSpeakerRow(FString& OutError)
 		return false;
 	}
 
+	const FName CurrentRowName = SelectedSpeakerRowName;
+	const FName DesiredRowName(*GetSpeakerLeafSegment(EditedRow.SpeakerTag));
+	const bool bNeedsRename = !DesiredRowName.IsNone() && DesiredRowName != CurrentRowName;
+	if (bNeedsRename && SpeakerTable->GetRowMap().Contains(DesiredRowName))
+	{
+		OutError = FString::Printf(
+			TEXT("Cannot rename row to '%s' because that row already exists."),
+			*DesiredRowName.ToString());
+		return false;
+	}
+
 	SpeakerTable->Modify();
-	*MutableRow = EditedRow;
+	if (bNeedsRename)
+	{
+		SpeakerTable->AddRow(DesiredRowName, EditedRow);
+		SpeakerTable->RemoveRow(CurrentRowName);
+		SelectedSpeakerRowName = DesiredRowName;
+	}
+	else
+	{
+		*MutableRow = EditedRow;
+	}
 	SpeakerTable->MarkPackageDirty();
 	return true;
 }
@@ -1941,9 +2017,23 @@ FGameplayTag SDialogueSpeakerEditorPanel::GetEditedSpeakerTag() const
 
 void SDialogueSpeakerEditorPanel::OnEditedSpeakerTagChanged(FGameplayTag NewTag)
 {
+	if (EditedSpeakerTag.IsValid() && EditedSpeakerTag.MatchesTagExact(NewTag))
+	{
+		return;
+	}
+
 	EditedSpeakerTag = NewTag;
 	EnsureSpeakerDefaultEmotionTag(NewTag);
 	RebuildEmotionTagCombo();
+
+	FName ConflictingRowName = NAME_None;
+	if (TryFindConflictingSpeakerTagRow(NewTag, ConflictingRowName))
+	{
+		AppendLogLine(FString::Printf(
+			TEXT("[WARN] Speaker Tag '%s' is already assigned to row '%s'. Save will be blocked until a unique tag is selected."),
+			*NewTag.ToString(),
+			*ConflictingRowName.ToString()));
+	}
 
 	if (EditedPortraitTag.IsValid() && NewTag.IsValid())
 	{
@@ -2990,30 +3080,22 @@ FReply SDialogueSpeakerEditorPanel::HandleNewSpeaker()
 		return FReply::Handled();
 	}
 
-	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
-	const FGameplayTag RootTag = DialogueSettings ? DialogueSettings->SpeakerDefinitionRootTag : FGameplayTag();
-
-	FName NewRowName(TEXT("Speaker"));
+	FName NewRowName(TEXT("NewSpeaker"));
 	for (int32 Suffix = 1; SpeakerTable->GetRowMap().Contains(NewRowName); ++Suffix)
 	{
-		NewRowName = FName(*FString::Printf(TEXT("Speaker_%d"), Suffix));
+		NewRowName = FName(*FString::Printf(TEXT("NewSpeaker_%d"), Suffix));
 	}
 
 	FParleySpeakerRow NewRow;
-	NewRow.DisplayName = FText::FromString(NewRowName.ToString());
+	NewRow.DisplayName = FText::FromString(TEXT("New Speaker"));
 	NewRow.Description = FText::GetEmpty();
 	NewRow.RelationshipThresholds = { 5.0f, 15.0f, 30.0f, 50.0f };
-	if (RootTag.IsValid())
-	{
-		const FString SpeakerPath = FString::Printf(TEXT("%s.%s"), *RootTag.ToString(), *NewRowName.ToString());
-		NewRow.SpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*SpeakerPath), false);
-	}
 
 	SpeakerTable->Modify();
 	SpeakerTable->AddRow(NewRowName, NewRow);
 	SpeakerTable->MarkPackageDirty();
 
-	AppendLogLine(FString::Printf(TEXT("Created speaker row '%s'."), *NewRowName.ToString()));
+	AppendLogLine(FString::Printf(TEXT("Created speaker row '%s'. Pick an unused Speaker Tag, then Save."), *NewRowName.ToString()));
 	RefreshData();
 	SetSelectedSpeakerRow(NewRowName);
 	return FReply::Handled();
@@ -3376,10 +3458,6 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		TargetRelationshipBand,
 		NewConversation->Header.MinimumRelationshipPoints));
 
-	if (UAssetEditorSubsystem* AssetEditorSubsystem = GEditor ? GEditor->GetEditorSubsystem<UAssetEditorSubsystem>() : nullptr)
-	{
-		AssetEditorSubsystem->OpenEditorForAsset(NewConversation);
-	}
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(NewConversation);
 	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
 
@@ -3402,10 +3480,6 @@ FReply SDialogueSpeakerEditorPanel::HandleOpenConversation()
 		return FReply::Handled();
 	}
 
-	if (UAssetEditorSubsystem* AssetEditorSubsystem = GEditor ? GEditor->GetEditorSubsystem<UAssetEditorSubsystem>() : nullptr)
-	{
-		AssetEditorSubsystem->OpenEditorForAsset(SelectedItems[0]->Asset.Get());
-	}
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(SelectedItems[0]->Asset.Get());
 	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
 	return FReply::Handled();
@@ -4870,10 +4944,6 @@ void SDialogueSpeakerEditorPanel::OnConversationDoubleClicked(TSharedPtr<FConver
 		return;
 	}
 
-	if (UAssetEditorSubsystem* AssetEditorSubsystem = GEditor ? GEditor->GetEditorSubsystem<UAssetEditorSubsystem>() : nullptr)
-	{
-		AssetEditorSubsystem->OpenEditorForAsset(Item->Asset.Get());
-	}
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(Item->Asset.Get());
 	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
 }

@@ -18,7 +18,7 @@ struct EMO_API FEmoIconRow : public FTableRowBase
 	GENERATED_BODY()
 
 	// Authoritative emotion key mapped to the icon for this row.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue", ToolTip = "Emotion tag key used to resolve icon content."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Emotion tag key used to resolve icon content."))
 	FGameplayTag EmotionTag;
 
 	// Texture shown when this row resolves for a requested emotion tag.

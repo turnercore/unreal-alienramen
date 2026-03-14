@@ -106,6 +106,7 @@ private:
 	int32 ComputeRelationshipBand(float MinimumRelationshipPoints, const TArray<float>& Thresholds) const;
 	FString BuildRelationshipBandLabel(int32 BandIndex, const TArray<float>& Thresholds) const;
 	FString BuildThresholdSummary(const TArray<float>& Thresholds) const;
+	bool TryFindConflictingSpeakerTagRow(const FGameplayTag& CandidateTag, FName& OutConflictingRowName) const;
 	bool BuildEditedSpeakerRow(FParleySpeakerRow& OutRow, FString& OutError) const;
 	bool CommitEditedSpeakerRow(FString& OutError);
 	FGameplayTag GetEditedSpeakerTag() const;

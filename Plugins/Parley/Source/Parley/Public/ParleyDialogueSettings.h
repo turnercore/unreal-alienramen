@@ -59,6 +59,6 @@ public:
 	bool bAutoEavesdropOnBusySpeakerByDefault = true;
 
 	// Emotion tag requested when a speaker is busy in one-talker mode.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (Categories = "Dialogue", ToolTip = "Emotion tag requested when a speaker is busy in one-talker-per-speaker mode."))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (ToolTip = "Emotion tag requested when a speaker is busy in one-talker-per-speaker mode."))
 	FGameplayTag BusySpeakerEmotionTag;
 };
