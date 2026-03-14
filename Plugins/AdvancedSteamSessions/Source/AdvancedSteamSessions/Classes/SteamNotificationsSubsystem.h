@@ -91,7 +91,7 @@ public:
 };
 
 #if (PLATFORM_WINDOWS || PLATFORM_MAC || PLATFORM_LINUX) && STEAM_SDK_INSTALLED
-void USteamNotificationsSubsystem::cSteamEventsStore::OnExternalUITriggered(GameOverlayActivated_t* CallbackData)
+inline void USteamNotificationsSubsystem::cSteamEventsStore::OnExternalUITriggered(GameOverlayActivated_t* CallbackData)
 {
 	if (ParentSubsystem)
 	{

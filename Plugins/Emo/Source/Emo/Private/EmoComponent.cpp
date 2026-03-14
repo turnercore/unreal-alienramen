@@ -596,7 +596,7 @@ FGameplayTag UEmoComponent::GetPreviewEmotionTag() const
 		return PreviewEmotionTag;
 	}
 
-	return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Emotion.Preview")), false);
+	return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Emotion.Preview")), false);
 }
 
 FVector UEmoComponent::GetEmotionAnchorWorldLocation() const

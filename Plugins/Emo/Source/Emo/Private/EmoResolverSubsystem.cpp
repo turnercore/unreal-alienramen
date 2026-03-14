@@ -99,7 +99,7 @@ namespace
 			}
 		}
 
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Dialogue.Emotion")), false);
+		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Emotion")), false);
 	}
 
 	static FGameplayTag ResolveGenericEmotionRootTag()

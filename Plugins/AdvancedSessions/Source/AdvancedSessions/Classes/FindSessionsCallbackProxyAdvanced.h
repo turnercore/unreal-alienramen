@@ -33,7 +33,7 @@ class ADVANCEDSESSIONS_API UFindSessionsCallbackProxyAdvanced : public UOnlineBl
 	static bool CompareVariants(const FVariantData &A, const FVariantData &B, EOnlineComparisonOpRedux Comparator);
 	
 	// Filters an array of session results by the given search parameters, returns a new array with the filtered results
-	UFUNCTION(BluePrintCallable, meta = (Category = "Online|AdvancedSessions"))
+	UFUNCTION(BlueprintCallable, meta = (Category = "Online|AdvancedSessions"))
 	static void FilterSessionResults(const TArray<FBlueprintSessionResult> &SessionResults, const TArray<FSessionsSearchSetting> &Filters, TArray<FBlueprintSessionResult> &FilteredResults);
 	
 	// Removed, the default built in versions work fine in the normal FindSessionsCallbackProxy

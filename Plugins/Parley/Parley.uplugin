@@ -15,10 +15,6 @@
     {
       "Name": "TagKey",
       "Enabled": true
-    },
-    {
-      "Name": "GameplayTagsEditor",
-      "Enabled": true
     }
   ],
   "Modules": [
