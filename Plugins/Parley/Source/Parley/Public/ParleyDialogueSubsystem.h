@@ -31,6 +31,8 @@ UCLASS()
 class PARLEY_API UParleyDialogueSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+	struct FARDialogueRuntimeState;
+	struct FARDialogueRuntimeStateDeleter;
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -231,15 +233,15 @@ public:
 	FParleyIsConversationCompleted OnQueryConversationCompleted;
 	FParleyGetCurrentModeTag OnQueryCurrentModeTag;
 
+	// Internal runtime-state accessors used by split implementation units.
+	FARDialogueRuntimeState& GetRuntimeState();
+	const FARDialogueRuntimeState& GetRuntimeState() const;
+
 private:
-	struct FARDialogueRuntimeState;
 	struct FARDialogueRuntimeStateDeleter
 	{
 		void operator()(FARDialogueRuntimeState* Ptr) const;
 	};
-
-	FARDialogueRuntimeState& GetRuntimeState();
-	const FARDialogueRuntimeState& GetRuntimeState() const;
 
 	TUniquePtr<FARDialogueRuntimeState, FARDialogueRuntimeStateDeleter> RuntimeState;
 };

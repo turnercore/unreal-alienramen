@@ -185,7 +185,7 @@ namespace
 		FSlateBrush PortraitBrush;
 	};
 
-	static UParleyDialogueSubsystem* GetDialogueSubsystemFromPIE()
+	static UParleyDialogueSubsystem* GetDialogueSubsystemFromPIESpeakerPanel()
 	{
 		if (!GEditor)
 		{
@@ -1778,7 +1778,7 @@ void SDialogueSpeakerEditorPanel::ApplySpeakerFilterAndSort()
 
 bool SDialogueSpeakerEditorPanel::ValidateConversationWithBestAvailable(UParleyConversationAsset* Conversation, FDialogueValidationReport& OutReport) const
 {
-	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemFromPIE())
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemFromPIESpeakerPanel())
 	{
 		return DialogueSubsystem->ValidateConversation(Conversation, OutReport);
 	}
@@ -1794,7 +1794,7 @@ bool SDialogueSpeakerEditorPanel::ValidateConversationWithBestAvailable(UParleyC
 
 bool SDialogueSpeakerEditorPanel::ValidateSpeakerWithBestAvailable(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
 {
-	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemFromPIE())
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystemFromPIESpeakerPanel())
 	{
 		return DialogueSubsystem->ValidateSpeaker(SpeakerRow, OutReport);
 	}

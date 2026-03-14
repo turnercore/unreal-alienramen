@@ -12,6 +12,7 @@ public class Parley : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"GameplayTags",
+			"Projects",
 			"DeveloperSettings",
 			"UMG",
 			"StructUtils",

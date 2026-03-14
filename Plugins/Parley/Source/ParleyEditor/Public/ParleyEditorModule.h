@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 
-class FGraphPanelNodeFactory;
+struct FGraphPanelNodeFactory;
 class SDockTab;
 class FSpawnTabArgs;
 struct FToolMenuContext;

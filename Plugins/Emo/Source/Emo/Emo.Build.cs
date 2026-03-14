@@ -12,6 +12,7 @@ public class Emo : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"GameplayTags",
+			"Projects",
 			"DeveloperSettings",
 			"TagContentResolver"
 		});
