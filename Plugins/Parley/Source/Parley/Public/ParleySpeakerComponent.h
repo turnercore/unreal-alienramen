@@ -11,7 +11,7 @@
 
 class APlayerController;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSpeakerTalkableStateChanged, bool, bNewTalkable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerTalkableStateChanged, bool, bNewTalkable);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionRequested, FGameplayTag, EmotionTag, FGameplayTag, PlayerSlotTag, bool, bIsDialogueLine);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerEmotionCleared, FGameplayTag, PlayerSlotTag);
 
@@ -28,48 +28,48 @@ public:
 	UParleySpeakerComponent();
 
 	/** Primary interaction entrypoint: routes to dialogue subsystem using this speaker tag and controller. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
 	void InteractByController(APlayerController* InteractingController);
 
 	/** Speaker identity tag used for dialogue lookups (GameplayTag). */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag", ToolTip = "Returns this speaker component's canonical speaker identity tag."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (DisplayName = "Get Speaker Tag", ToolTip = "Returns this speaker component's canonical speaker identity tag."))
 	FGameplayTag GetSpeakerTag() const { return SpeakerTag; }
 
 	/** Update the speaker tag at runtime (authority only recommended). Also refreshes talkable state. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker", meta = (DisplayName = "Set Speaker Tag", ToolTip = "Sets this speaker component's canonical speaker identity tag and refreshes talkability state."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (DisplayName = "Set Speaker Tag", ToolTip = "Sets this speaker component's canonical speaker identity tag and refreshes talkability state."))
 	void SetSpeakerTag(FGameplayTag NewSpeakerTag);
 
 	/** True when any player can currently start a conversation with this speaker. */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
 	bool IsTalkable() const { return bIsTalkable; }
 
 	// StateTree-friendly dialogue-only gate. True when this speaker currently has dialogue available for at least one slot.
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
 	bool HasDialogueToSay() const { return bIsTalkable; }
 
 	/** Slot-tag-specific talkable query (for example Player.Slot.P1 / Player.Slot.P2). */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
 	bool IsTalkableForPlayerSlotTag(FGameplayTag PlayerSlotTag) const;
 
 	/** Controller-aware talkable query (uses controller player slot mapping). */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
 	bool IsTalkableForController(const APlayerController* QueryController) const;
 
 	// StateTree-friendly gate alias for dialogue availability.
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
 	bool HasSomethingToSay() const;
 
 	/** Ask the dialogue subsystem to recompute talkability (use after unlocking content or clearing blockers). */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
 	void RefreshTalkableFromSubsystem();
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Talk", meta = (ToolTip = "Broadcast when this speaker's talkable state changes."))
-	FAROnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Talk", meta = (ToolTip = "Broadcast when this speaker's talkable state changes."))
+	FParleyOnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker to display an emotion. Game module should bridge this to Emo component."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker to display an emotion. Game module should bridge this to Emo component."))
 	FParleyOnSpeakerEmotionRequested OnSpeakerEmotionRequested;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker emotion override to clear. Game module should bridge this to Emo component."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker emotion override to clear. Game module should bridge this to Emo component."))
 	FParleyOnSpeakerEmotionCleared OnSpeakerEmotionCleared;
 
 protected:
@@ -93,14 +93,14 @@ private:
 	UPROPERTY(
 		EditAnywhere,
 		BlueprintReadOnly,
-		Category = "Alien Ramen|Talk",
+		Category = "Parley|Talk",
 		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag", ToolTip = "Primary speaker identity tag used for dialogue lookup and speaker-bound emotion routing."))
 	FGameplayTag SpeakerTag;
 
-	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Alien Ramen|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
+	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
 	bool bIsTalkable = false;
 
 	// Bitmask of talkable slots (P1=bit0, P2=bit1).
-	UPROPERTY(ReplicatedUsing = OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Alien Ramen|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Player Slot Mask", ToolTip = "Per-player talkability mask (P1 bit 0, P2 bit 1)."))
+	UPROPERTY(ReplicatedUsing = OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Player Slot Mask", ToolTip = "Per-player talkability mask (P1 bit 0, P2 bit 1)."))
 	uint8 TalkablePlayerSlotMask = 0;
 };

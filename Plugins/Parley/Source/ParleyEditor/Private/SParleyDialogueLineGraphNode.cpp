@@ -35,7 +35,7 @@ namespace
 	constexpr float LineWrapWidth = 280.0f;
 	constexpr float MultiLineIndexWidth = 28.0f;
 
-	static const FARDialogueSpeakerRow* ResolveSpeakerRowForTag(const FGameplayTag SpeakerTag)
+	static const FParleySpeakerRow* ResolveSpeakerRowForTag_LineNode(const FGameplayTag SpeakerTag)
 	{
 		if (!SpeakerTag.IsValid())
 		{
@@ -55,7 +55,7 @@ namespace
 			return nullptr;
 		}
 
-		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FARDialogueSpeakerRow::StaticStruct())
+		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FParleySpeakerRow::StaticStruct())
 		{
 			return nullptr;
 		}
@@ -71,7 +71,7 @@ namespace
 			}
 
 			const FName RowName(*TagString.Mid(DotIndex + 1));
-			if (const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueLineGraphNode"), false))
+			if (const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueLineGraphNode"), false))
 			{
 				return Row;
 			}
@@ -90,7 +90,7 @@ namespace
 			return FGameplayTag();
 		}
 
-		if (const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag))
+		if (const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForTag_LineNode(SpeakerTag))
 		{
 			if (SpeakerRow->SpeakerTag.IsValid())
 			{
@@ -101,7 +101,7 @@ namespace
 		return SpeakerTag;
 	}
 
-	static bool ContainsTagExact(const TArray<FGameplayTag>& Tags, const FGameplayTag Tag)
+	static bool ContainsTagExact_LineNode(const TArray<FGameplayTag>& Tags, const FGameplayTag Tag)
 	{
 		return Tags.ContainsByPredicate([Tag](const FGameplayTag Existing)
 		{
@@ -120,14 +120,14 @@ namespace
 		return TagString;
 	}
 
-	class FARDialogueLineEntryDragDropOp final : public FDecoratedDragDropOp
+	class FParleyDialogueLineEntryDragDropOp final : public FDecoratedDragDropOp
 	{
 	public:
-		DRAG_DROP_OPERATOR_TYPE(FARDialogueLineEntryDragDropOp, FDecoratedDragDropOp)
+		DRAG_DROP_OPERATOR_TYPE(FParleyDialogueLineEntryDragDropOp, FDecoratedDragDropOp)
 
-		static TSharedRef<FARDialogueLineEntryDragDropOp> New(const FGuid InEntryId)
+		static TSharedRef<FParleyDialogueLineEntryDragDropOp> New(const FGuid InEntryId)
 		{
-			TSharedRef<FARDialogueLineEntryDragDropOp> Op = MakeShared<FARDialogueLineEntryDragDropOp>();
+			TSharedRef<FParleyDialogueLineEntryDragDropOp> Op = MakeShared<FParleyDialogueLineEntryDragDropOp>();
 			Op->EntryId = InEntryId;
 			Op->DefaultHoverText = FText::FromString(TEXT("Reorder Line"));
 			Op->Construct();
@@ -161,14 +161,14 @@ namespace
 		virtual FReply OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
 		{
 			(void)MyGeometry;
-			const TSharedPtr<FARDialogueLineEntryDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FARDialogueLineEntryDragDropOp>();
+			const TSharedPtr<FParleyDialogueLineEntryDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FParleyDialogueLineEntryDragDropOp>();
 			return DragOperation.IsValid() ? FReply::Handled() : FReply::Unhandled();
 		}
 
 		virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
 		{
 			(void)MyGeometry;
-			const TSharedPtr<FARDialogueLineEntryDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FARDialogueLineEntryDragDropOp>();
+			const TSharedPtr<FParleyDialogueLineEntryDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FParleyDialogueLineEntryDragDropOp>();
 			if (!DragOperation.IsValid() || !DragOperation->EntryId.IsValid() || !EntryId.IsValid() || DragOperation->EntryId == EntryId)
 			{
 				return FReply::Unhandled();
@@ -220,7 +220,7 @@ namespace
 			(void)MyGeometry;
 			if (MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton) && EntryId.IsValid())
 			{
-				return FReply::Handled().BeginDragDrop(FARDialogueLineEntryDragDropOp::New(EntryId));
+				return FReply::Handled().BeginDragDrop(FParleyDialogueLineEntryDragDropOp::New(EntryId));
 			}
 			return FReply::Unhandled();
 		}
@@ -229,7 +229,7 @@ namespace
 		FGuid EntryId;
 	};
 
-	class FARDialogueLineGraphNodeFactory final : public FGraphPanelNodeFactory
+	class FParleyDialogueLineGraphNodeFactory final : public FGraphPanelNodeFactory
 	{
 	public:
 		virtual TSharedPtr<SGraphNode> CreateNode(UEdGraphNode* InNode) const override
@@ -615,7 +615,7 @@ void SParleyDialogueLineGraphNode::RefreshPortraitBrushForSpeaker(const FGamepla
 	PortraitBrush.ImageSize = FVector2D(PortraitSize - 6.0f, PortraitSize - 6.0f);
 	bool bHasPortraitTexture = false;
 
-	const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag);
+	const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForTag_LineNode(SpeakerTag);
 	if (SpeakerRow)
 	{
 		UTexture2D* PortraitTexture = nullptr;
@@ -685,7 +685,7 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildQuickSpeakerCycleList(co
 		auto TryAdd = [&Result](const FGameplayTag CandidateTag)
 		{
 			const FGameplayTag NormalizedTag = NormalizeSpeakerTagForCycle(CandidateTag);
-			if (NormalizedTag.IsValid() && !ContainsTagExact(Result, NormalizedTag))
+			if (NormalizedTag.IsValid() && !ContainsTagExact_LineNode(Result, NormalizedTag))
 			{
 				Result.Add(NormalizedTag);
 			}
@@ -748,7 +748,7 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildQuickSpeakerCycleList(co
 					const FGameplayTag NormalizedCandidate = NormalizeSpeakerTagForCycle(Candidate);
 					if (!NormalizedCandidate.IsValid()
 						|| NormalizedCandidate.MatchesTagExact(SpeakerRoot)
-						|| ContainsTagExact(Result, NormalizedCandidate))
+						|| ContainsTagExact_LineNode(Result, NormalizedCandidate))
 					{
 						continue;
 					}
@@ -758,7 +758,7 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildQuickSpeakerCycleList(co
 		}
 
 	const FGameplayTag CurrentSpeakerTag = NormalizeSpeakerTagForCycle(GetSpeakerTagForEntry(EntryId));
-	if (CurrentSpeakerTag.IsValid() && !ContainsTagExact(Result, CurrentSpeakerTag))
+	if (CurrentSpeakerTag.IsValid() && !ContainsTagExact_LineNode(Result, CurrentSpeakerTag))
 	{
 		Result.Insert(CurrentSpeakerTag, 0);
 	}
@@ -790,13 +790,13 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildEmotionTagListForEntry(c
 		{
 			continue;
 		}
-		if (!ContainsTagExact(Result, ChildTag))
+		if (!ContainsTagExact_LineNode(Result, ChildTag))
 		{
 			Result.Add(ChildTag);
 		}
 	}
 
-	if (CurrentSpeakerTag.IsValid() && !CurrentSpeakerTag.MatchesTagExact(BaseSpeakerTag) && !ContainsTagExact(Result, CurrentSpeakerTag))
+	if (CurrentSpeakerTag.IsValid() && !CurrentSpeakerTag.MatchesTagExact(BaseSpeakerTag) && !ContainsTagExact_LineNode(Result, CurrentSpeakerTag))
 	{
 		Result.Add(CurrentSpeakerTag);
 	}
@@ -849,7 +849,7 @@ void SParleyDialogueLineGraphNode::EnsureConversationParticipantsIncludeSpeaker(
 		return;
 	}
 
-	if (ContainsTagExact(Conversation->Header.ParticipatingSpeakerTags, NormalizedSpeakerTag))
+	if (ContainsTagExact_LineNode(Conversation->Header.ParticipatingSpeakerTags, NormalizedSpeakerTag))
 	{
 		return;
 	}
@@ -1098,5 +1098,5 @@ TSharedRef<SWidget> SParleyDialogueLineGraphNode::BuildLineEntryWidget(const FGu
 
 TSharedRef<FGraphPanelNodeFactory> CreateARDialogueLineGraphNodeFactory()
 {
-	return MakeShared<FARDialogueLineGraphNodeFactory>();
+	return MakeShared<FParleyDialogueLineGraphNodeFactory>();
 }

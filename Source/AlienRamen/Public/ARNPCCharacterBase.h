@@ -59,7 +59,7 @@ public:
 	void SetSpeakerLocalStateAllowsDialogue(bool bEnabled);
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Speaker", meta = (ToolTip = "Broadcast when resolved speaker talkable state changes after component/local-gate evaluation."))
-	FAROnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
+	FParleyOnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns cached optional speaker component reference, or null when not present on this NPC."))
 	UParleySpeakerComponent* GetSpeakerComponent() const { return SpeakerComponent; }

@@ -36,7 +36,7 @@ namespace
 	constexpr float CharacterRouteMinWidth = 260.0f;
 	constexpr float CharacterRoutePortraitSize = 28.0f;
 
-	static const FARDialogueSpeakerRow* ResolveSpeakerRowForTag(const FGameplayTag SpeakerTag)
+	static const FParleySpeakerRow* ResolveSpeakerRowForTag(const FGameplayTag SpeakerTag)
 	{
 		if (!SpeakerTag.IsValid())
 		{
@@ -56,7 +56,7 @@ namespace
 			return nullptr;
 		}
 
-		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FARDialogueSpeakerRow::StaticStruct())
+		if (!SpeakerTable || SpeakerTable->GetRowStruct() != FParleySpeakerRow::StaticStruct())
 		{
 			return nullptr;
 		}
@@ -72,7 +72,7 @@ namespace
 			}
 
 			const FName RowName(*TagString.Mid(DotIndex + 1));
-			if (const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueInlineCharacterRoute"), false))
+			if (const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueInlineCharacterRoute"), false))
 			{
 				return Row;
 			}
@@ -84,14 +84,14 @@ namespace
 		return nullptr;
 	}
 
-	class FARDialogueBranchDragDropOp final : public FDecoratedDragDropOp
+	class FParleyDialogueBranchDragDropOp final : public FDecoratedDragDropOp
 	{
 	public:
-		DRAG_DROP_OPERATOR_TYPE(FARDialogueBranchDragDropOp, FDecoratedDragDropOp)
+		DRAG_DROP_OPERATOR_TYPE(FParleyDialogueBranchDragDropOp, FDecoratedDragDropOp)
 
-		static TSharedRef<FARDialogueBranchDragDropOp> New(const EDialogueNodeType InBranchNodeType, const FGuid InBranchId)
+		static TSharedRef<FParleyDialogueBranchDragDropOp> New(const EDialogueNodeType InBranchNodeType, const FGuid InBranchId)
 		{
-			TSharedRef<FARDialogueBranchDragDropOp> Op = MakeShared<FARDialogueBranchDragDropOp>();
+			TSharedRef<FParleyDialogueBranchDragDropOp> Op = MakeShared<FParleyDialogueBranchDragDropOp>();
 			Op->BranchNodeType = InBranchNodeType;
 			Op->BranchId = InBranchId;
 			Op->DefaultHoverText = FText::FromString(TEXT("Reorder Branch"));
@@ -130,7 +130,7 @@ namespace
 		virtual FReply OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
 		{
 			(void)MyGeometry;
-			const TSharedPtr<FARDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FARDialogueBranchDragDropOp>();
+			const TSharedPtr<FParleyDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FParleyDialogueBranchDragDropOp>();
 			if (DragOperation.IsValid() && DragOperation->BranchNodeType == BranchNodeType)
 			{
 				return FReply::Handled();
@@ -141,7 +141,7 @@ namespace
 		virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
 		{
 			(void)MyGeometry;
-			const TSharedPtr<FARDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FARDialogueBranchDragDropOp>();
+			const TSharedPtr<FParleyDialogueBranchDragDropOp> DragOperation = DragDropEvent.GetOperationAs<FParleyDialogueBranchDragDropOp>();
 			if (!DragOperation.IsValid() || DragOperation->BranchNodeType != BranchNodeType || DragOperation->BranchId == BranchId)
 			{
 				return FReply::Unhandled();
@@ -197,7 +197,7 @@ namespace
 			(void)MyGeometry;
 			if (MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
 			{
-				return FReply::Handled().BeginDragDrop(FARDialogueBranchDragDropOp::New(BranchNodeType, BranchId));
+				return FReply::Handled().BeginDragDrop(FParleyDialogueBranchDragDropOp::New(BranchNodeType, BranchId));
 			}
 			return FReply::Unhandled();
 		}
@@ -207,7 +207,7 @@ namespace
 		FGuid BranchId;
 	};
 
-	class FARDialogueInlineGraphNodeFactory final : public FGraphPanelNodeFactory
+	class FParleyDialogueInlineGraphNodeFactory final : public FGraphPanelNodeFactory
 	{
 	public:
 		virtual TSharedPtr<SGraphNode> CreateNode(UEdGraphNode* InNode) const override
@@ -1209,7 +1209,7 @@ void SParleyDialogueInlineGraphNode::RefreshCharacterRoutePortraitBrush(const FG
 	PortraitBrush.ImageSize = FVector2D(CharacterRoutePortraitSize, CharacterRoutePortraitSize);
 	bool bHasPortraitTexture = false;
 
-	const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag);
+	const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag);
 	if (SpeakerRow)
 	{
 		UTexture2D* PortraitTexture = SpeakerRow->DefaultPortrait.PortraitTexture.LoadSynchronous();
@@ -1261,5 +1261,5 @@ FText SParleyDialogueInlineGraphNode::GetFactionDeltaText() const
 
 TSharedRef<FGraphPanelNodeFactory> CreateARDialogueInlineGraphNodeFactory()
 {
-	return MakeShared<FARDialogueInlineGraphNodeFactory>();
+	return MakeShared<FParleyDialogueInlineGraphNodeFactory>();
 }

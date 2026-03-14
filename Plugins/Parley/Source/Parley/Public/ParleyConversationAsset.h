@@ -33,11 +33,11 @@ public:
 	int32 CompileVersion = 0;
 
 	/** Returns true when compiled data is present and matches the latest editor graph. */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue", meta = (ToolTip = "Returns Parley dialogue runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns Parley dialogue runtime state without mutation."))
 	bool IsCompiledGraphValid() const;
 
 	/** Clear compiled data (forces a recompile on next save). Editor/debug helper. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue", meta = (ToolTip = "Executes a Parley dialogue runtime operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Executes a Parley dialogue runtime operation."))
 	void ClearCompiledData();
 
 	const FDialogueCompiledNode* FindCompiledNode(const FGuid& NodeId) const;

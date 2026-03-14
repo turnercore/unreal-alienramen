@@ -15,13 +15,13 @@ class APlayerController;
 class UTexture2D;
 struct FPropertyChangedEvent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnEmotionDisplayStateChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEmoOnEmotionDisplayStateChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEmoOnEmotionDisplayChanged, FGameplayTag, NewEmotionTag, FGameplayTag, OldEmotionTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEmoOnEmotionDisplayCleared);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEmoOnEmotionQueueChanged, int32, ActiveEntryCount);
 
 UCLASS(
-	ClassGroup=(AlienRamen),
+	ClassGroup=(Emo),
 	BlueprintType,
 	Blueprintable,
 	meta=(BlueprintSpawnableComponent, DisplayName="Dialogue Emotion Component", ToolTip="Replicated dialogue emotion display component with anchor and icon preview authoring helpers."))
@@ -32,123 +32,123 @@ class EMO_API UEmoComponent : public UActorComponent
 public:
 	UEmoComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetEmotionTag(FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearEmotionTag();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearAllEmotionTags();
 
 	// Dialogue override helpers (higher priority than base state).
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetDialogueEmotionTag(FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetDialogueEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearDialogueEmotionTag();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearDialogueEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearAllDialogueEmotionTags();
 
 	// Generic runtime override layer for built-on-top systems (for example ordering, scripted events, mode logic).
 	// Highest-priority active source wins; ties resolve by most-recent write.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetSystemEmotionTag(FName SourceId, FGameplayTag NewEmotionTag, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetSystemEmotionTagForDuration(FName SourceId, FGameplayTag NewEmotionTag, float DurationSeconds = -1.0f, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetSystemEmotionTagForPlayerSlotTag(FName SourceId, FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetSystemEmotionTagForPlayerSlotTagForDuration(FName SourceId, FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag, float DurationSeconds = -1.0f, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearSystemEmotionTag(FName SourceId);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearSystemEmotionTagForPlayerSlotTag(FName SourceId, FGameplayTag PlayerSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearAllSystemEmotionTagsForSource(FName SourceId);
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void ClearAllSystemEmotionTags();
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	FGameplayTag GetDisplayedEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag) const;
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	FGameplayTag GetDisplayedEmotionTagForController(const APlayerController* ViewerController) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	bool TryResolveDisplayedEmotionIconForPlayerSlot(
 		FGameplayTag PlayerSlotTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	bool TryResolveDisplayedEmotionIconForController(
 		const APlayerController* ViewerController,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	bool TryResolveEmotionIconForTag(
 		FGameplayTag EmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	bool TryResolvePreviewEmotionIcon(
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	FVector GetEmotionAnchorWorldLocation() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	bool GetEmotionFacingRotationForController(const APlayerController* ViewerController, FRotator& OutFacingRotation) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
 	void SetRegisteredSpeakerTag(FGameplayTag NewSpeakerTag);
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	FGameplayTag GetRegisteredSpeakerTag() const { return RegisteredSpeakerTag; }
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	float GetIconScreenSize() const { return IconScreenSize; }
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	FGameplayTag GetBaseEmotionTag() const { return BaseEmotionState.SharedEmotionTag; }
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
 	FGameplayTag GetPreviewEmotionTag() const;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion", meta = (ToolTip = "Broadcast when displayed emotion state changes and UI should refresh."))
-	FAROnEmotionDisplayStateChanged OnEmotionDisplayStateChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when displayed emotion state changes and UI should refresh."))
+	FEmoOnEmotionDisplayStateChanged OnEmotionDisplayStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion", meta = (ToolTip = "Broadcast when the effective displayed emotion tag changes. Params: NewEmotionTag, OldEmotionTag."))
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when the effective displayed emotion tag changes. Params: NewEmotionTag, OldEmotionTag."))
 	FEmoOnEmotionDisplayChanged OnEmotionDisplayChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion", meta = (ToolTip = "Broadcast when the effective displayed emotion tag becomes invalid (cleared)."))
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when the effective displayed emotion tag becomes invalid (cleared)."))
 	FEmoOnEmotionDisplayCleared OnEmotionDisplayCleared;
 
-	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Emotion", meta = (ToolTip = "Broadcast when active system override source count changes. Param: ActiveEntryCount."))
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when active system override source count changes. Param: ActiveEntryCount."))
 	FEmoOnEmotionQueueChanged OnEmotionQueueChanged;
 
 protected:
@@ -204,22 +204,22 @@ private:
 	UPROPERTY(Replicated)
 	FGameplayTag RegisteredSpeakerTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the actor top-bound anchor."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the actor top-bound anchor."))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
 	float IconScreenSize = 48.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue", ToolTip = "Editor/runtime preview emotion tag used when no active replicated emotion state is present."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", Categories = "Dialogue", ToolTip = "Editor/runtime preview emotion tag used when no active replicated emotion state is present."))
 	FGameplayTag PreviewEmotionTag;
 
-	UPROPERTY(ReplicatedUsing = OnRep_BaseEmotionState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Base Emotion State", ToolTip = "Replicated base emotion state. Dialogue override state can temporarily supersede this."))
+	UPROPERTY(ReplicatedUsing = OnRep_BaseEmotionState, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Base Emotion State", ToolTip = "Replicated base emotion state. Dialogue override state can temporarily supersede this."))
 	FEmoDisplayState BaseEmotionState;
 
-	UPROPERTY(ReplicatedUsing = OnRep_DialogueOverrideState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Dialogue Override State", ToolTip = "Replicated dialogue-scoped override state (higher priority than base emotion state)."))
+	UPROPERTY(ReplicatedUsing = OnRep_DialogueOverrideState, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Dialogue Override State", ToolTip = "Replicated dialogue-scoped override state (higher priority than base emotion state)."))
 	FEmoDisplayState DialogueOverrideState;
 
-	UPROPERTY(ReplicatedUsing = OnRep_SystemOverrideState, BlueprintReadOnly, Category = "Alien Ramen|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "System Override State", ToolTip = "Replicated top-priority runtime override state resolved from active system sources."))
+	UPROPERTY(ReplicatedUsing = OnRep_SystemOverrideState, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "System Override State", ToolTip = "Replicated top-priority runtime override state resolved from active system sources."))
 	FEmoDisplayState SystemOverrideState;
 
 	TMap<FName, FSystemEmotionSourceState> SystemEmotionSources;

@@ -29,7 +29,7 @@ void UParleyFactionSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-bool UParleyFactionSubsystem::GetFactionDefinition(const FGameplayTag FactionTag, FARFactionDefinitionRow& OutDefinition) const
+bool UParleyFactionSubsystem::GetFactionDefinition(const FGameplayTag FactionTag, FParleyFactionDefinitionRow& OutDefinition) const
 {
 	FString Error;
 	if (!ResolveFactionDefinition(FactionTag, OutDefinition, Error))
@@ -73,7 +73,7 @@ float UParleyFactionSubsystem::GetFactionPopularity(const FGameplayTag FactionTa
 		return Existing->Popularity;
 	}
 
-	FARFactionDefinitionRow Definition;
+	FParleyFactionDefinitionRow Definition;
 	FString Error;
 	if (ResolveFactionDefinition(FactionTag, Definition, Error))
 	{
@@ -91,7 +91,7 @@ float UParleyFactionSubsystem::GetEffectiveFactionPopularity(const FGameplayTag 
 	}
 
 	const float BasePopularity = GetFactionPopularity(FactionTag);
-	FARFactionDefinitionRow Definition;
+	FParleyFactionDefinitionRow Definition;
 	FString Error;
 	if (!ResolveFactionDefinition(FactionTag, Definition, Error))
 	{
@@ -125,7 +125,7 @@ bool UParleyFactionSubsystem::ModifyFactionPopularity(const FGameplayTag Faction
 
 	const float CurrentValue = GetFactionPopularity(FactionTag);
 	float NewValue = CurrentValue + DeltaPopularity;
-	FARFactionDefinitionRow Definition;
+	FParleyFactionDefinitionRow Definition;
 	FString Error;
 	if (ResolveFactionDefinition(FactionTag, Definition, Error))
 	{
@@ -334,7 +334,7 @@ bool UParleyFactionSubsystem::BuildFactionTagList(TArray<FGameplayTag>& OutFacti
 			continue;
 		}
 
-		FARFactionDefinitionRow Row;
+		FParleyFactionDefinitionRow Row;
 		FString ResolveError;
 		if (!ResolveFactionDefinition(CandidateTag, Row, ResolveError))
 		{
@@ -355,7 +355,7 @@ bool UParleyFactionSubsystem::BuildFactionTagList(TArray<FGameplayTag>& OutFacti
 	return true;
 }
 
-bool UParleyFactionSubsystem::ResolveFactionDefinition(const FGameplayTag& FactionTag, FARFactionDefinitionRow& OutRow, FString& OutError) const
+bool UParleyFactionSubsystem::ResolveFactionDefinition(const FGameplayTag& FactionTag, FParleyFactionDefinitionRow& OutRow, FString& OutError) const
 {
 	OutError.Reset();
 
@@ -374,25 +374,25 @@ bool UParleyFactionSubsystem::ResolveFactionDefinition(const FGameplayTag& Facti
 	}
 
 	FInstancedStruct RowData;
-	if (!Lookup->TryResolveRowForTag(FactionTag, RowData, OutError))
+	if (!Lookup->TryResolveRowStructForTag(FactionTag, RowData, OutError))
 	{
 		return false;
 	}
 
-	if (const FARFactionDefinitionRow* TypedRow = RowData.GetPtr<FARFactionDefinitionRow>())
+	if (const FParleyFactionDefinitionRow* TypedRow = RowData.GetPtr<FParleyFactionDefinitionRow>())
 	{
 		OutRow = *TypedRow;
 		return true;
 	}
 
-	OutError = FString::Printf(TEXT("Row struct mismatch for '%s'; expected FARFactionDefinitionRow."), *FactionTag.ToString());
+	OutError = FString::Printf(TEXT("Row struct mismatch for '%s'; expected FParleyFactionDefinitionRow."), *FactionTag.ToString());
 	return false;
 }
 
-float UParleyFactionSubsystem::ComputeModifierDelta(const FARFactionDefinitionRow& Row, const FGameplayTagContainer& ProgressionTags) const
+float UParleyFactionSubsystem::ComputeModifierDelta(const FParleyFactionDefinitionRow& Row, const FGameplayTagContainer& ProgressionTags) const
 {
 	float Delta = 0.0f;
-	for (const FARFactionPopularityModifierRule& Rule : Row.PopularityModifierRules)
+	for (const FParleyFactionPopularityModifierRule& Rule : Row.PopularityModifierRules)
 	{
 		if (!Rule.ConditionTag.IsValid())
 		{
@@ -408,7 +408,7 @@ float UParleyFactionSubsystem::ComputeModifierDelta(const FARFactionDefinitionRo
 	return Delta;
 }
 
-float UParleyFactionSubsystem::ClampPopularity(const FARFactionDefinitionRow& Row, const float Value)
+float UParleyFactionSubsystem::ClampPopularity(const FParleyFactionDefinitionRow& Row, const float Value)
 {
 	const float MinValue = FMath::Min(Row.MinPopularity, Row.MaxPopularity);
 	const float MaxValue = FMath::Max(Row.MinPopularity, Row.MaxPopularity);

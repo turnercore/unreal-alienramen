@@ -1149,7 +1149,7 @@ bool AARPlayerCharacterInvader::ResolveRowFromTag(FGameplayTag Tag, FInstancedSt
 	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
 	if (!Lookup) { OutError = TEXT("No TagContentResolverSubsystem."); return false; }
 
-	if (!Lookup->TryResolveRowForTag(Tag, OutRow, OutError))
+	if (!Lookup->TryResolveRowStructForTag(Tag, OutRow, OutError))
 	{
 		return false;
 	}

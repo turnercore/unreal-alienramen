@@ -37,10 +37,10 @@ void FParleyEditorModule::StartupModule()
 		FOnGetDetailCustomizationInstance::CreateStatic(&FParleyDialogueEdGraphNodeDetails::MakeInstance));
 	PropertyEditorModule.RegisterCustomPropertyTypeLayout(
 		TEXT("DialogueBoolNodeData"),
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FARDialogueBoolNodeDataCustomization::MakeInstance));
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FParleyDialogueBoolNodeDataCustomization::MakeInstance));
 	PropertyEditorModule.RegisterCustomPropertyTypeLayout(
 		TEXT("DialogueLineNodeData"),
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FARDialogueLineNodeDataCustomization::MakeInstance));
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FParleyDialogueLineNodeDataCustomization::MakeInstance));
 	PropertyEditorModule.NotifyCustomizationModuleChanged();
 
 	DialogueLineNodeFactory = CreateARDialogueLineGraphNodeFactory();

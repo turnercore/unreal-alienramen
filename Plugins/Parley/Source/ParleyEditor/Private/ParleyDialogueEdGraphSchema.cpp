@@ -104,14 +104,14 @@ namespace
 		}
 	}
 
-	struct FARDialogueGraphSchemaAction_NewNode final : public FEdGraphSchemaAction
+	struct FParleyDialogueGraphSchemaAction_NewNode final : public FEdGraphSchemaAction
 	{
-		FARDialogueGraphSchemaAction_NewNode()
+		FParleyDialogueGraphSchemaAction_NewNode()
 			: FEdGraphSchemaAction()
 		{
 		}
 
-		FARDialogueGraphSchemaAction_NewNode(const FText& Category, const FText& MenuDesc, const FText& ToolTip, const int32 Grouping, const EDialogueNodeType InNodeType)
+		FParleyDialogueGraphSchemaAction_NewNode(const FText& Category, const FText& MenuDesc, const FText& ToolTip, const int32 Grouping, const EDialogueNodeType InNodeType)
 			: FEdGraphSchemaAction(Category, MenuDesc, ToolTip, Grouping)
 			, NodeType(InNodeType)
 		{
@@ -150,9 +150,9 @@ namespace
 		EDialogueNodeType NodeType = EDialogueNodeType::Line;
 	};
 
-	struct FARDialogueGraphSchemaAction_NewComment final : public FEdGraphSchemaAction
+	struct FParleyDialogueGraphSchemaAction_NewComment final : public FEdGraphSchemaAction
 	{
-		FARDialogueGraphSchemaAction_NewComment()
+		FParleyDialogueGraphSchemaAction_NewComment()
 			: FEdGraphSchemaAction(
 				FText::GetEmpty(),
 				FText::FromString(TEXT("Add Comment...")),
@@ -213,7 +213,7 @@ void UParleyDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 	for (const EDialogueNodeType NodeType : NodeTypes)
 	{
 		const FText DisplayName = GetNodeDisplayName(NodeType);
-		TSharedPtr<FARDialogueGraphSchemaAction_NewNode> NewAction = MakeShared<FARDialogueGraphSchemaAction_NewNode>(
+		TSharedPtr<FParleyDialogueGraphSchemaAction_NewNode> NewAction = MakeShared<FParleyDialogueGraphSchemaAction_NewNode>(
 			FText::GetEmpty(),
 			DisplayName,
 			GetNodeTooltip(NodeType),
@@ -225,7 +225,7 @@ void UParleyDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 
 TSharedPtr<FEdGraphSchemaAction> UParleyDialogueEdGraphSchema::GetCreateCommentAction() const
 {
-	return MakeShared<FARDialogueGraphSchemaAction_NewComment>();
+	return MakeShared<FParleyDialogueGraphSchemaAction_NewComment>();
 }
 
 const FPinConnectionResponse UParleyDialogueEdGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const

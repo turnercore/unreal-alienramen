@@ -124,8 +124,8 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 			return false;
 		}
 
-		FARDialogueRuntimeState& Runtime = GetRuntimeState();
-		FARActiveDialogueSession* ActiveSession = FindSessionForSlot(Runtime.ActiveSessions, GetPlayerSlotFromPlayerState(ActivePS));
+		FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+		FParleyActiveDialogueSession* ActiveSession = FindSessionForSlot(Runtime.ActiveSessions, GetPlayerSlotFromPlayerState(ActivePS));
 		if (!ActiveSession)
 		{
 			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Tag mutation skipped: no active session for transient mutation."));

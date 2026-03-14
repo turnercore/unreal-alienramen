@@ -11,7 +11,7 @@ public:
 	virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
 };
 
-class FARDialogueBoolNodeDataCustomization final : public IPropertyTypeCustomization
+class FParleyDialogueBoolNodeDataCustomization final : public IPropertyTypeCustomization
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
@@ -20,7 +20,7 @@ public:
 	virtual void CustomizeChildren(TSharedRef<IPropertyHandle> StructPropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 };
 
-class FARDialogueLineNodeDataCustomization final : public IPropertyTypeCustomization
+class FParleyDialogueLineNodeDataCustomization final : public IPropertyTypeCustomization
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();

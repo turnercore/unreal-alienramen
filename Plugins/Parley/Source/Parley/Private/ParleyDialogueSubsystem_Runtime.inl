@@ -27,18 +27,18 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeaker(APlayerControl
 		return false;
 	}
 
-	const FARPlayerIdentity PlayerIdentity = BuildPlayerIdentityFromState(RequesterPS);
+	const FParleyPlayerIdentity PlayerIdentity = BuildPlayerIdentityFromState(RequesterPS);
 	const EParleyPlayerSlot RequesterSlot = GetPlayerSlotFromPlayerState(RequesterPS);
 	if (RequesterSlot == EParleyPlayerSlot::Unknown)
 	{
 		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Offer blocked: Requester slot is Unknown for speaker '%s'."), *PrimarySpeakerTag.ToString());
 		return false;
 	}
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	SyncCycleOfferStateFromProgressionStoreForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	SyncSpeakerOfferCountsFromProgressionStoreForSlot(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
 
-	const FARDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
 	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
 	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
 	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
@@ -64,7 +64,7 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeaker(APlayerControl
 
 	if (IsBusySpeakerLockEnabled(Settings, ModeTag))
 	{
-		if (const FARActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+		if (const FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 		{
 			UE_LOG(ParleyLog, Verbose,
 				TEXT("[Dialogue] Offer blocked: speaker '%s' is busy in active session '%s' owned by slot %s."),
@@ -289,7 +289,7 @@ enum class EDialogueExecutionResult : uint8
 	Failed
 };
 
-static void FillClientViewForSlot(const FARActiveDialogueSession& Session, const EParleyPlayerSlot Slot, FDialogueClientView& OutView)
+static void FillClientViewForSlot(const FParleyActiveDialogueSession& Session, const EParleyPlayerSlot Slot, FDialogueClientView& OutView)
 {
 	OutView = FDialogueClientView();
 	OutView.SessionId = Session.SessionId;
@@ -308,7 +308,7 @@ static void FillClientViewForSlot(const FARActiveDialogueSession& Session, const
 	OutView.OwnerSlotTag = ParleyPlayerSlot::SlotToTag(Session.OwnerSlot);
 }
 
-static void BroadcastSessionUpdated(UParleyDialogueSubsystem* DialogueSubsystem, const FARActiveDialogueSession& Session)
+static void BroadcastSessionUpdated(UParleyDialogueSubsystem* DialogueSubsystem, const FParleyActiveDialogueSession& Session)
 {
 	if (!DialogueSubsystem)
 	{
@@ -336,7 +336,7 @@ static void BroadcastSessionUpdated(UParleyDialogueSubsystem* DialogueSubsystem,
 	}
 }
 
-static int32 FindSessionIndexForSlot(const TArray<FARActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static int32 FindSessionIndexForSlot(const TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
 {
 	for (int32 Index = 0; Index < Sessions.Num(); ++Index)
 	{
@@ -348,7 +348,7 @@ static int32 FindSessionIndexForSlot(const TArray<FARActiveDialogueSession>& Ses
 	return INDEX_NONE;
 }
 
-static void ClearSessionPresentationState(FARActiveDialogueSession& Session)
+static void ClearSessionPresentationState(FParleyActiveDialogueSession& Session)
 {
 	Session.bWaitingForChoice = false;
 	Session.bWaitingForAdvanceInput = false;
@@ -364,7 +364,7 @@ static void ClearSessionPresentationState(FARActiveDialogueSession& Session)
 	Session.CurrentSpeakerPortrait = FSpeakerPortraitData();
 }
 
-static FARPlayerIdentity BuildOwnerIdentityForSession(const UWorld* World, const FARActiveDialogueSession& Session)
+static FParleyPlayerIdentity BuildOwnerIdentityForSession(const UWorld* World, const FParleyActiveDialogueSession& Session)
 {
 	const APlayerState* OwnerPlayerState = FindPlayerStateBySlot(World, Session.OwnerSlot);
 	return BuildPlayerIdentityFromState(OwnerPlayerState);
@@ -372,7 +372,7 @@ static FARPlayerIdentity BuildOwnerIdentityForSession(const UWorld* World, const
 
 static FDialogueRuntimeContext BuildSessionContext(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const FARActiveDialogueSession& Session,
+	const FParleyActiveDialogueSession& Session,
 	const TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
 	const FGameplayTagContainer& SeenByGameTransient)
 {
@@ -410,7 +410,7 @@ static FDialogueRuntimeContext BuildSessionContext(
 	if (ProgressionStore)
 	{
 		Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
-		const FARPlayerIdentity Identity = BuildOwnerIdentityForSession(Context.World, Session);
+		const FParleyPlayerIdentity Identity = BuildOwnerIdentityForSession(Context.World, Session);
 		GetProgressionTagsForIdentity(ProgressionStore, Identity, Context.PlayerOnlyProgressionTags);
 		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
 		Context.bCompletedByGame = ProgressionStore->DialogueCompletedConversationTagsByGame.HasTagExact(Session.ConversationTag);
@@ -463,7 +463,7 @@ static UParleySpeakerComponent* FindSpeakerComponentForSpeakerTag(UWorld* World,
 }
 
 static void ApplyDialogueEmotionForPresentedSpeaker(
-	FARActiveDialogueSession& Session,
+	FParleyActiveDialogueSession& Session,
 	const FDialogueRuntimeContext& Context,
 	const FGameplayTag& ResolvedSpeakerTag)
 {
@@ -485,7 +485,7 @@ static void ApplyDialogueEmotionForPresentedSpeaker(
 	Session.SpeakerComponentsWithEmotionOverride.Add(SpeakerComponent);
 }
 
-static void ClearDialogueEmotionOverridesForSession(FARActiveDialogueSession& Session, const bool bResetTrackedComponents)
+static void ClearDialogueEmotionOverridesForSession(FParleyActiveDialogueSession& Session, const bool bResetTrackedComponents)
 {
 	for (const TWeakObjectPtr<UParleySpeakerComponent>& WeakSpeakerComponent : Session.SpeakerComponentsWithEmotionOverride)
 	{
@@ -504,7 +504,7 @@ static void ClearDialogueEmotionOverridesForSession(FARActiveDialogueSession& Se
 static void RefreshBusyEmotionForSpeaker(
 	UParleyDialogueSubsystem* DialogueSubsystem,
 	const FGameplayTag& SpeakerTag,
-	const TArray<FARActiveDialogueSession>& Sessions)
+	const TArray<FParleyActiveDialogueSession>& Sessions)
 {
 	if (!DialogueSubsystem || !SpeakerTag.IsValid())
 	{
@@ -537,8 +537,309 @@ static void RefreshBusyEmotionForSpeaker(
 	}
 }
 
+static FGameplayTag ResolveLineSpeakerTagForContext(const FDialogueConversationLine& Line, const FDialogueRuntimeContext& Context)
+{
+	FGameplayTag ResolvedSpeakerTag = Line.SpeakerTag;
+	if (ResolvedSpeakerTag.IsValid() && GetDialogueSpeakerPlayerPlaceholderTag().IsValid()
+		&& ResolvedSpeakerTag.MatchesTagExact(GetDialogueSpeakerPlayerPlaceholderTag())
+		&& Context.ResolvedPlayerSpeakerTag.IsValid())
+	{
+		ResolvedSpeakerTag = Context.ResolvedPlayerSpeakerTag;
+	}
+
+	return ResolvedSpeakerTag;
+}
+
+static bool DoesSpeakerTagMatchPrimarySpeaker(const FGameplayTag& CandidateSpeakerTag, const FGameplayTag& PrimarySpeakerTag)
+{
+	if (!CandidateSpeakerTag.IsValid() || !PrimarySpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	return CandidateSpeakerTag.MatchesTag(PrimarySpeakerTag) || PrimarySpeakerTag.MatchesTag(CandidateSpeakerTag);
+}
+
+static bool DoesSpeakerTagMatchActivePlayerLookahead(const FGameplayTag& CandidateSpeakerTag, const FDialogueRuntimeContext& Context)
+{
+	if (!CandidateSpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	const FGameplayTag PlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	if (PlaceholderTag.IsValid() && CandidateSpeakerTag.MatchesTagExact(PlaceholderTag))
+	{
+		return true;
+	}
+
+	if (!Context.ResolvedPlayerSpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	return CandidateSpeakerTag.MatchesTag(Context.ResolvedPlayerSpeakerTag)
+		|| Context.ResolvedPlayerSpeakerTag.MatchesTag(CandidateSpeakerTag);
+}
+
+static bool ShouldShowLineForLookahead(
+	const UParleyDialogueSubsystem* DialogueSubsystem,
+	const FDialogueLineNodeData& LineData,
+	const FDialogueRuntimeContext& Context)
+{
+	if (!PassesCharacterRestriction(LineData.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	{
+		return false;
+	}
+
+	return PassesLockedConditions(DialogueSubsystem, LineData.SkipLockedConditions, Context)
+		&& PassesBlockedConditions(DialogueSubsystem, LineData.SkipBlockedConditions, Context);
+}
+
+static bool TryResolveChoiceLookaheadEmotion(
+	const UParleyDialogueSubsystem* DialogueSubsystem,
+	const FParleyActiveDialogueSession& Session,
+	const TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
+	const FGameplayTagContainer& SeenByGameTransient,
+	const FGuid StartNodeId,
+	FGameplayTag& OutPreviewEmotionTag)
+{
+	OutPreviewEmotionTag = FGameplayTag();
+	if (!DialogueSubsystem || !Session.ConversationAsset || !StartNodeId.IsValid())
+	{
+		return false;
+	}
+
+	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
+	const int32 MaxSteps = Settings ? FMath::Max(16, Settings->MaxLookaheadSteps) : 1024;
+
+	FGuid CurrentNodeId = StartNodeId;
+	for (int32 StepIndex = 0; StepIndex < MaxSteps; ++StepIndex)
+	{
+		if (!CurrentNodeId.IsValid())
+		{
+			return false;
+		}
+
+		const FDialogueCompiledNode* Node = FindNodeById(Session, CurrentNodeId);
+		if (!Node)
+		{
+			return false;
+		}
+
+		FDialogueRuntimeContext Context = BuildSessionContext(
+			DialogueSubsystem,
+			Session,
+			SeenByPlayerTransient,
+			SeenByGameTransient);
+		Context.ConversationTag = Session.ConversationTag;
+		Context.ConversationAsset = Session.ConversationAsset;
+		Context.PrimarySpeakerTag = Session.PrimarySpeakerTag;
+		Context.TransientConversationTags = Session.TransientConversationTags;
+
+		switch (Node->NodeType)
+		{
+		case EDialogueNodeType::Enter:
+		case EDialogueNodeType::Route:
+			CurrentNodeId = Node->NextNodeId;
+			break;
+
+		case EDialogueNodeType::Line:
+		{
+			const FDialogueLineNodeData* LineData = Node->NodeData.GetPtr<FDialogueLineNodeData>();
+			if (!LineData)
+			{
+				return false;
+			}
+
+			if (ShouldShowLineForLookahead(DialogueSubsystem, *LineData, Context))
+			{
+				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(LineData->Line, Context);
+				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
+				{
+					OutPreviewEmotionTag = ResolvedSpeakerTag;
+					return true;
+				}
+			}
+
+			CurrentNodeId = Node->NextNodeId;
+			break;
+		}
+
+		case EDialogueNodeType::MultiLine:
+		{
+			const FDialogueMultiLineNodeData* MultiLineData = Node->NodeData.GetPtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				return false;
+			}
+
+			for (const FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+			{
+				if (!ShouldShowLineForLookahead(DialogueSubsystem, Entry.LineData, Context))
+				{
+					continue;
+				}
+
+				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(Entry.LineData.Line, Context);
+				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
+				{
+					OutPreviewEmotionTag = ResolvedSpeakerTag;
+					return true;
+				}
+			}
+
+			CurrentNodeId = Node->NextNodeId;
+			break;
+		}
+
+		case EDialogueNodeType::SplitLine:
+		{
+			const FDialogueMultiLineNodeData* SplitLineData = Node->NodeData.GetPtr<FDialogueMultiLineNodeData>();
+			if (!SplitLineData)
+			{
+				return false;
+			}
+
+			for (const FDialogueMultiLineEntry& Entry : SplitLineData->Lines)
+			{
+				if (!ShouldShowLineForLookahead(DialogueSubsystem, Entry.LineData, Context))
+				{
+					continue;
+				}
+
+				if (!DoesSpeakerTagMatchActivePlayerLookahead(Entry.LineData.Line.SpeakerTag, Context))
+				{
+					continue;
+				}
+
+				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(Entry.LineData.Line, Context);
+				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
+				{
+					OutPreviewEmotionTag = ResolvedSpeakerTag;
+					return true;
+				}
+			}
+
+			CurrentNodeId = Node->NextNodeId;
+			break;
+		}
+
+		case EDialogueNodeType::Bool:
+		{
+			const FDialogueBoolNodeData* BoolData = Node->NodeData.GetPtr<FDialogueBoolNodeData>();
+			if (!BoolData)
+			{
+				return false;
+			}
+
+			CurrentNodeId = DialogueSubsystem->EvaluateDialogueCondition(BoolData->Condition, Context)
+				? Node->TrueNodeId
+				: Node->FalseNodeId;
+			break;
+		}
+
+		case EDialogueNodeType::SwitchOnTagsByPriority:
+		{
+			bool bMatched = false;
+			for (const FDialogueCompiledSwitchBranch& Branch : Node->SwitchBranches)
+			{
+				if (PassesLockedConditions(DialogueSubsystem, Branch.LockedConditions, Context)
+					&& PassesBlockedConditions(DialogueSubsystem, Branch.BlockedConditions, Context))
+				{
+					CurrentNodeId = Branch.NextNodeId;
+					bMatched = true;
+					break;
+				}
+			}
+
+			if (!bMatched)
+			{
+				if (!Node->bSwitchHasDefaultOutput)
+				{
+					return false;
+				}
+
+				CurrentNodeId = Node->SwitchDefaultNodeId;
+			}
+			break;
+		}
+
+		case EDialogueNodeType::Random:
+		{
+			float BestWeight = -1.0f;
+			FGuid BestNextNodeId;
+			for (const FDialogueCompiledRandomBranch& Branch : Node->RandomBranches)
+			{
+				if (!Branch.NextNodeId.IsValid() || Branch.Weight <= 0.0f)
+				{
+					continue;
+				}
+
+				if (Branch.Weight > BestWeight)
+				{
+					BestWeight = Branch.Weight;
+					BestNextNodeId = Branch.NextNodeId;
+				}
+			}
+
+			CurrentNodeId = BestNextNodeId;
+			break;
+		}
+
+		case EDialogueNodeType::RouteByCharacter:
+		{
+			bool bMatched = false;
+			for (const FDialogueCompiledCharacterRouteBranch& Branch : Node->CharacterRouteBranches)
+			{
+				if (!DoesSpeakerTagMatchActivePlayerLookahead(Branch.SpeakerTag, Context))
+				{
+					continue;
+				}
+
+				CurrentNodeId = Branch.NextNodeId;
+				bMatched = true;
+				break;
+			}
+
+			if (!bMatched)
+			{
+				return false;
+			}
+			break;
+		}
+
+		case EDialogueNodeType::Sequence:
+		{
+			FGuid FirstLinkedBranch;
+			for (const FDialogueCompiledSequenceBranch& Branch : Node->SequenceBranches)
+			{
+				if (Branch.NextNodeId.IsValid())
+				{
+					FirstLinkedBranch = Branch.NextNodeId;
+					break;
+				}
+			}
+
+			CurrentNodeId = FirstLinkedBranch;
+			break;
+		}
+
+		case EDialogueNodeType::TagMutation:
+		case EDialogueNodeType::RelationshipMutation:
+		case EDialogueNodeType::FactionMutation:
+		case EDialogueNodeType::Completed:
+		case EDialogueNodeType::Choice:
+		default:
+			return false;
+		}
+	}
+
+	return false;
+}
+
 static void AddSessionParticipant(
-	FARActiveDialogueSession& Session,
+	FParleyActiveDialogueSession& Session,
 	TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
 	const EParleyPlayerSlot Slot)
 {
@@ -553,7 +854,7 @@ static void AddSessionParticipant(
 
 static bool PersistCompletedConversation(
 	UParleyDialogueSubsystem* DialogueSubsystem,
-	const FARActiveDialogueSession& Session)
+	const FParleyActiveDialogueSession& Session)
 {
 	FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
 	if (!ProgressionStore)
@@ -566,7 +867,7 @@ static bool PersistCompletedConversation(
 
 	ProgressionStore->DialogueCompletedConversationTagsByGame.AddTag(Session.ConversationTag);
 
-	const FARPlayerIdentity OwnerIdentity = BuildOwnerIdentityForSession(DialogueSubsystem->GetWorld(), Session);
+	const FParleyPlayerIdentity OwnerIdentity = BuildOwnerIdentityForSession(DialogueSubsystem->GetWorld(), Session);
 	if (FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueState(ProgressionStore, OwnerIdentity))
 	{
 		PlayerState->CompletedConversationTags.AddTag(Session.ConversationTag);
@@ -619,8 +920,8 @@ static bool IsBranchConnected(const FGuid& NodeId)
 
 static EDialogueExecutionResult ExecuteSessionUntilWait(
 	UParleyDialogueSubsystem* DialogueSubsystem,
-	FARActiveDialogueSession& Session,
-	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
+	FParleyActiveDialogueSession& Session,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
 	const FGameplayTagContainer& SeenByGameTransient,
 	const bool bAdvanceLineInput,
@@ -990,7 +1291,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		{
 			ClearSessionPresentationState(Session);
 
-			const FARPlayerIdentity OwnerIdentity = BuildOwnerIdentityForSession(Context.World, Session);
+			const FParleyPlayerIdentity OwnerIdentity = BuildOwnerIdentityForSession(Context.World, Session);
 			if (Node->CompletedChoicePolicy == EDialogueCompletedChoicePolicy::LockedToRecordedChoice)
 			{
 				const FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
@@ -1343,7 +1644,7 @@ NextStep:
 	return EDialogueExecutionResult::Failed;
 }
 
-static bool ApplyPreviewAutoChoice(FARActiveDialogueSession& Session, FGuid& OutSelectedChoiceBranchId)
+static bool ApplyPreviewAutoChoice(FParleyActiveDialogueSession& Session, FGuid& OutSelectedChoiceBranchId)
 {
 	OutSelectedChoiceBranchId.Invalidate();
 	if (!Session.bWaitingForChoice || !Session.WaitingChoiceNodeId.IsValid())
@@ -1383,7 +1684,7 @@ static bool ApplyPreviewAutoChoice(FARActiveDialogueSession& Session, FGuid& Out
 	return true;
 }
 
-static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<FARActiveDialogueSession>& Sessions, const int32 SessionIndex, const bool bCompleted = false)
+static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<FParleyActiveDialogueSession>& Sessions, const int32 SessionIndex, const bool bCompleted = false)
 {
 	if (!DialogueSubsystem || !Sessions.IsValidIndex(SessionIndex))
 	{
@@ -1391,7 +1692,7 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 	}
 
 	const FString SessionId = Sessions[SessionIndex].SessionId;
-	FARActiveDialogueSession SessionSnapshot = Sessions[SessionIndex];
+	FParleyActiveDialogueSession SessionSnapshot = Sessions[SessionIndex];
 	const TSet<EParleyPlayerSlot> ParticipantSlots = SessionSnapshot.Participants;
 	if (UWorld* World = DialogueSubsystem->GetWorld())
 	{
@@ -1403,6 +1704,7 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 	UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Session '%s' removed (Participants=%d)."), *SessionId, ParticipantSlots.Num());
 	Sessions.RemoveAtSwap(SessionIndex, 1, EAllowShrinking::No);
 	RefreshBusyEmotionForSpeaker(DialogueSubsystem, SessionSnapshot.PrimarySpeakerTag, Sessions);
+	DialogueSubsystem->OnChoiceLookaheadCleared.Broadcast(ParleyPlayerSlot::SlotToTag(SessionSnapshot.OwnerSlot));
 	DialogueSubsystem->OnDialogueSessionEnded.Broadcast(SessionId);
 	DialogueSubsystem->OnConversationEnded.Broadcast(
 		SessionSnapshot.ConversationTag,
@@ -1441,11 +1743,11 @@ bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* Re
 	APlayerState* RequestingPlayerState = RequestingController->GetPlayerState<APlayerState>();
 	if (RequestingPlayerState)
 	{
-		FARDialogueRuntimeState& Runtime = GetRuntimeState();
+		FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 		const int32 ExistingSessionIndex = FindSessionIndexForSlot(Runtime.ActiveSessions, GetPlayerSlotFromPlayerState(RequestingPlayerState));
 		if (Runtime.ActiveSessions.IsValidIndex(ExistingSessionIndex))
 		{
-			FARActiveDialogueSession& ExistingSession = Runtime.ActiveSessions[ExistingSessionIndex];
+			FParleyActiveDialogueSession& ExistingSession = Runtime.ActiveSessions[ExistingSessionIndex];
 			if (!ExistingSession.ConversationAsset || !ExistingSession.CurrentNodeId.IsValid())
 			{
 				UE_LOG(
@@ -1472,8 +1774,8 @@ bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* Re
 		const FGameplayTag ModeTag = GetCurrentModeTag(this, GetWorld());
 		if (RequesterSlot != EParleyPlayerSlot::Unknown && IsBusySpeakerLockEnabled(Settings, ModeTag))
 		{
-			FARDialogueRuntimeState& Runtime = GetRuntimeState();
-			if (FARActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+			FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+			if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 			{
 				UE_LOG(
 					ParleyLog,
@@ -1515,7 +1817,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 		return false;
 	}
 
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	UParleyConversationAsset* Conversation = Runtime.ConversationsByTag.FindRef(ConversationTag);
 	if (!Conversation)
 	{
@@ -1559,7 +1861,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 		return false;
 	}
 
-	const FARPlayerIdentity RequesterIdentity = BuildPlayerIdentityFromState(RequesterPS);
+	const FParleyPlayerIdentity RequesterIdentity = BuildPlayerIdentityFromState(RequesterPS);
 	SyncCycleOfferStateFromProgressionStoreForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	SyncSpeakerOfferCountsFromProgressionStoreForSlot(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
 	FDialogueRuntimeContext StartContext = BuildOfferContext(this, Conversation, RequesterPS, RequesterIdentity);
@@ -1607,7 +1909,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 		return false;
 	}
 
-	const FARDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
 	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
 	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
 	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
@@ -1635,7 +1937,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 
 	if (bSharedMode)
 	{
-		if (FARActiveDialogueSession* Existing = FindSharedSession(Runtime.ActiveSessions))
+		if (FParleyActiveDialogueSession* Existing = FindSharedSession(Runtime.ActiveSessions))
 		{
 			if (Existing->ConversationTag.MatchesTagExact(ConversationTag))
 			{
@@ -1652,7 +1954,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 	}
 	else if (IsBusySpeakerLockEnabled(Settings, ModeTag))
 	{
-		if (FARActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
+		if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 		{
 			UE_LOG(
 				ParleyLog,
@@ -1680,7 +1982,7 @@ bool UParleyDialogueSubsystem::StartConversation(APlayerController* RequestingCo
 		return false;
 	}
 
-	FARActiveDialogueSession Session;
+	FParleyActiveDialogueSession Session;
 	Session.SessionId = BuildSessionId();
 	Session.ConversationTag = ConversationTag;
 	Session.PrimarySpeakerTag = PrimarySpeakerTag;
@@ -1758,7 +2060,7 @@ bool UParleyDialogueSubsystem::AdvanceConversation(APlayerController* Requesting
 		return false;
 	}
 
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	const int32 SessionIndex = FindSessionIndexForSlot(Runtime.ActiveSessions, GetPlayerSlotFromPlayerState(RequesterPS));
 	if (!Runtime.ActiveSessions.IsValidIndex(SessionIndex))
 	{
@@ -1767,7 +2069,7 @@ bool UParleyDialogueSubsystem::AdvanceConversation(APlayerController* Requesting
 		return false;
 	}
 
-	FARActiveDialogueSession& Session = Runtime.ActiveSessions[SessionIndex];
+	FParleyActiveDialogueSession& Session = Runtime.ActiveSessions[SessionIndex];
 	if (GetPlayerSlotFromPlayerState(RequesterPS) != Session.OwnerSlot)
 	{
 		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Advance rejected: slot %s is not the owner of session '%s'."),
@@ -1820,7 +2122,7 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 		return false;
 	}
 
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	const int32 SessionIndex = FindSessionIndexForSlot(Runtime.ActiveSessions, GetPlayerSlotFromPlayerState(RequesterPS));
 	if (!Runtime.ActiveSessions.IsValidIndex(SessionIndex))
 	{
@@ -1829,7 +2131,7 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 		return false;
 	}
 
-	FARActiveDialogueSession& Session = Runtime.ActiveSessions[SessionIndex];
+	FParleyActiveDialogueSession& Session = Runtime.ActiveSessions[SessionIndex];
 	if (!Session.bWaitingForChoice || !Session.WaitingChoiceNodeId.IsValid())
 	{
 		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] SubmitChoice rejected: session '%s' not waiting for choice."), *Session.SessionId);
@@ -1886,6 +2188,7 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 			ParleyPlayerSlot::SlotToTag(Session.OwnerSlot));
 	}
 
+	OnChoiceLookaheadCleared.Broadcast(ParleyPlayerSlot::SlotToTag(Session.OwnerSlot));
 	ClearSessionPresentationState(Session);
 	Session.RuntimeChoiceSelections.Add(ChoiceNode->NodeId, ChoiceBranchId);
 	Session.CurrentNodeId = SelectedBranch->NextNodeId;
@@ -1908,6 +2211,84 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 		static_cast<int32>(Result));
 	RemoveSessionAt(this, Runtime.ActiveSessions, SessionIndex, Result == EDialogueExecutionResult::EndedCompleted);
 	return Result == EDialogueExecutionResult::EndedCompleted || Result == EDialogueExecutionResult::EndedNonCompleted;
+}
+
+bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* RequestingController, FGuid ChoiceBranchId)
+{
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController)
+	{
+		return false;
+	}
+
+	APlayerState* RequesterPS = RequestingController->GetPlayerState<APlayerState>();
+	if (!RequesterPS)
+	{
+		return false;
+	}
+
+	const EParleyPlayerSlot ViewerSlot = GetPlayerSlotFromPlayerState(RequesterPS);
+	if (ViewerSlot == EParleyPlayerSlot::Unknown)
+	{
+		return false;
+	}
+
+	const FGameplayTag ViewerSlotTag = ParleyPlayerSlot::SlotToTag(ViewerSlot);
+	if (!ChoiceBranchId.IsValid())
+	{
+		OnChoiceLookaheadCleared.Broadcast(ViewerSlotTag);
+		return true;
+	}
+
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	const int32 SessionIndex = FindSessionIndexForSlot(Runtime.ActiveSessions, ViewerSlot);
+	if (!Runtime.ActiveSessions.IsValidIndex(SessionIndex))
+	{
+		return false;
+	}
+
+	const FParleyActiveDialogueSession& Session = Runtime.ActiveSessions[SessionIndex];
+	if (Session.OwnerSlot != ViewerSlot)
+	{
+		return false;
+	}
+
+	if (!Session.bWaitingForChoice || !Session.WaitingChoiceNodeId.IsValid())
+	{
+		return false;
+	}
+
+	const FDialogueCompiledNode* ChoiceNode = FindNodeById(Session, Session.WaitingChoiceNodeId);
+	if (!ChoiceNode)
+	{
+		OnChoiceLookaheadEmotion.Broadcast(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
+		return false;
+	}
+
+	const FDialogueCompiledChoiceBranch* HighlightedBranch = ChoiceNode->ChoiceBranches.FindByPredicate(
+		[&ChoiceBranchId](const FDialogueCompiledChoiceBranch& Branch)
+		{
+			return Branch.ChoiceBranchId == ChoiceBranchId;
+		});
+	if (!HighlightedBranch || !HighlightedBranch->NextNodeId.IsValid())
+	{
+		OnChoiceLookaheadEmotion.Broadcast(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
+		return false;
+	}
+
+	FGameplayTag PreviewEmotionTag;
+	const bool bResolvedPreview = TryResolveChoiceLookaheadEmotion(
+		this,
+		Session,
+		Runtime.SeenByPlayerTransient,
+		Runtime.SeenByGameTransient,
+		HighlightedBranch->NextNodeId,
+		PreviewEmotionTag);
+	OnChoiceLookaheadEmotion.Broadcast(
+		Session.PrimarySpeakerTag,
+		bResolvedPreview ? PreviewEmotionTag : FGameplayTag(),
+		ChoiceBranchId);
+	return true;
 }
 
 bool UParleyDialogueSubsystem::ForceEavesdrop(APlayerController* RequestingController, bool bEnable, FGameplayTag TargetSlotTag)
@@ -1935,7 +2316,7 @@ bool UParleyDialogueSubsystem::ForceEavesdrop(APlayerController* RequestingContr
 
 	const EParleyPlayerSlot TargetSlot = ParleyPlayerSlot::TagToSlot(TargetSlotTag);
 
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	if (bEnable)
 	{
 		if (TargetSlot == EParleyPlayerSlot::Unknown || TargetSlot == ViewerSlot)
@@ -1946,7 +2327,7 @@ bool UParleyDialogueSubsystem::ForceEavesdrop(APlayerController* RequestingContr
 			return false;
 		}
 
-		FARActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(Runtime.ActiveSessions, TargetSlot);
+		FParleyActiveDialogueSession* TargetSession = FindSessionByOwnerSlot(Runtime.ActiveSessions, TargetSlot);
 		if (!TargetSession)
 		{
 			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] ForceEavesdrop rejected: target slot %s has no active dialogue session."),
@@ -1977,7 +2358,7 @@ bool UParleyDialogueSubsystem::ForceEavesdrop(APlayerController* RequestingContr
 
 	Runtime.EavesdropTargetByViewer.Remove(ViewerSlot);
 	APlayerController* ViewerController = FindPlayerControllerBySlot(World, ViewerSlot);
-	for (FARActiveDialogueSession& Session : Runtime.ActiveSessions)
+	for (FParleyActiveDialogueSession& Session : Runtime.ActiveSessions)
 	{
 		if (!Session.bIsSharedSession && Session.OwnerSlot != ViewerSlot && !Session.bChoiceRequiresAllViewers)
 		{

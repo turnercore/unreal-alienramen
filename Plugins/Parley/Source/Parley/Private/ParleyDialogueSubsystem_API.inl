@@ -19,7 +19,7 @@ bool UParleyDialogueSubsystem::PreviewConversationTrace(
 
 	const int32 StepLimit = FMath::Clamp(MaxInteractiveSteps <= 0 ? 64 : MaxInteractiveSteps, 1, 512);
 
-	FARActiveDialogueSession PreviewSession;
+	FParleyActiveDialogueSession PreviewSession;
 	PreviewSession.SessionId = TEXT("PreviewTrace");
 	PreviewSession.ConversationTag = ConversationAsset->Header.ConversationTag;
 	PreviewSession.PrimarySpeakerTag = ConversationAsset->Header.PrimarySpeakerTag;
@@ -43,7 +43,7 @@ bool UParleyDialogueSubsystem::PreviewConversationTrace(
 		PreviewSeenByGame.AddTag(PreviewSession.ConversationTag);
 	}
 
-	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	bool bAdvanceLineInput = false;
 	for (int32 StepIndex = 0; StepIndex < StepLimit; ++StepIndex)
 	{
@@ -171,11 +171,11 @@ void UParleyDialogueSubsystem::GetRegisteredPrimarySpeakerTags(TArray<FGameplayT
 {
 	OutSpeakerTags.Reset();
 
-	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	TSet<FGameplayTag> UniqueTags;
 	UniqueTags.Reserve(Runtime.SpeakerRowsByTag.Num() + Runtime.ConversationsByTag.Num());
 
-	for (const TPair<FGameplayTag, FARDialogueSpeakerRow>& Pair : Runtime.SpeakerRowsByTag)
+	for (const TPair<FGameplayTag, FParleySpeakerRow>& Pair : Runtime.SpeakerRowsByTag)
 	{
 		if (Pair.Key.IsValid())
 		{
@@ -251,7 +251,7 @@ bool UParleyDialogueSubsystem::GetPrimarySpeakerForConversation(FGameplayTag Con
 		return false;
 	}
 
-	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	const TObjectPtr<UParleyConversationAsset>* ConversationPtr = Runtime.ConversationsByTag.Find(ConversationTag);
 	const UParleyConversationAsset* Conversation = ConversationPtr ? ConversationPtr->Get() : nullptr;
 	if (!Conversation || !Conversation->Header.PrimarySpeakerTag.IsValid())
@@ -298,7 +298,7 @@ bool UParleyDialogueSubsystem::GetLocalViewForController(const APlayerController
 	{
 		return false;
 	}
-	const FARActiveDialogueSession* Session = FindSessionForSlot(GetRuntimeState().ActiveSessions, Slot);
+	const FParleyActiveDialogueSession* Session = FindSessionForSlot(GetRuntimeState().ActiveSessions, Slot);
 	if (!Session)
 	{
 		return false;
@@ -329,7 +329,7 @@ bool UParleyDialogueSubsystem::HasActiveDialogueSession() const
 void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayTag PlayerSlotTag)
 {
 	const EParleyPlayerSlot PlayerSlot = ParleyPlayerSlot::TagToSlot(PlayerSlotTag);
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	FParleyProgressionStore* ProgressionStore = GetProgressionStore(this);
 	FParleyProgressionMutator* ProgressionMutator = GetProgressionMutator(this);
 	bool bProgressionChanged = false;
@@ -430,11 +430,11 @@ int32 UParleyDialogueSubsystem::GetRelationshipLevelForSpeaker(FGameplayTag Spea
 		return 0;
 	}
 
-	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	FGameplayTag CandidateSpeakerTag = SpeakerTag;
 	while (CandidateSpeakerTag.IsValid())
 	{
-		if (const FARDialogueSpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(CandidateSpeakerTag))
+		if (const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(CandidateSpeakerTag))
 		{
 			return ResolveRelationshipLevelFromThresholds(Points, SpeakerRow->RelationshipThresholds);
 		}
@@ -480,7 +480,7 @@ void UParleyDialogueSubsystem::SetProgressionStateForPlayer(FGameplayTag PlayerS
 	DialogueState.SkippedConversationTagsThisCycle = State.SkippedConversationTagsThisCycle;
 	DialogueState.SpeakerOfferCountsThisCycle = State.SpeakerOfferCountsThisCycle;
 
-	FARDialogueRuntimeState& Runtime = GetRuntimeState();
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	Runtime.SeenByPlayerTransient.FindOrAdd(PlayerSlot) = State.SeenConversationTagsThisCycle;
 	Runtime.SkippedByPlayerTransient.FindOrAdd(PlayerSlot) = State.SkippedConversationTagsThisCycle;
 	TMap<FGameplayTag, int32> OfferCountMap;

@@ -1,6 +1,6 @@
 /**
  * @file ParleyDialogueSettings.h
- * @brief Dialogue runtime/content settings for Alien Ramen.
+ * @brief Dialogue runtime/content settings for Parley.
  */
 #pragma once
 
@@ -18,7 +18,7 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 	virtual FName GetSectionName() const override { return TEXT("Dialogue"); }
 
-	// TagContentResolver root tag used to resolve FARDialogueSpeakerRow records.
+	// TagContentResolver root tag used to resolve FParleySpeakerRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content", meta = (ToolTip = "TagContentResolver root tag used to discover dialogue content assets."))
 	FGameplayTag SpeakerDefinitionRootTag;
 
@@ -41,6 +41,10 @@ public:
 	// Safety guard for runtime node traversal loops.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ClampMin="16", UIMin="16", ToolTip = "Safety cap for maximum node steps processed per dialogue advance."))
 	int32 MaxExecutionStepsPerAdvance = 1024;
+
+	// Safety guard for read-only choice lookahead traversal.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ClampMin="16", UIMin="16", ToolTip = "Safety cap for maximum node steps processed when previewing a highlighted choice branch."))
+	int32 MaxLookaheadSteps = 1024;
 
 	// Ordered list mapping player slots to tags (Index 0 = P1, Index 1 = P2).
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ToolTip = "Ordered list mapping player slots to tags (index 0 = P1, index 1 = P2)."))

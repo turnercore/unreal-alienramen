@@ -1,6 +1,6 @@
 // Split from ParleyDialogueSubsystem.cpp for maintainability.
 
-bool UParleyDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
+bool UParleyDialogueSubsystem::ValidateSpeaker(const FParleySpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const
 {
 	OutReport = FDialogueValidationReport();
 	auto Add = [&OutReport](EDialogueValidationSeverity Severity, const FString& Message)
@@ -50,7 +50,7 @@ bool UParleyDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& Spea
 		FString LookupError;
 		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 		{
-			if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueSpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+			if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 			{
 				LookupError.Empty();
 				if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
@@ -66,11 +66,11 @@ bool UParleyDialogueSubsystem::ValidateSpeaker(const FARDialogueSpeakerRow& Spea
 				EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
 			}
 
-			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
+			if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
 				{
-					const FARDialogueSpeakerRow* Row = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueSpeakerValidate"), false);
+					const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueSpeakerValidate"), false);
 					if (!Row)
 					{
 						continue;
@@ -464,8 +464,8 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		? DialogueSettings->SpeakerDefinitionRootTag
 		: FGameplayTag();
 
-	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
-	TMap<FGameplayTag, FARDialogueSpeakerRow> ValidationSpeakerRows = Runtime.SpeakerRowsByTag;
+	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	TMap<FGameplayTag, FParleySpeakerRow> ValidationSpeakerRows = Runtime.SpeakerRowsByTag;
 	if (ValidationSpeakerRows.IsEmpty())
 	{
 		UDataTable* SpeakerTable = nullptr;
@@ -473,7 +473,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		FString LookupError;
 		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
 		{
-			if (!Lookup->TryResolveDataTableForRowStruct(FARDialogueSpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+			if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 			{
 				LookupError.Empty();
 				if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
@@ -489,17 +489,17 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 				EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
 			}
 
-			if (SpeakerTable && SpeakerTable->GetRowStruct() == FARDialogueSpeakerRow::StaticStruct())
+			if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
 			{
 				for (const FName RowName : SpeakerTable->GetRowNames())
 				{
-					const FARDialogueSpeakerRow* SpeakerRow = SpeakerTable->FindRow<FARDialogueSpeakerRow>(RowName, TEXT("DialogueValidationFallback"), false);
+					const FParleySpeakerRow* SpeakerRow = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueValidationFallback"), false);
 					if (!SpeakerRow)
 					{
 						continue;
 					}
 
-					FARDialogueSpeakerRow Copy = *SpeakerRow;
+					FParleySpeakerRow Copy = *SpeakerRow;
 					if (!Copy.SpeakerTag.IsValid())
 					{
 						Copy.SpeakerTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
@@ -1208,7 +1208,7 @@ static FDialogueRuntimeContext BuildOfferContext(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
 	const UParleyConversationAsset* Conversation,
 	APlayerState* RequesterPS,
-	const FARPlayerIdentity& PlayerIdentity)
+	const FParleyPlayerIdentity& PlayerIdentity)
 {
 	FDialogueRuntimeContext Context;
 	Context.World = DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr;
