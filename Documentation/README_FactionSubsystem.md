@@ -8,7 +8,7 @@ This document describes the current faction runtime split:
 ## Ownership Split
 
 - **Parley-owned (`UParleyFactionSubsystem`)**
-  - Faction definition resolution from TagContentResolver
+  - Faction definition resolution from TagKey
   - Faction popularity state
   - Faction reputation per speaker (`FactionTag + SpeakerTag`)
   - Mutation events for save bridges

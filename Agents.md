@@ -126,13 +126,14 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
 - `AARShopAIController` bridges shop-NPC dialogue lifecycle into StateTree events (`Event.ShopNPC.ConversationOffered`, `Event.ShopNPC.DialogueStarted`, `Event.ShopNPC.DialogueEnded`, `Event.ShopNPC.ConversationCompleted`) for animation/state transitions.
-- `UEmoResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
+- `UEmoResolverSubsystem` owns shared emotion icon lookup/cache via TagKey route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
 - Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 - Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; relationship values and game-completed conversations remain shared save state.
 - Dialogue cycle gating is character-owned: seen/skipped-this-cycle and per-speaker cycle offer counts (`MaxOffersPerCycle` on speaker rows) are persisted on character dialogue state.
+- Parley `Signal` graph nodes are single-output passthrough nodes that broadcast `UParleyDialogueSubsystem::OnDialogueSignalFired` (`SignalTag`, optional payload tags, conversation/speaker/player-slot context); game systems should react in game layer listeners instead of embedding behavior in dialogue graphs.
 - `UARParleySaveBridge` is the game-owned persistence adapter for Parley/ParleyFaction events; plugin events mark save dirty only and never force autosave directly.
 
 Docs: `Documentation/README_DialogueNPC.md`
@@ -190,9 +191,9 @@ Docs: `Documentation/README_FactionSubsystem.md`
 
 ### Content Lookup
 
-- `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
+- `UTagKeySubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
-- `UARItemDefinitionSubsystem` is the shared resolver facade for item/energy-drink definitions and shared item physics metadata; it delegates to `UTagContentResolverSubsystem` and is consumed by both Shop and Scrapyard runtime paths.
+- `UARItemDefinitionSubsystem` is the shared resolver facade for item/energy-drink definitions and shared item physics metadata; it delegates to `UTagKeySubsystem` and is consumed by both Shop and Scrapyard runtime paths.
 
 ### Invader
 
@@ -233,7 +234,7 @@ Docs: `Documentation/README_TransitionMode.md`
 - Scrapyard hold-style interactions should use `AARPlayerController` active interaction tracking and optional `IARInteractableRangeListener` callbacks for server-authoritative out-of-range interruption.
 - Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
 - Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
-- Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- Scrapyard item definitions are TagKey-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
 - Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` using travel option context (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`).
 - When `SpawnRuleSet` is set on `AARScrapyardGameMode`, scrapyard item spawn orchestration is GameMode-owned (Perlin noise + spawner weight + rarity budgets + `bAlwaysSpawn`). Managed flow only runs when the rule asset is set; leave it unset only for maps that should intentionally have no scrapyard spawns. Set spawner `bSpawnOnBeginPlay=false` when relying on managed flow. Docs: `Documentation/README_ScrapyardMode.md` and `Documentation/Assets/README_ScrapyardSpawnRules.md`.
 

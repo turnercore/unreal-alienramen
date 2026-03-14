@@ -6,7 +6,7 @@
 class UDataTable;
 class UScriptStruct;
 
-class TAGCONTENTRESOLVEREDITOR_API FTagContentResolverEditorHelpers
+class TAGKEYEDITOR_API FTagKeyEditorHelpers
 {
 public:
 	static bool TryResolveDataTableForRootTag(FGameplayTag RootTag, UDataTable*& OutDataTable, FString& OutError);

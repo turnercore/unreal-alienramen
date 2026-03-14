@@ -1364,6 +1364,7 @@ void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UParl
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
+		case EDialogueNodeType::Signal:
 		case EDialogueNodeType::Route:
 			LinkPinToNode(SourceNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameNext()), RuntimeNode.NextNodeId);
 			break;
@@ -1606,6 +1607,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
+		case EDialogueNodeType::Signal:
 		case EDialogueNodeType::Route:
 			CompiledNode.NextNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameNext()), TEXT("Next"));
 			break;

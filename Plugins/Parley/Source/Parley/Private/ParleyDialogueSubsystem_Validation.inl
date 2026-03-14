@@ -48,7 +48,7 @@ bool UParleyDialogueSubsystem::ValidateSpeaker(const FParleySpeakerRow& SpeakerR
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
+		if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
 		{
 			if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 			{
@@ -385,7 +385,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
 		const FString CurrentOfferGatingSignature = BuildConversationOfferGatingSignature(ConversationAsset->Header);
 
-		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
+		if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
 		{
 			UDataTable* ConversationTable = nullptr;
 			FGameplayTag MatchedRoot;
@@ -440,7 +440,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		if (MatchingConversationTagCount > 1)
 		{
 			Add(EDialogueValidationSeverity::Error, FGuid(),
-				FString::Printf(TEXT("Duplicate conversation tag '%s' detected (%d occurrences in TagContentResolver rows)."),
+				FString::Printf(TEXT("Duplicate conversation tag '%s' detected (%d occurrences in TagKey rows)."),
 					*ConversationAsset->Header.ConversationTag.ToString(),
 					MatchingConversationTagCount));
 		}
@@ -471,7 +471,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
+		if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
 		{
 			if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 			{
@@ -910,6 +910,20 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 				Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Faction mutation requires valid FactionTag."));
 			}
 			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Faction mutation next output"));
+			break;
+		}
+		case EDialogueNodeType::Signal:
+		{
+			const FDialogueSignalNodeData* SignalData = Node.NodeData.GetPtr<FDialogueSignalNodeData>();
+			if (!SignalData)
+			{
+				Add(EDialogueValidationSeverity::Error, Node.NodeId, TEXT("Signal node payload mismatch."));
+			}
+			else if (!SignalData->SignalTag.IsValid())
+			{
+				Add(EDialogueValidationSeverity::Warning, Node.NodeId, TEXT("Signal node has no signal tag set."));
+			}
+			RegisterEdge(Node.NodeId, Node.NextNodeId, true, TEXT("Signal next output"));
 			break;
 		}
 		case EDialogueNodeType::Random:

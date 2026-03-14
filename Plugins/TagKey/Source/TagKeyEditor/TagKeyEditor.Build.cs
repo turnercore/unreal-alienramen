@@ -1,8 +1,8 @@
 using UnrealBuildTool;
 
-public class TagContentResolver : ModuleRules
+public class TagKeyEditor : ModuleRules
 {
-	public TagContentResolver(ReadOnlyTargetRules Target) : base(Target)
+	public TagKeyEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -11,9 +11,9 @@ public class TagContentResolver : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"DeveloperSettings",
+			"UnrealEd",
 			"GameplayTags",
-			"StructUtils"
+			"TagKey"
 		});
 	}
 }

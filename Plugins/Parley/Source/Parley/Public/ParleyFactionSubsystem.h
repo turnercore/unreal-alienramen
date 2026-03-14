@@ -20,7 +20,7 @@ class PARLEY_API UParleyFactionSubsystem : public UGameInstanceSubsystem
 public:
 	virtual void Deinitialize() override;
 
-	/** Resolves faction definition data for a faction tag via TagContentResolver. */
+	/** Resolves faction definition data for a faction tag via TagKey. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
 	bool GetFactionDefinition(FGameplayTag FactionTag, FParleyFactionDefinitionRow& OutDefinition) const;
 

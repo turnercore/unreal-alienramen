@@ -2,7 +2,7 @@
 
 #include "ParleyFactionSettings.h"
 #include "ParleyLog.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameplayTagsManager.h"
@@ -305,10 +305,10 @@ bool UParleyFactionSubsystem::BuildFactionTagList(TArray<FGameplayTag>& OutFacti
 		return false;
 	}
 
-	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
+	UTagKeySubsystem* Lookup = GI->GetSubsystem<UTagKeySubsystem>();
 	if (!Lookup)
 	{
-		OutError = TEXT("TagContentResolverSubsystem missing.");
+		OutError = TEXT("TagKeySubsystem missing.");
 		return false;
 	}
 
@@ -366,10 +366,10 @@ bool UParleyFactionSubsystem::ResolveFactionDefinition(const FGameplayTag& Facti
 		return false;
 	}
 
-	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
+	UTagKeySubsystem* Lookup = GI->GetSubsystem<UTagKeySubsystem>();
 	if (!Lookup)
 	{
-		OutError = TEXT("TagContentResolverSubsystem missing.");
+		OutError = TEXT("TagKeySubsystem missing.");
 		return false;
 	}
 

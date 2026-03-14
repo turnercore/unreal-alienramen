@@ -26,6 +26,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnRelationshipChanged, FGam
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnProgressionTagMutated, FGameplayTag, ProgressionTag, bool, bAdded, FGameplayTag, PlayerSlotTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnChoiceLookaheadEmotion, FGameplayTag, PrimarySpeakerTag, FGameplayTag, PreviewEmotionTag, FGuid, ChoiceBranchId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnChoiceLookaheadCleared, FGameplayTag, PlayerSlotTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnDialogueSignalFired, FGameplayTag, SignalTag, FGameplayTagContainer, PayloadTags, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
 DECLARE_DELEGATE_RetVal_TwoParams(bool, FParleyIsConversationCompleted, FGameplayTag, FGameplayTag);
 DECLARE_DELEGATE_RetVal(FGameplayTag, FParleyGetCurrentModeTag);
 
@@ -240,6 +241,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when highlighted-choice lookahead is cleared for a player slot."))
 	FParleyOnChoiceLookaheadCleared OnChoiceLookaheadCleared;
+
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Signals", meta = (ToolTip = "Broadcast when a Signal node fires. Params: SignalTag, PayloadTags, ConversationTag, SpeakerTag, PlayerSlotTag."))
+	FParleyOnDialogueSignalFired OnDialogueSignalFired;
 
 	// Optional query delegates owned by the game module.
 	FParleyIsConversationCompleted OnQueryConversationCompleted;

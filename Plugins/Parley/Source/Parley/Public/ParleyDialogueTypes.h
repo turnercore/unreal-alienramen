@@ -269,7 +269,7 @@ struct PARLEY_API FDialogueConversationHeader
 	bool bCompletedByGameBlocksReoffer = false;
 };
 
-// TagContentResolver row shape for conversation asset registration.
+// TagKey row shape for conversation asset registration.
 USTRUCT(BlueprintType)
 struct PARLEY_API FParleyConversationAssetRow : public FTableRowBase
 {
@@ -322,7 +322,8 @@ enum class EDialogueNodeType : uint8
 	Sequence,
 	MultiLine,
 	SplitLine,
-	RouteByCharacter
+	RouteByCharacter,
+	Signal
 };
 
 USTRUCT(BlueprintType)
@@ -534,6 +535,18 @@ struct PARLEY_API FDialogueFactionMutationNodeData
 };
 
 USTRUCT(BlueprintType)
+struct PARLEY_API FDialogueSignalNodeData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue.Signal", ToolTip = "Gameplay tag identifying this signal. Game systems bind to OnDialogueSignalFired and filter by this tag."))
+	FGameplayTag SignalTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Optional payload tags broadcast with the signal for additional context."))
+	FGameplayTagContainer PayloadTags;
+};
+
+USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueRandomBranch
 {
 	GENERATED_BODY()
@@ -667,16 +680,16 @@ struct PARLEY_API FDialogueCompiledNode
 		EditAnywhere,
 		BlueprintReadWrite,
 		Category = "",
-		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::SplitLine || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
+		meta = (ShowOnlyInnerProperties, EditCondition = "NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::SplitLine || NodeType == EDialogueNodeType::Bool || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Signal", EditConditionHides, DisplayName = "Node Payload", ToolTip = "Type-specific payload for this node. Only shown for node types that use direct payload data."))
 	FInstancedStruct NodeData;
 
-	// Single output edge for Enter/Line/TagMutation/RelationshipMutation/FactionMutation.
+	// Single output edge for Enter/Line/TagMutation/RelationshipMutation/FactionMutation/Signal.
 	UPROPERTY(
 		EditAnywhere,
 		BlueprintReadWrite,
 		Category = "",
 		AdvancedDisplay,
-		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::SplitLine || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/MultiLine/SplitLine/Mutation/Route nodes."))
+		meta = (EditCondition = "NodeType == EDialogueNodeType::Enter || NodeType == EDialogueNodeType::Line || NodeType == EDialogueNodeType::MultiLine || NodeType == EDialogueNodeType::SplitLine || NodeType == EDialogueNodeType::TagMutation || NodeType == EDialogueNodeType::RelationshipMutation || NodeType == EDialogueNodeType::FactionMutation || NodeType == EDialogueNodeType::Signal || NodeType == EDialogueNodeType::Route", EditConditionHides, DisplayName = "Next Node ID (Compile Managed)", ToolTip = "Compile-managed single-output link for Enter/Line/MultiLine/SplitLine/Mutation/Signal/Route nodes."))
 	FGuid NextNodeId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", AdvancedDisplay, meta = (EditCondition = "NodeType == EDialogueNodeType::Bool", EditConditionHides, DisplayName = "True Node ID (Compile Managed)", ToolTip = "Compile-managed output target when the Bool condition evaluates true."))

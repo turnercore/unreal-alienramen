@@ -18,12 +18,12 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Parley"); }
 	virtual FName GetSectionName() const override { return TEXT("Dialogue"); }
 
-	// TagContentResolver root tag used to resolve FParleySpeakerRow records.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content", meta = (ToolTip = "TagContentResolver root tag used to discover dialogue content assets."))
+	// TagKey root tag used to resolve FParleySpeakerRow records.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content", meta = (ToolTip = "TagKey root tag used to discover dialogue content assets."))
 	FGameplayTag SpeakerDefinitionRootTag;
 
-	// TagContentResolver root tag used to resolve FParleyConversationAssetRow records.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content", meta = (ToolTip = "TagContentResolver root tag used to discover dialogue content assets."))
+	// TagKey root tag used to resolve FParleyConversationAssetRow records.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content", meta = (ToolTip = "TagKey root tag used to discover dialogue content assets."))
 	FGameplayTag ConversationDefinitionRootTag;
 
 	// Modes that use one shared session for all slotted players.

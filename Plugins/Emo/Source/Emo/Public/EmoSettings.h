@@ -18,7 +18,7 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Emo"); }
 	virtual FName GetSectionName() const override { return TEXT("Emotion"); }
 
-	// Preferred TagContentResolver route root used to resolve the emotion icon DataTable.
+	// Preferred TagKey route root used to resolve the emotion icon DataTable.
 	// Example: Dialogue.Emotion (row names should match emotion tags).
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue", ToolTip = "Emotion content root tags used by resolver lookup and fallback."))
 	FGameplayTag EmotionResolverRootTag;

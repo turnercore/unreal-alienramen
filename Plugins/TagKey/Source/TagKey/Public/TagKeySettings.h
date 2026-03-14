@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "TagContentResolverTypes.h"
-#include "TagContentResolverSettings.generated.h"
+#include "TagKeyTypes.h"
+#include "TagKeySettings.generated.h"
 
-UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Tag Content Resolver"))
-class TAGCONTENTRESOLVER_API UTagContentResolverSettings : public UDeveloperSettings
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="TagKey"))
+class TAGKEY_API UTagKeySettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
@@ -14,10 +14,10 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Plugins"); }
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Project-owned routes. Other plugins can still contribute additional routes via providers. Each entry maps a root tag (e.g., Dialogue.Speaker) to a DataTable soft reference."))
-	TArray<FTagContentResolverProjectRoute> ProjectRoutes;
+	TArray<FTagKeyProjectRoute> ProjectRoutes;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Controls which route tables are preloaded at subsystem startup. Never = none, Only Routes Marked as Preload = project routes with bPreload=true, All Routes = every configured route."))
-	ETagContentResolverPreloadPolicy PreloadPolicy = ETagContentResolverPreloadPolicy::CriticalRoots;
+	ETagKeyPreloadPolicy PreloadPolicy = ETagKeyPreloadPolicy::CriticalRoots;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Async Loading", meta=(ToolTip="When enabled, successful row resolves request async loads for unresolved soft object/class references found in the resolved row data. Keeps future resolves hitch-free at the cost of background IO."))
 	bool bAutoPreloadRowSoftReferences = true;

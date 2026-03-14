@@ -16,7 +16,7 @@ public class Parley : ModuleRules
 			"DeveloperSettings",
 			"UMG",
 			"StructUtils",
-			"TagContentResolver"
+			"TagKey"
 		});
 	}
 }

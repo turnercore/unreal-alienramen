@@ -8,7 +8,7 @@
 #include "ParleyPlayerControllerInterface.h"
 #include "ParleySpeakerComponent.h"
 #include "ParleySpeakerSubsystem.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
 #include "Engine/World.h"
@@ -586,7 +586,7 @@ static const FParleyProgressionStore* GetProgressionStore(const UParleyDialogueS
 	return Subsystem ? &Subsystem->GetRuntimeState().ProgressionStoreState : nullptr;
 }
 
-static UTagContentResolverSubsystem* GetLookupSubsystem(const UParleyDialogueSubsystem* Subsystem)
+static UTagKeySubsystem* GetLookupSubsystem(const UParleyDialogueSubsystem* Subsystem)
 {
 	if (!Subsystem)
 	{
@@ -594,7 +594,7 @@ static UTagContentResolverSubsystem* GetLookupSubsystem(const UParleyDialogueSub
 	}
 	if (UGameInstance* GI = Subsystem->GetGameInstance())
 	{
-		return GI->GetSubsystem<UTagContentResolverSubsystem>();
+		return GI->GetSubsystem<UTagKeySubsystem>();
 	}
 	return nullptr;
 }
@@ -1727,16 +1727,16 @@ static bool ResolveDialogueTagFieldValue(
 			*ResolvedSpeakerRowTag.ToString());
 	}
 
-	UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(DialogueSubsystem);
+	UTagKeySubsystem* Lookup = GetLookupSubsystem(DialogueSubsystem);
 	if (!Lookup)
 	{
 		if (!SpeakerFieldFailure.IsEmpty())
 		{
-			SetFailureReason(SpeakerFieldFailure + TEXT(" TagContentResolverSubsystem is unavailable."));
+			SetFailureReason(SpeakerFieldFailure + TEXT(" TagKeySubsystem is unavailable."));
 		}
 		else
 		{
-			SetFailureReason(TEXT("TagContentResolverSubsystem is unavailable."));
+			SetFailureReason(TEXT("TagKeySubsystem is unavailable."));
 		}
 		return false;
 	}
@@ -2279,7 +2279,7 @@ static bool DoesSessionRejectEavesdrop(const FParleyActiveDialogueSession& Sessi
 void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	Collection.InitializeDependency<UTagContentResolverSubsystem>();
+	Collection.InitializeDependency<UTagKeySubsystem>();
 
 	RuntimeState.Reset(new FParleyDialogueRuntimeState());
 	FParleyDialogueRuntimeState& Runtime = *RuntimeState.Get();
@@ -2312,7 +2312,7 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 
 	int32 ConversationsFromLookup = 0;
-	if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
+	if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
 	{
 		UDataTable* ConversationTable = nullptr;
 		FString LookupError;
@@ -2339,7 +2339,7 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 			if (ConversationTable->GetRowStruct() != FParleyConversationAssetRow::StaticStruct())
 			{
 				UE_LOG(ParleyLog, Warning,
-					TEXT("[Dialogue] TagContentResolver conversation table '%s' row struct mismatch (%s); expected FParleyConversationAssetRow."),
+					TEXT("[Dialogue] TagKey conversation table '%s' row struct mismatch (%s); expected FParleyConversationAssetRow."),
 					*ConversationTable->GetName(),
 					*GetNameSafe(ConversationTable->GetRowStruct()));
 			}
@@ -2363,7 +2363,7 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 					if (!Conversation)
 					{
 						UE_LOG(ParleyLog, Warning,
-							TEXT("[Dialogue] TagContentResolver row '%s' missing conversation asset reference; skipping."),
+							TEXT("[Dialogue] TagKey row '%s' missing conversation asset reference; skipping."),
 							*RowName.ToString());
 						continue;
 					}
@@ -2372,7 +2372,7 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 						Runtime.ConversationsByTag,
 						Conversation,
 						RowConversationTag,
-						FString::Printf(TEXT("TagContentResolver row '%s'"), *RowName.ToString())))
+						FString::Printf(TEXT("TagKey row '%s'"), *RowName.ToString())))
 					{
 						++ConversationsFromLookup;
 					}
@@ -2382,23 +2382,23 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		else if (!LookupError.IsEmpty())
 		{
 			UE_LOG(ParleyLog, Warning,
-				TEXT("[Dialogue] No TagContentResolver conversation table resolved for root '%s': %s"),
+				TEXT("[Dialogue] No TagKey conversation table resolved for root '%s': %s"),
 				*Settings->ConversationDefinitionRootTag.ToString(),
 				*LookupError);
 		}
 		else
 		{
 			UE_LOG(ParleyLog, Warning,
-				TEXT("[Dialogue] No TagContentResolver conversation table resolved for root '%s' (empty lookup error)."),
+				TEXT("[Dialogue] No TagKey conversation table resolved for root '%s' (empty lookup error)."),
 				*Settings->ConversationDefinitionRootTag.ToString());
 		}
 	}
 	else
 	{
-		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] TagContentResolverSubsystem unavailable during dialogue initialization."));
+		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] TagKeySubsystem unavailable during dialogue initialization."));
 	}
 
-	if (UTagContentResolverSubsystem* Lookup = GetLookupSubsystem(this))
+	if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
 	{
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
@@ -2463,12 +2463,12 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 	else
 	{
-		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] TagContentResolverSubsystem unavailable during speaker initialization."));
+		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] TagKeySubsystem unavailable during speaker initialization."));
 	}
 
 	if (Runtime.ConversationsByTag.IsEmpty())
 	{
-		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] No conversations registered from TagContentResolver. Dialogue offering will fail."));
+		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] No conversations registered from TagKey. Dialogue offering will fail."));
 	}
 	else
 	{

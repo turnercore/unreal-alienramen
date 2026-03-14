@@ -2,7 +2,7 @@
   "FileVersion": 3,
   "Version": 1,
   "VersionName": "1.0.0",
-  "FriendlyName": "Tag Content Resolver",
+  "FriendlyName": "TagKey",
   "Description": "Gameplay tag to content table resolver for runtime and editor tooling.",
   "Category": "Gameplay",
   "CreatedBy": "Alien Ramen",
@@ -19,12 +19,12 @@
   ],
   "Modules": [
     {
-      "Name": "TagContentResolver",
+      "Name": "TagKey",
       "Type": "Runtime",
       "LoadingPhase": "Default"
     },
     {
-      "Name": "TagContentResolverEditor",
+      "Name": "TagKeyEditor",
       "Type": "Editor",
       "LoadingPhase": "PostEngineInit"
     }

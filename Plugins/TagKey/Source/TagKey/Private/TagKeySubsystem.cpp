@@ -1,4 +1,4 @@
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 
 #include "Algo/Sort.h"
 #include "Engine/AssetManager.h"
@@ -6,17 +6,17 @@
 #include "Misc/ScopeLock.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
-#include "TagContentResolverLog.h"
-#include "TagContentResolverProvider.h"
-#include "TagContentResolverSettings.h"
+#include "TagKeyLog.h"
+#include "TagKeyProvider.h"
+#include "TagKeySettings.h"
 #include "UObject/UnrealType.h"
 
-DECLARE_STATS_GROUP(TEXT("TagContentResolver"), STATGROUP_TagContentResolver, STATCAT_Advanced);
-DECLARE_CYCLE_STAT(TEXT("Resolver RebuildRouteCache"), STAT_TagContentResolver_RebuildRouteCache, STATGROUP_TagContentResolver);
-DECLARE_CYCLE_STAT(TEXT("Resolver PreloadDataTablesForRoots"), STAT_TagContentResolver_PreloadDataTablesForRoots, STATGROUP_TagContentResolver);
-DECLARE_CYCLE_STAT(TEXT("Resolver PreloadConfiguredCriticalRoutes"), STAT_TagContentResolver_PreloadConfiguredCriticalRoutes, STATGROUP_TagContentResolver);
-DECLARE_CYCLE_STAT(TEXT("Resolver PreloadAllConfiguredRoutes"), STAT_TagContentResolver_PreloadAllConfiguredRoutes, STATGROUP_TagContentResolver);
-DECLARE_CYCLE_STAT(TEXT("Resolver PreloadConfiguredRoutesForPolicy"), STAT_TagContentResolver_PreloadConfiguredRoutesForPolicy, STATGROUP_TagContentResolver);
+DECLARE_STATS_GROUP(TEXT("TagKey"), STATGROUP_TagKey, STATCAT_Advanced);
+DECLARE_CYCLE_STAT(TEXT("Resolver RebuildRouteCache"), STAT_TagKey_RebuildRouteCache, STATGROUP_TagKey);
+DECLARE_CYCLE_STAT(TEXT("Resolver PreloadDataTablesForRoots"), STAT_TagKey_PreloadDataTablesForRoots, STATGROUP_TagKey);
+DECLARE_CYCLE_STAT(TEXT("Resolver PreloadConfiguredCriticalRoutes"), STAT_TagKey_PreloadConfiguredCriticalRoutes, STATGROUP_TagKey);
+DECLARE_CYCLE_STAT(TEXT("Resolver PreloadAllConfiguredRoutes"), STAT_TagKey_PreloadAllConfiguredRoutes, STATGROUP_TagKey);
+DECLARE_CYCLE_STAT(TEXT("Resolver PreloadConfiguredRoutesForPolicy"), STAT_TagKey_PreloadConfiguredRoutesForPolicy, STATGROUP_TagKey);
 
 namespace
 {
@@ -27,7 +27,7 @@ namespace
 		uint32 RoutesFingerprint = 0;
 		bool bValidRouteMap = false;
 		FString LastRouteError;
-		TMap<FGameplayTag, FTagContentResolverRoute> RouteByRootTag;
+		TMap<FGameplayTag, FTagKeyRoute> RouteByRootTag;
 		TMap<FGameplayTag, TObjectPtr<UDataTable>> LoadedTablesByRootTag;
 		TMap<TObjectPtr<UScriptStruct>, FGameplayTag> CachedRowStructToRootTag;
 		TSet<TObjectPtr<UScriptStruct>> AmbiguousRowStructs;
@@ -45,15 +45,15 @@ namespace
 		return InTag;
 	}
 
-	TArray<ITagContentResolverRouteProvider*> GetSortedProviders()
+	TArray<ITagKeyRouteProvider*> GetSortedProviders()
 	{
-		TArray<ITagContentResolverRouteProvider*> Providers;
-		FTagContentResolverRouteProviderRegistry::GetProviders(Providers);
-		Providers.RemoveAll([](const ITagContentResolverRouteProvider* Provider)
+		TArray<ITagKeyRouteProvider*> Providers;
+		FTagKeyRouteProviderRegistry::GetProviders(Providers);
+		Providers.RemoveAll([](const ITagKeyRouteProvider* Provider)
 		{
 			return Provider == nullptr;
 		});
-		Algo::Sort(Providers, [](const ITagContentResolverRouteProvider* A, const ITagContentResolverRouteProvider* B)
+		Algo::Sort(Providers, [](const ITagKeyRouteProvider* A, const ITagKeyRouteProvider* B)
 		{
 			if (A->GetProviderPriority() != B->GetProviderPriority())
 			{
@@ -64,10 +64,10 @@ namespace
 		return Providers;
 	}
 
-	uint32 ComputeRoutesFingerprint(const TArray<FTagContentResolverRoute>& Routes)
+	uint32 ComputeRoutesFingerprint(const TArray<FTagKeyRoute>& Routes)
 	{
 		uint32 Hash = 1469598103u;
-		for (const FTagContentResolverRoute& Route : Routes)
+		for (const FTagKeyRoute& Route : Routes)
 		{
 			Hash = HashCombine(Hash, GetTypeHash(Route.RootTag));
 			Hash = HashCombine(Hash, GetTypeHash(Route.DataTable.ToSoftObjectPath()));
@@ -225,16 +225,16 @@ namespace
 	}
 }
 
-void UTagContentResolverSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UTagKeySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	RebuildRouteCache(true);
 }
 
-void UTagContentResolverSubsystem::ResetRuntimeCaches(bool bResetLoggedFailures)
+void UTagKeySubsystem::ResetRuntimeCaches(bool bResetLoggedFailures)
 {
 	bIsRouteConfigurationValid = false;
-	RouteProviderGenerationAtBuild = FTagContentResolverRouteProviderRegistry::GetProviderGeneration();
+	RouteProviderGenerationAtBuild = FTagKeyRouteProviderRegistry::GetProviderGeneration();
 	CompiledRoutes.Reset();
 	RouteByRootTag.Reset();
 	ClearResolvedTableCache();
@@ -249,7 +249,7 @@ void UTagContentResolverSubsystem::ResetRuntimeCaches(bool bResetLoggedFailures)
 	}
 }
 
-bool UTagContentResolverSubsystem::EnsureGameThread(const TCHAR* FunctionName, FString* OutError) const
+bool UTagKeySubsystem::EnsureGameThread(const TCHAR* FunctionName, FString* OutError) const
 {
 	if (IsInGameThread())
 	{
@@ -257,15 +257,15 @@ bool UTagContentResolverSubsystem::EnsureGameThread(const TCHAR* FunctionName, F
 	}
 
 	const FString Message = FString::Printf(
-		TEXT("[TagContentResolver] %s must be called on the game thread."),
+		TEXT("[TagKey] %s must be called on the game thread."),
 		FunctionName ? FunctionName : TEXT("Resolver API"));
 	if (GIsAutomationTesting)
 	{
-		UE_LOG(LogTagContentResolver, Warning, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Warning, TEXT("%s"), *Message);
 	}
 	else
 	{
-		UE_LOG(LogTagContentResolver, Error, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Error, TEXT("%s"), *Message);
 		ensureAlwaysMsgf(false, TEXT("%s"), *Message);
 	}
 	if (OutError)
@@ -275,9 +275,9 @@ bool UTagContentResolverSubsystem::EnsureGameThread(const TCHAR* FunctionName, F
 	return false;
 }
 
-bool UTagContentResolverSubsystem::EnsureRouteCacheFresh(FString& OutError)
+bool UTagKeySubsystem::EnsureRouteCacheFresh(FString& OutError)
 {
-	const uint64 CurrentProviderGeneration = FTagContentResolverRouteProviderRegistry::GetProviderGeneration();
+	const uint64 CurrentProviderGeneration = FTagKeyRouteProviderRegistry::GetProviderGeneration();
 	if (bIsRouteConfigurationValid && CurrentProviderGeneration == RouteProviderGenerationAtBuild)
 	{
 		return true;
@@ -293,21 +293,21 @@ bool UTagContentResolverSubsystem::EnsureRouteCacheFresh(FString& OutError)
 	return true;
 }
 
-void UTagContentResolverSubsystem::Deinitialize()
+void UTagKeySubsystem::Deinitialize()
 {
 	ResetRuntimeCaches(true);
 	Super::Deinitialize();
 }
 
-void UTagContentResolverSubsystem::RebuildRouteCache(bool bPreloadConfiguredTables)
+void UTagKeySubsystem::RebuildRouteCache(bool bPreloadConfiguredTables)
 {
 	if (!EnsureGameThread(TEXT("RebuildRouteCache"), nullptr))
 	{
 		return;
 	}
 
-	TRACE_CPUPROFILER_EVENT_SCOPE(TagContentResolver_RebuildRouteCache);
-	SCOPE_CYCLE_COUNTER(STAT_TagContentResolver_RebuildRouteCache);
+	TRACE_CPUPROFILER_EVENT_SCOPE(TagKey_RebuildRouteCache);
+	SCOPE_CYCLE_COUNTER(STAT_TagKey_RebuildRouteCache);
 
 	ResetRuntimeCaches(false);
 
@@ -316,25 +316,25 @@ void UTagContentResolverSubsystem::RebuildRouteCache(bool bPreloadConfiguredTabl
 	GatherConfiguredRoutes(CompiledRoutes, GatherError, &CriticalPreloadRoots);
 	if (!GatherError.IsEmpty())
 	{
-		LogFailure(FString::Printf(TEXT("[TagContentResolver] Failed gathering routes: %s"), *GatherError));
+		LogFailure(FString::Printf(TEXT("[TagKey] Failed gathering routes: %s"), *GatherError));
 	}
 
 	FString ValidateError;
 	if (!TryBuildConfiguredRouteMap(CompiledRoutes, RouteByRootTag, ValidateError))
 	{
-		LogFailure(FString::Printf(TEXT("[TagContentResolver] Invalid route configuration: %s"), *ValidateError));
+		LogFailure(FString::Printf(TEXT("[TagKey] Invalid route configuration: %s"), *ValidateError));
 		return;
 	}
 
 	bIsRouteConfigurationValid = true;
-	RouteProviderGenerationAtBuild = FTagContentResolverRouteProviderRegistry::GetProviderGeneration();
+	RouteProviderGenerationAtBuild = FTagKeyRouteProviderRegistry::GetProviderGeneration();
 
 	if (!bPreloadConfiguredTables)
 	{
 		return;
 	}
 
-	const UTagContentResolverSettings* Settings = GetDefault<UTagContentResolverSettings>();
+	const UTagKeySettings* Settings = GetDefault<UTagKeySettings>();
 	if (!Settings)
 	{
 		return;
@@ -343,8 +343,8 @@ void UTagContentResolverSubsystem::RebuildRouteCache(bool bPreloadConfiguredTabl
 	TArray<FGameplayTag> PreloadRoots;
 	switch (Settings->PreloadPolicy)
 	{
-	case ETagContentResolverPreloadPolicy::AllRoutes:
-		for (const FTagContentResolverRoute& Route : CompiledRoutes)
+	case ETagKeyPreloadPolicy::AllRoutes:
+		for (const FTagKeyRoute& Route : CompiledRoutes)
 		{
 			if (Route.RootTag.IsValid())
 			{
@@ -352,10 +352,10 @@ void UTagContentResolverSubsystem::RebuildRouteCache(bool bPreloadConfiguredTabl
 			}
 		}
 		break;
-	case ETagContentResolverPreloadPolicy::CriticalRoots:
+	case ETagKeyPreloadPolicy::CriticalRoots:
 		PreloadRoots = CriticalPreloadRoots;
 		break;
-	case ETagContentResolverPreloadPolicy::None:
+	case ETagKeyPreloadPolicy::None:
 	default:
 		break;
 	}
@@ -365,12 +365,12 @@ void UTagContentResolverSubsystem::RebuildRouteCache(bool bPreloadConfiguredTabl
 		FString PreloadError;
 		if (!PreloadDataTablesForRoots(PreloadRoots, PreloadError))
 		{
-			LogFailure(FString::Printf(TEXT("[TagContentResolver] Preload warning: %s"), *PreloadError));
+			LogFailure(FString::Printf(TEXT("[TagKey] Preload warning: %s"), *PreloadError));
 		}
 	}
 }
 
-void UTagContentResolverSubsystem::ClearResolvedTableCache()
+void UTagKeySubsystem::ClearResolvedTableCache()
 {
 	if (!EnsureGameThread(TEXT("ClearResolvedTableCache"), nullptr))
 	{
@@ -380,7 +380,7 @@ void UTagContentResolverSubsystem::ClearResolvedTableCache()
 	LoadedTablesByRootTag.Reset();
 }
 
-bool UTagContentResolverSubsystem::TryCheckRowExistsForTag(FGameplayTag Tag, FString& OutError)
+bool UTagKeySubsystem::TryCheckRowExistsForTag(FGameplayTag Tag, FString& OutError)
 {
 	OutError.Reset();
 	if (!EnsureGameThread(TEXT("TryCheckRowExistsForTag"), &OutError))
@@ -407,7 +407,7 @@ bool UTagContentResolverSubsystem::TryCheckRowExistsForTag(FGameplayTag Tag, FSt
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryValidateRouteConfiguration(FString& OutError)
+bool UTagKeySubsystem::TryValidateRouteConfiguration(FString& OutError)
 {
 	OutError.Reset();
 	if (!EnsureGameThread(TEXT("TryValidateRouteConfiguration"), &OutError))
@@ -415,7 +415,7 @@ bool UTagContentResolverSubsystem::TryValidateRouteConfiguration(FString& OutErr
 		return false;
 	}
 
-	TArray<FTagContentResolverRoute> Routes;
+	TArray<FTagKeyRoute> Routes;
 	GatherConfiguredRoutes(Routes, OutError, nullptr);
 	if (!OutError.IsEmpty())
 	{
@@ -425,7 +425,7 @@ bool UTagContentResolverSubsystem::TryValidateRouteConfiguration(FString& OutErr
 	return TryValidateRoutes(Routes, OutError);
 }
 
-bool UTagContentResolverSubsystem::TryResolveRowStructForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError)
+bool UTagKeySubsystem::TryResolveRowStructForTag(FGameplayTag Tag, FInstancedStruct& OutRow, FString& OutError)
 {
 	OutRow.Reset();
 	OutError.Reset();
@@ -454,7 +454,7 @@ bool UTagContentResolverSubsystem::TryResolveRowStructForTag(FGameplayTag Tag, F
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError)
+bool UTagKeySubsystem::TryResolveRowRefForTag(FGameplayTag Tag, FConstStructView& OutRowView, FString& OutError)
 {
 	OutRowView = FConstStructView();
 	OutError.Reset();
@@ -498,14 +498,14 @@ bool UTagContentResolverSubsystem::TryResolveRowRefForTag(FGameplayTag Tag, FCon
 	return true;
 }
 
-void UTagContentResolverSubsystem::TryPreloadSoftReferencesForRow(const UScriptStruct* RowStruct, const uint8* RowData) const
+void UTagKeySubsystem::TryPreloadSoftReferencesForRow(const UScriptStruct* RowStruct, const uint8* RowData) const
 {
 	if (!RowStruct || !RowData)
 	{
 		return;
 	}
 
-	const UTagContentResolverSettings* Settings = GetDefault<UTagContentResolverSettings>();
+	const UTagKeySettings* Settings = GetDefault<UTagKeySettings>();
 	if (!Settings || !Settings->bAutoPreloadRowSoftReferences)
 	{
 		return;
@@ -516,7 +516,7 @@ void UTagContentResolverSubsystem::TryPreloadSoftReferencesForRow(const UScriptS
 	RequestAsyncPreloadForPaths(PathsToPreload);
 }
 
-bool UTagContentResolverSubsystem::TryGetRowNamesForRootTag(FGameplayTag RootTag, TArray<FName>& OutRowNames, FString& OutError)
+bool UTagKeySubsystem::TryGetRowNamesForRootTag(FGameplayTag RootTag, TArray<FName>& OutRowNames, FString& OutError)
 {
 	OutRowNames.Reset();
 	OutError.Reset();
@@ -545,7 +545,7 @@ bool UTagContentResolverSubsystem::TryGetRowNamesForRootTag(FGameplayTag RootTag
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryResolveDataTableForRootTag(FGameplayTag RootTag, UDataTable*& OutDataTable, FString& OutError)
+bool UTagKeySubsystem::TryResolveDataTableForRootTag(FGameplayTag RootTag, UDataTable*& OutDataTable, FString& OutError)
 {
 	OutDataTable = nullptr;
 	OutError.Reset();
@@ -565,7 +565,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRootTag(FGameplayTag Ro
 		return false;
 	}
 
-	const FTagContentResolverRoute* FoundRoute = RouteByRootTag.Find(RootTag);
+	const FTagKeyRoute* FoundRoute = RouteByRootTag.Find(RootTag);
 	if (!FoundRoute)
 	{
 		OutError = FString::Printf(TEXT("No route found for root '%s'."), *RootTag.ToString());
@@ -580,7 +580,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRootTag(FGameplayTag Ro
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryResolveDataTableForRowStruct(
+bool UTagKeySubsystem::TryResolveDataTableForRowStruct(
 	UScriptStruct* DesiredRowStruct,
 	UDataTable*& OutDataTable,
 	FGameplayTag& OutMatchedRootTag,
@@ -622,7 +622,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRowStruct(
 	UDataTable* LastMatchTable = nullptr;
 	FGameplayTag LastMatchRoot;
 
-	for (const FTagContentResolverRoute& Route : CompiledRoutes)
+	for (const FTagKeyRoute& Route : CompiledRoutes)
 	{
 		if (!Route.RootTag.IsValid() || Route.DataTable.IsNull())
 		{
@@ -663,7 +663,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRowStruct(
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryResolveRootTagForTag(FGameplayTag Tag, FGameplayTag& OutMatchedRootTag, FString& OutError)
+bool UTagKeySubsystem::TryResolveRootTagForTag(FGameplayTag Tag, FGameplayTag& OutMatchedRootTag, FString& OutError)
 {
 	OutMatchedRootTag = FGameplayTag();
 	OutError.Reset();
@@ -676,15 +676,15 @@ bool UTagContentResolverSubsystem::TryResolveRootTagForTag(FGameplayTag Tag, FGa
 	return TryResolveDataTableAndRootForTag(Tag, IgnoredTable, OutMatchedRootTag, OutError);
 }
 
-bool UTagContentResolverSubsystem::PreloadDataTablesForRoots(const TArray<FGameplayTag>& RootTags, FString& OutError)
+bool UTagKeySubsystem::PreloadDataTablesForRoots(const TArray<FGameplayTag>& RootTags, FString& OutError)
 {
 	if (!EnsureGameThread(TEXT("PreloadDataTablesForRoots"), &OutError))
 	{
 		return false;
 	}
 
-	TRACE_CPUPROFILER_EVENT_SCOPE(TagContentResolver_PreloadDataTablesForRoots);
-	SCOPE_CYCLE_COUNTER(STAT_TagContentResolver_PreloadDataTablesForRoots);
+	TRACE_CPUPROFILER_EVENT_SCOPE(TagKey_PreloadDataTablesForRoots);
+	SCOPE_CYCLE_COUNTER(STAT_TagKey_PreloadDataTablesForRoots);
 
 	OutError.Reset();
 
@@ -708,19 +708,19 @@ bool UTagContentResolverSubsystem::PreloadDataTablesForRoots(const TArray<FGamep
 	return OutError.IsEmpty();
 }
 
-bool UTagContentResolverSubsystem::PreloadConfiguredCriticalRoutes(FString& OutError)
+bool UTagKeySubsystem::PreloadConfiguredCriticalRoutes(FString& OutError)
 {
 	if (!EnsureGameThread(TEXT("PreloadConfiguredCriticalRoutes"), &OutError))
 	{
 		return false;
 	}
 
-	TRACE_CPUPROFILER_EVENT_SCOPE(TagContentResolver_PreloadConfiguredCriticalRoutes);
-	SCOPE_CYCLE_COUNTER(STAT_TagContentResolver_PreloadConfiguredCriticalRoutes);
+	TRACE_CPUPROFILER_EVENT_SCOPE(TagKey_PreloadConfiguredCriticalRoutes);
+	SCOPE_CYCLE_COUNTER(STAT_TagKey_PreloadConfiguredCriticalRoutes);
 
 	OutError.Reset();
 
-	TArray<FTagContentResolverRoute> Routes;
+	TArray<FTagKeyRoute> Routes;
 	TArray<FGameplayTag> CriticalRoots;
 	GatherConfiguredRoutes(Routes, OutError, &CriticalRoots);
 	if (!OutError.IsEmpty())
@@ -731,19 +731,19 @@ bool UTagContentResolverSubsystem::PreloadConfiguredCriticalRoutes(FString& OutE
 	return PreloadDataTablesForRoots(CriticalRoots, OutError);
 }
 
-bool UTagContentResolverSubsystem::PreloadAllConfiguredRoutes(FString& OutError)
+bool UTagKeySubsystem::PreloadAllConfiguredRoutes(FString& OutError)
 {
 	if (!EnsureGameThread(TEXT("PreloadAllConfiguredRoutes"), &OutError))
 	{
 		return false;
 	}
 
-	TRACE_CPUPROFILER_EVENT_SCOPE(TagContentResolver_PreloadAllConfiguredRoutes);
-	SCOPE_CYCLE_COUNTER(STAT_TagContentResolver_PreloadAllConfiguredRoutes);
+	TRACE_CPUPROFILER_EVENT_SCOPE(TagKey_PreloadAllConfiguredRoutes);
+	SCOPE_CYCLE_COUNTER(STAT_TagKey_PreloadAllConfiguredRoutes);
 
 	OutError.Reset();
 
-	TArray<FTagContentResolverRoute> Routes;
+	TArray<FTagKeyRoute> Routes;
 	GatherConfiguredRoutes(Routes, OutError, nullptr);
 	if (!OutError.IsEmpty())
 	{
@@ -752,7 +752,7 @@ bool UTagContentResolverSubsystem::PreloadAllConfiguredRoutes(FString& OutError)
 
 	TArray<FGameplayTag> AllRoots;
 	AllRoots.Reserve(Routes.Num());
-	for (const FTagContentResolverRoute& Route : Routes)
+	for (const FTagKeyRoute& Route : Routes)
 	{
 		if (Route.RootTag.IsValid())
 		{
@@ -763,42 +763,42 @@ bool UTagContentResolverSubsystem::PreloadAllConfiguredRoutes(FString& OutError)
 	return PreloadDataTablesForRoots(AllRoots, OutError);
 }
 
-bool UTagContentResolverSubsystem::PreloadConfiguredRoutesForPolicy(FString& OutError)
+bool UTagKeySubsystem::PreloadConfiguredRoutesForPolicy(FString& OutError)
 {
 	if (!EnsureGameThread(TEXT("PreloadConfiguredRoutesForPolicy"), &OutError))
 	{
 		return false;
 	}
 
-	TRACE_CPUPROFILER_EVENT_SCOPE(TagContentResolver_PreloadConfiguredRoutesForPolicy);
-	SCOPE_CYCLE_COUNTER(STAT_TagContentResolver_PreloadConfiguredRoutesForPolicy);
+	TRACE_CPUPROFILER_EVENT_SCOPE(TagKey_PreloadConfiguredRoutesForPolicy);
+	SCOPE_CYCLE_COUNTER(STAT_TagKey_PreloadConfiguredRoutesForPolicy);
 
 	OutError.Reset();
 
-	const UTagContentResolverSettings* Settings = GetDefault<UTagContentResolverSettings>();
+	const UTagKeySettings* Settings = GetDefault<UTagKeySettings>();
 	if (!Settings)
 	{
-		OutError = TEXT("TagContentResolver settings could not be loaded.");
+		OutError = TEXT("TagKey settings could not be loaded.");
 		return false;
 	}
 
 	switch (Settings->PreloadPolicy)
 	{
-	case ETagContentResolverPreloadPolicy::AllRoutes:
+	case ETagKeyPreloadPolicy::AllRoutes:
 		return PreloadAllConfiguredRoutes(OutError);
-	case ETagContentResolverPreloadPolicy::CriticalRoots:
+	case ETagKeyPreloadPolicy::CriticalRoots:
 		return PreloadConfiguredCriticalRoutes(OutError);
-	case ETagContentResolverPreloadPolicy::None:
+	case ETagKeyPreloadPolicy::None:
 	default:
 		return true;
 	}
 }
 
-void UTagContentResolverSubsystem::GetResolverDiagnostics(FTagContentResolverDiagnostics& OutDiagnostics) const
+void UTagKeySubsystem::GetResolverDiagnostics(FTagKeyDiagnostics& OutDiagnostics) const
 {
 	if (!EnsureGameThread(TEXT("GetResolverDiagnostics"), nullptr))
 	{
-		OutDiagnostics = FTagContentResolverDiagnostics();
+		OutDiagnostics = FTagKeyDiagnostics();
 		return;
 	}
 
@@ -811,12 +811,12 @@ void UTagContentResolverSubsystem::GetResolverDiagnostics(FTagContentResolverDia
 	OutDiagnostics.LoggedFailureCount = LoggedFailureMessages.Num();
 }
 
-bool UTagContentResolverSubsystem::IsRootTableLoaded(FGameplayTag RootTag) const
+bool UTagKeySubsystem::IsRootTableLoaded(FGameplayTag RootTag) const
 {
 	return LoadedTablesByRootTag.Contains(RootTag);
 }
 
-bool UTagContentResolverSubsystem::ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError)
+bool UTagKeySubsystem::ResetLoadedTablesToExactRoots(const TArray<FGameplayTag>& RootsToKeep, FString& OutError)
 {
 	OutError.Reset();
 	if (!EnsureGameThread(TEXT("ResetLoadedTablesToExactRoots"), &OutError))
@@ -895,7 +895,7 @@ namespace
 	}
 }
 
-bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
+bool UTagKeySubsystem::PreloadRootTableAndSoftReferences(
 	FGameplayTag RootTag,
 	int32 MaxRecursiveTableDepth,
 	int32 MaxAssetsToLoad,
@@ -1012,7 +1012,7 @@ bool UTagContentResolverSubsystem::PreloadRootTableAndSoftReferences(
 
 	return true;
 }
-bool UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+bool UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 	FGameplayTag RootTag,
 	UDataTable*& OutDataTable,
 	FString& OutError)
@@ -1026,14 +1026,14 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRo
 		return false;
 	}
 
-	TArray<FTagContentResolverRoute> Routes;
+	TArray<FTagKeyRoute> Routes;
 	GatherConfiguredRoutes(Routes, OutError, nullptr);
 	if (!OutError.IsEmpty())
 	{
 		return false;
 	}
 
-	const uint64 ProviderGeneration = FTagContentResolverRouteProviderRegistry::GetProviderGeneration();
+	const uint64 ProviderGeneration = FTagKeyRouteProviderRegistry::GetProviderGeneration();
 	const uint32 RoutesFingerprint = ComputeRoutesFingerprint(Routes);
 
 	FScopeLock Lock(&GConfiguredRouteCache.Mutex);
@@ -1060,7 +1060,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRo
 		GConfiguredRouteCache.bValidRouteMap = true;
 	}
 
-	const FTagContentResolverRoute* Route = GConfiguredRouteCache.RouteByRootTag.Find(RootTag);
+	const FTagKeyRoute* Route = GConfiguredRouteCache.RouteByRootTag.Find(RootTag);
 	if (!Route)
 	{
 		OutError = FString::Printf(TEXT("No route found for root '%s'."), *RootTag.ToString());
@@ -1075,7 +1075,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRo
 		OutError);
 }
 
-bool UTagContentResolverSubsystem::TryResolveDataTableForRowStructFromConfiguredRoutes(
+bool UTagKeySubsystem::TryResolveDataTableForRowStructFromConfiguredRoutes(
 	UScriptStruct* DesiredRowStruct,
 	UDataTable*& OutDataTable,
 	FGameplayTag& OutMatchedRootTag,
@@ -1091,14 +1091,14 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRowStructFromConfigured
 		return false;
 	}
 
-	TArray<FTagContentResolverRoute> Routes;
+	TArray<FTagKeyRoute> Routes;
 	GatherConfiguredRoutes(Routes, OutError, nullptr);
 	if (!OutError.IsEmpty())
 	{
 		return false;
 	}
 
-	const uint64 ProviderGeneration = FTagContentResolverRouteProviderRegistry::GetProviderGeneration();
+	const uint64 ProviderGeneration = FTagKeyRouteProviderRegistry::GetProviderGeneration();
 	const uint32 RoutesFingerprint = ComputeRoutesFingerprint(Routes);
 
 	FScopeLock Lock(&GConfiguredRouteCache.Mutex);
@@ -1133,7 +1133,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRowStructFromConfigured
 
 	if (const FGameplayTag* CachedRoot = GConfiguredRouteCache.CachedRowStructToRootTag.Find(DesiredRowStruct))
 	{
-		const FTagContentResolverRoute* CachedRoute = GConfiguredRouteCache.RouteByRootTag.Find(*CachedRoot);
+		const FTagKeyRoute* CachedRoute = GConfiguredRouteCache.RouteByRootTag.Find(*CachedRoot);
 		if (!CachedRoute)
 		{
 			OutError = FString::Printf(TEXT("No route found for row struct '%s'."), *GetNameSafe(DesiredRowStruct));
@@ -1157,9 +1157,9 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRowStructFromConfigured
 	int32 MatchCount = 0;
 	FGameplayTag LastMatchRoot;
 	UDataTable* LastMatchTable = nullptr;
-	for (const TPair<FGameplayTag, FTagContentResolverRoute>& Pair : GConfiguredRouteCache.RouteByRootTag)
+	for (const TPair<FGameplayTag, FTagKeyRoute>& Pair : GConfiguredRouteCache.RouteByRootTag)
 	{
-		const FTagContentResolverRoute& Route = Pair.Value;
+		const FTagKeyRoute& Route = Pair.Value;
 		UDataTable* CandidateTable = nullptr;
 		FString LoadError;
 		if (!TryLoadAndCacheConfiguredDataTable(
@@ -1199,8 +1199,8 @@ bool UTagContentResolverSubsystem::TryResolveDataTableForRowStructFromConfigured
 	return true;
 }
 
-void UTagContentResolverSubsystem::GatherConfiguredRoutes(
-	TArray<FTagContentResolverRoute>& OutRoutes,
+void UTagKeySubsystem::GatherConfiguredRoutes(
+	TArray<FTagKeyRoute>& OutRoutes,
 	FString& OutError,
 	TArray<FGameplayTag>* OutCriticalPreloadRoots)
 {
@@ -1211,16 +1211,16 @@ void UTagContentResolverSubsystem::GatherConfiguredRoutes(
 		OutCriticalPreloadRoots->Reset();
 	}
 
-	const UTagContentResolverSettings* Settings = GetDefault<UTagContentResolverSettings>();
+	const UTagKeySettings* Settings = GetDefault<UTagKeySettings>();
 	if (!Settings)
 	{
-		OutError = TEXT("TagContentResolver settings could not be loaded.");
+		OutError = TEXT("TagKey settings could not be loaded.");
 		return;
 	}
 
-	for (const FTagContentResolverProjectRoute& ProjectRoute : Settings->ProjectRoutes)
+	for (const FTagKeyProjectRoute& ProjectRoute : Settings->ProjectRoutes)
 	{
-		FTagContentResolverRoute Route;
+		FTagKeyRoute Route;
 		Route.RootTag = ProjectRoute.RootTag;
 		Route.DataTable = ProjectRoute.DataTable;
 		OutRoutes.Add(Route);
@@ -1231,21 +1231,21 @@ void UTagContentResolverSubsystem::GatherConfiguredRoutes(
 		}
 	}
 
-	const TArray<ITagContentResolverRouteProvider*> Providers = GetSortedProviders();
-	for (const ITagContentResolverRouteProvider* Provider : Providers)
+	const TArray<ITagKeyRouteProvider*> Providers = GetSortedProviders();
+	for (const ITagKeyRouteProvider* Provider : Providers)
 	{
 		if (!Provider)
 		{
 			continue;
 		}
 
-		TArray<FTagContentResolverRoute> ProviderRoutes;
+		TArray<FTagKeyRoute> ProviderRoutes;
 		Provider->GetProvidedRoutes(ProviderRoutes);
 		OutRoutes.Append(ProviderRoutes);
 	}
 }
 
-bool UTagContentResolverSubsystem::TryValidateRoutes(const TArray<FTagContentResolverRoute>& Routes, FString& OutError)
+bool UTagKeySubsystem::TryValidateRoutes(const TArray<FTagKeyRoute>& Routes, FString& OutError)
 {
 	OutError.Reset();
 
@@ -1256,7 +1256,7 @@ bool UTagContentResolverSubsystem::TryValidateRoutes(const TArray<FTagContentRes
 	}
 
 	TSet<FGameplayTag> SeenRoots;
-	for (const FTagContentResolverRoute& Route : Routes)
+	for (const FTagKeyRoute& Route : Routes)
 	{
 		if (!Route.RootTag.IsValid())
 		{
@@ -1299,9 +1299,9 @@ bool UTagContentResolverSubsystem::TryValidateRoutes(const TArray<FTagContentRes
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryBuildConfiguredRouteMap(
-	const TArray<FTagContentResolverRoute>& Routes,
-	TMap<FGameplayTag, FTagContentResolverRoute>& OutRouteMap,
+bool UTagKeySubsystem::TryBuildConfiguredRouteMap(
+	const TArray<FTagKeyRoute>& Routes,
+	TMap<FGameplayTag, FTagKeyRoute>& OutRouteMap,
 	FString& OutError)
 {
 	OutRouteMap.Reset();
@@ -1312,7 +1312,7 @@ bool UTagContentResolverSubsystem::TryBuildConfiguredRouteMap(
 		return false;
 	}
 
-	for (const FTagContentResolverRoute& Route : Routes)
+	for (const FTagKeyRoute& Route : Routes)
 	{
 		OutRouteMap.Add(Route.RootTag, Route);
 	}
@@ -1320,7 +1320,7 @@ bool UTagContentResolverSubsystem::TryBuildConfiguredRouteMap(
 	return true;
 }
 
-FName UTagContentResolverSubsystem::ExtractLeafRowNameFromTag(FGameplayTag Tag)
+FName UTagKeySubsystem::ExtractLeafRowNameFromTag(FGameplayTag Tag)
 {
 	if (const FName* Cached = CachedLeafRowNamesByTag.Find(Tag))
 	{
@@ -1332,7 +1332,7 @@ FName UTagContentResolverSubsystem::ExtractLeafRowNameFromTag(FGameplayTag Tag)
 	return LeafName;
 }
 
-bool UTagContentResolverSubsystem::TryResolveTableAndRowNameForTag(
+bool UTagKeySubsystem::TryResolveTableAndRowNameForTag(
 	FGameplayTag Tag,
 	UDataTable*& OutDataTable,
 	FName& OutRowName,
@@ -1364,7 +1364,7 @@ bool UTagContentResolverSubsystem::TryResolveTableAndRowNameForTag(
 	return true;
 }
 
-bool UTagContentResolverSubsystem::TryResolveDataTableAndRootForTag(
+bool UTagKeySubsystem::TryResolveDataTableAndRootForTag(
 	FGameplayTag Tag,
 	UDataTable*& OutDataTable,
 	FGameplayTag& OutMatchedRoot,
@@ -1387,7 +1387,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableAndRootForTag(
 
 	if (const FGameplayTag* CachedRoot = CachedMatchedRootByTag.Find(Tag))
 	{
-		const FTagContentResolverRoute* CachedRoute = RouteByRootTag.Find(*CachedRoot);
+		const FTagKeyRoute* CachedRoute = RouteByRootTag.Find(*CachedRoot);
 		if (CachedRoute)
 		{
 			OutMatchedRoot = *CachedRoot;
@@ -1404,7 +1404,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableAndRootForTag(
 	FGameplayTag Current = Tag;
 	while (Current.IsValid())
 	{
-		if (const FTagContentResolverRoute* Route = RouteByRootTag.Find(Current))
+		if (const FTagKeyRoute* Route = RouteByRootTag.Find(Current))
 		{
 			OutMatchedRoot = Current;
 			CachedMatchedRootByTag.Add(Tag, Current);
@@ -1419,7 +1419,7 @@ bool UTagContentResolverSubsystem::TryResolveDataTableAndRootForTag(
 	return false;
 }
 
-bool UTagContentResolverSubsystem::TryLoadAndCacheDataTable(
+bool UTagKeySubsystem::TryLoadAndCacheDataTable(
 	const FGameplayTag& RootTag,
 	const TSoftObjectPtr<UDataTable>& TableRef,
 	UDataTable*& OutDataTable,
@@ -1455,9 +1455,9 @@ bool UTagContentResolverSubsystem::TryLoadAndCacheDataTable(
 	return true;
 }
 
-void UTagContentResolverSubsystem::LogFailure(const FString& Message, ELogVerbosity::Type Verbosity)
+void UTagKeySubsystem::LogFailure(const FString& Message, ELogVerbosity::Type Verbosity)
 {
-	const UTagContentResolverSettings* Settings = GetDefault<UTagContentResolverSettings>();
+	const UTagKeySettings* Settings = GetDefault<UTagKeySettings>();
 	const bool bDedupe = !Settings || Settings->bDeduplicateFailureLogs;
 
 	if (bDedupe)
@@ -1477,20 +1477,20 @@ void UTagContentResolverSubsystem::LogFailure(const FString& Message, ELogVerbos
 	switch (Verbosity)
 	{
 	case ELogVerbosity::Error:
-		UE_LOG(LogTagContentResolver, Error, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Error, TEXT("%s"), *Message);
 		break;
 	case ELogVerbosity::Verbose:
-		UE_LOG(LogTagContentResolver, Verbose, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Verbose, TEXT("%s"), *Message);
 		break;
 	case ELogVerbosity::Display:
-		UE_LOG(LogTagContentResolver, Display, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Display, TEXT("%s"), *Message);
 		break;
 	case ELogVerbosity::Log:
-		UE_LOG(LogTagContentResolver, Log, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Log, TEXT("%s"), *Message);
 		break;
 	case ELogVerbosity::Warning:
 	default:
-		UE_LOG(LogTagContentResolver, Warning, TEXT("%s"), *Message);
+		UE_LOG(LogTagKey, Warning, TEXT("%s"), *Message);
 		break;
 	}
 }

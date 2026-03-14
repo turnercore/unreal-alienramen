@@ -7,7 +7,7 @@
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/GameInstance.h"
@@ -726,7 +726,7 @@ void AARShopStationActor::ApplyConfigFromRowIfAvailable()
 	}
 
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UTagContentResolverSubsystem* Lookup = GI ? GI->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Lookup = GI ? GI->GetSubsystem<UTagKeySubsystem>() : nullptr;
 	if (!Lookup)
 	{
 		return;

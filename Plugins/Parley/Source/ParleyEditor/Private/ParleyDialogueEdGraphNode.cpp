@@ -50,6 +50,8 @@ namespace
 			return FText::FromString(TEXT("Relationship"));
 		case EDialogueNodeType::FactionMutation:
 			return FText::FromString(TEXT("Faction"));
+		case EDialogueNodeType::Signal:
+			return FText::FromString(TEXT("Signal"));
 		case EDialogueNodeType::Random:
 			return FText::FromString(TEXT("Random"));
 		case EDialogueNodeType::Route:
@@ -89,6 +91,8 @@ namespace
 			return TEXT("Relationship mutation node.");
 		case EDialogueNodeType::FactionMutation:
 			return TEXT("Faction mutation node.");
+		case EDialogueNodeType::Signal:
+			return TEXT("Fires a gameplay tag signal for game systems to react to.");
 		case EDialogueNodeType::Random:
 			return TEXT("Weighted random branch node.");
 		case EDialogueNodeType::Route:
@@ -1281,6 +1285,7 @@ void UParleyDialogueEdGraphNode::AllocateDefaultPins()
 	case EDialogueNodeType::TagMutation:
 	case EDialogueNodeType::RelationshipMutation:
 	case EDialogueNodeType::FactionMutation:
+	case EDialogueNodeType::Signal:
 	case EDialogueNodeType::Route:
 		AddInputPinIfNeeded();
 		AddNextOutputPinIfNeeded();
@@ -1383,6 +1388,8 @@ FLinearColor UParleyDialogueEdGraphNode::GetNodeTitleColor() const
 		return FLinearColor(0.27f, 0.21f, 0.16f, 1.0f);
 	case EDialogueNodeType::FactionMutation:
 		return FLinearColor(0.26f, 0.24f, 0.16f, 1.0f);
+	case EDialogueNodeType::Signal:
+		return FLinearColor(0.24f, 0.16f, 0.27f, 1.0f);
 	case EDialogueNodeType::Route:
 		return FLinearColor(0.18f, 0.18f, 0.18f, 1.0f);
 	case EDialogueNodeType::RouteByCharacter:
@@ -2146,6 +2153,12 @@ void UParleyDialogueEdGraphNode::EnsureNodeDataMatchesNodeType()
 			RuntimeNode.NodeData.InitializeAs<FDialogueFactionMutationNodeData>();
 		}
 		break;
+	case EDialogueNodeType::Signal:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueSignalNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueSignalNodeData>();
+		}
+		break;
 	default:
 		RuntimeNode.NodeData.Reset();
 		break;
@@ -2360,6 +2373,18 @@ FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 		return MutationData
 			? FString::Printf(TEXT("Faction:%s Delta:%+.2f"), *MutationData->FactionTag.ToString(), MutationData->DeltaPopularity)
 			: TEXT("Invalid faction payload");
+	}
+	case EDialogueNodeType::Signal:
+	{
+		const FDialogueSignalNodeData* SignalData = RuntimeNode.NodeData.GetPtr<FDialogueSignalNodeData>();
+		if (!SignalData)
+		{
+			return TEXT("Invalid signal payload");
+		}
+
+		return SignalData->SignalTag.IsValid()
+			? SignalData->SignalTag.ToString()
+			: TEXT("No signal tag");
 	}
 	case EDialogueNodeType::Random:
 		return FString::Printf(TEXT("Branches:%d"), RuntimeNode.RandomBranches.Num());

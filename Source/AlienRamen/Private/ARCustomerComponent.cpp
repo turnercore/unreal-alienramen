@@ -16,7 +16,7 @@
 #include "GameplayTagsManager.h"
 #include "Net/UnrealNetwork.h"
 #include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "Blueprint/UserWidget.h"
 
 namespace
@@ -524,7 +524,7 @@ bool UARCustomerComponent::ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow
 	}
 
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UTagContentResolverSubsystem* Lookup = GI ? GI->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Lookup = GI ? GI->GetSubsystem<UTagKeySubsystem>() : nullptr;
 	if (!Lookup)
 	{
 		return false;
