@@ -28,7 +28,7 @@ public:
 	UParleySpeakerComponent();
 
 	/** Primary interaction entrypoint: routes to dialogue subsystem using this speaker tag and controller. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
 	void InteractByController(APlayerController* InteractingController);
 
 	/** Speaker identity tag used for dialogue lookups (GameplayTag). */
@@ -40,27 +40,27 @@ public:
 	void SetSpeakerTag(FGameplayTag NewSpeakerTag);
 
 	/** True when any player can currently start a conversation with this speaker. */
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool IsTalkable() const { return bIsTalkable; }
 
 	// StateTree-friendly dialogue-only gate. True when this speaker currently has dialogue available for at least one slot.
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool HasDialogueToSay() const { return bIsTalkable; }
 
 	/** Slot-tag-specific talkable query (for example Player.Slot.P1 / Player.Slot.P2). */
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool IsTalkableForPlayerSlotTag(FGameplayTag PlayerSlotTag) const;
 
 	/** Controller-aware talkable query (uses controller player slot mapping). */
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool IsTalkableForController(const APlayerController* QueryController) const;
 
 	// StateTree-friendly gate alias for dialogue availability.
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool HasSomethingToSay() const;
 
 	/** Ask the dialogue subsystem to recompute talkability (use after unlocking content or clearing blockers). */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
 	void RefreshTalkableFromSubsystem();
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Talk", meta = (ToolTip = "Broadcast when this speaker's talkable state changes."))

@@ -19,50 +19,50 @@ class PARLEY_API UParleyDialogueWidgetBase : public UUserWidget
 
 public:
 	// Binds this widget to a specific AR player controller for dialogue updates/input forwarding.
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void InitializeDialogueWidget(APlayerController* InOwningController);
 
 	// Unbinds current controller and clears local dialogue state cache.
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void DeinitializeDialogueWidget();
 
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void AdvanceDialogue();
 
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void SubmitChoice(FGuid ChoiceBranchId);
 
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void SetEavesdrop(bool bEnable, FGameplayTag TargetSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void SetEavesdropOtherPlayer(bool bEnable);
 
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void StartDialogueWithSpeakerTag(FGameplayTag SpeakerTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Parley|Interaction|UI", meta = (ToolTip = "Executes interaction UI behavior through the dialogue widget bridge."))
 	void InteractWithCharacter(AActor* CharacterActor);
 
 	// Toggles local player's dialogue auto-advance preference through the bound controller.
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void ToggleAutoAdvance();
 
 	// Submits selected choice when waiting for choice; otherwise advances dialogue.
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void AdvanceOrSubmitDialogue();
 
 	// Moves selected choice index by Delta on the bound controller.
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Executes dialogue widget interaction or control behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void ChoiceDelta(int32 Delta);
 
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns dialogue widget state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns cached dialogue widget state without mutating runtime data."))
 	bool GetCurrentDialogueView(FDialogueClientView& OutView) const;
 
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns dialogue widget state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns cached dialogue widget state without mutating runtime data."))
 	bool HasActiveDialogueView() const { return bHasActiveDialogueView; }
 
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns dialogue widget state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns cached dialogue widget state without mutating runtime data."))
 	APlayerController* GetBoundController() const { return BoundController; }
 
 	// BP hook for visual setup when controller binding changes.

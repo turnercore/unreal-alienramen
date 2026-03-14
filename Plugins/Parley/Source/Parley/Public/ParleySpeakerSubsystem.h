@@ -21,15 +21,15 @@ public:
 	virtual void Deinitialize() override;
 
 	/** True when the speaker is currently talkable (resolved from dialogue runtime). */
-	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns speaker runtime state without mutation."))
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool IsSpeakerTalkable(FGameplayTag SpeakerTag) const;
 
 	/** Recompute talkable state for a single speaker tag (call after unlocks/state changes). */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
 	bool RefreshSpeakerTalkableState(FGameplayTag SpeakerTag);
 
 	/** Recompute talkable state for all registered speakers. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Executes a speaker component or subsystem operation."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
 	void RefreshAllSpeakerTalkableStates();
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Broadcast when cached talkable state changes for a speaker tag."))
