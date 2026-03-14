@@ -218,9 +218,10 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 - `AARGameModeBase` owns optional transition-map travel routing for mode exits via `bRouteModeTravelThroughTransitionMap` + `TransitionTravelMapURL` + transition context (`TransitionSourceMode`, `TransitionReason`).
 - `AARGameModeBase::TryStartTravel` accepts per-call `EARTravelRoutePolicy` override (`ModeDefault`, `ForceTransitionMap`, `ForceDirect`) so runtime can choose transition-map vs same-mode direct travel without mutating class defaults.
 - `AARGameModeBase` provides `EndModeAndTravel(...)` and `TravelDirectInMode(...)` Blueprint helpers for explicit routing intent.
-- `AARTransitionGameMode` owns transition-map continue gating and destination travel start.
+- `AARGameModeBase::HandleSeamlessTravelPlayer(...)` is the gameplay-mode handoff guard that clears carried spectator state and restarts possession when needed after seamless travel from transition maps.
+- `AARTransitionGameMode` owns transition-map continue gating and destination travel start; native class is abstract and maps should use a Blueprint subclass.
 - `AARTransitionGameState` owns replicated transition context (`FARTransitionContext`) for transition/result UI.
-- `AARTransitionPlayerController` is the controller entrypoint for continue votes.
+- `AARTransitionPlayerController` is the controller entrypoint for continue votes and local transition-widget lifecycle (`ShowTransitionWidgetFromContext` / `ShowTransitionWidget` / `HideTransitionWidget`) with context-driven class resolution; native class is abstract and should be consumed via Blueprint subclass defaults.
 - `UARTransitionBlueprintLibrary` is the BP-safe builder/parser for transition travel URLs and context payloads.
 - Transition mode is no-pawn by design; it should not spawn gameplay pawns.
 
