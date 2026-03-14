@@ -433,10 +433,10 @@ static FDialogueRuntimeContext BuildSessionContext(
 	{
 		Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
 		const FParleyPlayerIdentity Identity = BuildOwnerIdentityForSession(Context.World, Session);
-		GetProgressionTagsForIdentity(ProgressionStore, Identity, Context.PlayerOnlyProgressionTags);
+		GetProgressionTagsForIdentity(ProgressionStore, Identity, Context.PlayerOnlyProgressionTags, Context.World);
 		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
 		Context.bCompletedByGame = ProgressionStore->DialogueCompletedConversationTagsByGame.HasTagExact(Session.ConversationTag);
-		if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, Identity))
+		if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, Identity, Context.World))
 		{
 			Context.bCompletedByPlayer = PlayerState->CompletedConversationTags.HasTagExact(Session.ConversationTag);
 		}
@@ -931,7 +931,10 @@ static bool PersistCompletedConversation(
 	ProgressionStore->DialogueCompletedConversationTagsByGame.AddTag(Session.ConversationTag);
 
 	const FParleyPlayerIdentity OwnerIdentity = BuildOwnerIdentityForSession(DialogueSubsystem->GetWorld(), Session);
-	if (FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueState(ProgressionStore, OwnerIdentity))
+	if (FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueState(
+		ProgressionStore,
+		OwnerIdentity,
+		DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr))
 	{
 		PlayerState->CompletedConversationTags.AddTag(Session.ConversationTag);
 
@@ -1358,7 +1361,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			if (Node->CompletedChoicePolicy == EDialogueCompletedChoicePolicy::LockedToRecordedChoice)
 			{
 				const FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
-				const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, OwnerIdentity);
+				const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, OwnerIdentity, Context.World);
 				const bool bConversationCompletedForOwner = PlayerState && PlayerState->CompletedConversationTags.HasTagExact(Session.ConversationTag);
 				bool bFoundRecordedChoiceForNode = false;
 				if (PlayerState)
@@ -1828,13 +1831,6 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}
 	}
-}
-
-bool UParleyDialogueSubsystem::TryStartDialogueWithSpeaker(APlayerController* RequestingController, FGameplayTag PrimarySpeakerTag)
-{
-	APlayerState* RequestingPlayerState = RequestingController ? RequestingController->GetPlayerState<APlayerState>() : nullptr;
-	const FGameplayTag SourceSpeakerTag = ResolvePlayerSpeakerTag(RequestingPlayerState);
-	return TryStartDialogueBetweenSpeakers(RequestingController, SourceSpeakerTag, PrimarySpeakerTag);
 }
 
 bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(

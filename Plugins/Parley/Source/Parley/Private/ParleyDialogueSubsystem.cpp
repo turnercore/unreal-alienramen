@@ -601,8 +601,14 @@ static UTagKeySubsystem* GetLookupSubsystem(const UParleyDialogueSubsystem* Subs
 }
 
 static APlayerState* FindPlayerStateBySlot(const UWorld* World, const EParleyPlayerSlot Slot);
-static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const FParleyProgressionStore* ProgressionStore, const EParleyPlayerSlot Slot);
-static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity);
+static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(
+	const FParleyProgressionStore* ProgressionStore,
+	const EParleyPlayerSlot Slot,
+	const UWorld* World = nullptr);
+static FGameplayTag ResolveDialogueCharacterTagFromIdentity(
+	const FParleyProgressionStore* ProgressionStore,
+	const FParleyPlayerIdentity& Identity,
+	const UWorld* World = nullptr);
 
 static FParleyPlayerIdentity BuildPlayerIdentityFromState(const APlayerState* PS)
 {
@@ -633,7 +639,10 @@ static FGameplayTag ResolveDialogueCharacterTagFromPlayerState(const APlayerStat
 	return GetCurrentCharacterTagFromPlayerState(PlayerState);
 }
 
-static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
+static FGameplayTag ResolveDialogueCharacterTagFromIdentity(
+	const FParleyProgressionStore* ProgressionStore,
+	const FParleyPlayerIdentity& Identity,
+	const UWorld* World)
 {
 	if (!ProgressionStore)
 	{
@@ -644,7 +653,7 @@ static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgres
 	// Slot mapping in progression store is retained as fallback for detached/offline contexts.
 	if (Identity.PlayerSlot != EParleyPlayerSlot::Unknown)
 	{
-		if (const APlayerState* LivePlayerState = FindPlayerStateBySlot(GWorld, Identity.PlayerSlot))
+		if (const APlayerState* LivePlayerState = FindPlayerStateBySlot(World, Identity.PlayerSlot))
 		{
 			const FGameplayTag LiveCharacterTag = ResolveDialogueCharacterTagFromPlayerState(LivePlayerState);
 			if (LiveCharacterTag.IsValid())
@@ -674,14 +683,17 @@ static FGameplayTag ResolveDialogueCharacterTagFromIdentity(const FParleyProgres
 	return FGameplayTag();
 }
 
-static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
+static const FDialoguePlayerPersistentState* FindPlayerDialogueState(
+	const FParleyProgressionStore* ProgressionStore,
+	const FParleyPlayerIdentity& Identity,
+	const UWorld* World = nullptr)
 {
 	if (!ProgressionStore)
 	{
 		return nullptr;
 	}
 
-	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(ProgressionStore, Identity);
+	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(ProgressionStore, Identity, World);
 	FParleyCharacterProgressionData CharacterState;
 	int32 CharacterIndex = INDEX_NONE;
 	if (!ProgressionStore->FindCharacterStateDataByTag(CharacterTag, CharacterState, CharacterIndex)
@@ -693,14 +705,17 @@ static const FDialoguePlayerPersistentState* FindPlayerDialogueState(const FParl
 	return &ProgressionStore->CharacterStates[CharacterIndex].DialogueState;
 }
 
-static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
+static FDialoguePlayerPersistentState* FindPlayerDialogueStateMutable(
+	FParleyProgressionStore* ProgressionStore,
+	const FParleyPlayerIdentity& Identity,
+	const UWorld* World = nullptr)
 {
 	if (!ProgressionStore)
 	{
 		return nullptr;
 	}
 
-	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(ProgressionStore, Identity);
+	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(ProgressionStore, Identity, World);
 	int32 CharacterIndex = INDEX_NONE;
 	FParleyCharacterProgressionData* CharacterState = ProgressionStore->FindCharacterStateDataMutable(CharacterTag, CharacterIndex);
 	return CharacterState ? &CharacterState->DialogueState : nullptr;
@@ -725,7 +740,10 @@ static bool IsConversationCompletedByPlayer(const UParleyDialogueSubsystem* Subs
 		return false;
 	}
 
-	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, Identity);
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(
+		ProgressionStore,
+		Identity,
+		Subsystem ? Subsystem->GetWorld() : nullptr);
 	return PlayerState && PlayerState->CompletedConversationTags.HasTagExact(ConversationTag);
 }
 
@@ -918,9 +936,12 @@ static bool EvaluateTagContainerCondition(const FGameplayTagContainer& Container
 	}
 }
 
-static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity)
+static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(
+	FParleyProgressionStore* ProgressionStore,
+	const FParleyPlayerIdentity& Identity,
+	const UWorld* World = nullptr)
 {
-	if (FDialoguePlayerPersistentState* Existing = FindPlayerDialogueStateMutable(ProgressionStore, Identity))
+	if (FDialoguePlayerPersistentState* Existing = FindPlayerDialogueStateMutable(ProgressionStore, Identity, World))
 	{
 		return Existing;
 	}
@@ -930,7 +951,7 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(FParleyProgr
 		return nullptr;
 	}
 
-	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(ProgressionStore, Identity);
+	const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromIdentity(ProgressionStore, Identity, World);
 	if (!CharacterTag.IsValid())
 	{
 		return nullptr;
@@ -958,7 +979,10 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
 		{
 			ProgressionStore->CharacterTagBySlot.FindOrAdd(Slot) = CharacterTag;
 		}
-		return FindOrAddPlayerDialogueState(ProgressionStore, BuildPlayerIdentityFromState(PlayerState));
+		return FindOrAddPlayerDialogueState(
+			ProgressionStore,
+			BuildPlayerIdentityFromState(PlayerState),
+			DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr);
 	}
 
 	const FGameplayTag CharacterTag = GetDefaultCharacterTagForSlot(Slot);
@@ -1051,7 +1075,10 @@ static void SyncCycleOfferStateFromProgressionStoreForSlot(
 		return;
 	}
 
-	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(ProgressionStore, Slot);
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(
+		ProgressionStore,
+		Slot,
+		DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr);
 	if (!PlayerState)
 	{
 		SeenByPlayerTransient.Remove(Slot);
@@ -1080,7 +1107,10 @@ static void SyncSpeakerOfferCountsFromProgressionStoreForSlot(
 		return;
 	}
 
-	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(ProgressionStore, Slot);
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(
+		ProgressionStore,
+		Slot,
+		DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr);
 	if (!PlayerState)
 	{
 		SpeakerOfferCountsByPlayerTransient.Remove(Slot);
@@ -1471,16 +1501,19 @@ static const FParleySpeakerRow* ResolveSpeakerRowForPresentation(
 	return nullptr;
 }
 
-static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(const FParleyProgressionStore* ProgressionStore, const EParleyPlayerSlot Slot)
+static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(
+	const FParleyProgressionStore* ProgressionStore,
+	const EParleyPlayerSlot Slot,
+	const UWorld* World)
 {
 	if (!ProgressionStore || Slot == EParleyPlayerSlot::Unknown)
 	{
 		return nullptr;
 	}
 
-	if (const APlayerState* PlayerState = FindPlayerStateBySlot(GWorld, Slot))
+	if (const APlayerState* PlayerState = FindPlayerStateBySlot(World, Slot))
 	{
-		return FindPlayerDialogueState(ProgressionStore, BuildPlayerIdentityFromState(PlayerState));
+		return FindPlayerDialogueState(ProgressionStore, BuildPlayerIdentityFromState(PlayerState), World);
 	}
 
 	FParleyCharacterProgressionData CharacterState;
@@ -2169,7 +2202,11 @@ static const FDialogueCompiledNode* FindNodeById(const FParleyActiveDialogueSess
 	return Session.ConversationAsset->FindCompiledNode(NodeId);
 }
 
-static bool GetProgressionTagsForIdentity(const FParleyProgressionStore* ProgressionStore, const FParleyPlayerIdentity& Identity, FGameplayTagContainer& OutTags)
+static bool GetProgressionTagsForIdentity(
+	const FParleyProgressionStore* ProgressionStore,
+	const FParleyPlayerIdentity& Identity,
+	FGameplayTagContainer& OutTags,
+	const UWorld* World = nullptr)
 {
 	OutTags.Reset();
 	if (!ProgressionStore)
@@ -2177,7 +2214,7 @@ static bool GetProgressionTagsForIdentity(const FParleyProgressionStore* Progres
 		return false;
 	}
 
-	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, Identity);
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, Identity, World);
 	if (!PlayerState)
 	{
 		return false;

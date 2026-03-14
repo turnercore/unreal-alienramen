@@ -405,68 +405,6 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 		*StaticEnum<EParleyPlayerSlot>()->GetNameStringByValue(static_cast<int64>(PlayerSlot)));
 }
 
-float UParleyDialogueSubsystem::GetRelationshipPointsForSpeaker(FGameplayTag SpeakerTag) const
-{
-	if (!SpeakerTag.IsValid())
-	{
-		return 0.0f;
-	}
-
-	const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
-	if (PlayerPlaceholderTag.IsValid())
-	{
-		const float PlaceholderValue = GetRelationshipPointsForSpeakerPair(PlayerPlaceholderTag, SpeakerTag);
-		if (!FMath::IsNearlyZero(PlaceholderValue))
-		{
-			return PlaceholderValue;
-		}
-	}
-
-	const float BrotherValue = GetRelationshipPointsForSpeakerPair(GetDialogueSpeakerBrotherTag(), SpeakerTag);
-	const float SisterValue = GetRelationshipPointsForSpeakerPair(GetDialogueSpeakerSisterTag(), SpeakerTag);
-	if (!FMath::IsNearlyZero(BrotherValue) || !FMath::IsNearlyZero(SisterValue))
-	{
-		return FMath::Max(BrotherValue, SisterValue);
-	}
-
-	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(this);
-	if (!ProgressionStore)
-	{
-		return 0.0f;
-	}
-
-	for (const FDialogueSpeakerRelationshipState& State : ProgressionStore->DialogueSpeakerRelationshipStates)
-	{
-		if (State.TargetSpeakerTag.MatchesTagExact(SpeakerTag))
-		{
-			return State.RelationshipPoints;
-		}
-	}
-
-	return 0.0f;
-}
-
-int32 UParleyDialogueSubsystem::GetRelationshipLevelForSpeaker(FGameplayTag SpeakerTag) const
-{
-	const float Points = GetRelationshipPointsForSpeaker(SpeakerTag);
-	if (!SpeakerTag.IsValid())
-	{
-		return 0;
-	}
-
-	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
-	FGameplayTag CandidateSpeakerTag = SpeakerTag;
-	while (CandidateSpeakerTag.IsValid())
-	{
-		if (const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(CandidateSpeakerTag))
-		{
-			return ResolveRelationshipLevelFromThresholds(Points, SpeakerRow->RelationshipThresholds);
-		}
-		CandidateSpeakerTag = StripLeafGameplayTag(CandidateSpeakerTag);
-	}
-	return 0;
-}
-
 float UParleyDialogueSubsystem::GetRelationshipPointsForSpeakerPair(
 	const FGameplayTag SourceSpeakerTag,
 	const FGameplayTag TargetSpeakerTag) const
@@ -583,33 +521,12 @@ void UParleyDialogueSubsystem::GetCompletedConversationTagsByGame(FGameplayTagCo
 	}
 }
 
-void UParleyDialogueSubsystem::SetRelationshipStates(const TArray<FDialogueRelationshipState>& States)
-{
-	TArray<FDialogueSpeakerRelationshipState> ConvertedStates;
-	ConvertedStates.Reserve(States.Num());
-
-	const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
-	for (const FDialogueRelationshipState& State : States)
-	{
-		if (!State.SpeakerTag.IsValid())
-		{
-			continue;
-		}
-
-		FDialogueSpeakerRelationshipState& Converted = ConvertedStates.AddDefaulted_GetRef();
-		Converted.SourceSpeakerTag = PlayerPlaceholderTag;
-		Converted.TargetSpeakerTag = State.SpeakerTag;
-		Converted.RelationshipPoints = State.RelationshipPoints;
-	}
-
-	SetSpeakerRelationshipStates(ConvertedStates);
-}
-
 void UParleyDialogueSubsystem::SetSpeakerRelationshipStates(const TArray<FDialogueSpeakerRelationshipState>& States)
 {
 	if (FParleyProgressionStore* ProgressionStore = GetProgressionStore(this))
 	{
 		ProgressionStore->DialogueSpeakerRelationshipStates.Reset();
+		TMap<FString, int32> PairIndexByKey;
 		for (const FDialogueSpeakerRelationshipState& State : States)
 		{
 			if (!State.SourceSpeakerTag.IsValid() || !State.TargetSpeakerTag.IsValid())
@@ -617,10 +534,22 @@ void UParleyDialogueSubsystem::SetSpeakerRelationshipStates(const TArray<FDialog
 				continue;
 			}
 
+			const FString PairKey = FString::Printf(TEXT("%s|%s"), *State.SourceSpeakerTag.ToString(), *State.TargetSpeakerTag.ToString());
+			if (const int32* ExistingIndex = PairIndexByKey.Find(PairKey))
+			{
+				if (ProgressionStore->DialogueSpeakerRelationshipStates.IsValidIndex(*ExistingIndex))
+				{
+					ProgressionStore->DialogueSpeakerRelationshipStates[*ExistingIndex].RelationshipPoints = State.RelationshipPoints;
+				}
+				continue;
+			}
+
+			const int32 AddedIndex = ProgressionStore->DialogueSpeakerRelationshipStates.Num();
 			FDialogueSpeakerRelationshipState& Added = ProgressionStore->DialogueSpeakerRelationshipStates.AddDefaulted_GetRef();
 			Added.SourceSpeakerTag = State.SourceSpeakerTag;
 			Added.TargetSpeakerTag = State.TargetSpeakerTag;
 			Added.RelationshipPoints = State.RelationshipPoints;
+			PairIndexByKey.Add(PairKey, AddedIndex);
 		}
 	}
 }

@@ -986,18 +986,6 @@ struct PARLEY_API FDialogueValidationReport
 };
 
 USTRUCT(BlueprintType)
-struct PARLEY_API FDialogueRelationshipState
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
-	FGameplayTag SpeakerTag;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
-	float RelationshipPoints = 0.0f;
-};
-
-USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueSpeakerRelationshipState
 {
 	GENERATED_BODY()

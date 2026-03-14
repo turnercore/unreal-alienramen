@@ -1285,10 +1285,10 @@ static FDialogueRuntimeContext BuildOfferContext(
 	if (ProgressionStore)
 	{
 		Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
-		GetProgressionTagsForIdentity(ProgressionStore, PlayerIdentity, Context.PlayerOnlyProgressionTags);
+		GetProgressionTagsForIdentity(ProgressionStore, PlayerIdentity, Context.PlayerOnlyProgressionTags, Context.World);
 		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
 		Context.bCompletedByGame = ProgressionStore->DialogueCompletedConversationTagsByGame.HasTagExact(Context.ConversationTag);
-		if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, PlayerIdentity))
+		if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, PlayerIdentity, Context.World))
 		{
 			Context.bCompletedByPlayer = PlayerState->CompletedConversationTags.HasTagExact(Context.ConversationTag);
 		}

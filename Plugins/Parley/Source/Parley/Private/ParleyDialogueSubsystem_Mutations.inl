@@ -273,7 +273,10 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 			return false;
 		}
 
-		if (FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueState(ProgressionStore, BuildPlayerIdentityFromState(ActivePS)))
+		if (FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueState(
+			ProgressionStore,
+			BuildPlayerIdentityFromState(ActivePS),
+			ActivePS->GetWorld()))
 		{
 			const bool bAdded = Mutation.Operation == EDialogueTagMutationOp::Add;
 			const bool bChanged = bAdded
@@ -331,6 +334,10 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Relationship mutation skipped: source/target speaker tag invalid."));
 		return false;
 	}
+	if (FMath::IsNearlyZero(Mutation.DeltaPoints))
+	{
+		return false;
+	}
 
 	FDialogueSpeakerRelationshipState* RelationshipState = nullptr;
 	for (FDialogueSpeakerRelationshipState& Entry : ProgressionStore->DialogueSpeakerRelationshipStates)
@@ -367,12 +374,6 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 		Mutation.DeltaPoints,
 		RelationshipState->RelationshipPoints);
 
-	OnRelationshipChanged.Broadcast(
-		TargetSpeakerTag,
-		PlayerSlotTag,
-		Mutation.DeltaPoints,
-		RelationshipState->RelationshipPoints);
-
 	if (OldLevel != NewLevel)
 	{
 		OnSpeakerRelationshipLevelChanged.Broadcast(
@@ -382,11 +383,6 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 			OldLevel,
 			NewLevel,
 			RelationshipState->RelationshipPoints);
-		OnRelationshipLevelChanged.Broadcast(
-			TargetSpeakerTag,
-			PlayerSlotTag,
-			OldLevel,
-			NewLevel);
 	}
 	return true;
 }
