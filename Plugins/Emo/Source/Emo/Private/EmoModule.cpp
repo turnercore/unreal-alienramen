@@ -18,9 +18,9 @@ void FEmoModule::StartupModule()
 
 	static const TCHAR* RequiredTags[] =
 	{
-		TEXT("Dialogue.Emotion"),
-		TEXT("Dialogue.Emotion.Busy"),
-		TEXT("Dialogue.Emotion.WantsToTalk")
+		TEXT("Parley.Emotion"),
+		TEXT("Parley.Emotion.Busy"),
+		TEXT("Parley.Emotion.WantsToTalk")
 	};
 
 	for (const TCHAR* RequiredTag : RequiredTags)
