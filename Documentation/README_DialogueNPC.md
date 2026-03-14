@@ -139,7 +139,7 @@ Settings live in `Plugins/Parley/Source/Parley/Public/ParleyDialogueSettings.h`:
 - shared/per-player mode tag containers
 - execution guard `MaxExecutionStepsPerAdvance`
 
-Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `ConversationDefinitionRootTag=Dialogue.Conversation`.
+Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `ConversationDefinitionRootTag=Parley.Conversations`.
 
 ## Emotion Runtime
 
@@ -149,9 +149,9 @@ Default config now uses `SpeakerDefinitionRootTag=Dialogue.Speaker` and `Convers
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
 - Dialogue line emotion is written as a system source (`DialogueLine`) with priority above `BusyEmotionPriority`; if line-tag resolve fails, no line source is written so lower-priority state (for example busy) remains visible.
 - Dialogue clears prior line-emotion source entries when presenting the next line, so line emotion holds until next line or session end.
-- Dialogue line `SpeakerTag` may include an emotion leaf (example: `Dialogue.Speaker.Fred.Angry`).
+- Dialogue line `SpeakerTag` may include an emotion leaf (example: `Parley.Speaker.Fred.Angry`).
 - Emotion icon lookup resolves through `UTagKeySubsystem` route root `UEmoSettings::EmotionResolverRootTag` (row type `FEmoIconRow`) and is cached by `UEmoResolverSubsystem`.
-- Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Dialogue.Emotion`) when a speaker tag includes an explicit emotion leaf (for example `Dialogue.Speaker.Fred.Angry` -> `Dialogue.Emotion.Angry`).
+- Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Parley.Emotion`) when a speaker tag includes an explicit emotion leaf (for example `Parley.Speaker.Fred.Angry` -> `Parley.Emotion.Angry`).
 - `UEmoComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
 - Emotion anchor authoring is offset-only: `AnchorWorldOffset` is applied from owner actor top bounds fallback.
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UEmoSettings::DefaultTimedSystemOverrideDurationSeconds`.
@@ -302,6 +302,9 @@ Speaker hub currently provides:
 - TagKey-backed speaker table loading from `SpeakerDefinitionRootTag`
 - searchable/sortable speaker list with columns (display name/tag/thresholds/conversation count)
 - speaker CRUD (`New`, `Duplicate`, `Delete`) + `Save Speaker` + `Validate Speaker`
+- speaker save enforces one-to-one speaker-tag ownership across the speaker table and auto-syncs row name to speaker-tag leaf (for example `Parley.Speaker.TestCactus` -> row `TestCactus`)
+- `New` speaker rows are intentionally created without a speaker tag; authoring must assign an unused speaker tag before save.
+- speaker-tag picker now emits an immediate warning in editor output when selecting a tag already assigned to another row; save remains blocked until tag is unique.
 - reorderable threshold editing/reset (`5,15,30,50` defaults)
 - inline portrait list with add/update/remove operations
 - relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints

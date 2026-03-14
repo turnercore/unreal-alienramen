@@ -19,12 +19,12 @@ public:
 	virtual FName GetSectionName() const override { return TEXT("Emotion"); }
 
 	// Preferred TagKey route root used to resolve the emotion icon DataTable.
-	// Example: Dialogue.Emotion (row names should match emotion tags).
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue", ToolTip = "Emotion content root tags used by resolver lookup and fallback."))
+	// Example: Emotion (row names should match emotion tags under the selected root).
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (ToolTip = "Emotion content root tags used by resolver lookup and fallback."))
 	FGameplayTag EmotionResolverRootTag;
 
-	// Generic emotion root used for speaker-specific fallback (for example Dialogue.Speaker.Fred.Angry -> Dialogue.Emotion.Angry).
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (Categories = "Dialogue", ToolTip = "Emotion content root tags used by resolver lookup and fallback."))
+	// Generic emotion root used for speaker-specific fallback.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Content", meta = (ToolTip = "Emotion content root tags used by resolver lookup and fallback."))
 	FGameplayTag GenericEmotionRootTag;
 
 	// Enables extra resolver diagnostic logging for source selection and per-tag lookup outcomes.
@@ -41,12 +41,12 @@ public:
 
 	// Emotion tag applied by speaker runtime when a speaker is currently talkable/offerable.
 	// Used by NPCs when they have an active offer; sets overhead icon if available.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (Categories = "Dialogue.Emotion", ToolTip = "Emotion tags used by runtime behavior policies."))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (ToolTip = "Emotion tags used by runtime behavior policies."))
 	FGameplayTag WantsToTalkEmotionTag;
 
 	// Emotion tag applied by dialogue runtime when one-talker-per-speaker mode marks a speaker as busy.
 	// Shown while another player is talking to this speaker.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (Categories = "Dialogue.Emotion", ToolTip = "Emotion tags used by runtime behavior policies."))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (ToolTip = "Emotion tags used by runtime behavior policies."))
 	FGameplayTag BusyEmotionTag;
 
 	// Priority used when dialogue runtime applies BusyEmotionTag through generic system override source.
