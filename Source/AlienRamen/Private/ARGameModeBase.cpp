@@ -10,6 +10,7 @@
 #include "ARTransitionTypes.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/GameSession.h"
 
@@ -630,6 +631,33 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 				UE_LOG(ARLog, Verbose, TEXT("[GameMode] Session joinability refresh after join failed: %s"), *SessionResult.Error);
 			}
 		}
+	}
+}
+
+void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
+{
+	Super::HandleSeamlessTravelPlayer(C);
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(C);
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	if (PlayerController->PlayerState)
+	{
+		PlayerController->PlayerState->SetIsSpectator(false);
+	}
+
+	PlayerController->ChangeState(NAME_Playing);
+	if (!PlayerController->GetPawn())
+	{
+		RestartPlayer(PlayerController);
 	}
 }
 

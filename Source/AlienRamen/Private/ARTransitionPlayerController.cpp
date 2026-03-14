@@ -2,9 +2,27 @@
 
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ARTransitionGameState.h"
+#include "Blueprint/UserWidget.h"
 
 AARTransitionPlayerController::AARTransitionPlayerController()
 {
+}
+
+void AARTransitionPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (bAutoCreateTransitionWidget)
+	{
+		ShowTransitionWidgetFromContext();
+	}
+}
+
+void AARTransitionPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	HideTransitionWidget();
+	Super::EndPlay(EndPlayReason);
 }
 
 void AARTransitionPlayerController::RequestTransitionContinue(const bool bReady)
@@ -28,4 +46,88 @@ void AARTransitionPlayerController::RequestTransitionContinue(const bool bReady)
 void AARTransitionPlayerController::ServerRequestTransitionContinue_Implementation(const bool bReady)
 {
 	RequestTransitionContinue(bReady);
+}
+
+UUserWidget* AARTransitionPlayerController::ShowTransitionWidgetFromContext()
+{
+	return ShowTransitionWidget(ResolveTransitionWidgetClassFromContext());
+}
+
+UUserWidget* AARTransitionPlayerController::ShowTransitionWidget(TSubclassOf<UUserWidget> WidgetClass)
+{
+	if (!IsLocalController())
+	{
+		return nullptr;
+	}
+
+	if (!WidgetClass)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Transition] ShowTransitionWidget skipped on '%s': widget class is null."), *GetNameSafe(this));
+		return nullptr;
+	}
+
+	if (TransitionWidget && TransitionWidget->GetClass() != WidgetClass)
+	{
+		HideTransitionWidget();
+		TransitionWidget = nullptr;
+	}
+
+	if (!TransitionWidget)
+	{
+		TransitionWidget = CreateWidget<UUserWidget>(this, WidgetClass);
+	}
+
+	if (!TransitionWidget)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Transition] ShowTransitionWidget failed on '%s': widget create failed."), *GetNameSafe(this));
+		return nullptr;
+	}
+
+	if (!TransitionWidget->IsInViewport())
+	{
+		TransitionWidget->AddToViewport(TransitionWidgetZOrder);
+	}
+
+	return TransitionWidget;
+}
+
+void AARTransitionPlayerController::HideTransitionWidget()
+{
+	if (TransitionWidget && TransitionWidget->IsInViewport())
+	{
+		TransitionWidget->RemoveFromParent();
+	}
+}
+
+TSubclassOf<UUserWidget> AARTransitionPlayerController::ResolveTransitionWidgetClassFromContext() const
+{
+	const AARTransitionGameState* TransitionGameState = GetWorld() ? GetWorld()->GetGameState<AARTransitionGameState>() : nullptr;
+	if (!TransitionGameState)
+	{
+		return DefaultTransitionWidgetClass;
+	}
+
+	const FARTransitionContext& Context = TransitionGameState->GetTransitionContext();
+	if (Context.bFreshLoadEntry && FreshLoadTransitionWidgetClass)
+	{
+		return FreshLoadTransitionWidgetClass;
+	}
+
+	if (const TSubclassOf<UUserWidget>* ReasonClass = TransitionWidgetClassByReason.Find(Context.Reason))
+	{
+		if (*ReasonClass)
+		{
+			return *ReasonClass;
+		}
+	}
+
+	if (const TSubclassOf<UUserWidget>* SourceClass = TransitionWidgetClassBySourceMode.Find(Context.SourceMode))
+	{
+		if (*SourceClass)
+		{
+			return *SourceClass;
+		}
+	}
+
+	return DefaultTransitionWidgetClass;
 }

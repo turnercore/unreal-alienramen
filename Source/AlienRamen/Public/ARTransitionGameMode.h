@@ -14,7 +14,7 @@ class APlayerController;
 class APawn;
 class AActor;
 
-UCLASS()
+UCLASS(Abstract)
 class ALIENRAMEN_API AARTransitionGameMode : public AARGameModeBase
 {
 	GENERATED_BODY()
