@@ -1,4 +1,4 @@
-# Shop Ramen System (Built On Top)
+# Shop Game Mode Runtime Contract
 
 This document captures the runtime ownership and integration contract for the shop ramen ordering/serving loop.
 
