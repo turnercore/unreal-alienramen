@@ -118,3 +118,6 @@ tags
 /warnings.log
 /examples/html/*
 /examples/latex/*
+
+# Source art working files
+Sources/
