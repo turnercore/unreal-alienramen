@@ -306,6 +306,46 @@ int32 UARSaveGame::MigrateToCurrentSchema(TArray<FString>* OutWarnings)
 		}
 	}
 
+	if (SaveGameVersion <= 14)
+	{
+		const FGameplayTag DialogueProgressionRootTag = FGameplayTag::RequestGameplayTag(TEXT("Progression.Dialogue"), false);
+		bool bMigratedDialogueProgressionTags = false;
+		if (DialogueProgressionRootTag.IsValid())
+		{
+			for (const FARPlayerStateSaveData& PlayerData : PlayerStates)
+			{
+				const FGameplayTag CharacterTag = PlayerData.ResolveCurrentCharacterTag();
+				if (!CharacterTag.IsValid())
+				{
+					continue;
+				}
+
+				FARCharacterSaveData& CharacterState = FindOrAddCharacterStateData(CharacterTag);
+				const int32 OldProgressionCount = CharacterState.DialogueState.ProgressionTags.Num();
+				for (const FGameplayTag Tag : PlayerData.ProgressionTags)
+				{
+					if (Tag.IsValid() && Tag.MatchesTag(DialogueProgressionRootTag))
+					{
+						CharacterState.DialogueState.ProgressionTags.AddTag(Tag);
+					}
+				}
+
+				if (CharacterState.DialogueState.ProgressionTags.Num() != OldProgressionCount)
+				{
+					bMigratedDialogueProgressionTags = true;
+					++ChangeCount;
+				}
+			}
+		}
+
+		if (bMigratedDialogueProgressionTags)
+		{
+			AddWarning(
+				OutWarnings,
+				TEXT("Migrated dialogue progression tags from player-owned progression into character dialogue state."));
+		}
+	}
+
 	if (SaveGameVersion <= 11)
 	{
 		int32 MigratedDialogueRows = 0;

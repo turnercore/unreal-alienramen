@@ -40,7 +40,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 14;
+	static constexpr int32 CurrentSchemaVersion = 15;
 	static constexpr int32 MinSupportedSchemaVersion = 10;
 
 	UARSaveGame();
