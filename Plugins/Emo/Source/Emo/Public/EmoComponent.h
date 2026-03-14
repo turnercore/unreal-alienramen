@@ -32,111 +32,111 @@ class EMO_API UEmoComponent : public UActorComponent
 public:
 	UEmoComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetEmotionTag(FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearEmotionTag();
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearAllEmotionTags();
 
 	// Dialogue override helpers (higher priority than base state).
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetDialogueEmotionTag(FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetDialogueEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearDialogueEmotionTag();
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearDialogueEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearAllDialogueEmotionTags();
 
 	// Generic runtime override layer for built-on-top systems (for example ordering, scripted events, mode logic).
 	// Highest-priority active source wins; ties resolve by most-recent write.
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetSystemEmotionTag(FName SourceId, FGameplayTag NewEmotionTag, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetSystemEmotionTagForDuration(FName SourceId, FGameplayTag NewEmotionTag, float DurationSeconds = -1.0f, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetSystemEmotionTagForPlayerSlotTag(FName SourceId, FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetSystemEmotionTagForPlayerSlotTagForDuration(FName SourceId, FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag, float DurationSeconds = -1.0f, int32 Priority = 0);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearSystemEmotionTag(FName SourceId);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearSystemEmotionTagForPlayerSlotTag(FName SourceId, FGameplayTag PlayerSlotTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearAllSystemEmotionTagsForSource(FName SourceId);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void ClearAllSystemEmotionTags();
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	FGameplayTag GetDisplayedEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag) const;
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	FGameplayTag GetDisplayedEmotionTagForController(const APlayerController* ViewerController) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	bool TryResolveDisplayedEmotionIconForPlayerSlot(
 		FGameplayTag PlayerSlotTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	bool TryResolveDisplayedEmotionIconForController(
 		const APlayerController* ViewerController,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	bool TryResolveEmotionIconForTag(
 		FGameplayTag EmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	bool TryResolvePreviewEmotionIcon(
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	FVector GetEmotionAnchorWorldLocation() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	bool GetEmotionFacingRotationForController(const APlayerController* ViewerController, FRotator& OutFacingRotation) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Executes an emotion-system operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
 	void SetRegisteredSpeakerTag(FGameplayTag NewSpeakerTag);
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	FGameplayTag GetRegisteredSpeakerTag() const { return RegisteredSpeakerTag; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	float GetIconScreenSize() const { return IconScreenSize; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	FGameplayTag GetBaseEmotionTag() const { return BaseEmotionState.SharedEmotionTag; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns emotion-system state without mutating runtime data."))
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns computed emotion display state without mutating replicated data."))
 	FGameplayTag GetPreviewEmotionTag() const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when displayed emotion state changes and UI should refresh."))

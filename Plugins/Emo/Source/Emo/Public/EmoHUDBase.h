@@ -32,27 +32,27 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	// Local-only HUD init entrypoint called by the owning local player controller.
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD", meta = (ToolTip = "Runs a HUD initialization or control operation."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD", meta = (ToolTip = "Runs HUD initialization with controller and state context for widget and cache setup."))
 	virtual void RequestHUDInitialization(APlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Controls or queries HUD emotion rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
 	bool TryProjectEmotionForActor(
 		AActor* TargetActor,
 		FVector2D& OutScreenPosition,
 		FGameplayTag& OutDisplayedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutDisplayedIcon) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Controls or queries HUD emotion rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
 	bool TryProjectEmotionForComponent(
 		const UEmoComponent* EmotionComponent,
 		FVector2D& OutScreenPosition,
 		FGameplayTag& OutDisplayedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutDisplayedIcon) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Controls or queries HUD emotion rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
 	void SetEmotionRenderingSuppressed(bool bSuppressed, FName Reason = NAME_None);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Controls or queries HUD emotion rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
 	void SetEmotionRenderingEnabled(bool bEnabled) { bEnableEmotionView = bEnabled; }
 
 	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns HUD emotion rendering state without side effects."))
