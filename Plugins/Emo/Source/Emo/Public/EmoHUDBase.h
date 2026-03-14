@@ -35,33 +35,33 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD", meta = (ToolTip = "Runs HUD initialization with controller and state context for widget and cache setup."))
 	virtual void RequestHUDInitialization(APlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Projects an actor's emotion anchor to screen space and resolves its displayed emotion/icon for HUD rendering."))
 	bool TryProjectEmotionForActor(
 		AActor* TargetActor,
 		FVector2D& OutScreenPosition,
 		FGameplayTag& OutDisplayedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutDisplayedIcon) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Projects a specific emotion component to screen space and resolves its displayed emotion/icon for HUD rendering."))
 	bool TryProjectEmotionForComponent(
 		const UEmoComponent* EmotionComponent,
 		FVector2D& OutScreenPosition,
 		FGameplayTag& OutDisplayedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutDisplayedIcon) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Adds or removes a named suppression reason that temporarily blocks emotion rendering."))
 	void SetEmotionRenderingSuppressed(bool bSuppressed, FName Reason = NAME_None);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Configures or queries world-space emotion HUD rendering behavior."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Enables or disables emotion icon rendering globally for this HUD instance."))
 	void SetEmotionRenderingEnabled(bool bEnabled) { bEnableEmotionView = bEnabled; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns HUD emotion rendering state without side effects."))
+	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns whether emotion icon rendering is globally enabled on this HUD."))
 	bool IsEmotionRenderingEnabled() const { return bEnableEmotionView; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns HUD emotion rendering state without side effects."))
+	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns whether one or more suppression reasons are currently blocking emotion rendering."))
 	bool IsEmotionRenderingSuppressed() const { return SuppressionReasons.Num() > 0; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns HUD emotion rendering state without side effects."))
+	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns the number of active suppression reasons currently blocking emotion rendering."))
 	int32 GetEmotionRenderingSuppressionReasonCount() const { return SuppressionReasons.Num(); }
 
 protected:

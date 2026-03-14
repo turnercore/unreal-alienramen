@@ -27,18 +27,18 @@ public:
 	virtual void Deinitialize() override;
 
 	/** Rebuilds icon cache from configured DataTable and clears request caches. Call after changing emotion data. */
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Rebuilds resolver caches from configured emotion content and clears request-result caches."))
 	void RebuildCache();
 
 	/** Writes cache stats to log (routes through console command too). Useful for debugging missing icons. */
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Logs current resolver cache counts and lookup hit/miss statistics for diagnostics."))
 	void LogCacheStats() const;
 
 	/**
 	 * Resolve an emotion tag to an icon (soft texture) and the final resolved tag (after fallback).
 	 * Returns false when no icon is found; OutResolvedEmotionTag may still return fallback tag.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Mutates or resolves this component's replicated emotion state."))
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Resolves icon content for a requested emotion tag, including configured fallback tag resolution."))
 	bool TryResolveEmotionIcon(
 		FGameplayTag RequestedEmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,

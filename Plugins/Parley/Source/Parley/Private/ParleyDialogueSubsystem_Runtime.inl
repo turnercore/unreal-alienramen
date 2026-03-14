@@ -537,6 +537,46 @@ static void RefreshBusyEmotionForSpeaker(
 	}
 }
 
+static void BroadcastChoiceLookaheadPreviewForSpeaker(
+	UWorld* World,
+	const FGameplayTag& SpeakerTag,
+	const FGameplayTag& ViewerSlotTag,
+	const FGuid& ChoiceBranchId,
+	const FGameplayTag& PreviewEmotionTag)
+{
+	if (!World || !SpeakerTag.IsValid() || !ChoiceBranchId.IsValid())
+	{
+		return;
+	}
+
+	if (UParleySpeakerComponent* SpeakerComponent = FindSpeakerComponentForSpeakerTag(World, SpeakerTag))
+	{
+		SpeakerComponent->OnSpeakerEmotionPreviewRequested.Broadcast(
+			PreviewEmotionTag,
+			ViewerSlotTag,
+			ChoiceBranchId);
+	}
+}
+
+static void ClearChoiceLookaheadPreviewForSpeaker(
+	UWorld* World,
+	const FGameplayTag& SpeakerTag,
+	const FGameplayTag& ViewerSlotTag)
+{
+	if (!World || !SpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	if (UParleySpeakerComponent* SpeakerComponent = FindSpeakerComponentForSpeakerTag(World, SpeakerTag))
+	{
+		SpeakerComponent->OnSpeakerEmotionPreviewRequested.Broadcast(
+			FGameplayTag(),
+			ViewerSlotTag,
+			FGuid());
+	}
+}
+
 static FGameplayTag ResolveLineSpeakerTagForContext(const FDialogueConversationLine& Line, const FDialogueRuntimeContext& Context)
 {
 	FGameplayTag ResolvedSpeakerTag = Line.SpeakerTag;
@@ -1704,6 +1744,10 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 	UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Session '%s' removed (Participants=%d)."), *SessionId, ParticipantSlots.Num());
 	Sessions.RemoveAtSwap(SessionIndex, 1, EAllowShrinking::No);
 	RefreshBusyEmotionForSpeaker(DialogueSubsystem, SessionSnapshot.PrimarySpeakerTag, Sessions);
+	ClearChoiceLookaheadPreviewForSpeaker(
+		DialogueSubsystem->GetWorld(),
+		SessionSnapshot.PrimarySpeakerTag,
+		ParleyPlayerSlot::SlotToTag(SessionSnapshot.OwnerSlot));
 	DialogueSubsystem->OnChoiceLookaheadCleared.Broadcast(ParleyPlayerSlot::SlotToTag(SessionSnapshot.OwnerSlot));
 	DialogueSubsystem->OnDialogueSessionEnded.Broadcast(SessionId);
 	DialogueSubsystem->OnConversationEnded.Broadcast(
@@ -2188,6 +2232,10 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 			ParleyPlayerSlot::SlotToTag(Session.OwnerSlot));
 	}
 
+	ClearChoiceLookaheadPreviewForSpeaker(
+		World,
+		Session.PrimarySpeakerTag,
+		ParleyPlayerSlot::SlotToTag(Session.OwnerSlot));
 	OnChoiceLookaheadCleared.Broadcast(ParleyPlayerSlot::SlotToTag(Session.OwnerSlot));
 	ClearSessionPresentationState(Session);
 	Session.RuntimeChoiceSelections.Add(ChoiceNode->NodeId, ChoiceBranchId);
@@ -2236,6 +2284,12 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 	const FGameplayTag ViewerSlotTag = ParleyPlayerSlot::SlotToTag(ViewerSlot);
 	if (!ChoiceBranchId.IsValid())
 	{
+		const int32 SessionIndex = FindSessionIndexForSlot(GetRuntimeState().ActiveSessions, ViewerSlot);
+		if (GetRuntimeState().ActiveSessions.IsValidIndex(SessionIndex))
+		{
+			const FParleyActiveDialogueSession& Session = GetRuntimeState().ActiveSessions[SessionIndex];
+			ClearChoiceLookaheadPreviewForSpeaker(World, Session.PrimarySpeakerTag, ViewerSlotTag);
+		}
 		OnChoiceLookaheadCleared.Broadcast(ViewerSlotTag);
 		return true;
 	}
@@ -2261,6 +2315,12 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 	const FDialogueCompiledNode* ChoiceNode = FindNodeById(Session, Session.WaitingChoiceNodeId);
 	if (!ChoiceNode)
 	{
+		BroadcastChoiceLookaheadPreviewForSpeaker(
+			World,
+			Session.PrimarySpeakerTag,
+			ViewerSlotTag,
+			ChoiceBranchId,
+			FGameplayTag());
 		OnChoiceLookaheadEmotion.Broadcast(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
 		return false;
 	}
@@ -2272,6 +2332,12 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 		});
 	if (!HighlightedBranch || !HighlightedBranch->NextNodeId.IsValid())
 	{
+		BroadcastChoiceLookaheadPreviewForSpeaker(
+			World,
+			Session.PrimarySpeakerTag,
+			ViewerSlotTag,
+			ChoiceBranchId,
+			FGameplayTag());
 		OnChoiceLookaheadEmotion.Broadcast(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
 		return false;
 	}
@@ -2284,6 +2350,12 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 		Runtime.SeenByGameTransient,
 		HighlightedBranch->NextNodeId,
 		PreviewEmotionTag);
+	BroadcastChoiceLookaheadPreviewForSpeaker(
+		World,
+		Session.PrimarySpeakerTag,
+		ViewerSlotTag,
+		ChoiceBranchId,
+		bResolvedPreview ? PreviewEmotionTag : FGameplayTag());
 	OnChoiceLookaheadEmotion.Broadcast(
 		Session.PrimarySpeakerTag,
 		bResolvedPreview ? PreviewEmotionTag : FGameplayTag(),

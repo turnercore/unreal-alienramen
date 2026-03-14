@@ -15,7 +15,7 @@ class PARLEY_API UParleyDialogueSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
+	virtual FName GetCategoryName() const override { return TEXT("Parley"); }
 	virtual FName GetSectionName() const override { return TEXT("Dialogue"); }
 
 	// TagContentResolver root tag used to resolve FParleySpeakerRow records.
