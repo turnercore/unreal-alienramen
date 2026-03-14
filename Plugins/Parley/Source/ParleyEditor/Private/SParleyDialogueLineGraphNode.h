@@ -54,7 +54,7 @@ private:
 	TArray<FGameplayTag> BuildEmotionTagListForEntry(FGuid EntryId) const;
 	void OpenEmotionPickerMenuForEntry(FGuid EntryId, const FVector2D& ScreenPosition);
 	void EnsureConversationParticipantsIncludeSpeaker(const FGameplayTag& SpeakerTag);
-	void SetLineSpeakerTagForEntry(FGuid EntryId, const FGameplayTag& NewSpeakerTag);
+	void SetLineSpeakerTagForEntry(FGuid EntryId, FGameplayTag NewSpeakerTag);
 	void CommitLineTextForEntry(FGuid EntryId, const FText& NewText);
 	FGameplayTag GetSpeakerTagForEntry(FGuid EntryId) const;
 	const FDialogueLineNodeData* GetLineDataForEntry(FGuid EntryId) const;

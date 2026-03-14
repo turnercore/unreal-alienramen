@@ -328,7 +328,10 @@ static void BroadcastSessionUpdated(UParleyDialogueSubsystem* DialogueSubsystem,
 
 		if (APlayerController* TargetController = FindPlayerControllerBySlot(DialogueSubsystem->GetWorld(), Slot))
 		{
-			TargetController->ClientDialogueSessionUpdated(View);
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			{
+				ControllerInterface->NotifyDialogueViewUpdated(View);
+			}
 		}
 	}
 }
@@ -1410,7 +1413,10 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 	{
 		if (APlayerController* TargetController = FindPlayerControllerBySlot(DialogueSubsystem->GetWorld(), Slot))
 		{
-			TargetController->ClientDialogueSessionEnded(SessionId);
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			{
+				ControllerInterface->NotifyDialogueSessionEnded(SessionId);
+			}
 		}
 	}
 
@@ -1982,7 +1988,10 @@ bool UParleyDialogueSubsystem::ForceEavesdrop(APlayerController* RequestingContr
 				if (ViewerController)
 				{
 					// Viewer was removed before broadcast, so explicitly clear stale local UI/cache.
-					ViewerController->ClientDialogueSessionEnded(RemovedSessionId);
+					if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(ViewerController))
+					{
+						ControllerInterface->NotifyDialogueSessionEnded(RemovedSessionId);
+					}
 				}
 			}
 		}

@@ -11,6 +11,7 @@ public class ParleyEditor : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
+			"ApplicationCore",
 			"Slate",
 			"SlateCore",
 			"InputCore",

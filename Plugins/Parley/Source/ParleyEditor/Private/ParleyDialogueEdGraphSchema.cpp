@@ -7,7 +7,7 @@
 
 namespace
 {
-	static const FName PinCategoryExec(TEXT("DialogueExec"));
+	static const FName DialogueSchemaPinCategoryExec(TEXT("DialogueExec"));
 
 	static bool GraphHasEnterNode(const UEdGraph* Graph)
 	{
@@ -245,7 +245,7 @@ const FPinConnectionResponse UParleyDialogueEdGraphSchema::CanCreateConnection(c
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Pins must have opposite direction."));
 	}
 
-	if (A->PinType.PinCategory != PinCategoryExec || B->PinType.PinCategory != PinCategoryExec)
+	if (A->PinType.PinCategory != DialogueSchemaPinCategoryExec || B->PinType.PinCategory != DialogueSchemaPinCategoryExec)
 	{
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Only dialogue exec pins can be connected."));
 	}
@@ -263,7 +263,7 @@ const FPinConnectionResponse UParleyDialogueEdGraphSchema::CanCreateConnection(c
 
 FLinearColor UParleyDialogueEdGraphSchema::GetPinTypeColor(const FEdGraphPinType& PinType) const
 {
-	if (PinType.PinCategory == PinCategoryExec)
+	if (PinType.PinCategory == DialogueSchemaPinCategoryExec)
 	{
 		return FLinearColor(0.82f, 0.82f, 0.82f, 1.0f);
 	}

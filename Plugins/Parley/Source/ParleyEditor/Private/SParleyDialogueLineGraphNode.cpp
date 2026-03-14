@@ -859,7 +859,7 @@ void SParleyDialogueLineGraphNode::EnsureConversationParticipantsIncludeSpeaker(
 	Conversation->MarkPackageDirty();
 }
 
-void SParleyDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId, const FGameplayTag& NewSpeakerTag)
+void SParleyDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId, FGameplayTag NewSpeakerTag)
 {
 	if (!NewSpeakerTag.IsValid())
 	{

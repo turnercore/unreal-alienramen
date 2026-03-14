@@ -13,8 +13,8 @@ FORCEINLINE bool operator==(const FBlueprintSessionResult& A, const FBlueprintSe
 	return (A.OnlineResult.IsValid() == B.OnlineResult.IsValid() && (A.OnlineResult.GetSessionIdStr() == B.OnlineResult.GetSessionIdStr()));
 }
 
-UCLASS(MinimalAPI)
-class UFindSessionsCallbackProxyAdvanced : public UOnlineBlueprintCallProxyBase
+UCLASS()
+class ADVANCEDSESSIONS_API UFindSessionsCallbackProxyAdvanced : public UOnlineBlueprintCallProxyBase
 {
 	GENERATED_UCLASS_BODY()
 
