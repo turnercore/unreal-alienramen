@@ -18,8 +18,8 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Parley"); }
 	virtual FName GetSectionName() const override { return TEXT("Factions"); }
 
-	// Root used for TagContentResolver route resolution and row tag reconstruction.
+	// Root used for TagKey route resolution and row tag reconstruction.
 	// Example: Faction.Definition (route rows to build candidate lists).
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Faction", meta = (ToolTip = "Root faction definition tag used for TagContentResolver lookups."))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Faction", meta = (ToolTip = "Root faction definition tag used for TagKey lookups."))
 	FGameplayTag FactionDefinitionRootTag;
 };

@@ -4,7 +4,7 @@
 #include "EmoSettings.h"
 #include "EmoTypes.h"
 #include "EmoLog.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
@@ -15,20 +15,20 @@ namespace
 {
 	enum class EEmoEmotionTableSource : uint8
 	{
-		TagContentResolverRuntime,
-		TagContentResolverConfiguredRoutes
+		TagKeyRuntime,
+		TagKeyConfiguredRoutes
 	};
 
 	static const TCHAR* ToEmotionTableSourceText(const EEmoEmotionTableSource Source)
 	{
 		switch (Source)
 		{
-		case EEmoEmotionTableSource::TagContentResolverRuntime:
-			return TEXT("TagContentResolver(Runtime)");
-		case EEmoEmotionTableSource::TagContentResolverConfiguredRoutes:
-			return TEXT("TagContentResolver(ConfiguredRoutes)");
+		case EEmoEmotionTableSource::TagKeyRuntime:
+			return TEXT("TagKey(Runtime)");
+		case EEmoEmotionTableSource::TagKeyConfiguredRoutes:
+			return TEXT("TagKey(ConfiguredRoutes)");
 		default:
-			return TEXT("TagContentResolver");
+			return TEXT("TagKey");
 		}
 	}
 
@@ -185,7 +185,7 @@ namespace
 		FString& OutResolveError)
 	{
 		OutDataTable = nullptr;
-		OutSource = EEmoEmotionTableSource::TagContentResolverConfiguredRoutes;
+		OutSource = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 		OutRouteRootTag = FGameplayTag();
 		OutResolveError.Reset();
 
@@ -208,12 +208,12 @@ namespace
 		{
 			if (GameInstance)
 			{
-				if (UTagContentResolverSubsystem* ResolverSubsystem = GameInstance->GetSubsystem<UTagContentResolverSubsystem>())
+				if (UTagKeySubsystem* ResolverSubsystem = GameInstance->GetSubsystem<UTagKeySubsystem>())
 				{
 					FString ResolverError;
 					if (ResolverSubsystem->TryResolveDataTableForRootTag(ResolverRootTag, OutDataTable, ResolverError))
 					{
-						OutSource = EEmoEmotionTableSource::TagContentResolverRuntime;
+						OutSource = EEmoEmotionTableSource::TagKeyRuntime;
 						OutRouteRootTag = ResolverRootTag;
 						return true;
 					}
@@ -234,12 +234,12 @@ namespace
 			}
 
 			FString ConfiguredRouteError;
-			if (UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+			if (UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 				ResolverRootTag,
 				OutDataTable,
 				ConfiguredRouteError))
 			{
-				OutSource = EEmoEmotionTableSource::TagContentResolverConfiguredRoutes;
+				OutSource = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 				OutRouteRootTag = ResolverRootTag;
 				return true;
 			}
@@ -254,7 +254,7 @@ namespace
 			AppendError(TEXT("Emotion resolver root tag is invalid."));
 		}
 
-		AppendError(TEXT("No TagContentResolver route could resolve the configured emotion root."));
+		AppendError(TEXT("No TagKey route could resolve the configured emotion root."));
 		return false;
 	}
 
@@ -353,7 +353,7 @@ namespace
 		OutResolvedDataTablePath.Reset();
 		OutResolvedDataSource.Reset();
 
-		EEmoEmotionTableSource Source = EEmoEmotionTableSource::TagContentResolverConfiguredRoutes;
+		EEmoEmotionTableSource Source = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 		FGameplayTag RouteRootTag;
 		FString ResolveError;
 		if (!TryResolveEmotionDataTable(GameInstance, OutResolvedDataTable, Source, RouteRootTag, ResolveError))
@@ -363,7 +363,7 @@ namespace
 				UE_LOG(
 					EmoLog,
 					Warning,
-					TEXT("[Emotion] Failed resolving icon DataTable from TagContentResolver routes: %s"),
+					TEXT("[Emotion] Failed resolving icon DataTable from TagKey routes: %s"),
 					ResolveError.IsEmpty() ? TEXT("<no error>") : *ResolveError);
 			}
 			return false;

@@ -37,7 +37,7 @@ This document captures the server-authoritative runtime contract for:
   - Extracted energy drinks route to stored inventory only when `Unlock.Shop.Storage.EnergyDrink` is active; otherwise they route to queued next-run stacks.
 - `UARItemDefinitionSubsystem`
   - Shared item-definition resolver facade used by Scrapyard + Shop.
-  - Delegates row resolution to `UTagContentResolverSubsystem`.
+  - Delegates row resolution to `UTagKeySubsystem`.
 - `AARShopGameMode`
   - Run-ledger deposit to storage with clamps.
   - First-shop-entry run-buff cleanup.
@@ -176,4 +176,4 @@ This document captures the server-authoritative runtime contract for:
   - granted reward list
 - `AARScrapyardHUD`, `UARScrapyardHUDWidgetBase`, `UARScrapyardExitZoneWidgetBase` bind to replicated summary/timer/run-active/run-buff snapshot delegates.
 - Shared resolve path:
-  - systems should resolve item/energy-drink rows through `UARItemDefinitionSubsystem` instead of duplicating direct `UTagContentResolverSubsystem` calls.
+  - systems should resolve item/energy-drink rows through `UARItemDefinitionSubsystem` instead of duplicating direct `UTagKeySubsystem` calls.

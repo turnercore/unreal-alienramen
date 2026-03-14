@@ -4,10 +4,10 @@
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
 #include "GameplayTagContainer.h"
-#include "TagContentResolverProvider.h"
-#include "TagContentResolverSettings.h"
-#include "TagContentResolverSubsystem.h"
-#include "TagContentResolverTypes.h"
+#include "TagKeyProvider.h"
+#include "TagKeySettings.h"
+#include "TagKeySubsystem.h"
+#include "TagKeyTypes.h"
 
 namespace
 {
@@ -16,7 +16,7 @@ namespace
 	public:
 		FScopedTagResolverSettingsOverride()
 		{
-			if (UTagContentResolverSettings* Settings = GetMutableDefault<UTagContentResolverSettings>())
+			if (UTagKeySettings* Settings = GetMutableDefault<UTagKeySettings>())
 			{
 				OriginalProjectRoutes = Settings->ProjectRoutes;
 				OriginalPreloadPolicy = Settings->PreloadPolicy;
@@ -28,7 +28,7 @@ namespace
 
 		~FScopedTagResolverSettingsOverride()
 		{
-			if (UTagContentResolverSettings* Settings = GetMutableDefault<UTagContentResolverSettings>())
+			if (UTagKeySettings* Settings = GetMutableDefault<UTagKeySettings>())
 			{
 				Settings->ProjectRoutes = OriginalProjectRoutes;
 				Settings->PreloadPolicy = OriginalPreloadPolicy;
@@ -39,19 +39,19 @@ namespace
 		}
 
 	private:
-		TArray<FTagContentResolverProjectRoute> OriginalProjectRoutes;
-		ETagContentResolverPreloadPolicy OriginalPreloadPolicy = ETagContentResolverPreloadPolicy::CriticalRoots;
+		TArray<FTagKeyProjectRoute> OriginalProjectRoutes;
+		ETagKeyPreloadPolicy OriginalPreloadPolicy = ETagKeyPreloadPolicy::CriticalRoots;
 		bool OriginalAutoPreloadRowSoftReferences = true;
 		bool OriginalDedupeFailures = true;
 		int32 OriginalMaxRememberedFailureLogs = 256;
 	};
 
-	class FTestRouteProvider final : public ITagContentResolverRouteProvider
+	class FTestRouteProvider final : public ITagKeyRouteProvider
 	{
 	public:
 		virtual FName GetProviderName() const override
 		{
-			return TEXT("AlienRamen.TagContentResolver.Tests.Provider");
+			return TEXT("AlienRamen.TagKey.Tests.Provider");
 		}
 
 		virtual int32 GetProviderPriority() const override
@@ -59,12 +59,12 @@ namespace
 			return 1000;
 		}
 
-		virtual void GetProvidedRoutes(TArray<FTagContentResolverRoute>& OutRoutes) const override
+		virtual void GetProvidedRoutes(TArray<FTagKeyRoute>& OutRoutes) const override
 		{
 			OutRoutes = Routes;
 		}
 
-		TArray<FTagContentResolverRoute> Routes;
+		TArray<FTagKeyRoute> Routes;
 	};
 
 	FGameplayTag RequestTagChecked(const TCHAR* TagName)
@@ -76,14 +76,14 @@ namespace
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FTagContentResolver_OverlapRootsFailTest,
-	"AlienRamen.TagContentResolver.Validation.OverlappingRootsFail",
+	FTagKey_OverlapRootsFailTest,
+	"AlienRamen.TagKey.Validation.OverlappingRootsFail",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FTagContentResolver_OverlapRootsFailTest::RunTest(const FString& Parameters)
+bool FTagKey_OverlapRootsFailTest::RunTest(const FString& Parameters)
 {
 	FScopedTagResolverSettingsOverride ScopedSettings;
-	UTagContentResolverSettings* Settings = GetMutableDefault<UTagContentResolverSettings>();
+	UTagKeySettings* Settings = GetMutableDefault<UTagKeySettings>();
 	TestNotNull(TEXT("Settings should exist"), Settings);
 	if (!Settings)
 	{
@@ -93,11 +93,11 @@ bool FTagContentResolver_OverlapRootsFailTest::RunTest(const FString& Parameters
 	const FGameplayTag ShopRoot = RequestTagChecked(TEXT("Shop"));
 	const FGameplayTag ShopStationRoot = RequestTagChecked(TEXT("Shop.Station"));
 
-	FTagContentResolverProjectRoute ParentRoute;
+	FTagKeyProjectRoute ParentRoute;
 	ParentRoute.RootTag = ShopRoot;
 	ParentRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_ShopStations.DT_ShopStations")));
 
-	FTagContentResolverProjectRoute ChildRoute;
+	FTagKeyProjectRoute ChildRoute;
 	ChildRoute.RootTag = ShopStationRoot;
 	ChildRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_ShopStations.DT_ShopStations")));
 
@@ -105,7 +105,7 @@ bool FTagContentResolver_OverlapRootsFailTest::RunTest(const FString& Parameters
 
 	UDataTable* Table = nullptr;
 	FString Error;
-	const bool bResolved = UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+	const bool bResolved = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 		ShopStationRoot,
 		Table,
 		Error);
@@ -119,21 +119,21 @@ bool FTagContentResolver_OverlapRootsFailTest::RunTest(const FString& Parameters
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FTagContentResolver_ProviderGenerationInvalidatesStaticCacheTest,
-	"AlienRamen.TagContentResolver.Cache.ProviderGenerationInvalidatesStaticHelpers",
+	FTagKey_ProviderGenerationInvalidatesStaticCacheTest,
+	"AlienRamen.TagKey.Cache.ProviderGenerationInvalidatesStaticHelpers",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FTagContentResolver_ProviderGenerationInvalidatesStaticCacheTest::RunTest(const FString& Parameters)
+bool FTagKey_ProviderGenerationInvalidatesStaticCacheTest::RunTest(const FString& Parameters)
 {
 	FScopedTagResolverSettingsOverride ScopedSettings;
-	UTagContentResolverSettings* Settings = GetMutableDefault<UTagContentResolverSettings>();
+	UTagKeySettings* Settings = GetMutableDefault<UTagKeySettings>();
 	TestNotNull(TEXT("Settings should exist"), Settings);
 	if (!Settings)
 	{
 		return false;
 	}
 
-	FTagContentResolverProjectRoute BaseRoute;
+	FTagKeyProjectRoute BaseRoute;
 	BaseRoute.RootTag = RequestTagChecked(TEXT("Dialogue.Speaker"));
 	BaseRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Speakers.DT_Speakers")));
 	Settings->ProjectRoutes = { BaseRoute };
@@ -141,7 +141,7 @@ bool FTagContentResolver_ProviderGenerationInvalidatesStaticCacheTest::RunTest(c
 	const FGameplayTag ProviderRoot = RequestTagChecked(TEXT("Faction.Identity"));
 	FTestRouteProvider Provider;
 	{
-		FTagContentResolverRoute ProviderRoute;
+		FTagKeyRoute ProviderRoute;
 		ProviderRoute.RootTag = ProviderRoot;
 		ProviderRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Factions.DT_Factions")));
 		Provider.Routes = { ProviderRoute };
@@ -150,21 +150,21 @@ bool FTagContentResolver_ProviderGenerationInvalidatesStaticCacheTest::RunTest(c
 	UDataTable* Table = nullptr;
 	FString Error;
 
-	const bool bResolvesBeforeRegister = UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+	const bool bResolvesBeforeRegister = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 		ProviderRoot,
 		Table,
 		Error);
 	TestFalse(TEXT("Route from unregistered provider should not resolve"), bResolvesBeforeRegister);
 
-	FTagContentResolverRouteProviderRegistry::RegisterProvider(&Provider);
-	const bool bResolvesAfterRegister = UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+	FTagKeyRouteProviderRegistry::RegisterProvider(&Provider);
+	const bool bResolvesAfterRegister = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 		ProviderRoot,
 		Table,
 		Error);
 	TestTrue(TEXT("Route should resolve after provider registration without manual rebuild"), bResolvesAfterRegister);
 
-	FTagContentResolverRouteProviderRegistry::UnregisterProvider(&Provider);
-	const bool bResolvesAfterUnregister = UTagContentResolverSubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+	FTagKeyRouteProviderRegistry::UnregisterProvider(&Provider);
+	const bool bResolvesAfterUnregister = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 		ProviderRoot,
 		Table,
 		Error);
@@ -174,11 +174,11 @@ bool FTagContentResolver_ProviderGenerationInvalidatesStaticCacheTest::RunTest(c
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FTagContentResolver_GameThreadEnforcementTest,
-	"AlienRamen.TagContentResolver.Threading.InstanceMethodsRequireGameThread",
+	FTagKey_GameThreadEnforcementTest,
+	"AlienRamen.TagKey.Threading.InstanceMethodsRequireGameThread",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FTagContentResolver_GameThreadEnforcementTest::RunTest(const FString& Parameters)
+bool FTagKey_GameThreadEnforcementTest::RunTest(const FString& Parameters)
 {
 	UGameInstance* TestGameInstance = NewObject<UGameInstance>(GetTransientPackage());
 	TestNotNull(TEXT("Transient game instance should be constructible for subsystem guard-path test"), TestGameInstance);
@@ -187,7 +187,7 @@ bool FTagContentResolver_GameThreadEnforcementTest::RunTest(const FString& Param
 		return false;
 	}
 
-	UTagContentResolverSubsystem* Resolver = NewObject<UTagContentResolverSubsystem>(TestGameInstance);
+	UTagKeySubsystem* Resolver = NewObject<UTagKeySubsystem>(TestGameInstance);
 	TestNotNull(TEXT("Transient resolver should be constructible for guard-path test"), Resolver);
 	if (!Resolver)
 	{

@@ -23,8 +23,8 @@ public class ParleyEditor : ModuleRules
 			"GameplayTags",
 			"GameplayTagsEditor",
 			"DeveloperSettings",
-			"TagContentResolver",
-			"TagContentResolverEditor",
+			"TagKey",
+			"TagKeyEditor",
 			"Parley"
 		});
 	}

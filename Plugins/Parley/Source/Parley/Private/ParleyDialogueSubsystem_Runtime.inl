@@ -868,6 +868,7 @@ static bool TryResolveChoiceLookaheadEmotion(
 		case EDialogueNodeType::TagMutation:
 		case EDialogueNodeType::RelationshipMutation:
 		case EDialogueNodeType::FactionMutation:
+		case EDialogueNodeType::Signal:
 		case EDialogueNodeType::Completed:
 		case EDialogueNodeType::Choice:
 		default:
@@ -1599,6 +1600,36 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 				if (!ContinuePendingSequenceBranch())
 				{
 					LogRuntimeWarning(TEXT("Faction mutation node has no Next link; ending non-completed."));
+					return EDialogueExecutionResult::EndedNonCompleted;
+				}
+			}
+			break;
+		}
+		case EDialogueNodeType::Signal:
+		{
+			const FDialogueSignalNodeData* SignalData = Node->NodeData.GetPtr<FDialogueSignalNodeData>();
+			if (!SignalData)
+			{
+				LogRuntimeError(TEXT("Signal node payload missing."));
+				return EDialogueExecutionResult::Failed;
+			}
+
+			if (!bPreviewMode && SignalData->SignalTag.IsValid())
+			{
+				DialogueSubsystem->OnDialogueSignalFired.Broadcast(
+					SignalData->SignalTag,
+					SignalData->PayloadTags,
+					Context.ConversationTag,
+					Context.PrimarySpeakerTag,
+					ParleyPlayerSlot::SlotToTag(Session.OwnerSlot));
+			}
+
+			Session.CurrentNodeId = Node->NextNodeId;
+			if (!Session.CurrentNodeId.IsValid())
+			{
+				if (!ContinuePendingSequenceBranch())
+				{
+					LogRuntimeWarning(TEXT("Signal node has no Next link; ending non-completed."));
 					return EDialogueExecutionResult::EndedNonCompleted;
 				}
 			}

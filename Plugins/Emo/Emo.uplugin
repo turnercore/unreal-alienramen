@@ -13,7 +13,7 @@
   "Installed": false,
   "Plugins": [
     {
-      "Name": "TagContentResolver",
+      "Name": "TagKey",
       "Enabled": true
     }
   ],

@@ -4,8 +4,8 @@
 #include "ParleyDialogueEdGraphNode.h"
 #include "ParleyDialogueSettings.h"
 #include "ParleyDialogueTypes.h"
-#include "TagContentResolverSubsystem.h"
-#include "TagContentResolverEditorHelpers.h"
+#include "TagKeySubsystem.h"
+#include "TagKeyEditorHelpers.h"
 #include "DragAndDrop/DecoratedDragDropOp.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
@@ -50,7 +50,7 @@ namespace
 
 		UDataTable* SpeakerTable = nullptr;
 		FString LookupError;
-		if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
+		if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
 		{
 			return nullptr;
 		}
@@ -700,9 +700,9 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildQuickSpeakerCycleList(co
 		const UEdGraph* ConversationGraph = Cast<UEdGraph>(Conversation->EditorGraph);
 		if (ConversationGraph)
 		{
-			for (const UEdGraphNode* GraphNode : ConversationGraph->Nodes)
+			for (const UEdGraphNode* CandidateNode : ConversationGraph->Nodes)
 			{
-				const UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(GraphNode);
+				const UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(CandidateNode);
 				if (!DialogueNode)
 				{
 					continue;

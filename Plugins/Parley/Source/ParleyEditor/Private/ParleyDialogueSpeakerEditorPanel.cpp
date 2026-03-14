@@ -5,8 +5,8 @@
 #include "ParleyDialogueEditorSettings.h"
 #include "ParleyDialogueSettings.h"
 #include "ParleyDialogueSubsystem.h"
-#include "TagContentResolverSubsystem.h"
-#include "TagContentResolverEditorHelpers.h"
+#include "TagKeySubsystem.h"
+#include "TagKeyEditorHelpers.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetRegistry/AssetData.h"
 #include "Editor.h"
@@ -506,7 +506,7 @@ namespace
 
 		UDataTable* ConversationTable = nullptr;
 		FString LookupError;
-		if (FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError)
+		if (FTagKeyEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError)
 			&& ConversationTable
 			&& ConversationTable->GetRowStruct() == FParleyConversationAssetRow::StaticStruct())
 		{
@@ -1265,7 +1265,7 @@ bool SDialogueSpeakerEditorPanel::ResolveSpeakerDataTable(UDataTable*& OutTable,
 		return false;
 	}
 
-	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, OutTable, OutError))
+	if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, OutTable, OutError))
 	{
 		return false;
 	}
@@ -3209,7 +3209,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 
 	UDataTable* ConversationLookupTable = nullptr;
 	FString LookupError;
-	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
 	{
 		AppendLogLine(LookupError);
 		return FReply::Handled();
@@ -3484,7 +3484,7 @@ FReply SDialogueSpeakerEditorPanel::HandleDuplicateConversation()
 
 	UDataTable* ConversationLookupTable = nullptr;
 	FString LookupError;
-	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
 	{
 		AppendLogLine(LookupError);
 		return FReply::Handled();
@@ -3720,7 +3720,7 @@ FReply SDialogueSpeakerEditorPanel::HandleDeleteConversationInternal(const bool 
 
 	UDataTable* ConversationLookupTable = nullptr;
 	FString LookupError;
-	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
 	{
 		AppendLogLine(LookupError);
 		return FReply::Handled();
@@ -3829,7 +3829,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCleanupGeneratedConversationTags()
 
 	UDataTable* ConversationLookupTable = nullptr;
 	FString LookupError;
-	if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
+	if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(Settings->ConversationDefinitionRootTag, ConversationLookupTable, LookupError))
 	{
 		AppendLogLine(LookupError);
 		return FReply::Handled();

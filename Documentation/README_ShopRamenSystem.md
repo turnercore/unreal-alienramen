@@ -12,41 +12,41 @@ This document captures the runtime ownership and integration contract for the sh
   - `AARRamenBowlActor` owns bowl fill progression (strict sequence).
   - `AARMeatStorageBoxActor` is the meat-reserve specialization of `AARShopDispenserActor`.
 - **Dialogue-owned outcomes**:
-  - relationship mutation and emotion output are applied through `UARDialogueSubsystem::ApplyRamenServeOutcome(...)`.
+  - relationship mutation and emotion output are applied through `UParleyDialogueSubsystem::ApplyRamenServeOutcome(...)`.
   - shop code does not own dialogue/emotion/relationship authority.
 
 ## Configuration Sources
 
 - `UARCustomerSettings` (`Project Settings -> Alien Ramen -> Shop Settings`) provides:
-  - customer/station root tags for TagContentResolver
+  - customer/station root tags for TagKey
   - relationship point curve (`Hate/Ok/Like/Love`)
   - default reaction emotion tags
   - default station processing duration and stock cap
   - fallback-order policy
-- TagContentResolver routes are expected for:
+- TagKey routes are expected for:
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Shop.Station` -> `FARShopStationConfigRow`
 
 ## Speaker + Customer Flow
 
-- `AARNPCCharacterBase` is a lean shell; `UARCustomerComponent`, `UARSpeakerComponent`, and `UAREmotionComponent` are optional and can be authored independently per actor.
+- `AARNPCCharacterBase` is a lean shell; `UARCustomerComponent`, `UParleySpeakerComponent`, and `UEmoComponent` are optional and can be authored independently per actor.
 - Customer runtime speaker identity comes from `UARCustomerComponent::GetSpeakerTag()`:
   - `SpeakerTagOverride` when explicitly authored on the customer component
-  - otherwise the owning `UARSpeakerComponent` speaker tag
+  - otherwise the owning `UParleySpeakerComponent` speaker tag
 - Customer order UI can be authored per-NPC via `UARCustomerComponent::OrderWidgetClass` (`UARCustomerOrderWidgetBase` subclass). Runtime helpers:
   - `CreateAndInitializeOrderWidget(APlayerController*)`
   - `InitializeOrderWidget(UARCustomerOrderWidgetBase*)`
   - Widget base binds to customer delegates (`OnCustomerOrderChanged`/`GeneratedDetailed`/`Resolved`/`DoneOrdering`) and exposes BP events for styling.
-- `FARCustomerDefinitionRow` is keyed by TagContentResolver row tag/row name route mapping and does not carry a separate identity/speaker field.
+- `FARCustomerDefinitionRow` is keyed by TagKey row tag/row name route mapping and does not carry a separate identity/speaker field.
 - StateTree-facing gate helpers:
   - `UARCustomerComponent::HasOrderForInteraction()` reports active order availability for serve-first interaction branches.
-  - `UARSpeakerComponent::HasDialogueToSay()` reports dialogue talkability.
+  - `UParleySpeakerComponent::HasDialogueToSay()` reports dialogue talkability.
 - `AARNPCCharacterBase` exposes cached actor-level bools for direct StateTree condition binding (safe when optional components are missing):
   - `bST_HasActiveOrder`
   - `bST_HasDialogueToSay`
 - Interact priority is **delivery-first**:
   1. try serving held completed bowl via customer component
-  2. if serving fails, fallback to dialogue via `UARSpeakerComponent` (when present)
+  2. if serving fails, fallback to dialogue via `UParleySpeakerComponent` (when present)
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the preferred optional BP convenience entrypoint for BI_Interactable forwarding because it accepts either pawn or controller source references and routes to controller RPCs.
 - Speaker talkable queries stay true while an active customer order exists so interaction prompts can still route ramen delivery when dialogue is locally gated.
 - Customer evaluation rules:

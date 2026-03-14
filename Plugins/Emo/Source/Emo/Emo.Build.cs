@@ -14,7 +14,7 @@ public class Emo : ModuleRules
 			"GameplayTags",
 			"Projects",
 			"DeveloperSettings",
-			"TagContentResolver"
+			"TagKey"
 		});
 	}
 }

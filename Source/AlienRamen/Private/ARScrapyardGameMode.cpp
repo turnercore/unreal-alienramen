@@ -13,7 +13,7 @@
 #include "GameFramework/Controller.h"
 #include "Kismet/GameplayStatics.h"
 #include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "UObject/UnrealType.h"
 
 namespace
@@ -432,7 +432,7 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 	}
 
 	UGameInstance* GameInstance = GetGameInstance();
-	UTagContentResolverSubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagKeySubsystem>() : nullptr;
 	if (!Resolver)
 	{
 		return false;

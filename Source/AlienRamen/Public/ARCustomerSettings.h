@@ -18,11 +18,11 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 	virtual FName GetSectionName() const override { return TEXT("Shop Settings"); }
 
-	// Root tag used by TagContentResolver for FARCustomerDefinitionRow records.
+	// Root tag used by TagKey for FARCustomerDefinitionRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Content")
 	FGameplayTag CustomerDefinitionRootTag;
 
-	// Root tag used by TagContentResolver for FARShopStationConfigRow records.
+	// Root tag used by TagKey for FARShopStationConfigRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Content")
 	FGameplayTag StationDefinitionRootTag;
 

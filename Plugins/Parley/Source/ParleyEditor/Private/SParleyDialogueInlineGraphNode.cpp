@@ -5,7 +5,7 @@
 #include "ParleyFactionSettings.h"
 #include "ParleyDialogueTypes.h"
 #include "GameplayTagsManager.h"
-#include "TagContentResolverEditorHelpers.h"
+#include "TagKeyEditorHelpers.h"
 #include "DragAndDrop/DecoratedDragDropOp.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphUtilities.h"
@@ -51,7 +51,7 @@ namespace
 
 		UDataTable* SpeakerTable = nullptr;
 		FString LookupError;
-		if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
+		if (!FTagKeyEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError))
 		{
 			return nullptr;
 		}

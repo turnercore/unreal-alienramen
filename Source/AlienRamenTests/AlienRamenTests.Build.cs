@@ -17,7 +17,7 @@ public class AlienRamenTests : ModuleRules
 			"OnlineSubsystem",
 			"OnlineSubsystemUtils",
 			"DeveloperSettings",
-			"TagContentResolver",
+			"TagKey",
 			"Parley",
 			"Emo"
 		});

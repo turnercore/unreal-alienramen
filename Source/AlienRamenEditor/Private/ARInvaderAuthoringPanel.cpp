@@ -7,8 +7,8 @@
 #include "AREnemyBase.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
-#include "TagContentResolverSubsystem.h"
-#include "TagContentResolverEditorHelpers.h"
+#include "TagKeySubsystem.h"
+#include "TagKeyEditorHelpers.h"
 
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
@@ -91,7 +91,7 @@ namespace
 		UDataTable* Found = nullptr;
 		FGameplayTag MatchedRoot;
 		FString Error;
-		if (!FTagContentResolverEditorHelpers::TryResolveDataTableForRowStruct(DesiredRowStruct, Found, MatchedRoot, Error))
+		if (!FTagKeyEditorHelpers::TryResolveDataTableForRowStruct(DesiredRowStruct, Found, MatchedRoot, Error))
 		{
 			return nullptr;
 		}

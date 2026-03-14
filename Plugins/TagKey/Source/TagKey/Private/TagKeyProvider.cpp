@@ -1,4 +1,4 @@
-#include "TagContentResolverProvider.h"
+#include "TagKeyProvider.h"
 
 #include "HAL/CriticalSection.h"
 #include "Misc/ScopeLock.h"
@@ -7,11 +7,11 @@
 namespace
 {
 	FCriticalSection GProviderMutex;
-	TArray<ITagContentResolverRouteProvider*> GProviders;
+	TArray<ITagKeyRouteProvider*> GProviders;
 	TAtomic<uint64> GProviderGeneration(0);
 }
 
-void FTagContentResolverRouteProviderRegistry::RegisterProvider(ITagContentResolverRouteProvider* Provider)
+void FTagKeyRouteProviderRegistry::RegisterProvider(ITagKeyRouteProvider* Provider)
 {
 	if (!Provider)
 	{
@@ -26,7 +26,7 @@ void FTagContentResolverRouteProviderRegistry::RegisterProvider(ITagContentResol
 	}
 }
 
-void FTagContentResolverRouteProviderRegistry::UnregisterProvider(ITagContentResolverRouteProvider* Provider)
+void FTagKeyRouteProviderRegistry::UnregisterProvider(ITagKeyRouteProvider* Provider)
 {
 	if (!Provider)
 	{
@@ -40,13 +40,13 @@ void FTagContentResolverRouteProviderRegistry::UnregisterProvider(ITagContentRes
 	}
 }
 
-void FTagContentResolverRouteProviderRegistry::GetProviders(TArray<ITagContentResolverRouteProvider*>& OutProviders)
+void FTagKeyRouteProviderRegistry::GetProviders(TArray<ITagKeyRouteProvider*>& OutProviders)
 {
 	FScopeLock Lock(&GProviderMutex);
 	OutProviders = GProviders;
 }
 
-uint64 FTagContentResolverRouteProviderRegistry::GetProviderGeneration()
+uint64 FTagKeyRouteProviderRegistry::GetProviderGeneration()
 {
 	return GProviderGeneration.Load();
 }

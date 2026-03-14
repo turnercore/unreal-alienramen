@@ -6,8 +6,8 @@ Saved
 Plugins
 !Plugins/
 Plugins/*
-!Plugins/TagContentResolver/
-!Plugins/TagContentResolver/**
+!Plugins/TagKey/
+!Plugins/TagKey/**
 !Plugins/Parley/
 !Plugins/Parley/**
 !Plugins/Emo/
@@ -16,8 +16,8 @@ Plugins/*
 !Plugins/AdvancedSessions/**
 !Plugins/AdvancedSteamSessions/
 !Plugins/AdvancedSteamSessions/**
-Plugins/TagContentResolver/Binaries/
-Plugins/TagContentResolver/Intermediate/
+Plugins/TagKey/Binaries/
+Plugins/TagKey/Intermediate/
 Plugins/Parley/Binaries/
 Plugins/Parley/Intermediate/
 Plugins/Emo/Binaries/

@@ -49,6 +49,8 @@ namespace
 			return FText::FromString(TEXT("Modify Relationship"));
 		case EDialogueNodeType::FactionMutation:
 			return FText::FromString(TEXT("Modify Faction Popularity"));
+		case EDialogueNodeType::Signal:
+			return FText::FromString(TEXT("Signal"));
 		case EDialogueNodeType::Random:
 			return FText::FromString(TEXT("Random"));
 		case EDialogueNodeType::Route:
@@ -86,6 +88,8 @@ namespace
 			return FText::FromString(TEXT("Adjusts relationship points for a target speaker."));
 		case EDialogueNodeType::FactionMutation:
 			return FText::FromString(TEXT("Adjusts popularity for a target faction."));
+		case EDialogueNodeType::Signal:
+			return FText::FromString(TEXT("Broadcasts a gameplay tag signal for game systems."));
 		case EDialogueNodeType::Random:
 			return FText::FromString(TEXT("Selects an outgoing branch by authored weights."));
 		case EDialogueNodeType::Route:
@@ -202,6 +206,7 @@ void UParleyDialogueEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 		EDialogueNodeType::TagMutation,
 		EDialogueNodeType::RelationshipMutation,
 		EDialogueNodeType::FactionMutation,
+		EDialogueNodeType::Signal,
 		EDialogueNodeType::Random,
 		EDialogueNodeType::Route,
 		EDialogueNodeType::Sequence,
