@@ -135,6 +135,8 @@ enum class EDialogueConditionSource : uint8
 	ActiveCharacter,
 	RelationshipPoints,
 	RelationshipLevel,
+	FactionPopularity,
+	FactionSpeakerReputation,
 	SeenByPlayer,
 	SeenByGame,
 	CompletedByPlayer,
@@ -181,6 +183,9 @@ struct PARLEY_API FDialogueCondition
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Tag Value", ToolTip = "Tag operand for tag-based comparisons (Contains/Present/Equals, etc)."))
 	FGameplayTag TagValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Secondary Tag Value", ToolTip = "Optional secondary gameplay tag operand used by condition sources that require two tag identifiers."))
+	FGameplayTag SecondaryTagValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Numeric Value", ToolTip = "Numeric operand used for numeric comparisons (relationship points, kills, time played, etc)."))
 	float NumericValue = 0.0f;

@@ -36,6 +36,73 @@ namespace
 	constexpr float CharacterRouteMinWidth = 260.0f;
 	constexpr float CharacterRoutePortraitSize = 28.0f;
 
+	static FText ToOperatorLabel(const EDialogueComparisonOp Op)
+	{
+		switch (Op)
+		{
+		case EDialogueComparisonOp::Equals: return FText::FromString(TEXT("="));
+		case EDialogueComparisonOp::NotEquals: return FText::FromString(TEXT("!="));
+		case EDialogueComparisonOp::GreaterThan: return FText::FromString(TEXT(">"));
+		case EDialogueComparisonOp::GreaterOrEqual: return FText::FromString(TEXT(">="));
+		case EDialogueComparisonOp::LessThan: return FText::FromString(TEXT("<"));
+		case EDialogueComparisonOp::LessOrEqual: return FText::FromString(TEXT("<="));
+		case EDialogueComparisonOp::Contains: return FText::FromString(TEXT("Contains"));
+		case EDialogueComparisonOp::NotContains: return FText::FromString(TEXT("Not Contains"));
+		case EDialogueComparisonOp::Present: return FText::FromString(TEXT("Present"));
+		case EDialogueComparisonOp::Absent: return FText::FromString(TEXT("Absent"));
+		default: return FText::FromString(TEXT("?"));
+		}
+	}
+
+	static EDialogueComparisonOp CycleOperator(
+		const EDialogueComparisonOp Current,
+		const TArray<EDialogueComparisonOp>& Allowed)
+	{
+		if (Allowed.IsEmpty())
+		{
+			return Current;
+		}
+
+		const int32 CurrentIndex = Allowed.IndexOfByKey(Current);
+		const int32 NextIndex = CurrentIndex == INDEX_NONE ? 0 : (CurrentIndex + 1) % Allowed.Num();
+		return Allowed[NextIndex];
+	}
+
+	static const TArray<EDialogueComparisonOp>& GetTagOperators()
+	{
+		static const TArray<EDialogueComparisonOp> Ops = {
+			EDialogueComparisonOp::Present,
+			EDialogueComparisonOp::Absent,
+			EDialogueComparisonOp::Contains,
+			EDialogueComparisonOp::NotContains,
+			EDialogueComparisonOp::Equals,
+			EDialogueComparisonOp::NotEquals
+		};
+		return Ops;
+	}
+
+	static const TArray<EDialogueComparisonOp>& GetNumericOperators()
+	{
+		static const TArray<EDialogueComparisonOp> Ops = {
+			EDialogueComparisonOp::Equals,
+			EDialogueComparisonOp::NotEquals,
+			EDialogueComparisonOp::GreaterThan,
+			EDialogueComparisonOp::GreaterOrEqual,
+			EDialogueComparisonOp::LessThan,
+			EDialogueComparisonOp::LessOrEqual
+		};
+		return Ops;
+	}
+
+	static const TArray<EDialogueComparisonOp>& GetBoolOperators()
+	{
+		static const TArray<EDialogueComparisonOp> Ops = {
+			EDialogueComparisonOp::Equals,
+			EDialogueComparisonOp::NotEquals
+		};
+		return Ops;
+	}
+
 	static const FParleySpeakerRow* ResolveSpeakerRowForTag(const FGameplayTag SpeakerTag)
 	{
 		if (!SpeakerTag.IsValid())
@@ -226,12 +293,12 @@ namespace
 			case EDialogueEditorNodeType::Random:
 			case EDialogueEditorNodeType::Sequence:
 			case EDialogueEditorNodeType::RouteByCharacter:
+			case EDialogueEditorNodeType::TagMutation:
 			case EDialogueEditorNodeType::RelationshipMutation:
 			case EDialogueEditorNodeType::FactionMutation:
 			case EDialogueEditorNodeType::CheckTags:
 			case EDialogueEditorNodeType::CheckRelationship:
 			case EDialogueEditorNodeType::CheckProgress:
-			case EDialogueEditorNodeType::CheckStats:
 			case EDialogueEditorNodeType::CheckLoadout:
 			case EDialogueEditorNodeType::CheckCharacter:
 			case EDialogueEditorNodeType::CheckVariable:
@@ -391,6 +458,8 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildInlineContent() const
 		return BuildSequenceInlineContent();
 	case EDialogueEditorNodeType::RouteByCharacter:
 		return BuildCharacterRouteInlineContent();
+	case EDialogueEditorNodeType::TagMutation:
+		return BuildTagMutationInlineContent();
 	case EDialogueEditorNodeType::RelationshipMutation:
 		return BuildRelationshipInlineContent();
 	case EDialogueEditorNodeType::FactionMutation:
@@ -398,7 +467,6 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildInlineContent() const
 	case EDialogueEditorNodeType::CheckTags:
 	case EDialogueEditorNodeType::CheckRelationship:
 	case EDialogueEditorNodeType::CheckProgress:
-	case EDialogueEditorNodeType::CheckStats:
 	case EDialogueEditorNodeType::CheckLoadout:
 	case EDialogueEditorNodeType::CheckCharacter:
 	case EDialogueEditorNodeType::CheckVariable:
@@ -455,72 +523,284 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineCo
 		return SNew(STextBlock).Text(FText::FromString(TEXT("Invalid condition node.")));
 	}
 
-	FString Summary = TEXT("Select this node to edit details.");
 	switch (DialogueNode->EditorNodeType)
 	{
 	case EDialogueEditorNodeType::CheckTags:
 	{
-		if (const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>())
-		{
-			Summary = Data->TagValue.IsValid() ? Data->TagValue.ToString() : TEXT("Tag check");
-		}
-		break;
+		const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					if (!Data)
+					{
+						return FText::FromString(TEXT("Source: Combined Tags"));
+					}
+					switch (Data->Source)
+					{
+					case EDialogueEditorTagConditionSource::PlayerTags: return FText::FromString(TEXT("Source: Player Tags"));
+					case EDialogueEditorTagConditionSource::GameTags: return FText::FromString(TEXT("Source: Game Tags"));
+					case EDialogueEditorTagConditionSource::TransientConversationTags: return FText::FromString(TEXT("Source: Transient Tags"));
+					case EDialogueEditorTagConditionSource::CombinedTags:
+					default: return FText::FromString(TEXT("Source: Combined Tags"));
+					}
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Present).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Tag(Data ? Data->TagValue : FGameplayTag())
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionTagChanged)
+			];
 	}
 	case EDialogueEditorNodeType::CheckRelationship:
 	{
-		if (const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>())
-		{
-			Summary = FString::Printf(TEXT("%.2f"), Data->NumericValue);
-		}
-		break;
+		const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					if (!Data)
+					{
+						return FText::FromString(TEXT("Source: Relationship Points"));
+					}
+					switch (Data->Source)
+					{
+					case EDialogueEditorRelationshipConditionSource::RelationshipLevel: return FText::FromString(TEXT("Source: Relationship Level"));
+					case EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation: return FText::FromString(TEXT("Source: Faction Speaker Reputation"));
+					case EDialogueEditorRelationshipConditionSource::RelationshipPoints:
+					default: return FText::FromString(TEXT("Source: Relationship Points"));
+					}
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Dialogue.Speaker"))
+				.Tag(Data ? Data->TargetSpeakerTag : FGameplayTag())
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionSecondaryTagChanged)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Filter(TEXT("Faction.Identity"))
+				.Tag(Data ? Data->FactionTag : FGameplayTag())
+				.Visibility_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
+					return (NodeData && NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation) ? EVisibility::Visible : EVisibility::Collapsed;
+				})
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionFactionTagChanged)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("Target speaker defaults to conversation owner when unset.")))
+				.Visibility_Lambda([this]()
+				{
+					const UParleyDialogueEdGraphNode* Node = GetDialogueNode();
+					const FDialogueEditorCheckRelationshipNodeData* NodeData = Node ? Node->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>() : nullptr;
+					return (NodeData && NodeData->Source == EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation) ? EVisibility::Collapsed : EVisibility::Visible;
+				})
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::GreaterOrEqual).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SEditableTextBox)
+				.Text(FText::AsNumber(Data ? Data->NumericValue : 0.0f))
+				.HintText(FText::FromString(TEXT("0.0")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleConditionNumericTextCommitted)
+			];
 	}
 	case EDialogueEditorNodeType::CheckProgress:
 	{
-		if (const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>())
-		{
-			Summary = Data->bExpectedValue ? TEXT("Expected True") : TEXT("Expected False");
-		}
-		break;
-	}
-	case EDialogueEditorNodeType::CheckStats:
-	{
-		if (const FDialogueEditorCheckStatsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckStatsNodeData>())
-		{
-			Summary = FString::Printf(TEXT("%.2f"), Data->NumericValue);
-		}
-		break;
+		const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					if (!Data)
+					{
+						return FText::FromString(TEXT("Source: Seen By Player"));
+					}
+					switch (Data->Source)
+					{
+					case EDialogueEditorProgressConditionSource::SeenByGame: return FText::FromString(TEXT("Source: Seen By Game"));
+					case EDialogueEditorProgressConditionSource::CompletedByPlayer: return FText::FromString(TEXT("Source: Completed By Player"));
+					case EDialogueEditorProgressConditionSource::CompletedByGame: return FText::FromString(TEXT("Source: Completed By Game"));
+					case EDialogueEditorProgressConditionSource::SeenByPlayer:
+					default: return FText::FromString(TEXT("Source: Seen By Player"));
+					}
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Equals).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(Data && Data->bExpectedValue ? TEXT("Expected: True") : TEXT("Expected: False"));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked)
+			];
 	}
 	case EDialogueEditorNodeType::CheckLoadout:
 	{
-		if (const FDialogueEditorCheckLoadoutNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>())
-		{
-			Summary = Data->TagValue.IsValid() ? Data->TagValue.ToString() : TEXT("Loadout tag");
-		}
-		break;
+		const FDialogueEditorCheckLoadoutNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Present).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[
+				SNew(SGameplayTagCombo)
+				.Tag(Data ? Data->TagValue : FGameplayTag())
+				.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionTagChanged)
+			];
 	}
 	case EDialogueEditorNodeType::CheckCharacter:
 	{
-		if (const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>())
-		{
-			Summary = Data->Character == EDialogueEditorCharacterCondition::Brother ? TEXT("Brother") : TEXT("Sister");
-		}
-		break;
+		const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
+		return SNew(SButton)
+			.Text(FText::FromString(Data && Data->Character == EDialogueEditorCharacterCondition::Sister ? TEXT("Character: Sister") : TEXT("Character: Brother")))
+			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked);
 	}
 	case EDialogueEditorNodeType::CheckVariable:
 	{
-		if (const FDialogueEditorCheckVariableNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>())
-		{
-			Summary = Data->VariableName.IsNone() ? TEXT("Variable") : Data->VariableName.ToString();
-		}
-		break;
+		const FDialogueEditorCheckVariableNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>();
+		return SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SEditableTextBox)
+				.Text(FText::FromName(Data ? Data->VariableName : NAME_None))
+				.HintText(FText::FromString(TEXT("Variable Name")))
+				.OnTextCommitted(this, &SParleyDialogueInlineGraphNode::HandleConditionVariableNameCommitted)
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+			[ SNew(SButton)
+				.Text_Lambda([Data]()
+				{
+					return FText::FromString(FString::Printf(TEXT("Op: %s"), *ToOperatorLabel(Data ? Data->Operator : EDialogueComparisonOp::Equals).ToString()));
+				})
+				.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked)
+			];
 	}
 	default:
 		break;
 	}
 
-	return SNew(STextBlock)
-		.Text(FText::FromString(Summary))
-		.WrapTextAt(160.0f);
+	return SNew(STextBlock).Text(FText::FromString(TEXT("Condition editor unavailable.")));
+}
+
+TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildTagMutationInlineContent() const
+{
+	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
+	const FDialogueTagMutationNodeData* Data = DialogueNode ? DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>() : nullptr;
+	const FDialogueTagMutation* Mutation = (Data && Data->Mutations.Num() > 0) ? &Data->Mutations[0] : nullptr;
+
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[ SNew(SButton)
+			.Text_Lambda([Mutation]()
+			{
+				if (!Mutation)
+				{
+					return FText::FromString(TEXT("Target: Game Progression"));
+				}
+
+				switch (Mutation->Target)
+				{
+				case EDialogueTagMutationTarget::ActivePlayerProgression: return FText::FromString(TEXT("Target: Player Progression"));
+				case EDialogueTagMutationTarget::ActivePlayerTransientConversation: return FText::FromString(TEXT("Target: Transient Conversation"));
+				case EDialogueTagMutationTarget::GameStateProgression:
+				default: return FText::FromString(TEXT("Target: Game Progression"));
+				}
+			})
+			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleTagMutationTargetClicked)
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[ SNew(SButton)
+			.Text_Lambda([Mutation]()
+			{
+				if (!Mutation)
+				{
+					return FText::FromString(TEXT("Operation: Add"));
+				}
+				return FText::FromString(Mutation->Operation == EDialogueTagMutationOp::Remove ? TEXT("Operation: Remove") : TEXT("Operation: Add"));
+			})
+			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleCycleTagMutationOperationClicked)
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(0.0f, 3.0f, 0.0f, 0.0f)
+		[
+			SNew(SGameplayTagCombo)
+			.Tag(Mutation ? Mutation->Tag : FGameplayTag())
+			.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleTagMutationTagChanged)
+		];
 }
 
 TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildChoiceInlineContent() const
@@ -1045,13 +1325,13 @@ float SParleyDialogueInlineGraphNode::GetInlineContentMinWidth() const
 		return CharacterRouteMinWidth;
 	case EDialogueEditorNodeType::RelationshipMutation:
 	case EDialogueEditorNodeType::FactionMutation:
+	case EDialogueEditorNodeType::TagMutation:
 		return MutationMinWidth;
 	case EDialogueEditorNodeType::Sequence:
 		return SequenceMinWidth;
 	case EDialogueEditorNodeType::CheckTags:
 	case EDialogueEditorNodeType::CheckRelationship:
 	case EDialogueEditorNodeType::CheckProgress:
-	case EDialogueEditorNodeType::CheckStats:
 	case EDialogueEditorNodeType::CheckLoadout:
 	case EDialogueEditorNodeType::CheckCharacter:
 	case EDialogueEditorNodeType::CheckVariable:
@@ -1323,6 +1603,242 @@ void SParleyDialogueInlineGraphNode::HandleFactionDeltaTextCommitted(const FText
 	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
 	{
 		DialogueNode->SetFactionDeltaPopularity(ParsedValue);
+	}
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleTagMutationTargetClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		const FDialogueTagMutationNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>();
+		const EDialogueTagMutationTarget Current = (Data && Data->Mutations.Num() > 0)
+			? Data->Mutations[0].Target
+			: EDialogueTagMutationTarget::GameStateProgression;
+		const EDialogueTagMutationTarget Next = Current == EDialogueTagMutationTarget::GameStateProgression
+			? EDialogueTagMutationTarget::ActivePlayerProgression
+			: (Current == EDialogueTagMutationTarget::ActivePlayerProgression
+				? EDialogueTagMutationTarget::ActivePlayerTransientConversation
+				: EDialogueTagMutationTarget::GameStateProgression);
+		DialogueNode->SetPrimaryTagMutationTarget(Next);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleTagMutationOperationClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		const FDialogueTagMutationNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>();
+		const EDialogueTagMutationOp Current = (Data && Data->Mutations.Num() > 0)
+			? Data->Mutations[0].Operation
+			: EDialogueTagMutationOp::Add;
+		DialogueNode->SetPrimaryTagMutationOperation(Current == EDialogueTagMutationOp::Add ? EDialogueTagMutationOp::Remove : EDialogueTagMutationOp::Add);
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SParleyDialogueInlineGraphNode::HandleTagMutationTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetPrimaryTagMutationTag(NewTag);
+	}
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleConditionSourceClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		switch (DialogueNode->EditorNodeType)
+		{
+		case EDialogueEditorNodeType::CheckTags:
+		{
+			const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+			const EDialogueEditorTagConditionSource Current = Data ? Data->Source : EDialogueEditorTagConditionSource::CombinedTags;
+			const EDialogueEditorTagConditionSource Next = Current == EDialogueEditorTagConditionSource::CombinedTags
+				? EDialogueEditorTagConditionSource::PlayerTags
+				: (Current == EDialogueEditorTagConditionSource::PlayerTags
+					? EDialogueEditorTagConditionSource::GameTags
+					: (Current == EDialogueEditorTagConditionSource::GameTags
+						? EDialogueEditorTagConditionSource::TransientConversationTags
+						: EDialogueEditorTagConditionSource::CombinedTags));
+			DialogueNode->SetCheckTagsSource(Next);
+			break;
+		}
+		case EDialogueEditorNodeType::CheckRelationship:
+		{
+			const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+			const EDialogueEditorRelationshipConditionSource Current = Data ? Data->Source : EDialogueEditorRelationshipConditionSource::RelationshipPoints;
+			const EDialogueEditorRelationshipConditionSource Next = Current == EDialogueEditorRelationshipConditionSource::RelationshipPoints
+				? EDialogueEditorRelationshipConditionSource::RelationshipLevel
+				: (Current == EDialogueEditorRelationshipConditionSource::RelationshipLevel
+					? EDialogueEditorRelationshipConditionSource::FactionSpeakerReputation
+					: EDialogueEditorRelationshipConditionSource::RelationshipPoints);
+			DialogueNode->SetCheckRelationshipSource(Next);
+			break;
+		}
+		case EDialogueEditorNodeType::CheckProgress:
+		{
+			const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+			const EDialogueEditorProgressConditionSource Current = Data ? Data->Source : EDialogueEditorProgressConditionSource::SeenByPlayer;
+			const EDialogueEditorProgressConditionSource Next = Current == EDialogueEditorProgressConditionSource::SeenByPlayer
+				? EDialogueEditorProgressConditionSource::SeenByGame
+				: (Current == EDialogueEditorProgressConditionSource::SeenByGame
+					? EDialogueEditorProgressConditionSource::CompletedByPlayer
+					: (Current == EDialogueEditorProgressConditionSource::CompletedByPlayer
+						? EDialogueEditorProgressConditionSource::CompletedByGame
+						: EDialogueEditorProgressConditionSource::SeenByPlayer));
+			DialogueNode->SetCheckProgressSource(Next);
+			break;
+		}
+		default:
+			break;
+		}
+
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleCycleConditionOperatorClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		switch (DialogueNode->EditorNodeType)
+		{
+		case EDialogueEditorNodeType::CheckTags:
+		{
+			const FDialogueEditorCheckTagsNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Present;
+			DialogueNode->SetCheckTagsOperator(CycleOperator(Current, GetTagOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckRelationship:
+		{
+			const FDialogueEditorCheckRelationshipNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::GreaterOrEqual;
+			DialogueNode->SetCheckRelationshipOperator(CycleOperator(Current, GetNumericOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckProgress:
+		{
+			const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Equals;
+			DialogueNode->SetCheckProgressOperator(CycleOperator(Current, GetBoolOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckLoadout:
+		{
+			const FDialogueEditorCheckLoadoutNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Present;
+			DialogueNode->SetCheckLoadoutOperator(CycleOperator(Current, GetTagOperators()));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckVariable:
+		{
+			const FDialogueEditorCheckVariableNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>();
+			const EDialogueComparisonOp Current = Data ? Data->Operator : EDialogueComparisonOp::Equals;
+			DialogueNode->SetCheckVariableOperator(CycleOperator(Current, GetNumericOperators()));
+			break;
+		}
+		default:
+			break;
+		}
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+FReply SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked() const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		switch (DialogueNode->EditorNodeType)
+		{
+		case EDialogueEditorNodeType::CheckProgress:
+		{
+			const FDialogueEditorCheckProgressNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+			DialogueNode->SetCheckProgressExpectedValue(!(Data && Data->bExpectedValue));
+			break;
+		}
+		case EDialogueEditorNodeType::CheckCharacter:
+		{
+			const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
+			const EDialogueEditorCharacterCondition Next = (Data && Data->Character == EDialogueEditorCharacterCondition::Brother)
+				? EDialogueEditorCharacterCondition::Sister
+				: EDialogueEditorCharacterCondition::Brother;
+			DialogueNode->SetCheckCharacterCondition(Next);
+			break;
+		}
+		default:
+			break;
+		}
+
+		RefreshNodeWidget();
+	}
+
+	return FReply::Handled();
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::CheckTags)
+		{
+			DialogueNode->SetCheckTagsTag(NewTag);
+		}
+		else if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::CheckLoadout)
+		{
+			DialogueNode->SetCheckLoadoutTag(NewTag);
+		}
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionSecondaryTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetCheckRelationshipTargetSpeakerTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionFactionTagChanged(const FGameplayTag NewTag) const
+{
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetCheckRelationshipFactionTag(NewTag);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionNumericTextCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	float ParsedValue = 0.0f;
+	if (!FDefaultValueHelper::ParseFloat(NewText.ToString(), ParsedValue))
+	{
+		return;
+	}
+
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		DialogueNode->SetCheckRelationshipNumericValue(ParsedValue);
+	}
+}
+
+void SParleyDialogueInlineGraphNode::HandleConditionVariableNameCommitted(const FText& NewText, const ETextCommit::Type CommitType) const
+{
+	(void)CommitType;
+	if (UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable())
+	{
+		const FString Trimmed = NewText.ToString().TrimStartAndEnd();
+		DialogueNode->SetCheckVariableName(Trimmed.IsEmpty() ? NAME_None : FName(*Trimmed));
 	}
 }
 

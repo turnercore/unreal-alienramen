@@ -32,6 +32,7 @@ private:
 	TSharedRef<SWidget> BuildChoiceInlineContent() const;
 	TSharedRef<SWidget> BuildBranchInlineContent() const;
 	TSharedRef<SWidget> BuildConditionSourceInlineContent() const;
+	TSharedRef<SWidget> BuildTagMutationInlineContent() const;
 	TSharedRef<SWidget> BuildSwitchInlineContent() const;
 	TSharedRef<SWidget> BuildRandomInlineContent() const;
 	TSharedRef<SWidget> BuildSequenceInlineContent() const;
@@ -61,6 +62,17 @@ private:
 	void HandleRelationshipDeltaTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 	void HandleFactionTagChanged(FGameplayTag NewTag) const;
 	void HandleFactionDeltaTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
+	FReply HandleCycleTagMutationTargetClicked() const;
+	FReply HandleCycleTagMutationOperationClicked() const;
+	void HandleTagMutationTagChanged(FGameplayTag NewTag) const;
+	FReply HandleCycleConditionSourceClicked() const;
+	FReply HandleCycleConditionOperatorClicked() const;
+	FReply HandleToggleConditionBoolClicked() const;
+	void HandleConditionTagChanged(FGameplayTag NewTag) const;
+	void HandleConditionSecondaryTagChanged(FGameplayTag NewTag) const;
+	void HandleConditionFactionTagChanged(FGameplayTag NewTag) const;
+	void HandleConditionNumericTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
+	void HandleConditionVariableNameCommitted(const FText& NewText, ETextCommit::Type CommitType) const;
 
 	FText GetNodeTitleText() const;
 	FSlateColor GetTitleColor() const;

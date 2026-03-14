@@ -274,7 +274,7 @@ Conversation graph tooling now provides:
 - blueprint-style `SGraphEditor` canvas with right-click node creation
 - right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)
 - graph node classes/schema (`UParleyDialogueEdGraph`, `UParleyDialogueEdGraphNode`, `UParleyDialogueEdGraphSchema`)
-- conditional graph authoring uses editor-only `Branch` + `Check*` nodes (`CheckTags`, `CheckRelationship`, `CheckProgress`, `CheckStats`, `CheckLoadout`, `CheckCharacter`, `CheckVariable`) with dedicated bool wires; compile flattens them into existing runtime switch/condition-group data and emits no runtime nodes for the `Check*` sources
+- conditional graph authoring uses editor-only `Branch` + `Check*` nodes (`CheckTags`, `CheckRelationship`, `CheckProgress`, `CheckLoadout`, `CheckCharacter`, `CheckVariable`) with dedicated bool wires; compile flattens them into existing runtime switch/condition-group data and emits no runtime nodes for the `Check*` sources
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit

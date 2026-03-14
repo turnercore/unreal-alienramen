@@ -122,7 +122,6 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 		|| NodeType == EDialogueEditorNodeType::CheckTags
 		|| NodeType == EDialogueEditorNodeType::CheckRelationship
 		|| NodeType == EDialogueEditorNodeType::CheckProgress
-		|| NodeType == EDialogueEditorNodeType::CheckStats
 		|| NodeType == EDialogueEditorNodeType::CheckLoadout
 		|| NodeType == EDialogueEditorNodeType::CheckCharacter
 		|| NodeType == EDialogueEditorNodeType::CheckVariable;
@@ -142,10 +141,14 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bChoiceNodeImportant), true);
 			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CompletedChoicePolicy), true);
 			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchBranches), true);
-			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bSwitchHasDefaultOutput), true);
-			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchDefaultNodeId), true);
 			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SequenceBranches), true);
 			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, CharacterRouteBranches), true);
+		}
+
+		if (NodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
+		{
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, bSwitchHasDefaultOutput), true);
+			AddRuntimeNodeField(GET_MEMBER_NAME_CHECKED(FDialogueCompiledNode, SwitchDefaultNodeId), true);
 		}
 	}
 }

@@ -32,9 +32,51 @@ bool UParleyDialogueSubsystem::EvaluateDialogueCondition(const FDialogueConditio
 		return EvaluateTagContainerCondition(ActiveCharacterTags, Condition);
 	}
 	case EDialogueConditionSource::RelationshipPoints:
-		return CompareNumeric(Context.RelationshipPointsForPrimarySpeaker, Condition.Operator, Condition.NumericValue);
+	{
+		const FGameplayTag TargetSpeakerTag = Condition.TagValue.IsValid() ? Condition.TagValue : Context.PrimarySpeakerTag;
+		if (!TargetSpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		return CompareNumeric(GetRelationshipPointsForSpeaker(TargetSpeakerTag), Condition.Operator, Condition.NumericValue);
+	}
 	case EDialogueConditionSource::RelationshipLevel:
-		return CompareNumeric(static_cast<float>(Context.RelationshipLevelForPrimarySpeaker), Condition.Operator, Condition.NumericValue);
+	{
+		const FGameplayTag TargetSpeakerTag = Condition.TagValue.IsValid() ? Condition.TagValue : Context.PrimarySpeakerTag;
+		if (!TargetSpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		return CompareNumeric(static_cast<float>(GetRelationshipLevelForSpeaker(TargetSpeakerTag)), Condition.Operator, Condition.NumericValue);
+	}
+	case EDialogueConditionSource::FactionSpeakerReputation:
+	{
+		if (!Condition.TagValue.IsValid())
+		{
+			return false;
+		}
+
+		const FGameplayTag SpeakerTag = Condition.SecondaryTagValue.IsValid()
+			? Condition.SecondaryTagValue
+			: Context.PrimarySpeakerTag;
+		if (!SpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		if (UGameInstance* GI = GetGameInstance())
+		{
+			if (UParleyFactionSubsystem* FactionSubsystem = GI->GetSubsystem<UParleyFactionSubsystem>())
+			{
+				const float Reputation = FactionSubsystem->GetFactionSpeakerReputation(Condition.TagValue, SpeakerTag);
+				return CompareNumeric(Reputation, Condition.Operator, Condition.NumericValue);
+			}
+		}
+
+		return false;
+	}
 	case EDialogueConditionSource::SeenByPlayer:
 		return CompareBool(Context.bSeenByPlayer, Condition.Operator, Condition.NumericValue > 0.0f);
 	case EDialogueConditionSource::SeenByGame:

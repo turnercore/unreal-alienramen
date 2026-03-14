@@ -139,6 +139,7 @@ namespace
 		{
 		case EDialogueConditionSource::RelationshipPoints:
 		case EDialogueConditionSource::RelationshipLevel:
+		case EDialogueConditionSource::FactionSpeakerReputation:
 		case EDialogueConditionSource::PlayerKills:
 		case EDialogueConditionSource::TimePlayed:
 			return true;
@@ -231,10 +232,11 @@ namespace
 	static FString BuildConditionKey(const FDialogueCondition& Condition)
 	{
 		return FString::Printf(
-			TEXT("Src=%d|Op=%d|Tag=%s|Num=%s|Var=%s|Inj=%s"),
+			TEXT("Src=%d|Op=%d|Tag=%s|Tag2=%s|Num=%s|Var=%s|Inj=%s"),
 			static_cast<int32>(Condition.Source),
 			static_cast<int32>(Condition.Operator),
 			*Condition.TagValue.ToString(),
+			*Condition.SecondaryTagValue.ToString(),
 			*FString::SanitizeFloat(Condition.NumericValue),
 			*Condition.VariableName.ToString(),
 			*BuildInjectedValueKey(Condition.InjectedValue));
@@ -318,6 +320,11 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 			if (!IsNumericOperator(Condition.Operator))
 			{
 				Add(EDialogueValidationSeverity::Error, NodeId, TEXT("Condition operator is invalid for numeric source."));
+			}
+
+			if (Condition.Source == EDialogueConditionSource::FactionSpeakerReputation && !Condition.TagValue.IsValid())
+			{
+				Add(EDialogueValidationSeverity::Error, NodeId, TEXT("Faction speaker reputation condition requires Faction Tag in TagValue."));
 			}
 			return;
 		}
