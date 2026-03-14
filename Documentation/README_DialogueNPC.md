@@ -218,7 +218,7 @@ Conversation graph tooling now provides:
 - blueprint-style `SGraphEditor` canvas with right-click node creation
 - right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)
 - graph node classes/schema (`UARDialogueEdGraph`, `UARDialogueEdGraphNode`, `UARDialogueEdGraphSchema`)
-- line nodes now render with inline authoring UI: speaker portrait button (click to cycle speakers) + wrapped inline line-text edit
+- line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)
 - drag-link execution wiring with:
   - one outgoing link per output pin
@@ -233,7 +233,7 @@ Conversation graph tooling now provides:
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
-- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`
+- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`; line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
 - Speaker details authoring categories for actor/talk/emotion properties use distinct roots (`Alien Ramen|Speaker`, `Alien Ramen|Talk`, `Alien Ramen|Emotion`) to avoid repeated same-name category buckets in Blueprint class-default details.
 
 Speaker hub currently provides:

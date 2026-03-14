@@ -1071,6 +1071,23 @@ static bool IsResolvableConversationSpeakerTag(
 	return FindSpeakerRowByConversationSpeakerTag(SpeakerRowsByTag, SpeakerTag, ResolvedSpeakerRowTag) != nullptr;
 }
 
+static bool IsStructurallyValidConversationSpeakerTag(
+	const FGameplayTag& SpeakerTag,
+	const FGameplayTag& SpeakerRootTag)
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	if (IsBuiltInDialogueSpeakerTag(SpeakerTag))
+	{
+		return true;
+	}
+
+	return SpeakerRootTag.IsValid() && SpeakerTag.MatchesTag(SpeakerRootTag);
+}
+
 static const FARDialogueSpeakerRow* ResolveSpeakerRowForPresentation(
 	const TMap<FGameplayTag, FARDialogueSpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& RequestedSpeakerTag,
@@ -2970,11 +2987,15 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 #endif
 	}
 
+	const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
+	const FGameplayTag ValidationSpeakerRootTag = (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		? DialogueSettings->SpeakerDefinitionRootTag
+		: FGameplayTag();
+
 	const FARDialogueRuntimeState& Runtime = GetRuntimeState();
 	TMap<FGameplayTag, FARDialogueSpeakerRow> ValidationSpeakerRows = Runtime.SpeakerRowsByTag;
 	if (ValidationSpeakerRows.IsEmpty())
 	{
-		const UARDialogueSettings* DialogueSettings = GetDefault<UARDialogueSettings>();
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
 		FString LookupError;
@@ -3022,9 +3043,20 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 	if (ConversationAsset->Header.PrimarySpeakerTag.IsValid()
 		&& !IsResolvableConversationSpeakerTag(ValidationSpeakerRows, ConversationAsset->Header.PrimarySpeakerTag))
 	{
-		Add(EDialogueValidationSeverity::Error, FGuid(),
-			FString::Printf(TEXT("PrimarySpeakerTag '%s' is not resolvable to a known speaker."),
-				*ConversationAsset->Header.PrimarySpeakerTag.ToString()));
+		if (IsStructurallyValidConversationSpeakerTag(ConversationAsset->Header.PrimarySpeakerTag, ValidationSpeakerRootTag))
+		{
+			Add(EDialogueValidationSeverity::Warning, FGuid(),
+				FString::Printf(
+					TEXT("PrimarySpeakerTag '%s' is not currently resolved in speaker rows; runtime may still resolve it by speaker root '%s'."),
+					*ConversationAsset->Header.PrimarySpeakerTag.ToString(),
+					*ValidationSpeakerRootTag.ToString()));
+		}
+		else
+		{
+			Add(EDialogueValidationSeverity::Error, FGuid(),
+				FString::Printf(TEXT("PrimarySpeakerTag '%s' is not resolvable to a known speaker."),
+					*ConversationAsset->Header.PrimarySpeakerTag.ToString()));
+		}
 	}
 
 	TSet<FGameplayTag> ParticipantSpeakerTags;
@@ -3047,9 +3079,20 @@ bool UARDialogueSubsystem::ValidateConversation(UARDialogueConversationAsset* Co
 
 		if (!IsResolvableConversationSpeakerTag(ValidationSpeakerRows, ParticipantTag))
 		{
-			Add(EDialogueValidationSeverity::Error, FGuid(),
-				FString::Printf(TEXT("Participating speaker tag '%s' is not resolvable to a known speaker."),
-					*ParticipantTag.ToString()));
+			if (IsStructurallyValidConversationSpeakerTag(ParticipantTag, ValidationSpeakerRootTag))
+			{
+				Add(EDialogueValidationSeverity::Warning, FGuid(),
+					FString::Printf(
+						TEXT("Participating speaker tag '%s' is not currently resolved in speaker rows; runtime may still resolve it by speaker root '%s'."),
+						*ParticipantTag.ToString(),
+						*ValidationSpeakerRootTag.ToString()));
+			}
+			else
+			{
+				Add(EDialogueValidationSeverity::Error, FGuid(),
+					FString::Printf(TEXT("Participating speaker tag '%s' is not resolvable to a known speaker."),
+						*ParticipantTag.ToString()));
+			}
 		}
 	}
 

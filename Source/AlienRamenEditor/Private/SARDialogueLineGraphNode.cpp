@@ -12,6 +12,7 @@
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphUtilities.h"
 #include "Framework/Application/SlateApplication.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "GameplayTagsManager.h"
 #include "InputCoreTypes.h"
 #include "Internationalization/Text.h"
@@ -80,6 +81,24 @@ namespace
 		}
 
 		return nullptr;
+	}
+
+	static FGameplayTag NormalizeSpeakerTagForCycle(const FGameplayTag SpeakerTag)
+	{
+		if (!SpeakerTag.IsValid())
+		{
+			return FGameplayTag();
+		}
+
+		if (const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag))
+		{
+			if (SpeakerRow->SpeakerTag.IsValid())
+			{
+				return SpeakerRow->SpeakerTag;
+			}
+		}
+
+		return SpeakerTag;
 	}
 
 	static bool ContainsTagExact(const TArray<FGameplayTag>& Tags, const FGameplayTag Tag)
@@ -431,6 +450,23 @@ FReply SARDialogueLineGraphNode::HandlePortraitClickedForEntry(const FGuid Entry
 	return FReply::Handled();
 }
 
+FReply SARDialogueLineGraphNode::HandlePortraitMouseButtonDownForEntry(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent, const FGuid EntryId)
+{
+	(void)MyGeometry;
+	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		return HandlePortraitClickedForEntry(EntryId);
+	}
+
+	if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		OpenEmotionPickerMenuForEntry(EntryId, MouseEvent.GetScreenSpacePosition());
+		return FReply::Handled();
+	}
+
+	return FReply::Unhandled();
+}
+
 void SARDialogueLineGraphNode::HandleLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType)
 {
 	(void)CommitType;
@@ -582,22 +618,46 @@ void SARDialogueLineGraphNode::RefreshPortraitBrushForSpeaker(const FGameplayTag
 	const FARDialogueSpeakerRow* SpeakerRow = ResolveSpeakerRowForTag(SpeakerTag);
 	if (SpeakerRow)
 	{
-		UTexture2D* PortraitTexture = SpeakerRow->DefaultPortrait.PortraitTexture.LoadSynchronous();
-		if (!PortraitTexture)
+		UTexture2D* PortraitTexture = nullptr;
+		for (const FSpeakerPortraitEntry& PortraitEntry : SpeakerRow->Portraits)
 		{
-			for (const FSpeakerPortraitEntry& PortraitEntry : SpeakerRow->Portraits)
+			if (!PortraitEntry.PortraitTag.IsValid() || !PortraitEntry.PortraitTag.MatchesTagExact(SpeakerTag))
 			{
-				if (!PortraitEntry.PortraitTag.IsValid() || !PortraitEntry.PortraitTag.MatchesTagExact(SpeakerTag))
-				{
-					continue;
-				}
+				continue;
+			}
 
-				PortraitTexture = PortraitEntry.Portrait.PortraitTexture.LoadSynchronous();
-				if (PortraitTexture)
+			PortraitTexture = PortraitEntry.Portrait.PortraitTexture.LoadSynchronous();
+			if (PortraitTexture)
+			{
+				break;
+			}
+		}
+
+		if (!PortraitTexture && SpeakerRow->SpeakerTag.IsValid())
+		{
+			const FString DefaultTagPath = FString::Printf(TEXT("%s.Default"), *SpeakerRow->SpeakerTag.ToString());
+			const FGameplayTag DefaultPortraitTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*DefaultTagPath), false);
+			if (DefaultPortraitTag.IsValid())
+			{
+				for (const FSpeakerPortraitEntry& PortraitEntry : SpeakerRow->Portraits)
 				{
-					break;
+					if (!PortraitEntry.PortraitTag.IsValid() || !PortraitEntry.PortraitTag.MatchesTagExact(DefaultPortraitTag))
+					{
+						continue;
+					}
+
+					PortraitTexture = PortraitEntry.Portrait.PortraitTexture.LoadSynchronous();
+					if (PortraitTexture)
+					{
+						break;
+					}
 				}
 			}
+		}
+
+		if (!PortraitTexture)
+		{
+			PortraitTexture = SpeakerRow->DefaultPortrait.PortraitTexture.LoadSynchronous();
 		}
 
 		if (PortraitTexture)
@@ -624,9 +684,10 @@ TArray<FGameplayTag> SARDialogueLineGraphNode::BuildQuickSpeakerCycleList(const 
 	{
 		auto TryAdd = [&Result](const FGameplayTag CandidateTag)
 		{
-			if (CandidateTag.IsValid() && !ContainsTagExact(Result, CandidateTag))
+			const FGameplayTag NormalizedTag = NormalizeSpeakerTagForCycle(CandidateTag);
+			if (NormalizedTag.IsValid() && !ContainsTagExact(Result, NormalizedTag))
 			{
-				Result.Add(CandidateTag);
+				Result.Add(NormalizedTag);
 			}
 		};
 
@@ -634,6 +695,38 @@ TArray<FGameplayTag> SARDialogueLineGraphNode::BuildQuickSpeakerCycleList(const 
 		for (const FGameplayTag ParticipantTag : Conversation->Header.ParticipatingSpeakerTags)
 		{
 			TryAdd(ParticipantTag);
+		}
+
+		const UEdGraph* ConversationGraph = Cast<UEdGraph>(Conversation->EditorGraph);
+		if (ConversationGraph)
+		{
+			for (const UEdGraphNode* GraphNode : ConversationGraph->Nodes)
+			{
+				const UARDialogueEdGraphNode* DialogueNode = Cast<UARDialogueEdGraphNode>(GraphNode);
+				if (!DialogueNode)
+				{
+					continue;
+				}
+
+				if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Line)
+				{
+					if (const FDialogueLineNodeData* LineData = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueLineNodeData>())
+					{
+						TryAdd(LineData->Line.SpeakerTag);
+					}
+				}
+				else if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
+					|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+				{
+					if (const FDialogueMultiLineNodeData* MultiLineData = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>())
+					{
+						for (const FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+						{
+							TryAdd(Entry.LineData.Line.SpeakerTag);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -650,23 +743,120 @@ TArray<FGameplayTag> SARDialogueLineGraphNode::BuildQuickSpeakerCycleList(const 
 				return Lhs.ToString() < Rhs.ToString();
 			});
 
-			for (const FGameplayTag Candidate : CandidateTags)
-			{
-				if (!Candidate.MatchesTagExact(SpeakerRoot) && !ContainsTagExact(Result, Candidate))
+				for (const FGameplayTag Candidate : CandidateTags)
 				{
-					Result.Add(Candidate);
+					const FGameplayTag NormalizedCandidate = NormalizeSpeakerTagForCycle(Candidate);
+					if (!NormalizedCandidate.IsValid()
+						|| NormalizedCandidate.MatchesTagExact(SpeakerRoot)
+						|| ContainsTagExact(Result, NormalizedCandidate))
+					{
+						continue;
+					}
+					Result.Add(NormalizedCandidate);
 				}
 			}
 		}
-	}
 
-	const FGameplayTag CurrentSpeakerTag = GetSpeakerTagForEntry(EntryId);
+	const FGameplayTag CurrentSpeakerTag = NormalizeSpeakerTagForCycle(GetSpeakerTagForEntry(EntryId));
 	if (CurrentSpeakerTag.IsValid() && !ContainsTagExact(Result, CurrentSpeakerTag))
 	{
 		Result.Insert(CurrentSpeakerTag, 0);
 	}
 
 	return Result;
+}
+
+TArray<FGameplayTag> SARDialogueLineGraphNode::BuildEmotionTagListForEntry(const FGuid EntryId) const
+{
+	TArray<FGameplayTag> Result;
+	const FGameplayTag CurrentSpeakerTag = GetSpeakerTagForEntry(EntryId);
+	if (!CurrentSpeakerTag.IsValid())
+	{
+		return Result;
+	}
+
+	const FGameplayTag BaseSpeakerTag = NormalizeSpeakerTagForCycle(CurrentSpeakerTag);
+	if (!BaseSpeakerTag.IsValid())
+	{
+		return Result;
+	}
+
+	const FGameplayTagContainer ChildTags = UGameplayTagsManager::Get().RequestGameplayTagChildrenInDictionary(BaseSpeakerTag);
+	TArray<FGameplayTag> ChildTagArray;
+	ChildTags.GetGameplayTagArray(ChildTagArray);
+	for (const FGameplayTag ChildTag : ChildTagArray)
+	{
+		if (!ChildTag.IsValid() || ChildTag.MatchesTagExact(BaseSpeakerTag) || !ChildTag.MatchesTag(BaseSpeakerTag))
+		{
+			continue;
+		}
+		if (!ContainsTagExact(Result, ChildTag))
+		{
+			Result.Add(ChildTag);
+		}
+	}
+
+	if (CurrentSpeakerTag.IsValid() && !CurrentSpeakerTag.MatchesTagExact(BaseSpeakerTag) && !ContainsTagExact(Result, CurrentSpeakerTag))
+	{
+		Result.Add(CurrentSpeakerTag);
+	}
+
+	Result.Sort([](const FGameplayTag Lhs, const FGameplayTag Rhs)
+	{
+		return Lhs.ToString() < Rhs.ToString();
+	});
+	return Result;
+}
+
+void SARDialogueLineGraphNode::OpenEmotionPickerMenuForEntry(const FGuid EntryId, const FVector2D& ScreenPosition)
+{
+	const TArray<FGameplayTag> EmotionTags = BuildEmotionTagListForEntry(EntryId);
+	if (EmotionTags.IsEmpty())
+	{
+		return;
+	}
+
+	FMenuBuilder MenuBuilder(true, nullptr);
+	for (const FGameplayTag EmotionTag : EmotionTags)
+	{
+		const FString TagLabel = EmotionTag.ToString();
+		MenuBuilder.AddMenuEntry(
+			FText::FromString(TagLabel),
+			FText::FromString(FString::Printf(TEXT("Set line speaker tag to '%s'."), *TagLabel)),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateSP(this, &SARDialogueLineGraphNode::SetLineSpeakerTagForEntry, EntryId, EmotionTag)));
+	}
+
+	FSlateApplication::Get().PushMenu(
+		AsShared(),
+		FWidgetPath(),
+		MenuBuilder.MakeWidget(),
+		ScreenPosition,
+		FPopupTransitionEffect(FPopupTransitionEffect::ContextMenu));
+}
+
+void SARDialogueLineGraphNode::EnsureConversationParticipantsIncludeSpeaker(const FGameplayTag& SpeakerTag)
+{
+	const FGameplayTag NormalizedSpeakerTag = NormalizeSpeakerTagForCycle(SpeakerTag);
+	if (!NormalizedSpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	UARDialogueConversationAsset* Conversation = const_cast<UARDialogueConversationAsset*>(GetOwningConversationAsset());
+	if (!Conversation)
+	{
+		return;
+	}
+
+	if (ContainsTagExact(Conversation->Header.ParticipatingSpeakerTags, NormalizedSpeakerTag))
+	{
+		return;
+	}
+
+	Conversation->Modify();
+	Conversation->Header.ParticipatingSpeakerTags.Add(NormalizedSpeakerTag);
+	Conversation->MarkPackageDirty();
 }
 
 void SARDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId, const FGameplayTag& NewSpeakerTag)
@@ -687,6 +877,7 @@ void SARDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId, co
 	{
 		if (EntryId.IsValid() && DialogueNode->SetMultiLineEntrySpeakerTag(EntryId, NewSpeakerTag))
 		{
+			EnsureConversationParticipantsIncludeSpeaker(NewSpeakerTag);
 			UpdateGraphNode();
 		}
 		return;
@@ -707,6 +898,7 @@ void SARDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId, co
 		Graph->NotifyGraphChanged();
 	}
 
+	EnsureConversationParticipantsIncludeSpeaker(NewSpeakerTag);
 	UpdateGraphNode();
 }
 
@@ -789,16 +981,16 @@ TSharedRef<SWidget> SARDialogueLineGraphNode::BuildLineEntryWidget(const FGuid E
 		.AutoHeight()
 		[
 			SNew(SHorizontalBox)
-			+ SHorizontalBox::Slot()
-			.AutoWidth()
-			[
-				SNew(SButton)
-				.ToolTipText(FText::FromString(TEXT("Click to cycle line speaker (conversation participants first).")))
-				.OnClicked(this, &SARDialogueLineGraphNode::HandlePortraitClickedForEntry, EntryId)
-				.ContentPadding(0.0f)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
 				[
-					SNew(SBox)
-					.WidthOverride(PortraitSize)
+					SNew(SBorder)
+					.ToolTipText(FText::FromString(TEXT("Left-click: cycle speaker. Right-click: pick emotion tag for current speaker.")))
+					.BorderImage(FAppStyle::GetBrush(TEXT("NoBorder")))
+					.OnMouseButtonDown(this, &SARDialogueLineGraphNode::HandlePortraitMouseButtonDownForEntry, EntryId)
+					[
+						SNew(SBox)
+						.WidthOverride(PortraitSize)
 					.HeightOverride(PortraitSize)
 					[
 						SNew(SBorder)
@@ -908,4 +1100,3 @@ TSharedRef<FGraphPanelNodeFactory> CreateARDialogueLineGraphNodeFactory()
 {
 	return MakeShared<FARDialogueLineGraphNodeFactory>();
 }
-
