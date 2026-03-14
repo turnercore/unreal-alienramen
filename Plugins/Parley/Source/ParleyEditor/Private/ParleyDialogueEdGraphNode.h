@@ -321,4 +321,6 @@ private:
 	void AddCharacterRoutePins();
 	FString BuildInlineSummary() const;
 
-	EDialogueValidationSeverity ValidationSeverity = EDialog
+	EDialogueValidationSeverity ValidationSeverity = EDialogueValidationSeverity::Info;
+	FString ValidationMessage;
+};
