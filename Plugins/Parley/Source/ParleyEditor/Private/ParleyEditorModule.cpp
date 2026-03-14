@@ -36,9 +36,6 @@ void FParleyEditorModule::StartupModule()
 		UParleyDialogueEdGraphNode::StaticClass()->GetFName(),
 		FOnGetDetailCustomizationInstance::CreateStatic(&FParleyDialogueEdGraphNodeDetails::MakeInstance));
 	PropertyEditorModule.RegisterCustomPropertyTypeLayout(
-		TEXT("DialogueBoolNodeData"),
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FParleyDialogueBoolNodeDataCustomization::MakeInstance));
-	PropertyEditorModule.RegisterCustomPropertyTypeLayout(
 		TEXT("DialogueLineNodeData"),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FParleyDialogueLineNodeDataCustomization::MakeInstance));
 	PropertyEditorModule.NotifyCustomizationModuleChanged();
@@ -73,7 +70,6 @@ void FParleyEditorModule::ShutdownModule()
 	{
 		FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
 		PropertyEditorModule.UnregisterCustomClassLayout(UParleyDialogueEdGraphNode::StaticClass()->GetFName());
-		PropertyEditorModule.UnregisterCustomPropertyTypeLayout(TEXT("DialogueBoolNodeData"));
 		PropertyEditorModule.UnregisterCustomPropertyTypeLayout(TEXT("DialogueLineNodeData"));
 		PropertyEditorModule.NotifyCustomizationModuleChanged();
 	}

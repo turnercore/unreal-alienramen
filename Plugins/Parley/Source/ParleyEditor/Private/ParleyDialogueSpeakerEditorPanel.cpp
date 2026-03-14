@@ -437,18 +437,6 @@ namespace
 				}
 				break;
 			}
-			case EDialogueNodeType::Bool:
-			{
-				if (FDialogueBoolNodeData* BoolData = Node.NodeData.GetMutablePtr<FDialogueBoolNodeData>())
-				{
-					if (BoolData->Condition.TagValue.IsValid() && RemovedTags.Contains(BoolData->Condition.TagValue))
-					{
-						BoolData->Condition.TagValue = FGameplayTag();
-						bChanged = true;
-					}
-				}
-				break;
-			}
 			default:
 				break;
 			}

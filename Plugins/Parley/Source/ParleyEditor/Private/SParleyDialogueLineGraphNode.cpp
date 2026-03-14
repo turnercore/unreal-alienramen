@@ -236,9 +236,9 @@ namespace
 		{
 			UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(InNode);
 			if (!DialogueNode
-				|| (DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Line
-					&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-					&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::SplitLine))
+				|| (DialogueNode->EditorNodeType != EDialogueEditorNodeType::Line
+					&& DialogueNode->EditorNodeType != EDialogueEditorNodeType::MultiLine
+					&& DialogueNode->EditorNodeType != EDialogueEditorNodeType::SplitLine))
 			{
 				return nullptr;
 			}
@@ -422,8 +422,8 @@ bool SParleyDialogueLineGraphNode::IsMultiLineNode() const
 {
 	const UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNode();
 	return DialogueNode
-		&& (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
-			|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine);
+		&& (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+			|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine);
 }
 
 FReply SParleyDialogueLineGraphNode::HandlePortraitClicked()
@@ -483,8 +483,8 @@ FReply SParleyDialogueLineGraphNode::HandleAddMultiLineEntryClicked()
 {
 	UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
 	if (DialogueNode
-		&& (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
-			|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine))
+		&& (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+			|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine))
 	{
 		DialogueNode->AddMultiLineEntry();
 		UpdateGraphNode();
@@ -497,8 +497,8 @@ bool SParleyDialogueLineGraphNode::HandleMultiLineRowDropped(const FGuid Dragged
 {
 	UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
 	if (!DialogueNode
-		|| (DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-			&& DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::SplitLine))
+		|| (DialogueNode->EditorNodeType != EDialogueEditorNodeType::MultiLine
+			&& DialogueNode->EditorNodeType != EDialogueEditorNodeType::SplitLine))
 	{
 		return false;
 	}
@@ -708,15 +708,15 @@ TArray<FGameplayTag> SParleyDialogueLineGraphNode::BuildQuickSpeakerCycleList(co
 					continue;
 				}
 
-				if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Line)
+				if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::Line)
 				{
 					if (const FDialogueLineNodeData* LineData = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueLineNodeData>())
 					{
 						TryAdd(LineData->Line.SpeakerTag);
 					}
 				}
-				else if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
-					|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+				else if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+					|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine)
 				{
 					if (const FDialogueMultiLineNodeData* MultiLineData = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>())
 					{
@@ -872,8 +872,8 @@ void SParleyDialogueLineGraphNode::SetLineSpeakerTagForEntry(const FGuid EntryId
 		return;
 	}
 
-	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
-		|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+	if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+		|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine)
 	{
 		if (EntryId.IsValid() && DialogueNode->SetMultiLineEntrySpeakerTag(EntryId, NewSpeakerTag))
 		{
@@ -910,8 +910,8 @@ void SParleyDialogueLineGraphNode::CommitLineTextForEntry(const FGuid EntryId, c
 		return;
 	}
 
-	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
-		|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+	if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+		|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine)
 	{
 		DialogueNode->SetMultiLineEntryText(EntryId, NewText);
 		return;
@@ -947,8 +947,8 @@ const FDialogueLineNodeData* SParleyDialogueLineGraphNode::GetLineDataForEntry(c
 		return nullptr;
 	}
 
-	if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::MultiLine
-		|| DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+	if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+		|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine)
 	{
 		const FDialogueMultiLineNodeData* MultiLineData = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
 		if (!MultiLineData || MultiLineData->Lines.IsEmpty())

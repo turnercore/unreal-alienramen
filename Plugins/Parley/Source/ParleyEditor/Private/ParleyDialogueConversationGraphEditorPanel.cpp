@@ -1,6 +1,7 @@
 #include "ParleyDialogueConversationGraphEditorPanel.h"
 
 #include "ParleyConversationAsset.h"
+#include "ParleyDialogueConditionCompileUtils.h"
 #include "ParleyDialogueEdGraph.h"
 #include "ParleyDialogueEdGraphNode.h"
 #include "ParleyDialogueEdGraphSchema.h"
@@ -590,7 +591,7 @@ FReply SDialogueConversationGraphEditorPanel::HandleSpawnNodeByShortcut(FInputCh
 
 		UParleyDialogueEdGraphNode* RouteNode = NewObject<UParleyDialogueEdGraphNode>(Graph);
 		RouteNode->SetFlags(RF_Transactional);
-		RouteNode->InitializeForNodeType(EDialogueNodeType::Route);
+		RouteNode->InitializeForNodeType(EDialogueEditorNodeType::Route);
 		RouteNode->NodePosX = static_cast<int32>(Location.X);
 		RouteNode->NodePosY = static_cast<int32>(Location.Y);
 		RouteNode->CreateNewGuid();
@@ -980,7 +981,7 @@ void SDialogueConversationGraphEditorPanel::HandleCopySelectedNodes()
 		}
 
 		const UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(GraphNode);
-		if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		if (DialogueNode && DialogueNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 		{
 			continue;
 		}
@@ -1017,7 +1018,7 @@ bool SDialogueConversationGraphEditorPanel::CanCopySelectedNodes() const
 		}
 
 		const UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(GraphNode);
-		if (DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		if (DialogueNode && DialogueNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 		{
 			continue;
 		}
@@ -1141,7 +1142,7 @@ void SDialogueConversationGraphEditorPanel::PasteNodesAtLocation(const FVector2f
 
 		if (UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(PastedNode))
 		{
-			if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+			if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 			{
 				DialogueNode->Modify();
 				DialogueNode->DestroyNode();
@@ -1207,7 +1208,7 @@ void SDialogueConversationGraphEditorPanel::HandleDeleteSelectedNodes()
 		}
 
 		if (UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(GraphNode);
-			DialogueNode && DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+			DialogueNode && DialogueNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 		{
 			++SkippedEnterCount;
 			continue;
@@ -1256,7 +1257,7 @@ bool SDialogueConversationGraphEditorPanel::CanDeleteSelectedNodes() const
 		}
 
 		const UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(GraphNode);
-		if (!DialogueNode || DialogueNode->RuntimeNode.NodeType != EDialogueNodeType::Enter)
+		if (!DialogueNode || DialogueNode->EditorNodeType != EDialogueEditorNodeType::Enter)
 		{
 			return true;
 		}
@@ -1277,7 +1278,13 @@ bool SDialogueConversationGraphEditorPanel::EnsureConversationEditorGraph(UParle
 	{
 		if (ExistingGraph->Nodes.IsEmpty())
 		{
-			RebuildEditorGraphFromCompiled(ConversationAsset, ExistingGraph);
+			if (const UEdGraphSchema* Schema = ExistingGraph->GetSchema())
+			{
+				ExistingGraph->Modify();
+				Schema->CreateDefaultNodesForGraph(*ExistingGraph);
+				ExistingGraph->NotifyGraphChanged();
+				ConversationAsset->MarkPackageDirty();
+			}
 		}
 		return true;
 	}
@@ -1286,141 +1293,13 @@ bool SDialogueConversationGraphEditorPanel::EnsureConversationEditorGraph(UParle
 	UParleyDialogueEdGraph* NewGraph = NewObject<UParleyDialogueEdGraph>(ConversationAsset, NAME_None, RF_Transactional);
 	NewGraph->Schema = UParleyDialogueEdGraphSchema::StaticClass();
 	ConversationAsset->EditorGraph = NewGraph;
-	RebuildEditorGraphFromCompiled(ConversationAsset, NewGraph);
+	if (const UEdGraphSchema* Schema = NewGraph->GetSchema())
+	{
+		Schema->CreateDefaultNodesForGraph(*NewGraph);
+		NewGraph->NotifyGraphChanged();
+	}
 	ConversationAsset->MarkPackageDirty();
 	return true;
-}
-
-void SDialogueConversationGraphEditorPanel::RebuildEditorGraphFromCompiled(UParleyConversationAsset* ConversationAsset, UParleyDialogueEdGraph* Graph) const
-{
-	if (!ConversationAsset || !Graph)
-	{
-		return;
-	}
-
-	Graph->Modify();
-	for (int32 Index = Graph->Nodes.Num() - 1; Index >= 0; --Index)
-	{
-		if (UEdGraphNode* ExistingNode = Graph->Nodes[Index])
-		{
-			Graph->RemoveNode(ExistingNode);
-		}
-	}
-
-	TMap<FGuid, UParleyDialogueEdGraphNode*> NodeById;
-	int32 NodeIndex = 0;
-	for (const FDialogueCompiledNode& RuntimeNode : ConversationAsset->CompiledData.Nodes)
-	{
-		UParleyDialogueEdGraphNode* GraphNode = NewObject<UParleyDialogueEdGraphNode>(Graph);
-		GraphNode->SetFlags(RF_Transactional);
-		GraphNode->RuntimeNode = RuntimeNode;
-		GraphNode->EnsureStableIds(false, false);
-		GraphNode->NodePosX = (NodeIndex % 4) * 420;
-		GraphNode->NodePosY = (NodeIndex / 4) * 220;
-		GraphNode->CreateNewGuid();
-		GraphNode->AllocateDefaultPins();
-		Graph->AddNode(GraphNode, true, false);
-		NodeById.Add(GraphNode->RuntimeNode.NodeId, GraphNode);
-		++NodeIndex;
-	}
-
-	auto LinkPinToNode = [&NodeById](UEdGraphPin* SourcePin, const FGuid& TargetNodeId)
-	{
-		if (!SourcePin || !TargetNodeId.IsValid())
-		{
-			return;
-		}
-
-		UParleyDialogueEdGraphNode* TargetNode = NodeById.FindRef(TargetNodeId);
-		if (!TargetNode)
-		{
-			return;
-		}
-
-		UEdGraphPin* TargetInput = TargetNode->GetExecInputPin();
-		if (!TargetInput)
-		{
-			return;
-		}
-
-		SourcePin->MakeLinkTo(TargetInput);
-	};
-
-	for (const TPair<FGuid, UParleyDialogueEdGraphNode*>& Pair : NodeById)
-	{
-		UParleyDialogueEdGraphNode* SourceNode = Pair.Value;
-		if (!SourceNode)
-		{
-			continue;
-		}
-
-		const FDialogueCompiledNode& RuntimeNode = SourceNode->RuntimeNode;
-		switch (RuntimeNode.NodeType)
-		{
-		case EDialogueNodeType::Enter:
-		case EDialogueNodeType::Line:
-		case EDialogueNodeType::MultiLine:
-		case EDialogueNodeType::SplitLine:
-		case EDialogueNodeType::TagMutation:
-		case EDialogueNodeType::RelationshipMutation:
-		case EDialogueNodeType::FactionMutation:
-		case EDialogueNodeType::Signal:
-		case EDialogueNodeType::Route:
-			LinkPinToNode(SourceNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameNext()), RuntimeNode.NextNodeId);
-			break;
-		case EDialogueNodeType::Bool:
-			LinkPinToNode(SourceNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameTrue()), RuntimeNode.TrueNodeId);
-			LinkPinToNode(SourceNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameFalse()), RuntimeNode.FalseNodeId);
-			break;
-		case EDialogueNodeType::Choice:
-			for (const FDialogueCompiledChoiceBranch& Branch : RuntimeNode.ChoiceBranches)
-			{
-				LinkPinToNode(SourceNode->GetChoiceOutputPin(Branch.ChoiceBranchId), Branch.NextNodeId);
-			}
-			LinkPinToNode(SourceNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameFallback()), RuntimeNode.FallbackNodeId);
-			break;
-		case EDialogueNodeType::SwitchOnTagsByPriority:
-			for (const FDialogueCompiledSwitchBranch& Branch : RuntimeNode.SwitchBranches)
-			{
-				LinkPinToNode(SourceNode->GetSwitchOutputPin(Branch.BranchId), Branch.NextNodeId);
-			}
-			if (RuntimeNode.bSwitchHasDefaultOutput)
-			{
-				LinkPinToNode(SourceNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameSwitchDefault()), RuntimeNode.SwitchDefaultNodeId);
-			}
-			break;
-		case EDialogueNodeType::Random:
-			for (const FDialogueCompiledRandomBranch& Branch : RuntimeNode.RandomBranches)
-			{
-				LinkPinToNode(SourceNode->GetRandomOutputPin(Branch.BranchId), Branch.NextNodeId);
-			}
-			break;
-		case EDialogueNodeType::Sequence:
-			for (const FDialogueCompiledSequenceBranch& Branch : RuntimeNode.SequenceBranches)
-			{
-				LinkPinToNode(SourceNode->GetSequenceOutputPin(Branch.BranchId), Branch.NextNodeId);
-			}
-			break;
-		case EDialogueNodeType::RouteByCharacter:
-			for (const FDialogueCompiledCharacterRouteBranch& Branch : RuntimeNode.CharacterRouteBranches)
-			{
-				LinkPinToNode(SourceNode->GetCharacterRouteOutputPin(Branch.BranchId), Branch.NextNodeId);
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	if (Graph->Nodes.IsEmpty())
-	{
-		if (const UEdGraphSchema* Schema = Graph->GetSchema())
-		{
-			Schema->CreateDefaultNodesForGraph(*Graph);
-		}
-	}
-
-	Graph->NotifyGraphChanged();
 }
 
 bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyConversationAsset* ConversationAsset, FDialogueValidationReport& OutValidationReport) const
@@ -1459,7 +1338,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 		Graph->Modify();
 		UParleyDialogueEdGraphNode* EnterNode = NewObject<UParleyDialogueEdGraphNode>(Graph);
 		EnterNode->SetFlags(RF_Transactional);
-		EnterNode->InitializeForNodeType(EDialogueNodeType::Enter);
+		EnterNode->InitializeForNodeType(EDialogueEditorNodeType::Enter);
 		EnterNode->NodePosX = -300;
 		EnterNode->NodePosY = 0;
 		EnterNode->CreateNewGuid();
@@ -1471,7 +1350,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 	TArray<UParleyDialogueEdGraphNode*> EnterNodes;
 	for (UParleyDialogueEdGraphNode* Node : EditorNodes)
 	{
-		if (Node && Node->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+		if (Node && Node->EditorNodeType == EDialogueEditorNodeType::Enter)
 		{
 			EnterNodes.Add(Node);
 		}
@@ -1554,6 +1433,18 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 		return LinkedNode->RuntimeNode.NodeId;
 	};
 
+	const auto AddConditionCompileIssues = [&OutValidationReport](const FGuid NodeId, const TArray<FString>& Warnings, const TArray<FString>& Errors)
+	{
+		for (const FString& Warning : Warnings)
+		{
+			AddValidationIssue(OutValidationReport, EDialogueValidationSeverity::Warning, NodeId, Warning);
+		}
+		for (const FString& Error : Errors)
+		{
+			AddValidationIssue(OutValidationReport, EDialogueValidationSeverity::Error, NodeId, Error);
+		}
+	};
+
 	FDialogueCompiledConversationData CompiledData;
 	int32 EnterCount = 0;
 
@@ -1564,7 +1455,13 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 			continue;
 		}
 
+		if (ParleyDialogueConditionCompile::IsConditionSourceNodeType(EditorNode->EditorNodeType))
+		{
+			continue;
+		}
+
 		FDialogueCompiledNode CompiledNode = EditorNode->RuntimeNode;
+		CompiledNode.NodeType = UParleyDialogueEdGraphNode::MakeRuntimeNodeTypeFromEditor(EditorNode->EditorNodeType);
 		CompiledNode.NextNodeId.Invalidate();
 		CompiledNode.TrueNodeId.Invalidate();
 		CompiledNode.FalseNodeId.Invalidate();
@@ -1591,9 +1488,9 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 			Branch.NextNodeId.Invalidate();
 		}
 
-		switch (CompiledNode.NodeType)
+		switch (EditorNode->EditorNodeType)
 		{
-		case EDialogueNodeType::Enter:
+		case EDialogueEditorNodeType::Enter:
 			CompiledNode.NextNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameNext()), TEXT("Next"));
 			++EnterCount;
 			if (!CompiledData.EnterNodeId.IsValid())
@@ -1601,17 +1498,17 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 				CompiledData.EnterNodeId = CompiledNode.NodeId;
 			}
 			break;
-		case EDialogueNodeType::Line:
-		case EDialogueNodeType::MultiLine:
-		case EDialogueNodeType::SplitLine:
-		case EDialogueNodeType::TagMutation:
-		case EDialogueNodeType::RelationshipMutation:
-		case EDialogueNodeType::FactionMutation:
-		case EDialogueNodeType::Signal:
-		case EDialogueNodeType::Route:
+		case EDialogueEditorNodeType::Line:
+		case EDialogueEditorNodeType::MultiLine:
+		case EDialogueEditorNodeType::SplitLine:
+		case EDialogueEditorNodeType::TagMutation:
+		case EDialogueEditorNodeType::RelationshipMutation:
+		case EDialogueEditorNodeType::FactionMutation:
+		case EDialogueEditorNodeType::Signal:
+		case EDialogueEditorNodeType::Route:
 			CompiledNode.NextNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameNext()), TEXT("Next"));
 			break;
-		case EDialogueNodeType::Choice:
+		case EDialogueEditorNodeType::Choice:
 			for (FDialogueCompiledChoiceBranch& Branch : CompiledNode.ChoiceBranches)
 			{
 				CompiledNode.CompletedChoicePolicy = EditorNode->RuntimeNode.CompletedChoicePolicy;
@@ -1622,11 +1519,29 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 			}
 			CompiledNode.FallbackNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameFallback()), TEXT("Fallback"));
 			break;
-		case EDialogueNodeType::Bool:
-			CompiledNode.TrueNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameTrue()), TEXT("True"));
-			CompiledNode.FalseNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameFalse()), TEXT("False"));
+		case EDialogueEditorNodeType::Branch:
+		{
+			CompiledNode.NodeType = EDialogueNodeType::SwitchOnTagsByPriority;
+			CompiledNode.NodeData.Reset();
+			CompiledNode.SwitchBranches.Reset();
+			CompiledNode.bSwitchHasDefaultOutput = true;
+
+			FDialogueConditionGroup ConditionGroup;
+			TArray<FString> ConditionWarnings;
+			TArray<FString> ConditionErrors;
+			if (ParleyDialogueConditionCompile::BuildConditionGroupFromBranchNode(EditorNode, ConditionGroup, ConditionWarnings, ConditionErrors))
+			{
+				FDialogueCompiledSwitchBranch& TrueBranch = CompiledNode.SwitchBranches.AddDefaulted_GetRef();
+				TrueBranch.BranchId = FGuid::NewGuid();
+				TrueBranch.Label = FText::FromString(TEXT("True"));
+				TrueBranch.LockedConditions = ConditionGroup;
+				TrueBranch.NextNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameTrue()), TEXT("True"));
+			}
+			AddConditionCompileIssues(EditorNode->RuntimeNode.NodeId, ConditionWarnings, ConditionErrors);
+			CompiledNode.SwitchDefaultNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameFalse()), TEXT("False"));
 			break;
-		case EDialogueNodeType::SwitchOnTagsByPriority:
+		}
+		case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 			for (FDialogueCompiledSwitchBranch& Branch : CompiledNode.SwitchBranches)
 			{
 				Branch.NextNodeId = ResolveLinkedNodeId(
@@ -1639,7 +1554,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 				CompiledNode.SwitchDefaultNodeId = ResolveLinkedNodeId(EditorNode, EditorNode->GetOutputPinByName(UParleyDialogueEdGraphNode::GetPinNameSwitchDefault()), TEXT("Default"));
 			}
 			break;
-		case EDialogueNodeType::Random:
+		case EDialogueEditorNodeType::Random:
 			for (FDialogueCompiledRandomBranch& Branch : CompiledNode.RandomBranches)
 			{
 				Branch.NextNodeId = ResolveLinkedNodeId(
@@ -1648,7 +1563,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 					FString::Printf(TEXT("Random %.2f"), Branch.Weight));
 			}
 			break;
-		case EDialogueNodeType::Sequence:
+		case EDialogueEditorNodeType::Sequence:
 			for (int32 BranchIndex = 0; BranchIndex < CompiledNode.SequenceBranches.Num(); ++BranchIndex)
 			{
 				FDialogueCompiledSequenceBranch& Branch = CompiledNode.SequenceBranches[BranchIndex];
@@ -1658,7 +1573,7 @@ bool SDialogueConversationGraphEditorPanel::CompileEditorGraphToRuntime(UParleyC
 					FString::Printf(TEXT("Then %d"), BranchIndex + 1));
 			}
 			break;
-		case EDialogueNodeType::RouteByCharacter:
+		case EDialogueEditorNodeType::RouteByCharacter:
 			for (FDialogueCompiledCharacterRouteBranch& Branch : CompiledNode.CharacterRouteBranches)
 			{
 				Branch.NextNodeId = ResolveLinkedNodeId(

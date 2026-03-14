@@ -30,6 +30,8 @@ private:
 
 	TSharedRef<SWidget> BuildInlineContent() const;
 	TSharedRef<SWidget> BuildChoiceInlineContent() const;
+	TSharedRef<SWidget> BuildBranchInlineContent() const;
+	TSharedRef<SWidget> BuildConditionSourceInlineContent() const;
 	TSharedRef<SWidget> BuildSwitchInlineContent() const;
 	TSharedRef<SWidget> BuildRandomInlineContent() const;
 	TSharedRef<SWidget> BuildSequenceInlineContent() const;
@@ -43,6 +45,8 @@ private:
 	bool HandleBranchRowDropped(EDialogueNodeType BranchNodeType, FGuid DraggedBranchId, FGuid TargetBranchId) const;
 
 	FReply HandleAddBranchPinClicked() const;
+	FReply HandleSetBranchAllClicked() const;
+	FReply HandleSetBranchAnyClicked() const;
 
 	void HandleChoiceTextCommitted(const FText& NewText, ETextCommit::Type CommitType, FGuid ChoiceBranchId) const;
 	void HandleFallbackTextCommitted(const FText& NewText, ETextCommit::Type CommitType) const;

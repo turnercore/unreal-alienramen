@@ -15,6 +15,8 @@
 namespace
 {
 	static const FName PinCategoryExec(TEXT("DialogueExec"));
+	static const FName PinCategoryConditionBool(TEXT("DialogueConditionBool"));
+	static const FString ConditionPinPrefix(TEXT("Condition_"));
 	static const FString ChoicePinPrefix(TEXT("Choice_"));
 	static const FString SwitchPinPrefix(TEXT("Switch_"));
 	static const FString RandomPinPrefix(TEXT("Random_"));
@@ -28,83 +30,118 @@ namespace
 		return PinType;
 	}
 
-	static FText BuildNodeTypeText(const EDialogueNodeType NodeType)
+	static FEdGraphPinType MakeConditionBoolPinType()
+	{
+		FEdGraphPinType PinType;
+		PinType.PinCategory = PinCategoryConditionBool;
+		return PinType;
+	}
+
+	static FText BuildNodeTypeText(const EDialogueEditorNodeType NodeType)
 	{
 		switch (NodeType)
 		{
-		case EDialogueNodeType::Enter:
+		case EDialogueEditorNodeType::Enter:
 			return FText::FromString(TEXT("Enter"));
-		case EDialogueNodeType::Completed:
+		case EDialogueEditorNodeType::Completed:
 			return FText::FromString(TEXT("Completed"));
-		case EDialogueNodeType::Line:
+		case EDialogueEditorNodeType::Line:
 			return FText::FromString(TEXT("Line"));
-		case EDialogueNodeType::Choice:
+		case EDialogueEditorNodeType::Choice:
 			return FText::FromString(TEXT("Choice"));
-		case EDialogueNodeType::Bool:
-			return FText::FromString(TEXT("Bool"));
-		case EDialogueNodeType::SwitchOnTagsByPriority:
+		case EDialogueEditorNodeType::Branch:
+			return FText::FromString(TEXT("Branch"));
+		case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 			return FText::FromString(TEXT("Switch Tags"));
-		case EDialogueNodeType::TagMutation:
+		case EDialogueEditorNodeType::TagMutation:
 			return FText::FromString(TEXT("Tag Mutation"));
-		case EDialogueNodeType::RelationshipMutation:
+		case EDialogueEditorNodeType::RelationshipMutation:
 			return FText::FromString(TEXT("Relationship"));
-		case EDialogueNodeType::FactionMutation:
+		case EDialogueEditorNodeType::FactionMutation:
 			return FText::FromString(TEXT("Faction"));
-		case EDialogueNodeType::Signal:
+		case EDialogueEditorNodeType::Signal:
 			return FText::FromString(TEXT("Signal"));
-		case EDialogueNodeType::Random:
+		case EDialogueEditorNodeType::Random:
 			return FText::FromString(TEXT("Random"));
-		case EDialogueNodeType::Route:
+		case EDialogueEditorNodeType::Route:
 			return FText::FromString(TEXT("Route"));
-		case EDialogueNodeType::Sequence:
+		case EDialogueEditorNodeType::Sequence:
 			return FText::FromString(TEXT("Sequence"));
-		case EDialogueNodeType::MultiLine:
+		case EDialogueEditorNodeType::MultiLine:
 			return FText::FromString(TEXT("Multi-Line"));
-		case EDialogueNodeType::SplitLine:
+		case EDialogueEditorNodeType::SplitLine:
 			return FText::FromString(TEXT("Split Line"));
-		case EDialogueNodeType::RouteByCharacter:
+		case EDialogueEditorNodeType::RouteByCharacter:
 			return FText::FromString(TEXT("Route Character"));
+		case EDialogueEditorNodeType::CheckTags:
+			return FText::FromString(TEXT("Check Tags"));
+		case EDialogueEditorNodeType::CheckRelationship:
+			return FText::FromString(TEXT("Check Relationship"));
+		case EDialogueEditorNodeType::CheckProgress:
+			return FText::FromString(TEXT("Check Progress"));
+		case EDialogueEditorNodeType::CheckStats:
+			return FText::FromString(TEXT("Check Stats"));
+		case EDialogueEditorNodeType::CheckLoadout:
+			return FText::FromString(TEXT("Check Loadout"));
+		case EDialogueEditorNodeType::CheckCharacter:
+			return FText::FromString(TEXT("Check Character"));
+		case EDialogueEditorNodeType::CheckVariable:
+			return FText::FromString(TEXT("Check Variable"));
 		default:
 			return FText::FromString(TEXT("Unknown"));
 		}
 	}
 
-	static FString BuildNodeTypeTooltip(const EDialogueNodeType NodeType)
+	static FString BuildNodeTypeTooltip(const EDialogueEditorNodeType NodeType)
 	{
 		switch (NodeType)
 		{
-		case EDialogueNodeType::Enter:
+		case EDialogueEditorNodeType::Enter:
 			return TEXT("Entry point for this conversation graph.");
-		case EDialogueNodeType::Completed:
+		case EDialogueEditorNodeType::Completed:
 			return TEXT("Conversation completion node.");
-		case EDialogueNodeType::Line:
+		case EDialogueEditorNodeType::Line:
 			return TEXT("Single spoken line.");
-		case EDialogueNodeType::Choice:
+		case EDialogueEditorNodeType::Choice:
 			return TEXT("Player choice branch node.");
-		case EDialogueNodeType::Bool:
-			return TEXT("Conditional true/false branch node.");
-		case EDialogueNodeType::SwitchOnTagsByPriority:
+		case EDialogueEditorNodeType::Branch:
+			return TEXT("Conditional branch node driven by connected bool source nodes.");
+		case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 			return TEXT("Priority switch branch node.");
-		case EDialogueNodeType::TagMutation:
+		case EDialogueEditorNodeType::TagMutation:
 			return TEXT("Gameplay tag mutation node.");
-		case EDialogueNodeType::RelationshipMutation:
+		case EDialogueEditorNodeType::RelationshipMutation:
 			return TEXT("Relationship mutation node.");
-		case EDialogueNodeType::FactionMutation:
+		case EDialogueEditorNodeType::FactionMutation:
 			return TEXT("Faction mutation node.");
-		case EDialogueNodeType::Signal:
+		case EDialogueEditorNodeType::Signal:
 			return TEXT("Fires a gameplay tag signal for game systems to react to.");
-		case EDialogueNodeType::Random:
+		case EDialogueEditorNodeType::Random:
 			return TEXT("Weighted random branch node.");
-		case EDialogueNodeType::Route:
+		case EDialogueEditorNodeType::Route:
 			return TEXT("Flow routing helper node.");
-		case EDialogueNodeType::Sequence:
+		case EDialogueEditorNodeType::Sequence:
 			return TEXT("Sequential branch node.");
-		case EDialogueNodeType::MultiLine:
+		case EDialogueEditorNodeType::MultiLine:
 			return TEXT("Multi-line sequence node.");
-		case EDialogueNodeType::SplitLine:
+		case EDialogueEditorNodeType::SplitLine:
 			return TEXT("Split-line variant node.");
-		case EDialogueNodeType::RouteByCharacter:
+		case EDialogueEditorNodeType::RouteByCharacter:
 			return TEXT("Route by active player character.");
+		case EDialogueEditorNodeType::CheckTags:
+			return TEXT("Evaluates a tag-based dialogue condition and outputs a bool.");
+		case EDialogueEditorNodeType::CheckRelationship:
+			return TEXT("Evaluates relationship points or level and outputs a bool.");
+		case EDialogueEditorNodeType::CheckProgress:
+			return TEXT("Evaluates dialogue seen/completed progress and outputs a bool.");
+		case EDialogueEditorNodeType::CheckStats:
+			return TEXT("Evaluates runtime player stats and outputs a bool.");
+		case EDialogueEditorNodeType::CheckLoadout:
+			return TEXT("Evaluates active loadout tags and outputs a bool.");
+		case EDialogueEditorNodeType::CheckCharacter:
+			return TEXT("Evaluates the active player character and outputs a bool.");
+		case EDialogueEditorNodeType::CheckVariable:
+			return TEXT("Evaluates an injected runtime variable and outputs a bool.");
 		default:
 			return TEXT("Dialogue node.");
 		}
@@ -141,6 +178,11 @@ FName UParleyDialogueEdGraphNode::GetPinNameSwitchDefault()
 	return TEXT("SwitchDefault");
 }
 
+FName UParleyDialogueEdGraphNode::MakeConditionPinName(const FGuid& InputId)
+{
+	return FName(*FString::Printf(TEXT("%s%s"), *ConditionPinPrefix, *InputId.ToString(EGuidFormats::Digits)));
+}
+
 FName UParleyDialogueEdGraphNode::MakeChoicePinName(const FGuid& ChoiceBranchId)
 {
 	return FName(*FString::Printf(TEXT("%s%s"), *ChoicePinPrefix, *ChoiceBranchId.ToString(EGuidFormats::Digits)));
@@ -166,10 +208,98 @@ FName UParleyDialogueEdGraphNode::MakeCharacterRoutePinName(const FGuid& BranchI
 	return FName(*FString::Printf(TEXT("%s%s"), *CharacterRoutePinPrefix, *BranchId.ToString(EGuidFormats::Digits)));
 }
 
-void UParleyDialogueEdGraphNode::InitializeForNodeType(const EDialogueNodeType NodeType)
+EDialogueEditorNodeType UParleyDialogueEdGraphNode::MakeEditorNodeTypeFromRuntime(const EDialogueNodeType NodeType)
 {
+	switch (NodeType)
+	{
+	case EDialogueNodeType::Enter:
+		return EDialogueEditorNodeType::Enter;
+	case EDialogueNodeType::Completed:
+		return EDialogueEditorNodeType::Completed;
+	case EDialogueNodeType::Line:
+		return EDialogueEditorNodeType::Line;
+	case EDialogueNodeType::Choice:
+		return EDialogueEditorNodeType::Choice;
+	case EDialogueNodeType::SwitchOnTagsByPriority:
+		return EDialogueEditorNodeType::SwitchOnTagsByPriority;
+	case EDialogueNodeType::TagMutation:
+		return EDialogueEditorNodeType::TagMutation;
+	case EDialogueNodeType::RelationshipMutation:
+		return EDialogueEditorNodeType::RelationshipMutation;
+	case EDialogueNodeType::FactionMutation:
+		return EDialogueEditorNodeType::FactionMutation;
+	case EDialogueNodeType::Random:
+		return EDialogueEditorNodeType::Random;
+	case EDialogueNodeType::Route:
+		return EDialogueEditorNodeType::Route;
+	case EDialogueNodeType::Sequence:
+		return EDialogueEditorNodeType::Sequence;
+	case EDialogueNodeType::MultiLine:
+		return EDialogueEditorNodeType::MultiLine;
+	case EDialogueNodeType::SplitLine:
+		return EDialogueEditorNodeType::SplitLine;
+	case EDialogueNodeType::RouteByCharacter:
+		return EDialogueEditorNodeType::RouteByCharacter;
+	case EDialogueNodeType::Signal:
+		return EDialogueEditorNodeType::Signal;
+	default:
+		return EDialogueEditorNodeType::Route;
+	}
+}
+
+EDialogueNodeType UParleyDialogueEdGraphNode::MakeRuntimeNodeTypeFromEditor(const EDialogueEditorNodeType NodeType)
+{
+	switch (NodeType)
+	{
+	case EDialogueEditorNodeType::Enter:
+		return EDialogueNodeType::Enter;
+	case EDialogueEditorNodeType::Completed:
+		return EDialogueNodeType::Completed;
+	case EDialogueEditorNodeType::Line:
+		return EDialogueNodeType::Line;
+	case EDialogueEditorNodeType::Choice:
+		return EDialogueNodeType::Choice;
+	case EDialogueEditorNodeType::Branch:
+		return EDialogueNodeType::SwitchOnTagsByPriority;
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
+		return EDialogueNodeType::SwitchOnTagsByPriority;
+	case EDialogueEditorNodeType::TagMutation:
+		return EDialogueNodeType::TagMutation;
+	case EDialogueEditorNodeType::RelationshipMutation:
+		return EDialogueNodeType::RelationshipMutation;
+	case EDialogueEditorNodeType::FactionMutation:
+		return EDialogueNodeType::FactionMutation;
+	case EDialogueEditorNodeType::Random:
+		return EDialogueNodeType::Random;
+	case EDialogueEditorNodeType::Route:
+		return EDialogueNodeType::Route;
+	case EDialogueEditorNodeType::Sequence:
+		return EDialogueNodeType::Sequence;
+	case EDialogueEditorNodeType::MultiLine:
+		return EDialogueNodeType::MultiLine;
+	case EDialogueEditorNodeType::SplitLine:
+		return EDialogueNodeType::SplitLine;
+	case EDialogueEditorNodeType::RouteByCharacter:
+		return EDialogueNodeType::RouteByCharacter;
+	case EDialogueEditorNodeType::Signal:
+		return EDialogueNodeType::Signal;
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckStats:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+	default:
+		return EDialogueNodeType::Route;
+	}
+}
+
+void UParleyDialogueEdGraphNode::InitializeForNodeType(const EDialogueEditorNodeType NodeType)
+{
+	EditorNodeType = NodeType;
 	RuntimeNode = FDialogueCompiledNode();
-	RuntimeNode.NodeType = NodeType;
+	RuntimeNode.NodeType = MakeRuntimeNodeTypeFromEditor(NodeType);
 	RuntimeNode.NodeId = FGuid::NewGuid();
 	RuntimeNode.FallbackChoiceText = FText::FromString(TEXT("..."));
 	RuntimeNode.CompletedChoicePolicy = EDialogueCompletedChoicePolicy::LockedToRecordedChoice;
@@ -185,6 +315,12 @@ void UParleyDialogueEdGraphNode::EnsureStableIds(const bool bRegenerateNodeId, c
 		RuntimeNode.NodeId = FGuid::NewGuid();
 	}
 
+	if (EditorNodeType == EDialogueEditorNodeType::Line && RuntimeNode.NodeType != EDialogueNodeType::Line)
+	{
+		EditorNodeType = MakeEditorNodeTypeFromRuntime(RuntimeNode.NodeType);
+	}
+
+	RuntimeNode.NodeType = MakeRuntimeNodeTypeFromEditor(EditorNodeType);
 	EnsureNodeDataMatchesNodeType();
 	EnsureBranchAndLineIds(bRegenerateBranchIds, bRegenerateNodeId || bRegenerateBranchIds);
 }
@@ -229,6 +365,11 @@ UEdGraphPin* UParleyDialogueEdGraphNode::GetOutputPinByName(const FName PinName)
 	return FindPin(PinName, EGPD_Output);
 }
 
+UEdGraphPin* UParleyDialogueEdGraphNode::GetConditionInputPin(const FGuid& InputId) const
+{
+	return FindPin(MakeConditionPinName(InputId), EGPD_Input);
+}
+
 UEdGraphPin* UParleyDialogueEdGraphNode::GetChoiceOutputPin(const FGuid& ChoiceBranchId) const
 {
 	return FindPin(MakeChoicePinName(ChoiceBranchId), EGPD_Output);
@@ -256,11 +397,12 @@ UEdGraphPin* UParleyDialogueEdGraphNode::GetCharacterRouteOutputPin(const FGuid&
 
 bool UParleyDialogueEdGraphNode::SupportsDynamicBranchPins() const
 {
-	return RuntimeNode.NodeType == EDialogueNodeType::Choice
-		|| RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority
-		|| RuntimeNode.NodeType == EDialogueNodeType::Random
-		|| RuntimeNode.NodeType == EDialogueNodeType::Sequence
-		|| RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter;
+	return EditorNodeType == EDialogueEditorNodeType::Choice
+		|| EditorNodeType == EDialogueEditorNodeType::Branch
+		|| EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority
+		|| EditorNodeType == EDialogueEditorNodeType::Random
+		|| EditorNodeType == EDialogueEditorNodeType::Sequence
+		|| EditorNodeType == EDialogueEditorNodeType::RouteByCharacter;
 }
 
 void UParleyDialogueEdGraphNode::AddDynamicBranchPin()
@@ -274,9 +416,9 @@ void UParleyDialogueEdGraphNode::AddDynamicBranchPin()
 	Modify();
 
 	UEdGraphPin* NewPin = nullptr;
-	switch (RuntimeNode.NodeType)
+	switch (EditorNodeType)
 	{
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 	{
 		FDialogueCompiledChoiceBranch NewBranch;
 		NewBranch.ChoiceBranchId = FGuid::NewGuid();
@@ -289,7 +431,26 @@ void UParleyDialogueEdGraphNode::AddDynamicBranchPin()
 		}
 		break;
 	}
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::Branch:
+	{
+		FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorBranchNodeData>();
+		if (!BranchData)
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorBranchNodeData>();
+			BranchData = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorBranchNodeData>();
+		}
+
+		FDialogueEditorConditionInput NewInput;
+		NewInput.InputId = FGuid::NewGuid();
+		const FDialogueEditorConditionInput& AddedInput = BranchData->Inputs.Add_GetRef(NewInput);
+		NewPin = CreatePin(EGPD_Input, MakeConditionBoolPinType(), MakeConditionPinName(AddedInput.InputId));
+		if (NewPin)
+		{
+			NewPin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Condition %d"), BranchData->Inputs.Num()));
+		}
+		break;
+	}
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 	{
 		FDialogueCompiledSwitchBranch NewBranch;
 		NewBranch.BranchId = FGuid::NewGuid();
@@ -302,7 +463,7 @@ void UParleyDialogueEdGraphNode::AddDynamicBranchPin()
 		}
 		break;
 	}
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Random:
 	{
 		FDialogueCompiledRandomBranch NewBranch;
 		NewBranch.BranchId = FGuid::NewGuid();
@@ -315,7 +476,7 @@ void UParleyDialogueEdGraphNode::AddDynamicBranchPin()
 		}
 		break;
 	}
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 	{
 		FDialogueCompiledSequenceBranch NewBranch;
 		NewBranch.BranchId = FGuid::NewGuid();
@@ -327,7 +488,7 @@ void UParleyDialogueEdGraphNode::AddDynamicBranchPin()
 		}
 		break;
 	}
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 	{
 		FDialogueCompiledCharacterRouteBranch NewBranch;
 		NewBranch.BranchId = FGuid::NewGuid();
@@ -372,33 +533,42 @@ bool UParleyDialogueEdGraphNode::RemoveLastDynamicBranchPin()
 		return false;
 	}
 
-	switch (RuntimeNode.NodeType)
+	switch (EditorNodeType)
 	{
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 		if (RuntimeNode.ChoiceBranches.IsEmpty())
 		{
 			return false;
 		}
 		return RemoveDynamicBranchPinByName(MakeChoicePinName(RuntimeNode.ChoiceBranches.Last().ChoiceBranchId));
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::Branch:
+	{
+		const FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetPtr<FDialogueEditorBranchNodeData>();
+		if (!BranchData || BranchData->Inputs.Num() <= 1)
+		{
+			return false;
+		}
+		return RemoveDynamicBranchPinByName(MakeConditionPinName(BranchData->Inputs.Last().InputId));
+	}
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 		if (RuntimeNode.SwitchBranches.IsEmpty())
 		{
 			return false;
 		}
 		return RemoveDynamicBranchPinByName(MakeSwitchPinName(RuntimeNode.SwitchBranches.Last().BranchId));
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Random:
 		if (RuntimeNode.RandomBranches.Num() <= 1)
 		{
 			return false;
 		}
 		return RemoveDynamicBranchPinByName(MakeRandomPinName(RuntimeNode.RandomBranches.Last().BranchId));
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 		if (RuntimeNode.SequenceBranches.Num() <= 1)
 		{
 			return false;
 		}
 		return RemoveDynamicBranchPinByName(MakeSequencePinName(RuntimeNode.SequenceBranches.Last().BranchId));
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 		if (RuntimeNode.CharacterRouteBranches.IsEmpty())
 		{
 			return false;
@@ -421,7 +591,7 @@ bool UParleyDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinNam
 		[this, PinName]() -> bool
 		{
 			FGuid BranchId;
-			if (RuntimeNode.NodeType == EDialogueNodeType::Choice
+			if (EditorNodeType == EDialogueEditorNodeType::Choice
 				&& TryParseBranchGuidFromPinName(PinName, ChoicePinPrefix, BranchId))
 			{
 				const int32 RemovedCount = RuntimeNode.ChoiceBranches.RemoveAll([BranchId](const FDialogueCompiledChoiceBranch& Branch)
@@ -431,7 +601,23 @@ bool UParleyDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinNam
 				return RemovedCount > 0;
 			}
 
-			if (RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority
+			if (EditorNodeType == EDialogueEditorNodeType::Branch
+				&& TryParseBranchGuidFromPinName(PinName, ConditionPinPrefix, BranchId))
+			{
+				FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorBranchNodeData>();
+				if (!BranchData || BranchData->Inputs.Num() <= 1)
+				{
+					return false;
+				}
+
+				const int32 RemovedCount = BranchData->Inputs.RemoveAll([BranchId](const FDialogueEditorConditionInput& Input)
+				{
+					return Input.InputId == BranchId;
+				});
+				return RemovedCount > 0;
+			}
+
+			if (EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority
 				&& TryParseBranchGuidFromPinName(PinName, SwitchPinPrefix, BranchId))
 			{
 				const int32 RemovedCount = RuntimeNode.SwitchBranches.RemoveAll([BranchId](const FDialogueCompiledSwitchBranch& Branch)
@@ -441,7 +627,7 @@ bool UParleyDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinNam
 				return RemovedCount > 0;
 			}
 
-			if (RuntimeNode.NodeType == EDialogueNodeType::Random
+			if (EditorNodeType == EDialogueEditorNodeType::Random
 				&& TryParseBranchGuidFromPinName(PinName, RandomPinPrefix, BranchId))
 			{
 				if (RuntimeNode.RandomBranches.Num() <= 1)
@@ -456,7 +642,7 @@ bool UParleyDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinNam
 				return RemovedCount > 0;
 			}
 
-			if (RuntimeNode.NodeType == EDialogueNodeType::Sequence
+			if (EditorNodeType == EDialogueEditorNodeType::Sequence
 				&& TryParseBranchGuidFromPinName(PinName, SequencePinPrefix, BranchId))
 			{
 				if (RuntimeNode.SequenceBranches.Num() <= 1)
@@ -471,7 +657,7 @@ bool UParleyDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinNam
 				return RemovedCount > 0;
 			}
 
-			if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter
+			if (EditorNodeType == EDialogueEditorNodeType::RouteByCharacter
 				&& TryParseBranchGuidFromPinName(PinName, CharacterRoutePinPrefix, BranchId))
 			{
 				const int32 RemovedCount = RuntimeNode.CharacterRouteBranches.RemoveAll([BranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
@@ -482,6 +668,29 @@ bool UParleyDialogueEdGraphNode::RemoveDynamicBranchPinByName(const FName PinNam
 			}
 
 			return false;
+		},
+		true);
+}
+
+bool UParleyDialogueEdGraphNode::SetBranchMatchMode(const EDialogueConditionMatchMode NewMatchMode)
+{
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetBranchMatchMode", "Set Branch Match Mode"),
+		[this, NewMatchMode]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::Branch)
+			{
+				return false;
+			}
+
+			FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorBranchNodeData>();
+			if (!BranchData || BranchData->MatchMode == NewMatchMode)
+			{
+				return false;
+			}
+
+			BranchData->MatchMode = NewMatchMode;
+			return true;
 		},
 		true);
 }
@@ -866,7 +1075,7 @@ bool UParleyDialogueEdGraphNode::SetChoiceFallbackText(const FText& NewFallbackT
 		LOCTEXT("SetChoiceFallbackText", "Set Choice Fallback Text"),
 		[this, NewFallbackText]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::Choice || RuntimeNode.FallbackChoiceText.EqualTo(NewFallbackText))
+			if (EditorNodeType != EDialogueEditorNodeType::Choice || RuntimeNode.FallbackChoiceText.EqualTo(NewFallbackText))
 			{
 				return false;
 			}
@@ -883,7 +1092,7 @@ bool UParleyDialogueEdGraphNode::SetRelationshipTargetSpeakerTag(const FGameplay
 		LOCTEXT("SetRelationshipSpeakerTag", "Set Relationship Speaker Tag"),
 		[this, NewTag]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::RelationshipMutation)
+			if (EditorNodeType != EDialogueEditorNodeType::RelationshipMutation)
 			{
 				return false;
 			}
@@ -906,7 +1115,7 @@ bool UParleyDialogueEdGraphNode::SetRelationshipDeltaPoints(const float NewDelta
 		LOCTEXT("SetRelationshipDelta", "Set Relationship Delta"),
 		[this, NewDeltaPoints]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::RelationshipMutation)
+			if (EditorNodeType != EDialogueEditorNodeType::RelationshipMutation)
 			{
 				return false;
 			}
@@ -929,7 +1138,7 @@ bool UParleyDialogueEdGraphNode::SetFactionTag(const FGameplayTag& NewTag)
 		LOCTEXT("SetFactionTag", "Set Faction Tag"),
 		[this, NewTag]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::FactionMutation)
+			if (EditorNodeType != EDialogueEditorNodeType::FactionMutation)
 			{
 				return false;
 			}
@@ -952,7 +1161,7 @@ bool UParleyDialogueEdGraphNode::SetFactionDeltaPopularity(const float NewDeltaP
 		LOCTEXT("SetFactionDeltaPopularity", "Set Faction Popularity Delta"),
 		[this, NewDeltaPopularity]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::FactionMutation)
+			if (EditorNodeType != EDialogueEditorNodeType::FactionMutation)
 			{
 				return false;
 			}
@@ -975,8 +1184,8 @@ bool UParleyDialogueEdGraphNode::AddMultiLineEntry()
 		LOCTEXT("AddMultiLineEntry", "Add Multi-Line Entry"),
 		[this]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
+			if (EditorNodeType != EDialogueEditorNodeType::MultiLine
+				&& EditorNodeType != EDialogueEditorNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -1007,8 +1216,8 @@ bool UParleyDialogueEdGraphNode::RemoveMultiLineEntry(const FGuid& EntryId)
 		LOCTEXT("RemoveMultiLineEntry", "Remove Multi-Line Entry"),
 		[this, EntryId]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
+			if (EditorNodeType != EDialogueEditorNodeType::MultiLine
+				&& EditorNodeType != EDialogueEditorNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -1039,8 +1248,8 @@ bool UParleyDialogueEdGraphNode::ReorderMultiLineEntry(const FGuid& MovingEntryI
 		LOCTEXT("ReorderMultiLineEntry", "Reorder Multi-Line Entry"),
 		[this, MovingEntryId, TargetEntryId]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
+			if (EditorNodeType != EDialogueEditorNodeType::MultiLine
+				&& EditorNodeType != EDialogueEditorNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -1084,8 +1293,8 @@ bool UParleyDialogueEdGraphNode::SetMultiLineEntrySpeakerTag(const FGuid& EntryI
 		LOCTEXT("SetMultiLineEntrySpeakerTag", "Set Multi-Line Speaker Tag"),
 		[this, EntryId, NewSpeakerTag]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
+			if (EditorNodeType != EDialogueEditorNodeType::MultiLine
+				&& EditorNodeType != EDialogueEditorNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -1125,8 +1334,8 @@ bool UParleyDialogueEdGraphNode::SetMultiLineEntryText(const FGuid& EntryId, con
 		LOCTEXT("SetMultiLineEntryText", "Set Multi-Line Text"),
 		[this, EntryId, NewText]() -> bool
 		{
-			if (RuntimeNode.NodeType != EDialogueNodeType::MultiLine
-				&& RuntimeNode.NodeType != EDialogueNodeType::SplitLine)
+			if (EditorNodeType != EDialogueEditorNodeType::MultiLine
+				&& EditorNodeType != EDialogueEditorNodeType::SplitLine)
 			{
 				return false;
 			}
@@ -1267,53 +1476,87 @@ void UParleyDialogueEdGraphNode::AddCharacterRoutePins()
 	}
 }
 
+void UParleyDialogueEdGraphNode::AddConditionInputPins()
+{
+	const FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetPtr<FDialogueEditorBranchNodeData>();
+	if (!BranchData)
+	{
+		return;
+	}
+
+	for (int32 Index = 0; Index < BranchData->Inputs.Num(); ++Index)
+	{
+		const FDialogueEditorConditionInput& Input = BranchData->Inputs[Index];
+		UEdGraphPin* Pin = CreatePin(EGPD_Input, MakeConditionBoolPinType(), MakeConditionPinName(Input.InputId));
+		if (Pin)
+		{
+			Pin->bHidden = false;
+			Pin->bAdvancedView = false;
+			Pin->PinFriendlyName = FText::FromString(FString::Printf(TEXT("Condition %d"), Index + 1));
+		}
+	}
+}
+
 void UParleyDialogueEdGraphNode::AllocateDefaultPins()
 {
 	EnsureStableIds(false, false);
 
-	switch (RuntimeNode.NodeType)
+	switch (EditorNodeType)
 	{
-	case EDialogueNodeType::Enter:
+	case EDialogueEditorNodeType::Enter:
 		AddNextOutputPinIfNeeded();
 		break;
-	case EDialogueNodeType::Completed:
+	case EDialogueEditorNodeType::Completed:
 		AddInputPinIfNeeded();
 		break;
-	case EDialogueNodeType::Line:
-	case EDialogueNodeType::MultiLine:
-	case EDialogueNodeType::SplitLine:
-	case EDialogueNodeType::TagMutation:
-	case EDialogueNodeType::RelationshipMutation:
-	case EDialogueNodeType::FactionMutation:
-	case EDialogueNodeType::Signal:
-	case EDialogueNodeType::Route:
+	case EDialogueEditorNodeType::Line:
+	case EDialogueEditorNodeType::MultiLine:
+	case EDialogueEditorNodeType::SplitLine:
+	case EDialogueEditorNodeType::TagMutation:
+	case EDialogueEditorNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::FactionMutation:
+	case EDialogueEditorNodeType::Signal:
+	case EDialogueEditorNodeType::Route:
 		AddInputPinIfNeeded();
 		AddNextOutputPinIfNeeded();
 		break;
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 		AddInputPinIfNeeded();
 		AddChoicePins();
 		break;
-	case EDialogueNodeType::Bool:
+	case EDialogueEditorNodeType::Branch:
 		AddInputPinIfNeeded();
+		AddConditionInputPins();
 		CreatePin(EGPD_Output, MakeExecPinType(), GetPinNameTrue());
 		CreatePin(EGPD_Output, MakeExecPinType(), GetPinNameFalse());
 		break;
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 		AddInputPinIfNeeded();
 		AddSwitchPins();
 		break;
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Random:
 		AddInputPinIfNeeded();
 		AddRandomPins();
 		break;
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 		AddInputPinIfNeeded();
 		AddSequencePins();
 		break;
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 		AddInputPinIfNeeded();
 		AddCharacterRoutePins();
+		break;
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckStats:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+		if (UEdGraphPin* OutputPin = CreatePin(EGPD_Output, MakeConditionBoolPinType(), GetPinNameTrue()))
+		{
+			OutputPin->PinFriendlyName = FText::FromString(TEXT("Bool"));
+		}
 		break;
 	default:
 		AddInputPinIfNeeded();
@@ -1324,13 +1567,13 @@ void UParleyDialogueEdGraphNode::AllocateDefaultPins()
 
 bool UParleyDialogueEdGraphNode::CanUserDeleteNode() const
 {
-	return RuntimeNode.NodeType != EDialogueNodeType::Enter;
+	return EditorNodeType != EDialogueEditorNodeType::Enter;
 }
 
 FText UParleyDialogueEdGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
 	(void)TitleType;
-	return BuildNodeTypeText(RuntimeNode.NodeType);
+	return BuildNodeTypeText(EditorNodeType);
 }
 
 FText UParleyDialogueEdGraphNode::GetTooltipText() const
@@ -1343,10 +1586,10 @@ FText UParleyDialogueEdGraphNode::GetTooltipText() const
 	const FString InlineSummary = BuildInlineSummary();
 	if (InlineSummary.IsEmpty())
 	{
-		return FText::FromString(BuildNodeTypeTooltip(RuntimeNode.NodeType));
+		return FText::FromString(BuildNodeTypeTooltip(EditorNodeType));
 	}
 
-	return FText::FromString(FString::Printf(TEXT("%s\n%s"), *BuildNodeTypeTooltip(RuntimeNode.NodeType), *InlineSummary));
+	return FText::FromString(FString::Printf(TEXT("%s\n%s"), *BuildNodeTypeTooltip(EditorNodeType), *InlineSummary));
 }
 
 FLinearColor UParleyDialogueEdGraphNode::GetNodeTitleColor() const
@@ -1360,40 +1603,48 @@ FLinearColor UParleyDialogueEdGraphNode::GetNodeTitleColor() const
 		return FLinearColor(0.85f, 0.55f, 0.1f, 1.0f);
 	}
 
-	switch (RuntimeNode.NodeType)
+	switch (EditorNodeType)
 	{
-	case EDialogueNodeType::Enter:
+	case EDialogueEditorNodeType::Enter:
 		return FLinearColor(0.16f, 0.22f, 0.30f, 1.0f);
-	case EDialogueNodeType::Completed:
+	case EDialogueEditorNodeType::Completed:
 		return FLinearColor(0.16f, 0.27f, 0.18f, 1.0f);
-	case EDialogueNodeType::Line:
+	case EDialogueEditorNodeType::Line:
 		return FLinearColor(0.14f, 0.21f, 0.23f, 1.0f);
-	case EDialogueNodeType::MultiLine:
+	case EDialogueEditorNodeType::MultiLine:
 		return FLinearColor(0.14f, 0.24f, 0.28f, 1.0f);
-	case EDialogueNodeType::SplitLine:
+	case EDialogueEditorNodeType::SplitLine:
 		return FLinearColor(0.13f, 0.25f, 0.31f, 1.0f);
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 		return FLinearColor(0.22f, 0.20f, 0.30f, 1.0f);
-	case EDialogueNodeType::Bool:
+	case EDialogueEditorNodeType::Branch:
 		return FLinearColor(0.19f, 0.20f, 0.27f, 1.0f);
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 		return FLinearColor(0.20f, 0.19f, 0.28f, 1.0f);
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Random:
 		return FLinearColor(0.21f, 0.19f, 0.29f, 1.0f);
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 		return FLinearColor(0.20f, 0.22f, 0.28f, 1.0f);
-	case EDialogueNodeType::TagMutation:
+	case EDialogueEditorNodeType::TagMutation:
 		return FLinearColor(0.16f, 0.24f, 0.17f, 1.0f);
-	case EDialogueNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::RelationshipMutation:
 		return FLinearColor(0.27f, 0.21f, 0.16f, 1.0f);
-	case EDialogueNodeType::FactionMutation:
+	case EDialogueEditorNodeType::FactionMutation:
 		return FLinearColor(0.26f, 0.24f, 0.16f, 1.0f);
-	case EDialogueNodeType::Signal:
+	case EDialogueEditorNodeType::Signal:
 		return FLinearColor(0.24f, 0.16f, 0.27f, 1.0f);
-	case EDialogueNodeType::Route:
+	case EDialogueEditorNodeType::Route:
 		return FLinearColor(0.18f, 0.18f, 0.18f, 1.0f);
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 		return FLinearColor(0.17f, 0.20f, 0.30f, 1.0f);
+	case EDialogueEditorNodeType::CheckTags:
+	case EDialogueEditorNodeType::CheckRelationship:
+	case EDialogueEditorNodeType::CheckProgress:
+	case EDialogueEditorNodeType::CheckStats:
+	case EDialogueEditorNodeType::CheckLoadout:
+	case EDialogueEditorNodeType::CheckCharacter:
+	case EDialogueEditorNodeType::CheckVariable:
+		return FLinearColor(0.16f, 0.26f, 0.30f, 1.0f);
 	default:
 		return FLinearColor(0.18f, 0.18f, 0.18f, 1.0f);
 	}
@@ -1447,7 +1698,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					if (!IsValid(MutableNode) || !MutableNode->CanDuplicateNode() || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+					if (!IsValid(MutableNode) || !MutableNode->CanDuplicateNode() || MutableNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 					{
 						return;
 					}
@@ -1464,7 +1715,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					return IsValid(MutableNode) && MutableNode->CanDuplicateNode() && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter;
+					return IsValid(MutableNode) && MutableNode->CanDuplicateNode() && MutableNode->EditorNodeType != EDialogueEditorNodeType::Enter;
 				}))));
 	EditSection.AddEntry(FToolMenuEntry::InitMenuEntry(
 		TEXT("ARDialogueCutNode"),
@@ -1476,7 +1727,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					if (!IsValid(MutableNode) || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter || !MutableNode->CanUserDeleteNode())
+					if (!IsValid(MutableNode) || MutableNode->EditorNodeType == EDialogueEditorNodeType::Enter || !MutableNode->CanUserDeleteNode())
 					{
 						return;
 					}
@@ -1507,7 +1758,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				[MutableNode]()
 				{
 					return IsValid(MutableNode)
-						&& MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter
+						&& MutableNode->EditorNodeType != EDialogueEditorNodeType::Enter
 						&& MutableNode->CanDuplicateNode()
 						&& MutableNode->CanUserDeleteNode();
 				}))));
@@ -1521,7 +1772,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					if (!IsValid(MutableNode) || !MutableNode->CanDuplicateNode() || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+					if (!IsValid(MutableNode) || !MutableNode->CanDuplicateNode() || MutableNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 					{
 						return;
 					}
@@ -1554,7 +1805,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 
 						if (UParleyDialogueEdGraphNode* DialogueNode = Cast<UParleyDialogueEdGraphNode>(PastedNode))
 						{
-							if (DialogueNode->RuntimeNode.NodeType == EDialogueNodeType::Enter)
+							if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::Enter)
 							{
 								DialogueNode->Modify();
 								DialogueNode->DestroyNode();
@@ -1580,7 +1831,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					return IsValid(MutableNode) && MutableNode->CanDuplicateNode() && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter;
+					return IsValid(MutableNode) && MutableNode->CanDuplicateNode() && MutableNode->EditorNodeType != EDialogueEditorNodeType::Enter;
 				}))));
 	EditSection.AddEntry(FToolMenuEntry::InitMenuEntry(
 		TEXT("ARDialogueDeleteNode"),
@@ -1592,7 +1843,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					if (!IsValid(MutableNode) || MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Enter || !MutableNode->CanUserDeleteNode())
+					if (!IsValid(MutableNode) || MutableNode->EditorNodeType == EDialogueEditorNodeType::Enter || !MutableNode->CanUserDeleteNode())
 					{
 						return;
 					}
@@ -1614,10 +1865,10 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 				MutableNode,
 				[MutableNode]()
 				{
-					return IsValid(MutableNode) && MutableNode->RuntimeNode.NodeType != EDialogueNodeType::Enter && MutableNode->CanUserDeleteNode();
+					return IsValid(MutableNode) && MutableNode->EditorNodeType != EDialogueEditorNodeType::Enter && MutableNode->CanUserDeleteNode();
 				}))));
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine || RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+	if (EditorNodeType == EDialogueEditorNodeType::MultiLine || EditorNodeType == EDialogueEditorNodeType::SplitLine)
 	{
 		FToolMenuSection& MultiLineSection = Menu->AddSection(
 			TEXT("ARDialogueMultiLine"),
@@ -1718,7 +1969,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 
 	if (!Context->Pin)
 	{
-		if (RuntimeNode.NodeType == EDialogueNodeType::Choice)
+		if (EditorNodeType == EDialogueEditorNodeType::Choice)
 		{
 			for (int32 Index = 0; Index < RuntimeNode.ChoiceBranches.Num(); ++Index)
 			{
@@ -1743,7 +1994,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 						}))));
 			}
 		}
-		else if (RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+		else if (EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
 		{
 			for (int32 Index = 0; Index < RuntimeNode.SwitchBranches.Num(); ++Index)
 			{
@@ -1768,7 +2019,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 						}))));
 			}
 		}
-		else if (RuntimeNode.NodeType == EDialogueNodeType::Random)
+		else if (EditorNodeType == EDialogueEditorNodeType::Random)
 		{
 			for (int32 Index = 0; Index < RuntimeNode.RandomBranches.Num(); ++Index)
 			{
@@ -1791,7 +2042,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 						}))));
 			}
 		}
-		else if (RuntimeNode.NodeType == EDialogueNodeType::Sequence)
+		else if (EditorNodeType == EDialogueEditorNodeType::Sequence)
 		{
 			for (int32 Index = 0; Index < RuntimeNode.SequenceBranches.Num(); ++Index)
 			{
@@ -1814,7 +2065,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 					}))));
 			}
 		}
-		else if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+		else if (EditorNodeType == EDialogueEditorNodeType::RouteByCharacter)
 		{
 			for (int32 Index = 0; Index < RuntimeNode.CharacterRouteBranches.Num(); ++Index)
 			{
@@ -1843,30 +2094,56 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 		return;
 	}
 
-	if (!Context->Pin || Context->Pin->Direction != EGPD_Output)
+	if (EditorNodeType == EDialogueEditorNodeType::Branch && Context->Pin->Direction == EGPD_Input)
+	{
+		FGuid ParsedInputId;
+		if (!TryParseBranchGuidFromPinName(Context->Pin->PinName, ConditionPinPrefix, ParsedInputId))
+		{
+			return;
+		}
+
+		const FName PinName = Context->Pin->PinName;
+		Section.AddEntry(FToolMenuEntry::InitMenuEntry(
+			TEXT("ARDialogueDeleteConditionPin"),
+			LOCTEXT("ARDialogueDeleteConditionPinLabel", "Delete Condition Pin"),
+			LOCTEXT("ARDialogueDeleteConditionPinTooltip", "Delete this condition input pin and clear its connection."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateWeakLambda(
+				MutableNode,
+				[MutableNode, PinName]()
+				{
+					if (IsValid(MutableNode))
+					{
+						MutableNode->RemoveDynamicBranchPinByName(PinName);
+					}
+				}))));
+		return;
+	}
+
+	if (Context->Pin->Direction != EGPD_Output)
 	{
 		return;
 	}
 
 	FGuid ParsedBranchId;
 	bool bCanDeletePin = false;
-	if (RuntimeNode.NodeType == EDialogueNodeType::Choice)
+	if (EditorNodeType == EDialogueEditorNodeType::Choice)
 	{
 		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, ChoicePinPrefix, ParsedBranchId);
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+	else if (EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
 	{
 		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, SwitchPinPrefix, ParsedBranchId);
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::Random)
+	else if (EditorNodeType == EDialogueEditorNodeType::Random)
 	{
 		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, RandomPinPrefix, ParsedBranchId);
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::Sequence)
+	else if (EditorNodeType == EDialogueEditorNodeType::Sequence)
 	{
 		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, SequencePinPrefix, ParsedBranchId);
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+	else if (EditorNodeType == EDialogueEditorNodeType::RouteByCharacter)
 	{
 		bCanDeletePin = TryParseBranchGuidFromPinName(Context->Pin->PinName, CharacterRoutePinPrefix, ParsedBranchId);
 	}
@@ -1878,7 +2155,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 
 	int32 BranchIndex = INDEX_NONE;
 	int32 BranchCount = 0;
-	if (RuntimeNode.NodeType == EDialogueNodeType::Choice)
+	if (EditorNodeType == EDialogueEditorNodeType::Choice)
 	{
 		BranchIndex = RuntimeNode.ChoiceBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledChoiceBranch& Branch)
 		{
@@ -1886,7 +2163,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 		});
 		BranchCount = RuntimeNode.ChoiceBranches.Num();
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+	else if (EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
 	{
 		BranchIndex = RuntimeNode.SwitchBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledSwitchBranch& Branch)
 		{
@@ -1894,7 +2171,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 		});
 		BranchCount = RuntimeNode.SwitchBranches.Num();
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::Random)
+	else if (EditorNodeType == EDialogueEditorNodeType::Random)
 	{
 		BranchIndex = RuntimeNode.RandomBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledRandomBranch& Branch)
 		{
@@ -1902,7 +2179,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 		});
 		BranchCount = RuntimeNode.RandomBranches.Num();
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::Sequence)
+	else if (EditorNodeType == EDialogueEditorNodeType::Sequence)
 	{
 		BranchIndex = RuntimeNode.SequenceBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledSequenceBranch& Branch)
 		{
@@ -1910,7 +2187,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 		});
 		BranchCount = RuntimeNode.SequenceBranches.Num();
 	}
-	else if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+	else if (EditorNodeType == EDialogueEditorNodeType::RouteByCharacter)
 	{
 		BranchIndex = RuntimeNode.CharacterRouteBranches.IndexOfByPredicate([ParsedBranchId](const FDialogueCompiledCharacterRouteBranch& Branch)
 		{
@@ -1919,7 +2196,7 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 		BranchCount = RuntimeNode.CharacterRouteBranches.Num();
 	}
 
-	if (RuntimeNode.NodeType != EDialogueNodeType::Sequence && BranchIndex > 0)
+	if (EditorNodeType != EDialogueEditorNodeType::Sequence && BranchIndex > 0)
 	{
 		Section.AddEntry(FToolMenuEntry::InitMenuEntry(
 			TEXT("ARDialogueMovePinUp"),
@@ -1935,27 +2212,27 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 						return;
 					}
 
-					if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Choice)
+					if (MutableNode->EditorNodeType == EDialogueEditorNodeType::Choice)
 					{
 						MutableNode->MoveChoiceBranch(ParsedBranchId, true);
 					}
-					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+					else if (MutableNode->EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
 					{
 						MutableNode->MoveSwitchBranch(ParsedBranchId, true);
 					}
-					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Random
+					else if (MutableNode->EditorNodeType == EDialogueEditorNodeType::Random
 						&& MutableNode->RuntimeNode.RandomBranches.IsValidIndex(BranchIndex - 1))
 					{
 						MutableNode->ReorderRandomBranch(ParsedBranchId, MutableNode->RuntimeNode.RandomBranches[BranchIndex - 1].BranchId);
 					}
-					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+					else if (MutableNode->EditorNodeType == EDialogueEditorNodeType::RouteByCharacter)
 					{
 						MutableNode->MoveCharacterRouteBranch(ParsedBranchId, true);
 					}
 				}))));
 	}
 
-	if (RuntimeNode.NodeType != EDialogueNodeType::Sequence && BranchIndex != INDEX_NONE && BranchIndex + 1 < BranchCount)
+	if (EditorNodeType != EDialogueEditorNodeType::Sequence && BranchIndex != INDEX_NONE && BranchIndex + 1 < BranchCount)
 	{
 		Section.AddEntry(FToolMenuEntry::InitMenuEntry(
 			TEXT("ARDialogueMovePinDown"),
@@ -1971,20 +2248,20 @@ void UParleyDialogueEdGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGra
 						return;
 					}
 
-					if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Choice)
+					if (MutableNode->EditorNodeType == EDialogueEditorNodeType::Choice)
 					{
 						MutableNode->MoveChoiceBranch(ParsedBranchId, false);
 					}
-					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+					else if (MutableNode->EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
 					{
 						MutableNode->MoveSwitchBranch(ParsedBranchId, false);
 					}
-					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::Random
+					else if (MutableNode->EditorNodeType == EDialogueEditorNodeType::Random
 						&& MutableNode->RuntimeNode.RandomBranches.IsValidIndex(BranchIndex + 1))
 					{
 						MutableNode->ReorderRandomBranch(ParsedBranchId, MutableNode->RuntimeNode.RandomBranches[BranchIndex + 1].BranchId);
 					}
-					else if (MutableNode->RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+					else if (MutableNode->EditorNodeType == EDialogueEditorNodeType::RouteByCharacter)
 					{
 						MutableNode->MoveCharacterRouteBranch(ParsedBranchId, false);
 					}
@@ -2114,49 +2391,91 @@ bool UParleyDialogueEdGraphNode::TryParseBranchGuidFromPinName(const FName PinNa
 
 void UParleyDialogueEdGraphNode::EnsureNodeDataMatchesNodeType()
 {
-	switch (RuntimeNode.NodeType)
+	switch (EditorNodeType)
 	{
-	case EDialogueNodeType::Line:
+	case EDialogueEditorNodeType::Line:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueLineNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueLineNodeData>();
 		}
 		break;
-	case EDialogueNodeType::MultiLine:
-	case EDialogueNodeType::SplitLine:
+	case EDialogueEditorNodeType::MultiLine:
+	case EDialogueEditorNodeType::SplitLine:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueMultiLineNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueMultiLineNodeData>();
 		}
 		break;
-	case EDialogueNodeType::Bool:
-		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueBoolNodeData::StaticStruct())
+	case EDialogueEditorNodeType::Branch:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorBranchNodeData::StaticStruct())
 		{
-			RuntimeNode.NodeData.InitializeAs<FDialogueBoolNodeData>();
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorBranchNodeData>();
 		}
 		break;
-	case EDialogueNodeType::TagMutation:
+	case EDialogueEditorNodeType::TagMutation:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueTagMutationNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueTagMutationNodeData>();
 		}
 		break;
-	case EDialogueNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::RelationshipMutation:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueRelationshipMutationNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueRelationshipMutationNodeData>();
 		}
 		break;
-	case EDialogueNodeType::FactionMutation:
+	case EDialogueEditorNodeType::FactionMutation:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueFactionMutationNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueFactionMutationNodeData>();
 		}
 		break;
-	case EDialogueNodeType::Signal:
+	case EDialogueEditorNodeType::Signal:
 		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueSignalNodeData::StaticStruct())
 		{
 			RuntimeNode.NodeData.InitializeAs<FDialogueSignalNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckTags:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckTagsNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckTagsNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckRelationship:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckRelationshipNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckRelationshipNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckProgress:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckProgressNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckProgressNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckStats:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckStatsNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckStatsNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckLoadout:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckLoadoutNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckLoadoutNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckCharacter:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckCharacterNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckCharacterNodeData>();
+		}
+		break;
+	case EDialogueEditorNodeType::CheckVariable:
+		if (RuntimeNode.NodeData.GetScriptStruct() != FDialogueEditorCheckVariableNodeData::StaticStruct())
+		{
+			RuntimeNode.NodeData.InitializeAs<FDialogueEditorCheckVariableNodeData>();
 		}
 		break;
 	default:
@@ -2167,7 +2486,7 @@ void UParleyDialogueEdGraphNode::EnsureNodeDataMatchesNodeType()
 
 void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBranches, const bool bRegenerateLineGuid)
 {
-	if (RuntimeNode.NodeType == EDialogueNodeType::Line)
+	if (EditorNodeType == EDialogueEditorNodeType::Line)
 	{
 		if (FDialogueLineNodeData* LineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueLineNodeData>())
 		{
@@ -2178,7 +2497,7 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::MultiLine || RuntimeNode.NodeType == EDialogueNodeType::SplitLine)
+	if (EditorNodeType == EDialogueEditorNodeType::MultiLine || EditorNodeType == EDialogueEditorNodeType::SplitLine)
 	{
 		FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
 		if (MultiLineData)
@@ -2208,7 +2527,30 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::RouteByCharacter)
+	if (EditorNodeType == EDialogueEditorNodeType::Branch)
+	{
+		FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorBranchNodeData>();
+		if (BranchData)
+		{
+			if (BranchData->Inputs.IsEmpty())
+			{
+				FDialogueEditorConditionInput& DefaultInput = BranchData->Inputs.AddDefaulted_GetRef();
+				DefaultInput.InputId = FGuid::NewGuid();
+			}
+
+			TSet<FGuid> SeenInputIds;
+			for (FDialogueEditorConditionInput& Input : BranchData->Inputs)
+			{
+				if (bRegenerateBranches || !Input.InputId.IsValid() || SeenInputIds.Contains(Input.InputId))
+				{
+					Input.InputId = FGuid::NewGuid();
+				}
+				SeenInputIds.Add(Input.InputId);
+			}
+		}
+	}
+
+	if (EditorNodeType == EDialogueEditorNodeType::RouteByCharacter)
 	{
 		if (RuntimeNode.CharacterRouteBranches.IsEmpty())
 		{
@@ -2228,7 +2570,7 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::Choice)
+	if (EditorNodeType == EDialogueEditorNodeType::Choice)
 	{
 		if (RuntimeNode.FallbackChoiceText.IsEmpty())
 		{
@@ -2247,7 +2589,7 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::SwitchOnTagsByPriority)
+	if (EditorNodeType == EDialogueEditorNodeType::SwitchOnTagsByPriority)
 	{
 		TSet<FGuid> SeenBranchIds;
 		for (FDialogueCompiledSwitchBranch& Branch : RuntimeNode.SwitchBranches)
@@ -2260,7 +2602,7 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::Random)
+	if (EditorNodeType == EDialogueEditorNodeType::Random)
 	{
 		if (RuntimeNode.RandomBranches.IsEmpty())
 		{
@@ -2281,7 +2623,7 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 		}
 	}
 
-	if (RuntimeNode.NodeType == EDialogueNodeType::Sequence)
+	if (EditorNodeType == EDialogueEditorNodeType::Sequence)
 	{
 		if (RuntimeNode.SequenceBranches.IsEmpty())
 		{
@@ -2304,9 +2646,9 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 
 FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 {
-	switch (RuntimeNode.NodeType)
+	switch (EditorNodeType)
 	{
-	case EDialogueNodeType::Line:
+	case EDialogueEditorNodeType::Line:
 	{
 		const FDialogueLineNodeData* LineData = RuntimeNode.NodeData.GetPtr<FDialogueLineNodeData>();
 		if (!LineData)
@@ -2321,60 +2663,60 @@ FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 			LineData->SkipLockedConditions.Conditions.Num(),
 			LineData->SkipBlockedConditions.Conditions.Num());
 	}
-	case EDialogueNodeType::MultiLine:
+	case EDialogueEditorNodeType::MultiLine:
 	{
 		const FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
 		return MultiLineData
 			? FString::Printf(TEXT("Lines:%d"), MultiLineData->Lines.Num())
 			: TEXT("Invalid multiline payload");
 	}
-	case EDialogueNodeType::SplitLine:
+	case EDialogueEditorNodeType::SplitLine:
 	{
 		const FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetPtr<FDialogueMultiLineNodeData>();
 		return MultiLineData
 			? FString::Printf(TEXT("Split Lines:%d"), MultiLineData->Lines.Num())
 			: TEXT("Invalid split-line payload");
 	}
-	case EDialogueNodeType::Choice:
+	case EDialogueEditorNodeType::Choice:
 		return FString::Printf(TEXT("Choices:%d Fallback:\"%s\" Important:%s"),
 			RuntimeNode.ChoiceBranches.Num(),
 			*RuntimeNode.FallbackChoiceText.ToString(),
 			RuntimeNode.bChoiceNodeImportant ? TEXT("Y") : TEXT("N"));
-	case EDialogueNodeType::Bool:
+	case EDialogueEditorNodeType::Branch:
 	{
-		const FDialogueBoolNodeData* BoolData = RuntimeNode.NodeData.GetPtr<FDialogueBoolNodeData>();
-		if (!BoolData)
+		const FDialogueEditorBranchNodeData* BranchData = RuntimeNode.NodeData.GetPtr<FDialogueEditorBranchNodeData>();
+		if (!BranchData)
 		{
-			return TEXT("Invalid bool payload");
+			return TEXT("Invalid branch payload");
 		}
-		return FString::Printf(TEXT("Cond Source:%d Op:%d"),
-			static_cast<int32>(BoolData->Condition.Source),
-			static_cast<int32>(BoolData->Condition.Operator));
+		return FString::Printf(TEXT("%s Conditions:%d"),
+			BranchData->MatchMode == EDialogueConditionMatchMode::All ? TEXT("AND") : TEXT("OR"),
+			BranchData->Inputs.Num());
 	}
-	case EDialogueNodeType::SwitchOnTagsByPriority:
+	case EDialogueEditorNodeType::SwitchOnTagsByPriority:
 		return FString::Printf(TEXT("Branches:%d Default:%s"),
 			RuntimeNode.SwitchBranches.Num(),
 			RuntimeNode.bSwitchHasDefaultOutput ? TEXT("Y") : TEXT("N"));
-	case EDialogueNodeType::TagMutation:
+	case EDialogueEditorNodeType::TagMutation:
 	{
 		const FDialogueTagMutationNodeData* MutationData = RuntimeNode.NodeData.GetPtr<FDialogueTagMutationNodeData>();
 		return MutationData ? FString::Printf(TEXT("Mutations:%d"), MutationData->Mutations.Num()) : TEXT("Invalid tag mutation payload");
 	}
-	case EDialogueNodeType::RelationshipMutation:
+	case EDialogueEditorNodeType::RelationshipMutation:
 	{
 		const FDialogueRelationshipMutationNodeData* MutationData = RuntimeNode.NodeData.GetPtr<FDialogueRelationshipMutationNodeData>();
 		return MutationData
 			? FString::Printf(TEXT("Target:%s Delta:%+.2f"), *MutationData->TargetSpeakerTag.ToString(), MutationData->DeltaPoints)
 			: TEXT("Invalid relationship payload");
 	}
-	case EDialogueNodeType::FactionMutation:
+	case EDialogueEditorNodeType::FactionMutation:
 	{
 		const FDialogueFactionMutationNodeData* MutationData = RuntimeNode.NodeData.GetPtr<FDialogueFactionMutationNodeData>();
 		return MutationData
 			? FString::Printf(TEXT("Faction:%s Delta:%+.2f"), *MutationData->FactionTag.ToString(), MutationData->DeltaPopularity)
 			: TEXT("Invalid faction payload");
 	}
-	case EDialogueNodeType::Signal:
+	case EDialogueEditorNodeType::Signal:
 	{
 		const FDialogueSignalNodeData* SignalData = RuntimeNode.NodeData.GetPtr<FDialogueSignalNodeData>();
 		if (!SignalData)
@@ -2386,14 +2728,59 @@ FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 			? SignalData->SignalTag.ToString()
 			: TEXT("No signal tag");
 	}
-	case EDialogueNodeType::Random:
+	case EDialogueEditorNodeType::Random:
 		return FString::Printf(TEXT("Branches:%d"), RuntimeNode.RandomBranches.Num());
-	case EDialogueNodeType::Sequence:
+	case EDialogueEditorNodeType::Sequence:
 		return FString::Printf(TEXT("Then Branches:%d"), RuntimeNode.SequenceBranches.Num());
-	case EDialogueNodeType::Route:
+	case EDialogueEditorNodeType::Route:
 		return TEXT("Wire organizer (no runtime side effects)");
-	case EDialogueNodeType::RouteByCharacter:
+	case EDialogueEditorNodeType::RouteByCharacter:
 		return FString::Printf(TEXT("Character Branches:%d"), RuntimeNode.CharacterRouteBranches.Num());
+	case EDialogueEditorNodeType::CheckTags:
+	{
+		const FDialogueEditorCheckTagsNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckTagsNodeData>();
+		return Data
+			? FString::Printf(TEXT("Source:%d Tag:%s"), static_cast<int32>(Data->Source), *Data->TagValue.ToString())
+			: TEXT("Invalid tags payload");
+	}
+	case EDialogueEditorNodeType::CheckRelationship:
+	{
+		const FDialogueEditorCheckRelationshipNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckRelationshipNodeData>();
+		return Data
+			? FString::Printf(TEXT("Source:%d Value:%.2f"), static_cast<int32>(Data->Source), Data->NumericValue)
+			: TEXT("Invalid relationship check payload");
+	}
+	case EDialogueEditorNodeType::CheckProgress:
+	{
+		const FDialogueEditorCheckProgressNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckProgressNodeData>();
+		return Data
+			? FString::Printf(TEXT("Source:%d Expected:%s"), static_cast<int32>(Data->Source), Data->bExpectedValue ? TEXT("True") : TEXT("False"))
+			: TEXT("Invalid progress payload");
+	}
+	case EDialogueEditorNodeType::CheckStats:
+	{
+		const FDialogueEditorCheckStatsNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckStatsNodeData>();
+		return Data
+			? FString::Printf(TEXT("Source:%d Value:%.2f"), static_cast<int32>(Data->Source), Data->NumericValue)
+			: TEXT("Invalid stats payload");
+	}
+	case EDialogueEditorNodeType::CheckLoadout:
+	{
+		const FDialogueEditorCheckLoadoutNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckLoadoutNodeData>();
+		return Data ? Data->TagValue.ToString() : TEXT("Invalid loadout payload");
+	}
+	case EDialogueEditorNodeType::CheckCharacter:
+	{
+		const FDialogueEditorCheckCharacterNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
+		return Data
+			? (Data->Character == EDialogueEditorCharacterCondition::Brother ? TEXT("Brother") : TEXT("Sister"))
+			: TEXT("Invalid character payload");
+	}
+	case EDialogueEditorNodeType::CheckVariable:
+	{
+		const FDialogueEditorCheckVariableNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckVariableNodeData>();
+		return Data ? Data->VariableName.ToString() : TEXT("Invalid variable payload");
+	}
 	default:
 		return FString();
 	}

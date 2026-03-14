@@ -74,7 +74,6 @@ private:
 	void CreateCommentAtLocation(const FVector2f& Location);
 
 	bool EnsureConversationEditorGraph(UParleyConversationAsset* ConversationAsset);
-	void RebuildEditorGraphFromCompiled(UParleyConversationAsset* ConversationAsset, UParleyDialogueEdGraph* Graph) const;
 	bool CompileEditorGraphToRuntime(UParleyConversationAsset* ConversationAsset, FDialogueValidationReport& OutValidationReport) const;
 	void ApplyValidationToEditorNodes(UParleyConversationAsset* ConversationAsset, const FDialogueValidationReport& ValidationReport) const;
 

@@ -121,6 +121,8 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UParleySpeakerSubsystem` owns speaker talkable-state resolution/cache.
 - `UParleySpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
 - `UEmoComponent` owns replicated overhead emotion display state.
+- Parley conversation graph condition authoring is editor-only: `Branch` + `Check*` nodes persist in the editor graph, then compile down to existing runtime condition groups/switch routing; runtime does not execute the editor-only condition source nodes directly.
+- Conversation graph redraw/open behavior is editor-graph authoritative (`EditorGraph`); editor tooling does not reconstruct authoring nodes from compiled runtime node data.
 - Runtime overhead emotion rendering lives in `AEmoHUDBase` (Emo plugin) with `AARHUDBase` as the game-specific wrapper.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
