@@ -4,17 +4,13 @@ This site is built with MkDocs Material + Doxygen. Everything under `Documentati
 
 ## Quick links
 
-- Gameplay Ability System: [GAS overview](README_GAS.md) - [GAS Blueprint attributes](README_GAS_Blueprint_Attributes.md)
-- Networking/session system: [Session subsystem](README_SessionSubsystem.md)
-- Save system: [Save subsystem](README_SaveSubsystem.md)
-- Invader drops: [Invader drops runtime](README_InvaderDrops.md)
-- Progression + unlocks: [Progression + Unlocks](README_ProgressionUnlocks.md)
-- Dialogue plugin boundary: [Dialogue plugin ownership](README_DialoguePluginBoundary.md)
-- Dialogue/NPC system: [Dialogue + NPC runtime](README_DialogueNPC.md)
-- Shop ramen ordering/serving (built on top): [Shop ramen system](README_ShopRamenSystem.md)
-- Scrapyard extraction + temp buffs: [Scrapyard mode + temp buffs](README_ScrapyardMode.md)
-- Faction election system (built on top): [Faction subsystem](README_FactionSubsystem.md)
-- C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
+- Plugins: [Plugins overview](README_Plugins.md) - [TagKey](README_Plugins_TagKey.md) - [Parley runtime](README_DialogueNPC.md) - [Emo](README_Plugins_Emo.md)
+- Shop: [Shop overview](README_Shop.md) - [Shop runtime](README_ShopRamenSystem.md) - [Voting](README_FactionSubsystem.md)
+- Invader: [Invader overview](README_Invader.md) - [Pickups](README_InvaderDrops.md) - [Loadouts](README_Invader_Loadouts.md)
+- Scrapyard: [Scrapyard overview](README_Scrapyard.md) - [Runtime contract](README_ScrapyardMode.md)
+- Networking: [Networking overview](README_Networking.md) - [Online session subsystem](README_SessionSubsystem.md)
+- Persistence: [Persistence overview](README_Persistence.md) - [Saving/loading/hydration](README_SaveSubsystem.md)
+- Other: [GAS overview](README_GAS.md) - [Transition mode](README_TransitionMode.md)
 - API reference: [Doxygen HTML](/unreal-alienramen/doxygen/index.html)
 
 ## Build / preview docs locally

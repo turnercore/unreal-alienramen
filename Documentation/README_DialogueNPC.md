@@ -1,6 +1,6 @@
-# Dialogue + Speaker Runtime (`UARDialogueSubsystem`, `UARSpeakerSubsystem`)
+# Parley Runtime (`UARDialogueSubsystem`, `UARSpeakerSubsystem`)
 
-Plugin ownership boundary reference: [Dialogue Plugin Ownership Boundary](README_DialoguePluginBoundary.md)
+Plugin ownership boundary reference: [Parley Plugin Ownership Boundary](README_DialoguePluginBoundary.md)
 
 ## Overview
 

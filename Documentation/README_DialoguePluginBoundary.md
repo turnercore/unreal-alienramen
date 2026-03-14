@@ -1,8 +1,8 @@
-# Dialogue Plugin Ownership Boundary
+# Parley Plugin Ownership Boundary
 
-This page defines what is owned by the Dialogue plugin boundary (even if code currently lives in `Source/AlienRamen`) versus systems that build on top.
+This page defines what is owned by the Parley plugin boundary (historically labeled "Dialogue plugin"), versus systems that build on top.
 
-## Owned by Dialogue Plugin
+## Owned by Parley Plugin
 
 - Dialogue runtime system (`UARDialogueSubsystem` and dialogue session execution).
 - Speaker definitions and speaker-facing authored data.
@@ -13,7 +13,7 @@ This page defines what is owned by the Dialogue plugin boundary (even if code cu
 - Dialogue-facing faction/relationship state used by dialogue mutations and gating.
 - Speaker relationship progression surfaces used by dialogue flow.
 
-## Not Owned by Dialogue Plugin (Built On Top)
+## Not Owned by Parley Plugin (Built On Top)
 
 - Faction voting/election orchestration and travel finalization flow.
 - Ordering/customer-serving gameplay loops.

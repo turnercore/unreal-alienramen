@@ -1,4 +1,4 @@
-# Invader Drops Runtime Contract
+# Invader Pickups Runtime Contract
 
 Paths:
 - `Source/AlienRamen/Public/ARInvaderDropBase.h`
