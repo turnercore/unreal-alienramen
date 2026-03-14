@@ -112,6 +112,21 @@ namespace
 		return false;
 	}
 
+	static void MarkCanonicalSaveDirty(const AARGameStateBase* GameState)
+	{
+		if (!GameState)
+		{
+			return;
+		}
+
+		const UGameInstance* GameInstance = GameState->GetGameInstance();
+		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+		if (SaveSubsystem && SaveSubsystem->GetCurrentSaveGame())
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+
 	static const TCHAR* GetMeatBucketLabel(const EARAffinityColor Color)
 	{
 		switch (Color)
@@ -402,6 +417,7 @@ void AARGameStateBase::SetUnlocksFromSave(const FGameplayTagContainer& NewUnlock
 	Unlocks = NewUnlocks;
 	OnRep_Unlocks(OldUnlocks);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 }
 
 bool AARGameStateBase::AddUnlockTag(const FGameplayTag& UnlockTag)
@@ -420,6 +436,7 @@ bool AARGameStateBase::AddUnlockTag(const FGameplayTag& UnlockTag)
 	Unlocks.AddTag(UnlockTag);
 	OnRep_Unlocks(OldUnlocks);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 	return true;
 }
 
@@ -439,6 +456,7 @@ bool AARGameStateBase::RemoveUnlockTag(const FGameplayTag& UnlockTag)
 	Unlocks.RemoveTag(UnlockTag);
 	OnRep_Unlocks(OldUnlocks);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 	return true;
 }
 
@@ -464,6 +482,7 @@ void AARGameStateBase::SetMoneyFromSave(int32 NewMoney)
 	Money = Clamped;
 	OnRep_Money(OldMoney);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 }
 
 void AARGameStateBase::SetScrapFromSave(int32 NewScrap)
@@ -483,6 +502,7 @@ void AARGameStateBase::SetScrapFromSave(int32 NewScrap)
 	Scrap = Clamped;
 	OnRep_Scrap(OldScrap);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 }
 
 void AARGameStateBase::SetMeatFromSave(const FARMeatState& NewMeat)
@@ -502,6 +522,7 @@ void AARGameStateBase::SetMeatFromSave(const FARMeatState& NewMeat)
 	Meat = Sanitized;
 	OnRep_Meat(OldMeat);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 }
 
 void AARGameStateBase::SetRunLedgerScrap(int32 NewRunLedgerScrap)
@@ -631,6 +652,7 @@ void AARGameStateBase::SetActiveFactionTagFromSave(FGameplayTag NewActiveFaction
 	ActiveFactionTag = NewActiveFactionTag;
 	OnRep_ActiveFactionTag(OldTag);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 }
 
 void AARGameStateBase::SetActiveFactionEffectTagsFromSave(const FGameplayTagContainer& NewActiveFactionEffectTags)
@@ -649,6 +671,7 @@ void AARGameStateBase::SetActiveFactionEffectTagsFromSave(const FGameplayTagCont
 	ActiveFactionEffectTags = NewActiveFactionEffectTags;
 	OnRep_ActiveFactionEffectTags(OldTags);
 	ForceNetUpdate();
+	MarkCanonicalSaveDirty(this);
 }
 
 void AARGameStateBase::SetManualSaveAllowed(const bool bAllowed)

@@ -62,6 +62,14 @@
 			"Enabled": true
 		},
 		{
+			"Name": "Parley",
+			"Enabled": true
+		},
+		{
+			"Name": "Emo",
+			"Enabled": true
+		},
+		{
 			"Name": "VisualStudioTools",
 			"Enabled": false,
 			"SupportedTargetPlatforms": [

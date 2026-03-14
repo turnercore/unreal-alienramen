@@ -1,9 +1,13 @@
 #include "ARGameInstance.h"
 
+#include "ARFactionVotingSubsystem.h"
 #include "ARLog.h"
+#include "ARParleySaveBridge.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
+#include "ParleyDialogueSubsystem.h"
+#include "ParleyFactionSubsystem.h"
 #include "HAL/IConsoleManager.h"
 #include "Engine/Engine.h"
 #include "Misc/App.h"
@@ -14,12 +18,30 @@ void UARGameInstance::Init()
 {
 	Super::Init();
 	RegisterDebugConsoleCommands();
+
+	if (!ParleySaveBridge)
+	{
+		ParleySaveBridge = NewObject<UARParleySaveBridge>(this);
+	}
+
+	if (ParleySaveBridge)
+	{
+		ParleySaveBridge->Initialize(
+			GetSubsystem<UARSaveSubsystem>(),
+			GetSubsystem<UParleyDialogueSubsystem>(),
+			GetSubsystem<UParleyFactionSubsystem>());
+	}
+
 	UE_LOG(ARLog, Log, TEXT("[GameInstance] Initialized: %s"), *GetNameSafe(this));
 	BP_OnARGameInstanceInitialized();
 }
 
 void UARGameInstance::Shutdown()
 {
+	if (ParleySaveBridge)
+	{
+		ParleySaveBridge->Shutdown();
+	}
 	UnregisterDebugConsoleCommands();
 	UE_LOG(ARLog, Log, TEXT("[GameInstance] Shutdown: %s"), *GetNameSafe(this));
 	BP_OnARGameInstanceShutdown();
@@ -34,6 +56,11 @@ UARSaveSubsystem* UARGameInstance::GetARSaveSubsystem() const
 UARSessionSubsystem* UARGameInstance::GetARSessionSubsystem() const
 {
 	return GetSubsystem<UARSessionSubsystem>();
+}
+
+UARFactionVotingSubsystem* UARGameInstance::GetARFactionVotingSubsystem() const
+{
+	return GetSubsystem<UARFactionVotingSubsystem>();
 }
 
 // ---- Network compatibility helpers ----

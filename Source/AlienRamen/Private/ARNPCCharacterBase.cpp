@@ -1,9 +1,9 @@
 #include "ARNPCCharacterBase.h"
 
 #include "ARCustomerComponent.h"
-#include "ARDialogueSubsystem.h"
-#include "AREmotionComponent.h"
-#include "AREmotionSettings.h"
+#include "ParleyDialogueSubsystem.h"
+#include "EmoComponent.h"
+#include "EmoSettings.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "Components/ActorComponent.h"
@@ -55,13 +55,13 @@ namespace
 			return;
 		}
 
-		TArray<UARSpeakerComponent*> SpeakerComponents;
+		TArray<UParleySpeakerComponent*> SpeakerComponents;
 		Actor->GetComponents(SpeakerComponents);
 
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[Interact] '%s' missing UARSpeakerComponent after refresh. FoundTypedSpeakerComponents=%d Components=[%s]"),
+			TEXT("[Interact] '%s' missing UParleySpeakerComponent after refresh. FoundTypedSpeakerComponents=%d Components=[%s]"),
 			*GetNameSafe(Actor),
 			SpeakerComponents.Num(),
 			*DescribeActorComponentsForDiagnostics(Actor));
@@ -101,6 +101,10 @@ void AARNPCCharacterBase::BeginPlay()
 	{
 		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
 		SpeakerComponent->OnSpeakerTalkableStateChanged.AddDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
+		SpeakerComponent->OnSpeakerEmotionRequested.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerEmotionRequested);
+		SpeakerComponent->OnSpeakerEmotionRequested.AddDynamic(this, &AARNPCCharacterBase::HandleSpeakerEmotionRequested);
+		SpeakerComponent->OnSpeakerEmotionCleared.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerEmotionCleared);
+		SpeakerComponent->OnSpeakerEmotionCleared.AddDynamic(this, &AARNPCCharacterBase::HandleSpeakerEmotionCleared);
 
 		if (HasAuthority() && EmotionComponent)
 		{
@@ -124,11 +128,11 @@ void AARNPCCharacterBase::BeginPlay()
 
 void AARNPCCharacterBase::ResolveOptionalComponents()
 {
-	TArray<UARSpeakerComponent*> TalkComponents;
+	TArray<UParleySpeakerComponent*> TalkComponents;
 	GetComponents(TalkComponents);
 	if (!TalkComponents.IsEmpty())
 	{
-		UARSpeakerComponent* PreferredTalkComponent = SpeakerComponent;
+		UParleySpeakerComponent* PreferredTalkComponent = SpeakerComponent;
 		if (!PreferredTalkComponent || !TalkComponents.Contains(PreferredTalkComponent))
 		{
 			PreferredTalkComponent = TalkComponents[0];
@@ -136,7 +140,7 @@ void AARNPCCharacterBase::ResolveOptionalComponents()
 
 		if (PreferredTalkComponent && !PreferredTalkComponent->GetSpeakerTag().IsValid())
 		{
-			for (UARSpeakerComponent* Candidate : TalkComponents)
+			for (UParleySpeakerComponent* Candidate : TalkComponents)
 			{
 				if (Candidate && Candidate->GetSpeakerTag().IsValid())
 				{
@@ -152,7 +156,7 @@ void AARNPCCharacterBase::ResolveOptionalComponents()
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[Speaker] '%s' has %d UARSpeakerComponent instances. Using '%s' as canonical."),
+				TEXT("[Speaker] '%s' has %d UParleySpeakerComponent instances. Using '%s' as canonical."),
 				*GetNameSafe(this),
 				TalkComponents.Num(),
 				*GetNameSafe(SpeakerComponent));
@@ -163,11 +167,11 @@ void AARNPCCharacterBase::ResolveOptionalComponents()
 		SpeakerComponent = nullptr;
 	}
 
-	TArray<UAREmotionComponent*> EmotionComponents;
+	TArray<UEmoComponent*> EmotionComponents;
 	GetComponents(EmotionComponents);
 	if (!EmotionComponents.IsEmpty())
 	{
-		UAREmotionComponent* PreferredEmotionComponent = EmotionComponent;
+		UEmoComponent* PreferredEmotionComponent = EmotionComponent;
 		if (!PreferredEmotionComponent || !EmotionComponents.Contains(PreferredEmotionComponent))
 		{
 			PreferredEmotionComponent = EmotionComponents[0];
@@ -179,7 +183,7 @@ void AARNPCCharacterBase::ResolveOptionalComponents()
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[Speaker] '%s' has %d UAREmotionComponent instances. Using '%s' as canonical."),
+				TEXT("[Speaker] '%s' has %d UEmoComponent instances. Using '%s' as canonical."),
 				*GetNameSafe(this),
 				EmotionComponents.Num(),
 				*GetNameSafe(EmotionComponent));
@@ -223,6 +227,8 @@ void AARNPCCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (SpeakerComponent)
 	{
 		SpeakerComponent->OnSpeakerTalkableStateChanged.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged);
+		SpeakerComponent->OnSpeakerEmotionRequested.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerEmotionRequested);
+		SpeakerComponent->OnSpeakerEmotionCleared.RemoveDynamic(this, &AARNPCCharacterBase::HandleSpeakerEmotionCleared);
 	}
 	if (CustomerComponent)
 	{
@@ -319,7 +325,7 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 			{
 				if (UGameInstance* GameInstance = GetGameInstance())
 				{
-					if (UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>())
+					if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 					{
 						if (DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, CustomerSpeakerTag))
 						{
@@ -363,7 +369,10 @@ bool AARNPCCharacterBase::IsTalkable() const
 bool AARNPCCharacterBase::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
 {
 	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
-	return bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && SpeakerComponent && SpeakerComponent->IsTalkableForPlayerSlot(PlayerSlot));
+	return bHasActiveCustomerOrder
+		|| (bSpeakerLocalStateAllowsDialogue
+			&& SpeakerComponent
+			&& SpeakerComponent->IsTalkableForPlayerSlotTag(ARPlayer::GetPlayerSlotTag(PlayerSlot)));
 }
 
 bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* QueryController) const
@@ -391,7 +400,7 @@ bool AARNPCCharacterBase::IsSpeakerBusyForController(const AARPlayerController* 
 		return false;
 	}
 
-	const UARDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UARDialogueSubsystem>();
+	const UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>();
 	return DialogueSubsystem && DialogueSubsystem->IsSpeakerBusyForController(QueryController, SpeakerTag);
 }
 
@@ -420,6 +429,64 @@ void AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged(const bool 
 	RefreshStateTreeInteractionFlags();
 	RefreshAutoWantsToTalkEmotion(bEffectiveTalkable);
 	OnSpeakerTalkableStateChanged.Broadcast(bEffectiveTalkable);
+}
+
+void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag, FGameplayTag PlayerSlotTag, bool bIsDialogueLine)
+{
+	(void)bIsDialogueLine;
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!EmotionComponent)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Emotion] '%s' speaker emotion request ignored: no emotion component."), *GetNameSafe(this));
+		return;
+	}
+
+	if (PlayerSlotTag.IsValid())
+	{
+		if (EmotionTag.IsValid())
+		{
+			EmotionComponent->SetDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag, EmotionTag);
+		}
+		else
+		{
+			EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag);
+		}
+		return;
+	}
+
+	if (EmotionTag.IsValid())
+	{
+		EmotionComponent->SetDialogueEmotionTag(EmotionTag);
+	}
+	else
+	{
+		EmotionComponent->ClearDialogueEmotionTag();
+	}
+}
+
+void AARNPCCharacterBase::HandleSpeakerEmotionCleared(FGameplayTag PlayerSlotTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!EmotionComponent)
+	{
+		return;
+	}
+
+	if (PlayerSlotTag.IsValid())
+	{
+		EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag);
+		return;
+	}
+
+	EmotionComponent->ClearDialogueEmotionTag();
 }
 
 void AARNPCCharacterBase::OnRep_SpeakerLocalStateAllowsDialogue(const bool bOldAllowsDialogue)
@@ -482,7 +549,7 @@ void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTal
 		return;
 	}
 
-	const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+	const UEmoSettings* EmotionSettings = GetDefault<UEmoSettings>();
 	const FGameplayTag WantsToTalkTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
 	if (!WantsToTalkTag.IsValid())
 	{

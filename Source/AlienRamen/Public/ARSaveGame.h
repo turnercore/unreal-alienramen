@@ -6,8 +6,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "ARDialogueTypes.h"
-#include "ARFactionTypes.h"
+#include "ParleyDialogueTypes.h"
+#include "ParleyFactionTypes.h"
 #include "ARRunBuffTypes.h"
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
@@ -40,7 +40,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 15;
+	static constexpr int32 CurrentSchemaVersion = 16;
 	static constexpr int32 MinSupportedSchemaVersion = 10;
 
 	UARSaveGame();
@@ -93,6 +93,10 @@ public:
 	// Persistent background popularity state for faction ranking/drift.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
 	TArray<FARFactionRuntimeState> FactionPopularityStates;
+
+	// Persistent faction reputation keyed by (FactionTag, SpeakerTag).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	TArray<FParleyFactionSpeakerReputationState> FactionSpeakerReputationStates;
 
 	// Stored inventory of extracted energy drinks (counted, save-persistent).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")

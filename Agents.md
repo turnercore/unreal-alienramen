@@ -52,6 +52,7 @@ Detailed behavior belongs in `Documentation/` and should be maintained there.
 - Shared enums/structs used across systems should live in focused shared `*Types.h` headers.
 - Public headers belong in `Source/AlienRamen/Public`; implementations in `Private`.
 - Blueprint-facing categories should use the `Alien Ramen|...` prefix.
+- Blueprint-exposed developer surfaces (BlueprintCallable/Pure, BlueprintAssignable, editor-exposed properties/struct fields) should include `ToolTip` metadata, especially in Parley/Emo plugin APIs.
 - Compile after meaningful changes before updating docs.
 
 ---
@@ -101,34 +102,38 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - Save/travel logic must remain subsystem-owned, not scattered across Blueprints.
 - Save files persist three ownership buckets: shared world state, player-owned state, and character-owned state.
 - Canonical character identity is a gameplay tag; `EARCharacterChoice` remains a compatibility mirror for existing Blueprints.
+- Canonical player slot identity is `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`); `EARPlayerSlot` remains a compatibility mirror.
 - Character loadout is canonical character-owned state (`CharacterStates[].LoadoutTags`), not player-owned save data.
 - `AARPlayerStateBase` is the runtime projection surface for the currently controlled character; character-owned save data hydrates onto `PlayerState`, not `GameState`.
 - Hydration and state application are authority-only.
 - Pending travel overlay state may carry between maps when not persisting to disk.
 - Save-load gameplay entry should route through a standard transition context (`SaveLoad` / `SaveLoadEntry` / `bFreshLoadEntry=true`) so load-only restore logic can key off the same signal across maps.
 - Canonical saves are blocked during active dialogue sessions.
+- Save-facing `GameState` mutations (for example shared economy/faction fields) must leave the canonical save dirty so quit/leave autosaves can persist them.
 - Shop loose carryables (energy drinks/meat) persist as transient save snapshots (`ShopTransientCarryables`) only for reload-before-run continuity.
 - Run-start and post-run shop-entry flows clear transient loose-carryable snapshots via save-backed one-shot clear gate.
 - Shop character transform/held-item restore is character-owned save data and only applies on fresh save-load re-entry into `Mode.Shop`; clean shop entries ignore it.
+- First authoritative shop entry after a save still points at another mode/map should immediately persist a canonical shop save; scrapyard finalization should also commit a canonical save before travel back to shop.
 
 ### Dialogue / Speaker
 
-- `UARDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
-- `UARSpeakerSubsystem` owns speaker talkable-state resolution/cache.
-- `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
-- `UAREmotionComponent` owns replicated overhead emotion display state.
-- Runtime overhead emotion rendering is owned directly by `AARHUDBase` (`DrawHUD` + emotion projection/occlusion helpers), not by a separate HUD component.
+- `UParleyDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
+- `UParleySpeakerSubsystem` owns speaker talkable-state resolution/cache.
+- `UParleySpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
+- `UEmoComponent` owns replicated overhead emotion display state.
+- Runtime overhead emotion rendering lives in `AEmoHUDBase` (Emo plugin) with `AARHUDBase` as the game-specific wrapper.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
 - `AARShopAIController` bridges shop-NPC dialogue lifecycle into StateTree events (`Event.ShopNPC.ConversationOffered`, `Event.ShopNPC.DialogueStarted`, `Event.ShopNPC.DialogueEnded`, `Event.ShopNPC.ConversationCompleted`) for animation/state transitions.
-- `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
+- `UEmoResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
 - Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
 - Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; relationship values and game-completed conversations remain shared save state.
 - Dialogue cycle gating is character-owned: seen/skipped-this-cycle and per-speaker cycle offer counts (`MaxOffersPerCycle` on speaker rows) are persisted on character dialogue state.
+- `UARParleySaveBridge` is the game-owned persistence adapter for Parley/ParleyFaction events; plugin events mark save dirty only and never force autosave directly.
 
 Docs: `Documentation/README_DialogueNPC.md`
 
@@ -176,8 +181,10 @@ Docs: `Documentation/README_ShopRamenSystem.md`
 
 ### Faction
 
-- `UARFactionSubsystem` owns election/voting runtime.
-- Faction election is built on top of dialogue-owned faction/relationship surfaces and remains outside dialogue plugin ownership.
+- `UParleyFactionSubsystem` owns generic faction definitions, popularity, and faction-speaker reputation state/events.
+- `UARFactionVotingSubsystem` owns AR election/vote runtime and applies winners to `AARGameStateBase` active faction state.
+- Election/voting runtime is game-owned (AR layer) and builds on Parley faction data; Parley itself is vote-agnostic.
+- Faction election finalization commits in transition flow (`AARTransitionGameMode`) for `Shop -> Invader` context; no shop-mode direct fallback path.
 
 Docs: `Documentation/README_FactionSubsystem.md`
 

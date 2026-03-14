@@ -1,10 +1,12 @@
 #include "ARTransitionGameMode.h"
 
+#include "ARFactionVotingSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARTransitionGameState.h"
 #include "ARTransitionPlayerController.h"
 #include "ARTransitionTypes.h"
+#include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
@@ -52,6 +54,8 @@ void AARTransitionGameMode::BeginPlay()
 	{
 		return;
 	}
+
+	bFactionElectionFinalizedForThisTransition = false;
 
 	if (UWorld* World = GetWorld())
 	{
@@ -147,6 +151,7 @@ void AARTransitionGameMode::InitializeTransitionContext()
 	}
 
 	TransitionGameState->SetTransitionContext(TransitionContext);
+	TryFinalizeFactionElectionFromTransitionContext(TransitionContext);
 	UE_LOG(
 		ARLog,
 		Log,
@@ -155,6 +160,43 @@ void AARTransitionGameMode::InitializeTransitionContext()
 		*ARTransition::LexToString(TransitionContext.Reason),
 		*TransitionContext.DestinationURL,
 		TransitionContext.bFreshLoadEntry ? 1 : 0);
+}
+
+void AARTransitionGameMode::TryFinalizeFactionElectionFromTransitionContext(const FARTransitionContext& TransitionContext)
+{
+	if (!HasAuthority() || bFactionElectionFinalizedForThisTransition || !bFinalizeFactionElectionOnShopToInvaderTransition)
+	{
+		return;
+	}
+
+	if (TransitionContext.SourceMode != EARTransitionSourceMode::Shop
+		|| TransitionContext.Reason != EARTransitionReason::ShopToInvader)
+	{
+		return;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UARFactionVotingSubsystem* VotingSubsystem = GameInstance ? GameInstance->GetSubsystem<UARFactionVotingSubsystem>() : nullptr;
+	if (!VotingSubsystem)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Transition] Faction voting subsystem unavailable for Shop->Invader election finalize."));
+		return;
+	}
+
+	FGameplayTag WinnerFactionTag;
+	FGameplayTagContainer WinnerEffectTags;
+	if (!VotingSubsystem->FinalizeElection(WinnerFactionTag, WinnerEffectTags, true, true))
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Transition] No faction election winner finalized for this Shop->Invader transition."));
+		return;
+	}
+
+	bFactionElectionFinalizedForThisTransition = true;
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[Transition] Finalized faction election winner '%s' for Shop->Invader transition."),
+		*WinnerFactionTag.ToString());
 }
 
 void AARTransitionGameMode::ResetPlayersReadyState() const

@@ -6,11 +6,11 @@
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARLoadoutSettings.h"
-#include "ARDialogueSubsystem.h"
+#include "ParleyDialogueSubsystem.h"
 #include "AREnergyDrinkCarryItem.h"
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
-#include "ARSpeakerSubsystem.h"
+#include "ParleySpeakerSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
@@ -777,6 +777,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->ProgressionTags = CurrentSaveGame->ProgressionTags;
 		SaveObject->FactionClout = CurrentSaveGame->FactionClout;
 		SaveObject->FactionPopularityStates = CurrentSaveGame->FactionPopularityStates;
+		SaveObject->FactionSpeakerReputationStates = CurrentSaveGame->FactionSpeakerReputationStates;
 		SaveObject->DialogueRelationshipStates = CurrentSaveGame->DialogueRelationshipStates;
 		SaveObject->DialogueCompletedConversationTagsByGame = CurrentSaveGame->DialogueCompletedConversationTagsByGame;
 		SaveObject->CharacterStates = CurrentSaveGame->CharacterStates;
@@ -1116,6 +1117,16 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 
 bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
+	return SaveCurrentGameInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, false);
+}
+
+bool UARSaveSubsystem::SaveCurrentGameUnthrottled(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
+{
+	return SaveCurrentGameInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, true);
+}
+
+bool UARSaveSubsystem::SaveCurrentGameInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, const bool bIgnoreThrottle)
+{
 	OutResult = FARSaveResult();
 
 	if (bSaveInProgress)
@@ -1148,7 +1159,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UARDialogueSubsystem>())
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
 		{
 			if (DialogueSubsystem->HasActiveDialogueSession())
 			{
@@ -1161,7 +1172,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	}
 
 	const FDateTime NowUtc = FDateTime::UtcNow();
-	if (MinSaveIntervalSeconds > 0.f && LastSaveTimestampUtc.GetTicks() != 0)
+	if (!bIgnoreThrottle && MinSaveIntervalSeconds > 0.f && LastSaveTimestampUtc.GetTicks() != 0)
 	{
 		const double Elapsed = (NowUtc - LastSaveTimestampUtc).GetTotalSeconds();
 		if (Elapsed < MinSaveIntervalSeconds)
@@ -2113,7 +2124,7 @@ void UARSaveSubsystem::ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveRes
 	// Loading a save can change dialogue availability; refresh speaker talkable caches/widgets immediately.
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UParleySpeakerSubsystem>())
 		{
 			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}

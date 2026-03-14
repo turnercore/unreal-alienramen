@@ -1,12 +1,6 @@
 #include "AREnemyAuthoringPanel.h"
-#include "ARDialogueConversationGraphEditorPanel.h"
-#include "ARDialogueEdGraphNode.h"
-#include "ARDialogueSpeakerEditorPanel.h"
 #include "ARInvaderAuthoringPanel.h"
 #include "ARLog.h"
-#include "ARDialogueNodeDetailsCustomization.h"
-#include "SARDialogueLineGraphNode.h"
-#include "SARDialogueInlineGraphNode.h"
 #include "ARSaveSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
@@ -24,7 +18,6 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/MessageDialog.h"
-#include "EdGraphUtilities.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SCheckBox.h"
@@ -1543,38 +1536,11 @@ namespace ARDebugSaveEditor
 	};
 }
 
-namespace ARDialogueSpeakerEditor
-{
-	static const FName TabName(TEXT("AR_DialogueSpeakerEditor"));
-}
-
-namespace ARDialogueConversationGraphEditor
-{
-	static const FName TabName(TEXT("AR_DialogueConversationGraphEditor"));
-}
-
 class FAlienRamenEditorModule final : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override
 	{
-		FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
-		PropertyEditorModule.RegisterCustomClassLayout(
-			UARDialogueEdGraphNode::StaticClass()->GetFName(),
-			FOnGetDetailCustomizationInstance::CreateStatic(&FARDialogueEdGraphNodeDetails::MakeInstance));
-		PropertyEditorModule.RegisterCustomPropertyTypeLayout(
-			TEXT("DialogueBoolNodeData"),
-			FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FARDialogueBoolNodeDataCustomization::MakeInstance));
-		PropertyEditorModule.RegisterCustomPropertyTypeLayout(
-			TEXT("DialogueLineNodeData"),
-			FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FARDialogueLineNodeDataCustomization::MakeInstance));
-		PropertyEditorModule.NotifyCustomizationModuleChanged();
-
-		DialogueLineNodeFactory = CreateARDialogueLineGraphNodeFactory();
-		FEdGraphUtilities::RegisterVisualNodeFactory(DialogueLineNodeFactory);
-		DialogueInlineNodeFactory = CreateARDialogueInlineGraphNodeFactory();
-		FEdGraphUtilities::RegisterVisualNodeFactory(DialogueInlineNodeFactory);
-
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 			ARDebugSaveEditor::TabName,
 			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDebugSaveTab))
@@ -1599,47 +1565,11 @@ public:
 			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"))
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
-		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
-			ARDialogueSpeakerEditor::TabName,
-			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDialogueSpeakerTab))
-			.SetDisplayName(FText::FromString("AR Dialogue Speaker Editor"))
-			.SetTooltipText(FText::FromString("Speaker-centric dialogue authoring hub."))
-			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"))
-			.SetMenuType(ETabSpawnerMenuType::Hidden);
-
-		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
-			ARDialogueConversationGraphEditor::TabName,
-			FOnSpawnTab::CreateRaw(this, &FAlienRamenEditorModule::SpawnDialogueConversationGraphTab))
-			.SetDisplayName(FText::FromString("AR Dialogue Conversation Graph Editor"))
-			.SetTooltipText(FText::FromString("Conversation graph validation, compile, and preview workflow."))
-			.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"))
-			.SetMenuType(ETabSpawnerMenuType::Hidden);
-
 		UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FAlienRamenEditorModule::RegisterMenus));
 	}
 
 	virtual void ShutdownModule() override
 	{
-		if (FModuleManager::Get().IsModuleLoaded(TEXT("PropertyEditor")))
-		{
-			FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
-			PropertyEditorModule.UnregisterCustomClassLayout(UARDialogueEdGraphNode::StaticClass()->GetFName());
-			PropertyEditorModule.UnregisterCustomPropertyTypeLayout(TEXT("DialogueBoolNodeData"));
-			PropertyEditorModule.UnregisterCustomPropertyTypeLayout(TEXT("DialogueLineNodeData"));
-			PropertyEditorModule.NotifyCustomizationModuleChanged();
-		}
-
-		if (DialogueLineNodeFactory.IsValid())
-		{
-			FEdGraphUtilities::UnregisterVisualNodeFactory(DialogueLineNodeFactory);
-			DialogueLineNodeFactory.Reset();
-		}
-		if (DialogueInlineNodeFactory.IsValid())
-		{
-			FEdGraphUtilities::UnregisterVisualNodeFactory(DialogueInlineNodeFactory);
-			DialogueInlineNodeFactory.Reset();
-		}
-
 		if (UToolMenus::TryGet())
 		{
 			UToolMenus::UnRegisterStartupCallback(this);
@@ -1647,8 +1577,6 @@ public:
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDebugSaveEditor::TabName);
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderAuthoringEditor::TabName);
 		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARInvaderEnemyAuthoringEditor::TabName);
-		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDialogueSpeakerEditor::TabName);
-		FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ARDialogueConversationGraphEditor::TabName);
 	}
 
 private:
@@ -1658,24 +1586,6 @@ private:
 			.TabRole(ETabRole::NomadTab)
 			[
 				SNew(ARDebugSaveEditor::SPanel)
-			];
-	}
-
-	TSharedRef<SDockTab> SpawnDialogueSpeakerTab(const FSpawnTabArgs&)
-	{
-		return SNew(SDockTab)
-			.TabRole(ETabRole::NomadTab)
-			[
-				SNew(SDialogueSpeakerEditorPanel)
-			];
-	}
-
-	TSharedRef<SDockTab> SpawnDialogueConversationGraphTab(const FSpawnTabArgs&)
-	{
-		return SNew(SDockTab)
-			.TabRole(ETabRole::NomadTab)
-			[
-				SNew(SDialogueConversationGraphEditorPanel)
 			];
 	}
 
@@ -1701,18 +1611,6 @@ private:
 			FText::FromString("Open the dedicated enemy authoring tool."),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"),
 			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenEnemyAuthoringTab));
-		Section.AddMenuEntry(
-			"OpenARDialogueSpeakerEditor",
-			FText::FromString("AR Dialogue Speaker Editor"),
-			FText::FromString("Open the dialogue speaker-centric authoring tab."),
-			FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Outliner"),
-			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenDialogueSpeakerTab));
-		Section.AddMenuEntry(
-			"OpenARDialogueConversationGraphEditor",
-			FText::FromString("AR Dialogue Conversation Graph Editor"),
-			FText::FromString("Open the conversation graph authoring and preview tab."),
-			FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"),
-			FToolMenuExecuteAction::CreateRaw(this, &FAlienRamenEditorModule::OpenDialogueConversationGraphTab));
 	}
 
 	void OpenTab(const FToolMenuContext&)
@@ -1730,18 +1628,6 @@ private:
 		FGlobalTabmanager::Get()->TryInvokeTab(ARInvaderEnemyAuthoringEditor::TabName);
 	}
 
-	void OpenDialogueSpeakerTab(const FToolMenuContext&)
-	{
-		FGlobalTabmanager::Get()->TryInvokeTab(ARDialogueSpeakerEditor::TabName);
-	}
-
-	void OpenDialogueConversationGraphTab(const FToolMenuContext&)
-	{
-		FGlobalTabmanager::Get()->TryInvokeTab(ARDialogueConversationGraphEditor::TabName);
-	}
-
-	TSharedPtr<FGraphPanelNodeFactory> DialogueLineNodeFactory;
-	TSharedPtr<FGraphPanelNodeFactory> DialogueInlineNodeFactory;
 };
 
 IMPLEMENT_MODULE(FAlienRamenEditorModule, AlienRamenEditor)

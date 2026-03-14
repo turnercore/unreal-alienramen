@@ -37,6 +37,73 @@ enum class EARCoreAttributeType : uint8
 
 namespace ARPlayer
 {
+	static inline FGameplayTag GetPlayerSlotRootTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Player.Slot"), false);
+	}
+
+	static inline FGameplayTag GetPlayerSlotP1Tag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Player.Slot.P1"), false);
+	}
+
+	static inline FGameplayTag GetPlayerSlotP2Tag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Player.Slot.P2"), false);
+	}
+
+	static inline FGameplayTag GetPlayerSlotTag(const EARPlayerSlot PlayerSlot)
+	{
+		switch (PlayerSlot)
+		{
+		case EARPlayerSlot::P1:
+			return GetPlayerSlotP1Tag();
+		case EARPlayerSlot::P2:
+			return GetPlayerSlotP2Tag();
+		default:
+			return FGameplayTag();
+		}
+	}
+
+	static inline EARPlayerSlot GetPlayerSlotForTag(const FGameplayTag& PlayerSlotTag)
+	{
+		if (!PlayerSlotTag.IsValid())
+		{
+			return EARPlayerSlot::Unknown;
+		}
+
+		const FGameplayTag P1Tag = GetPlayerSlotP1Tag();
+		if (P1Tag.IsValid() && PlayerSlotTag.MatchesTagExact(P1Tag))
+		{
+			return EARPlayerSlot::P1;
+		}
+
+		const FGameplayTag P2Tag = GetPlayerSlotP2Tag();
+		if (P2Tag.IsValid() && PlayerSlotTag.MatchesTagExact(P2Tag))
+		{
+			return EARPlayerSlot::P2;
+		}
+
+		return EARPlayerSlot::Unknown;
+	}
+
+	static inline FGameplayTag NormalizePlayerSlotTag(
+		const FGameplayTag& PlayerSlotTag,
+		const EARPlayerSlot FallbackSlot = EARPlayerSlot::Unknown)
+	{
+		if (GetPlayerSlotForTag(PlayerSlotTag) != EARPlayerSlot::Unknown)
+		{
+			return PlayerSlotTag;
+		}
+
+		if (FallbackSlot != EARPlayerSlot::Unknown)
+		{
+			return GetPlayerSlotTag(FallbackSlot);
+		}
+
+		return FGameplayTag();
+	}
+
 	static inline FGameplayTag GetBrotherCharacterTag()
 	{
 		return FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Speaker.Brother"), false);

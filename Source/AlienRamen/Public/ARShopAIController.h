@@ -6,13 +6,13 @@
 
 #include "CoreMinimal.h"
 #include "ARAIControllerBase.h"
-#include "ARDialogueTypes.h"
+#include "ParleyDialogueTypes.h"
 #include "GameplayTagContainer.h"
 #include "ARShopAIController.generated.h"
 
 class UStateTree;
 class UARShopStateTreeAIComponent;
-class UARDialogueSubsystem;
+class UParleyDialogueSubsystem;
 class APawn;
 class AARNPCCharacterBase;
 
@@ -62,7 +62,7 @@ protected:
 	TObjectPtr<UStateTree> DefaultStateTree;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UARDialogueSubsystem> BoundDialogueSubsystem;
+	TObjectPtr<UParleyDialogueSubsystem> BoundDialogueSubsystem;
 
 	bool bWasSpeakerInDialogueSession = false;
 };

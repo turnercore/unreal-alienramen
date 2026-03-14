@@ -145,34 +145,35 @@ namespace
 		return FString();
 	}
 
-	static FGameplayTag ResolveLegacyDialogueCharacterTag(
-		UARSaveGame* SaveGame,
-		const FDialoguePlayerPersistentState& LegacyState)
+static FGameplayTag ResolveLegacyDialogueCharacterTag(
+	UARSaveGame* SaveGame,
+	const FDialoguePlayerPersistentState& LegacyState)
+{
+	if (!SaveGame)
 	{
-		if (!SaveGame)
-		{
-			return FGameplayTag();
-		}
+		return FGameplayTag();
+	}
 
-		FARPlayerStateSaveData MatchedPlayerState;
+	if (IsValidCharacterTag(LegacyState.CharacterTag))
+	{
+		return ARPlayer::NormalizeCharacterTag(LegacyState.CharacterTag);
+	}
+
+	FARPlayerStateSaveData MatchedPlayerState;
+	const EARPlayerSlot LegacySlot = ARPlayer::GetPlayerSlotForTag(LegacyState.OwnerPlayerSlotTag);
+	if (LegacySlot != EARPlayerSlot::Unknown)
+	{
 		int32 PlayerIndex = INDEX_NONE;
-		if (SaveGame->FindPlayerStateDataByIdentity(LegacyState.Identity, MatchedPlayerState, PlayerIndex))
+		if (SaveGame->FindPlayerStateDataBySlot(LegacySlot, MatchedPlayerState, PlayerIndex))
 		{
 			return MatchedPlayerState.ResolveCurrentCharacterTag();
 		}
 
-		if (LegacyState.Identity.PlayerSlot != EARPlayerSlot::Unknown)
-		{
-			if (SaveGame->FindPlayerStateDataBySlot(LegacyState.Identity.PlayerSlot, MatchedPlayerState, PlayerIndex))
-			{
-				return MatchedPlayerState.ResolveCurrentCharacterTag();
-			}
-
-			return ARPlayer::GetDefaultCharacterTagForSlot(LegacyState.Identity.PlayerSlot);
-		}
-
-		return FGameplayTag();
+		return ARPlayer::GetDefaultCharacterTagForSlot(LegacySlot);
 	}
+
+	return FGameplayTag();
+}
 }
 
 UARSaveGame::UARSaveGame()
@@ -782,6 +783,30 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		FactionPopularityStates.Add(ActiveEntry);
 		++ClampedCount;
 		AddWarning(OutWarnings, TEXT("ActiveFactionTag was missing from FactionPopularityStates and was auto-added."));
+	}
+
+	TSet<FString> SeenFactionSpeakerPairs;
+	for (int32 Index = FactionSpeakerReputationStates.Num() - 1; Index >= 0; --Index)
+	{
+		FParleyFactionSpeakerReputationState& State = FactionSpeakerReputationStates[Index];
+		if (!State.FactionTag.IsValid() || !State.SpeakerTag.IsValid())
+		{
+			FactionSpeakerReputationStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("FactionSpeakerReputationStates contained an invalid tag pair and was removed."));
+			continue;
+		}
+
+		const FString PairKey = FString::Printf(TEXT("%s|%s"), *State.FactionTag.ToString(), *State.SpeakerTag.ToString());
+		if (SeenFactionSpeakerPairs.Contains(PairKey))
+		{
+			FactionSpeakerReputationStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("FactionSpeakerReputationStates contained duplicate faction/speaker entries and extras were removed."));
+			continue;
+		}
+
+		SeenFactionSpeakerPairs.Add(PairKey);
 	}
 
 	if (SaveSlotNumber < 0)
