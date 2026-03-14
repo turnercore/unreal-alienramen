@@ -3,7 +3,6 @@
 #include "AREconomySettings.h"
 #include "AREnergyDrinkCarryItem.h"
 #include "ARGameStateBase.h"
-#include "ARFactionSubsystem.h"
 #include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -188,6 +187,7 @@ void AARShopGameMode::BeginPlay()
 	// even when non-drink transient carryables were restored.
 	SpawnStoredEnergyDrinksAtAnchors(SaveGame, SaveSubsystem);
 	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
+	PersistCanonicalShopEntryIfNeeded(SaveSubsystem, SaveGame);
 }
 
 void AARShopGameMode::RestartPlayer(AController* NewPlayer)
@@ -213,29 +213,7 @@ bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options,
 
 	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
 	ClearShopTransientCarryablesForRunStart(SaveSubsystem);
-
-	UARFactionSubsystem* FactionSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARFactionSubsystem>() : nullptr;
-	if (!FactionSubsystem)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] PreStartTravel failed: FactionSubsystem missing."));
-		return false;
-	}
-
-	FGameplayTag WinnerFactionTag;
-	EARFactionWinnerReason Reason = EARFactionWinnerReason::NoValidFactions;
-	const bool bFinalized = FactionSubsystem->FinalizeElectionForTravel(WinnerFactionTag, Reason);
-	if (!bFinalized)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] PreStartTravel blocked: faction election finalize failed."));
-		return false;
-	}
-
-	UE_LOG(
-		ARLog,
-		Log,
-		TEXT("[ShopGameMode] Faction election finalized. Winner='%s' Reason=%d"),
-		*WinnerFactionTag.ToString(),
-		static_cast<int32>(Reason));
+	UE_LOG(ARLog, Verbose, TEXT("[ShopGameMode] Faction election finalization is handled in transition map flow."));
 	return true;
 }
 
@@ -717,4 +695,30 @@ void AARShopGameMode::ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* 
 	SaveGame->ShopTransientCarryables.Reset();
 	SaveGame->bClearShopTransientCarryablesOnNextShopLoad = false;
 	SaveSubsystem->MarkSaveDirty();
+}
+
+bool AARShopGameMode::ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const
+{
+	if (!HasAuthority() || !SaveGame)
+	{
+		return false;
+	}
+
+	const UPackage* WorldPackage = GetWorld() && GetWorld()->PersistentLevel ? GetWorld()->PersistentLevel->GetOutermost() : nullptr;
+	const FString CurrentMapPath = WorldPackage ? WorldPackage->GetName() : FString();
+	return SaveGame->LastSavedModeTag != ModeTag || (!CurrentMapPath.IsEmpty() && SaveGame->LastSavedMapPath != CurrentMapPath);
+}
+
+void AARShopGameMode::PersistCanonicalShopEntryIfNeeded(UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const
+{
+	if (!SaveSubsystem || !ShouldPersistCanonicalShopEntry(SaveGame))
+	{
+		return;
+	}
+
+	FARSaveResult SaveResult;
+	if (!SaveSubsystem->SaveCurrentGameUnthrottled(NAME_None, true, SaveResult))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Failed to persist canonical shop entry save: %s"), *SaveResult.Error);
+	}
 }

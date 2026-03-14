@@ -2,11 +2,11 @@
 
 #include "ARCustomerOrderWidgetBase.h"
 #include "ARCustomerSettings.h"
-#include "ARDialogueSubsystem.h"
-#include "AREmotionComponent.h"
-#include "AREmotionSettings.h"
+#include "ParleyDialogueSubsystem.h"
+#include "EmoComponent.h"
+#include "EmoSettings.h"
 #include "ARNPCCharacterBase.h"
-#include "ARSpeakerComponent.h"
+#include "ParleySpeakerComponent.h"
 #include "ARPlayerController.h"
 #include "ARShopAIController.h"
 #include "ARShopCarryComponent.h"
@@ -114,7 +114,7 @@ FGameplayTag UARCustomerComponent::GetSpeakerTag() const
 	}
 
 	const AActor* OwnerActor = GetOwner();
-	const UARSpeakerComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UARSpeakerComponent>() : nullptr;
+	const UParleySpeakerComponent* TalkComponent = OwnerActor ? OwnerActor->FindComponentByClass<UParleySpeakerComponent>() : nullptr;
 	return TalkComponent ? TalkComponent->GetSpeakerTag() : FGameplayTag();
 }
 
@@ -174,7 +174,7 @@ bool UARCustomerComponent::GenerateNextOrder()
 	int32 RelationshipLevel = 0;
 	if (UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UARDialogueSubsystem>())
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
 		{
 			RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeaker(CachedSpeakerTag);
 		}
@@ -667,7 +667,7 @@ void UARCustomerComponent::RefreshOrderingEmotionState() const
 		return;
 	}
 
-	UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>();
+	UEmoComponent* EmotionComponent = OwnerActor->FindComponentByClass<UEmoComponent>();
 	if (!EmotionComponent)
 	{
 		return;
@@ -679,7 +679,7 @@ void UARCustomerComponent::RefreshOrderingEmotionState() const
 	FGameplayTag ActiveOrderEmotionTag = CustomerSettings ? CustomerSettings->ActiveOrderEmotionTag : FGameplayTag();
 	if (!ActiveOrderEmotionTag.IsValid())
 	{
-		const UAREmotionSettings* EmotionSettings = GetDefault<UAREmotionSettings>();
+		const UEmoSettings* EmotionSettings = GetDefault<UEmoSettings>();
 		ActiveOrderEmotionTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
 	}
 
@@ -701,7 +701,7 @@ void UARCustomerComponent::ApplyOrderingReactionEmotion(const FGameplayTag& Reac
 		return;
 	}
 
-	UAREmotionComponent* EmotionComponent = OwnerActor->FindComponentByClass<UAREmotionComponent>();
+	UEmoComponent* EmotionComponent = OwnerActor->FindComponentByClass<UEmoComponent>();
 	if (!EmotionComponent)
 	{
 		return;
@@ -716,7 +716,7 @@ void UARCustomerComponent::ApplyOrderingReactionEmotion(const FGameplayTag& Reac
 bool UARCustomerComponent::ApplyServeOutcomeToDialogue(const FARRamenServeResult& ServeResult) const
 {
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UARDialogueSubsystem* DialogueSubsystem = GI ? GI->GetSubsystem<UARDialogueSubsystem>() : nullptr;
+	UParleyDialogueSubsystem* DialogueSubsystem = GI ? GI->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
 	if (!DialogueSubsystem)
 	{
 		return false;

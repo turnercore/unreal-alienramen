@@ -17,7 +17,9 @@ public class AlienRamenTests : ModuleRules
 			"OnlineSubsystem",
 			"OnlineSubsystemUtils",
 			"DeveloperSettings",
-			"TagContentResolver"
+			"TagContentResolver",
+			"Parley",
+			"Emo"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[]

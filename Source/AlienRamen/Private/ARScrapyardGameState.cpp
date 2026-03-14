@@ -355,9 +355,15 @@ bool AARScrapyardGameState::FinalizeScrapyardRunAndTravelToShop(const FString& I
 		return false;
 	}
 
-	// Scrapyard finalization mutates authoritative runtime state and reward inventory first.
-	// Travel uses captured pending GameState data and intentionally skips pre-travel canonical save
-	// so SaveSubsystem dialogue/throttle guards cannot strand the host after run consumption.
+	FARSaveResult SaveResult;
+	if (!SaveSubsystem->SaveCurrentGameUnthrottled(NAME_None, true, SaveResult))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization save failed before travel: %s"), *SaveResult.Error);
+		return false;
+	}
+
+	// Scrapyard finalization now commits a canonical save before travel so rewards/economy survive
+	// transition-map crashes and immediate host quits after re-entry.
 	FString FinalTravelURL = ShopTravelURL;
 	if (const AARGameModeBase* GameMode = GetWorld() ? Cast<AARGameModeBase>(GetWorld()->GetAuthGameMode()) : nullptr)
 	{
@@ -596,6 +602,13 @@ void AARScrapyardGameState::SetScrapyardSharedScrap(int32 NewScrapValue)
 	Scrap = NewScrapValue;
 	OnRep_Scrap(OldScrap);
 	ForceNetUpdate();
+	if (UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr)
+	{
+		if (SaveSubsystem->GetCurrentSaveGame())
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
 }
 
 void AARScrapyardGameState::RefreshExtractionSummary(bool bBroadcast)

@@ -9,7 +9,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "ARInteractionTypes.h"
-#include "ARDialogueTypes.h"
+#include "ParleyDialogueTypes.h"
+#include "ParleyPlayerControllerInterface.h"
 #include "ARTransitionTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "TimerManager.h"
@@ -17,7 +18,7 @@
 
 class UARAbilitySet;
 class UInputMappingContext;
-class UARDialogueWidgetBase;
+class UParleyDialogueWidgetBase;
 class UUserWidget;
 class AARNPCCharacterBase;
 class AARMeatStorageBoxActor;
@@ -66,12 +67,27 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 
 /** Base player controller: owns save sync RPCs, travel requests, and common ability set handoff. */
 UCLASS()
-class ALIENRAMEN_API AARPlayerController : public APlayerController
+class ALIENRAMEN_API AARPlayerController : public APlayerController, public IParleyPlayerControllerInterface
 {
 	GENERATED_BODY()
 
 public:
 	AARPlayerController();
+
+	virtual FGameplayTag GetPlayerSlotTag() const override;
+	virtual bool IsDialogueAutoAdvanceEnabled() const override;
+	virtual FGameplayTag GetCharacterTag() const override;
+	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
+	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
+	virtual void RequestInteractWithActor(AActor* Actor) override;
+	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) override;
+	virtual void RequestAdvanceDialogueInput() override;
+	virtual void RequestSubmitDialogueChoiceInput(FGuid ChoiceBranchId) override;
+	virtual void RequestSetDialogueEavesdropInput(bool bEnable, FGameplayTag TargetSlotTag) override;
+	virtual void RequestSetDialogueEavesdropOtherPlayerInput(bool bEnable) override;
+	virtual void RequestToggleDialogueAutoAdvanceInput() override;
+	virtual void RequestAdvanceOrSubmitDialogueInput() override;
+	virtual void RequestDialogueChoiceDeltaInput(int32 Delta) override;
 
 	// Common abilities/effects every pawn gets when possessed (server grants via pawn).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Abilities")
@@ -221,11 +237,11 @@ public:
 
 	// Runtime dialogue-view cache for late-bound widgets/UI.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool GetCachedDialogueView(FDialogueClientView& OutView) const;
+	bool GetCachedDialogueView(FDialogueClientView& OutView) const override;
 
 	// Queries current local dialogue view directly from subsystem.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
-	bool QueryLocalDialogueView(FDialogueClientView& OutView) const;
+	bool QueryLocalDialogueView(FDialogueClientView& OutView) const override;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool HasCachedDialogueView() const { return bHasCachedDialogueView; }
@@ -267,7 +283,7 @@ public:
 	void RemoveDialogueWidget();
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI")
-	UARDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
+	UParleyDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
 
 	// Initializes a custom default cursor widget on local controllers only.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
@@ -361,9 +377,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI")
 	bool bAutoCreateDialogueWidget = false;
 
-	// Widget class for dialogue presentation/input (typically deriving from UARDialogueWidgetBase).
+	// Widget class for dialogue presentation/input (typically deriving from UParleyDialogueWidgetBase).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
-	TSubclassOf<UARDialogueWidgetBase> DialogueWidgetClass;
+	TSubclassOf<UParleyDialogueWidgetBase> DialogueWidgetClass;
 
 	// Viewport z-order for auto-created dialogue widget.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
@@ -519,7 +535,7 @@ private:
 	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UARDialogueWidgetBase> DialogueWidget = nullptr;
+	TObjectPtr<UParleyDialogueWidgetBase> DialogueWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input", meta = (AllowPrivateAccess = "true"))
 	int32 SelectedDialogueChoiceIndex = INDEX_NONE;

@@ -1,7 +1,7 @@
 #include "ARShopAIController.h"
 
 #include "ARCustomerComponent.h"
-#include "ARDialogueSubsystem.h"
+#include "ParleyDialogueSubsystem.h"
 #include "ARNPCCharacterBase.h"
 #include "ARShopStateTreeAIComponent.h"
 #include "Engine/GameInstance.h"
@@ -257,7 +257,7 @@ void AARShopAIController::BindDialogueSubsystemDelegates()
 	}
 
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	BoundDialogueSubsystem = GI ? GI->GetSubsystem<UARDialogueSubsystem>() : nullptr;
+	BoundDialogueSubsystem = GI ? GI->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
 	if (!BoundDialogueSubsystem)
 	{
 		return;

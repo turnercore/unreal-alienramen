@@ -2,7 +2,8 @@
 
 #include "Misc/AutomationTest.h"
 
-#include "ARDialogueTypes.h"
+#include "ARPlayerTypes.h"
+#include "ParleyDialogueTypes.h"
 #include "ARSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -93,7 +94,7 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
 
 	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	LegacyDialogueState.Identity.PlayerSlot = EARPlayerSlot::P1;
+	LegacyDialogueState.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
 	LegacyDialogueState.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother.Default")), false));
 	LegacyDialogueState.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false));
 

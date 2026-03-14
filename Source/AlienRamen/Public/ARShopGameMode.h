@@ -49,4 +49,6 @@ private:
 	bool RestoreBowlSnapshot(class AARRamenBowlActor* BowlActor, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
 	bool SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
 	void ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* SaveSubsystem) const;
+	bool ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const;
+	void PersistCanonicalShopEntryIfNeeded(UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 };

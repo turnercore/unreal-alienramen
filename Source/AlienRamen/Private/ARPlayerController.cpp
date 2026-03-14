@@ -1,6 +1,6 @@
 #include "ARPlayerController.h"
-#include "ARDialogueSubsystem.h"
-#include "ARDialogueWidgetBase.h"
+#include "ParleyDialogueSubsystem.h"
+#include "ParleyDialogueWidgetBase.h"
 #include "ARHUDBase.h"
 #include "ARInteractableRangeListener.h"
 #include "ARGameStateBase.h"
@@ -73,6 +73,87 @@ AARPlayerController::AARPlayerController()
 {
 	// Nothing required here yet.
 	// Input bindings can stay in BP; this controller just provides the CommonAbilitySet reference.
+}
+
+FGameplayTag AARPlayerController::GetPlayerSlotTag() const
+{
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	return ARPS ? ARPS->GetPlayerSlotTag() : FGameplayTag();
+}
+
+bool AARPlayerController::IsDialogueAutoAdvanceEnabled() const
+{
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	return ARPS && ARPS->IsDialogueAutoAdvanceEnabled();
+}
+
+FGameplayTag AARPlayerController::GetCharacterTag() const
+{
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	if (!ARPS)
+	{
+		return FGameplayTag();
+	}
+
+	return ARPS->GetCurrentCharacterTag();
+}
+
+void AARPlayerController::NotifyDialogueViewUpdated(const FDialogueClientView& View)
+{
+	ClientDialogueSessionUpdated(View);
+}
+
+void AARPlayerController::NotifyDialogueSessionEnded(const FString& SessionId)
+{
+	ClientDialogueSessionEnded(SessionId);
+}
+
+void AARPlayerController::RequestInteractWithActor(AActor* Actor)
+{
+	if (AARNPCCharacterBase* CharacterActor = Cast<AARNPCCharacterBase>(Actor))
+	{
+		RequestInteractWithCharacter(CharacterActor);
+	}
+}
+
+void AARPlayerController::RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag)
+{
+	RequestStartDialogue(SpeakerTag);
+}
+
+void AARPlayerController::RequestAdvanceDialogueInput()
+{
+	RequestAdvanceDialogue();
+}
+
+void AARPlayerController::RequestSubmitDialogueChoiceInput(const FGuid ChoiceBranchId)
+{
+	RequestSubmitDialogueChoice(ChoiceBranchId);
+}
+
+void AARPlayerController::RequestSetDialogueEavesdropInput(const bool bEnable, const FGameplayTag TargetSlotTag)
+{
+	RequestSetDialogueEavesdrop(bEnable, ARPlayer::GetPlayerSlotForTag(TargetSlotTag));
+}
+
+void AARPlayerController::RequestSetDialogueEavesdropOtherPlayerInput(const bool bEnable)
+{
+	RequestSetDialogueEavesdropOtherPlayer(bEnable);
+}
+
+void AARPlayerController::RequestToggleDialogueAutoAdvanceInput()
+{
+	RequestToggleDialogueAutoAdvance();
+}
+
+void AARPlayerController::RequestAdvanceOrSubmitDialogueInput()
+{
+	RequestAdvanceOrSubmitDialogue();
+}
+
+void AARPlayerController::RequestDialogueChoiceDeltaInput(const int32 Delta)
+{
+	RequestDialogueChoiceDelta(Delta);
 }
 
 void AARPlayerController::BeginPlay()
@@ -342,7 +423,7 @@ void AARPlayerController::RequestStartDialogue(FGameplayTag SpeakerTag)
 {
 	if (HasAuthority())
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
 			DialogueSubsystem->TryStartDialogueWithSpeaker(this, SpeakerTag);
 		}
@@ -663,7 +744,7 @@ void AARPlayerController::RequestAdvanceDialogue()
 {
 	if (HasAuthority())
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
 			DialogueSubsystem->AdvanceConversation(this);
 		}
@@ -682,7 +763,7 @@ void AARPlayerController::RequestSubmitDialogueChoice(FGuid ChoiceBranchId)
 {
 	if (HasAuthority())
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
 			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceBranchId);
 		}
@@ -701,9 +782,9 @@ void AARPlayerController::RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlo
 {
 	if (HasAuthority())
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->SetShopEavesdropTarget(this, TargetSlot, bEnable);
+			DialogueSubsystem->SetShopEavesdropTarget(this, ARPlayer::GetPlayerSlotTag(TargetSlot), bEnable);
 		}
 		return;
 	}
@@ -794,7 +875,7 @@ bool AARPlayerController::GetCachedDialogueView(FDialogueClientView& OutView) co
 bool AARPlayerController::QueryLocalDialogueView(FDialogueClientView& OutView) const
 {
 	OutView = FDialogueClientView();
-	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 	{
 		return DialogueSubsystem->GetLocalViewForController(this, OutView);
 	}
@@ -887,7 +968,7 @@ void AARPlayerController::EnsureDialogueWidget()
 		return;
 	}
 
-	DialogueWidget = CreateWidget<UARDialogueWidgetBase>(this, DialogueWidgetClass);
+	DialogueWidget = CreateWidget<UParleyDialogueWidgetBase>(this, DialogueWidgetClass);
 	if (!DialogueWidget)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Dialogue|UI] Failed to create auto dialogue widget for '%s'."), *GetNameSafe(this));
@@ -1561,7 +1642,7 @@ bool AARPlayerController::IsLobbyControllerMode() const
 
 bool AARPlayerController::IsDialogueSessionActiveLocal() const
 {
-	if (UARDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueSubsystem>() : nullptr)
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 	{
 		FDialogueClientView View;
 		return DialogueSubsystem->GetLocalViewForController(this, View);

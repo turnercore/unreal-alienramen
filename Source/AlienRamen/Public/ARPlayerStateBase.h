@@ -188,9 +188,17 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARPlayerSlot GetPlayerSlot() const { return PlayerSlot; }
 
+	/** Canonical gameplay-tag player slot identity (for example Player.Slot.P1). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FGameplayTag GetPlayerSlotTag() const { return PlayerSlotTag; }
+
 	/** Sets the authoritative player slot (P1/P2). Server only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void SetPlayerSlot(EARPlayerSlot NewSlot);
+
+	/** Sets the authoritative gameplay-tag player slot identity. Server only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
+	void SetPlayerSlotTag(FGameplayTag NewSlotTag);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
@@ -509,6 +517,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	UFUNCTION()
+	void OnRep_PlayerSlotTag(FGameplayTag OldSlotTag);
+	UFUNCTION()
 	void OnRep_PlayerSlot(EARPlayerSlot OldSlot);
 	UFUNCTION()
 	void OnRep_CharacterPicked(EARCharacterChoice OldCharacter);
@@ -555,6 +565,10 @@ protected:
 	void SetDowned_Internal(bool bNewDowned);
 	void SetDead_Internal(bool bNewDead);
 	void SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled);
+	void SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, bool bBroadcastSlotChanged = true);
+	void SetPlayerSlot_Internal(EARPlayerSlot NewSlot, bool bBroadcastSlotChanged = true);
+	void SyncPlayerSlotMirrorsFromTag(bool bBroadcastSlotChanged);
+	void SyncPlayerSlotMirrorsFromEnum(bool bBroadcastSlotChanged);
 	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags, bool bMarkSaveDirty = true);
 	void UpdateLoadoutWithTag_Internal(FGameplayTag NewTag);
 	void RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove);
@@ -586,6 +600,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlotTag, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player", meta = (ToolTip = "Canonical gameplay-tag slot identity for this player. The legacy PlayerSlot enum mirrors this value for compatibility."))
+	FGameplayTag PlayerSlotTag;
 
 	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlot, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;

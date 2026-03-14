@@ -1,109 +1,107 @@
-# Faction Subsystem Guide (`UARFactionSubsystem`)
+# Faction Runtime Guide (`UParleyFactionSubsystem`)
 
-This document describes the current server-authoritative faction election flow and its integration with save state and mode travel.
+This document describes the current faction runtime split:
 
-Ownership note:
+- `Parley` owns generic faction data/state APIs.
+- AR game layer owns election/voting orchestration.
 
-- Faction voting/election orchestration is a built-on-top system and is outside Dialogue plugin ownership.
-- Dialogue plugin-owned faction surfaces are limited to dialogue-facing faction/relationship gating and mutation data used by dialogue runtime.
+## Ownership Split
 
-## Runtime Ownership
+- **Parley-owned (`UParleyFactionSubsystem`)**
+  - Faction definition resolution from TagContentResolver
+  - Faction popularity state
+  - Faction reputation per speaker (`FactionTag + SpeakerTag`)
+  - Mutation events for save bridges
+  - Save-state injection APIs (load-time hydrate)
 
-- Primary runtime API: `UARFactionSubsystem` (`Source/AlienRamen/Public/ARFactionSubsystem.h`)
-- Settings source: `UARFactionSettings` (`Project Settings -> Alien Ramen -> Factions`)
-- Content source: `UTagContentResolverSubsystem` root `Faction.Identity`
-- Persistence source: `UARSaveSubsystem` / `UARSaveGame`
-- Authoring table: `FARFactionDefinitionRow` (DataTable) under TagContentResolver route `Faction.Identity`
+- **Game-owned (AR layer)**
+  - Voting candidates
+  - Vote submission and winner policy
+  - Election-specific effects and game outcomes
+  - Any vote-specific DataTable that layers on top of Parley faction definitions
 
-## Core API Surface
+## AR Voting Subsystem
 
-- `RefreshElectionSnapshot()`
-- `GetCurrentCandidates()`
-- `SubmitVote(PlayerSlot, SelectedFactionTag)`
-- `ClearVotes()`
-- `FinalizeElectionForTravel(OutWinnerFactionTag, OutReason)`
+Primary subsystem:
+- `UARFactionVotingSubsystem` (`Source/AlienRamen/Public/ARFactionVotingSubsystem.h`)
+
+Settings:
+- `UARFactionVotingSettings` (`Project Settings -> Alien Ramen -> Faction Voting`)
+- required DataTable row type: `FARFactionVotingDefinitionRow`
+
+Runtime behavior:
+- Candidate pool resolves from AR-owned voting DataTable only; no runtime fallback candidate source.
+- Candidate count scales with save-owned `FactionClout` using settings:
+  - `MinCandidateCount`
+  - `MaxCandidateCount`
+  - `CloutPerAdditionalCandidate`
+- Votes are submitted by canonical player slot tag (`Player.Slot.P1`, `Player.Slot.P2`).
+- Winner resolution order:
+  1. vote count
+  2. effective popularity from Parley
+  3. candidate priority
+  4. faction-tag lexical fallback
+- Winner applies to game-owned state:
+  - `AARGameStateBase::ActiveFactionTag`
+  - `AARGameStateBase::ActiveFactionEffectTags`
+  - current save payload mirror + `MarkSaveDirty()`
+
+Transition timing:
+- Election finalization is owned by transition flow, not Parley and not shop fallback.
+- `AARTransitionGameMode` finalizes once when transition context is `Source=Shop` and `Reason=ShopToInvader`.
+
+## Parley API Surface
+
+Primary subsystem:
+- `UParleyFactionSubsystem` (`Plugins/Parley/Source/Parley/Public/ParleyFactionSubsystem.h`)
+
+Definition/data access:
+- `GetFactionDefinition(FactionTag, OutDefinition)`
+- `GetAllFactionTags(OutFactionTags)`
+
+Popularity:
+- `GetFactionPopularity(FactionTag)`
+- `GetEffectiveFactionPopularity(FactionTag)` (includes injected progression-rule modifiers)
+- `ModifyFactionPopularity(FactionTag, DeltaPopularity)`
+- `SetFactionPopularityStates(States)` (save bridge injection)
+
+Speaker reputation:
+- `GetFactionSpeakerReputation(FactionTag, SpeakerTag)`
+- `ModifyFactionSpeakerReputation(FactionTag, SpeakerTag, DeltaReputation)`
+- `SetFactionSpeakerReputationStates(States)` (save bridge injection)
 
 Events:
-- `OnFactionCandidatesRefreshed`
-- `OnFactionElectionFinalized`
+- `OnFactionPopularityChanged(FactionTag, Delta, NewTotal)`
+- `OnFactionSpeakerReputationChanged(FactionTag, SpeakerTag, Delta, NewTotal)`
 
-## Election Snapshot Model
+## Save Bridge Contract
 
-`RefreshElectionSnapshot()` (authority-only) rebuilds:
-- ranked faction list
-- candidate list
-- transient vote state reset
+`UARParleySaveBridge` subscribes to Parley faction events and persists:
 
-Ranking inputs per faction row:
-- persisted popularity (or row `BasePopularity` when not present)
-- per-election random drift (`DriftPerCycleMin..DriftPerCycleMax`)
-- progression modifiers (`PopularityModifierRules` against save `ProgressionTags`)
+- `UARSaveGame::FactionPopularityStates`
+- `UARSaveGame::FactionSpeakerReputationStates`
 
-Popularity is clamped to row min/max bounds before ranking.
+On save load, bridge injects:
 
-## Clout + Candidates
+- `SetFactionPopularityStates(...)`
+- `SetFactionSpeakerReputationStates(...)`
+- `SetProgressionTags(...)` (for effective-score modifier evaluation)
 
-- Candidate count is clamped from `FactionClout`:
-  - `CandidateCount = clamp(FactionClout, 0, RankedFactionCount)`
-- If clout is `0` at finalize time:
-  - winner is cleared
-  - reason is `DisabledByClout`
-  - active faction/effects are removed from save/runtime state
+Policy:
+- event handlers **mark save dirty only**
+- no forced autosave from Parley faction mutations
 
-## Vote Resolution Policy
+## Definition Row Contract
 
-Finalization winner resolution order:
-1. Both players voted same faction -> `SamePick`
-2. Both players voted different factions -> random tie-break (`DivergedRandom`)
-3. Only one player voted -> `SinglePick`
-4. No votes -> top-ranked faction (`NoVotesTopPopularity`)
+`FARFactionDefinitionRow` remains the canonical faction definition row:
 
-If no valid faction definitions resolve, finalization falls back to `NoValidFactions`.
+- display fields (`DisplayName`, `Description`, `IconTexture`, `PosterTexture`)
+- popularity bounds/base
+- optional drift/effect fields for game-owned voting layers
+- optional progression-based popularity modifier rules
 
-## Apply + Persist Side Effects
+## Notes
 
-On successful finalize:
-- Saves popularity snapshot to `SaveGame.FactionPopularityStates`
-- Writes elected state to save:
-  - `ActiveFactionTag`
-  - `ActiveFactionEffectTags`
-- Applies elected state to replicated runtime GameState:
-  - `SetActiveFactionTagFromSave(...)`
-  - `SetActiveFactionEffectTagsFromSave(...)`
-- Marks save dirty
-- Broadcasts `OnFactionElectionFinalized`
-
-## Mode Integration
-
-- `AARShopGameMode::PreStartTravel(...)` calls `FinalizeElectionForTravel(...)`.
-- Travel is blocked if faction finalization fails.
-- This ensures the next mode sees finalized elected faction state before transition.
-
-## Data Contracts
-
-Faction definition row type: `FARFactionDefinitionRow`
-- canonical `FactionTag`
-- `BasePopularity`, min/max bounds
-- drift range
-- elected `EffectTags`
-- progression-based modifier rules
-  - each `FARFactionPopularityModifierRule` checks a progression tag (e.g., `Progression.Faction.CorpFriendly`) and adds a delta when present
-  - use negative delta to down-rank a faction when a tag is present
-  - values are additive with drift and saved popularity, then clamped to min/max
-
-Runtime state types:
-- `FARFactionRuntimeState` (tag + popularity)
-- `FARFactionVoteSelection` (slot + selected faction)
-- `EARFactionWinnerReason`
-
-## Troubleshooting
-
-- Snapshot refresh fails:
-  - verify authority context
-  - verify `FactionDefinitionRootTag` in project settings
-  - verify TagContentResolver route/table shape
-- Finalize blocked in Shop travel:
-  - check `UARFactionSubsystem` exists
-  - inspect TagContentResolver resolution warnings for faction rows
-- Unexpected candidate list size:
-  - verify `FactionClout` in current save and progression modifiers
+- `AARShopGameMode` no longer finalizes faction election through Parley.
+- Voting/election runtime should be implemented entirely in AR on top of Parley faction state.
+- Blueprint-exposed voting + Parley faction surfaces should include `ToolTip` metadata for editor discoverability.

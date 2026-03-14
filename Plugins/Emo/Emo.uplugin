@@ -1,0 +1,21 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0.0",
+  "FriendlyName": "Emo",
+  "Description": "Priority-queued emotion display component and EmoVision HUD for NPC emotion feedback.",
+  "Category": "Gameplay",
+  "CreatedBy": "Alien Ramen",
+  "CanContainContent": false,
+  "EnabledByDefault": true,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "Emo",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

@@ -141,7 +141,7 @@ private:
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Alien Ramen|Shop|Customer",
-		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from ARSpeakerComponent."))
+		meta = (AllowPrivateAccess = "true", Categories = "Dialogue.Speaker", DisplayName = "Speaker Tag Override", ToolTip = "Optional shop-specific speaker identity override. When unset, this uses the owning speaker tag from UParleySpeakerComponent."))
 	FGameplayTag SpeakerTagOverride;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Customer|UI", meta = (AllowPrivateAccess = "true", DisplayName = "Order Widget Class", ToolTip = "Optional widget class used for this customer's order display. Must derive from ARCustomerOrderWidgetBase."))

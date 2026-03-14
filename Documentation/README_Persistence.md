@@ -71,6 +71,8 @@ If the data should stay with the character regardless of which player controls t
 
 - Character identity is canonical as a gameplay tag.
 - `EARCharacterChoice` is a compatibility mirror for existing Blueprint logic.
+- Player slot identity is canonical as `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`).
+- `EARPlayerSlot` is a compatibility mirror that stays synchronized with `PlayerSlotTag`.
 - Runtime control still projects through `AARPlayerStateBase`.
 - New logic should prefer `CurrentCharacterTag` over `CharacterPicked`.
 
@@ -93,6 +95,9 @@ Important expectations:
 - save is authority-only
 - canonical saves are blocked during active dialogue
 - revisioned saves use `<SlotBase>__<Revision>`
+- save-facing `AARGameStateBase` mutations mark the canonical save dirty when they change live authoritative state, so quit/leave autosaves can persist shop/shared-economy changes without each gameplay system hand-marking dirtiness
+- Parley/ParleyFaction runtime is save-agnostic; `UARParleySaveBridge` listens to plugin events and marks dirty (no forced autosave).
+- Important conversation completion should only mark save dirty through the bridge policy; it does not directly force autosave from Parley.
 
 ### Load flow
 
@@ -157,6 +162,10 @@ What happens:
 2. shared `GameState` travel overlay is captured
 3. optional disk save runs when the mode is configured to save on exit
 4. travel starts
+
+Additional durability rules:
+- first authoritative entry into `Mode.Shop` persists an immediate canonical save when the current save still points at a different mode/map (for example fresh new-game start or shop re-entry after non-shop save state)
+- `Scrapyard -> Transition -> Shop` now commits a canonical save immediately after finalization and before travel so rewards/economy survive transition-map crashes or immediate post-run host quits
 
 ### Save-load gameplay entry
 

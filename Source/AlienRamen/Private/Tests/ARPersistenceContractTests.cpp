@@ -2,6 +2,7 @@
 
 #include "Misc/AutomationTest.h"
 
+#include "ARPlayerTypes.h"
 #include "ARSaveGame.h"
 #include "ARTransitionTypes.h"
 
@@ -176,7 +177,7 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 	PlayerData.CharacterPicked = EARCharacterChoice::Brother;
 
 	FDialoguePlayerPersistentState& LegacyA = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	LegacyA.Identity.PlayerSlot = EARPlayerSlot::P1;
+	LegacyA.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
 	LegacyA.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
 	LegacyA.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false));
 
@@ -187,7 +188,7 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 	LegacyA.CompletedChoiceRecords.Add(SharedRecord);
 
 	FDialoguePlayerPersistentState& LegacyB = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	LegacyB.Identity.PlayerSlot = EARPlayerSlot::P1;
+	LegacyB.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
 	LegacyB.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue.Choice")), false));
 	LegacyB.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.2")), false));
 	LegacyB.CompletedChoiceRecords.Add(SharedRecord);

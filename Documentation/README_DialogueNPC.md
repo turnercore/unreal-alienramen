@@ -2,6 +2,14 @@
 
 Plugin ownership boundary reference: [Dialogue Plugin Ownership Boundary](README_DialoguePluginBoundary.md)
 
+## Plugin Migration Notes (Current)
+
+- Parley plugin owns dialogue/speaker/faction runtime (`UParleyDialogueSubsystem`, `UParleySpeakerSubsystem`, `UParleySpeakerComponent`, `UParleyFactionSubsystem`).
+- Emo plugin owns emotion display/resolution/HUD base (`UEmoComponent`, `UEmoResolverSubsystem`, `AEmoHUDBase`).
+- Parley is save-agnostic and Emo-agnostic. Game integration is done by AR-owned bridges (`UARParleySaveBridge`, `AARNPCCharacterBase`).
+- `AARNPCCharacterBase` remains component-optional safe: speaker, emotion, and customer components may each be absent and runtime paths must early-out safely.
+- `AARNPCCharacterBase` bridges Parley speaker emotion signals to Emo only when an emotion component exists.
+
 ## Overview
 
 Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:

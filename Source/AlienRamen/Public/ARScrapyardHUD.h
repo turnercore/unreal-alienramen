@@ -13,6 +13,7 @@
 class AARPlayerController;
 class AARScrapyardGameState;
 class AGameStateBase;
+class APlayerController;
 class APlayerState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnScrapyardHUDExtractionSummaryChangedSignature, const FARScrapyardExtractionSummary&, Summary);
@@ -26,7 +27,7 @@ class ALIENRAMEN_API AARScrapyardHUD : public AARHUDBase
 	GENERATED_BODY()
 
 public:
-	virtual void RequestHUDInitialization(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState) override;
+	virtual void RequestHUDInitialization(APlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|UI")
 	void InitializeScrapyardHUD(AARPlayerController* SourceController, AARScrapyardGameState* CurrentScrapyardGameState);

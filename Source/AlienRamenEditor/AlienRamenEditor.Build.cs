@@ -27,6 +27,9 @@ public class AlienRamenEditor : ModuleRules
 			"GameplayTagsEditor",
 			"TagContentResolver",
 			"TagContentResolverEditor",
+			"Parley",
+			"ParleyEditor",
+			"Emo",
 			"AlienRamen"
 		});
 	}
