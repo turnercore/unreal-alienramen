@@ -6,8 +6,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "ARDialogueTypes.h"
-#include "ARFactionTypes.h"
+#include "ParleyDialogueTypes.h"
+#include "ParleyFactionTypes.h"
 #include "ARRunBuffTypes.h"
 #include "ARSaveTypes.h"
 #include "ARSaveGame.generated.h"
@@ -24,6 +24,10 @@ struct ALIENRAMEN_API FARCharacterSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Persistent dialogue progression, completion, and choice memory that belongs to this character."))
 	FDialoguePlayerPersistentState DialogueState;
 
+	// Canonical character-owned loadout state keyed by CharacterTag.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character", meta = (ToolTip = "Canonical loadout state owned by this character and reused when any player takes control of the same character."))
+	FGameplayTagContainer LoadoutTags;
+
 	// Shop-only world snapshot used when loading directly back into the saved shop state.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Shop-only world snapshot restored when loading directly back into the saved shop state."))
 	FARCharacterShopSnapshot ShopSnapshot;
@@ -36,8 +40,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 12;
-	static constexpr int32 MinSupportedSchemaVersion = 10;
+	static constexpr int32 CurrentSchemaVersion = 17;
+	static constexpr int32 MinSupportedSchemaVersion = 17;
 
 	UARSaveGame();
 
@@ -88,7 +92,11 @@ public:
 
 	// Persistent background popularity state for faction ranking/drift.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
-	TArray<FARFactionRuntimeState> FactionPopularityStates;
+	TArray<FParleyFactionRuntimeState> FactionPopularityStates;
+
+	// Persistent faction reputation keyed by (FactionTag, SpeakerTag).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
+	TArray<FParleyFactionSpeakerReputationState> FactionSpeakerReputationStates;
 
 	// Stored inventory of extracted energy drinks (counted, save-persistent).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Run Buff")
@@ -138,9 +146,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Character-owned save rows keyed by canonical character gameplay tag."))
 	TArray<FARCharacterSaveData> CharacterStates;
 
-	// Global speaker relationship points.
+	// Global directed speaker relationship points.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
-	TArray<FDialogueRelationshipState> DialogueRelationshipStates;
+	TArray<FDialogueSpeakerRelationshipState> DialogueSpeakerRelationshipStates;
 
 	// Persistent game-scope completed conversations.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")

@@ -14,7 +14,7 @@ class APlayerController;
 class APawn;
 class AActor;
 
-UCLASS()
+UCLASS(Abstract)
 class ALIENRAMEN_API AARTransitionGameMode : public AARGameModeBase
 {
 	GENERATED_BODY()
@@ -44,11 +44,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition")
 	FString FallbackDestinationURL = TEXT("/Game/Maps/Lvl_RamenShop");
 
+	/** When true, finalizes faction election once on transition init for Shop->Invader flows. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Faction|Voting", meta = (ToolTip = "When enabled, transition mode finalizes faction election once for Shop->Invader transitions."))
+	bool bFinalizeFactionElectionOnShopToInvaderTransition = true;
+
 private:
 	void InitializeTransitionContext();
 	void ResetPlayersReadyState() const;
 	bool TryAdvanceToDestination();
+	void TryFinalizeFactionElectionFromTransitionContext(const FARTransitionContext& TransitionContext);
 
 	bool bTransitionTravelStarted = false;
+	bool bFactionElectionFinalizedForThisTransition = false;
 };
-

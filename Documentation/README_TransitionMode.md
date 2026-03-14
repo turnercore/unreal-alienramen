@@ -7,6 +7,7 @@ This document defines the server-authoritative contract for the dedicated transi
 - `AARGameModeBase`
   - Shared mode-travel router for transition-map handoff.
   - `TryStartTravel` routes destination URLs through transition map when mode opts in.
+  - Seamless-travel handoff resets carried spectator controller state back to playing via `HandleSeamlessTravelPlayer(...)` so gameplay modes repossess correctly after transition maps.
   - Per-call route override is supported via `EARTravelRoutePolicy`:
     - `ModeDefault`
     - `ForceTransitionMap`
@@ -21,6 +22,7 @@ This document defines the server-authoritative contract for the dedicated transi
     - `TransitionReason`
 - `AARTransitionGameMode`
   - Authority owner of transition continue-gate behavior.
+  - Native class is abstract; maps should use a Blueprint subclass.
   - Resets player travel-ready flags on transition entry (configurable).
   - Auto-advances to destination when all active players are ready.
   - Spawns no gameplay pawn in transition mode.
@@ -29,6 +31,17 @@ This document defines the server-authoritative contract for the dedicated transi
   - Exposes source mode, transition reason, destination URL, and fresh-load flag to UI/widgets.
 - `AARTransitionPlayerController`
   - BP/UI entrypoint for continue voting (`RequestTransitionContinue`).
+  - Native class is abstract; transition maps should use a Blueprint subclass via GameMode defaults.
+  - BP/UI transition widget host:
+    - `ShowTransitionWidgetFromContext`
+    - `ShowTransitionWidget(WidgetClass)`
+    - `HideTransitionWidget`
+    - `ResolveTransitionWidgetClassFromContext`
+  - Context-based widget resolution supports overrides by:
+    - `bFreshLoadEntry` (`FreshLoadTransitionWidgetClass`)
+    - `Reason` (`TransitionWidgetClassByReason`)
+    - `SourceMode` (`TransitionWidgetClassBySourceMode`)
+    - fallback (`DefaultTransitionWidgetClass`)
 
 ## Travel Context
 

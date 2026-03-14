@@ -10,7 +10,7 @@ This site is built with MkDocs Material + Doxygen. Everything under `Documentati
 - Invader drops: [Invader drops runtime](README_InvaderDrops.md)
 - Progression + unlocks: [Progression + Unlocks](README_ProgressionUnlocks.md)
 - Dialogue plugin boundary: [Dialogue plugin ownership](README_DialoguePluginBoundary.md)
-- Dialogue/NPC system: [Dialogue + NPC runtime](README_DialogueNPC.md)
+- Dialogue/NPC system (includes Signal node usage): [Dialogue + NPC runtime](README_DialogueNPC.md)
 - Shop ramen ordering/serving (built on top): [Shop ramen system](README_ShopRamenSystem.md)
 - Scrapyard extraction + temp buffs: [Scrapyard mode + temp buffs](README_ScrapyardMode.md)
 - Faction election system (built on top): [Faction subsystem](README_FactionSubsystem.md)

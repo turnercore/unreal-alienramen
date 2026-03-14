@@ -4,7 +4,7 @@
 #include "AREnemyAIController.h"
 #include "AREconomySettings.h"
 #include "ARAttributeSetCore.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
 #include "ARGameStateBase.h"
@@ -1555,15 +1555,15 @@ bool UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag(FGameplayTag Enemy
 		return false;
 	}
 
-	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
+	UTagKeySubsystem* Lookup = GI->GetSubsystem<UTagKeySubsystem>();
 	if (!Lookup)
 	{
-		OutError = TEXT("No TagContentResolverSubsystem.");
+		OutError = TEXT("No TagKeySubsystem.");
 		return false;
 	}
 
 	FInstancedStruct ResolvedRow;
-	if (!Lookup->TryResolveRowForTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	if (!Lookup->TryResolveRowStructForTag(EnemyIdentifierTag, ResolvedRow, OutError))
 	{
 		return false;
 	}
@@ -1875,10 +1875,10 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
-	UTagContentResolverSubsystem* TagContentResolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
-	if (!TagContentResolver)
+	UTagKeySubsystem* TagKey = GameInstance ? GameInstance->GetSubsystem<UTagKeySubsystem>() : nullptr;
+	if (!TagKey)
 	{
-		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] TagContentResolverSubsystem unavailable while resolving wave/stage tables."));
+		UE_LOG(ARLog, Error, TEXT("[InvaderDirector|Validation] TagKeySubsystem unavailable while resolving wave/stage tables."));
 		return false;
 	}
 
@@ -1888,10 +1888,10 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		if (Settings->WaveDefinitionRootTag.IsValid())
 		{
 			UDataTable* ResolvedWaveTable = nullptr;
-			if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->WaveDefinitionRootTag, ResolvedWaveTable, LookupError))
+			if (!TagKey->TryResolveDataTableForRootTag(Settings->WaveDefinitionRootTag, ResolvedWaveTable, LookupError))
 			{
 				FGameplayTag MatchedRoot;
-				TagContentResolver->TryResolveDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
+				TagKey->TryResolveDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
 			}
 			WaveTable = ResolvedWaveTable;
 		}
@@ -1899,7 +1899,7 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		{
 			UDataTable* ResolvedWaveTable = nullptr;
 			FGameplayTag MatchedRoot;
-			TagContentResolver->TryResolveDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
+			TagKey->TryResolveDataTableForRowStruct(FARWaveDefRow::StaticStruct(), ResolvedWaveTable, MatchedRoot, LookupError);
 			WaveTable = ResolvedWaveTable;
 		}
 	}
@@ -1909,10 +1909,10 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		if (Settings->StageDefinitionRootTag.IsValid())
 		{
 			UDataTable* ResolvedStageTable = nullptr;
-			if (!TagContentResolver->TryResolveDataTableForRootTag(Settings->StageDefinitionRootTag, ResolvedStageTable, LookupError))
+			if (!TagKey->TryResolveDataTableForRootTag(Settings->StageDefinitionRootTag, ResolvedStageTable, LookupError))
 			{
 				FGameplayTag MatchedRoot;
-				TagContentResolver->TryResolveDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
+				TagKey->TryResolveDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
 			}
 			StageTable = ResolvedStageTable;
 		}
@@ -1920,7 +1920,7 @@ bool UARInvaderDirectorSubsystem::EnsureDataTables()
 		{
 			UDataTable* ResolvedStageTable = nullptr;
 			FGameplayTag MatchedRoot;
-			TagContentResolver->TryResolveDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
+			TagKey->TryResolveDataTableForRowStruct(FARStageDefRow::StaticStruct(), ResolvedStageTable, MatchedRoot, LookupError);
 			StageTable = ResolvedStageTable;
 		}
 	}

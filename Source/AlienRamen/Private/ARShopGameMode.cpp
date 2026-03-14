@@ -3,7 +3,6 @@
 #include "AREconomySettings.h"
 #include "AREnergyDrinkCarryItem.h"
 #include "ARGameStateBase.h"
-#include "ARFactionSubsystem.h"
 #include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -114,6 +113,23 @@ namespace
 			&& TransitionContext.Reason == EARTransitionReason::SaveLoadEntry
 			&& TransitionContext.bFreshLoadEntry;
 	}
+
+	static FGameplayTag ResolveCharacterTagForController(const AController* Controller)
+	{
+		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		if (!PlayerState)
+		{
+			return FGameplayTag();
+		}
+
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
+		if (CharacterTag.IsValid())
+		{
+			return CharacterTag;
+		}
+
+		return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
+	}
 }
 
 AARShopGameMode::AARShopGameMode()
@@ -188,6 +204,7 @@ void AARShopGameMode::BeginPlay()
 	// even when non-drink transient carryables were restored.
 	SpawnStoredEnergyDrinksAtAnchors(SaveGame, SaveSubsystem);
 	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
+	PersistCanonicalShopEntryIfNeeded(SaveSubsystem, SaveGame);
 }
 
 void AARShopGameMode::RestartPlayer(AController* NewPlayer)
@@ -204,6 +221,37 @@ void AARShopGameMode::RestartPlayer(AController* NewPlayer)
 	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
 }
 
+UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	const FGameplayTag CharacterTag = ResolveCharacterTagForController(InController);
+	if (CharacterTag.IsValid())
+	{
+		if (const TSubclassOf<APawn>* PawnClassByTag = ShopPawnClassByCharacterTag.Find(CharacterTag))
+		{
+			if (*PawnClassByTag)
+			{
+				return PawnClassByTag->Get();
+			}
+		}
+
+		// Allow parent-tag keyed entries (for example Parley.Speaker.Brother root variants).
+		for (const TPair<FGameplayTag, TSubclassOf<APawn>>& Entry : ShopPawnClassByCharacterTag)
+		{
+			if (Entry.Key.IsValid() && CharacterTag.MatchesTag(Entry.Key) && Entry.Value)
+			{
+				return Entry.Value.Get();
+			}
+		}
+	}
+
+	if (FallbackShopPawnClass)
+	{
+		return FallbackShopPawnClass.Get();
+	}
+
+	return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
 bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)
 {
 	if (!Super::PreStartTravel(URL, Options, bSkipReadyChecks))
@@ -213,29 +261,7 @@ bool AARShopGameMode::PreStartTravel(const FString& URL, const FString& Options,
 
 	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
 	ClearShopTransientCarryablesForRunStart(SaveSubsystem);
-
-	UARFactionSubsystem* FactionSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARFactionSubsystem>() : nullptr;
-	if (!FactionSubsystem)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] PreStartTravel failed: FactionSubsystem missing."));
-		return false;
-	}
-
-	FGameplayTag WinnerFactionTag;
-	EARFactionWinnerReason Reason = EARFactionWinnerReason::NoValidFactions;
-	const bool bFinalized = FactionSubsystem->FinalizeElectionForTravel(WinnerFactionTag, Reason);
-	if (!bFinalized)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] PreStartTravel blocked: faction election finalize failed."));
-		return false;
-	}
-
-	UE_LOG(
-		ARLog,
-		Log,
-		TEXT("[ShopGameMode] Faction election finalized. Winner='%s' Reason=%d"),
-		*WinnerFactionTag.ToString(),
-		static_cast<int32>(Reason));
+	UE_LOG(ARLog, Verbose, TEXT("[ShopGameMode] Faction election finalization is handled in transition map flow."));
 	return true;
 }
 
@@ -717,4 +743,30 @@ void AARShopGameMode::ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* 
 	SaveGame->ShopTransientCarryables.Reset();
 	SaveGame->bClearShopTransientCarryablesOnNextShopLoad = false;
 	SaveSubsystem->MarkSaveDirty();
+}
+
+bool AARShopGameMode::ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const
+{
+	if (!HasAuthority() || !SaveGame)
+	{
+		return false;
+	}
+
+	const UPackage* WorldPackage = GetWorld() && GetWorld()->PersistentLevel ? GetWorld()->PersistentLevel->GetOutermost() : nullptr;
+	const FString CurrentMapPath = WorldPackage ? WorldPackage->GetName() : FString();
+	return SaveGame->LastSavedModeTag != ModeTag || (!CurrentMapPath.IsEmpty() && SaveGame->LastSavedMapPath != CurrentMapPath);
+}
+
+void AARShopGameMode::PersistCanonicalShopEntryIfNeeded(UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const
+{
+	if (!SaveSubsystem || !ShouldPersistCanonicalShopEntry(SaveGame))
+	{
+		return;
+	}
+
+	FARSaveResult SaveResult;
+	if (!SaveSubsystem->SaveCurrentGameUnthrottled(NAME_None, true, SaveResult))
+	{
+		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Failed to persist canonical shop entry save: %s"), *SaveResult.Error);
+	}
 }

@@ -12,7 +12,7 @@
 #include "ARAbilitySet.h"
 #include "ARAttributeSetCore.h"
 #include "ARInvaderDirectorSettings.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -487,7 +487,7 @@ bool AAREnemyBase::ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString
 		return false;
 	}
 
-	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
+	UTagKeySubsystem* Lookup = GI->GetSubsystem<UTagKeySubsystem>();
 	if (!Lookup)
 	{
 		OutError = TEXT("No content lookup subsystem.");
@@ -495,7 +495,7 @@ bool AAREnemyBase::ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString
 	}
 
 	FInstancedStruct ResolvedRow;
-	if (!Lookup->TryResolveRowForTag(EnemyIdentifierTag, ResolvedRow, OutError))
+	if (!Lookup->TryResolveRowStructForTag(EnemyIdentifierTag, ResolvedRow, OutError))
 	{
 		return false;
 	}

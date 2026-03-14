@@ -7,14 +7,13 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Primary runtime API: `UARSaveSubsystem` (`Source/AlienRamen/Public/ARSaveSubsystem.h`)
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
-- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARPlayerCharacterSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
-- Save schema version is `v12`; minimum supported is `v10`.
+- Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
+- Save schema version is `v17`; minimum supported is `v17`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 - Save ownership is explicit:
   - shared world state -> `UARSaveGame`
   - player-owned state -> `PlayerStates[]` keyed by player identity
   - character-owned state -> `CharacterStates[]` keyed by canonical character gameplay tag
-  - player-character-owned state -> nested `PlayerStates[].CharacterStates[]`
 
 ## Persisted Payload Contract (`UARSaveGame`)
 
@@ -34,7 +33,7 @@ Authoritative persisted fields currently include:
   - `FactionPopularityStates`
 - Shared dialogue/run payload:
   - `DialogueCompletedConversationTagsByGame`
-  - `DialogueRelationshipStates`
+  - `DialogueSpeakerRelationshipStates`
   - `StoredEnergyDrinkStacks`
   - `QueuedEnergyDrinkStacks`
   - `ActiveRunBuffPayloads`
@@ -47,11 +46,10 @@ Authoritative persisted fields currently include:
     - compatibility `CharacterPicked`
     - `bDialogueAutoAdvanceEnabled`
     - player-owned `ProgressionTags`
-    - compatibility `LoadoutTags` for the active character
-    - nested `CharacterStates[]` for player-character-owned state (currently per-character loadouts)
 - Character payload:
   - `CharacterStates[]`:
     - canonical `CharacterTag`
+    - canonical character-owned `LoadoutTags`
     - dialogue progression/completion/choice-memory state
     - shop-only character world snapshot (`CharacterTransform`, held supported carryable snapshot)
 - Save metadata:
@@ -179,7 +177,7 @@ PlayerState hydration is split by lifecycle:
 - Seamless travel path: `AARPlayerStateBase::CopyProperties(...)` copies runtime struct + key replicated fields.
 - Player hydration is two-stage:
   1. hydrate player-owned fields by identity (or slot fallback for local-only identities)
-  2. resolve active `CurrentCharacterTag` and project character-owned plus player-character-owned state onto `AARPlayerStateBase`
+  2. resolve active `CurrentCharacterTag` and project character-owned state onto `AARPlayerStateBase`
 - `AARPlayerStateBase` remains the runtime owner surface, but character-owned persistence is not keyed by player id.
 
 ## Typical Blueprint Flows
@@ -205,8 +203,8 @@ PlayerState hydration is split by lifecycle:
 ## Extend Save Data
 
 When adding new persisted data:
-1. Decide the ownership bucket first: shared world, player-owned, character-owned, or player-character-owned.
-2. Add the field to `UARSaveGame`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, or `FARPlayerCharacterSaveData` accordingly.
+1. Decide the ownership bucket first: shared world, player-owned, or character-owned.
+2. Add the field to `UARSaveGame`, `FARPlayerStateSaveData`, or `FARCharacterSaveData` accordingly.
 3. Populate in `UARSaveSubsystem::GatherRuntimeData(...)`.
 4. Apply in the correct hydration/projection flow.
 5. If BP-facing, add reflected `UPROPERTY`.

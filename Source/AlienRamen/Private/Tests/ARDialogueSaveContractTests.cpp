@@ -2,7 +2,8 @@
 
 #include "Misc/AutomationTest.h"
 
-#include "ARDialogueTypes.h"
+#include "ARPlayerTypes.h"
+#include "ParleyDialogueTypes.h"
 #include "ARSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -41,23 +42,24 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 	}
 
 	{
-		FDialogueRelationshipState InvalidRelationship;
+		FDialogueSpeakerRelationshipState InvalidRelationship;
 		InvalidRelationship.RelationshipPoints = 10.0f;
-		Save->DialogueRelationshipStates.Add(InvalidRelationship);
+		Save->DialogueSpeakerRelationshipStates.Add(InvalidRelationship);
 
-		FDialogueRelationshipState ValidRelationship;
-		ValidRelationship.SpeakerTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker")), false);
+		FDialogueSpeakerRelationshipState ValidRelationship;
+		ValidRelationship.SourceSpeakerTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+		ValidRelationship.TargetSpeakerTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker")), false);
 		ValidRelationship.RelationshipPoints = 25.0f;
-		Save->DialogueRelationshipStates.Add(ValidRelationship);
+		Save->DialogueSpeakerRelationshipStates.Add(ValidRelationship);
 	}
 
 	{
 		FARCharacterSaveData CharacterState;
-		CharacterState.CharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false);
+		CharacterState.CharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 
 		FDialoguePlayerPersistentState& PlayerState = CharacterState.DialogueState;
 		FDialogueChoiceMemoryRecord InvalidRecord;
-		InvalidRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation")), false);
+		InvalidRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations")), false);
 		PlayerState.CompletedChoiceRecords.Add(InvalidRecord);
 		Save->CharacterStates.Add(CharacterState);
 	}
@@ -65,7 +67,7 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 	TArray<FString> Warnings;
 	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
 	TestTrue(TEXT("Sanitization performs at least one correction"), ClampedCount > 0);
-	TestEqual(TEXT("Invalid relationship rows removed"), Save->DialogueRelationshipStates.Num(), 1);
+	TestEqual(TEXT("Invalid relationship rows removed"), Save->DialogueSpeakerRelationshipStates.Num(), 1);
 	TestEqual(TEXT("Invalid choice memory rows removed"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 0);
 	TestTrue(TEXT("Warnings produced for invalid dialogue data"), Warnings.Num() > 0);
 	return true;
@@ -91,15 +93,14 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
 	PlayerState.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
-	PlayerState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
 
 	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	LegacyDialogueState.Identity.PlayerSlot = EARPlayerSlot::P1;
-	LegacyDialogueState.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother.Default")), false));
-	LegacyDialogueState.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false));
+	LegacyDialogueState.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
+	LegacyDialogueState.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother.Default")), false));
+	LegacyDialogueState.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false));
 
 	FDialogueChoiceMemoryRecord ChoiceRecord;
-	ChoiceRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false);
+	ChoiceRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false);
 	ChoiceRecord.ChoiceNodeId = FGuid::NewGuid();
 	ChoiceRecord.SelectedBranchId = FGuid::NewGuid();
 	LegacyDialogueState.CompletedChoiceRecords.Add(ChoiceRecord);
@@ -112,14 +113,13 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Legacy dialogue array cleared after migration"), Save->DialoguePlayerPersistentStates.Num(), 0);
 
 	TestEqual(TEXT("One character row created"), Save->CharacterStates.Num(), 1);
-	TestEqual(TEXT("Character row keyed by Brother tag"), Save->CharacterStates[0].CharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
-	TestTrue(TEXT("Dialogue progression migrated to character row"), Save->CharacterStates[0].DialogueState.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother.Default")), false)));
-	TestTrue(TEXT("Dialogue completion migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Conversation.Id.TestCactus.1")), false)));
+	TestEqual(TEXT("Character row keyed by Brother tag"), Save->CharacterStates[0].CharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
+	TestTrue(TEXT("Dialogue progression migrated to character row"), Save->CharacterStates[0].DialogueState.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother.Default")), false)));
+	TestTrue(TEXT("Dialogue completion migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false)));
 	TestEqual(TEXT("Dialogue choice memory migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 1);
 
-	TestEqual(TEXT("One player-character loadout row created"), Save->PlayerStates[0].CharacterStates.Num(), 1);
-	TestEqual(TEXT("Current character tag resolved"), Save->PlayerStates[0].CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false));
-	TestTrue(TEXT("Loadout migrated into player-character row"), Save->PlayerStates[0].CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Speaker.Brother")), false)));
+	TestEqual(TEXT("Current character tag resolved"), Save->PlayerStates[0].CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
+	TestEqual(TEXT("Character selection enum mirrors canonical tag"), Save->PlayerStates[0].CharacterPicked, EARCharacterChoice::Brother);
 	TestTrue(TEXT("Migration warnings emitted"), Warnings.Num() > 0);
 	return true;
 }
@@ -154,3 +154,4 @@ bool FDialogueTypesDefaultsTest::RunTest(const FString& Parameters)
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
+

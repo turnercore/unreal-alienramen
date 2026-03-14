@@ -4,7 +4,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "Engine/GameInstance.h"
 #include "StructUtils/InstancedStruct.h"
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 
 bool UARItemDefinitionSubsystem::ResolveItemDefinition(const FGameplayTag ItemTag, FARScrapyardItemDefRow& OutItemDef) const
 {
@@ -22,7 +22,7 @@ bool UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition(
 	}
 
 	UGameInstance* GameInstance = GetGameInstance();
-	UTagContentResolverSubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagKeySubsystem>() : nullptr;
 
 	auto TryResolveDirect = [Resolver](const FGameplayTag TagToResolve, FAREnergyDrinkDefRow& OutDef) -> bool
 	{
@@ -33,7 +33,7 @@ bool UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition(
 
 		FInstancedStruct RowData;
 		FString ResolveError;
-		if (!Resolver->TryResolveRowForTag(TagToResolve, RowData, ResolveError))
+		if (!Resolver->TryResolveRowStructForTag(TagToResolve, RowData, ResolveError))
 		{
 			return false;
 		}
@@ -178,7 +178,7 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 	}
 
 	UGameInstance* GameInstance = GetGameInstance();
-	UTagContentResolverSubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagContentResolverSubsystem>() : nullptr;
+	UTagKeySubsystem* Resolver = GameInstance ? GameInstance->GetSubsystem<UTagKeySubsystem>() : nullptr;
 	if (!Resolver)
 	{
 		return false;
@@ -186,7 +186,7 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 
 	FInstancedStruct RowData;
 	FString ResolveError;
-	if (!Resolver->TryResolveRowForTag(ItemTag, RowData, ResolveError))
+	if (!Resolver->TryResolveRowStructForTag(ItemTag, RowData, ResolveError))
 	{
 		UE_LOG(
 			ARLog,

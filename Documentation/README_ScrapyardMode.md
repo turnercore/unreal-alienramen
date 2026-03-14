@@ -21,7 +21,13 @@ This document captures the server-authoritative runtime contract for:
 - `AARScrapyardCarryItemBase`
   - Scrapyard world-carryable base actor for extraction items.
   - `ForwardUseToController` routes BI_Interactable-style use to scrapyard pickup (`AARScrapyardPlayerController`) instead of shop pickup.
+  - Inherits `ForwardSecondaryUseToController` / `UseSecondaryInWorldByController` default behavior from `AARShopCarryItemBase` for secondary world-item kick handling.
   - Replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI resolution.
+- `AARScrapyardPlayerController`
+  - `RequestUseSecondaryOnHeldCarryItem()` provides generic held-secondary dispatch through held `AARShopCarryItemBase::UseSecondaryByController(...)` (default throw unless item override).
+- `AARPlayerController` (shared interaction runtime used by `AARScrapyardPlayerController`)
+  - Tracks active hold targets (`ActiveInteractable`, `ActiveSecondaryInteractable`) plus latch state (`bIsInteracting`) for hold-style interaction input.
+  - Performs server-side periodic range re-validation (`ActiveInteractionRangeCheckInterval`) for active targets and calls `IARInteractableRangeListener::OnPlayerOutOfRange(...)` on opted-in interactables before clearing target state.
 - `UARInvaderDirectorSubsystem`
   - End-of-run authority (loss, unanimous early-bail, stop reasons).
   - Death-penalty application to run ledger.
@@ -31,7 +37,7 @@ This document captures the server-authoritative runtime contract for:
   - Extracted energy drinks route to stored inventory only when `Unlock.Shop.Storage.EnergyDrink` is active; otherwise they route to queued next-run stacks.
 - `UARItemDefinitionSubsystem`
   - Shared item-definition resolver facade used by Scrapyard + Shop.
-  - Delegates row resolution to `UTagContentResolverSubsystem`.
+  - Delegates row resolution to `UTagKeySubsystem`.
 - `AARShopGameMode`
   - Run-ledger deposit to storage with clamps.
   - First-shop-entry run-buff cleanup.
@@ -41,6 +47,7 @@ This document captures the server-authoritative runtime contract for:
 
 - Scrapyard item definitions: route root `Scrapyard.Item` (`FARScrapyardItemDefRow`).
   - Includes item type/rarity, main/alt text, knowledge gates, spawn conditions, rewards, sell value, stack/weight/model metadata.
+- Ship definitions (`Unlock.Ship.*`) should provide `ScrapyardPawnClass` and may provide `DummyPawnClass` as a mode-agnostic fallback for spawn selection.
 - Energy drink definitions: route root `Scrapyard.EnergyDrink` (`FAREnergyDrinkDefRow`).
   - Includes icon + per-run GE/tag payload + stack rules.
 - Economy tuning: `UAREconomySettings`.
@@ -170,4 +177,4 @@ This document captures the server-authoritative runtime contract for:
   - granted reward list
 - `AARScrapyardHUD`, `UARScrapyardHUDWidgetBase`, `UARScrapyardExitZoneWidgetBase` bind to replicated summary/timer/run-active/run-buff snapshot delegates.
 - Shared resolve path:
-  - systems should resolve item/energy-drink rows through `UARItemDefinitionSubsystem` instead of duplicating direct `UTagContentResolverSubsystem` calls.
+  - systems should resolve item/energy-drink rows through `UARItemDefinitionSubsystem` instead of duplicating direct `UTagKeySubsystem` calls.

@@ -172,20 +172,6 @@ struct ALIENRAMEN_API FARPlayerIdentity
 };
 
 USTRUCT(BlueprintType)
-struct ALIENRAMEN_API FARPlayerCharacterSaveData
-{
-	GENERATED_BODY()
-
-	// Which character this nested row belongs to.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Canonical gameplay-tag identity for the character this nested player row belongs to."))
-	FGameplayTag CharacterTag;
-
-	// Character-specific loadout that is still owned by the player profile.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Loadout saved for this specific player-character pairing."))
-	FGameplayTagContainer LoadoutTags;
-};
-
-USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARPlayerStateSaveData
 {
 	GENERATED_BODY()
@@ -210,14 +196,6 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Player-owned progression tags that follow this player identity regardless of active character."))
 	FGameplayTagContainer ProgressionTags;
 
-	// Compatibility mirror of the active character row's loadout.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Compatibility mirror of the currently active character's loadout."))
-	FGameplayTagContainer LoadoutTags;
-
-	// Per-character rows that stay under the owning player profile.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Per-character save rows owned by this player profile."))
-	TArray<FARPlayerCharacterSaveData> CharacterStates;
-
 	FGameplayTag ResolveCurrentCharacterTag() const
 	{
 		return CurrentCharacterTag.IsValid()
@@ -225,10 +203,7 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 			: ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(CharacterPicked), Identity.PlayerSlot);
 	}
 
-	const struct FARPlayerCharacterSaveData* FindCharacterStateData(const FGameplayTag CharacterTag, int32& OutIndex) const;
-	struct FARPlayerCharacterSaveData* FindCharacterStateDataMutable(const FGameplayTag CharacterTag, int32& OutIndex);
-	struct FARPlayerCharacterSaveData& FindOrAddCharacterStateData(const FGameplayTag CharacterTag);
-	void SyncCompatibilityLoadoutFromCurrentCharacter();
+	void SyncCharacterSelectionFromCurrentTag();
 };
 
 USTRUCT(BlueprintType)
@@ -285,8 +260,8 @@ struct ALIENRAMEN_API FARSaveSlotDescriptor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FName SlotName = NAME_None;
 
-	/** Zero-based save revision number used as the on-disk slot suffix (e.g., \"Base__Rev\"). Not a human-facing slot index. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Zero-based save revision number used as the on-disk slot suffix (e.g., \"Base__Rev\"). Not a human-facing slot index."))
+	/** Zero-based save revision number used as the on-disk slot suffix (e.g., \"Base__0\"). Not a human-facing slot index. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Zero-based save revision number used as the on-disk slot suffix (e.g., \"Base__0\"). Not a human-facing slot index."))
 	int32 SlotNumber = 0;
 
 	/** Save schema version recorded for this slot revision. */
@@ -362,72 +337,9 @@ struct ALIENRAMEN_API FARSaveResult
 	EARSaveResultCode ResultCode = EARSaveResultCode::Unknown;
 };
 
-inline const FARPlayerCharacterSaveData* FARPlayerStateSaveData::FindCharacterStateData(const FGameplayTag CharacterTag, int32& OutIndex) const
+inline void FARPlayerStateSaveData::SyncCharacterSelectionFromCurrentTag()
 {
-	OutIndex = INDEX_NONE;
-	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
-	if (!NormalizedTag.IsValid())
-	{
-		return nullptr;
-	}
-
-	for (int32 Index = 0; Index < CharacterStates.Num(); ++Index)
-	{
-		if (CharacterStates[Index].CharacterTag == NormalizedTag)
-		{
-			OutIndex = Index;
-			return &CharacterStates[Index];
-		}
-	}
-
-	return nullptr;
-}
-
-inline FARPlayerCharacterSaveData* FARPlayerStateSaveData::FindCharacterStateDataMutable(const FGameplayTag CharacterTag, int32& OutIndex)
-{
-	OutIndex = INDEX_NONE;
-	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
-	if (!NormalizedTag.IsValid())
-	{
-		return nullptr;
-	}
-
-	for (int32 Index = 0; Index < CharacterStates.Num(); ++Index)
-	{
-		if (CharacterStates[Index].CharacterTag == NormalizedTag)
-		{
-			OutIndex = Index;
-			return &CharacterStates[Index];
-		}
-	}
-
-	return nullptr;
-}
-
-inline FARPlayerCharacterSaveData& FARPlayerStateSaveData::FindOrAddCharacterStateData(const FGameplayTag CharacterTag)
-{
-	int32 ExistingIndex = INDEX_NONE;
-	if (FARPlayerCharacterSaveData* Existing = FindCharacterStateDataMutable(CharacterTag, ExistingIndex))
-	{
-		return *Existing;
-	}
-
-	FARPlayerCharacterSaveData& Added = CharacterStates.AddDefaulted_GetRef();
-	Added.CharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag, Identity.PlayerSlot);
-	return Added;
-}
-
-inline void FARPlayerStateSaveData::SyncCompatibilityLoadoutFromCurrentCharacter()
-{
-	LoadoutTags.Reset();
-
 	const FGameplayTag ActiveCharacterTag = ResolveCurrentCharacterTag();
-	int32 CharacterIndex = INDEX_NONE;
-	if (const FARPlayerCharacterSaveData* CharacterState = FindCharacterStateData(ActiveCharacterTag, CharacterIndex))
-	{
-		LoadoutTags = CharacterState->LoadoutTags;
-	}
-
 	CharacterPicked = ARPlayer::GetCharacterChoiceForTag(ActiveCharacterTag);
 	CurrentCharacterTag = ActiveCharacterTag;
 }

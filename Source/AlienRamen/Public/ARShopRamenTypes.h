@@ -139,19 +139,19 @@ struct ALIENRAMEN_API FARCustomerDefinitionRow : public FTableRowBase
 	TArray<FARRamenOrderOption> OrderOptions;
 
 	// Optional per-customer overrides. If unset, system settings defaults are used.
-	/** Override emotion tag for the Hate reaction (Dialogue.Emotion). */
+	/** Override emotion tag for the Hate reaction (Parley.Emotion). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue"))
 	FGameplayTag HateEmotionTagOverride;
 
-	/** Override emotion tag for the Ok reaction (Dialogue.Emotion). */
+	/** Override emotion tag for the Ok reaction (Parley.Emotion). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue"))
 	FGameplayTag OkEmotionTagOverride;
 
-	/** Override emotion tag for the Like reaction (Dialogue.Emotion). */
+	/** Override emotion tag for the Like reaction (Parley.Emotion). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue"))
 	FGameplayTag LikeEmotionTagOverride;
 
-	/** Override emotion tag for the Love reaction (Dialogue.Emotion). */
+	/** Override emotion tag for the Love reaction (Parley.Emotion). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Dialogue"))
 	FGameplayTag LoveEmotionTagOverride;
 };
@@ -185,3 +185,4 @@ struct ALIENRAMEN_API FARShopStationConfigRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float TapProcessingSecondsPerPress = 0.20f;
 };
+

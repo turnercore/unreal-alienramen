@@ -6,18 +6,19 @@
 #include "GameFramework/PlayerState.h"
 
 void AARScrapyardHUD::RequestHUDInitialization(
-	AARPlayerController* SourceController,
+	APlayerController* SourceController,
 	APlayerState* CurrentPlayerState,
 	AGameStateBase* CurrentGameState)
 {
 	Super::RequestHUDInitialization(SourceController, CurrentPlayerState, CurrentGameState);
 
-	if (!SourceController || !SourceController->IsLocalController())
+	AARPlayerController* ARController = Cast<AARPlayerController>(SourceController);
+	if (!ARController || !ARController->IsLocalController())
 	{
 		return;
 	}
 
-	InitializeScrapyardHUD(SourceController, Cast<AARScrapyardGameState>(CurrentGameState));
+	InitializeScrapyardHUD(ARController, Cast<AARScrapyardGameState>(CurrentGameState));
 }
 
 void AARScrapyardHUD::InitializeScrapyardHUD(AARPlayerController* SourceController, AARScrapyardGameState* CurrentScrapyardGameState)

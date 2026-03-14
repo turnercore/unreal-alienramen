@@ -50,7 +50,10 @@ public:
 
 	/** Processing progress in [0..1]; designers can bind this to progress bars. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
-	float GetProcessingProgress01() const { return ProcessingProgress01; }
+	float GetProcessingProgressNormalized() const { return ProcessingProgress01; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station", meta = (DeprecatedFunction, DeprecationMessage = "Use GetProcessingProgressNormalized instead."))
+	float GetProcessingProgress01() const { return GetProcessingProgressNormalized(); }
 
 	/** Returns the meat actor currently slotted for processing, if any. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")

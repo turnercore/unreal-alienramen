@@ -64,13 +64,31 @@ bool UARShopCarryComponent::TrySetHeldActor(AActor* NewHeldActor)
 {
 	if (!IsAuthorityOwner() || !IsValid(NewHeldActor) || HeldActor != nullptr)
 	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Carry] TrySetHeldActor rejected owner='%s' authority=%d newActor='%s' currentlyHeld='%s'."),
+			*GetNameSafe(GetOwner()),
+			IsAuthorityOwner() ? 1 : 0,
+			*GetNameSafe(NewHeldActor),
+			*GetNameSafe(HeldActor));
 		return false;
 	}
 
 	AActor* OldHeldActor = HeldActor;
 	HeldActor = NewHeldActor;
+	if (AARRamenMeatActor* HeldMeat = Cast<AARRamenMeatActor>(HeldActor))
+	{
+		HeldMeat->ArmStorageReturn();
+	}
 	ApplyHoldPresentation(HeldActor);
 	OnHeldActorChanged.Broadcast(HeldActor, OldHeldActor);
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Carry] TrySetHeldActor success owner='%s' heldActor='%s'."),
+		*GetNameSafe(GetOwner()),
+		*GetNameSafe(HeldActor));
 
 	if (AActor* OwnerActor = GetOwner())
 	{
@@ -83,6 +101,13 @@ AActor* UARShopCarryComponent::ClearHeldActor(const bool bDropInWorld)
 {
 	if (!IsAuthorityOwner() || HeldActor == nullptr)
 	{
+		UE_LOG(
+			ARLog,
+			VeryVerbose,
+			TEXT("[Shop|Carry] ClearHeldActor no-op owner='%s' authority=%d held='%s'."),
+			*GetNameSafe(GetOwner()),
+			IsAuthorityOwner() ? 1 : 0,
+			*GetNameSafe(HeldActor));
 		return nullptr;
 	}
 
@@ -90,6 +115,13 @@ AActor* UARShopCarryComponent::ClearHeldActor(const bool bDropInWorld)
 	ClearHoldPresentation(Released, bDropInWorld);
 	HeldActor = nullptr;
 	OnHeldActorChanged.Broadcast(nullptr, Released);
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Carry] ClearHeldActor owner='%s' released='%s' dropInWorld=%d."),
+		*GetNameSafe(GetOwner()),
+		*GetNameSafe(Released),
+		bDropInWorld ? 1 : 0);
 
 	if (AActor* OwnerActor = GetOwner())
 	{
@@ -102,12 +134,25 @@ AActor* UARShopCarryComponent::ReleaseHeldActorForTransfer()
 {
 	if (!IsAuthorityOwner() || HeldActor == nullptr)
 	{
+		UE_LOG(
+			ARLog,
+			VeryVerbose,
+			TEXT("[Shop|Carry] ReleaseHeldActorForTransfer no-op owner='%s' authority=%d held='%s'."),
+			*GetNameSafe(GetOwner()),
+			IsAuthorityOwner() ? 1 : 0,
+			*GetNameSafe(HeldActor));
 		return nullptr;
 	}
 
 	AActor* Released = HeldActor;
 	HeldActor = nullptr;
 	OnHeldActorChanged.Broadcast(nullptr, Released);
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Shop|Carry] ReleaseHeldActorForTransfer owner='%s' released='%s'."),
+		*GetNameSafe(GetOwner()),
+		*GetNameSafe(Released));
 
 	if (AActor* OwnerActor = GetOwner())
 	{

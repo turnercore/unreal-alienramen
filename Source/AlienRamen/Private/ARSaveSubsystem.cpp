@@ -6,11 +6,11 @@
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARLoadoutSettings.h"
-#include "ARDialogueSubsystem.h"
+#include "ParleyDialogueSubsystem.h"
 #include "AREnergyDrinkCarryItem.h"
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
-#include "ARSpeakerSubsystem.h"
+#include "ParleySpeakerSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
@@ -777,7 +777,8 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->ProgressionTags = CurrentSaveGame->ProgressionTags;
 		SaveObject->FactionClout = CurrentSaveGame->FactionClout;
 		SaveObject->FactionPopularityStates = CurrentSaveGame->FactionPopularityStates;
-		SaveObject->DialogueRelationshipStates = CurrentSaveGame->DialogueRelationshipStates;
+		SaveObject->FactionSpeakerReputationStates = CurrentSaveGame->FactionSpeakerReputationStates;
+		SaveObject->DialogueSpeakerRelationshipStates = CurrentSaveGame->DialogueSpeakerRelationshipStates;
 		SaveObject->DialogueCompletedConversationTagsByGame = CurrentSaveGame->DialogueCompletedConversationTagsByGame;
 		SaveObject->CharacterStates = CurrentSaveGame->CharacterStates;
 		SaveObject->StoredEnergyDrinkStacks = CurrentSaveGame->StoredEnergyDrinkStacks;
@@ -829,14 +830,12 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 
 		const FARPlayerIdentity RuntimeIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(PS);
 		FARPlayerStateSaveData PlayerData;
-		bool bFoundExistingPlayerData = false;
 		for (const FARPlayerStateSaveData& ExistingPlayerData : ExistingPlayerStates)
 		{
 			if (ExistingPlayerData.Identity.Matches(RuntimeIdentity)
 				|| (RuntimeIdentity.PlayerSlot != EARPlayerSlot::Unknown && ExistingPlayerData.Identity.PlayerSlot == RuntimeIdentity.PlayerSlot))
 			{
 				PlayerData = ExistingPlayerData;
-				bFoundExistingPlayerData = true;
 				break;
 			}
 		}
@@ -847,14 +846,10 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		PlayerData.bDialogueAutoAdvanceEnabled = ARPS->IsDialogueAutoAdvanceEnabled();
 		if (PlayerData.CurrentCharacterTag.IsValid())
 		{
-			FARPlayerCharacterSaveData& ActiveCharacterState = PlayerData.FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
+			FARCharacterSaveData& ActiveCharacterState = SaveObject->FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
 			ActiveCharacterState.LoadoutTags = ARPS->LoadoutTags;
 		}
-		else if (!bFoundExistingPlayerData)
-		{
-			PlayerData.LoadoutTags = ARPS->LoadoutTags;
-		}
-		PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
+		PlayerData.SyncCharacterSelectionFromCurrentTag();
 
 		SaveObject->PlayerStates.Add(MoveTemp(PlayerData));
 
@@ -1122,6 +1117,16 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 
 bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
+	return SaveCurrentGameInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, false);
+}
+
+bool UARSaveSubsystem::SaveCurrentGameUnthrottled(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
+{
+	return SaveCurrentGameInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, true);
+}
+
+bool UARSaveSubsystem::SaveCurrentGameInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, const bool bIgnoreThrottle)
+{
 	OutResult = FARSaveResult();
 
 	if (bSaveInProgress)
@@ -1154,7 +1159,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UARDialogueSubsystem>())
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
 		{
 			if (DialogueSubsystem->HasActiveDialogueSession())
 			{
@@ -1167,7 +1172,7 @@ bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevisi
 	}
 
 	const FDateTime NowUtc = FDateTime::UtcNow();
-	if (MinSaveIntervalSeconds > 0.f && LastSaveTimestampUtc.GetTicks() != 0)
+	if (!bIgnoreThrottle && MinSaveIntervalSeconds > 0.f && LastSaveTimestampUtc.GetTicks() != 0)
 	{
 		const double Elapsed = (NowUtc - LastSaveTimestampUtc).GetTotalSeconds();
 		if (Elapsed < MinSaveIntervalSeconds)
@@ -1983,10 +1988,10 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 		AddedPlayerData.bDialogueAutoAdvanceEnabled = Requester->IsDialogueAutoAdvanceEnabled();
 		if (AddedPlayerData.CurrentCharacterTag.IsValid())
 		{
-			FARPlayerCharacterSaveData& ActiveCharacterState = AddedPlayerData.FindOrAddCharacterStateData(AddedPlayerData.CurrentCharacterTag);
+			FARCharacterSaveData& ActiveCharacterState = CurrentSaveGame->FindOrAddCharacterStateData(AddedPlayerData.CurrentCharacterTag);
 			ActiveCharacterState.LoadoutTags = Requester->LoadoutTags;
 		}
-		AddedPlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
+		AddedPlayerData.SyncCharacterSelectionFromCurrentTag();
 		PlayerIndex = CurrentSaveGame->PlayerStates.Num() - 1;
 	}
 
@@ -2119,7 +2124,7 @@ void UARSaveSubsystem::ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveRes
 	// Loading a save can change dialogue availability; refresh speaker talkable caches/widgets immediately.
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		if (UARSpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UARSpeakerSubsystem>())
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UParleySpeakerSubsystem>())
 		{
 			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
 		}

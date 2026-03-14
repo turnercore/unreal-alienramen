@@ -18,11 +18,11 @@ public:
 	virtual FName GetCategoryName() const override { return TEXT("Alien Ramen"); }
 	virtual FName GetSectionName() const override { return TEXT("Shop Settings"); }
 
-	// Root tag used by TagContentResolver for FARCustomerDefinitionRow records.
+	// Root tag used by TagKey for FARCustomerDefinitionRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Content")
 	FGameplayTag CustomerDefinitionRootTag;
 
-	// Root tag used by TagContentResolver for FARShopStationConfigRow records.
+	// Root tag used by TagKey for FARShopStationConfigRow records.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Content")
 	FGameplayTag StationDefinitionRootTag;
 
@@ -51,7 +51,7 @@ public:
 	FGameplayTag LoveEmotionTag;
 
 	// Optional emotion while this customer has an active order. If unset, Emotion Settings -> WantsToTalkEmotionTag is used.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Emotion", meta = (Categories = "Dialogue.Emotion"))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Emotion", meta = (Categories = "Parley.Emotion"))
 	FGameplayTag ActiveOrderEmotionTag;
 
 	// Priority used for active-order system emotion overrides (higher wins over dialogue/base).
@@ -78,3 +78,4 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Fallback")
 	bool bAllowProceduralFallbackOrders = true;
 };
+

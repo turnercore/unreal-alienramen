@@ -20,11 +20,6 @@ namespace
 		}
 	}
 
-	static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
-	{
-		return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
-	}
-
 	static bool ContainsChoiceRecord(
 		const TArray<FDialogueChoiceMemoryRecord>& Records,
 		const FDialogueChoiceMemoryRecord& Candidate)
@@ -73,6 +68,35 @@ namespace
 			}
 		}
 
+		for (const FDialogueSpeakerCycleOfferCount& SourceCount : Source.SpeakerOfferCountsThisCycle)
+		{
+			if (!SourceCount.SpeakerTag.IsValid() || SourceCount.OfferCount <= 0)
+			{
+				continue;
+			}
+
+			bool bFound = false;
+			for (FDialogueSpeakerCycleOfferCount& TargetCount : Target.SpeakerOfferCountsThisCycle)
+			{
+				if (!TargetCount.SpeakerTag.MatchesTagExact(SourceCount.SpeakerTag))
+				{
+					continue;
+				}
+
+				bFound = true;
+				const int32 OldCount = TargetCount.OfferCount;
+				TargetCount.OfferCount = FMath::Max(OldCount, SourceCount.OfferCount);
+				ChangeCount += (TargetCount.OfferCount != OldCount) ? 1 : 0;
+				break;
+			}
+
+			if (!bFound)
+			{
+				Target.SpeakerOfferCountsThisCycle.Add(SourceCount);
+				++ChangeCount;
+			}
+		}
+
 		return ChangeCount;
 	}
 
@@ -81,34 +105,75 @@ namespace
 		return ARPlayer::GetCharacterChoiceForTag(CharacterTag) != EARCharacterChoice::None;
 	}
 
-	static FGameplayTag ResolveLegacyDialogueCharacterTag(
-		UARSaveGame* SaveGame,
-		const FDialoguePlayerPersistentState& LegacyState)
+	static FString ResolveDefaultMapPathForModeTag(const FGameplayTag ModeTag)
 	{
-		if (!SaveGame)
+		if (!ModeTag.IsValid())
 		{
-			return FGameplayTag();
+			return FString();
 		}
 
-		FARPlayerStateSaveData MatchedPlayerState;
+		const FGameplayTag LobbyModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Lobby"), false);
+		if (LobbyModeTag.IsValid() && ModeTag.MatchesTagExact(LobbyModeTag))
+		{
+			return TEXT("/Game/Maps/Lvl_MultiplayerLobby");
+		}
+
+		const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+		if (ShopModeTag.IsValid() && ModeTag.MatchesTagExact(ShopModeTag))
+		{
+			return TEXT("/Game/Maps/Lvl_RamenShop");
+		}
+
+		const FGameplayTag InvaderModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Invader"), false);
+		if (InvaderModeTag.IsValid() && ModeTag.MatchesTagExact(InvaderModeTag))
+		{
+			return TEXT("/Game/Maps/Lvl_Invader");
+		}
+
+		const FGameplayTag ScrapyardModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Scrapyard"), false);
+		if (ScrapyardModeTag.IsValid() && ModeTag.MatchesTagExact(ScrapyardModeTag))
+		{
+			return TEXT("/Game/Maps/Lvl_Scrapyard");
+		}
+
+		const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
+		if (TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag))
+		{
+			return TEXT("/Game/Maps/Lvl_Loading");
+		}
+
+		return FString();
+	}
+
+static FGameplayTag ResolveLegacyDialogueCharacterTag(
+	UARSaveGame* SaveGame,
+	const FDialoguePlayerPersistentState& LegacyState)
+{
+	if (!SaveGame)
+	{
+		return FGameplayTag();
+	}
+
+	if (IsValidCharacterTag(LegacyState.CharacterTag))
+	{
+		return ARPlayer::NormalizeCharacterTag(LegacyState.CharacterTag);
+	}
+
+	FARPlayerStateSaveData MatchedPlayerState;
+	const EARPlayerSlot LegacySlot = ARPlayer::GetPlayerSlotForTag(LegacyState.OwnerPlayerSlotTag);
+	if (LegacySlot != EARPlayerSlot::Unknown)
+	{
 		int32 PlayerIndex = INDEX_NONE;
-		if (SaveGame->FindPlayerStateDataByIdentity(LegacyState.Identity, MatchedPlayerState, PlayerIndex))
+		if (SaveGame->FindPlayerStateDataBySlot(LegacySlot, MatchedPlayerState, PlayerIndex))
 		{
 			return MatchedPlayerState.ResolveCurrentCharacterTag();
 		}
 
-		if (LegacyState.Identity.PlayerSlot != EARPlayerSlot::Unknown)
-		{
-			if (SaveGame->FindPlayerStateDataBySlot(LegacyState.Identity.PlayerSlot, MatchedPlayerState, PlayerIndex))
-			{
-				return MatchedPlayerState.ResolveCurrentCharacterTag();
-			}
-
-			return ARPlayer::GetDefaultCharacterTagForSlot(LegacyState.Identity.PlayerSlot);
-		}
-
-		return FGameplayTag();
+		return ARPlayer::GetDefaultCharacterTagForSlot(LegacySlot);
 	}
+
+	return FGameplayTag();
+}
 }
 
 UARSaveGame::UARSaveGame()
@@ -231,30 +296,59 @@ int32 UARSaveGame::MigrateToCurrentSchema(TArray<FString>* OutWarnings)
 		return ChangeCount;
 	}
 
-	if (SaveGameVersion <= 11)
+	if (SaveGameVersion <= 13)
 	{
 		for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 		{
-			const FGameplayTag ResolvedCharacterTag = PlayerData.ResolveCurrentCharacterTag();
-			if (PlayerData.CurrentCharacterTag != ResolvedCharacterTag)
-			{
-				PlayerData.CurrentCharacterTag = ResolvedCharacterTag;
-				++ChangeCount;
-			}
+			const FGameplayTag OldTag = PlayerData.CurrentCharacterTag;
+			const EARCharacterChoice OldChoice = PlayerData.CharacterPicked;
+			PlayerData.SyncCharacterSelectionFromCurrentTag();
+			ChangeCount += (PlayerData.CurrentCharacterTag != OldTag || PlayerData.CharacterPicked != OldChoice) ? 1 : 0;
+		}
+	}
 
-			if (ResolvedCharacterTag.IsValid())
+	if (SaveGameVersion <= 14)
+	{
+		const FGameplayTag DialogueProgressionRootTag = FGameplayTag::RequestGameplayTag(TEXT("Progression.Dialogue"), false);
+		bool bMigratedDialogueProgressionTags = false;
+		if (DialogueProgressionRootTag.IsValid())
+		{
+			for (const FARPlayerStateSaveData& PlayerData : PlayerStates)
 			{
-				FARPlayerCharacterSaveData& CharacterRow = PlayerData.FindOrAddCharacterStateData(ResolvedCharacterTag);
-				if (!AreTagContainersEquivalent(CharacterRow.LoadoutTags, PlayerData.LoadoutTags))
+				const FGameplayTag CharacterTag = PlayerData.ResolveCurrentCharacterTag();
+				if (!CharacterTag.IsValid())
 				{
-					CharacterRow.LoadoutTags = PlayerData.LoadoutTags;
+					continue;
+				}
+
+				FARCharacterSaveData& CharacterState = FindOrAddCharacterStateData(CharacterTag);
+				const int32 OldProgressionCount = CharacterState.DialogueState.ProgressionTags.Num();
+				for (const FGameplayTag Tag : PlayerData.ProgressionTags)
+				{
+					if (Tag.IsValid() && Tag.MatchesTag(DialogueProgressionRootTag))
+					{
+						CharacterState.DialogueState.ProgressionTags.AddTag(Tag);
+					}
+				}
+
+				if (CharacterState.DialogueState.ProgressionTags.Num() != OldProgressionCount)
+				{
+					bMigratedDialogueProgressionTags = true;
 					++ChangeCount;
 				}
 			}
-
-			PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
 		}
 
+		if (bMigratedDialogueProgressionTags)
+		{
+			AddWarning(
+				OutWarnings,
+				TEXT("Migrated dialogue progression tags from player-owned progression into character dialogue state."));
+		}
+	}
+
+	if (SaveGameVersion <= 11)
+	{
 		int32 MigratedDialogueRows = 0;
 		int32 MergedDialogueRows = 0;
 		int32 DroppedDialogueRows = 0;
@@ -299,10 +393,38 @@ int32 UARSaveGame::MigrateToCurrentSchema(TArray<FString>* OutWarnings)
 					DroppedDialogueRows));
 		}
 
-		SaveGameVersion = CurrentSchemaVersion;
-		++ChangeCount;
-		AddWarning(OutWarnings, TEXT("Save schema was migrated to the current ownership model."));
+		if (!LastSavedModeTag.IsValid())
+		{
+			const FGameplayTag DefaultShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+			if (DefaultShopModeTag.IsValid())
+			{
+				LastSavedModeTag = DefaultShopModeTag;
+				++ChangeCount;
+				AddWarning(OutWarnings, TEXT("Legacy save had no saved mode tag; migration defaulted it to Mode.Shop."));
+			}
+		}
+
+		if (LastSavedMapPath.IsEmpty())
+		{
+			FString BackfilledMapPath = ResolveDefaultMapPathForModeTag(LastSavedModeTag);
+			if (BackfilledMapPath.IsEmpty())
+			{
+				BackfilledMapPath = TEXT("/Game/Maps/Lvl_RamenShop");
+			}
+
+			LastSavedMapPath = BackfilledMapPath;
+			++ChangeCount;
+			AddWarningf(
+				OutWarnings,
+				FString::Printf(
+					TEXT("Legacy save had no saved map path; migration defaulted it to '%s'."),
+					*LastSavedMapPath));
+		}
 	}
+
+	SaveGameVersion = CurrentSchemaVersion;
+	++ChangeCount;
+	AddWarning(OutWarnings, TEXT("Save schema was migrated to the current ownership model."));
 
 	return ChangeCount;
 }
@@ -482,63 +604,14 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	{
 		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
 		SanitizeTagContainer(PlayerData.ProgressionTags, TEXT("PlayerState.ProgressionTags"));
-		SanitizeTagContainer(PlayerData.LoadoutTags, TEXT("PlayerState.LoadoutTags"));
-
-		const FGameplayTag ResolvedCharacterTag = PlayerData.ResolveCurrentCharacterTag();
-		if (PlayerData.CurrentCharacterTag != ResolvedCharacterTag)
+		const FGameplayTag OldTag = PlayerData.CurrentCharacterTag;
+		const EARCharacterChoice OldChoice = PlayerData.CharacterPicked;
+		PlayerData.SyncCharacterSelectionFromCurrentTag();
+		if (PlayerData.CurrentCharacterTag != OldTag || PlayerData.CharacterPicked != OldChoice)
 		{
-			PlayerData.CurrentCharacterTag = ResolvedCharacterTag;
 			++ClampedCount;
-			AddWarning(OutWarnings, TEXT("PlayerState.CurrentCharacterTag was normalized from compatibility fields."));
+			AddWarning(OutWarnings, TEXT("PlayerState character selection fields were normalized from compatibility data."));
 		}
-
-		for (int32 CharacterIndex = PlayerData.CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)
-		{
-			FARPlayerCharacterSaveData& CharacterState = PlayerData.CharacterStates[CharacterIndex];
-			const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(CharacterState.CharacterTag, PlayerData.Identity.PlayerSlot);
-			if (!NormalizedTag.IsValid())
-			{
-				PlayerData.CharacterStates.RemoveAtSwap(CharacterIndex);
-				++ClampedCount;
-				AddWarning(OutWarnings, TEXT("PlayerState.CharacterStates contained an invalid CharacterTag and it was removed."));
-				continue;
-			}
-
-			if (CharacterState.CharacterTag != NormalizedTag)
-			{
-				CharacterState.CharacterTag = NormalizedTag;
-				++ClampedCount;
-			}
-
-			SanitizeTagContainer(CharacterState.LoadoutTags, TEXT("PlayerState.CharacterStates.LoadoutTags"));
-		}
-
-		for (int32 CharacterIndex = PlayerData.CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)
-		{
-			FARPlayerCharacterSaveData& CharacterState = PlayerData.CharacterStates[CharacterIndex];
-			for (int32 EarlierIndex = 0; EarlierIndex < CharacterIndex; ++EarlierIndex)
-			{
-				FARPlayerCharacterSaveData& EarlierState = PlayerData.CharacterStates[EarlierIndex];
-				if (EarlierState.CharacterTag != CharacterState.CharacterTag)
-				{
-					continue;
-				}
-
-				const int32 OldLoadoutCount = EarlierState.LoadoutTags.Num();
-				EarlierState.LoadoutTags.AppendTags(CharacterState.LoadoutTags);
-				if (EarlierState.LoadoutTags.Num() != OldLoadoutCount)
-				{
-					++ClampedCount;
-				}
-
-				PlayerData.CharacterStates.RemoveAtSwap(CharacterIndex);
-				++ClampedCount;
-				AddWarning(OutWarnings, TEXT("PlayerState.CharacterStates contained duplicate rows for one character and they were merged."));
-				break;
-			}
-		}
-
-		PlayerData.SyncCompatibilityLoadoutFromCurrentCharacter();
 	}
 
 	SanitizeTagContainer(Unlocks, TEXT("Unlocks"));
@@ -574,14 +647,28 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		SanitizeTagContainer(Payload.GrantedTags, TEXT("ActiveRunBuffPayloads.GrantedTags"));
 	}
 
-	for (int32 Index = DialogueRelationshipStates.Num() - 1; Index >= 0; --Index)
+	TSet<FString> SeenRelationshipPairs;
+	for (int32 Index = DialogueSpeakerRelationshipStates.Num() - 1; Index >= 0; --Index)
 	{
-		if (!DialogueRelationshipStates[Index].SpeakerTag.IsValid())
+		FDialogueSpeakerRelationshipState& State = DialogueSpeakerRelationshipStates[Index];
+		if (!State.SourceSpeakerTag.IsValid() || !State.TargetSpeakerTag.IsValid())
 		{
-			DialogueRelationshipStates.RemoveAtSwap(Index);
+			DialogueSpeakerRelationshipStates.RemoveAtSwap(Index);
 			++ClampedCount;
-			AddWarning(OutWarnings, TEXT("DialogueRelationshipStates contained an invalid SpeakerTag and was removed."));
+			AddWarning(OutWarnings, TEXT("DialogueSpeakerRelationshipStates contained an invalid source/target speaker pair and was removed."));
+			continue;
 		}
+
+		const FString PairKey = FString::Printf(TEXT("%s|%s"), *State.SourceSpeakerTag.ToString(), *State.TargetSpeakerTag.ToString());
+		if (SeenRelationshipPairs.Contains(PairKey))
+		{
+			DialogueSpeakerRelationshipStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("DialogueSpeakerRelationshipStates contained duplicate source/target entries and extras were removed."));
+			continue;
+		}
+
+		SeenRelationshipPairs.Add(PairKey);
 	}
 
 	for (int32 CharacterIndex = CharacterStates.Num() - 1; CharacterIndex >= 0; --CharacterIndex)
@@ -602,10 +689,21 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			++ClampedCount;
 		}
 
+		SanitizeTagContainer(CharacterState.LoadoutTags, TEXT("CharacterStates.LoadoutTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.ProgressionTags, TEXT("CharacterStates.DialogueState.ProgressionTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.CompletedConversationTags, TEXT("CharacterStates.DialogueState.CompletedConversationTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.SeenConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SeenConversationTagsThisCycle"));
 		SanitizeTagContainer(CharacterState.DialogueState.SkippedConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SkippedConversationTagsThisCycle"));
+		for (int32 OfferIndex = CharacterState.DialogueState.SpeakerOfferCountsThisCycle.Num() - 1; OfferIndex >= 0; --OfferIndex)
+		{
+			const FDialogueSpeakerCycleOfferCount& OfferCount = CharacterState.DialogueState.SpeakerOfferCountsThisCycle[OfferIndex];
+			if (!OfferCount.SpeakerTag.IsValid() || OfferCount.OfferCount <= 0)
+			{
+				CharacterState.DialogueState.SpeakerOfferCountsThisCycle.RemoveAtSwap(OfferIndex);
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("CharacterStates.DialogueState.SpeakerOfferCountsThisCycle contained an invalid entry and it was removed."));
+			}
+		}
 
 		for (int32 ChoiceIndex = CharacterState.DialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
 		{
@@ -646,6 +744,16 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		SanitizeTagContainer(PlayerDialogueState.CompletedConversationTags, TEXT("DialoguePlayerPersistentStates.CompletedConversationTags"));
 		SanitizeTagContainer(PlayerDialogueState.SeenConversationTagsThisCycle, TEXT("DialoguePlayerPersistentStates.SeenConversationTagsThisCycle"));
 		SanitizeTagContainer(PlayerDialogueState.SkippedConversationTagsThisCycle, TEXT("DialoguePlayerPersistentStates.SkippedConversationTagsThisCycle"));
+		for (int32 OfferIndex = PlayerDialogueState.SpeakerOfferCountsThisCycle.Num() - 1; OfferIndex >= 0; --OfferIndex)
+		{
+			const FDialogueSpeakerCycleOfferCount& OfferCount = PlayerDialogueState.SpeakerOfferCountsThisCycle[OfferIndex];
+			if (!OfferCount.SpeakerTag.IsValid() || OfferCount.OfferCount <= 0)
+			{
+				PlayerDialogueState.SpeakerOfferCountsThisCycle.RemoveAtSwap(OfferIndex);
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("DialoguePlayerPersistentStates.SpeakerOfferCountsThisCycle contained an invalid entry and it was removed."));
+			}
+		}
 
 		for (int32 ChoiceIndex = PlayerDialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
 		{
@@ -662,7 +770,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	TSet<FGameplayTag> SeenFactions;
 	for (int32 Index = FactionPopularityStates.Num() - 1; Index >= 0; --Index)
 	{
-		FARFactionRuntimeState& State = FactionPopularityStates[Index];
+		FParleyFactionRuntimeState& State = FactionPopularityStates[Index];
 		if (!State.FactionTag.IsValid())
 		{
 			FactionPopularityStates.RemoveAtSwap(Index);
@@ -684,11 +792,35 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 	if (ActiveFactionTag.IsValid() && !SeenFactions.Contains(ActiveFactionTag))
 	{
-		FARFactionRuntimeState ActiveEntry;
+		FParleyFactionRuntimeState ActiveEntry;
 		ActiveEntry.FactionTag = ActiveFactionTag;
 		FactionPopularityStates.Add(ActiveEntry);
 		++ClampedCount;
 		AddWarning(OutWarnings, TEXT("ActiveFactionTag was missing from FactionPopularityStates and was auto-added."));
+	}
+
+	TSet<FString> SeenFactionSpeakerPairs;
+	for (int32 Index = FactionSpeakerReputationStates.Num() - 1; Index >= 0; --Index)
+	{
+		FParleyFactionSpeakerReputationState& State = FactionSpeakerReputationStates[Index];
+		if (!State.FactionTag.IsValid() || !State.SpeakerTag.IsValid())
+		{
+			FactionSpeakerReputationStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("FactionSpeakerReputationStates contained an invalid tag pair and was removed."));
+			continue;
+		}
+
+		const FString PairKey = FString::Printf(TEXT("%s|%s"), *State.FactionTag.ToString(), *State.SpeakerTag.ToString());
+		if (SeenFactionSpeakerPairs.Contains(PairKey))
+		{
+			FactionSpeakerReputationStates.RemoveAtSwap(Index);
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("FactionSpeakerReputationStates contained duplicate faction/speaker entries and extras were removed."));
+			continue;
+		}
+
+		SeenFactionSpeakerPairs.Add(PairKey);
 	}
 
 	if (SaveSlotNumber < 0)

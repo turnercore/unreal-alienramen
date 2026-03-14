@@ -58,7 +58,15 @@
 			"Enabled": true
 		},
 		{
-			"Name": "TagContentResolver",
+			"Name": "TagKey",
+			"Enabled": true
+		},
+		{
+			"Name": "Parley",
+			"Enabled": true
+		},
+		{
+			"Name": "Emo",
 			"Enabled": true
 		},
 		{

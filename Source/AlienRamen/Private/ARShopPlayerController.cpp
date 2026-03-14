@@ -618,6 +618,7 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 		const FVector ThrowDirection = GetControlRotation().Vector();
 		const float EffectiveThrowStrength = ResolveThrowStrengthForController(this, ThrowStrength);
 		ApplyThrowImpulse(ReleasedActor, ThrowDirection, EffectiveThrowStrength);
+		NotifyInteractionActionCue(EARInteractionActionCue::Throw, ReleasedActor);
 		return;
 	}
 
@@ -627,6 +628,36 @@ void AARShopPlayerController::RequestShopThrowHeldCarryItem(const float ThrowStr
 void AARShopPlayerController::ServerRequestShopThrowHeldCarryItem_Implementation(const float ThrowStrength)
 {
 	RequestShopThrowHeldCarryItem(ThrowStrength);
+}
+
+void AARShopPlayerController::RequestUseSecondaryOnHeldCarryItem()
+{
+	if (HasAuthority())
+	{
+		UARShopCarryComponent* CarryComponent = ResolveShopCarryComponentFromController(this);
+		AARShopCarryItemBase* HeldCarryItem = CarryComponent ? Cast<AARShopCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
+		if (!HeldCarryItem)
+		{
+			return;
+		}
+
+		const bool bHandled = HeldCarryItem->UseSecondaryByController(this);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Carry] SecondaryUse controller='%s' actor='%s' handled=%d."),
+			*GetNameSafe(this),
+			*GetNameSafe(HeldCarryItem),
+			bHandled ? 1 : 0);
+		return;
+	}
+
+	ServerRequestUseSecondaryOnHeldCarryItem();
+}
+
+void AARShopPlayerController::ServerRequestUseSecondaryOnHeldCarryItem_Implementation()
+{
+	RequestUseSecondaryOnHeldCarryItem();
 }
 
 void AARShopPlayerController::RequestConsumeHeldEnergyDrink()
@@ -648,6 +679,10 @@ void AARShopPlayerController::RequestConsumeHeldEnergyDrink()
 			*GetNameSafe(this),
 			*GetNameSafe(HeldDrink),
 			bConsumed ? 1 : 0);
+		if (bConsumed)
+		{
+			NotifyInteractionActionCue(EARInteractionActionCue::Consume, HeldDrink);
+		}
 		return;
 	}
 

@@ -52,6 +52,7 @@ Detailed behavior belongs in `Documentation/` and should be maintained there.
 - Shared enums/structs used across systems should live in focused shared `*Types.h` headers.
 - Public headers belong in `Source/AlienRamen/Public`; implementations in `Private`.
 - Blueprint-facing categories should use the `Alien Ramen|...` prefix.
+- Blueprint-exposed developer surfaces (BlueprintCallable/Pure, BlueprintAssignable, editor-exposed properties/struct fields) should include `ToolTip` metadata, especially in Parley/Emo plugin APIs.
 - Compile after meaningful changes before updating docs.
 
 ---
@@ -99,33 +100,48 @@ Docs: `Documentation/README_SessionSubsystem.md`
 - `UARSaveSubsystem` is the authoritative save/load/hydration/travel entry point.
 - `UARSaveGame` owns save schema versioning in native code.
 - Save/travel logic must remain subsystem-owned, not scattered across Blueprints.
-- Save files persist four ownership buckets: shared world state, player-owned state, character-owned state, and player-character-owned state.
+- Save files persist three ownership buckets: shared world state, player-owned state, and character-owned state.
 - Canonical character identity is a gameplay tag; `EARCharacterChoice` remains a compatibility mirror for existing Blueprints.
+- Canonical player slot identity is `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`); `EARPlayerSlot` remains a compatibility mirror.
+- Character loadout is canonical character-owned state (`CharacterStates[].LoadoutTags`), not player-owned save data.
 - `AARPlayerStateBase` is the runtime projection surface for the currently controlled character; character-owned save data hydrates onto `PlayerState`, not `GameState`.
+- Authoritative mode identity normalization must ensure each connected player has a valid canonical `CurrentCharacterTag` (`Brother`/`Sister`) and apply non-taken fallback selection when one is missing/invalid.
+- Authoritative gameplay-mode identity normalization must ensure each connected player loadout includes at least one `Unlock.Ship.*` tag; missing ship tags are repaired from `LoadoutSettings.DefaultPlayerLoadoutTags`.
 - Hydration and state application are authority-only.
 - Pending travel overlay state may carry between maps when not persisting to disk.
 - Save-load gameplay entry should route through a standard transition context (`SaveLoad` / `SaveLoadEntry` / `bFreshLoadEntry=true`) so load-only restore logic can key off the same signal across maps.
 - Canonical saves are blocked during active dialogue sessions.
+- Save-facing `GameState` mutations (for example shared economy/faction fields) must leave the canonical save dirty so quit/leave autosaves can persist them.
 - Shop loose carryables (energy drinks/meat) persist as transient save snapshots (`ShopTransientCarryables`) only for reload-before-run continuity.
 - Run-start and post-run shop-entry flows clear transient loose-carryable snapshots via save-backed one-shot clear gate.
 - Shop character transform/held-item restore is character-owned save data and only applies on fresh save-load re-entry into `Mode.Shop`; clean shop entries ignore it.
+- First authoritative shop entry after a save still points at another mode/map should immediately persist a canonical shop save; scrapyard finalization should also commit a canonical save before travel back to shop.
 
 ### Dialogue / Speaker
 
-- `UARDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
-- `UARSpeakerSubsystem` owns speaker talkable-state resolution/cache.
-- `UARSpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
-- `UAREmotionComponent` owns replicated overhead emotion display state.
-- Runtime overhead emotion rendering is owned directly by `AARHUDBase` (`DrawHUD` + emotion projection/occlusion helpers), not by a separate HUD component.
+- `UParleyDialogueSubsystem` is server-authoritative for dialogue offer selection, execution, mutation, completion, and choice memory.
+- `UParleySpeakerSubsystem` owns speaker talkable-state resolution/cache.
+- `UParleySpeakerComponent` owns speaker-side dialogue interaction and replicated talkable-state fields.
+- `UEmoComponent` owns replicated overhead emotion display state.
+- Parley conversation graph condition authoring is editor-only: `Branch` + `Check*` nodes persist in the editor graph, then compile down to existing runtime condition groups/switch routing; runtime does not execute the editor-only condition source nodes directly.
+- Conversation graph redraw/open behavior is editor-graph authoritative (`EditorGraph`); editor tooling does not reconstruct authoring nodes from compiled runtime node data.
+- Runtime overhead emotion rendering lives in `AEmoHUDBase` (Emo plugin) with `AARHUDBase` as the game-specific wrapper.
 - `AARNPCCharacterBase` is a lean shell; speaker/emotion/customer behavior is component-driven and each component is optional per actor.
 - `AARNPCCharacterBase::ForwardUseToController(AActor*)` is the optional BP forwarding helper for BI_Interactable-style flows; it resolves pawn/controller sources to `AARPlayerController` and routes to controller RPC interaction.
 - `AARShopAIController` must restore speaker local dialogue gate open when `State.ShopNPC` tags are absent and during unpossess cleanup to avoid stale blocked talkability.
-- `UAREmotionResolverSubsystem` owns shared emotion icon lookup/cache via TagContentResolver route root `Dialogue.Emotion`.
+- `AARShopAIController` bridges shop-NPC dialogue lifecycle into StateTree events (`Event.ShopNPC.ConversationOffered`, `Event.ShopNPC.DialogueStarted`, `Event.ShopNPC.DialogueEnded`, `Event.ShopNPC.ConversationCompleted`) for animation/state transitions.
+- `UEmoResolverSubsystem` owns shared emotion icon lookup/cache via TagKey route root `Parley.Emotion`.
 - Speaker talkable refresh targets must come from dialogue runtime registered speaker tags (not synthesized speaker DataTable row-name tags).
 - Dialogue-related settings pages are grouped under `Project Settings -> Alien Ramen` (`Dialogue`, `Dialogue Tooling`, `Emotion`, `Factions`).
 - Speaker actors do not own dialogue authority.
 - Seen state is transient only; completion and recorded choice results are persistent.
-- Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; relationship values and game-completed conversations remain shared save state.
+- Dialogue progression/completion/choice-memory persistence is character-owned and keyed by canonical character gameplay tag; game-completed conversations remain shared save state.
+- Parley relationship runtime is a directed speaker matrix (`SourceSpeakerTag -> TargetSpeakerTag`); Alien Ramen bridge applies game-specific Brother/Sister mirroring so player-facing relationships remain shared.
+- Dialogue cycle gating is character-owned: seen/skipped-this-cycle and per-speaker cycle offer counts (`MaxOffersPerCycle` on speaker rows) are persisted on character dialogue state.
+- Dialogue progression resolution must prioritize live `PlayerState.CurrentCharacterTag` for the active slot/controller; slot-mapped cache is fallback only for detached/offline restore paths.
+- `Dialogue.Speaker.Player` is a placeholder tag resolved by dialogue runtime to the active player's current character speaker tag (`Brother`/`Sister`) from `PlayerState` (`CurrentCharacterTag`, with slot fallback), and speaker-targeted relationship/faction checks/mutations should use that resolved tag.
+- Parley `Signal` graph nodes are single-output passthrough nodes that broadcast `UParleyDialogueSubsystem::OnDialogueSignalFired` (`SignalTag`, optional payload tags, conversation/speaker/player-slot context); game systems should react in game layer listeners instead of embedding behavior in dialogue graphs.
+- `UARParleySaveBridge` is the game-owned persistence adapter for Parley/ParleyFaction events; plugin events mark save dirty only and never force autosave directly.
 
 Docs: `Documentation/README_DialogueNPC.md`
 
@@ -133,10 +149,17 @@ Docs: `Documentation/README_DialogueNPC.md`
 
 - `UARCustomerComponent` is the authoritative customer/order runtime.
 - Customer speaker identity is component-owned (`SpeakerTagOverride` or owning `UARSpeakerComponent` tag); customer DataTable rows are keyed by route tag/row name and do not store a separate identity tag field.
+- Customer order UI style is component-authored via `UARCustomerComponent::OrderWidgetClass` (`UARCustomerOrderWidgetBase` subclass); runtime should use `CreateAndInitializeOrderWidget(...)` / `InitializeOrderWidget(...)` so widget binding stays delegate-driven from customer state.
+- Shop NPC StateTree binding should use `AARNPCCharacterBase` cached actor bools (`bST_HasActiveOrder`, `bST_HasDialogueToSay`) for branch conditions; these are component-optional safe and refreshed from customer/speaker state changes.
 - `AARShopDispenserActor` is the generic server-authoritative item dispenser surface.
 - `AARShopPlayerController` owns shop-only interaction requests for carryables and stations (including `Pickup`/`Drop`/`Throw` plus station place/pickup/process/fill routes).
+- `AARShopGameMode` owns native shop pawn-class resolution from canonical character identity via gameplay-tag map (`ShopPawnClassByCharacterTag`) with fallback (`FallbackShopPawnClass`); redundant BP join-spawn/possess flows should be removed.
 - Shop throw strength defaults to thrower GAS `Strength` mapping (`Strength * 100`) when `RequestShopThrowHeldCarryItem` is called with `ThrowStrength <= 0`.
 - Actor-targeted interaction RPC requests on `AARPlayerController`/`AARShopPlayerController` must pass server-side reachability validation against the controller pawn (`ServerInteractionMaxDistance`) before authority gameplay mutation.
+- `AARPlayerController` tracks active primary/secondary interaction targets (`ActiveInteractable`, `ActiveSecondaryInteractable`) plus shared latch state (`bIsInteracting`) for hold-style input flows; when both active targets clear (including out-of-range interruption), controller auto-clears `bIsInteracting`.
+- Server-side controller tick re-validates active interaction targets at `ActiveInteractionRangeCheckInterval` and notifies opted-in interactables through `IARInteractableRangeListener::OnPlayerOutOfRange(...)` before clearing out-of-range targets.
+- `AARPlayerController::OnInteractionActionCue` is the shared animation/UI cue stream for interaction outcomes (for example `Throw`, `Consume`, `Kick`, `Slap`); gameplay paths should emit cues via `NotifyInteractionActionCue(...)` when actions are successfully performed.
+- `AARPlayerController::RequestKickActor(...)` emits `Kick` vs `Slap` cue using target height relative to pawn (`SlapCueMinHeightDeltaCm`) while keeping kick/slap physics behavior identical.
 - `AARShopPlayerController::RequestShopUseOrDrop(AActor*)` is the preferred one-shot input entrypoint: forward-use valid targets, fallback drop when target is null.
 - `AARShopPlayerController::RequestShopPickupCarryItem(nullptr)` is the no-hit fallback path and drops the currently held carry item when one exists.
 - `AARShopPlayerController::RequestShopStationInteract(AARShopStationActor*)` is the smart station one-shot entrypoint: held bowl -> fill, held meat + empty slot -> place, empty hands + slotted meat -> pickup.
@@ -145,12 +168,18 @@ Docs: `Documentation/README_DialogueNPC.md`
 - `AARShopStationActor` also auto-slots loose world meat on station contact when the station can accept meat and its slot is empty.
 - Manual/debug station authoring rule: if `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded (no unlock dependency).
 - Station processing input mode is station-configurable (`Hold`/`Tap`): in tap mode, each press consumes one pulse and release is required before the next pulse.
+- Station processing is blocked when buffered stock already matches the incoming meat color (or incoming color is `None`); processing with existing stock is only allowed for a different non-`None` color swap.
 - `AARShopCarryItemBase` is the shared lifecycle base for shop carryables (for example `AARRamenBowlActor` and `AARRamenMeatActor`).
+- Held-item secondary actions route through `AARShopCarryItemBase::UseSecondaryByController(...)`; controller input should call `RequestUseSecondaryOnHeldCarryItem()` and let the held item decide behavior (default throw, item-specific overrides such as energy-drink consume).
+- Carry-item world secondary actions route through `AARShopCarryItemBase::UseSecondaryInWorldByController(...)`; default behavior is a strength-scaled kick impulse (`Strength * 100`) for non-held world items.
+- `AARShopCarryItemBase::ForwardSecondaryUseToController(AActor*)` is the BI-style held-secondary forwarding helper and only routes when the item is currently held by the interacting controller (throw/consume/etc via item override).
+- `AARShopCarryItemBase::ForwardKickToController(AActor*)` is the BI-style world-item kick forwarding helper and routes to `AARPlayerController::RequestKickActor(...)`.
 - Shop carryables expose shared `WeightKg` runtime (`0` = native primitive mass, `>0` = explicit mass override) so bowl/meat physics weight can be tuned per actor/Blueprint.
 - Shop carryable actors replicate movement so held/drop/throw transforms remain server-authoritative across local + remote players.
 - `AARRamenBowlActor` enforces strict fill order: `Noodles -> Broth -> Toppings`.
 - `AARMeatStorageBoxActor` handles smart meat storage interaction: held meat + interact stores back to `GameState::Meat`; empty hands + interact dispenses from reserve.
-- `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap, but only after it has moved beyond storage-return arm distance (prevents instant re-store on spawn).
+- `AARRamenMeatActor` can auto-return to matching meat storage on world hit/overlap; `None`/unspecified meat is accepted by color-specific storage and deposited using the storage color. Auto-return still requires moving beyond storage-return arm distance (prevents instant re-store on spawn).
+- Intentional player pickup of `AARRamenMeatActor` arms storage return, so throw-back interactions are not blocked by initial spawn-distance gating.
 - Station processing progress is replicated runtime-only state and is intentionally **not** save-persistent.
 - `AAREnergyDrinkCarryItem` is a shop carryable consumed through `AARShopPlayerController::RequestConsumeHeldEnergyDrink` and is valid only in `Mode.Shop`.
 - `AAREnergyDrinkCarryItem` replicates `EnergyDrinkItemTag` so remote clients can resolve drink UI/content from world actors.
@@ -161,21 +190,24 @@ Docs: `Documentation/README_ShopRamenSystem.md`
 
 ### Faction
 
-- `UARFactionSubsystem` owns election/voting runtime.
-- Faction election is built on top of dialogue-owned faction/relationship surfaces and remains outside dialogue plugin ownership.
+- `UParleyFactionSubsystem` owns generic faction definitions, popularity, and faction-speaker reputation state/events.
+- `UARFactionVotingSubsystem` owns AR election/vote runtime and applies winners to `AARGameStateBase` active faction state.
+- Election/voting runtime is game-owned (AR layer) and builds on Parley faction data; Parley itself is vote-agnostic.
+- Faction election finalization commits in transition flow (`AARTransitionGameMode`) for `Shop -> Invader` context; no shop-mode direct fallback path.
 
 Docs: `Documentation/README_FactionSubsystem.md`
 
 ### Content Lookup
 
-- `UTagContentResolverSubsystem` resolves gameplay tags to authored content through registry routes.
+- `UTagKeySubsystem` resolves gameplay tags to authored content through registry routes.
 - Project Settings are the default registry source.
-- `UARItemDefinitionSubsystem` is the shared resolver facade for item/energy-drink definitions and shared item physics metadata; it delegates to `UTagContentResolverSubsystem` and is consumed by both Shop and Scrapyard runtime paths.
+- `UARItemDefinitionSubsystem` is the shared resolver facade for item/energy-drink definitions and shared item physics metadata; it delegates to `UTagKeySubsystem` and is consumed by both Shop and Scrapyard runtime paths.
 
 ### Invader
 
 - `UARInvaderDirectorSubsystem` is the server-only invader run authority.
 - `AARInvaderGameState` owns replicated invader shared runtime state.
+- `AARInvaderGameMode` resolves player pawn class from canonical ship loadout tags (`Unlock.Ship.*`) using ship-row `InvaderPawnClass` with fallback to `DummyPawnClass`.
 - `AARInvaderPickupBase` is invader-pickup-only runtime base (not used by shop carryables).
 - Invader combat runtime should remain GAS-driven and server-authoritative.
 - Director exposes replicated/read-model state rather than relying on client simulation.
@@ -190,9 +222,11 @@ Docs: `Documentation/CppOverview/InvaderSpicyTrack.md`
 - `AARGameModeBase` owns optional transition-map travel routing for mode exits via `bRouteModeTravelThroughTransitionMap` + `TransitionTravelMapURL` + transition context (`TransitionSourceMode`, `TransitionReason`).
 - `AARGameModeBase::TryStartTravel` accepts per-call `EARTravelRoutePolicy` override (`ModeDefault`, `ForceTransitionMap`, `ForceDirect`) so runtime can choose transition-map vs same-mode direct travel without mutating class defaults.
 - `AARGameModeBase` provides `EndModeAndTravel(...)` and `TravelDirectInMode(...)` Blueprint helpers for explicit routing intent.
-- `AARTransitionGameMode` owns transition-map continue gating and destination travel start.
+- `AARGameModeBase::ChoosePlayerStart_Implementation(...)` resolves tagged starts (`AARTaggedPlayerStart`) by canonical player slot tag first, then canonical character tag, then falls back to default UE start selection.
+- `AARGameModeBase::HandleSeamlessTravelPlayer(...)` is the gameplay-mode handoff guard that clears carried spectator state and restarts possession when needed after seamless travel from transition maps.
+- `AARTransitionGameMode` owns transition-map continue gating and destination travel start; native class is abstract and maps should use a Blueprint subclass.
 - `AARTransitionGameState` owns replicated transition context (`FARTransitionContext`) for transition/result UI.
-- `AARTransitionPlayerController` is the controller entrypoint for continue votes.
+- `AARTransitionPlayerController` is the controller entrypoint for continue votes and local transition-widget lifecycle (`ShowTransitionWidgetFromContext` / `ShowTransitionWidget` / `HideTransitionWidget`) with context-driven class resolution; native class is abstract and should be consumed via Blueprint subclass defaults.
 - `UARTransitionBlueprintLibrary` is the BP-safe builder/parser for transition travel URLs and context payloads.
 - Transition mode is no-pawn by design; it should not spawn gameplay pawns.
 
@@ -207,9 +241,12 @@ Docs: `Documentation/README_TransitionMode.md`
 - `UARScrapyardHUDWidgetBase` and `UARScrapyardExitZoneWidgetBase` are reusable Blueprint-facing widget bridges for Scrapyard HUD state and per-exit reserved scrap state.
 - `AARScrapyardCarryItemBase` overrides `ForwardUseToController` to route BI_Interactable-style use into `AARScrapyardPlayerController::RequestScrapyardPickupCarryItem` (not shop pickup).
 - `AARScrapyardCarryItemBase` replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI paths.
+- `AARScrapyardPlayerController::RequestUseSecondaryOnHeldCarryItem()` mirrors shop held-secondary dispatch and delegates behavior to held `AARShopCarryItemBase::UseSecondaryByController(...)` (default throw unless item override).
+- Scrapyard hold-style interactions should use `AARPlayerController` active interaction tracking and optional `IARInteractableRangeListener` callbacks for server-authoritative out-of-range interruption.
 - Negative scrap is allowed only for Scrapyard extraction accounting; finalization sets shared scrap to `0` before travel.
 - Scrapyard budget starts as `ShopScrapStorage + RunLedgerScrap`; leftover finalized scrap is returned through run ledger for shop deposit.
-- Scrapyard item definitions are TagContentResolver-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- Scrapyard item definitions are TagKey-driven under `Scrapyard.Item`; energy-drink payload definitions are under `Scrapyard.EnergyDrink`.
+- `AARScrapyardGameMode` resolves player pawn class from canonical ship loadout tags using ship-row `ScrapyardPawnClass` with fallback to `DummyPawnClass`.
 - Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` using travel option context (`ARTrSource/ARTrReason/ARTrDest/ARTrFresh`).
 - When `SpawnRuleSet` is set on `AARScrapyardGameMode`, scrapyard item spawn orchestration is GameMode-owned (Perlin noise + spawner weight + rarity budgets + `bAlwaysSpawn`). Managed flow only runs when the rule asset is set; leave it unset only for maps that should intentionally have no scrapyard spawns. Set spawner `bSpawnOnBeginPlay=false` when relying on managed flow. Docs: `Documentation/README_ScrapyardMode.md` and `Documentation/Assets/README_ScrapyardSpawnRules.md`.
 

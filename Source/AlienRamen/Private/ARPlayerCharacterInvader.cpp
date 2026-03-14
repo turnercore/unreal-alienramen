@@ -18,7 +18,7 @@
 #include "GameplayEffect.h"
 #include "Abilities/GameplayAbility.h"
 
-#include "TagContentResolverSubsystem.h"
+#include "TagKeySubsystem.h"
 #include "ARWeaponDefinition.h"
 
 #include "UObject/UnrealType.h"
@@ -1146,10 +1146,10 @@ bool AARPlayerCharacterInvader::ResolveRowFromTag(FGameplayTag Tag, FInstancedSt
 	UGameInstance* GI = World->GetGameInstance();
 	if (!GI) { OutError = TEXT("No GameInstance."); return false; }
 
-	UTagContentResolverSubsystem* Lookup = GI->GetSubsystem<UTagContentResolverSubsystem>();
-	if (!Lookup) { OutError = TEXT("No TagContentResolverSubsystem."); return false; }
+	UTagKeySubsystem* Lookup = GI->GetSubsystem<UTagKeySubsystem>();
+	if (!Lookup) { OutError = TEXT("No TagKeySubsystem."); return false; }
 
-	if (!Lookup->TryResolveRowForTag(Tag, OutRow, OutError))
+	if (!Lookup->TryResolveRowStructForTag(Tag, OutRow, OutError))
 	{
 		return false;
 	}
