@@ -31,6 +31,7 @@ private:
 
 	FReply HandlePortraitClicked();
 	FReply HandlePortraitClickedForEntry(FGuid EntryId);
+	FReply HandlePortraitMouseButtonDownForEntry(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent, FGuid EntryId);
 	void HandleLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType);
 	void HandleLineTextCommittedForEntry(const FText& NewText, ETextCommit::Type CommitType, FGuid EntryId);
 	FReply HandleAddMultiLineEntryClicked();
@@ -50,6 +51,9 @@ private:
 	const FSlateBrush* GetPortraitBrushForEntry(FGuid EntryId) const;
 	void RefreshPortraitBrushForSpeaker(const FGameplayTag& SpeakerTag) const;
 	TArray<FGameplayTag> BuildQuickSpeakerCycleList(FGuid EntryId) const;
+	TArray<FGameplayTag> BuildEmotionTagListForEntry(FGuid EntryId) const;
+	void OpenEmotionPickerMenuForEntry(FGuid EntryId, const FVector2D& ScreenPosition);
+	void EnsureConversationParticipantsIncludeSpeaker(const FGameplayTag& SpeakerTag);
 	void SetLineSpeakerTagForEntry(FGuid EntryId, const FGameplayTag& NewSpeakerTag);
 	void CommitLineTextForEntry(FGuid EntryId, const FText& NewText);
 	FGameplayTag GetSpeakerTagForEntry(FGuid EntryId) const;
