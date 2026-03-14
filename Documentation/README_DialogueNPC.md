@@ -60,12 +60,6 @@ Core subsystem API:
 - `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
 - `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/player-slot context)
 
-Compatibility wrappers still exist for gameplay BPs:
-
-- `TryStartDialogueWithSpeaker(...)`
-- `SubmitDialogueChoice(...)` (routes to `SubmitChoice`)
-- `SetShopEavesdropTarget(...)` (routes to `ForceEavesdrop`)
-
 ## Signal Node (How To Use)
 
 `Signal` is a single-input/single-output passthrough node for game-layer hooks without embedding arbitrary gameplay code in dialogue graphs.

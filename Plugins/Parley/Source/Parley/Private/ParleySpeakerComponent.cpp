@@ -97,16 +97,15 @@ void UParleySpeakerComponent::InteractByController(APlayerController* Interactin
 				}
 			}
 
-			const bool bStarted = SourceSpeakerTag.IsValid()
-				? DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, SpeakerTag)
-				: DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, SpeakerTag);
+			const bool bStarted = DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, SpeakerTag);
 			if (!bStarted)
 			{
 				UE_LOG(
 					ParleyLog,
 					Verbose,
-					TEXT("[Speaker] TryStartDialogueWithSpeaker returned false for '%s' with speaker '%s'."),
+					TEXT("[Speaker] Dialogue start returned false for '%s' source='%s' target='%s'."),
 					*GetNameSafe(InteractingController),
+					*SourceSpeakerTag.ToString(),
 					*SpeakerTag.ToString());
 			}
 		}

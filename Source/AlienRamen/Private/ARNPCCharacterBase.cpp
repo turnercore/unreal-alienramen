@@ -2,6 +2,7 @@
 
 #include "ARCustomerComponent.h"
 #include "ParleyDialogueSubsystem.h"
+#include "ParleySpeakerComponent.h"
 #include "EmoComponent.h"
 #include "EmoSettings.h"
 #include "ARLog.h"
@@ -327,7 +328,16 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 				{
 					if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 					{
-						if (DialogueSubsystem->TryStartDialogueWithSpeaker(InteractingController, CustomerSpeakerTag))
+						FGameplayTag SourceSpeakerTag;
+						if (const APawn* InteractingPawn = InteractingController->GetPawn())
+						{
+							if (const UParleySpeakerComponent* SourceSpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
+							{
+								SourceSpeakerTag = SourceSpeakerComponent->GetSpeakerTag();
+							}
+						}
+
+						if (DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, CustomerSpeakerTag))
 						{
 							UE_LOG(
 								ARLog,

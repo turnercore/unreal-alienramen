@@ -185,6 +185,14 @@ void UARParleySaveBridge::HandleSpeakerRelationshipChanged(FGameplayTag SourceSp
 	{
 		for (const FGameplayTag TargetVariant : TargetVariants)
 		{
+			// Do not synthesize player self-edges when mirroring an asymmetric player edge (for example Brother->Sister).
+			if (!SourceSpeakerTag.MatchesTagExact(TargetSpeakerTag)
+				&& SourceVariant.MatchesTagExact(TargetVariant)
+				&& IsPlayerCharacterSpeakerTag(SourceVariant))
+			{
+				continue;
+			}
+
 			bChanged |= UpsertSpeakerRelationshipState(SaveGame, SourceVariant, TargetVariant, NewTotal);
 		}
 	}

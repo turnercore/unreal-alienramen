@@ -176,7 +176,19 @@ bool UARCustomerComponent::GenerateNextOrder()
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeaker(CachedSpeakerTag);
+			const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Player")), false);
+			if (PlayerSpeakerTag.IsValid())
+			{
+				RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeakerPair(PlayerSpeakerTag, CachedSpeakerTag);
+			}
+			else
+			{
+				const FGameplayTag BrotherTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+				const FGameplayTag SisterTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+				RelationshipLevel = FMath::Max(
+					DialogueSubsystem->GetRelationshipLevelForSpeakerPair(BrotherTag, CachedSpeakerTag),
+					DialogueSubsystem->GetRelationshipLevelForSpeakerPair(SisterTag, CachedSpeakerTag));
+			}
 		}
 	}
 

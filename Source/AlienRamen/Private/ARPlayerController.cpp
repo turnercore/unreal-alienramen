@@ -13,6 +13,7 @@
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
+#include "ParleySpeakerComponent.h"
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
@@ -425,7 +426,16 @@ void AARPlayerController::RequestStartDialogue(FGameplayTag SpeakerTag)
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->TryStartDialogueWithSpeaker(this, SpeakerTag);
+			FGameplayTag SourceSpeakerTag;
+			if (const APawn* ControlledPawn = GetPawn())
+			{
+				if (const UParleySpeakerComponent* SourceSpeakerComponent = ControlledPawn->FindComponentByClass<UParleySpeakerComponent>())
+				{
+					SourceSpeakerTag = SourceSpeakerComponent->GetSpeakerTag();
+				}
+			}
+
+			DialogueSubsystem->TryStartDialogueBetweenSpeakers(this, SourceSpeakerTag, SpeakerTag);
 		}
 		return;
 	}
@@ -765,7 +775,7 @@ void AARPlayerController::RequestSubmitDialogueChoice(FGuid ChoiceBranchId)
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->SubmitDialogueChoice(this, ChoiceBranchId);
+			DialogueSubsystem->SubmitChoice(this, ChoiceBranchId);
 		}
 		return;
 	}
@@ -784,7 +794,7 @@ void AARPlayerController::RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlo
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->SetShopEavesdropTarget(this, ARPlayer::GetPlayerSlotTag(TargetSlot), bEnable);
+			DialogueSubsystem->ForceEavesdrop(this, bEnable, ARPlayer::GetPlayerSlotTag(TargetSlot));
 		}
 		return;
 	}
