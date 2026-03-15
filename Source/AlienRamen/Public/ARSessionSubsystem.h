@@ -6,16 +6,14 @@
 
 #include "CoreMinimal.h"
 #include "ARSaveTypes.h"
-#include "BlueprintDataDefinitions.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSessionSubsystem.generated.h"
 
 class FOnlineSessionSearch;
 class FOnlineSessionSettings;
 class UARNetworkRoutingSettings;
-class UCreateSessionCallbackProxyAdvanced;
-class UFindSessionsCallbackProxyAdvanced;
 
 UENUM(BlueprintType)
 enum class EARSessionResultCode : uint8
@@ -125,10 +123,10 @@ public:
 	bool JoinSessionByIndex(int32 ResultIndex, FARSessionResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
-	bool FindFriendSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult);
+	bool FindFriendSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
-	bool InviteFriendToSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult);
+	bool InviteFriendToSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
 	bool DestroySession(FARSessionResult& OutResult);
@@ -216,18 +214,6 @@ private:
 	void BindInviteAcceptedDelegate();
 	void ClearInviteAcceptedDelegate();
 
-	UFUNCTION()
-	void HandleAdvancedCreateSuccess();
-
-	UFUNCTION()
-	void HandleAdvancedCreateFailure();
-
-	UFUNCTION()
-	void HandleAdvancedFindSuccess(const TArray<FBlueprintSessionResult>& Results);
-
-	UFUNCTION()
-	void HandleAdvancedFindFailure(const TArray<FBlueprintSessionResult>& Results);
-
 	void HandleCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void HandleUpdateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void HandleDestroySessionComplete(FName SessionName, bool bWasSuccessful);
@@ -251,12 +237,6 @@ private:
 
 	UPROPERTY(Transient)
 	TArray<FARSessionSearchResultData> LastFindResults;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UCreateSessionCallbackProxyAdvanced> ActiveAdvancedCreateProxy = nullptr;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UFindSessionsCallbackProxyAdvanced> ActiveAdvancedFindProxy = nullptr;
 
 	FName ActiveSubsystemName = NAME_None;
 	FName InviteDelegateSubsystemName = NAME_None;

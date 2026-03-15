@@ -1566,6 +1566,130 @@ static FSpeakerPortraitData ResolvePortraitForSpeaker(
 	return SpeakerRow->DefaultPortrait;
 }
 
+static FGameplayTag GetDialogueEmotionRootTag()
+{
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion"), false);
+}
+
+static FGameplayTag BuildEmotionTagFromSpeakerTag(
+	const FGameplayTag& SpeakerTag,
+	const FGameplayTag& ResolvedSpeakerRowTag)
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return FGameplayTag();
+	}
+
+	const FGameplayTag EmotionRootTag = GetDialogueEmotionRootTag();
+	if (!EmotionRootTag.IsValid())
+	{
+		return FGameplayTag();
+	}
+
+	const FString SpeakerPath = SpeakerTag.ToString();
+	TArray<FString> CandidateBasePaths;
+	if (ResolvedSpeakerRowTag.IsValid())
+	{
+		CandidateBasePaths.Add(ResolvedSpeakerRowTag.ToString());
+	}
+
+	// Built-in speaker aliases can appear directly in line authoring with suffix emotion segments
+	// (for example Parley.Speaker.Player.Angry), so include them as explicit suffix bases.
+	const FGameplayTag PlayerTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	if (PlayerTag.IsValid())
+	{
+		CandidateBasePaths.AddUnique(PlayerTag.ToString());
+	}
+	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
+	if (BrotherTag.IsValid())
+	{
+		CandidateBasePaths.AddUnique(BrotherTag.ToString());
+	}
+	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
+	if (SisterTag.IsValid())
+	{
+		CandidateBasePaths.AddUnique(SisterTag.ToString());
+	}
+
+	// Only treat explicit suffix segments as emotion keys.
+	// This avoids misinterpreting base speaker ids (for example Parley.Speaker.Fred) as Parley.Emotion.Fred.
+	for (const FString& BasePath : CandidateBasePaths)
+	{
+		if (BasePath.IsEmpty())
+		{
+			continue;
+		}
+
+		const FString Prefix = BasePath + TEXT(".");
+		if (!SpeakerPath.StartsWith(Prefix))
+		{
+			continue;
+		}
+
+		const FString EmotionSuffix = SpeakerPath.RightChop(Prefix.Len());
+		if (EmotionSuffix.IsEmpty())
+		{
+			continue;
+		}
+
+		const FString EmotionPath = FString::Printf(TEXT("%s.%s"), *EmotionRootTag.ToString(), *EmotionSuffix);
+		return UGameplayTagsManager::Get().RequestGameplayTag(FName(*EmotionPath), false);
+	}
+
+	return FGameplayTag();
+}
+
+static bool ResolveSpeakerEmotionFallbackAudioForSpeaker(
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
+	const FGameplayTag& LineSpeakerTag,
+	USoundBase*& OutNativeSound,
+	FGameplayTag& OutAudioCueTag)
+{
+	OutNativeSound = nullptr;
+	OutAudioCueTag = FGameplayTag();
+
+	FGameplayTag SpeakerRowTag;
+	const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, LineSpeakerTag, SpeakerRowTag);
+	if (!SpeakerRow || SpeakerRow->EmotionAudioFallbacks.IsEmpty())
+	{
+		return false;
+	}
+
+	const FGameplayTag ResolvedEmotionTag = BuildEmotionTagFromSpeakerTag(LineSpeakerTag, SpeakerRowTag);
+	const FGameplayTag DefaultEmotionTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion.Default"), false);
+	const FParleySpeakerEmotionAudioEntry* DefaultEntry = nullptr;
+	const FParleySpeakerEmotionAudioEntry* UnscopedEntry = nullptr;
+
+	for (const FParleySpeakerEmotionAudioEntry& Entry : SpeakerRow->EmotionAudioFallbacks)
+	{
+		if (ResolvedEmotionTag.IsValid() && Entry.EmotionTag.IsValid() && Entry.EmotionTag.MatchesTagExact(ResolvedEmotionTag))
+		{
+			OutNativeSound = Entry.NativeSound;
+			OutAudioCueTag = Entry.AudioCueTag;
+			return OutNativeSound != nullptr || OutAudioCueTag.IsValid();
+		}
+
+		if (DefaultEmotionTag.IsValid() && Entry.EmotionTag.IsValid() && Entry.EmotionTag.MatchesTagExact(DefaultEmotionTag))
+		{
+			DefaultEntry = &Entry;
+		}
+		else if (!Entry.EmotionTag.IsValid() && !UnscopedEntry)
+		{
+			UnscopedEntry = &Entry;
+		}
+	}
+
+	const FParleySpeakerEmotionAudioEntry* ChosenEntry = DefaultEntry ? DefaultEntry : UnscopedEntry;
+	if (!ChosenEntry)
+	{
+		return false;
+	}
+
+	OutNativeSound = ChosenEntry->NativeSound;
+	OutAudioCueTag = ChosenEntry->AudioCueTag;
+	return OutNativeSound != nullptr || OutAudioCueTag.IsValid();
+}
+
 static FString NormalizeDialogueFieldToken(const FString& RawFieldToken)
 {
 	FString Normalized = RawFieldToken;
@@ -2567,4 +2691,3 @@ void UParleyDialogueSubsystem::Deinitialize()
 #include "ParleyDialogueSubsystem_Validation.inl"
 #include "ParleyDialogueSubsystem_Runtime.inl"
 #include "ParleyDialogueSubsystem_API.inl"
-

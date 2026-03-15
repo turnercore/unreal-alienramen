@@ -45,8 +45,8 @@ bool FARFactionVoting_RequiredTagsPresentTest::RunTest(const FString& Parameters
 
 	static const TCHAR* RequiredTags[] =
 	{
-		TEXT("Faction.Identity"),
-		TEXT("Faction.Effect"),
+		TEXT("Parley.Factions"),
+		TEXT("Parley.Factions.Effect"),
 		TEXT("Player.Slot.P1"),
 		TEXT("Player.Slot.P2")
 	};

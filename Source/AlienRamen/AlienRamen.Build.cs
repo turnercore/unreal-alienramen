@@ -7,9 +7,9 @@ public class AlienRamen : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings", "TagKey", "Parley", "Emo" });
+			PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings", "TagKey", "Parley", "Emo" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils", "AdvancedSessions" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils" });
 
 		bool bDesktopTarget =
 			Target.Platform == UnrealTargetPlatform.Win64 ||
@@ -18,7 +18,6 @@ public class AlienRamen : ModuleRules
 
 		if (bDesktopTarget)
 		{
-			PrivateDependencyModuleNames.Add("AdvancedSteamSessions");
 			DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 		}
 
