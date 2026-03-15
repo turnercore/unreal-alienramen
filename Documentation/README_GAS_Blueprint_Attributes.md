@@ -2,6 +2,14 @@
 
 This doc explains the practical Blueprint flow for reading and reacting to GAS attributes in Alien Ramen.
 
+Use this page after [GAS Overview](README_GAS.md) when the question is specifically about replicated Blueprint/UI access.
+
+## Common Entry Points
+
+- Invader player HUD and teammate panels: [Invader Loadouts and Player Runtime](README_Invader_Loadouts.md)
+- Scrapyard ship/UI surfaces: [Scrapyard Ships](README_Scrapyard_Ships.md)
+- Shared system ownership: [GAS Overview](README_GAS.md)
+
 ## Source of Truth
 
 - Player attributes live on `AARPlayerStateBase` (ASC owner).
