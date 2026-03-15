@@ -632,48 +632,174 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		const FDialogueLineNodeData& LineData,
 		const FGuid& NodeId,
 		const TCHAR* ContextLabel)
-	{
-		if (LineData.Line.Text.IsEmpty())
 		{
-			Add(
-				EDialogueValidationSeverity::Error,
-				NodeId,
-				FString::Printf(TEXT("%s text is missing (sound-only lines are invalid)."), ContextLabel));
-		}
+			if (LineData.Line.Text.IsEmpty())
+			{
+				Add(
+					EDialogueValidationSeverity::Error,
+					NodeId,
+					FString::Printf(TEXT("%s text is missing (sound-only lines are invalid)."), ContextLabel));
+			}
 
-		USoundBase* FallbackNativeSound = nullptr;
-		FGameplayTag FallbackCueTag;
-		ResolveSpeakerEmotionFallbackAudioForSpeaker(
-			ValidationSpeakerRows,
-			LineData.Line.SpeakerTag,
-			FallbackNativeSound,
-			FallbackCueTag);
+			auto ResolveStrictFallbackAudioForSpeaker = [&](
+				const FGameplayTag& ValidationSpeakerTag,
+				USoundBase*& OutStrictNativeSound,
+				FGameplayTag& OutStrictCueTag)
+			{
+				OutStrictNativeSound = nullptr;
+				OutStrictCueTag = FGameplayTag();
 
-		const bool bHasNativeAudio = LineData.Line.Sound != nullptr || FallbackNativeSound != nullptr;
-		const bool bHasSignalAudio = LineData.Line.AudioCueTag.IsValid() || FallbackCueTag.IsValid();
+				FGameplayTag ResolvedSpeakerRowTag;
+				const FParleySpeakerRow* SpeakerRow = FindSpeakerRowByConversationSpeakerTag(
+					ValidationSpeakerRows,
+					ValidationSpeakerTag,
+					ResolvedSpeakerRowTag);
+				if (!SpeakerRow || SpeakerRow->EmotionAudioFallbacks.IsEmpty())
+				{
+					return false;
+				}
 
-		if (bSignalAudioMode && !bHasSignalAudio)
-		{
-			Add(
-				EDialogueValidationSeverity::Warning,
+				const FGameplayTag ResolvedEmotionTag = BuildEmotionTagFromSpeakerTag(ValidationSpeakerTag, ResolvedSpeakerRowTag);
+				const FGameplayTag DefaultEmotionTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion.Default"), false);
+				const FParleySpeakerEmotionAudioEntry* DefaultEntry = nullptr;
+				const FParleySpeakerEmotionAudioEntry* UnscopedEntry = nullptr;
+
+				for (const FParleySpeakerEmotionAudioEntry& Entry : SpeakerRow->EmotionAudioFallbacks)
+				{
+					if (ResolvedEmotionTag.IsValid() && Entry.EmotionTag.IsValid() && Entry.EmotionTag.MatchesTagExact(ResolvedEmotionTag))
+					{
+						OutStrictNativeSound = Entry.NativeSound;
+						OutStrictCueTag = Entry.AudioCueTag;
+						return OutStrictNativeSound != nullptr || OutStrictCueTag.IsValid();
+					}
+
+					if (DefaultEmotionTag.IsValid() && Entry.EmotionTag.IsValid() && Entry.EmotionTag.MatchesTagExact(DefaultEmotionTag))
+					{
+						DefaultEntry = &Entry;
+					}
+					else if (!Entry.EmotionTag.IsValid() && !UnscopedEntry)
+					{
+						UnscopedEntry = &Entry;
+					}
+				}
+
+				const FParleySpeakerEmotionAudioEntry* ChosenEntry = DefaultEntry ? DefaultEntry : UnscopedEntry;
+				if (!ChosenEntry)
+				{
+					return false;
+				}
+
+				OutStrictNativeSound = ChosenEntry->NativeSound;
+				OutStrictCueTag = ChosenEntry->AudioCueTag;
+				return OutStrictNativeSound != nullptr || OutStrictCueTag.IsValid();
+			};
+
+			USoundBase* FallbackNativeSound = nullptr;
+			FGameplayTag FallbackCueTag;
+			ResolveSpeakerEmotionFallbackAudioForSpeaker(
+				ValidationSpeakerRows,
+				LineData.Line.SpeakerTag,
+				FallbackNativeSound,
+				FallbackCueTag);
+
+			const bool bHasNativeAudio = LineData.Line.Sound != nullptr || FallbackNativeSound != nullptr;
+			const bool bHasSignalAudio = LineData.Line.AudioCueTag.IsValid() || FallbackCueTag.IsValid();
+			const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+			const bool bUsesPlayerPlaceholderSpeaker = PlayerPlaceholderTag.IsValid()
+				&& LineData.Line.SpeakerTag.MatchesTagExact(PlayerPlaceholderTag);
+
+			bool bMissingNativeFallbackForResolvedPlayerSpeaker = false;
+			bool bMissingSignalFallbackForResolvedPlayerSpeaker = false;
+			if (bUsesPlayerPlaceholderSpeaker)
+			{
+				TArray<FGameplayTag> ResolvedPlayerSpeakerTagsToValidate;
+				const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
+				const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
+				if (BrotherTag.IsValid())
+				{
+					ResolvedPlayerSpeakerTagsToValidate.AddUnique(BrotherTag);
+				}
+				if (SisterTag.IsValid())
+				{
+					ResolvedPlayerSpeakerTagsToValidate.AddUnique(SisterTag);
+				}
+
+				for (const FGameplayTag& ResolvedPlayerSpeakerTag : ResolvedPlayerSpeakerTagsToValidate)
+				{
+					USoundBase* StrictFallbackNativeSound = nullptr;
+					FGameplayTag StrictFallbackCueTag;
+					ResolveStrictFallbackAudioForSpeaker(
+						ResolvedPlayerSpeakerTag,
+						StrictFallbackNativeSound,
+						StrictFallbackCueTag);
+
+					if (!LineData.Line.Sound && !StrictFallbackNativeSound)
+					{
+						bMissingNativeFallbackForResolvedPlayerSpeaker = true;
+					}
+					if (!LineData.Line.AudioCueTag.IsValid() && !StrictFallbackCueTag.IsValid())
+					{
+						bMissingSignalFallbackForResolvedPlayerSpeaker = true;
+					}
+				}
+			}
+
+			if (bSignalAudioMode && !bHasSignalAudio)
+			{
+				Add(
+					EDialogueValidationSeverity::Warning,
 				NodeId,
-				FString::Printf(
-					TEXT("%s has no signal audio cue. Assign Audio Cue Tag on the line or speaker emotion fallback."),
-					ContextLabel));
-		}
-		else if (!bSignalAudioMode && LineData.Line.LengthSeconds <= 0.0f && !bHasNativeAudio)
-		{
-			Add(
-				EDialogueValidationSeverity::Warning,
-				NodeId,
-				FString::Printf(
-					TEXT("%s has no native audio and Length Seconds is 0. Set Length Seconds, assign line Sound, or configure speaker emotion fallback sound."),
-					ContextLabel));
-		}
-		if (!LineData.Line.SpeakerTag.IsValid())
-		{
-			Add(
-				EDialogueValidationSeverity::Error,
+					FString::Printf(
+						TEXT("%s has no signal audio cue. Assign Audio Cue Tag on the line or speaker emotion fallback."),
+						ContextLabel));
+			}
+			if (bSignalAudioMode && LineData.Line.LengthSeconds <= 0.0f)
+			{
+				Add(
+					EDialogueValidationSeverity::Warning,
+					NodeId,
+					FString::Printf(
+						TEXT("%s has Length Seconds <= 0 in Audio Signals mode. Signal mode suppresses native sound, so auto-advance timing uses Length Seconds and may advance almost immediately."),
+						ContextLabel));
+			}
+			if (bSignalAudioMode
+				&& bUsesPlayerPlaceholderSpeaker
+				&& !LineData.Line.AudioCueTag.IsValid()
+				&& bMissingSignalFallbackForResolvedPlayerSpeaker)
+			{
+				Add(
+					EDialogueValidationSeverity::Warning,
+					NodeId,
+					FString::Printf(
+						TEXT("%s uses Parley.Speaker.Player but speaker-emotion cue fallback is missing for at least one resolved player speaker (Brother/Sister)."),
+						ContextLabel));
+			}
+			else if (!bSignalAudioMode && LineData.Line.LengthSeconds <= 0.0f && !bHasNativeAudio)
+			{
+				Add(
+					EDialogueValidationSeverity::Warning,
+					NodeId,
+					FString::Printf(
+						TEXT("%s has no native audio and Length Seconds is 0. Set Length Seconds, assign line Sound, or configure speaker emotion fallback sound."),
+						ContextLabel));
+			}
+			else if (!bSignalAudioMode
+				&& bUsesPlayerPlaceholderSpeaker
+				&& LineData.Line.LengthSeconds <= 0.0f
+				&& !LineData.Line.Sound
+				&& bMissingNativeFallbackForResolvedPlayerSpeaker)
+			{
+				Add(
+					EDialogueValidationSeverity::Warning,
+					NodeId,
+					FString::Printf(
+						TEXT("%s uses Parley.Speaker.Player but speaker-emotion native fallback is missing for at least one resolved player speaker (Brother/Sister)."),
+						ContextLabel));
+			}
+			if (!LineData.Line.SpeakerTag.IsValid())
+			{
+				Add(
+					EDialogueValidationSeverity::Error,
 				NodeId,
 				FString::Printf(TEXT("%s speaker tag is invalid."), ContextLabel));
 		}
