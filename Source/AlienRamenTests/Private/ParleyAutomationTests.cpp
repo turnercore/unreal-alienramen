@@ -105,6 +105,7 @@ bool FParley_RequiredTagsPresentTest::RunTest(const FString& Parameters)
 		TEXT("Parley.Conversations"),
 		TEXT("Parley.Emotion"),
 		TEXT("Parley.Emotion.Busy"),
+		TEXT("Parley.Emotion.Default"),
 		TEXT("Parley.AudioCue"),
 		TEXT("Parley.Factions"),
 		TEXT("Parley.Factions.Effect")

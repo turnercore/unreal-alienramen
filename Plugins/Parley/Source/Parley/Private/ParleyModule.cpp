@@ -28,6 +28,7 @@ void FParleyModule::StartupModule()
 		TEXT("Parley.Conversations"),
 		TEXT("Parley.Emotion"),
 		TEXT("Parley.Emotion.Busy"),
+		TEXT("Parley.Emotion.Default"),
 		TEXT("Parley.AudioCue"),
 		TEXT("Parley.Factions"),
 		TEXT("Parley.Factions.Effect")
