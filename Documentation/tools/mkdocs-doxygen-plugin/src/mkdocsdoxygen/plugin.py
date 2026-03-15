@@ -13,11 +13,12 @@ logger = logging.getLogger("mkdocs")
 
 def get_doxygen_key(doxyfile, key, default=None):
     try:
-        return next(
-            line.split("=")[1].strip()
-            for line in open(doxyfile)
-            if line.strip().startswith(key)
-        )
+        with open(doxyfile) as doxyfile_handle:
+            return next(
+                line.split("=")[1].strip()
+                for line in doxyfile_handle
+                if line.strip().startswith(key)
+            )
     except StopIteration:
         if default is not None:
             return default
