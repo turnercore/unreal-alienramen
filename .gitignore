@@ -55,6 +55,7 @@ Documentation/doxygen.warnings
 
 # Python / MkDocs
 .venv
+.venv-docs/
 .env
 __pycache__/
 *.egg-info
@@ -114,6 +115,7 @@ cmake-build-debug-event-trace/
 #*
 .rej
 .orig
+.tools/doxygen/
 tags
 !Config/Tags/
 !Config/Tags/*.ini

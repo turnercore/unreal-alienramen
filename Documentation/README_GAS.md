@@ -1,6 +1,24 @@
 # Alien Ramen GAS Reference
 
-This document summarizes the current Gameplay Ability System (GAS) attribute model in `UARAttributeSetCore` and gives practical guidance for next steps.
+This document summarizes the current Gameplay Ability System (GAS) ownership model in Alien Ramen and the attribute model in `UARAttributeSetCore`.
+
+GAS is documented under the shared plugin/runtime section because it supports more than one mode, even though Invader is the main gameplay consumer.
+
+## Where GAS Is Used
+
+- Invader player runtime:
+  - `AARPlayerStateBase` owns the ASC
+  - the Invader pawn/avatar initializes actor info and applies loadout-driven abilities/effects/tags
+- Shop integration:
+  - shop throw strength falls back to thrower GAS `Strength`
+- Scrapyard integration:
+  - ship/UI surfaces read replicated attributes through `PlayerState`
+
+## Start Here If
+
+- you are changing player loadouts, abilities, or attribute-driven combat behavior in Invader
+- you need the replicated attribute read model for UI or Blueprint
+- a non-Invader mode is consuming shared player attributes and you want the authoritative contract
 
 ## Current GAS Setup (Quick Context)
 
@@ -8,6 +26,13 @@ This document summarizes the current Gameplay Ability System (GAS) attribute mod
 - Pawn (`AARPlayerCharacterInvader`) initializes ASC actor info and applies loadout-driven abilities/effects/tags.
 - A single shared attribute set is used today: `UARAttributeSetCore`.
 - Loadout terminology uses `Hat` (`Unlock.Hat`).
+
+## Related Docs
+
+- [Invader Loadouts and Player Runtime](README_Invader_Loadouts.md)
+- [GAS Blueprint Attributes](README_GAS_Blueprint_Attributes.md)
+- [Shop Runtime Contract](README_ShopRamenSystem.md)
+- [Scrapyard Ships](README_Scrapyard_Ships.md)
 
 ## Current Attributes In `UARAttributeSetCore`
 
