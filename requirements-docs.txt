@@ -2,5 +2,5 @@ mkdocs>=1.6
 # Official theme from squidfunk/mkdocs-material
 mkdocs-material>=9.7
 pymdown-extensions>=10
-# Pin to a known commit for reproducible docs builds across Python/toolchain updates.
-mkdocs-doxygen-plugin @ git+https://github.com/pieterdavid/mkdocs-doxygen-plugin@49b841b649acf58b668c0b805ab27f9e454920f4
+# Vendored locally for Python 3.14+ compatibility.
+./Documentation/tools/mkdocs-doxygen-plugin

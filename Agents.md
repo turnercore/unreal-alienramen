@@ -66,6 +66,8 @@ Detailed behavior belongs in `Documentation/` and should be maintained there.
 
 Key docs:
 
+- `Documentation/README_GameModes.md`
+- `Documentation/README_SharedSystems.md`
 - `Documentation/README_SessionSubsystem.md`
 - `Documentation/README_Persistence.md`
 - `Documentation/README_FactionSubsystem.md`
