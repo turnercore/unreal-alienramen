@@ -2,28 +2,38 @@
 
 This site is built with MkDocs Material + Doxygen. Everything under `Documentation/` is rendered as-is; C++ API reference is generated from `Source/` via `Doxyfile`.
 
-## Quick links
+## Start Here
 
-- Gameplay Ability System: [GAS overview](README_GAS.md) - [GAS Blueprint attributes](README_GAS_Blueprint_Attributes.md)
-- Networking/session system: [Session subsystem](README_SessionSubsystem.md)
-- Save system: [Save subsystem](README_SaveSubsystem.md)
-- Invader drops: [Invader drops runtime](README_InvaderDrops.md)
-- Progression + unlocks: [Progression + Unlocks](README_ProgressionUnlocks.md)
-- Dialogue plugin boundary: [Dialogue plugin ownership](README_DialoguePluginBoundary.md)
-- Dialogue/NPC system (includes Signal node usage): [Dialogue + NPC runtime](README_DialogueNPC.md)
-- Shop ramen ordering/serving (built on top): [Shop ramen system](README_ShopRamenSystem.md)
-- Scrapyard extraction + temp buffs: [Scrapyard mode + temp buffs](README_ScrapyardMode.md)
-- Faction election system (built on top): [Faction subsystem](README_FactionSubsystem.md)
-- C++ inventory: [Invader runtime/authoring overview](CppOverview/README.md)
-- API reference: [Doxygen HTML](/unreal-alienramen/doxygen/index.html)
+- For mode flow and gameplay ownership across the main loop: [Game Modes Guide](README_GameModes.md)
+- For networking, persistence, plugins, GAS, dialogue, and other shared runtime surfaces: [Shared Systems Guide](README_SharedSystems.md)
+- For class-level Invader runtime references: [Invader C++ Overview](CppOverview/README.md)
+- For generated API docs: [Doxygen HTML](/unreal-alienramen/doxygen/index.html)
+
+## Core Loop Map
+
+1. [Shop Mode](README_Shop.md)
+2. [Invader Mode](README_Invader.md)
+3. [Scrapyard Mode](README_Scrapyard.md)
+
+Travel between those modes is coordinated through [Transition Flow](README_TransitionMode.md).
+
+## Shared Runtime Map
+
+- Networking and sessions: [Networking Overview](README_Networking.md)
+- Save, travel, and hydration: [Persistence Overview](README_Persistence.md)
+- Plugins and shared runtime foundations: [Plugins Overview](README_Plugins.md)
+- Gameplay Ability System: [GAS Overview](README_GAS.md)
+- Dialogue, speakers, emotion, and faction surfaces: [Parley Runtime](README_DialogueNPC.md) and [Faction Subsystem](README_FactionSubsystem.md)
 
 ## Build / preview docs locally
 
-```bash
-source .venv-docs/bin/activate
-mkdocs serve
+```powershell
+py -m venv .venv-docs
+.\.venv-docs\Scripts\Activate.ps1
+pip install -r requirements-docs.txt
+python -m mkdocs serve
 ```
-(This runs Doxygen via the MkDocs plugin and serves on 127.0.0.1:8000 by default.)
+(This runs Doxygen via the MkDocs plugin and serves on 127.0.0.1:8000 by default. `doxygen` must be available on `PATH`.)
 
 ## Debug console commands (Invader)
 
