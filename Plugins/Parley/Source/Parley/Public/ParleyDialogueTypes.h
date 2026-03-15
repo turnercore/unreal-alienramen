@@ -44,6 +44,21 @@ struct PARLEY_API FSpeakerPortraitEntry
 };
 
 USTRUCT(BlueprintType)
+struct PARLEY_API FParleySpeakerEmotionAudioEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Emotion", DisplayName = "Emotion Tag", ToolTip = "Emotion tag that maps to this speaker fallback audio entry."))
+	FGameplayTag EmotionTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Native Sound", ToolTip = "Optional native fallback sound for this emotion when dialogue audio mode is NativeAudio."))
+	TObjectPtr<USoundBase> NativeSound = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.AudioCue", DisplayName = "Audio Cue Tag", ToolTip = "Optional cue tag emitted when dialogue audio mode is AudioSignals."))
+	FGameplayTag AudioCueTag;
+};
+
+USTRUCT(BlueprintType)
 struct PARLEY_API FParleySpeakerRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -73,6 +88,9 @@ struct PARLEY_API FParleySpeakerRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
 	TArray<FSpeakerPortraitEntry> Portraits;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Emotion Audio Fallbacks", ToolTip = "Optional emotion-keyed audio fallbacks used when a line does not provide direct audio fields."))
+	TArray<FParleySpeakerEmotionAudioEntry> EmotionAudioFallbacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
 	TArray<float> RelationshipThresholds = { 50.0f, 150.0f, 300.0f, 500.0f };
@@ -302,6 +320,9 @@ struct PARLEY_API FDialogueConversationLine
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Sound", ToolTip = "Optional voice/audio clip played with this line."))
 	TObjectPtr<USoundBase> Sound = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.AudioCue", DisplayName = "Audio Cue Tag", ToolTip = "Optional cue tag emitted for this line when dialogue audio mode is AudioSignals."))
+	FGameplayTag AudioCueTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Speaker Tag", ToolTip = "Speaker used when presenting this line. Optional leaf segments can encode presentation emotion (for example Parley.Speaker.Fred.Angry). Leave empty to fall back to conversation context."))
 	FGameplayTag SpeakerTag;
@@ -869,6 +890,44 @@ struct PARLEY_API FDialogueChoiceView
 	bool bImportant = false;
 };
 
+UENUM(BlueprintType)
+enum class EDialogueAudioRequestSource : uint8
+{
+	None = 0,
+	Line,
+	EmotionFallback
+};
+
+USTRUCT(BlueprintType)
+struct PARLEY_API FDialogueAudioRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Dialogue session identifier for this audio request."))
+	FString SessionId;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Stable line guid for dedupe and listener routing."))
+	FGuid LineGuid;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Conversation tag context for this audio request."))
+	FGameplayTag ConversationTag;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Resolved speaker tag context for this audio request."))
+	FGameplayTag SpeakerTag;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Target player slot for this local audio request."))
+	FGameplayTag PlayerSlotTag;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Whether this request came from direct line audio or speaker-emotion fallback."))
+	EDialogueAudioRequestSource Source = EDialogueAudioRequestSource::None;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Resolved native sound payload for NativeAudio mode requests."))
+	TObjectPtr<USoundBase> NativeSound = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Resolved cue tag payload for AudioSignals mode requests."))
+	FGameplayTag AudioCueTag;
+};
+
 USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueClientView
 {
@@ -1086,4 +1145,3 @@ struct PARLEY_API FParleyProgressionState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Canonical speaker/character tag for this progression state."))
 	FGameplayTag CharacterTag;
 };
-

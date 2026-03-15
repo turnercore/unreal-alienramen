@@ -626,6 +626,9 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 	int32 EnterCount = 0;
 	TSet<FGuid> CompletedNodeIds;
 	TSet<FGuid> LineGuidSet;
+	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
+	const bool bSignalAudioMode = DialogueSettings
+		&& DialogueSettings->DialogueAudioMode == EParleyDialogueAudioMode::AudioSignals;
 	auto ValidateLineEntry = [&](
 		const FDialogueLineNodeData& LineData,
 		const FGuid& NodeId,
@@ -638,13 +641,34 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 				NodeId,
 				FString::Printf(TEXT("%s text is missing (sound-only lines are invalid)."), ContextLabel));
 		}
-		if (LineData.Line.LengthSeconds <= 0.0f && LineData.Line.Sound == nullptr)
+
+		USoundBase* FallbackNativeSound = nullptr;
+		FGameplayTag FallbackCueTag;
+		ResolveSpeakerEmotionFallbackAudioForSpeaker(
+			ValidationSpeakerRows,
+			LineData.Line.SpeakerTag,
+			FallbackNativeSound,
+			FallbackCueTag);
+
+		const bool bHasNativeAudio = LineData.Line.Sound != nullptr || FallbackNativeSound != nullptr;
+		const bool bHasSignalAudio = LineData.Line.AudioCueTag.IsValid() || FallbackCueTag.IsValid();
+
+		if (bSignalAudioMode && !bHasSignalAudio)
 		{
 			Add(
 				EDialogueValidationSeverity::Warning,
 				NodeId,
 				FString::Printf(
-					TEXT("%s has no audio and Length Seconds is 0. Set a positive Length Seconds value or assign a Sound."),
+					TEXT("%s has no signal audio cue. Assign Audio Cue Tag on the line or speaker emotion fallback."),
+					ContextLabel));
+		}
+		else if (!bSignalAudioMode && LineData.Line.LengthSeconds <= 0.0f && !bHasNativeAudio)
+		{
+			Add(
+				EDialogueValidationSeverity::Warning,
+				NodeId,
+				FString::Printf(
+					TEXT("%s has no native audio and Length Seconds is 0. Set Length Seconds, assign line Sound, or configure speaker emotion fallback sound."),
 					ContextLabel));
 		}
 		if (!LineData.Line.SpeakerTag.IsValid())
@@ -1372,4 +1396,3 @@ static bool EvaluateConversationOfferRules(
 
 	return true;
 }
-

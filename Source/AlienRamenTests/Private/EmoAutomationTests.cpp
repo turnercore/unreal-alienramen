@@ -78,8 +78,8 @@ bool FEmo_ResolverCanResolveConfiguredEmotionTest::RunTest(const FString& Parame
 		CandidateTags.Add(Settings->WantsToTalkEmotionTag);
 	}
 
-	const FGameplayTag FallbackOkTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Emotion.Ok")), false);
-	const FGameplayTag FallbackLikeTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Dialogue.Emotion.Like")), false);
+	const FGameplayTag FallbackOkTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Emotion.Ok")), false);
+	const FGameplayTag FallbackLikeTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Emotion.Like")), false);
 	if (FallbackOkTag.IsValid())
 	{
 		CandidateTags.AddUnique(FallbackOkTag);

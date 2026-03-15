@@ -115,6 +115,10 @@ cmake-build-debug-event-trace/
 .rej
 .orig
 tags
+!Config/Tags/
+!Config/Tags/*.ini
+!Plugins/*/Config/Tags/
+!Plugins/*/Config/Tags/*.ini
 *.mo
 *.pro
 *.idb

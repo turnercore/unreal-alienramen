@@ -28,7 +28,9 @@ void FParleyModule::StartupModule()
 		TEXT("Parley.Conversations"),
 		TEXT("Parley.Emotion"),
 		TEXT("Parley.Emotion.Busy"),
-		TEXT("Parley.Factions")
+		TEXT("Parley.AudioCue"),
+		TEXT("Parley.Factions"),
+		TEXT("Parley.Factions.Effect")
 	};
 
 	for (const TCHAR* RequiredTag : RequiredTags)
@@ -47,4 +49,3 @@ void FParleyModule::StartupModule()
 void FParleyModule::ShutdownModule()
 {
 }
-

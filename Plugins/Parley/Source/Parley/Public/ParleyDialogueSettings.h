@@ -9,6 +9,13 @@
 #include "GameplayTagContainer.h"
 #include "ParleyDialogueSettings.generated.h"
 
+UENUM(BlueprintType)
+enum class EParleyDialogueAudioMode : uint8
+{
+	NativeAudio = 0,
+	AudioSignals
+};
+
 UCLASS(Config=Parley, DefaultConfig, meta=(DisplayName="Dialogue"))
 class PARLEY_API UParleyDialogueSettings : public UDeveloperSettings
 {
@@ -41,6 +48,10 @@ public:
 	// Safety guard for runtime node traversal loops.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ClampMin="16", UIMin="16", ToolTip = "Safety cap for maximum node steps processed per dialogue advance."))
 	int32 MaxExecutionStepsPerAdvance = 1024;
+
+	// Controls whether dialogue line audio resolves to native USound playback or signal-style cue events.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Audio", meta = (ToolTip = "Selects how dialogue line audio is emitted. NativeAudio resolves and plays Sound assets. AudioSignals suppresses native sounds and emits cue tags for external systems (for example FMOD bridges)."))
+	EParleyDialogueAudioMode DialogueAudioMode = EParleyDialogueAudioMode::NativeAudio;
 
 	// Safety guard for read-only choice lookahead traversal.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ClampMin="16", UIMin="16", ToolTip = "Safety cap for maximum node steps processed when previewing a highlighted choice branch."))

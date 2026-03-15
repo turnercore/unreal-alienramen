@@ -1,12 +1,39 @@
 #include "ParleyDialogueNodeDetailsCustomization.h"
 
 #include "ParleyDialogueEdGraphNode.h"
+#include "ParleyDialogueSettings.h"
 #include "ParleyDialogueTypes.h"
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailChildrenBuilder.h"
 #include "PropertyHandle.h"
+
+namespace
+{
+	static bool ShouldDisplayLineAudioField(const FName FieldName)
+	{
+		const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
+		if (!Settings)
+		{
+			return true;
+		}
+
+		const bool bSignalsMode = Settings->DialogueAudioMode == EParleyDialogueAudioMode::AudioSignals;
+		const FName SoundField = GET_MEMBER_NAME_CHECKED(FDialogueConversationLine, Sound);
+		const FName CueField = GET_MEMBER_NAME_CHECKED(FDialogueConversationLine, AudioCueTag);
+
+		if (FieldName == SoundField)
+		{
+			return !bSignalsMode;
+		}
+		if (FieldName == CueField)
+		{
+			return bSignalsMode;
+		}
+		return true;
+	}
+}
 
 TSharedRef<IDetailCustomization> FParleyDialogueEdGraphNodeDetails::MakeInstance()
 {
@@ -104,6 +131,12 @@ void FParleyDialogueEdGraphNodeDetails::CustomizeDetails(IDetailLayoutBuilder& D
 					const TSharedPtr<IPropertyHandle> InnerHandle = ChildHandle->GetChildHandle(InnerIndex);
 					if (InnerHandle.IsValid() && InnerHandle->IsValidHandle())
 					{
+						const FName InnerName = InnerHandle->GetProperty() ? InnerHandle->GetProperty()->GetFName() : NAME_None;
+						if (!ShouldDisplayLineAudioField(InnerName))
+						{
+							continue;
+						}
+
 						IDetailPropertyRow& Row = Category.AddProperty(InnerHandle.ToSharedRef(), EPropertyLocation::Default);
 						Row.ShouldAutoExpand(true);
 					}
@@ -193,6 +226,12 @@ void FParleyDialogueLineNodeDataCustomization::CustomizeChildren(
 			const TSharedPtr<IPropertyHandle> ChildHandle = LineHandle->GetChildHandle(ChildIndex);
 			if (ChildHandle.IsValid() && ChildHandle->IsValidHandle())
 			{
+				const FName ChildName = ChildHandle->GetProperty() ? ChildHandle->GetProperty()->GetFName() : NAME_None;
+				if (!ShouldDisplayLineAudioField(ChildName))
+				{
+					continue;
+				}
+
 				ChildBuilder.AddProperty(ChildHandle.ToSharedRef());
 			}
 		}

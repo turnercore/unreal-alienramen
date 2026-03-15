@@ -27,6 +27,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnProgressionTagMutated, F
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnChoiceLookaheadEmotion, FGameplayTag, PrimarySpeakerTag, FGameplayTag, PreviewEmotionTag, FGuid, ChoiceBranchId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnChoiceLookaheadCleared, FGameplayTag, PlayerSlotTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnDialogueSignalFired, FGameplayTag, SignalTag, FGameplayTagContainer, PayloadTags, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnDialogueAudioRequested, const FDialogueAudioRequest&, Request);
 DECLARE_DELEGATE_RetVal_TwoParams(bool, FParleyIsConversationCompleted, FGameplayTag, FGameplayTag);
 DECLARE_DELEGATE_RetVal(FGameplayTag, FParleyGetCurrentModeTag);
 
@@ -228,6 +229,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Signals", meta = (ToolTip = "Broadcast when a Signal node fires. Params: SignalTag, PayloadTags, ConversationTag, SpeakerTag, PlayerSlotTag."))
 	FParleyOnDialogueSignalFired OnDialogueSignalFired;
+
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Audio", meta = (ToolTip = "Broadcast when dialogue line audio resolves into a native-sound or cue-tag request payload."))
+	FParleyOnDialogueAudioRequested OnDialogueAudioRequested;
 
 	// Optional query delegates owned by the game module.
 	FParleyIsConversationCompleted OnQueryConversationCompleted;
