@@ -2,6 +2,7 @@
 #include "ParleyDialogueSubsystem.h"
 #include "ParleyDialogueWidgetBase.h"
 #include "ARHUDBase.h"
+#include "ARDialogueAudioBridgeSubsystem.h"
 #include "ARInteractableRangeListener.h"
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
@@ -107,6 +108,11 @@ void AARPlayerController::NotifyDialogueViewUpdated(const FDialogueClientView& V
 void AARPlayerController::NotifyDialogueSessionEnded(const FString& SessionId)
 {
 	ClientDialogueSessionEnded(SessionId);
+}
+
+void AARPlayerController::NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request)
+{
+	ClientDialogueAudioRequested(Request);
 }
 
 void AARPlayerController::RequestInteractWithActor(AActor* Actor)
@@ -874,6 +880,17 @@ void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FStrin
 	RefreshDialogueInputStateFromSession();
 	OnDialogueSessionEndedSignal.Broadcast(SessionId);
 	BP_OnDialogueSessionEnded(SessionId);
+}
+
+void AARPlayerController::ClientDialogueAudioRequested_Implementation(const FDialogueAudioRequest& Request)
+{
+	// Expose the resolved payload to BP listeners before default local bridge handling.
+	OnDialogueAudioRequested.Broadcast(Request);
+
+	if (UARDialogueAudioBridgeSubsystem* AudioBridge = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueAudioBridgeSubsystem>() : nullptr)
+	{
+		AudioBridge->HandleLocalDialogueAudioRequest(this, Request);
+	}
 }
 
 bool AARPlayerController::GetCachedDialogueView(FDialogueClientView& OutView) const

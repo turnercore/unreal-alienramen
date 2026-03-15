@@ -355,6 +355,41 @@ static void BroadcastSessionUpdated(UParleyDialogueSubsystem* DialogueSubsystem,
 	}
 }
 
+static void DispatchDialogueAudioRequestToParticipants(
+	UParleyDialogueSubsystem* DialogueSubsystem,
+	const FParleyActiveDialogueSession& Session,
+	const FDialogueAudioRequest& Request)
+{
+	if (!DialogueSubsystem)
+	{
+		return;
+	}
+
+	// Subsystem-level listeners get one authority-side notification per resolved line.
+	// Per-local-player routing happens below via controller interface dispatch.
+	DialogueSubsystem->OnDialogueAudioRequested.Broadcast(Request);
+
+	for (const EParleyPlayerSlot Slot : Session.Participants)
+	{
+		if (Slot == EParleyPlayerSlot::Unknown)
+		{
+			continue;
+		}
+
+		APlayerController* TargetController = FindPlayerControllerBySlot(DialogueSubsystem->GetWorld(), Slot);
+		IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController);
+		if (!ControllerInterface)
+		{
+			continue;
+		}
+
+		FDialogueAudioRequest PerPlayerRequest = Request;
+		// PlayerSlotTag is local-delivery context and must be rewritten per participant.
+		PerPlayerRequest.PlayerSlotTag = ParleyPlayerSlot::SlotToTag(Slot);
+		ControllerInterface->NotifyDialogueAudioRequested(PerPlayerRequest);
+	}
+}
+
 static int32 FindSessionIndexForSlot(const TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
 {
 	for (int32 Index = 0; Index < Sessions.Num(); ++Index)
@@ -1067,6 +1102,77 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		Session.WaitingLineNodeId = WaitingNodeId;
 		Session.WaitingMultiLineEntryIndex = MultiLineEntryIndex;
 
+		const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
+		const bool bUseAudioSignals = DialogueSettings
+			&& DialogueSettings->DialogueAudioMode == EParleyDialogueAudioMode::AudioSignals;
+
+		USoundBase* EmotionFallbackNativeSound = nullptr;
+		FGameplayTag EmotionFallbackCueTag;
+		ResolveSpeakerEmotionFallbackAudioForSpeaker(
+			SpeakerRowsByTag,
+			ResolvedSpeakerTag,
+			EmotionFallbackNativeSound,
+			EmotionFallbackCueTag);
+
+		USoundBase* ResolvedNativeSound = Line.Sound;
+		FGameplayTag ResolvedCueTag = Line.AudioCueTag;
+		EDialogueAudioRequestSource AudioRequestSource = EDialogueAudioRequestSource::None;
+
+		// Authoring priority: line payload first, speaker-emotion fallback second.
+		if (!ResolvedNativeSound && EmotionFallbackNativeSound)
+		{
+			ResolvedNativeSound = EmotionFallbackNativeSound;
+		}
+		if (!ResolvedCueTag.IsValid() && EmotionFallbackCueTag.IsValid())
+		{
+			ResolvedCueTag = EmotionFallbackCueTag;
+		}
+
+		if (bUseAudioSignals)
+		{
+			// Signal mode intentionally suppresses native audio payloads at source.
+			ResolvedNativeSound = nullptr;
+			if (Line.AudioCueTag.IsValid())
+			{
+				AudioRequestSource = EDialogueAudioRequestSource::Line;
+			}
+			else if (EmotionFallbackCueTag.IsValid())
+			{
+				AudioRequestSource = EDialogueAudioRequestSource::EmotionFallback;
+			}
+		}
+		else
+		{
+			// Native mode intentionally suppresses cue-tag payloads at source.
+			ResolvedCueTag = FGameplayTag();
+			if (Line.Sound)
+			{
+				AudioRequestSource = EDialogueAudioRequestSource::Line;
+			}
+			else if (EmotionFallbackNativeSound)
+			{
+				AudioRequestSource = EDialogueAudioRequestSource::EmotionFallback;
+			}
+		}
+
+		FDialogueAudioRequest AudioRequest;
+		AudioRequest.SessionId = Session.SessionId;
+		AudioRequest.LineGuid = Line.LocalLineGuid;
+		AudioRequest.ConversationTag = Session.ConversationTag;
+		AudioRequest.SpeakerTag = ResolvedSpeakerTag;
+		AudioRequest.PlayerSlotTag = ParleyPlayerSlot::SlotToTag(Session.OwnerSlot);
+		AudioRequest.Source = AudioRequestSource;
+		AudioRequest.NativeSound = ResolvedNativeSound;
+		AudioRequest.AudioCueTag = ResolvedCueTag;
+
+		const bool bHasAudioPayload = bUseAudioSignals
+			? ResolvedCueTag.IsValid()
+			: (ResolvedNativeSound != nullptr);
+		if (!bPreviewMode && bHasAudioPayload)
+		{
+			DispatchDialogueAudioRequestToParticipants(DialogueSubsystem, Session, AudioRequest);
+		}
+
 		const APlayerState* ActiveARPlayerState = Cast<APlayerState>(Context.ActivePlayerState);
 		const bool bAutoAdvanceEnabledForOwner = !bPreviewMode
 			&& ActiveARPlayerState
@@ -1074,9 +1180,9 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		if (bAutoAdvanceEnabledForOwner && Context.World)
 		{
 			float DelaySeconds = Line.LengthSeconds;
-			if (Line.Sound)
+			if (ResolvedNativeSound)
 			{
-				const float SoundDuration = Line.Sound->GetDuration();
+				const float SoundDuration = ResolvedNativeSound->GetDuration();
 				if (SoundDuration > 0.0f)
 				{
 					DelaySeconds = SoundDuration;

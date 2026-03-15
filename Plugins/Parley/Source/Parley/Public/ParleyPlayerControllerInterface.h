@@ -24,6 +24,7 @@ public:
 	virtual FGameplayTag GetCharacterTag() const = 0;
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) = 0;
 	virtual void NotifyDialogueSessionEnded(const FString& SessionId) = 0;
+	virtual void NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request) = 0;
 	virtual void RequestInteractWithActor(AActor* Actor) = 0;
 	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) = 0;
 	virtual void RequestAdvanceDialogueInput() = 0;

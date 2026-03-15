@@ -79,6 +79,7 @@ bool FParley_DialogueSettingsSlotTagContractTest::RunTest(const FString& Paramet
 	TestTrue(TEXT("Configured P2 slot tag should be valid"), ConfiguredP2Tag.IsValid());
 	TestEqual(TEXT("Configured P1 slot tag should map to P1"), ParleyPlayerSlot::TagToSlot(ConfiguredP1Tag), EParleyPlayerSlot::P1);
 	TestEqual(TEXT("Configured P2 slot tag should map to P2"), ParleyPlayerSlot::TagToSlot(ConfiguredP2Tag), EParleyPlayerSlot::P2);
+	TestEqual(TEXT("Dialogue audio mode defaults to NativeAudio"), Settings->DialogueAudioMode, EParleyDialogueAudioMode::NativeAudio);
 
 	return true;
 }
@@ -97,14 +98,17 @@ bool FParley_RequiredTagsPresentTest::RunTest(const FString& Parameters)
 		TEXT("Player.Slot"),
 		TEXT("Player.Slot.P1"),
 		TEXT("Player.Slot.P2"),
-		TEXT("Dialogue.Speaker"),
-		TEXT("Dialogue.Speaker.Player"),
-		TEXT("Dialogue.Speaker.Brother"),
-		TEXT("Dialogue.Speaker.Sister"),
-		TEXT("Dialogue.Conversation"),
-		TEXT("Dialogue.Emotion"),
-		TEXT("Dialogue.Emotion.Busy"),
-		TEXT("Faction.Identity")
+		TEXT("Parley.Speaker"),
+		TEXT("Parley.Speaker.Player"),
+		TEXT("Parley.Speaker.Brother"),
+		TEXT("Parley.Speaker.Sister"),
+		TEXT("Parley.Conversations"),
+		TEXT("Parley.Emotion"),
+		TEXT("Parley.Emotion.Busy"),
+		TEXT("Parley.Emotion.Default"),
+		TEXT("Parley.AudioCue"),
+		TEXT("Parley.Factions"),
+		TEXT("Parley.Factions.Effect")
 	};
 
 	for (const TCHAR* TagName : RequiredTags)

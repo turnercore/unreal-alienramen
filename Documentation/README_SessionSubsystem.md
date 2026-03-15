@@ -114,8 +114,9 @@ This means moving from Steam to another backend does not require a new Blueprint
 - Manual `JoinSessionByIndex` also performs destroy-then-join if the local runtime is already in a different named session.
 - Online (non-LAN) find now performs a retry without strict query filters when the first filtered search returns zero rows.
 - Find completion semantics: transport/query success returns `bSuccess=true`; empty result sets use `ResultCode=SessionNotFound` with `Error="No sessions found."`.
-- Session create/find execution path now uses AdvancedSessions C++ proxies when a local player controller is available (`UCreateSessionCallbackProxyAdvanced`, `UFindSessionsCallbackProxyAdvanced`) while preserving `UARSessionSubsystem` Blueprint API.
-- Project plugin requirement for that proxy path: `AdvancedSessions` and `AdvancedSteamSessions` are enabled in `AlienRamen.uproject`.
+- Session create/find execution path uses native `IOnlineSession` delegates in `UARSessionSubsystem` (`CreateSession` / `FindSessions`) while preserving the same Blueprint-facing `UARSessionSubsystem` API.
+- Runtime GameMode session class is forced in native code (`AARGameModeBase::GetGameSessionClass` returns `AGameSession`) so BP-configured `AdvancedGameSession` class defaults do not control runtime authority behavior.
+- `AdvancedSessions` / `AdvancedSteamSessions` plugin enablement is currently a project/content compatibility concern (existing assets and plugin types), not a requirement for the core native create/find implementation.
 - `Stay Offline` is a session-policy gate (not module shutdown): it blocks internet/platform session actions while leaving LAN/local session flow available.
 - Session lifetime is intended to survive normal map travel (listen-server flow) unless explicitly destroyed.
 - Leave behavior:

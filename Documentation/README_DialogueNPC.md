@@ -59,6 +59,7 @@ Core subsystem API:
 - `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
 - `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
 - `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/player-slot context)
+- `OnDialogueAudioRequested` (broadcast when line audio resolves into either native sound payload or cue-tag signal payload)
 
 ## Signal Node (How To Use)
 
@@ -107,6 +108,29 @@ void UMySystem::HandleDialogueSignal(
 }
 ```
 
+## Dialogue Audio Modes
+
+Parley dialogue audio is mode-driven from `UParleyDialogueSettings::DialogueAudioMode`:
+
+- `NativeAudio`
+  - dialogue resolves native `USoundBase` payloads
+  - line `Sound` has priority
+  - if line `Sound` is empty, speaker emotion fallback sound can supply audio
+- `AudioSignals`
+  - native sounds are suppressed
+  - dialogue resolves cue-tag payloads only
+  - line `AudioCueTag` has priority
+  - if line cue is empty, speaker emotion fallback cue can supply signal audio
+
+Speaker emotion fallback audio is authored in speaker rows (`FParleySpeakerRow::EmotionAudioFallbacks`) and keyed by emotion tags.
+
+Local delivery contract:
+
+- server runtime resolves the request once per delivered line
+- Parley forwards local audio requests to participating player controllers
+- AR layer handles per-machine dedupe (`SessionId + LineGuid`) for couch co-op
+- AR FMOD bridge resolves cue tags through `FARDialogueAudioCueFMODRow` DataTable mappings and plays 2D FMOD events locally
+
 ## Runtime UI Bridge
 
 Runtime UI is intentionally separate from editor preview tooling.
@@ -138,6 +162,7 @@ Settings live in `Plugins/Parley/Source/Parley/Public/ParleyDialogueSettings.h`:
 - `ConversationDefinitionRootTag` (conversation lookup row root)
 - shared/per-player mode tag containers
 - execution guard `MaxExecutionStepsPerAdvance`
+- audio mode switch `DialogueAudioMode` (`NativeAudio` / `AudioSignals`)
 
 Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `ConversationDefinitionRootTag=Parley.Conversations`.
 
@@ -250,7 +275,7 @@ Speaker actor integration now routes through `UParleySpeakerComponent`:
 
 ## Emotion Resolver Runtime
 
-- `UEmoResolverSubsystem` caches emotion tag->icon mappings from TagKey route root `UEmoSettings::EmotionResolverRootTag` (default `Dialogue.Emotion`).
+- `UEmoResolverSubsystem` caches emotion tag->icon mappings from TagKey route root `UEmoSettings::EmotionResolverRootTag` (default `Parley.Emotion`).
 - Resolver cache invalidates/rebuilds when configured settings inputs change or when the bound emotion DataTable broadcasts `OnDataTableChanged`.
 - Debug console commands:
   - `ar.emotion.log_cache_stats`
@@ -292,9 +317,9 @@ Conversation graph tooling now provides:
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
-- speaker-tag editor fields are gameplay-tag-filtered to `Dialogue.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
+- speaker-tag editor fields are gameplay-tag-filtered to `Parley.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
-- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Dialogue.Speaker.Player`; line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
+- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Parley.Speaker.Player`; line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
 - Speaker details authoring categories for actor/talk/emotion properties use distinct roots (`Alien Ramen|Speaker`, `Alien Ramen|Talk`, `Alien Ramen|Emotion`) to avoid repeated same-name category buckets in Blueprint class-default details.
 
 Speaker hub currently provides:
@@ -316,4 +341,3 @@ Speaker hub currently provides:
 - stale lookup rows are cleaned when referenced conversation assets are deleted; removed conversation tags are stripped from lock/block condition references in remaining conversations
 - generated conversation tag config cleanup is explicit via `Cleanup Tags` action (not implicit during delete), keeping undo/redo behavior predictable
 - conversation create/open actions and broken-conversation scan using runtime validator
-

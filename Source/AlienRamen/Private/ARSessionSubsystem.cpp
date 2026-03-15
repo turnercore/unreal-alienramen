@@ -6,10 +6,8 @@
 #include "ARNetworkUserSettings.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
-#include "CreateSessionCallbackProxyAdvanced.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
-#include "FindSessionsCallbackProxyAdvanced.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Interfaces/OnlineSessionInterface.h"
@@ -279,9 +277,6 @@ void UARSessionSubsystem::Deinitialize()
 
 	ResetFindState();
 
-	ActiveAdvancedCreateProxy = nullptr;
-	ActiveAdvancedFindProxy = nullptr;
-
 	ResetOperationState();
 	ActiveSubsystemName = NAME_None;
 
@@ -403,51 +398,6 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 	}
 	else
 	{
-		UWorld* World = GetWorld();
-		APlayerController* LocalPlayerController = ResolveLocalPlayerController(World);
-		if (LocalPlayerController)
-		{
-			TArray<FSessionPropertyKeyPair> ExtraSettings;
-			const FString ResolvedDisplayName = ResolveSessionDisplayName(SessionDisplayName);
-
-			FSessionPropertyKeyPair LobbyNameSetting;
-			LobbyNameSetting.Key = SessionSetting_ARLobbyName;
-			LobbyNameSetting.Data.SetValue(ResolvedDisplayName);
-			ExtraSettings.Add(LobbyNameSetting);
-
-			FSessionPropertyKeyPair SessionKeySetting;
-			SessionKeySetting.Key = SETTING_SESSIONKEY;
-			SessionKeySetting.Data.SetValue(ResolvedDisplayName);
-			ExtraSettings.Add(SessionKeySetting);
-
-			ActiveAdvancedCreateProxy = UCreateSessionCallbackProxyAdvanced::CreateAdvancedSession(
-				this,
-				ExtraSettings,
-				LocalPlayerController,
-				MaxPublicPlayerConnections,
-				0,
-				bUseLAN,
-				true,
-				false,
-				!bUseLAN,
-				true,
-				false,
-				false,
-				false,
-				true,
-				!bUseLAN,
-				true);
-
-			if (ActiveAdvancedCreateProxy)
-			{
-				ActiveAdvancedCreateProxy->OnSuccess.AddDynamic(this, &UARSessionSubsystem::HandleAdvancedCreateSuccess);
-				ActiveAdvancedCreateProxy->OnFailure.AddDynamic(this, &UARSessionSubsystem::HandleAdvancedCreateFailure);
-				ActiveAdvancedCreateProxy->Activate();
-				FillResult(OutResult, true, EARSessionResultCode::Success);
-				return true;
-			}
-		}
-
 		FOnCreateSessionCompleteDelegate Delegate;
 		Delegate.BindUObject(this, &UARSessionSubsystem::HandleCreateSessionComplete);
 		CreateSessionCompleteHandle = Session->AddOnCreateSessionCompleteDelegate_Handle(Delegate);
@@ -499,40 +449,6 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 		bLANQuery ? TEXT("true") : TEXT("false"),
 		MaxResults,
 		*SubsystemName.ToString());
-
-	if (APlayerController* LocalPlayerController = ResolveLocalPlayerController(GetWorld()))
-	{
-		LastFindMaxResults = FMath::Max(1, MaxResults);
-		bLastFindWasLANQuery = bLANQuery;
-		bFindRetryWithoutFilters = false;
-		bOperationInFlight = true;
-		CurrentOperation = ESessionOperation::Find;
-		ActiveSubsystemName = SubsystemName;
-
-		TArray<FSessionsSearchSetting> Filters;
-		ActiveAdvancedFindProxy = UFindSessionsCallbackProxyAdvanced::FindSessionsAdvanced(
-			this,
-			LocalPlayerController,
-			LastFindMaxResults,
-			bLANQuery,
-			EBPServerPresenceSearchType::AllServers,
-			Filters,
-			false,
-			false,
-			false,
-			0);
-
-		if (ActiveAdvancedFindProxy)
-		{
-			ActiveAdvancedFindProxy->OnSuccess.AddDynamic(this, &UARSessionSubsystem::HandleAdvancedFindSuccess);
-			ActiveAdvancedFindProxy->OnFailure.AddDynamic(this, &UARSessionSubsystem::HandleAdvancedFindFailure);
-			ActiveAdvancedFindProxy->Activate();
-			FillResult(OutResult, true, EARSessionResultCode::Success);
-			return true;
-		}
-
-		ResetOperationState();
-	}
 
 	ActiveSessionSearch = MakeShared<FOnlineSessionSearch>();
 	ActiveSessionSearch->bIsLanQuery = bLANQuery;
@@ -675,7 +591,7 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 	return BeginJoinSession(Session, 0, Candidate, OutResult);
 }
 
-bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult)
+bool UARSessionSubsystem::FindFriendSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult)
 {
 	if (IsStayOfflineEnabled())
 	{
@@ -690,7 +606,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 		return false;
 	}
 
-	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId();
+	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId().Get();
 	if (!FriendNetId)
 	{
 		FillResult(OutResult, false, EARSessionResultCode::SessionNotFound, TEXT("Friend unique net id is invalid."));
@@ -728,7 +644,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 	return true;
 }
 
-bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult)
+bool UARSessionSubsystem::InviteFriendToSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult)
 {
 	if (IsStayOfflineEnabled())
 	{
@@ -737,7 +653,7 @@ bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniq
 		return false;
 	}
 
-	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId();
+	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId().Get();
 	if (!FriendNetId)
 	{
 		FillResult(OutResult, false, EARSessionResultCode::InviteFailed, TEXT("Friend unique net id is invalid."));
@@ -1405,68 +1321,6 @@ void UARSessionSubsystem::DestroySessionBestEffort()
 
 	FARSessionResult Result;
 	DestroySession(Result);
-}
-
-void UARSessionSubsystem::HandleAdvancedCreateSuccess()
-{
-	ActiveAdvancedCreateProxy = nullptr;
-	ResetOperationState();
-
-	FARSessionResult Result;
-	FillResult(Result, true, EARSessionResultCode::Success);
-	OnCreateSessionCompleted.Broadcast(Result);
-}
-
-void UARSessionSubsystem::HandleAdvancedCreateFailure()
-{
-	ActiveAdvancedCreateProxy = nullptr;
-	ResetOperationState();
-
-	FARSessionResult Result;
-	FillResult(Result, false, EARSessionResultCode::CreateFailed, TEXT("AdvancedSessions CreateAdvancedSession failed."));
-	OnCreateSessionCompleted.Broadcast(Result);
-}
-
-void UARSessionSubsystem::HandleAdvancedFindSuccess(const TArray<FBlueprintSessionResult>& Results)
-{
-	ActiveAdvancedFindProxy = nullptr;
-	ResetOperationState();
-	bFindRetryWithoutFilters = false;
-	ActiveSessionSearch.Reset();
-
-	CachedNativeSearchResults.Reset();
-	CachedNativeSearchResults.Reserve(Results.Num());
-
-	for (const FBlueprintSessionResult& SessionResult : Results)
-	{
-		if (SessionResult.OnlineResult.IsValid())
-		{
-			CachedNativeSearchResults.Add(SessionResult.OnlineResult);
-		}
-	}
-
-	RebuildLastFindResults();
-
-	FARSessionResult Result;
-	const bool bFoundAny = LastFindResults.Num() > 0;
-	FillResult(Result, true, bFoundAny ? EARSessionResultCode::Success : EARSessionResultCode::SessionNotFound, bFoundAny ? FString() : TEXT("No sessions found."));
-	BroadcastFindCompleted(Result);
-}
-
-void UARSessionSubsystem::HandleAdvancedFindFailure(const TArray<FBlueprintSessionResult>& Results)
-{
-	(void)Results;
-
-	ActiveAdvancedFindProxy = nullptr;
-	ResetOperationState();
-	bFindRetryWithoutFilters = false;
-	ActiveSessionSearch.Reset();
-	CachedNativeSearchResults.Reset();
-	LastFindResults.Reset();
-
-	FARSessionResult Result;
-	FillResult(Result, false, EARSessionResultCode::FindFailed, TEXT("AdvancedSessions FindSessionsAdvanced failed."));
-	BroadcastFindCompleted(Result);
 }
 
 void UARSessionSubsystem::HandleCreateSessionComplete(FName SessionName, bool bWasSuccessful)
