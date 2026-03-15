@@ -2,6 +2,12 @@
 
 This document defines the server-authoritative contract for the dedicated transition map flow (`Lvl_Loading` or equivalent).
 
+Transition flow is the handoff layer between the three primary game modes:
+
+1. Shop
+2. Invader
+3. Scrapyard
+
 ## Ownership
 
 - `AARGameModeBase`
