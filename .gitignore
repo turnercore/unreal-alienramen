@@ -132,5 +132,6 @@ tags
 /warnings.log
 /examples/html/*
 /examples/latex/*
+sdks/Steamworks/
 
 .claude
