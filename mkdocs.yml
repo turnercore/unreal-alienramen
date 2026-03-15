@@ -1,6 +1,7 @@
 site_name: "Alien Ramen Documentation"
 site_description: "Alien Ramen UE5.7 C++ and gameplay docs"
 docs_dir: Documentation
+exclude_docs: tools/mkdocs-doxygen-plugin/**
 site_dir: site
 repo_name: alienramen
 site_url: https://turnercore.github.io/unreal-alienramen/
@@ -8,49 +9,63 @@ site_url: https://turnercore.github.io/unreal-alienramen/
 
 nav:
   - Home: README.md
-  - Plugins:
-      - Plugins Overview: README_Plugins.md
-      - TagKey: README_Plugins_TagKey.md
-      - Parley:
-          - Ownership Boundary: README_DialoguePluginBoundary.md
-          - Runtime: README_DialogueNPC.md
-      - Emo: README_Plugins_Emo.md
-  - Shop:
-      - Shop Overview: README_Shop.md
-      - Shop Game Mode: README_ShopRamenSystem.md
-      - Customers: README_Shop_Customers.md
-      - Shop Items: README_Shop_Items.md
-      - Voting: README_FactionSubsystem.md
-      - Stations: README_Shop_Stations.md
-      - Storage: README_Shop_Storage.md
-  - Invader:
-      - Invader Overview: README_Invader.md
-      - Pickups: README_InvaderDrops.md
-      - Loadouts: README_Invader_Loadouts.md
-      - Progression and Unlocks: README_ProgressionUnlocks.md
-      - Scoring: README_Invader_Scoring.md
-      - Invader Director: README_Invader_Director.md
-      - Wave Designer: README_Invader_WaveDesigner.md
-      - Invader Spicy Track: CppOverview/InvaderSpicyTrack.md
-  - Scrapyard:
-      - Scrapyard Overview: README_Scrapyard.md
-      - Main Runtime Contract: README_ScrapyardMode.md
-      - Items: README_Scrapyard_Items.md
-      - Exits: README_Scrapyard_Exits.md
-      - Ships: README_Scrapyard_Ships.md
-      - Spawn Rules: Assets/README_ScrapyardSpawnRules.md
-  - Networking:
-      - Networking Overview: README_Networking.md
-      - Online Session Subsystem: README_SessionSubsystem.md
-  - Persistence:
-      - Persistence Overview: README_Persistence.md
-      - Saving, Loading, and Hydration: README_SaveSubsystem.md
-  - Other:
-      - GAS:
+  - Game Modes:
+      - Game Modes Overview: README_GameModes.md
+      - Shop Mode:
+          - Shop Overview: README_Shop.md
+          - Runtime Contract: README_ShopRamenSystem.md
+          - Customers: README_Shop_Customers.md
+          - Shop Items: README_Shop_Items.md
+          - Stations: README_Shop_Stations.md
+          - Storage: README_Shop_Storage.md
+      - Invader Mode:
+          - Invader Overview: README_Invader.md
+          - Loadouts and Player Runtime: README_Invader_Loadouts.md
+          - Pickups: README_InvaderDrops.md
+          - Scoring: README_Invader_Scoring.md
+          - Invader Director: README_Invader_Director.md
+          - Wave Designer: README_Invader_WaveDesigner.md
+          - Shared Spicy Track: CppOverview/InvaderSpicyTrack.md
+          - Invader C++ Surfaces:
+              - Overview: CppOverview/README.md
+              - AAREnemyBase: CppOverview/AAREnemyBase.md
+              - AAREnemyAIController: CppOverview/AAREnemyAIController.md
+              - AARInvaderDropBase: CppOverview/AARInvaderDropBase.md
+              - UARInvaderDirectorSubsystem: CppOverview/UARInvaderDirectorSubsystem.md
+              - UARInvaderRuntimeStateComponent: CppOverview/UARInvaderRuntimeStateComponent.md
+              - UARInvaderDirectorSettings: CppOverview/UARInvaderDirectorSettings.md
+              - InvaderDataTypes: CppOverview/InvaderDataTypes.md
+              - EnemyUtilities: CppOverview/EnemyUtilities.md
+              - Editor SInvaderAuthoringPanel: CppOverview/Editor_SInvaderAuthoringPanel.md
+              - Editor Settings: CppOverview/Editor_Settings.md
+      - Scrapyard Mode:
+          - Scrapyard Overview: README_Scrapyard.md
+          - Runtime Contract: README_ScrapyardMode.md
+          - Items: README_Scrapyard_Items.md
+          - Exits: README_Scrapyard_Exits.md
+          - Ships: README_Scrapyard_Ships.md
+          - Spawn Rules: Assets/README_ScrapyardSpawnRules.md
+      - Transition Flow: README_TransitionMode.md
+  - Shared Systems:
+      - Shared Systems Overview: README_SharedSystems.md
+      - Networking and Sessions:
+          - Networking Overview: README_Networking.md
+          - Online Session Subsystem: README_SessionSubsystem.md
+      - Save, Travel, and Progression:
+          - Persistence Overview: README_Persistence.md
+          - Saving, Loading, and Hydration: README_SaveSubsystem.md
+          - Progression and Unlocks: README_ProgressionUnlocks.md
+      - Dialogue, Speakers, and Factions:
+          - Parley Runtime: README_DialogueNPC.md
+          - Plugin Ownership Boundary: README_DialoguePluginBoundary.md
+          - Faction Subsystem: README_FactionSubsystem.md
+      - Plugins and Shared Runtime:
+          - Plugins Overview: README_Plugins.md
           - GAS Overview: README_GAS.md
           - GAS Blueprint Attributes: README_GAS_Blueprint_Attributes.md
-      - Transition Mode: README_TransitionMode.md
-      - API Reference (Doxygen): API-Reference.md
+          - TagKey: README_Plugins_TagKey.md
+          - Emo: README_Plugins_Emo.md
+  - API Reference (Doxygen): API-Reference.md
 
 theme:
   name: material
@@ -58,8 +73,11 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
     - content.code.copy
     - content.code.annotate
+    - search.highlight
+    - search.suggest
   palette:
     - scheme: default
       primary: deep purple
