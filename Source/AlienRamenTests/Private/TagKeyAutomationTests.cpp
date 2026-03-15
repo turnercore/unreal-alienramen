@@ -134,11 +134,11 @@ bool FTagKey_ProviderGenerationInvalidatesStaticCacheTest::RunTest(const FString
 	}
 
 	FTagKeyProjectRoute BaseRoute;
-	BaseRoute.RootTag = RequestTagChecked(TEXT("Dialogue.Speaker"));
+	BaseRoute.RootTag = RequestTagChecked(TEXT("Parley.Speaker"));
 	BaseRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Speakers.DT_Speakers")));
 	Settings->ProjectRoutes = { BaseRoute };
 
-	const FGameplayTag ProviderRoot = RequestTagChecked(TEXT("Faction.Identity"));
+	const FGameplayTag ProviderRoot = RequestTagChecked(TEXT("Parley.Factions"));
 	FTestRouteProvider Provider;
 	{
 		FTagKeyRoute ProviderRoute;

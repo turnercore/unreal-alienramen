@@ -52,6 +52,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FAROnDialogueSessionEndedSignature,
 	const FString&,
 	SessionId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FAROnDialogueAudioRequestedSignature,
+	const FDialogueAudioRequest&,
+	Request);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnDialogueChoiceSelectionChangedSignature,
 	int32,
@@ -79,6 +83,7 @@ public:
 	virtual FGameplayTag GetCharacterTag() const override;
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
 	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
+	virtual void NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request) override;
 	virtual void RequestInteractWithActor(AActor* Actor) override;
 	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) override;
 	virtual void RequestAdvanceDialogueInput() override;
@@ -222,6 +227,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientDialogueSessionEnded(const FString& SessionId);
 
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueAudioRequested(const FDialogueAudioRequest& Request);
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
 	void BP_OnDialogueSessionUpdated(const FDialogueClientView& View);
 
@@ -234,6 +242,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue")
 	FAROnDialogueSessionEndedSignature OnDialogueSessionEndedSignal;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Dialogue|Audio")
+	FAROnDialogueAudioRequestedSignature OnDialogueAudioRequested;
 
 	// Runtime dialogue-view cache for late-bound widgets/UI.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
