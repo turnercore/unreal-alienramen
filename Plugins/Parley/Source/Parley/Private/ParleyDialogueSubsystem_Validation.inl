@@ -626,7 +626,6 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 	int32 EnterCount = 0;
 	TSet<FGuid> CompletedNodeIds;
 	TSet<FGuid> LineGuidSet;
-	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
 	const bool bSignalAudioMode = DialogueSettings
 		&& DialogueSettings->DialogueAudioMode == EParleyDialogueAudioMode::AudioSignals;
 	auto ValidateLineEntry = [&](
