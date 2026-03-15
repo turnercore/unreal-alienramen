@@ -7,7 +7,7 @@ public class AlienRamen : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings", "TagKey", "Parley", "Emo", "FMODStudio" });
+			PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings", "TagKey", "Parley", "Emo" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils", "AdvancedSessions" });
 

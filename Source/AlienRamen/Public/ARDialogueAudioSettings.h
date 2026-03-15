@@ -11,8 +11,6 @@
 #include "UObject/SoftObjectPtr.h"
 #include "ARDialogueAudioSettings.generated.h"
 
-class UFMODEvent;
-
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARDialogueAudioCueFMODRow : public FTableRowBase
 {
@@ -21,8 +19,9 @@ struct ALIENRAMEN_API FARDialogueAudioCueFMODRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.AudioCue", DisplayName = "Audio Cue Tag", ToolTip = "Dialogue audio cue tag emitted by Parley signal-mode requests."))
 	FGameplayTag AudioCueTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "FMOD Event", ToolTip = "FMOD event played for this dialogue audio cue in local 2D audio flow."))
-	TSoftObjectPtr<UFMODEvent> FMODEventAsset;
+	// Kept as UObject soft reference so this module has no hard compile-time dependency on FMOD classes.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "FMOD Event", AllowedClasses = "/Script/FMODStudio.FMODEvent", ToolTip = "Optional FMOD event asset played for this dialogue audio cue in local 2D signal flow."))
+	TSoftObjectPtr<UObject> FMODEventAsset;
 };
 
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Dialogue Audio"))
