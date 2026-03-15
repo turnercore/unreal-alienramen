@@ -6,8 +6,8 @@
 
 #include "CoreMinimal.h"
 #include "ARSaveTypes.h"
-#include "BlueprintDataDefinitions.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSessionSubsystem.generated.h"
 
@@ -123,10 +123,10 @@ public:
 	bool JoinSessionByIndex(int32 ResultIndex, FARSessionResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
-	bool FindFriendSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult);
+	bool FindFriendSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
-	bool InviteFriendToSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult);
+	bool InviteFriendToSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Session")
 	bool DestroySession(FARSessionResult& OutResult);

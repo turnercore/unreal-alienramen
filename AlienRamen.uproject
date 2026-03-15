@@ -43,11 +43,13 @@
 		},
 		{
 			"Name": "AdvancedSessions",
-			"Enabled": true
+			"Enabled": true,
+			"Optional": true
 		},
 		{
 			"Name": "AdvancedSteamSessions",
-			"Enabled": true
+			"Enabled": true,
+			"Optional": true
 		},
 		{
 			"Name": "OnlineSubsystemNull",

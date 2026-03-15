@@ -591,7 +591,7 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 	return BeginJoinSession(Session, 0, Candidate, OutResult);
 }
 
-bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult)
+bool UARSessionSubsystem::FindFriendSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult)
 {
 	if (IsStayOfflineEnabled())
 	{
@@ -606,7 +606,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 		return false;
 	}
 
-	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId();
+	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId().Get();
 	if (!FriendNetId)
 	{
 		FillResult(OutResult, false, EARSessionResultCode::SessionNotFound, TEXT("Friend unique net id is invalid."));
@@ -644,7 +644,7 @@ bool UARSessionSubsystem::FindFriendSession(const FBPUniqueNetId& FriendUniqueNe
 	return true;
 }
 
-bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniqueNetId, FARSessionResult& OutResult)
+bool UARSessionSubsystem::InviteFriendToSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult)
 {
 	if (IsStayOfflineEnabled())
 	{
@@ -653,7 +653,7 @@ bool UARSessionSubsystem::InviteFriendToSession(const FBPUniqueNetId& FriendUniq
 		return false;
 	}
 
-	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId();
+	const FUniqueNetId* FriendNetId = FriendUniqueNetId.GetUniqueNetId().Get();
 	if (!FriendNetId)
 	{
 		FillResult(OutResult, false, EARSessionResultCode::InviteFailed, TEXT("Friend unique net id is invalid."));
