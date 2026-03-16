@@ -376,13 +376,15 @@ bool AARNPCCharacterBase::IsTalkable() const
 	return bHasActiveCustomerOrder || (bSpeakerLocalStateAllowsDialogue && SpeakerComponent && SpeakerComponent->IsTalkable());
 }
 
-bool AARNPCCharacterBase::IsTalkableForPlayerSlot(const EARPlayerSlot PlayerSlot) const
+bool AARNPCCharacterBase::IsTalkableForCharacter(FGameplayTag CharacterTag) const
 {
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
 	const bool bHasActiveCustomerOrder = CustomerComponent && CustomerComponent->HasActiveOrder();
 	return bHasActiveCustomerOrder
 		|| (bSpeakerLocalStateAllowsDialogue
 			&& SpeakerComponent
-			&& SpeakerComponent->IsTalkableForPlayerSlotTag(ARPlayer::GetPlayerSlotTag(PlayerSlot)));
+			&& NormalizedCharacterTag.IsValid()
+			&& SpeakerComponent->IsTalkableForCharacterTag(NormalizedCharacterTag));
 }
 
 bool AARNPCCharacterBase::IsTalkableForController(const AARPlayerController* QueryController) const
@@ -441,7 +443,7 @@ void AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged(const bool 
 	OnSpeakerTalkableStateChanged.Broadcast(bEffectiveTalkable);
 }
 
-void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag, FGameplayTag PlayerSlotTag, bool bIsDialogueLine)
+void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag, FGameplayTag ViewerCharacterTag, bool bIsDialogueLine)
 {
 	(void)bIsDialogueLine;
 	if (!HasAuthority())
@@ -455,15 +457,19 @@ void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag,
 		return;
 	}
 
-	if (PlayerSlotTag.IsValid())
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(ViewerCharacterTag);
+	if (NormalizedCharacterTag.IsValid())
 	{
 		if (EmotionTag.IsValid())
 		{
-			EmotionComponent->SetDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag, EmotionTag);
+			EmotionComponent->SetDialogueEmotionTagForPlayerSlotTag(
+				ARPlayer::GetPlayerSlotTag(ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag)),
+				EmotionTag);
 		}
 		else
 		{
-			EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag);
+			EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(
+				ARPlayer::GetPlayerSlotTag(ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag)));
 		}
 		return;
 	}
@@ -478,7 +484,7 @@ void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag,
 	}
 }
 
-void AARNPCCharacterBase::HandleSpeakerEmotionCleared(FGameplayTag PlayerSlotTag)
+void AARNPCCharacterBase::HandleSpeakerEmotionCleared(FGameplayTag ViewerCharacterTag)
 {
 	if (!HasAuthority())
 	{
@@ -490,9 +496,11 @@ void AARNPCCharacterBase::HandleSpeakerEmotionCleared(FGameplayTag PlayerSlotTag
 		return;
 	}
 
-	if (PlayerSlotTag.IsValid())
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(ViewerCharacterTag);
+	if (NormalizedCharacterTag.IsValid())
 	{
-		EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag);
+		EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(
+			ARPlayer::GetPlayerSlotTag(ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag)));
 		return;
 	}
 

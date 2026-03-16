@@ -206,7 +206,7 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 		}
 
 		FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
-		FParleyActiveDialogueSession* ActiveSession = FindSessionForSlot(Runtime.ActiveSessions, GetPlayerSlotFromPlayerState(ActivePS));
+		FParleyActiveDialogueSession* ActiveSession = FindSessionForCharacter(Runtime.ActiveSessions, GetCharacterTagFromPlayerState(ActivePS));
 		if (!ActiveSession)
 		{
 			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Tag mutation skipped: no active session for transient mutation."));
@@ -299,7 +299,7 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 			OnProgressionTagMutated.Broadcast(
 				Mutation.Tag,
 				bAdded,
-				ParleyPlayerSlot::SlotToTag(GetPlayerSlotFromPlayerState(ActivePS)));
+				GetDefaultCharacterTagForSlot(GetCharacterTagFromPlayerState(ActivePS)));
 			return true;
 		}
 		return false;
@@ -360,17 +360,17 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 	const int32 OldLevel = GetRelationshipLevelForSpeakerPair(SourceSpeakerTag, TargetSpeakerTag);
 	RelationshipState->RelationshipPoints += Mutation.DeltaPoints;
 	const int32 NewLevel = GetRelationshipLevelForSpeakerPair(SourceSpeakerTag, TargetSpeakerTag);
-	EParleyPlayerSlot PlayerSlot = EParleyPlayerSlot::Unknown;
+	FGameplayTag PlayerCharacterTag = FGameplayTag();
 	if (const APlayerState* ActivePS = Cast<APlayerState>(Context.ActivePlayerState))
 	{
-		PlayerSlot = GetPlayerSlotFromPlayerState(ActivePS);
+		PlayerCharacterTag = GetCharacterTagFromPlayerState(ActivePS);
 	}
-	const FGameplayTag PlayerSlotTag = ParleyPlayerSlot::SlotToTag(PlayerSlot);
+	const FGameplayTag OwnerCharacterTag = GetDefaultCharacterTagForSlot(PlayerCharacterTag);
 
 	OnSpeakerRelationshipChanged.Broadcast(
 		SourceSpeakerTag,
 		TargetSpeakerTag,
-		PlayerSlotTag,
+		OwnerCharacterTag,
 		Mutation.DeltaPoints,
 		RelationshipState->RelationshipPoints);
 
@@ -379,7 +379,7 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 		OnSpeakerRelationshipLevelChanged.Broadcast(
 			SourceSpeakerTag,
 			TargetSpeakerTag,
-			PlayerSlotTag,
+			OwnerCharacterTag,
 			OldLevel,
 			NewLevel,
 			RelationshipState->RelationshipPoints);

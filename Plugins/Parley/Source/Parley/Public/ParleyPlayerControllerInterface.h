@@ -19,7 +19,6 @@ class PARLEY_API IParleyPlayerControllerInterface
 	GENERATED_BODY()
 
 public:
-	virtual FGameplayTag GetPlayerSlotTag() const = 0;
 	virtual bool IsDialogueAutoAdvanceEnabled() const = 0;
 	virtual FGameplayTag GetCharacterTag() const = 0;
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) = 0;
@@ -29,7 +28,7 @@ public:
 	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) = 0;
 	virtual void RequestAdvanceDialogueInput() = 0;
 	virtual void RequestSubmitDialogueChoiceInput(FGuid ChoiceBranchId) = 0;
-	virtual void RequestSetDialogueEavesdropInput(bool bEnable, FGameplayTag TargetSlotTag) = 0;
+	virtual void RequestSetDialogueEavesdropInput(bool bEnable, FGameplayTag TargetCharacterTag) = 0;
 	virtual void RequestSetDialogueEavesdropOtherPlayerInput(bool bEnable) = 0;
 	virtual void RequestToggleDialogueAutoAdvanceInput() = 0;
 	virtual void RequestAdvanceOrSubmitDialogueInput() = 0;

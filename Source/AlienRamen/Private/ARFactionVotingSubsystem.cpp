@@ -27,7 +27,7 @@ namespace
 
 void UARFactionVotingSubsystem::Deinitialize()
 {
-	VotesByPlayerSlotTag.Reset();
+	VotesByPlayerSlotId.Reset();
 	Super::Deinitialize();
 }
 
@@ -57,16 +57,14 @@ bool UARFactionVotingSubsystem::IsFactionCandidate(const FGameplayTag FactionTag
 		});
 }
 
-bool UARFactionVotingSubsystem::SubmitVoteForPlayerSlotTag(FGameplayTag PlayerSlotTag, const FGameplayTag FactionTag)
+bool UARFactionVotingSubsystem::SubmitVoteForPlayerSlotId(const int32 PlayerSlotId, const FGameplayTag FactionTag)
 {
-	if (!EnsureAuthorityWorld(TEXT("SubmitVoteForPlayerSlotTag")))
+	if (!EnsureAuthorityWorld(TEXT("SubmitVoteForPlayerSlotId")))
 	{
 		return false;
 	}
 
-	const EARPlayerSlot Slot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	const FGameplayTag CanonicalSlotTag = ARPlayer::GetPlayerSlotTag(Slot);
-	if (Slot == EARPlayerSlot::Unknown || !CanonicalSlotTag.IsValid() || !FactionTag.IsValid())
+	if (PlayerSlotId <= 0 || !FactionTag.IsValid())
 	{
 		return false;
 	}
@@ -76,26 +74,21 @@ bool UARFactionVotingSubsystem::SubmitVoteForPlayerSlotTag(FGameplayTag PlayerSl
 		UE_LOG(
 			ARLog,
 			Verbose,
-			TEXT("[FactionVoting] Rejecting vote for slot '%s': faction '%s' is not an eligible candidate."),
-			*CanonicalSlotTag.ToString(),
+			TEXT("[FactionVoting] Rejecting vote for slot id '%d': faction '%s' is not an eligible candidate."),
+			PlayerSlotId,
 			*FactionTag.ToString());
 		return false;
 	}
 
-	const FGameplayTag PreviousFactionTag = VotesByPlayerSlotTag.FindRef(CanonicalSlotTag);
+	const FGameplayTag PreviousFactionTag = VotesByPlayerSlotId.FindRef(PlayerSlotId);
 	if (PreviousFactionTag.MatchesTagExact(FactionTag))
 	{
 		return true;
 	}
 
-	VotesByPlayerSlotTag.FindOrAdd(CanonicalSlotTag) = FactionTag;
-	OnFactionVoteSubmitted.Broadcast(CanonicalSlotTag, FactionTag, PreviousFactionTag);
+	VotesByPlayerSlotId.FindOrAdd(PlayerSlotId) = FactionTag;
+	OnFactionVoteSubmitted.Broadcast(PlayerSlotId, FactionTag, PreviousFactionTag);
 	return true;
-}
-
-bool UARFactionVotingSubsystem::SubmitVoteForPlayerSlot(const EARPlayerSlot PlayerSlot, const FGameplayTag FactionTag)
-{
-	return SubmitVoteForPlayerSlotTag(ARPlayer::GetPlayerSlotTag(PlayerSlot), FactionTag);
 }
 
 bool UARFactionVotingSubsystem::SubmitVoteForPlayerState(const AARPlayerStateBase* PlayerState, const FGameplayTag FactionTag)
@@ -105,24 +98,22 @@ bool UARFactionVotingSubsystem::SubmitVoteForPlayerState(const AARPlayerStateBas
 		return false;
 	}
 
-	return SubmitVoteForPlayerSlotTag(PlayerState->GetPlayerSlotTag(), FactionTag);
+	return SubmitVoteForPlayerSlotId(PlayerState->GetPlayerSlotId(), FactionTag);
 }
 
-void UARFactionVotingSubsystem::ClearVoteForPlayerSlotTag(FGameplayTag PlayerSlotTag)
+void UARFactionVotingSubsystem::ClearVoteForPlayerSlotId(const int32 PlayerSlotId)
 {
-	if (!EnsureAuthorityWorld(TEXT("ClearVoteForPlayerSlotTag")))
+	if (!EnsureAuthorityWorld(TEXT("ClearVoteForPlayerSlotId")))
 	{
 		return;
 	}
 
-	const EARPlayerSlot Slot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	const FGameplayTag CanonicalSlotTag = ARPlayer::GetPlayerSlotTag(Slot);
-	if (Slot == EARPlayerSlot::Unknown || !CanonicalSlotTag.IsValid())
+	if (PlayerSlotId <= 0)
 	{
 		return;
 	}
 
-	VotesByPlayerSlotTag.Remove(CanonicalSlotTag);
+	VotesByPlayerSlotId.Remove(PlayerSlotId);
 }
 
 void UARFactionVotingSubsystem::ClearAllVotes()
@@ -132,29 +123,29 @@ void UARFactionVotingSubsystem::ClearAllVotes()
 		return;
 	}
 
-	VotesByPlayerSlotTag.Reset();
+	VotesByPlayerSlotId.Reset();
 }
 
 void UARFactionVotingSubsystem::GetCurrentVotes(TArray<FARFactionVoteEntry>& OutVotes) const
 {
 	OutVotes.Reset();
-	OutVotes.Reserve(VotesByPlayerSlotTag.Num());
+	OutVotes.Reserve(VotesByPlayerSlotId.Num());
 
-	for (const TPair<FGameplayTag, FGameplayTag>& Pair : VotesByPlayerSlotTag)
+	for (const TPair<int32, FGameplayTag>& Pair : VotesByPlayerSlotId)
 	{
-		if (!Pair.Key.IsValid() || !Pair.Value.IsValid())
+		if (Pair.Key <= 0 || !Pair.Value.IsValid())
 		{
 			continue;
 		}
 
 		FARFactionVoteEntry& Entry = OutVotes.AddDefaulted_GetRef();
-		Entry.PlayerSlotTag = Pair.Key;
+		Entry.PlayerSlotId = Pair.Key;
 		Entry.VotedFactionTag = Pair.Value;
 	}
 
 	OutVotes.Sort([](const FARFactionVoteEntry& A, const FARFactionVoteEntry& B)
 	{
-		return A.PlayerSlotTag.ToString() < B.PlayerSlotTag.ToString();
+		return A.PlayerSlotId < B.PlayerSlotId;
 	});
 }
 
@@ -230,7 +221,7 @@ bool UARFactionVotingSubsystem::FinalizeElection(
 	const bool bSettingsAllowClear = Settings ? Settings->bClearVotesAfterElection : true;
 	if (bClearVotesAfterFinalize && bSettingsAllowClear)
 	{
-		VotesByPlayerSlotTag.Reset();
+		VotesByPlayerSlotId.Reset();
 	}
 
 	return true;
@@ -423,7 +414,7 @@ int32 UARFactionVotingSubsystem::CountVotesForFaction(const FGameplayTag Faction
 	}
 
 	int32 VoteCount = 0;
-	for (const TPair<FGameplayTag, FGameplayTag>& Pair : VotesByPlayerSlotTag)
+	for (const TPair<int32, FGameplayTag>& Pair : VotesByPlayerSlotId)
 	{
 		if (Pair.Value.MatchesTagExact(FactionTag))
 		{

@@ -77,12 +77,6 @@ AARPlayerController::AARPlayerController()
 	// Input bindings can stay in BP; this controller just provides the CommonAbilitySet reference.
 }
 
-FGameplayTag AARPlayerController::GetPlayerSlotTag() const
-{
-	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
-	return ARPS ? ARPS->GetPlayerSlotTag() : FGameplayTag();
-}
-
 bool AARPlayerController::IsDialogueAutoAdvanceEnabled() const
 {
 	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
@@ -144,9 +138,9 @@ void AARPlayerController::RequestSubmitDialogueChoiceInput(const FGuid ChoiceBra
 	RequestSubmitDialogueChoice(ChoiceBranchId);
 }
 
-void AARPlayerController::RequestSetDialogueEavesdropInput(const bool bEnable, const FGameplayTag TargetSlotTag)
+void AARPlayerController::RequestSetDialogueEavesdropInput(const bool bEnable, const FGameplayTag TargetCharacterTag)
 {
-	RequestSetDialogueEavesdrop(bEnable, ARPlayer::GetPlayerSlotForTag(TargetSlotTag));
+	RequestSetDialogueEavesdropByCharacter(bEnable, ARPlayer::NormalizeCharacterTag(TargetCharacterTag));
 }
 
 void AARPlayerController::RequestSetDialogueEavesdropOtherPlayerInput(const bool bEnable)
@@ -844,23 +838,29 @@ void AARPlayerController::ServerRequestSubmitDialogueChoice_Implementation(FGuid
 	RequestSubmitDialogueChoice(ChoiceBranchId);
 }
 
-void AARPlayerController::RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)
+void AARPlayerController::RequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag)
 {
+	TargetCharacterTag = ARPlayer::NormalizeCharacterTag(TargetCharacterTag);
+	if (!TargetCharacterTag.IsValid())
+	{
+		return;
+	}
+
 	if (HasAuthority())
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
 		{
-			DialogueSubsystem->ForceEavesdrop(this, bEnable, ARPlayer::GetPlayerSlotTag(TargetSlot));
+			DialogueSubsystem->ForceEavesdrop(this, bEnable, TargetCharacterTag);
 		}
 		return;
 	}
 
-	ServerRequestSetDialogueEavesdrop(bEnable, TargetSlot);
+	ServerRequestSetDialogueEavesdropByCharacter(bEnable, TargetCharacterTag);
 }
 
-void AARPlayerController::ServerRequestSetDialogueEavesdrop_Implementation(bool bEnable, EARPlayerSlot TargetSlot)
+void AARPlayerController::ServerRequestSetDialogueEavesdropByCharacter_Implementation(bool bEnable, FGameplayTag TargetCharacterTag)
 {
-	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
+	RequestSetDialogueEavesdropByCharacter(bEnable, TargetCharacterTag);
 }
 
 void AARPlayerController::RequestSetDialogueEavesdropOtherPlayer(bool bEnable)
@@ -871,26 +871,28 @@ void AARPlayerController::RequestSetDialogueEavesdropOtherPlayer(bool bEnable)
 		return;
 	}
 
-	EARPlayerSlot TargetSlot = EARPlayerSlot::Unknown;
-	switch (ARPS->GetPlayerSlot())
+	const EARCharacterChoice CurrentChoice = ARPlayer::GetCharacterChoiceForTag(ARPS->GetCurrentCharacterTag());
+	EARCharacterChoice TargetChoice = EARCharacterChoice::None;
+	switch (CurrentChoice)
 	{
-	case EARPlayerSlot::P1:
-		TargetSlot = EARPlayerSlot::P2;
+	case EARCharacterChoice::Brother:
+		TargetChoice = EARCharacterChoice::Sister;
 		break;
-	case EARPlayerSlot::P2:
-		TargetSlot = EARPlayerSlot::P1;
+	case EARCharacterChoice::Sister:
+		TargetChoice = EARCharacterChoice::Brother;
 		break;
 	default:
 		break;
 	}
 
-	if (TargetSlot == EARPlayerSlot::Unknown)
+	const FGameplayTag TargetCharacterTag = ARPlayer::GetCharacterTagForChoice(TargetChoice);
+	if (!TargetCharacterTag.IsValid())
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] RequestSetDialogueEavesdropOtherPlayer ignored: controller '%s' has unknown player slot."), *GetNameSafe(this));
+		UE_LOG(ARLog, Verbose, TEXT("[Dialogue] RequestSetDialogueEavesdropOtherPlayer ignored: controller '%s' has unresolved current character."), *GetNameSafe(this));
 		return;
 	}
 
-	RequestSetDialogueEavesdrop(bEnable, TargetSlot);
+	RequestSetDialogueEavesdropByCharacter(bEnable, TargetCharacterTag);
 }
 
 void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FDialogueClientView& View)
@@ -1701,15 +1703,15 @@ void AARPlayerController::SubmitPauseMenuVote(const bool bPaused)
 		return;
 	}
 
-	const EARPlayerSlot PlayerSlot = ARPlayerState->GetPlayerSlot();
-	if (PlayerSlot == EARPlayerSlot::Unknown)
+	const int32 PlayerSlotId = ARPlayerState->GetPlayerSlotId();
+	if (PlayerSlotId <= 0)
 	{
 		return;
 	}
 
 	if (HasAuthority())
 	{
-		ARGameState->SetPlayerPauseMenuVote(PlayerSlot, bPaused);
+		ARGameState->SetPlayerPauseMenuVoteById(PlayerSlotId, bPaused);
 		return;
 	}
 
@@ -1798,16 +1800,20 @@ AARPlayerController* AARPlayerController::ResolveSharedPauseOverlayOwner(UWorld*
 		return nullptr;
 	}
 
+	int32 BestSlotId = MAX_int32;
+	AARPlayerController* BestController = nullptr;
 	for (AARPlayerController* LocalController : LocalControllers)
 	{
 		if (const AARPlayerStateBase* ARPlayerState = LocalController->GetPlayerState<AARPlayerStateBase>())
 		{
-			if (ARPlayerState->GetPlayerSlot() == EARPlayerSlot::P1)
+			const int32 RuntimeSlotId = ARPlayerState->GetPlayerSlotId();
+			if (RuntimeSlotId > 0 && RuntimeSlotId < BestSlotId)
 			{
-				return LocalController;
+				BestSlotId = RuntimeSlotId;
+				BestController = LocalController;
 			}
 		}
 	}
 
-	return LocalControllers[0];
+	return BestController ? BestController : LocalControllers[0];
 }

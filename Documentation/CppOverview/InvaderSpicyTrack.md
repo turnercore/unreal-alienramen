@@ -22,11 +22,11 @@ Paths:
 | `ActivatedInvaderUpgradeTags` | `AARPlayerStateBase` | Server | Replicated to all | "Has upgrade" ledger for claim/prereq logic. |
 | `SharedTrackSlots` | `AARInvaderGameState` | Server | Replicated to all | Team-shared slotted upgrades. |
 | `SharedFullBlastTier` | `AARInvaderGameState` | Server | Replicated to all | Tier progression (default max 5). |
-| `FullBlastSession` (`bIsActive`, `Offers`, `RequestingPlayerSlot`, `ActivationTier`) | `AARInvaderGameState` | Server | Replicated to all | Authoritative offer session snapshot. |
-| `OfferPresenceStates` (`PlayerSlot`, hovered offer, destination slot, selected offer, selected destination`) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session, including teammate "presence select" highlights. |
+| `FullBlastSession` (`bIsActive`, `Offers`, `RequestingCharacterTag`, `ActivationTier`) | `AARInvaderGameState` | Server | Replicated to all | Authoritative offer session snapshot. |
+| `OfferPresenceStates` (`PlayerCharacterTag`, hovered offer, destination slot, selected offer, selected destination`) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session, including teammate "presence select" highlights. |
 | `ActiveSpiceSharers` | `AARInvaderGameState` | Server | Not replicated | Server tick loop membership for hold-to-share transfer. |
 | `PredictedSpiceValue`, `bHasPredictedSpiceValue` | `AARPlayerStateBase` | Client local | Not replicated | Cosmetic HUD prediction overlay only. |
-| Kill-credit FX event (`FARInvaderKillCreditFxEvent`) | `AARInvaderGameState` | Server emit | NetMulticast to all | Cosmetic hook for enemy->meter particles/cues with target player slot. |
+| Kill-credit FX event (`FARInvaderKillCreditFxEvent`) | `AARInvaderGameState` | Server emit | NetMulticast to all | Cosmetic hook for enemy->meter particles/cues with target character tag. |
 
 ## Offer Session Lifecycle (v1)
 Server flow:
@@ -34,18 +34,18 @@ Server flow:
 
 Replicated offer-session payload (`FARInvaderFullBlastSessionState`):
 - `bIsActive`
-- `RequestingPlayerSlot`
+- `RequestingCharacterTag`
 - `ActivationTier`
 - `Offers` (`UpgradeTag`, `OfferedLevel`)
 
 Rules enforced in current runtime:
 - Only one offer session may exist at a time (`RequestActivateFullBlast` fails when `bIsActive` is true).
 - A new full blast cannot trigger while a session is active.
-- Only the requesting player slot can resolve choose/skip.
+- Only the requesting character owner can resolve choose/skip.
 - Both players receive replicated `FullBlastSession` and can render the same options while the non-requesting player observes.
 - Selection must match one of the currently active replicated offers.
 - Late-join clients reconstruct current offer session from replicated `FullBlastSession`.
-- Offer presence is replicated for any player slot that publishes it during an active session.
+- Offer presence is replicated for any character owner that publishes it during an active session.
 
 Not yet implemented (open hardening work):
 - Session id/nonce for stale-RPC rejection across sequential sessions.
@@ -75,7 +75,7 @@ Not yet implemented (open hardening work):
 - `AwardKillCredit(...)` supports explicit scripted credit.
 - `NotifyEnemyKilled(...)` is the automatic ingestion entry called from enemy death.
 - `SetOfferPresence(...)` / `ClearOfferPresence(...)` publish/clear replicated per-player offer UI presence (hover + optional selected offer/destination).
-- `OnInvaderKillCreditFxEvent` broadcasts on server + clients when kill credit awards spice (includes target slot, spice gained, combo, enemy metadata, optional origin).
+- `OnInvaderKillCreditFxEvent` broadcasts on server + clients when kill credit awards spice (includes target character tag, spice gained, combo, enemy metadata, optional origin).
 
 ## Debug Console Commands
 - `ar.invader.debug.set_spice [p1|p2] <value>`
@@ -98,7 +98,7 @@ Not yet implemented (open hardening work):
 - Native widget base is `UARInvaderFullBlastMenuWidget`:
 - receives session payload via `BP_OnFullBlastMenuUpdated(...)`,
 - and sends selection/skip/presence back through owning controller (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
-- Menu is auto-shown for all local invader players while a session is active; only the requesting slot is chooser-authorized (`bIsChooser=true`), and menu is removed when session ends.
+- Menu is auto-shown for all local invader players while a session is active; only the requesting character owner is chooser-authorized (`bIsChooser=true`), and menu is removed when session ends.
 
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.

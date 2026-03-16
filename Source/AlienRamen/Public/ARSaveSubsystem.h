@@ -184,7 +184,7 @@ public:
 	void ClearPendingFreshLoadEntry();
 
 	// Applies player-specific save payload onto Requester when identity is found in CurrentSaveGame.
-	// Slot fallback is legacy-only and should stay disabled for normal runtime joins.
+	// bAllowSlotFallback is a legacy compatibility flag and is ignored by current character-native matching.
 	// Returns true when a matching player row was found and applied.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = false);
@@ -227,7 +227,7 @@ private:
 	static FName NormalizeSlotBaseName(FName SlotBaseName);
 	static FName BuildRevisionSlotName(FName SlotBaseName, int32 SlotNumber);
 	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber);
-	static bool ResolvePlayerSaveDataIndex(const UARSaveGame* SaveGame, const FARPlayerIdentity& Identity, EARPlayerSlot FallbackSlot, bool bAllowSlotFallback, int32& OutIndex);
+	static bool ResolvePlayerSaveDataIndex(const UARSaveGame* SaveGame, const FARPlayerIdentity& Identity, int32& OutIndex);
 
 	bool LoadOrCreateIndexForSlot(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
 	bool SaveIndexForSlot(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;

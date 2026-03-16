@@ -12,20 +12,14 @@
 
 namespace
 {
-	static constexpr uint8 PauseVoteBitP1 = 1 << 0;
-	static constexpr uint8 PauseVoteBitP2 = 1 << 1;
-
-	static uint8 GetPauseVoteBit(const EARPlayerSlot Slot)
+	static uint8 GetPauseVoteBitForPlayerSlotId(const int32 PlayerSlotId)
 	{
-		switch (Slot)
+		if (PlayerSlotId < 1 || PlayerSlotId > 8)
 		{
-		case EARPlayerSlot::P1:
-			return PauseVoteBitP1;
-		case EARPlayerSlot::P2:
-			return PauseVoteBitP2;
-		default:
 			return 0;
 		}
+
+		return static_cast<uint8>(1u << (PlayerSlotId - 1));
 	}
 
 	static uint8 GetExternalPauseReasonBit(const EARPauseExternalReason Reason)
@@ -215,20 +209,6 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AARGameStateBase, bEffectivePauseStateActive);
 }
 
-AARPlayerStateBase* AARGameStateBase::GetPlayerBySlot(EARPlayerSlot Slot) const
-{
-	for (APlayerState* PS : PlayerArray)
-	{
-		AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
-		if (IsValid(Player) && Player->GetPlayerSlot() == Slot)
-		{
-			return Player;
-		}
-	}
-
-	return nullptr;
-}
-
 TArray<AARPlayerStateBase*> AARGameStateBase::GetPlayerStates() const
 {
 	TArray<AARPlayerStateBase*> Result;
@@ -243,6 +223,48 @@ TArray<AARPlayerStateBase*> AARGameStateBase::GetPlayerStates() const
 	}
 
 	return Result;
+}
+
+AARPlayerStateBase* AARGameStateBase::GetPlayerStateByCharacterTag(const FGameplayTag CharacterTag) const
+{
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedCharacterTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState);
+		if (!ARPlayerState)
+		{
+			continue;
+		}
+
+		const FGameplayTag RuntimeCharacterTag = ARPlayer::NormalizeCharacterTag(ARPlayerState->GetCurrentCharacterTag());
+		if (RuntimeCharacterTag.IsValid() && RuntimeCharacterTag.MatchesTagExact(NormalizedCharacterTag))
+		{
+			return ARPlayerState;
+		}
+	}
+
+	return nullptr;
+}
+
+APlayerController* AARGameStateBase::GetControllerByCharacterTag(const FGameplayTag CharacterTag) const
+{
+	const AARPlayerStateBase* PlayerState = GetPlayerStateByCharacterTag(CharacterTag);
+	if (!PlayerState)
+	{
+		return nullptr;
+	}
+
+	return Cast<APlayerController>(PlayerState->GetOwner());
+}
+
+bool AARGameStateBase::IsCharacterControlled(const FGameplayTag CharacterTag) const
+{
+	return GetPlayerStateByCharacterTag(CharacterTag) != nullptr;
 }
 
 bool AARGameStateBase::AreAllPlayersTravelReady() const
@@ -307,7 +329,7 @@ void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 	{
 		if (const AARPlayerStateBase* ARPlayerState = Cast<AARPlayerStateBase>(PlayerState))
 		{
-			ClearPauseVoteForSlot(ARPlayerState->GetPlayerSlot());
+			ClearPauseVoteForPlayerSlotId(ARPlayerState->GetPlayerSlotId());
 		}
 	}
 
@@ -329,9 +351,9 @@ void AARGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 	}
 }
 
-void AARGameStateBase::HandlePlayerReadyStatusChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewReady, bool bOldReady)
+void AARGameStateBase::HandlePlayerReadyStatusChanged(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewReady, bool bOldReady)
 {
-	OnPlayerReadyChanged.Broadcast(SourcePlayerState, SourcePlayerSlot, bNewReady, bOldReady);
+	OnPlayerReadyChanged.Broadcast(SourcePlayerState, SourceCharacterTag, bNewReady, bOldReady);
 
 	if (HasAuthority())
 	{
@@ -339,22 +361,11 @@ void AARGameStateBase::HandlePlayerReadyStatusChanged(AARPlayerStateBase* Source
 	}
 }
 
-void AARGameStateBase::HandlePlayerSlotChanged(EARPlayerSlot NewSlot, EARPlayerSlot OldSlot)
+void AARGameStateBase::HandlePlayerCharacterPickedChanged(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter)
 {
-	if (HasAuthority() && NewSlot != OldSlot)
-	{
-		if (OldSlot != EARPlayerSlot::Unknown)
-		{
-			ClearPauseVoteForSlot(OldSlot);
-		}
+	(void)SourcePlayerState;
+	(void)SourceCharacterTag;
 
-		RefreshAllPlayersTravelReady();
-		RefreshPauseResolution();
-	}
-}
-
-void AARGameStateBase::HandlePlayerCharacterPickedChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter)
-{
 	if (HasAuthority() && NewCharacter != OldCharacter)
 	{
 		RefreshAllPlayersTravelReady();
@@ -899,9 +910,9 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 		GetMeat().GetTotalAmount());
 }
 
-bool AARGameStateBase::IsPlayerPauseMenuVoteActive(const EARPlayerSlot PlayerSlot) const
+bool AARGameStateBase::IsPlayerPauseMenuVoteActiveById(const int32 PlayerSlotId) const
 {
-	const uint8 VoteBit = GetPauseVoteBit(PlayerSlot);
+	const uint8 VoteBit = GetPauseVoteBitForPlayerSlotId(PlayerSlotId);
 	return VoteBit != 0 && (PauseMenuVoteMask & VoteBit) != 0;
 }
 
@@ -911,14 +922,14 @@ bool AARGameStateBase::IsExternalPauseReasonActive(const EARPauseExternalReason 
 	return ReasonBit != 0 && (ExternalPauseReasonMask & ReasonBit) != 0;
 }
 
-void AARGameStateBase::SetPlayerPauseMenuVote(const EARPlayerSlot PlayerSlot, const bool bPaused)
+void AARGameStateBase::SetPlayerPauseMenuVoteById(const int32 PlayerSlotId, const bool bPaused)
 {
 	if (!HasAuthority())
 	{
 		return;
 	}
 
-	const uint8 VoteBit = GetPauseVoteBit(PlayerSlot);
+	const uint8 VoteBit = GetPauseVoteBitForPlayerSlotId(PlayerSlotId);
 	if (VoteBit == 0)
 	{
 		return;
@@ -973,7 +984,6 @@ void AARGameStateBase::BindPlayerStateSignals(AARPlayerStateBase* PlayerState)
 	}
 
 	PlayerState->OnReadyStatusChanged.AddUniqueDynamic(this, &AARGameStateBase::HandlePlayerReadyStatusChanged);
-	PlayerState->OnPlayerSlotChanged.AddUniqueDynamic(this, &AARGameStateBase::HandlePlayerSlotChanged);
 	PlayerState->OnCharacterPickedChanged.AddUniqueDynamic(this, &AARGameStateBase::HandlePlayerCharacterPickedChanged);
 }
 
@@ -985,7 +995,6 @@ void AARGameStateBase::UnbindPlayerStateSignals(AARPlayerStateBase* PlayerState)
 	}
 
 	PlayerState->OnReadyStatusChanged.RemoveDynamic(this, &AARGameStateBase::HandlePlayerReadyStatusChanged);
-	PlayerState->OnPlayerSlotChanged.RemoveDynamic(this, &AARGameStateBase::HandlePlayerSlotChanged);
 	PlayerState->OnCharacterPickedChanged.RemoveDynamic(this, &AARGameStateBase::HandlePlayerCharacterPickedChanged);
 }
 
@@ -1032,7 +1041,7 @@ void AARGameStateBase::RefreshAllPlayersTravelReady()
 
 bool AARGameStateBase::ComputeAllPlayersPausedByMenu() const
 {
-	bool bFoundAnySlottedPlayer = false;
+	bool bFoundAnyPlayer = false;
 
 	for (APlayerState* PlayerState : PlayerArray)
 	{
@@ -1042,20 +1051,20 @@ bool AARGameStateBase::ComputeAllPlayersPausedByMenu() const
 			continue;
 		}
 
-		const EARPlayerSlot Slot = ARPlayerState->GetPlayerSlot();
-		if (Slot == EARPlayerSlot::Unknown)
+		const int32 RuntimePlayerSlotId = ARPlayerState->GetPlayerSlotId();
+		if (RuntimePlayerSlotId <= 0)
 		{
 			continue;
 		}
 
-		bFoundAnySlottedPlayer = true;
-		if (!IsPlayerPauseMenuVoteActive(Slot))
+		bFoundAnyPlayer = true;
+		if (!IsPlayerPauseMenuVoteActiveById(RuntimePlayerSlotId))
 		{
 			return false;
 		}
 	}
 
-	return bFoundAnySlottedPlayer;
+	return bFoundAnyPlayer;
 }
 
 void AARGameStateBase::RefreshPauseResolution()
@@ -1109,14 +1118,14 @@ void AARGameStateBase::RefreshPauseResolution()
 	}
 }
 
-void AARGameStateBase::ClearPauseVoteForSlot(const EARPlayerSlot PlayerSlot)
+void AARGameStateBase::ClearPauseVoteForPlayerSlotId(const int32 PlayerSlotId)
 {
 	if (!HasAuthority())
 	{
 		return;
 	}
 
-	const uint8 VoteBit = GetPauseVoteBit(PlayerSlot);
+	const uint8 VoteBit = GetPauseVoteBitForPlayerSlotId(PlayerSlotId);
 	if (VoteBit == 0 || (PauseMenuVoteMask & VoteBit) == 0)
 	{
 		return;

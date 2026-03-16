@@ -150,27 +150,17 @@ static FGameplayTag ResolveLegacyDialogueCharacterTag(
 	UARSaveGame* SaveGame,
 	const FDialoguePlayerPersistentState& LegacyState)
 {
-	if (!SaveGame)
-	{
-		return FGameplayTag();
-	}
+	(void)SaveGame;
 
 	if (IsValidCharacterTag(LegacyState.CharacterTag))
 	{
 		return ARPlayer::NormalizeCharacterTag(LegacyState.CharacterTag);
 	}
 
-	FARPlayerStateSaveData MatchedPlayerState;
-	const EARPlayerSlot LegacySlot = ARPlayer::GetPlayerSlotForTag(LegacyState.OwnerPlayerSlotTag);
-	if (LegacySlot != EARPlayerSlot::Unknown)
+	const FGameplayTag OwnerCharacterTag = ARPlayer::NormalizeCharacterTag(LegacyState.OwnerCharacterTag);
+	if (OwnerCharacterTag.IsValid())
 	{
-		int32 PlayerIndex = INDEX_NONE;
-		if (SaveGame->FindPlayerStateDataBySlot(LegacySlot, MatchedPlayerState, PlayerIndex))
-		{
-			return MatchedPlayerState.ResolveCurrentCharacterTag();
-		}
-
-		return ARPlayer::GetDefaultCharacterTagForSlot(LegacySlot);
+		return OwnerCharacterTag;
 	}
 
 	return FGameplayTag();

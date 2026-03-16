@@ -252,17 +252,12 @@ bool UARTravelSubsystem::ArePlayersReadyForTravel(const bool bSkipReadyChecks, F
 			continue;
 		}
 
-		if (ARPlayerState->GetPlayerSlot() == EARPlayerSlot::Unknown)
-		{
-			OutError = FString::Printf(TEXT("Player '%s' missing slot."), *GetNameSafe(ARPlayerState));
-			return false;
-		}
-
-		if (ARPlayerState->GetCharacterPicked() == EARCharacterChoice::None)
-		{
-			OutError = FString::Printf(TEXT("Player '%s' missing character choice."), *GetNameSafe(ARPlayerState));
-			return false;
-		}
+			if (!ARPlayer::NormalizeCharacterTag(ARPlayerState->GetCurrentCharacterTag()).IsValid()
+				|| ARPlayerState->GetCharacterPicked() == EARCharacterChoice::None)
+			{
+				OutError = FString::Printf(TEXT("Player '%s' missing character choice."), *GetNameSafe(ARPlayerState));
+				return false;
+			}
 
 		if (!ARPlayerState->IsReadyForRun())
 		{

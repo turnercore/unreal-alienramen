@@ -212,12 +212,12 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Player-owned progression tags that follow this player identity regardless of active character."))
 	FGameplayTagContainer ProgressionTags;
 
-	FGameplayTag ResolveCurrentCharacterTag() const
-	{
-		return CurrentCharacterTag.IsValid()
-			? ARPlayer::NormalizeCharacterTag(CurrentCharacterTag, Identity.PlayerSlot)
-			: ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(CharacterPicked), Identity.PlayerSlot);
-	}
+		FGameplayTag ResolveCurrentCharacterTag() const
+		{
+			return CurrentCharacterTag.IsValid()
+				? ARPlayer::NormalizeCharacterTag(CurrentCharacterTag)
+				: ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(CharacterPicked));
+		}
 
 	void SyncCharacterSelectionFromCurrentTag();
 };

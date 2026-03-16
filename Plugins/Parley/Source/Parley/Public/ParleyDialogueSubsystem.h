@@ -16,18 +16,18 @@ class UParleyConversationAsset;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnDialogueSessionUpdated, const FDialogueClientView&, View);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnDialogueSessionEnded, const FString&, SessionId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnConversationCompletedSignature, FGameplayTag, ConversationTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnConversationStarted, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnConversationEnded, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag, bool, bCompleted);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnLineDelivered, FGameplayTag, SpeakerTag, FGameplayTag, ConversationTag, FGameplayTag, PlayerSlotTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnImportantChoiceMade, FGuid, ChoiceBranchId, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FParleyOnSpeakerRelationshipLevelChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, PlayerSlotTag, int32, OldLevel, int32, NewLevel, float, NewTotal);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnConversationCompleted, FGameplayTag, ConversationTag, FGameplayTag, PlayerSlotTag, FGameplayTag, CharacterTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnSpeakerRelationshipChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, PlayerSlotTag, float, Delta, float, NewTotal);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnProgressionTagMutated, FGameplayTag, ProgressionTag, bool, bAdded, FGameplayTag, PlayerSlotTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnConversationStarted, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, OwnerCharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnConversationEnded, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, OwnerCharacterTag, bool, bCompleted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnLineDelivered, FGameplayTag, SpeakerTag, FGameplayTag, ConversationTag, FGameplayTag, OwnerCharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FParleyOnImportantChoiceMade, FGuid, ChoiceBranchId, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, OwnerCharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FParleyOnSpeakerRelationshipLevelChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, OwnerCharacterTag, int32, OldLevel, int32, NewLevel, float, NewTotal);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnConversationCompleted, FGameplayTag, ConversationTag, FGameplayTag, OwnerCharacterTag, FGameplayTag, CharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnSpeakerRelationshipChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, OwnerCharacterTag, float, Delta, float, NewTotal);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnProgressionTagMutated, FGameplayTag, ProgressionTag, bool, bAdded, FGameplayTag, OwnerCharacterTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FParleyOnProgressionStateMarkedDirty);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnChoiceLookaheadEmotion, FGameplayTag, PrimarySpeakerTag, FGameplayTag, PreviewEmotionTag, FGuid, ChoiceBranchId);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnChoiceLookaheadCleared, FGameplayTag, PlayerSlotTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnDialogueSignalFired, FGameplayTag, SignalTag, FGameplayTagContainer, PayloadTags, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnChoiceLookaheadCleared, FGameplayTag, OwnerCharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnDialogueSignalFired, FGameplayTag, SignalTag, FGameplayTagContainer, PayloadTags, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, OwnerCharacterTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnDialogueAudioRequested, const FDialogueAudioRequest&, Request);
 DECLARE_DELEGATE_RetVal_TwoParams(bool, FParleyIsConversationCompleted, FGameplayTag, FGameplayTag);
 DECLARE_DELEGATE_RetVal(FGameplayTag, FParleyGetCurrentModeTag);
@@ -61,9 +61,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	bool SubmitChoice(APlayerController* RequestingController, FGuid ChoiceBranchId);
 
-	/** Toggle eavesdrop mode, letting a player hear another slot's conversation. Use in shop two-up flows. */
+	/** Toggle eavesdrop mode, letting a character hear another character's conversation. Use in shop two-up flows. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
-	bool ForceEavesdrop(APlayerController* RequestingController, bool bEnable, FGameplayTag TargetSlotTag);
+	bool ForceEavesdrop(APlayerController* RequestingController, bool bEnable, FGameplayTag TargetCharacterTag);
 
 	/** Preview the highlighted choice branch without mutating dialogue state. Pass invalid branch id to clear preview. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Performs read-only choice lookahead and broadcasts a preview emotion for the active primary speaker."))
@@ -120,19 +120,19 @@ public:
 		bool& bOutEndedCompleted,
 		FDialogueValidationReport& OutReport) const;
 
-	/** Starts dialogue using explicit source and target speaker identities while keeping player-slot ownership authority. */
+	/** Starts dialogue using explicit source and target speaker identities while keeping owning-character authority. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	bool TryStartDialogueBetweenSpeakers(APlayerController* RequestingController, FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag);
 
-	/** Returns true when the given player slot has unlocked any conversation for this speaker. */
+	/** Returns true when the given character has unlocked any conversation for this speaker. */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
-	bool HasUnlockedDialogueForSpeakerForSlot(FGameplayTag PrimarySpeakerTag, FGameplayTag PlayerSlotTag) const;
+	bool HasUnlockedDialogueForSpeakerForCharacter(FGameplayTag PrimarySpeakerTag, FGameplayTag CharacterTag) const;
 
-	/** Returns true when any player slot has an unlocked conversation for this speaker. */
+	/** Returns true when any controlled character has an unlocked conversation for this speaker. */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
 	bool HasUnlockedDialogueForSpeakerForAnyPlayer(FGameplayTag PrimarySpeakerTag) const;
 
-	/** Returns true when this primary speaker currently has any active dialogue session (any slot). */
+	/** Returns true when this primary speaker currently has any active dialogue session (any character owner). */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
 	bool IsPrimarySpeakerInActiveSession(FGameplayTag PrimarySpeakerTag) const;
 
@@ -156,10 +156,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
 	bool HasActiveDialogueSession() const;
 
-	// Clears transient per-cycle offer blockers (seen/skipped). Pass Unknown to clear all player slots.
-	/** Clear seen/skipped blockers for the current offer cycle. Pass Unknown to clear for all slots. */
+	// Clears transient per-cycle offer blockers (seen/skipped). Pass invalid tag to clear all character states.
+	/** Clear seen/skipped blockers for the current offer cycle. Pass invalid tag to clear all characters. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
-	void ClearConversationCycleOfferState(FGameplayTag PlayerSlotTag = FGameplayTag());
+	void ClearConversationCycleOfferState(FGameplayTag CharacterTag = FGameplayTag());
 
 	/** Current directed relationship points for Source -> Target speakers. */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
@@ -169,9 +169,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
 	int32 GetRelationshipLevelForSpeakerPair(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag) const;
 
-	/** Injects persistent progression state for a player slot from an external save system bridge. */
+	/** Injects persistent progression state for a character from an external save system bridge. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
-	void SetProgressionStateForPlayer(FGameplayTag PlayerSlotTag, const FParleyProgressionState& State);
+	void SetProgressionStateForCharacter(FGameplayTag CharacterTag, const FParleyProgressionState& State);
 
 	/** Injects global game-owned progression tags used by dialogue conditions. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
@@ -198,28 +198,28 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast delegate exposed to Blueprint for dialogue lifecycle updates."))
 	FParleyOnConversationCompletedSignature OnConversationCompleted;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation session starts. Params: ConversationTag, SpeakerTag, PlayerSlotTag."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation session starts. Params: ConversationTag, SpeakerTag, OwnerCharacterTag."))
 	FParleyOnConversationStarted OnConversationStarted;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation session ends. Params: ConversationTag, SpeakerTag, PlayerSlotTag, bCompleted."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation session ends. Params: ConversationTag, SpeakerTag, OwnerCharacterTag, bCompleted."))
 	FParleyOnConversationEnded OnConversationEnded;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a dialogue line is delivered to clients. Params: SpeakerTag, ConversationTag, PlayerSlotTag."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a dialogue line is delivered to clients. Params: SpeakerTag, ConversationTag, OwnerCharacterTag."))
 	FParleyOnLineDelivered OnLineDelivered;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a submitted important choice branch is selected. Params: ChoiceBranchId, ConversationTag, SpeakerTag, PlayerSlotTag."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a submitted important choice branch is selected. Params: ChoiceBranchId, ConversationTag, SpeakerTag, OwnerCharacterTag."))
 	FParleyOnImportantChoiceMade OnImportantChoiceMade;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when directed relationship level threshold changes for a source-target speaker pair."))
 	FParleyOnSpeakerRelationshipLevelChanged OnSpeakerRelationshipLevelChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation is completed for a player slot. Save bridges should persist and mark dirty."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation is completed for a character owner. Save bridges should persist and mark dirty."))
 	FParleyOnConversationCompleted OnParleyConversationCompleted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when directed relationship points are mutated by dialogue. Save bridges should persist and mark dirty."))
 	FParleyOnSpeakerRelationshipChanged OnSpeakerRelationshipChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when progression tags are added/removed by dialogue. Save bridges should persist and mark dirty."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when progression tags are added/removed by dialogue for a character owner. Save bridges should persist and mark dirty."))
 	FParleyOnProgressionTagMutated OnProgressionTagMutated;
 
 	/** Broadcast when dialogue progression data was mutated and requires save-bridge persistence. */
@@ -229,10 +229,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when highlighted-choice lookahead resolves a preview emotion for the current primary speaker. PreviewEmotionTag is invalid when no preview is available."))
 	FParleyOnChoiceLookaheadEmotion OnChoiceLookaheadEmotion;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when highlighted-choice lookahead is cleared for a player slot."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when highlighted-choice lookahead is cleared for a character owner."))
 	FParleyOnChoiceLookaheadCleared OnChoiceLookaheadCleared;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Signals", meta = (ToolTip = "Broadcast when a Signal node fires. Params: SignalTag, PayloadTags, ConversationTag, SpeakerTag, PlayerSlotTag."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Signals", meta = (ToolTip = "Broadcast when a Signal node fires. Params: SignalTag, PayloadTags, ConversationTag, SpeakerTag, OwnerCharacterTag."))
 	FParleyOnDialogueSignalFired OnDialogueSignalFired;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Audio", meta = (ToolTip = "Broadcast when dialogue line audio resolves into a native-sound or cue-tag request payload."))

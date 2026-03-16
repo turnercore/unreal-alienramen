@@ -82,8 +82,8 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	P1State->SetPlayerSlot(EARPlayerSlot::P1);
-	TestEqual(TEXT("Player slot was assigned"), P1State->GetPlayerSlot(), EARPlayerSlot::P1);
+	P1State->SetCurrentCharacterTag(ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother));
+	TestEqual(TEXT("Player character was assigned"), ARPlayer::NormalizeCharacterTag(P1State->GetCurrentCharacterTag()), ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother));
 
 	TestFalse(
 		TEXT("Presence update is rejected while session is inactive"),
@@ -92,7 +92,7 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 	FARInvaderFullBlastSessionState ActiveSession = InvaderGameState->GetFullBlastSession();
 	ActiveSession = FARInvaderFullBlastSessionState();
 	ActiveSession.bIsActive = true;
-	ActiveSession.RequestingPlayerSlot = EARPlayerSlot::P1;
+	ActiveSession.RequestingCharacterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
 	ActiveSession.ActivationTier = 2;
 	{
 		FARInvaderUpgradeOffer OfferedUpgrade;
@@ -114,7 +114,10 @@ bool FARInvaderOfferPresenceLifecycleTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	TestEqual(TEXT("Presence player slot is P1"), PresenceAfterInvalidHover[0].PlayerSlot, EARPlayerSlot::P1);
+	TestEqual(
+		TEXT("Presence owner character is Brother"),
+		PresenceAfterInvalidHover[0].PlayerCharacterTag,
+		ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother));
 	TestFalse(TEXT("Non-offered hover tag is scrubbed"), PresenceAfterInvalidHover[0].HoveredUpgradeTag.IsValid());
 	TestEqual(TEXT("Hovered destination slot persisted"), PresenceAfterInvalidHover[0].HoveredDestinationSlot, 2);
 	TestFalse(TEXT("Non-offered selection tag is scrubbed"), PresenceAfterInvalidHover[0].SelectedUpgradeTag.IsValid());
@@ -208,12 +211,12 @@ bool FARInvaderOfferChooserRestrictionTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	P1State->SetPlayerSlot(EARPlayerSlot::P1);
-	P2State->SetPlayerSlot(EARPlayerSlot::P2);
+	P1State->SetCurrentCharacterTag(ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother));
+	P2State->SetCurrentCharacterTag(ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister));
 
 	FARInvaderFullBlastSessionState ActiveSession = FARInvaderFullBlastSessionState();
 	ActiveSession.bIsActive = true;
-	ActiveSession.RequestingPlayerSlot = EARPlayerSlot::P1;
+	ActiveSession.RequestingCharacterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
 	ActiveSession.ActivationTier = 3;
 	{
 		FARInvaderUpgradeOffer OfferedUpgrade;
@@ -231,7 +234,10 @@ bool FARInvaderOfferChooserRestrictionTest::RunTest(const FString& Parameters)
 		InvaderGameState->ResolveFullBlastSelection(P2State, OfferedTag, 1));
 
 	TestTrue(TEXT("Offer session remains active after blocked non-chooser actions"), InvaderGameState->GetFullBlastSession().bIsActive);
-	TestEqual(TEXT("Offer chooser remains requester slot P1"), InvaderGameState->GetFullBlastSession().RequestingPlayerSlot, EARPlayerSlot::P1);
+	TestEqual(
+		TEXT("Offer chooser remains requester character Brother"),
+		InvaderGameState->GetFullBlastSession().RequestingCharacterTag,
+		ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother));
 	TestEqual(TEXT("Offer list remains unchanged"), InvaderGameState->GetFullBlastSession().Offers.Num(), 1);
 
 	P2State->Destroy();

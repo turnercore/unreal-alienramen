@@ -78,7 +78,6 @@ class ALIENRAMEN_API AARPlayerController : public APlayerController, public IPar
 public:
 	AARPlayerController();
 
-	virtual FGameplayTag GetPlayerSlotTag() const override;
 	virtual bool IsDialogueAutoAdvanceEnabled() const override;
 	virtual FGameplayTag GetCharacterTag() const override;
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
@@ -88,7 +87,7 @@ public:
 	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) override;
 	virtual void RequestAdvanceDialogueInput() override;
 	virtual void RequestSubmitDialogueChoiceInput(FGuid ChoiceBranchId) override;
-	virtual void RequestSetDialogueEavesdropInput(bool bEnable, FGameplayTag TargetSlotTag) override;
+	virtual void RequestSetDialogueEavesdropInput(bool bEnable, FGameplayTag TargetCharacterTag) override;
 	virtual void RequestSetDialogueEavesdropOtherPlayerInput(bool bEnable) override;
 	virtual void RequestToggleDialogueAutoAdvanceInput() override;
 	virtual void RequestAdvanceOrSubmitDialogueInput() override;
@@ -218,13 +217,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestSubmitDialogueChoice(FGuid ChoiceBranchId);
 
+	/** Character-native eavesdrop targeting used by swap-safe flows. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
-	void RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
+	void RequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot);
+	void ServerRequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag);
 
-	// Convenience wrapper that targets the opposite slotted player when possible.
+	// Convenience wrapper that targets the opposite canonical character when possible.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue")
 	void RequestSetDialogueEavesdropOtherPlayer(bool bEnable);
 

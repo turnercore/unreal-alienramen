@@ -35,7 +35,7 @@ Runtime behavior:
   - `MinCandidateCount`
   - `MaxCandidateCount`
   - `CloutPerAdditionalCandidate`
-- Votes are submitted by canonical player slot tag (`Player.Slot.P1`, `Player.Slot.P2`).
+- Votes are submitted by runtime controller slot id (`PlayerSlotId` on `AARPlayerStateBase`), with legacy slot-tag wrappers kept only for compatibility.
 - Winner resolution order:
   1. vote count
   2. effective popularity from Parley

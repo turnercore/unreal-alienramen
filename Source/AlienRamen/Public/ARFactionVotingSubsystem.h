@@ -7,7 +7,6 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GameplayTagContainer.h"
-#include "ARPlayerTypes.h"
 #include "ARFactionVotingTypes.h"
 #include "ARFactionVotingSubsystem.generated.h"
 
@@ -18,8 +17,8 @@ class AARGameStateBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FAROnFactionVoteSubmittedSignature,
-	FGameplayTag,
-	PlayerSlotTag,
+	int32,
+	PlayerSlotId,
 	FGameplayTag,
 	VotedFactionTag,
 	FGameplayTag,
@@ -53,21 +52,17 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction|Voting", meta = (ToolTip = "Returns whether the provided faction is currently eligible in the voting candidate pool."))
 	bool IsFactionCandidate(FGameplayTag FactionTag) const;
 
-	/** Submit or replace vote for a canonical player slot tag (for example Player.Slot.P1). */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Submits or replaces a vote for a canonical player slot tag."))
-	bool SubmitVoteForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag FactionTag);
-
-	/** Compatibility wrapper for enum slot-based callers. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Submits or replaces a vote for an enum player slot."))
-	bool SubmitVoteForPlayerSlot(EARPlayerSlot PlayerSlot, FGameplayTag FactionTag);
+	/** Submit or replace vote for a runtime controller slot id. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Submits or replaces a vote for a runtime controller slot id."))
+	bool SubmitVoteForPlayerSlotId(int32 PlayerSlotId, FGameplayTag FactionTag);
 
 	/** Convenience wrapper that resolves slot tag from player state. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Submits or replaces a vote using slot identity from the provided player state."))
 	bool SubmitVoteForPlayerState(const AARPlayerStateBase* PlayerState, FGameplayTag FactionTag);
 
-	/** Clears one slot's current vote (if any). */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Clears the current vote for one canonical player slot tag."))
-	void ClearVoteForPlayerSlotTag(FGameplayTag PlayerSlotTag);
+	/** Clears one runtime controller slot id vote (if any). */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Clears the current vote for one runtime controller slot id."))
+	void ClearVoteForPlayerSlotId(int32 PlayerSlotId);
 
 	/** Clears all submitted votes. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Faction|Voting", meta = (BlueprintAuthorityOnly, ToolTip = "Clears all submitted faction votes."))
@@ -88,9 +83,9 @@ public:
 		bool bApplyWinnerToGameStateAndSave = true,
 		bool bClearVotesAfterFinalize = true);
 
-	/** True when at least one slot currently has a submitted vote. */
+	/** True when at least one runtime controller slot id currently has a submitted vote. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction|Voting", meta = (ToolTip = "Returns whether any player slot currently has a submitted faction vote."))
-	bool HasAnySubmittedVotes() const { return VotesByPlayerSlotTag.Num() > 0; }
+	bool HasAnySubmittedVotes() const { return VotesByPlayerSlotId.Num() > 0; }
 
 	/** Fired when a slot vote is submitted/replaced. */
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Faction|Voting", meta = (ToolTip = "Broadcast when a slot submits or replaces its faction vote."))
@@ -114,5 +109,5 @@ private:
 	int32 CountVotesForFaction(FGameplayTag FactionTag) const;
 	bool TryApplyWinnerToGame(FGameplayTag WinnerFactionTag, const FGameplayTagContainer& WinnerEffectTags) const;
 
-	TMap<FGameplayTag, FGameplayTag> VotesByPlayerSlotTag;
+	TMap<int32, FGameplayTag> VotesByPlayerSlotId;
 };

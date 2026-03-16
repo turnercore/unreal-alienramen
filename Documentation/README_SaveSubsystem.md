@@ -132,7 +132,7 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 
 Hydration identity policy:
 - If requester has a strict online identity (`UniqueNetIdString` + non-null provider type), hydration requires identity match and does not slot-fallback.
-- Slot fallback is only used for local-only identities (PIE/offline/null subsystem style flows).
+- Slot fallback is no longer used by runtime hydration; `bAllowSlotFallback` remains a compatibility parameter.
 - When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup uses a shared-account primary/secondary profile discriminator (`bSharedOnlineIdSecondaryProfile`) assigned by runtime claim order.
 - `ClearPendingTravelGameStateData()`
 - `HasPendingTravelGameStateData()`
@@ -175,7 +175,7 @@ PlayerState hydration is split by lifecycle:
 - First join path (GameMode): `TryHydratePlayerStateFromCurrentSave(...)` if possible, else `InitializeForFirstSessionJoin()`.
 - Seamless travel path: `AARPlayerStateBase::CopyProperties(...)` copies runtime struct + key replicated fields.
 - Player hydration is two-stage:
-  1. hydrate player-owned fields by identity (or slot fallback for local-only identities)
+  1. hydrate player-owned fields by identity
   2. resolve active `CurrentCharacterTag` and project character-owned state onto `AARPlayerStateBase`
 - If projected character-owned `LoadoutTags` are empty after hydration, `AARPlayerStateBase` seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so editor raw-map starts and runtime joins both get a deterministic baseline.
 - `AARPlayerStateBase` remains the runtime owner surface, but character-owned persistence is not keyed by player id.

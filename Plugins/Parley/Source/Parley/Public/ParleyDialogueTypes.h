@@ -915,8 +915,8 @@ struct PARLEY_API FDialogueAudioRequest
 	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Resolved speaker tag context for this audio request."))
 	FGameplayTag SpeakerTag;
 
-	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Target player slot for this local audio request."))
-	FGameplayTag PlayerSlotTag;
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Target listener character tag for this local audio request."))
+	FGameplayTag ListenerCharacterTag;
 
 	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Whether this request came from direct line audio or speaker-emotion fallback."))
 	EDialogueAudioRequestSource Source = EDialogueAudioRequestSource::None;
@@ -969,11 +969,11 @@ struct PARLEY_API FDialogueClientView
 	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Blueprint read-only Parley runtime output field."))
 	bool bConversationImportant = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Canonical initiating player slot tag for this session view (for example Player.Slot.P1)."))
-	FGameplayTag InitiatorSlotTag;
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Canonical initiating character tag for this session view."))
+	FGameplayTag InitiatorCharacterTag;
 
-	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Canonical owning player slot tag for this session view (for example Player.Slot.P1)."))
-	FGameplayTag OwnerSlotTag;
+	UPROPERTY(BlueprintReadOnly, Category = "", meta = (ToolTip = "Canonical owning character tag for this session view."))
+	FGameplayTag OwnerCharacterTag;
 };
 
 USTRUCT(BlueprintType)
@@ -1091,8 +1091,8 @@ struct PARLEY_API FDialoguePlayerPersistentState
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Owning player slot tag for this progression state (for example Player.Slot.P1)."))
-	FGameplayTag OwnerPlayerSlotTag;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Owning character tag for this progression state."))
+	FGameplayTag OwnerCharacterTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Canonical speaker/character tag that owns this progression state."))
 	FGameplayTag CharacterTag;

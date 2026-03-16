@@ -20,8 +20,8 @@ class UDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderSharedTrackChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderFullBlastSessionChangedSignature, bool, bIsActive);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnInvaderFullBlastResolvedSignature, bool, bSkipped, int32, ActivationTier, EARPlayerSlot, RequestingPlayerSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderKillCreditAwardedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, float, SpiceGained, int32, NewCombo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnInvaderFullBlastResolvedSignature, bool, bSkipped, int32, ActivationTier, FGameplayTag, RequestingCharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderKillCreditAwardedSignature, AARPlayerStateBase*, SourcePlayerState, FGameplayTag, SourceCharacterTag, float, SpiceGained, int32, NewCombo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnInvaderOfferPresenceChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderKillCreditFxEventSignature, const FARInvaderKillCreditFxEvent&, EventData);
 
@@ -205,7 +205,7 @@ private:
 	void RefreshWhileSlottedEffects();
 	void ClearWhileSlottedEffects();
 	void ClearWhileSlottedEffectsForPlayer(AARPlayerStateBase* PlayerState);
-	void ResolveFullBlastCommonPostChoice(bool bSkipped, EARPlayerSlot RequestingSlot, int32 ActivationTier);
+	void ResolveFullBlastCommonPostChoice(bool bSkipped, FGameplayTag RequestingCharacterTag, int32 ActivationTier);
 	void ApplyFullBlastGameplayCue();
 	void ClearEnemyProjectilesByTag();
 	bool BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvaderUpgradeDefRow>& OutDefinitions) const;

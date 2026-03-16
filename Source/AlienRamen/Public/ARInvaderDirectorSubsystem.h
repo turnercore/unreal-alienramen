@@ -173,13 +173,13 @@ private:
 	void HandleTrackedPlayersChanged();
 
 	UFUNCTION()
-	void HandlePlayerHealthSignal(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, float NewValue, float OldValue);
+	void HandlePlayerHealthSignal(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, float NewValue, float OldValue);
 
 	UFUNCTION()
-	void HandlePlayerDownedSignal(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewDowned, bool bOldDowned);
+	void HandlePlayerDownedSignal(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewDowned, bool bOldDowned);
 
 	UFUNCTION()
-	void HandlePlayerDeadSignal(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewDead, bool bOldDead);
+	void HandlePlayerDeadSignal(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewDead, bool bOldDead);
 
 	bool SpawnWaveFromDefinition(FName WaveRowName, const FARWaveDefRow& WaveDef, bool bColorSwap);
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
@@ -257,7 +257,7 @@ private:
 	int32 DeadPlayerCountCached = 0;
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDownedCache;
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDeadCache;
-	TSet<EARPlayerSlot> EarlyBailVotesBySlot;
+	TSet<int32> EarlyBailVotesByPlayerSlotId;
 
 	struct FPlayerStatusBinding
 	{

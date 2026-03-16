@@ -32,8 +32,8 @@ Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 - `RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)`
 - `RequestAdvanceDialogue()`
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
-- `RequestSetDialogueEavesdrop(bool bEnable, EARPlayerSlot TargetSlot)`
-- `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (slot convenience wrapper)
+- `RequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag)` (character-native targeting)
+- `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (targets the opposite canonical character of the local controller)
 - Actor-targeted interaction requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
 
 World actor convenience entrypoint:
@@ -49,7 +49,7 @@ Core subsystem API:
 
 - `GetAvailableConversationForSpeaker(...)`
 - `StartConversation(...)`
-- `TryStartDialogueBetweenSpeakers(...)` (explicit source-speaker + target-speaker start, still slot-owned authority)
+- `TryStartDialogueBetweenSpeakers(...)` (explicit source-speaker + target-speaker start; ownership resolves through runtime character/controller identity)
 - `AdvanceConversation(...)`
 - `SubmitChoice(...)`
 - `ForceEavesdrop(...)`
@@ -58,7 +58,7 @@ Core subsystem API:
 - `PreviewConversation(...)`
 - `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
 - `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
-- `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/player-slot context)
+- `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/owner-character context)
 - `OnDialogueAudioRequested` (broadcast when line audio resolves into either native sound payload or cue-tag signal payload)
 
 ## Signal Node (How To Use)
@@ -75,7 +75,7 @@ Authoring flow:
 Runtime behavior:
 
 - On authoritative runtime execution, the node broadcasts `UParleyDialogueSubsystem::OnDialogueSignalFired`.
-- Broadcast payload: `SignalTag`, `PayloadTags`, `ConversationTag`, `SpeakerTag`, `PlayerSlotTag`.
+- Broadcast payload: `SignalTag`, `PayloadTags`, `ConversationTag`, `SpeakerTag`, `OwnerCharacterTag`.
 - The node immediately advances to `NextNodeId`.
 - Conversation preview/trace tooling treats `Signal` as passthrough and does not broadcast gameplay signals.
 - Validation warns when `SignalTag` is unset and errors on payload type mismatch.
@@ -99,7 +99,7 @@ void UMySystem::HandleDialogueSignal(
 	FGameplayTagContainer PayloadTags,
 	FGameplayTag ConversationTag,
 	FGameplayTag SpeakerTag,
-	FGameplayTag PlayerSlotTag)
+	FGameplayTag OwnerCharacterTag)
 {
 	if (SignalTag.MatchesTagExact(FGameplayTag::RequestGameplayTag(TEXT("Dialogue.Signal.GiveReward"))))
 	{
@@ -170,7 +170,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 ## Emotion Runtime
 
 - `UEmoComponent` provides replicated overhead-emotion display state for speaker actors and player characters.
-- Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
+- Emotion state is server-authoritative with shared + per-viewer variants (legacy slot tags, now character-derived in gameplay flows).
 - Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
 - `SetDialogueEmotionTag*`/`ClearDialogueEmotionTag*` APIs write directly to replicated `DialogueOverrideState`; they do not enqueue into system-source arbitration.
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
@@ -184,7 +184,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UEmoSettings::DefaultTimedSystemOverrideDurationSeconds`.
 - Runtime overhead emotion rendering is owned directly by `AARHUDBase` (no separate HUD emotion component).
 - `AARHUDBase::DrawHUD` renders overhead emotions natively and applies projection/size/occlusion policy from HUD properties.
-- HUD viewer-slot resolution falls back to shared display state when the local viewer has no `PlayerSlotTag` (for example single-player/spectator/untagged local controllers).
+- HUD viewer identity resolution falls back to shared display state when the local viewer has no resolved character/controller context (for example single-player/spectator/untagged local controllers).
 - Runtime suppression (for example cutscenes) should use `AARHUDBase::SetEmotionRenderingSuppressed(...)`.
 - `UEmoComponent` display change notifications now fire when effective shared or slot-specific (`P1`/`P2`) display tags change, so delegate-driven UI/subsystems are informed without polling.
 

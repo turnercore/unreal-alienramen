@@ -189,19 +189,19 @@ bool UARInvaderDirectorSubsystem::SubmitEarlyBailVote(AARPlayerStateBase* Player
 		return false;
 	}
 
-	const EARPlayerSlot PlayerSlot = PlayerState->GetPlayerSlot();
-	if (PlayerSlot == EARPlayerSlot::Unknown)
+	const int32 PlayerSlotId = PlayerState->GetPlayerSlotId();
+	if (PlayerSlotId <= 0)
 	{
 		return false;
 	}
 
 	if (bVoteYes)
 	{
-		EarlyBailVotesBySlot.Add(PlayerSlot);
+		EarlyBailVotesByPlayerSlotId.Add(PlayerSlotId);
 	}
 	else
 	{
-		EarlyBailVotesBySlot.Remove(PlayerSlot);
+		EarlyBailVotesByPlayerSlotId.Remove(PlayerSlotId);
 	}
 
 	EvaluateEarlyBailVotes();
@@ -294,7 +294,7 @@ void UARInvaderDirectorSubsystem::ResetRunState(const bool bForActiveRunStart)
 	DeadPlayerCountCached = 0;
 	PlayerDownedCache.Reset();
 	PlayerDeadCache.Reset();
-	EarlyBailVotesBySlot.Reset();
+	EarlyBailVotesByPlayerSlotId.Reset();
 
 	EnemyDefinitionCache.Reset();
 	EnemyClassPreloadHandles.Reset();
@@ -945,11 +945,11 @@ void UARInvaderDirectorSubsystem::EvaluateEarlyBailVotes()
 		return;
 	}
 
-	TSet<EARPlayerSlot> ActiveSlots;
+	TSet<int32> ActivePlayerSlotIds;
 	for (APlayerState* PSBase : GS->PlayerArray)
 	{
 		const AARPlayerStateBase* PS = Cast<AARPlayerStateBase>(PSBase);
-		if (!PS || PS->IsOnlyASpectator() || PS->GetPlayerSlot() == EARPlayerSlot::Unknown)
+		if (!PS || PS->IsOnlyASpectator() || PS->GetPlayerSlotId() <= 0)
 		{
 			continue;
 		}
@@ -960,17 +960,17 @@ void UARInvaderDirectorSubsystem::EvaluateEarlyBailVotes()
 			continue;
 		}
 
-		ActiveSlots.Add(PS->GetPlayerSlot());
+		ActivePlayerSlotIds.Add(PS->GetPlayerSlotId());
 	}
 
-	if (ActiveSlots.Num() <= 0)
+	if (ActivePlayerSlotIds.Num() <= 0)
 	{
 		return;
 	}
 
-	for (const EARPlayerSlot Slot : ActiveSlots)
+	for (const int32 PlayerSlotId : ActivePlayerSlotIds)
 	{
-		if (!EarlyBailVotesBySlot.Contains(Slot))
+		if (!EarlyBailVotesByPlayerSlotId.Contains(PlayerSlotId))
 		{
 			return;
 		}
@@ -1073,17 +1073,17 @@ void UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged()
 	RefreshPlayerStatusSignals();
 }
 
-void UARInvaderDirectorSubsystem::HandlePlayerHealthSignal(AARPlayerStateBase* /*SourcePlayerState*/, EARPlayerSlot /*SourcePlayerSlot*/, float /*NewValue*/, float /*OldValue*/)
+void UARInvaderDirectorSubsystem::HandlePlayerHealthSignal(AARPlayerStateBase* /*SourcePlayerState*/, FGameplayTag /*SourceCharacterTag*/, float /*NewValue*/, float /*OldValue*/)
 {
 	RefreshPlayerStatusSignals();
 }
 
-void UARInvaderDirectorSubsystem::HandlePlayerDownedSignal(AARPlayerStateBase* /*SourcePlayerState*/, EARPlayerSlot /*SourcePlayerSlot*/, bool /*bNewDowned*/, bool /*bOldDowned*/)
+void UARInvaderDirectorSubsystem::HandlePlayerDownedSignal(AARPlayerStateBase* /*SourcePlayerState*/, FGameplayTag /*SourceCharacterTag*/, bool /*bNewDowned*/, bool /*bOldDowned*/)
 {
 	RefreshPlayerStatusSignals();
 }
 
-void UARInvaderDirectorSubsystem::HandlePlayerDeadSignal(AARPlayerStateBase* /*SourcePlayerState*/, EARPlayerSlot /*SourcePlayerSlot*/, bool /*bNewDead*/, bool /*bOldDead*/)
+void UARInvaderDirectorSubsystem::HandlePlayerDeadSignal(AARPlayerStateBase* /*SourcePlayerState*/, FGameplayTag /*SourceCharacterTag*/, bool /*bNewDead*/, bool /*bOldDead*/)
 {
 	RefreshPlayerStatusSignals();
 }

@@ -39,9 +39,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns true when this NPC is currently talkable for any player slot."))
 	bool IsTalkable() const;
 
-	// Per-slot talkable state. Use this for per-player local interaction indicators.
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns true when this NPC is talkable for the provided enum player slot mirror."))
-	bool IsTalkableForPlayerSlot(EARPlayerSlot PlayerSlot) const;
+	// Per-character talkable state. Use this for per-player local interaction indicators.
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns true when this NPC is talkable for the provided canonical character tag."))
+	bool IsTalkableForCharacter(FGameplayTag CharacterTag) const;
 
 	// Convenience per-controller query for per-player local interaction indicators.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|Speaker", meta = (ToolTip = "Returns true when this NPC is talkable for the provided controller's resolved slot identity."))
@@ -79,10 +79,10 @@ protected:
 	void HandleSpeakerComponentTalkableStateChanged(bool bNewTalkable);
 
 	UFUNCTION()
-	void HandleSpeakerEmotionRequested(FGameplayTag EmotionTag, FGameplayTag PlayerSlotTag, bool bIsDialogueLine);
+	void HandleSpeakerEmotionRequested(FGameplayTag EmotionTag, FGameplayTag ViewerCharacterTag, bool bIsDialogueLine);
 
 	UFUNCTION()
-	void HandleSpeakerEmotionCleared(FGameplayTag PlayerSlotTag);
+	void HandleSpeakerEmotionCleared(FGameplayTag ViewerCharacterTag);
 
 	UFUNCTION()
 	void OnRep_SpeakerLocalStateAllowsDialogue(bool bOldAllowsDialogue);

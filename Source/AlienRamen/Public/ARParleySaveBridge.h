@@ -24,13 +24,13 @@ public:
 	void HandleSaveLoaded();
 
 	UFUNCTION()
-	void HandleConversationCompleted(FGameplayTag ConversationTag, FGameplayTag PlayerSlotTag, FGameplayTag CharacterTag);
+	void HandleConversationCompleted(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag);
 
 	UFUNCTION()
-	void HandleSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag PlayerSlotTag, float Delta, float NewTotal);
+	void HandleSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal);
 
 	UFUNCTION()
-	void HandleProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag PlayerSlotTag);
+	void HandleProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag);
 
 	UFUNCTION()
 	void HandleFactionPopularityChanged(FGameplayTag FactionTag, float Delta, float NewTotal);
@@ -38,14 +38,12 @@ public:
 	UFUNCTION()
 	void HandleFactionSpeakerReputationChanged(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal);
 
-	bool IsConversationCompletedForPlayer(FGameplayTag ConversationTag, FGameplayTag PlayerSlotTag) const;
+	bool IsConversationCompletedForCharacter(FGameplayTag ConversationTag, FGameplayTag CharacterTag) const;
 	FGameplayTag ResolveCurrentModeTag() const;
 
 private:
 	void InjectAllFromCurrentSave();
 	UARSaveGame* GetCurrentSave() const;
-	FGameplayTag ResolveCharacterTagForSlot(UARSaveGame* SaveGame, EARPlayerSlot Slot) const;
-
 	UPROPERTY(Transient)
 	TObjectPtr<UARSaveSubsystem> SaveSubsystem;
 
