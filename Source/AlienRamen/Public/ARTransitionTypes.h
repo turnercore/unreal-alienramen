@@ -62,6 +62,13 @@ namespace ARTransition
 	ALIENRAMEN_API extern const TCHAR* OptionDestinationURL;
 	ALIENRAMEN_API extern const TCHAR* OptionFreshLoad;
 
+	/** Appends travel options using Unreal URL syntax (Map?A=1?B=2). */
+	ALIENRAMEN_API FString AppendTravelOptions(const FString& BaseURL, const FString& Options);
+	/** Returns true when an option token is present as either "Token" or "Token=Value". */
+	ALIENRAMEN_API bool HasTravelOption(const FString& URLOrOptions, const FString& OptionToken);
+	/** Ensures an option token exists using Unreal URL syntax (Map?A=1?B=2). */
+	ALIENRAMEN_API FString EnsureTravelOption(const FString& URLOrOptions, const FString& OptionToken);
+
 	ALIENRAMEN_API FString AppendTransitionContextOptions(const FString& URL, const FARTransitionContext& Context);
 	ALIENRAMEN_API FString BuildTransitionTravelURL(const FString& TransitionMapURL, const FARTransitionContext& Context);
 	ALIENRAMEN_API void ApplyTransitionContextFromTravelOptions(const FString& OptionsString, FARTransitionContext& InOutContext);

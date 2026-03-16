@@ -68,6 +68,7 @@ bool UARDialogueAudioBridgeSubsystem::HandleLocalDialogueAudioRequest(APlayerCon
 
 	const UARDialogueAudioSettings* AudioSettings = GetDefault<UARDialogueAudioSettings>();
 	const double NowSeconds = FPlatformTime::Seconds();
+	bool bShouldRecordDeliveredLine = false;
 	if (AudioSettings && AudioSettings->LocalLineDedupeWindowSeconds > 0.0f)
 	{
 		// Requests can arrive once per local participant controller (couch co-op/eavesdrop),
@@ -77,7 +78,7 @@ bool UARDialogueAudioBridgeSubsystem::HandleLocalDialogueAudioRequest(APlayerCon
 		{
 			return false;
 		}
-		RecordDeliveredLine(Request, NowSeconds);
+		bShouldRecordDeliveredLine = true;
 	}
 
 	if (DialogueSettings->DialogueAudioMode == EParleyDialogueAudioMode::NativeAudio)
@@ -89,6 +90,10 @@ bool UARDialogueAudioBridgeSubsystem::HandleLocalDialogueAudioRequest(APlayerCon
 		}
 
 		UGameplayStatics::PlaySound2D(SourceController, Request.NativeSound);
+		if (bShouldRecordDeliveredLine)
+		{
+			RecordDeliveredLine(Request, NowSeconds);
+		}
 		return true;
 	}
 
@@ -112,7 +117,12 @@ bool UARDialogueAudioBridgeSubsystem::HandleLocalDialogueAudioRequest(APlayerCon
 	}
 
 	// FMOD invocation is resolved dynamically (reflection) so this module has no hard FMOD build dependency.
-	return PlayFMODEvent2DByReflection(SourceController, ResolvedEventAsset);
+	const bool bPlayed = PlayFMODEvent2DByReflection(SourceController, ResolvedEventAsset);
+	if (bPlayed && bShouldRecordDeliveredLine)
+	{
+		RecordDeliveredLine(Request, NowSeconds);
+	}
+	return bPlayed;
 }
 
 bool UARDialogueAudioBridgeSubsystem::IsDuplicateLocalLine(const FDialogueAudioRequest& Request, const double NowSeconds) const

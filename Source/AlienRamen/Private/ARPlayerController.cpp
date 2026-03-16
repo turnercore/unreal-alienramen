@@ -863,6 +863,13 @@ void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FDia
 	{
 		OnDialogueChoiceSelectionChanged.Broadcast(SelectedDialogueChoiceIndex, OldChoiceIndex);
 	}
+
+	// Keep subsystem-bound client UI bridges in sync with controller-delivered RPC updates.
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
+	{
+		DialogueSubsystem->OnDialogueSessionUpdated.Broadcast(View);
+	}
+
 	OnDialogueViewUpdated.Broadcast(View);
 	EnsureDialogueWidget();
 	RefreshDialogueInputStateFromSession();
@@ -878,6 +885,12 @@ void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FStrin
 	}
 	SetSelectedDialogueChoiceIndex(INDEX_NONE);
 	RefreshDialogueInputStateFromSession();
+
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
+	{
+		DialogueSubsystem->OnDialogueSessionEnded.Broadcast(SessionId);
+	}
+
 	OnDialogueSessionEndedSignal.Broadcast(SessionId);
 	BP_OnDialogueSessionEnded(SessionId);
 }

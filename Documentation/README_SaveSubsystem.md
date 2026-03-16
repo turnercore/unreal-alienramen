@@ -140,21 +140,18 @@ Hydration identity policy:
 - `FindPlayerStateDataBySlot(Slot, OutData, OutIndex)`
 - `FindPlayerStateDataByIdentity(Identity, OutData, OutIndex)`
 
-## Travel helpers
+## Travel Boundary
 
-- `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bPersistSaveBeforeTravel)`
-- `RequestOpenLevel(LevelName, Options, bSkipReadyChecks, bAbsolute, bPersistSaveBeforeTravel)`
-- `TravelToLoadedSaveDestination(bUseOpenLevelInPIE, TransitionMapURL)`
+Travel execution is owned by `UARTravelSubsystem` (not `UARSaveSubsystem`).
 
-Both capture one-shot `PendingTravelGameStateData` before map travel:
-- If `bPersistSaveBeforeTravel=true`, travel saves to disk first, then clears pending travel data.
-- If `bPersistSaveBeforeTravel=false`, travel skips disk save and carries pending travel data to next map hydration.
-
-`TravelToLoadedSaveDestination(...)` is the standard save-load gameplay entry path:
-- it reads the loaded save's recorded destination map
-- builds a `FARTransitionContext` with `SourceMode=SaveLoad`, `Reason=SaveLoadEntry`, `bFreshLoadEntry=true`
-- routes through the transition map URL by default so downstream gameplay maps receive the same fresh-load signal
-- when older migrated saves are missing explicit location metadata, load attempts backfill compatible mode/map metadata before this travel step
+`UARSaveSubsystem` still owns the save-side contracts consumed by travel orchestration:
+- `SetPendingTravelGameStateData(...)` / `ClearPendingTravelGameStateData(...)`
+- `SaveCurrentGame(...)` / `SaveCurrentGameUnthrottled(...)`
+- loaded-save destination metadata:
+  - `GetCurrentSaveGame()->LastSavedMapPath`
+  - `GetCurrentSaveGame()->LastSavedModeTag`
+  - `GetPendingLoadedSaveMapPath()`
+  - `GetPendingLoadedSaveModeTag()`
 
 ## BP Events
 

@@ -14,5 +14,10 @@ public class TagKey : ModuleRules
 			"DeveloperSettings",
 			"GameplayTags"
 		});
+
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
+			"AssetRegistry"
+		});
 	}
 }

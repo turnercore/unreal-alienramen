@@ -104,6 +104,8 @@ public:
 	/**
 	 * Preloads a root's DataTable and all soft object/class references found in its rows.
 	 * Optionally recurses into DataTables referenced by those soft paths (depth-limited).
+	 * Recursion only synchronously loads paths identified as DataTables; all gathered soft refs are
+	 * then requested through async streaming.
 	 * @param RootTag						Resolver root to load.
 	 * @param MaxRecursiveTableDepth		How many levels of referenced DataTables to walk (0 = only the root table).
 	 * @param MaxAssetsToLoad				Guard rail to prevent runaway recursion; early-outs if exceeded.
@@ -115,11 +117,13 @@ public:
 		int32 MaxAssetsToLoad,
 		FString& OutError);
 
+	/** Static configured-route resolver for exact root tags. Must be called on the game thread. */
 	static bool TryResolveDataTableForRootTagFromConfiguredRoutes(
 		FGameplayTag RootTag,
 		UDataTable*& OutDataTable,
 		FString& OutError);
 
+	/** Static configured-route resolver for row struct matching. Must be called on the game thread. */
 	static bool TryResolveDataTableForRowStructFromConfiguredRoutes(
 		UScriptStruct* DesiredRowStruct,
 		UDataTable*& OutDataTable,

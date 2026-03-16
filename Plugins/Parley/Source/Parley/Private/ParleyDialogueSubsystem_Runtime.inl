@@ -11,7 +11,8 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeaker(
 		PrimarySpeakerTag,
 		OutOffer,
 		bSpeakerLocalStateAllowsDialogue,
-		FGameplayTag());
+		FGameplayTag(),
+		/*bPersistChanceSkipFailures=*/ false);
 }
 
 bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
@@ -19,9 +20,16 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 	FGameplayTag PrimarySpeakerTag,
 	FDialogueConversationOffer& OutOffer,
 	const bool bSpeakerLocalStateAllowsDialogue,
-	const FGameplayTag SourceSpeakerTagOverride)
+	const FGameplayTag SourceSpeakerTagOverride,
+	const bool bPersistChanceSkipFailures)
 {
 	OutOffer = FDialogueConversationOffer();
+	const UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Offer request ignored: authority required."));
+		return false;
+	}
 	if (!RequestingController)
 	{
 		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Offer request ignored: RequestingController is null."));
@@ -72,7 +80,6 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 			*StaticEnum<EParleyPlayerSlot>()->GetNameStringByValue(static_cast<int64>(RequesterSlot)));
 		return false;
 	}
-	const UWorld* World = GetWorld();
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
 	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
 	if (!IsModeDialogueEnabled(Settings, ModeTag))
@@ -207,7 +214,7 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 			const float ChanceRoll = FMath::FRand();
 			if (ChanceRoll > Candidate.ChanceOffered)
 			{
-				if (Conversation->Header.ConversationTag.IsValid())
+				if (bPersistChanceSkipFailures && Conversation->Header.ConversationTag.IsValid())
 				{
 					SkippedForPlayer.AddTag(Conversation->Header.ConversationTag);
 					PersistCycleOfferStateForSlot(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
@@ -2017,7 +2024,8 @@ bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(
 		TargetSpeakerTag,
 		Offer,
 		/*bSpeakerLocalStateAllowsDialogue=*/ true,
-		SourceSpeakerTag))
+		SourceSpeakerTag,
+		/*bPersistChanceSkipFailures=*/ true))
 	{
 		return false;
 	}

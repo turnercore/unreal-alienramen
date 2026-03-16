@@ -110,7 +110,7 @@ High-level sequence:
 3. run migration + sanitize
 4. install the loaded save as the current canonical save
 5. raise load-complete events
-6. gameplay then travels into the saved destination using `TravelToLoadedSaveDestination(...)`
+6. gameplay then travels into the saved destination using `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 Important expectations:
 - `LoadGame(...)` loads the save into memory; it does not by itself hydrate a gameplay map
@@ -156,8 +156,8 @@ Expectation:
 
 Primary entrypoints:
 - `AARGameModeBase::TryStartTravel(...)`
-- `UARSaveSubsystem::RequestServerTravel(...)`
-- `UARSaveSubsystem::RequestOpenLevel(...)`
+- `UARTravelSubsystem::RequestServerTravel(...)`
+- `UARTravelSubsystem::RequestOpenLevel(...)`
 
 What happens:
 1. readiness is checked unless skipped
@@ -172,12 +172,13 @@ Additional durability rules:
 ### Save-load gameplay entry
 
 Primary entrypoint:
-- `UARSaveSubsystem::TravelToLoadedSaveDestination(...)`
+- `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 This is the standard path after `LoadGame(...)`.
 
 What it does:
 1. reads the loaded save's recorded destination map
+   - if missing, resolves fallback destination from `LastSavedModeTag`
 2. builds `FARTransitionContext` with:
    - `SourceMode=SaveLoad`
    - `Reason=SaveLoadEntry`
@@ -185,6 +186,7 @@ What it does:
 3. routes through transition map by default
 4. transition mode preserves that same context on the continue leg
 5. final gameplay map receives the same save-load entry signal in travel options
+   - caller-provided destination options are preserved through transition-map routing
 
 Use this path for any load-only gameplay behavior.
 
@@ -224,7 +226,7 @@ Current example:
 
 1. Get `ARSaveSubsystem`.
 2. Call `LoadGame(...)`.
-3. On success, call `TravelToLoadedSaveDestination(...)`.
+3. Get `ARTravelSubsystem` and call `TravelToLoadedSaveDestination(...)`.
 
 ### Query player-owned progression
 
@@ -261,7 +263,7 @@ Do not use shared `ProgressionTags` for those.
 - putting character-owned data on `GameState`
 - keying player-owned data by character tag
 - mutating persistence on clients
-- loading a save and then entering gameplay through an ad hoc travel path instead of `TravelToLoadedSaveDestination(...)`
+- loading a save and then entering gameplay through an ad hoc travel path instead of `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 ## Rules For New Persistence
 

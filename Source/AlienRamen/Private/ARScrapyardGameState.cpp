@@ -10,6 +10,7 @@
 #include "ARScrapyardCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
 #include "ARSaveSubsystem.h"
+#include "ARTravelSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARShopCarryComponent.h"
 #include "ARGameModeBase.h"
@@ -376,7 +377,14 @@ bool AARScrapyardGameState::FinalizeScrapyardRunAndTravelToShop(const FString& I
 		return false;
 	}
 
-	if (!SaveSubsystem->RequestServerTravel(FinalTravelURL, true, false, false, false))
+	UARTravelSubsystem* TravelSubsystem = GameInstance ? GameInstance->GetSubsystem<UARTravelSubsystem>() : nullptr;
+	if (!TravelSubsystem)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization travel failed: TravelSubsystem missing."));
+		return false;
+	}
+
+	if (!TravelSubsystem->RequestServerTravel(FinalTravelURL, true, false, false, false))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Scrapyard] Finalization travel failed for URL '%s'."), *FinalTravelURL);
 		return false;

@@ -4,6 +4,7 @@
 
 #include "ARPlayerTypes.h"
 #include "ARSaveGame.h"
+#include "ARTravelSubsystem.h"
 #include "ARTransitionTypes.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -103,6 +104,74 @@ bool FARPersistenceSaveLoadTransitionContextTest::RunTest(const FString& Paramet
 	TestEqual(TEXT("Final-leg source mode preserved"), ParsedFinalTravelContext.SourceMode, EARTransitionSourceMode::SaveLoad);
 	TestEqual(TEXT("Final-leg reason preserved"), ParsedFinalTravelContext.Reason, EARTransitionReason::SaveLoadEntry);
 	TestTrue(TEXT("Final-leg fresh-load flag preserved"), ParsedFinalTravelContext.bFreshLoadEntry);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARPersistenceTransitionDestinationOptionsPreservedTest,
+	"AlienRamen.Transition.ModeExit.DestinationOptionsPreservedThroughTransitionMap",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARPersistenceTransitionDestinationOptionsPreservedTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	FARTransitionContext Context;
+	Context.SourceMode = EARTransitionSourceMode::Shop;
+	Context.Reason = EARTransitionReason::ShopToInvader;
+	Context.DestinationURL = TEXT("/Game/Maps/Lvl_Invader?Game=/Script/AlienRamen.ARInvaderGameMode?Portal=Dock?CustomFlag=1");
+
+	const FString TransitionURL = ARTransition::BuildTransitionTravelURL(TEXT("/Game/Maps/Lvl_Loading"), Context);
+	FARTransitionContext ParsedTransitionContext;
+	ARTransition::ApplyTransitionContextFromTravelOptions(TransitionURL, ParsedTransitionContext);
+	TestEqual(TEXT("Wrapped transition preserves destination URL with options"), ParsedTransitionContext.DestinationURL, Context.DestinationURL);
+
+	const FString FinalTravelURL = ARTransition::AppendTransitionContextOptions(ParsedTransitionContext.DestinationURL, ParsedTransitionContext);
+	TestTrue(TEXT("Final travel URL preserves Game option"), FinalTravelURL.Contains(TEXT("?Game=/Script/AlienRamen.ARInvaderGameMode")));
+	TestTrue(TEXT("Final travel URL preserves Portal option"), FinalTravelURL.Contains(TEXT("?Portal=Dock")));
+	TestTrue(TEXT("Final travel URL preserves custom option"), FinalTravelURL.Contains(TEXT("?CustomFlag=1")));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARPersistenceSaveLoadFallbackDestinationTravelURLTest,
+	"AlienRamen.Save.LoadTravel.FallbackModeTagDestinationUsedForDirectTravel",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARPersistenceSaveLoadFallbackDestinationTravelURLTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	FARTransitionContext TransitionContext;
+	TransitionContext.SourceMode = EARTransitionSourceMode::SaveLoad;
+	TransitionContext.Reason = EARTransitionReason::SaveLoadEntry;
+	TransitionContext.bFreshLoadEntry = true;
+
+	const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
+	const FString TravelURL = UARTravelSubsystem::BuildLoadedSaveTravelURL(TEXT(""), ShopModeTag, TEXT(""), TransitionContext);
+
+	TestTrue(TEXT("Fallback mode tag resolves direct-travel URL"), !TravelURL.IsEmpty());
+	TestTrue(TEXT("Fallback mode tag resolves to ramen shop map"), TravelURL.StartsWith(TEXT("/Game/Maps/Lvl_RamenShop")));
+	TestEqual(TEXT("Context destination is set to resolved fallback"), TransitionContext.DestinationURL, FString(TEXT("/Game/Maps/Lvl_RamenShop")));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARPersistenceTravelOptionNormalizationTest,
+	"AlienRamen.Transition.TravelOptions.ListenNormalizationUsesQuestionSeparator",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARPersistenceTravelOptionNormalizationTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	const FString URLWithOptions = TEXT("/Game/Maps/Lvl_RamenShop?Game=/Script/AlienRamen.ARShopGameMode?Portal=Kitchen");
+	const FString NormalizedURL = ARTransition::EnsureTravelOption(URLWithOptions, TEXT("listen"));
+	TestTrue(TEXT("Listen option appended with UE '?' separator"), NormalizedURL.Contains(TEXT("?Portal=Kitchen?listen")));
+	TestFalse(TEXT("Listen option is never appended with '&'"), NormalizedURL.Contains(TEXT("&listen")));
+
+	const FString AlreadyHasListen = ARTransition::EnsureTravelOption(TEXT("/Game/Maps/Lvl_RamenShop?listen"), TEXT("listen"));
+	TestEqual(TEXT("Existing listen option is not duplicated"), AlreadyHasListen, FString(TEXT("/Game/Maps/Lvl_RamenShop?listen")));
 	return true;
 }
 
@@ -215,4 +284,3 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
-

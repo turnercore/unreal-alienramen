@@ -6,6 +6,7 @@
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
+#include "ARTravelSubsystem.h"
 #include "ParleyDialogueSubsystem.h"
 #include "ParleyFactionSubsystem.h"
 #include "HAL/IConsoleManager.h"
@@ -56,6 +57,11 @@ UARSaveSubsystem* UARGameInstance::GetARSaveSubsystem() const
 UARSessionSubsystem* UARGameInstance::GetARSessionSubsystem() const
 {
 	return GetSubsystem<UARSessionSubsystem>();
+}
+
+UARTravelSubsystem* UARGameInstance::GetARTravelSubsystem() const
+{
+	return GetSubsystem<UARTravelSubsystem>();
 }
 
 UARFactionVotingSubsystem* UARGameInstance::GetARFactionVotingSubsystem() const

@@ -9,6 +9,7 @@
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
+#include "ARTravelSubsystem.h"
 #include "ARTransitionTypes.h"
 #include "EngineUtils.h"
 #include "Engine/GameInstance.h"
@@ -32,30 +33,6 @@ namespace
 		default:
 			return bModeDefaultRouteEnabled;
 		}
-	}
-
-	static FString AppendTravelOptions(const FString& BaseURL, const FString& Options)
-	{
-		if (Options.IsEmpty())
-		{
-			return BaseURL;
-		}
-
-		FString TrimmedOptions = Options.TrimStartAndEnd();
-		if (TrimmedOptions.IsEmpty())
-		{
-			return BaseURL;
-		}
-
-		if (TrimmedOptions.StartsWith(TEXT("?")) || TrimmedOptions.StartsWith(TEXT("&")))
-		{
-			// Normalize any leading '&' to '?' — UE travel URLs use repeated '?' (Map?A=1?B=2).
-			TrimmedOptions[0] = TEXT('?');
-			return BaseURL + TrimmedOptions;
-		}
-
-		// Always use '?' as the joiner for travel options (Map?A=1?B=2).
-		return FString::Printf(TEXT("%s?%s"), *BaseURL, *TrimmedOptions);
 	}
 }
 
@@ -956,18 +933,18 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		return false;
 	}
 
-	FString TravelURL = BuildModeTravelURL(URL, RoutePolicy);
-	TravelURL = AppendTravelOptions(TravelURL, Options);
+	const FString RequestedURLWithOptions = ARTransition::AppendTravelOptions(URL, Options);
+	FString TravelURL = BuildModeTravelURL(RequestedURLWithOptions, RoutePolicy);
 
-	UARSaveSubsystem* SaveSubsystem = nullptr;
+	UARTravelSubsystem* TravelSubsystem = nullptr;
 	if (UGameInstance* GI = GetGameInstance())
 	{
-		SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
+		TravelSubsystem = GI->GetSubsystem<UARTravelSubsystem>();
 	}
 
-	if (!SaveSubsystem)
+	if (!TravelSubsystem)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel failed: SaveSubsystem missing."));
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] TryStartTravel failed: TravelSubsystem missing."));
 		return false;
 	}
 
@@ -983,30 +960,10 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 			OpenLevelOptions = TravelURL.Mid(QueryIndex + 1);
 		}
 
-		bool bHasListenOption = false;
-		if (!OpenLevelOptions.IsEmpty())
-		{
-			TArray<FString> OptionTokens;
-			OpenLevelOptions.ParseIntoArray(OptionTokens, TEXT("?"), true);
-			for (const FString& Token : OptionTokens)
-			{
-				if (Token.TrimStartAndEnd().Equals(TEXT("listen"), ESearchCase::IgnoreCase))
-				{
-					bHasListenOption = true;
-					break;
-				}
-			}
-		}
-
-		if (!bHasListenOption)
-		{
-			OpenLevelOptions = OpenLevelOptions.IsEmpty()
-				? FString(TEXT("listen"))
-				: FString::Printf(TEXT("%s?listen"), *OpenLevelOptions);
-		}
+		OpenLevelOptions = ARTransition::EnsureTravelOption(OpenLevelOptions, TEXT("listen"));
 
 		UE_LOG(ARLog, Log, TEXT("[GameMode] TryStartTravel PIE fallback -> OpenLevel Level='%s' Options='%s'"), *LevelName, *OpenLevelOptions);
-		return SaveSubsystem->RequestOpenLevel(LevelName, OpenLevelOptions, bSkipReadyChecks, bAbsolute, bSaveOnModeExit);
+		return TravelSubsystem->RequestOpenLevel(LevelName, OpenLevelOptions, bSkipReadyChecks, bAbsolute, bSaveOnModeExit);
 	}
 #endif
 
@@ -1020,7 +977,7 @@ bool AARGameModeBase::TryStartTravel(const FString& URL, const FString& Options,
 		*ARTransition::LexToString(RoutePolicy),
 		bSkipReadyChecks ? TEXT("true") : TEXT("false"),
 		bSaveOnModeExit ? TEXT("true") : TEXT("false"));
-	return SaveSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bSaveOnModeExit);
+	return TravelSubsystem->RequestServerTravel(TravelURL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bSaveOnModeExit);
 }
 
 bool AARGameModeBase::PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks)

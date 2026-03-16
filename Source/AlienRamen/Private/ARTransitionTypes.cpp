@@ -11,6 +11,39 @@ namespace ARTransition
 
 	namespace
 	{
+		static FString NormalizeOptionSeparators(const FString& Input)
+		{
+			FString Normalized = Input;
+			Normalized.ReplaceInline(TEXT("&"), TEXT("?"), ESearchCase::CaseSensitive);
+			return Normalized;
+		}
+
+		static void SplitURLAndOptions(const FString& URLOrOptions, FString& OutMapPath, FString& OutOptions)
+		{
+			OutMapPath = URLOrOptions;
+			OutOptions.Reset();
+
+			int32 QueryStart = INDEX_NONE;
+			if (URLOrOptions.FindChar(TEXT('?'), QueryStart))
+			{
+				OutMapPath = URLOrOptions.Left(QueryStart);
+				OutOptions = URLOrOptions.Mid(QueryStart + 1);
+			}
+		}
+
+		static bool DoesTokenMatchOption(const FString& Token, const FString& OptionToken)
+		{
+			FString TrimmedToken = Token.TrimStartAndEnd();
+			if (TrimmedToken.IsEmpty())
+			{
+				return false;
+			}
+
+			const int32 EqualsIndex = TrimmedToken.Find(TEXT("="));
+			const FString TokenName = EqualsIndex == INDEX_NONE ? TrimmedToken : TrimmedToken.Left(EqualsIndex);
+			return TokenName.TrimStartAndEnd().Equals(OptionToken, ESearchCase::IgnoreCase);
+		}
+
 		static void AppendTravelOption(FString& InOutURL, const TCHAR* Key, const FString& Value)
 		{
 			if (!Key || Value.IsEmpty())
@@ -85,6 +118,81 @@ namespace ARTransition
 
 			return OptionsOrURL;
 		}
+	}
+
+	FString AppendTravelOptions(const FString& BaseURL, const FString& Options)
+	{
+		if (Options.IsEmpty())
+		{
+			return BaseURL;
+		}
+
+		FString TrimmedOptions = Options.TrimStartAndEnd();
+		if (TrimmedOptions.IsEmpty())
+		{
+			return BaseURL;
+		}
+
+		TrimmedOptions = NormalizeOptionSeparators(TrimmedOptions);
+		if (TrimmedOptions.StartsWith(TEXT("?")) || TrimmedOptions.StartsWith(TEXT("&")))
+		{
+			// UE travel options always chain via '?' (Map?A=1?B=2).
+			TrimmedOptions[0] = TEXT('?');
+			return BaseURL + TrimmedOptions;
+		}
+
+		return FString::Printf(TEXT("%s?%s"), *BaseURL, *TrimmedOptions);
+	}
+
+	bool HasTravelOption(const FString& URLOrOptions, const FString& OptionToken)
+	{
+		const FString Token = OptionToken.TrimStartAndEnd();
+		if (Token.IsEmpty() || URLOrOptions.IsEmpty())
+		{
+			return false;
+		}
+
+		FString OptionsString;
+		FString IgnoredMapPath;
+		SplitURLAndOptions(URLOrOptions, IgnoredMapPath, OptionsString);
+
+		FString SearchSpace = !OptionsString.IsEmpty() ? OptionsString : URLOrOptions;
+		SearchSpace = NormalizeOptionSeparators(SearchSpace);
+
+		TArray<FString> OptionTokens;
+		SearchSpace.ParseIntoArray(OptionTokens, TEXT("?"), true);
+		for (const FString& Option : OptionTokens)
+		{
+			if (DoesTokenMatchOption(Option, Token))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	FString EnsureTravelOption(const FString& URLOrOptions, const FString& OptionToken)
+	{
+		const FString Token = OptionToken.TrimStartAndEnd();
+		if (Token.IsEmpty())
+		{
+			return URLOrOptions;
+		}
+
+		FString Value = URLOrOptions.TrimStartAndEnd();
+		if (Value.IsEmpty())
+		{
+			return Token;
+		}
+
+		Value = NormalizeOptionSeparators(Value);
+		if (HasTravelOption(Value, Token))
+		{
+			return Value;
+		}
+
+		return FString::Printf(TEXT("%s?%s"), *Value, *Token);
 	}
 
 	FString AppendTransitionContextOptions(const FString& URL, const FARTransitionContext& Context)

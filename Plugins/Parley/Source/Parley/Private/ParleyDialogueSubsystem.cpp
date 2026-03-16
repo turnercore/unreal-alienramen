@@ -164,6 +164,10 @@ namespace
 
 		void MarkStateDirty() const
 		{
+			if (Owner)
+			{
+				Owner->OnProgressionStateMarkedDirty.Broadcast();
+			}
 		}
 
 		bool AddProgressionTag(const FGameplayTag& ProgressionTag)

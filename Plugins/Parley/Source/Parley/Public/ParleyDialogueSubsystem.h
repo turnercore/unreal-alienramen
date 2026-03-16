@@ -24,6 +24,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FParleyOnSpeakerRelationshipLevelCh
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnConversationCompleted, FGameplayTag, ConversationTag, FGameplayTag, PlayerSlotTag, FGameplayTag, CharacterTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnSpeakerRelationshipChanged, FGameplayTag, SourceSpeakerTag, FGameplayTag, TargetSpeakerTag, FGameplayTag, PlayerSlotTag, float, Delta, float, NewTotal);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnProgressionTagMutated, FGameplayTag, ProgressionTag, bool, bAdded, FGameplayTag, PlayerSlotTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FParleyOnProgressionStateMarkedDirty);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnChoiceLookaheadEmotion, FGameplayTag, PrimarySpeakerTag, FGameplayTag, PreviewEmotionTag, FGuid, ChoiceBranchId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnChoiceLookaheadCleared, FGameplayTag, PlayerSlotTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FParleyOnDialogueSignalFired, FGameplayTag, SignalTag, FGameplayTagContainer, PayloadTags, FGameplayTag, ConversationTag, FGameplayTag, SpeakerTag, FGameplayTag, PlayerSlotTag);
@@ -221,6 +222,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when progression tags are added/removed by dialogue. Save bridges should persist and mark dirty."))
 	FParleyOnProgressionTagMutated OnProgressionTagMutated;
 
+	/** Broadcast when dialogue progression data was mutated and requires save-bridge persistence. */
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when dialogue progression state mutates and should be persisted by save bridges."))
+	FParleyOnProgressionStateMarkedDirty OnProgressionStateMarkedDirty;
+
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when highlighted-choice lookahead resolves a preview emotion for the current primary speaker. PreviewEmotionTag is invalid when no preview is available."))
 	FParleyOnChoiceLookaheadEmotion OnChoiceLookaheadEmotion;
 
@@ -247,7 +252,8 @@ private:
 		FGameplayTag PrimarySpeakerTag,
 		FDialogueConversationOffer& OutOffer,
 		bool bSpeakerLocalStateAllowsDialogue,
-		FGameplayTag SourceSpeakerTagOverride);
+		FGameplayTag SourceSpeakerTagOverride,
+		bool bPersistChanceSkipFailures);
 	bool StartConversationInternal(
 		APlayerController* RequestingController,
 		FGameplayTag ConversationTag,

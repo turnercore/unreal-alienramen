@@ -143,6 +143,7 @@ Runtime UI is intentionally separate from editor preview tooling.
   - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
 - `UParleyDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithCharacter`) back to the bound controller.
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
+- Client runtime now mirrors controller RPC dialogue updates back into `UParleyDialogueSubsystem::OnDialogueSessionUpdated/OnDialogueSessionEnded` so subsystem-bound widgets receive live updates on clients without extra project glue.
 
 ## Content Model
 
@@ -171,6 +172,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - `UEmoComponent` provides replicated overhead-emotion display state for speaker actors and player characters.
 - Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
 - Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
+- `SetDialogueEmotionTag*`/`ClearDialogueEmotionTag*` APIs write directly to replicated `DialogueOverrideState`; they do not enqueue into system-source arbitration.
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
 - Dialogue line emotion is written as a system source (`DialogueLine`) with priority above `BusyEmotionPriority`; if line-tag resolve fails, no line source is written so lower-priority state (for example busy) remains visible.
 - Dialogue clears prior line-emotion source entries when presenting the next line, so line emotion holds until next line or session end.
@@ -182,7 +184,9 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UEmoSettings::DefaultTimedSystemOverrideDurationSeconds`.
 - Runtime overhead emotion rendering is owned directly by `AARHUDBase` (no separate HUD emotion component).
 - `AARHUDBase::DrawHUD` renders overhead emotions natively and applies projection/size/occlusion policy from HUD properties.
+- HUD viewer-slot resolution falls back to shared display state when the local viewer has no `PlayerSlotTag` (for example single-player/spectator/untagged local controllers).
 - Runtime suppression (for example cutscenes) should use `AARHUDBase::SetEmotionRenderingSuppressed(...)`.
+- `UEmoComponent` display change notifications now fire when effective shared or slot-specific (`P1`/`P2`) display tags change, so delegate-driven UI/subsystems are informed without polling.
 
 ## Offer + Execution Rules (Current Runtime)
 
@@ -192,7 +196,8 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
   - repeatable/other
 - Highest numeric priority wins inside the first non-empty bucket.
 - Equal-priority candidates resolve by weighted random using `OfferWeight` (default `1`).
-- `ChanceOffered` (`0..1`) is rolled per candidate during offer evaluation; failed rolls mark that conversation skipped for the player this cycle.
+- `ChanceOffered` (`0..1`) is rolled per candidate during offer evaluation.
+- Failed chance rolls are only persisted to per-cycle skipped state on authoritative offer-attempt flow (`TryStartDialogueBetweenSpeakers` path), not on pure availability queries.
 - Per-cycle blockers are character-specific (`seen this cycle`, `skipped this cycle`), controlled by `bBlockOfferPerCycle` (default `true`).
 - Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority `1`.
 - Offer checks include:
@@ -228,6 +233,8 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Per-cycle offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per character in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
 - Per-cycle speaker offer counts are also persisted per character (`SpeakerOfferCountsThisCycle`) and gate speaker offer/start paths when `MaxOffersPerCycle > 0`.
 - Runtime still keeps active-session transient containers for fast gating/evaluation.
+- `ClearConversationCycleOfferState(...)` and authoritative offer-selection/start mutation paths are authority-gated; non-authority calls early-out.
+- Save bridges can bind `UParleyDialogueSubsystem::OnProgressionStateMarkedDirty` to persist progression/cycle-state changes when dialogue marks data dirty.
 - Completed state is persistent and save-backed.
 - Completion is written only when a `Completed` node executes.
 - Per-cycle offer blockers can be reset explicitly via `ClearConversationCycleOfferState(...)` (single slot or all slots).

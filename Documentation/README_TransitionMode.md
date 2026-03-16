@@ -60,6 +60,8 @@ Transition context is passed by travel URL options:
 
 Helpers live in `ARTransitionTypes`:
 
+- `ARTransition::AppendTravelOptions` (normalizes travel option separators to UE-style repeated `?`)
+- `ARTransition::EnsureTravelOption` (token-safe option injection, for example `listen`)
 - `ARTransition::BuildTransitionTravelURL`
 - `ARTransition::AppendTransitionContextOptions`
 - `ARTransition::ApplyTransitionContextFromTravelOptions`
@@ -74,6 +76,7 @@ Blueprint wrappers:
 
 1. Source mode finalizes authoritative runtime state (economy/rewards/etc).
 2. Source mode calls `TryStartTravel` / `EndModeAndTravel`; router emits transition-map URL + context options.
+   - Caller-supplied destination travel options are embedded into `ARTrDest` and preserved through the transition-map leg.
 3. Transition map displays results/loading UI.
 4. Players submit continue-ready votes.
 5. Transition mode auto-travels to `TransitionContext.DestinationURL` when all are ready.
@@ -110,7 +113,7 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
 
 ## Save-Load Entry
 
-- `UARSaveSubsystem::TravelToLoadedSaveDestination(...)` is the standard gameplay-entry path after `LoadGame(...)`.
+- `UARTravelSubsystem::TravelToLoadedSaveDestination(...)` is the standard gameplay-entry path after `LoadGame(...)`.
 - It builds transition context with:
   - `SourceMode=SaveLoad`
   - `Reason=SaveLoadEntry`
