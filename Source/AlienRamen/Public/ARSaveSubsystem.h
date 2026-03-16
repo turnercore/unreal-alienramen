@@ -15,6 +15,7 @@ class UARSaveIndexGame;
 class AARGameStateBase;
 class AARPlayerStateBase;
 class AARPlayerController;
+class APlayerState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationCompleted, const FARSaveResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationFailed, const FARSaveResult&, Result);
@@ -93,6 +94,9 @@ public:
 	// Whether a save is currently running (authority only, sync path).
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool IsSaveInProgress() const { return bSaveInProgress; }
+
+	/** Builds runtime identity for a player, including shared-account couch secondary-profile disambiguation. */
+	FARPlayerIdentity BuildRuntimePlayerIdentity(const APlayerState* PlayerState) const;
 
 	// Marks save dirty; autosave can later persist.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -216,6 +220,10 @@ protected:
 	virtual void Deinitialize() override;
 
 private:
+	static FString BuildSharedOnlineIdentityRuntimeKey(const FARPlayerIdentity& Identity);
+	bool ResolveSharedOnlineSecondaryProfileForPlayerState(const APlayerState* PlayerState) const;
+	void ClearSharedOnlineIdentityRuntimeCache();
+
 	static FName NormalizeSlotBaseName(FName SlotBaseName);
 	static FName BuildRevisionSlotName(FName SlotBaseName, int32 SlotNumber);
 	static bool TrySplitRevisionSlotName(const FString& InSlotName, FString& OutBaseSlotName, int32& OutSlotNumber);
@@ -253,6 +261,8 @@ private:
 
 	UPROPERTY(Transient)
 	bool bPendingFreshLoadEntry = false;
+
+	mutable TMap<FString, TArray<TWeakObjectPtr<APlayerState>>> SharedOnlineIdentityRuntimeClaims;
 
 	UPROPERTY(Transient)
 	FGameplayTag PendingLoadedSaveModeTag;

@@ -41,7 +41,7 @@ Authoritative persisted fields currently include:
   - `ShopTransientCarryables`
 - Player payload:
   - `PlayerStates[]`:
-    - `Identity` (`PlayerSlot`, optional online id/type, legacy id/name)
+    - `Identity` (optional online id/type, legacy id/name, shared-account primary/secondary profile flag)
     - canonical `CurrentCharacterTag`
     - compatibility `CharacterPicked`
     - `bDialogueAutoAdvanceEnabled`
@@ -133,7 +133,7 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 Hydration identity policy:
 - If requester has a strict online identity (`UniqueNetIdString` + non-null provider type), hydration requires identity match and does not slot-fallback.
 - Slot fallback is only used for local-only identities (PIE/offline/null subsystem style flows).
-- When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup prefers the row matching requester `PlayerSlot`.
+- When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup uses a shared-account primary/secondary profile discriminator (`bSharedOnlineIdSecondaryProfile`) assigned by runtime claim order.
 - `ClearPendingTravelGameStateData()`
 - `HasPendingTravelGameStateData()`
 

@@ -202,15 +202,15 @@ bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Paramete
 	FARPlayerStateSaveData& P1 = Save->PlayerStates.AddDefaulted_GetRef();
 	P1.Identity.UniqueNetIdString = TEXT("SharedLocalId");
 	P1.Identity.UniqueNetIdType = TEXT("LOCAL");
+	P1.Identity.bSharedOnlineIdSecondaryProfile = false;
 	P1.Identity.DisplayName = FText::FromString(TEXT("Player One"));
-	P1.Identity.PlayerSlot = EARPlayerSlot::P1;
 	P1.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 
 	FARPlayerStateSaveData& P2 = Save->PlayerStates.AddDefaulted_GetRef();
 	P2.Identity.UniqueNetIdString = TEXT("SharedLocalId");
 	P2.Identity.UniqueNetIdType = TEXT("LOCAL");
+	P2.Identity.bSharedOnlineIdSecondaryProfile = true;
 	P2.Identity.DisplayName = FText::FromString(TEXT("Player Two"));
-	P2.Identity.PlayerSlot = EARPlayerSlot::P2;
 	P2.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
 
 	FARPlayerStateSaveData Matched;
@@ -219,25 +219,26 @@ bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Paramete
 	FARPlayerIdentity LookupIdentity;
 	LookupIdentity.UniqueNetIdString = TEXT("SharedLocalId");
 	LookupIdentity.UniqueNetIdType = TEXT("LOCAL");
-	LookupIdentity.PlayerSlot = EARPlayerSlot::P2;
+	LookupIdentity.bSharedOnlineIdSecondaryProfile = true;
 	TestTrue(TEXT("Identity lookup succeeds"), Save->FindPlayerStateDataByIdentity(LookupIdentity, Matched, MatchedIndex));
-	TestEqual(TEXT("Identity lookup prefers matching slot when online ids collide"), MatchedIndex, 1);
-	TestEqual(TEXT("Identity lookup returns slot-consistent character row"), Matched.CurrentCharacterTag, P2.CurrentCharacterTag);
+	TestEqual(TEXT("Identity lookup resolves shared-id secondary profile row"), MatchedIndex, 1);
+	TestEqual(TEXT("Identity lookup returns secondary profile character row"), Matched.CurrentCharacterTag, P2.CurrentCharacterTag);
 
-	FARPlayerIdentity SlotFallbackIdentity;
-	SlotFallbackIdentity.PlayerSlot = EARPlayerSlot::P1;
-	TestTrue(TEXT("Slot fallback lookup succeeds"), Save->FindPlayerStateDataBySlot(SlotFallbackIdentity.PlayerSlot, Matched, MatchedIndex));
-	TestEqual(TEXT("Slot fallback returns P1 row"), MatchedIndex, 0);
-	TestEqual(TEXT("Slot fallback preserves current character tag"), Matched.CurrentCharacterTag, P1.CurrentCharacterTag);
+	FARPlayerIdentity PrimaryLookup = LookupIdentity;
+	PrimaryLookup.bSharedOnlineIdSecondaryProfile = false;
+	PrimaryLookup.PlayerSlot = EARPlayerSlot::P2; // Slot drift should not remap strict online identity.
+	TestTrue(TEXT("Primary identity lookup succeeds when runtime slot changed"), Save->FindPlayerStateDataByIdentity(PrimaryLookup, Matched, MatchedIndex));
+	TestEqual(TEXT("Primary identity lookup remains on primary profile row"), MatchedIndex, 0);
+	TestEqual(TEXT("Primary identity lookup preserves primary character row"), Matched.CurrentCharacterTag, P1.CurrentCharacterTag);
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARPersistenceSharedAccountUnknownSlotMigrationTest,
-	"AlienRamen.Save.PlayerState.SharedAccountUnknownSlotMigration",
+	FARPersistenceSharedAccountSecondaryProfileResolutionTest,
+	"AlienRamen.Save.PlayerState.SharedAccountSecondaryProfileResolution",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FARPersistenceSharedAccountUnknownSlotMigrationTest::RunTest(const FString& Parameters)
+bool FARPersistenceSharedAccountSecondaryProfileResolutionTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
@@ -247,35 +248,28 @@ bool FARPersistenceSharedAccountUnknownSlotMigrationTest::RunTest(const FString&
 		return false;
 	}
 
-	FARPlayerStateSaveData& FirstUnknown = Save->PlayerStates.AddDefaulted_GetRef();
-	FirstUnknown.Identity.UniqueNetIdString = TEXT("SharedLocalId");
-	FirstUnknown.Identity.UniqueNetIdType = TEXT("LOCAL");
-	FirstUnknown.Identity.PlayerSlot = EARPlayerSlot::Unknown;
-	FirstUnknown.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+	FARPlayerStateSaveData& Primary = Save->PlayerStates.AddDefaulted_GetRef();
+	Primary.Identity.UniqueNetIdString = TEXT("SharedLocalId");
+	Primary.Identity.UniqueNetIdType = TEXT("LOCAL");
+	Primary.Identity.bSharedOnlineIdSecondaryProfile = false;
+	Primary.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 
-	FARPlayerStateSaveData& SecondUnknown = Save->PlayerStates.AddDefaulted_GetRef();
-	SecondUnknown.Identity.UniqueNetIdString = TEXT("SharedLocalId");
-	SecondUnknown.Identity.UniqueNetIdType = TEXT("LOCAL");
-	SecondUnknown.Identity.PlayerSlot = EARPlayerSlot::Unknown;
-	SecondUnknown.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
-
-	FARPlayerIdentity QueryP1;
-	QueryP1.UniqueNetIdString = TEXT("SharedLocalId");
-	QueryP1.UniqueNetIdType = TEXT("LOCAL");
-	QueryP1.PlayerSlot = EARPlayerSlot::P1;
-
+	FARPlayerIdentity SecondaryQuery;
+	SecondaryQuery.UniqueNetIdString = TEXT("SharedLocalId");
+	SecondaryQuery.UniqueNetIdType = TEXT("LOCAL");
+	SecondaryQuery.bSharedOnlineIdSecondaryProfile = true;
 	FARPlayerStateSaveData MatchedData;
 	int32 MatchedIndex = INDEX_NONE;
-	TestTrue(TEXT("P1 identity resolves from unknown-slot legacy rows"), Save->FindPlayerStateDataByIdentity(QueryP1, MatchedData, MatchedIndex));
-	TestEqual(TEXT("First unknown-slot row is selected for first concrete slot"), MatchedIndex, 0);
+	TestFalse(TEXT("Secondary shared-id profile is absent before creation"), Save->FindPlayerStateDataByIdentity(SecondaryQuery, MatchedData, MatchedIndex));
 
-	// Emulate save-write normalization after first hydrate: row now gets a concrete runtime slot.
-	Save->PlayerStates[MatchedIndex].Identity.PlayerSlot = EARPlayerSlot::P1;
+	FARPlayerStateSaveData& Secondary = Save->PlayerStates.AddDefaulted_GetRef();
+	Secondary.Identity.UniqueNetIdString = TEXT("SharedLocalId");
+	Secondary.Identity.UniqueNetIdType = TEXT("LOCAL");
+	Secondary.Identity.bSharedOnlineIdSecondaryProfile = true;
+	Secondary.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
 
-	FARPlayerIdentity QueryP2 = QueryP1;
-	QueryP2.PlayerSlot = EARPlayerSlot::P2;
-	TestTrue(TEXT("P2 identity resolves after P1 row has been normalized"), Save->FindPlayerStateDataByIdentity(QueryP2, MatchedData, MatchedIndex));
-	TestEqual(TEXT("Second unknown-slot row is selected for second concrete slot"), MatchedIndex, 1);
+	TestTrue(TEXT("Secondary shared-id profile resolves once created"), Save->FindPlayerStateDataByIdentity(SecondaryQuery, MatchedData, MatchedIndex));
+	TestEqual(TEXT("Secondary shared-id profile resolves to second row"), MatchedIndex, 1);
 	return true;
 }
 

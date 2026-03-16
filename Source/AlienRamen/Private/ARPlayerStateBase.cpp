@@ -24,16 +24,22 @@ namespace
 			return Identity;
 		}
 
-		Identity.LegacyId = PlayerState->GetPlayerId();
-		Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
-		// Persist a runtime slot snapshot so shared-account local players stay disambiguated.
-		// Runtime join normalization still owns the authoritative slot assignment on load/travel.
-		const EARPlayerSlot SlotFromTag = ARPlayer::GetPlayerSlotForTag(PlayerState->GetPlayerSlotTag());
-		Identity.PlayerSlot = SlotFromTag != EARPlayerSlot::Unknown ? SlotFromTag : PlayerState->GetPlayerSlot();
-		if (PlayerState->GetUniqueId().IsValid())
+		UGameInstance* GameInstance = PlayerState->GetGameInstance();
+		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+		if (SaveSubsystem)
 		{
-			Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
-			Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+			Identity = SaveSubsystem->BuildRuntimePlayerIdentity(PlayerState);
+		}
+		else
+		{
+			Identity.LegacyId = PlayerState->GetPlayerId();
+			Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
+			Identity.PlayerSlot = EARPlayerSlot::Unknown;
+			if (PlayerState->GetUniqueId().IsValid())
+			{
+				Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+				Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+			}
 		}
 
 		return Identity;
@@ -232,22 +238,22 @@ void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, cons
 					return true;
 				}
 
-				const FUniqueNetIdRepl ThisUniqueId = GetUniqueId();
-				const FUniqueNetIdRepl OtherUniqueId = OtherPlayer->GetUniqueId();
-				if (ThisUniqueId.IsValid() && OtherUniqueId.IsValid() && ThisUniqueId == OtherUniqueId)
+				const int32 ThisLegacyId = GetPlayerId();
+				const int32 OtherLegacyId = OtherPlayer->GetPlayerId();
+				if (ThisLegacyId > 0 && ThisLegacyId == OtherLegacyId)
 				{
 					return true;
 				}
 
-				const int32 ThisLegacyId = GetPlayerId();
-				const int32 OtherLegacyId = OtherPlayer->GetPlayerId();
-				return ThisLegacyId > 0 && ThisLegacyId == OtherLegacyId;
+				const AController* ThisOwnerController = Cast<AController>(GetOwner());
+				const AController* OtherOwnerController = Cast<AController>(OtherPlayer->GetOwner());
+				return ThisOwnerController && OtherOwnerController && ThisOwnerController == OtherOwnerController;
 			};
 
 			for (APlayerState* PS : GS->PlayerArray)
 			{
 				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
-				if (!OtherPlayer || IsSameLogicalPlayer(OtherPlayer))
+				if (!OtherPlayer)
 				{
 					continue;
 				}
@@ -256,6 +262,11 @@ void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, cons
 				if (!OtherOwnerController || OtherOwnerController->PlayerState != OtherPlayer)
 				{
 					// Ignore stale/inactive PlayerState remnants during seamless-travel handoff.
+					continue;
+				}
+
+				if (IsSameLogicalPlayer(OtherPlayer))
+				{
 					continue;
 				}
 

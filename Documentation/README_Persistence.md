@@ -73,8 +73,8 @@ If the data should stay with the character regardless of which player controls t
 - `EARCharacterChoice` is a compatibility mirror for existing Blueprint logic.
 - Player slot identity is canonical as `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`).
 - `EARPlayerSlot` is a compatibility mirror that stays synchronized with `PlayerSlotTag`.
-- Save player rows persist a slot snapshot in `FARPlayerIdentity::PlayerSlot` to disambiguate shared-account local players that share one online id.
-- Slot snapshots are identity tie-breakers only; runtime join/travel normalization remains authoritative for active slot ownership.
+- Save player rows do not persist slot snapshot as a durable identity key.
+- Shared-account local players are disambiguated by a persisted primary/secondary profile flag under the same online id (`FARPlayerIdentity::bSharedOnlineIdSecondaryProfile`), while runtime join/travel normalization remains authoritative for active slot ownership.
 - Runtime control still projects through `AARPlayerStateBase`.
 - New logic should prefer `CurrentCharacterTag` over `CharacterPicked`.
 
@@ -163,6 +163,7 @@ Expectation:
 - `HandleStartingNewPlayer(...)` performs a one-shot `RestartPlayer(...)` retry only when `Super::HandleStartingNewPlayer_Implementation(...)` leaves the controller without a pawn after normalization, recovering failed initial spawn without forcing extra respawns when identity later changes.
 - first-session/no-save joins assign a random available canonical character (`Brother`/`Sister`) while preserving uniqueness when possible.
 - `AARGameModeBase::HandleSeamlessTravelPlayer(...)` immediately re-runs slot/character normalization (`EnsureJoinedPlayerHasUniqueSlot` + `NormalizeConnectedPlayersIdentity`) so transient handoff overlap cannot leave duplicate concrete slots
+- `AARPlayerStateBase::SetPlayerSlotTag_Internal(...)` enforces concrete slot uniqueness against active controller-owned players only, and does not collapse distinct local couch-coop players solely because they share the same online account id.
 - seamless-travel controller replacement must flow through `GetPlayerControllerClassToSpawnForSeamlessTravel(...)` + engine handoff (`SeamlessTravelTo/From`) rather than post-super manual `SwapPlayerControllers` calls
 - authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
 - `AARPlayerStateBase::UpdateLoadoutWithTag(...)` ignores invalid/empty incoming tags and re-seeds default loadout when runtime loadout is empty, preventing editor/raw-map test flows from staying uninitialized.

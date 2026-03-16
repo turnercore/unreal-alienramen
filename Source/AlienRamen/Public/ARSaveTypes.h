@@ -131,13 +131,17 @@ struct ALIENRAMEN_API FARPlayerIdentity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
-	/**
-	 * Runtime coop slot snapshot used to disambiguate duplicated online identities
-	 * (for example couch-coop players sharing one platform account).
-	 * Slot assignment is still re-owned by runtime join normalization on load/travel.
-	 */
+	/** Legacy runtime slot snapshot (no longer persisted by save gather paths; kept for compatibility only). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
+
+	/**
+	 * Shared-account disambiguator:
+	 * - false = primary profile for this online id
+	 * - true  = secondary couch profile for this online id
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	bool bSharedOnlineIdSecondaryProfile = false;
 
 	/** Platform-specific unique id string (primary identity key). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
@@ -174,22 +178,13 @@ struct ALIENRAMEN_API FARPlayerIdentity
 				return false;
 			}
 
-			// When both sides provide a concrete slot, require it to match to avoid
-			// collapsing shared-account local players onto one save row.
-			if (PlayerSlot != EARPlayerSlot::Unknown
-				&& Other.PlayerSlot != EARPlayerSlot::Unknown
-				&& PlayerSlot != Other.PlayerSlot)
-			{
-				return false;
-			}
-
-			return true;
+			return bSharedOnlineIdSecondaryProfile == Other.bSharedOnlineIdSecondaryProfile;
 		}
-		// Slot-only identity matching is legacy compatibility for older save rows.
-		return PlayerSlot != EARPlayerSlot::Unknown
-			&& Other.PlayerSlot != EARPlayerSlot::Unknown
-			&& PlayerSlot == Other.PlayerSlot;
+
+		// Legacy fallback path for non-online identities.
+		return LegacyId > 0 && Other.LegacyId > 0 && LegacyId == Other.LegacyId;
 	}
+
 };
 
 USTRUCT(BlueprintType)

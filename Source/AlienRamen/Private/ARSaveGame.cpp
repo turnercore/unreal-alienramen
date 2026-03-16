@@ -200,51 +200,15 @@ bool UARSaveGame::FindPlayerStateDataBySlot(const EARPlayerSlot Slot, FARPlayerS
 bool UARSaveGame::FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const
 {
 	OutIndex = INDEX_NONE;
-	int32 FirstIdentityMatchIndex = INDEX_NONE;
-	int32 FirstUnknownSlotIdentityMatchIndex = INDEX_NONE;
-	const bool bIdentityProvidesConcreteSlot = Identity.PlayerSlot != EARPlayerSlot::Unknown;
-
 	for (int32 i = 0; i < PlayerStates.Num(); ++i)
 	{
-		if (PlayerStates[i].Identity.Matches(Identity))
+		const FARPlayerIdentity& ExistingIdentity = PlayerStates[i].Identity;
+		if (ExistingIdentity.Matches(Identity))
 		{
-			if (FirstIdentityMatchIndex == INDEX_NONE)
-			{
-				FirstIdentityMatchIndex = i;
-			}
-
-			// Prefer slot-consistent match when multiple rows share the same online identity
-			// (for example couch coop players on one platform account).
-			if (bIdentityProvidesConcreteSlot && PlayerStates[i].Identity.PlayerSlot == Identity.PlayerSlot)
-			{
-				OutData = PlayerStates[i];
-				OutIndex = i;
-				return true;
-			}
-
-			// If no exact slot row exists yet, prefer an unknown-slot match over a mismatched concrete slot.
-			// This supports migrating pre-fix rows where local-player duplicates were stored with Unknown slot.
-			if (bIdentityProvidesConcreteSlot
-				&& PlayerStates[i].Identity.PlayerSlot == EARPlayerSlot::Unknown
-				&& FirstUnknownSlotIdentityMatchIndex == INDEX_NONE)
-			{
-				FirstUnknownSlotIdentityMatchIndex = i;
-			}
+			OutData = PlayerStates[i];
+			OutIndex = i;
+			return true;
 		}
-	}
-
-	if (FirstUnknownSlotIdentityMatchIndex != INDEX_NONE)
-	{
-		OutData = PlayerStates[FirstUnknownSlotIdentityMatchIndex];
-		OutIndex = FirstUnknownSlotIdentityMatchIndex;
-		return true;
-	}
-
-	if (FirstIdentityMatchIndex != INDEX_NONE)
-	{
-		OutData = PlayerStates[FirstIdentityMatchIndex];
-		OutIndex = FirstIdentityMatchIndex;
-		return true;
 	}
 
 	return false;

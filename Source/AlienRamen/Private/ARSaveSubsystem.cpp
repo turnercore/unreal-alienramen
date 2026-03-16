@@ -24,6 +24,8 @@
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/ScopeExit.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerState.h"
 #include "GameFramework/Pawn.h"
 #include "Templates/UnrealTemplate.h"
 #include "StructSerializable.h"
@@ -325,31 +327,6 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 	});
 }
 
-static FARPlayerIdentity BuildPlayerIdentityFromPlayerState(const APlayerState* PlayerState)
-{
-	FARPlayerIdentity Identity;
-	const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
-	if (!ARPS)
-	{
-		return Identity;
-	}
-
-	Identity.LegacyId = ARPS->GetPlayerId();
-	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-	// Capture runtime slot in identity rows so shared-account local players map to distinct rows.
-	// Runtime join normalization still reassigns authoritative slots after hydration.
-	const EARPlayerSlot SlotFromTag = ARPlayer::GetPlayerSlotForTag(ARPS->GetPlayerSlotTag());
-	Identity.PlayerSlot = SlotFromTag != EARPlayerSlot::Unknown ? SlotFromTag : ARPS->GetPlayerSlot();
-
-	if (PlayerState->GetUniqueId().IsValid())
-	{
-		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
-		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
-	}
-
-	return Identity;
-}
-
 static FARCharacterSaveData* FindOrAddCharacterState(UARSaveGame* SaveGame, const FGameplayTag CharacterTag)
 {
 	if (!SaveGame)
@@ -444,13 +421,98 @@ void UARSaveSubsystem::Deinitialize()
 	PendingLoadedSaveModeTag = FGameplayTag();
 	PendingLoadedSaveMapPath.Reset();
 	bPendingFreshLoadEntry = false;
+	ClearSharedOnlineIdentityRuntimeCache();
 	Super::Deinitialize();
 }
 
 void UARSaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	ClearSharedOnlineIdentityRuntimeCache();
 	ARSaveInternal::EnablePIESeamlessTravelIfNeeded();
+}
+
+FString UARSaveSubsystem::BuildSharedOnlineIdentityRuntimeKey(const FARPlayerIdentity& Identity)
+{
+	if (!Identity.HasStrictOnlineIdentity())
+	{
+		return FString();
+	}
+
+	return FString::Printf(TEXT("%s|%s"), *Identity.UniqueNetIdType, *Identity.UniqueNetIdString);
+}
+
+void UARSaveSubsystem::ClearSharedOnlineIdentityRuntimeCache()
+{
+	SharedOnlineIdentityRuntimeClaims.Reset();
+}
+
+bool UARSaveSubsystem::ResolveSharedOnlineSecondaryProfileForPlayerState(const APlayerState* PlayerState) const
+{
+	if (!PlayerState)
+	{
+		return false;
+	}
+
+	FARPlayerIdentity Identity;
+	if (PlayerState->GetUniqueId().IsValid())
+	{
+		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+	}
+
+	const FString IdentityKey = BuildSharedOnlineIdentityRuntimeKey(Identity);
+	if (IdentityKey.IsEmpty())
+	{
+		return false;
+	}
+
+	TArray<TWeakObjectPtr<APlayerState>>& Claims = SharedOnlineIdentityRuntimeClaims.FindOrAdd(IdentityKey);
+	Claims.RemoveAll([](const TWeakObjectPtr<APlayerState>& Entry)
+	{
+		APlayerState* Existing = Entry.Get();
+		if (!Existing || !IsValid(Existing))
+		{
+			return true;
+		}
+
+		const AController* OwnerController = Cast<AController>(Existing->GetOwner());
+		return !OwnerController || OwnerController->PlayerState != Existing;
+	});
+
+	for (int32 Index = 0; Index < Claims.Num(); ++Index)
+	{
+		if (Claims[Index].Get() == PlayerState)
+		{
+			return Index > 0;
+		}
+	}
+
+	Claims.Add(const_cast<APlayerState*>(PlayerState));
+	return Claims.Num() > 1;
+}
+
+FARPlayerIdentity UARSaveSubsystem::BuildRuntimePlayerIdentity(const APlayerState* PlayerState) const
+{
+	FARPlayerIdentity Identity;
+	const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
+	if (!ARPS)
+	{
+		return Identity;
+	}
+
+	Identity.LegacyId = ARPS->GetPlayerId();
+	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
+	Identity.PlayerSlot = EARPlayerSlot::Unknown;
+
+	if (PlayerState->GetUniqueId().IsValid())
+	{
+		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+	}
+
+	Identity.bSharedOnlineIdSecondaryProfile = ResolveSharedOnlineSecondaryProfileForPlayerState(PlayerState);
+	return Identity;
 }
 
 FName UARSaveSubsystem::NormalizeSlotBaseName(FName SlotBaseName)
@@ -825,15 +887,31 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 			continue;
 		}
 
-		const FARPlayerIdentity RuntimeIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(PS);
+		const FARPlayerIdentity RuntimeIdentity = BuildRuntimePlayerIdentity(PS);
 		FARPlayerStateSaveData PlayerData;
-		for (const FARPlayerStateSaveData& ExistingPlayerData : ExistingPlayerStates)
+		int32 BestMatchIndex = INDEX_NONE;
+		int32 BestMatchScore = MIN_int32;
+		for (int32 ExistingIndex = 0; ExistingIndex < ExistingPlayerStates.Num(); ++ExistingIndex)
 		{
-			if (ExistingPlayerData.Identity.Matches(RuntimeIdentity))
+			const FARPlayerStateSaveData& ExistingPlayerData = ExistingPlayerStates[ExistingIndex];
+			const FARPlayerIdentity& ExistingIdentity = ExistingPlayerData.Identity;
+
+			int32 MatchScore = MIN_int32;
+			if (ExistingIdentity.Matches(RuntimeIdentity))
 			{
-				PlayerData = ExistingPlayerData;
-				break;
+				MatchScore = 100;
 			}
+
+			if (MatchScore > BestMatchScore)
+			{
+				BestMatchScore = MatchScore;
+				BestMatchIndex = ExistingIndex;
+			}
+		}
+
+		if (ExistingPlayerStates.IsValidIndex(BestMatchIndex))
+		{
+			PlayerData = ExistingPlayerStates[BestMatchIndex];
 		}
 
 		PlayerData.Identity = RuntimeIdentity;
@@ -1564,7 +1642,7 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 Index = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), bAllowSlotFallback, Index))
 	{
@@ -1690,7 +1768,7 @@ bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, F
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), bAllowSlotFallback, PlayerIndex))
 	{
@@ -1736,7 +1814,7 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), true, PlayerIndex))
 	{
@@ -1789,7 +1867,7 @@ bool UARSaveSubsystem::RemovePlayerProgressionTag(AARPlayerStateBase* Requester,
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), true, PlayerIndex))
 	{
