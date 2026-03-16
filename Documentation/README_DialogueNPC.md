@@ -143,6 +143,7 @@ Runtime UI is intentionally separate from editor preview tooling.
   - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
 - `UParleyDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithCharacter`) back to the bound controller.
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
+- Client runtime now mirrors controller RPC dialogue updates back into `UParleyDialogueSubsystem::OnDialogueSessionUpdated/OnDialogueSessionEnded` so subsystem-bound widgets receive live updates on clients without extra project glue.
 
 ## Content Model
 
@@ -171,6 +172,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - `UEmoComponent` provides replicated overhead-emotion display state for speaker actors and player characters.
 - Emotion state is server-authoritative with shared + per-slot variants (`P1` / `P2`).
 - Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
+- `SetDialogueEmotionTag*`/`ClearDialogueEmotionTag*` APIs write directly to replicated `DialogueOverrideState`; they do not enqueue into system-source arbitration.
 - Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
 - Dialogue line emotion is written as a system source (`DialogueLine`) with priority above `BusyEmotionPriority`; if line-tag resolve fails, no line source is written so lower-priority state (for example busy) remains visible.
 - Dialogue clears prior line-emotion source entries when presenting the next line, so line emotion holds until next line or session end.
@@ -182,7 +184,9 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UEmoSettings::DefaultTimedSystemOverrideDurationSeconds`.
 - Runtime overhead emotion rendering is owned directly by `AARHUDBase` (no separate HUD emotion component).
 - `AARHUDBase::DrawHUD` renders overhead emotions natively and applies projection/size/occlusion policy from HUD properties.
+- HUD viewer-slot resolution falls back to shared display state when the local viewer has no `PlayerSlotTag` (for example single-player/spectator/untagged local controllers).
 - Runtime suppression (for example cutscenes) should use `AARHUDBase::SetEmotionRenderingSuppressed(...)`.
+- `UEmoComponent` display change notifications now fire when effective shared or slot-specific (`P1`/`P2`) display tags change, so delegate-driven UI/subsystems are informed without polling.
 
 ## Offer + Execution Rules (Current Runtime)
 
@@ -192,7 +196,8 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
   - repeatable/other
 - Highest numeric priority wins inside the first non-empty bucket.
 - Equal-priority candidates resolve by weighted random using `OfferWeight` (default `1`).
-- `ChanceOffered` (`0..1`) is rolled per candidate during offer evaluation; failed rolls mark that conversation skipped for the player this cycle.
+- `ChanceOffered` (`0..1`) is rolled per candidate during offer evaluation.
+- Failed chance rolls are only persisted to per-cycle skipped state on authoritative offer-attempt flow (`TryStartDialogueBetweenSpeakers` path), not on pure availability queries.
 - Per-cycle blockers are character-specific (`seen this cycle`, `skipped this cycle`), controlled by `bBlockOfferPerCycle` (default `true`).
 - Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority `1`.
 - Offer checks include:
@@ -228,6 +233,8 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Per-cycle offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per character in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
 - Per-cycle speaker offer counts are also persisted per character (`SpeakerOfferCountsThisCycle`) and gate speaker offer/start paths when `MaxOffersPerCycle > 0`.
 - Runtime still keeps active-session transient containers for fast gating/evaluation.
+- `ClearConversationCycleOfferState(...)` and authoritative offer-selection/start mutation paths are authority-gated; non-authority calls early-out.
+- Save bridges can bind `UParleyDialogueSubsystem::OnProgressionStateMarkedDirty` to persist progression/cycle-state changes when dialogue marks data dirty.
 - Completed state is persistent and save-backed.
 - Completion is written only when a `Completed` node executes.
 - Per-cycle offer blockers can be reset explicitly via `ClearConversationCycleOfferState(...)` (single slot or all slots).
@@ -300,8 +307,9 @@ Conversation graph tooling now provides:
 - `CheckRelationship` source options now include speaker relationship points/level (optional target speaker tag, defaulting to conversation primary speaker), faction popularity, and faction-speaker reputation (faction tag + optional speaker tag)
 - `Relationship Mutation` authoring supports directed `SourceSpeakerTag -> TargetSpeakerTag` edits (source optional override, target optional fallback to conversation primary speaker)
 - `Faction Mutation` inline authoring now supports both faction popularity delta and faction-speaker reputation delta (`FactionTag` + optional `TargetSpeakerTag`)
-- when a speaker-target field uses `Parley.Speaker.Player`, runtime resolves it to the active player's current character speaker tag (`Brother`/`Sister`) for relationship/faction condition and mutation evaluation; unresolved player fallback remains conversation primary speaker
+- when a speaker-target field uses `Parley.Speaker.Requester`/`Parley.Speaker.Owner`, runtime resolves it using the requester/owner `UParleySpeakerComponent` tags for relationship/faction condition and mutation evaluation
 - character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
+- player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit
@@ -319,7 +327,7 @@ Conversation graph tooling now provides:
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Parley.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
-- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Parley.Speaker.Player`; line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
+- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and the requester placeholder (`Parley.Speaker.Requester`); line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
 - Speaker details authoring categories for actor/talk/emotion properties use distinct roots (`Alien Ramen|Speaker`, `Alien Ramen|Talk`, `Alien Ramen|Emotion`) to avoid repeated same-name category buckets in Blueprint class-default details.
 
 Speaker hub currently provides:
@@ -331,7 +339,7 @@ Speaker hub currently provides:
 - `New` speaker rows are intentionally created without a speaker tag; authoring must assign an unused speaker tag before save.
 - speaker-tag picker now emits an immediate warning in editor output when selecting a tag already assigned to another row; save remains blocked until tag is unique.
 - reorderable threshold editing/reset (`5,15,30,50` defaults)
-- inline portrait list with add/update/remove operations
+- inline portrait list with explicit `Add New` emotion button (tag + texture fields) and highlighted-entry removal
 - relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
 - conversation cards are draggable between level headers to change minimum-relationship level assignment (replaces level cycle toggle)
 - conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Dialogue.Conversation.Id.<Speaker>.*`)

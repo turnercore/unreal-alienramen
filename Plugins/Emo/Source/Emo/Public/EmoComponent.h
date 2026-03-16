@@ -195,7 +195,14 @@ private:
 	void HandleTimedSystemOverrideClear(FName SourceId);
 	UFUNCTION()
 	void HandleTimedSystemOverrideSlotClear(FName SourceId, FGameplayTag SlotTag);
-	void BroadcastDisplayStateDelta(const FGameplayTag& OldDisplayedTag);
+	/**
+	 * Broadcasts display-state change delegates after recomputing effective display tags for shared and slot contexts.
+	 * Any effective tag change in shared/P1/P2 contexts triggers change notifications.
+	 */
+	void BroadcastDisplayStateDelta(
+		const FEmoDisplayState& OldBaseState,
+		const FEmoDisplayState& OldDialogueState,
+		const FEmoDisplayState& OldSystemState);
 #if WITH_EDITOR
 	void RefreshEditorPreviewBillboard();
 	void DestroyEditorPreviewBillboard();

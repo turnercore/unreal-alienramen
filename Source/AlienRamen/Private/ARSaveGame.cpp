@@ -1,5 +1,6 @@
 #include "ARSaveGame.h"
 
+#include "ARLoadoutSettings.h"
 #include "GameplayEffect.h"
 
 namespace
@@ -199,34 +200,15 @@ bool UARSaveGame::FindPlayerStateDataBySlot(const EARPlayerSlot Slot, FARPlayerS
 bool UARSaveGame::FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const
 {
 	OutIndex = INDEX_NONE;
-	int32 FirstIdentityMatchIndex = INDEX_NONE;
-
 	for (int32 i = 0; i < PlayerStates.Num(); ++i)
 	{
-		if (PlayerStates[i].Identity.Matches(Identity))
+		const FARPlayerIdentity& ExistingIdentity = PlayerStates[i].Identity;
+		if (ExistingIdentity.Matches(Identity))
 		{
-			if (FirstIdentityMatchIndex == INDEX_NONE)
-			{
-				FirstIdentityMatchIndex = i;
-			}
-
-			// Prefer slot-consistent match when multiple rows share the same online identity
-			// (for example couch coop players on one Steam account).
-			if (Identity.PlayerSlot != EARPlayerSlot::Unknown
-				&& PlayerStates[i].Identity.PlayerSlot == Identity.PlayerSlot)
-			{
-				OutData = PlayerStates[i];
-				OutIndex = i;
-				return true;
-			}
+			OutData = PlayerStates[i];
+			OutIndex = i;
+			return true;
 		}
-	}
-
-	if (FirstIdentityMatchIndex != INDEX_NONE)
-	{
-		OutData = PlayerStates[FirstIdentityMatchIndex];
-		OutIndex = FirstIdentityMatchIndex;
-		return true;
 	}
 
 	return false;
@@ -615,6 +597,16 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	}
 
 	SanitizeTagContainer(Unlocks, TEXT("Unlocks"));
+	if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
+	{
+		const FGameplayTagContainer UnlocksBeforeDefaults = Unlocks;
+		Unlocks.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
+		if (!(Unlocks == UnlocksBeforeDefaults))
+		{
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("Unlocks was missing one or more default starting unlock tags and was normalized."));
+		}
+	}
 	SanitizeTagContainer(ProgressionTags, TEXT("ProgressionTags"));
 	SanitizeTagContainer(ActiveFactionEffectTags, TEXT("ActiveFactionEffectTags"));
 	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));

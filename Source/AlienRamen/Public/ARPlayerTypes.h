@@ -114,14 +114,44 @@ namespace ARPlayer
 		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
 	}
 
+	static inline FGameplayTag GetBrotherParleySpeakerTag()
+	{
+		return GetBrotherCharacterTag();
+	}
+
+	static inline FGameplayTag GetSisterParleySpeakerTag()
+	{
+		return GetSisterCharacterTag();
+	}
+
+	static inline FGameplayTag GetBrotherShopCharacterTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Character.Brother"), false);
+	}
+
+	static inline FGameplayTag GetSisterShopCharacterTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Character.Sister"), false);
+	}
+
+	static inline FGameplayTag GetBrotherShopCustomerTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Customer.Brother"), false);
+	}
+
+	static inline FGameplayTag GetSisterShopCustomerTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Customer.Sister"), false);
+	}
+
 	static inline FGameplayTag GetCharacterTagForChoice(const EARCharacterChoice Choice)
 	{
 		switch (Choice)
 		{
 		case EARCharacterChoice::Brother:
-			return GetBrotherCharacterTag();
+			return GetBrotherShopCharacterTag();
 		case EARCharacterChoice::Sister:
-			return GetSisterCharacterTag();
+			return GetSisterShopCharacterTag();
 		default:
 			return FGameplayTag();
 		}
@@ -134,14 +164,22 @@ namespace ARPlayer
 			return EARCharacterChoice::None;
 		}
 
-		const FGameplayTag BrotherTag = GetBrotherCharacterTag();
-		if (BrotherTag.IsValid() && CharacterTag.MatchesTag(BrotherTag))
+		const FGameplayTag BrotherCanonicalTag = GetBrotherShopCharacterTag();
+		const FGameplayTag BrotherSpeakerTag = GetBrotherParleySpeakerTag();
+		const FGameplayTag BrotherCustomerTag = GetBrotherShopCustomerTag();
+		if ((BrotherCanonicalTag.IsValid() && CharacterTag.MatchesTag(BrotherCanonicalTag))
+			|| (BrotherSpeakerTag.IsValid() && CharacterTag.MatchesTag(BrotherSpeakerTag))
+			|| (BrotherCustomerTag.IsValid() && CharacterTag.MatchesTag(BrotherCustomerTag)))
 		{
 			return EARCharacterChoice::Brother;
 		}
 
-		const FGameplayTag SisterTag = GetSisterCharacterTag();
-		if (SisterTag.IsValid() && CharacterTag.MatchesTag(SisterTag))
+		const FGameplayTag SisterCanonicalTag = GetSisterShopCharacterTag();
+		const FGameplayTag SisterSpeakerTag = GetSisterParleySpeakerTag();
+		const FGameplayTag SisterCustomerTag = GetSisterShopCustomerTag();
+		if ((SisterCanonicalTag.IsValid() && CharacterTag.MatchesTag(SisterCanonicalTag))
+			|| (SisterSpeakerTag.IsValid() && CharacterTag.MatchesTag(SisterSpeakerTag))
+			|| (SisterCustomerTag.IsValid() && CharacterTag.MatchesTag(SisterCustomerTag)))
 		{
 			return EARCharacterChoice::Sister;
 		}
@@ -154,18 +192,19 @@ namespace ARPlayer
 		switch (PlayerSlot)
 		{
 		case EARPlayerSlot::P2:
-			return GetSisterCharacterTag();
+			return GetCharacterTagForChoice(EARCharacterChoice::Sister);
 		case EARPlayerSlot::P1:
 		default:
-			return GetBrotherCharacterTag();
+			return GetCharacterTagForChoice(EARCharacterChoice::Brother);
 		}
 	}
 
 	static inline FGameplayTag NormalizeCharacterTag(const FGameplayTag& CharacterTag, const EARPlayerSlot FallbackSlot = EARPlayerSlot::Unknown)
 	{
-		if (GetCharacterChoiceForTag(CharacterTag) != EARCharacterChoice::None)
+		const EARCharacterChoice ResolvedChoice = GetCharacterChoiceForTag(CharacterTag);
+		if (ResolvedChoice != EARCharacterChoice::None)
 		{
-			return CharacterTag;
+			return GetCharacterTagForChoice(ResolvedChoice);
 		}
 
 		if (FallbackSlot != EARPlayerSlot::Unknown)

@@ -120,6 +120,12 @@ void AARPlayerController::RequestInteractWithActor(AActor* Actor)
 	if (AARNPCCharacterBase* CharacterActor = Cast<AARNPCCharacterBase>(Actor))
 	{
 		RequestInteractWithCharacter(CharacterActor);
+		return;
+	}
+
+	if (Actor && Actor->FindComponentByClass<UParleySpeakerComponent>())
+	{
+		RequestInteractWithParleySpeaker(Actor);
 	}
 }
 
@@ -241,6 +247,11 @@ void AARPlayerController::InitializeCustomCursor()
 void AARPlayerController::RequestHUDInitialization()
 {
 	RequestHUDInitializationInternal(true);
+}
+
+void AARPlayerController::ClientApplyGameplayInputModeDefaults_Implementation()
+{
+	ApplyGameplayInputModeDefaultsLocal();
 }
 
 void AARPlayerController::ClientPersistCanonicalSave_Implementation(const TArray<uint8>& SaveBytes, FName SlotBaseName, int32 SlotNumber)
@@ -652,6 +663,45 @@ void AARPlayerController::ServerRequestInteractWithCharacter_Implementation(AARN
 	RequestInteractWithCharacter(CharacterActor);
 }
 
+void AARPlayerController::RequestInteractWithParleySpeaker(AActor* SpeakerActor)
+{
+	if (!SpeakerActor)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] RequestInteractWithParleySpeaker ignored on '%s': target is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		if (!IsServerInteractionTargetReachable(SpeakerActor, TEXT("Interact|Parley")))
+		{
+			return;
+		}
+
+		if (UParleySpeakerComponent* TargetSpeakerComponent = SpeakerActor->FindComponentByClass<UParleySpeakerComponent>())
+		{
+			TargetSpeakerComponent->InteractByController(this);
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Interact] RequestInteractWithParleySpeaker ignored on '%s': target '%s' has no UParleySpeakerComponent."),
+				*GetNameSafe(this),
+				*GetNameSafe(SpeakerActor));
+		}
+		return;
+	}
+
+	ServerRequestInteractWithParleySpeaker(SpeakerActor);
+}
+
+void AARPlayerController::ServerRequestInteractWithParleySpeaker_Implementation(AActor* SpeakerActor)
+{
+	RequestInteractWithParleySpeaker(SpeakerActor);
+}
+
 void AARPlayerController::RequestKickActor(AActor* TargetActor)
 {
 	if (!TargetActor)
@@ -863,6 +913,13 @@ void AARPlayerController::ClientDialogueSessionUpdated_Implementation(const FDia
 	{
 		OnDialogueChoiceSelectionChanged.Broadcast(SelectedDialogueChoiceIndex, OldChoiceIndex);
 	}
+
+	// Keep subsystem-bound client UI bridges in sync with controller-delivered RPC updates.
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
+	{
+		DialogueSubsystem->OnDialogueSessionUpdated.Broadcast(View);
+	}
+
 	OnDialogueViewUpdated.Broadcast(View);
 	EnsureDialogueWidget();
 	RefreshDialogueInputStateFromSession();
@@ -878,6 +935,12 @@ void AARPlayerController::ClientDialogueSessionEnded_Implementation(const FStrin
 	}
 	SetSelectedDialogueChoiceIndex(INDEX_NONE);
 	RefreshDialogueInputStateFromSession();
+
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UParleyDialogueSubsystem>() : nullptr)
+	{
+		DialogueSubsystem->OnDialogueSessionEnded.Broadcast(SessionId);
+	}
+
 	OnDialogueSessionEndedSignal.Broadcast(SessionId);
 	BP_OnDialogueSessionEnded(SessionId);
 }
@@ -1055,6 +1118,24 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 	}
 
 	BP_OnHUDInitializationRequested(this, CurrentPlayerState, CurrentGameState);
+}
+
+void AARPlayerController::ApplyGameplayInputModeDefaultsLocal()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	// Preserve active modal UI flows (pause/dialogue/full-blast). Only clear transition-map UI capture.
+	if (bPauseInputModeApplied || bDialogueInputModeApplied || IsInvaderFullBlastSessionActiveLocal())
+	{
+		return;
+	}
+
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = false;
 }
 
 void AARPlayerController::StartHUDInitializationRetry()

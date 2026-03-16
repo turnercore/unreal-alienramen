@@ -7,7 +7,6 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARSaveTypes.h"
-#include "ARTransitionTypes.h"
 #include "StructUtils/InstancedStruct.h"
 #include "ARSaveSubsystem.generated.h"
 
@@ -16,14 +15,14 @@ class UARSaveIndexGame;
 class AARGameStateBase;
 class AARPlayerStateBase;
 class AARPlayerController;
-class UWorld;
+class APlayerState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationCompleted, const FARSaveResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnSaveOperationFailed, const FARSaveResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnGameLoaded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnSaveOperationStarted);
 
-/** GameInstance subsystem that owns save/load/list/delete plus travel-save orchestration. */
+/** GameInstance subsystem that owns save/load/list/delete and hydration contracts. */
 UCLASS()
 class ALIENRAMEN_API UARSaveSubsystem : public UGameInstanceSubsystem
 {
@@ -45,13 +44,6 @@ public:
 	/** Loads a save by base name + revision (RevisionOrLatest=-1 uses most recent). Leaves save in memory for later hydrate/travel. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARSaveResult& OutResult, bool bUseDebugSaves = false);
-
-	/**
-	 * Authority-only helper that travels into the map recorded by the currently loaded save using a standard SaveLoad transition context.
-	 * Use this after a successful LoadGame call so fresh-load-only gameplay logic can key off the same signal in all maps.
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
-	bool TravelToLoadedSaveDestination(bool bUseOpenLevelInPIE = false, const FString& TransitionMapURL = TEXT("/Game/Maps/Lvl_Loading"));
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult, bool bUseDebugSaves = false) const;
@@ -103,6 +95,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool IsSaveInProgress() const { return bSaveInProgress; }
 
+	/** Builds runtime identity for a player, including shared-account couch secondary-profile disambiguation. */
+	FARPlayerIdentity BuildRuntimePlayerIdentity(const APlayerState* PlayerState) const;
+
 	// Marks save dirty; autosave can later persist.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void MarkSaveDirty();
@@ -149,36 +144,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool RequestAutosaveIfDirty(bool bCreateNewRevision, FARSaveResult& OutResult);
 
-	// Increments the canonical save's cycle counter. Authority only; can optionally persist immediately.
+	// Advances world day/cycle count. Authority only; can optionally persist immediately.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediately, FARSaveResult& OutResult);
+
+	// Legacy compatibility wrapper. Prefer AdvanceWorldDays.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestGameStateHydration(AARGameStateBase* Requester);
-
-	/**
-	 * Authority-only travel helper used by UI/Blueprints.
-	 *
-	 * Flow: optional readiness gate -> capture GameState travel snapshot -> optional disk save -> ServerTravel with enforced listen option.
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool RequestServerTravel(
-		const FString& URL,
-		bool bSkipReadyChecks = false,
-		bool bAbsolute = false,
-		bool bSkipGameNotify = false,
-		bool bPersistSaveBeforeTravel = true);
-
-	/**
-	 * Authority-only non-networked level open. Enforces listen option so host remains authoritative.
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel", meta = (BlueprintAuthorityOnly))
-	bool RequestOpenLevel(
-		const FString& LevelName,
-		const FString& Options = "",
-		bool bSkipReadyChecks = false,
-		bool bAbsolute = false,
-		bool bPersistSaveBeforeTravel = true);
 
 	// Sets travel-transient GameState data to be overlaid on next RequestGameStateHydration call
 	// (after persisted save fields when a current save exists).
@@ -208,10 +183,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void ClearPendingFreshLoadEntry();
 
-	// Applies player-specific save payload onto Requester if identity (or optional slot fallback) is found in CurrentSaveGame.
+	// Applies player-specific save payload onto Requester when identity is found in CurrentSaveGame.
+	// Slot fallback is legacy-only and should stay disabled for normal runtime joins.
 	// Returns true when a matching player row was found and applied.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = true);
+	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = false);
 
 	// Server-authoritative helper: sends current canonical snapshot to a specific player controller.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -244,10 +220,9 @@ protected:
 	virtual void Deinitialize() override;
 
 private:
-	bool ArePlayersReadyForTravel(bool bSkipReadyChecks, FString& OutError) const;
-	bool CaptureGameStateForTravel(UWorld* World);
-	static FString EnsureListenOption(const FString& InURLOrOptions);
-	static bool SplitTravelURL(const FString& InTravelURL, FString& OutLevelName, FString& OutOptions);
+	static FString BuildSharedOnlineIdentityRuntimeKey(const FARPlayerIdentity& Identity);
+	bool ResolveSharedOnlineSecondaryProfileForPlayerState(const APlayerState* PlayerState) const;
+	void ClearSharedOnlineIdentityRuntimeCache();
 
 	static FName NormalizeSlotBaseName(FName SlotBaseName);
 	static FName BuildRevisionSlotName(FName SlotBaseName, int32 SlotNumber);
@@ -286,6 +261,8 @@ private:
 
 	UPROPERTY(Transient)
 	bool bPendingFreshLoadEntry = false;
+
+	mutable TMap<FString, TArray<TWeakObjectPtr<APlayerState>>> SharedOnlineIdentityRuntimeClaims;
 
 	UPROPERTY(Transient)
 	FGameplayTag PendingLoadedSaveModeTag;

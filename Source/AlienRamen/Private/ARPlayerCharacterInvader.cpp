@@ -63,6 +63,35 @@ namespace
 {
 	const FName RangeTriggerComponentTag(TEXT("AR.RangeTrigger"));
 
+	void AlignActorUpToDirection(AActor* Actor, const FVector& DesiredUpDirection)
+	{
+		if (!Actor)
+		{
+			return;
+		}
+
+		const FVector DesiredUp = DesiredUpDirection.GetSafeNormal();
+		if (DesiredUp.IsNearlyZero())
+		{
+			return;
+		}
+
+		const FVector CurrentUp = Actor->GetActorUpVector().GetSafeNormal();
+		if (CurrentUp.IsNearlyZero() || CurrentUp.Equals(DesiredUp, KINDA_SMALL_NUMBER))
+		{
+			return;
+		}
+
+		const FQuat AlignQuat = FQuat::FindBetweenNormals(CurrentUp, DesiredUp);
+		if (AlignQuat.IsIdentity(KINDA_SMALL_NUMBER))
+		{
+			return;
+		}
+
+		const FQuat NewRotation = (AlignQuat * Actor->GetActorQuat()).GetNormalized();
+		Actor->SetActorRotation(NewRotation);
+	}
+
 	void NormalizeRangeTriggerCollision(AActor* OwnerActor)
 	{
 		if (!OwnerActor)
@@ -391,25 +420,46 @@ static UARWeaponDefinition* ExtractWeaponDef(const UScriptStruct* StructType, co
 	return nullptr;
 }
 
-static void GrantAbilityArrayFromStruct(
+static int32 GrantAbilityArrayFromStruct(
 	UAbilitySystemComponent* ASC,
 	const UScriptStruct* StructType,
 	const void* StructData,
 	FName ArrayPropName,
-	TArray<FGameplayAbilitySpecHandle>& OutGrantedHandles
+	TArray<FGameplayAbilitySpecHandle>& OutGrantedHandles,
+	bool* bOutFoundArrayProperty = nullptr
 )
 {
-	if (!ASC || !StructType || !StructData) return;
+	if (bOutFoundArrayProperty)
+	{
+		*bOutFoundArrayProperty = false;
+	}
+
+	if (!ASC || !StructType || !StructData)
+	{
+		return 0;
+	}
 
 	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, ArrayPropName.ToString());
 	FArrayProperty* ArrayProp = CastField<FArrayProperty>(P);
-	if (!ArrayProp) return;
+	if (!ArrayProp)
+	{
+		return 0;
+	}
+
+	if (bOutFoundArrayProperty)
+	{
+		*bOutFoundArrayProperty = true;
+	}
 
 	FProperty* Inner = ArrayProp->Inner;
-	if (!Inner) return;
+	if (!Inner)
+	{
+		return 0;
+	}
 
 	FScriptArrayHelper Helper(ArrayProp, ArrayProp->ContainerPtrToValuePtr<void>(StructData));
 	const int32 Num = Helper.Num();
+	int32 GrantedCount = 0;
 
 	for (int32 i = 0; i < Num; ++i)
 	{
@@ -432,7 +482,10 @@ static void GrantAbilityArrayFromStruct(
 
 		FGameplayAbilitySpec Spec(AbilityGA, 1);
 		OutGrantedHandles.Add(ASC->GiveAbility(Spec));
+		++GrantedCount;
 	}
+
+	return GrantedCount;
 }
 
 static void ApplyEffectArrayFromStruct(
@@ -608,13 +661,13 @@ void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 	AARPlayerController* ARPC = Cast<AARPlayerController>(NewController);
 	if (!ARPC)
 	{
-		UE_LOG(ARLog, Error, TEXT("[ShipGAS] Possess by non-gameplay controller '%s' (class=%s); ship loadout init skipped. Expect missing abilities/stats until possessed by AARPlayerController."),
+		UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Possess by non-gameplay controller '%s' (class=%s); continuing loadout init without controller common ability set."),
 			*GetNameSafe(NewController),
 			*GetNameSafe(NewController ? NewController->GetClass() : nullptr));
-		return;
 	}
 
 	bServerLoadoutApplied = false;
+	bServerCommonAbilitySetApplied = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
 	{
@@ -622,7 +675,6 @@ void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 	}
 
 	ClearAppliedLoadout();
-	GrantCommonAbilitySetFromController(ARPC);
 	if (!TryApplyServerLoadoutFromPlayerState(true))
 	{
 		RetryServerLoadoutInit();
@@ -755,10 +807,10 @@ void AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects()
 void AARPlayerCharacterInvader::UnPossessed()
 {
 	Super::UnPossessed();
-	ClearPrimaryWeaponRuntimeEffects();
 	UnbindMoveSpeedChangeDelegate(CachedASC);
 	CachedASC = nullptr;
 	bServerLoadoutApplied = false;
+	bServerCommonAbilitySetApplied = false;
 	LoadoutInitRetryCount = 0;
 	if (UWorld* World = GetWorld())
 	{
@@ -768,6 +820,10 @@ void AARPlayerCharacterInvader::UnPossessed()
 	if (HasAuthority())
 	{
 		ClearAppliedLoadout();
+	}
+	else
+	{
+		ClearPrimaryWeaponRuntimeEffects();
 	}
 }
 
@@ -834,6 +890,16 @@ void AARPlayerCharacterInvader::ApplyInvaderGravityFrameFromSettings()
 	const FVector ResolvedUp = Up.IsNearlyZero() ? FVector(1.0f, 0.0f, 0.0f) : Up;
 	const FVector GravityDir = -ResolvedUp;
 	MoveComp->SetGravityDirection(GravityDir);
+	AlignActorUpToDirection(this, ResolvedUp);
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[InvaderGravity] Applied gravity frame on '%s': DesiredUp=%s GravityDir=%s ActorUp=%s."),
+		*GetNameSafe(this),
+		*ResolvedUp.ToCompactString(),
+		*GravityDir.ToCompactString(),
+		*GetActorUpVector().ToCompactString());
 }
 
 bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogErrors)
@@ -841,6 +907,29 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 	if (!HasAuthority() || bServerLoadoutApplied)
 	{
 		return bServerLoadoutApplied;
+	}
+
+	InitAbilityActorInfo();
+	if (!GetAbilitySystemComponent())
+	{
+		if (bLogErrors)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: ASC unavailable; retrying."));
+		}
+		return false;
+	}
+
+	if (!bServerCommonAbilitySetApplied)
+	{
+		if (!GrantCommonAbilitySetFromController(GetController()))
+		{
+			if (bLogErrors)
+			{
+				UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: common ability-set grant not ready (Controller=%s); retrying."), *GetNameSafe(GetController()));
+			}
+			return false;
+		}
+		bServerCommonAbilitySetApplied = true;
 	}
 
 	FGameplayTagContainer LoadoutTags;
@@ -886,7 +975,15 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		}
 		return false;
 	}
-	ApplyResolvedRowBaseline(ShipRow);
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Ship tag '%s' resolved to struct '%s'."), *ShipTag.ToString(), *GetNameSafe(ShipRow.GetScriptStruct()));
+	if (!ApplyResolvedRowBaseline(ShipRow, true))
+	{
+		if (bLogErrors)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: ship baseline apply failed for '%s'; retrying."), *ShipTag.ToString());
+		}
+		return false;
+	}
 
 	// Secondary (optional legacy lane; never required for loadout init).
 	FGameplayTag SecondaryTag;
@@ -905,7 +1002,7 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		FString SecondaryError;
 		if (ResolveRowFromTag(SecondaryTag, SecondaryRow, SecondaryError))
 		{
-			ApplyResolvedRowBaseline(SecondaryRow);
+			ApplyResolvedRowBaseline(SecondaryRow, false);
 		}
 	}
 
@@ -918,11 +1015,14 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		FString HatError;
 		if (ResolveRowFromTag(HatTag, HatRow, HatError))
 		{
-			ApplyResolvedRowBaseline(HatRow);
+			ApplyResolvedRowBaseline(HatRow, false);
 		}
 	}
 
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
+	// Keep gravity-frame ownership on the invader pawn. Re-apply after loadout/baseline setup
+	// in case movement/frame configuration changed during ship row application.
+	ApplyInvaderGravityFrameFromSettings();
 	bServerLoadoutApplied = true;
 	if (UWorld* World = GetWorld())
 	{
@@ -960,18 +1060,36 @@ void AARPlayerCharacterInvader::RetryServerLoadoutInit()
 	}
 }
 
-void AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController* NewController)
+bool AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController* NewController)
 {
 	AARPlayerController* ARPC = Cast<AARPlayerController>(NewController);
-	if (!ARPC) return;
+	if (!ARPC)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[ShipGAS] Common ability-set grant skipped: controller '%s' (class=%s) is not AARPlayerController."),
+			*GetNameSafe(NewController),
+			*GetNameSafe(NewController ? NewController->GetClass() : nullptr));
+		return true;
+	}
 
 	const UARAbilitySet* Set = ARPC->GetCommonAbilitySet();
-	if (!Set) return;
-
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
-	if (!ASC) return;
+	if (!ASC)
+	{
+		return false;
+	}
+
+	if (!Set)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] No common ability set configured on controller '%s'."), *GetNameSafe(NewController));
+		return true;
+	}
 
 	GrantAbilitySet(ASC, Set, GrantedAbilityHandles, AppliedEffectHandles);
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Granted common ability set '%s' from controller '%s'."), *GetNameSafe(Set), *GetNameSafe(NewController));
+	return true;
 }
 
 // --------------------
@@ -979,18 +1097,29 @@ void AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController*
 // Stats, StartupAbilities, StartupEffects, ShipTags, MovementType, PrimaryWeapon(optional)
 // --------------------
 
-void AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct)
+bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct, bool bLogMissingStartupAbilities)
 {
-	if (!HasAuthority()) return;
+	if (!HasAuthority())
+	{
+		return false;
+	}
 
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
-	if (!ASC) return;
+	if (!ASC)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Baseline apply skipped: ASC unavailable."));
+		return false;
+	}
 
 	ClearPrimaryWeaponRuntimeEffects();
 
 	const UScriptStruct* StructType = RowStruct.GetScriptStruct();
 	const void* StructData = RowStruct.GetMemory();
-	if (!StructType || !StructData) return;
+	if (!StructType || !StructData)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Baseline apply skipped: invalid row struct payload."));
+		return false;
+	}
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Applying loadout row baseline from struct '%s'."), *StructType->GetName());
 	// Stats effect (optional)
 	{
@@ -1017,7 +1146,33 @@ void AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 	}
 
 	// Startup abilities/effects
-	GrantAbilityArrayFromStruct(ASC, StructType, StructData, NAME_StartupAbilities, GrantedAbilityHandles);
+	bool bFoundStartupAbilityArray = false;
+	const int32 GrantedStartupAbilityCount = GrantAbilityArrayFromStruct(
+		ASC,
+		StructType,
+		StructData,
+		NAME_StartupAbilities,
+		GrantedAbilityHandles,
+		&bFoundStartupAbilityArray);
+	if (bLogMissingStartupAbilities && !bFoundStartupAbilityArray)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[ShipGAS] Ship row struct '%s' is missing expected array field '%s'. Startup abilities were not granted."),
+			*StructType->GetName(),
+			*NAME_StartupAbilities.ToString());
+		LogAllPropertiesOnStruct(StructType);
+	}
+	else
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[ShipGAS] Startup ability grant from struct '%s': granted=%d."),
+			*StructType->GetName(),
+			GrantedStartupAbilityCount);
+	}
 	ApplyEffectArrayFromStruct(ASC, StructType, StructData, NAME_StartupEffects, AppliedEffectHandles);
 
 	// Loose tags (ShipTags field)
@@ -1043,6 +1198,8 @@ void AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 			AppliedLooseTags.AppendTags(MoveTags);
 		}
 	}
+
+	return true;
 }
 
 // --------------------
@@ -1055,6 +1212,13 @@ void AARPlayerCharacterInvader::ClearAppliedLoadout()
 
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (!ASC) return;
+
+	// Primary weapon tuning effect is part of loadout baseline runtime state.
+	ClearPrimaryWeaponRuntimeEffects();
+
+	const int32 RemovedAbilityCount = GrantedAbilityHandles.Num();
+	const int32 RemovedEffectCount = AppliedEffectHandles.Num();
+	const int32 RemovedLooseTagCount = AppliedLooseTags.Num();
 
 	for (const FGameplayAbilitySpecHandle& Handle : GrantedAbilityHandles)
 	{
@@ -1081,6 +1245,14 @@ void AARPlayerCharacterInvader::ClearAppliedLoadout()
 	}
 
 	CurrentPrimaryWeapon = nullptr;
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[ShipGAS] Cleared applied loadout state: abilities=%d effects=%d tags=%d."),
+		RemovedAbilityCount,
+		RemovedEffectCount,
+		RemovedLooseTagCount);
 }
 
 // --------------------

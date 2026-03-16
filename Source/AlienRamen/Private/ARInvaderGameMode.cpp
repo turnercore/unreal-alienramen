@@ -1,12 +1,17 @@
 #include "ARInvaderGameMode.h"
 
+#include "ARInvaderDirectorSubsystem.h"
+#include "ARInvaderPlayerController.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARRunBuffSubsystem.h"
 #include "Engine/GameInstance.h"
+#include "Engine/World.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
 #include "StructUtils/InstancedStruct.h"
 #include "TagKeySubsystem.h"
+#include "TimerManager.h"
 #include "UObject/UnrealType.h"
 
 namespace
@@ -64,6 +69,145 @@ void AARInvaderGameMode::BeginPlay()
 			UE_LOG(ARLog, Warning, TEXT("[InvaderGameMode] Missing RunBuffSubsystem during invader init rotation."));
 		}
 	}
+
+	if (UARInvaderDirectorSubsystem* DirectorSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARInvaderDirectorSubsystem>() : nullptr)
+	{
+		DirectorSubsystem->OnRunEnded.AddUniqueDynamic(this, &AARInvaderGameMode::HandleInvaderRunEnded);
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderGameMode] Missing InvaderDirectorSubsystem; run-end handling hook was not bound."));
+	}
+}
+
+void AARInvaderGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(RunEndAutoTravelTimer);
+		RunEndAutoTravelTimer.Invalidate();
+
+		if (UARInvaderDirectorSubsystem* DirectorSubsystem = World->GetSubsystem<UARInvaderDirectorSubsystem>())
+		{
+			DirectorSubsystem->OnRunEnded.RemoveDynamic(this, &AARInvaderGameMode::HandleInvaderRunEnded);
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
+bool AARInvaderGameMode::FinalizeInvaderRunAndTravel(const FString& InTravelURL)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderGameMode] FinalizeInvaderRunAndTravel ignored: not authority."));
+		return false;
+	}
+
+	const FString TravelURL = InTravelURL.IsEmpty() ? DefaultPostRunTravelURL : InTravelURL;
+	if (TravelURL.IsEmpty())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[InvaderGameMode] FinalizeInvaderRunAndTravel failed: destination URL is empty."));
+		return false;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(RunEndAutoTravelTimer);
+		RunEndAutoTravelTimer.Invalidate();
+	}
+
+	if (bRunEndTravelRequested)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderGameMode] FinalizeInvaderRunAndTravel ignored: travel already requested."));
+		return true;
+	}
+
+	bRunEndTravelRequested = true;
+	if (!EndModeAndTravel(TravelURL, TEXT(""), true))
+	{
+		bRunEndTravelRequested = false;
+		UE_LOG(ARLog, Warning, TEXT("[InvaderGameMode] FinalizeInvaderRunAndTravel failed for URL '%s'."), *TravelURL);
+		return false;
+	}
+
+	UE_LOG(ARLog, Log, TEXT("[InvaderGameMode] FinalizeInvaderRunAndTravel started: URL='%s' Reason=%d."),
+		*TravelURL,
+		static_cast<int32>(LastHandledRunEndReason));
+	return true;
+}
+
+void AARInvaderGameMode::HandleInvaderRunEnded(const EARInvaderRunEndReason EndReason)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	LastHandledRunEndReason = EndReason;
+	bRunEndTravelRequested = false;
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(RunEndAutoTravelTimer);
+		RunEndAutoTravelTimer.Invalidate();
+	}
+
+	NotifyControllersInvaderRunEnded(EndReason);
+	OnInvaderRunEnded(EndReason);
+	TriggerAutoTravelAfterRunEnd();
+}
+
+void AARInvaderGameMode::NotifyControllersInvaderRunEnded(const EARInvaderRunEndReason EndReason)
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* Controller = It->Get();
+		if (!Controller || Controller->IsPendingKillPending())
+		{
+			continue;
+		}
+
+		if (AARInvaderPlayerController* InvaderController = Cast<AARInvaderPlayerController>(Controller))
+		{
+			InvaderController->ClientHandleInvaderRunEnded(EndReason);
+		}
+	}
+}
+
+void AARInvaderGameMode::TriggerAutoTravelAfterRunEnd()
+{
+	if (!bAutoTravelAfterRunEnd || bRunEndTravelRequested)
+	{
+		return;
+	}
+
+	if (AutoTravelAfterRunEndDelaySeconds <= KINDA_SMALL_NUMBER)
+	{
+		FinalizeInvaderRunAndTravel();
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			RunEndAutoTravelTimer,
+			this,
+			&AARInvaderGameMode::HandleInvaderRunEndAutoTravelTimer,
+			AutoTravelAfterRunEndDelaySeconds,
+			false);
+	}
+}
+
+void AARInvaderGameMode::HandleInvaderRunEndAutoTravelTimer()
+{
+	FinalizeInvaderRunAndTravel();
 }
 
 void AARInvaderGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)

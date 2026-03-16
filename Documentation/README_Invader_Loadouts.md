@@ -9,7 +9,29 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - Loadouts are persisted as player-character-owned state and projected onto `AARPlayerStateBase`.
 - The Ability System Component is owned by `AARPlayerStateBase`.
 - The Invader pawn/avatar initializes ASC actor info and applies loadout-driven abilities, effects, and tags.
+- Server possession now treats loadout init as complete only after ASC is valid and ship baseline applies successfully; otherwise it keeps retrying and logs the blocking reason.
+- Common controller ability-set grants are tied to that same retryable init path so they are not lost when possession order races happen in-editor.
+- Possession by non-`AARPlayerController` no longer hard-aborts ship loadout initialization; pawn-side ship baseline abilities/effects still initialize while controller-common ability set grant is skipped until/if a gameplay controller is present.
 - UI should read replicated attributes from `PlayerState`, not from a local pawn copy.
+
+## Data Table Row Contracts
+
+- Canonical loadout row structs live in `Source/AlienRamen/Public/ARLoadoutTypes.h`.
+- Hat rows use `FARHatDefRow` (`Unlock.Hat.*`) and currently expose:
+  - `DisplayName`
+  - `Description`
+- Ship rows use `FARShipDefRow` (`Unlock.Ship.*`) and expose:
+  - identity: `DisplayName`, `Description`
+  - baseline gameplay: `Stats`, `PrimaryWeapon`, `StartupAbilities`, `StartupEffects`, `ShipTags`, `MovementType`
+  - mode-specific pawn classes: `ScrapyardPawnClass`, `DummyPawnClass`, `InvaderPawnClass`
+- Runtime consumers resolve ship fields by property name (reflection), so these names are contract-critical and should remain stable.
+- Ship baseline hydrate logs now explicitly warn when `StartupAbilities` is missing on the resolved row struct and print that struct's property list to speed up `DT_Ships` contract debugging after row/schema rebuilds.
+
+## Gravity Frame Notes
+
+- `AARPlayerCharacterInvader` applies invader gravity using `UCharacterMovementComponent::SetGravityDirection`.
+- Runtime now also rotates actor up-vector to match `UARInvaderDirectorSettings::InvaderDesiredUpDirection` during BeginPlay/possess/PlayerState replication updates.
+- If players spawn with wrong orientation, check `[InvaderGravity]` logs first to verify desired up, gravity direction, and final actor up vector.
 
 ## What to read
 

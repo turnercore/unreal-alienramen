@@ -151,20 +151,115 @@ bool UParleyDialogueSubsystem::PreviewConversation(UParleyConversationAsset* Con
 
 bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForSlot(FGameplayTag PrimarySpeakerTag, FGameplayTag PlayerSlotTag) const
 {
+	const UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] HasUnlockedDialogueForSpeakerForSlot requires authority runtime."));
+		return false;
+	}
+
 	const EParleyPlayerSlot PlayerSlot = ParleyPlayerSlot::TagToSlot(PlayerSlotTag);
 	if (!PrimarySpeakerTag.IsValid() || PlayerSlot == EParleyPlayerSlot::Unknown)
 	{
 		return false;
 	}
 
-	APlayerController* PC = FindPlayerControllerBySlot(GetWorld(), PlayerSlot);
+	APlayerController* PC = FindPlayerControllerBySlot(World, PlayerSlot);
 	if (!PC)
 	{
 		return false;
 	}
 
-	FDialogueConversationOffer Offer;
-	return const_cast<UParleyDialogueSubsystem*>(this)->GetAvailableConversationForSpeaker(PC, PrimarySpeakerTag, Offer, /*bSpeakerLocalStateAllowsDialogue=*/ true);
+	APlayerState* RequesterPS = PC->GetPlayerState<APlayerState>();
+	if (!RequesterPS)
+	{
+		return false;
+	}
+
+	const FParleyPlayerIdentity PlayerIdentity = BuildPlayerIdentityFromState(RequesterPS);
+	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(this);
+	FGameplayTagContainer SeenThisCycle;
+	FGameplayTagContainer SkippedThisCycle;
+	TMap<FGameplayTag, int32> SpeakerOfferCountMap;
+	if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, PlayerIdentity, World))
+	{
+		SeenThisCycle = PlayerState->SeenConversationTagsThisCycle;
+		SkippedThisCycle = PlayerState->SkippedConversationTagsThisCycle;
+		BuildSpeakerOfferCountMap(PlayerState->SpeakerOfferCountsThisCycle, SpeakerOfferCountMap);
+	}
+
+	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
+	const int32 ExistingOfferCount = SpeakerOfferCountMap.FindRef(PrimarySpeakerTag);
+	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
+	{
+		return false;
+	}
+
+	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
+	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
+	if (!IsModeDialogueEnabled(Settings, ModeTag))
+	{
+		return false;
+	}
+
+	if (IsBusySpeakerLockEnabled(Settings, ModeTag)
+		&& FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, PlayerSlot) != nullptr)
+	{
+		return false;
+	}
+
+	for (const TPair<FGameplayTag, TObjectPtr<UParleyConversationAsset>>& Pair : Runtime.ConversationsByTag)
+	{
+		UParleyConversationAsset* Conversation = Pair.Value;
+		if (!Conversation || !Conversation->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+		{
+			continue;
+		}
+
+		FDialogueValidationReport Validation;
+		if (!ValidateConversation(Conversation, Validation))
+		{
+			continue;
+		}
+
+		FDialogueRuntimeContext Context = BuildOfferContext(this, Conversation, RequesterPS, PlayerIdentity);
+		Context.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(Conversation->Header.ConversationTag);
+		Context.bSeenByPlayer = SeenThisCycle.HasTagExact(Conversation->Header.ConversationTag);
+		const bool bSkippedForCycle = SkippedThisCycle.HasTagExact(Conversation->Header.ConversationTag);
+
+		if (!EvaluateConversationOfferRules(this, Context, Conversation->Header, nullptr))
+		{
+			continue;
+		}
+
+		if (!Conversation->Header.bRepeatable && Context.bCompletedByPlayer)
+		{
+			continue;
+		}
+		if (Conversation->Header.bCompletedByGameBlocksReoffer && Context.bCompletedByGame)
+		{
+			continue;
+		}
+		if (Conversation->Header.bSeenByGameBlocksReoffer && Context.bSeenByGame)
+		{
+			continue;
+		}
+		if (Conversation->Header.bSeenByPlayerBlocksReoffer && Context.bSeenByPlayer)
+		{
+			continue;
+		}
+		if (Conversation->Header.bBlockOfferPerCycle && (Context.bSeenByPlayer || bSkippedForCycle))
+		{
+			continue;
+		}
+
+		// Predicate queries intentionally avoid chance rolls and side effects.
+		return true;
+	}
+
+	return false;
 }
 
 void UParleyDialogueSubsystem::GetRegisteredPrimarySpeakerTags(TArray<FGameplayTag>& OutSpeakerTags) const
@@ -328,6 +423,13 @@ bool UParleyDialogueSubsystem::HasActiveDialogueSession() const
 
 void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayTag PlayerSlotTag)
 {
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] ClearConversationCycleOfferState ignored: authority required."));
+		return;
+	}
+
 	const EParleyPlayerSlot PlayerSlot = ParleyPlayerSlot::TagToSlot(PlayerSlotTag);
 	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	FParleyProgressionStore* ProgressionStore = GetProgressionStore(this);
@@ -374,7 +476,7 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 
 	if (ProgressionStore)
 	{
-		const APlayerState* PlayerState = FindPlayerStateBySlot(GetWorld(), PlayerSlot);
+		const APlayerState* PlayerState = FindPlayerStateBySlot(World, PlayerSlot);
 		const FGameplayTag CharacterTag = PlayerState
 			? ResolveDialogueCharacterTagFromPlayerState(PlayerState)
 			: GetDefaultCharacterTagForSlot(PlayerSlot);

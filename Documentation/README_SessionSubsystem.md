@@ -102,7 +102,7 @@ No gameplay Blueprint should need to switch from Steam-specific nodes when using
 - Player save identity is provider-aware (`UniqueNetIdString` + `UniqueNetIdType`).
 - Strict online identities require exact provider/id match for hydration.
 - Local-only/null-style identities can use slot fallback.
-- If two local players share one online identity, hydration prefers matching `PlayerSlot`.
+- If two local players share one online identity, hydration disambiguates by shared-account primary/secondary profile claim order rather than persisted slot snapshots.
 
 This means moving from Steam to another backend does not require a new Blueprint save schema; identity matching remains backend-aware in C++.
 

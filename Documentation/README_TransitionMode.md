@@ -14,6 +14,9 @@ Transition flow is the handoff layer between the three primary game modes:
   - Shared mode-travel router for transition-map handoff.
   - `TryStartTravel` routes destination URLs through transition map when mode opts in.
   - Seamless-travel handoff resets carried spectator controller state back to playing via `HandleSeamlessTravelPlayer(...)` so gameplay modes repossess correctly after transition maps.
+  - Gameplay-mode join/handoff now clears carried `StartSpot` references and spectator-only flags before spawn, preventing stale transition-map state from blocking post-transition pawn spawn (for example `Scrapyard -> Transition -> Shop`).
+  - Seamless-travel handoff now swaps carried controllers to the destination mode's `PlayerControllerClass` when classes mismatch (for example transition/debug controllers entering gameplay modes), so mode-specific controller defaults and startup logic still apply.
+  - Identity/slot normalization now considers only controller-owned active `PlayerState` instances during travel handoff to avoid stale seamless-copy remnants stealing `P1/P2` occupancy.
   - Per-call route override is supported via `EARTravelRoutePolicy`:
     - `ModeDefault`
     - `ForceTransitionMap`
@@ -31,6 +34,7 @@ Transition flow is the handoff layer between the three primary game modes:
   - Native class is abstract; maps should use a Blueprint subclass.
   - Resets player travel-ready flags on transition entry (configurable).
   - Auto-advances to destination when all active players are ready.
+  - Final destination hop now uses absolute server travel to avoid leaking prior map URL options into the destination mode (for example stale `game=` overrides).
   - Spawns no gameplay pawn in transition mode.
 - `AARTransitionGameState`
   - Replicated read model for transition context (`FARTransitionContext`).
@@ -48,6 +52,7 @@ Transition flow is the handoff layer between the three primary game modes:
     - `Reason` (`TransitionWidgetClassByReason`)
     - `SourceMode` (`TransitionWidgetClassBySourceMode`)
     - fallback (`DefaultTransitionWidgetClass`)
+  - Enforces local `UIOnly` input mode + visible cursor while transition UI is active, and restores gameplay input defaults on transition exit.
 
 ## Travel Context
 
@@ -60,6 +65,8 @@ Transition context is passed by travel URL options:
 
 Helpers live in `ARTransitionTypes`:
 
+- `ARTransition::AppendTravelOptions` (normalizes travel option separators to UE-style repeated `?`)
+- `ARTransition::EnsureTravelOption` (token-safe option injection, for example `listen`)
 - `ARTransition::BuildTransitionTravelURL`
 - `ARTransition::AppendTransitionContextOptions`
 - `ARTransition::ApplyTransitionContextFromTravelOptions`
@@ -74,9 +81,11 @@ Blueprint wrappers:
 
 1. Source mode finalizes authoritative runtime state (economy/rewards/etc).
 2. Source mode calls `TryStartTravel` / `EndModeAndTravel`; router emits transition-map URL + context options.
+   - Caller-supplied destination travel options are embedded into `ARTrDest` and preserved through the transition-map leg.
 3. Transition map displays results/loading UI.
 4. Players submit continue-ready votes.
 5. Transition mode auto-travels to `TransitionContext.DestinationURL` when all are ready.
+   - Travel is executed as absolute URL handoff so destination map defaults (GameMode/PlayerController) resolve deterministically.
 6. The final gameplay map receives the same transition context in its own travel options.
 
 ## Direct Same-Mode Travel
@@ -91,6 +100,7 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
 
 - Shop mode defaults to `Shop -> Transition -> Invader` via `AARGameModeBase::TryStartTravel`.
 - Invader mode defaults to `Invader -> Transition -> Scrapyard` via `AARGameModeBase::TryStartTravel`.
+- Transition mode advances world day/cycle once (and persists immediately) for `Invader -> Scrapyard` context, so completed invader runs survive crashes/quit before scrapyard completion.
 - Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` by resolving final URL through `AARGameModeBase::BuildModeTravelURL` before authority travel request.
 - Any mode can disable transition-map routing by setting `bRouteModeTravelThroughTransitionMap=false` in that mode class/defaults.
 
@@ -100,8 +110,13 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
   - End current mode and show transition: call `EndModeAndTravel(DestinationURL, ...)`.
   - Same-mode map hop (no transition map): call `TravelDirectInMode(DestinationURL, ...)`.
   - Generic path: call `TryStartTravel(..., RoutePolicy)` and pass `ModeDefault` / `ForceTransitionMap` / `ForceDirect`.
+- From shop runtime state (`AARShopGameState`):
+  - Explicit shop-exit helper: call `FinalizeShopRunAndTravelToInvader(InInvaderTravelURL)`.
+  - Leave `InInvaderTravelURL` empty to use `DefaultInvaderTravelURL`.
+  - Pass the final gameplay destination (for example `/Game/Maps/Lvl_Invader`), not the transition map URL.
 - From controller/UI during gameplay:
   - Call `AARPlayerController::TryStartTravel(..., RoutePolicy)`; server authority resolves final URL and performs save/travel gate checks.
+  - Shop-specific convenience: `AARShopPlayerController::RequestFinalizeShopRunAndTravelToInvader(...)` routes via server RPC to the authoritative shop finalization helper.
 - From main menu / non-`AARGameModeBase` map:
   - Build URL with `UARTransitionBlueprintLibrary`:
     1. `MakeTransitionContext(SourceMode, Reason, DestinationURL, bFreshLoadEntry)`
@@ -110,7 +125,7 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
 
 ## Save-Load Entry
 
-- `UARSaveSubsystem::TravelToLoadedSaveDestination(...)` is the standard gameplay-entry path after `LoadGame(...)`.
+- `UARTravelSubsystem::TravelToLoadedSaveDestination(...)` is the standard gameplay-entry path after `LoadGame(...)`.
 - It builds transition context with:
   - `SourceMode=SaveLoad`
   - `Reason=SaveLoadEntry`

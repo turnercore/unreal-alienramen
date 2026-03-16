@@ -1,9 +1,11 @@
 #include "TagKeySubsystem.h"
 
 #include "Algo/Sort.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
 #include "Misc/ScopeLock.h"
+#include "Modules/ModuleManager.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
 #include "TagKeyLog.h"
@@ -34,6 +36,48 @@ namespace
 	};
 
 	FConfiguredRouteResolutionCache GConfiguredRouteCache;
+
+	bool EnsureTagKeyGameThread(const TCHAR* FunctionName, FString* OutError = nullptr)
+	{
+		if (IsInGameThread())
+		{
+			return true;
+		}
+
+		const FString Message = FString::Printf(
+			TEXT("[TagKey] %s must be called on the game thread."),
+			FunctionName ? FunctionName : TEXT("Resolver API"));
+		if (GIsAutomationTesting)
+		{
+			UE_LOG(LogTagKey, Warning, TEXT("%s"), *Message);
+		}
+		else
+		{
+			UE_LOG(LogTagKey, Error, TEXT("%s"), *Message);
+			ensureAlwaysMsgf(false, TEXT("%s"), *Message);
+		}
+
+		if (OutError)
+		{
+			*OutError = Message;
+		}
+
+		return false;
+	}
+
+	bool IsDataTableSoftPath(const FSoftObjectPath& Path)
+	{
+		if (Path.IsNull())
+		{
+			return false;
+		}
+
+		FAssetRegistryModule& AssetRegistryModule =
+			FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+		const FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath(Path);
+		return AssetData.IsValid() &&
+			AssetData.AssetClassPath == UDataTable::StaticClass()->GetClassPathName();
+	}
 
 	FString GetLeafSegment(const FString& InTag)
 	{
@@ -155,6 +199,17 @@ namespace
 			return;
 		}
 
+		if (const FSoftClassProperty* SoftClassProperty = CastField<FSoftClassProperty>(Property))
+		{
+			const FSoftObjectPtr SoftClassPtr = SoftClassProperty->GetPropertyValue(ValuePtr);
+			const FSoftObjectPath SoftClassPath = SoftClassPtr.ToSoftObjectPath();
+			if (!SoftClassPtr.IsNull() && !SoftClassPtr.IsValid() && !SoftClassPath.IsNull())
+			{
+				OutPaths.Add(SoftClassPath);
+			}
+			return;
+		}
+
 		if (const FStructProperty* StructProperty = CastField<FStructProperty>(Property))
 		{
 			GatherSoftObjectPathsFromStruct(StructProperty->Struct, ValuePtr, OutPaths);
@@ -251,28 +306,7 @@ void UTagKeySubsystem::ResetRuntimeCaches(bool bResetLoggedFailures)
 
 bool UTagKeySubsystem::EnsureGameThread(const TCHAR* FunctionName, FString* OutError) const
 {
-	if (IsInGameThread())
-	{
-		return true;
-	}
-
-	const FString Message = FString::Printf(
-		TEXT("[TagKey] %s must be called on the game thread."),
-		FunctionName ? FunctionName : TEXT("Resolver API"));
-	if (GIsAutomationTesting)
-	{
-		UE_LOG(LogTagKey, Warning, TEXT("%s"), *Message);
-	}
-	else
-	{
-		UE_LOG(LogTagKey, Error, TEXT("%s"), *Message);
-		ensureAlwaysMsgf(false, TEXT("%s"), *Message);
-	}
-	if (OutError)
-	{
-		*OutError = Message;
-	}
-	return false;
+	return EnsureTagKeyGameThread(FunctionName, OutError);
 }
 
 bool UTagKeySubsystem::EnsureRouteCacheFresh(FString& OutError)
@@ -975,7 +1009,17 @@ bool UTagKeySubsystem::PreloadRootTableAndSoftReferences(
 				return false;
 			}
 
-			if (UDataTable* SubTable = Cast<UDataTable>(Path.TryLoad()))
+			if (!IsDataTableSoftPath(Path))
+			{
+				continue;
+			}
+
+			UDataTable* SubTable = Cast<UDataTable>(Path.ResolveObject());
+			if (!SubTable)
+			{
+				SubTable = Cast<UDataTable>(Path.TryLoad());
+			}
+			if (SubTable)
 			{
 				// Only walk each DataTable once.
 				const FSoftObjectPath SubTablePath(SubTable);
@@ -1019,6 +1063,10 @@ bool UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
 {
 	OutDataTable = nullptr;
 	OutError.Reset();
+	if (!EnsureTagKeyGameThread(TEXT("TryResolveDataTableForRootTagFromConfiguredRoutes"), &OutError))
+	{
+		return false;
+	}
 
 	if (!RootTag.IsValid())
 	{
@@ -1084,6 +1132,10 @@ bool UTagKeySubsystem::TryResolveDataTableForRowStructFromConfiguredRoutes(
 	OutDataTable = nullptr;
 	OutMatchedRootTag = FGameplayTag();
 	OutError.Reset();
+	if (!EnsureTagKeyGameThread(TEXT("TryResolveDataTableForRowStructFromConfiguredRoutes"), &OutError))
+	{
+		return false;
+	}
 
 	if (!DesiredRowStruct)
 	{

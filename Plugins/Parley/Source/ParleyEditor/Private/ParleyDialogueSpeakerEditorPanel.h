@@ -177,9 +177,11 @@ private:
 	FReply HandleMoveThresholdUp();
 	FReply HandleMoveThresholdDown();
 	FReply HandleAddEmotionSlot();
+	FReply HandleCreateEmotionFromFields();
 	FReply HandleAddPortrait();
 	FReply HandleRemovePortrait();
 	FReply HandleDeleteConversationInternal(bool bDeleteAssetFromContentBrowser);
+	bool CanCreateEmotionFromFields() const;
 
 	TSharedRef<ITableRow> OnGenerateSpeakerRow(TSharedPtr<FSpeakerEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const;
 	TSharedRef<ITableRow> OnGenerateConversationRow(TSharedPtr<FConversationEntry> Item, const TSharedRef<STableViewBase>& OwnerTable) const;

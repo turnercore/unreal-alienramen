@@ -31,7 +31,8 @@ protected:
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks) override;
 
-	// Pawn-class overrides keyed by canonical character tag (for example Parley.Speaker.Brother / Parley.Speaker.Sister).
+	// Pawn-class overrides keyed by canonical shop character tags (for example Shop.Character.Brother / Shop.Character.Sister).
+	// Legacy Parley/Customer keys are normalized at runtime, but new content should only author Shop.Character.* keys.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Spawn")
 	TMap<FGameplayTag, TSubclassOf<APawn>> ShopPawnClassByCharacterTag;
 

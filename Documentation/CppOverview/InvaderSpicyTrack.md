@@ -9,7 +9,7 @@ Paths:
 - Shared track/full-blast state is replicated from GameState.
 - Per-player runtime spicy metadata (color/combo/activated-upgrade ledger) lives on `AARPlayerStateBase`.
 - System is runtime-only for Invader and is not persisted in save/hydration structs.
-- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via ship-row `InvaderPawnClass` with `DummyPawnClass` fallback.
+- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via `FARShipDefRow` (`ARLoadoutTypes.h`) field `InvaderPawnClass` with `DummyPawnClass` fallback.
 
 ## Runtime Ownership Matrix
 | State | Class | Authority | Replication | Notes |

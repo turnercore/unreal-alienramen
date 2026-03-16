@@ -10,6 +10,7 @@
 
 class UARSaveSubsystem;
 class UARSessionSubsystem;
+class UARTravelSubsystem;
 class UARParleySaveBridge;
 class UARFactionVotingSubsystem;
 class FOnlineSessionSettings;
@@ -33,6 +34,10 @@ public:
 	/** Accessor for the session subsystem (authority for session join/host flows). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
 	UARSessionSubsystem* GetARSessionSubsystem() const;
+
+	/** Accessor for the travel subsystem (authority for travel execution flows). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")
+	UARTravelSubsystem* GetARTravelSubsystem() const;
 
 	/** Accessor for the AR-owned faction voting subsystem (election/vote runtime). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Game Instance")

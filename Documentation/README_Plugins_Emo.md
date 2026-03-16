@@ -5,8 +5,8 @@
 ## Runtime ownership
 
 - Emotion state is server-authoritative.
-- Runtime display state is carried by `UAREmotionComponent`.
-- Icon resolve/cache is owned by `UAREmotionResolverSubsystem`.
+- Runtime display state is carried by `UEmoComponent`.
+- Icon resolve/cache is owned by `UEmoResolverSubsystem`.
 - Rendering is owned by `AARHUDBase`.
 
 ## Integration rule

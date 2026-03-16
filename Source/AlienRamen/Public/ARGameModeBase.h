@@ -29,8 +29,10 @@ public:
 	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
 	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	virtual TSubclassOf<APlayerController> GetPlayerControllerClassToSpawnForSeamlessTravel(APlayerController* PreviousPlayerController) override;
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 	virtual void Logout(AController* Exiting) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
@@ -98,10 +100,14 @@ protected:
 	void BP_OnPlayerLeft(AARPlayerStateBase* LeftPlayerState);
 	virtual void BP_OnPlayerLeft_Implementation(AARPlayerStateBase* LeftPlayerState);
 
+	/** Returns the character tag cached by ChoosePlayerStart for this controller's current spawn attempt. */
+	FGameplayTag GetPendingSpawnCharacterTagForController(const AController* Controller) const;
+
 	// Authority pre-travel hook for mode-specific transition logic.
 	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks);
 
 private:
+	void CachePendingSpawnCharacterTagForController(const AController* Controller, const FGameplayTag& CharacterTag);
 	static EARPlayerSlot DetermineNextPlayerSlot(const AARGameStateBase* GameState);
 	static EARPlayerSlot FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState = nullptr);
 	static EARAffinityColor ResolveExpectedInvaderPlayerColor(EARCharacterChoice CharacterChoice, EARPlayerSlot PlayerSlot);
@@ -111,4 +117,7 @@ private:
 	void HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const;
 	void EnsureJoinedPlayerHasUniqueSlot(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
 	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
+
+	/** Per-controller character-tag cache captured in ChoosePlayerStart to keep pawn class/start identity aligned. */
+	TMap<TWeakObjectPtr<const AController>, FGameplayTag> PendingSpawnCharacterTagsByController;
 };

@@ -41,7 +41,7 @@ Authoritative persisted fields currently include:
   - `ShopTransientCarryables`
 - Player payload:
   - `PlayerStates[]`:
-    - `Identity` (`PlayerSlot`, optional online id/type, legacy id/name)
+    - `Identity` (optional online id/type, legacy id/name, shared-account primary/secondary profile flag)
     - canonical `CurrentCharacterTag`
     - compatibility `CharacterPicked`
     - `bDialogueAutoAdvanceEnabled`
@@ -112,7 +112,8 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `SetMaxBackupRevisions(NewMaxBackups)`
 - `MarkSaveDirty()`
 - `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)`
-- `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)`
+- `AdvanceWorldDays(DeltaDays, bPersistImmediately, OutResult)`
+- `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (legacy compatibility wrapper)
 - `GetPlayerProgressionTags(Requester, OutTags, bAllowSlotFallback)`
 - `HasPlayerProgressionTag(Requester, Tag, bAllowSlotFallback)`
 - `AddPlayerProgressionTag(Requester, Tag)`
@@ -132,7 +133,7 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 Hydration identity policy:
 - If requester has a strict online identity (`UniqueNetIdString` + non-null provider type), hydration requires identity match and does not slot-fallback.
 - Slot fallback is only used for local-only identities (PIE/offline/null subsystem style flows).
-- When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup prefers the row matching requester `PlayerSlot`.
+- When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup uses a shared-account primary/secondary profile discriminator (`bSharedOnlineIdSecondaryProfile`) assigned by runtime claim order.
 - `ClearPendingTravelGameStateData()`
 - `HasPendingTravelGameStateData()`
 
@@ -140,21 +141,18 @@ Hydration identity policy:
 - `FindPlayerStateDataBySlot(Slot, OutData, OutIndex)`
 - `FindPlayerStateDataByIdentity(Identity, OutData, OutIndex)`
 
-## Travel helpers
+## Travel Boundary
 
-- `RequestServerTravel(URL, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bPersistSaveBeforeTravel)`
-- `RequestOpenLevel(LevelName, Options, bSkipReadyChecks, bAbsolute, bPersistSaveBeforeTravel)`
-- `TravelToLoadedSaveDestination(bUseOpenLevelInPIE, TransitionMapURL)`
+Travel execution is owned by `UARTravelSubsystem` (not `UARSaveSubsystem`).
 
-Both capture one-shot `PendingTravelGameStateData` before map travel:
-- If `bPersistSaveBeforeTravel=true`, travel saves to disk first, then clears pending travel data.
-- If `bPersistSaveBeforeTravel=false`, travel skips disk save and carries pending travel data to next map hydration.
-
-`TravelToLoadedSaveDestination(...)` is the standard save-load gameplay entry path:
-- it reads the loaded save's recorded destination map
-- builds a `FARTransitionContext` with `SourceMode=SaveLoad`, `Reason=SaveLoadEntry`, `bFreshLoadEntry=true`
-- routes through the transition map URL by default so downstream gameplay maps receive the same fresh-load signal
-- when older migrated saves are missing explicit location metadata, load attempts backfill compatible mode/map metadata before this travel step
+`UARSaveSubsystem` still owns the save-side contracts consumed by travel orchestration:
+- `SetPendingTravelGameStateData(...)` / `ClearPendingTravelGameStateData(...)`
+- `SaveCurrentGame(...)` / `SaveCurrentGameUnthrottled(...)`
+- loaded-save destination metadata:
+  - `GetCurrentSaveGame()->LastSavedMapPath`
+  - `GetCurrentSaveGame()->LastSavedModeTag`
+  - `GetPendingLoadedSaveMapPath()`
+  - `GetPendingLoadedSaveModeTag()`
 
 ## BP Events
 
@@ -170,7 +168,8 @@ Both capture one-shot `PendingTravelGameStateData` before map travel:
 GameState hydration (`RequestGameStateHydration`) is authority-only and runs at `AARGameStateBase::BeginPlay`:
 1. Runtime starts from class/default values.
 2. If a current save exists, persisted GameState fields are applied.
-3. If pending travel GameState data exists, it overlays the current runtime values and is consumed/reset.
+3. Default starting unlock baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) is merged into runtime unlocks.
+4. If pending travel GameState data exists, it overlays the current runtime values and is consumed/reset.
 
 PlayerState hydration is split by lifecycle:
 - First join path (GameMode): `TryHydratePlayerStateFromCurrentSave(...)` if possible, else `InitializeForFirstSessionJoin()`.
@@ -178,6 +177,7 @@ PlayerState hydration is split by lifecycle:
 - Player hydration is two-stage:
   1. hydrate player-owned fields by identity (or slot fallback for local-only identities)
   2. resolve active `CurrentCharacterTag` and project character-owned state onto `AARPlayerStateBase`
+- If projected character-owned `LoadoutTags` are empty after hydration, `AARPlayerStateBase` seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so editor raw-map starts and runtime joins both get a deterministic baseline.
 - `AARPlayerStateBase` remains the runtime owner surface, but character-owned persistence is not keyed by player id.
 
 ## Typical Blueprint Flows

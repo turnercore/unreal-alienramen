@@ -73,6 +73,8 @@ If the data should stay with the character regardless of which player controls t
 - `EARCharacterChoice` is a compatibility mirror for existing Blueprint logic.
 - Player slot identity is canonical as `AARPlayerStateBase::PlayerSlotTag` (`Player.Slot.P1/P2`).
 - `EARPlayerSlot` is a compatibility mirror that stays synchronized with `PlayerSlotTag`.
+- Save player rows do not persist slot snapshot as a durable identity key.
+- Shared-account local players are disambiguated by a persisted primary/secondary profile flag under the same online id (`FARPlayerIdentity::bSharedOnlineIdSecondaryProfile`), while runtime join/travel normalization remains authoritative for active slot ownership.
 - Runtime control still projects through `AARPlayerStateBase`.
 - New logic should prefer `CurrentCharacterTag` over `CharacterPicked`.
 
@@ -110,7 +112,7 @@ High-level sequence:
 3. run migration + sanitize
 4. install the loaded save as the current canonical save
 5. raise load-complete events
-6. gameplay then travels into the saved destination using `TravelToLoadedSaveDestination(...)`
+6. gameplay then travels into the saved destination using `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 Important expectations:
 - `LoadGame(...)` loads the save into memory; it does not by itself hydrate a gameplay map
@@ -126,7 +128,8 @@ Primary entrypoint:
 Order:
 1. start from runtime defaults
 2. apply current save shared fields
-3. if pending travel overlay exists, apply that on top once
+3. merge default starting unlock baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) into runtime unlocks
+4. if pending travel overlay exists, apply that on top once
 
 ### PlayerState hydration
 
@@ -134,11 +137,13 @@ Primary entrypoint:
 - `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)`
 
 Order:
-1. resolve player row by identity, with slot fallback only for local-only identities
+1. resolve player row by identity
 2. apply player-owned fields to `AARPlayerStateBase`
 3. resolve active `CurrentCharacterTag`
 4. project character-owned state onto runtime `PlayerState`
 5. keep character identity fields synchronized
+6. gameplay-mode join normalization enforces unique runtime P1/P2 occupancy (host joins as P1, next player as P2) and does not source slot assignment from save rows
+- if projected character-owned `LoadoutTags` are empty after hydration, `AARPlayerStateBase` seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so raw editor map starts and runtime joins get defaults.
 
 ### Seamless travel
 
@@ -147,8 +152,21 @@ Primary runtime carry path:
 
 Expectation:
 - seamless travel keeps the active projected runtime state alive without requiring disk save/load
+- `AARPlayerStateBase::CopyProperties(...)` uses an explicit PlayerState field copy contract (slot tag, character identity, projected active-character loadout, display name, dialogue preference, and selected transient resets) and intentionally does not run generic StructSerializable by-name overlays for PlayerState handoff
+- character-owned loadouts remain canonical by `CurrentCharacterTag`; `PlayerState.LoadoutTags` is only the active projection and is refreshed on character switch
 - authoritative mode join/travel normalization ensures `CurrentCharacterTag` remains valid (`Brother`/`Sister`) and resolves non-taken fallback selection when a tag is missing/invalid
+- `AARGameModeBase::HandleStartingNewPlayer(...)` normalizes slot/character before spawn so `ChoosePlayerStart` and pawn-class resolution do not run on unknown identity.
+- `HandleFirstSessionJoinSetup(...)` hydrates player identity from save with slot fallback enabled for non-strict online identities (for example editor/direct-map starts), then reapplies runtime-assigned slot so pre-spawn character identity is still available when unique-id matching is absent.
+- `AARGameModeBase::ChoosePlayerStart_Implementation(...)` also performs an authority-side just-in-time slot/character normalization pass before querying tagged starts, covering editor/raw-map startup timing where character selection can otherwise lag.
+- `ChoosePlayerStart_Implementation(...)` prioritizes canonical character-tag start points before slot-tag fallbacks, so character-authored spawn lanes win when both are present.
+- `ChoosePlayerStart_Implementation(...)` emits warnings when identity is unresolved before spawn-point selection (and if still unresolved after normalization), so startup spawn races are visible in logs.
+- `HandleStartingNewPlayer(...)` performs a one-shot `RestartPlayer(...)` retry only when `Super::HandleStartingNewPlayer_Implementation(...)` leaves the controller without a pawn after normalization, recovering failed initial spawn without forcing extra respawns when identity later changes.
+- first-session/no-save joins assign a random available canonical character (`Brother`/`Sister`) while preserving uniqueness when possible.
+- `AARGameModeBase::HandleSeamlessTravelPlayer(...)` immediately re-runs slot/character normalization (`EnsureJoinedPlayerHasUniqueSlot` + `NormalizeConnectedPlayersIdentity`) so transient handoff overlap cannot leave duplicate concrete slots
+- `AARPlayerStateBase::SetPlayerSlotTag_Internal(...)` enforces concrete slot uniqueness against active controller-owned players only, and does not collapse distinct local couch-coop players solely because they share the same online account id.
+- seamless-travel controller replacement must flow through `GetPlayerControllerClassToSpawnForSeamlessTravel(...)` + engine handoff (`SeamlessTravelTo/From`) rather than post-super manual `SwapPlayerControllers` calls
 - authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
+- `AARPlayerStateBase::UpdateLoadoutWithTag(...)` ignores invalid/empty incoming tags and re-seeds default loadout when runtime loadout is empty, preventing editor/raw-map test flows from staying uninitialized.
 
 ## Travel and Persistence
 
@@ -156,8 +174,8 @@ Expectation:
 
 Primary entrypoints:
 - `AARGameModeBase::TryStartTravel(...)`
-- `UARSaveSubsystem::RequestServerTravel(...)`
-- `UARSaveSubsystem::RequestOpenLevel(...)`
+- `UARTravelSubsystem::RequestServerTravel(...)`
+- `UARTravelSubsystem::RequestOpenLevel(...)`
 
 What happens:
 1. readiness is checked unless skipped
@@ -167,17 +185,19 @@ What happens:
 
 Additional durability rules:
 - first authoritative entry into `Mode.Shop` persists an immediate canonical save when the current save still points at a different mode/map (for example fresh new-game start or shop re-entry after non-shop save state)
+- `Invader -> Transition -> Scrapyard` now advances world day/cycle by +1 and persists immediately in transition init, so completed invader runs survive transition-map or early-scrapyard crashes/quits
 - `Scrapyard -> Transition -> Shop` now commits a canonical save immediately after finalization and before travel so rewards/economy survive transition-map crashes or immediate post-run host quits
 
 ### Save-load gameplay entry
 
 Primary entrypoint:
-- `UARSaveSubsystem::TravelToLoadedSaveDestination(...)`
+- `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 This is the standard path after `LoadGame(...)`.
 
 What it does:
 1. reads the loaded save's recorded destination map
+   - if missing, resolves fallback destination from `LastSavedModeTag`
 2. builds `FARTransitionContext` with:
    - `SourceMode=SaveLoad`
    - `Reason=SaveLoadEntry`
@@ -185,6 +205,7 @@ What it does:
 3. routes through transition map by default
 4. transition mode preserves that same context on the continue leg
 5. final gameplay map receives the same save-load entry signal in travel options
+   - caller-provided destination options are preserved through transition-map routing
 
 Use this path for any load-only gameplay behavior.
 
@@ -224,7 +245,7 @@ Current example:
 
 1. Get `ARSaveSubsystem`.
 2. Call `LoadGame(...)`.
-3. On success, call `TravelToLoadedSaveDestination(...)`.
+3. Get `ARTravelSubsystem` and call `TravelToLoadedSaveDestination(...)`.
 
 ### Query player-owned progression
 
@@ -261,7 +282,7 @@ Do not use shared `ProgressionTags` for those.
 - putting character-owned data on `GameState`
 - keying player-owned data by character tag
 - mutating persistence on clients
-- loading a save and then entering gameplay through an ad hoc travel path instead of `TravelToLoadedSaveDestination(...)`
+- loading a save and then entering gameplay through an ad hoc travel path instead of `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 ## Rules For New Persistence
 

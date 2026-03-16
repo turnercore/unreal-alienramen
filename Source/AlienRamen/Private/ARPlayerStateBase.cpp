@@ -9,6 +9,7 @@
 #include "AbilitySystemComponent.h"
 #include "ARSaveSubsystem.h"
 #include "GameplayTagUtilities.h"
+#include "GameFramework/Controller.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
@@ -23,13 +24,22 @@ namespace
 			return Identity;
 		}
 
-		Identity.LegacyId = PlayerState->GetPlayerId();
-		Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
-		Identity.PlayerSlot = PlayerState->GetPlayerSlot();
-		if (PlayerState->GetUniqueId().IsValid())
+		UGameInstance* GameInstance = PlayerState->GetGameInstance();
+		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+		if (SaveSubsystem)
 		{
-			Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
-			Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+			Identity = SaveSubsystem->BuildRuntimePlayerIdentity(PlayerState);
+		}
+		else
+		{
+			Identity.LegacyId = PlayerState->GetPlayerId();
+			Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
+			Identity.PlayerSlot = EARPlayerSlot::Unknown;
+			if (PlayerState->GetUniqueId().IsValid())
+			{
+				Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+				Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+			}
 		}
 
 		return Identity;
@@ -58,19 +68,12 @@ namespace
 			return &SaveGame->PlayerStates[ExistingIndex];
 		}
 
-		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
-			&& SaveGame->FindPlayerStateDataBySlot(Identity.PlayerSlot, ExistingData, ExistingIndex)
-			&& SaveGame->PlayerStates.IsValidIndex(ExistingIndex))
-		{
-			return &SaveGame->PlayerStates[ExistingIndex];
-		}
-
 		FARPlayerStateSaveData& Added = SaveGame->PlayerStates.AddDefaulted_GetRef();
 		Added.Identity = Identity;
 		return &Added;
 	}
 
-	static UARSaveGame* GetCurrentSaveGame(AARPlayerStateBase* PlayerState)
+	static UARSaveGame* GetCurrentSaveGame(const AARPlayerStateBase* PlayerState)
 	{
 		if (!PlayerState)
 		{
@@ -228,10 +231,41 @@ void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, cons
 		const AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 		if (GS)
 		{
+			const auto IsSameLogicalPlayer = [this](const AARPlayerStateBase* OtherPlayer) -> bool
+			{
+				if (!OtherPlayer || OtherPlayer == this)
+				{
+					return true;
+				}
+
+				const int32 ThisLegacyId = GetPlayerId();
+				const int32 OtherLegacyId = OtherPlayer->GetPlayerId();
+				if (ThisLegacyId > 0 && ThisLegacyId == OtherLegacyId)
+				{
+					return true;
+				}
+
+				const AController* ThisOwnerController = Cast<AController>(GetOwner());
+				const AController* OtherOwnerController = Cast<AController>(OtherPlayer->GetOwner());
+				return ThisOwnerController && OtherOwnerController && ThisOwnerController == OtherOwnerController;
+			};
+
 			for (APlayerState* PS : GS->PlayerArray)
 			{
 				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
-				if (!OtherPlayer || OtherPlayer == this)
+				if (!OtherPlayer)
+				{
+					continue;
+				}
+
+				const AController* OtherOwnerController = Cast<AController>(OtherPlayer->GetOwner());
+				if (!OtherOwnerController || OtherOwnerController->PlayerState != OtherPlayer)
+				{
+					// Ignore stale/inactive PlayerState remnants during seamless-travel handoff.
+					continue;
+				}
+
+				if (IsSameLogicalPlayer(OtherPlayer))
 				{
 					continue;
 				}
@@ -391,17 +425,18 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	SetCurrentCharacterTag_Internal(PlayerData.ResolveCurrentCharacterTag(), false);
 
 	FGameplayTagContainer ProjectedLoadout;
-	if (UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+	if (TryResolveCharacterOwnedLoadout(CurrentCharacterTag, ProjectedLoadout))
 	{
-		FARCharacterSaveData CharacterState;
-		int32 CharacterIndex = INDEX_NONE;
-		if (SaveGame->FindCharacterStateDataByTag(CurrentCharacterTag, CharacterState, CharacterIndex))
-		{
-			ProjectedLoadout = CharacterState.LoadoutTags;
-		}
+		SetLoadoutTags_Internal(ProjectedLoadout, false);
+	}
+	else
+	{
+		SetLoadoutTags_Internal(FGameplayTagContainer(), false);
 	}
 
-	SetLoadoutTags_Internal(ProjectedLoadout, false);
+	// Hydration may legitimately resolve an empty character-owned loadout (missing/legacy rows).
+	// Keep editor raw-map startup and runtime join behavior deterministic by seeding defaults.
+	EnsureDefaultLoadoutIfEmpty();
 }
 
 void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
@@ -1050,7 +1085,11 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		return;
 	}
 
-	FGameplayTagContainer NextProjectedLoadout = LoadoutTags;
+	FGameplayTagContainer NextProjectedLoadout;
+	bool bHasProjectedLoadout = false;
+
+	CacheCharacterOwnedLoadout(CurrentCharacterTag, LoadoutTags);
+
 	UARSaveGame* SaveGame = GetCurrentSaveGame(this);
 	if (SaveGame && CurrentCharacterTag.IsValid())
 	{
@@ -1068,18 +1107,10 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 	}
 
-	if (SaveGame)
+	bHasProjectedLoadout = TryResolveCharacterOwnedLoadout(NormalizedTag, NextProjectedLoadout);
+	if (!bHasProjectedLoadout)
 	{
-		FARCharacterSaveData NextCharacterState;
-		int32 NextCharacterIndex = INDEX_NONE;
-		if (SaveGame->FindCharacterStateDataByTag(NormalizedTag, NextCharacterState, NextCharacterIndex))
-		{
-			NextProjectedLoadout = NextCharacterState.LoadoutTags;
-		}
-		else
-		{
-			NextProjectedLoadout.Reset();
-		}
+		NextProjectedLoadout.Reset();
 	}
 
 	const EARCharacterChoice OldCharacter = CharacterPicked;
@@ -1470,6 +1501,8 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
+	CacheCharacterOwnedLoadout(CurrentCharacterTag, LoadoutTags);
+
 	// Mirror the projected runtime loadout into the canonical character-owned save row.
 	if (UGameInstance* GI = GetGameInstance())
 	{
@@ -1498,6 +1531,46 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	}
 }
 
+void AARPlayerStateBase::CacheCharacterOwnedLoadout(const FGameplayTag CharacterTag, const FGameplayTagContainer& LoadoutTagsToCache)
+{
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedCharacterTag.IsValid())
+	{
+		return;
+	}
+
+	RuntimeCharacterOwnedLoadouts.FindOrAdd(NormalizedCharacterTag) = LoadoutTagsToCache;
+}
+
+bool AARPlayerStateBase::TryResolveCharacterOwnedLoadout(const FGameplayTag CharacterTag, FGameplayTagContainer& OutLoadoutTags) const
+{
+	OutLoadoutTags.Reset();
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedCharacterTag.IsValid())
+	{
+		return false;
+	}
+
+	if (const FGameplayTagContainer* RuntimeLoadout = RuntimeCharacterOwnedLoadouts.Find(NormalizedCharacterTag))
+	{
+		OutLoadoutTags = *RuntimeLoadout;
+		return true;
+	}
+
+	if (const UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+	{
+		FARCharacterSaveData CharacterState;
+		int32 CharacterIndex = INDEX_NONE;
+		if (SaveGame->FindCharacterStateDataByTag(NormalizedCharacterTag, CharacterState, CharacterIndex))
+		{
+			OutLoadoutTags = CharacterState.LoadoutTags;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
 {
 	if (!HasAuthority())
@@ -1508,6 +1581,8 @@ void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
 	if (!NewTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag ignored invalid tag for '%s'."), *GetNameSafe(this));
+		// Keep default baseline intact for editor/testing flows where callers may submit empty tags.
+		EnsureDefaultLoadoutIfEmpty();
 		return;
 	}
 
@@ -1610,26 +1685,58 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 		return;
 	}
 
-	if (GetClass()->ImplementsInterface(UStructSerializable::StaticClass())
-		&& TargetPS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
+	// Seamless-travel copy is intentionally explicit for PlayerState identity/runtime fields.
+	// Avoid generic StructSerializable by-name overlays here; BP-defined fallback structs can
+	// transiently stamp stale slot/character mirrors during travel handoff and create collisions.
+	const EARPlayerSlot SourceSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) != EARPlayerSlot::Unknown
+		? ARPlayer::GetPlayerSlotForTag(PlayerSlotTag)
+		: PlayerSlot;
+	TargetPS->PlayerSlotTag = ARPlayer::GetPlayerSlotTag(SourceSlot);
+	TargetPS->SyncPlayerSlotMirrorsFromTag(false);
+
+	FGameplayTag CopiedCharacterTag = CurrentCharacterTag.IsValid()
+		? CurrentCharacterTag
+		: ARPlayer::GetCharacterTagForChoice(CharacterPicked);
+	CopiedCharacterTag = ARPlayer::NormalizeCharacterTag(CopiedCharacterTag, TargetPS->GetPlayerSlot());
+	if (!CopiedCharacterTag.IsValid())
 	{
-		FInstancedStruct CurrentState;
-		IStructSerializable::Execute_ExtractStateToStruct(this, CurrentState);
-		IStructSerializable::Execute_ApplyStateFromStruct(TargetPS, CurrentState);
+		CopiedCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
 	}
 
-	TargetPS->SetPlayerSlotTag(PlayerSlotTag);
-	TargetPS->SetLoadoutTags(LoadoutTags);
-	TargetPS->SetCharacterPicked(CharacterPicked);
-	TargetPS->SetDisplayNameValue(DisplayName);
-	TargetPS->SetDialogueAutoAdvanceEnabled(bDialogueAutoAdvanceEnabled);
+	TargetPS->CurrentCharacterTag = CopiedCharacterTag;
+	TargetPS->CharacterPicked = ARPlayer::GetCharacterChoiceForTag(CopiedCharacterTag);
+	if (TargetPS->CharacterPicked == EARCharacterChoice::None)
+	{
+		TargetPS->CharacterPicked = CharacterPicked;
+	}
 
-	// Mark copied/traveled state as setup-complete; ready remains transient.
-	TargetPS->SetIsSetupComplete(true);
-	TargetPS->SetReadyForRun(false);
-	TargetPS->ResetInvaderCombo();
-	TargetPS->ClearActivatedInvaderUpgrades();
-	TargetPS->ResetSpicyTrackCursor();
+	// Carry runtime character-owned loadout cache through seamless travel.
+	TargetPS->RuntimeCharacterOwnedLoadouts = RuntimeCharacterOwnedLoadouts;
+	TargetPS->LoadoutTags = LoadoutTags;
+	TargetPS->NormalizeLoadoutTagsForSlotRules(TargetPS->LoadoutTags);
+	TargetPS->CacheCharacterOwnedLoadout(TargetPS->CurrentCharacterTag, TargetPS->LoadoutTags);
+	TargetPS->DisplayName = DisplayName;
+	TargetPS->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+
+	// Mark copied/traveled state as setup-complete; ready and offer/cursor state remain transient.
+	TargetPS->bIsSetup = true;
+	TargetPS->bIsReady = false;
+	TargetPS->InvaderComboCount = 0;
+	TargetPS->LastInvaderKillCreditServerTime = -1.0f;
+	TargetPS->ActivatedInvaderUpgradeTags.Reset();
+	TargetPS->bIsSharingSpice = false;
+	TargetPS->SpicyTrackCursorTier = 0;
+	TargetPS->PredictedSpiceValue = 0.0f;
+	TargetPS->bHasPredictedSpiceValue = false;
+	TargetPS->PredictedSpicyTrackCursorTier = 0;
+	TargetPS->bHasPredictedSpicyTrackCursorTier = false;
+
+	const EARAffinityColor ResolvedTravelColor = InvaderPlayerColor != EARAffinityColor::Unknown
+		? InvaderPlayerColor
+		: ResolveDefaultInvaderPlayerColorFromCharacter(TargetPS->CharacterPicked);
+	TargetPS->InvaderPlayerColor = ResolvedTravelColor;
+	TargetPS->bCachedTravelReady = TargetPS->IsTravelReady();
+	TargetPS->ForceNetUpdate();
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)

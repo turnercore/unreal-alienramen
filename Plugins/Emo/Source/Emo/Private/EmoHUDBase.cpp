@@ -11,12 +11,9 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
-#include "GameFramework/PlayerState.h"
-#include "GameplayTagsManager.h"
 #include "HAL/PlatformTime.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
-#include "UObject/UnrealType.h"
 #include "UObject/UObjectIterator.h"
 
 DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_EmoHUD, STATCAT_Advanced);
@@ -27,67 +24,6 @@ DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Occlusion Traces"), STAT_EmoHUD
 DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Async Requests"), STAT_EmoHUD_AsyncRequests, STATGROUP_EmoHUD);
 DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD Distance Culled"), STAT_EmoHUD_DistanceCulled, STATGROUP_EmoHUD);
 DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Emotion HUD FOV Culled"), STAT_EmoHUD_FOVCulled, STATGROUP_EmoHUD);
-
-namespace
-{
-	static FGameplayTag GetP1SlotTag_HUD()
-	{
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Player.Slot.P1")), false);
-	}
-
-	static FGameplayTag GetP2SlotTag_HUD()
-	{
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Player.Slot.P2")), false);
-	}
-
-	static bool IsKnownSlotTag_HUD(const FGameplayTag& SlotTag)
-	{
-		const FGameplayTag P1Tag = GetP1SlotTag_HUD();
-		const FGameplayTag P2Tag = GetP2SlotTag_HUD();
-		return (P1Tag.IsValid() && SlotTag.MatchesTagExact(P1Tag))
-			|| (P2Tag.IsValid() && SlotTag.MatchesTagExact(P2Tag));
-	}
-
-	static bool TryGetSlotTagFromObject_HUD(const UObject* SourceObject, FGameplayTag& OutSlotTag)
-	{
-		OutSlotTag = FGameplayTag();
-		if (!SourceObject)
-		{
-			return false;
-		}
-
-		if (UFunction* GetPlayerSlotTagFunction = SourceObject->FindFunction(TEXT("GetPlayerSlotTag")))
-		{
-			struct FGetPlayerSlotTagParams
-			{
-				FGameplayTag ReturnValue;
-			};
-
-			FGetPlayerSlotTagParams Params;
-			const_cast<UObject*>(SourceObject)->ProcessEvent(GetPlayerSlotTagFunction, &Params);
-			if (IsKnownSlotTag_HUD(Params.ReturnValue))
-			{
-				OutSlotTag = Params.ReturnValue;
-				return true;
-			}
-		}
-
-		const FStructProperty* SlotTagProperty = FindFProperty<FStructProperty>(SourceObject->GetClass(), TEXT("PlayerSlotTag"));
-		if (SlotTagProperty && SlotTagProperty->Struct == TBaseStructure<FGameplayTag>::Get())
-		{
-			if (const FGameplayTag* SlotTagValue = SlotTagProperty->ContainerPtrToValuePtr<FGameplayTag>(SourceObject))
-			{
-				if (IsKnownSlotTag_HUD(*SlotTagValue))
-				{
-					OutSlotTag = *SlotTagValue;
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-}
 
 AEmoHUDBase::AEmoHUDBase()
 {
@@ -557,29 +493,7 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 		return false;
 	}
 
-	FGameplayTag ViewerSlotTag;
-	if (!TryGetSlotTagFromObject_HUD(LocalController, ViewerSlotTag))
-	{
-		if (const APlayerState* LocalPlayerState = LocalController->GetPlayerState<APlayerState>())
-		{
-			TryGetSlotTagFromObject_HUD(LocalPlayerState, ViewerSlotTag);
-		}
-	}
-
-	if (!ViewerSlotTag.IsValid())
-	{
-		if (ShouldLogEmotionRenderVerbose())
-		{
-			UE_LOG(
-				EmoLog,
-				Verbose,
-				TEXT("[Emotion][HUD] Skip projection for '%s': Viewer slot unknown."),
-				*GetNameSafe(EmotionComponent->GetOwner()));
-		}
-		return false;
-	}
-
-	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForPlayerSlotTag(ViewerSlotTag);
+	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForController(LocalController);
 	if (!DisplayTag.IsValid())
 	{
 		if (ShouldLogEmotionRenderVerbose())
@@ -587,9 +501,8 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 			UE_LOG(
 				EmoLog,
 				Verbose,
-				TEXT("[Emotion][HUD] Skip projection for '%s': no displayed emotion tag for slot '%s'."),
-				*GetNameSafe(EmotionComponent->GetOwner()),
-				*ViewerSlotTag.ToString());
+				TEXT("[Emotion][HUD] Skip projection for '%s': no displayed emotion tag for local viewer."),
+				*GetNameSafe(EmotionComponent->GetOwner()));
 		}
 		return false;
 	}
@@ -601,10 +514,9 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 			UE_LOG(
 				EmoLog,
 				Verbose,
-				TEXT("[Emotion][HUD] Resolve failed for '%s': DisplayTag=%s Slot=%s"),
+				TEXT("[Emotion][HUD] Resolve failed for '%s': DisplayTag=%s"),
 				*GetNameSafe(EmotionComponent->GetOwner()),
-				*DisplayTag.ToString(),
-				*ViewerSlotTag.ToString());
+				*DisplayTag.ToString());
 		}
 		return false;
 	}

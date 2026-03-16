@@ -119,4 +119,12 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestConsumeHeldEnergyDrink();
+
+	// Requests authoritative shop-mode finalization and transition-routed travel to invader gameplay.
+	// Destination should be the final gameplay map URL (for example /Game/Maps/Lvl_Invader), not the transition map.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Travel")
+	void RequestFinalizeShopRunAndTravelToInvader(const FString& InInvaderTravelURL = TEXT(""));
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestFinalizeShopRunAndTravelToInvader(const FString& InInvaderTravelURL = TEXT(""));
 };

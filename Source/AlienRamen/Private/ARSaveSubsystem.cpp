@@ -24,6 +24,8 @@
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/ScopeExit.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerState.h"
 #include "GameFramework/Pawn.h"
 #include "Templates/UnrealTemplate.h"
 #include "StructSerializable.h"
@@ -107,12 +109,9 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	}
 
 	FGameplayTagContainer UnlocksToApply = SaveGame->Unlocks;
-	if (UnlocksToApply.IsEmpty())
+	if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 	{
-		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
-		{
-			UnlocksToApply = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
-		}
+		UnlocksToApply.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 	}
 
 	GameState->SetUnlocksFromSave(UnlocksToApply);
@@ -328,28 +327,6 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 	});
 }
 
-static FARPlayerIdentity BuildPlayerIdentityFromPlayerState(const APlayerState* PlayerState)
-{
-	FARPlayerIdentity Identity;
-	const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
-	if (!ARPS)
-	{
-		return Identity;
-	}
-
-	Identity.LegacyId = ARPS->GetPlayerId();
-	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-	Identity.PlayerSlot = ARPS->GetPlayerSlot();
-
-	if (PlayerState->GetUniqueId().IsValid())
-	{
-		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
-		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
-	}
-
-	return Identity;
-}
-
 static FARCharacterSaveData* FindOrAddCharacterState(UARSaveGame* SaveGame, const FGameplayTag CharacterTag)
 {
 	if (!SaveGame)
@@ -444,13 +421,98 @@ void UARSaveSubsystem::Deinitialize()
 	PendingLoadedSaveModeTag = FGameplayTag();
 	PendingLoadedSaveMapPath.Reset();
 	bPendingFreshLoadEntry = false;
+	ClearSharedOnlineIdentityRuntimeCache();
 	Super::Deinitialize();
 }
 
 void UARSaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	ClearSharedOnlineIdentityRuntimeCache();
 	ARSaveInternal::EnablePIESeamlessTravelIfNeeded();
+}
+
+FString UARSaveSubsystem::BuildSharedOnlineIdentityRuntimeKey(const FARPlayerIdentity& Identity)
+{
+	if (!Identity.HasStrictOnlineIdentity())
+	{
+		return FString();
+	}
+
+	return FString::Printf(TEXT("%s|%s"), *Identity.UniqueNetIdType, *Identity.UniqueNetIdString);
+}
+
+void UARSaveSubsystem::ClearSharedOnlineIdentityRuntimeCache()
+{
+	SharedOnlineIdentityRuntimeClaims.Reset();
+}
+
+bool UARSaveSubsystem::ResolveSharedOnlineSecondaryProfileForPlayerState(const APlayerState* PlayerState) const
+{
+	if (!PlayerState)
+	{
+		return false;
+	}
+
+	FARPlayerIdentity Identity;
+	if (PlayerState->GetUniqueId().IsValid())
+	{
+		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+	}
+
+	const FString IdentityKey = BuildSharedOnlineIdentityRuntimeKey(Identity);
+	if (IdentityKey.IsEmpty())
+	{
+		return false;
+	}
+
+	TArray<TWeakObjectPtr<APlayerState>>& Claims = SharedOnlineIdentityRuntimeClaims.FindOrAdd(IdentityKey);
+	Claims.RemoveAll([](const TWeakObjectPtr<APlayerState>& Entry)
+	{
+		APlayerState* Existing = Entry.Get();
+		if (!Existing || !IsValid(Existing))
+		{
+			return true;
+		}
+
+		const AController* OwnerController = Cast<AController>(Existing->GetOwner());
+		return !OwnerController || OwnerController->PlayerState != Existing;
+	});
+
+	for (int32 Index = 0; Index < Claims.Num(); ++Index)
+	{
+		if (Claims[Index].Get() == PlayerState)
+		{
+			return Index > 0;
+		}
+	}
+
+	Claims.Add(const_cast<APlayerState*>(PlayerState));
+	return Claims.Num() > 1;
+}
+
+FARPlayerIdentity UARSaveSubsystem::BuildRuntimePlayerIdentity(const APlayerState* PlayerState) const
+{
+	FARPlayerIdentity Identity;
+	const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PlayerState);
+	if (!ARPS)
+	{
+		return Identity;
+	}
+
+	Identity.LegacyId = ARPS->GetPlayerId();
+	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
+	Identity.PlayerSlot = EARPlayerSlot::Unknown;
+
+	if (PlayerState->GetUniqueId().IsValid())
+	{
+		Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
+		Identity.UniqueNetIdType = PlayerState->GetUniqueId()->GetType().ToString();
+	}
+
+	Identity.bSharedOnlineIdSecondaryProfile = ResolveSharedOnlineSecondaryProfileForPlayerState(PlayerState);
+	return Identity;
 }
 
 FName UARSaveSubsystem::NormalizeSlotBaseName(FName SlotBaseName)
@@ -762,12 +824,9 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->ActiveFactionEffectTags = GS->GetActiveFactionEffectTags();
 	}
 
-	if (SaveObject->Unlocks.IsEmpty())
+	if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 	{
-		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
-		{
-			SaveObject->Unlocks = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
-		}
+		SaveObject->Unlocks.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 	}
 
 	// Persist cycles from current save as authoritative progression counter (not GameState-owned).
@@ -828,16 +887,31 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 			continue;
 		}
 
-		const FARPlayerIdentity RuntimeIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(PS);
+		const FARPlayerIdentity RuntimeIdentity = BuildRuntimePlayerIdentity(PS);
 		FARPlayerStateSaveData PlayerData;
-		for (const FARPlayerStateSaveData& ExistingPlayerData : ExistingPlayerStates)
+		int32 BestMatchIndex = INDEX_NONE;
+		int32 BestMatchScore = MIN_int32;
+		for (int32 ExistingIndex = 0; ExistingIndex < ExistingPlayerStates.Num(); ++ExistingIndex)
 		{
-			if (ExistingPlayerData.Identity.Matches(RuntimeIdentity)
-				|| (RuntimeIdentity.PlayerSlot != EARPlayerSlot::Unknown && ExistingPlayerData.Identity.PlayerSlot == RuntimeIdentity.PlayerSlot))
+			const FARPlayerStateSaveData& ExistingPlayerData = ExistingPlayerStates[ExistingIndex];
+			const FARPlayerIdentity& ExistingIdentity = ExistingPlayerData.Identity;
+
+			int32 MatchScore = MIN_int32;
+			if (ExistingIdentity.Matches(RuntimeIdentity))
 			{
-				PlayerData = ExistingPlayerData;
-				break;
+				MatchScore = 100;
 			}
+
+			if (MatchScore > BestMatchScore)
+			{
+				BestMatchScore = MatchScore;
+				BestMatchIndex = ExistingIndex;
+			}
+		}
+
+		if (ExistingPlayerStates.IsValidIndex(BestMatchIndex))
+		{
+			PlayerData = ExistingPlayerStates[BestMatchIndex];
 		}
 
 		PlayerData.Identity = RuntimeIdentity;
@@ -1358,57 +1432,6 @@ bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARS
 	return true;
 }
 
-bool UARSaveSubsystem::TravelToLoadedSaveDestination(const bool bUseOpenLevelInPIE, const FString& TransitionMapURL)
-{
-	if (!CurrentSaveGame)
-	{
-		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] TravelToLoadedSaveDestination failed: no current save is loaded."));
-		return false;
-	}
-
-	const FString DestinationURL = !CurrentSaveGame->LastSavedMapPath.IsEmpty()
-		? CurrentSaveGame->LastSavedMapPath
-		: PendingLoadedSaveMapPath;
-	const FGameplayTag SavedModeTag = CurrentSaveGame->LastSavedModeTag.IsValid()
-		? CurrentSaveGame->LastSavedModeTag
-		: PendingLoadedSaveModeTag;
-	const FString ResolvedDestinationURL = !DestinationURL.IsEmpty()
-		? DestinationURL
-		: ARSaveInternal::ResolveDefaultMapPathForModeTag(SavedModeTag);
-	if (ResolvedDestinationURL.IsEmpty())
-	{
-		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] TravelToLoadedSaveDestination failed: loaded save has no destination map path."));
-		return false;
-	}
-
-	FARTransitionContext TransitionContext;
-	TransitionContext.SourceMode = EARTransitionSourceMode::SaveLoad;
-	TransitionContext.Reason = EARTransitionReason::SaveLoadEntry;
-	TransitionContext.DestinationURL = ResolvedDestinationURL;
-	TransitionContext.bFreshLoadEntry = true;
-
-	const FString TravelURL = !TransitionMapURL.IsEmpty()
-		? ARTransition::BuildTransitionTravelURL(TransitionMapURL, TransitionContext)
-		: ARTransition::AppendTransitionContextOptions(DestinationURL, TransitionContext);
-
-#if WITH_EDITOR
-	if (bUseOpenLevelInPIE && GetWorld() && GetWorld()->WorldType == EWorldType::PIE)
-	{
-		FString LevelName;
-		FString TravelOptions;
-		if (!SplitTravelURL(TravelURL, LevelName, TravelOptions))
-		{
-			UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] TravelToLoadedSaveDestination failed: could not parse travel URL '%s'."), *TravelURL);
-			return false;
-		}
-
-		return RequestOpenLevel(LevelName, TravelOptions, true, false, false);
-	}
-#endif
-
-	return RequestServerTravel(TravelURL, true, false, false, false);
-}
-
 bool UARSaveSubsystem::ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult, bool bUseDebugSaves) const
 {
 	OutSlots.Reset();
@@ -1619,7 +1642,7 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 Index = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), bAllowSlotFallback, Index))
 	{
@@ -1630,198 +1653,7 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 	return true;
 }
 
-bool UARSaveSubsystem::ArePlayersReadyForTravel(bool bSkipReadyChecks, FString& OutError) const
-{
-	if (bSkipReadyChecks)
-	{
-		return true;
-	}
-
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		OutError = TEXT("No world available.");
-		return false;
-	}
-
-	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
-	{
-		OutError = TEXT("Travel readiness check requires authority.");
-		return false;
-	}
-
-	const AARGameStateBase* GS = World->GetGameState<AARGameStateBase>();
-	if (!GS)
-	{
-		OutError = TEXT("No GameState available.");
-		return false;
-	}
-
-	for (APlayerState* PS : GS->PlayerArray)
-	{
-		const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PS);
-		if (!ARPS)
-		{
-			continue;
-		}
-
-		if (ARPS->GetPlayerSlot() == EARPlayerSlot::Unknown)
-		{
-			OutError = FString::Printf(TEXT("Player '%s' missing slot."), *GetNameSafe(ARPS));
-			return false;
-		}
-
-		if (ARPS->GetCharacterPicked() == EARCharacterChoice::None)
-		{
-			OutError = FString::Printf(TEXT("Player '%s' missing character choice."), *GetNameSafe(ARPS));
-			return false;
-		}
-
-		if (!ARPS->IsReadyForRun())
-		{
-			OutError = FString::Printf(TEXT("Player '%s' not ready."), *GetNameSafe(ARPS));
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool UARSaveSubsystem::CaptureGameStateForTravel(UWorld* World)
-{
-	if (!World)
-	{
-		return false;
-	}
-
-	AARGameStateBase* GS = World->GetGameState<AARGameStateBase>();
-	if (!GS || !GS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
-	{
-		return false;
-	}
-
-	FInstancedStruct GSState;
-	IStructSerializable::Execute_ExtractStateToStruct(GS, GSState);
-	if (GSState.IsValid())
-	{
-		SetPendingTravelGameStateData(GSState);
-		return true;
-	}
-
-	return false;
-}
-
-FString UARSaveSubsystem::EnsureListenOption(const FString& InURLOrOptions)
-{
-	if (InURLOrOptions.Contains(TEXT("listen"), ESearchCase::IgnoreCase))
-	{
-		return InURLOrOptions;
-	}
-
-	if (InURLOrOptions.Contains(TEXT("?")))
-	{
-		return InURLOrOptions + TEXT("&listen");
-	}
-
-	return InURLOrOptions.IsEmpty() ? FString(TEXT("listen")) : InURLOrOptions + TEXT("?listen");
-}
-
-bool UARSaveSubsystem::SplitTravelURL(const FString& InTravelURL, FString& OutLevelName, FString& OutOptions)
-{
-	OutLevelName = InTravelURL;
-	OutOptions.Reset();
-
-	int32 QueryIndex = INDEX_NONE;
-	if (!InTravelURL.FindChar(TEXT('?'), QueryIndex))
-	{
-		return !OutLevelName.IsEmpty();
-	}
-
-	OutLevelName = InTravelURL.Left(QueryIndex);
-	OutOptions = InTravelURL.Mid(QueryIndex + 1);
-	return !OutLevelName.IsEmpty();
-}
-
-bool UARSaveSubsystem::RequestServerTravel(
-	const FString& URL,
-	bool bSkipReadyChecks,
-	bool bAbsolute,
-	bool bSkipGameNotify,
-	bool bPersistSaveBeforeTravel)
-{
-	FString Error;
-	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
-	{
-		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] ServerTravel blocked: %s"), *Error);
-		return false;
-	}
-
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return false;
-	}
-
-	CaptureGameStateForTravel(World);
-
-	if (bPersistSaveBeforeTravel)
-	{
-		FARSaveResult SaveResult;
-		if (!SaveCurrentGame(NAME_None, true, SaveResult))
-		{
-			UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] ServerTravel blocked: save failed: %s"), *SaveResult.Error);
-			return false;
-		}
-
-		// Persisted save supersedes travel-transient overlay.
-		ClearPendingTravelGameStateData();
-	}
-
-	const FString TravelURL = EnsureListenOption(URL);
-	return World->ServerTravel(TravelURL, bAbsolute, bSkipGameNotify);
-}
-
-bool UARSaveSubsystem::RequestOpenLevel(
-	const FString& LevelName,
-	const FString& Options,
-	bool bSkipReadyChecks,
-	bool bAbsolute,
-	bool bPersistSaveBeforeTravel)
-{
-	FString Error;
-	if (!ArePlayersReadyForTravel(bSkipReadyChecks, Error))
-	{
-		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] OpenLevel blocked: %s"), *Error);
-		return false;
-	}
-
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return false;
-	}
-
-	CaptureGameStateForTravel(World);
-
-	if (bPersistSaveBeforeTravel)
-	{
-		FARSaveResult SaveResult;
-		if (!SaveCurrentGame(NAME_None, true, SaveResult))
-		{
-			UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] OpenLevel blocked: save failed: %s"), *SaveResult.Error);
-			return false;
-		}
-
-		// Persisted save supersedes travel-transient overlay.
-		ClearPendingTravelGameStateData();
-	}
-
-	const FString ListenOptions = EnsureListenOption(Options);
-	UGameplayStatics::OpenLevel(World, FName(*LevelName), bAbsolute, ListenOptions);
-	return true;
-}
-
-bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)
+bool UARSaveSubsystem::AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediately, FARSaveResult& OutResult)
 {
 	OutResult = FARSaveResult();
 
@@ -1834,7 +1666,7 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 
 	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
 	{
-		OutResult.Error = TEXT("IncrementSaveCycles must run on authority/server.");
+		OutResult.Error = TEXT("AdvanceWorldDays must run on authority/server.");
 		return false;
 	}
 
@@ -1847,9 +1679,9 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 		}
 	}
 
-	if (Delta != 0)
+	if (DeltaDays != 0)
 	{
-		const int32 NewCycles = FMath::Max(0, CurrentSaveGame->Cycles + Delta);
+		const int32 NewCycles = FMath::Max(0, CurrentSaveGame->Cycles + DeltaDays);
 		CurrentSaveGame->Cycles = NewCycles;
 		bSaveDirty = true;
 		if (AARGameStateBase* GS = World->GetGameState<AARGameStateBase>())
@@ -1858,7 +1690,7 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 		}
 	}
 
-	if (!bSaveAfterIncrement)
+	if (!bPersistImmediately)
 	{
 		OutResult.bSuccess = true;
 		OutResult.ResultCode = EARSaveResultCode::Success;
@@ -1868,6 +1700,11 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 	// Persist to the current slot (no forced new revision unless configured in SaveCurrentGame).
 	const bool bSaved = SaveCurrentGame(CurrentSlotBaseName, true, OutResult);
 	return bSaved;
+}
+
+bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)
+{
+	return AdvanceWorldDays(Delta, bSaveAfterIncrement, OutResult);
 }
 
 bool UARSaveSubsystem::GetTimeSinceLastSave(FTimespan& OutElapsed) const
@@ -1931,7 +1768,7 @@ bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, F
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), bAllowSlotFallback, PlayerIndex))
 	{
@@ -1977,7 +1814,7 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), true, PlayerIndex))
 	{
@@ -2030,7 +1867,7 @@ bool UARSaveSubsystem::RemovePlayerProgressionTag(AARPlayerStateBase* Requester,
 		return false;
 	}
 
-	const FARPlayerIdentity QueryIdentity = ARSaveInternal::BuildPlayerIdentityFromPlayerState(Requester);
+	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), true, PlayerIndex))
 	{

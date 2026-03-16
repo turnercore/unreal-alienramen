@@ -11,16 +11,21 @@
 
 namespace
 {
-	static FGameplayTag GetPlayerPlaceholderSpeakerTag()
+	static FGameplayTag GetRequesterPlaceholderSpeakerTag()
 	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Player"), false);
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Requester"), false);
+	}
+
+	static FGameplayTag GetOwnerPlaceholderSpeakerTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Owner"), false);
 	}
 
 	static bool IsPlayerCharacterSpeakerTag(const FGameplayTag& SpeakerTag)
 	{
-		return SpeakerTag.MatchesTagExact(ARPlayer::GetBrotherCharacterTag())
-			|| SpeakerTag.MatchesTagExact(ARPlayer::GetSisterCharacterTag())
-			|| SpeakerTag.MatchesTagExact(GetPlayerPlaceholderSpeakerTag());
+		return ARPlayer::GetCharacterChoiceForTag(SpeakerTag) != EARCharacterChoice::None
+			|| SpeakerTag.MatchesTagExact(GetRequesterPlaceholderSpeakerTag())
+			|| SpeakerTag.MatchesTagExact(GetOwnerPlaceholderSpeakerTag());
 	}
 
 	static void AddMirrorVariants(const FGameplayTag& SpeakerTag, TArray<FGameplayTag>& OutVariants)
@@ -31,15 +36,17 @@ namespace
 		}
 
 		OutVariants.AddUnique(SpeakerTag);
-		if (SpeakerTag.MatchesTagExact(ARPlayer::GetBrotherCharacterTag()))
+		const EARCharacterChoice Choice = ARPlayer::GetCharacterChoiceForTag(SpeakerTag);
+		if (Choice == EARCharacterChoice::Brother)
 		{
 			OutVariants.AddUnique(ARPlayer::GetSisterCharacterTag());
 		}
-		else if (SpeakerTag.MatchesTagExact(ARPlayer::GetSisterCharacterTag()))
+		else if (Choice == EARCharacterChoice::Sister)
 		{
 			OutVariants.AddUnique(ARPlayer::GetBrotherCharacterTag());
 		}
-		else if (SpeakerTag.MatchesTagExact(GetPlayerPlaceholderSpeakerTag()))
+		else if (SpeakerTag.MatchesTagExact(GetRequesterPlaceholderSpeakerTag())
+			|| SpeakerTag.MatchesTagExact(GetOwnerPlaceholderSpeakerTag()))
 		{
 			OutVariants.AddUnique(ARPlayer::GetBrotherCharacterTag());
 			OutVariants.AddUnique(ARPlayer::GetSisterCharacterTag());

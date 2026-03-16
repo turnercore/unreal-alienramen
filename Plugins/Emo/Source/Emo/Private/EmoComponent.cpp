@@ -18,8 +18,6 @@
 
 namespace
 {
-	static const FName DialogueEmotionSourceId(TEXT("Dialogue"));
-
 	static FGameplayTag GetP1SlotTag()
 	{
 		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Player.Slot.P1")), false);
@@ -264,27 +262,64 @@ void UEmoComponent::ClearAllEmotionTags()
 
 void UEmoComponent::SetDialogueEmotionTag(const FGameplayTag NewEmotionTag)
 {
-	SetSystemEmotionTag(DialogueEmotionSourceId, NewEmotionTag, 0);
+	if (!IsAuthorityOwner() || AreTagsEqual(DialogueOverrideState.SharedEmotionTag, NewEmotionTag))
+	{
+		return;
+	}
+
+	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
+	DialogueOverrideState.SharedEmotionTag = NewEmotionTag;
+	OnRep_DialogueOverrideState(OldDialogueState);
+	ForceOwnerNetUpdate();
 }
 
 void UEmoComponent::SetDialogueEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag, const FGameplayTag NewEmotionTag)
 {
-	SetSystemEmotionTagForPlayerSlotTag(DialogueEmotionSourceId, PlayerSlotTag, NewEmotionTag, 0);
+	if (!IsAuthorityOwner())
+	{
+		return;
+	}
+
+	const FGameplayTag Existing = GetStateSlotTag(DialogueOverrideState, PlayerSlotTag);
+	if (AreTagsEqual(Existing, NewEmotionTag))
+	{
+		return;
+	}
+
+	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
+	SetStateSlotTag(DialogueOverrideState, PlayerSlotTag, NewEmotionTag);
+	OnRep_DialogueOverrideState(OldDialogueState);
+	ForceOwnerNetUpdate();
 }
 
 void UEmoComponent::ClearDialogueEmotionTag()
 {
-	ClearSystemEmotionTag(DialogueEmotionSourceId);
+	SetDialogueEmotionTag(FGameplayTag());
 }
 
 void UEmoComponent::ClearDialogueEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag)
 {
-	ClearSystemEmotionTagForPlayerSlotTag(DialogueEmotionSourceId, PlayerSlotTag);
+	SetDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag, FGameplayTag());
 }
 
 void UEmoComponent::ClearAllDialogueEmotionTags()
 {
-	ClearAllSystemEmotionTagsForSource(DialogueEmotionSourceId);
+	if (!IsAuthorityOwner())
+	{
+		return;
+	}
+
+	if (!DialogueOverrideState.SharedEmotionTag.IsValid()
+		&& !DialogueOverrideState.P1EmotionTag.IsValid()
+		&& !DialogueOverrideState.P2EmotionTag.IsValid())
+	{
+		return;
+	}
+
+	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
+	DialogueOverrideState = FEmoDisplayState();
+	OnRep_DialogueOverrideState(OldDialogueState);
+	ForceOwnerNetUpdate();
 }
 
 void UEmoComponent::SetSystemEmotionTag(const FName SourceId, const FGameplayTag NewEmotionTag, const int32 Priority)
@@ -851,12 +886,36 @@ void UEmoComponent::ForceOwnerNetUpdate() const
 	}
 }
 
-void UEmoComponent::BroadcastDisplayStateDelta(const FGameplayTag& OldDisplayedTag)
+void UEmoComponent::BroadcastDisplayStateDelta(
+	const FEmoDisplayState& OldBaseState,
+	const FEmoDisplayState& OldDialogueState,
+	const FEmoDisplayState& OldSystemState)
 {
+	const FGameplayTag OldDisplayedTag = ResolveDisplayedEmotionTagFromStates(
+		OldBaseState,
+		OldDialogueState,
+		OldSystemState,
+		FGameplayTag());
+	const FGameplayTag OldP1DisplayedTag = ResolveDisplayedEmotionTagFromStates(
+		OldBaseState,
+		OldDialogueState,
+		OldSystemState,
+		GetP1SlotTag());
+	const FGameplayTag OldP2DisplayedTag = ResolveDisplayedEmotionTagFromStates(
+		OldBaseState,
+		OldDialogueState,
+		OldSystemState,
+		GetP2SlotTag());
+
 	const FGameplayTag NewDisplayedTag = GetDisplayedEmotionTagForPlayerSlotTag(FGameplayTag());
+	const FGameplayTag NewP1DisplayedTag = GetDisplayedEmotionTagForPlayerSlotTag(GetP1SlotTag());
+	const FGameplayTag NewP2DisplayedTag = GetDisplayedEmotionTagForPlayerSlotTag(GetP2SlotTag());
+	const bool bAnyDisplayChanged = !AreTagsEqual(OldDisplayedTag, NewDisplayedTag)
+		|| !AreTagsEqual(OldP1DisplayedTag, NewP1DisplayedTag)
+		|| !AreTagsEqual(OldP2DisplayedTag, NewP2DisplayedTag);
 	OnEmotionDisplayStateChanged.Broadcast();
 
-	if (!AreTagsEqual(OldDisplayedTag, NewDisplayedTag))
+	if (bAnyDisplayChanged)
 	{
 		OnEmotionDisplayChanged.Broadcast(NewDisplayedTag, OldDisplayedTag);
 		if (!NewDisplayedTag.IsValid())
@@ -882,8 +941,7 @@ void UEmoComponent::OnRep_BaseEmotionState(const FEmoDisplayState OldState)
 {
 	if (!AreDisplayStatesEqual(OldState, BaseEmotionState))
 	{
-		const FGameplayTag OldDisplayedTag = ResolveDisplayedEmotionTagFromStates(OldState, DialogueOverrideState, SystemOverrideState, FGameplayTag());
-		BroadcastDisplayStateDelta(OldDisplayedTag);
+		BroadcastDisplayStateDelta(OldState, DialogueOverrideState, SystemOverrideState);
 	}
 }
 
@@ -891,8 +949,7 @@ void UEmoComponent::OnRep_DialogueOverrideState(const FEmoDisplayState OldState)
 {
 	if (!AreDisplayStatesEqual(OldState, DialogueOverrideState))
 	{
-		const FGameplayTag OldDisplayedTag = ResolveDisplayedEmotionTagFromStates(BaseEmotionState, OldState, SystemOverrideState, FGameplayTag());
-		BroadcastDisplayStateDelta(OldDisplayedTag);
+		BroadcastDisplayStateDelta(BaseEmotionState, OldState, SystemOverrideState);
 	}
 }
 
@@ -900,8 +957,7 @@ void UEmoComponent::OnRep_SystemOverrideState(const FEmoDisplayState OldState)
 {
 	if (!AreDisplayStatesEqual(OldState, SystemOverrideState))
 	{
-		const FGameplayTag OldDisplayedTag = ResolveDisplayedEmotionTagFromStates(BaseEmotionState, DialogueOverrideState, OldState, FGameplayTag());
-		BroadcastDisplayStateDelta(OldDisplayedTag);
+		BroadcastDisplayStateDelta(BaseEmotionState, DialogueOverrideState, OldState);
 	}
 }
 

@@ -31,3 +31,9 @@ Use this section when you are working on player combat runtime, loadouts, waves,
 - [Networking Overview](README_Networking.md)
 - [Persistence Overview](README_Persistence.md)
 - [Transition Flow](README_TransitionMode.md)
+
+## Controller Lifecycle Note
+
+- Invader controller runtime should not rely on `BeginPlay` as the only setup hook after transition-map seamless travel.
+- `AARInvaderPlayerController::SetPawn` now rebinds invader GameState wiring when controller instances persist across travel.
+- Camera ownership should remain in the Invader mode/Blueprint shared-camera flow; native `SetPawn` should not force view target to pawn.

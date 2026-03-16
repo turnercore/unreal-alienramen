@@ -157,6 +157,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
+	// Generic dialogue interaction path for any actor that owns a UParleySpeakerComponent.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void RequestInteractWithParleySpeaker(AActor* SpeakerActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestInteractWithParleySpeaker(AActor* SpeakerActor);
+
 	/** Requests a strength-scaled kick impulse on a target actor in interaction range. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
 	void RequestKickActor(AActor* TargetActor);
@@ -307,6 +314,13 @@ public:
 	// BP hook to create/rebind HUD widgets when local controller context is ready or refreshed.
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
 	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
+
+	/**
+	 * Clears transition-map style UI-only input mode on the owning client and reapplies
+	 * gameplay-default input mode/cursor state after entering gameplay modes.
+	 */
+	UFUNCTION(Client, Reliable, Category = "Alien Ramen|Input|Travel")
+	void ClientApplyGameplayInputModeDefaults();
 
 	/** Opens pause menu for all local AR controllers on this machine (if not blocked). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Pause")
@@ -461,6 +475,7 @@ private:
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestHUDInitializationInternal(bool bForceBroadcast);
+	void ApplyGameplayInputModeDefaultsLocal();
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
 	void HandleHUDInitializationRetry();

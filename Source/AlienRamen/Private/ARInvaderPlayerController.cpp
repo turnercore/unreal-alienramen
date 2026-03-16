@@ -48,6 +48,15 @@ void AARInvaderPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 	SyncLegacyShipReferenceFromPawn(InPawn);
+	TryBindInvaderGameState();
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[InvaderController] SetPawn on '%s' -> '%s' (Local=%d). Camera ownership is handled by mode/BP shared-camera flow."),
+		*GetNameSafe(this),
+		*GetNameSafe(InPawn),
+		IsLocalPlayerController() ? 1 : 0);
 }
 
 AARPlayerStateBase* AARInvaderPlayerController::GetInvaderPlayerState() const
@@ -649,4 +658,10 @@ void AARInvaderPlayerController::ServerRequestVoteEndRunEarly_Implementation(con
 	}
 
 	DirectorSubsystem->SubmitEarlyBailVote(GetInvaderPlayerState(), bVoteYes);
+}
+
+void AARInvaderPlayerController::ClientHandleInvaderRunEnded_Implementation(const EARInvaderRunEndReason EndReason)
+{
+	OnInvaderRunEndedSignal.Broadcast(EndReason);
+	OnInvaderRunEnded(EndReason);
 }
