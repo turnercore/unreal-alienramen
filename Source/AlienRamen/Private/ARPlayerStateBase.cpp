@@ -25,7 +25,9 @@ namespace
 
 		Identity.LegacyId = PlayerState->GetPlayerId();
 		Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
-		Identity.PlayerSlot = PlayerState->GetPlayerSlot();
+		// Coop slot is session-authoritative runtime state (host=P1, next local player=P2),
+		// so it is intentionally not serialized into save identity rows.
+		Identity.PlayerSlot = EARPlayerSlot::Unknown;
 		if (PlayerState->GetUniqueId().IsValid())
 		{
 			Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
@@ -54,13 +56,6 @@ namespace
 		FARPlayerStateSaveData ExistingData;
 		int32 ExistingIndex = INDEX_NONE;
 		if (SaveGame->FindPlayerStateDataByIdentity(Identity, ExistingData, ExistingIndex) && SaveGame->PlayerStates.IsValidIndex(ExistingIndex))
-		{
-			return &SaveGame->PlayerStates[ExistingIndex];
-		}
-
-		if (Identity.PlayerSlot != EARPlayerSlot::Unknown
-			&& SaveGame->FindPlayerStateDataBySlot(Identity.PlayerSlot, ExistingData, ExistingIndex)
-			&& SaveGame->PlayerStates.IsValidIndex(ExistingIndex))
 		{
 			return &SaveGame->PlayerStates[ExistingIndex];
 		}
@@ -228,10 +223,29 @@ void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, cons
 		const AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 		if (GS)
 		{
+			const auto IsSameLogicalPlayer = [this](const AARPlayerStateBase* OtherPlayer) -> bool
+			{
+				if (!OtherPlayer || OtherPlayer == this)
+				{
+					return true;
+				}
+
+				const FUniqueNetIdRepl ThisUniqueId = GetUniqueId();
+				const FUniqueNetIdRepl OtherUniqueId = OtherPlayer->GetUniqueId();
+				if (ThisUniqueId.IsValid() && OtherUniqueId.IsValid() && ThisUniqueId == OtherUniqueId)
+				{
+					return true;
+				}
+
+				const int32 ThisLegacyId = GetPlayerId();
+				const int32 OtherLegacyId = OtherPlayer->GetPlayerId();
+				return ThisLegacyId > 0 && ThisLegacyId == OtherLegacyId;
+			};
+
 			for (APlayerState* PS : GS->PlayerArray)
 			{
 				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
-				if (!OtherPlayer || OtherPlayer == this)
+				if (!OtherPlayer || IsSameLogicalPlayer(OtherPlayer))
 				{
 					continue;
 				}
@@ -1610,26 +1624,55 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 		return;
 	}
 
-	if (GetClass()->ImplementsInterface(UStructSerializable::StaticClass())
-		&& TargetPS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
+	// Seamless-travel copy is intentionally explicit for PlayerState identity/runtime fields.
+	// Avoid generic StructSerializable by-name overlays here; BP-defined fallback structs can
+	// transiently stamp stale slot/character mirrors during travel handoff and create collisions.
+	const EARPlayerSlot SourceSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) != EARPlayerSlot::Unknown
+		? ARPlayer::GetPlayerSlotForTag(PlayerSlotTag)
+		: PlayerSlot;
+	TargetPS->PlayerSlotTag = ARPlayer::GetPlayerSlotTag(SourceSlot);
+	TargetPS->SyncPlayerSlotMirrorsFromTag(false);
+
+	FGameplayTag CopiedCharacterTag = CurrentCharacterTag.IsValid()
+		? CurrentCharacterTag
+		: ARPlayer::GetCharacterTagForChoice(CharacterPicked);
+	CopiedCharacterTag = ARPlayer::NormalizeCharacterTag(CopiedCharacterTag, TargetPS->GetPlayerSlot());
+	if (!CopiedCharacterTag.IsValid())
 	{
-		FInstancedStruct CurrentState;
-		IStructSerializable::Execute_ExtractStateToStruct(this, CurrentState);
-		IStructSerializable::Execute_ApplyStateFromStruct(TargetPS, CurrentState);
+		CopiedCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
 	}
 
-	TargetPS->SetPlayerSlotTag(PlayerSlotTag);
-	TargetPS->SetLoadoutTags(LoadoutTags);
-	TargetPS->SetCharacterPicked(CharacterPicked);
-	TargetPS->SetDisplayNameValue(DisplayName);
-	TargetPS->SetDialogueAutoAdvanceEnabled(bDialogueAutoAdvanceEnabled);
+	TargetPS->CurrentCharacterTag = CopiedCharacterTag;
+	TargetPS->CharacterPicked = ARPlayer::GetCharacterChoiceForTag(CopiedCharacterTag);
+	if (TargetPS->CharacterPicked == EARCharacterChoice::None)
+	{
+		TargetPS->CharacterPicked = CharacterPicked;
+	}
 
-	// Mark copied/traveled state as setup-complete; ready remains transient.
-	TargetPS->SetIsSetupComplete(true);
-	TargetPS->SetReadyForRun(false);
-	TargetPS->ResetInvaderCombo();
-	TargetPS->ClearActivatedInvaderUpgrades();
-	TargetPS->ResetSpicyTrackCursor();
+	TargetPS->LoadoutTags = LoadoutTags;
+	TargetPS->NormalizeLoadoutTagsForSlotRules(TargetPS->LoadoutTags);
+	TargetPS->DisplayName = DisplayName;
+	TargetPS->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+
+	// Mark copied/traveled state as setup-complete; ready and offer/cursor state remain transient.
+	TargetPS->bIsSetup = true;
+	TargetPS->bIsReady = false;
+	TargetPS->InvaderComboCount = 0;
+	TargetPS->LastInvaderKillCreditServerTime = -1.0f;
+	TargetPS->ActivatedInvaderUpgradeTags.Reset();
+	TargetPS->bIsSharingSpice = false;
+	TargetPS->SpicyTrackCursorTier = 0;
+	TargetPS->PredictedSpiceValue = 0.0f;
+	TargetPS->bHasPredictedSpiceValue = false;
+	TargetPS->PredictedSpicyTrackCursorTier = 0;
+	TargetPS->bHasPredictedSpicyTrackCursorTier = false;
+
+	const EARAffinityColor ResolvedTravelColor = InvaderPlayerColor != EARAffinityColor::Unknown
+		? InvaderPlayerColor
+		: ResolveDefaultInvaderPlayerColorFromCharacter(TargetPS->CharacterPicked);
+	TargetPS->InvaderPlayerColor = ResolvedTravelColor;
+	TargetPS->bCachedTravelReady = TargetPS->IsTravelReady();
+	TargetPS->ForceNetUpdate();
 }
 
 bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState)

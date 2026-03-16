@@ -367,13 +367,13 @@ void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState,
 		return;
 	}
 
-	const EARPlayerSlot AssignedSlot = DetermineNextPlayerSlot(InGameState);
+	EARPlayerSlot AssignedSlot = DetermineNextPlayerSlot(InGameState);
 	JoinedPlayerState->SetPlayerSlot(AssignedSlot);
 
 	bool bHydratedFromSave = false;
 	if (SaveSubsystem)
 	{
-		bHydratedFromSave = SaveSubsystem->TryHydratePlayerStateFromCurrentSave(JoinedPlayerState, true);
+		bHydratedFromSave = SaveSubsystem->TryHydratePlayerStateFromCurrentSave(JoinedPlayerState, false);
 		// Preserve authoritative join-time slot assignment for this session.
 		JoinedPlayerState->SetPlayerSlot(AssignedSlot);
 	}
@@ -468,6 +468,7 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 		}
 
 		EARPlayerSlot CurrentSlot = Player->GetPlayerSlot();
+		EARPlayerSlot TargetSlot = CurrentSlot;
 		const bool bCurrentIsP1 = CurrentSlot == EARPlayerSlot::P1;
 		const bool bCurrentIsP2 = CurrentSlot == EARPlayerSlot::P2;
 		const bool bCurrentTaken = (bCurrentIsP1 && bP1Taken) || (bCurrentIsP2 && bP2Taken);
@@ -475,23 +476,32 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 
 		if (!bCurrentValid || bCurrentTaken)
 		{
-			EARPlayerSlot NewSlot = EARPlayerSlot::Unknown;
 			if (!bP1Taken)
 			{
-				NewSlot = EARPlayerSlot::P1;
+				TargetSlot = EARPlayerSlot::P1;
 			}
 			else if (!bP2Taken)
 			{
-				NewSlot = EARPlayerSlot::P2;
+				TargetSlot = EARPlayerSlot::P2;
 			}
-
-			if (NewSlot != EARPlayerSlot::Unknown && NewSlot != CurrentSlot)
+			else
 			{
-				Player->SetPlayerSlot(NewSlot);
-				UE_LOG(ARLog, Log, TEXT("[GameMode] Identity normalize slot for '%s': %d -> %d"),
-					*GetNameSafe(Player), static_cast<int32>(CurrentSlot), static_cast<int32>(NewSlot));
-				CurrentSlot = NewSlot;
+				TargetSlot = EARPlayerSlot::Unknown;
 			}
+		}
+
+		if (TargetSlot != EARPlayerSlot::Unknown && TargetSlot != CurrentSlot)
+		{
+			Player->SetPlayerSlot(TargetSlot);
+			const EARPlayerSlot AppliedSlot = Player->GetPlayerSlot();
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[GameMode] Identity normalize slot for '%s': %d -> %d"),
+				*GetNameSafe(Player),
+				static_cast<int32>(CurrentSlot),
+				static_cast<int32>(AppliedSlot));
+			CurrentSlot = AppliedSlot;
 		}
 
 		if (CurrentSlot == EARPlayerSlot::P1)
@@ -762,6 +772,18 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 		}
 
 		RestartPlayer(PlayerController);
+	}
+
+	// Seamless travel can produce transient duplicate slot mirrors while old/new PlayerState
+	// instances overlap during handoff. Re-run authoritative identity normalization immediately.
+	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
+	{
+		if (AARPlayerStateBase* JoinedPS = PlayerController->GetPlayerState<AARPlayerStateBase>())
+		{
+			EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+		}
+
+		NormalizeConnectedPlayersIdentity(GS);
 	}
 }
 

@@ -339,7 +339,8 @@ static FARPlayerIdentity BuildPlayerIdentityFromPlayerState(const APlayerState* 
 
 	Identity.LegacyId = ARPS->GetPlayerId();
 	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-	Identity.PlayerSlot = ARPS->GetPlayerSlot();
+	// Coop slot is runtime session state and should never be persisted/restored from disk.
+	Identity.PlayerSlot = EARPlayerSlot::Unknown;
 
 	if (PlayerState->GetUniqueId().IsValid())
 	{
@@ -832,8 +833,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		FARPlayerStateSaveData PlayerData;
 		for (const FARPlayerStateSaveData& ExistingPlayerData : ExistingPlayerStates)
 		{
-			if (ExistingPlayerData.Identity.Matches(RuntimeIdentity)
-				|| (RuntimeIdentity.PlayerSlot != EARPlayerSlot::Unknown && ExistingPlayerData.Identity.PlayerSlot == RuntimeIdentity.PlayerSlot))
+			if (ExistingPlayerData.Identity.Matches(RuntimeIdentity))
 			{
 				PlayerData = ExistingPlayerData;
 				break;

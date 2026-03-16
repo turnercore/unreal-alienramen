@@ -134,11 +134,12 @@ Primary entrypoint:
 - `UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(...)`
 
 Order:
-1. resolve player row by identity, with slot fallback only for local-only identities
+1. resolve player row by identity
 2. apply player-owned fields to `AARPlayerStateBase`
 3. resolve active `CurrentCharacterTag`
 4. project character-owned state onto runtime `PlayerState`
 5. keep character identity fields synchronized
+6. gameplay-mode join normalization enforces unique runtime P1/P2 occupancy (host joins as P1, next player as P2) and does not source slot assignment from save rows
 
 ### Seamless travel
 
@@ -147,7 +148,9 @@ Primary runtime carry path:
 
 Expectation:
 - seamless travel keeps the active projected runtime state alive without requiring disk save/load
+- `AARPlayerStateBase::CopyProperties(...)` uses an explicit PlayerState field copy contract (slot tag, character identity, loadout, display name, dialogue preference, and selected transient resets) and intentionally does not run generic StructSerializable by-name overlays for PlayerState handoff
 - authoritative mode join/travel normalization ensures `CurrentCharacterTag` remains valid (`Brother`/`Sister`) and resolves non-taken fallback selection when a tag is missing/invalid
+- `AARGameModeBase::HandleSeamlessTravelPlayer(...)` immediately re-runs slot/character normalization (`EnsureJoinedPlayerHasUniqueSlot` + `NormalizeConnectedPlayersIdentity`) so transient handoff overlap cannot leave duplicate concrete slots
 - authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
 
 ## Travel and Persistence

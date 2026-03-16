@@ -11,6 +11,18 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - The Invader pawn/avatar initializes ASC actor info and applies loadout-driven abilities, effects, and tags.
 - UI should read replicated attributes from `PlayerState`, not from a local pawn copy.
 
+## Data Table Row Contracts
+
+- Canonical loadout row structs live in `Source/AlienRamen/Public/ARLoadoutTypes.h`.
+- Hat rows use `FARHatDefRow` (`Unlock.Hat.*`) and currently expose:
+  - `DisplayName`
+  - `Description`
+- Ship rows use `FARShipDefRow` (`Unlock.Ship.*`) and expose:
+  - identity: `DisplayName`, `Description`
+  - baseline gameplay: `Stats`, `PrimaryWeapon`, `StartupAbilities`, `StartupEffects`, `ShipTags`, `MovementType`
+  - mode-specific pawn classes: `ScrapyardPawnClass`, `DummyPawnClass`, `InvaderPawnClass`
+- Runtime consumers resolve ship fields by property name (reflection), so these names are contract-critical and should remain stable.
+
 ## What to read
 
 - [Progression and unlocks](README_ProgressionUnlocks.md)

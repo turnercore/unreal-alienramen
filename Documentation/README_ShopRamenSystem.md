@@ -26,6 +26,10 @@ This document captures the runtime ownership and integration contract for the sh
 - TagKey routes are expected for:
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Shop.Station` -> `FARShopStationConfigRow`
+- Character table rows for shop/runtime character spawning can use `FARShopCharacterDefRow` (`Source/AlienRamen/Public/ARLoadoutTypes.h`) with:
+  - `CharacterTag` (`Parley.Speaker.*`)
+  - `CharacterClass` (soft pawn Blueprint/class; shown as `Blueprint` in row editor)
+  - Speaker/customer identity links stay component-driven on the spawned pawn Blueprint (no duplicate speaker/customer row links required).
 
 ## Speaker + Customer Flow
 

@@ -510,6 +510,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
+	/**
+	 * Seamless-travel carry path from old PlayerState to the new instance.
+	 *
+	 * Contract:
+	 * - copies canonical player identity/runtime fields explicitly (slot tag, character, loadout, display name, dialogue preference)
+	 * - resets per-run transients that should not survive mode travel (ready/combo/cursor/share flags)
+	 * - avoids generic by-name struct overlay for PlayerState handoff to prevent stale/mismatched BP state from reintroducing duplicate slot mirrors
+	 */
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
 

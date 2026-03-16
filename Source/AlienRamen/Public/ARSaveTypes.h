@@ -131,7 +131,7 @@ struct ALIENRAMEN_API FARPlayerIdentity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
-	/** Coop slot fallback when no platform id exists. */
+	/** Legacy coop slot identity retained for migration/compatibility; new saves keep this Unknown. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
 
@@ -167,6 +167,7 @@ struct ALIENRAMEN_API FARPlayerIdentity
 
 			return UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive);
 		}
+		// Slot-only identity matching is legacy compatibility for older save rows.
 		return PlayerSlot != EARPlayerSlot::Unknown && PlayerSlot == Other.PlayerSlot;
 	}
 };

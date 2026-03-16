@@ -175,10 +175,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void ClearPendingFreshLoadEntry();
 
-	// Applies player-specific save payload onto Requester if identity (or optional slot fallback) is found in CurrentSaveGame.
+	// Applies player-specific save payload onto Requester when identity is found in CurrentSaveGame.
+	// Slot fallback is legacy-only and should stay disabled for normal runtime joins.
 	// Returns true when a matching player row was found and applied.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = true);
+	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = false);
 
 	// Server-authoritative helper: sends current canonical snapshot to a specific player controller.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
