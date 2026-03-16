@@ -176,19 +176,25 @@ bool UARCustomerComponent::GenerateNextOrder()
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Player")), false);
-			if (PlayerSpeakerTag.IsValid())
+			const FGameplayTag RequesterSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Requester")), false);
+			const FGameplayTag OwnerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Owner")), false);
+			const FGameplayTag BrotherTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+			const FGameplayTag SisterTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+
+			auto AccumulateRelationshipLevel = [&RelationshipLevel, DialogueSubsystem, this](const FGameplayTag& SourceSpeakerTag)
 			{
-				RelationshipLevel = DialogueSubsystem->GetRelationshipLevelForSpeakerPair(PlayerSpeakerTag, CachedSpeakerTag);
-			}
-			else
-			{
-				const FGameplayTag BrotherTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
-				const FGameplayTag SisterTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
-				RelationshipLevel = FMath::Max(
-					DialogueSubsystem->GetRelationshipLevelForSpeakerPair(BrotherTag, CachedSpeakerTag),
-					DialogueSubsystem->GetRelationshipLevelForSpeakerPair(SisterTag, CachedSpeakerTag));
-			}
+				if (!SourceSpeakerTag.IsValid() || !CachedSpeakerTag.IsValid())
+				{
+					return;
+				}
+
+				RelationshipLevel = FMath::Max(RelationshipLevel, DialogueSubsystem->GetRelationshipLevelForSpeakerPair(SourceSpeakerTag, CachedSpeakerTag));
+			};
+
+			AccumulateRelationshipLevel(RequesterSpeakerTag);
+			AccumulateRelationshipLevel(OwnerSpeakerTag);
+			AccumulateRelationshipLevel(BrotherTag);
+			AccumulateRelationshipLevel(SisterTag);
 		}
 	}
 

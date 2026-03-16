@@ -107,12 +107,9 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 	}
 
 	FGameplayTagContainer UnlocksToApply = SaveGame->Unlocks;
-	if (UnlocksToApply.IsEmpty())
+	if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 	{
-		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
-		{
-			UnlocksToApply = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
-		}
+		UnlocksToApply.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 	}
 
 	GameState->SetUnlocksFromSave(UnlocksToApply);
@@ -763,12 +760,9 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->ActiveFactionEffectTags = GS->GetActiveFactionEffectTags();
 	}
 
-	if (SaveObject->Unlocks.IsEmpty())
+	if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
 	{
-		if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
-		{
-			SaveObject->Unlocks = LoadoutSettings->GetEffectiveDefaultStartingUnlocks();
-		}
+		SaveObject->Unlocks.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 	}
 
 	// Persist cycles from current save as authoritative progression counter (not GameState-owned).

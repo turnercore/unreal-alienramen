@@ -643,15 +643,7 @@ static void ClearChoiceLookaheadPreviewForSpeaker(
 
 static FGameplayTag ResolveLineSpeakerTagForContext(const FDialogueConversationLine& Line, const FDialogueRuntimeContext& Context)
 {
-	FGameplayTag ResolvedSpeakerTag = Line.SpeakerTag;
-	if (ResolvedSpeakerTag.IsValid() && GetDialogueSpeakerPlayerPlaceholderTag().IsValid()
-		&& ResolvedSpeakerTag.MatchesTagExact(GetDialogueSpeakerPlayerPlaceholderTag())
-		&& Context.ResolvedPlayerSpeakerTag.IsValid())
-	{
-		ResolvedSpeakerTag = Context.ResolvedPlayerSpeakerTag;
-	}
-
-	return ResolvedSpeakerTag;
+	return ResolveSpeakerTagForContext(Line.SpeakerTag, Context, Line.SpeakerTag);
 }
 
 static bool DoesSpeakerTagMatchPrimarySpeaker(const FGameplayTag& CandidateSpeakerTag, const FGameplayTag& PrimarySpeakerTag)
@@ -671,8 +663,7 @@ static bool DoesSpeakerTagMatchActivePlayerLookahead(const FGameplayTag& Candida
 		return false;
 	}
 
-	const FGameplayTag PlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
-	if (PlaceholderTag.IsValid() && CandidateSpeakerTag.MatchesTagExact(PlaceholderTag))
+	if (IsRequesterPlaceholderSpeakerTag(CandidateSpeakerTag))
 	{
 		return true;
 	}
@@ -1086,13 +1077,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 		ClearDialogueEmotionOverridesForSession(Session, /*bResetTrackedComponents=*/ true);
 		ClearSessionPresentationState(Session);
 
-		FGameplayTag ResolvedSpeakerTag = Line.SpeakerTag;
-		if (ResolvedSpeakerTag.IsValid() && GetDialogueSpeakerPlayerPlaceholderTag().IsValid()
-			&& ResolvedSpeakerTag.MatchesTagExact(GetDialogueSpeakerPlayerPlaceholderTag())
-			&& Context.ResolvedPlayerSpeakerTag.IsValid())
-		{
-			ResolvedSpeakerTag = Context.ResolvedPlayerSpeakerTag;
-		}
+		const FGameplayTag ResolvedSpeakerTag = ResolveSpeakerTagForContext(Line.SpeakerTag, Context, Line.SpeakerTag);
 
 		Session.CurrentSpeakerTag = ResolvedSpeakerTag;
 		Session.CurrentLineText = BuildFormattedDialogueLineText(
@@ -1240,8 +1225,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			return false;
 		}
 
-		const FGameplayTag PlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
-		if (PlaceholderTag.IsValid() && CandidateSpeakerTag.MatchesTagExact(PlaceholderTag))
+		if (IsRequesterPlaceholderSpeakerTag(CandidateSpeakerTag))
 		{
 			return true;
 		}

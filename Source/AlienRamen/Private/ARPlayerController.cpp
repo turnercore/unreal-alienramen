@@ -120,6 +120,12 @@ void AARPlayerController::RequestInteractWithActor(AActor* Actor)
 	if (AARNPCCharacterBase* CharacterActor = Cast<AARNPCCharacterBase>(Actor))
 	{
 		RequestInteractWithCharacter(CharacterActor);
+		return;
+	}
+
+	if (Actor && Actor->FindComponentByClass<UParleySpeakerComponent>())
+	{
+		RequestInteractWithParleySpeaker(Actor);
 	}
 }
 
@@ -650,6 +656,45 @@ void AARPlayerController::RequestInteractWithCharacter(AARNPCCharacterBase* Char
 void AARPlayerController::ServerRequestInteractWithCharacter_Implementation(AARNPCCharacterBase* CharacterActor)
 {
 	RequestInteractWithCharacter(CharacterActor);
+}
+
+void AARPlayerController::RequestInteractWithParleySpeaker(AActor* SpeakerActor)
+{
+	if (!SpeakerActor)
+	{
+		UE_LOG(ARLog, Verbose, TEXT("[Interact] RequestInteractWithParleySpeaker ignored on '%s': target is null."), *GetNameSafe(this));
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		if (!IsServerInteractionTargetReachable(SpeakerActor, TEXT("Interact|Parley")))
+		{
+			return;
+		}
+
+		if (UParleySpeakerComponent* TargetSpeakerComponent = SpeakerActor->FindComponentByClass<UParleySpeakerComponent>())
+		{
+			TargetSpeakerComponent->InteractByController(this);
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Interact] RequestInteractWithParleySpeaker ignored on '%s': target '%s' has no UParleySpeakerComponent."),
+				*GetNameSafe(this),
+				*GetNameSafe(SpeakerActor));
+		}
+		return;
+	}
+
+	ServerRequestInteractWithParleySpeaker(SpeakerActor);
+}
+
+void AARPlayerController::ServerRequestInteractWithParleySpeaker_Implementation(AActor* SpeakerActor)
+{
+	RequestInteractWithParleySpeaker(SpeakerActor);
 }
 
 void AARPlayerController::RequestKickActor(AActor* TargetActor)

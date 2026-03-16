@@ -242,7 +242,9 @@ bool AARTransitionGameMode::TryAdvanceToDestination()
 
 	bTransitionTravelStarted = true;
 	const FString DestinationTravelURL = ARTransition::AppendTransitionContextOptions(TransitionContext.DestinationURL, TransitionContext);
-	if (!TryStartTravel(DestinationTravelURL, TEXT(""), false, false, false, false, EARTravelRoutePolicy::ForceDirect))
+	// Use absolute travel for the final transition hop so previous map URL options
+	// (for example a transient game-mode override) do not leak into destination mode.
+	if (!TryStartTravel(DestinationTravelURL, TEXT(""), false, true, false, false, EARTravelRoutePolicy::ForceDirect))
 	{
 		bTransitionTravelStarted = false;
 		UE_LOG(ARLog, Warning, TEXT("[Transition] Advance travel failed to '%s'."), *DestinationTravelURL);

@@ -107,9 +107,9 @@ namespace
 		};
 
 		AddUniqueTag(ConversationAsset->Header.PrimarySpeakerTag);
-		if (const FGameplayTag PlayerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false); PlayerTag.IsValid())
+		if (const FGameplayTag RequesterTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Requester"), false); RequesterTag.IsValid())
 		{
-			AddUniqueTag(PlayerTag);
+			AddUniqueTag(RequesterTag);
 		}
 
 		for (const FDialogueCompiledNode& Node : ConversationAsset->CompiledData.Nodes)

@@ -3351,9 +3351,9 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	NewConversation->Header.DisplayTitle = FText::FromString(AssetName);
 	NewConversation->Header.PrimarySpeakerTag = SpeakerRow->SpeakerTag;
 	NewConversation->Header.ParticipatingSpeakerTags.AddUnique(SpeakerRow->SpeakerTag);
-	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
+	if (const FGameplayTag RequesterSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Requester"), false); RequesterSpeakerTag.IsValid())
 	{
-		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(PlayerSpeakerTag);
+		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(RequesterSpeakerTag);
 	}
 	if (TargetRelationshipBand > 0 && SpeakerRow->RelationshipThresholds.IsValidIndex(TargetRelationshipBand - 1))
 	{
@@ -3692,9 +3692,9 @@ FReply SDialogueSpeakerEditorPanel::HandleDuplicateConversation()
 		NewConversation->Header.DisplayTitle = FText::FromString(NewConversation->Header.DisplayTitle.ToString() + TEXT(" Copy"));
 	}
 	NewConversation->Header.ParticipatingSpeakerTags.AddUnique(NewConversation->Header.PrimarySpeakerTag);
-	if (const FGameplayTag PlayerSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false); PlayerSpeakerTag.IsValid())
+	if (const FGameplayTag RequesterSpeakerTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Requester"), false); RequesterSpeakerTag.IsValid())
 	{
-		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(PlayerSpeakerTag);
+		NewConversation->Header.ParticipatingSpeakerTags.AddUnique(RequesterSpeakerTag);
 	}
 
 	FParleyConversationAssetRow NewLookupRow;

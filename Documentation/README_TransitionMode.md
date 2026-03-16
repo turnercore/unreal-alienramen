@@ -14,6 +14,8 @@ Transition flow is the handoff layer between the three primary game modes:
   - Shared mode-travel router for transition-map handoff.
   - `TryStartTravel` routes destination URLs through transition map when mode opts in.
   - Seamless-travel handoff resets carried spectator controller state back to playing via `HandleSeamlessTravelPlayer(...)` so gameplay modes repossess correctly after transition maps.
+  - Seamless-travel handoff now swaps carried controllers to the destination mode's `PlayerControllerClass` when classes mismatch (for example transition/debug controllers entering gameplay modes), so mode-specific controller defaults and startup logic still apply.
+  - Identity/slot normalization now considers only controller-owned active `PlayerState` instances during travel handoff to avoid stale seamless-copy remnants stealing `P1/P2` occupancy.
   - Per-call route override is supported via `EARTravelRoutePolicy`:
     - `ModeDefault`
     - `ForceTransitionMap`
@@ -31,6 +33,7 @@ Transition flow is the handoff layer between the three primary game modes:
   - Native class is abstract; maps should use a Blueprint subclass.
   - Resets player travel-ready flags on transition entry (configurable).
   - Auto-advances to destination when all active players are ready.
+  - Final destination hop now uses absolute server travel to avoid leaking prior map URL options into the destination mode (for example stale `game=` overrides).
   - Spawns no gameplay pawn in transition mode.
 - `AARTransitionGameState`
   - Replicated read model for transition context (`FARTransitionContext`).
@@ -80,6 +83,7 @@ Blueprint wrappers:
 3. Transition map displays results/loading UI.
 4. Players submit continue-ready votes.
 5. Transition mode auto-travels to `TransitionContext.DestinationURL` when all are ready.
+   - Travel is executed as absolute URL handoff so destination map defaults (GameMode/PlayerController) resolve deterministically.
 6. The final gameplay map receives the same transition context in its own travel options.
 
 ## Direct Same-Mode Travel

@@ -122,13 +122,22 @@ namespace
 			return FGameplayTag();
 		}
 
-		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
-		if (CharacterTag.IsValid())
+		const FGameplayTag CanonicalCharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+		const FGameplayTag ChoiceCharacterTag = ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
+		if (ChoiceCharacterTag.IsValid())
 		{
-			return CharacterTag;
+			if (!CanonicalCharacterTag.IsValid() || !CanonicalCharacterTag.MatchesTagExact(ChoiceCharacterTag))
+			{
+				return ChoiceCharacterTag;
+			}
 		}
 
-		return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
+		if (CanonicalCharacterTag.IsValid())
+		{
+			return CanonicalCharacterTag;
+		}
+
+		return ARPlayer::GetDefaultCharacterTagForSlot(PlayerState->GetPlayerSlot());
 	}
 }
 
@@ -223,22 +232,92 @@ void AARShopGameMode::RestartPlayer(AController* NewPlayer)
 
 UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
-	const FGameplayTag CharacterTag = ResolveCharacterTagForController(InController);
+	const FGameplayTag PendingCharacterTag = ARPlayer::NormalizeCharacterTag(GetPendingSpawnCharacterTagForController(InController));
+	const FGameplayTag RuntimeCharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterTagForController(InController));
+	const FGameplayTag CharacterTag = PendingCharacterTag.IsValid() ? PendingCharacterTag : RuntimeCharacterTag;
+	const TCHAR* CharacterTagSource = PendingCharacterTag.IsValid() ? TEXT("PendingChoosePlayerStart") : TEXT("PlayerState");
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[ShopGameMode] Resolve pawn class for controller='%s' slot=%d choice=%d characterTag=%s source=%s."),
+		*GetNameSafe(InController),
+		InController && InController->GetPlayerState<AARPlayerStateBase>() ? static_cast<int32>(InController->GetPlayerState<AARPlayerStateBase>()->GetPlayerSlot()) : static_cast<int32>(EARPlayerSlot::Unknown),
+		InController && InController->GetPlayerState<AARPlayerStateBase>() ? static_cast<int32>(InController->GetPlayerState<AARPlayerStateBase>()->GetCharacterPicked()) : static_cast<int32>(EARCharacterChoice::None),
+		*CharacterTag.ToString(),
+		CharacterTagSource);
 	if (CharacterTag.IsValid())
 	{
 		if (const TSubclassOf<APawn>* PawnClassByTag = ShopPawnClassByCharacterTag.Find(CharacterTag))
 		{
 			if (*PawnClassByTag)
 			{
+				UE_LOG(ARLog, Verbose, TEXT("[ShopGameMode] Pawn class exact-tag hit: QueryTag=%s Class=%s."), *CharacterTag.ToString(), *GetNameSafe(PawnClassByTag->Get()));
 				return PawnClassByTag->Get();
 			}
 		}
 
-		// Allow parent-tag keyed entries (for example Parley.Speaker.Brother root variants).
+		// Legacy compatibility: support Parley/Customer keyed entries by canonicalizing map keys at runtime.
 		for (const TPair<FGameplayTag, TSubclassOf<APawn>>& Entry : ShopPawnClassByCharacterTag)
 		{
-			if (Entry.Key.IsValid() && CharacterTag.MatchesTag(Entry.Key) && Entry.Value)
+			if (!Entry.Value)
 			{
+				continue;
+			}
+
+			const FGameplayTag CanonicalEntryTag = ARPlayer::NormalizeCharacterTag(Entry.Key);
+			if (!CanonicalEntryTag.IsValid() || !CanonicalEntryTag.MatchesTagExact(CharacterTag))
+			{
+				continue;
+			}
+
+			if (!Entry.Key.MatchesTagExact(CanonicalEntryTag))
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[ShopGameMode] Pawn class map uses legacy character tag '%s'; please migrate this key to canonical '%s'."),
+					*Entry.Key.ToString(),
+					*CanonicalEntryTag.ToString());
+			}
+
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[ShopGameMode] Pawn class canonicalized exact hit: QueryTag=%s EntryTag=%s Class=%s."),
+				*CharacterTag.ToString(),
+				*Entry.Key.ToString(),
+				*GetNameSafe(Entry.Value.Get()));
+			return Entry.Value.Get();
+		}
+
+		// Allow broader parent-tag mappings while still canonicalizing legacy key roots.
+		for (const TPair<FGameplayTag, TSubclassOf<APawn>>& Entry : ShopPawnClassByCharacterTag)
+		{
+			if (!Entry.Value)
+			{
+				continue;
+			}
+
+			const FGameplayTag CanonicalEntryTag = ARPlayer::NormalizeCharacterTag(Entry.Key);
+			if (CanonicalEntryTag.IsValid() && CharacterTag.MatchesTag(CanonicalEntryTag))
+			{
+				if (!Entry.Key.MatchesTagExact(CanonicalEntryTag))
+				{
+					UE_LOG(
+						ARLog,
+						Warning,
+						TEXT("[ShopGameMode] Pawn class map uses legacy parent tag '%s'; migrate to canonical '%s'."),
+						*Entry.Key.ToString(),
+						*CanonicalEntryTag.ToString());
+				}
+
+				UE_LOG(
+					ARLog,
+					Verbose,
+					TEXT("[ShopGameMode] Pawn class canonicalized parent-tag hit: QueryTag=%s EntryTag=%s Class=%s."),
+					*CharacterTag.ToString(),
+					*Entry.Key.ToString(),
+					*GetNameSafe(Entry.Value.Get()));
 				return Entry.Value.Get();
 			}
 		}
@@ -246,9 +325,12 @@ UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AContro
 
 	if (FallbackShopPawnClass)
 	{
+		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Pawn class falling back to FallbackShopPawnClass '%s' for controller '%s' (CharacterTag=%s)."),
+			*GetNameSafe(FallbackShopPawnClass.Get()), *GetNameSafe(InController), *CharacterTag.ToString());
 		return FallbackShopPawnClass.Get();
 	}
 
+	UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Pawn class falling back to Super for controller '%s' (CharacterTag=%s)."), *GetNameSafe(InController), *CharacterTag.ToString());
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 

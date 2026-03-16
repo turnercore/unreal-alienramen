@@ -307,7 +307,7 @@ Conversation graph tooling now provides:
 - `CheckRelationship` source options now include speaker relationship points/level (optional target speaker tag, defaulting to conversation primary speaker), faction popularity, and faction-speaker reputation (faction tag + optional speaker tag)
 - `Relationship Mutation` authoring supports directed `SourceSpeakerTag -> TargetSpeakerTag` edits (source optional override, target optional fallback to conversation primary speaker)
 - `Faction Mutation` inline authoring now supports both faction popularity delta and faction-speaker reputation delta (`FactionTag` + optional `TargetSpeakerTag`)
-- when a speaker-target field uses `Parley.Speaker.Player`, runtime resolves it to the active player's current character speaker tag (`Brother`/`Sister`) for relationship/faction condition and mutation evaluation; unresolved player fallback remains conversation primary speaker
+- when a speaker-target field uses `Parley.Speaker.Requester`/`Parley.Speaker.Owner`, runtime resolves it using the requester/owner `UParleySpeakerComponent` tags for relationship/faction condition and mutation evaluation
 - character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
@@ -326,7 +326,7 @@ Conversation graph tooling now provides:
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Parley.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
 - speaker rows include optional `LineFont` (`UFont` soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path
-- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and `Parley.Speaker.Player`; line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
+- compile/create flow ensures `ParticipatingSpeakerTags` always includes the conversation primary speaker and the requester placeholder (`Parley.Speaker.Requester`); line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring
 - Speaker details authoring categories for actor/talk/emotion properties use distinct roots (`Alien Ramen|Speaker`, `Alien Ramen|Talk`, `Alien Ramen|Emotion`) to avoid repeated same-name category buckets in Blueprint class-default details.
 
 Speaker hub currently provides:

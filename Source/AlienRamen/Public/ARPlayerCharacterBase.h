@@ -11,6 +11,7 @@
 
 class UAbilitySystemComponent;
 class UEmoComponent;
+class UParleySpeakerComponent;
 
 /** Root player pawn base; implements ASC interface stub for mode-specific subclasses. */
 UCLASS()
@@ -27,7 +28,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	UEmoComponent* GetEmotionComponent() const { return EmotionComponent; }
 
+	/** Returns the pawn-owned Parley speaker component used as dialogue requester identity. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Dialogue")
+	UParleySpeakerComponent* GetParleySpeakerComponent() const { return ParleySpeakerComponent; }
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	TObjectPtr<UEmoComponent> EmotionComponent;
+
+	/** Pawn-side dialogue identity source. Dialogue start paths read requester/owner tags from this component. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player|Dialogue")
+	TObjectPtr<UParleySpeakerComponent> ParleySpeakerComponent;
+
+private:
+	void RefreshParleySpeakerFromPlayerState();
 };

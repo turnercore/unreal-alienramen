@@ -9,6 +9,7 @@
 #include "AbilitySystemComponent.h"
 #include "ARSaveSubsystem.h"
 #include "GameplayTagUtilities.h"
+#include "GameFramework/Controller.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
@@ -250,6 +251,13 @@ void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, cons
 					continue;
 				}
 
+				const AController* OtherOwnerController = Cast<AController>(OtherPlayer->GetOwner());
+				if (!OtherOwnerController || OtherOwnerController->PlayerState != OtherPlayer)
+				{
+					// Ignore stale/inactive PlayerState remnants during seamless-travel handoff.
+					continue;
+				}
+
 				if (OtherPlayer->GetPlayerSlot() == ResolvedSlot
 					|| OtherPlayer->GetPlayerSlotTag().MatchesTagExact(ResolvedTag))
 				{
@@ -413,6 +421,10 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	{
 		SetLoadoutTags_Internal(FGameplayTagContainer(), false);
 	}
+
+	// Hydration may legitimately resolve an empty character-owned loadout (missing/legacy rows).
+	// Keep editor raw-map startup and runtime join behavior deterministic by seeding defaults.
+	EnsureDefaultLoadoutIfEmpty();
 }
 
 void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
@@ -1557,6 +1569,8 @@ void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
 	if (!NewTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag ignored invalid tag for '%s'."), *GetNameSafe(this));
+		// Keep default baseline intact for editor/testing flows where callers may submit empty tags.
+		EnsureDefaultLoadoutIfEmpty();
 		return;
 	}
 

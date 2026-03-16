@@ -157,6 +157,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor);
 
+	// Generic dialogue interaction path for any actor that owns a UParleySpeakerComponent.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
+	void RequestInteractWithParleySpeaker(AActor* SpeakerActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestInteractWithParleySpeaker(AActor* SpeakerActor);
+
 	/** Requests a strength-scaled kick impulse on a target actor in interaction range. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
 	void RequestKickActor(AActor* TargetActor);

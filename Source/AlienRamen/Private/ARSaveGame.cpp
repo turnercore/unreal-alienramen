@@ -1,5 +1,6 @@
 #include "ARSaveGame.h"
 
+#include "ARLoadoutSettings.h"
 #include "GameplayEffect.h"
 
 namespace
@@ -615,6 +616,16 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	}
 
 	SanitizeTagContainer(Unlocks, TEXT("Unlocks"));
+	if (const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>())
+	{
+		const FGameplayTagContainer UnlocksBeforeDefaults = Unlocks;
+		Unlocks.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
+		if (!(Unlocks == UnlocksBeforeDefaults))
+		{
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("Unlocks was missing one or more default starting unlock tags and was normalized."));
+		}
+	}
 	SanitizeTagContainer(ProgressionTags, TEXT("ProgressionTags"));
 	SanitizeTagContainer(ActiveFactionEffectTags, TEXT("ActiveFactionEffectTags"));
 	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));

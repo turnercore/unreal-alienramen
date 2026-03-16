@@ -125,12 +125,14 @@ protected:
 
 	// ---- Loadout application (server only) ----
 	void ClearAppliedLoadout();
-	void GrantCommonAbilitySetFromController(AController* NewController);
+	// Grants controller-scoped common ability set once ASC/controller are both ready.
+	bool GrantCommonAbilitySetFromController(AController* NewController);
 	void ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags);
 
 	// Apply baseline for any row struct that contains common fields:
 	// Stats, StartupAbilities, StartupEffects, ShipTags, MovementType, PrimaryWeapon(optional)
-	void ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct);
+	// Returns false when baseline cannot be applied yet (for retry path).
+	bool ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct, bool bLogMissingStartupAbilities);
 
 	// Reads LoadoutTags from PlayerState even if it's only defined in a BP child (reflection).
 	bool GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadoutTags) const;
@@ -180,6 +182,10 @@ protected:
 	// Server-only deferred loadout init state for possess/order races.
 	UPROPERTY(Transient)
 	bool bServerLoadoutApplied = false;
+
+	// Tracks one-time grant of controller common ability set per possession.
+	UPROPERTY(Transient)
+	bool bServerCommonAbilitySetApplied = false;
 
 	UPROPERTY(Transient)
 	int32 LoadoutInitRetryCount = 0;

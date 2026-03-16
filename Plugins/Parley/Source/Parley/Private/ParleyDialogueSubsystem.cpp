@@ -1263,7 +1263,31 @@ static void PersistSeenCycleTagsForSlot(
 
 static FGameplayTag GetDialogueSpeakerPlayerPlaceholderTag()
 {
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Player"), false);
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Requester"), false);
+}
+
+static FGameplayTag GetDialogueSpeakerOwnerPlaceholderTag()
+{
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Owner"), false);
+}
+
+static bool IsRequesterPlaceholderSpeakerTag(const FGameplayTag& SpeakerTag)
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	const FGameplayTag RequesterPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	return RequesterPlaceholderTag.IsValid() && SpeakerTag.MatchesTagExact(RequesterPlaceholderTag);
+}
+
+static bool IsOwnerPlaceholderSpeakerTag(const FGameplayTag& SpeakerTag)
+{
+	const FGameplayTag OwnerPlaceholderTag = GetDialogueSpeakerOwnerPlaceholderTag();
+	return SpeakerTag.IsValid()
+		&& OwnerPlaceholderTag.IsValid()
+		&& SpeakerTag.MatchesTagExact(OwnerPlaceholderTag);
 }
 
 static FGameplayTag GetDialogueSpeakerBrotherTag()
@@ -1337,16 +1361,23 @@ static FGameplayTag ResolveSpeakerTagForContext(
 {
 	if (RequestedSpeakerTag.IsValid())
 	{
-		const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
-		if (PlayerPlaceholderTag.IsValid()
-			&& RequestedSpeakerTag.MatchesTagExact(PlayerPlaceholderTag))
+		if (IsRequesterPlaceholderSpeakerTag(RequestedSpeakerTag))
 		{
+			if (Context.SourceSpeakerTag.IsValid())
+			{
+				return Context.SourceSpeakerTag;
+			}
+
 			if (Context.ResolvedPlayerSpeakerTag.IsValid())
 			{
 				return Context.ResolvedPlayerSpeakerTag;
 			}
 
 			return FallbackSpeakerTag;
+		}
+		if (IsOwnerPlaceholderSpeakerTag(RequestedSpeakerTag))
+		{
+			return Context.PrimarySpeakerTag.IsValid() ? Context.PrimarySpeakerTag : FallbackSpeakerTag;
 		}
 
 		return RequestedSpeakerTag;
@@ -1401,8 +1432,11 @@ static bool IsBuiltInDialogueSpeakerTag(const FGameplayTag& SpeakerTag)
 		return false;
 	}
 
-	const FGameplayTag PlayerTag = GetDialogueSpeakerPlayerPlaceholderTag();
-	if (PlayerTag.IsValid() && SpeakerTag.MatchesTag(PlayerTag))
+	if (IsRequesterPlaceholderSpeakerTag(SpeakerTag))
+	{
+		return true;
+	}
+	if (IsOwnerPlaceholderSpeakerTag(SpeakerTag))
 	{
 		return true;
 	}
@@ -1472,20 +1506,25 @@ static const FParleySpeakerRow* ResolveSpeakerRowForPresentation(
 	}
 
 	TArray<FGameplayTag> FallbackCandidates;
-	const FGameplayTag PlayerTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	const FGameplayTag RequesterTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	const FGameplayTag OwnerTag = GetDialogueSpeakerOwnerPlaceholderTag();
 	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
 	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
 	if (RequestedSpeakerTag.MatchesTag(BrotherTag))
 	{
-		FallbackCandidates = { PlayerTag, SisterTag };
+		FallbackCandidates = { RequesterTag, OwnerTag, SisterTag };
 	}
 	else if (RequestedSpeakerTag.MatchesTag(SisterTag))
 	{
-		FallbackCandidates = { PlayerTag, BrotherTag };
+		FallbackCandidates = { RequesterTag, OwnerTag, BrotherTag };
+	}
+	else if (OwnerTag.IsValid() && RequestedSpeakerTag.MatchesTag(OwnerTag))
+	{
+		FallbackCandidates = { RequesterTag, BrotherTag, SisterTag };
 	}
 	else
 	{
-		FallbackCandidates = { BrotherTag, SisterTag };
+		FallbackCandidates = { OwnerTag, RequesterTag, BrotherTag, SisterTag };
 	}
 
 	for (const FGameplayTag CandidateTag : FallbackCandidates)
@@ -1598,11 +1637,16 @@ static FGameplayTag BuildEmotionTagFromSpeakerTag(
 	}
 
 	// Built-in speaker aliases can appear directly in line authoring with suffix emotion segments
-	// (for example Parley.Speaker.Player.Angry), so include them as explicit suffix bases.
-	const FGameplayTag PlayerTag = GetDialogueSpeakerPlayerPlaceholderTag();
-	if (PlayerTag.IsValid())
+	// (for example Parley.Speaker.Requester.Angry), so include them as explicit suffix bases.
+	const FGameplayTag RequesterTag = GetDialogueSpeakerPlayerPlaceholderTag();
+	if (RequesterTag.IsValid())
 	{
-		CandidateBasePaths.AddUnique(PlayerTag.ToString());
+		CandidateBasePaths.AddUnique(RequesterTag.ToString());
+	}
+	const FGameplayTag OwnerTag = GetDialogueSpeakerOwnerPlaceholderTag();
+	if (OwnerTag.IsValid())
+	{
+		CandidateBasePaths.AddUnique(OwnerTag.ToString());
 	}
 	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
 	if (BrotherTag.IsValid())

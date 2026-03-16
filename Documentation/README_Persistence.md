@@ -126,7 +126,8 @@ Primary entrypoint:
 Order:
 1. start from runtime defaults
 2. apply current save shared fields
-3. if pending travel overlay exists, apply that on top once
+3. merge default starting unlock baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) into runtime unlocks
+4. if pending travel overlay exists, apply that on top once
 
 ### PlayerState hydration
 
@@ -140,6 +141,7 @@ Order:
 4. project character-owned state onto runtime `PlayerState`
 5. keep character identity fields synchronized
 6. gameplay-mode join normalization enforces unique runtime P1/P2 occupancy (host joins as P1, next player as P2) and does not source slot assignment from save rows
+- if projected character-owned `LoadoutTags` are empty after hydration, `AARPlayerStateBase` seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so raw editor map starts and runtime joins get defaults.
 
 ### Seamless travel
 
@@ -152,9 +154,15 @@ Expectation:
 - character-owned loadouts remain canonical by `CurrentCharacterTag`; `PlayerState.LoadoutTags` is only the active projection and is refreshed on character switch
 - authoritative mode join/travel normalization ensures `CurrentCharacterTag` remains valid (`Brother`/`Sister`) and resolves non-taken fallback selection when a tag is missing/invalid
 - `AARGameModeBase::HandleStartingNewPlayer(...)` normalizes slot/character before spawn so `ChoosePlayerStart` and pawn-class resolution do not run on unknown identity.
+- `HandleFirstSessionJoinSetup(...)` hydrates player identity from save with slot fallback enabled for non-strict online identities (for example editor/direct-map starts), then reapplies runtime-assigned slot so pre-spawn character identity is still available when unique-id matching is absent.
+- `AARGameModeBase::ChoosePlayerStart_Implementation(...)` also performs an authority-side just-in-time slot/character normalization pass before querying tagged starts, covering editor/raw-map startup timing where character selection can otherwise lag.
+- `ChoosePlayerStart_Implementation(...)` prioritizes canonical character-tag start points before slot-tag fallbacks, so character-authored spawn lanes win when both are present.
+- `ChoosePlayerStart_Implementation(...)` emits warnings when identity is unresolved before spawn-point selection (and if still unresolved after normalization), so startup spawn races are visible in logs.
+- `HandleStartingNewPlayer(...)` performs a one-shot `RestartPlayer(...)` retry only when `Super::HandleStartingNewPlayer_Implementation(...)` leaves the controller without a pawn after normalization, recovering failed initial spawn without forcing extra respawns when identity later changes.
 - first-session/no-save joins assign a random available canonical character (`Brother`/`Sister`) while preserving uniqueness when possible.
 - `AARGameModeBase::HandleSeamlessTravelPlayer(...)` immediately re-runs slot/character normalization (`EnsureJoinedPlayerHasUniqueSlot` + `NormalizeConnectedPlayersIdentity`) so transient handoff overlap cannot leave duplicate concrete slots
 - authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
+- `AARPlayerStateBase::UpdateLoadoutWithTag(...)` ignores invalid/empty incoming tags and re-seeds default loadout when runtime loadout is empty, preventing editor/raw-map test flows from staying uninitialized.
 
 ## Travel and Persistence
 

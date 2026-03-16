@@ -51,10 +51,10 @@ When unlocks are changed at runtime, save should be marked dirty so normal autos
 ## Default Seeding and Hydration
 
 - Default unlock baseline comes from `UARLoadoutSettings::DefaultStartingUnlocks`.
-- Empty unlocks are seeded from settings during:
-  - runtime gather when save payload has empty unlocks
-  - authority GameState hydration when no save exists
-  - load apply fallback when loaded save unlocks are empty
+- Effective default baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) is merged into unlocks during:
+  - runtime gather before save write
+  - authority GameState hydration
+  - save sanitize/normalize on load
 
 Hydration precedence:
 1. Runtime/default values

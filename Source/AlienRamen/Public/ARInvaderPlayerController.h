@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARInvaderTypes.h"
 #include "ARPlayerController.h"
 #include "ARInvaderSpicyTrackTypes.h"
 #include "ARInvaderPlayerController.generated.h"
@@ -21,6 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	SessionState,
 	const TArray<FARInvaderUpgradeDefRow>&,
 	OfferDefinitions);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderControllerRunEndedSignature, EARInvaderRunEndReason, EndReason);
 
 UCLASS()
 class ALIENRAMEN_API AARInvaderPlayerController : public AARPlayerController
@@ -110,9 +112,27 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestVoteEndRunEarly(bool bVoteYes = true);
 
+	/**
+	 * Client notification from authoritative Invader GameMode that the director run has ended.
+	 * Use this to start local end-sequence UI/animation; travel may follow immediately or after delay.
+	 */
+	UFUNCTION(Client, Reliable, Category = "Alien Ramen|Invader|Run End")
+	void ClientHandleInvaderRunEnded(EARInvaderRunEndReason EndReason);
+
+	/**
+	 * Blueprint hook for local end-sequence handling when the run ends (for example fades, score cards, or
+	 * input lock). Triggered from ClientHandleInvaderRunEnded.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Invader|Run End", meta = (DisplayName = "On Invader Run Ended"))
+	void OnInvaderRunEnded(EARInvaderRunEndReason EndReason);
+
 	// Broadcast whenever full-blast menu state/data is refreshed for this local controller.
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Spice Track|Full Blast")
 	FAROnInvaderFullBlastMenuSessionUpdatedSignature OnInvaderFullBlastMenuSessionUpdated;
+
+	/** Broadcast whenever this local controller is notified that the Invader run has ended. */
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader|Run End")
+	FAROnInvaderControllerRunEndedSignature OnInvaderRunEndedSignal;
 
 private:
 	AARPlayerStateBase* GetInvaderPlayerState() const;

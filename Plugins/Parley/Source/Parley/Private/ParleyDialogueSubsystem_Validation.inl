@@ -704,9 +704,11 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 
 			const bool bHasNativeAudio = LineData.Line.Sound != nullptr || FallbackNativeSound != nullptr;
 			const bool bHasSignalAudio = LineData.Line.AudioCueTag.IsValid() || FallbackCueTag.IsValid();
-			const FGameplayTag PlayerPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
-			const bool bUsesPlayerPlaceholderSpeaker = PlayerPlaceholderTag.IsValid()
-				&& LineData.Line.SpeakerTag.MatchesTagExact(PlayerPlaceholderTag);
+			const FGameplayTag RequesterPlaceholderTag = GetDialogueSpeakerPlayerPlaceholderTag();
+			const FGameplayTag OwnerPlaceholderTag = GetDialogueSpeakerOwnerPlaceholderTag();
+			const bool bUsesPlayerPlaceholderSpeaker =
+				(RequesterPlaceholderTag.IsValid() && LineData.Line.SpeakerTag.MatchesTagExact(RequesterPlaceholderTag))
+				|| (OwnerPlaceholderTag.IsValid() && LineData.Line.SpeakerTag.MatchesTagExact(OwnerPlaceholderTag));
 
 			bool bMissingNativeFallbackForResolvedPlayerSpeaker = false;
 			bool bMissingSignalFallbackForResolvedPlayerSpeaker = false;
@@ -771,7 +773,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 					EDialogueValidationSeverity::Warning,
 					NodeId,
 					FString::Printf(
-						TEXT("%s uses Parley.Speaker.Player but speaker-emotion cue fallback is missing for at least one resolved player speaker (Brother/Sister)."),
+						TEXT("%s uses Parley.Speaker.Requester/Owner but speaker-emotion cue fallback is missing for at least one resolved player speaker (Brother/Sister)."),
 						ContextLabel));
 			}
 			else if (!bSignalAudioMode && LineData.Line.LengthSeconds <= 0.0f && !bHasNativeAudio)
@@ -793,7 +795,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 					EDialogueValidationSeverity::Warning,
 					NodeId,
 					FString::Printf(
-						TEXT("%s uses Parley.Speaker.Player but speaker-emotion native fallback is missing for at least one resolved player speaker (Brother/Sister)."),
+						TEXT("%s uses Parley.Speaker.Requester/Owner but speaker-emotion native fallback is missing for at least one resolved player speaker (Brother/Sister)."),
 						ContextLabel));
 			}
 			if (!LineData.Line.SpeakerTag.IsValid())
