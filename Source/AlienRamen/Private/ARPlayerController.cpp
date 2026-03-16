@@ -249,6 +249,11 @@ void AARPlayerController::RequestHUDInitialization()
 	RequestHUDInitializationInternal(true);
 }
 
+void AARPlayerController::ClientApplyGameplayInputModeDefaults_Implementation()
+{
+	ApplyGameplayInputModeDefaultsLocal();
+}
+
 void AARPlayerController::ClientPersistCanonicalSave_Implementation(const TArray<uint8>& SaveBytes, FName SlotBaseName, int32 SlotNumber)
 {
 	if (UGameInstance* GI = GetGameInstance())
@@ -1113,6 +1118,24 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 	}
 
 	BP_OnHUDInitializationRequested(this, CurrentPlayerState, CurrentGameState);
+}
+
+void AARPlayerController::ApplyGameplayInputModeDefaultsLocal()
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	// Preserve active modal UI flows (pause/dialogue/full-blast). Only clear transition-map UI capture.
+	if (bPauseInputModeApplied || bDialogueInputModeApplied || IsInvaderFullBlastSessionActiveLocal())
+	{
+		return;
+	}
+
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = false;
 }
 
 void AARPlayerController::StartHUDInitializationRetry()

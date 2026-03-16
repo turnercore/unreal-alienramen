@@ -315,6 +315,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
 	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
+	/**
+	 * Clears transition-map style UI-only input mode on the owning client and reapplies
+	 * gameplay-default input mode/cursor state after entering gameplay modes.
+	 */
+	UFUNCTION(Client, Reliable, Category = "Alien Ramen|Input|Travel")
+	void ClientApplyGameplayInputModeDefaults();
+
 	/** Opens pause menu for all local AR controllers on this machine (if not blocked). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Pause")
 	void RequestOpenPauseMenu();
@@ -468,6 +475,7 @@ private:
 	void RequestAddUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestRemoveUnlockInternal(const FGameplayTag& UnlockTag);
 	void RequestHUDInitializationInternal(bool bForceBroadcast);
+	void ApplyGameplayInputModeDefaultsLocal();
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
 	void HandleHUDInitializationRetry();

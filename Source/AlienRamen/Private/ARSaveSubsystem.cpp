@@ -1573,7 +1573,7 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 	return true;
 }
 
-bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)
+bool UARSaveSubsystem::AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediately, FARSaveResult& OutResult)
 {
 	OutResult = FARSaveResult();
 
@@ -1586,7 +1586,7 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 
 	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
 	{
-		OutResult.Error = TEXT("IncrementSaveCycles must run on authority/server.");
+		OutResult.Error = TEXT("AdvanceWorldDays must run on authority/server.");
 		return false;
 	}
 
@@ -1599,9 +1599,9 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 		}
 	}
 
-	if (Delta != 0)
+	if (DeltaDays != 0)
 	{
-		const int32 NewCycles = FMath::Max(0, CurrentSaveGame->Cycles + Delta);
+		const int32 NewCycles = FMath::Max(0, CurrentSaveGame->Cycles + DeltaDays);
 		CurrentSaveGame->Cycles = NewCycles;
 		bSaveDirty = true;
 		if (AARGameStateBase* GS = World->GetGameState<AARGameStateBase>())
@@ -1610,7 +1610,7 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 		}
 	}
 
-	if (!bSaveAfterIncrement)
+	if (!bPersistImmediately)
 	{
 		OutResult.bSuccess = true;
 		OutResult.ResultCode = EARSaveResultCode::Success;
@@ -1620,6 +1620,11 @@ bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement
 	// Persist to the current slot (no forced new revision unless configured in SaveCurrentGame).
 	const bool bSaved = SaveCurrentGame(CurrentSlotBaseName, true, OutResult);
 	return bSaved;
+}
+
+bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)
+{
+	return AdvanceWorldDays(Delta, bSaveAfterIncrement, OutResult);
 }
 
 bool UARSaveSubsystem::GetTimeSinceLastSave(FTimespan& OutElapsed) const

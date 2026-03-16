@@ -112,7 +112,8 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `SetMaxBackupRevisions(NewMaxBackups)`
 - `MarkSaveDirty()`
 - `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)`
-- `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)`
+- `AdvanceWorldDays(DeltaDays, bPersistImmediately, OutResult)`
+- `IncrementSaveCycles(Delta, bSaveAfterIncrement, OutResult)` (legacy compatibility wrapper)
 - `GetPlayerProgressionTags(Requester, OutTags, bAllowSlotFallback)`
 - `HasPlayerProgressionTag(Requester, Tag, bAllowSlotFallback)`
 - `AddPlayerProgressionTag(Requester, Tag)`

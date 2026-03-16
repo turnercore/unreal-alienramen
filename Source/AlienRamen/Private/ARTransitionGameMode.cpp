@@ -3,6 +3,7 @@
 #include "ARFactionVotingSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ARSaveSubsystem.h"
 #include "ARTransitionGameState.h"
 #include "ARTransitionPlayerController.h"
 #include "ARTransitionTypes.h"
@@ -56,6 +57,7 @@ void AARTransitionGameMode::BeginPlay()
 	}
 
 	bFactionElectionFinalizedForThisTransition = false;
+	bWorldDayAdvancedForThisTransition = false;
 
 	if (UWorld* World = GetWorld())
 	{
@@ -151,6 +153,7 @@ void AARTransitionGameMode::InitializeTransitionContext()
 	}
 
 	TransitionGameState->SetTransitionContext(TransitionContext);
+	TryAdvanceWorldDayFromTransitionContext(TransitionContext);
 	TryFinalizeFactionElectionFromTransitionContext(TransitionContext);
 	UE_LOG(
 		ARLog,
@@ -197,6 +200,42 @@ void AARTransitionGameMode::TryFinalizeFactionElectionFromTransitionContext(cons
 		Log,
 		TEXT("[Transition] Finalized faction election winner '%s' for Shop->Invader transition."),
 		*WinnerFactionTag.ToString());
+}
+
+void AARTransitionGameMode::TryAdvanceWorldDayFromTransitionContext(const FARTransitionContext& TransitionContext)
+{
+	if (!HasAuthority() || bWorldDayAdvancedForThisTransition || !bAdvanceWorldDayOnInvaderToScrapyardTransition)
+	{
+		return;
+	}
+
+	if (TransitionContext.SourceMode != EARTransitionSourceMode::Invader
+		|| TransitionContext.Reason != EARTransitionReason::InvaderToScrapyard)
+	{
+		return;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	if (!SaveSubsystem)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Transition] SaveSubsystem unavailable; cannot advance world day for Invader->Scrapyard transition."));
+		return;
+	}
+
+	FARSaveResult SaveResult;
+	if (!SaveSubsystem->AdvanceWorldDays(1, true, SaveResult))
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Transition] Failed to advance world day for Invader->Scrapyard transition: %s"),
+			*SaveResult.Error);
+		return;
+	}
+
+	bWorldDayAdvancedForThisTransition = true;
+	UE_LOG(ARLog, Log, TEXT("[Transition] Advanced world day for Invader->Scrapyard transition (Delta=+1, Persisted=1)."));
 }
 
 void AARTransitionGameMode::ResetPlayersReadyState() const

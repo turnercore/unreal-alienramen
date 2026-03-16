@@ -181,6 +181,7 @@ What happens:
 
 Additional durability rules:
 - first authoritative entry into `Mode.Shop` persists an immediate canonical save when the current save still points at a different mode/map (for example fresh new-game start or shop re-entry after non-shop save state)
+- `Invader -> Transition -> Scrapyard` now advances world day/cycle by +1 and persists immediately in transition init, so completed invader runs survive transition-map or early-scrapyard crashes/quits
 - `Scrapyard -> Transition -> Shop` now commits a canonical save immediately after finalization and before travel so rewards/economy survive transition-map crashes or immediate post-run host quits
 
 ### Save-load gameplay entry

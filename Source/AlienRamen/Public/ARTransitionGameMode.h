@@ -53,7 +53,13 @@ private:
 	void ResetPlayersReadyState() const;
 	bool TryAdvanceToDestination();
 	void TryFinalizeFactionElectionFromTransitionContext(const FARTransitionContext& TransitionContext);
+	void TryAdvanceWorldDayFromTransitionContext(const FARTransitionContext& TransitionContext);
+
+	/** When true, Invader->Scrapyard transition advances world day/cycle exactly once and persists immediately. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition|Persistence", meta = (AllowPrivateAccess = "true"))
+	bool bAdvanceWorldDayOnInvaderToScrapyardTransition = true;
 
 	bool bTransitionTravelStarted = false;
 	bool bFactionElectionFinalizedForThisTransition = false;
+	bool bWorldDayAdvancedForThisTransition = false;
 };

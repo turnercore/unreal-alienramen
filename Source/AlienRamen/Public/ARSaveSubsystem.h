@@ -140,7 +140,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool RequestAutosaveIfDirty(bool bCreateNewRevision, FARSaveResult& OutResult);
 
-	// Increments the canonical save's cycle counter. Authority only; can optionally persist immediately.
+	// Advances world day/cycle count. Authority only; can optionally persist immediately.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediately, FARSaveResult& OutResult);
+
+	// Legacy compatibility wrapper. Prefer AdvanceWorldDays.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult);
 

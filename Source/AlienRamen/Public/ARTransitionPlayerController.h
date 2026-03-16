@@ -48,6 +48,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition|UI")
 	bool bAutoCreateTransitionWidget = true;
 
+	/** When true, transition controllers enforce UI-only input mode + visible cursor while active. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition|UI")
+	bool bAutoApplyTransitionInputMode = true;
+
+	/** If true, EndPlay restores gameplay input mode on this local controller. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition|UI", meta = (EditCondition = "bAutoApplyTransitionInputMode"))
+	bool bRestoreGameplayInputModeOnEndPlay = true;
+
 	/** Default transition widget class when no context-specific override applies. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition|UI")
 	TSubclassOf<UUserWidget> DefaultTransitionWidgetClass;
@@ -69,6 +77,8 @@ protected:
 	int32 TransitionWidgetZOrder = 1900;
 
 private:
+	void ApplyTransitionInputMode(bool bEnable, UUserWidget* FocusWidget = nullptr);
+
 	UPROPERTY(Transient)
 	TObjectPtr<UUserWidget> TransitionWidget = nullptr;
 };

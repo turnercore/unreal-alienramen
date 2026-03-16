@@ -14,6 +14,7 @@ Transition flow is the handoff layer between the three primary game modes:
   - Shared mode-travel router for transition-map handoff.
   - `TryStartTravel` routes destination URLs through transition map when mode opts in.
   - Seamless-travel handoff resets carried spectator controller state back to playing via `HandleSeamlessTravelPlayer(...)` so gameplay modes repossess correctly after transition maps.
+  - Gameplay-mode join/handoff now clears carried `StartSpot` references and spectator-only flags before spawn, preventing stale transition-map state from blocking post-transition pawn spawn (for example `Scrapyard -> Transition -> Shop`).
   - Seamless-travel handoff now swaps carried controllers to the destination mode's `PlayerControllerClass` when classes mismatch (for example transition/debug controllers entering gameplay modes), so mode-specific controller defaults and startup logic still apply.
   - Identity/slot normalization now considers only controller-owned active `PlayerState` instances during travel handoff to avoid stale seamless-copy remnants stealing `P1/P2` occupancy.
   - Per-call route override is supported via `EARTravelRoutePolicy`:
@@ -51,6 +52,7 @@ Transition flow is the handoff layer between the three primary game modes:
     - `Reason` (`TransitionWidgetClassByReason`)
     - `SourceMode` (`TransitionWidgetClassBySourceMode`)
     - fallback (`DefaultTransitionWidgetClass`)
+  - Enforces local `UIOnly` input mode + visible cursor while transition UI is active, and restores gameplay input defaults on transition exit.
 
 ## Travel Context
 
@@ -98,6 +100,7 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
 
 - Shop mode defaults to `Shop -> Transition -> Invader` via `AARGameModeBase::TryStartTravel`.
 - Invader mode defaults to `Invader -> Transition -> Scrapyard` via `AARGameModeBase::TryStartTravel`.
+- Transition mode advances world day/cycle once (and persists immediately) for `Invader -> Scrapyard` context, so completed invader runs survive crashes/quit before scrapyard completion.
 - Scrapyard finalization defaults to `Scrapyard -> Transition -> Shop` by resolving final URL through `AARGameModeBase::BuildModeTravelURL` before authority travel request.
 - Any mode can disable transition-map routing by setting `bRouteModeTravelThroughTransitionMap=false` in that mode class/defaults.
 

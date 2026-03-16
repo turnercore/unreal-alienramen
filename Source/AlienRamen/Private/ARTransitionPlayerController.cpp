@@ -13,14 +13,25 @@ void AARTransitionPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UUserWidget* CreatedWidget = nullptr;
 	if (bAutoCreateTransitionWidget)
 	{
-		ShowTransitionWidgetFromContext();
+		CreatedWidget = ShowTransitionWidgetFromContext();
+	}
+
+	if (bAutoApplyTransitionInputMode)
+	{
+		ApplyTransitionInputMode(true, CreatedWidget);
 	}
 }
 
 void AARTransitionPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (bAutoApplyTransitionInputMode && bRestoreGameplayInputModeOnEndPlay)
+	{
+		ApplyTransitionInputMode(false);
+	}
+
 	HideTransitionWidget();
 	Super::EndPlay(EndPlayReason);
 }
@@ -88,6 +99,11 @@ UUserWidget* AARTransitionPlayerController::ShowTransitionWidget(TSubclassOf<UUs
 		TransitionWidget->AddToViewport(TransitionWidgetZOrder);
 	}
 
+	if (bAutoApplyTransitionInputMode)
+	{
+		ApplyTransitionInputMode(true, TransitionWidget);
+	}
+
 	return TransitionWidget;
 }
 
@@ -130,4 +146,33 @@ TSubclassOf<UUserWidget> AARTransitionPlayerController::ResolveTransitionWidgetC
 	}
 
 	return DefaultTransitionWidgetClass;
+}
+
+void AARTransitionPlayerController::ApplyTransitionInputMode(const bool bEnable, UUserWidget* FocusWidget)
+{
+	if (!IsLocalPlayerController())
+	{
+		return;
+	}
+
+	if (bEnable)
+	{
+		bShowMouseCursor = true;
+		FInputModeUIOnly InputMode;
+		if (!FocusWidget)
+		{
+			FocusWidget = TransitionWidget;
+		}
+		if (FocusWidget)
+		{
+			InputMode.SetWidgetToFocus(FocusWidget->TakeWidget());
+		}
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		SetInputMode(InputMode);
+		return;
+	}
+
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = false;
 }

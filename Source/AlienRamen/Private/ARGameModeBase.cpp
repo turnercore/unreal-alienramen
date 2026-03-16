@@ -6,6 +6,7 @@
 #include "ARNetworkUserSettings.h"
 #include "ARTaggedPlayerStart.h"
 #include "ParleySpeakerSubsystem.h"
+#include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARSessionSubsystem.h"
@@ -194,6 +195,32 @@ namespace
 		}
 
 		return ARPlayer::GetDefaultCharacterTagForSlot(PlayerState->GetPlayerSlot());
+	}
+
+	static void PrepareControllerForGameplaySpawn(AController* Controller)
+	{
+		if (!Controller)
+		{
+			return;
+		}
+
+		Controller->StartSpot.Reset();
+
+		if (APlayerState* PlayerState = Controller->PlayerState)
+		{
+			PlayerState->SetIsSpectator(false);
+			PlayerState->SetIsOnlyASpectator(false);
+		}
+
+		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+		{
+			PlayerController->ChangeState(NAME_Playing);
+
+			if (AARPlayerController* ARPlayerController = Cast<AARPlayerController>(PlayerController))
+			{
+				ARPlayerController->ClientApplyGameplayInputModeDefaults();
+			}
+		}
 	}
 }
 
@@ -965,6 +992,13 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 		return;
 	}
 
+	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
+	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
+	if (!bIsTransitionMode)
+	{
+		PrepareControllerForGameplaySpawn(NewPlayer);
+	}
+
 	AARPlayerStateBase* JoinedPS = NewPlayer->GetPlayerState<AARPlayerStateBase>();
 	AARGameStateBase* GS = GetGameState<AARGameStateBase>();
 	if (!JoinedPS || !GS)
@@ -1033,6 +1067,10 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	if (!NewPlayer->GetPawn() || bIdentityDriftedDuringInitialSpawn)
 	{
 		CachePendingSpawnCharacterTagForController(NewPlayer, PostSuperCharacterTag);
+		if (!bIsTransitionMode)
+		{
+			PrepareControllerForGameplaySpawn(NewPlayer);
+		}
 
 		if (bIdentityDriftedDuringInitialSpawn)
 		{
@@ -1171,6 +1209,10 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 
 	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
 	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
+	if (!bIsTransitionMode)
+	{
+		PrepareControllerForGameplaySpawn(PlayerController);
+	}
 	APawn* ExistingPawn = PlayerController->GetPawn();
 	const bool bHasSpectatorPawn = ExistingPawn && ExistingPawn->IsA(ASpectatorPawn::StaticClass());
 	const bool bNeedsGameplayPawn = !bIsTransitionMode && (!ExistingPawn || bHasSpectatorPawn || bWasSpectating);
