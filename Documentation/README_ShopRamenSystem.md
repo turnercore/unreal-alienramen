@@ -2,6 +2,13 @@
 
 This document captures the runtime ownership and integration contract for the shop ramen ordering/serving loop.
 
+## Mode Exit Travel
+
+- `AARShopGameState::FinalizeShopRunAndTravelToInvader(InInvaderTravelURL)` is the explicit authority Blueprint helper for ending shop mode and starting run travel.
+- Client/UI entrypoint: `AARShopPlayerController::RequestFinalizeShopRunAndTravelToInvader(...)` routes through server RPC and invokes the authoritative game-state helper.
+- Destination input should be the final gameplay map URL (for example `/Game/Maps/Lvl_Invader`), not the transition map.
+- Empty destination input falls back to `AARShopGameState::DefaultInvaderTravelURL`.
+
 ## Ownership Model
 
 - **Server-authoritative runtime**:
@@ -27,9 +34,12 @@ This document captures the runtime ownership and integration contract for the sh
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Shop.Station` -> `FARShopStationConfigRow`
 - Character table rows for shop/runtime character spawning can use `FARShopCharacterDefRow` (`Source/AlienRamen/Public/ARLoadoutTypes.h`) with:
-  - `CharacterTag` (`Parley.Speaker.*`)
+  - `CharacterTag` (`Shop.Character.*`)
+  - `CustomerTag` (`Shop.Customer.*`)
+  - `SpeakerTag` (`Parley.Speaker.*`)
   - `CharacterClass` (soft pawn Blueprint/class; shown as `Blueprint` in row editor)
-  - Speaker/customer identity links stay component-driven on the spawned pawn Blueprint (no duplicate speaker/customer row links required).
+  - `Shop.Character`, `Shop.Customer`, and `Parley.Speaker` tags should mirror by the first segment under each root (for example `Brother`), while deeper subleafs may differ.
+  - Speaker/customer behavior wiring still stays component-driven on the spawned pawn Blueprint.
 
 ## Speaker + Customer Flow
 
@@ -123,7 +133,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Interaction outcome animation cues are emitted through `AARPlayerController::OnInteractionActionCue` (`NotifyInteractionActionCue(...)`), with current secondary defaults emitting `Throw`, `Consume`, and kick-style cues that classify as `Kick` vs `Slap` by target height delta above pawn (`SlapCueMinHeightDeltaCm`).
 - `AARPlayerCharacterShop` exposes BP helpers `IsCarryingShopItem()` and `GetHeldShopActor()` for pawn-side input/UI branching.
 - Shop player pawn selection is native via `AARShopGameMode::GetDefaultPawnClassForController_Implementation(...)`, resolving by canonical character tag map (`ShopPawnClassByCharacterTag`) with `FallbackShopPawnClass` fallback so BP join-spawn/possess wiring is optional and should be removed when redundant.
-- Spawn transform selection is GameMode-owned through `AARGameModeBase::ChoosePlayerStart_Implementation(...)` using `AARTaggedPlayerStart` identity tags in this order: player slot tag -> character tag -> default UE fallback.
+- Spawn transform selection is GameMode-owned through `AARGameModeBase::ChoosePlayerStart_Implementation(...)` using `AARTaggedPlayerStart` identity tags in this order: player slot tag -> character tag (+ mirrored `Parley.Speaker`/`Shop.Character`/`Shop.Customer` first-segment aliases) -> default UE fallback.
 - `AARShopCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
 - `AARShopCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).

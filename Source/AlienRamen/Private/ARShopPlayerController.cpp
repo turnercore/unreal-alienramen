@@ -9,6 +9,7 @@
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
 #include "ARShopDispenserActor.h"
+#include "ARShopGameState.h"
 #include "ARShopStationActor.h"
 #include "AbilitySystemComponent.h"
 #include "Components/PrimitiveComponent.h"
@@ -692,4 +693,34 @@ void AARShopPlayerController::RequestConsumeHeldEnergyDrink()
 void AARShopPlayerController::ServerRequestConsumeHeldEnergyDrink_Implementation()
 {
 	RequestConsumeHeldEnergyDrink();
+}
+
+void AARShopPlayerController::RequestFinalizeShopRunAndTravelToInvader(const FString& InInvaderTravelURL)
+{
+	if (HasAuthority())
+	{
+		AARShopGameState* ShopGameState = GetWorld() ? GetWorld()->GetGameState<AARShopGameState>() : nullptr;
+		if (!ShopGameState)
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Shop|Travel] Finalize request ignored on '%s': missing AARShopGameState."), *GetNameSafe(this));
+			return;
+		}
+
+		const bool bTravelStarted = ShopGameState->FinalizeShopRunAndTravelToInvader(InInvaderTravelURL);
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[Shop|Travel] Finalize request controller='%s' destination='%s' success=%d."),
+			*GetNameSafe(this),
+			InInvaderTravelURL.IsEmpty() ? TEXT("<default>") : *InInvaderTravelURL,
+			bTravelStarted ? 1 : 0);
+		return;
+	}
+
+	ServerRequestFinalizeShopRunAndTravelToInvader(InInvaderTravelURL);
+}
+
+void AARShopPlayerController::ServerRequestFinalizeShopRunAndTravelToInvader_Implementation(const FString& InInvaderTravelURL)
+{
+	RequestFinalizeShopRunAndTravelToInvader(InInvaderTravelURL);
 }

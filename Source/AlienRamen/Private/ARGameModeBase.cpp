@@ -34,6 +34,94 @@ namespace
 			return bModeDefaultRouteEnabled;
 		}
 	}
+
+	static bool TryGetFirstSegmentUnderRoot(const FGameplayTag& InTag, const FGameplayTag& RootTag, FString& OutSegment)
+	{
+		OutSegment.Reset();
+		if (!InTag.IsValid() || !RootTag.IsValid())
+		{
+			return false;
+		}
+
+		const FString TagString = InTag.ToString();
+		const FString RootString = RootTag.ToString();
+		const FString RootPrefix = RootString + TEXT(".");
+		if (!TagString.StartsWith(RootPrefix))
+		{
+			return false;
+		}
+
+		const FString Suffix = TagString.Mid(RootPrefix.Len());
+		if (Suffix.IsEmpty())
+		{
+			return false;
+		}
+
+		FString FirstSegment;
+		if (!Suffix.Split(TEXT("."), &FirstSegment, nullptr))
+		{
+			FirstSegment = Suffix;
+		}
+
+		if (FirstSegment.IsEmpty())
+		{
+			return false;
+		}
+
+		OutSegment = FirstSegment;
+		return true;
+	}
+
+	static void AddSpawnIdentityMirrorTags(const FGameplayTag& CharacterTag, TArray<FGameplayTag>& InOutTags)
+	{
+		if (!CharacterTag.IsValid())
+		{
+			return;
+		}
+
+		const FGameplayTag ParleySpeakerRoot = FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker"), false);
+		const FGameplayTag ShopCharacterRoot = FGameplayTag::RequestGameplayTag(TEXT("Shop.Character"), false);
+		const FGameplayTag ShopCustomerRoot = FGameplayTag::RequestGameplayTag(TEXT("Shop.Customer"), false);
+
+		FString Segment;
+		if (!TryGetFirstSegmentUnderRoot(CharacterTag, ParleySpeakerRoot, Segment)
+			&& !TryGetFirstSegmentUnderRoot(CharacterTag, ShopCharacterRoot, Segment)
+			&& !TryGetFirstSegmentUnderRoot(CharacterTag, ShopCustomerRoot, Segment))
+		{
+			return;
+		}
+
+		auto TryAppendTag = [&InOutTags](const FGameplayTag& TagToAppend)
+		{
+			if (!TagToAppend.IsValid() || InOutTags.Contains(TagToAppend))
+			{
+				return;
+			}
+
+			InOutTags.Add(TagToAppend);
+		};
+
+		if (ParleySpeakerRoot.IsValid())
+		{
+			TryAppendTag(FGameplayTag::RequestGameplayTag(
+				*FString::Printf(TEXT("%s.%s"), *ParleySpeakerRoot.ToString(), *Segment),
+				false));
+		}
+
+		if (ShopCharacterRoot.IsValid())
+		{
+			TryAppendTag(FGameplayTag::RequestGameplayTag(
+				*FString::Printf(TEXT("%s.%s"), *ShopCharacterRoot.ToString(), *Segment),
+				false));
+		}
+
+		if (ShopCustomerRoot.IsValid())
+		{
+			TryAppendTag(FGameplayTag::RequestGameplayTag(
+				*FString::Printf(TEXT("%s.%s"), *ShopCustomerRoot.ToString(), *Segment),
+				false));
+		}
+	}
 }
 
 AARGameModeBase::AARGameModeBase()
@@ -381,6 +469,27 @@ void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState,
 	if (!bHydratedFromSave)
 	{
 		JoinedPlayerState->InitializeForFirstSessionJoin();
+
+		// Fresh/no-save join policy: assign a random available canonical character.
+		TArray<EARCharacterChoice> AvailableChoices;
+		if (!IsCharacterChoiceTakenByOther(InGameState, JoinedPlayerState, EARCharacterChoice::Brother))
+		{
+			AvailableChoices.Add(EARCharacterChoice::Brother);
+		}
+		if (!IsCharacterChoiceTakenByOther(InGameState, JoinedPlayerState, EARCharacterChoice::Sister))
+		{
+			AvailableChoices.Add(EARCharacterChoice::Sister);
+		}
+
+		if (AvailableChoices.Num() > 0)
+		{
+			const int32 RandomIndex = FMath::RandHelper(AvailableChoices.Num());
+			const EARCharacterChoice RandomChoice = AvailableChoices[RandomIndex];
+			if (RandomChoice != EARCharacterChoice::None && RandomChoice != JoinedPlayerState->GetCharacterPicked())
+			{
+				JoinedPlayerState->SetCharacterPicked(RandomChoice);
+			}
+		}
 	}
 
 	ResolveCharacterChoiceConflict(InGameState, JoinedPlayerState);
@@ -683,10 +792,9 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 
 void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
-
 	if (!HasAuthority() || !NewPlayer)
 	{
+		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 		return;
 	}
 
@@ -694,6 +802,7 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	AARGameStateBase* GS = GetGameState<AARGameStateBase>();
 	if (!JoinedPS || !GS)
 	{
+		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 		return;
 	}
 
@@ -709,6 +818,13 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	}
 
 	// Enforce stable unique slot occupancy even when setup is already complete (for example seamless travel/copy paths).
+	EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+	NormalizeConnectedPlayersIdentity(GS);
+
+	// Identity must be normalized before Super so spawn class/start selection sees non-unknown slot/character.
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+
+	// Re-run once after Super to catch any mirrored-state drift during spawn/possess setup.
 	EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
 	NormalizeConnectedPlayersIdentity(GS);
 	if (UGameInstance* GI = GetGameInstance())
@@ -765,6 +881,17 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 	const bool bNeedsGameplayPawn = !bIsTransitionMode && (!ExistingPawn || bHasSpectatorPawn || bWasSpectating);
 	if (bNeedsGameplayPawn)
 	{
+		// Ensure slot/character are valid before restart so spawn class/start selection is identity-aware.
+		if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
+		{
+			if (AARPlayerStateBase* JoinedPS = PlayerController->GetPlayerState<AARPlayerStateBase>())
+			{
+				EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+			}
+
+			NormalizeConnectedPlayersIdentity(GS);
+		}
+
 		if (ExistingPawn)
 		{
 			PlayerController->UnPossess();
@@ -802,6 +929,16 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 
 	const FGameplayTag PlayerSlotTag = ARPlayer::NormalizePlayerSlotTag(PlayerState->GetPlayerSlotTag(), PlayerState->GetPlayerSlot());
 	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
+	TArray<FGameplayTag> IdentityQueryTags;
+	if (PlayerSlotTag.IsValid())
+	{
+		IdentityQueryTags.Add(PlayerSlotTag);
+	}
+	if (CharacterTag.IsValid() && !IdentityQueryTags.Contains(CharacterTag))
+	{
+		IdentityQueryTags.Add(CharacterTag);
+	}
+	AddSpawnIdentityMirrorTags(CharacterTag, IdentityQueryTags);
 
 	TArray<AARTaggedPlayerStart*> TaggedStarts;
 	if (UWorld* World = GetWorld())
@@ -834,24 +971,20 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		return nullptr;
 	};
 
-	if (AActor* SlotExact = FindMatchingStart(PlayerSlotTag, true))
+	for (const FGameplayTag& QueryTag : IdentityQueryTags)
 	{
-		return SlotExact;
+		if (AActor* MatchedExact = FindMatchingStart(QueryTag, true))
+		{
+			return MatchedExact;
+		}
 	}
 
-	if (AActor* SlotLoose = FindMatchingStart(PlayerSlotTag, false))
+	for (const FGameplayTag& QueryTag : IdentityQueryTags)
 	{
-		return SlotLoose;
-	}
-
-	if (AActor* CharacterExact = FindMatchingStart(CharacterTag, true))
-	{
-		return CharacterExact;
-	}
-
-	if (AActor* CharacterLoose = FindMatchingStart(CharacterTag, false))
-	{
-		return CharacterLoose;
+		if (AActor* MatchedLoose = FindMatchingStart(QueryTag, false))
+		{
+			return MatchedLoose;
+		}
 	}
 
 	return Super::ChoosePlayerStart_Implementation(Player);

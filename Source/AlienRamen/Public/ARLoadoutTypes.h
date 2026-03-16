@@ -91,16 +91,32 @@ struct ALIENRAMEN_API FARShipDefRow : public FTableRowBase
  * Data table row for shop-playable characters (`DT_Characters` / `DT_ShopCharacters`).
  *
  * Speaker/customer links are intentionally component-driven on the spawned pawn Blueprint
- * (`UParleySpeakerComponent`, `UARCustomerComponent`) and not duplicated on this row.
+ * (`UParleySpeakerComponent`, `UARCustomerComponent`).
+ *
+ * Identity tag contract:
+ * - `CharacterTag` (`Shop.Character.*`)
+ * - `CustomerTag` (`Shop.Customer.*`)
+ * - `SpeakerTag` (`Parley.Speaker.*`)
+ * These tags should mirror only by the first segment under the root
+ * (for example `Brother` in `Shop.Character.Brother.*`), while deeper
+ * subleafs may diverge per-system.
  */
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARShopCharacterDefRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	/** Canonical character identity tag used for lookup/spawn selection (for example `Parley.Speaker.Brother`). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Shop Character", meta = (Categories = "Parley.Speaker", ToolTip = "Character identity tag used to select this row at runtime."))
+	/** Shop-character identity tag used for lookup/spawn selection (for example `Shop.Character.Brother`). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Shop Character", meta = (DisplayName = "Shop Character Tag", Categories = "Shop.Character", ToolTip = "Shop.Character identity tag for this row. Mirror only the first segment under the root (for example Brother) with Shop.Customer and Parley.Speaker tags. Deeper subleafs may differ."))
 	FGameplayTag CharacterTag;
+
+	/** Shop-customer identity tag mirrored to CharacterTag/SpeakerTag (for example `Shop.Customer.Brother`). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Shop Character", meta = (DisplayName = "Shop Customer Tag", Categories = "Shop.Customer", ToolTip = "Shop.Customer identity tag for this row. Mirror only the first segment under the root (for example Brother) with Shop.Character and Parley.Speaker tags. Deeper subleafs may differ."))
+	FGameplayTag CustomerTag;
+
+	/** Dialogue speaker identity tag mirrored to CharacterTag/CustomerTag (for example `Parley.Speaker.Brother`). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Shop Character", meta = (DisplayName = "Parley Speaker Tag", Categories = "Parley.Speaker", ToolTip = "Parley.Speaker identity tag for this row. Mirror only the first segment under the root (for example Brother) with Shop.Character and Shop.Customer tags. Deeper subleafs may differ."))
+	FGameplayTag SpeakerTag;
 
 	/** Spawnable character Blueprint/class for this character row. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Shop Character", meta = (DisplayName = "Blueprint", ToolTip = "Soft pawn class used when spawning this character from DT_Characters."))

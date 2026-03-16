@@ -1039,23 +1039,20 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 4.0f)
 							[
 								SNew(STextBlock)
-								.Text(FText::FromString(TEXT("No emotions yet. Add one to start.")))
+								.Text(FText::FromString(TEXT("No emotions yet. Use Add New below to create one.")))
 								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Visible : EVisibility::Collapsed; })
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 							[
 								SNew(STextBlock).Text(FText::FromString(TEXT("Emotion Tag")))
-								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 							[
 								SAssignNew(EmotionTagComboHost, SBox)
-								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
 							[
 								SNew(STextBlock).Text(FText::FromString(TEXT("Emotion Portrait Texture")))
-								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 6.0f)
 							[
@@ -1064,7 +1061,18 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 								.DisplayThumbnail(true)
 								.ObjectPath(this, &SDialogueSpeakerEditorPanel::GetEditedPortraitTexturePath)
 								.OnObjectChanged(this, &SDialogueSpeakerEditorPanel::OnEditedPortraitTextureChanged)
-								.Visibility_Lambda([this]() { return PortraitEntries.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible; })
+							]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 2.0f)
+							[
+								SNew(SHorizontalBox)
+								+ SHorizontalBox::Slot().AutoWidth()
+								[
+									SNew(SButton)
+									.Text(FText::FromString(TEXT("Add New")))
+									.ToolTipText(FText::FromString(TEXT("Create a new emotion portrait entry from the current Emotion Tag + Texture fields.")))
+									.OnClicked(this, &SDialogueSpeakerEditorPanel::HandleCreateEmotionFromFields)
+									.IsEnabled_Lambda([this]() { return CanCreateEmotionFromFields(); })
+								]
 							]
 						]
 					]
@@ -2465,26 +2473,23 @@ TSharedPtr<SWidget> SDialogueSpeakerEditorPanel::BuildEmotionListContextMenu()
 	FMenuBuilder MenuBuilder(true, nullptr);
 
 	MenuBuilder.AddMenuEntry(
-		FText::FromString(TEXT("Add Emotion")),
-		FText::FromString(TEXT("Add an emotion entry (or apply edits to selected entry).")),
+		FText::FromString(TEXT("Add New Emotion")),
+		FText::FromString(TEXT("Create a new emotion entry from the current Emotion Tag + Texture fields.")),
 		FSlateIcon(),
-		FUIAction(FExecuteAction::CreateLambda([this]()
-		{
-			if (PortraitEntries.IsEmpty())
-			{
-				HandleAddEmotionSlot();
-			}
-			else
-			{
-				HandleAddPortrait();
-			}
-		})));
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { HandleCreateEmotionFromFields(); }),
+			FCanExecuteAction::CreateSP(this, &SDialogueSpeakerEditorPanel::CanCreateEmotionFromFields)));
 
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Remove Emotion")),
 		FText::FromString(TEXT("Remove the currently selected emotion entry.")),
 		FSlateIcon(),
-		FUIAction(FExecuteAction::CreateLambda([this]() { HandleRemovePortrait(); })));
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() { HandleRemovePortrait(); }),
+			FCanExecuteAction::CreateLambda([this]()
+			{
+				return SelectedPortraitIndex != INDEX_NONE && PortraitEntries.IsValidIndex(SelectedPortraitIndex);
+			})));
 
 	return MenuBuilder.MakeWidget();
 }
@@ -4291,6 +4296,20 @@ FReply SDialogueSpeakerEditorPanel::HandleMoveThresholdDown()
 	return FReply::Handled();
 }
 
+bool SDialogueSpeakerEditorPanel::CanCreateEmotionFromFields() const
+{
+	return SpeakerDataTable.IsValid()
+		&& !SelectedSpeakerRowName.IsNone()
+		&& !EditedDefaultPortraitTexture.IsNull()
+		&& EditedPortraitTag.IsValid();
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleCreateEmotionFromFields()
+{
+	SelectedPortraitIndex = INDEX_NONE;
+	return HandleAddPortrait();
+}
+
 FReply SDialogueSpeakerEditorPanel::HandleAddEmotionSlot()
 {
 	UDataTable* SpeakerTable = SpeakerDataTable.Get();
@@ -4362,6 +4381,7 @@ FReply SDialogueSpeakerEditorPanel::HandleAddPortrait()
 	NewPortrait.PortraitTag = EditedPortraitTag;
 	NewPortrait.Portrait.PortraitTexture = EditedPortraitTexture;
 
+	int32 TargetPortraitIndex = SelectedPortraitIndex;
 	SpeakerTable->Modify();
 	if (SelectedPortraitIndex != INDEX_NONE && Row->Portraits.IsValidIndex(SelectedPortraitIndex))
 	{
@@ -4371,12 +4391,18 @@ FReply SDialogueSpeakerEditorPanel::HandleAddPortrait()
 	else
 	{
 		Row->Portraits.Add(NewPortrait);
+		TargetPortraitIndex = Row->Portraits.Num() - 1;
 		AppendLogLine(TEXT("Added new emotion entry."));
 	}
 	SpeakerTable->MarkPackageDirty();
 
 	RefreshData();
 	SetSelectedSpeakerRow(SelectedSpeakerRowName);
+	SelectedPortraitIndex = TargetPortraitIndex;
+	if (PortraitEntries.IsValidIndex(SelectedPortraitIndex) && PortraitListView.IsValid())
+	{
+		PortraitListView->SetSelection(PortraitEntries[SelectedPortraitIndex], ESelectInfo::OnMouseClick);
+	}
 	return FReply::Handled();
 }
 

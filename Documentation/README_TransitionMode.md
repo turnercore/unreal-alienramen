@@ -103,8 +103,13 @@ For stage-to-stage travel where mode class should stay the same (for example Inv
   - End current mode and show transition: call `EndModeAndTravel(DestinationURL, ...)`.
   - Same-mode map hop (no transition map): call `TravelDirectInMode(DestinationURL, ...)`.
   - Generic path: call `TryStartTravel(..., RoutePolicy)` and pass `ModeDefault` / `ForceTransitionMap` / `ForceDirect`.
+- From shop runtime state (`AARShopGameState`):
+  - Explicit shop-exit helper: call `FinalizeShopRunAndTravelToInvader(InInvaderTravelURL)`.
+  - Leave `InInvaderTravelURL` empty to use `DefaultInvaderTravelURL`.
+  - Pass the final gameplay destination (for example `/Game/Maps/Lvl_Invader`), not the transition map URL.
 - From controller/UI during gameplay:
   - Call `AARPlayerController::TryStartTravel(..., RoutePolicy)`; server authority resolves final URL and performs save/travel gate checks.
+  - Shop-specific convenience: `AARShopPlayerController::RequestFinalizeShopRunAndTravelToInvader(...)` routes via server RPC to the authoritative shop finalization helper.
 - From main menu / non-`AARGameModeBase` map:
   - Build URL with `UARTransitionBlueprintLibrary`:
     1. `MakeTransitionContext(SourceMode, Reason, DestinationURL, bFreshLoadEntry)`

@@ -148,8 +148,11 @@ Primary runtime carry path:
 
 Expectation:
 - seamless travel keeps the active projected runtime state alive without requiring disk save/load
-- `AARPlayerStateBase::CopyProperties(...)` uses an explicit PlayerState field copy contract (slot tag, character identity, loadout, display name, dialogue preference, and selected transient resets) and intentionally does not run generic StructSerializable by-name overlays for PlayerState handoff
+- `AARPlayerStateBase::CopyProperties(...)` uses an explicit PlayerState field copy contract (slot tag, character identity, projected active-character loadout, display name, dialogue preference, and selected transient resets) and intentionally does not run generic StructSerializable by-name overlays for PlayerState handoff
+- character-owned loadouts remain canonical by `CurrentCharacterTag`; `PlayerState.LoadoutTags` is only the active projection and is refreshed on character switch
 - authoritative mode join/travel normalization ensures `CurrentCharacterTag` remains valid (`Brother`/`Sister`) and resolves non-taken fallback selection when a tag is missing/invalid
+- `AARGameModeBase::HandleStartingNewPlayer(...)` normalizes slot/character before spawn so `ChoosePlayerStart` and pawn-class resolution do not run on unknown identity.
+- first-session/no-save joins assign a random available canonical character (`Brother`/`Sister`) while preserving uniqueness when possible.
 - `AARGameModeBase::HandleSeamlessTravelPlayer(...)` immediately re-runs slot/character normalization (`EnsureJoinedPlayerHasUniqueSlot` + `NormalizeConnectedPlayersIdentity`) so transient handoff overlap cannot leave duplicate concrete slots
 - authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
 

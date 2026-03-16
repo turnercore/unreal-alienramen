@@ -338,7 +338,7 @@ Speaker hub currently provides:
 - `New` speaker rows are intentionally created without a speaker tag; authoring must assign an unused speaker tag before save.
 - speaker-tag picker now emits an immediate warning in editor output when selecting a tag already assigned to another row; save remains blocked until tag is unique.
 - reorderable threshold editing/reset (`5,15,30,50` defaults)
-- inline portrait list with add/update/remove operations
+- inline portrait list with explicit `Add New` emotion button (tag + texture fields) and highlighted-entry removal
 - relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
 - conversation cards are draggable between level headers to change minimum-relationship level assignment (replaces level cycle toggle)
 - conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Dialogue.Conversation.Id.<Speaker>.*`)

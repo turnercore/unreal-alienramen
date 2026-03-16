@@ -65,7 +65,7 @@ namespace
 		return &Added;
 	}
 
-	static UARSaveGame* GetCurrentSaveGame(AARPlayerStateBase* PlayerState)
+	static UARSaveGame* GetCurrentSaveGame(const AARPlayerStateBase* PlayerState)
 	{
 		if (!PlayerState)
 		{
@@ -405,17 +405,14 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	SetCurrentCharacterTag_Internal(PlayerData.ResolveCurrentCharacterTag(), false);
 
 	FGameplayTagContainer ProjectedLoadout;
-	if (UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+	if (TryResolveCharacterOwnedLoadout(CurrentCharacterTag, ProjectedLoadout))
 	{
-		FARCharacterSaveData CharacterState;
-		int32 CharacterIndex = INDEX_NONE;
-		if (SaveGame->FindCharacterStateDataByTag(CurrentCharacterTag, CharacterState, CharacterIndex))
-		{
-			ProjectedLoadout = CharacterState.LoadoutTags;
-		}
+		SetLoadoutTags_Internal(ProjectedLoadout, false);
 	}
-
-	SetLoadoutTags_Internal(ProjectedLoadout, false);
+	else
+	{
+		SetLoadoutTags_Internal(FGameplayTagContainer(), false);
+	}
 }
 
 void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
@@ -1064,7 +1061,11 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		return;
 	}
 
-	FGameplayTagContainer NextProjectedLoadout = LoadoutTags;
+	FGameplayTagContainer NextProjectedLoadout;
+	bool bHasProjectedLoadout = false;
+
+	CacheCharacterOwnedLoadout(CurrentCharacterTag, LoadoutTags);
+
 	UARSaveGame* SaveGame = GetCurrentSaveGame(this);
 	if (SaveGame && CurrentCharacterTag.IsValid())
 	{
@@ -1082,18 +1083,10 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 	}
 
-	if (SaveGame)
+	bHasProjectedLoadout = TryResolveCharacterOwnedLoadout(NormalizedTag, NextProjectedLoadout);
+	if (!bHasProjectedLoadout)
 	{
-		FARCharacterSaveData NextCharacterState;
-		int32 NextCharacterIndex = INDEX_NONE;
-		if (SaveGame->FindCharacterStateDataByTag(NormalizedTag, NextCharacterState, NextCharacterIndex))
-		{
-			NextProjectedLoadout = NextCharacterState.LoadoutTags;
-		}
-		else
-		{
-			NextProjectedLoadout.Reset();
-		}
+		NextProjectedLoadout.Reset();
 	}
 
 	const EARCharacterChoice OldCharacter = CharacterPicked;
@@ -1484,6 +1477,8 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
+	CacheCharacterOwnedLoadout(CurrentCharacterTag, LoadoutTags);
+
 	// Mirror the projected runtime loadout into the canonical character-owned save row.
 	if (UGameInstance* GI = GetGameInstance())
 	{
@@ -1510,6 +1505,46 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 			}
 		}
 	}
+}
+
+void AARPlayerStateBase::CacheCharacterOwnedLoadout(const FGameplayTag CharacterTag, const FGameplayTagContainer& LoadoutTagsToCache)
+{
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedCharacterTag.IsValid())
+	{
+		return;
+	}
+
+	RuntimeCharacterOwnedLoadouts.FindOrAdd(NormalizedCharacterTag) = LoadoutTagsToCache;
+}
+
+bool AARPlayerStateBase::TryResolveCharacterOwnedLoadout(const FGameplayTag CharacterTag, FGameplayTagContainer& OutLoadoutTags) const
+{
+	OutLoadoutTags.Reset();
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedCharacterTag.IsValid())
+	{
+		return false;
+	}
+
+	if (const FGameplayTagContainer* RuntimeLoadout = RuntimeCharacterOwnedLoadouts.Find(NormalizedCharacterTag))
+	{
+		OutLoadoutTags = *RuntimeLoadout;
+		return true;
+	}
+
+	if (const UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+	{
+		FARCharacterSaveData CharacterState;
+		int32 CharacterIndex = INDEX_NONE;
+		if (SaveGame->FindCharacterStateDataByTag(NormalizedCharacterTag, CharacterState, CharacterIndex))
+		{
+			OutLoadoutTags = CharacterState.LoadoutTags;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
@@ -1649,8 +1684,11 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 		TargetPS->CharacterPicked = CharacterPicked;
 	}
 
+	// Carry runtime character-owned loadout cache through seamless travel.
+	TargetPS->RuntimeCharacterOwnedLoadouts = RuntimeCharacterOwnedLoadouts;
 	TargetPS->LoadoutTags = LoadoutTags;
 	TargetPS->NormalizeLoadoutTagsForSlotRules(TargetPS->LoadoutTags);
+	TargetPS->CacheCharacterOwnedLoadout(TargetPS->CurrentCharacterTag, TargetPS->LoadoutTags);
 	TargetPS->DisplayName = DisplayName;
 	TargetPS->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
 

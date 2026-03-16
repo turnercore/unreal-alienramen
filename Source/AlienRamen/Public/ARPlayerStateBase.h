@@ -514,7 +514,7 @@ public:
 	 * Seamless-travel carry path from old PlayerState to the new instance.
 	 *
 	 * Contract:
-	 * - copies canonical player identity/runtime fields explicitly (slot tag, character, loadout, display name, dialogue preference)
+	 * - copies canonical player identity/runtime fields explicitly (slot tag, character, projected active-character loadout, display name, dialogue preference)
 	 * - resets per-run transients that should not survive mode travel (ready/combo/cursor/share flags)
 	 * - avoids generic by-name struct overlay for PlayerState handoff to prevent stale/mismatched BP state from reintroducing duplicate slot mirrors
 	 */
@@ -578,6 +578,9 @@ protected:
 	void SyncPlayerSlotMirrorsFromTag(bool bBroadcastSlotChanged);
 	void SyncPlayerSlotMirrorsFromEnum(bool bBroadcastSlotChanged);
 	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags, bool bMarkSaveDirty = true);
+	// Character-owned loadout cache for runtime-only flows (for example seamless travel/session state without disk IO).
+	void CacheCharacterOwnedLoadout(const FGameplayTag CharacterTag, const FGameplayTagContainer& LoadoutTagsToCache);
+	bool TryResolveCharacterOwnedLoadout(const FGameplayTag CharacterTag, FGameplayTagContainer& OutLoadoutTags) const;
 	void UpdateLoadoutWithTag_Internal(FGameplayTag NewTag);
 	void RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove);
 	void NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const;
@@ -673,6 +676,12 @@ protected:
 	// Cached travel readiness for change detection.
 	UPROPERTY(Transient)
 	bool bCachedTravelReady = false;
+
+	// Runtime-only character->loadout ownership cache.
+	// Canonical persistence still lives in SaveGame CharacterStates, but this guarantees
+	// character-owned loadout switching works even when no save object is loaded/available.
+	UPROPERTY(Transient)
+	TMap<FGameplayTag, FGameplayTagContainer> RuntimeCharacterOwnedLoadouts;
 
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MaxHealthChangedDelegateHandle;
