@@ -18,19 +18,6 @@ namespace ARTransition
 			return Normalized;
 		}
 
-		static void SplitURLAndOptions(const FString& URLOrOptions, FString& OutMapPath, FString& OutOptions)
-		{
-			OutMapPath = URLOrOptions;
-			OutOptions.Reset();
-
-			int32 QueryStart = INDEX_NONE;
-			if (URLOrOptions.FindChar(TEXT('?'), QueryStart))
-			{
-				OutMapPath = URLOrOptions.Left(QueryStart);
-				OutOptions = URLOrOptions.Mid(QueryStart + 1);
-			}
-		}
-
 		static bool DoesTokenMatchOption(const FString& Token, const FString& OptionToken)
 		{
 			FString TrimmedToken = Token.TrimStartAndEnd();
@@ -152,12 +139,15 @@ namespace ARTransition
 			return false;
 		}
 
-		FString OptionsString;
-		FString IgnoredMapPath;
-		SplitURLAndOptions(URLOrOptions, IgnoredMapPath, OptionsString);
-
-		FString SearchSpace = !OptionsString.IsEmpty() ? OptionsString : URLOrOptions;
-		SearchSpace = NormalizeOptionSeparators(SearchSpace);
+		FString SearchSpace = NormalizeOptionSeparators(URLOrOptions.TrimStartAndEnd());
+		if (SearchSpace.StartsWith(TEXT("?")))
+		{
+			SearchSpace = SearchSpace.Mid(1);
+		}
+		if (SearchSpace.IsEmpty())
+		{
+			return false;
+		}
 
 		TArray<FString> OptionTokens;
 		SearchSpace.ParseIntoArray(OptionTokens, TEXT("?"), true);

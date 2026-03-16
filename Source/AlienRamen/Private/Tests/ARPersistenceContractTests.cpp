@@ -172,6 +172,15 @@ bool FARPersistenceTravelOptionNormalizationTest::RunTest(const FString& Paramet
 
 	const FString AlreadyHasListen = ARTransition::EnsureTravelOption(TEXT("/Game/Maps/Lvl_RamenShop?listen"), TEXT("listen"));
 	TestEqual(TEXT("Existing listen option is not duplicated"), AlreadyHasListen, FString(TEXT("/Game/Maps/Lvl_RamenShop?listen")));
+
+	TestTrue(
+		TEXT("Options-only strings still detect first-token options"),
+		ARTransition::HasTravelOption(TEXT("listen?Portal=Dock"), TEXT("listen")));
+	const FString OptionOnlyWithListen = ARTransition::EnsureTravelOption(TEXT("listen?Portal=Dock"), TEXT("listen"));
+	TestEqual(
+		TEXT("Options-only strings do not duplicate existing first-token options"),
+		OptionOnlyWithListen,
+		FString(TEXT("listen?Portal=Dock")));
 	return true;
 }
 

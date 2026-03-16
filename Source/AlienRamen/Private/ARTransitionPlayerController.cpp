@@ -19,7 +19,9 @@ void AARTransitionPlayerController::BeginPlay()
 		CreatedWidget = ShowTransitionWidgetFromContext();
 	}
 
-	if (bAutoApplyTransitionInputMode)
+	// ShowTransitionWidget already applies transition input mode when auto-create is enabled.
+	// Only apply here when no widget was just created/shown to avoid duplicate SetInputMode churn.
+	if (bAutoApplyTransitionInputMode && !CreatedWidget)
 	{
 		ApplyTransitionInputMode(true, CreatedWidget);
 	}
