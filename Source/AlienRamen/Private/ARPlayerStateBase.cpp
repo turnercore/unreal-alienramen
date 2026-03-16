@@ -26,9 +26,10 @@ namespace
 
 		Identity.LegacyId = PlayerState->GetPlayerId();
 		Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
-		// Coop slot is session-authoritative runtime state (host=P1, next local player=P2),
-		// so it is intentionally not serialized into save identity rows.
-		Identity.PlayerSlot = EARPlayerSlot::Unknown;
+		// Persist a runtime slot snapshot so shared-account local players stay disambiguated.
+		// Runtime join normalization still owns the authoritative slot assignment on load/travel.
+		const EARPlayerSlot SlotFromTag = ARPlayer::GetPlayerSlotForTag(PlayerState->GetPlayerSlotTag());
+		Identity.PlayerSlot = SlotFromTag != EARPlayerSlot::Unknown ? SlotFromTag : PlayerState->GetPlayerSlot();
 		if (PlayerState->GetUniqueId().IsValid())
 		{
 			Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();

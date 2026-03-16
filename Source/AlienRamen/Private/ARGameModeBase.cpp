@@ -1158,47 +1158,6 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 		return;
 	}
 
-	if (PlayerControllerClass && !PlayerController->IsA(PlayerControllerClass))
-	{
-		const FVector ReplacementSpawnLocation = PlayerController->GetPawn()
-			? PlayerController->GetPawn()->GetActorLocation()
-			: FVector::ZeroVector;
-		// Controller handoff should not author gameplay-facing spawn orientation; destination pawn
-		// classes own their own orientation policy during spawn/possess.
-		const FRotator ReplacementSpawnRotation = FRotator::ZeroRotator;
-		APlayerController* ReplacementController = SpawnPlayerControllerCommon(
-			PlayerController->GetRemoteRole(),
-			ReplacementSpawnLocation,
-			ReplacementSpawnRotation,
-			PlayerControllerClass);
-
-		if (ReplacementController)
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[GameMode] Seamless travel controller class mismatch in mode '%s': replacing '%s' with '%s'."),
-				*ModeTag.ToString(),
-				*GetNameSafe(PlayerController->GetClass()),
-				*GetNameSafe(PlayerControllerClass));
-
-			SwapPlayerControllers(PlayerController, ReplacementController);
-			C = ReplacementController;
-			PlayerController = ReplacementController;
-		}
-		else
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[GameMode] Seamless travel controller class mismatch in mode '%s': expected '%s', got '%s' for '%s', and replacement spawn failed."),
-				*ModeTag.ToString(),
-				*GetNameSafe(PlayerControllerClass),
-				*GetNameSafe(PlayerController->GetClass()),
-				*GetNameSafe(PlayerController));
-		}
-	}
-
 	if (PlayerController->PlayerState)
 	{
 		PlayerController->PlayerState->SetIsSpectator(false);
@@ -1260,6 +1219,28 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 
 		NormalizeConnectedPlayersIdentity(GS);
 	}
+}
+
+TSubclassOf<APlayerController> AARGameModeBase::GetPlayerControllerClassToSpawnForSeamlessTravel(APlayerController* PreviousPlayerController)
+{
+	TSubclassOf<APlayerController> ControllerClassToSpawn = Super::GetPlayerControllerClassToSpawnForSeamlessTravel(PreviousPlayerController);
+	if (!PlayerControllerClass)
+	{
+		return ControllerClassToSpawn;
+	}
+
+	// During normal gameplay travel (including transition-map spectator flow), destination mode must
+	// drive controller class selection via PlayerControllerClass. Only preserve replay spectator class
+	// selection when the world is actually playing back a replay.
+	if (UWorld* World = GetWorld())
+	{
+		if (!World->IsPlayingReplay())
+		{
+			return PlayerControllerClass;
+		}
+	}
+
+	return ControllerClassToSpawn;
 }
 
 AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)

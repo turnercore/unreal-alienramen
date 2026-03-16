@@ -309,6 +309,7 @@ Conversation graph tooling now provides:
 - `Faction Mutation` inline authoring now supports both faction popularity delta and faction-speaker reputation delta (`FactionTag` + optional `TargetSpeakerTag`)
 - when a speaker-target field uses `Parley.Speaker.Requester`/`Parley.Speaker.Owner`, runtime resolves it using the requester/owner `UParleySpeakerComponent` tags for relationship/faction condition and mutation evaluation
 - character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
+- player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit

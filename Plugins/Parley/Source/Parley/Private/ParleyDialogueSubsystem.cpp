@@ -1300,6 +1300,42 @@ static FGameplayTag GetDialogueSpeakerSisterTag()
 	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
 }
 
+static FGameplayTag GetShopCharacterBrotherTag()
+{
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Shop.Character.Brother"), false);
+}
+
+static FGameplayTag GetShopCharacterSisterTag()
+{
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Shop.Character.Sister"), false);
+}
+
+static FGameplayTag ResolvePlayerSpeakerTagFromCharacterTag(const FGameplayTag& CharacterTag)
+{
+	if (!CharacterTag.IsValid())
+	{
+		return FGameplayTag();
+	}
+
+	const FGameplayTag BrotherSpeakerTag = GetDialogueSpeakerBrotherTag();
+	const FGameplayTag BrotherShopTag = GetShopCharacterBrotherTag();
+	if ((BrotherSpeakerTag.IsValid() && CharacterTag.MatchesTag(BrotherSpeakerTag))
+		|| (BrotherShopTag.IsValid() && CharacterTag.MatchesTag(BrotherShopTag)))
+	{
+		return BrotherSpeakerTag;
+	}
+
+	const FGameplayTag SisterSpeakerTag = GetDialogueSpeakerSisterTag();
+	const FGameplayTag SisterShopTag = GetShopCharacterSisterTag();
+	if ((SisterSpeakerTag.IsValid() && CharacterTag.MatchesTag(SisterSpeakerTag))
+		|| (SisterShopTag.IsValid() && CharacterTag.MatchesTag(SisterShopTag)))
+	{
+		return SisterSpeakerTag;
+	}
+
+	return FGameplayTag();
+}
+
 static bool PassesCharacterRestriction(
 	const EDialogueActiveCharacterRestriction Restriction,
 	const FGameplayTag& ResolvedPlayerSpeakerTag)
@@ -1331,16 +1367,10 @@ static FGameplayTag ResolvePlayerSpeakerTag(const APlayerState* PlayerState)
 	}
 
 	const FGameplayTag CurrentCharacterTag = ResolveDialogueCharacterTagFromPlayerState(PlayerState);
-	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-	if (BrotherTag.IsValid() && CurrentCharacterTag.MatchesTag(BrotherTag))
+	const FGameplayTag CharacterResolvedSpeakerTag = ResolvePlayerSpeakerTagFromCharacterTag(CurrentCharacterTag);
+	if (CharacterResolvedSpeakerTag.IsValid())
 	{
-		return GetDialogueSpeakerBrotherTag();
-	}
-
-	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-	if (SisterTag.IsValid() && CurrentCharacterTag.MatchesTag(SisterTag))
-	{
-		return GetDialogueSpeakerSisterTag();
+		return CharacterResolvedSpeakerTag;
 	}
 
 	switch (GetPlayerSlotFromPlayerState(PlayerState))

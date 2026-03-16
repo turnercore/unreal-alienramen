@@ -224,6 +224,53 @@ bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Paramete
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARPersistenceSharedAccountUnknownSlotMigrationTest,
+	"AlienRamen.Save.PlayerState.SharedAccountUnknownSlotMigration",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARPersistenceSharedAccountUnknownSlotMigrationTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	UARSaveGame* Save = NewObject<UARSaveGame>();
+	if (!TestNotNull(TEXT("Created save object"), Save))
+	{
+		return false;
+	}
+
+	FARPlayerStateSaveData& FirstUnknown = Save->PlayerStates.AddDefaulted_GetRef();
+	FirstUnknown.Identity.UniqueNetIdString = TEXT("SharedLocalId");
+	FirstUnknown.Identity.UniqueNetIdType = TEXT("LOCAL");
+	FirstUnknown.Identity.PlayerSlot = EARPlayerSlot::Unknown;
+	FirstUnknown.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+
+	FARPlayerStateSaveData& SecondUnknown = Save->PlayerStates.AddDefaulted_GetRef();
+	SecondUnknown.Identity.UniqueNetIdString = TEXT("SharedLocalId");
+	SecondUnknown.Identity.UniqueNetIdType = TEXT("LOCAL");
+	SecondUnknown.Identity.PlayerSlot = EARPlayerSlot::Unknown;
+	SecondUnknown.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+
+	FARPlayerIdentity QueryP1;
+	QueryP1.UniqueNetIdString = TEXT("SharedLocalId");
+	QueryP1.UniqueNetIdType = TEXT("LOCAL");
+	QueryP1.PlayerSlot = EARPlayerSlot::P1;
+
+	FARPlayerStateSaveData MatchedData;
+	int32 MatchedIndex = INDEX_NONE;
+	TestTrue(TEXT("P1 identity resolves from unknown-slot legacy rows"), Save->FindPlayerStateDataByIdentity(QueryP1, MatchedData, MatchedIndex));
+	TestEqual(TEXT("First unknown-slot row is selected for first concrete slot"), MatchedIndex, 0);
+
+	// Emulate save-write normalization after first hydrate: row now gets a concrete runtime slot.
+	Save->PlayerStates[MatchedIndex].Identity.PlayerSlot = EARPlayerSlot::P1;
+
+	FARPlayerIdentity QueryP2 = QueryP1;
+	QueryP2.PlayerSlot = EARPlayerSlot::P2;
+	TestTrue(TEXT("P2 identity resolves after P1 row has been normalized"), Save->FindPlayerStateDataByIdentity(QueryP2, MatchedData, MatchedIndex));
+	TestEqual(TEXT("Second unknown-slot row is selected for second concrete slot"), MatchedIndex, 1);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FARPersistenceLegacyDialogueMergeTest,
 	"AlienRamen.Save.MigrateLegacyDialogueRows.MergeByCharacter",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

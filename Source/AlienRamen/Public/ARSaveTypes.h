@@ -131,7 +131,11 @@ struct ALIENRAMEN_API FARPlayerIdentity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
-	/** Legacy coop slot identity retained for migration/compatibility; new saves keep this Unknown. */
+	/**
+	 * Runtime coop slot snapshot used to disambiguate duplicated online identities
+	 * (for example couch-coop players sharing one platform account).
+	 * Slot assignment is still re-owned by runtime join normalization on load/travel.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
 
@@ -165,10 +169,26 @@ struct ALIENRAMEN_API FARPlayerIdentity
 				return false;
 			}
 
-			return UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive);
+			if (!UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive))
+			{
+				return false;
+			}
+
+			// When both sides provide a concrete slot, require it to match to avoid
+			// collapsing shared-account local players onto one save row.
+			if (PlayerSlot != EARPlayerSlot::Unknown
+				&& Other.PlayerSlot != EARPlayerSlot::Unknown
+				&& PlayerSlot != Other.PlayerSlot)
+			{
+				return false;
+			}
+
+			return true;
 		}
 		// Slot-only identity matching is legacy compatibility for older save rows.
-		return PlayerSlot != EARPlayerSlot::Unknown && PlayerSlot == Other.PlayerSlot;
+		return PlayerSlot != EARPlayerSlot::Unknown
+			&& Other.PlayerSlot != EARPlayerSlot::Unknown
+			&& PlayerSlot == Other.PlayerSlot;
 	}
 };
 

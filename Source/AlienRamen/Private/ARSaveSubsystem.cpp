@@ -336,8 +336,10 @@ static FARPlayerIdentity BuildPlayerIdentityFromPlayerState(const APlayerState* 
 
 	Identity.LegacyId = ARPS->GetPlayerId();
 	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-	// Coop slot is runtime session state and should never be persisted/restored from disk.
-	Identity.PlayerSlot = EARPlayerSlot::Unknown;
+	// Capture runtime slot in identity rows so shared-account local players map to distinct rows.
+	// Runtime join normalization still reassigns authoritative slots after hydration.
+	const EARPlayerSlot SlotFromTag = ARPlayer::GetPlayerSlotForTag(ARPS->GetPlayerSlotTag());
+	Identity.PlayerSlot = SlotFromTag != EARPlayerSlot::Unknown ? SlotFromTag : ARPS->GetPlayerSlot();
 
 	if (PlayerState->GetUniqueId().IsValid())
 	{
