@@ -106,6 +106,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	bool,
 	bOldReady);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FAROnPlayerSlotIdChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	int32,
+	NewPlayerSlotId,
+	int32,
+	OldPlayerSlotId);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnDownedStateChangedSignature,
 	AARPlayerStateBase*,
@@ -471,6 +480,9 @@ public:
 	FAROnReadyStatusChangedSignature OnReadyStatusChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnPlayerSlotIdChangedSignature OnPlayerSlotIdChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnDownedStateChangedSignature OnDownedStateChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
@@ -553,6 +565,7 @@ protected:
 	UFUNCTION()
 	void OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
+	void SetCurrentCharacterTagWithSwap_Internal(FGameplayTag NewCharacterTag);
 	void SetCurrentCharacterTag_Internal(FGameplayTag NewCharacterTag, bool bMarkSaveDirty = true);
 	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
 	void SetSpiceSharingActive_Internal(bool bNewIsSharing, bool bForceBroadcast = false);

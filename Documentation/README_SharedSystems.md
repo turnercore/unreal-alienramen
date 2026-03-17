@@ -23,6 +23,15 @@ Use this section when the question is not "what happens in Shop/Invader/Scrapyar
 
 Read this when a feature needs to survive listen-server play, couch co-op, LAN, or future online backend routing.
 
+## Controller Identity and Character Assignment UI
+
+- Runtime controller identity is `AARPlayerStateBase::PlayerSlotId` (controller/profile-owned, not character-owned).
+- Canonical gameplay ownership remains character-tag-based (`CurrentCharacterTag`).
+- Shared Blueprint widget bridge for lobby/pause character assignment:
+  - `Source/AlienRamen/Public/ARCharacterAssignmentWidgetBase.h`
+  - `Source/AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp`
+- `UARCharacterAssignmentWidgetBase` publishes controller-id -> character-tag snapshots, supports deferred selection + confirm flows, and emits `OnAllTrackedControllersReadyChanged` for menu owners to close/unpause/continue.
+
 ## Save, Travel, and Progression
 
 - [Persistence Overview](README_Persistence.md)

@@ -93,6 +93,20 @@ namespace
 
 		return ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
 	}
+
+	static FGameplayTag ResolveAlternateCanonicalCharacterTag(const FGameplayTag CharacterTag)
+	{
+		const EARCharacterChoice Choice = ARPlayer::GetCharacterChoiceForTag(CharacterTag);
+		switch (Choice)
+		{
+		case EARCharacterChoice::Brother:
+			return ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister);
+		case EARCharacterChoice::Sister:
+			return ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
+		default:
+			return FGameplayTag();
+		}
+	}
 }
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -243,7 +257,7 @@ void AARPlayerStateBase::SetCurrentCharacterTag(FGameplayTag NewCharacterTag)
 {
 	if (HasAuthority())
 	{
-		SetCurrentCharacterTag_Internal(NewCharacterTag);
+		SetCurrentCharacterTagWithSwap_Internal(NewCharacterTag);
 		return;
 	}
 
@@ -252,7 +266,7 @@ void AARPlayerStateBase::SetCurrentCharacterTag(FGameplayTag NewCharacterTag)
 
 void AARPlayerStateBase::ServerSetCurrentCharacterTag_Implementation(FGameplayTag NewCharacterTag)
 {
-	SetCurrentCharacterTag_Internal(NewCharacterTag);
+	SetCurrentCharacterTagWithSwap_Internal(NewCharacterTag);
 }
 
 void AARPlayerStateBase::SetDisplayNameValue(const FString& NewDisplayName)
@@ -824,7 +838,7 @@ void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AARPlayerStateBase::OnRep_PlayerSlotId(const int32 OldSlotId)
 {
-	(void)OldSlotId;
+	OnPlayerSlotIdChanged.Broadcast(this, PlayerSlotId, OldSlotId);
 	EvaluateTravelReadinessAndBroadcast();
 }
 
@@ -926,7 +940,60 @@ void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewChara
 		return;
 	}
 
-	SetCurrentCharacterTag_Internal(ARPlayer::GetCharacterTagForChoice(NewCharacter));
+	SetCurrentCharacterTagWithSwap_Internal(ARPlayer::GetCharacterTagForChoice(NewCharacter));
+}
+
+void AARPlayerStateBase::SetCurrentCharacterTagWithSwap_Internal(FGameplayTag NewCharacterTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FGameplayTag NormalizedNewTag = ARPlayer::NormalizeCharacterTag(NewCharacterTag);
+	if (!NormalizedNewTag.IsValid())
+	{
+		SetCurrentCharacterTag_Internal(NewCharacterTag);
+		return;
+	}
+
+	APlayerState* OccupyingPlayerState = nullptr;
+	const AGameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
+	if (GameState)
+	{
+		for (APlayerState* CandidatePlayerState : GameState->PlayerArray)
+		{
+			AARPlayerStateBase* Candidate = Cast<AARPlayerStateBase>(CandidatePlayerState);
+			if (!Candidate || Candidate == this)
+			{
+				continue;
+			}
+
+			const FGameplayTag CandidateCharacterTag = ARPlayer::NormalizeCharacterTag(Candidate->GetCurrentCharacterTag());
+			if (CandidateCharacterTag.IsValid() && CandidateCharacterTag.MatchesTagExact(NormalizedNewTag))
+			{
+				OccupyingPlayerState = CandidatePlayerState;
+				break;
+			}
+		}
+	}
+
+	AARPlayerStateBase* OccupyingARPlayerState = Cast<AARPlayerStateBase>(OccupyingPlayerState);
+	if (OccupyingARPlayerState)
+	{
+		FGameplayTag RequesterOldCharacterTag = ARPlayer::NormalizeCharacterTag(CurrentCharacterTag);
+		if (!RequesterOldCharacterTag.IsValid() || RequesterOldCharacterTag.MatchesTagExact(NormalizedNewTag))
+		{
+			RequesterOldCharacterTag = ResolveAlternateCanonicalCharacterTag(NormalizedNewTag);
+		}
+
+		if (RequesterOldCharacterTag.IsValid() && !RequesterOldCharacterTag.MatchesTagExact(NormalizedNewTag))
+		{
+			OccupyingARPlayerState->SetCurrentCharacterTag_Internal(RequesterOldCharacterTag);
+		}
+	}
+
+	SetCurrentCharacterTag_Internal(NormalizedNewTag);
 }
 
 void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharacterTag, const bool bMarkSaveDirty)
