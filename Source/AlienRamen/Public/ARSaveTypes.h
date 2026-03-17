@@ -131,10 +131,6 @@ struct ALIENRAMEN_API FARPlayerIdentity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
-	/** Legacy runtime slot snapshot (no longer persisted by save gather paths; kept for compatibility only). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
-
 	/**
 	 * Shared-account disambiguator:
 	 * - false = primary profile for this online id

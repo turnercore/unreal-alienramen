@@ -91,7 +91,6 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	Save->SaveGameVersion = 10;
 
 	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerState.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
 
 	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();

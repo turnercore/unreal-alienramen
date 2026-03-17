@@ -252,7 +252,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 
 ## Persistence
 
-Save schema is now `v17` with dialogue split by ownership:
+Save schema is now `v18` with dialogue split by ownership:
 
 - shared:
   - `DialogueSpeakerRelationshipStates` (directed `SourceSpeakerTag -> TargetSpeakerTag` matrix)
@@ -262,7 +262,7 @@ Save schema is now `v17` with dialogue split by ownership:
 
 Alien Ramen game-layer bridge mirrors Brother/Sister matrix edges so player-facing relationship values remain shared across player characters; Parley plugin core stays game-agnostic.
 
-Legacy `DialoguePlayerPersistentStates` rows migrate into `CharacterStates[]` by resolving the saved active character for the matching player identity/slot.
+Legacy `DialoguePlayerPersistentStates` rows migrate into `CharacterStates[]` by resolving the saved active character for the matching player identity.
 
 ## Speaker Talkable Runtime
 

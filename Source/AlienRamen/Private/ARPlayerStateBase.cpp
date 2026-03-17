@@ -34,7 +34,6 @@ namespace
 		{
 			Identity.LegacyId = PlayerState->GetPlayerId();
 			Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
-			Identity.PlayerSlot = EARPlayerSlot::Unknown;
 			if (PlayerState->GetUniqueId().IsValid())
 			{
 				Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();

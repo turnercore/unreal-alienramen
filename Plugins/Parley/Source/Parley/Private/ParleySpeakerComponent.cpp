@@ -33,7 +33,7 @@ namespace
 		return *Property->ContainerPtrToValuePtr<FGameplayTag>(Object);
 	}
 
-	static bool AreTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
+	static bool AreCharacterTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
 	{
 		return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
 	}
@@ -245,7 +245,7 @@ void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable."), *GetNameSafe(GetOwner()));
 	}
 
-	const bool bCharacterTagsChanged = !AreTagContainersEquivalent(OldTalkableCharacterTags, NewTalkableCharacterTags);
+	const bool bCharacterTagsChanged = !AreCharacterTagContainersEquivalent(OldTalkableCharacterTags, NewTalkableCharacterTags);
 	TalkableCharacterTags = NewTalkableCharacterTags;
 	if (bCharacterTagsChanged)
 	{
@@ -288,7 +288,7 @@ void UParleySpeakerComponent::OnRep_IsTalkable(const bool bOldTalkable)
 
 void UParleySpeakerComponent::OnRep_TalkableCharacterTags(FGameplayTagContainer OldTalkableCharacterTags)
 {
-	if (AreTagContainersEquivalent(OldTalkableCharacterTags, TalkableCharacterTags))
+	if (AreCharacterTagContainersEquivalent(OldTalkableCharacterTags, TalkableCharacterTags))
 	{
 		return;
 	}

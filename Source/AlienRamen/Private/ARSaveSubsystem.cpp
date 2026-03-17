@@ -503,7 +503,6 @@ FARPlayerIdentity UARSaveSubsystem::BuildRuntimePlayerIdentity(const APlayerStat
 
 	Identity.LegacyId = ARPS->GetPlayerId();
 	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-	Identity.PlayerSlot = EARPlayerSlot::Unknown;
 
 	if (PlayerState->GetUniqueId().IsValid())
 	{

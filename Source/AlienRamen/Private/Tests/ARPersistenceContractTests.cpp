@@ -17,7 +17,6 @@ bool FARPersistencePlayerProjectionTest::RunTest(const FString& Parameters)
 	(void)Parameters;
 
 	FARPlayerStateSaveData PlayerData;
-	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
 	PlayerData.SyncCharacterSelectionFromCurrentTag();
@@ -44,7 +43,6 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 	}
 
 	FARPlayerStateSaveData& PlayerData = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 	PlayerData.ProgressionTags.AddTag(FGameplayTag());
 	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
@@ -186,7 +184,7 @@ bool FARPersistenceTravelOptionNormalizationTest::RunTest(const FString& Paramet
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FARPersistencePlayerIdentityResolutionTest,
-	"AlienRamen.Save.PlayerState.IdentityAndSlotResolution",
+	"AlienRamen.Save.PlayerState.IdentityResolution",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Parameters)
@@ -226,8 +224,7 @@ bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Paramete
 
 	FARPlayerIdentity PrimaryLookup = LookupIdentity;
 	PrimaryLookup.bSharedOnlineIdSecondaryProfile = false;
-	PrimaryLookup.PlayerSlot = EARPlayerSlot::P2; // Slot drift should not remap strict online identity.
-	TestTrue(TEXT("Primary identity lookup succeeds when runtime slot changed"), Save->FindPlayerStateDataByIdentity(PrimaryLookup, Matched, MatchedIndex));
+	TestTrue(TEXT("Primary identity lookup succeeds when runtime character assignment changed"), Save->FindPlayerStateDataByIdentity(PrimaryLookup, Matched, MatchedIndex));
 	TestEqual(TEXT("Primary identity lookup remains on primary profile row"), MatchedIndex, 0);
 	TestEqual(TEXT("Primary identity lookup preserves primary character row"), Matched.CurrentCharacterTag, P1.CurrentCharacterTag);
 	return true;
@@ -291,7 +288,6 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 	Save->SaveGameVersion = 11;
 
 	FARPlayerStateSaveData& PlayerData = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerData.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
 	PlayerData.CharacterPicked = EARCharacterChoice::Brother;
 

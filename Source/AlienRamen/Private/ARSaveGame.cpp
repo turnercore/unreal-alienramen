@@ -172,21 +172,6 @@ UARSaveGame::UARSaveGame()
 	SaveGameVersion = CurrentSchemaVersion;
 }
 
-bool UARSaveGame::FindPlayerStateDataBySlot(const EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const
-{
-	OutIndex = INDEX_NONE;
-	for (int32 i = 0; i < PlayerStates.Num(); ++i)
-	{
-		if (PlayerStates[i].Identity.PlayerSlot == Slot)
-		{
-			OutData = PlayerStates[i];
-			OutIndex = i;
-			return true;
-		}
-	}
-	return false;
-}
-
 bool UARSaveGame::FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const
 {
 	OutIndex = INDEX_NONE;
