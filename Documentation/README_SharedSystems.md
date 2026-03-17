@@ -30,7 +30,11 @@ Read this when a feature needs to survive listen-server play, couch co-op, LAN, 
 - Shared Blueprint widget bridge for lobby/pause character assignment:
   - `Source/AlienRamen/Public/ARCharacterAssignmentWidgetBase.h`
   - `Source/AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp`
+- Concrete Widget Blueprint parent for UMG assets:
+  - `Source/AlienRamen/Public/ARLobbyCharacterAssignmentWidget.h`
+  - `Source/AlienRamen/Private/ARLobbyCharacterAssignmentWidget.cpp`
 - `UARCharacterAssignmentWidgetBase` publishes controller-id -> character-tag snapshots, supports deferred selection + confirm flows, and emits `OnAllTrackedControllersReadyChanged` for menu owners to close/unpause/continue.
+- Create lobby Widget Blueprints from `UARLobbyCharacterAssignmentWidget`; keep `UARCharacterAssignmentWidgetBase` as the reusable abstract runtime bridge.
 
 ## Save, Travel, and Progression
 

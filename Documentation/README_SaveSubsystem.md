@@ -185,7 +185,8 @@ PlayerState hydration is split by lifecycle:
 
 1. Get subsystem.
 2. Call `CreateNewSave(NAME_None or custom base, OutSlot, OutResult, bUseDebugSaves)`.
-3. On success, travel/start flow as needed.
+3. On success, the subsystem keeps a new canonical save in memory, marks it dirty, and does not write any slot/index files yet.
+4. First explicit save/autosave writes revision `0` for that slot base.
 
 ## Save current run
 
