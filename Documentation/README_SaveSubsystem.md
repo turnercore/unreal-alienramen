@@ -39,6 +39,7 @@ Authoritative persisted fields currently include:
   - `ActiveRunBuffPayloads`
   - `ActiveRunBuffCycleId`
   - `ShopTransientCarryables`
+    - meat snapshots include `MeatQualityTier` (`EARVendingQualityTier`, default `Standard`)
 - Player payload:
   - `PlayerStates[]`:
     - `Identity` (optional online id/type, legacy id/name, shared-account primary/secondary profile flag)

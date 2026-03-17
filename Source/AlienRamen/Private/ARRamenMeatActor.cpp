@@ -12,10 +12,14 @@ AARRamenMeatActor::AARRamenMeatActor()
 
 void AARRamenMeatActor::SetMeatData(const EARAffinityColor NewColor, const int32 NewAmount)
 {
-	SetMeatDataByTag(FGameplayTag(), NewColor, NewAmount);
+	SetMeatDataByTag(FGameplayTag(), NewColor, NewAmount, EARVendingQualityTier::Standard);
 }
 
-void AARRamenMeatActor::SetMeatDataByTag(const FGameplayTag NewMeatTag, const EARAffinityColor NewColor, const int32 NewAmount)
+void AARRamenMeatActor::SetMeatDataByTag(
+	const FGameplayTag NewMeatTag,
+	const EARAffinityColor NewColor,
+	const int32 NewAmount,
+	const EARVendingQualityTier NewQualityTier)
 {
 	if (!HasAuthority())
 	{
@@ -25,6 +29,9 @@ void AARRamenMeatActor::SetMeatDataByTag(const FGameplayTag NewMeatTag, const EA
 	MeatTag = NewMeatTag;
 	MeatColor = NewColor;
 	MeatAmount = FMath::Max(1, NewAmount);
+	MeatQualityTier = StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(NewQualityTier))
+		? NewQualityTier
+		: EARVendingQualityTier::Standard;
 	ForceNetUpdate();
 }
 
@@ -122,4 +129,5 @@ void AARRamenMeatActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(AARRamenMeatActor, MeatColor);
 	DOREPLIFETIME(AARRamenMeatActor, MeatAmount);
 	DOREPLIFETIME(AARRamenMeatActor, MeatTag);
+	DOREPLIFETIME(AARRamenMeatActor, MeatQualityTier);
 }

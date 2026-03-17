@@ -48,6 +48,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Economy")
 	float GetVendingQualityMultiplier(EARVendingQualityTier QualityTier) const;
 
+	/** Item quality multiplier used when resolving value from meat/item definitions. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Economy")
+	float GetItemQualityMultiplier(EARVendingQualityTier QualityTier) const;
+
 	/** Adds one completed vending bowl entry to the save-backed pending ledger for next shop-entry settlement. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Economy", meta = (BlueprintAuthorityOnly))
 	bool QueueVendingStockedBowl(const FARVendingStockedBowlEntry& Entry);
@@ -115,6 +119,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Economy|Vending", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float VendingPremiumQualityMultiplier = 1.0f;
 
+	/** Item quality multiplier for low quality. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Economy|ItemQuality", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float ItemQualityLowMultiplier = 0.25f;
+
+	/** Item quality multiplier for average/standard quality. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Economy|ItemQuality", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float ItemQualityStandardMultiplier = 1.0f;
+
+	/** Item quality multiplier for high quality. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Economy|ItemQuality", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float ItemQualityHighMultiplier = 1.25f;
+
+	/** Item quality multiplier for legendary/premium quality. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Economy|ItemQuality", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float ItemQualityPremiumMultiplier = 2.0f;
+
 private:
 	bool ShouldApplyFreshLoadCharacterRestore(const UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 	bool TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
@@ -127,7 +147,7 @@ private:
 	bool ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const;
 	void PersistCanonicalShopEntryIfNeeded(UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 	void FinalizePendingVendingPayout(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem, class AARShopGameState* ShopGameState) const;
-	int32 ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec) const;
+	int32 ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec, EARVendingQualityTier QualityTier = EARVendingQualityTier::Standard) const;
 	int32 ResolveVendingBowlPayout(const FARVendingStockedBowlEntry& Entry) const;
 
 	int32 ServeTipRollCounter = 0;

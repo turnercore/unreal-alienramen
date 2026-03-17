@@ -514,6 +514,12 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				Snapshot.MeatAmount = 1;
 				bChanged = true;
 			}
+
+			if (!StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(Snapshot.MeatQualityTier)))
+			{
+				Snapshot.MeatQualityTier = EARVendingQualityTier::Standard;
+				bChanged = true;
+			}
 		}
 
 		if (bChanged)
@@ -531,6 +537,13 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			Snapshot.MeatAmount = 1;
 			++ClampedCount;
 			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.MeatAmount was clamped to 1."), FieldName));
+		}
+
+		if (!StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(Snapshot.MeatQualityTier)))
+		{
+			Snapshot.MeatQualityTier = EARVendingQualityTier::Standard;
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.MeatQualityTier was reset to Standard."), FieldName));
 		}
 
 		if (Snapshot.BowlFillStep < 0)

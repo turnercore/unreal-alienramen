@@ -86,8 +86,9 @@ This document captures the runtime ownership and integration contract for the sh
   - mirrored to `AARShopGameState::BaseBowlPayout` for UI/readability
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
-  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> meat row `ItemTag` -> shared item `SellMoneyValue`
+  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> meat row `ItemTag` -> shared item `SellMoneyValue` and applies item-quality multiplier (defaults to `Standard` = `1.0`)
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
+  - item quality multipliers are authored on `AARShopGameMode` (`Low/Standard/High/Premium` defaults `0.25 / 1.0 / 1.25 / 2.0`)
 - Vending settlement:
   - queued bowls persist to `UARSaveGame::PendingVendingStockedBowls`
   - shop-entry finalization awards per-bowl `RoundToInt(1 + CombinedMeatValue * QualityMultiplier)` and clears ledger
@@ -113,7 +114,7 @@ This document captures the runtime ownership and integration contract for the sh
   - in `Tap` mode, `StartProcessingByController` consumes at most one pulse per press and requires `StopProcessingByController` (release) before the next pulse.
   - processing progress pauses/resumes and replicates to all players
   - slotted meat is consumed immediately when processing starts
-  - processed stock carries both color + `Item.Meat` tag
+  - processed stock carries both runtime actor color + `Item.Meat` tag
   - when stock already exists, processing is blocked only for identical output type (same color + same meat tag)
   - processing without slotted meat is gated by `bAllowProcessingWithoutMeat` (from station row/runtime setting)
   - processing `None` is blocked whenever the station already has any buffered stock (colored or `None`); it is only allowed when stock is fully empty
@@ -121,6 +122,7 @@ This document captures the runtime ownership and integration contract for the sh
   - bowl consumes one processed stock unit per fill
   - bowl fill records both slot color and slot `Item.Meat` tag (`NoodlesMeatTag`, `BrothMeatTag`, `ToppingsMeatTag`)
   - bowl sequence is strict: `Noodles -> Broth -> Toppings`
+  - `AARRamenBowlActor` exposes `OnFillStepChanged(PreviousFillStep, NewFillStep)` for animation/UI hooks on local authority changes and replicated client updates
 
 ## World Carry Item Interaction
 
@@ -170,10 +172,10 @@ This document captures the runtime ownership and integration contract for the sh
 - Meat storage interaction contract:
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
   - reserve inventory is canonical by meat type tag (`FARMeatState::AdditionalAmountsByType`); legacy color buckets are compatibility mirrors.
-  - `TryDispenseMeat(...)` uses random typed dispense by container color (`TryDispenseRandomMeatByContainerColor`), uniformly across eligible meat types.
+  - `TryDispenseMeat(...)` uses random typed dispense across eligible typed stock (`TryDispenseRandomMeatByContainerColor`), and applies storage/container color to the spawned world meat actor.
   - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Item.Meat` tag.
   - color-only compatibility paths resolve to the first deterministic meat row for that color (sorted row-name order).
-  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
+  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching runtime meat color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
   - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
 - `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
@@ -189,6 +191,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Character-owned shop restore snapshots live in `UARSaveGame::CharacterStates[]` and currently capture:
   - shop character transform
   - held supported carryable snapshot (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`)
+  - held meat snapshots include `MeatQualityTier` (`Standard` default)
 - Character shop restore applies only when re-entering `Mode.Shop` from a fresh save load of a save that was itself made in `Mode.Shop`.
 - Fresh-load character restore skips controllers that are not ready yet and retries on later `RestartPlayer(...)` calls until the pending fresh-load entry is fully consumed.
 - Clean shop entry from new game / invader / scrapyard does not apply character transform or held-item restore snapshots.

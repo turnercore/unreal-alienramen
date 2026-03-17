@@ -29,21 +29,6 @@ namespace
 	{
 		return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
 	}
-
-	static int32& ResolveLegacyBucketForColor(FARMeatState& MeatState, const EARAffinityColor Color)
-	{
-		switch (Color)
-		{
-		case EARAffinityColor::Red:
-			return MeatState.RedAmount;
-		case EARAffinityColor::Blue:
-			return MeatState.BlueAmount;
-		case EARAffinityColor::White:
-			return MeatState.WhiteAmount;
-		default:
-			return MeatState.UnspecifiedAmount;
-		}
-	}
 }
 
 AARMeatStorageBoxActor::AARMeatStorageBoxActor()
@@ -181,7 +166,8 @@ bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(AARPlayerController* Reques
 		return false;
 	}
 
-	const EARAffinityColor SpawnColor = SanitizeColor(MeatDefinition.Color);
+	// Meat type and color are decoupled at runtime; storage color drives dispensed actor color.
+	const EARAffinityColor SpawnColor = SanitizeColor(MeatColor);
 	SpawnedMeat->SetMeatDataByTag(MeatDefinition.MeatTag, SpawnColor, DispenseAmount);
 	if (!CarryComponent->TrySetHeldActor(SpawnedMeat))
 	{
@@ -280,7 +266,6 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 		{
 			DepositMeatTag = DepositDefinition.MeatTag;
 		}
-		DepositColor = SanitizeColor(DepositDefinition.Color);
 	}
 	else
 	{
@@ -494,9 +479,6 @@ void AARMeatStorageBoxActor::RebuildLegacyColorBucketsFromTyped(FARMeatState& In
 	InOutMeatState.WhiteAmount = 0;
 	InOutMeatState.UnspecifiedAmount = 0;
 
-	UGameInstance* GI = GetGameInstance();
-	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
-
 	for (const FARMeatTypeAmount& Entry : InOutMeatState.AdditionalAmountsByType)
 	{
 		const int32 Amount = FMath::Max(0, Entry.Amount);
@@ -505,15 +487,8 @@ void AARMeatStorageBoxActor::RebuildLegacyColorBucketsFromTyped(FARMeatState& In
 			continue;
 		}
 
-		EARAffinityColor ColorBucket = EARAffinityColor::None;
-		FARMeatDefinitionRow MeatDefinition;
-		if (ItemDefinitions && ItemDefinitions->ResolveMeatDefinition(Entry.MeatType, MeatDefinition))
-		{
-			ColorBucket = SanitizeColor(MeatDefinition.Color);
-		}
-
-		int32& Bucket = ResolveLegacyBucketForColor(InOutMeatState, ColorBucket);
-		Bucket += Amount;
+		// Typed inventory no longer implies a canonical color. Keep legacy mirrors conservative.
+		InOutMeatState.UnspecifiedAmount += Amount;
 	}
 }
 
@@ -521,30 +496,18 @@ bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTagForContainerColor(const 
 {
 	OutMeatTag = FGameplayTag();
 
-	UGameInstance* GI = GetGameInstance();
-	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
-	if (!ItemDefinitions)
-	{
-		return false;
-	}
-
-	TArray<FGameplayTag> CandidateTags;
-	if (!ItemDefinitions->GetMeatTagsForColor(SanitizeColor(MeatColor), CandidateTags) || CandidateTags.IsEmpty())
-	{
-		return false;
-	}
-
 	TArray<FGameplayTag> EligibleTags;
 	const int32 DispenseAmount = FMath::Max(1, MeatAmountPerDispense);
-	for (const FGameplayTag CandidateTag : CandidateTags)
+	for (const FARMeatTypeAmount& Entry : MeatState.AdditionalAmountsByType)
 	{
-		for (const FARMeatTypeAmount& Entry : MeatState.AdditionalAmountsByType)
+		if (!Entry.MeatType.IsValid())
 		{
-			if (Entry.MeatType.MatchesTagExact(CandidateTag) && Entry.Amount >= DispenseAmount)
-			{
-				EligibleTags.Add(CandidateTag);
-				break;
-			}
+			continue;
+		}
+
+		if (Entry.Amount >= DispenseAmount)
+		{
+			EligibleTags.Add(Entry.MeatType);
 		}
 	}
 

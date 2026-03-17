@@ -296,6 +296,7 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 		{
 			Snapshot.MeatColor = MeatActor->GetMeatColor();
 			Snapshot.MeatTag = MeatActor->GetMeatTag();
+			Snapshot.MeatQualityTier = MeatActor->GetMeatQualityTier();
 			Snapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 		}
 	}
@@ -358,6 +359,7 @@ static bool CaptureHeldShopItemSnapshot(AActor* HeldActor, FARCharacterHeldShopI
 		OutSnapshot.ActorClass = MeatActor->GetClass();
 		OutSnapshot.MeatColor = MeatActor->GetMeatColor();
 		OutSnapshot.MeatTag = MeatActor->GetMeatTag();
+		OutSnapshot.MeatQualityTier = MeatActor->GetMeatQualityTier();
 		OutSnapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 		return true;
 	}

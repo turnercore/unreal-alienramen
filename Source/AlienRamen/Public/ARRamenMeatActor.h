@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
+#include "ARShopRamenTypes.h"
 #include "ARShopCarryItemBase.h"
 #include "GameplayTagContainer.h"
 #include "ARRamenMeatActor.generated.h"
@@ -25,7 +26,11 @@ public:
 	void SetMeatData(EARAffinityColor NewColor, int32 NewAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Meat", meta = (BlueprintAuthorityOnly))
-	void SetMeatDataByTag(FGameplayTag NewMeatTag, EARAffinityColor NewColor, int32 NewAmount);
+	void SetMeatDataByTag(
+		FGameplayTag NewMeatTag,
+		EARAffinityColor NewColor,
+		int32 NewAmount,
+		EARVendingQualityTier NewQualityTier = EARVendingQualityTier::Standard);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
 	EARAffinityColor GetMeatColor() const { return MeatColor; }
@@ -35,6 +40,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
 	FGameplayTag GetMeatTag() const { return MeatTag; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
+	EARVendingQualityTier GetMeatQualityTier() const { return MeatQualityTier; }
 
 	// True once this meat has moved at least RequiredDistance units away from spawn.
 	// Used by storage auto-return gating to avoid instant re-store at spawn time.
@@ -68,6 +76,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat", meta = (Categories = "Item.Meat"))
 	FGameplayTag MeatTag;
+
+	/** Quality tier used for value scaling (defaults to Average/Standard). */
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat")
+	EARVendingQualityTier MeatQualityTier = EARVendingQualityTier::Standard;
 
 private:
 	void TryAutoStoreWithActor(AActor* OtherActor);
