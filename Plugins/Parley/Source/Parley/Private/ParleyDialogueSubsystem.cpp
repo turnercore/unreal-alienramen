@@ -614,6 +614,39 @@ static UTagKeySubsystem* GetLookupSubsystem(const UParleyDialogueSubsystem* Subs
 	return nullptr;
 }
 
+static bool TryResolveDataTableForRootTag_Parley(
+	const UParleyDialogueSubsystem* Subsystem,
+	const FGameplayTag RootTag,
+	UDataTable*& OutDataTable,
+	FString& OutError)
+{
+	if (UTagKeySubsystem* Lookup = GetLookupSubsystem(Subsystem))
+	{
+		return Lookup->TryResolveDataTableForRootTag(RootTag, OutDataTable, OutError);
+	}
+
+	return UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(RootTag, OutDataTable, OutError);
+}
+
+static bool TryResolveDataTableForRowStruct_Parley(
+	const UParleyDialogueSubsystem* Subsystem,
+	UScriptStruct* DesiredRowStruct,
+	UDataTable*& OutDataTable,
+	FGameplayTag& OutMatchedRootTag,
+	FString& OutError)
+{
+	if (UTagKeySubsystem* Lookup = GetLookupSubsystem(Subsystem))
+	{
+		return Lookup->TryResolveDataTableForRowStruct(DesiredRowStruct, OutDataTable, OutMatchedRootTag, OutError);
+	}
+
+	return UTagKeySubsystem::TryResolveDataTableForRowStructFromConfiguredRoutes(
+		DesiredRowStruct,
+		OutDataTable,
+		OutMatchedRootTag,
+		OutError);
+}
+
 static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FGameplayTag Slot);
 static const FDialoguePlayerPersistentState* FindPlayerDialogueStateByCharacterTag(
 	const FParleyProgressionStore* ProgressionStore,

@@ -20,6 +20,7 @@
 #include "SGraphPin.h"
 #include "Styling/AppStyle.h"
 #include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SNumericEntryBox.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
@@ -34,6 +35,7 @@ namespace
 	constexpr float PortraitSize = 46.0f;
 	constexpr float LineWrapWidth = 280.0f;
 	constexpr float MultiLineIndexWidth = 28.0f;
+	constexpr float InlineLengthWidth = 78.0f;
 
 	static const FParleySpeakerRow* ResolveSpeakerRowForTag_LineNode(const FGameplayTag SpeakerTag)
 	{
@@ -479,6 +481,16 @@ void SParleyDialogueLineGraphNode::HandleLineTextCommittedForEntry(const FText& 
 	CommitLineTextForEntry(EntryId, NewText);
 }
 
+void SParleyDialogueLineGraphNode::HandleLineLengthChanged(const float NewLengthSeconds)
+{
+	CommitLineLengthSecondsForEntry(FGuid(), NewLengthSeconds);
+}
+
+void SParleyDialogueLineGraphNode::HandleLineLengthChangedForEntry(const float NewLengthSeconds, const FGuid EntryId)
+{
+	CommitLineLengthSecondsForEntry(EntryId, NewLengthSeconds);
+}
+
 FReply SParleyDialogueLineGraphNode::HandleAddMultiLineEntryClicked()
 {
 	UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
@@ -554,6 +566,17 @@ FText SParleyDialogueLineGraphNode::GetSpeakerInitialsTextForEntry(const FGuid E
 FText SParleyDialogueLineGraphNode::GetLineEditHintText() const
 {
 	return FText::FromString(TEXT("Line text..."));
+}
+
+TOptional<float> SParleyDialogueLineGraphNode::GetLineLengthSeconds() const
+{
+	return GetLineLengthSecondsForEntry(FGuid());
+}
+
+TOptional<float> SParleyDialogueLineGraphNode::GetLineLengthSecondsForEntry(const FGuid EntryId) const
+{
+	const FDialogueLineNodeData* LineData = GetLineDataForEntry(EntryId);
+	return LineData ? TOptional<float>(LineData->Line.LengthSeconds) : TOptional<float>();
 }
 
 EVisibility SParleyDialogueLineGraphNode::GetSpeakerInitialsVisibility() const
@@ -933,6 +956,24 @@ void SParleyDialogueLineGraphNode::CommitLineTextForEntry(const FGuid EntryId, c
 	}
 }
 
+void SParleyDialogueLineGraphNode::CommitLineLengthSecondsForEntry(const FGuid EntryId, const float NewLengthSeconds)
+{
+	UParleyDialogueEdGraphNode* DialogueNode = GetDialogueNodeMutable();
+	if (!DialogueNode)
+	{
+		return;
+	}
+
+	if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::MultiLine
+		|| DialogueNode->EditorNodeType == EDialogueEditorNodeType::SplitLine)
+	{
+		DialogueNode->SetMultiLineEntryLengthSeconds(EntryId, NewLengthSeconds);
+		return;
+	}
+
+	DialogueNode->SetLineLengthSeconds(NewLengthSeconds);
+}
+
 FGameplayTag SParleyDialogueLineGraphNode::GetSpeakerTagForEntry(const FGuid EntryId) const
 {
 	const FDialogueLineNodeData* LineData = GetLineDataForEntry(EntryId);
@@ -1041,14 +1082,52 @@ TSharedRef<SWidget> SParleyDialogueLineGraphNode::BuildLineEntryWidget(const FGu
 		.AutoHeight()
 		.Padding(0.0f, 4.0f, 0.0f, 0.0f)
 		[
-			SNew(SBox)
-			.WidthOverride(LineWrapWidth)
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.FillWidth(1.0f)
 			[
-				SNew(SMultiLineEditableTextBox)
-				.Text(InitialText)
-				.HintText(this, &SParleyDialogueLineGraphNode::GetLineEditHintText)
-				.AutoWrapText(true)
-				.OnTextCommitted(this, &SParleyDialogueLineGraphNode::HandleLineTextCommittedForEntry, EntryId)
+				SNew(SBox)
+				.WidthOverride(LineWrapWidth)
+				[
+					SNew(SMultiLineEditableTextBox)
+					.Text(InitialText)
+					.HintText(this, &SParleyDialogueLineGraphNode::GetLineEditHintText)
+					.AutoWrapText(true)
+					.OnTextCommitted(this, &SParleyDialogueLineGraphNode::HandleLineTextCommittedForEntry, EntryId)
+				]
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.Padding(6.0f, 0.0f, 0.0f, 0.0f)
+			.VAlign(VAlign_Top)
+			[
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(TEXT("Sec")))
+					.ToolTipText(FText::FromString(TEXT("Authored line length in seconds when no native audio determines timing.")))
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(0.0f, 2.0f, 0.0f, 0.0f)
+				[
+					SNew(SBox)
+					.WidthOverride(InlineLengthWidth)
+					[
+						SNew(SNumericEntryBox<float>)
+						.AllowSpin(true)
+						.MinValue(0.0f)
+						.MinSliderValue(0.0f)
+						.Delta(0.1f)
+						.Value_Lambda([this, EntryId]()
+						{
+							return GetLineLengthSecondsForEntry(EntryId);
+						})
+						.OnValueChanged(this, &SParleyDialogueLineGraphNode::HandleLineLengthChangedForEntry, EntryId)
+					]
+				]
 			]
 		];
 

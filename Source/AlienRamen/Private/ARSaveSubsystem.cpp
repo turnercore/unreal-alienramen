@@ -561,7 +561,11 @@ FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 	{
 		FARSaveResult IndexResult;
 		UARSaveIndexGame* CanonicalIndex = nullptr;
-		if (LoadOrCreateIndexForSlot(CanonicalIndex, IndexResult, ARSaveInternal::SaveIndexSlot) && CanonicalIndex)
+		if (UGameplayStatics::DoesSaveGameExist(ARSaveInternal::SaveIndexSlot, DefaultUserIndex))
+		{
+			CanonicalIndex = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(ARSaveInternal::SaveIndexSlot, DefaultUserIndex));
+		}
+		if (CanonicalIndex)
 		{
 			for (const FARSaveSlotDescriptor& Entry : CanonicalIndex->SlotNames)
 			{
@@ -570,7 +574,11 @@ FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 		}
 
 		UARSaveIndexGame* DebugIndex = nullptr;
-		if (LoadOrCreateIndexForSlot(DebugIndex, IndexResult, ARSaveInternal::DebugSaveIndexSlot) && DebugIndex)
+		if (UGameplayStatics::DoesSaveGameExist(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex))
+		{
+			DebugIndex = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex));
+		}
+		if (DebugIndex)
 		{
 			for (const FARSaveSlotDescriptor& Entry : DebugIndex->SlotNames)
 			{
@@ -1538,6 +1546,14 @@ bool UARSaveSubsystem::PushCurrentSaveToPlayer(AARPlayerController* TargetPlayer
 	{
 		QueuePendingCanonicalSyncRequest(TargetPlayerController);
 		OutResult.Error = TEXT("PushCurrentSaveToPlayer deferred: no current save loaded yet; request queued.");
+		return false;
+	}
+
+	if (CurrentSaveGame->LastSaved.GetTicks() == 0)
+	{
+		QueuePendingCanonicalSyncRequest(TargetPlayerController);
+		OutResult.Error = TEXT("PushCurrentSaveToPlayer deferred: current save has not been persisted yet.");
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		return false;
 	}
 

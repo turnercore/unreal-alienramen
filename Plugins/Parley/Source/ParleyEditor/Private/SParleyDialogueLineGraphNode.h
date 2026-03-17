@@ -34,6 +34,8 @@ private:
 	FReply HandlePortraitMouseButtonDownForEntry(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent, FGuid EntryId);
 	void HandleLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType);
 	void HandleLineTextCommittedForEntry(const FText& NewText, ETextCommit::Type CommitType, FGuid EntryId);
+	void HandleLineLengthChanged(float NewLengthSeconds);
+	void HandleLineLengthChangedForEntry(float NewLengthSeconds, FGuid EntryId);
 	FReply HandleAddMultiLineEntryClicked();
 	bool HandleMultiLineRowDropped(FGuid DraggedEntryId, FGuid TargetEntryId);
 
@@ -43,6 +45,8 @@ private:
 	FText GetSpeakerTagTextForEntry(FGuid EntryId) const;
 	FText GetSpeakerInitialsTextForEntry(FGuid EntryId) const;
 	FText GetLineEditHintText() const;
+	TOptional<float> GetLineLengthSeconds() const;
+	TOptional<float> GetLineLengthSecondsForEntry(FGuid EntryId) const;
 	EVisibility GetSpeakerInitialsVisibility() const;
 	EVisibility GetSpeakerInitialsVisibilityForEntry(FGuid EntryId) const;
 	FSlateColor GetTitleColor() const;
@@ -56,6 +60,7 @@ private:
 	void EnsureConversationParticipantsIncludeSpeaker(const FGameplayTag& SpeakerTag);
 	void SetLineSpeakerTagForEntry(FGuid EntryId, FGameplayTag NewSpeakerTag);
 	void CommitLineTextForEntry(FGuid EntryId, const FText& NewText);
+	void CommitLineLengthSecondsForEntry(FGuid EntryId, float NewLengthSeconds);
 	FGameplayTag GetSpeakerTagForEntry(FGuid EntryId) const;
 	const FDialogueLineNodeData* GetLineDataForEntry(FGuid EntryId) const;
 	TSharedRef<SWidget> BuildLineEntryWidget(FGuid EntryId, int32 DisplayIndex, bool bShowDragHandle);

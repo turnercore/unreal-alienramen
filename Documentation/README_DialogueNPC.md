@@ -312,7 +312,7 @@ Conversation graph tooling now provides:
 - player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
-- line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit
+- line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit + inline `Length Seconds` float edit; newly created line, multi-line, and split-line entries default authored length to `1.0`
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)
 - drag-link execution wiring with:
   - one outgoing link per output pin
@@ -323,6 +323,7 @@ Conversation graph tooling now provides:
 - split-line node authoring uses multiline-style inline line rows, but runtime selects only the first row matching the active player character and otherwise skips to `Next`
 - compile-from-editor-graph into `CompiledData` with node-level validation markers
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running
+- no-PIE validation falls back to TagKey configured-route resolution when no live `GameInstance`/`UTagKeySubsystem` exists, so conversation graph validation still resolves authored speaker/conversation tables in editor-only flows
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Parley.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
