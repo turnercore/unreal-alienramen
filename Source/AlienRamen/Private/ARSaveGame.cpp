@@ -495,8 +495,19 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		}
 	};
 
+	auto SanitizeMeatQualityTier = [](EARVendingQualityTier& InOutTier) -> bool
+	{
+		if (StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(InOutTier)))
+		{
+			return false;
+		}
+
+		InOutTier = EARVendingQualityTier::Standard;
+		return true;
+	};
+
 	auto SanitizeShopTransientCarryables =
-		[OutWarnings, &ClampedCount](TArray<FARShopTransientCarryableSnapshot>& Snapshots)
+		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](TArray<FARShopTransientCarryableSnapshot>& Snapshots)
 	{
 		bool bChanged = false;
 		for (int32 SnapshotIndex = Snapshots.Num() - 1; SnapshotIndex >= 0; --SnapshotIndex)
@@ -515,9 +526,9 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				bChanged = true;
 			}
 
-			if (!StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(Snapshot.MeatQualityTier)))
+			const bool bWasQualityTierInvalid = SanitizeMeatQualityTier(Snapshot.MeatQualityTier);
+			if (bWasQualityTierInvalid)
 			{
-				Snapshot.MeatQualityTier = EARVendingQualityTier::Standard;
 				bChanged = true;
 			}
 		}
@@ -530,7 +541,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	};
 
 	auto SanitizeHeldShopItem =
-		[OutWarnings, &ClampedCount](FARCharacterHeldShopItemSnapshot& Snapshot, const TCHAR* FieldName)
+		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](FARCharacterHeldShopItemSnapshot& Snapshot, const TCHAR* FieldName)
 	{
 		if (Snapshot.MeatAmount < 1)
 		{
@@ -539,9 +550,9 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.MeatAmount was clamped to 1."), FieldName));
 		}
 
-		if (!StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(Snapshot.MeatQualityTier)))
+		const bool bWasQualityTierInvalid = SanitizeMeatQualityTier(Snapshot.MeatQualityTier);
+		if (bWasQualityTierInvalid)
 		{
-			Snapshot.MeatQualityTier = EARVendingQualityTier::Standard;
 			++ClampedCount;
 			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.MeatQualityTier was reset to Standard."), FieldName));
 		}

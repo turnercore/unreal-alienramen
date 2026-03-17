@@ -64,6 +64,18 @@ namespace
 			}
 		}
 
+		if (!ExecWorld)
+		{
+			UE_LOG(
+				LogTagKey,
+				Warning,
+				TEXT("[TagKey] %s is only available when a PIE/Game world context exists. Unable to apply verbosity '%s' to %s."),
+				CommandName,
+				*TargetVerbosity,
+				CategoryName);
+			return false;
+		}
+
 		const FString ExecCommand = FString::Printf(TEXT("log %s %s"), CategoryName, *TargetVerbosity);
 		const bool bApplied = GEngine->Exec(ExecWorld, *ExecCommand);
 		if (!bApplied)

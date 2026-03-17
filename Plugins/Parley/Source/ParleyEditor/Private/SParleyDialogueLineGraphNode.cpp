@@ -481,13 +481,18 @@ void SParleyDialogueLineGraphNode::HandleLineTextCommittedForEntry(const FText& 
 	CommitLineTextForEntry(EntryId, NewText);
 }
 
-void SParleyDialogueLineGraphNode::HandleLineLengthChanged(const float NewLengthSeconds)
+void SParleyDialogueLineGraphNode::HandleLineLengthCommitted(const float NewLengthSeconds, const ETextCommit::Type CommitType)
 {
+	(void)CommitType;
 	CommitLineLengthSecondsForEntry(FGuid(), NewLengthSeconds);
 }
 
-void SParleyDialogueLineGraphNode::HandleLineLengthChangedForEntry(const float NewLengthSeconds, const FGuid EntryId)
+void SParleyDialogueLineGraphNode::HandleLineLengthCommittedForEntry(
+	const float NewLengthSeconds,
+	const ETextCommit::Type CommitType,
+	const FGuid EntryId)
 {
+	(void)CommitType;
 	CommitLineLengthSecondsForEntry(EntryId, NewLengthSeconds);
 }
 
@@ -1125,7 +1130,7 @@ TSharedRef<SWidget> SParleyDialogueLineGraphNode::BuildLineEntryWidget(const FGu
 						{
 							return GetLineLengthSecondsForEntry(EntryId);
 						})
-						.OnValueChanged(this, &SParleyDialogueLineGraphNode::HandleLineLengthChangedForEntry, EntryId)
+						.OnValueCommitted(this, &SParleyDialogueLineGraphNode::HandleLineLengthCommittedForEntry, EntryId)
 					]
 				]
 			]

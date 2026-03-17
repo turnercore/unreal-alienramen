@@ -1331,6 +1331,8 @@ bool UTagKeySubsystem::TryValidateRoutes(const TArray<FTagKeyRoute>& Routes, FSt
 		}
 	}
 
+	// Root-tag hierarchy overlap is intentional: route resolution walks parent tags from leaf->root and
+	// picks the nearest configured ancestor, so overlap remains deterministic instead of order-dependent.
 	return true;
 }
 

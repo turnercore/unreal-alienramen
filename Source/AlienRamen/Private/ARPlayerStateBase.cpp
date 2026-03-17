@@ -1008,6 +1008,16 @@ void AARPlayerStateBase::SetCurrentCharacterTagWithSwap_Internal(FGameplayTag Ne
 		{
 			OccupyingARPlayerState->SetCurrentCharacterTag_Internal(RequesterOldCharacterTag);
 		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[PlayerState] Character swap aborted for '%s': no safe alternate tag was available for occupying player '%s'."),
+				*GetNameSafe(this),
+				*GetNameSafe(OccupyingARPlayerState));
+			return;
+		}
 	}
 
 	SetCurrentCharacterTag_Internal(NormalizedNewTag);

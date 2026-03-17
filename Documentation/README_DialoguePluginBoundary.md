@@ -33,4 +33,5 @@ This page defines what is owned by the Parley dialogue plugin boundary (`Plugins
 
 - `parley.debug.log` defaults `ParleyLog` to `VeryVerbose`.
 - `parley.debug.log verbose|log|warning|error|off|reset` supports the same verbosity shorthands as `ar.debug.log`.
+- `parley.debug.log` requires an active PIE/Game world context; it will no-op with a warning from editor-only/non-game contexts.
 - Native console command `log parleylog <level>` still works for direct category control.

@@ -34,8 +34,8 @@ private:
 	FReply HandlePortraitMouseButtonDownForEntry(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent, FGuid EntryId);
 	void HandleLineTextCommitted(const FText& NewText, ETextCommit::Type CommitType);
 	void HandleLineTextCommittedForEntry(const FText& NewText, ETextCommit::Type CommitType, FGuid EntryId);
-	void HandleLineLengthChanged(float NewLengthSeconds);
-	void HandleLineLengthChangedForEntry(float NewLengthSeconds, FGuid EntryId);
+	void HandleLineLengthCommitted(float NewLengthSeconds, ETextCommit::Type CommitType);
+	void HandleLineLengthCommittedForEntry(float NewLengthSeconds, ETextCommit::Type CommitType, FGuid EntryId);
 	FReply HandleAddMultiLineEntryClicked();
 	bool HandleMultiLineRowDropped(FGuid DraggedEntryId, FGuid TargetEntryId);
 

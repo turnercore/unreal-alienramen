@@ -561,11 +561,23 @@ FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 
 	if (bEnsureUnique)
 	{
-		FARSaveResult IndexResult;
 		UARSaveIndexGame* CanonicalIndex = nullptr;
 		if (UGameplayStatics::DoesSaveGameExist(ARSaveInternal::SaveIndexSlot, DefaultUserIndex))
 		{
-			CanonicalIndex = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(ARSaveInternal::SaveIndexSlot, DefaultUserIndex));
+			if (USaveGame* LoadedIndex = UGameplayStatics::LoadGameFromSlot(ARSaveInternal::SaveIndexSlot, DefaultUserIndex))
+			{
+				CanonicalIndex = Cast<UARSaveIndexGame>(LoadedIndex);
+				if (!CanonicalIndex)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: index slot '%s' exists but is incompatible. Falling back to disk probes for uniqueness."),
+						ARSaveInternal::SaveIndexSlot);
+				}
+			}
+			else
+			{
+				UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: failed loading index slot '%s'. Falling back to disk probes for uniqueness."),
+					ARSaveInternal::SaveIndexSlot);
+			}
 		}
 		if (CanonicalIndex)
 		{
@@ -578,7 +590,20 @@ FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 		UARSaveIndexGame* DebugIndex = nullptr;
 		if (UGameplayStatics::DoesSaveGameExist(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex))
 		{
-			DebugIndex = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex));
+			if (USaveGame* LoadedIndex = UGameplayStatics::LoadGameFromSlot(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex))
+			{
+				DebugIndex = Cast<UARSaveIndexGame>(LoadedIndex);
+				if (!DebugIndex)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: debug index slot '%s' exists but is incompatible. Falling back to disk probes for uniqueness."),
+						ARSaveInternal::DebugSaveIndexSlot);
+				}
+			}
+			else
+			{
+				UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: failed loading debug index slot '%s'. Falling back to disk probes for uniqueness."),
+					ARSaveInternal::DebugSaveIndexSlot);
+			}
 		}
 		if (DebugIndex)
 		{
@@ -1084,6 +1109,7 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	OutResult.ResultCode = EARSaveResultCode::Success;
 	OutResult.SlotName = SlotBase;
 	OutResult.SlotNumber = 0;
+	// New-save creation is intentionally in-memory only; OnSaveCompleted is reserved for persisted writes.
 	return true;
 }
 

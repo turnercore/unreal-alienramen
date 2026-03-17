@@ -70,6 +70,22 @@ namespace
 
 		return FMath::Max(0.0f, Strength) * 100.0f;
 	}
+
+	static void RefreshParleySpeakerTalkableStatesIfAuthority(AARPlayerController* Controller)
+	{
+		if (!Controller || !Controller->HasAuthority())
+		{
+			return;
+		}
+
+		if (UGameInstance* GameInstance = Controller->GetGameInstance())
+		{
+			if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+			{
+				SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
+			}
+		}
+	}
 }
 
 AARPlayerController::AARPlayerController()
@@ -81,37 +97,13 @@ AARPlayerController::AARPlayerController()
 void AARPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	if (UGameInstance* GameInstance = GetGameInstance())
-	{
-		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
-		{
-			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
-		}
-	}
+	RefreshParleySpeakerTalkableStatesIfAuthority(this);
 }
 
 void AARPlayerController::OnUnPossess()
 {
 	Super::OnUnPossess();
-
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	if (UGameInstance* GameInstance = GetGameInstance())
-	{
-		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
-		{
-			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
-		}
-	}
+	RefreshParleySpeakerTalkableStatesIfAuthority(this);
 }
 
 bool AARPlayerController::IsDialogueAutoAdvanceEnabled() const

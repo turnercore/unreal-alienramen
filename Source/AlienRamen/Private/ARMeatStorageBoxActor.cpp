@@ -100,7 +100,7 @@ bool AARMeatStorageBoxActor::TryDispenseRandomMeatByContainerColor(AARPlayerCont
 	RebuildLegacyColorBucketsFromTyped(CandidateState);
 
 	FGameplayTag RandomMeatTag;
-	if (!SelectRandomEligibleMeatTagForContainerColor(CandidateState, RandomMeatTag))
+	if (!SelectRandomEligibleMeatTagFromTypedStock(CandidateState, RandomMeatTag))
 	{
 		UE_LOG(
 			ARLog,
@@ -492,7 +492,7 @@ void AARMeatStorageBoxActor::RebuildLegacyColorBucketsFromTyped(FARMeatState& In
 	}
 }
 
-bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTagForContainerColor(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const
+bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTagFromTypedStock(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const
 {
 	OutMeatTag = FGameplayTag();
 

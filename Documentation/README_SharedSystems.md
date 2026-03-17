@@ -60,6 +60,7 @@ This is the shared runtime foundation section. GAS lives here because it is a cr
 - `ar.debug.log` controls `ARLog`.
 - `ar.debug.log.all` controls `ARLog`, `EmoLog`, `ParleyLog`, and `TagKeyLog` together.
 - `emo.debug.log`, `parley.debug.log`, and `tagkey.debug.log` control their plugin categories independently.
+- Plugin-specific debug commands require an active PIE/Game world context to apply verbosity at runtime.
 
 ## Dialogue, Speakers, and Factions
 
