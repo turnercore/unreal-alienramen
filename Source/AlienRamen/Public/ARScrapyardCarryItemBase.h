@@ -45,8 +45,8 @@ protected:
 	void RefreshVisualModelActor();
 	void DestroyVisualModelActor();
 
-	// Tag key resolved through Scrapyard.Item route.
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ToolTip = "Item identity tag looked up via Scrapyard.Item route to resolve definitions/rewards."))
+	// Tag key resolved through the shared Item route.
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Item", meta = (ToolTip = "Item identity tag looked up via the Item route to resolve definitions/rewards."))
 	FGameplayTag ScrapyardItemTag;
 
 	// Used only when item definition resolution fails.

@@ -14,6 +14,7 @@
 #include "ARSaveSubsystem.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
+#include "ARShopGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "Engine/GameInstance.h"
@@ -151,6 +152,107 @@ AARShopGameMode::AARShopGameMode()
 	TransitionReason = EARTransitionReason::ShopToInvader;
 }
 
+bool AARShopGameMode::GetTipRangeForReaction(const EARRamenTasteReaction Reaction, FARShopReactionTipRange& OutRange) const
+{
+	switch (Reaction)
+	{
+	case EARRamenTasteReaction::Hate:
+		OutRange = HateTipMultiplierRange;
+		return true;
+	case EARRamenTasteReaction::Ok:
+		OutRange = OkTipMultiplierRange;
+		return true;
+	case EARRamenTasteReaction::Like:
+		OutRange = LikeTipMultiplierRange;
+		return true;
+	case EARRamenTasteReaction::Love:
+		OutRange = LoveTipMultiplierRange;
+		return true;
+	default:
+		OutRange = FARShopReactionTipRange();
+		return false;
+	}
+}
+
+int32 AARShopGameMode::CalculateServePayout(
+	const FARRamenBowlSpec& ServedBowl,
+	const EARRamenTasteReaction Reaction,
+	float& OutAppliedTipMultiplier,
+	int32& OutCombinedMeatValue,
+	int32& OutBasePayout,
+	int32& OutTipPayout)
+{
+	OutAppliedTipMultiplier = 0.0f;
+	OutCombinedMeatValue = ResolveCombinedMeatValue(ServedBowl);
+	OutTipPayout = 0;
+
+	AARShopGameState* ShopGameState = GetGameState<AARShopGameState>();
+	OutBasePayout = ShopGameState ? ShopGameState->GetBaseBowlPayout() : FMath::Max(0, BaseBowlPayout);
+
+	FARShopReactionTipRange TipRange;
+	if (!GetTipRangeForReaction(Reaction, TipRange))
+	{
+		return FMath::Max(0, OutBasePayout);
+	}
+
+	const float RangeMin = FMath::Max(0.0f, FMath::Min(TipRange.MinMultiplier, TipRange.MaxMultiplier));
+	const float RangeMax = FMath::Max(0.0f, FMath::Max(TipRange.MinMultiplier, TipRange.MaxMultiplier));
+	const uint32 Seed = HashCombineFast(
+		HashCombineFast(
+			HashCombineFast(GetTypeHash(++ServeTipRollCounter), GetTypeHash(Reaction)),
+			HashCombineFast(GetTypeHash(ServedBowl.NoodlesMeatTag), GetTypeHash(ServedBowl.BrothMeatTag))),
+		GetTypeHash(ServedBowl.ToppingsMeatTag));
+	FRandomStream TipRandom(static_cast<int32>(Seed));
+	OutAppliedTipMultiplier = TipRandom.FRandRange(RangeMin, RangeMax);
+	OutTipPayout = FMath::Max(0, FMath::RoundToInt(OutCombinedMeatValue * OutAppliedTipMultiplier));
+	return FMath::Max(0, OutBasePayout + OutTipPayout);
+}
+
+float AARShopGameMode::GetVendingQualityMultiplier(const EARVendingQualityTier QualityTier) const
+{
+	switch (QualityTier)
+	{
+	case EARVendingQualityTier::Low:
+		return FMath::Max(0.0f, VendingLowQualityMultiplier);
+	case EARVendingQualityTier::Standard:
+		return FMath::Max(0.0f, VendingStandardQualityMultiplier);
+	case EARVendingQualityTier::High:
+		return FMath::Max(0.0f, VendingHighQualityMultiplier);
+	case EARVendingQualityTier::Premium:
+		return FMath::Max(0.0f, VendingPremiumQualityMultiplier);
+	default:
+		return FMath::Max(0.0f, VendingStandardQualityMultiplier);
+	}
+}
+
+bool AARShopGameMode::QueueVendingStockedBowl(const FARVendingStockedBowlEntry& Entry)
+{
+	if (!HasAuthority())
+	{
+		return false;
+	}
+
+	UGameInstance* GI = GetGameInstance();
+	UARSaveSubsystem* SaveSubsystem = GI ? GI->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	if (!SaveSubsystem || !SaveGame)
+	{
+		return false;
+	}
+
+	FARVendingStockedBowlEntry SanitizedEntry = Entry;
+	auto SanitizeColor = [](const EARAffinityColor InColor)
+	{
+		return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
+	};
+	SanitizedEntry.BowlSpec.NoodlesColor = SanitizeColor(SanitizedEntry.BowlSpec.NoodlesColor);
+	SanitizedEntry.BowlSpec.BrothColor = SanitizeColor(SanitizedEntry.BowlSpec.BrothColor);
+	SanitizedEntry.BowlSpec.ToppingsColor = SanitizeColor(SanitizedEntry.BowlSpec.ToppingsColor);
+	SaveGame->PendingVendingStockedBowls.Add(SanitizedEntry);
+	SaveSubsystem->MarkSaveDirty();
+	return true;
+}
+
 void AARShopGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -164,6 +266,11 @@ void AARShopGameMode::BeginPlay()
 	if (!SharedGameState)
 	{
 		return;
+	}
+	AARShopGameState* ShopGameState = Cast<AARShopGameState>(SharedGameState);
+	if (ShopGameState)
+	{
+		ShopGameState->SetBaseBowlPayout(BaseBowlPayout);
 	}
 
 	const UAREconomySettings* EconomySettings = GetDefault<UAREconomySettings>();
@@ -195,6 +302,8 @@ void AARShopGameMode::BeginPlay()
 	{
 		return;
 	}
+
+	FinalizePendingVendingPayout(SaveGame, SaveSubsystem, ShopGameState);
 
 	if (SaveGame->bClearShopTransientCarryablesOnNextShopLoad)
 	{
@@ -408,7 +517,7 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 		}
 		else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(Spawned))
 		{
-			MeatActor->SetMeatData(Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
+			MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
 		}
 
 		SanitizedSnapshots.Add(Snapshot);
@@ -599,7 +708,7 @@ bool AARShopGameMode::RestoreHeldShopItemSnapshot(UARShopCarryComponent* CarryCo
 	}
 	else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(SpawnedItem))
 	{
-		MeatActor->SetMeatData(Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
+		MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
 	}
 	else if (AARRamenBowlActor* BowlActor = Cast<AARRamenBowlActor>(SpawnedItem))
 	{
@@ -624,17 +733,17 @@ bool AARShopGameMode::RestoreBowlSnapshot(AARRamenBowlActor* BowlActor, const FA
 
 	BowlActor->ClearBowl();
 	const int32 FillStep = FMath::Clamp(Snapshot.BowlFillStep, 0, 3);
-	if (FillStep >= 1 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, Snapshot.BowlSpec.NoodlesColor))
+	if (FillStep >= 1 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, Snapshot.BowlSpec.NoodlesColor, Snapshot.BowlSpec.NoodlesMeatTag))
 	{
 		return false;
 	}
 
-	if (FillStep >= 2 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, Snapshot.BowlSpec.BrothColor))
+	if (FillStep >= 2 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, Snapshot.BowlSpec.BrothColor, Snapshot.BowlSpec.BrothMeatTag))
 	{
 		return false;
 	}
 
-	if (FillStep >= 3 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, Snapshot.BowlSpec.ToppingsColor))
+	if (FillStep >= 3 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, Snapshot.BowlSpec.ToppingsColor, Snapshot.BowlSpec.ToppingsMeatTag))
 	{
 		return false;
 	}
@@ -825,6 +934,42 @@ void AARShopGameMode::ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* 
 	SaveGame->ShopTransientCarryables.Reset();
 	SaveGame->bClearShopTransientCarryablesOnNextShopLoad = false;
 	SaveSubsystem->MarkSaveDirty();
+}
+
+void AARShopGameMode::FinalizePendingVendingPayout(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem, AARShopGameState* ShopGameState) const
+{
+	if (!HasAuthority() || !SaveGame || !SaveSubsystem || !ShopGameState || SaveGame->PendingVendingStockedBowls.IsEmpty())
+	{
+		return;
+	}
+
+	int32 TotalPayout = 0;
+	for (const FARVendingStockedBowlEntry& Entry : SaveGame->PendingVendingStockedBowls)
+	{
+		TotalPayout += ResolveVendingBowlPayout(Entry);
+	}
+
+	SaveGame->PendingVendingStockedBowls.Reset();
+	if (TotalPayout > 0)
+	{
+		ShopGameState->SetMoneyFromSave(ShopGameState->GetMoney() + TotalPayout);
+	}
+
+	SaveSubsystem->MarkSaveDirty();
+}
+
+int32 AARShopGameMode::ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec) const
+{
+	UGameInstance* GI = GetGameInstance();
+	const UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	return ItemDefinitions ? FMath::Max(0, ItemDefinitions->ResolveCombinedMeatItemValue(BowlSpec)) : 0;
+}
+
+int32 AARShopGameMode::ResolveVendingBowlPayout(const FARVendingStockedBowlEntry& Entry) const
+{
+	const int32 CombinedMeatValue = ResolveCombinedMeatValue(Entry.BowlSpec);
+	const float Multiplier = GetVendingQualityMultiplier(Entry.QualityTier);
+	return FMath::Max(0, FMath::RoundToInt(1.0f + (CombinedMeatValue * Multiplier)));
 }
 
 bool AARShopGameMode::ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const

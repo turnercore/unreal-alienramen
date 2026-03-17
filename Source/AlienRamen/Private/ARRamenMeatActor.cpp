@@ -12,11 +12,17 @@ AARRamenMeatActor::AARRamenMeatActor()
 
 void AARRamenMeatActor::SetMeatData(const EARAffinityColor NewColor, const int32 NewAmount)
 {
+	SetMeatDataByTag(FGameplayTag(), NewColor, NewAmount);
+}
+
+void AARRamenMeatActor::SetMeatDataByTag(const FGameplayTag NewMeatTag, const EARAffinityColor NewColor, const int32 NewAmount)
+{
 	if (!HasAuthority())
 	{
 		return;
 	}
 
+	MeatTag = NewMeatTag;
 	MeatColor = NewColor;
 	MeatAmount = FMath::Max(1, NewAmount);
 	ForceNetUpdate();
@@ -115,4 +121,5 @@ void AARRamenMeatActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AARRamenMeatActor, MeatColor);
 	DOREPLIFETIME(AARRamenMeatActor, MeatAmount);
+	DOREPLIFETIME(AARRamenMeatActor, MeatTag);
 }

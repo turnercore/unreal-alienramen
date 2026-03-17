@@ -295,6 +295,7 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 		if (MeatActor)
 		{
 			Snapshot.MeatColor = MeatActor->GetMeatColor();
+			Snapshot.MeatTag = MeatActor->GetMeatTag();
 			Snapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 		}
 	}
@@ -356,6 +357,7 @@ static bool CaptureHeldShopItemSnapshot(AActor* HeldActor, FARCharacterHeldShopI
 	{
 		OutSnapshot.ActorClass = MeatActor->GetClass();
 		OutSnapshot.MeatColor = MeatActor->GetMeatColor();
+		OutSnapshot.MeatTag = MeatActor->GetMeatTag();
 		OutSnapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 		return true;
 	}
@@ -833,6 +835,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		SaveObject->ActiveRunBuffCycleId = CurrentSaveGame->ActiveRunBuffCycleId;
 		SaveObject->ShopTransientCarryables = CurrentSaveGame->ShopTransientCarryables;
 		SaveObject->bClearShopTransientCarryablesOnNextShopLoad = CurrentSaveGame->bClearShopTransientCarryablesOnNextShopLoad;
+		SaveObject->PendingVendingStockedBowls = CurrentSaveGame->PendingVendingStockedBowls;
 	}
 
 	SaveObject->LastSavedModeTag = FGameplayTag();

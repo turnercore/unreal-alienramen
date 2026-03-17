@@ -2,6 +2,7 @@
 
 #include "ARCustomerSettings.h"
 #include "ARGameStateBase.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARRamenBowlActor.h"
@@ -127,6 +128,7 @@ bool AARShopStationActor::TryPlaceMeatActor(AARRamenMeatActor* MeatActor)
 
 	SlottedMeatActor = MeatActor;
 	PendingProcessColor = SanitizeColor(MeatActor->GetMeatColor());
+	PendingProcessMeatTag = MeatActor->GetMeatTag();
 	PendingProcessAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 	ProcessingProgress01 = 0.0f;
 	SetRuntimeState(EARRamenStationRuntimeState::MeatReady);
@@ -231,6 +233,7 @@ bool AARShopStationActor::TryPickupSlottedMeatToController(AARPlayerController* 
 
 	SlottedMeatActor = nullptr;
 	PendingProcessColor = EARAffinityColor::None;
+	PendingProcessMeatTag = FGameplayTag();
 	PendingProcessAmount = 0;
 
 	if (ProcessedStockAmount > 0)
@@ -488,7 +491,8 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 	}
 
 	EARAffinityColor ColorToApply = EARAffinityColor::None;
-	if (!TryConsumeForBowl(StationType, ColorToApply))
+	FGameplayTag MeatTagToApply;
+	if (!TryConsumeForBowl(StationType, ColorToApply, MeatTagToApply))
 	{
 		UE_LOG(
 			ARLog,
@@ -501,11 +505,12 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 		return false;
 	}
 
-	if (!HeldBowl->TryApplyFillFromStation(StationType, ColorToApply))
+	if (!HeldBowl->TryApplyFillFromStation(StationType, ColorToApply, MeatTagToApply))
 	{
 		if (ProcessedStockAmount <= 0)
 		{
 			ProcessedStockColor = ColorToApply;
+			ProcessedStockMeatTag = MeatTagToApply;
 		}
 		ProcessedStockAmount = FMath::Clamp(ProcessedStockAmount + 1, 0, ResolveEffectiveMaxStock());
 		if (RuntimeState == EARRamenStationRuntimeState::Idle)
@@ -531,9 +536,10 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 	return true;
 }
 
-bool AARShopStationActor::TryConsumeForBowl(const EARRamenStationType RequestedStationType, EARAffinityColor& OutColor)
+bool AARShopStationActor::TryConsumeForBowl(const EARRamenStationType RequestedStationType, EARAffinityColor& OutColor, FGameplayTag& OutMeatTag)
 {
 	OutColor = EARAffinityColor::None;
+	OutMeatTag = FGameplayTag();
 	if (!HasAuthority() || RequestedStationType != StationType)
 	{
 		return false;
@@ -541,8 +547,8 @@ bool AARShopStationActor::TryConsumeForBowl(const EARRamenStationType RequestedS
 
 	if (!IsStationUpgraded())
 	{
-		// Base station behavior: always provide None output (no meat/stock required).
-		return true;
+		// Base station behavior can bypass stock, but still respects empty-processing policy.
+		return bAllowProcessingWithoutMeat;
 	}
 
 	if (ProcessedStockAmount <= 0)
@@ -551,10 +557,12 @@ bool AARShopStationActor::TryConsumeForBowl(const EARRamenStationType RequestedS
 	}
 
 	OutColor = SanitizeColor(ProcessedStockColor);
+	OutMeatTag = ProcessedStockMeatTag;
 	ProcessedStockAmount = FMath::Max(0, ProcessedStockAmount - 1);
 	if (ProcessedStockAmount <= 0)
 	{
 		ProcessedStockColor = EARAffinityColor::None;
+		ProcessedStockMeatTag = FGameplayTag();
 		if (RuntimeState == EARRamenStationRuntimeState::Processed)
 		{
 			SetRuntimeState(SlottedMeatActor ? EARRamenStationRuntimeState::MeatReady : EARRamenStationRuntimeState::Idle);
@@ -751,6 +759,7 @@ void AARShopStationActor::ApplyConfigFromRowIfAvailable()
 	ProcessingDurationSeconds = FMath::Max(0.05f, Row->ProcessingDurationSeconds);
 	ProcessingInputMode = Row->ProcessingInputMode;
 	TapProcessingSecondsPerPress = FMath::Max(0.0f, Row->TapProcessingSecondsPerPress);
+	bAllowProcessingWithoutMeat = Row->bAllowProcessingWithoutMeat;
 }
 
 bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
@@ -760,21 +769,43 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 		return false;
 	}
 
-	const EARAffinityColor NextColor = SanitizeColor(SlottedMeatActor->GetMeatColor());
+	EARAffinityColor NextColor = SanitizeColor(SlottedMeatActor->GetMeatColor());
+	FGameplayTag NextMeatTag = SlottedMeatActor->GetMeatTag();
+	int32 NextProcessAmount = FMath::Max(1, SlottedMeatActor->GetMeatAmount());
+	if (NextMeatTag.IsValid())
+	{
+		UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
+		const UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+		FARMeatDefinitionRow MeatDef;
+		if (ItemDefinitions && ItemDefinitions->ResolveMeatDefinition(NextMeatTag, MeatDef))
+		{
+			NextColor = SanitizeColor(MeatDef.Color);
+			NextProcessAmount = FMath::Max(1, MeatDef.StationFillAmount);
+			if (MeatDef.MeatTag.IsValid())
+			{
+				NextMeatTag = MeatDef.MeatTag;
+			}
+		}
+	}
+
 	const EARAffinityColor ExistingColor = SanitizeColor(ProcessedStockColor);
+	const bool bSameMeatType =
+		(ProcessedStockMeatTag.IsValid() && NextMeatTag.IsValid() && ProcessedStockMeatTag.MatchesTagExact(NextMeatTag))
+		|| (!ProcessedStockMeatTag.IsValid() && !NextMeatTag.IsValid());
 
 	// If stock is already buffered, only allow processing when explicitly swapping
-	// to a different non-None color. This blocks redundant same-color refills.
+	// to a materially different output type (color/meat tag pair).
 	if (ProcessedStockAmount > 0)
 	{
-		if (NextColor == EARAffinityColor::None || NextColor == ExistingColor)
+		if (NextColor == ExistingColor && bSameMeatType)
 		{
 			return false;
 		}
 	}
 
 	PendingProcessColor = NextColor;
-	PendingProcessAmount = FMath::Max(1, SlottedMeatActor->GetMeatAmount());
+	PendingProcessMeatTag = NextMeatTag;
+	PendingProcessAmount = NextProcessAmount;
 
 	SlottedMeatActor->ReleaseCarryItem();
 	SlottedMeatActor = nullptr;
@@ -786,6 +817,11 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 
 bool AARShopStationActor::BeginProcessingNoneIfAllowed()
 {
+	if (!bAllowProcessingWithoutMeat)
+	{
+		return false;
+	}
+
 	// None-processing is only valid from an empty stock state.
 	// If any stock is already buffered (colored or None), require bowl consumption first.
 	if (ProcessedStockAmount > 0 || HasColoredProcessedStock())
@@ -794,6 +830,7 @@ bool AARShopStationActor::BeginProcessingNoneIfAllowed()
 	}
 
 	PendingProcessColor = EARAffinityColor::None;
+	PendingProcessMeatTag = FGameplayTag();
 	PendingProcessAmount = 1;
 	if (RuntimeState != EARRamenStationRuntimeState::Processing)
 	{
@@ -817,19 +854,26 @@ void AARShopStationActor::CompleteProcessingCycle()
 	if (ProcessedStockAmount <= 0)
 	{
 		ProcessedStockColor = FinalColor;
+		ProcessedStockMeatTag = PendingProcessMeatTag;
 		ProcessedStockAmount = FMath::Clamp(AddedUnits, 0, EffectiveMaxStock);
 	}
-	else if (ProcessedStockColor == FinalColor)
+	else if (
+		ProcessedStockColor == FinalColor
+		&& (
+			(ProcessedStockMeatTag.IsValid() && PendingProcessMeatTag.IsValid() && ProcessedStockMeatTag.MatchesTagExact(PendingProcessMeatTag))
+			|| (!ProcessedStockMeatTag.IsValid() && !PendingProcessMeatTag.IsValid())))
 	{
 		ProcessedStockAmount = FMath::Clamp(ProcessedStockAmount + AddedUnits, 0, EffectiveMaxStock);
 	}
 	else
 	{
 		ProcessedStockColor = FinalColor;
+		ProcessedStockMeatTag = PendingProcessMeatTag;
 		ProcessedStockAmount = FMath::Clamp(AddedUnits, 0, EffectiveMaxStock);
 	}
 
 	PendingProcessColor = EARAffinityColor::None;
+	PendingProcessMeatTag = FGameplayTag();
 	PendingProcessAmount = 0;
 	ProcessingProgress01 = 0.0f;
 	ActiveProcessingControllers.Reset();
@@ -936,8 +980,10 @@ void AARShopStationActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AARShopStationActor, RuntimeState);
 	DOREPLIFETIME(AARShopStationActor, SlottedMeatActor);
 	DOREPLIFETIME(AARShopStationActor, PendingProcessColor);
+	DOREPLIFETIME(AARShopStationActor, PendingProcessMeatTag);
 	DOREPLIFETIME(AARShopStationActor, PendingProcessAmount);
 	DOREPLIFETIME(AARShopStationActor, ProcessedStockColor);
+	DOREPLIFETIME(AARShopStationActor, ProcessedStockMeatTag);
 	DOREPLIFETIME(AARShopStationActor, ProcessedStockAmount);
 	DOREPLIFETIME(AARShopStationActor, ProcessingProgress01);
 	DOREPLIFETIME(AARShopStationActor, bProcessingActive);

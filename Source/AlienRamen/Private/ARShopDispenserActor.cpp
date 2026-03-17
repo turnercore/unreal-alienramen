@@ -68,12 +68,14 @@ bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* Request
 	}
 
 	TSubclassOf<AActor> SpawnClass = Definition.SpawnActorClass;
-	const FGameplayTag SharedItemRootTag = FGameplayTag::RequestGameplayTag(TEXT("Scrapyard.Item"), false);
+	const FGameplayTag SharedItemRootTag = FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
+	const FGameplayTag MeatItemRootTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
 	const bool bCanResolveSharedItemClass =
 		Definition.ItemTag.IsValid()
 		&& Definition.bResolveSpawnActorClassFromItemDefinition
 		&& SharedItemRootTag.IsValid()
-		&& Definition.ItemTag.MatchesTag(SharedItemRootTag);
+		&& Definition.ItemTag.MatchesTag(SharedItemRootTag)
+		&& (!MeatItemRootTag.IsValid() || !Definition.ItemTag.MatchesTag(MeatItemRootTag));
 	if (!SpawnClass && bCanResolveSharedItemClass)
 	{
 		if (UGameInstance* GameInstance = GetGameInstance())

@@ -122,6 +122,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
 	bool bClearShopTransientCarryablesOnNextShopLoad = false;
 
+	// Deferred vending sales settled on next shop entry. Each entry is one completed bowl and machine quality.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	TArray<FARVendingStockedBowlEntry> PendingVendingStockedBowls;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Meta")
 	FName SaveSlot = NAME_None;
 

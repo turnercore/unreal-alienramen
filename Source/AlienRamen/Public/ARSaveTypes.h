@@ -32,7 +32,7 @@ struct ALIENRAMEN_API FARMeatTypeAmount
 {
 	GENERATED_BODY()
 
-	/** Meat type tag (e.g., Shop.Meat.Red). */
+	/** Meat type tag (e.g., Item.Meat.Red). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FGameplayTag MeatType;
 
@@ -235,6 +235,10 @@ struct ALIENRAMEN_API FARCharacterHeldShopItemSnapshot
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Meat color used when the held item snapshot is meat."))
 	EARAffinityColor MeatColor = EARAffinityColor::Red;
 
+	/** Meat type tag when the held item is meat (Item.Meat.*). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (Categories = "Item.Meat", ToolTip = "Meat definition tag used when the held item snapshot is meat."))
+	FGameplayTag MeatTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1", ToolTip = "Meat amount used when the held item snapshot is meat."))
 	int32 MeatAmount = 1;
 
@@ -313,6 +317,10 @@ struct ALIENRAMEN_API FARShopTransientCarryableSnapshot
 	/** Meat color when this snapshot represents meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
 	EARAffinityColor MeatColor = EARAffinityColor::Red;
+
+	/** Meat definition tag when this snapshot represents meat (Item.Meat.*). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (Categories = "Item.Meat"))
+	FGameplayTag MeatTag;
 
 	/** Meat amount when this snapshot represents meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1"))

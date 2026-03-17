@@ -2,6 +2,9 @@
 
 #include "ARCustomerOrderWidgetBase.h"
 #include "ARCustomerSettings.h"
+#include "ARLog.h"
+#include "ARShopGameMode.h"
+#include "ARShopGameState.h"
 #include "ParleyDialogueSubsystem.h"
 #include "EmoComponent.h"
 #include "EmoSettings.h"
@@ -29,19 +32,35 @@ namespace
 		return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
 	}
 
-	static int32 ColorIndex(const EARAffinityColor InColor)
+	static bool DoesRequestedColorMatchServedColor(const EARAffinityColor RequestedColor, const EARAffinityColor ServedColor)
 	{
-		switch (SanitizeColor(InColor))
+		const EARAffinityColor SanitizedRequested = SanitizeColor(RequestedColor);
+		const EARAffinityColor SanitizedServed = SanitizeColor(ServedColor);
+		if (SanitizedRequested == EARAffinityColor::None)
 		{
-		case EARAffinityColor::Red:
-			return 1;
-		case EARAffinityColor::White:
-			return 2;
-		case EARAffinityColor::Blue:
-			return 3;
-		default:
-			return 0;
+			return SanitizedServed == EARAffinityColor::None;
 		}
+
+		if (SanitizedRequested == EARAffinityColor::Colorless)
+		{
+			return SanitizedServed != EARAffinityColor::None;
+		}
+
+		return SanitizedRequested == SanitizedServed;
+	}
+
+	static int32 CountRequestedScoringSlots(const TArray<EARAffinityColor>& RequestedColors)
+	{
+		int32 Count = 0;
+		for (const EARAffinityColor Color : RequestedColors)
+		{
+			if (SanitizeColor(Color) != EARAffinityColor::None)
+			{
+				++Count;
+			}
+		}
+
+		return Count;
 	}
 
 	static void GetBowlColors(const FARRamenBowlSpec& BowlSpec, TArray<EARAffinityColor>& OutColors)
@@ -290,6 +309,41 @@ bool UARCustomerComponent::TryServeBowl(AARPlayerController* InteractingControll
 	OutResult.RelationshipDeltaPoints = ResolveReactionRelationshipDelta(OutResult.Reaction);
 	OrdersServedCount = FMath::Max(0, OrdersServedCount + 1);
 
+	if (AARShopGameMode* ShopGameMode = GetWorld() ? Cast<AARShopGameMode>(GetWorld()->GetAuthGameMode()) : nullptr)
+	{
+		AARShopGameState* ShopGameState = GetWorld() ? GetWorld()->GetGameState<AARShopGameState>() : nullptr;
+		if (ShopGameState)
+		{
+			float TipMultiplier = 0.0f;
+			int32 CombinedMeatValue = 0;
+			int32 BasePayout = 0;
+			int32 TipPayout = 0;
+			const int32 TotalPayout = ShopGameMode->CalculateServePayout(
+				ServedBowl,
+				OutResult.Reaction,
+				TipMultiplier,
+				CombinedMeatValue,
+				BasePayout,
+				TipPayout);
+			if (TotalPayout > 0)
+			{
+				ShopGameState->SetMoneyFromSave(ShopGameState->GetMoney() + TotalPayout);
+			}
+
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[Shop|Serve] Customer='%s' reaction=%d payout=%d base=%d tip=%d combinedMeatValue=%d tipMultiplier=%.3f."),
+				*GetNameSafe(GetOwner()),
+				static_cast<int32>(OutResult.Reaction),
+				TotalPayout,
+				BasePayout,
+				TipPayout,
+				CombinedMeatValue,
+				TipMultiplier);
+		}
+	}
+
 	ApplyServeOutcomeToDialogue(OutResult);
 	ApplyOrderingReactionEmotion(OutResult.AppliedReactionEmotionTag);
 	OnCustomerOrderResolved.Broadcast(OutResult);
@@ -404,30 +458,41 @@ FARRamenServeResult UARCustomerComponent::EvaluateServeResult(
 
 	if (bUsePickyExactRule)
 	{
-		TArray<int32> OrderCounts;
-		TArray<int32> BowlCounts;
-		OrderCounts.Init(0, 4);
-		BowlCounts.Init(0, 4);
+		static const int32 Permutations[6][3] =
+		{
+			{ 0, 1, 2 },
+			{ 0, 2, 1 },
+			{ 1, 0, 2 },
+			{ 1, 2, 0 },
+			{ 2, 0, 1 },
+			{ 2, 1, 0 }
+		};
 
-		for (const EARAffinityColor Color : NormalizedOrder.RequestedColors)
+		Result.bExactCompositionMatch = false;
+		for (int32 PermutationIndex = 0; PermutationIndex < UE_ARRAY_COUNT(Permutations); ++PermutationIndex)
 		{
-			OrderCounts[ColorIndex(Color)] += 1;
-		}
-		for (const EARAffinityColor Color : BowlColors)
-		{
-			BowlCounts[ColorIndex(Color)] += 1;
-		}
-
-		Result.bExactCompositionMatch = OrderCounts == BowlCounts;
-		if (Result.bExactCompositionMatch)
-		{
-			for (const EARAffinityColor Color : NormalizedOrder.RequestedColors)
+			bool bAllSlotsMatch = true;
+			for (int32 SlotIndex = 0; SlotIndex < 3; ++SlotIndex)
 			{
-				if (SanitizeColor(Color) != EARAffinityColor::None)
+				const EARAffinityColor RequestedColor = NormalizedOrder.RequestedColors[SlotIndex];
+				const EARAffinityColor ServedColor = BowlColors[Permutations[PermutationIndex][SlotIndex]];
+				if (!DoesRequestedColorMatchServedColor(RequestedColor, ServedColor))
 				{
-					Result.MatchedColorCount += 1;
+					bAllSlotsMatch = false;
+					break;
 				}
 			}
+
+			if (bAllSlotsMatch)
+			{
+				Result.bExactCompositionMatch = true;
+				break;
+			}
+		}
+
+		if (Result.bExactCompositionMatch)
+		{
+			Result.MatchedColorCount = CountRequestedScoringSlots(NormalizedOrder.RequestedColors);
 		}
 		else
 		{
@@ -436,30 +501,76 @@ FARRamenServeResult UARCustomerComponent::EvaluateServeResult(
 	}
 	else
 	{
-		int32 RequestedCounts[4] = { 0, 0, 0, 0 };
-		int32 ServedCounts[4] = { 0, 0, 0, 0 };
+		int32 RequestedNoneCount = 0;
+		int32 RequestedColorlessCount = 0;
+		int32 RequestedRedCount = 0;
+		int32 RequestedWhiteCount = 0;
+		int32 RequestedBlueCount = 0;
 
 		for (const EARAffinityColor Color : NormalizedOrder.RequestedColors)
 		{
-			const EARAffinityColor Sanitized = SanitizeColor(Color);
-			if (Sanitized != EARAffinityColor::None)
+			switch (SanitizeColor(Color))
 			{
-				RequestedCounts[ColorIndex(Sanitized)] += 1;
-			}
-		}
-		for (const EARAffinityColor Color : BowlColors)
-		{
-			const EARAffinityColor Sanitized = SanitizeColor(Color);
-			if (Sanitized != EARAffinityColor::None)
-			{
-				ServedCounts[ColorIndex(Sanitized)] += 1;
+			case EARAffinityColor::None:
+				++RequestedNoneCount;
+				break;
+			case EARAffinityColor::Colorless:
+				++RequestedColorlessCount;
+				break;
+			case EARAffinityColor::Red:
+				++RequestedRedCount;
+				break;
+			case EARAffinityColor::White:
+				++RequestedWhiteCount;
+				break;
+			case EARAffinityColor::Blue:
+				++RequestedBlueCount;
+				break;
+			default:
+				break;
 			}
 		}
 
-		Result.MatchedColorCount =
-			FMath::Min(RequestedCounts[1], ServedCounts[1]) +
-			FMath::Min(RequestedCounts[2], ServedCounts[2]) +
-			FMath::Min(RequestedCounts[3], ServedCounts[3]);
+		int32 ServedNoneCount = 0;
+		int32 ServedColorlessCount = 0;
+		int32 ServedRedCount = 0;
+		int32 ServedWhiteCount = 0;
+		int32 ServedBlueCount = 0;
+		for (const EARAffinityColor Color : BowlColors)
+		{
+			switch (SanitizeColor(Color))
+			{
+			case EARAffinityColor::None:
+				++ServedNoneCount;
+				break;
+			case EARAffinityColor::Colorless:
+				++ServedColorlessCount;
+				break;
+			case EARAffinityColor::Red:
+				++ServedRedCount;
+				break;
+			case EARAffinityColor::White:
+				++ServedWhiteCount;
+				break;
+			case EARAffinityColor::Blue:
+				++ServedBlueCount;
+				break;
+			default:
+				break;
+			}
+		}
+
+		Result.MatchedColorCount += FMath::Min(RequestedNoneCount, ServedNoneCount);
+		ServedNoneCount -= FMath::Min(RequestedNoneCount, ServedNoneCount);
+		Result.MatchedColorCount += FMath::Min(RequestedRedCount, ServedRedCount);
+		ServedRedCount -= FMath::Min(RequestedRedCount, ServedRedCount);
+		Result.MatchedColorCount += FMath::Min(RequestedWhiteCount, ServedWhiteCount);
+		ServedWhiteCount -= FMath::Min(RequestedWhiteCount, ServedWhiteCount);
+		Result.MatchedColorCount += FMath::Min(RequestedBlueCount, ServedBlueCount);
+		ServedBlueCount -= FMath::Min(RequestedBlueCount, ServedBlueCount);
+
+		const int32 RemainingServedNonNoneCount = ServedColorlessCount + ServedRedCount + ServedWhiteCount + ServedBlueCount;
+		Result.MatchedColorCount += FMath::Min(RequestedColorlessCount, RemainingServedNonNoneCount);
 	}
 
 	if (Result.MatchedColorCount >= 3)
@@ -640,7 +751,8 @@ bool UARCustomerComponent::BuildProceduralFallbackOrder(FARRamenOrderRequest& Ou
 	{
 		EARAffinityColor::Red,
 		EARAffinityColor::Blue,
-		EARAffinityColor::White
+		EARAffinityColor::White,
+		EARAffinityColor::Colorless
 	};
 
 	for (int32 Index = 0; Index < ColorCount; ++Index)

@@ -121,4 +121,72 @@ bool FARShopCustomerPickyExactTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARShopCustomerColorlessAndNoneMatchingTest,
+	"AlienRamen.Shop.Customer.ColorlessAndNoneMatching",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARShopCustomerColorlessAndNoneMatchingTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	FARRamenOrderRequest ColorlessOrder;
+	ColorlessOrder.RequestedColors = { EARAffinityColor::Colorless };
+
+	FARRamenBowlSpec RedBowl;
+	RedBowl.NoodlesColor = EARAffinityColor::Red;
+	RedBowl.BrothColor = EARAffinityColor::None;
+	RedBowl.ToppingsColor = EARAffinityColor::None;
+
+	const FARRamenServeResult ColorlessResult = UARCustomerComponent::EvaluateServeResult(
+		ColorlessOrder,
+		RedBowl,
+		/*bUsePickyExactRule=*/false,
+		0,
+		1,
+		3,
+		5);
+
+	TestEqual(TEXT("Colorless request matches any non-none served color"), ColorlessResult.MatchedColorCount, 1);
+	TestEqual(TEXT("Colorless non-picky match yields Ok"), ColorlessResult.Reaction, EARRamenTasteReaction::Ok);
+
+	FARRamenOrderRequest NoneOrder;
+	NoneOrder.RequestedColors = { EARAffinityColor::None };
+
+	FARRamenBowlSpec NoneBowl;
+	NoneBowl.NoodlesColor = EARAffinityColor::None;
+	NoneBowl.BrothColor = EARAffinityColor::None;
+	NoneBowl.ToppingsColor = EARAffinityColor::None;
+
+	const FARRamenServeResult NoneExactResult = UARCustomerComponent::EvaluateServeResult(
+		NoneOrder,
+		NoneBowl,
+		/*bUsePickyExactRule=*/false,
+		0,
+		1,
+		3,
+		5);
+
+	TestEqual(TEXT("None request matches only none served color"), NoneExactResult.MatchedColorCount, 1);
+	TestEqual(TEXT("None match maps to Ok"), NoneExactResult.Reaction, EARRamenTasteReaction::Ok);
+
+	FARRamenBowlSpec RedOnlyBowl;
+	RedOnlyBowl.NoodlesColor = EARAffinityColor::Red;
+	RedOnlyBowl.BrothColor = EARAffinityColor::None;
+	RedOnlyBowl.ToppingsColor = EARAffinityColor::None;
+	const FARRamenServeResult NoneMismatchResult = UARCustomerComponent::EvaluateServeResult(
+		NoneOrder,
+		RedOnlyBowl,
+		/*bUsePickyExactRule=*/false,
+		0,
+		1,
+		3,
+		5);
+
+	TestEqual(TEXT("None request does not match non-none served color"), NoneMismatchResult.MatchedColorCount, 0);
+	TestEqual(TEXT("None mismatch yields Hate"), NoneMismatchResult.Reaction, EARRamenTasteReaction::Hate);
+
+	return true;
+}
+
 #endif // WITH_DEV_AUTOMATION_TESTS
