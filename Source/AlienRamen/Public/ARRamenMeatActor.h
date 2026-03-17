@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
 #include "ARShopCarryItemBase.h"
+#include "GameplayTagContainer.h"
 #include "ARRamenMeatActor.generated.h"
 
 class UPrimitiveComponent;
@@ -23,11 +24,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Meat", meta = (BlueprintAuthorityOnly))
 	void SetMeatData(EARAffinityColor NewColor, int32 NewAmount);
 
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Meat", meta = (BlueprintAuthorityOnly))
+	void SetMeatDataByTag(FGameplayTag NewMeatTag, EARAffinityColor NewColor, int32 NewAmount);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
 	EARAffinityColor GetMeatColor() const { return MeatColor; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
 	int32 GetMeatAmount() const { return MeatAmount; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Meat")
+	FGameplayTag GetMeatTag() const { return MeatTag; }
 
 	// True once this meat has moved at least RequiredDistance units away from spawn.
 	// Used by storage auto-return gating to avoid instant re-store at spawn time.
@@ -58,6 +65,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat", meta = (ClampMin = "1", UIMin = "1"))
 	int32 MeatAmount = 1;
+
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat", meta = (Categories = "Item.Meat"))
+	FGameplayTag MeatTag;
 
 private:
 	void TryAutoStoreWithActor(AActor* OtherActor);
