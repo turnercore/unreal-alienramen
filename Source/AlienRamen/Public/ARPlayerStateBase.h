@@ -227,6 +227,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSetCurrentCharacterTag(FGameplayTag NewCharacterTag);
 
+	/**
+	 * Authority-only direct character assignment that bypasses occupancy auto-swap.
+	 * Used by GameMode-coordinated multi-controller switch flows to apply final targets atomically.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
+	void SetCurrentCharacterTagDirect(FGameplayTag NewCharacterTag);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	FString GetDisplayNameValue() const { return DisplayName; }
 

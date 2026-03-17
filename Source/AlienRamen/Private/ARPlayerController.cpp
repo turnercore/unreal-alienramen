@@ -137,6 +137,25 @@ FGameplayTag AARPlayerController::GetPlayerSlotTag() const
 	return ARPS ? ARPS->GetPlayerSlotTag() : FGameplayTag();
 }
 
+void AARPlayerController::RequestSwitchToNextPlayableCharacter(const bool bIsRequesting)
+{
+	if (HasAuthority())
+	{
+		if (AARGameModeBase* ARGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AARGameModeBase>() : nullptr)
+		{
+			ARGameMode->SubmitCharacterSwitchHoldRequest(this, bIsRequesting);
+		}
+		return;
+	}
+
+	ServerRequestSwitchToNextPlayableCharacter(bIsRequesting);
+}
+
+void AARPlayerController::ServerRequestSwitchToNextPlayableCharacter_Implementation(const bool bIsRequesting)
+{
+	RequestSwitchToNextPlayableCharacter(bIsRequesting);
+}
+
 void AARPlayerController::NotifyDialogueViewUpdated(const FDialogueClientView& View)
 {
 	ClientDialogueSessionUpdated(View);
