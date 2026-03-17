@@ -46,8 +46,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FAROnCoreAttributeChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	EARCoreAttributeType,
 	AttributeType,
 	float,
@@ -59,26 +59,26 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnScalarAttributeChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	float,
 	NewValue,
 	float,
 	OldValue);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FAROnPlayerSlotChangedSignature,
-	EARPlayerSlot,
-	NewSlot,
-	EARPlayerSlot,
-	OldSlot);
+	FAROnCurrentCharacterTagChangedSignature,
+	FGameplayTag,
+	NewCharacterTag,
+	FGameplayTag,
+	OldCharacterTag);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnCharacterPickedChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	EARCharacterChoice,
 	NewCharacter,
 	EARCharacterChoice,
@@ -88,8 +88,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnDisplayNameChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	const FString&,
 	NewDisplayName,
 	const FString&,
@@ -99,8 +99,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnReadyStatusChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	bool,
 	bNewReady,
 	bool,
@@ -110,8 +110,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnDownedStateChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	bool,
 	bNewDowned,
 	bool,
@@ -121,8 +121,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnDeadStateChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	bool,
 	bNewDead,
 	bool,
@@ -139,8 +139,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnLoadoutTagsChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	const FGameplayTagContainer&,
 	NewLoadoutTags,
 	const FGameplayTagContainer&,
@@ -148,17 +148,17 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnTravelReadinessChangedSignature, bool, bIsReadyForTravel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerColorChangedSignature, EARAffinityColor, NewColor, EARAffinityColor, OldColor);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCombo, int32, OldCombo);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpiceSharingStateChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, bool, bIsSharingNow, bool, bWasSharingBefore);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpicyTrackCursorChangedSignature, AARPlayerStateBase*, SourcePlayerState, EARPlayerSlot, SourcePlayerSlot, int32, NewCursorTier, int32, OldCursorTier);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderComboChangedSignature, AARPlayerStateBase*, SourcePlayerState, FGameplayTag, SourceCharacterTag, int32, NewCombo, int32, OldCombo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnInvaderActivatedUpgradesChangedSignature, AARPlayerStateBase*, SourcePlayerState, FGameplayTag, SourceCharacterTag, const FGameplayTagContainer&, NewActivatedTags, const FGameplayTagContainer&, OldActivatedTags);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpiceSharingStateChangedSignature, AARPlayerStateBase*, SourcePlayerState, FGameplayTag, SourceCharacterTag, bool, bIsSharingNow, bool, bWasSharingBefore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FAROnSpicyTrackCursorChangedSignature, AARPlayerStateBase*, SourcePlayerState, FGameplayTag, SourceCharacterTag, int32, NewCursorTier, int32, OldCursorTier);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnDialogueAutoAdvancePreferenceChangedSignature, AARPlayerStateBase*, SourcePlayerState, bool, bNewAutoAdvanceEnabled, bool, bOldAutoAdvanceEnabled);
 
 /**
  * PlayerState backbone for Alien Ramen.
  *
  * - Owns the authoritative ASC + shared attribute set.
- * - Replicates identity (slot, display name, picked character) and lobby readiness.
+ * - Replicates identity (display name + active character) and lobby readiness.
  * - Carries loadout tags that drive ability/equipment initialization.
  * - Implements IStructSerializable for save/load handoff across travel.
  */
@@ -185,20 +185,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	float GetSpiceNormalized() const;
 
+	/** Runtime-only controller/profile slot id (1-based local/session identity). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
-	EARPlayerSlot GetPlayerSlot() const { return PlayerSlot; }
+	int32 GetPlayerSlotId() const { return PlayerSlotId; }
 
-	/** Canonical gameplay-tag player slot identity (for example Player.Slot.P1). */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
-	FGameplayTag GetPlayerSlotTag() const { return PlayerSlotTag; }
-
-	/** Sets the authoritative player slot (P1/P2). Server only. */
+	/** Sets runtime-only controller/profile slot id. Server only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
-	void SetPlayerSlot(EARPlayerSlot NewSlot);
-
-	/** Sets the authoritative gameplay-tag player slot identity. Server only. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
-	void SetPlayerSlotTag(FGameplayTag NewSlotTag);
+	void SetPlayerSlotId(int32 NewSlotId);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
@@ -261,7 +254,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerUpdateDeadState(bool bNewDead);
 
-	// Composite readiness for travel: requires slot, character choice, and ready flag.
+	// Composite readiness for travel: requires a valid active character tag and ready flag.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	bool IsTravelReady() const;
 
@@ -466,7 +459,7 @@ public:
 	FAROnScalarAttributeChangedSignature OnStrengthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
-	FAROnPlayerSlotChangedSignature OnPlayerSlotChanged;
+	FAROnCurrentCharacterTagChangedSignature OnCurrentCharacterTagChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnCharacterPickedChangedSignature OnCharacterPickedChanged;
@@ -517,9 +510,9 @@ public:
 	 * Seamless-travel carry path from old PlayerState to the new instance.
 	 *
 	 * Contract:
-	 * - copies canonical player identity/runtime fields explicitly (slot tag, character, projected active-character loadout, display name, dialogue preference)
+	 * - copies canonical player identity/runtime fields explicitly (character, projected active-character loadout, display name, dialogue preference)
 	 * - resets per-run transients that should not survive mode travel (ready/combo/cursor/share flags)
-	 * - avoids generic by-name struct overlay for PlayerState handoff to prevent stale/mismatched BP state from reintroducing duplicate slot mirrors
+	 * - avoids generic by-name struct overlay for PlayerState handoff to prevent stale/mismatched BP state from reintroducing duplicate identity mirrors
 	 */
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 	virtual bool ApplyStateFromStruct_Implementation(const FInstancedStruct& SavedState) override;
@@ -528,9 +521,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	UFUNCTION()
-	void OnRep_PlayerSlotTag(FGameplayTag OldSlotTag);
-	UFUNCTION()
-	void OnRep_PlayerSlot(EARPlayerSlot OldSlot);
+	void OnRep_PlayerSlotId(int32 OldSlotId);
 	UFUNCTION()
 	void OnRep_CharacterPicked(EARCharacterChoice OldCharacter);
 	UFUNCTION()
@@ -576,10 +567,7 @@ protected:
 	void SetDowned_Internal(bool bNewDowned);
 	void SetDead_Internal(bool bNewDead);
 	void SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled);
-	void SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, bool bBroadcastSlotChanged = true);
-	void SetPlayerSlot_Internal(EARPlayerSlot NewSlot, bool bBroadcastSlotChanged = true);
-	void SyncPlayerSlotMirrorsFromTag(bool bBroadcastSlotChanged);
-	void SyncPlayerSlotMirrorsFromEnum(bool bBroadcastSlotChanged);
+	void SetPlayerSlotId_Internal(int32 NewSlotId);
 	void SetLoadoutTags_Internal(const FGameplayTagContainer& NewLoadoutTags, bool bMarkSaveDirty = true);
 	// Character-owned loadout cache for runtime-only flows (for example seamless travel/session state without disk IO).
 	void CacheCharacterOwnedLoadout(const FGameplayTag CharacterTag, const FGameplayTagContainer& LoadoutTagsToCache);
@@ -615,11 +603,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlotTag, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player", meta = (ToolTip = "Canonical gameplay-tag slot identity for this player. The legacy PlayerSlot enum mirrors this value for compatibility."))
-	FGameplayTag PlayerSlotTag;
-
-	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlot, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
-	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
+	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlotId, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player", meta = (ToolTip = "Runtime-only controller/profile slot id used for controller-owned systems such as pause voting. Not used for character ownership."))
+	int32 PlayerSlotId = 0;
 
 	UPROPERTY(ReplicatedUsing=OnRep_CharacterPicked, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	EARCharacterChoice CharacterPicked = EARCharacterChoice::None;

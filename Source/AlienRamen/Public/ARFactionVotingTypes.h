@@ -66,18 +66,18 @@ struct ALIENRAMEN_API FARFactionVotingCandidate
 	int32 CandidatePriority = 0;
 };
 
-/** Current vote map entry keyed by player slot tag. */
+/** Current vote map entry keyed by runtime controller slot id. */
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARFactionVoteEntry
 {
 	GENERATED_BODY()
 
-	/** Canonical player slot tag for this vote (for example Player.Slot.P1). */
-	UPROPERTY(BlueprintReadOnly, Category = "Faction|Voting", meta = (ToolTip = "Canonical player slot tag that submitted this vote."))
-	FGameplayTag PlayerSlotTag;
+	/** Runtime controller/profile slot id that submitted this vote. */
+	UPROPERTY(BlueprintReadOnly, Category = "Faction|Voting", meta = (ToolTip = "Runtime controller slot id that submitted this vote."))
+	int32 PlayerSlotId = 0;
 
-	/** Candidate faction currently selected by this player slot. */
-	UPROPERTY(BlueprintReadOnly, Category = "Faction|Voting", meta = (ToolTip = "Faction tag this player slot is currently voting for."))
+	/** Candidate faction currently selected by this controller slot id. */
+	UPROPERTY(BlueprintReadOnly, Category = "Faction|Voting", meta = (ToolTip = "Faction tag this controller slot id is currently voting for."))
 	FGameplayTag VotedFactionTag;
 };
 

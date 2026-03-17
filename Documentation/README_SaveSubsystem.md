@@ -8,7 +8,7 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
 - Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
-- Save schema version is `v17`; minimum supported is `v17`.
+- Save schema version is `v18`; minimum supported is `v18`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 - Save ownership is explicit:
   - shared world state -> `UARSaveGame`
@@ -132,13 +132,12 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 
 Hydration identity policy:
 - If requester has a strict online identity (`UniqueNetIdString` + non-null provider type), hydration requires identity match and does not slot-fallback.
-- Slot fallback is only used for local-only identities (PIE/offline/null subsystem style flows).
+- Slot fallback is no longer used by runtime hydration; `bAllowSlotFallback` remains a compatibility parameter.
 - When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup uses a shared-account primary/secondary profile discriminator (`bSharedOnlineIdSecondaryProfile`) assigned by runtime claim order.
 - `ClearPendingTravelGameStateData()`
 - `HasPendingTravelGameStateData()`
 
 `UARSaveGame` BP readers:
-- `FindPlayerStateDataBySlot(Slot, OutData, OutIndex)`
 - `FindPlayerStateDataByIdentity(Identity, OutData, OutIndex)`
 
 ## Travel Boundary
@@ -175,7 +174,7 @@ PlayerState hydration is split by lifecycle:
 - First join path (GameMode): `TryHydratePlayerStateFromCurrentSave(...)` if possible, else `InitializeForFirstSessionJoin()`.
 - Seamless travel path: `AARPlayerStateBase::CopyProperties(...)` copies runtime struct + key replicated fields.
 - Player hydration is two-stage:
-  1. hydrate player-owned fields by identity (or slot fallback for local-only identities)
+  1. hydrate player-owned fields by identity
   2. resolve active `CurrentCharacterTag` and project character-owned state onto `AARPlayerStateBase`
 - If projected character-owned `LoadoutTags` are empty after hydration, `AARPlayerStateBase` seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so editor raw-map starts and runtime joins both get a deterministic baseline.
 - `AARPlayerStateBase` remains the runtime owner surface, but character-owned persistence is not keyed by player id.

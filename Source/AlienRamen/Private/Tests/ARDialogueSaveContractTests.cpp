@@ -91,11 +91,10 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	Save->SaveGameVersion = 10;
 
 	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerState.Identity.PlayerSlot = EARPlayerSlot::P1;
 	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
 
 	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	LegacyDialogueState.OwnerPlayerSlotTag = ARPlayer::GetPlayerSlotTag(EARPlayerSlot::P1);
+	LegacyDialogueState.OwnerCharacterTag = ARPlayer::GetBrotherCharacterTag();
 	LegacyDialogueState.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother.Default")), false));
 	LegacyDialogueState.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false));
 

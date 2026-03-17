@@ -131,10 +131,6 @@ struct ALIENRAMEN_API FARPlayerIdentity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
 
-	/** Legacy runtime slot snapshot (no longer persisted by save gather paths; kept for compatibility only). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
-
 	/**
 	 * Shared-account disambiguator:
 	 * - false = primary profile for this online id
@@ -212,12 +208,12 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Player-owned progression tags that follow this player identity regardless of active character."))
 	FGameplayTagContainer ProgressionTags;
 
-	FGameplayTag ResolveCurrentCharacterTag() const
-	{
-		return CurrentCharacterTag.IsValid()
-			? ARPlayer::NormalizeCharacterTag(CurrentCharacterTag, Identity.PlayerSlot)
-			: ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(CharacterPicked), Identity.PlayerSlot);
-	}
+		FGameplayTag ResolveCurrentCharacterTag() const
+		{
+			return CurrentCharacterTag.IsValid()
+				? ARPlayer::NormalizeCharacterTag(CurrentCharacterTag)
+				: ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(CharacterPicked));
+		}
 
 	void SyncCharacterSelectionFromCurrentTag();
 };

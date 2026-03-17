@@ -3,7 +3,6 @@
 #include "ARPlayerTypes.h"
 #include "GameplayTagContainer.h"
 #include "ParleyDialogueSettings.h"
-#include "ParleyPlayerSlotHelpers.h"
 
 namespace
 {
@@ -14,48 +13,38 @@ namespace
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FParley_PlayerSlotTagRoundTripTest,
-	"AlienRamen.Parley.PlayerSlot.RoundTrip",
+	FParley_CharacterOwnershipTagContractTest,
+	"AlienRamen.Parley.CharacterOwnership.TagContract",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FParley_PlayerSlotTagRoundTripTest::RunTest(const FString& Parameters)
+bool FParley_CharacterOwnershipTagContractTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
-	const FGameplayTag P1Tag = ParleyPlayerSlot::SlotToTag(EParleyPlayerSlot::P1);
-	const FGameplayTag P2Tag = ParleyPlayerSlot::SlotToTag(EParleyPlayerSlot::P2);
+	const FGameplayTag BrotherTag = RequestTagNoCrash(TEXT("Parley.Speaker.Brother"));
+	const FGameplayTag SisterTag = RequestTagNoCrash(TEXT("Parley.Speaker.Sister"));
 
-	TestTrue(TEXT("P1 slot tag should resolve"), P1Tag.IsValid());
-	TestTrue(TEXT("P2 slot tag should resolve"), P2Tag.IsValid());
-	TestEqual(TEXT("P1 slot tag should map back to P1"), ParleyPlayerSlot::TagToSlot(P1Tag), EParleyPlayerSlot::P1);
-	TestEqual(TEXT("P2 slot tag should map back to P2"), ParleyPlayerSlot::TagToSlot(P2Tag), EParleyPlayerSlot::P2);
+	TestTrue(TEXT("Brother character tag should resolve"), BrotherTag.IsValid());
+	TestTrue(TEXT("Sister character tag should resolve"), SisterTag.IsValid());
 
 	TestEqual(
-		TEXT("ARPlayer helper should agree on P1 slot mapping"),
-		ARPlayer::GetPlayerSlotForTag(P1Tag),
-		EARPlayerSlot::P1);
+		TEXT("ARPlayer helper should resolve Brother choice"),
+		ARPlayer::GetCharacterChoiceForTag(BrotherTag),
+		EARCharacterChoice::Brother);
 	TestEqual(
-		TEXT("ARPlayer helper should agree on P2 slot mapping"),
-		ARPlayer::GetPlayerSlotForTag(P2Tag),
-		EARPlayerSlot::P2);
-
-	TestEqual(
-		TEXT("Invalid slot tag should map to Unknown"),
-		ParleyPlayerSlot::TagToSlot(FGameplayTag()),
-		EParleyPlayerSlot::Unknown);
-	TestFalse(
-		TEXT("Invalid slot tag should fail helper validity check"),
-		ParleyPlayerSlot::IsValidSlotTag(FGameplayTag()));
+		TEXT("ARPlayer helper should resolve Sister choice"),
+		ARPlayer::GetCharacterChoiceForTag(SisterTag),
+		EARCharacterChoice::Sister);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FParley_DialogueSettingsSlotTagContractTest,
-	"AlienRamen.Parley.Settings.SlotTagContract",
+	FParley_DialogueSettingsContractTest,
+	"AlienRamen.Parley.Settings.DialogueContract",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FParley_DialogueSettingsSlotTagContractTest::RunTest(const FString& Parameters)
+bool FParley_DialogueSettingsContractTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
@@ -66,19 +55,6 @@ bool FParley_DialogueSettingsSlotTagContractTest::RunTest(const FString& Paramet
 		return false;
 	}
 
-	TestTrue(TEXT("Parley slot tag list should contain P1 + P2"), Settings->PlayerSlotTags.Num() >= 2);
-	if (Settings->PlayerSlotTags.Num() < 2)
-	{
-		return false;
-	}
-
-	const FGameplayTag ConfiguredP1Tag = Settings->PlayerSlotTags[0];
-	const FGameplayTag ConfiguredP2Tag = Settings->PlayerSlotTags[1];
-
-	TestTrue(TEXT("Configured P1 slot tag should be valid"), ConfiguredP1Tag.IsValid());
-	TestTrue(TEXT("Configured P2 slot tag should be valid"), ConfiguredP2Tag.IsValid());
-	TestEqual(TEXT("Configured P1 slot tag should map to P1"), ParleyPlayerSlot::TagToSlot(ConfiguredP1Tag), EParleyPlayerSlot::P1);
-	TestEqual(TEXT("Configured P2 slot tag should map to P2"), ParleyPlayerSlot::TagToSlot(ConfiguredP2Tag), EParleyPlayerSlot::P2);
 	TestEqual(TEXT("Dialogue audio mode defaults to NativeAudio"), Settings->DialogueAudioMode, EParleyDialogueAudioMode::NativeAudio);
 
 	return true;

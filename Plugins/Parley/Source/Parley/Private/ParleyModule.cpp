@@ -18,9 +18,6 @@ void FParleyModule::StartupModule()
 
 	static const TCHAR* RequiredTags[] =
 	{
-		TEXT("Player.Slot"),
-		TEXT("Player.Slot.P1"),
-		TEXT("Player.Slot.P2"),
 		TEXT("Parley.Speaker"),
 		TEXT("Parley.Speaker.Requester"),
 		TEXT("Parley.Speaker.Owner"),

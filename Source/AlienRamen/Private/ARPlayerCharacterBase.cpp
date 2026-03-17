@@ -48,7 +48,7 @@ void AARPlayerCharacterBase::RefreshParleySpeakerFromPlayerState()
 		return;
 	}
 
-	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ARPlayerState->GetCurrentCharacterTag(), ARPlayerState->GetPlayerSlot());
+	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ARPlayerState->GetCurrentCharacterTag());
 	switch (ARPlayer::GetCharacterChoiceForTag(CharacterTag))
 	{
 	case EARCharacterChoice::Brother:

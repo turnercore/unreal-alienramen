@@ -158,9 +158,9 @@ struct ALIENRAMEN_API FARInvaderOfferPresenceState
 {
 	GENERATED_BODY()
 
-	// Player currently publishing presence for the active offer session.
+	// Character currently publishing presence for the active offer session.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
-	EARPlayerSlot PlayerSlot = EARPlayerSlot::Unknown;
+	FGameplayTag PlayerCharacterTag;
 
 	// Optional currently hovered offer (can be empty when only cursor is present).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
@@ -188,9 +188,9 @@ struct ALIENRAMEN_API FARInvaderKillCreditFxEvent
 {
 	GENERATED_BODY()
 
-	// Player slot whose spice meter received the awarded kill credit.
+	// Character whose spice meter received the awarded kill credit.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kill Credit")
-	EARPlayerSlot TargetPlayerSlot = EARPlayerSlot::Unknown;
+	FGameplayTag TargetCharacterTag;
 
 	// Awarded spice amount after multipliers.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kill Credit")
@@ -225,7 +225,7 @@ struct ALIENRAMEN_API FARInvaderFullBlastSessionState
 	bool bIsActive = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")
-	EARPlayerSlot RequestingPlayerSlot = EARPlayerSlot::Unknown;
+	FGameplayTag RequestingCharacterTag;
 
 	// Full-blast tier at activation time (used for offer-level rolls and top-tier rules).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Offer")

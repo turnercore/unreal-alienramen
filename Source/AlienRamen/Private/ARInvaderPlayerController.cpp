@@ -235,12 +235,14 @@ bool AARInvaderPlayerController::IsChooserForSession(const FARInvaderFullBlastSe
 		return false;
 	}
 
-	if (Session.RequestingPlayerSlot == EARPlayerSlot::Unknown)
+	const FGameplayTag SessionRequestingCharacterTag = ARPlayer::NormalizeCharacterTag(Session.RequestingCharacterTag);
+	if (!SessionRequestingCharacterTag.IsValid())
 	{
 		return true;
 	}
 
-	return InvaderPlayerState->GetPlayerSlot() == Session.RequestingPlayerSlot;
+	const FGameplayTag LocalCharacterTag = ARPlayer::NormalizeCharacterTag(InvaderPlayerState->GetCurrentCharacterTag());
+	return LocalCharacterTag.IsValid() && LocalCharacterTag.MatchesTagExact(SessionRequestingCharacterTag);
 }
 
 void AARInvaderPlayerController::SyncLegacyShipReferenceFromPawn(APawn* InPawn)
@@ -464,9 +466,9 @@ void AARInvaderPlayerController::RequestActivateTrackUpgrade(const int32 SlotInd
 void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade_Implementation(const int32 SlotIndex)
 {
 	AARPlayerStateBase* RequestingPlayerState = GetInvaderPlayerState();
-	const int32 RequestingSlot = RequestingPlayerState ? static_cast<int32>(RequestingPlayerState->GetPlayerSlot()) : static_cast<int32>(EARPlayerSlot::Unknown);
-	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' playerSlot=%d slot=%d"),
-		*GetNameSafe(this), *GetNameSafe(RequestingPlayerState), RequestingSlot, SlotIndex);
+	const FGameplayTag RequestingCharacterTag = RequestingPlayerState ? ARPlayer::NormalizeCharacterTag(RequestingPlayerState->GetCurrentCharacterTag()) : FGameplayTag();
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Input] ServerRequestActivateTrackUpgrade controller='%s' playerState='%s' characterTag='%s' slot=%d"),
+		*GetNameSafe(this), *GetNameSafe(RequestingPlayerState), *RequestingCharacterTag.ToString(), SlotIndex);
 
 	if (AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
 	{
@@ -474,9 +476,9 @@ void AARInvaderPlayerController::ServerRequestActivateTrackUpgrade_Implementatio
 		if (!bActivated)
 		{
 			const FString FailureMessage = FString::Printf(
-				TEXT("[InvaderSpice|Input] Track upgrade activation failed for '%s' (PlayerSlot=%d) on slot %d. Check prior [InvaderSpice|Action] logs for rejection details."),
+				TEXT("[InvaderSpice|Input] Track upgrade activation failed for '%s' (CharacterTag=%s) on slot %d. Check prior [InvaderSpice|Action] logs for rejection details."),
 				*GetNameSafe(RequestingPlayerState),
-				RequestingSlot,
+				*RequestingCharacterTag.ToString(),
 				SlotIndex);
 			UE_LOG(ARLog, Error, TEXT("%s"), *FailureMessage);
 			ClientMessage(FailureMessage);

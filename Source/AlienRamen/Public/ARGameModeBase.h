@@ -108,16 +108,16 @@ protected:
 
 private:
 	void CachePendingSpawnCharacterTagForController(const AController* Controller, const FGameplayTag& CharacterTag);
-	static EARPlayerSlot DetermineNextPlayerSlot(const AARGameStateBase* GameState);
-	static EARPlayerSlot FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState = nullptr);
-	static EARAffinityColor ResolveExpectedInvaderPlayerColor(EARCharacterChoice CharacterChoice, EARPlayerSlot PlayerSlot);
+	static int32 FindFirstFreePlayerSlotId(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState = nullptr);
+	static EARAffinityColor ResolveExpectedInvaderPlayerColor(EARCharacterChoice CharacterChoice);
 	static EARCharacterChoice GetAlternateCharacterChoice(EARCharacterChoice CurrentChoice);
 	static bool IsCharacterChoiceTakenByOther(const AARGameStateBase* InGameState, const AARPlayerStateBase* CurrentPlayerState, EARCharacterChoice CharacterChoice);
 	void ResolveCharacterChoiceConflict(const AARGameStateBase* InGameState, AARPlayerStateBase* CurrentPlayerState) const;
 	void HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const;
-	void EnsureJoinedPlayerHasUniqueSlot(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
+	void EnsureJoinedPlayerHasUniqueIdentity(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
 	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
 
 	/** Per-controller character-tag cache captured in ChoosePlayerStart to keep pawn class/start identity aligned. */
 	TMap<TWeakObjectPtr<const AController>, FGameplayTag> PendingSpawnCharacterTagsByController;
 };
+

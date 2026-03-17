@@ -503,7 +503,6 @@ FARPlayerIdentity UARSaveSubsystem::BuildRuntimePlayerIdentity(const APlayerStat
 
 	Identity.LegacyId = ARPS->GetPlayerId();
 	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
-	Identity.PlayerSlot = EARPlayerSlot::Unknown;
 
 	if (PlayerState->GetUniqueId().IsValid())
 	{
@@ -656,8 +655,6 @@ bool UARSaveSubsystem::TrySplitRevisionSlotName(const FString& InSlotName, FStri
 bool UARSaveSubsystem::ResolvePlayerSaveDataIndex(
 	const UARSaveGame* SaveGame,
 	const FARPlayerIdentity& Identity,
-	const EARPlayerSlot FallbackSlot,
-	const bool bAllowSlotFallback,
 	int32& OutIndex)
 {
 	OutIndex = INDEX_NONE;
@@ -668,16 +665,6 @@ bool UARSaveSubsystem::ResolvePlayerSaveDataIndex(
 
 	FARPlayerStateSaveData IgnoredData;
 	if (SaveGame->FindPlayerStateDataByIdentity(Identity, IgnoredData, OutIndex))
-	{
-		return SaveGame->PlayerStates.IsValidIndex(OutIndex);
-	}
-
-	if (!bAllowSlotFallback || Identity.HasStrictOnlineIdentity() || FallbackSlot == EARPlayerSlot::Unknown)
-	{
-		return false;
-	}
-
-	if (SaveGame->FindPlayerStateDataBySlot(FallbackSlot, IgnoredData, OutIndex))
 	{
 		return SaveGame->PlayerStates.IsValidIndex(OutIndex);
 	}
@@ -1631,6 +1618,7 @@ void UARSaveSubsystem::ClearPendingTravelGameStateData()
 
 bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, const bool bAllowSlotFallback)
 {
+	(void)bAllowSlotFallback;
 	if (!Requester || !CurrentSaveGame)
 	{
 		return false;
@@ -1644,7 +1632,7 @@ bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* 
 
 	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 Index = INDEX_NONE;
-	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), bAllowSlotFallback, Index))
+	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Index))
 	{
 		return false;
 	}
@@ -1762,6 +1750,7 @@ bool UARSaveSubsystem::HasProgressionTag(FGameplayTag ProgressionTag) const
 
 bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags, const bool bAllowSlotFallback) const
 {
+	(void)bAllowSlotFallback;
 	OutTags.Reset();
 	if (!Requester || !CurrentSaveGame)
 	{
@@ -1770,7 +1759,7 @@ bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, F
 
 	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
-	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), bAllowSlotFallback, PlayerIndex))
+	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, PlayerIndex))
 	{
 		return false;
 	}
@@ -1816,7 +1805,7 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 
 	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
-	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), true, PlayerIndex))
+	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, PlayerIndex))
 	{
 		FARPlayerStateSaveData& AddedPlayerData = CurrentSaveGame->PlayerStates.AddDefaulted_GetRef();
 		AddedPlayerData.Identity = QueryIdentity;
@@ -1869,7 +1858,7 @@ bool UARSaveSubsystem::RemovePlayerProgressionTag(AARPlayerStateBase* Requester,
 
 	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
-	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, Requester->GetPlayerSlot(), true, PlayerIndex))
+	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, PlayerIndex))
 	{
 		return false;
 	}

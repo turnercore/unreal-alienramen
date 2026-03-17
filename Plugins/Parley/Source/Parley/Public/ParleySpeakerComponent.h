@@ -13,9 +13,9 @@ class APlayerController;
 class UParleySpeakerComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerTalkableStateChanged, bool, bNewTalkable);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionRequested, FGameplayTag, EmotionTag, FGameplayTag, PlayerSlotTag, bool, bIsDialogueLine);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerEmotionCleared, FGameplayTag, PlayerSlotTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionPreviewRequested, FGameplayTag, EmotionTag, FGameplayTag, PlayerSlotTag, FGuid, ChoiceBranchId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionRequested, FGameplayTag, EmotionTag, FGameplayTag, ViewerCharacterTag, bool, bIsDialogueLine);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FParleyOnSpeakerEmotionCleared, FGameplayTag, ViewerCharacterTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FParleyOnSpeakerEmotionPreviewRequested, FGameplayTag, EmotionTag, FGameplayTag, ViewerCharacterTag, FGuid, ChoiceBranchId);
 
 UCLASS(
 	ClassGroup=(Parley),
@@ -49,15 +49,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool IsTalkable() const { return bIsTalkable; }
 
-	// StateTree-friendly dialogue-only gate. True when this speaker currently has dialogue available for at least one slot.
+	// StateTree-friendly dialogue-only gate. True when this speaker currently has dialogue available for at least one character.
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool HasDialogueToSay() const { return bIsTalkable; }
 
-	/** Slot-tag-specific talkable query (for example Player.Slot.P1 / Player.Slot.P2). */
+	/** Character-tag-specific talkable query. */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
-	bool IsTalkableForPlayerSlotTag(FGameplayTag PlayerSlotTag) const;
+	bool IsTalkableForCharacterTag(FGameplayTag CharacterTag) const;
 
-	/** Controller-aware talkable query (uses controller player slot mapping). */
+	/** Controller-aware talkable query (uses the controller's currently controlled character). */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Returns current speaker component state without mutating runtime data."))
 	bool IsTalkableForController(const APlayerController* QueryController) const;
 
@@ -90,7 +90,7 @@ protected:
 	void OnRep_IsTalkable(bool bOldTalkable);
 
 	UFUNCTION()
-	void OnRep_TalkablePlayerSlotMask(uint8 bOldTalkablePlayerSlotMask);
+	void OnRep_TalkableCharacterTags(FGameplayTagContainer OldTalkableCharacterTags);
 
 	UFUNCTION()
 	void HandleSpeakerTalkableChanged(FGameplayTag ChangedSpeakerTag, bool bNewTalkable);
@@ -109,8 +109,8 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_IsTalkable, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Speaker Is Talkable", ToolTip = "Resolved global talkability for this speaker from the dialogue runtime."))
 	bool bIsTalkable = false;
 
-	// Bitmask of talkable slots (P1=bit0, P2=bit1).
-	UPROPERTY(ReplicatedUsing = OnRep_TalkablePlayerSlotMask, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Player Slot Mask", ToolTip = "Per-player talkability mask (P1 bit 0, P2 bit 1)."))
-	uint8 TalkablePlayerSlotMask = 0;
+	// Runtime talkability by currently controlled character.
+	UPROPERTY(ReplicatedUsing = OnRep_TalkableCharacterTags, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Character Tags", ToolTip = "Character tags that can currently start dialogue with this speaker."))
+	FGameplayTagContainer TalkableCharacterTags;
 };
 

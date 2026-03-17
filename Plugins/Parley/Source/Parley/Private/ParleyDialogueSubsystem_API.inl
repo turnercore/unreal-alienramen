@@ -27,16 +27,16 @@ bool UParleyDialogueSubsystem::PreviewConversationTrace(
 	PreviewSession.CurrentNodeId = ConversationAsset->CompiledData.EnterNodeId;
 	PreviewSession.bConversationImportant = ConversationAsset->Header.bImportant;
 	PreviewSession.bConversationPrivate = ConversationAsset->Header.bPrivateConversation;
-	PreviewSession.OwnerSlot = EParleyPlayerSlot::P1;
-	PreviewSession.InitiatorSlot = EParleyPlayerSlot::P1;
-	PreviewSession.Participants.Add(EParleyPlayerSlot::P1);
+	PreviewSession.OwnerCharacterTag = GetDialogueSpeakerBrotherTag();
+	PreviewSession.InitiatorCharacterTag = GetDialogueSpeakerBrotherTag();
+	PreviewSession.Participants.Add(GetDialogueSpeakerBrotherTag());
 	PreviewSession.TransientConversationTags = PreviewContext.TransientConversationTags;
 
-	TMap<EParleyPlayerSlot, FGameplayTagContainer> PreviewSeenByPlayer;
+	TMap<FGameplayTag, FGameplayTagContainer> PreviewSeenByPlayer;
 	FGameplayTagContainer PreviewSeenByGame;
 	if (PreviewContext.bSeenByPlayer && PreviewSession.ConversationTag.IsValid())
 	{
-		PreviewSeenByPlayer.FindOrAdd(EParleyPlayerSlot::P1).AddTag(PreviewSession.ConversationTag);
+		PreviewSeenByPlayer.FindOrAdd(GetDialogueSpeakerBrotherTag()).AddTag(PreviewSession.ConversationTag);
 	}
 	if (PreviewContext.bSeenByGame && PreviewSession.ConversationTag.IsValid())
 	{
@@ -61,7 +61,7 @@ bool UParleyDialogueSubsystem::PreviewConversationTrace(
 		if (Result == EDialogueExecutionResult::Waiting)
 		{
 			FDialogueClientView View;
-			FillClientViewForSlot(PreviewSession, EParleyPlayerSlot::P1, View);
+			FillClientViewForCharacter(PreviewSession, GetDialogueSpeakerBrotherTag(), View);
 			OutViews.Add(View);
 
 			if (PreviewSession.bWaitingForChoice)
@@ -149,22 +149,22 @@ bool UParleyDialogueSubsystem::PreviewConversation(UParleyConversationAsset* Con
 	return true;
 }
 
-bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForSlot(FGameplayTag PrimarySpeakerTag, FGameplayTag PlayerSlotTag) const
+bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForCharacter(FGameplayTag PrimarySpeakerTag, FGameplayTag OwnerCharacterTag) const
 {
 	const UWorld* World = GetWorld();
 	if (!IsAuthorityWorld_Dialogue(World))
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] HasUnlockedDialogueForSpeakerForSlot requires authority runtime."));
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] HasUnlockedDialogueForSpeakerForCharacter requires authority runtime."));
 		return false;
 	}
 
-	const EParleyPlayerSlot PlayerSlot = ParleyPlayerSlot::TagToSlot(PlayerSlotTag);
-	if (!PrimarySpeakerTag.IsValid() || PlayerSlot == EParleyPlayerSlot::Unknown)
+	const FGameplayTag PlayerCharacterTag = NormalizeCharacterTagForDialogue(OwnerCharacterTag);
+	if (!PrimarySpeakerTag.IsValid() || !PlayerCharacterTag.IsValid())
 	{
 		return false;
 	}
 
-	APlayerController* PC = FindPlayerControllerBySlot(World, PlayerSlot);
+	APlayerController* PC = FindPlayerControllerByCharacter(World, PlayerCharacterTag);
 	if (!PC)
 	{
 		return false;
@@ -205,7 +205,7 @@ bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForSlot(FGameplayTag
 	}
 
 	if (IsBusySpeakerLockEnabled(Settings, ModeTag)
-		&& FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, PlayerSlot) != nullptr)
+		&& FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, PlayerCharacterTag) != nullptr)
 	{
 		return false;
 	}
@@ -314,12 +314,12 @@ bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForAnyPlayer(FGamepl
 			continue;
 		}
 
-		const EParleyPlayerSlot Slot = GetPlayerSlotFromPlayerState(PS);
-		if (Slot == EParleyPlayerSlot::Unknown)
+		const FGameplayTag Slot = GetCharacterTagFromPlayerState(PS);
+		if (!Slot.IsValid())
 		{
 			continue;
 		}
-		if (HasUnlockedDialogueForSpeakerForSlot(PrimarySpeakerTag, ParleyPlayerSlot::SlotToTag(Slot)))
+		if (HasUnlockedDialogueForSpeakerForCharacter(PrimarySpeakerTag, GetDefaultCharacterTagForSlot(Slot)))
 		{
 			return true;
 		}
@@ -335,7 +335,7 @@ bool UParleyDialogueSubsystem::IsPrimarySpeakerInActiveSession(FGameplayTag Prim
 		return false;
 	}
 
-	return FindPerPlayerSessionByPrimarySpeaker(GetRuntimeState().ActiveSessions, PrimarySpeakerTag, EParleyPlayerSlot::Unknown) != nullptr;
+	return FindPerPlayerSessionByPrimarySpeaker(GetRuntimeState().ActiveSessions, PrimarySpeakerTag, FGameplayTag()) != nullptr;
 }
 
 bool UParleyDialogueSubsystem::GetPrimarySpeakerForConversation(FGameplayTag ConversationTag, FGameplayTag& OutPrimarySpeakerTag) const
@@ -365,8 +365,8 @@ bool UParleyDialogueSubsystem::IsSpeakerBusyForController(const APlayerControlle
 		return false;
 	}
 
-	const EParleyPlayerSlot RequesterSlot = GetSlotFromController(RequestingController);
-	if (RequesterSlot == EParleyPlayerSlot::Unknown)
+	const FGameplayTag RequesterSlot = GetCharacterTagFromController(RequestingController);
+	if (!RequesterSlot.IsValid())
 	{
 		return false;
 	}
@@ -388,12 +388,12 @@ bool UParleyDialogueSubsystem::GetLocalViewForController(const APlayerController
 	{
 		return false;
 	}
-	const EParleyPlayerSlot Slot = GetSlotFromController(RequestingController);
-	if (Slot == EParleyPlayerSlot::Unknown)
+	const FGameplayTag Slot = GetCharacterTagFromController(RequestingController);
+	if (!Slot.IsValid())
 	{
 		return false;
 	}
-	const FParleyActiveDialogueSession* Session = FindSessionForSlot(GetRuntimeState().ActiveSessions, Slot);
+	const FParleyActiveDialogueSession* Session = FindSessionForCharacter(GetRuntimeState().ActiveSessions, Slot);
 	if (!Session)
 	{
 		return false;
@@ -409,9 +409,9 @@ bool UParleyDialogueSubsystem::GetLocalViewForController(const APlayerController
 	OutView.SpeakerPortrait = Session->CurrentSpeakerPortrait;
 	OutView.bWaitingForChoice = Session->bWaitingForChoice;
 	OutView.bConversationImportant = Session->bConversationImportant;
-	OutView.bIsEavesdropping = !Session->bIsSharedSession && Slot != Session->OwnerSlot;
-	OutView.InitiatorSlotTag = ParleyPlayerSlot::SlotToTag(Session->InitiatorSlot);
-	OutView.OwnerSlotTag = ParleyPlayerSlot::SlotToTag(Session->OwnerSlot);
+	OutView.bIsEavesdropping = !Session->bIsSharedSession && Slot != Session->OwnerCharacterTag;
+	OutView.InitiatorCharacterTag = GetDefaultCharacterTagForSlot(Session->InitiatorCharacterTag);
+	OutView.OwnerCharacterTag = GetDefaultCharacterTagForSlot(Session->OwnerCharacterTag);
 	OutView.Choices = Session->CurrentChoices;
 	return true;
 }
@@ -421,7 +421,7 @@ bool UParleyDialogueSubsystem::HasActiveDialogueSession() const
 	return GetRuntimeState().ActiveSessions.Num() > 0;
 }
 
-void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayTag PlayerSlotTag)
+void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayTag OwnerCharacterTag)
 {
 	UWorld* World = GetWorld();
 	if (!IsAuthorityWorld_Dialogue(World))
@@ -430,13 +430,13 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 		return;
 	}
 
-	const EParleyPlayerSlot PlayerSlot = ParleyPlayerSlot::TagToSlot(PlayerSlotTag);
+	const FGameplayTag PlayerCharacterTag = NormalizeCharacterTagForDialogue(OwnerCharacterTag);
 	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	FParleyProgressionStore* ProgressionStore = GetProgressionStore(this);
 	FParleyProgressionMutator* ProgressionMutator = GetProgressionMutator(this);
 	bool bProgressionChanged = false;
 
-	if (PlayerSlot == EParleyPlayerSlot::Unknown)
+	if (!PlayerCharacterTag.IsValid())
 	{
 		Runtime.SeenByPlayerTransient.Reset();
 		Runtime.SkippedByPlayerTransient.Reset();
@@ -470,16 +470,16 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 		return;
 	}
 
-	Runtime.SeenByPlayerTransient.Remove(PlayerSlot);
-	Runtime.SkippedByPlayerTransient.Remove(PlayerSlot);
-	Runtime.SpeakerOfferCountsByPlayerTransient.Remove(PlayerSlot);
+	Runtime.SeenByPlayerTransient.Remove(PlayerCharacterTag);
+	Runtime.SkippedByPlayerTransient.Remove(PlayerCharacterTag);
+	Runtime.SpeakerOfferCountsByPlayerTransient.Remove(PlayerCharacterTag);
 
 	if (ProgressionStore)
 	{
-		const APlayerState* PlayerState = FindPlayerStateBySlot(World, PlayerSlot);
+		const APlayerState* PlayerState = FindPlayerStateByCharacterTag(World, PlayerCharacterTag);
 		const FGameplayTag CharacterTag = PlayerState
 			? ResolveDialogueCharacterTagFromPlayerState(PlayerState)
-			: GetDefaultCharacterTagForSlot(PlayerSlot);
+			: GetDefaultCharacterTagForSlot(PlayerCharacterTag);
 		int32 CharacterIndex = INDEX_NONE;
 		if (FParleyCharacterProgressionData* CharacterState = ProgressionStore->FindCharacterStateDataMutable(CharacterTag, CharacterIndex))
 		{
@@ -504,7 +504,7 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 	}
 
 	UE_LOG(ParleyLog, Log, TEXT("[Dialogue] Cleared conversation cycle offer state for slot %s."),
-		*StaticEnum<EParleyPlayerSlot>()->GetNameStringByValue(static_cast<int64>(PlayerSlot)));
+		LexToStringParleySlot(PlayerCharacterTag));
 }
 
 float UParleyDialogueSubsystem::GetRelationshipPointsForSpeakerPair(
@@ -553,12 +553,12 @@ int32 UParleyDialogueSubsystem::GetRelationshipLevelForSpeakerPair(
 	return 0;
 }
 
-void UParleyDialogueSubsystem::SetProgressionStateForPlayer(FGameplayTag PlayerSlotTag, const FParleyProgressionState& State)
+void UParleyDialogueSubsystem::SetProgressionStateForCharacter(FGameplayTag OwnerCharacterTag, const FParleyProgressionState& State)
 {
-	const EParleyPlayerSlot PlayerSlot = ParleyPlayerSlot::TagToSlot(PlayerSlotTag);
-	if (PlayerSlot == EParleyPlayerSlot::Unknown)
+	const FGameplayTag PlayerCharacterTag = NormalizeCharacterTagForDialogue(OwnerCharacterTag);
+	if (!PlayerCharacterTag.IsValid())
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] SetProgressionStateForPlayer ignored: unresolved slot tag '%s'."), *PlayerSlotTag.ToString());
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] SetProgressionStateForCharacter ignored: unresolved slot tag '%s'."), *OwnerCharacterTag.ToString());
 		return;
 	}
 
@@ -570,18 +570,18 @@ void UParleyDialogueSubsystem::SetProgressionStateForPlayer(FGameplayTag PlayerS
 
 	const FGameplayTag CharacterTag = State.CharacterTag.IsValid()
 		? State.CharacterTag
-		: GetDefaultCharacterTagForSlot(PlayerSlot);
+		: GetDefaultCharacterTagForSlot(PlayerCharacterTag);
 	if (!CharacterTag.IsValid())
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] SetProgressionStateForPlayer ignored: unresolved character tag for slot %s."),
-			*StaticEnum<EParleyPlayerSlot>()->GetNameStringByValue(static_cast<int64>(PlayerSlot)));
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] SetProgressionStateForCharacter ignored: unresolved character tag for slot %s."),
+			LexToStringParleySlot(PlayerCharacterTag));
 		return;
 	}
 
-	ProgressionStore->CharacterTagBySlot.FindOrAdd(PlayerSlot) = CharacterTag;
+	ProgressionStore->CharacterTagByIdentity.FindOrAdd(PlayerCharacterTag) = CharacterTag;
 	FParleyCharacterProgressionData& CharacterState = ProgressionStore->FindOrAddCharacterStateData(CharacterTag);
 	FDialoguePlayerPersistentState& DialogueState = CharacterState.DialogueState;
-	DialogueState.OwnerPlayerSlotTag = ParleyPlayerSlot::SlotToTag(PlayerSlot);
+	DialogueState.OwnerCharacterTag = GetDefaultCharacterTagForSlot(PlayerCharacterTag);
 	DialogueState.CharacterTag = CharacterTag;
 	DialogueState.ProgressionTags = State.ProgressionTags;
 	DialogueState.CompletedConversationTags = State.CompletedConversationTags;
@@ -591,11 +591,11 @@ void UParleyDialogueSubsystem::SetProgressionStateForPlayer(FGameplayTag PlayerS
 	DialogueState.SpeakerOfferCountsThisCycle = State.SpeakerOfferCountsThisCycle;
 
 	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
-	Runtime.SeenByPlayerTransient.FindOrAdd(PlayerSlot) = State.SeenConversationTagsThisCycle;
-	Runtime.SkippedByPlayerTransient.FindOrAdd(PlayerSlot) = State.SkippedConversationTagsThisCycle;
+	Runtime.SeenByPlayerTransient.FindOrAdd(PlayerCharacterTag) = State.SeenConversationTagsThisCycle;
+	Runtime.SkippedByPlayerTransient.FindOrAdd(PlayerCharacterTag) = State.SkippedConversationTagsThisCycle;
 	TMap<FGameplayTag, int32> OfferCountMap;
 	BuildSpeakerOfferCountMap(State.SpeakerOfferCountsThisCycle, OfferCountMap);
-	Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(PlayerSlot) = MoveTemp(OfferCountMap);
+	Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(PlayerCharacterTag) = MoveTemp(OfferCountMap);
 }
 
 void UParleyDialogueSubsystem::SetGameProgressionTags(const FGameplayTagContainer& Tags)

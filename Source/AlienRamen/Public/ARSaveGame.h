@@ -40,8 +40,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 17;
-	static constexpr int32 MinSupportedSchemaVersion = 17;
+	static constexpr int32 CurrentSchemaVersion = 18;
+	static constexpr int32 MinSupportedSchemaVersion = 18;
 
 	UARSaveGame();
 
@@ -157,10 +157,6 @@ public:
 	// Legacy compatibility root retained only for migration of older save schema versions.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Legacy dialogue state array retained only for migration from older save versions."))
 	TArray<FDialoguePlayerPersistentState> DialoguePlayerPersistentStates;
-
-	/** Finds a player save row by coop slot (P1/P2). Returns false when not found. */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
-	bool FindPlayerStateDataBySlot(EARPlayerSlot Slot, FARPlayerStateSaveData& OutData, int32& OutIndex) const;
 
 	/** Finds a player save row by identity (platform/user + display name). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")

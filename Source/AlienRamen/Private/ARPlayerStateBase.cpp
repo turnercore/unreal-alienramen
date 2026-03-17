@@ -34,7 +34,6 @@ namespace
 		{
 			Identity.LegacyId = PlayerState->GetPlayerId();
 			Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
-			Identity.PlayerSlot = EARPlayerSlot::Unknown;
 			if (PlayerState->GetUniqueId().IsValid())
 			{
 				Identity.UniqueNetIdString = PlayerState->GetUniqueId()->ToString();
@@ -84,6 +83,16 @@ namespace
 		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
 		return SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
 	}
+
+	static FGameplayTag ResolveSignalCharacterTag(const AARPlayerStateBase* PlayerState)
+	{
+		if (!PlayerState)
+		{
+			return FGameplayTag();
+		}
+
+		return ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+	}
 }
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -91,8 +100,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
-	DOREPLIFETIME(AARPlayerStateBase, PlayerSlotTag);
-	DOREPLIFETIME(AARPlayerStateBase, PlayerSlot);
+	DOREPLIFETIME(AARPlayerStateBase, PlayerSlotId);
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
 	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterTag);
 	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
@@ -110,7 +118,7 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
 {
-	OnLoadoutTagsChanged.Broadcast(this, PlayerSlot, LoadoutTags, OldLoadoutTags);
+	OnLoadoutTagsChanged.Broadcast(this, ResolveSignalCharacterTag(this), LoadoutTags, OldLoadoutTags);
 }
 
 AARPlayerStateBase::AARPlayerStateBase()
@@ -191,162 +199,28 @@ int32 AARPlayerStateBase::GetHUDPlayerSlotIndex() const
 	return GS->PlayerArray.IndexOfByKey(this);
 }
 
-void AARPlayerStateBase::SetPlayerSlot(EARPlayerSlot NewSlot)
+void AARPlayerStateBase::SetPlayerSlotId(int32 NewSlotId)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	SetPlayerSlot_Internal(NewSlot);
+	SetPlayerSlotId_Internal(NewSlotId);
 }
 
-void AARPlayerStateBase::SetPlayerSlotTag(FGameplayTag NewSlotTag)
+void AARPlayerStateBase::SetPlayerSlotId_Internal(const int32 NewSlotId)
 {
 	if (!HasAuthority())
 	{
 		return;
 	}
 
-	SetPlayerSlotTag_Internal(NewSlotTag);
-}
-
-void AARPlayerStateBase::SetPlayerSlotTag_Internal(FGameplayTag NewSlotTag, const bool bBroadcastSlotChanged)
-{
-	if (!HasAuthority())
+	const int32 SanitizedSlotId = FMath::Max(0, NewSlotId);
+	if (PlayerSlotId == SanitizedSlotId)
 	{
 		return;
 	}
 
-	const EARPlayerSlot ResolvedSlot = ARPlayer::GetPlayerSlotForTag(NewSlotTag);
-	const FGameplayTag ResolvedTag = ARPlayer::GetPlayerSlotTag(ResolvedSlot);
-	if (PlayerSlot == ResolvedSlot && PlayerSlotTag.MatchesTagExact(ResolvedTag))
-	{
-		return;
-	}
-
-	// Hard uniqueness guard: reject duplicate concrete slot assignment even if caller bypasses GameMode normalization.
-	if (ResolvedSlot != EARPlayerSlot::Unknown)
-	{
-		const AGameStateBase* GS = GetWorld() ? GetWorld()->GetGameState() : nullptr;
-		if (GS)
-		{
-			const auto IsSameLogicalPlayer = [this](const AARPlayerStateBase* OtherPlayer) -> bool
-			{
-				if (!OtherPlayer || OtherPlayer == this)
-				{
-					return true;
-				}
-
-				const int32 ThisLegacyId = GetPlayerId();
-				const int32 OtherLegacyId = OtherPlayer->GetPlayerId();
-				if (ThisLegacyId > 0 && ThisLegacyId == OtherLegacyId)
-				{
-					return true;
-				}
-
-				const AController* ThisOwnerController = Cast<AController>(GetOwner());
-				const AController* OtherOwnerController = Cast<AController>(OtherPlayer->GetOwner());
-				return ThisOwnerController && OtherOwnerController && ThisOwnerController == OtherOwnerController;
-			};
-
-			for (APlayerState* PS : GS->PlayerArray)
-			{
-				const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
-				if (!OtherPlayer)
-				{
-					continue;
-				}
-
-				const AController* OtherOwnerController = Cast<AController>(OtherPlayer->GetOwner());
-				if (!OtherOwnerController || OtherOwnerController->PlayerState != OtherPlayer)
-				{
-					// Ignore stale/inactive PlayerState remnants during seamless-travel handoff.
-					continue;
-				}
-
-				if (IsSameLogicalPlayer(OtherPlayer))
-				{
-					continue;
-				}
-
-				if (OtherPlayer->GetPlayerSlot() == ResolvedSlot
-					|| OtherPlayer->GetPlayerSlotTag().MatchesTagExact(ResolvedTag))
-				{
-					UE_LOG(
-						ARLog,
-						Warning,
-						TEXT("[PlayerState] Rejected duplicate slot assignment for '%s': requested %s is already used by '%s'."),
-						*GetNameSafe(this),
-						*ResolvedTag.ToString(),
-						*GetNameSafe(OtherPlayer));
-					return;
-				}
-			}
-		}
-	}
-
-	const EARPlayerSlot OldSlot = PlayerSlot;
-	PlayerSlot = ResolvedSlot;
-	PlayerSlotTag = ResolvedTag;
-
-	if (bBroadcastSlotChanged && OldSlot != PlayerSlot)
-	{
-		OnRep_PlayerSlot(OldSlot);
-	}
-	else
-	{
-		EvaluateTravelReadinessAndBroadcast();
-	}
-
+	const int32 OldSlotId = PlayerSlotId;
+	PlayerSlotId = SanitizedSlotId;
+	OnRep_PlayerSlotId(OldSlotId);
 	ForceNetUpdate();
-}
-
-void AARPlayerStateBase::SetPlayerSlot_Internal(const EARPlayerSlot NewSlot, const bool bBroadcastSlotChanged)
-{
-	SetPlayerSlotTag_Internal(ARPlayer::GetPlayerSlotTag(NewSlot), bBroadcastSlotChanged);
-}
-
-void AARPlayerStateBase::SyncPlayerSlotMirrorsFromTag(const bool bBroadcastSlotChanged)
-{
-	const EARPlayerSlot ResolvedSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	if (PlayerSlot == ResolvedSlot)
-	{
-		return;
-	}
-
-	const EARPlayerSlot OldSlot = PlayerSlot;
-	PlayerSlot = ResolvedSlot;
-
-	if (bBroadcastSlotChanged && OldSlot != PlayerSlot)
-	{
-		OnRep_PlayerSlot(OldSlot);
-	}
-	else
-	{
-		EvaluateTravelReadinessAndBroadcast();
-	}
-}
-
-void AARPlayerStateBase::SyncPlayerSlotMirrorsFromEnum(const bool bBroadcastSlotChanged)
-{
-	const FGameplayTag ResolvedTag = ARPlayer::GetPlayerSlotTag(PlayerSlot);
-	if (PlayerSlotTag.MatchesTagExact(ResolvedTag))
-	{
-		return;
-	}
-
-	const EARPlayerSlot OldSlot = PlayerSlot;
-	PlayerSlotTag = ResolvedTag;
-
-	if (bBroadcastSlotChanged && OldSlot != PlayerSlot)
-	{
-		OnRep_PlayerSlot(OldSlot);
-	}
-	else
-	{
-		EvaluateTravelReadinessAndBroadcast();
-	}
 }
 
 void AARPlayerStateBase::SetCharacterPicked(EARCharacterChoice NewCharacter)
@@ -460,7 +334,7 @@ void AARPlayerStateBase::InitializeForFirstSessionJoin()
 	}
 
 	const EARCharacterChoice DefaultCharacter =
-		(ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		(ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag) == EARCharacterChoice::Sister) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
 	SetCurrentCharacterTag_Internal(ARPlayer::GetCharacterTagForChoice(DefaultCharacter), false);
 	ResetInvaderCombo();
 	ClearActivatedInvaderUpgrades();
@@ -810,7 +684,7 @@ void AARPlayerStateBase::SetPredictedSpiceValue(const float NewPredictedSpice)
 	const float OldDisplayed = bHasPredictedSpiceValue ? PredictedSpiceValue : GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	PredictedSpiceValue = FMath::Max(0.0f, NewPredictedSpice);
 	bHasPredictedSpiceValue = true;
-	OnSpiceChanged.Broadcast(this, PlayerSlot, PredictedSpiceValue, OldDisplayed);
+	OnSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), PredictedSpiceValue, OldDisplayed);
 }
 
 void AARPlayerStateBase::ClearPredictedSpiceValue()
@@ -824,7 +698,7 @@ void AARPlayerStateBase::ClearPredictedSpiceValue()
 	const float AuthoritativeSpice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
 	bHasPredictedSpiceValue = false;
 	PredictedSpiceValue = AuthoritativeSpice;
-	OnSpiceChanged.Broadcast(this, PlayerSlot, AuthoritativeSpice, OldPredicted);
+	OnSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), AuthoritativeSpice, OldPredicted);
 }
 
 int32 AARPlayerStateBase::GetEffectiveSpicyTrackCursorTier() const
@@ -901,7 +775,7 @@ void AARPlayerStateBase::SetPredictedSpicyTrackCursorTier(const int32 NewPredict
 	const int32 OldDisplayedCursorTier = bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : SpicyTrackCursorTier;
 	PredictedSpicyTrackCursorTier = ClampSpicyTrackCursorTier(NewPredictedCursorTier);
 	bHasPredictedSpicyTrackCursorTier = true;
-	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, PredictedSpicyTrackCursorTier, OldDisplayedCursorTier);
+	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), PredictedSpicyTrackCursorTier, OldDisplayedCursorTier);
 }
 
 void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
@@ -918,15 +792,6 @@ void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
 void AARPlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (PlayerSlotTag.IsValid())
-	{
-		SyncPlayerSlotMirrorsFromTag(false);
-	}
-	else if (PlayerSlot != EARPlayerSlot::Unknown)
-	{
-		SyncPlayerSlotMirrorsFromEnum(false);
-	}
 
 	if (HasAuthority())
 	{
@@ -957,33 +822,26 @@ void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-void AARPlayerStateBase::OnRep_PlayerSlotTag(FGameplayTag OldSlotTag)
+void AARPlayerStateBase::OnRep_PlayerSlotId(const int32 OldSlotId)
 {
-	(void)OldSlotTag;
-	SyncPlayerSlotMirrorsFromTag(true);
-}
-
-void AARPlayerStateBase::OnRep_PlayerSlot(EARPlayerSlot OldSlot)
-{
-	SyncPlayerSlotMirrorsFromEnum(false);
-
-	if (OldSlot != PlayerSlot)
-	{
-		OnPlayerSlotChanged.Broadcast(PlayerSlot, OldSlot);
-	}
-
+	(void)OldSlotId;
 	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::OnRep_CharacterPicked(EARCharacterChoice OldCharacter)
 {
-	OnCharacterPickedChanged.Broadcast(this, PlayerSlot, CharacterPicked, OldCharacter);
+	OnCharacterPickedChanged.Broadcast(this, ResolveSignalCharacterTag(this), CharacterPicked, OldCharacter);
 	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag)
 {
-	(void)OldCharacterTag;
+	const FGameplayTag NormalizedOldCharacterTag = ARPlayer::NormalizeCharacterTag(OldCharacterTag);
+	const FGameplayTag NormalizedNewCharacterTag = ResolveSignalCharacterTag(this);
+	if (!NormalizedOldCharacterTag.MatchesTagExact(NormalizedNewCharacterTag))
+	{
+		OnCurrentCharacterTagChanged.Broadcast(NormalizedNewCharacterTag, NormalizedOldCharacterTag);
+	}
 
 	const EARCharacterChoice ResolvedChoice = ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag);
 	if (ResolvedChoice != EARCharacterChoice::None && CharacterPicked != ResolvedChoice)
@@ -996,23 +854,23 @@ void AARPlayerStateBase::OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag)
 
 void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
 {
-	OnDisplayNameChanged.Broadcast(this, PlayerSlot, DisplayName, OldDisplayName);
+	OnDisplayNameChanged.Broadcast(this, ResolveSignalCharacterTag(this), DisplayName, OldDisplayName);
 }
 
 void AARPlayerStateBase::OnRep_IsReady(bool bOldReady)
 {
-	OnReadyStatusChanged.Broadcast(this, PlayerSlot, bIsReady, bOldReady);
+	OnReadyStatusChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsReady, bOldReady);
 	EvaluateTravelReadinessAndBroadcast();
 }
 
 void AARPlayerStateBase::OnRep_IsDowned(bool bOldDowned)
 {
-	OnDownedStateChanged.Broadcast(this, PlayerSlot, bIsDowned, bOldDowned);
+	OnDownedStateChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsDowned, bOldDowned);
 }
 
 void AARPlayerStateBase::OnRep_IsDeadState(bool bOldDeadState)
 {
-	OnDeadStateChanged.Broadcast(this, PlayerSlot, bIsDeadState, bOldDeadState);
+	OnDeadStateChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsDeadState, bOldDeadState);
 }
 
 void AARPlayerStateBase::OnRep_DialogueAutoAdvanceEnabled(bool bOldEnabled)
@@ -1032,17 +890,17 @@ void AARPlayerStateBase::OnRep_InvaderPlayerColor(EARAffinityColor OldColor)
 
 void AARPlayerStateBase::OnRep_InvaderComboCount(int32 OldComboCount)
 {
-	OnInvaderComboChanged.Broadcast(this, PlayerSlot, InvaderComboCount, OldComboCount);
+	OnInvaderComboChanged.Broadcast(this, ResolveSignalCharacterTag(this), InvaderComboCount, OldComboCount);
 }
 
 void AARPlayerStateBase::OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags)
 {
-	OnInvaderActivatedUpgradesChanged.Broadcast(this, PlayerSlot, ActivatedInvaderUpgradeTags, OldActivatedTags);
+	OnInvaderActivatedUpgradesChanged.Broadcast(this, ResolveSignalCharacterTag(this), ActivatedInvaderUpgradeTags, OldActivatedTags);
 }
 
 void AARPlayerStateBase::OnRep_IsSharingSpice(bool bOldIsSharingSpice)
 {
-	OnSpiceSharingStateChanged.Broadcast(this, PlayerSlot, bIsSharingSpice, bOldIsSharingSpice);
+	OnSpiceSharingStateChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsSharingSpice, bOldIsSharingSpice);
 }
 
 void AARPlayerStateBase::OnRep_SpicyTrackCursorTier(int32 OldCursorTier)
@@ -1053,12 +911,12 @@ void AARPlayerStateBase::OnRep_SpicyTrackCursorTier(int32 OldCursorTier)
 		ClearPredictedSpicyTrackCursorTier();
 		if (OldPredictedCursorTier != SpicyTrackCursorTier)
 		{
-			OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldPredictedCursorTier);
+			OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), SpicyTrackCursorTier, OldPredictedCursorTier);
 		}
 		return;
 	}
 
-	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, OldCursorTier);
+	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), SpicyTrackCursorTier, OldCursorTier);
 }
 
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
@@ -1078,7 +936,7 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		return;
 	}
 
-	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(NewCharacterTag, ARPlayer::GetPlayerSlotForTag(PlayerSlotTag));
+	const FGameplayTag NormalizedTag = ARPlayer::NormalizeCharacterTag(NewCharacterTag);
 	const EARCharacterChoice NewCharacter = ARPlayer::GetCharacterChoiceForTag(NormalizedTag);
 	if (CurrentCharacterTag == NormalizedTag && CharacterPicked == NewCharacter)
 	{
@@ -1117,6 +975,12 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 	const FGameplayTag OldCharacterTag = CurrentCharacterTag;
 	CurrentCharacterTag = NormalizedTag;
 	CharacterPicked = NewCharacter;
+	const FGameplayTag NormalizedOldCharacterTag = ARPlayer::NormalizeCharacterTag(OldCharacterTag);
+	const FGameplayTag NormalizedNewCharacterTag = ResolveSignalCharacterTag(this);
+	if (!NormalizedOldCharacterTag.MatchesTagExact(NormalizedNewCharacterTag))
+	{
+		OnCurrentCharacterTagChanged.Broadcast(NormalizedNewCharacterTag, NormalizedOldCharacterTag);
+	}
 	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(NewCharacter));
 
 	if (OldCharacter != CharacterPicked)
@@ -1165,11 +1029,11 @@ void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARAffinityColor NewColo
 		UE_LOG(
 			ARLog,
 			Verbose,
-			TEXT("[InvaderSpice|Color] Player '%s' entered non-baseline color %d (Old=%d Slot=%d Character=%d)."),
+			TEXT("[InvaderSpice|Color] Player '%s' entered non-baseline color %d (Old=%d PlayerSlotId=%d Character=%d)."),
 			*GetNameSafe(this),
 			static_cast<int32>(NewColor),
 			static_cast<int32>(OldColor),
-			static_cast<int32>(PlayerSlot),
+			PlayerSlotId,
 			static_cast<int32>(CharacterPicked));
 	}
 }
@@ -1249,7 +1113,7 @@ EARAffinityColor AARPlayerStateBase::ResolveDefaultInvaderPlayerColorFromCharact
 		return EARAffinityColor::Red;
 	default:
 		// Keep a deterministic non-white baseline even when character is not yet assigned.
-		return (ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
+	return (ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag) == EARCharacterChoice::Sister) ? EARAffinityColor::Red : EARAffinityColor::Blue;
 	}
 }
 
@@ -1393,40 +1257,7 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		return false;
 	}
 
-	if (ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) == EARPlayerSlot::Unknown)
-	{
-		bool bP1Taken = false;
-		bool bP2Taken = false;
-		for (APlayerState* PS : GS->PlayerArray)
-		{
-			const AARPlayerStateBase* OtherPlayer = Cast<AARPlayerStateBase>(PS);
-			if (!OtherPlayer || OtherPlayer == this)
-			{
-				continue;
-			}
-
-			if (OtherPlayer->GetPlayerSlot() == EARPlayerSlot::P1)
-			{
-				bP1Taken = true;
-			}
-			else if (OtherPlayer->GetPlayerSlot() == EARPlayerSlot::P2)
-			{
-				bP2Taken = true;
-			}
-		}
-
-		if (bP1Taken && bP2Taken)
-		{
-			UE_LOG(ARLog, Warning, TEXT("[PlayerState] Could not auto-assign player slot for '%s': P1 and P2 already taken."), *GetNameSafe(this));
-			return false;
-		}
-
-		const EARPlayerSlot ResolvedSlot = !bP1Taken ? EARPlayerSlot::P1 : EARPlayerSlot::P2;
-		SetPlayerSlot(ResolvedSlot);
-	}
-
-	const EARPlayerSlot EffectiveSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	if (CharacterPicked == EARCharacterChoice::None)
+	if (CharacterPicked == EARCharacterChoice::None || !CurrentCharacterTag.IsValid())
 	{
 		const auto IsCharacterTakenByOther = [this, GS](EARCharacterChoice Choice) -> bool
 		{
@@ -1452,10 +1283,8 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 			return false;
 		};
 
-		const EARCharacterChoice PreferredChoice =
-			(EffectiveSlot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
-		const EARCharacterChoice AlternateChoice =
-			(PreferredChoice == EARCharacterChoice::Brother) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
+		const EARCharacterChoice PreferredChoice = EARCharacterChoice::Brother;
+		const EARCharacterChoice AlternateChoice = EARCharacterChoice::Sister;
 
 		if (!IsCharacterTakenByOther(PreferredChoice))
 		{
@@ -1467,11 +1296,11 @@ bool AARPlayerStateBase::EnsureReadyPrerequisitesForRun()
 		}
 		else
 		{
-			// Never leave character unset; fall back to slot-biased default even if non-unique.
+			// Never leave character unset; default to Brother when both are currently occupied.
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[PlayerState] Ready prerequisites found both character choices already taken for '%s'; assigning slot-biased fallback %d."),
+				TEXT("[PlayerState] Ready prerequisites found both character choices already taken for '%s'; assigning default fallback %d."),
 				*GetNameSafe(this),
 				static_cast<int32>(PreferredChoice));
 			SetCharacterPicked_Internal(PreferredChoice);
@@ -1687,17 +1516,13 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 
 	// Seamless-travel copy is intentionally explicit for PlayerState identity/runtime fields.
 	// Avoid generic StructSerializable by-name overlays here; BP-defined fallback structs can
-	// transiently stamp stale slot/character mirrors during travel handoff and create collisions.
-	const EARPlayerSlot SourceSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) != EARPlayerSlot::Unknown
-		? ARPlayer::GetPlayerSlotForTag(PlayerSlotTag)
-		: PlayerSlot;
-	TargetPS->PlayerSlotTag = ARPlayer::GetPlayerSlotTag(SourceSlot);
-	TargetPS->SyncPlayerSlotMirrorsFromTag(false);
+	// transiently stamp stale identity mirrors during travel handoff and create collisions.
+	TargetPS->PlayerSlotId = PlayerSlotId;
 
 	FGameplayTag CopiedCharacterTag = CurrentCharacterTag.IsValid()
 		? CurrentCharacterTag
 		: ARPlayer::GetCharacterTagForChoice(CharacterPicked);
-	CopiedCharacterTag = ARPlayer::NormalizeCharacterTag(CopiedCharacterTag, TargetPS->GetPlayerSlot());
+	CopiedCharacterTag = ARPlayer::NormalizeCharacterTag(CopiedCharacterTag);
 	if (!CopiedCharacterTag.IsValid())
 	{
 		CopiedCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
@@ -2013,33 +1838,33 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Strength, Snapshot.Strength, Snapshot.Strength);
 
-	OnHealthChanged.Broadcast(this, PlayerSlot, Snapshot.Health, Snapshot.Health);
-	OnMaxHealthChanged.Broadcast(this, PlayerSlot, Snapshot.MaxHealth, Snapshot.MaxHealth);
-	OnSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.Spice, Snapshot.Spice);
-	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, Snapshot.MaxSpice, Snapshot.MaxSpice);
-	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, Snapshot.MoveSpeed, Snapshot.MoveSpeed);
-	OnStrengthChanged.Broadcast(this, PlayerSlot, Snapshot.Strength, Snapshot.Strength);
-	OnSpicyTrackCursorChanged.Broadcast(this, PlayerSlot, SpicyTrackCursorTier, SpicyTrackCursorTier);
+	OnHealthChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.Health, Snapshot.Health);
+	OnMaxHealthChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.MaxHealth, Snapshot.MaxHealth);
+	OnSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.Spice, Snapshot.Spice);
+	OnMaxSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.MaxSpice, Snapshot.MaxSpice);
+	OnMoveSpeedChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.MoveSpeed, Snapshot.MoveSpeed);
+	OnStrengthChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.Strength, Snapshot.Strength);
+	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), SpicyTrackCursorTier, SpicyTrackCursorTier);
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Health, ChangeData.NewValue, ChangeData.OldValue);
-	OnHealthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	OnHealthChanged.Broadcast(this, ResolveSignalCharacterTag(this), ChangeData.NewValue, ChangeData.OldValue);
 	EvaluateLifeStateFromASC();
 }
 
 void AARPlayerStateBase::HandleMaxHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxHealth, ChangeData.NewValue, ChangeData.OldValue);
-	OnMaxHealthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	OnMaxHealthChanged.Broadcast(this, ResolveSignalCharacterTag(this), ChangeData.NewValue, ChangeData.OldValue);
 	EvaluateLifeStateFromASC();
 }
 
 void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Spice, ChangeData.NewValue, ChangeData.OldValue);
-	OnSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	OnSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), ChangeData.NewValue, ChangeData.OldValue);
 	bHasPredictedSpiceValue = false;
 	PredictedSpiceValue = ChangeData.NewValue;
 
@@ -2062,7 +1887,7 @@ void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeDat
 void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MaxSpice, ChangeData.NewValue, ChangeData.OldValue);
-	OnMaxSpiceChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	OnMaxSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), ChangeData.NewValue, ChangeData.OldValue);
 
 	if (HasAuthority())
 	{
@@ -2073,13 +1898,13 @@ void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChange
 void AARPlayerStateBase::HandleMoveSpeedAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::MoveSpeed, ChangeData.NewValue, ChangeData.OldValue);
-	OnMoveSpeedChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	OnMoveSpeedChanged.Broadcast(this, ResolveSignalCharacterTag(this), ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleStrengthAttributeChanged(const FOnAttributeChangeData& ChangeData)
 {
 	BroadcastCoreAttributeChanged(EARCoreAttributeType::Strength, ChangeData.NewValue, ChangeData.OldValue);
-	OnStrengthChanged.Broadcast(this, PlayerSlot, ChangeData.NewValue, ChangeData.OldValue);
+	OnStrengthChanged.Broadcast(this, ResolveSignalCharacterTag(this), ChangeData.NewValue, ChangeData.OldValue);
 }
 
 void AARPlayerStateBase::HandleDownedTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
@@ -2230,7 +2055,7 @@ void AARPlayerStateBase::EvaluateLifeStateFromASC()
 
 void AARPlayerStateBase::BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue)
 {
-	OnCoreAttributeChanged.Broadcast(this, PlayerSlot, AttributeType, NewValue, OldValue);
+	OnCoreAttributeChanged.Broadcast(this, ResolveSignalCharacterTag(this), AttributeType, NewValue, OldValue);
 }
 
 void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)
@@ -2257,8 +2082,7 @@ void AARPlayerStateBase::SetStrength_Internal(const float NewStrength)
 
 bool AARPlayerStateBase::IsTravelReady() const
 {
-	return ARPlayer::GetPlayerSlotForTag(PlayerSlotTag) != EARPlayerSlot::Unknown
-		&& CharacterPicked != EARCharacterChoice::None
+	return ARPlayer::NormalizeCharacterTag(CurrentCharacterTag).IsValid()
 		&& bIsReady;
 }
 
@@ -2271,3 +2095,4 @@ void AARPlayerStateBase::EvaluateTravelReadinessAndBroadcast()
 		OnTravelReadinessChanged.Broadcast(bCachedTravelReady);
 	}
 }
+

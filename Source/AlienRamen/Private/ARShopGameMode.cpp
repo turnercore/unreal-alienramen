@@ -137,7 +137,7 @@ namespace
 			return CanonicalCharacterTag;
 		}
 
-		return ARPlayer::GetDefaultCharacterTagForSlot(PlayerState->GetPlayerSlot());
+		return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
 	}
 }
 
@@ -239,9 +239,9 @@ UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AContro
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[ShopGameMode] Resolve pawn class for controller='%s' slot=%d choice=%d characterTag=%s source=%s."),
+		TEXT("[ShopGameMode] Resolve pawn class for controller='%s' playerSlotId=%d choice=%d characterTag=%s source=%s."),
 		*GetNameSafe(InController),
-		InController && InController->GetPlayerState<AARPlayerStateBase>() ? static_cast<int32>(InController->GetPlayerState<AARPlayerStateBase>()->GetPlayerSlot()) : static_cast<int32>(EARPlayerSlot::Unknown),
+		InController && InController->GetPlayerState<AARPlayerStateBase>() ? InController->GetPlayerState<AARPlayerStateBase>()->GetPlayerSlotId() : 0,
 		InController && InController->GetPlayerState<AARPlayerStateBase>() ? static_cast<int32>(InController->GetPlayerState<AARPlayerStateBase>()->GetCharacterPicked()) : static_cast<int32>(EARCharacterChoice::None),
 		*CharacterTag.ToString(),
 		CharacterTagSource);
@@ -514,7 +514,7 @@ bool AARShopGameMode::TryRestoreCharacterShopStateForController(AController* Con
 		return false;
 	}
 
-	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag(), PlayerState->GetPlayerSlot());
+	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
 	int32 CharacterIndex = INDEX_NONE;
 	FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterIndex);
 	if (!CharacterState)

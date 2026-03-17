@@ -97,11 +97,11 @@ void UParleyDialogueWidgetBase::SubmitChoice(FGuid ChoiceBranchId)
 	}
 }
 
-void UParleyDialogueWidgetBase::SetEavesdrop(bool bEnable, FGameplayTag TargetSlotTag)
+void UParleyDialogueWidgetBase::SetEavesdrop(bool bEnable, FGameplayTag TargetCharacterTag)
 {
 	if (IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController))
 	{
-		ControllerInterface->RequestSetDialogueEavesdropInput(bEnable, TargetSlotTag);
+		ControllerInterface->RequestSetDialogueEavesdropInput(bEnable, TargetCharacterTag);
 	}
 }
 

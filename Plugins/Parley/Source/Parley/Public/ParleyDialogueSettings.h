@@ -33,7 +33,7 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Content", meta = (ToolTip = "TagKey root tag used to discover dialogue content assets."))
 	FGameplayTag ConversationDefinitionRootTag;
 
-	// Modes that use one shared session for all slotted players.
+	// Modes that use one shared session for all active characters/controllers.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Mode", meta = (ToolTip = "Mode tag set used to configure dialogue runtime behavior."))
 	FGameplayTagContainer SharedDialogueModeTags;
 
@@ -56,10 +56,6 @@ public:
 	// Safety guard for read-only choice lookahead traversal.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ClampMin="16", UIMin="16", ToolTip = "Safety cap for maximum node steps processed when previewing a highlighted choice branch."))
 	int32 MaxLookaheadSteps = 1024;
-
-	// Ordered list mapping player slots to tags (Index 0 = P1, Index 1 = P2).
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta=(ToolTip = "Ordered list mapping player slots to tags (index 0 = P1, index 1 = P2)."))
-	TArray<FGameplayTag> PlayerSlotTags;
 
 	// In per-player dialogue modes, allow only one active owner session per primary speaker at a time.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (ToolTip = "Runtime dialogue behavior toggle used by Parley systems."))

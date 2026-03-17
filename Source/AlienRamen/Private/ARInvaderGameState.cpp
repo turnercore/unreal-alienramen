@@ -39,6 +39,17 @@ namespace ARInvaderGameStateInternal
 	{
 		return static_cast<int32>(HashCombine(GetTypeHash(RunSeed), Salt));
 	}
+
+	static FGameplayTag ResolveOwningCharacterTag(const AARPlayerStateBase* PlayerState)
+	{
+		if (!PlayerState)
+		{
+			return FGameplayTag();
+		}
+
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+	return NormalizedCharacterTag;
+}
 }
 
 AARInvaderGameState::AARInvaderGameState()
@@ -304,14 +315,14 @@ AARPlayerStateBase* AARInvaderGameState::ResolvePlayerStateFromDebugToken(const 
 		return nullptr;
 	}
 
-	EARPlayerSlot DesiredSlot = EARPlayerSlot::Unknown;
+	FGameplayTag DesiredCharacterTag;
 	if (Normalized == TEXT("p1") || Normalized == TEXT("1"))
 	{
-		DesiredSlot = EARPlayerSlot::P1;
+		DesiredCharacterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
 	}
 	else if (Normalized == TEXT("p2") || Normalized == TEXT("2"))
 	{
-		DesiredSlot = EARPlayerSlot::P2;
+		DesiredCharacterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister);
 	}
 
 	for (AARPlayerStateBase* PlayerState : GetPlayerStates())
@@ -321,7 +332,8 @@ AARPlayerStateBase* AARInvaderGameState::ResolvePlayerStateFromDebugToken(const 
 			continue;
 		}
 
-		if (DesiredSlot != EARPlayerSlot::Unknown && PlayerState->GetPlayerSlot() == DesiredSlot)
+		if (DesiredCharacterTag.IsValid()
+			&& ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag()).MatchesTagExact(DesiredCharacterTag))
 		{
 			return PlayerState;
 		}
@@ -609,7 +621,7 @@ void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args
 			continue;
 		}
 
-		if (PlayerState->GetPlayerSlot() == EARPlayerSlot::P1)
+		if (ARInvaderGameStateInternal::ResolveOwningCharacterTag(PlayerState).MatchesTagExact(ARPlayer::GetBrotherCharacterTag()))
 		{
 			RequestingPlayerState = PlayerState;
 			break;
@@ -639,7 +651,7 @@ void AARInvaderGameState::HandleConsoleInjectUpgrade(const TArray<FString>& Args
 
 	FullBlastSession = FARInvaderFullBlastSessionState();
 	FullBlastSession.bIsActive = true;
-	FullBlastSession.RequestingPlayerSlot = RequestingPlayerState->GetPlayerSlot();
+	FullBlastSession.RequestingCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState);
 	FullBlastSession.ActivationTier = ActivationTier;
 	FARInvaderUpgradeOffer InjectOffer;
 	InjectOffer.UpgradeTag = UpgradeTag;
@@ -1430,7 +1442,7 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 	FullBlastSession = FARInvaderFullBlastSessionState();
 	OfferPresenceStates.Reset();
 	FullBlastSession.bIsActive = true;
-	FullBlastSession.RequestingPlayerSlot = RequestingPlayerState->GetPlayerSlot();
+	FullBlastSession.RequestingCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState);
 	FullBlastSession.ActivationTier = SharedFullBlastTier;
 	FullBlastSession.Offers.Reserve(OfferCount);
 	for (int32 OfferIndex = 0; OfferIndex < OfferCount; ++OfferIndex)
@@ -1458,11 +1470,14 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 		return false;
 	}
 
-	if (FullBlastSession.RequestingPlayerSlot != EARPlayerSlot::Unknown
-		&& RequestingPlayerState->GetPlayerSlot() != FullBlastSession.RequestingPlayerSlot)
+	const FGameplayTag RequestingCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState);
+	if (ARPlayer::NormalizeCharacterTag(FullBlastSession.RequestingCharacterTag).IsValid()
+		&& !RequestingCharacterTag.MatchesTagExact(ARPlayer::NormalizeCharacterTag(FullBlastSession.RequestingCharacterTag)))
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected requester='%s' slot=%d expectedSlot=%d"),
-			*GetNameSafe(RequestingPlayerState), static_cast<int32>(RequestingPlayerState->GetPlayerSlot()), static_cast<int32>(FullBlastSession.RequestingPlayerSlot));
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection rejected requester='%s' character=%s expectedCharacter=%s"),
+			*GetNameSafe(RequestingPlayerState),
+			*RequestingCharacterTag.ToString(),
+			*FullBlastSession.RequestingCharacterTag.ToString());
 		return false;
 	}
 
@@ -1548,7 +1563,7 @@ bool AARInvaderGameState::ResolveFullBlastSelection(AARPlayerStateBase* Requesti
 		OnRep_SharedFullBlastTier(OldTier);
 	}
 
-	ResolveFullBlastCommonPostChoice(false, OldSession.RequestingPlayerSlot, OldSession.ActivationTier);
+	ResolveFullBlastCommonPostChoice(false, OldSession.RequestingCharacterTag, OldSession.ActivationTier);
 	ForceNetUpdate();
 	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSelection accepted requester='%s' tag='%s' destinationSlot=%d newTier=%d"),
 		*GetNameSafe(RequestingPlayerState), *SelectedUpgradeTag.ToString(), DestinationSlot, SharedFullBlastTier);
@@ -1564,11 +1579,14 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 		return false;
 	}
 
-	if (FullBlastSession.RequestingPlayerSlot != EARPlayerSlot::Unknown
-		&& RequestingPlayerState->GetPlayerSlot() != FullBlastSession.RequestingPlayerSlot)
+	const FGameplayTag RequestingCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState);
+	if (ARPlayer::NormalizeCharacterTag(FullBlastSession.RequestingCharacterTag).IsValid()
+		&& !RequestingCharacterTag.MatchesTagExact(ARPlayer::NormalizeCharacterTag(FullBlastSession.RequestingCharacterTag)))
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSkip rejected requester='%s' slot=%d expectedSlot=%d"),
-			*GetNameSafe(RequestingPlayerState), static_cast<int32>(RequestingPlayerState->GetPlayerSlot()), static_cast<int32>(FullBlastSession.RequestingPlayerSlot));
+		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSkip rejected requester='%s' character=%s expectedCharacter=%s"),
+			*GetNameSafe(RequestingPlayerState),
+			*RequestingCharacterTag.ToString(),
+			*FullBlastSession.RequestingCharacterTag.ToString());
 		return false;
 	}
 
@@ -1589,7 +1607,7 @@ bool AARInvaderGameState::ResolveFullBlastSkip(AARPlayerStateBase* RequestingPla
 	SyncSharedMaxSpiceToPlayers();
 	OnRep_FullBlastSession(OldSession);
 	OnRep_OfferPresenceStates(OldPresenceStates);
-	ResolveFullBlastCommonPostChoice(true, OldSession.RequestingPlayerSlot, OldSession.ActivationTier);
+	ResolveFullBlastCommonPostChoice(true, OldSession.RequestingCharacterTag, OldSession.ActivationTier);
 	ForceNetUpdate();
 	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] ResolveFullBlastSkip accepted requester='%s' activationTier=%d scrapReward=%d"),
 		*GetNameSafe(RequestingPlayerState), OldSession.ActivationTier, SkipReward);
@@ -1609,8 +1627,8 @@ bool AARInvaderGameState::SetOfferPresence(
 		return false;
 	}
 
-	const EARPlayerSlot SourceSlot = SourcePlayerState->GetPlayerSlot();
-	if (SourceSlot == EARPlayerSlot::Unknown)
+	const FGameplayTag SourceCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(SourcePlayerState);
+	if (!SourceCharacterTag.IsValid())
 	{
 		return false;
 	}
@@ -1642,7 +1660,7 @@ bool AARInvaderGameState::SetOfferPresence(
 	}
 
 	FARInvaderOfferPresenceState NewPresenceState;
-	NewPresenceState.PlayerSlot = SourceSlot;
+	NewPresenceState.PlayerCharacterTag = SourceCharacterTag;
 	NewPresenceState.HoveredUpgradeTag = HoveredUpgradeTag;
 	NewPresenceState.HoveredDestinationSlot = HoveredDestinationSlot > 0 ? HoveredDestinationSlot : -1;
 	NewPresenceState.bHasSelection = bHasSelection && SelectedUpgradeTag.IsValid();
@@ -1651,9 +1669,9 @@ bool AARInvaderGameState::SetOfferPresence(
 
 	const TArray<FARInvaderOfferPresenceState> OldPresenceStates = OfferPresenceStates;
 	const int32 ExistingIndex = OfferPresenceStates.IndexOfByPredicate(
-		[SourceSlot](const FARInvaderOfferPresenceState& State)
+		[SourceCharacterTag](const FARInvaderOfferPresenceState& State)
 		{
-			return State.PlayerSlot == SourceSlot;
+			return State.PlayerCharacterTag.MatchesTagExact(SourceCharacterTag);
 		});
 
 	if (ExistingIndex != INDEX_NONE)
@@ -1674,12 +1692,12 @@ bool AARInvaderGameState::SetOfferPresence(
 	else
 	{
 		OfferPresenceStates.Add(NewPresenceState);
-		OfferPresenceStates.Sort(
-			[](const FARInvaderOfferPresenceState& A, const FARInvaderOfferPresenceState& B)
-			{
-				return static_cast<uint8>(A.PlayerSlot) < static_cast<uint8>(B.PlayerSlot);
-			});
-	}
+			OfferPresenceStates.Sort(
+				[](const FARInvaderOfferPresenceState& A, const FARInvaderOfferPresenceState& B)
+				{
+					return A.PlayerCharacterTag.ToString() < B.PlayerCharacterTag.ToString();
+				});
+		}
 
 	OnRep_OfferPresenceStates(OldPresenceStates);
 	ForceNetUpdate();
@@ -1693,17 +1711,17 @@ bool AARInvaderGameState::ClearOfferPresence(AARPlayerStateBase* SourcePlayerSta
 		return false;
 	}
 
-	const EARPlayerSlot SourceSlot = SourcePlayerState->GetPlayerSlot();
-	if (SourceSlot == EARPlayerSlot::Unknown)
+	const FGameplayTag SourceCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(SourcePlayerState);
+	if (!SourceCharacterTag.IsValid())
 	{
 		return false;
 	}
 
 	const TArray<FARInvaderOfferPresenceState> OldPresenceStates = OfferPresenceStates;
 	const int32 RemovedCount = OfferPresenceStates.RemoveAll(
-		[SourceSlot](const FARInvaderOfferPresenceState& State)
+		[SourceCharacterTag](const FARInvaderOfferPresenceState& State)
 		{
-			return State.PlayerSlot == SourceSlot;
+			return State.PlayerCharacterTag.MatchesTagExact(SourceCharacterTag);
 		});
 	if (RemovedCount <= 0)
 	{
@@ -1760,9 +1778,9 @@ bool AARInvaderGameState::ApplyUpgradeActivation(AARPlayerStateBase* RequestingP
 			UE_LOG(
 				ARLog,
 				Error,
-				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' slot=%d tag='%s' reason=MissingASC"),
+				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' character='%s' tag='%s' reason=MissingASC"),
 				*GetNameSafe(RequestingPlayerState),
-				static_cast<int32>(RequestingPlayerState->GetPlayerSlot()),
+				*ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState).ToString(),
 				*UpgradeDef.UpgradeTag.ToString());
 			return false;
 		}
@@ -1773,9 +1791,9 @@ bool AARInvaderGameState::ApplyUpgradeActivation(AARPlayerStateBase* RequestingP
 			UE_LOG(
 				ARLog,
 				Error,
-				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' slot=%d tag='%s' reason=InvalidActivateEffectClass"),
+				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' character='%s' tag='%s' reason=InvalidActivateEffectClass"),
 				*GetNameSafe(RequestingPlayerState),
-				static_cast<int32>(RequestingPlayerState->GetPlayerSlot()),
+				*ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState).ToString(),
 				*UpgradeDef.UpgradeTag.ToString());
 			return false;
 		}
@@ -1787,9 +1805,9 @@ bool AARInvaderGameState::ApplyUpgradeActivation(AARPlayerStateBase* RequestingP
 			UE_LOG(
 				ARLog,
 				Error,
-				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' slot=%d tag='%s' reason=InvalidGESpec"),
+				TEXT("[InvaderSpice|Action] ApplyUpgradeActivation failed requester='%s' character='%s' tag='%s' reason=InvalidGESpec"),
 				*GetNameSafe(RequestingPlayerState),
-				static_cast<int32>(RequestingPlayerState->GetPlayerSlot()),
+				*ARInvaderGameStateInternal::ResolveOwningCharacterTag(RequestingPlayerState).ToString(),
 				*UpgradeDef.UpgradeTag.ToString());
 			return false;
 		}
@@ -2107,12 +2125,12 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 
 	OnInvaderKillCreditAwarded.Broadcast(
 		KillerPlayerState,
-		KillerPlayerState->GetPlayerSlot(),
+		ARInvaderGameStateInternal::ResolveOwningCharacterTag(KillerPlayerState),
 		SpiceGained,
 		KillerPlayerState->GetInvaderComboCount());
 
 	FARInvaderKillCreditFxEvent FxEventData;
-	FxEventData.TargetPlayerSlot = KillerPlayerState->GetPlayerSlot();
+	FxEventData.TargetCharacterTag = ARInvaderGameStateInternal::ResolveOwningCharacterTag(KillerPlayerState);
 	FxEventData.SpiceGained = SpiceGained;
 	FxEventData.NewComboCount = KillerPlayerState->GetInvaderComboCount();
 	FxEventData.EnemyColor = EnemyColor;
@@ -2132,9 +2150,9 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 	}
 
 	MulticastNotifyKillCreditFxEvent(FxEventData);
-	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] Kill credit awarded to '%s' Slot=%d EnemyColor=%d Gained=%.2f Spice %.2f -> %.2f / %.2f Combo=%d"),
+	UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice] Kill credit awarded to '%s' CharacterTag=%s EnemyColor=%d Gained=%.2f Spice %.2f -> %.2f / %.2f Combo=%d"),
 		*KillerPlayerState->GetName(),
-		static_cast<int32>(KillerPlayerState->GetPlayerSlot()),
+		*FxEventData.TargetCharacterTag.ToString(),
 		static_cast<int32>(EnemyColor),
 		SpiceGained,
 		CurrentSpice,
@@ -2711,11 +2729,11 @@ EARAffinityColor AARInvaderGameState::ToPlayerColor(const EARAffinityColor Enemy
 	}
 }
 
-void AARInvaderGameState::ResolveFullBlastCommonPostChoice(const bool bSkipped, const EARPlayerSlot RequestingSlot, const int32 ActivationTier)
+void AARInvaderGameState::ResolveFullBlastCommonPostChoice(const bool bSkipped, const FGameplayTag RequestingCharacterTag, const int32 ActivationTier)
 {
 	ApplyFullBlastGameplayCue();
 	ClearEnemyProjectilesByTag();
-	OnInvaderFullBlastResolved.Broadcast(bSkipped, ActivationTier, RequestingSlot);
+	OnInvaderFullBlastResolved.Broadcast(bSkipped, ActivationTier, RequestingCharacterTag);
 }
 
 void AARInvaderGameState::ApplyFullBlastGameplayCue()
@@ -2864,3 +2882,4 @@ void AARInvaderGameState::ClearWhileSlottedEffectsForPlayer(AARPlayerStateBase* 
 		}
 	}
 }
+

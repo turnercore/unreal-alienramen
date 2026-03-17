@@ -4,27 +4,61 @@
 #include "ParleyDialogueSettings.h"
 #include "ParleyLog.h"
 #include "ParleyPlayerControllerInterface.h"
-#include "ParleyPlayerSlotHelpers.h"
 #include "ParleySpeakerSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/GameStateBase.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "UObject/UnrealType.h"
 
 namespace
 {
-	static uint8 GetTalkableMaskForSlotIndex(const int32 SlotIndex)
+	static FGameplayTag ReadCharacterTagProperty(const UObject* Object, const FName PropertyName)
 	{
-		switch (SlotIndex)
+		if (!Object)
 		{
-		case 0:
-			return 1 << 0;
-		case 1:
-			return 1 << 1;
-		default:
-			return 0;
+			return FGameplayTag();
+		}
+
+		const FStructProperty* Property = FindFProperty<FStructProperty>(Object->GetClass(), PropertyName);
+		if (!Property || Property->Struct != TBaseStructure<FGameplayTag>::Get())
+		{
+			return FGameplayTag();
+		}
+
+		return *Property->ContainerPtrToValuePtr<FGameplayTag>(Object);
+	}
+
+	static bool AreCharacterTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
+	{
+		return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
+	}
+
+	static void GatherControlledCharacterTags(const UWorld* World, TArray<FGameplayTag>& OutCharacterTags)
+	{
+		OutCharacterTags.Reset();
+		if (!World)
+		{
+			return;
+		}
+
+		const AGameStateBase* GameState = World->GetGameState<AGameStateBase>();
+		if (!GameState)
+		{
+			return;
+		}
+
+		for (APlayerState* PlayerState : GameState->PlayerArray)
+		{
+			const FGameplayTag CharacterTag = ReadCharacterTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
+			if (CharacterTag.IsValid())
+			{
+				OutCharacterTags.AddUnique(CharacterTag);
+			}
 		}
 	}
 }
@@ -177,34 +211,29 @@ void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 		return;
 	}
 
-	const uint8 OldMask = TalkablePlayerSlotMask;
-	uint8 NewTalkableMask = 0;
+	const FGameplayTagContainer OldTalkableCharacterTags = TalkableCharacterTags;
+	FGameplayTagContainer NewTalkableCharacterTags;
 	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			const bool bP1Talkable = DialogueSubsystem->HasUnlockedDialogueForSpeakerForSlot(SpeakerTag, ParleyPlayerSlot::GetP1Tag());
-			const bool bP2Talkable = DialogueSubsystem->HasUnlockedDialogueForSpeakerForSlot(SpeakerTag, ParleyPlayerSlot::GetP2Tag());
-			if (bP1Talkable)
+			TArray<FGameplayTag> ControlledCharacterTags;
+			GatherControlledCharacterTags(GetWorld(), ControlledCharacterTags);
+			for (const FGameplayTag CharacterTag : ControlledCharacterTags)
 			{
-				NewTalkableMask |= GetTalkableMaskForSlotIndex(0);
-			}
-
-			if (bP2Talkable)
-			{
-				NewTalkableMask |= GetTalkableMaskForSlotIndex(1);
+				if (DialogueSubsystem->HasUnlockedDialogueForSpeakerForCharacter(SpeakerTag, CharacterTag))
+				{
+					NewTalkableCharacterTags.AddTag(CharacterTag);
+				}
 			}
 
 			UE_LOG(
 				ParleyLog,
 				Verbose,
-				TEXT("[Speaker] Component eval '%s' (%s): P1=%s P2=%s Mask=0x%02x->0x%02x"),
+				TEXT("[Speaker] Component eval '%s' (%s): TalkableCharacters=%d"),
 				*GetNameSafe(GetOwner()),
 				*SpeakerTag.ToString(),
-				bP1Talkable ? TEXT("true") : TEXT("false"),
-				bP2Talkable ? TEXT("true") : TEXT("false"),
-				OldMask,
-				NewTalkableMask);
+				NewTalkableCharacterTags.Num());
 		}
 		else
 		{
@@ -216,14 +245,14 @@ void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable."), *GetNameSafe(GetOwner()));
 	}
 
-	const bool bMaskChanged = OldMask != NewTalkableMask;
-	TalkablePlayerSlotMask = NewTalkableMask;
-	if (bMaskChanged)
+	const bool bCharacterTagsChanged = !AreCharacterTagContainersEquivalent(OldTalkableCharacterTags, NewTalkableCharacterTags);
+	TalkableCharacterTags = NewTalkableCharacterTags;
+	if (bCharacterTagsChanged)
 	{
-		OnRep_TalkablePlayerSlotMask(OldMask);
+		OnRep_TalkableCharacterTags(OldTalkableCharacterTags);
 	}
 
-	const bool bNewTalkable = TalkablePlayerSlotMask != 0;
+	const bool bNewTalkable = TalkableCharacterTags.Num() > 0;
 	const bool bTalkableChanged = bIsTalkable != bNewTalkable;
 	if (bTalkableChanged)
 	{
@@ -232,7 +261,7 @@ void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 		OnRep_IsTalkable(bOldTalkable);
 	}
 
-	if (bMaskChanged || bTalkableChanged)
+	if (bCharacterTagsChanged || bTalkableChanged)
 	{
 		ForceOwnerNetUpdate();
 	}
@@ -257,22 +286,21 @@ void UParleySpeakerComponent::OnRep_IsTalkable(const bool bOldTalkable)
 	}
 }
 
-void UParleySpeakerComponent::OnRep_TalkablePlayerSlotMask(const uint8 bOldTalkablePlayerSlotMask)
+void UParleySpeakerComponent::OnRep_TalkableCharacterTags(FGameplayTagContainer OldTalkableCharacterTags)
 {
-	if (bOldTalkablePlayerSlotMask == TalkablePlayerSlotMask)
+	if (AreCharacterTagContainersEquivalent(OldTalkableCharacterTags, TalkableCharacterTags))
 	{
 		return;
 	}
 
-	// Always broadcast on slot-mask changes so listeners refresh per-slot indicators even
+	// Always broadcast on per-character changes so listeners refresh per-character indicators even
 	// if bIsTalkable replication is delayed or unchanged.
-	OnSpeakerTalkableStateChanged.Broadcast(TalkablePlayerSlotMask != 0);
+	OnSpeakerTalkableStateChanged.Broadcast(TalkableCharacterTags.Num() > 0);
 }
 
-bool UParleySpeakerComponent::IsTalkableForPlayerSlotTag(const FGameplayTag PlayerSlotTag) const
+bool UParleySpeakerComponent::IsTalkableForCharacterTag(const FGameplayTag CharacterTag) const
 {
-	const uint8 SlotMask = GetTalkableMaskForSlotIndex(ParleyPlayerSlot::GetIndexForTag(PlayerSlotTag));
-	return SlotMask != 0 && (TalkablePlayerSlotMask & SlotMask) != 0;
+	return CharacterTag.IsValid() && TalkableCharacterTags.HasTagExact(CharacterTag);
 }
 
 bool UParleySpeakerComponent::IsTalkableForController(const APlayerController* QueryController) const
@@ -288,8 +316,8 @@ bool UParleySpeakerComponent::IsTalkableForController(const APlayerController* Q
 		return false;
 	}
 
-	const FGameplayTag SlotTag = ControllerInterface->GetPlayerSlotTag();
-	return IsTalkableForPlayerSlotTag(SlotTag);
+	const FGameplayTag CharacterTag = ControllerInterface->GetCharacterTag();
+	return IsTalkableForCharacterTag(CharacterTag);
 }
 
 bool UParleySpeakerComponent::HasSomethingToSay() const
@@ -315,5 +343,5 @@ void UParleySpeakerComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UParleySpeakerComponent, bIsTalkable);
-	DOREPLIFETIME(UParleySpeakerComponent, TalkablePlayerSlotMask);
+	DOREPLIFETIME(UParleySpeakerComponent, TalkableCharacterTags);
 }

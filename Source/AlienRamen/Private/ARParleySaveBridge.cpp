@@ -7,7 +7,6 @@
 #include "ARSaveSubsystem.h"
 #include "ParleyDialogueSubsystem.h"
 #include "ParleyFactionSubsystem.h"
-#include "ParleyPlayerSlotHelpers.h"
 
 namespace
 {
@@ -100,7 +99,7 @@ void UARParleySaveBridge::Initialize(UARSaveSubsystem* InSaveSubsystem, UParleyD
 		ParleySubsystem->OnParleyConversationCompleted.AddDynamic(this, &UARParleySaveBridge::HandleConversationCompleted);
 		ParleySubsystem->OnSpeakerRelationshipChanged.AddDynamic(this, &UARParleySaveBridge::HandleSpeakerRelationshipChanged);
 		ParleySubsystem->OnProgressionTagMutated.AddDynamic(this, &UARParleySaveBridge::HandleProgressionTagMutated);
-		ParleySubsystem->OnQueryConversationCompleted.BindUObject(this, &UARParleySaveBridge::IsConversationCompletedForPlayer);
+		ParleySubsystem->OnQueryConversationCompleted.BindUObject(this, &UARParleySaveBridge::IsConversationCompletedForCharacter);
 		ParleySubsystem->OnQueryCurrentModeTag.BindUObject(this, &UARParleySaveBridge::ResolveCurrentModeTag);
 	}
 
@@ -141,7 +140,7 @@ void UARParleySaveBridge::HandleSaveLoaded()
 	InjectAllFromCurrentSave();
 }
 
-void UARParleySaveBridge::HandleConversationCompleted(FGameplayTag ConversationTag, FGameplayTag PlayerSlotTag, FGameplayTag CharacterTag)
+void UARParleySaveBridge::HandleConversationCompleted(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag)
 {
 	UARSaveGame* SaveGame = GetCurrentSave();
 	if (!SaveGame || !ConversationTag.IsValid())
@@ -151,10 +150,9 @@ void UARParleySaveBridge::HandleConversationCompleted(FGameplayTag ConversationT
 
 	SaveGame->DialogueCompletedConversationTagsByGame.AddTag(ConversationTag);
 
-	const EARPlayerSlot PlayerSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	const FGameplayTag EffectiveCharacterTag = CharacterTag.IsValid()
-		? CharacterTag
-		: ResolveCharacterTagForSlot(SaveGame, PlayerSlot);
+	const FGameplayTag EffectiveCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag).IsValid()
+		? ARPlayer::NormalizeCharacterTag(CharacterTag)
+		: ARPlayer::NormalizeCharacterTag(OwnerCharacterTag);
 	if (EffectiveCharacterTag.IsValid())
 	{
 		FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(EffectiveCharacterTag);
@@ -164,9 +162,9 @@ void UARParleySaveBridge::HandleConversationCompleted(FGameplayTag ConversationT
 	SaveSubsystem->MarkSaveDirty();
 }
 
-void UARParleySaveBridge::HandleSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag PlayerSlotTag, float Delta, float NewTotal)
+void UARParleySaveBridge::HandleSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal)
 {
-	(void)PlayerSlotTag;
+	(void)OwnerCharacterTag;
 	(void)Delta;
 	UARSaveGame* SaveGame = GetCurrentSave();
 	if (!SaveGame || !SourceSpeakerTag.IsValid() || !TargetSpeakerTag.IsValid())
@@ -210,7 +208,7 @@ void UARParleySaveBridge::HandleSpeakerRelationshipChanged(FGameplayTag SourceSp
 	}
 }
 
-void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag PlayerSlotTag)
+void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag)
 {
 	UARSaveGame* SaveGame = GetCurrentSave();
 	if (!SaveGame || !ProgressionTag.IsValid())
@@ -218,8 +216,8 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 		return;
 	}
 
-	const EARPlayerSlot PlayerSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	if (PlayerSlot == EARPlayerSlot::Unknown)
+	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(OwnerCharacterTag);
+	if (!CharacterTag.IsValid())
 	{
 		if (bAdded)
 		{
@@ -230,12 +228,6 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 			SaveGame->ProgressionTags.RemoveTag(ProgressionTag);
 		}
 		SaveSubsystem->MarkSaveDirty();
-		return;
-	}
-
-	const FGameplayTag CharacterTag = ResolveCharacterTagForSlot(SaveGame, PlayerSlot);
-	if (!CharacterTag.IsValid())
-	{
 		return;
 	}
 
@@ -302,7 +294,7 @@ void UARParleySaveBridge::HandleFactionSpeakerReputationChanged(FGameplayTag Fac
 	SaveSubsystem->MarkSaveDirty();
 }
 
-bool UARParleySaveBridge::IsConversationCompletedForPlayer(FGameplayTag ConversationTag, FGameplayTag PlayerSlotTag) const
+bool UARParleySaveBridge::IsConversationCompletedForCharacter(FGameplayTag ConversationTag, FGameplayTag CharacterTag) const
 {
 	const UARSaveGame* SaveGame = GetCurrentSave();
 	if (!SaveGame || !ConversationTag.IsValid())
@@ -310,21 +302,15 @@ bool UARParleySaveBridge::IsConversationCompletedForPlayer(FGameplayTag Conversa
 		return false;
 	}
 
-	const EARPlayerSlot PlayerSlot = ARPlayer::GetPlayerSlotForTag(PlayerSlotTag);
-	if (PlayerSlot == EARPlayerSlot::Unknown)
-	{
-		return false;
-	}
-
-	const FGameplayTag CharacterTag = ResolveCharacterTagForSlot(const_cast<UARSaveGame*>(SaveGame), PlayerSlot);
-	if (!CharacterTag.IsValid())
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	if (!NormalizedCharacterTag.IsValid())
 	{
 		return false;
 	}
 
 	FARCharacterSaveData CharacterState;
 	int32 CharacterIndex = INDEX_NONE;
-	if (!SaveGame->FindCharacterStateDataByTag(CharacterTag, CharacterState, CharacterIndex))
+	if (!SaveGame->FindCharacterStateDataByTag(NormalizedCharacterTag, CharacterState, CharacterIndex))
 	{
 		return false;
 	}
@@ -367,10 +353,10 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 	ParleySubsystem->SetCompletedConversationTagsByGame(SaveGame->DialogueCompletedConversationTagsByGame);
 	ParleySubsystem->SetSpeakerRelationshipStates(SaveGame->DialogueSpeakerRelationshipStates);
 
-	for (const EARPlayerSlot Slot : { EARPlayerSlot::P1, EARPlayerSlot::P2 })
+	for (const FGameplayTag CharacterTag : { ARPlayer::GetBrotherCharacterTag(), ARPlayer::GetSisterCharacterTag() })
 	{
 		FParleyProgressionState State;
-		State.CharacterTag = ResolveCharacterTagForSlot(SaveGame, Slot);
+		State.CharacterTag = CharacterTag;
 
 		if (State.CharacterTag.IsValid())
 		{
@@ -387,7 +373,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 			}
 		}
 
-		ParleySubsystem->SetProgressionStateForPlayer(ARPlayer::GetPlayerSlotTag(Slot), State);
+		ParleySubsystem->SetProgressionStateForCharacter(State.CharacterTag, State);
 	}
 
 	FactionSubsystem->SetProgressionTags(SaveGame->ProgressionTags);
@@ -431,19 +417,3 @@ UARSaveGame* UARParleySaveBridge::GetCurrentSave() const
 	return SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
 }
 
-FGameplayTag UARParleySaveBridge::ResolveCharacterTagForSlot(UARSaveGame* SaveGame, EARPlayerSlot Slot) const
-{
-	if (!SaveGame || Slot == EARPlayerSlot::Unknown)
-	{
-		return FGameplayTag();
-	}
-
-	FARPlayerStateSaveData PlayerData;
-	int32 PlayerIndex = INDEX_NONE;
-	if (SaveGame->FindPlayerStateDataBySlot(Slot, PlayerData, PlayerIndex))
-	{
-		return PlayerData.ResolveCurrentCharacterTag();
-	}
-
-	return ARPlayer::GetDefaultCharacterTagForSlot(Slot);
-}

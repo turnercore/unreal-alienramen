@@ -24,8 +24,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnPlayerReadyChangedSignature,
 	AARPlayerStateBase*,
 	SourcePlayerState,
-	EARPlayerSlot,
-	SourcePlayerSlot,
+	FGameplayTag,
+	SourceCharacterTag,
 	bool,
 	bNewReady,
 	bool,
@@ -140,13 +140,21 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "State Serialization")
 	TObjectPtr<UScriptStruct> ClassStateStruct;
 
-	/** Returns the AR player occupying a specific coop slot (P1/P2), or nullptr if empty. */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
-	AARPlayerStateBase* GetPlayerBySlot(EARPlayerSlot Slot) const;
-
 	/** Returns all AR player states (filtered view of PlayerArray). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
 	TArray<AARPlayerStateBase*> GetPlayerStates() const;
+
+	/** Returns the AR player currently assigned to a canonical character tag. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	AARPlayerStateBase* GetPlayerStateByCharacterTag(FGameplayTag CharacterTag) const;
+
+	/** Returns the controller currently possessing/assigned to a canonical character tag. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	APlayerController* GetControllerByCharacterTag(FGameplayTag CharacterTag) const;
+
+	/** True when any current player state is assigned to the provided canonical character tag. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
+	bool IsCharacterControlled(FGameplayTag CharacterTag) const;
 
 	/** True when at least one AR player exists and both players are travel-ready. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Players")
@@ -257,7 +265,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
 	const FGameplayTagContainer& GetActiveFactionEffectTags() const { return ActiveFactionEffectTags; }
 
-	/** Returns true when all currently slotted players have an active pause-menu vote. */
+	/** Returns true when all currently connected players with valid runtime slot ids have an active pause-menu vote. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
 	bool AreAllPlayersPausedByMenu() const { return bAllPlayersPausedByMenu; }
 
@@ -269,17 +277,17 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
 	bool IsEffectivePauseStateActive() const { return bEffectivePauseStateActive; }
 
-	/** Returns whether a specific player slot currently has an active pause-menu vote. */
+	/** Returns whether a controller-owned runtime player slot id currently has an active pause-menu vote. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
-	bool IsPlayerPauseMenuVoteActive(EARPlayerSlot PlayerSlot) const;
+	bool IsPlayerPauseMenuVoteActiveById(int32 PlayerSlotId) const;
 
 	/** Returns whether a specific external pause reason is currently active. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Pause")
 	bool IsExternalPauseReasonActive(EARPauseExternalReason Reason) const;
 
-	/** Authority-only mutation for per-slot pause-menu vote. */
+	/** Authority-only mutation for controller-owned runtime player slot id pause vote. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Pause", meta = (BlueprintAuthorityOnly))
-	void SetPlayerPauseMenuVote(EARPlayerSlot PlayerSlot, bool bPaused);
+	void SetPlayerPauseMenuVoteById(int32 PlayerSlotId, bool bPaused);
 
 	/** Authority-only mutation for external pause reasons (dialogue/full-blast/etc). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Pause", meta = (BlueprintAuthorityOnly))
@@ -366,13 +374,10 @@ protected:
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
 	UFUNCTION()
-	void HandlePlayerReadyStatusChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, bool bNewReady, bool bOldReady);
+	void HandlePlayerReadyStatusChanged(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewReady, bool bOldReady);
 
 	UFUNCTION()
-	void HandlePlayerSlotChanged(EARPlayerSlot NewSlot, EARPlayerSlot OldSlot);
-
-	UFUNCTION()
-	void HandlePlayerCharacterPickedChanged(AARPlayerStateBase* SourcePlayerState, EARPlayerSlot SourcePlayerSlot, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter);
+	void HandlePlayerCharacterPickedChanged(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, EARCharacterChoice NewCharacter, EARCharacterChoice OldCharacter);
 
 	UFUNCTION()
 	void OnRep_AllPlayersTravelReady(bool bOldAllPlayersTravelReady);
@@ -431,7 +436,7 @@ protected:
 	void RefreshAllPlayersTravelReady();
 	bool ComputeAllPlayersPausedByMenu() const;
 	void RefreshPauseResolution();
-	void ClearPauseVoteForSlot(EARPlayerSlot PlayerSlot);
+	void ClearPauseVoteForPlayerSlotId(int32 PlayerSlotId);
 	void RegisterDebugConsoleCommands();
 	void UnregisterDebugConsoleCommands();
 	void HandleConsoleAddMeat(const TArray<FString>& Args, UWorld* World);

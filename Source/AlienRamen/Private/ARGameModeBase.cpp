@@ -189,13 +189,17 @@ namespace
 			}
 		}
 
-		if (CanonicalCharacterTag.IsValid())
-		{
-			return CanonicalCharacterTag;
-		}
-
-		return ARPlayer::GetDefaultCharacterTagForSlot(PlayerState->GetPlayerSlot());
+	if (CanonicalCharacterTag.IsValid())
+	{
+		return CanonicalCharacterTag;
 	}
+
+	const int32 RuntimeSlotId = PlayerState->GetPlayerSlotId();
+	const EARCharacterChoice FallbackChoice = (RuntimeSlotId > 0 && RuntimeSlotId % 2 == 0)
+		? EARCharacterChoice::Sister
+		: EARCharacterChoice::Brother;
+	return ARPlayer::GetCharacterTagForChoice(FallbackChoice);
+}
 
 	static void PrepareControllerForGameplaySpawn(AController* Controller)
 	{
@@ -391,58 +395,17 @@ void AARGameModeBase::BeginPlay()
 	}
 }
 
-EARPlayerSlot AARGameModeBase::DetermineNextPlayerSlot(const AARGameStateBase* GameState)
+int32 AARGameModeBase::FindFirstFreePlayerSlotId(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState)
 {
 	if (!GameState)
 	{
-		return EARPlayerSlot::P1;
+		return 1;
 	}
 
-	bool bHasP1 = false;
-	bool bHasP2 = false;
+	TSet<int32> OccupiedSlotIds;
 	for (APlayerState* PS : GameState->PlayerArray)
 	{
-		AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
-		if (!IsIdentityRelevantPlayerState(Player))
-		{
-			continue;
-		}
-
-		if (Player->GetPlayerSlot() == EARPlayerSlot::P1)
-		{
-			bHasP1 = true;
-		}
-		else if (Player->GetPlayerSlot() == EARPlayerSlot::P2)
-		{
-			bHasP2 = true;
-		}
-	}
-
-	if (!bHasP1)
-	{
-		return EARPlayerSlot::P1;
-	}
-
-	if (!bHasP2)
-	{
-		return EARPlayerSlot::P2;
-	}
-
-	return EARPlayerSlot::Unknown;
-}
-
-EARPlayerSlot AARGameModeBase::FindFirstFreePlayerSlot(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState)
-{
-	if (!GameState)
-	{
-		return EARPlayerSlot::P1;
-	}
-
-	bool bHasP1 = false;
-	bool bHasP2 = false;
-	for (APlayerState* PS : GameState->PlayerArray)
-	{
-		AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
+		const AARPlayerStateBase* Player = Cast<AARPlayerStateBase>(PS);
 		if (!IsIdentityRelevantPlayerState(Player)
 			|| Player == IgnorePlayerState
 			|| (IgnorePlayerState && AreSameLogicalPlayerState(Player, IgnorePlayerState)))
@@ -450,30 +413,23 @@ EARPlayerSlot AARGameModeBase::FindFirstFreePlayerSlot(const AARGameStateBase* G
 			continue;
 		}
 
-		if (Player->GetPlayerSlot() == EARPlayerSlot::P1)
+		const int32 RuntimeSlotId = Player->GetPlayerSlotId();
+		if (RuntimeSlotId > 0)
 		{
-			bHasP1 = true;
-		}
-		else if (Player->GetPlayerSlot() == EARPlayerSlot::P2)
-		{
-			bHasP2 = true;
+			OccupiedSlotIds.Add(RuntimeSlotId);
 		}
 	}
 
-	if (!bHasP1)
+	int32 CandidateSlotId = 1;
+	while (OccupiedSlotIds.Contains(CandidateSlotId))
 	{
-		return EARPlayerSlot::P1;
+		++CandidateSlotId;
 	}
 
-	if (!bHasP2)
-	{
-		return EARPlayerSlot::P2;
-	}
-
-	return EARPlayerSlot::Unknown;
+	return CandidateSlotId;
 }
 
-EARAffinityColor AARGameModeBase::ResolveExpectedInvaderPlayerColor(const EARCharacterChoice CharacterChoice, const EARPlayerSlot PlayerSlot)
+EARAffinityColor AARGameModeBase::ResolveExpectedInvaderPlayerColor(const EARCharacterChoice CharacterChoice)
 {
 	switch (CharacterChoice)
 	{
@@ -483,7 +439,7 @@ EARAffinityColor AARGameModeBase::ResolveExpectedInvaderPlayerColor(const EARCha
 		return EARAffinityColor::Red;
 	default:
 		// Mode-load baseline should still be a valid team color even if character is temporarily unset.
-		return (PlayerSlot == EARPlayerSlot::P2) ? EARAffinityColor::Red : EARAffinityColor::Blue;
+		return EARAffinityColor::Blue;
 	}
 }
 
@@ -557,43 +513,16 @@ void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState,
 		return;
 	}
 
-	EARPlayerSlot AssignedSlot = FindFirstFreePlayerSlot(InGameState, JoinedPlayerState);
-	if (AssignedSlot == EARPlayerSlot::Unknown)
+	if (JoinedPlayerState->GetPlayerSlotId() <= 0)
 	{
-		AssignedSlot = EARPlayerSlot::P1;
+		JoinedPlayerState->SetPlayerSlotId(FindFirstFreePlayerSlotId(InGameState, JoinedPlayerState));
 	}
-	JoinedPlayerState->SetPlayerSlot(AssignedSlot);
 
 	bool bHydratedFromSave = false;
 	if (SaveSubsystem)
 	{
-		// First pass: strict identity only. This avoids forcing slot-biased character data (for example
-		// P1->Brother) when a later strict sync will resolve to a different explicit character.
+		// Character-native hydration only: no slot fallback.
 		bHydratedFromSave = SaveSubsystem->TryHydratePlayerStateFromCurrentSave(JoinedPlayerState, false);
-
-		if (!bHydratedFromSave)
-		{
-			// Only allow slot fallback when there is no explicit character intent present on the runtime
-			// player state. If a character is already selected/tagged, preserve that intent.
-			const bool bHasExplicitCharacterIntent =
-				JoinedPlayerState->GetCharacterPicked() != EARCharacterChoice::None
-				|| ARPlayer::NormalizeCharacterTag(JoinedPlayerState->GetCurrentCharacterTag()).IsValid();
-			if (!bHasExplicitCharacterIntent)
-			{
-				bHydratedFromSave = SaveSubsystem->TryHydratePlayerStateFromCurrentSave(JoinedPlayerState, true);
-				if (bHydratedFromSave)
-				{
-					UE_LOG(
-						ARLog,
-						Verbose,
-						TEXT("[GameMode] Applied slot-fallback save hydration for '%s' because no explicit runtime character intent was present."),
-						*GetNameSafe(JoinedPlayerState));
-				}
-			}
-		}
-
-		// Preserve authoritative join-time slot assignment for this session.
-		JoinedPlayerState->SetPlayerSlot(AssignedSlot);
 	}
 
 	if (!bHydratedFromSave)
@@ -626,17 +555,16 @@ void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState,
 	JoinedPlayerState->SetIsSetupComplete(true);
 }
 
-void AARGameModeBase::EnsureJoinedPlayerHasUniqueSlot(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const
+void AARGameModeBase::EnsureJoinedPlayerHasUniqueIdentity(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const
 {
 	if (!InGameState || !JoinedPlayerState)
 	{
 		return;
 	}
 
-	const EARPlayerSlot CurrentSlot = JoinedPlayerState->GetPlayerSlot();
-	bool bSlotConflict = false;
-
-	if (CurrentSlot != EARPlayerSlot::Unknown)
+	const int32 CurrentSlotId = JoinedPlayerState->GetPlayerSlotId();
+	bool bSlotIdConflict = false;
+	if (CurrentSlotId > 0)
 	{
 		for (APlayerState* PS : InGameState->PlayerArray)
 		{
@@ -648,42 +576,46 @@ void AARGameModeBase::EnsureJoinedPlayerHasUniqueSlot(AARGameStateBase* InGameSt
 				continue;
 			}
 
-			if (OtherPlayer->GetPlayerSlot() == CurrentSlot)
+			if (OtherPlayer->GetPlayerSlotId() == CurrentSlotId)
 			{
-				bSlotConflict = true;
+				bSlotIdConflict = true;
 				break;
 			}
 		}
 	}
 
-	if (CurrentSlot != EARPlayerSlot::Unknown && !bSlotConflict)
+	if (CurrentSlotId <= 0 || bSlotIdConflict)
 	{
-		return;
+		const int32 ResolvedSlotId = FindFirstFreePlayerSlotId(InGameState, JoinedPlayerState);
+		JoinedPlayerState->SetPlayerSlotId(ResolvedSlotId);
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[GameMode] Normalized runtime player slot id for '%s': %d -> %d"),
+			*GetNameSafe(JoinedPlayerState),
+			CurrentSlotId,
+			ResolvedSlotId);
 	}
 
-	const EARPlayerSlot ResolvedSlot = FindFirstFreePlayerSlot(InGameState, JoinedPlayerState);
-	if (ResolvedSlot == EARPlayerSlot::Unknown)
+	const FGameplayTag CurrentCharacterTag = ARPlayer::NormalizeCharacterTag(JoinedPlayerState->GetCurrentCharacterTag());
+	if (!CurrentCharacterTag.IsValid())
 	{
-		UE_LOG(ARLog, Warning, TEXT("[GameMode] Could not resolve unique slot for '%s' (CurrentSlot=%d Conflict=%d)."),
-			*GetNameSafe(JoinedPlayerState), static_cast<int32>(CurrentSlot), bSlotConflict ? 1 : 0);
-		return;
+		EARCharacterChoice PreferredChoice = (JoinedPlayerState->GetPlayerSlotId() > 0 && JoinedPlayerState->GetPlayerSlotId() % 2 == 0)
+			? EARCharacterChoice::Sister
+			: EARCharacterChoice::Brother;
+		EARCharacterChoice AlternateChoice = GetAlternateCharacterChoice(PreferredChoice);
+
+		if (IsCharacterChoiceTakenByOther(InGameState, JoinedPlayerState, PreferredChoice)
+			&& AlternateChoice != EARCharacterChoice::None
+			&& !IsCharacterChoiceTakenByOther(InGameState, JoinedPlayerState, AlternateChoice))
+		{
+			PreferredChoice = AlternateChoice;
+		}
+
+		JoinedPlayerState->SetCharacterPicked(PreferredChoice);
 	}
 
-	if (ResolvedSlot != CurrentSlot)
-	{
-		JoinedPlayerState->SetPlayerSlot(ResolvedSlot);
-		const EARPlayerSlot AppliedSlot = JoinedPlayerState->GetPlayerSlot();
-		if (AppliedSlot == ResolvedSlot)
-		{
-			UE_LOG(ARLog, Log, TEXT("[GameMode] Normalized player slot for '%s': %d -> %d"),
-				*GetNameSafe(JoinedPlayerState), static_cast<int32>(CurrentSlot), static_cast<int32>(AppliedSlot));
-		}
-		else
-		{
-			UE_LOG(ARLog, Warning, TEXT("[GameMode] Slot normalization could not apply for '%s': requested %d from %d, actual=%d."),
-				*GetNameSafe(JoinedPlayerState), static_cast<int32>(ResolvedSlot), static_cast<int32>(CurrentSlot), static_cast<int32>(AppliedSlot));
-		}
-	}
+	ResolveCharacterChoiceConflict(InGameState, JoinedPlayerState);
 }
 
 FGameplayTag AARGameModeBase::GetPendingSpawnCharacterTagForController(const AController* Controller) const
@@ -752,9 +684,9 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 		return;
 	}
 
-	// Slot normalization: preserve first valid occupant, reassign only invalid/conflicting slots.
-	bool bP1Taken = false;
-	bool bP2Taken = false;
+	// Controller/profile identity normalization: runtime slot ids must be unique and non-zero.
+	TSet<int32> UsedPlayerSlotIds;
+	int32 NextAvailableSlotId = 1;
 	for (AARPlayerStateBase* Player : Players)
 	{
 		if (!Player)
@@ -762,142 +694,70 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 			continue;
 		}
 
-		EARPlayerSlot CurrentSlot = Player->GetPlayerSlot();
-		EARPlayerSlot TargetSlot = CurrentSlot;
-		const bool bCurrentIsP1 = CurrentSlot == EARPlayerSlot::P1;
-		const bool bCurrentIsP2 = CurrentSlot == EARPlayerSlot::P2;
-		const bool bCurrentTaken = (bCurrentIsP1 && bP1Taken) || (bCurrentIsP2 && bP2Taken);
-		const bool bCurrentValid = bCurrentIsP1 || bCurrentIsP2;
-
-		if (!bCurrentValid || bCurrentTaken)
+		int32 RuntimeSlotId = Player->GetPlayerSlotId();
+		if (RuntimeSlotId <= 0 || UsedPlayerSlotIds.Contains(RuntimeSlotId))
 		{
-			if (!bP1Taken)
+			while (UsedPlayerSlotIds.Contains(NextAvailableSlotId))
 			{
-				TargetSlot = EARPlayerSlot::P1;
+				++NextAvailableSlotId;
 			}
-			else if (!bP2Taken)
-			{
-				TargetSlot = EARPlayerSlot::P2;
-			}
-			else
-			{
-				TargetSlot = EARPlayerSlot::Unknown;
-			}
+
+			Player->SetPlayerSlotId(NextAvailableSlotId);
+			RuntimeSlotId = NextAvailableSlotId;
+			++NextAvailableSlotId;
+		}
+		else
+		{
+			NextAvailableSlotId = FMath::Max(NextAvailableSlotId, RuntimeSlotId + 1);
 		}
 
-		if (TargetSlot != EARPlayerSlot::Unknown && TargetSlot != CurrentSlot)
-		{
-			Player->SetPlayerSlot(TargetSlot);
-			const EARPlayerSlot AppliedSlot = Player->GetPlayerSlot();
-			UE_LOG(
-				ARLog,
-				Log,
-				TEXT("[GameMode] Identity normalize slot for '%s': %d -> %d"),
-				*GetNameSafe(Player),
-				static_cast<int32>(CurrentSlot),
-				static_cast<int32>(AppliedSlot));
-			CurrentSlot = AppliedSlot;
-		}
-
-		if (CurrentSlot == EARPlayerSlot::P1)
-		{
-			bP1Taken = true;
-		}
-		else if (CurrentSlot == EARPlayerSlot::P2)
-		{
-			bP2Taken = true;
-		}
+		UsedPlayerSlotIds.Add(RuntimeSlotId);
 	}
 
-	// Character normalization: fill None from slot preference where possible, then resolve conflicts.
+	// Character normalization: ensure every connected player has a valid canonical character assignment.
 	for (AARPlayerStateBase* Player : Players)
 	{
-		if (!Player || Player->GetCharacterPicked() != EARCharacterChoice::None)
+		if (!Player)
 		{
 			continue;
 		}
 
-		const EARCharacterChoice PreferredChoice =
-			(Player->GetPlayerSlot() == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
-		const EARCharacterChoice AlternateChoice = GetAlternateCharacterChoice(PreferredChoice);
+		const FGameplayTag CurrentCharacterTag = ARPlayer::NormalizeCharacterTag(Player->GetCurrentCharacterTag());
+		EARCharacterChoice ResolvedChoice = ARPlayer::GetCharacterChoiceForTag(CurrentCharacterTag);
+		if (ResolvedChoice == EARCharacterChoice::None)
+		{
+			ResolvedChoice = Player->GetCharacterPicked();
+		}
+		if (ResolvedChoice == EARCharacterChoice::None)
+		{
+			ResolvedChoice = (Player->GetPlayerSlotId() > 0 && Player->GetPlayerSlotId() % 2 == 0)
+				? EARCharacterChoice::Sister
+				: EARCharacterChoice::Brother;
+		}
 
-		if (!IsCharacterChoiceTakenByOther(InGameState, Player, PreferredChoice))
+		if (IsCharacterChoiceTakenByOther(InGameState, Player, ResolvedChoice))
 		{
-			Player->SetCharacterPicked(PreferredChoice);
+			const EARCharacterChoice AlternateChoice = GetAlternateCharacterChoice(ResolvedChoice);
+			if (AlternateChoice != EARCharacterChoice::None && !IsCharacterChoiceTakenByOther(InGameState, Player, AlternateChoice))
+			{
+				ResolvedChoice = AlternateChoice;
+			}
 		}
-		else if (AlternateChoice != EARCharacterChoice::None && !IsCharacterChoiceTakenByOther(InGameState, Player, AlternateChoice))
+
+		const FGameplayTag ResolvedTag = ARPlayer::GetCharacterTagForChoice(ResolvedChoice);
+		if (ResolvedChoice != Player->GetCharacterPicked())
 		{
-			Player->SetCharacterPicked(AlternateChoice);
+			Player->SetCharacterPicked(ResolvedChoice);
 		}
-		else
+		else if (ResolvedTag.IsValid() && !CurrentCharacterTag.MatchesTagExact(ResolvedTag))
 		{
-			// Never leave character unset after load/join normalization.
-			Player->SetCharacterPicked(PreferredChoice);
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[GameMode] Character normalize fallback for '%s': both choices occupied, assigning slot-biased %d."),
-				*GetNameSafe(Player),
-				static_cast<int32>(PreferredChoice));
+			Player->SetCurrentCharacterTag(ResolvedTag);
 		}
 	}
 
 	for (AARPlayerStateBase* Player : Players)
 	{
 		ResolveCharacterChoiceConflict(InGameState, Player);
-	}
-
-	// Canonical-tag normalization: never leave CurrentCharacterTag invalid, and keep Brother/Sister unique when possible.
-	for (AARPlayerStateBase* Player : Players)
-	{
-		if (!Player)
-		{
-			continue;
-		}
-
-		const EARPlayerSlot Slot = Player->GetPlayerSlot();
-		const EARCharacterChoice PreferredChoice =
-			(Slot == EARPlayerSlot::P2) ? EARCharacterChoice::Sister : EARCharacterChoice::Brother;
-		const EARCharacterChoice AlternateChoice = GetAlternateCharacterChoice(PreferredChoice);
-
-		EARCharacterChoice ResolvedChoice = ARPlayer::GetCharacterChoiceForTag(
-			ARPlayer::NormalizeCharacterTag(Player->GetCurrentCharacterTag()));
-		const EARCharacterChoice MirroredChoice = Player->GetCharacterPicked();
-		if (MirroredChoice != EARCharacterChoice::None)
-		{
-			if (ResolvedChoice == EARCharacterChoice::None || ResolvedChoice != MirroredChoice)
-			{
-				ResolvedChoice = MirroredChoice;
-			}
-		}
-		if (ResolvedChoice == EARCharacterChoice::None)
-		{
-			ResolvedChoice = PreferredChoice;
-		}
-
-		if (IsCharacterChoiceTakenByOther(InGameState, Player, ResolvedChoice))
-		{
-			if (AlternateChoice != EARCharacterChoice::None && !IsCharacterChoiceTakenByOther(InGameState, Player, AlternateChoice))
-			{
-				ResolvedChoice = AlternateChoice;
-			}
-			else
-			{
-				ResolvedChoice = PreferredChoice;
-			}
-		}
-
-		const FGameplayTag ResolvedTag = ARPlayer::GetCharacterTagForChoice(ResolvedChoice);
-		if (ResolvedTag.IsValid() && !Player->GetCurrentCharacterTag().MatchesTagExact(ResolvedTag))
-		{
-			Player->SetCurrentCharacterTag(ResolvedTag);
-			UE_LOG(
-				ARLog,
-				Log,
-				TEXT("[GameMode] Identity normalize character tag for '%s': -> %s"),
-				*GetNameSafe(Player),
-				*ResolvedTag.ToString());
-		}
 	}
 
 	// Loadout normalization: gameplay modes require at least one ship tag in loadout.
@@ -973,7 +833,7 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 			continue;
 		}
 
-		const EARAffinityColor ExpectedColor = ResolveExpectedInvaderPlayerColor(Player->GetCharacterPicked(), Player->GetPlayerSlot());
+			const EARAffinityColor ExpectedColor = ResolveExpectedInvaderPlayerColor(Player->GetCharacterPicked());
 		const EARAffinityColor CurrentColor = Player->GetInvaderPlayerColor();
 		if (CurrentColor != ExpectedColor)
 		{
@@ -1019,31 +879,31 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 		HandleFirstSessionJoinSetup(GS, JoinedPS, SaveSubsystem);
 	}
 
-	// Enforce stable unique slot occupancy even when setup is already complete (for example seamless travel/copy paths).
-	EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+	// Enforce stable unique runtime controller/profile id + character identity even when setup is already complete.
+	EnsureJoinedPlayerHasUniqueIdentity(GS, JoinedPS);
 	NormalizeConnectedPlayersIdentity(GS);
-	const EARPlayerSlot PreSuperSlot = JoinedPS->GetPlayerSlot();
+	const int32 PreSuperSlotId = JoinedPS->GetPlayerSlotId();
 	const EARCharacterChoice PreSuperChoice = JoinedPS->GetCharacterPicked();
 	const FGameplayTag PreSuperCharacterTag = ResolveCharacterTagForSpawnIdentity(JoinedPS);
 	CachePendingSpawnCharacterTagForController(NewPlayer, PreSuperCharacterTag);
 
-	// Identity must be normalized before Super so spawn class/start selection sees non-unknown slot/character.
+	// Identity must be normalized before Super so spawn class/start selection sees non-unknown character.
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 
 	// Re-run once after Super to catch any mirrored-state drift during spawn/possess setup.
-	EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+	EnsureJoinedPlayerHasUniqueIdentity(GS, JoinedPS);
 	NormalizeConnectedPlayersIdentity(GS);
-	const EARPlayerSlot PostSuperSlot = JoinedPS->GetPlayerSlot();
+	const int32 PostSuperSlotId = JoinedPS->GetPlayerSlotId();
 	const EARCharacterChoice PostSuperChoice = JoinedPS->GetCharacterPicked();
 	const FGameplayTag PostSuperCharacterTag = ResolveCharacterTagForSpawnIdentity(JoinedPS);
 
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[GameMode] HandleStartingNewPlayer identity after Super for '%s': Slot %d->%d Choice %d->%d CharacterTag %s->%s Pawn=%s."),
+		TEXT("[GameMode] HandleStartingNewPlayer identity after Super for '%s': PlayerSlotId %d->%d Choice %d->%d CharacterTag %s->%s Pawn=%s."),
 		*GetNameSafe(JoinedPS),
-		static_cast<int32>(PreSuperSlot),
-		static_cast<int32>(PostSuperSlot),
+		PreSuperSlotId,
+		PostSuperSlotId,
 		static_cast<int32>(PreSuperChoice),
 		static_cast<int32>(PostSuperChoice),
 		*PreSuperCharacterTag.ToString(),
@@ -1084,10 +944,10 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[GameMode] HandleStartingNewPlayer running corrective RestartPlayer for '%s' (HasPawn=%d Slot=%d CharacterTag=%s)."),
+			TEXT("[GameMode] HandleStartingNewPlayer running corrective RestartPlayer for '%s' (HasPawn=%d PlayerSlotId=%d CharacterTag=%s)."),
 			*GetNameSafe(JoinedPS),
 			NewPlayer->GetPawn() ? 1 : 0,
-			static_cast<int32>(PostSuperSlot),
+			PostSuperSlotId,
 			*PostSuperCharacterTag.ToString());
 		RestartPlayer(NewPlayer);
 	}
@@ -1100,30 +960,30 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 		}
 	}
 
-	const EARPlayerSlot SlotBeforeBPJoin = JoinedPS->GetPlayerSlot();
+	const int32 SlotIdBeforeBPJoin = JoinedPS->GetPlayerSlotId();
 	const FGameplayTag CharacterTagBeforeBPJoin = ResolveCharacterTagForSpawnIdentity(JoinedPS);
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[GameMode] Player joined (pre-BP): %s (Slot=%d, CharacterTag=%s, Setup=%s)"),
+		TEXT("[GameMode] Player joined (pre-BP): %s (PlayerSlotId=%d, CharacterTag=%s, Setup=%s)"),
 		*GetNameSafe(JoinedPS),
-		static_cast<int32>(SlotBeforeBPJoin),
+		SlotIdBeforeBPJoin,
 		*CharacterTagBeforeBPJoin.ToString(),
 		JoinedPS->IsSetupComplete() ? TEXT("true") : TEXT("false"));
 
 	BP_OnPlayerJoined(JoinedPS);
 
-	const EARPlayerSlot SlotAfterBPJoin = JoinedPS->GetPlayerSlot();
+	const int32 SlotIdAfterBPJoin = JoinedPS->GetPlayerSlotId();
 	const FGameplayTag CharacterTagAfterBPJoin = ResolveCharacterTagForSpawnIdentity(JoinedPS);
-	if (SlotAfterBPJoin != SlotBeforeBPJoin || !CharacterTagAfterBPJoin.MatchesTagExact(CharacterTagBeforeBPJoin))
+	if (SlotIdAfterBPJoin != SlotIdBeforeBPJoin || !CharacterTagAfterBPJoin.MatchesTagExact(CharacterTagBeforeBPJoin))
 	{
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[GameMode] BP_OnPlayerJoined changed identity for '%s' (Slot %d->%d CharacterTag %s->%s)."),
+			TEXT("[GameMode] BP_OnPlayerJoined changed identity for '%s' (PlayerSlotId %d->%d CharacterTag %s->%s)."),
 			*GetNameSafe(JoinedPS),
-			static_cast<int32>(SlotBeforeBPJoin),
-			static_cast<int32>(SlotAfterBPJoin),
+			SlotIdBeforeBPJoin,
+			SlotIdAfterBPJoin,
 			*CharacterTagBeforeBPJoin.ToString(),
 			*CharacterTagAfterBPJoin.ToString());
 	}
@@ -1193,7 +1053,7 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 		{
 			if (AARPlayerStateBase* JoinedPS = PlayerController->GetPlayerState<AARPlayerStateBase>())
 			{
-				EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+				EnsureJoinedPlayerHasUniqueIdentity(GS, JoinedPS);
 			}
 
 			NormalizeConnectedPlayersIdentity(GS);
@@ -1214,7 +1074,7 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 	{
 		if (AARPlayerStateBase* JoinedPS = PlayerController->GetPlayerState<AARPlayerStateBase>())
 		{
-			EnsureJoinedPlayerHasUniqueSlot(GS, JoinedPS);
+			EnsureJoinedPlayerHasUniqueIdentity(GS, JoinedPS);
 		}
 
 		NormalizeConnectedPlayersIdentity(GS);
@@ -1257,9 +1117,8 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		return Super::ChoosePlayerStart_Implementation(Player);
 	}
 
-	const FGameplayTag PreNormalizedPlayerSlotTag = ARPlayer::NormalizePlayerSlotTag(PlayerState->GetPlayerSlotTag(), PlayerState->GetPlayerSlot());
 	const FGameplayTag PreNormalizedCharacterTag = ResolveCharacterTagForSpawnIdentity(PlayerState);
-	const bool bHadUnresolvedIdentityPrePass = !PreNormalizedPlayerSlotTag.IsValid() || !PreNormalizedCharacterTag.IsValid();
+	const bool bHadUnresolvedIdentityPrePass = !PreNormalizedCharacterTag.IsValid();
 
 	// Spawn-point selection must never run against an unresolved identity; editor/raw-map flows
 	// can still reach here before earlier join normalization has finalized character assignment.
@@ -1278,12 +1137,11 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 				HandleFirstSessionJoinSetup(GS, PlayerState, SaveSubsystem);
 			}
 
-			EnsureJoinedPlayerHasUniqueSlot(GS, PlayerState);
+			EnsureJoinedPlayerHasUniqueIdentity(GS, PlayerState);
 			NormalizeConnectedPlayersIdentity(GS);
 		}
 	}
 
-	const FGameplayTag PlayerSlotTag = ARPlayer::NormalizePlayerSlotTag(PlayerState->GetPlayerSlotTag(), PlayerState->GetPlayerSlot());
 	FGameplayTag CharacterTag = ResolveCharacterTagForSpawnIdentity(PlayerState);
 	const FGameplayTag PendingCharacterTag = ARPlayer::NormalizeCharacterTag(GetPendingSpawnCharacterTagForController(Player));
 	if (PendingCharacterTag.IsValid() && !CharacterTag.MatchesTagExact(PendingCharacterTag))
@@ -1303,11 +1161,9 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[GameMode] ChoosePlayerStart saw unresolved pre-normalization identity for '%s' (PreSlot=%s PreCharacter=%s -> PostSlot=%s PostCharacter=%s)."),
+			TEXT("[GameMode] ChoosePlayerStart saw unresolved pre-normalization identity for '%s' (PreCharacter=%s -> PostCharacter=%s)."),
 			*GetNameSafe(PlayerState),
-			*PreNormalizedPlayerSlotTag.ToString(),
 			*PreNormalizedCharacterTag.ToString(),
-			*PlayerSlotTag.ToString(),
 			*CharacterTag.ToString());
 	}
 
@@ -1316,10 +1172,8 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[GameMode] ChoosePlayerStart still has invalid character identity for '%s' after normalization (Slot=%d SlotTag=%s CurrentCharacterTag=%s CharacterPicked=%d)."),
+			TEXT("[GameMode] ChoosePlayerStart still has invalid character identity for '%s' after normalization (CurrentCharacterTag=%s CharacterPicked=%d)."),
 			*GetNameSafe(PlayerState),
-			static_cast<int32>(PlayerState->GetPlayerSlot()),
-			*PlayerSlotTag.ToString(),
 			*PlayerState->GetCurrentCharacterTag().ToString(),
 			static_cast<int32>(PlayerState->GetCharacterPicked()));
 	}
@@ -1331,10 +1185,6 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		IdentityQueryTags.Add(CharacterTag);
 	}
 	AddSpawnIdentityMirrorTags(CharacterTag, IdentityQueryTags);
-	if (PlayerSlotTag.IsValid() && !IdentityQueryTags.Contains(PlayerSlotTag))
-	{
-		IdentityQueryTags.Add(PlayerSlotTag);
-	}
 	if (IdentityQueryTags.IsEmpty())
 	{
 		UE_LOG(
@@ -1359,9 +1209,8 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[GameMode] ChoosePlayerStart evaluating '%s': SlotTag=%s CharacterTag=%s QueryTags=%d TaggedStarts=%d."),
+		TEXT("[GameMode] ChoosePlayerStart evaluating '%s': CharacterTag=%s QueryTags=%d TaggedStarts=%d."),
 		*GetNameSafe(PlayerState),
-		*PlayerSlotTag.ToString(),
 		*CharacterTag.ToString(),
 		IdentityQueryTags.Num(),
 		TaggedStarts.Num());
@@ -1417,9 +1266,8 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	UE_LOG(
 		ARLog,
 		Warning,
-		TEXT("[GameMode] ChoosePlayerStart found no tagged match for '%s' (SlotTag=%s CharacterTag=%s). Falling back to default PlayerStart."),
+		TEXT("[GameMode] ChoosePlayerStart found no tagged match for '%s' (CharacterTag=%s). Falling back to default PlayerStart."),
 		*GetNameSafe(PlayerState),
-		*PlayerSlotTag.ToString(),
 		*CharacterTag.ToString());
 	return Super::ChoosePlayerStart_Implementation(Player);
 }
@@ -1621,3 +1469,4 @@ void AARGameModeBase::BP_OnPlayerJoined_Implementation(AARPlayerStateBase* Joine
 void AARGameModeBase::BP_OnPlayerLeft_Implementation(AARPlayerStateBase* LeftPlayerState)
 {
 }
+

@@ -199,6 +199,24 @@ namespace ARPlayer
 		}
 	}
 
+	static inline FGameplayTag GetCharacterTagForPlayerSlot(const EARPlayerSlot PlayerSlot)
+	{
+		return GetDefaultCharacterTagForSlot(PlayerSlot);
+	}
+
+	static inline EARPlayerSlot GetPlayerSlotForCharacterTag(const FGameplayTag& CharacterTag)
+	{
+		switch (GetCharacterChoiceForTag(CharacterTag))
+		{
+		case EARCharacterChoice::Brother:
+			return EARPlayerSlot::P1;
+		case EARCharacterChoice::Sister:
+			return EARPlayerSlot::P2;
+		default:
+			return EARPlayerSlot::Unknown;
+		}
+	}
+
 	static inline FGameplayTag NormalizeCharacterTag(const FGameplayTag& CharacterTag, const EARPlayerSlot FallbackSlot = EARPlayerSlot::Unknown)
 	{
 		const EARCharacterChoice ResolvedChoice = GetCharacterChoiceForTag(CharacterTag);

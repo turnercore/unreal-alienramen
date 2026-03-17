@@ -33,7 +33,7 @@ public:
 	void SubmitChoice(FGuid ChoiceBranchId);
 
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
-	void SetEavesdrop(bool bEnable, FGameplayTag TargetSlotTag);
+	void SetEavesdrop(bool bEnable, FGameplayTag TargetCharacterTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Runs this dialogue widget bridge operation for view and control synchronization."))
 	void SetEavesdropOtherPlayer(bool bEnable);

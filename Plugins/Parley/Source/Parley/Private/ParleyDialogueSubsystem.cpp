@@ -4,7 +4,6 @@
 #include "ParleyDialogueSettings.h"
 #include "ParleyFactionSubsystem.h"
 #include "ParleyLog.h"
-#include "ParleyPlayerSlotHelpers.h"
 #include "ParleyPlayerControllerInterface.h"
 #include "ParleySpeakerComponent.h"
 #include "ParleySpeakerSubsystem.h"
@@ -23,38 +22,84 @@
 
 namespace
 {
-	static FGameplayTag GetDefaultCharacterTagForSlot(const EParleyPlayerSlot Slot)
+	static FGameplayTag GetCanonicalBrotherCharacterTag()
 	{
-		switch (Slot)
+		return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
+	}
+
+	static FGameplayTag GetCanonicalSisterCharacterTag()
+	{
+		return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
+	}
+
+	static const TCHAR* LexToStringParleySlot(const FGameplayTag CharacterTag)
+	{
+		if (!CharacterTag.IsValid())
 		{
-		case EParleyPlayerSlot::P1:
-			return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
-		case EParleyPlayerSlot::P2:
-			return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
-		default:
+			return TEXT("None");
+		}
+
+		const FGameplayTag BrotherTag = GetCanonicalBrotherCharacterTag();
+		if (BrotherTag.IsValid() && CharacterTag.MatchesTag(BrotherTag))
+		{
+			return TEXT("Brother");
+		}
+
+		const FGameplayTag SisterTag = GetCanonicalSisterCharacterTag();
+		if (SisterTag.IsValid() && CharacterTag.MatchesTag(SisterTag))
+		{
+			return TEXT("Sister");
+		}
+
+		return TEXT("Character");
+	}
+
+	static FGameplayTag NormalizeCharacterTagForDialogue(const FGameplayTag CharacterTag)
+	{
+		if (!CharacterTag.IsValid())
+		{
 			return FGameplayTag();
 		}
+
+		const FGameplayTag BrotherTag = GetCanonicalBrotherCharacterTag();
+		if (BrotherTag.IsValid() && CharacterTag.MatchesTag(BrotherTag))
+		{
+			return BrotherTag;
+		}
+
+		const FGameplayTag SisterTag = GetCanonicalSisterCharacterTag();
+		if (SisterTag.IsValid() && CharacterTag.MatchesTag(SisterTag))
+		{
+			return SisterTag;
+		}
+
+		return CharacterTag;
+	}
+
+	static FGameplayTag GetDefaultCharacterTagForSlot(const FGameplayTag CharacterTag)
+	{
+		return NormalizeCharacterTagForDialogue(CharacterTag);
 	}
 
 	struct FParleyPlayerIdentity
 	{
 		int32 LegacyId = 0;
 		FText DisplayName;
-		EParleyPlayerSlot PlayerSlot = EParleyPlayerSlot::Unknown;
+		FGameplayTag PlayerCharacterTag = FGameplayTag();
 		FString UniqueNetIdString;
 		FString UniqueNetIdType;
 	};
 
 	struct FParleyPlayerStateProgressionData
 	{
-		EParleyPlayerSlot PlayerSlot = EParleyPlayerSlot::Unknown;
+		FGameplayTag PlayerCharacterTag = FGameplayTag();
 		FGameplayTag CurrentCharacterTag;
 
 		FGameplayTag ResolveCurrentCharacterTag() const
 		{
 			return CurrentCharacterTag.IsValid()
 				? CurrentCharacterTag
-				: GetDefaultCharacterTagForSlot(PlayerSlot);
+				: GetDefaultCharacterTagForSlot(PlayerCharacterTag);
 		}
 	};
 
@@ -70,30 +115,30 @@ namespace
 		FGameplayTagContainer DialogueCompletedConversationTagsByGame;
 		TArray<FDialogueSpeakerRelationshipState> DialogueSpeakerRelationshipStates;
 		TArray<FParleyCharacterProgressionData> CharacterStates;
-		TMap<EParleyPlayerSlot, FGameplayTag> CharacterTagBySlot;
+		TMap<FGameplayTag, FGameplayTag> CharacterTagByIdentity;
 
 		bool FindPlayerStateDataByIdentity(const FParleyPlayerIdentity& Identity, FParleyPlayerStateProgressionData& OutData, int32& OutIndex) const
 		{
-			return FindPlayerStateDataBySlot(Identity.PlayerSlot, OutData, OutIndex);
+			return FindPlayerStateDataByCharacterTag(Identity.PlayerCharacterTag, OutData, OutIndex);
 		}
 
-		bool FindPlayerStateDataBySlot(const EParleyPlayerSlot Slot, FParleyPlayerStateProgressionData& OutData, int32& OutIndex) const
+		bool FindPlayerStateDataByCharacterTag(const FGameplayTag Slot, FParleyPlayerStateProgressionData& OutData, int32& OutIndex) const
 		{
 			OutIndex = INDEX_NONE;
-			if (Slot == EParleyPlayerSlot::Unknown)
+			if (!Slot.IsValid())
 			{
 				return false;
 			}
 
-			const FGameplayTag* CharacterTag = CharacterTagBySlot.Find(Slot);
+			const FGameplayTag* CharacterTag = CharacterTagByIdentity.Find(Slot);
 			if (!CharacterTag)
 			{
 				return false;
 			}
 
-			OutData.PlayerSlot = Slot;
+			OutData.PlayerCharacterTag = Slot;
 			OutData.CurrentCharacterTag = *CharacterTag;
-			OutIndex = static_cast<int32>(Slot);
+			OutIndex = 0;
 			return true;
 		}
 
@@ -229,8 +274,8 @@ namespace
 		TObjectPtr<UParleyConversationAsset> ConversationAsset = nullptr;
 		FGuid CurrentNodeId;
 		FGuid WaitingChoiceNodeId;
-		EParleyPlayerSlot InitiatorSlot = EParleyPlayerSlot::Unknown;
-		EParleyPlayerSlot OwnerSlot = EParleyPlayerSlot::Unknown;
+		FGameplayTag InitiatorCharacterTag = FGameplayTag();
+		FGameplayTag OwnerCharacterTag = FGameplayTag();
 		bool bIsSharedSession = false;
 		bool bConversationImportant = false;
 		bool bConversationPrivate = false;
@@ -249,7 +294,7 @@ namespace
 		FGameplayTagContainer TransientConversationTags;
 		TArray<FGuid> PendingSequenceBranchNodeIds;
 		TMap<FGuid, int32> PendingMultiLineStartIndexByNode;
-		TSet<EParleyPlayerSlot> Participants;
+		TSet<FGameplayTag> Participants;
 		TSet<TWeakObjectPtr<UParleySpeakerComponent>> SpeakerComponentsWithEmotionOverride;
 		FTimerHandle AutoAdvanceTimerHandle;
 	};
@@ -302,54 +347,19 @@ namespace
 		return true;
 	}
 
-	static EParleyPlayerSlot ReadPlayerSlotProperty(const UObject* Object, const FName PropertyName)
-	{
-		if (!Object)
-		{
-			return EParleyPlayerSlot::Unknown;
-		}
-
-		if (const FEnumProperty* EnumProperty = FindFProperty<FEnumProperty>(Object->GetClass(), PropertyName))
-		{
-			const FNumericProperty* Underlying = EnumProperty->GetUnderlyingProperty();
-			const int64 EnumValue = Underlying ? Underlying->GetSignedIntPropertyValue(EnumProperty->ContainerPtrToValuePtr<void>(Object)) : 0;
-			return static_cast<EParleyPlayerSlot>(EnumValue);
-		}
-
-		if (const FByteProperty* ByteProperty = FindFProperty<FByteProperty>(Object->GetClass(), PropertyName))
-		{
-			return static_cast<EParleyPlayerSlot>(ByteProperty->GetPropertyValue_InContainer(Object));
-		}
-
-		return EParleyPlayerSlot::Unknown;
-	}
-
-	static EParleyPlayerSlot GetPlayerSlotFromPlayerState(const APlayerState* PlayerState)
+	static FGameplayTag GetCharacterTagFromPlayerState(const APlayerState* PlayerState)
 	{
 		if (!PlayerState)
 		{
-			return EParleyPlayerSlot::Unknown;
+			return FGameplayTag();
 		}
 
-		const FGameplayTag SlotTag = ReadGameplayTagProperty(PlayerState, TEXT("PlayerSlotTag"));
-		const EParleyPlayerSlot SlotFromTag = ParleyPlayerSlot::TagToSlot(SlotTag);
-		if (SlotFromTag != EParleyPlayerSlot::Unknown)
-		{
-			return SlotFromTag;
-		}
-
-		return ReadPlayerSlotProperty(PlayerState, TEXT("PlayerSlot"));
+		return NormalizeCharacterTagForDialogue(ReadGameplayTagProperty(PlayerState, TEXT("CurrentCharacterTag")));
 	}
 
 	static FGameplayTag GetCurrentCharacterTagFromPlayerState(const APlayerState* PlayerState)
 	{
-		const FGameplayTag CharacterTag = ReadGameplayTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
-		if (CharacterTag.IsValid())
-		{
-			return CharacterTag;
-		}
-
-		return GetDefaultCharacterTagForSlot(GetPlayerSlotFromPlayerState(PlayerState));
+		return GetCharacterTagFromPlayerState(PlayerState);
 	}
 
 	static FText GetPlayerDisplayNameFromPlayerState(const APlayerState* PlayerState)
@@ -394,23 +404,23 @@ namespace
 		return ReadBoolProperty(PlayerState, TEXT("bDialogueAutoAdvanceEnabled"), bAutoAdvance) ? bAutoAdvance : false;
 	}
 
-	static EParleyPlayerSlot GetSlotFromController(const APlayerController* PC)
+	static FGameplayTag GetCharacterTagFromController(const APlayerController* PC)
 	{
 		if (!PC)
 		{
-			return EParleyPlayerSlot::Unknown;
+			return FGameplayTag();
 		}
 
 		if (const IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(const_cast<APlayerController*>(PC)))
 		{
-			const EParleyPlayerSlot InterfaceSlot = ParleyPlayerSlot::TagToSlot(ControllerInterface->GetPlayerSlotTag());
-			if (InterfaceSlot != EParleyPlayerSlot::Unknown)
+			const FGameplayTag InterfaceSlot = NormalizeCharacterTagForDialogue(ControllerInterface->GetCharacterTag());
+			if (InterfaceSlot.IsValid())
 			{
 				return InterfaceSlot;
 			}
 		}
 
-		return GetPlayerSlotFromPlayerState(GetPlayerStateFromController(PC));
+		return GetCharacterTagFromPlayerState(GetPlayerStateFromController(PC));
 	}
 
 	static FString BuildSessionId()
@@ -481,11 +491,11 @@ struct UParleyDialogueSubsystem::FParleyDialogueRuntimeState
 	TMap<FGameplayTag, TObjectPtr<UParleyConversationAsset>> ConversationsByTag;
 	TMap<FGameplayTag, FParleySpeakerRow> SpeakerRowsByTag;
 	TArray<FParleyActiveDialogueSession> ActiveSessions;
-	TMap<EParleyPlayerSlot, FGameplayTagContainer> SeenByPlayerTransient;
-	TMap<EParleyPlayerSlot, FGameplayTagContainer> SkippedByPlayerTransient;
-	TMap<EParleyPlayerSlot, TMap<FGameplayTag, int32>> SpeakerOfferCountsByPlayerTransient;
+	TMap<FGameplayTag, FGameplayTagContainer> SeenByPlayerTransient;
+	TMap<FGameplayTag, FGameplayTagContainer> SkippedByPlayerTransient;
+	TMap<FGameplayTag, TMap<FGameplayTag, int32>> SpeakerOfferCountsByPlayerTransient;
 	FGameplayTagContainer SeenByGameTransient;
-	TMap<EParleyPlayerSlot, EParleyPlayerSlot> EavesdropTargetByViewer;
+	TMap<FGameplayTag, FGameplayTag> EavesdropTargetByViewer;
 	FParleyProgressionStore ProgressionStoreState;
 	FParleyProgressionMutator ProgressionMutator;
 };
@@ -604,10 +614,10 @@ static UTagKeySubsystem* GetLookupSubsystem(const UParleyDialogueSubsystem* Subs
 	return nullptr;
 }
 
-static APlayerState* FindPlayerStateBySlot(const UWorld* World, const EParleyPlayerSlot Slot);
-static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(
+static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FGameplayTag Slot);
+static const FDialoguePlayerPersistentState* FindPlayerDialogueStateByCharacterTag(
 	const FParleyProgressionStore* ProgressionStore,
-	const EParleyPlayerSlot Slot,
+	const FGameplayTag Slot,
 	const UWorld* World = nullptr);
 static FGameplayTag ResolveDialogueCharacterTagFromIdentity(
 	const FParleyProgressionStore* ProgressionStore,
@@ -624,7 +634,7 @@ static FParleyPlayerIdentity BuildPlayerIdentityFromState(const APlayerState* PS
 
 	Identity.LegacyId = PS->GetPlayerId();
 	Identity.DisplayName = GetPlayerDisplayNameFromPlayerState(PS);
-	Identity.PlayerSlot = GetPlayerSlotFromPlayerState(PS);
+	Identity.PlayerCharacterTag = GetCharacterTagFromPlayerState(PS);
 	if (PS->GetUniqueId().IsValid())
 	{
 		Identity.UniqueNetIdString = PS->GetUniqueId()->ToString();
@@ -655,9 +665,9 @@ static FGameplayTag ResolveDialogueCharacterTagFromIdentity(
 
 	// Character-owned dialogue state should follow the currently controlled character first.
 	// Slot mapping in progression store is retained as fallback for detached/offline contexts.
-	if (Identity.PlayerSlot != EParleyPlayerSlot::Unknown)
+	if (Identity.PlayerCharacterTag.IsValid())
 	{
-		if (const APlayerState* LivePlayerState = FindPlayerStateBySlot(World, Identity.PlayerSlot))
+		if (const APlayerState* LivePlayerState = FindPlayerStateByCharacterTag(World, Identity.PlayerCharacterTag))
 		{
 			const FGameplayTag LiveCharacterTag = ResolveDialogueCharacterTagFromPlayerState(LivePlayerState);
 			if (LiveCharacterTag.IsValid())
@@ -674,14 +684,14 @@ static FGameplayTag ResolveDialogueCharacterTagFromIdentity(
 		return PlayerStateData.ResolveCurrentCharacterTag();
 	}
 
-	if (Identity.PlayerSlot != EParleyPlayerSlot::Unknown)
+	if (Identity.PlayerCharacterTag.IsValid())
 	{
-		if (ProgressionStore->FindPlayerStateDataBySlot(Identity.PlayerSlot, PlayerStateData, PlayerIndex))
+		if (ProgressionStore->FindPlayerStateDataByCharacterTag(Identity.PlayerCharacterTag, PlayerStateData, PlayerIndex))
 		{
 			return PlayerStateData.ResolveCurrentCharacterTag();
 		}
 
-		return GetDefaultCharacterTagForSlot(Identity.PlayerSlot);
+		return GetDefaultCharacterTagForSlot(Identity.PlayerCharacterTag);
 	}
 
 	return FGameplayTag();
@@ -735,7 +745,7 @@ static bool IsConversationCompletedByPlayer(const UParleyDialogueSubsystem* Subs
 {
 	if (Subsystem && Subsystem->OnQueryConversationCompleted.IsBound())
 	{
-		return Subsystem->OnQueryConversationCompleted.Execute(ConversationTag, ParleyPlayerSlot::SlotToTag(Identity.PlayerSlot));
+		return Subsystem->OnQueryConversationCompleted.Execute(ConversationTag, GetDefaultCharacterTagForSlot(Identity.PlayerCharacterTag));
 	}
 
 	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(Subsystem);
@@ -751,11 +761,11 @@ static bool IsConversationCompletedByPlayer(const UParleyDialogueSubsystem* Subs
 	return PlayerState && PlayerState->CompletedConversationTags.HasTagExact(ConversationTag);
 }
 
-static FParleyActiveDialogueSession* FindSessionByOwnerSlot(TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static FParleyActiveDialogueSession* FindSessionByOwnerCharacter(TArray<FParleyActiveDialogueSession>& Sessions, const FGameplayTag Slot)
 {
 	for (FParleyActiveDialogueSession& Session : Sessions)
 	{
-		if (!Session.bIsSharedSession && Session.OwnerSlot == Slot)
+		if (!Session.bIsSharedSession && Session.OwnerCharacterTag == Slot)
 		{
 			return &Session;
 		}
@@ -766,7 +776,7 @@ static FParleyActiveDialogueSession* FindSessionByOwnerSlot(TArray<FParleyActive
 static FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 	TArray<FParleyActiveDialogueSession>& Sessions,
 	const FGameplayTag& PrimarySpeakerTag,
-	const EParleyPlayerSlot ExcludedOwnerSlot = EParleyPlayerSlot::Unknown)
+	const FGameplayTag ExcludedOwnerCharacterTag = FGameplayTag())
 {
 	if (!PrimarySpeakerTag.IsValid())
 	{
@@ -780,7 +790,7 @@ static FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 			continue;
 		}
 
-		if (ExcludedOwnerSlot != EParleyPlayerSlot::Unknown && Session.OwnerSlot == ExcludedOwnerSlot)
+		if (ExcludedOwnerCharacterTag.IsValid() && Session.OwnerCharacterTag == ExcludedOwnerCharacterTag)
 		{
 			continue;
 		}
@@ -797,7 +807,7 @@ static FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 static const FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 	const TArray<FParleyActiveDialogueSession>& Sessions,
 	const FGameplayTag& PrimarySpeakerTag,
-	const EParleyPlayerSlot ExcludedOwnerSlot = EParleyPlayerSlot::Unknown)
+	const FGameplayTag ExcludedOwnerCharacterTag = FGameplayTag())
 {
 	if (!PrimarySpeakerTag.IsValid())
 	{
@@ -811,7 +821,7 @@ static const FParleyActiveDialogueSession* FindPerPlayerSessionByPrimarySpeaker(
 			continue;
 		}
 
-		if (ExcludedOwnerSlot != EParleyPlayerSlot::Unknown && Session.OwnerSlot == ExcludedOwnerSlot)
+		if (ExcludedOwnerCharacterTag.IsValid() && Session.OwnerCharacterTag == ExcludedOwnerCharacterTag)
 		{
 			continue;
 		}
@@ -837,7 +847,7 @@ static FParleyActiveDialogueSession* FindSharedSession(TArray<FParleyActiveDialo
 	return nullptr;
 }
 
-static FParleyActiveDialogueSession* FindSessionForSlot(TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static FParleyActiveDialogueSession* FindSessionForCharacter(TArray<FParleyActiveDialogueSession>& Sessions, const FGameplayTag Slot)
 {
 	for (FParleyActiveDialogueSession& Session : Sessions)
 	{
@@ -849,7 +859,7 @@ static FParleyActiveDialogueSession* FindSessionForSlot(TArray<FParleyActiveDial
 	return nullptr;
 }
 
-static const FParleyActiveDialogueSession* FindSessionForSlot(const TArray<FParleyActiveDialogueSession>& Sessions, const EParleyPlayerSlot Slot)
+static const FParleyActiveDialogueSession* FindSessionForCharacter(const TArray<FParleyActiveDialogueSession>& Sessions, const FGameplayTag Slot)
 {
 	for (const FParleyActiveDialogueSession& Session : Sessions)
 	{
@@ -861,9 +871,9 @@ static const FParleyActiveDialogueSession* FindSessionForSlot(const TArray<FParl
 	return nullptr;
 }
 
-static APlayerController* FindPlayerControllerBySlot(const UWorld* World, const EParleyPlayerSlot Slot)
+static APlayerController* FindPlayerControllerByCharacter(const UWorld* World, const FGameplayTag Slot)
 {
-	if (!World || Slot == EParleyPlayerSlot::Unknown)
+	if (!World || !Slot.IsValid())
 	{
 		return nullptr;
 	}
@@ -874,7 +884,7 @@ static APlayerController* FindPlayerControllerBySlot(const UWorld* World, const 
 		{
 			if (const APlayerState* PS = PC->GetPlayerState<APlayerState>())
 			{
-				if (GetPlayerSlotFromPlayerState(PS) == Slot)
+				if (GetCharacterTagFromPlayerState(PS) == Slot)
 				{
 					return PC;
 				}
@@ -965,23 +975,23 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueState(
 	return &CharacterState.DialogueState;
 }
 
-static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
+static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateByCharacterTag(
 	FParleyProgressionStore* ProgressionStore,
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const EParleyPlayerSlot Slot)
+	const FGameplayTag Slot)
 {
-	if (!ProgressionStore || Slot == EParleyPlayerSlot::Unknown)
+	if (!ProgressionStore || !Slot.IsValid())
 	{
 		return nullptr;
 	}
 
-	const APlayerState* PlayerState = FindPlayerStateBySlot(DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr, Slot);
+	const APlayerState* PlayerState = FindPlayerStateByCharacterTag(DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr, Slot);
 	if (PlayerState)
 	{
 		const FGameplayTag CharacterTag = ResolveDialogueCharacterTagFromPlayerState(PlayerState);
 		if (CharacterTag.IsValid())
 		{
-			ProgressionStore->CharacterTagBySlot.FindOrAdd(Slot) = CharacterTag;
+			ProgressionStore->CharacterTagByIdentity.FindOrAdd(Slot) = CharacterTag;
 		}
 		return FindOrAddPlayerDialogueState(
 			ProgressionStore,
@@ -996,7 +1006,7 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
 	}
 
 	FParleyCharacterProgressionData& CharacterState = ProgressionStore->FindOrAddCharacterStateData(CharacterTag);
-	ProgressionStore->CharacterTagBySlot.FindOrAdd(Slot) = CharacterTag;
+	ProgressionStore->CharacterTagByIdentity.FindOrAdd(Slot) = CharacterTag;
 	return &CharacterState.DialogueState;
 }
 
@@ -1060,13 +1070,13 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateBySlot(
 		return true;
 	}
 
-static void SyncCycleOfferStateFromProgressionStoreForSlot(
+static void SyncCycleOfferStateFromProgressionStoreForCharacter(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const EParleyPlayerSlot Slot,
-	TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
-	TMap<EParleyPlayerSlot, FGameplayTagContainer>& SkippedByPlayerTransient)
+	const FGameplayTag Slot,
+	TMap<FGameplayTag, FGameplayTagContainer>& SeenByPlayerTransient,
+	TMap<FGameplayTag, FGameplayTagContainer>& SkippedByPlayerTransient)
 {
-	if (Slot == EParleyPlayerSlot::Unknown)
+	if (!Slot.IsValid())
 	{
 		return;
 	}
@@ -1079,7 +1089,7 @@ static void SyncCycleOfferStateFromProgressionStoreForSlot(
 		return;
 	}
 
-	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateByCharacterTag(
 		ProgressionStore,
 		Slot,
 		DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr);
@@ -1094,12 +1104,12 @@ static void SyncCycleOfferStateFromProgressionStoreForSlot(
 	SkippedByPlayerTransient.FindOrAdd(Slot) = PlayerState->SkippedConversationTagsThisCycle;
 }
 
-static void SyncSpeakerOfferCountsFromProgressionStoreForSlot(
+static void SyncSpeakerOfferCountsFromProgressionStoreForCharacter(
 	const UParleyDialogueSubsystem* DialogueSubsystem,
-	const EParleyPlayerSlot Slot,
-	TMap<EParleyPlayerSlot, TMap<FGameplayTag, int32>>& SpeakerOfferCountsByPlayerTransient)
+	const FGameplayTag Slot,
+	TMap<FGameplayTag, TMap<FGameplayTag, int32>>& SpeakerOfferCountsByPlayerTransient)
 {
-	if (Slot == EParleyPlayerSlot::Unknown)
+	if (!Slot.IsValid())
 	{
 		return;
 	}
@@ -1111,7 +1121,7 @@ static void SyncSpeakerOfferCountsFromProgressionStoreForSlot(
 		return;
 	}
 
-	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateBySlot(
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateByCharacterTag(
 		ProgressionStore,
 		Slot,
 		DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr);
@@ -1126,14 +1136,14 @@ static void SyncSpeakerOfferCountsFromProgressionStoreForSlot(
 	SpeakerOfferCountsByPlayerTransient.FindOrAdd(Slot) = MoveTemp(CountMap);
 }
 
-static void PersistCycleOfferStateForSlot(
+static void PersistCycleOfferStateForCharacter(
 	UParleyDialogueSubsystem* DialogueSubsystem,
-	const EParleyPlayerSlot Slot,
-	const TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
-	const TMap<EParleyPlayerSlot, FGameplayTagContainer>& SkippedByPlayerTransient,
+	const FGameplayTag Slot,
+	const TMap<FGameplayTag, FGameplayTagContainer>& SeenByPlayerTransient,
+	const TMap<FGameplayTag, FGameplayTagContainer>& SkippedByPlayerTransient,
 	const bool bMarkProgressionDirty)
 {
-	if (!DialogueSubsystem || Slot == EParleyPlayerSlot::Unknown)
+	if (!DialogueSubsystem || !Slot.IsValid())
 	{
 		return;
 	}
@@ -1144,7 +1154,7 @@ static void PersistCycleOfferStateForSlot(
 		return;
 	}
 
-	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateBySlot(ProgressionStore, DialogueSubsystem, Slot);
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateByCharacterTag(ProgressionStore, DialogueSubsystem, Slot);
 	if (!PlayerState)
 	{
 		return;
@@ -1174,13 +1184,13 @@ static void PersistCycleOfferStateForSlot(
 	}
 }
 
-static void PersistSpeakerOfferCountsForSlot(
+static void PersistSpeakerOfferCountsForCharacter(
 	UParleyDialogueSubsystem* DialogueSubsystem,
-	const EParleyPlayerSlot Slot,
-	const TMap<EParleyPlayerSlot, TMap<FGameplayTag, int32>>& SpeakerOfferCountsByPlayerTransient,
+	const FGameplayTag Slot,
+	const TMap<FGameplayTag, TMap<FGameplayTag, int32>>& SpeakerOfferCountsByPlayerTransient,
 	const bool bMarkProgressionDirty)
 {
-	if (!DialogueSubsystem || Slot == EParleyPlayerSlot::Unknown)
+	if (!DialogueSubsystem || !Slot.IsValid())
 	{
 		return;
 	}
@@ -1191,7 +1201,7 @@ static void PersistSpeakerOfferCountsForSlot(
 		return;
 	}
 
-	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateBySlot(ProgressionStore, DialogueSubsystem, Slot);
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateByCharacterTag(ProgressionStore, DialogueSubsystem, Slot);
 	if (!PlayerState)
 	{
 		return;
@@ -1221,13 +1231,13 @@ static void PersistSpeakerOfferCountsForSlot(
 	}
 }
 
-static void PersistSeenCycleTagsForSlot(
+static void PersistSeenCycleTagsForCharacter(
 	UParleyDialogueSubsystem* DialogueSubsystem,
-	const EParleyPlayerSlot Slot,
-	const TMap<EParleyPlayerSlot, FGameplayTagContainer>& SeenByPlayerTransient,
+	const FGameplayTag Slot,
+	const TMap<FGameplayTag, FGameplayTagContainer>& SeenByPlayerTransient,
 	const bool bMarkProgressionDirty)
 {
-	if (!DialogueSubsystem || Slot == EParleyPlayerSlot::Unknown)
+	if (!DialogueSubsystem || !Slot.IsValid())
 	{
 		return;
 	}
@@ -1238,7 +1248,7 @@ static void PersistSeenCycleTagsForSlot(
 		return;
 	}
 
-	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateBySlot(ProgressionStore, DialogueSubsystem, Slot);
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateByCharacterTag(ProgressionStore, DialogueSubsystem, Slot);
 	if (!PlayerState)
 	{
 		return;
@@ -1373,15 +1383,20 @@ static FGameplayTag ResolvePlayerSpeakerTag(const APlayerState* PlayerState)
 		return CharacterResolvedSpeakerTag;
 	}
 
-	switch (GetPlayerSlotFromPlayerState(PlayerState))
+	const FGameplayTag PlayerCharacterTag = GetCharacterTagFromPlayerState(PlayerState);
+	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
+	if (BrotherTag.IsValid() && PlayerCharacterTag.MatchesTag(BrotherTag))
 	{
-	case EParleyPlayerSlot::P1:
-		return GetDialogueSpeakerBrotherTag();
-	case EParleyPlayerSlot::P2:
-		return GetDialogueSpeakerSisterTag();
-	default:
-		return FGameplayTag();
+		return BrotherTag;
 	}
+
+	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
+	if (SisterTag.IsValid() && PlayerCharacterTag.MatchesTag(SisterTag))
+	{
+		return SisterTag;
+	}
+
+	return FGameplayTag();
 }
 
 static FGameplayTag ResolveSpeakerTagForContext(
@@ -1574,17 +1589,17 @@ static const FParleySpeakerRow* ResolveSpeakerRowForPresentation(
 	return nullptr;
 }
 
-static const FDialoguePlayerPersistentState* FindPlayerDialogueStateBySlot(
+static const FDialoguePlayerPersistentState* FindPlayerDialogueStateByCharacterTag(
 	const FParleyProgressionStore* ProgressionStore,
-	const EParleyPlayerSlot Slot,
+	const FGameplayTag Slot,
 	const UWorld* World)
 {
-	if (!ProgressionStore || Slot == EParleyPlayerSlot::Unknown)
+	if (!ProgressionStore || !Slot.IsValid())
 	{
 		return nullptr;
 	}
 
-	if (const APlayerState* PlayerState = FindPlayerStateBySlot(World, Slot))
+	if (const APlayerState* PlayerState = FindPlayerStateByCharacterTag(World, Slot))
 	{
 		return FindPlayerDialogueState(ProgressionStore, BuildPlayerIdentityFromState(PlayerState), World);
 	}
@@ -2474,9 +2489,9 @@ static bool PassesBlockedConditions(const UParleyDialogueSubsystem* DialogueSubs
 	return !EvaluateConditionGroupInternal(DialogueSubsystem, Group, Context, false);
 }
 
-static TArray<EParleyPlayerSlot> GetAllSlottedPlayers(const UWorld* World)
+static TArray<FGameplayTag> GetAllControlledCharacters(const UWorld* World)
 {
-	TArray<EParleyPlayerSlot> Slots;
+	TArray<FGameplayTag> Slots;
 	if (!World)
 	{
 		return Slots;
@@ -2496,8 +2511,8 @@ static TArray<EParleyPlayerSlot> GetAllSlottedPlayers(const UWorld* World)
 			continue;
 		}
 
-		const EParleyPlayerSlot Slot = GetPlayerSlotFromPlayerState(ARPlayerState);
-		if (Slot != EParleyPlayerSlot::Unknown)
+		const FGameplayTag Slot = GetCharacterTagFromPlayerState(ARPlayerState);
+		if (Slot.IsValid())
 		{
 			Slots.AddUnique(Slot);
 		}
@@ -2506,9 +2521,9 @@ static TArray<EParleyPlayerSlot> GetAllSlottedPlayers(const UWorld* World)
 	return Slots;
 }
 
-static APlayerState* FindPlayerStateBySlot(const UWorld* World, const EParleyPlayerSlot Slot)
+static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FGameplayTag Slot)
 {
-	if (!World || Slot == EParleyPlayerSlot::Unknown)
+	if (!World || !Slot.IsValid())
 	{
 		return nullptr;
 	}
@@ -2522,7 +2537,7 @@ static APlayerState* FindPlayerStateBySlot(const UWorld* World, const EParleyPla
 	for (APlayerState* PlayerState : GameState->PlayerArray)
 	{
 		APlayerState* ARPlayerState = Cast<APlayerState>(PlayerState);
-		if (ARPlayerState && GetPlayerSlotFromPlayerState(ARPlayerState) == Slot)
+		if (ARPlayerState && GetCharacterTagFromPlayerState(ARPlayerState) == Slot)
 		{
 			return ARPlayerState;
 		}
