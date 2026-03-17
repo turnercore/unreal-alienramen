@@ -13,6 +13,7 @@ class AARPlayerController;
 class AARRamenMeatActor;
 class AActor;
 class UStaticMeshComponent;
+struct FARMeatDefinitionRow;
 
 UCLASS(Blueprintable)
 class ALIENRAMEN_API AARMeatStorageBoxActor : public AARShopDispenserActor
@@ -24,6 +25,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseMeat(AARPlayerController* RequestingController);
+
+	/** Dispenses a specific Shop.Meat type from storage inventory. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
+	bool TryDispenseSpecificMeat(AARPlayerController* RequestingController, FGameplayTag MeatTag);
+
+	/** Dispenses a random meat type whose definition color matches this storage's MeatColor. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
+	bool TryDispenseRandomMeatByContainerColor(AARPlayerController* RequestingController);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryStoreHeldMeat(AARPlayerController* RequestingController);
@@ -57,8 +66,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
 	TSubclassOf<AARRamenMeatActor> MeatActorClass;
 
-	// Optional typed item tag forwarded into generic dispenser lookup.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Scrapyard.Item"))
+	// Optional explicit meat type for specific-dispense calls and authoring defaults.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Shop.Meat"))
 	FGameplayTag MeatItemTag;
 
 	// World-hit auto-store is blocked until meat has moved at least this far from spawn.
@@ -68,5 +77,11 @@ protected:
 
 private:
 	void SyncLegacyDefinition();
+	bool TryDispenseResolvedMeat(AARPlayerController* RequestingController, const FARMeatDefinitionRow& MeatDefinition);
+	bool ConsumeTypedMeatFromState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, int32 AmountToConsume) const;
+	void AddTypedMeatToState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, int32 AmountToAdd) const;
+	void PromoteLegacyBucketsToTyped(FARMeatState& InOutMeatState) const;
+	void RebuildLegacyColorBucketsFromTyped(FARMeatState& InOutMeatState) const;
+	bool SelectRandomEligibleMeatTagForContainerColor(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const;
 	bool TryStoreMeatActorInternal(AARRamenMeatActor* MeatActor, AARPlayerController* RequestingController, bool bRequireWorldReturnArmed);
 };

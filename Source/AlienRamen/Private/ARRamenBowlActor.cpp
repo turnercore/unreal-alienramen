@@ -21,7 +21,7 @@ EARRamenStationType AARRamenBowlActor::GetNextRequiredStationType() const
 	}
 }
 
-bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType StationType, const EARAffinityColor StationColor)
+bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType StationType, const EARAffinityColor StationColor, const FGameplayTag StationMeatTag)
 {
 	if (!HasAuthority() || IsComplete() || StationType != GetNextRequiredStationType())
 	{
@@ -41,12 +41,15 @@ bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType Statio
 	{
 	case 0:
 		BowlSpec.NoodlesColor = StationColor;
+		BowlSpec.NoodlesMeatTag = StationMeatTag;
 		break;
 	case 1:
 		BowlSpec.BrothColor = StationColor;
+		BowlSpec.BrothMeatTag = StationMeatTag;
 		break;
 	case 2:
 		BowlSpec.ToppingsColor = StationColor;
+		BowlSpec.ToppingsMeatTag = StationMeatTag;
 		break;
 	default:
 		return false;

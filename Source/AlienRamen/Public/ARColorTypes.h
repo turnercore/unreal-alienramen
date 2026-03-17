@@ -12,6 +12,7 @@ enum class EARAffinityColor : uint8
 {
 	None = 0 UMETA(DisplayName = "None"),
 	Unknown = None UMETA(Hidden),
+	Colorless,
 	Red,
 	White,
 	Blue

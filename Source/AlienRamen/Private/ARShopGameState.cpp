@@ -4,6 +4,7 @@
 #include "ARGameStateModeStructs.h"
 #include "ARLog.h"
 #include "Engine/World.h"
+#include "Net/UnrealNetwork.h"
 
 AARShopGameState::AARShopGameState()
 {
@@ -13,6 +14,30 @@ AARShopGameState::AARShopGameState()
 UScriptStruct* AARShopGameState::GetStateStruct_Implementation() const
 {
 	return ClassStateStruct ? ClassStateStruct.Get() : FARShopGameStateData::StaticStruct();
+}
+
+void AARShopGameState::SetBaseBowlPayout(const int32 NewBaseBowlPayout)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 SanitizedPayout = FMath::Max(0, NewBaseBowlPayout);
+	if (BaseBowlPayout == SanitizedPayout)
+	{
+		return;
+	}
+
+	const int32 OldBaseBowlPayout = BaseBowlPayout;
+	BaseBowlPayout = SanitizedPayout;
+	OnRep_BaseBowlPayout(OldBaseBowlPayout);
+	ForceNetUpdate();
+}
+
+void AARShopGameState::OnRep_BaseBowlPayout(const int32 OldBaseBowlPayout)
+{
+	(void)OldBaseBowlPayout;
 }
 
 bool AARShopGameState::FinalizeShopRunAndTravelToInvader(const FString& InInvaderTravelURL)
@@ -43,4 +68,10 @@ bool AARShopGameState::FinalizeShopRunAndTravelToInvader(const FString& InInvade
 	}
 
 	return true;
+}
+
+void AARShopGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AARShopGameState, BaseBowlPayout);
 }

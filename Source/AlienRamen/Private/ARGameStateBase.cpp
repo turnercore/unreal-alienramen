@@ -1,11 +1,13 @@
 #include "ARGameStateBase.h"
 
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "GameplayTagsManager.h"
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -97,6 +99,11 @@ namespace
 			OutColor = EARAffinityColor::White;
 			return true;
 		}
+		if (Normalized == TEXT("colorless"))
+		{
+			OutColor = EARAffinityColor::Colorless;
+			return true;
+		}
 		if (Normalized == TEXT("none") || Normalized == TEXT("unspecified"))
 		{
 			OutColor = EARAffinityColor::None;
@@ -131,8 +138,115 @@ namespace
 			return TEXT("blue");
 		case EARAffinityColor::White:
 			return TEXT("white");
+		case EARAffinityColor::Colorless:
+			return TEXT("colorless");
 		default:
 			return TEXT("none");
+		}
+	}
+
+	static int32& ResolveLegacyMeatBucket(FARMeatState& MeatState, const EARAffinityColor Color)
+	{
+		switch (Color)
+		{
+		case EARAffinityColor::Red:
+			return MeatState.RedAmount;
+		case EARAffinityColor::Blue:
+			return MeatState.BlueAmount;
+		case EARAffinityColor::White:
+			return MeatState.WhiteAmount;
+		default:
+			return MeatState.UnspecifiedAmount;
+		}
+	}
+
+	static void AddTypedMeatDelta(FARMeatState& InOutMeatState, const FGameplayTag MeatTag, const int32 Delta)
+	{
+		if (!MeatTag.IsValid() || Delta == 0)
+		{
+			return;
+		}
+
+		for (FARMeatTypeAmount& Entry : InOutMeatState.AdditionalAmountsByType)
+		{
+			if (!Entry.MeatType.MatchesTagExact(MeatTag))
+			{
+				continue;
+			}
+
+			Entry.Amount = FMath::Max(0, Entry.Amount + Delta);
+			InOutMeatState.NormalizeAdditionalAmounts();
+			return;
+		}
+
+		if (Delta <= 0)
+		{
+			return;
+		}
+
+		FARMeatTypeAmount& Added = InOutMeatState.AdditionalAmountsByType.AddDefaulted_GetRef();
+		Added.MeatType = MeatTag;
+		Added.Amount = Delta;
+		InOutMeatState.NormalizeAdditionalAmounts();
+	}
+
+	static void PromoteLegacyBucketsToTyped(FARMeatState& InOutMeatState, UARItemDefinitionSubsystem* ItemDefinitions)
+	{
+		if (!ItemDefinitions)
+		{
+			return;
+		}
+
+		auto PromoteBucket = [&InOutMeatState, ItemDefinitions](const EARAffinityColor BucketColor, int32& BucketAmount)
+		{
+			const int32 SanitizedAmount = FMath::Max(0, BucketAmount);
+			if (SanitizedAmount <= 0)
+			{
+				BucketAmount = 0;
+				return;
+			}
+
+			FGameplayTag ResolvedTag;
+			if (!ItemDefinitions->ResolveFirstMeatTagForColor(BucketColor, ResolvedTag))
+			{
+				return;
+			}
+
+			AddTypedMeatDelta(InOutMeatState, ResolvedTag, SanitizedAmount);
+			BucketAmount = 0;
+		};
+
+		PromoteBucket(EARAffinityColor::Red, InOutMeatState.RedAmount);
+		PromoteBucket(EARAffinityColor::Blue, InOutMeatState.BlueAmount);
+		PromoteBucket(EARAffinityColor::White, InOutMeatState.WhiteAmount);
+		PromoteBucket(EARAffinityColor::None, InOutMeatState.UnspecifiedAmount);
+		InOutMeatState.NormalizeAdditionalAmounts();
+	}
+
+	static void RebuildLegacyBucketsFromTyped(FARMeatState& InOutMeatState, UARItemDefinitionSubsystem* ItemDefinitions)
+	{
+		InOutMeatState.RedAmount = 0;
+		InOutMeatState.BlueAmount = 0;
+		InOutMeatState.WhiteAmount = 0;
+		InOutMeatState.UnspecifiedAmount = 0;
+
+		for (const FARMeatTypeAmount& Entry : InOutMeatState.AdditionalAmountsByType)
+		{
+			const int32 Amount = FMath::Max(0, Entry.Amount);
+			if (!Entry.MeatType.IsValid() || Amount <= 0)
+			{
+				continue;
+			}
+
+			EARAffinityColor BucketColor = EARAffinityColor::None;
+			FARMeatDefinitionRow MeatDefinition;
+			if (ItemDefinitions && ItemDefinitions->ResolveMeatDefinition(Entry.MeatType, MeatDefinition))
+			{
+				BucketColor = MeatDefinition.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : MeatDefinition.Color;
+			}
+
+			int32& Bucket = ResolveLegacyMeatBucket(InOutMeatState, BucketColor);
+			Bucket += Amount;
 		}
 	}
 }
@@ -832,7 +946,7 @@ void AARGameStateBase::RegisterDebugConsoleCommands()
 
 	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.debug.add_meat"),
-		TEXT("Usage: ar.debug.add_meat [delta] [red|blue|white|none]"),
+		TEXT("Usage: ar.debug.add_meat <delta> <Shop.Meat.*|red|blue|white|colorless|none>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARGameStateBase::HandleConsoleAddMeat),
 		ECVF_Cheat);
 }
@@ -855,7 +969,7 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 	}
 
 	int32 Delta = 1;
-	EARAffinityColor ColorBucket = EARAffinityColor::None;
+	FString Token;
 
 	if (Args.Num() > 0)
 	{
@@ -863,49 +977,69 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 		if (LexTryParseString(ParsedDelta, *Args[0]))
 		{
 			Delta = ParsedDelta;
-
-			if (Args.Num() > 1)
-			{
-				if (!TryParseMeatColorToken(Args[1], ColorBucket))
-				{
-					UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Invalid meat color '%s'. Expected red|blue|white|none."), *Args[1]);
-					return;
-				}
-			}
+			Token = Args.Num() > 1 ? Args[1] : FString();
 		}
 		else
 		{
-			if (!TryParseMeatColorToken(Args[0], ColorBucket))
-			{
-				UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Usage: ar.debug.add_meat [delta] [red|blue|white|none]"));
-				return;
-			}
+			Token = Args[0];
+		}
+	}
+
+	UGameInstance* GI = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	if (!ItemDefinitions)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: missing item definition subsystem."));
+		return;
+	}
+
+	FGameplayTag TargetMeatTag;
+	EARAffinityColor ParsedColor = EARAffinityColor::None;
+	if (Token.IsEmpty())
+	{
+		ParsedColor = EARAffinityColor::None;
+		if (!ItemDefinitions->ResolveFirstMeatTagForColor(ParsedColor, TargetMeatTag))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: no Shop.Meat row found for default color '%s'."), GetMeatBucketLabel(ParsedColor));
+			return;
+		}
+	}
+	else if (TryParseMeatColorToken(Token, ParsedColor))
+	{
+		if (!ItemDefinitions->ResolveFirstMeatTagForColor(ParsedColor, TargetMeatTag))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: no Shop.Meat row found for color '%s'."), *Token);
+			return;
+		}
+	}
+	else
+	{
+		TargetMeatTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*Token), false);
+		if (!TargetMeatTag.IsValid())
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Usage: ar.debug.add_meat <delta> <Shop.Meat.*|red|blue|white|colorless|none>"));
+			return;
+		}
+
+		FARMeatDefinitionRow MeatDefinition;
+		if (!ItemDefinitions->ResolveMeatDefinition(TargetMeatTag, MeatDefinition))
+		{
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: '%s' is not a resolved Shop.Meat definition tag."), *Token);
+			return;
 		}
 	}
 
 	FARMeatState MeatState = GetMeat();
-	switch (ColorBucket)
-	{
-	case EARAffinityColor::Red:
-		MeatState.RedAmount += Delta;
-		break;
-	case EARAffinityColor::Blue:
-		MeatState.BlueAmount += Delta;
-		break;
-	case EARAffinityColor::White:
-		MeatState.WhiteAmount += Delta;
-		break;
-	default:
-		MeatState.UnspecifiedAmount += Delta;
-		break;
-	}
+	PromoteLegacyBucketsToTyped(MeatState, ItemDefinitions);
+	AddTypedMeatDelta(MeatState, TargetMeatTag, Delta);
+	RebuildLegacyBucketsFromTyped(MeatState, ItemDefinitions);
 
 	SetMeatFromSave(MeatState);
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[Save|Debug] AddMeat bucket=%s %+d -> total=%d"),
-		GetMeatBucketLabel(ColorBucket),
+		TEXT("[Save|Debug] AddMeat type='%s' %+d -> total=%d"),
+		*TargetMeatTag.ToString(),
 		Delta,
 		GetMeat().GetTotalAmount());
 }

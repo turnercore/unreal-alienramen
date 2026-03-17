@@ -541,6 +541,36 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		}
 	};
 
+	auto SanitizeVendingStockedBowls =
+		[OutWarnings, &ClampedCount](TArray<FARVendingStockedBowlEntry>& Entries)
+	{
+		bool bChanged = false;
+		for (FARVendingStockedBowlEntry& Entry : Entries)
+		{
+			auto SanitizeColor = [](const EARAffinityColor InColor)
+			{
+				return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
+			};
+
+			const EARAffinityColor OldNoodles = Entry.BowlSpec.NoodlesColor;
+			const EARAffinityColor OldBroth = Entry.BowlSpec.BrothColor;
+			const EARAffinityColor OldToppings = Entry.BowlSpec.ToppingsColor;
+			Entry.BowlSpec.NoodlesColor = SanitizeColor(Entry.BowlSpec.NoodlesColor);
+			Entry.BowlSpec.BrothColor = SanitizeColor(Entry.BowlSpec.BrothColor);
+			Entry.BowlSpec.ToppingsColor = SanitizeColor(Entry.BowlSpec.ToppingsColor);
+			bChanged = bChanged
+				|| Entry.BowlSpec.NoodlesColor != OldNoodles
+				|| Entry.BowlSpec.BrothColor != OldBroth
+				|| Entry.BowlSpec.ToppingsColor != OldToppings;
+		}
+
+		if (bChanged)
+		{
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("PendingVendingStockedBowls contained unknown colors and was normalized."));
+		}
+	};
+
 	ClampNonNegative(Money, TEXT("Money"));
 	ClampNonNegative(Scrap, TEXT("Scrap"));
 	ClampNonNegative(Cycles, TEXT("Cycles"));
@@ -588,6 +618,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	SanitizeStackArray(StoredEnergyDrinkStacks, TEXT("StoredEnergyDrinkStacks"));
 	SanitizeStackArray(QueuedEnergyDrinkStacks, TEXT("QueuedEnergyDrinkStacks"));
 	SanitizeShopTransientCarryables(ShopTransientCarryables);
+	SanitizeVendingStockedBowls(PendingVendingStockedBowls);
 
 	for (int32 PayloadIndex = ActiveRunBuffPayloads.Num() - 1; PayloadIndex >= 0; --PayloadIndex)
 	{

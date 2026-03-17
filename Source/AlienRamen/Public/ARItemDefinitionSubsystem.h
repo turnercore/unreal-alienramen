@@ -8,6 +8,7 @@
 #include "GameplayTagContainer.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ARScrapyardTypes.h"
+#include "ARShopRamenTypes.h"
 #include "ARItemDefinitionSubsystem.generated.h"
 
 class AActor;
@@ -34,7 +35,29 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Items")
 	bool ApplyItemPhysicsProperties(AActor* Actor, FGameplayTag ItemTag) const;
 
+	/** Resolves the canonical meat definition row for a Shop.Meat tag. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool ResolveMeatDefinition(FGameplayTag MeatTag, FARMeatDefinitionRow& OutMeatDef) const;
+
+	/** Resolves the first deterministic meat definition row that matches the requested color. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool ResolveFirstMeatDefinitionForColor(EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const;
+
+	/** Resolves the first deterministic Shop.Meat tag that matches the requested color. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool ResolveFirstMeatTagForColor(EARAffinityColor Color, FGameplayTag& OutMeatTag) const;
+
+	/** Returns all Shop.Meat tags matching the requested color in deterministic row-name order. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool GetMeatTagsForColor(EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const;
+
+	/** Resolves summed item sell value for all meat tags authored on a completed bowl. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	int32 ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const;
+
 private:
 	bool ResolveItemDefinition_Internal(FGameplayTag ItemTag, FARScrapyardItemDefRow& OutItemDef) const;
+	bool ResolveMeatDefinition_Internal(FGameplayTag MeatTag, FARMeatDefinitionRow& OutMeatDef) const;
+	bool GatherAllMeatDefinitions(TArray<TPair<FName, FARMeatDefinitionRow>>& OutDefinitions) const;
 	static void ApplyKnowledgeTextFallback(FGameplayTag ItemTag, FARScrapyardItemDefRow& InOutDef);
 };

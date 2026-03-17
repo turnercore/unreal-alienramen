@@ -20,6 +20,15 @@ enum class EARRamenTasteReaction : uint8
 };
 
 UENUM(BlueprintType)
+enum class EARVendingQualityTier : uint8
+{
+	Low = 0,
+	Standard,
+	High,
+	Premium
+};
+
+UENUM(BlueprintType)
 enum class EARRamenStationType : uint8
 {
 	Noodles = 0,
@@ -59,6 +68,52 @@ struct ALIENRAMEN_API FARRamenBowlSpec
 	/** Toppings color currently in the bowl (None means empty slot). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	EARAffinityColor ToppingsColor = EARAffinityColor::None;
+
+	/** Meat item tag used for the noodles slot (invalid when no meat identity was applied). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	FGameplayTag NoodlesMeatTag;
+
+	/** Meat item tag used for the broth slot (invalid when no meat identity was applied). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	FGameplayTag BrothMeatTag;
+
+	/** Meat item tag used for the toppings slot (invalid when no meat identity was applied). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	FGameplayTag ToppingsMeatTag;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	/** Canonical meat identity gameplay tag used by shop inventory/runtime flows. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	FGameplayTag MeatTag;
+
+	/** Optional enemy identifier tag that maps invader drops to this meat definition. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Enemy.Identifier"))
+	FGameplayTag EnemyIdentifierTag;
+
+	/** Shared item definition tag used to resolve item metadata (value/icon/weight/etc). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Scrapyard.Item"))
+	FGameplayTag ItemTag;
+
+	/** Display name used for UI and diagnostics. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FText Name;
+
+	/** Description used for UI and diagnostics. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FText Description;
+
+	/** Color classification used for order matching and color aggregate views. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARAffinityColor Color = EARAffinityColor::None;
+
+	/** Number of bowl fill units one item contributes when loaded into a station. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "1", UIMin = "1"))
+	int32 StationFillAmount = 1;
 };
 
 USTRUCT(BlueprintType)
@@ -184,5 +239,36 @@ struct ALIENRAMEN_API FARShopStationConfigRow : public FTableRowBase
 	/** Progress contribution per tap when in Tap mode; scale relative to ProcessingDurationSeconds. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float TapProcessingSecondsPerPress = 0.20f;
+
+	/** When false, station processing can only start when a meat item is slotted. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	bool bAllowProcessingWithoutMeat = true;
 };
 
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARShopReactionTipRange
+{
+	GENERATED_BODY()
+
+	/** Inclusive minimum multiplier used when sampling tip payout for this reaction bucket. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MinMultiplier = 0.0f;
+
+	/** Inclusive maximum multiplier used when sampling tip payout for this reaction bucket. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MaxMultiplier = 0.0f;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARVendingStockedBowlEntry
+{
+	GENERATED_BODY()
+
+	/** Vending machine quality tier used when calculating post-run sale payout. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARVendingQualityTier QualityTier = EARVendingQualityTier::Standard;
+
+	/** Completed bowl payload to monetize on next shop-entry settlement. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FARRamenBowlSpec BowlSpec;
+};

@@ -48,6 +48,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	EARAffinityColor GetProcessedStockColor() const { return ProcessedStockColor; }
 
+	/** Meat item tag associated with buffered stock (invalid when stock is empty or processed without slotted meat). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
+	FGameplayTag GetProcessedStockMeatTag() const { return ProcessedStockMeatTag; }
+
 	/** Processing progress in [0..1]; designers can bind this to progress bars. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	float GetProcessingProgressNormalized() const { return ProcessingProgress01; }
@@ -93,7 +97,7 @@ public:
 
 	// Station->bowl consume endpoint used by bowl fill flow. Drains one processed stock unit.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
-	bool TryConsumeForBowl(EARRamenStationType RequestedStationType, EARAffinityColor& OutColor);
+	bool TryConsumeForBowl(EARRamenStationType RequestedStationType, EARAffinityColor& OutColor, FGameplayTag& OutMeatTag);
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Shop|Station")
 	FAROnShopStationRuntimeChanged OnRuntimeStateChanged;
@@ -177,6 +181,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0"))
 	float TapProcessingSecondsPerPress = 0.20f;
 
+	/** When false, this station cannot process unless a meat item is currently slotted. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	bool bAllowProcessingWithoutMeat = true;
+
 	// Optional config lookup tag. When valid, BeginPlay resolves FARShopStationConfigRow for this station and overrides station config fields.
 	// Example: StationConfigTag = "Shop.Station.Broth.Fast" to drive a data-table row for tuned timings.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
@@ -196,10 +204,16 @@ private:
 	EARAffinityColor PendingProcessColor = EARAffinityColor::None;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag PendingProcessMeatTag;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	int32 PendingProcessAmount = 0;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	EARAffinityColor ProcessedStockColor = EARAffinityColor::None;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag ProcessedStockMeatTag;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ProcessedStockAmount, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	int32 ProcessedStockAmount = 0;
