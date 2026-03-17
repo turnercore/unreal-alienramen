@@ -1409,6 +1409,23 @@ static FGameplayTag ResolvePlayerSpeakerTag(const APlayerState* PlayerState)
 		return FGameplayTag();
 	}
 
+	// Possession can change the live dialogue speaker source before any mirrored player-state
+	// character tag update lands, so prefer the currently possessed pawn speaker when available.
+	if (const APlayerController* PlayerController = Cast<APlayerController>(PlayerState->GetOwner()))
+	{
+		if (const APawn* Pawn = PlayerController->GetPawn())
+		{
+			if (const UParleySpeakerComponent* SpeakerComponent = Pawn->FindComponentByClass<UParleySpeakerComponent>())
+			{
+				const FGameplayTag PawnSpeakerTag = SpeakerComponent->GetSpeakerTag();
+				if (PawnSpeakerTag.IsValid())
+				{
+					return PawnSpeakerTag;
+				}
+			}
+		}
+	}
+
 	const FGameplayTag CurrentCharacterTag = ResolveDialogueCharacterTagFromPlayerState(PlayerState);
 	const FGameplayTag CharacterResolvedSpeakerTag = ResolvePlayerSpeakerTagFromCharacterTag(CurrentCharacterTag);
 	if (CharacterResolvedSpeakerTag.IsValid())

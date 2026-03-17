@@ -77,9 +77,13 @@ class ALIENRAMEN_API AARPlayerController : public APlayerController, public IPar
 
 public:
 	AARPlayerController();
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 
 	virtual bool IsDialogueAutoAdvanceEnabled() const override;
 	virtual FGameplayTag GetCharacterTag() const override;
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FGameplayTag GetPlayerSlotTag() const;
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
 	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
 	virtual void NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request) override;

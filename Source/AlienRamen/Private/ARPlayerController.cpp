@@ -15,6 +15,7 @@
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
 #include "ParleySpeakerComponent.h"
+#include "ParleySpeakerSubsystem.h"
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
@@ -77,6 +78,42 @@ AARPlayerController::AARPlayerController()
 	// Input bindings can stay in BP; this controller just provides the CommonAbilitySet reference.
 }
 
+void AARPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
+		}
+	}
+}
+
+void AARPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
+		}
+	}
+}
+
 bool AARPlayerController::IsDialogueAutoAdvanceEnabled() const
 {
 	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
@@ -92,6 +129,12 @@ FGameplayTag AARPlayerController::GetCharacterTag() const
 	}
 
 	return ARPS->GetCurrentCharacterTag();
+}
+
+FGameplayTag AARPlayerController::GetPlayerSlotTag() const
+{
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	return ARPS ? ARPS->GetPlayerSlotTag() : FGameplayTag();
 }
 
 void AARPlayerController::NotifyDialogueViewUpdated(const FDialogueClientView& View)

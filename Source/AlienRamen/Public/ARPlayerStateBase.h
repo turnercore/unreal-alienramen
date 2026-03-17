@@ -202,6 +202,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void SetPlayerSlotId(int32 NewSlotId);
 
+	/** Canonical player-slot tag for viewer-specific systems such as Emo HUD rendering. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FGameplayTag GetPlayerSlotTag() const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
 

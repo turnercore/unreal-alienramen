@@ -264,6 +264,13 @@ void AARPlayerStateBase::SetCurrentCharacterTag(FGameplayTag NewCharacterTag)
 	ServerSetCurrentCharacterTag(NewCharacterTag);
 }
 
+FGameplayTag AARPlayerStateBase::GetPlayerSlotTag() const
+{
+	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(CurrentCharacterTag);
+	const EARPlayerSlot CharacterSlot = ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag);
+	return ARPlayer::GetPlayerSlotTag(CharacterSlot);
+}
+
 void AARPlayerStateBase::ServerSetCurrentCharacterTag_Implementation(FGameplayTag NewCharacterTag)
 {
 	SetCurrentCharacterTagWithSwap_Internal(NewCharacterTag);
