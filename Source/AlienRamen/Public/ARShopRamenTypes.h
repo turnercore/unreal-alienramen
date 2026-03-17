@@ -107,7 +107,7 @@ struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FText Description;
 
-	/** Color classification used for order matching and color aggregate views. */
+	/** Legacy authoring hint only; runtime meat color is carried by spawned meat/drop actors and may vary per enemy. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	EARAffinityColor Color = EARAffinityColor::None;
 

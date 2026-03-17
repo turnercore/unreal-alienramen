@@ -21,10 +21,20 @@ void UParleySpeakerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 	Collection.InitializeDependency<UParleyDialogueSubsystem>();
 	SpeakerTalkableCache.Reset();
+
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystem(this))
+	{
+		DialogueSubsystem->OnProgressionStateMarkedDirty.AddDynamic(this, &UParleySpeakerSubsystem::HandleDialogueProgressionStateMarkedDirty);
+	}
 }
 
 void UParleySpeakerSubsystem::Deinitialize()
 {
+	if (UParleyDialogueSubsystem* DialogueSubsystem = GetDialogueSubsystem(this))
+	{
+		DialogueSubsystem->OnProgressionStateMarkedDirty.RemoveDynamic(this, &UParleySpeakerSubsystem::HandleDialogueProgressionStateMarkedDirty);
+	}
+
 	SpeakerTalkableCache.Reset();
 	Super::Deinitialize();
 }
@@ -107,4 +117,9 @@ void UParleySpeakerSubsystem::RefreshAllSpeakerTalkableStates()
 			RefreshSpeakerTalkableState(SpeakerTag);
 		}
 	}
+}
+
+void UParleySpeakerSubsystem::HandleDialogueProgressionStateMarkedDirty()
+{
+	RefreshAllSpeakerTalkableStates();
 }

@@ -1,5 +1,6 @@
 #include "EmoComponent.h"
 
+#include "EmoLog.h"
 #include "EmoResolverSubsystem.h"
 #include "EmoSettings.h"
 #include "Engine/GameInstance.h"
@@ -269,6 +270,13 @@ void UEmoComponent::SetDialogueEmotionTag(const FGameplayTag NewEmotionTag)
 
 	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
 	DialogueOverrideState.SharedEmotionTag = NewEmotionTag;
+	UE_LOG(
+		EmoLog,
+		Verbose,
+		TEXT("[Emotion] Dialogue shared override '%s': Speaker=%s NewTag=%s"),
+		*GetNameSafe(GetOwner()),
+		*RegisteredSpeakerTag.ToString(),
+		*NewEmotionTag.ToString());
 	OnRep_DialogueOverrideState(OldDialogueState);
 	ForceOwnerNetUpdate();
 }
@@ -288,6 +296,14 @@ void UEmoComponent::SetDialogueEmotionTagForPlayerSlotTag(const FGameplayTag Pla
 
 	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
 	SetStateSlotTag(DialogueOverrideState, PlayerSlotTag, NewEmotionTag);
+	UE_LOG(
+		EmoLog,
+		Verbose,
+		TEXT("[Emotion] Dialogue slot override '%s': Speaker=%s Slot=%s NewTag=%s"),
+		*GetNameSafe(GetOwner()),
+		*RegisteredSpeakerTag.ToString(),
+		*PlayerSlotTag.ToString(),
+		*NewEmotionTag.ToString());
 	OnRep_DialogueOverrideState(OldDialogueState);
 	ForceOwnerNetUpdate();
 }
@@ -949,6 +965,14 @@ void UEmoComponent::OnRep_DialogueOverrideState(const FEmoDisplayState OldState)
 {
 	if (!AreDisplayStatesEqual(OldState, DialogueOverrideState))
 	{
+		UE_LOG(
+			EmoLog,
+			Verbose,
+			TEXT("[Emotion] Dialogue override replicated '%s': Shared=%s P1=%s P2=%s"),
+			*GetNameSafe(GetOwner()),
+			*DialogueOverrideState.SharedEmotionTag.ToString(),
+			*DialogueOverrideState.P1EmotionTag.ToString(),
+			*DialogueOverrideState.P2EmotionTag.ToString());
 		BroadcastDisplayStateDelta(BaseEmotionState, OldState, SystemOverrideState);
 	}
 }

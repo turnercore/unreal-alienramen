@@ -14,6 +14,11 @@
 
 namespace
 {
+	static float SanitizeInlineLineLengthSeconds(const float InLengthSeconds)
+	{
+		return FMath::Max(0.0f, InLengthSeconds);
+	}
+
 	static const FName PinCategoryExec(TEXT("DialogueExec"));
 	static const FName PinCategoryConditionBool(TEXT("DialogueConditionBool"));
 	static const FString ConditionPinPrefix(TEXT("Condition_"));
@@ -1659,6 +1664,7 @@ bool UParleyDialogueEdGraphNode::AddMultiLineEntry()
 			NewEntry.EntryId = FGuid::NewGuid();
 			NewEntry.LineData.SkipBlockedConditions.MatchMode = EDialogueConditionMatchMode::Any;
 			NewEntry.LineData.Line.LocalLineGuid = FGuid::NewGuid();
+			NewEntry.LineData.Line.LengthSeconds = 1.0f;
 			return true;
 		},
 		false);
@@ -1818,6 +1824,75 @@ bool UParleyDialogueEdGraphNode::SetMultiLineEntryText(const FGuid& EntryId, con
 				Entry.LineData.Line.Text = NewText;
 				return true;
 			}
+			return false;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetLineLengthSeconds(const float NewLengthSeconds)
+{
+	const float SanitizedLengthSeconds = SanitizeInlineLineLengthSeconds(NewLengthSeconds);
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetLineLengthSeconds", "Set Line Length Seconds"),
+		[this, SanitizedLengthSeconds]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::Line)
+			{
+				return false;
+			}
+
+			FDialogueLineNodeData* LineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueLineNodeData>();
+			if (!LineData || FMath::IsNearlyEqual(LineData->Line.LengthSeconds, SanitizedLengthSeconds))
+			{
+				return false;
+			}
+
+			LineData->Line.LengthSeconds = SanitizedLengthSeconds;
+			return true;
+		},
+		false);
+}
+
+bool UParleyDialogueEdGraphNode::SetMultiLineEntryLengthSeconds(const FGuid& EntryId, const float NewLengthSeconds)
+{
+	if (!EntryId.IsValid())
+	{
+		return false;
+	}
+
+	const float SanitizedLengthSeconds = SanitizeInlineLineLengthSeconds(NewLengthSeconds);
+	return CommitRuntimeNodeMutation(
+		LOCTEXT("SetMultiLineEntryLengthSeconds", "Set Multi-Line Length Seconds"),
+		[this, EntryId, SanitizedLengthSeconds]() -> bool
+		{
+			if (EditorNodeType != EDialogueEditorNodeType::MultiLine
+				&& EditorNodeType != EDialogueEditorNodeType::SplitLine)
+			{
+				return false;
+			}
+
+			FDialogueMultiLineNodeData* MultiLineData = RuntimeNode.NodeData.GetMutablePtr<FDialogueMultiLineNodeData>();
+			if (!MultiLineData)
+			{
+				return false;
+			}
+
+			for (FDialogueMultiLineEntry& Entry : MultiLineData->Lines)
+			{
+				if (Entry.EntryId != EntryId)
+				{
+					continue;
+				}
+
+				if (FMath::IsNearlyEqual(Entry.LineData.Line.LengthSeconds, SanitizedLengthSeconds))
+				{
+					return false;
+				}
+
+				Entry.LineData.Line.LengthSeconds = SanitizedLengthSeconds;
+				return true;
+			}
+
 			return false;
 		},
 		false);
@@ -2953,6 +3028,10 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 			{
 				LineData->Line.LocalLineGuid = FGuid::NewGuid();
 			}
+			if (LineData->Line.LengthSeconds <= 0.0f)
+			{
+				LineData->Line.LengthSeconds = 1.0f;
+			}
 		}
 	}
 
@@ -2981,6 +3060,10 @@ void UParleyDialogueEdGraphNode::EnsureBranchAndLineIds(const bool bRegenerateBr
 				if (bRegenerateLineGuid || !Entry.LineData.Line.LocalLineGuid.IsValid())
 				{
 					Entry.LineData.Line.LocalLineGuid = FGuid::NewGuid();
+				}
+				if (Entry.LineData.Line.LengthSeconds <= 0.0f)
+				{
+					Entry.LineData.Line.LengthSeconds = 1.0f;
 				}
 			}
 		}

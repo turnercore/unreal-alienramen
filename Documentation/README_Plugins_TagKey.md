@@ -15,6 +15,14 @@
 ## Runtime constraints
 
 - Resolver APIs are game-thread-only; static configured-route helpers enforce the same thread requirement as subsystem instance methods.
+- Root-tag hierarchy overlap is allowed intentionally; tag resolution walks parent tags from leaf to root and uses the nearest configured ancestor root.
+
+## Debugging
+
+- `tagkey.debug.log` defaults `TagKeyLog` to `VeryVerbose`.
+- `tagkey.debug.log verbose|log|warning|error|off|reset` supports the same verbosity shorthands as `ar.debug.log`.
+- `tagkey.debug.log` requires an active PIE/Game world context; it will no-op with a warning from editor-only/non-game contexts.
+- Native console command `log logtagkey <level>` still works for direct log-category control.
 
 ## Where to read details
 

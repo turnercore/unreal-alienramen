@@ -232,7 +232,9 @@ Current example:
 
 1. Get `ARSaveSubsystem` from `GameInstance`.
 2. Call `CreateNewSave(...)`.
-3. On success, start normal game flow/travel.
+3. On success, gameplay continues with a dirty in-memory canonical save; nothing is written to disk yet.
+4. Canonical save sync for joining clients is also deferred until the first persisted save.
+5. First explicit save/autosave persists revision `0` for that slot.
 
 ### Save current game
 

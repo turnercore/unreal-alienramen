@@ -145,21 +145,6 @@ namespace
 		}
 	}
 
-	static int32& ResolveLegacyMeatBucket(FARMeatState& MeatState, const EARAffinityColor Color)
-	{
-		switch (Color)
-		{
-		case EARAffinityColor::Red:
-			return MeatState.RedAmount;
-		case EARAffinityColor::Blue:
-			return MeatState.BlueAmount;
-		case EARAffinityColor::White:
-			return MeatState.WhiteAmount;
-		default:
-			return MeatState.UnspecifiedAmount;
-		}
-	}
-
 	static void AddTypedMeatDelta(FARMeatState& InOutMeatState, const FGameplayTag MeatTag, const int32 Delta)
 	{
 		if (!MeatTag.IsValid() || Delta == 0)
@@ -225,6 +210,7 @@ namespace
 
 	static void RebuildLegacyBucketsFromTyped(FARMeatState& InOutMeatState, UARItemDefinitionSubsystem* ItemDefinitions)
 	{
+		(void)ItemDefinitions;
 		InOutMeatState.RedAmount = 0;
 		InOutMeatState.BlueAmount = 0;
 		InOutMeatState.WhiteAmount = 0;
@@ -238,15 +224,8 @@ namespace
 				continue;
 			}
 
-			EARAffinityColor BucketColor = EARAffinityColor::None;
-			FARMeatDefinitionRow MeatDefinition;
-			if (ItemDefinitions && ItemDefinitions->ResolveMeatDefinition(Entry.MeatType, MeatDefinition))
-			{
-				BucketColor = MeatDefinition.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : MeatDefinition.Color;
-			}
-
-			int32& Bucket = ResolveLegacyMeatBucket(InOutMeatState, BucketColor);
-			Bucket += Amount;
+			// Typed inventory no longer implies a canonical color. Keep legacy mirrors conservative.
+			InOutMeatState.UnspecifiedAmount += Amount;
 		}
 	}
 }

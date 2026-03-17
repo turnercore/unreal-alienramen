@@ -77,9 +77,25 @@ class ALIENRAMEN_API AARPlayerController : public APlayerController, public IPar
 
 public:
 	AARPlayerController();
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 
 	virtual bool IsDialogueAutoAdvanceEnabled() const override;
 	virtual FGameplayTag GetCharacterTag() const override;
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FGameplayTag GetPlayerSlotTag() const;
+
+	/**
+	 * Hold-style request for switching to the next playable character.
+	 * bIsRequesting=true should be bound to input pressed/triggered; false to input released.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
+	void RequestSwitchToNextPlayableCharacter(bool bIsRequesting = true);
+
+	/** Server relay for RequestSwitchToNextPlayableCharacter. */
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSwitchToNextPlayableCharacter(bool bIsRequesting = true);
+
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
 	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
 	virtual void NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request) override;

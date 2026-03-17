@@ -225,6 +225,23 @@ float AARShopGameMode::GetVendingQualityMultiplier(const EARVendingQualityTier Q
 	}
 }
 
+float AARShopGameMode::GetItemQualityMultiplier(const EARVendingQualityTier QualityTier) const
+{
+	switch (QualityTier)
+	{
+	case EARVendingQualityTier::Low:
+		return FMath::Max(0.0f, ItemQualityLowMultiplier);
+	case EARVendingQualityTier::Standard:
+		return FMath::Max(0.0f, ItemQualityStandardMultiplier);
+	case EARVendingQualityTier::High:
+		return FMath::Max(0.0f, ItemQualityHighMultiplier);
+	case EARVendingQualityTier::Premium:
+		return FMath::Max(0.0f, ItemQualityPremiumMultiplier);
+	default:
+		return FMath::Max(0.0f, ItemQualityStandardMultiplier);
+	}
+}
+
 bool AARShopGameMode::QueueVendingStockedBowl(const FARVendingStockedBowlEntry& Entry)
 {
 	if (!HasAuthority())
@@ -517,7 +534,7 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 		}
 		else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(Spawned))
 		{
-			MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
+			MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount), Snapshot.MeatQualityTier);
 		}
 
 		SanitizedSnapshots.Add(Snapshot);
@@ -708,7 +725,7 @@ bool AARShopGameMode::RestoreHeldShopItemSnapshot(UARShopCarryComponent* CarryCo
 	}
 	else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(SpawnedItem))
 	{
-		MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount));
+		MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount), Snapshot.MeatQualityTier);
 	}
 	else if (AARRamenBowlActor* BowlActor = Cast<AARRamenBowlActor>(SpawnedItem))
 	{
@@ -958,16 +975,18 @@ void AARShopGameMode::FinalizePendingVendingPayout(UARSaveGame* SaveGame, UARSav
 	SaveSubsystem->MarkSaveDirty();
 }
 
-int32 AARShopGameMode::ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec) const
+int32 AARShopGameMode::ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec, const EARVendingQualityTier QualityTier) const
 {
 	UGameInstance* GI = GetGameInstance();
 	const UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
-	return ItemDefinitions ? FMath::Max(0, ItemDefinitions->ResolveCombinedMeatItemValue(BowlSpec)) : 0;
+	const int32 BaseValue = ItemDefinitions ? FMath::Max(0, ItemDefinitions->ResolveCombinedMeatItemValue(BowlSpec)) : 0;
+	const float QualityMultiplier = GetItemQualityMultiplier(QualityTier);
+	return FMath::Max(0, FMath::RoundToInt(static_cast<float>(BaseValue) * QualityMultiplier));
 }
 
 int32 AARShopGameMode::ResolveVendingBowlPayout(const FARVendingStockedBowlEntry& Entry) const
 {
-	const int32 CombinedMeatValue = ResolveCombinedMeatValue(Entry.BowlSpec);
+	const int32 CombinedMeatValue = ResolveCombinedMeatValue(Entry.BowlSpec, Entry.QualityTier);
 	const float Multiplier = GetVendingQualityMultiplier(Entry.QualityTier);
 	return FMath::Max(0, FMath::RoundToInt(1.0f + (CombinedMeatValue * Multiplier)));
 }

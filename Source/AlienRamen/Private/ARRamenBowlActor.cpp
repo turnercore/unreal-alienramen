@@ -37,6 +37,8 @@ bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType Statio
 		return false;
 	}
 
+	const int32 PreviousFillStep = FillStep;
+
 	switch (FillStep)
 	{
 	case 0:
@@ -56,6 +58,7 @@ bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType Statio
 	}
 
 	++FillStep;
+	BroadcastFillStepChanged(PreviousFillStep, FillStep);
 	ForceNetUpdate();
 	UE_LOG(
 		ARLog,
@@ -76,10 +79,27 @@ void AARRamenBowlActor::ClearBowl()
 		return;
 	}
 
+	const int32 PreviousFillStep = FillStep;
 	BowlSpec = FARRamenBowlSpec();
 	FillStep = 0;
+	BroadcastFillStepChanged(PreviousFillStep, FillStep);
 	ForceNetUpdate();
 	UE_LOG(ARLog, Verbose, TEXT("[Shop|Bowl] Cleared bowl '%s'."), *GetNameSafe(this));
+}
+
+void AARRamenBowlActor::OnRep_FillStep(const int32 PreviousFillStep)
+{
+	BroadcastFillStepChanged(PreviousFillStep, FillStep);
+}
+
+void AARRamenBowlActor::BroadcastFillStepChanged(const int32 PreviousFillStep, const int32 NewFillStep)
+{
+	if (PreviousFillStep == NewFillStep)
+	{
+		return;
+	}
+
+	OnFillStepChanged.Broadcast(PreviousFillStep, NewFillStep);
 }
 
 void AARRamenBowlActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -48,44 +48,41 @@ bool UParleyDialogueSubsystem::ValidateSpeaker(const FParleySpeakerRow& SpeakerR
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
+		if (!TryResolveDataTableForRowStruct_Parley(this, FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 		{
-			if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+			LookupError.Empty();
+			if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
 			{
-				LookupError.Empty();
-				if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+				TryResolveDataTableForRootTag_Parley(this, DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
+				MatchedRoot = DialogueSettings->SpeakerDefinitionRootTag;
+			}
+		}
+
+		FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
+		if ((!EffectiveSpeakerRoot.IsValid()) && DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		{
+			EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
+		}
+
+		if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
+		{
+			for (const FName RowName : SpeakerTable->GetRowNames())
+			{
+				const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueSpeakerValidate"), false);
+				if (!Row)
 				{
-					Lookup->TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
-					MatchedRoot = DialogueSettings->SpeakerDefinitionRootTag;
+					continue;
 				}
-			}
 
-			FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
-			if ((!EffectiveSpeakerRoot.IsValid()) && DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
-			{
-				EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
-			}
-
-			if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
-			{
-				for (const FName RowName : SpeakerTable->GetRowNames())
+				FGameplayTag CandidateTag = Row->SpeakerTag;
+				if (!CandidateTag.IsValid() && EffectiveSpeakerRoot.IsValid())
 				{
-					const FParleySpeakerRow* Row = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueSpeakerValidate"), false);
-					if (!Row)
-					{
-						continue;
-					}
+					CandidateTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
+				}
 
-					FGameplayTag CandidateTag = Row->SpeakerTag;
-					if (!CandidateTag.IsValid() && EffectiveSpeakerRoot.IsValid())
-					{
-						CandidateTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
-					}
-
-					if (CandidateTag.IsValid() && CandidateTag.MatchesTagExact(SpeakerRow.SpeakerTag))
-					{
-						++MatchingSpeakerTagCount;
-					}
+				if (CandidateTag.IsValid() && CandidateTag.MatchesTagExact(SpeakerRow.SpeakerTag))
+				{
+					++MatchingSpeakerTagCount;
 				}
 			}
 		}
@@ -395,54 +392,51 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
 		const FString CurrentOfferGatingSignature = BuildConversationOfferGatingSignature(ConversationAsset->Header);
 
-		if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
+		UDataTable* ConversationTable = nullptr;
+		FGameplayTag MatchedRoot;
+		FString LookupError;
+		if (!TryResolveDataTableForRowStruct_Parley(this, FParleyConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
 		{
-			UDataTable* ConversationTable = nullptr;
-			FGameplayTag MatchedRoot;
-			FString LookupError;
-			if (!Lookup->TryResolveDataTableForRowStruct(FParleyConversationAssetRow::StaticStruct(), ConversationTable, MatchedRoot, LookupError))
+			LookupError.Empty();
+			if (DialogueSettings && DialogueSettings->ConversationDefinitionRootTag.IsValid())
 			{
-				LookupError.Empty();
-				if (DialogueSettings && DialogueSettings->ConversationDefinitionRootTag.IsValid())
-				{
-					Lookup->TryResolveDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError);
-				}
+				TryResolveDataTableForRootTag_Parley(this, DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError);
 			}
+		}
 
-			if (ConversationTable && ConversationTable->GetRowStruct() == FParleyConversationAssetRow::StaticStruct())
+		if (ConversationTable && ConversationTable->GetRowStruct() == FParleyConversationAssetRow::StaticStruct())
+		{
+			for (const FName RowName : ConversationTable->GetRowNames())
 			{
-				for (const FName RowName : ConversationTable->GetRowNames())
+				const FParleyConversationAssetRow* Row = ConversationTable->FindRow<FParleyConversationAssetRow>(RowName, TEXT("DialogueConversationDuplicateCheck"), false);
+				if (!Row)
 				{
-					const FParleyConversationAssetRow* Row = ConversationTable->FindRow<FParleyConversationAssetRow>(RowName, TEXT("DialogueConversationDuplicateCheck"), false);
-					if (!Row)
-					{
-						continue;
-					}
+					continue;
+				}
 
-					FGameplayTag CandidateTag = Row->ConversationTag;
-					if ((!CandidateTag.IsValid()) && DialogueSettings && DialogueSettings->ConversationDefinitionRootTag.IsValid())
-					{
-						CandidateTag = BuildTagFromRootAndLeaf(DialogueSettings->ConversationDefinitionRootTag, RowName);
-					}
+				FGameplayTag CandidateTag = Row->ConversationTag;
+				if ((!CandidateTag.IsValid()) && DialogueSettings && DialogueSettings->ConversationDefinitionRootTag.IsValid())
+				{
+					CandidateTag = BuildTagFromRootAndLeaf(DialogueSettings->ConversationDefinitionRootTag, RowName);
+				}
 
-					if (CandidateTag.IsValid() && CandidateTag.MatchesTagExact(ConversationAsset->Header.ConversationTag))
-					{
-						++MatchingConversationTagCount;
-					}
+				if (CandidateTag.IsValid() && CandidateTag.MatchesTagExact(ConversationAsset->Header.ConversationTag))
+				{
+					++MatchingConversationTagCount;
+				}
 
-					UParleyConversationAsset* CandidateConversation = Row->Conversation.LoadSynchronous();
-					if (!CandidateConversation || CandidateConversation == ConversationAsset)
-					{
-						continue;
-					}
+				UParleyConversationAsset* CandidateConversation = Row->Conversation.LoadSynchronous();
+				if (!CandidateConversation || CandidateConversation == ConversationAsset)
+				{
+					continue;
+				}
 
-					if (BuildConversationOfferGatingSignature(CandidateConversation->Header) == CurrentOfferGatingSignature)
-					{
-						const FString CandidateLabel = CandidateConversation->Header.ConversationTag.IsValid()
-							? CandidateConversation->Header.ConversationTag.ToString()
-							: CandidateConversation->GetName();
-						OverlappingConversationLabels.AddUnique(CandidateLabel);
-					}
+				if (BuildConversationOfferGatingSignature(CandidateConversation->Header) == CurrentOfferGatingSignature)
+				{
+					const FString CandidateLabel = CandidateConversation->Header.ConversationTag.IsValid()
+						? CandidateConversation->Header.ConversationTag.ToString()
+						: CandidateConversation->GetName();
+					OverlappingConversationLabels.AddUnique(CandidateLabel);
 				}
 			}
 		}
@@ -481,43 +475,40 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 		UDataTable* SpeakerTable = nullptr;
 		FGameplayTag MatchedRoot;
 		FString LookupError;
-		if (UTagKeySubsystem* Lookup = GetLookupSubsystem(this))
+		if (!TryResolveDataTableForRowStruct_Parley(this, FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
 		{
-			if (!Lookup->TryResolveDataTableForRowStruct(FParleySpeakerRow::StaticStruct(), SpeakerTable, MatchedRoot, LookupError))
+			LookupError.Empty();
+			if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
 			{
-				LookupError.Empty();
-				if (DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+				TryResolveDataTableForRootTag_Parley(this, DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
+				MatchedRoot = DialogueSettings->SpeakerDefinitionRootTag;
+			}
+		}
+
+		FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
+		if ((!EffectiveSpeakerRoot.IsValid()) && DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
+		{
+			EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
+		}
+
+		if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
+		{
+			for (const FName RowName : SpeakerTable->GetRowNames())
+			{
+				const FParleySpeakerRow* SpeakerRow = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueValidationFallback"), false);
+				if (!SpeakerRow)
 				{
-					Lookup->TryResolveDataTableForRootTag(DialogueSettings->SpeakerDefinitionRootTag, SpeakerTable, LookupError);
-					MatchedRoot = DialogueSettings->SpeakerDefinitionRootTag;
+					continue;
 				}
-			}
 
-			FGameplayTag EffectiveSpeakerRoot = MatchedRoot;
-			if ((!EffectiveSpeakerRoot.IsValid()) && DialogueSettings && DialogueSettings->SpeakerDefinitionRootTag.IsValid())
-			{
-				EffectiveSpeakerRoot = DialogueSettings->SpeakerDefinitionRootTag;
-			}
-
-			if (SpeakerTable && SpeakerTable->GetRowStruct() == FParleySpeakerRow::StaticStruct())
-			{
-				for (const FName RowName : SpeakerTable->GetRowNames())
+				FParleySpeakerRow Copy = *SpeakerRow;
+				if (!Copy.SpeakerTag.IsValid())
 				{
-					const FParleySpeakerRow* SpeakerRow = SpeakerTable->FindRow<FParleySpeakerRow>(RowName, TEXT("DialogueValidationFallback"), false);
-					if (!SpeakerRow)
-					{
-						continue;
-					}
-
-					FParleySpeakerRow Copy = *SpeakerRow;
-					if (!Copy.SpeakerTag.IsValid())
-					{
-						Copy.SpeakerTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
-					}
-					if (Copy.SpeakerTag.IsValid())
-					{
-						ValidationSpeakerRows.Add(Copy.SpeakerTag, Copy);
-					}
+					Copy.SpeakerTag = BuildTagFromRootAndLeaf(EffectiveSpeakerRoot, RowName);
+				}
+				if (Copy.SpeakerTag.IsValid())
+				{
+					ValidationSpeakerRows.Add(Copy.SpeakerTag, Copy);
 				}
 			}
 		}

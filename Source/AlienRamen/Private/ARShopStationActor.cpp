@@ -779,7 +779,6 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 		FARMeatDefinitionRow MeatDef;
 		if (ItemDefinitions && ItemDefinitions->ResolveMeatDefinition(NextMeatTag, MeatDef))
 		{
-			NextColor = SanitizeColor(MeatDef.Color);
 			NextProcessAmount = FMath::Max(1, MeatDef.StationFillAmount);
 			if (MeatDef.MeatTag.IsValid())
 			{

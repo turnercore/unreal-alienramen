@@ -310,9 +310,13 @@ Conversation graph tooling now provides:
 - when a speaker-target field uses `Parley.Speaker.Requester`/`Parley.Speaker.Owner`, runtime resolves it using the requester/owner `UParleySpeakerComponent` tags for relationship/faction condition and mutation evaluation
 - character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
 - player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
+- player-speaker resolution prefers the currently possessed pawn's `UParleySpeakerComponent` speaker tag before falling back to mirrored player-state character tags, so swaps/possess flows immediately evaluate offers against the live pawn identity
+- speaker talkable cache now refreshes when dialogue progression state mutates and when controllers possess/unpossess pawns, so relationship/tag/completion changes and pawn swaps immediately update NPC talkability
+- `AARShopAIController` only applies `State.ShopNPC.DialogueWindow` local dialogue gating to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
+- AR player controllers/player states now expose `GetPlayerSlotTag()` so Emo can resolve viewer-specific P1/P2 dialogue overrides instead of falling back to shared-only display
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
-- line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit
+- line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit + inline `Length Seconds` float edit; newly created line, multi-line, and split-line entries default authored length to `1.0`
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)
 - drag-link execution wiring with:
   - one outgoing link per output pin
@@ -323,6 +327,7 @@ Conversation graph tooling now provides:
 - split-line node authoring uses multiline-style inline line rows, but runtime selects only the first row matching the active player character and otherwise skips to `Next`
 - compile-from-editor-graph into `CompiledData` with node-level validation markers
 - validation + preview execution through runtime dialogue subsystem even when PIE is not running
+- no-PIE validation falls back to TagKey configured-route resolution when no live `GameInstance`/`UTagKeySubsystem` exists, so conversation graph validation still resolves authored speaker/conversation tables in editor-only flows
 - no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)
 - preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables
 - speaker-tag editor fields are gameplay-tag-filtered to `Parley.Speaker.*` (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)
