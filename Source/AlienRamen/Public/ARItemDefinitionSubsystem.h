@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Items")
 	bool ApplyItemPhysicsProperties(AActor* Actor, FGameplayTag ItemTag) const;
 
-	/** Resolves the canonical meat definition row for a Shop.Meat tag. */
+	/** Resolves the canonical meat definition row for an Item.Meat tag. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveMeatDefinition(FGameplayTag MeatTag, FARMeatDefinitionRow& OutMeatDef) const;
 
@@ -43,11 +43,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveFirstMeatDefinitionForColor(EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const;
 
-	/** Resolves the first deterministic Shop.Meat tag that matches the requested color. */
+	/** Resolves the first deterministic Item.Meat tag that matches the requested color. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveFirstMeatTagForColor(EARAffinityColor Color, FGameplayTag& OutMeatTag) const;
 
-	/** Returns all Shop.Meat tags matching the requested color in deterministic row-name order. */
+	/** Returns all Item.Meat tags matching the requested color in deterministic row-name order. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool GetMeatTagsForColor(EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const;
 

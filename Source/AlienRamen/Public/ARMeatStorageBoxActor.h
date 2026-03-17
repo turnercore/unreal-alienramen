@@ -26,7 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseMeat(AARPlayerController* RequestingController);
 
-	/** Dispenses a specific Shop.Meat type from storage inventory. */
+	/** Dispenses a specific Item.Meat type from storage inventory. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseSpecificMeat(AARPlayerController* RequestingController, FGameplayTag MeatTag);
 
@@ -66,8 +66,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage")
 	TSubclassOf<AARRamenMeatActor> MeatActorClass;
 
-	// Optional explicit meat type for specific-dispense calls and authoring defaults.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Shop.Meat"))
+	// Optional explicit Item.Meat tag for specific-dispense calls and authoring defaults.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|MeatStorage", meta = (Categories = "Item.Meat"))
 	FGameplayTag MeatItemTag;
 
 	// World-hit auto-store is blocked until meat has moved at least this far from spawn.

@@ -20,7 +20,7 @@ bool FARSaveGameRunBuffSanitizeTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	const FGameplayTag ValidItemTag = FGameplayTag::RequestGameplayTag(TEXT("Scrapyard.Item"), false);
+	const FGameplayTag ValidItemTag = FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
 	const FGameplayTag ValidGrantedTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat.Vac"), false);
 
 	FARRunBuffItemStack InvalidStored;

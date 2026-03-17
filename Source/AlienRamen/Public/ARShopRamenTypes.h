@@ -70,15 +70,15 @@ struct ALIENRAMEN_API FARRamenBowlSpec
 	EARAffinityColor ToppingsColor = EARAffinityColor::None;
 
 	/** Meat item tag used for the noodles slot (invalid when no meat identity was applied). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
 	FGameplayTag NoodlesMeatTag;
 
 	/** Meat item tag used for the broth slot (invalid when no meat identity was applied). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
 	FGameplayTag BrothMeatTag;
 
 	/** Meat item tag used for the toppings slot (invalid when no meat identity was applied). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
 	FGameplayTag ToppingsMeatTag;
 };
 
@@ -88,7 +88,7 @@ struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
 	GENERATED_BODY()
 
 	/** Canonical meat identity gameplay tag used by shop inventory/runtime flows. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Shop.Meat"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
 	FGameplayTag MeatTag;
 
 	/** Optional enemy identifier tag that maps invader drops to this meat definition. */
@@ -96,7 +96,7 @@ struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
 	FGameplayTag EnemyIdentifierTag;
 
 	/** Shared item definition tag used to resolve item metadata (value/icon/weight/etc). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Scrapyard.Item"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item"))
 	FGameplayTag ItemTag;
 
 	/** Display name used for UI and diagnostics. */

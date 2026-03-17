@@ -66,7 +66,7 @@ protected:
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat", meta = (ClampMin = "1", UIMin = "1"))
 	int32 MeatAmount = 1;
 
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat", meta = (Categories = "Shop.Meat"))
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Meat", meta = (Categories = "Item.Meat"))
 	FGameplayTag MeatTag;
 
 private:

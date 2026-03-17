@@ -17,7 +17,7 @@ namespace
 
 	static FGameplayTag ResolveMeatRootTag()
 	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Meat"), false);
+		return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
 	}
 }
 

@@ -946,7 +946,7 @@ void AARGameStateBase::RegisterDebugConsoleCommands()
 
 	CmdDebugAddMeat = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.debug.add_meat"),
-		TEXT("Usage: ar.debug.add_meat <delta> <Shop.Meat.*|red|blue|white|colorless|none>"),
+		TEXT("Usage: ar.debug.add_meat <delta> <Item.Meat.*|red|blue|white|colorless|none>"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARGameStateBase::HandleConsoleAddMeat),
 		ECVF_Cheat);
 }
@@ -1000,7 +1000,7 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 		ParsedColor = EARAffinityColor::None;
 		if (!ItemDefinitions->ResolveFirstMeatTagForColor(ParsedColor, TargetMeatTag))
 		{
-			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: no Shop.Meat row found for default color '%s'."), GetMeatBucketLabel(ParsedColor));
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: no Item.Meat row found for default color '%s'."), GetMeatBucketLabel(ParsedColor));
 			return;
 		}
 	}
@@ -1008,7 +1008,7 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 	{
 		if (!ItemDefinitions->ResolveFirstMeatTagForColor(ParsedColor, TargetMeatTag))
 		{
-			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: no Shop.Meat row found for color '%s'."), *Token);
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: no Item.Meat row found for color '%s'."), *Token);
 			return;
 		}
 	}
@@ -1017,14 +1017,14 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 		TargetMeatTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*Token), false);
 		if (!TargetMeatTag.IsValid())
 		{
-			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Usage: ar.debug.add_meat <delta> <Shop.Meat.*|red|blue|white|colorless|none>"));
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] Usage: ar.debug.add_meat <delta> <Item.Meat.*|red|blue|white|colorless|none>"));
 			return;
 		}
 
 		FARMeatDefinitionRow MeatDefinition;
 		if (!ItemDefinitions->ResolveMeatDefinition(TargetMeatTag, MeatDefinition))
 		{
-			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: '%s' is not a resolved Shop.Meat definition tag."), *Token);
+			UE_LOG(ARLog, Warning, TEXT("[Save|Debug] ar.debug.add_meat failed: '%s' is not a resolved Item.Meat definition tag."), *Token);
 			return;
 		}
 	}

@@ -33,7 +33,7 @@ This document captures the runtime ownership and integration contract for the sh
 - TagKey routes are expected for:
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Unlock.Shop.Station` -> `FARShopStationConfigRow`
-  - `Shop.Meat` -> `FARMeatDefinitionRow`
+- `Item.Meat` -> `FARMeatDefinitionRow`
 - Character table rows for shop/runtime character spawning can use `FARShopCharacterDefRow` (`Source/AlienRamen/Public/ARLoadoutTypes.h`) with:
   - `CharacterTag` (`Shop.Character.*`)
   - `CustomerTag` (`Shop.Customer.*`)
@@ -86,7 +86,7 @@ This document captures the runtime ownership and integration contract for the sh
   - mirrored to `AARShopGameState::BaseBowlPayout` for UI/readability
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
-  - `CombinedMeatValue` resolves from bowl slot `Shop.Meat` tags -> meat row `ItemTag` -> shared item `SellMoneyValue`
+  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> meat row `ItemTag` -> shared item `SellMoneyValue`
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
 - Vending settlement:
   - queued bowls persist to `UARSaveGame::PendingVendingStockedBowls`
@@ -113,13 +113,13 @@ This document captures the runtime ownership and integration contract for the sh
   - in `Tap` mode, `StartProcessingByController` consumes at most one pulse per press and requires `StopProcessingByController` (release) before the next pulse.
   - processing progress pauses/resumes and replicates to all players
   - slotted meat is consumed immediately when processing starts
-  - processed stock carries both color + `Shop.Meat` tag
+  - processed stock carries both color + `Item.Meat` tag
   - when stock already exists, processing is blocked only for identical output type (same color + same meat tag)
   - processing without slotted meat is gated by `bAllowProcessingWithoutMeat` (from station row/runtime setting)
   - processing `None` is blocked whenever the station already has any buffered stock (colored or `None`); it is only allowed when stock is fully empty
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill
-  - bowl fill records both slot color and slot `Shop.Meat` tag (`NoodlesMeatTag`, `BrothMeatTag`, `ToppingsMeatTag`)
+  - bowl fill records both slot color and slot `Item.Meat` tag (`NoodlesMeatTag`, `BrothMeatTag`, `ToppingsMeatTag`)
   - bowl sequence is strict: `Noodles -> Broth -> Toppings`
 
 ## World Carry Item Interaction
@@ -171,7 +171,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
   - reserve inventory is canonical by meat type tag (`FARMeatState::AdditionalAmountsByType`); legacy color buckets are compatibility mirrors.
   - `TryDispenseMeat(...)` uses random typed dispense by container color (`TryDispenseRandomMeatByContainerColor`), uniformly across eligible meat types.
-  - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Shop.Meat` tag.
+  - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Item.Meat` tag.
   - color-only compatibility paths resolve to the first deterministic meat row for that color (sorted row-name order).
   - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching storage color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
@@ -182,7 +182,7 @@ This document captures the runtime ownership and integration contract for the sh
 
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
-- Meat debug command `ar.debug.add_meat <delta> <Shop.Meat.*|red|white|blue|colorless|none>` supports explicit type-tag adds or color-token deterministic resolution.
+- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*|red|white|blue|colorless|none>` supports explicit type-tag adds or color-token deterministic resolution.
 - Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
 - Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
