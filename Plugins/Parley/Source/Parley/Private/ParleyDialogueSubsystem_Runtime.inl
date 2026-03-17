@@ -539,9 +539,20 @@ static void ApplyDialogueEmotionForPresentedSpeaker(
 	UParleySpeakerComponent* SpeakerComponent = FindSpeakerComponentForSpeakerTag(Context.World, ResolvedSpeakerTag);
 	if (!SpeakerComponent)
 	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Emotion request skipped: no speaker component found for '%s'."),
+			*ResolvedSpeakerTag.ToString());
 		return;
 	}
 
+	UE_LOG(
+		ParleyLog,
+		Verbose,
+		TEXT("[Dialogue] Requesting presented-speaker emotion: SpeakerTag=%s OwnerCharacter=%s"),
+		*ResolvedSpeakerTag.ToString(),
+		*GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag).ToString());
 	SpeakerComponent->OnSpeakerEmotionRequested.Broadcast(
 		ResolvedSpeakerTag,
 		GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),

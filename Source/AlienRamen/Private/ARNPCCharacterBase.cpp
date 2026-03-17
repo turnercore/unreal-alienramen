@@ -445,7 +445,6 @@ void AARNPCCharacterBase::HandleSpeakerComponentTalkableStateChanged(const bool 
 
 void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag, FGameplayTag ViewerCharacterTag, bool bIsDialogueLine)
 {
-	(void)bIsDialogueLine;
 	if (!HasAuthority())
 	{
 		return;
@@ -456,6 +455,15 @@ void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag,
 		UE_LOG(ARLog, Verbose, TEXT("[Emotion] '%s' speaker emotion request ignored: no emotion component."), *GetNameSafe(this));
 		return;
 	}
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Emotion] '%s' received speaker emotion request: Tag=%s ViewerCharacter=%s DialogueLine=%d"),
+		*GetNameSafe(this),
+		*EmotionTag.ToString(),
+		*ViewerCharacterTag.ToString(),
+		bIsDialogueLine ? 1 : 0);
 
 	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(ViewerCharacterTag);
 	if (NormalizedCharacterTag.IsValid())

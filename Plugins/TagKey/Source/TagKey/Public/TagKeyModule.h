@@ -2,13 +2,13 @@
 
 #include "Modules/ModuleInterface.h"
 
-class FParleyModule : public IModuleInterface
+class FTagKeyModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
 private:
-	class IConsoleObject* CmdParleyDebug = nullptr;
-	void HandleConsoleParleyDebug(const TArray<FString>& Args);
+	class IConsoleObject* CmdTagKeyDebug = nullptr;
+	void HandleConsoleTagKeyDebug(const TArray<FString>& Args);
 };

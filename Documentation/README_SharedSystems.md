@@ -55,6 +55,12 @@ Read this when data needs to persist across maps, survive mode handoffs, or proj
 
 This is the shared runtime foundation section. GAS lives here because it is a cross-mode system, even though Invader is its heaviest gameplay consumer.
 
+## Debug Commands
+
+- `ar.debug.log` controls `ARLog`.
+- `ar.debug.log.all` controls `ARLog`, `EmoLog`, `ParleyLog`, and `TagKeyLog` together.
+- `emo.debug.log`, `parley.debug.log`, and `tagkey.debug.log` control their plugin categories independently.
+
 ## Dialogue, Speakers, and Factions
 
 - [Parley Runtime](README_DialogueNPC.md)

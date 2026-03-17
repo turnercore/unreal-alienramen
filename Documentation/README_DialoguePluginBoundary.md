@@ -28,3 +28,9 @@ This page defines what is owned by the Parley dialogue plugin boundary (`Plugins
 - Shop/customer-serving systems should use `UParleyDialogueSubsystem::ApplyRamenServeOutcome(...)` for relationship + emotion output instead of mutating save/emotion state directly.
 - Systems reacting to dialogue `Signal` nodes should bind `OnDialogueSignalFired` in game layer and keep gameplay effects out of dialogue graph execution code.
 - Systems reacting to dialogue audio should consume controller-local requests in game layer; Parley should not depend on FMOD modules.
+
+## Debugging
+
+- `parley.debug.log` defaults `ParleyLog` to `VeryVerbose`.
+- `parley.debug.log verbose|log|warning|error|off|reset` supports the same verbosity shorthands as `ar.debug.log`.
+- Native console command `log parleylog <level>` still works for direct category control.

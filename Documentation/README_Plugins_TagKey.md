@@ -16,6 +16,12 @@
 
 - Resolver APIs are game-thread-only; static configured-route helpers enforce the same thread requirement as subsystem instance methods.
 
+## Debugging
+
+- `tagkey.debug.log` defaults `TagKeyLog` to `VeryVerbose`.
+- `tagkey.debug.log verbose|log|warning|error|off|reset` supports the same verbosity shorthands as `ar.debug.log`.
+- Native console command `log logtagkey <level>` still works for direct log-category control.
+
 ## Where to read details
 
 - [Parley runtime](README_DialogueNPC.md)

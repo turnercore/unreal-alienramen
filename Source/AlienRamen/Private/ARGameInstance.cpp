@@ -145,48 +145,65 @@ void UARGameInstance::RegisterDebugConsoleCommands()
 		TEXT("Usage: ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>. Applies to ARLog."),
 		FConsoleCommandWithArgsDelegate::CreateUObject(this, &UARGameInstance::HandleConsoleArDebug),
 		ECVF_Default);
+	CmdArDebugAll = ConsoleManager.RegisterConsoleCommand(
+		TEXT("ar.debug.log.all"),
+		TEXT("Usage: ar.debug.log.all <veryverbose|verbose|log|warning|error|off|reset>. Applies to ARLog, EmoLog, ParleyLog, and TagKeyLog."),
+		FConsoleCommandWithArgsDelegate::CreateUObject(this, &UARGameInstance::HandleConsoleArDebugAll),
+		ECVF_Default);
 }
 
 void UARGameInstance::UnregisterDebugConsoleCommands()
 {
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug.log"), false);
+	ConsoleManager.UnregisterConsoleObject(TEXT("ar.debug.log.all"), false);
 	CmdArDebug = nullptr;
+	CmdArDebugAll = nullptr;
+}
+
+bool UARGameInstance::TryResolveDebugVerbosityArg(const TArray<FString>& Args, FString& OutTargetVerbosity) const
+{
+	const FString LevelArg = (Args.Num() > 0 ? Args[0] : FString()).TrimStartAndEnd().ToLower();
+	if (LevelArg == TEXT("veryverbose") || LevelArg == TEXT("vv"))
+	{
+		OutTargetVerbosity = TEXT("veryverbose");
+	}
+	else if (LevelArg == TEXT("verbose") || LevelArg == TEXT("v"))
+	{
+		OutTargetVerbosity = TEXT("verbose");
+	}
+	else if (LevelArg == TEXT("log") || LevelArg == TEXT("l") || LevelArg == TEXT("default"))
+	{
+		OutTargetVerbosity = TEXT("log");
+	}
+	else if (LevelArg == TEXT("warning") || LevelArg == TEXT("warn") || LevelArg == TEXT("w"))
+	{
+		OutTargetVerbosity = TEXT("warning");
+	}
+	else if (LevelArg == TEXT("error") || LevelArg == TEXT("e"))
+	{
+		OutTargetVerbosity = TEXT("error");
+	}
+	else if (LevelArg == TEXT("off") || LevelArg == TEXT("none"))
+	{
+		OutTargetVerbosity = TEXT("off");
+	}
+	else if (LevelArg == TEXT("reset"))
+	{
+		OutTargetVerbosity = TEXT("log");
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void UARGameInstance::HandleConsoleArDebug(const TArray<FString>& Args)
 {
-	const FString LevelArg = (Args.Num() > 0 ? Args[0] : FString()).TrimStartAndEnd().ToLower();
 	FString TargetVerbosity;
-	if (LevelArg == TEXT("veryverbose") || LevelArg == TEXT("vv"))
-	{
-		TargetVerbosity = TEXT("veryverbose");
-	}
-	else if (LevelArg == TEXT("verbose") || LevelArg == TEXT("v"))
-	{
-		TargetVerbosity = TEXT("verbose");
-	}
-	else if (LevelArg == TEXT("log") || LevelArg == TEXT("l") || LevelArg == TEXT("default"))
-	{
-		TargetVerbosity = TEXT("log");
-	}
-	else if (LevelArg == TEXT("warning") || LevelArg == TEXT("warn") || LevelArg == TEXT("w"))
-	{
-		TargetVerbosity = TEXT("warning");
-	}
-	else if (LevelArg == TEXT("error") || LevelArg == TEXT("e"))
-	{
-		TargetVerbosity = TEXT("error");
-	}
-	else if (LevelArg == TEXT("off") || LevelArg == TEXT("none"))
-	{
-		TargetVerbosity = TEXT("off");
-	}
-	else if (LevelArg == TEXT("reset"))
-	{
-		TargetVerbosity = TEXT("log");
-	}
-	else
+	if (!TryResolveDebugVerbosityArg(Args, TargetVerbosity))
 	{
 		UE_LOG(ARLog, Log, TEXT("[Debug] Usage: ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>"));
 		return;
@@ -207,5 +224,46 @@ void UARGameInstance::HandleConsoleArDebug(const TArray<FString>& Args)
 	else
 	{
 		UE_LOG(ARLog, Warning, TEXT("[Debug] ar.debug.log could not apply verbosity '%s' (no active world/console context)."), *TargetVerbosity);
+	}
+}
+
+void UARGameInstance::HandleConsoleArDebugAll(const TArray<FString>& Args)
+{
+	FString TargetVerbosity;
+	if (!TryResolveDebugVerbosityArg(Args, TargetVerbosity))
+	{
+		UE_LOG(ARLog, Log, TEXT("[Debug] Usage: ar.debug.log.all <veryverbose|verbose|log|warning|error|off|reset>"));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!GEngine || !World)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Debug] ar.debug.log.all could not apply verbosity '%s' (no active world/console context)."), *TargetVerbosity);
+		return;
+	}
+
+	const TCHAR* Categories[] =
+	{
+		TEXT("arlog"),
+		TEXT("emolog"),
+		TEXT("parleylog"),
+		TEXT("logtagkey")
+	};
+
+	bool bAppliedAll = true;
+	for (const TCHAR* CategoryName : Categories)
+	{
+		const FString ExecCommand = FString::Printf(TEXT("log %s %s"), CategoryName, *TargetVerbosity);
+		bAppliedAll &= GEngine->Exec(World, *ExecCommand);
+	}
+
+	if (bAppliedAll)
+	{
+		UE_LOG(ARLog, Log, TEXT("[Debug] ar.debug.log.all set ARLog, EmoLog, ParleyLog, and TagKeyLog to '%s'."), *TargetVerbosity);
+	}
+	else
+	{
+		UE_LOG(ARLog, Warning, TEXT("[Debug] ar.debug.log.all only partially applied verbosity '%s'."), *TargetVerbosity);
 	}
 }
