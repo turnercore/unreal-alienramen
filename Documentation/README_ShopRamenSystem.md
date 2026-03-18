@@ -76,7 +76,7 @@ This document captures the runtime ownership and integration contract for the sh
   - when finite budget is exhausted, customer marks done ordering and emits done signal.
   - runtime emits detailed signals for order generated, order served, and done-ordering states (counts + remaining budget).
   - customer runtime still drives the local speaker gate while orders are active; convenience interact paths can still attempt speaker fallback after delivery attempt.
-  - ordering emotion now routes through generic emotion-system overrides (state + timed reaction), so fallback returns to dialogue/base emotion automatically.
+  - ordering emotion now routes through generic emotion registrations (state + timed reaction), so fallback returns to lower-priority or global emotion automatically.
 
 ## Shop Economy + Vending
 
