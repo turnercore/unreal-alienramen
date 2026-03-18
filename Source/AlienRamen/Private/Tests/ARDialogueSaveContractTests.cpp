@@ -91,7 +91,7 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	Save->SaveGameVersion = 10;
 
 	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
+	PlayerState.CurrentCharacterTag = ARPlayer::GetBrotherCharacterTag();
 
 	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
 	LegacyDialogueState.OwnerCharacterTag = ARPlayer::GetBrotherCharacterTag();
@@ -118,7 +118,6 @@ bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Dialogue choice memory migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 1);
 
 	TestEqual(TEXT("Current character tag resolved"), Save->PlayerStates[0].CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
-	TestEqual(TEXT("Character selection enum mirrors canonical tag"), Save->PlayerStates[0].CharacterPicked, EARCharacterChoice::Brother);
 	TestTrue(TEXT("Migration warnings emitted"), Warnings.Num() > 0);
 	return true;
 }

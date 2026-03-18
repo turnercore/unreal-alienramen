@@ -15,8 +15,9 @@
 #include "ARPlayerStateBase.generated.h"
 
 class UAbilitySystemComponent;
-class UARAttributeSetCore;
 class AARPlayerStateBase;
+class AARCharacterStateRuntime;
+class APawn;
 
 USTRUCT(BlueprintType)
 struct FARPlayerCoreAttributeSnapshot
@@ -157,7 +158,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAROnDialogueAutoAdvancePreferenc
 /**
  * PlayerState backbone for Alien Ramen.
  *
- * - Owns the authoritative ASC + shared attribute set.
+ * - Owns player identity/slot/preferences and current-character pointer state.
+ * - Resolves gameplay/combat reads through the current AARCharacterStateRuntime.
  * - Replicates identity (display name + active character) and lobby readiness.
  * - Carries loadout tags that drive ability/equipment initialization.
  * - Implements IStructSerializable for save/load handoff across travel.
@@ -171,7 +173,7 @@ public:
 	AARPlayerStateBase();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAbilitySystemComponent* GetASC() const { return AbilitySystemComponent; }
+	UAbilitySystemComponent* GetASC() const;
 
 	/** Returns the current value of a core attribute (health/spice/move speed/strength). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
@@ -200,6 +202,22 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	FGameplayTag GetCurrentCharacterTag() const { return CurrentCharacterTag; }
 
+	/** Returns the replicated runtime actor that owns character-scoped combat/loadout state for CurrentCharacterTag. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Character Runtime")
+	AARCharacterStateRuntime* GetCurrentCharacterRuntime() const { return CurrentCharacterRuntime; }
+
+	/** Returns the pawn currently bound to the active character runtime. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Character Runtime")
+	APawn* GetCurrentCharacterPawn() const;
+
+	/** Returns the effective loadout tags from current character runtime state. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Loadout")
+	FGameplayTagContainer GetCurrentCharacterLoadoutTags() const;
+
+	/** Authority-only runtime pointer update used by character subsystem orchestration flows. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Character Runtime", meta = (BlueprintAuthorityOnly))
+	void SetCurrentCharacterRuntime(AARCharacterStateRuntime* NewRuntime);
+
 	/** Sets picked character; client calls route to server. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
 	void SetCharacterPicked(EARCharacterChoice NewCharacter);
@@ -207,7 +225,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerPickCharacter(EARCharacterChoice NewCharacter);
 
-	/** Sets the active character using the canonical gameplay tag; the compatibility enum is mirrored automatically. */
+	/** Sets the active character using canonical gameplay-tag identity. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player")
 	void SetCurrentCharacterTag(FGameplayTag NewCharacterTag);
 
@@ -227,10 +245,10 @@ public:
 	bool IsReadyForRun() const { return bIsReady; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
-	bool IsDowned() const { return bIsDowned; }
+	bool IsDowned() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
-	bool IsDeadState() const { return bIsDeadState; }
+	bool IsDeadState() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool IsDialogueAutoAdvanceEnabled() const { return bDialogueAutoAdvanceEnabled; }
@@ -308,7 +326,7 @@ public:
 	// ---- INVADER SPICY TRACK RUNTIME (non-persistent) ----
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
-	EARAffinityColor GetInvaderPlayerColor() const { return InvaderPlayerColor; }
+	EARAffinityColor GetInvaderPlayerColor() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
 	void SetInvaderPlayerColor(EARAffinityColor NewColor);
@@ -317,10 +335,10 @@ public:
 	void ServerSetInvaderPlayerColor(EARAffinityColor NewColor);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
-	int32 GetInvaderComboCount() const { return InvaderComboCount; }
+	int32 GetInvaderComboCount() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
-	float GetInvaderLastKillCreditServerTime() const { return LastInvaderKillCreditServerTime; }
+	float GetInvaderLastKillCreditServerTime() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track", meta = (BlueprintAuthorityOnly))
 	void ResetInvaderCombo();
@@ -338,10 +356,10 @@ public:
 	bool HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
-	const FGameplayTagContainer& GetActivatedInvaderUpgrades() const { return ActivatedInvaderUpgradeTags; }
+	const FGameplayTagContainer& GetActivatedInvaderUpgrades() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track")
-	bool IsSpiceSharingActive() const { return bIsSharingSpice; }
+	bool IsSpiceSharingActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Spice Track")
 	void SetSpiceSharingActive(bool bNewIsSharing);
@@ -369,7 +387,7 @@ public:
 	// Server-authoritative spicy-track cursor tier for this player.
 	// 0 = no slotted tier selected, 1..N = track tier selected.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Cursor")
-	int32 GetSpicyTrackCursorTier() const { return SpicyTrackCursorTier; }
+	int32 GetSpicyTrackCursorTier() const;
 
 	// Local predicted cursor tier for responsive HUD input feedback.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Spice Track|Cursor|Prediction")
@@ -409,9 +427,6 @@ public:
 
 	// ---- LOADOUT (GameplayTag driven) ----
 
-	UPROPERTY(ReplicatedUsing = OnRep_Loadout, BlueprintReadWrite, Category = "Loadout")
-	FGameplayTagContainer LoadoutTags;
-
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Loadout")
 	void SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags);
 
@@ -433,9 +448,6 @@ public:
 
 	UFUNCTION()
 	void OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags);
-
-	UPROPERTY()
-	TObjectPtr<class UARAttributeSetCore> AttributeSetCore;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
 	FAROnCoreAttributeChangedSignature OnCoreAttributeChanged;
@@ -510,8 +522,9 @@ public:
 	 * Seamless-travel carry path from old PlayerState to the new instance.
 	 *
 	 * Contract:
-	 * - copies canonical player identity/runtime fields explicitly (character, projected active-character loadout, display name, dialogue preference)
-	 * - resets per-run transients that should not survive mode travel (ready/combo/cursor/share flags)
+	 * - copies player-owned identity/runtime fields explicitly (slot, current character pointer, display name, dialogue preference)
+	 * - does not implicitly copy character-runtime-owned combat/loadout state
+	 * - resets per-run player transients that should not survive mode travel (ready state)
 	 * - avoids generic by-name struct overlay for PlayerState handoff to prevent stale/mismatched BP state from reintroducing duplicate identity mirrors
 	 */
 	virtual void CopyProperties(APlayerState* PlayerState) override;
@@ -530,28 +543,68 @@ protected:
 	void OnRep_IsReady(bool bOldReady);
 
 	UFUNCTION()
-	void OnRep_IsDowned(bool bOldDowned);
-
-	UFUNCTION()
-	void OnRep_IsDeadState(bool bOldDeadState);
-
-	UFUNCTION()
 	void OnRep_DialogueAutoAdvanceEnabled(bool bOldEnabled);
 
 	UFUNCTION()
 	void OnRep_IsSetup(bool bOldIsSetup);
 	UFUNCTION()
-	void OnRep_InvaderPlayerColor(EARAffinityColor OldColor);
-	UFUNCTION()
-	void OnRep_InvaderComboCount(int32 OldComboCount);
-	UFUNCTION()
-	void OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags);
-	UFUNCTION()
-	void OnRep_IsSharingSpice(bool bOldIsSharingSpice);
-	UFUNCTION()
-	void OnRep_SpicyTrackCursorTier(int32 OldCursorTier);
-	UFUNCTION()
 	void OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag);
+
+	UFUNCTION()
+	void OnRep_CurrentCharacterRuntime();
+	void BindCurrentRuntimeDelegates();
+	void UnbindCurrentRuntimeDelegates();
+
+	UFUNCTION()
+	void HandleRuntimeLoadoutChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		const FGameplayTagContainer& NewLoadoutTags,
+		const FGameplayTagContainer& OldLoadoutTags);
+
+	UFUNCTION()
+	void HandleRuntimeDownedChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		FGameplayTag CharacterTag,
+		bool bNewDowned,
+		bool bOldDowned);
+
+	UFUNCTION()
+	void HandleRuntimeDeadChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		FGameplayTag CharacterTag,
+		bool bNewDead,
+		bool bOldDead);
+
+	UFUNCTION()
+	void HandleRuntimeInvaderColorChanged(EARAffinityColor NewColor, EARAffinityColor OldColor);
+
+	UFUNCTION()
+	void HandleRuntimeInvaderComboChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		FGameplayTag CharacterTag,
+		int32 NewCombo,
+		int32 OldCombo);
+
+	UFUNCTION()
+	void HandleRuntimeActivatedUpgradesChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		FGameplayTag CharacterTag,
+		const FGameplayTagContainer& NewActivatedTags,
+		const FGameplayTagContainer& OldActivatedTags);
+
+	UFUNCTION()
+	void HandleRuntimeSpiceSharingChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		FGameplayTag CharacterTag,
+		bool bNewSharing,
+		bool bOldSharing);
+
+	UFUNCTION()
+	void HandleRuntimeSpicyTrackCursorChanged(
+		AARCharacterStateRuntime* SourceRuntime,
+		FGameplayTag CharacterTag,
+		int32 NewCursorTier,
+		int32 OldCursorTier);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
 	void SetCurrentCharacterTag_Internal(FGameplayTag NewCharacterTag, bool bMarkSaveDirty = true);
 	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
@@ -600,9 +653,6 @@ protected:
 	bool EnsureReadyPrerequisitesForRun();
 	void EvaluateTravelReadinessAndBroadcast();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
 	UPROPERTY(ReplicatedUsing=OnRep_PlayerSlotId, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player", meta = (ToolTip = "Runtime-only controller/profile slot id used for controller-owned systems such as pause voting. Not used for character ownership."))
 	int32 PlayerSlotId = 0;
 
@@ -613,41 +663,21 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentCharacterTag, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player", meta = (ToolTip = "Canonical gameplay-tag identity for the active character. New systems should use this instead of CharacterPicked."))
 	FGameplayTag CurrentCharacterTag;
 
+	// Character-owned replicated runtime owner. This actor is authoritative for combat/loadout state.
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentCharacterRuntime, Transient, BlueprintReadOnly, Category = "Alien Ramen|Player|Character Runtime", meta = (ToolTip = "Replicated character runtime actor owning combat/loadout state for CurrentCharacterTag."))
+	TObjectPtr<AARCharacterStateRuntime> CurrentCharacterRuntime = nullptr;
+
 	UPROPERTY(ReplicatedUsing=OnRep_DisplayName, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	FString DisplayName;
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsReady, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsReady = false;
 
-	UPROPERTY(ReplicatedUsing=OnRep_IsDowned, Transient, BlueprintReadOnly, Category = "Alien Ramen|Player")
-	bool bIsDowned = false;
-
-	UPROPERTY(ReplicatedUsing=OnRep_IsDeadState, Transient, BlueprintReadOnly, Category = "Alien Ramen|Player")
-	bool bIsDeadState = false;
-
 	UPROPERTY(ReplicatedUsing=OnRep_IsSetup, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	bool bIsSetup = false;
 
 	UPROPERTY(ReplicatedUsing=OnRep_DialogueAutoAdvanceEnabled, Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (ToolTip = "Per-player preference controlling whether dialogue lines auto-advance when possible."))
 	bool bDialogueAutoAdvanceEnabled = false;
-
-	UPROPERTY(ReplicatedUsing=OnRep_InvaderPlayerColor, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
-	EARAffinityColor InvaderPlayerColor = EARAffinityColor::None;
-
-	UPROPERTY(ReplicatedUsing=OnRep_InvaderComboCount, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
-	int32 InvaderComboCount = 0;
-
-	UPROPERTY(ReplicatedUsing=OnRep_ActivatedInvaderUpgrades, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
-	FGameplayTagContainer ActivatedInvaderUpgradeTags;
-
-	UPROPERTY(ReplicatedUsing=OnRep_IsSharingSpice, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track")
-	bool bIsSharingSpice = false;
-
-	UPROPERTY(ReplicatedUsing=OnRep_SpicyTrackCursorTier, Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Cursor")
-	int32 SpicyTrackCursorTier = 0;
-
-	UPROPERTY(Transient)
-	float LastInvaderKillCreditServerTime = -1.0f;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Prediction")
 	float PredictedSpiceValue = 0.0f;
@@ -665,12 +695,6 @@ protected:
 	UPROPERTY(Transient)
 	bool bCachedTravelReady = false;
 
-	// Runtime-only character->loadout ownership cache.
-	// Canonical persistence still lives in SaveGame CharacterStates, but this guarantees
-	// character-owned loadout switching works even when no save object is loaded/available.
-	UPROPERTY(Transient)
-	TMap<FGameplayTag, FGameplayTagContainer> RuntimeCharacterOwnedLoadouts;
-
 	FDelegateHandle HealthChangedDelegateHandle;
 	FDelegateHandle MaxHealthChangedDelegateHandle;
 	FDelegateHandle SpiceChangedDelegateHandle;
@@ -684,6 +708,8 @@ protected:
 	FDelegateHandle ColorWhiteTagChangedDelegateHandle;
 	FDelegateHandle ColorBlueTagChangedDelegateHandle;
 	FDelegateHandle SharingSpiceTagChangedDelegateHandle;
+	TWeakObjectPtr<UAbilitySystemComponent> BoundTrackedASC;
+	TWeakObjectPtr<AARCharacterStateRuntime> BoundRuntimeForDelegates;
 	bool bUpdatingInvaderColorFromTags = false;
 	bool bApplyingInvaderColorTags = false;
 

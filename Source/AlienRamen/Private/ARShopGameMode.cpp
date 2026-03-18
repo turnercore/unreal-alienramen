@@ -5,6 +5,7 @@
 #include "ARGameStateBase.h"
 #include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
+#include "ARCharacterStateRuntime.h"
 #include "ARPlayerStateBase.h"
 #include "ARRamenMeatActor.h"
 #include "ARRamenBowlActor.h"
@@ -348,10 +349,9 @@ UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AContro
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[ShopGameMode] Resolve pawn class for controller='%s' playerSlotId=%d choice=%d characterTag=%s source=%s."),
+		TEXT("[ShopGameMode] Resolve pawn class for controller='%s' playerSlotId=%d characterTag=%s source=%s."),
 		*GetNameSafe(InController),
 		InController && InController->GetPlayerState<AARPlayerStateBase>() ? InController->GetPlayerState<AARPlayerStateBase>()->GetPlayerSlotId() : 0,
-		InController && InController->GetPlayerState<AARPlayerStateBase>() ? static_cast<int32>(InController->GetPlayerState<AARPlayerStateBase>()->GetCharacterPicked()) : static_cast<int32>(EARCharacterChoice::None),
 		*CharacterTag.ToString(),
 		CharacterTagSource);
 	if (CharacterTag.IsValid())
@@ -365,7 +365,7 @@ UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AContro
 			}
 		}
 
-		// Legacy compatibility: support Parley/Customer keyed entries by canonicalizing map keys at runtime.
+		// Allow broader parent-tag mappings for canonical keys.
 		for (const TPair<FGameplayTag, TSubclassOf<APawn>>& Entry : ShopPawnClassByCharacterTag)
 		{
 			if (!Entry.Value)
@@ -373,57 +373,12 @@ UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AContro
 				continue;
 			}
 
-			const FGameplayTag CanonicalEntryTag = ARPlayer::NormalizeCharacterTag(Entry.Key);
-			if (!CanonicalEntryTag.IsValid() || !CanonicalEntryTag.MatchesTagExact(CharacterTag))
+			if (Entry.Key.IsValid() && CharacterTag.MatchesTag(Entry.Key))
 			{
-				continue;
-			}
-
-			if (!Entry.Key.MatchesTagExact(CanonicalEntryTag))
-			{
-				UE_LOG(
-					ARLog,
-					Warning,
-					TEXT("[ShopGameMode] Pawn class map uses legacy character tag '%s'; please migrate this key to canonical '%s'."),
-					*Entry.Key.ToString(),
-					*CanonicalEntryTag.ToString());
-			}
-
-			UE_LOG(
-				ARLog,
-				Verbose,
-				TEXT("[ShopGameMode] Pawn class canonicalized exact hit: QueryTag=%s EntryTag=%s Class=%s."),
-				*CharacterTag.ToString(),
-				*Entry.Key.ToString(),
-				*GetNameSafe(Entry.Value.Get()));
-			return Entry.Value.Get();
-		}
-
-		// Allow broader parent-tag mappings while still canonicalizing legacy key roots.
-		for (const TPair<FGameplayTag, TSubclassOf<APawn>>& Entry : ShopPawnClassByCharacterTag)
-		{
-			if (!Entry.Value)
-			{
-				continue;
-			}
-
-			const FGameplayTag CanonicalEntryTag = ARPlayer::NormalizeCharacterTag(Entry.Key);
-			if (CanonicalEntryTag.IsValid() && CharacterTag.MatchesTag(CanonicalEntryTag))
-			{
-				if (!Entry.Key.MatchesTagExact(CanonicalEntryTag))
-				{
-					UE_LOG(
-						ARLog,
-						Warning,
-						TEXT("[ShopGameMode] Pawn class map uses legacy parent tag '%s'; migrate to canonical '%s'."),
-						*Entry.Key.ToString(),
-						*CanonicalEntryTag.ToString());
-				}
-
 				UE_LOG(
 					ARLog,
 					Verbose,
-					TEXT("[ShopGameMode] Pawn class canonicalized parent-tag hit: QueryTag=%s EntryTag=%s Class=%s."),
+					TEXT("[ShopGameMode] Pawn class parent-tag hit: QueryTag=%s EntryTag=%s Class=%s."),
 					*CharacterTag.ToString(),
 					*Entry.Key.ToString(),
 					*GetNameSafe(Entry.Value.Get()));
@@ -623,7 +578,10 @@ bool AARShopGameMode::TryRestoreCharacterShopStateForController(AController* Con
 		return false;
 	}
 
-	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+	const AARCharacterStateRuntime* Runtime = PlayerState->GetCurrentCharacterRuntime();
+	const FGameplayTag CharacterTag = Runtime
+		? ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag())
+		: ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
 	int32 CharacterIndex = INDEX_NONE;
 	FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterIndex);
 	if (!CharacterState)

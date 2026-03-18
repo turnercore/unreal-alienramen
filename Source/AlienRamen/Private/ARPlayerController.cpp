@@ -11,6 +11,7 @@
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
 #include "ARMeatStorageBoxActor.h"
+#include "ARCharacterSubsystem.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
@@ -764,6 +765,54 @@ void AARPlayerController::RequestKickActor(AActor* TargetActor)
 void AARPlayerController::ServerRequestKickActor_Implementation(AActor* TargetActor)
 {
 	RequestKickActor(TargetActor);
+}
+
+void AARPlayerController::RequestSwapCharacter(FGameplayTag TargetCharacterTag)
+{
+	TargetCharacterTag = ARPlayer::NormalizeCharacterTag(TargetCharacterTag);
+	if (!TargetCharacterTag.IsValid())
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+		if (!CharacterSubsystem)
+		{
+			ClientNotifySwapCharacterRejected(TargetCharacterTag, TEXT("Character subsystem is unavailable."));
+			return;
+		}
+
+		FString FailureReason;
+		if (!CharacterSubsystem->TrySwapCharacter(this, TargetCharacterTag, FailureReason))
+		{
+			ClientNotifySwapCharacterRejected(
+				TargetCharacterTag,
+				FailureReason.IsEmpty() ? TEXT("Character swap request was rejected.") : FailureReason);
+		}
+		return;
+	}
+
+	ServerRequestSwapCharacter(TargetCharacterTag);
+}
+
+void AARPlayerController::ServerRequestSwapCharacter_Implementation(FGameplayTag TargetCharacterTag)
+{
+	RequestSwapCharacter(TargetCharacterTag);
+}
+
+void AARPlayerController::ClientNotifySwapCharacterRejected_Implementation(
+	FGameplayTag TargetCharacterTag,
+	const FString& FailureReason)
+{
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[CharacterSwap] Rejected swap request for '%s': %s"),
+		*TargetCharacterTag.ToString(),
+		*FailureReason);
+	BP_OnSwapCharacterRejected(TargetCharacterTag, FailureReason);
 }
 
 void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)

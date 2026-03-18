@@ -116,6 +116,7 @@ private:
 	void HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const;
 	void EnsureJoinedPlayerHasUniqueIdentity(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
 	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
+	void PreparePlayerSpawnIdentity(AController* Player, AARPlayerStateBase* PlayerState) const;
 
 	/** Per-controller character-tag cache captured in ChoosePlayerStart to keep pawn class/start identity aligned. */
 	TMap<TWeakObjectPtr<const AController>, FGameplayTag> PendingSpawnCharacterTagsByController;

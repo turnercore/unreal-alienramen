@@ -1,6 +1,8 @@
 #include "ARPlayerStateBase.h"
 
 #include "ARAttributeSetCore.h"
+#include "ARCharacterStateRuntime.h"
+#include "ARCharacterSubsystem.h"
 #include "ARInvaderGameState.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLoadoutSettings.h"
@@ -11,6 +13,7 @@
 #include "GameplayTagUtilities.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/GameStateBase.h"
+#include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
 #include "StructSerializable.h"
 
@@ -32,7 +35,6 @@ namespace
 		}
 		else
 		{
-			Identity.LegacyId = PlayerState->GetPlayerId();
 			Identity.DisplayName = FText::FromString(PlayerState->GetDisplayNameValue());
 			if (PlayerState->GetUniqueId().IsValid())
 			{
@@ -99,49 +101,74 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
 	DOREPLIFETIME(AARPlayerStateBase, PlayerSlotId);
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
 	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterTag);
+	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterRuntime);
 	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
 	DOREPLIFETIME(AARPlayerStateBase, bIsReady);
-	DOREPLIFETIME(AARPlayerStateBase, bIsDowned);
-	DOREPLIFETIME(AARPlayerStateBase, bIsDeadState);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
 	DOREPLIFETIME(AARPlayerStateBase, bDialogueAutoAdvanceEnabled);
-	DOREPLIFETIME(AARPlayerStateBase, InvaderPlayerColor);
-	DOREPLIFETIME(AARPlayerStateBase, InvaderComboCount);
-	DOREPLIFETIME(AARPlayerStateBase, ActivatedInvaderUpgradeTags);
-	DOREPLIFETIME(AARPlayerStateBase, bIsSharingSpice);
-	DOREPLIFETIME(AARPlayerStateBase, SpicyTrackCursorTier);
 }
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
 {
-	OnLoadoutTagsChanged.Broadcast(this, ResolveSignalCharacterTag(this), LoadoutTags, OldLoadoutTags);
+	OnLoadoutTagsChanged.Broadcast(this, ResolveSignalCharacterTag(this), GetCurrentCharacterLoadoutTags(), OldLoadoutTags);
 }
 
 AARPlayerStateBase::AARPlayerStateBase()
 {
 	bReplicates = true;
-
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-
-	AttributeSetCore = CreateDefaultSubobject<UARAttributeSetCore>(TEXT("AttributeSetCore"));
 	DisplayName = GetPlayerName();
 	bCachedTravelReady = false;
 }
 
 UAbilitySystemComponent* AARPlayerStateBase::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetAbilitySystemComponent() : nullptr;
+}
+
+UAbilitySystemComponent* AARPlayerStateBase::GetASC() const
+{
+	return GetAbilitySystemComponent();
+}
+
+APawn* AARPlayerStateBase::GetCurrentCharacterPawn() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetCurrentPawn() : nullptr;
+}
+
+FGameplayTagContainer AARPlayerStateBase::GetCurrentCharacterLoadoutTags() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetLoadoutTags() : FGameplayTagContainer();
+}
+
+void AARPlayerStateBase::SetCurrentCharacterRuntime(AARCharacterStateRuntime* NewRuntime)
+{
+	if (!HasAuthority() || CurrentCharacterRuntime == NewRuntime)
+	{
+		return;
+	}
+
+	if (NewRuntime)
+	{
+		NewRuntime->SetOwningPlayerState(this);
+		if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+		{
+			CharacterSubsystem->RegisterRuntime(NewRuntime);
+			CharacterSubsystem->BindRuntimePawn(NewRuntime, GetPawn());
+		}
+	}
+
+	CurrentCharacterRuntime = NewRuntime;
+	OnRep_CurrentCharacterRuntime();
+	ForceNetUpdate();
 }
 
 float AARPlayerStateBase::GetCoreAttributeValue(EARCoreAttributeType AttributeType) const
 {
-	if (!AbilitySystemComponent)
+	const UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!ActiveASC)
 	{
 		return 0.f;
 	}
@@ -149,17 +176,17 @@ float AARPlayerStateBase::GetCoreAttributeValue(EARCoreAttributeType AttributeTy
 	switch (AttributeType)
 	{
 	case EARCoreAttributeType::Health:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+		return ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
 	case EARCoreAttributeType::MaxHealth:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
+		return ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
 	case EARCoreAttributeType::Spice:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceAttribute());
+		return ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceAttribute());
 	case EARCoreAttributeType::MaxSpice:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
+		return ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
 	case EARCoreAttributeType::MoveSpeed:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute());
+		return ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute());
 	case EARCoreAttributeType::Strength:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
+		return ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
 	default:
 		return 0.f;
 	}
@@ -311,6 +338,26 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	// Hydration may legitimately resolve an empty character-owned loadout (missing/legacy rows).
 	// Keep editor raw-map startup and runtime join behavior deterministic by seeding defaults.
 	EnsureDefaultLoadoutIfEmpty();
+
+	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	{
+		bool bCreatedRuntime = false;
+		if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(this, CurrentCharacterTag, bCreatedRuntime))
+		{
+			if (UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+			{
+				FARCharacterSaveData CharacterState;
+				int32 CharacterStateIndex = INDEX_NONE;
+				if (SaveGame->FindCharacterStateDataByTag(CurrentCharacterTag, CharacterState, CharacterStateIndex))
+				{
+					Runtime->ApplySaveData(CharacterState);
+				}
+			}
+
+			SetCurrentCharacterRuntime(Runtime);
+			Runtime->SetCurrentPawn(GetPawn());
+		}
+	}
 }
 
 void AARPlayerStateBase::SetIsSetupComplete(bool bNewIsSetup)
@@ -444,7 +491,7 @@ TArray<FGameplayTag> AARPlayerStateBase::GetTagsInLoadoutSlot(FGameplayTag SlotT
 	}
 
 	TArray<FGameplayTag> ExistingTags;
-	LoadoutTags.GetGameplayTagArray(ExistingTags);
+	GetCurrentCharacterLoadoutTags().GetGameplayTagArray(ExistingTags);
 	for (const FGameplayTag& ExistingTag : ExistingTags)
 	{
 		if (!ExistingTag.IsValid())
@@ -488,6 +535,47 @@ float AARPlayerStateBase::GetStrength() const
 	return GetCoreAttributeValue(EARCoreAttributeType::Strength);
 }
 
+bool AARPlayerStateBase::IsDowned() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->IsDowned() : false;
+}
+
+bool AARPlayerStateBase::IsDeadState() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->IsDeadState() : false;
+}
+
+EARAffinityColor AARPlayerStateBase::GetInvaderPlayerColor() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetInvaderPlayerColor() : EARAffinityColor::None;
+}
+
+int32 AARPlayerStateBase::GetInvaderComboCount() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetInvaderComboCount() : 0;
+}
+
+float AARPlayerStateBase::GetInvaderLastKillCreditServerTime() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetInvaderLastKillCreditServerTime() : -1.0f;
+}
+
+const FGameplayTagContainer& AARPlayerStateBase::GetActivatedInvaderUpgrades() const
+{
+	static const FGameplayTagContainer EmptyTags;
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetActivatedInvaderUpgrades() : EmptyTags;
+}
+
+bool AARPlayerStateBase::IsSpiceSharingActive() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->IsSpiceSharingActive() : false;
+}
+
+int32 AARPlayerStateBase::GetSpicyTrackCursorTier() const
+{
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetSpicyTrackCursorTier() : 0;
+}
+
 void AARPlayerStateBase::SetStrength(const float NewStrength)
 {
 	if (HasAuthority())
@@ -525,18 +613,19 @@ void AARPlayerStateBase::ApplySpiceShareTick(const float DeltaSeconds, AARPlayer
 	OutSourceDrained = 0.0f;
 	OutTargetGranted = 0.0f;
 
-	if (!HasAuthority() || !AbilitySystemComponent || !TargetPlayer || TargetPlayer == this || DeltaSeconds <= 0.0f)
+	UAbilitySystemComponent* SourceASC = GetASC();
+	if (!HasAuthority() || !SourceASC || !TargetPlayer || TargetPlayer == this || DeltaSeconds <= 0.0f)
 	{
 		return;
 	}
 
 	// Mutual sharing cancels transfer entirely (prevents both players draining to nowhere).
-	if (bIsSharingSpice && TargetPlayer->IsSpiceSharingActive())
+	if (IsSpiceSharingActive() && TargetPlayer->IsSpiceSharingActive())
 	{
 		return;
 	}
 
-	if (!bIsSharingSpice)
+	if (!IsSpiceSharingActive())
 	{
 		return;
 	}
@@ -550,8 +639,8 @@ void AARPlayerStateBase::ApplySpiceShareTick(const float DeltaSeconds, AARPlayer
 		return;
 	}
 
-	const float DrainRate = FMath::Max(0.0f, AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceDrainRateAttribute()));
-	const float ShareRatio = FMath::Max(0.0f, AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceShareRatioAttribute()));
+	const float DrainRate = FMath::Max(0.0f, SourceASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceDrainRateAttribute()));
+	const float ShareRatio = FMath::Max(0.0f, SourceASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceShareRatioAttribute()));
 	if (DrainRate <= KINDA_SMALL_NUMBER || ShareRatio <= KINDA_SMALL_NUMBER)
 	{
 		return;
@@ -605,16 +694,12 @@ void AARPlayerStateBase::ResetInvaderCombo()
 		return;
 	}
 
-	if (InvaderComboCount == 0)
+	if (!CurrentCharacterRuntime)
 	{
-		LastInvaderKillCreditServerTime = -1.0f;
 		return;
 	}
 
-	const int32 OldComboCount = InvaderComboCount;
-	InvaderComboCount = 0;
-	LastInvaderKillCreditServerTime = -1.0f;
-	OnRep_InvaderComboCount(OldComboCount);
+	CurrentCharacterRuntime->ResetInvaderCombo();
 	ForceNetUpdate();
 }
 
@@ -625,20 +710,9 @@ void AARPlayerStateBase::ReportInvaderKillCredit(EARAffinityColor EnemyColor, co
 		return;
 	}
 
-	const bool bHasPriorCredit = LastInvaderKillCreditServerTime >= 0.0f;
-	const bool bTimedOut = bHasPriorCredit
-		&& ComboTimeoutSeconds > 0.0f
-		&& (ServerTimeSeconds - LastInvaderKillCreditServerTime) > ComboTimeoutSeconds;
-
-	const bool bMatchedColor = DoesInvaderColorMatch(InvaderPlayerColor, EnemyColor);
-	const int32 OldComboCount = InvaderComboCount;
-	const int32 NewComboCount = bMatchedColor ? ((bTimedOut ? 0 : OldComboCount) + 1) : 0;
-
-	InvaderComboCount = FMath::Max(0, NewComboCount);
-	LastInvaderKillCreditServerTime = ServerTimeSeconds;
-	if (InvaderComboCount != OldComboCount)
+	if (CurrentCharacterRuntime)
 	{
-		OnRep_InvaderComboCount(OldComboCount);
+		CurrentCharacterRuntime->ReportInvaderKillCredit(EnemyColor, ServerTimeSeconds, ComboTimeoutSeconds);
 		ForceNetUpdate();
 	}
 }
@@ -650,33 +724,34 @@ void AARPlayerStateBase::MarkInvaderUpgradeActivated(FGameplayTag UpgradeTag)
 		return;
 	}
 
-	if (ActivatedInvaderUpgradeTags.HasTagExact(UpgradeTag))
+	if (!CurrentCharacterRuntime)
 	{
 		return;
 	}
 
-	const FGameplayTagContainer OldTags = ActivatedInvaderUpgradeTags;
-	ActivatedInvaderUpgradeTags.AddTag(UpgradeTag);
-	OnRep_ActivatedInvaderUpgrades(OldTags);
+	CurrentCharacterRuntime->MarkInvaderUpgradeActivated(UpgradeTag);
 	ForceNetUpdate();
 }
 
 void AARPlayerStateBase::ClearActivatedInvaderUpgrades()
 {
-	if (!HasAuthority() || ActivatedInvaderUpgradeTags.IsEmpty())
+	if (!HasAuthority() || !CurrentCharacterRuntime)
 	{
 		return;
 	}
 
-	const FGameplayTagContainer OldTags = ActivatedInvaderUpgradeTags;
-	ActivatedInvaderUpgradeTags.Reset();
-	OnRep_ActivatedInvaderUpgrades(OldTags);
+	CurrentCharacterRuntime->ClearActivatedInvaderUpgrades();
 	ForceNetUpdate();
 }
 
 bool AARPlayerStateBase::HasActivatedInvaderUpgrade(FGameplayTag UpgradeTag) const
 {
-	return UpgradeTag.IsValid() && ActivatedInvaderUpgradeTags.HasTagExact(UpgradeTag);
+	if (!UpgradeTag.IsValid())
+	{
+		return false;
+	}
+
+	return GetActivatedInvaderUpgrades().HasTagExact(UpgradeTag);
 }
 
 void AARPlayerStateBase::SetPredictedSpiceValue(const float NewPredictedSpice)
@@ -703,7 +778,7 @@ void AARPlayerStateBase::ClearPredictedSpiceValue()
 
 int32 AARPlayerStateBase::GetEffectiveSpicyTrackCursorTier() const
 {
-	return bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : SpicyTrackCursorTier;
+	return bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : GetSpicyTrackCursorTier();
 }
 
 void AARPlayerStateBase::SetSpicyTrackCursorTier(int32 NewCursorTier)
@@ -772,7 +847,7 @@ void AARPlayerStateBase::ResetSpicyTrackCursor()
 
 void AARPlayerStateBase::SetPredictedSpicyTrackCursorTier(const int32 NewPredictedCursorTier)
 {
-	const int32 OldDisplayedCursorTier = bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : SpicyTrackCursorTier;
+	const int32 OldDisplayedCursorTier = bHasPredictedSpicyTrackCursorTier ? PredictedSpicyTrackCursorTier : GetSpicyTrackCursorTier();
 	PredictedSpicyTrackCursorTier = ClampSpicyTrackCursorTier(NewPredictedCursorTier);
 	bHasPredictedSpicyTrackCursorTier = true;
 	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), PredictedSpicyTrackCursorTier, OldDisplayedCursorTier);
@@ -786,7 +861,7 @@ void AARPlayerStateBase::ClearPredictedSpicyTrackCursorTier()
 	}
 
 	bHasPredictedSpicyTrackCursorTier = false;
-	PredictedSpicyTrackCursorTier = SpicyTrackCursorTier;
+	PredictedSpicyTrackCursorTier = GetSpicyTrackCursorTier();
 }
 
 void AARPlayerStateBase::BeginPlay()
@@ -803,14 +878,36 @@ void AARPlayerStateBase::BeginPlay()
 		{
 			CurrentCharacterTag = ARPlayer::GetCharacterTagForChoice(CharacterPicked);
 		}
+
+		if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+		{
+			bool bCreatedRuntime = false;
+			AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(this, CurrentCharacterTag, bCreatedRuntime);
+			if (Runtime)
+			{
+				if (UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+				{
+					FARCharacterSaveData CharacterState;
+					int32 CharacterStateIndex = INDEX_NONE;
+					if (SaveGame->FindCharacterStateDataByTag(CurrentCharacterTag, CharacterState, CharacterStateIndex))
+					{
+						Runtime->ApplySaveData(CharacterState);
+					}
+				}
+
+				SetCurrentCharacterRuntime(Runtime);
+				Runtime->SetCurrentPawn(GetPawn());
+			}
+		}
 	}
 
 	EnsureDefaultLoadoutIfEmpty();
-	if (HasAuthority() && InvaderPlayerColor == EARAffinityColor::None)
+	if (HasAuthority() && CurrentCharacterRuntime && CurrentCharacterRuntime->GetInvaderPlayerColor() == EARAffinityColor::None)
 	{
 		SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked), true);
 	}
 	BindTrackedAttributeDelegates();
+	BindCurrentRuntimeDelegates();
 	BroadcastTrackedAttributeSnapshot();
 	EvaluateLifeStateFromASC();
 	EvaluateTravelReadinessAndBroadcast();
@@ -818,6 +915,7 @@ void AARPlayerStateBase::BeginPlay()
 
 void AARPlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	UnbindCurrentRuntimeDelegates();
 	UnbindTrackedAttributeDelegates();
 	Super::EndPlay(EndPlayReason);
 }
@@ -852,6 +950,14 @@ void AARPlayerStateBase::OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag)
 	}
 }
 
+void AARPlayerStateBase::OnRep_CurrentCharacterRuntime()
+{
+	BindCurrentRuntimeDelegates();
+	UnbindTrackedAttributeDelegates();
+	BindTrackedAttributeDelegates();
+	BroadcastTrackedAttributeSnapshot();
+}
+
 void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
 {
 	OnDisplayNameChanged.Broadcast(this, ResolveSignalCharacterTag(this), DisplayName, OldDisplayName);
@@ -861,16 +967,6 @@ void AARPlayerStateBase::OnRep_IsReady(bool bOldReady)
 {
 	OnReadyStatusChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsReady, bOldReady);
 	EvaluateTravelReadinessAndBroadcast();
-}
-
-void AARPlayerStateBase::OnRep_IsDowned(bool bOldDowned)
-{
-	OnDownedStateChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsDowned, bOldDowned);
-}
-
-void AARPlayerStateBase::OnRep_IsDeadState(bool bOldDeadState)
-{
-	OnDeadStateChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsDeadState, bOldDeadState);
 }
 
 void AARPlayerStateBase::OnRep_DialogueAutoAdvanceEnabled(bool bOldEnabled)
@@ -883,40 +979,155 @@ void AARPlayerStateBase::OnRep_IsSetup(bool bOldIsSetup)
 	OnSetupStateChanged.Broadcast(bIsSetup, bOldIsSetup);
 }
 
-void AARPlayerStateBase::OnRep_InvaderPlayerColor(EARAffinityColor OldColor)
+void AARPlayerStateBase::BindCurrentRuntimeDelegates()
 {
-	OnInvaderPlayerColorChanged.Broadcast(InvaderPlayerColor, OldColor);
+	UnbindCurrentRuntimeDelegates();
+	if (!CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	CurrentCharacterRuntime->OnLoadoutChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeLoadoutChanged);
+	CurrentCharacterRuntime->OnDownedStateChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeDownedChanged);
+	CurrentCharacterRuntime->OnDeadStateChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeDeadChanged);
+	CurrentCharacterRuntime->OnInvaderPlayerColorChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeInvaderColorChanged);
+	CurrentCharacterRuntime->OnInvaderComboChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeInvaderComboChanged);
+	CurrentCharacterRuntime->OnActivatedInvaderUpgradesChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeActivatedUpgradesChanged);
+	CurrentCharacterRuntime->OnSpiceSharingStateChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeSpiceSharingChanged);
+	CurrentCharacterRuntime->OnSpicyTrackCursorChanged.AddDynamic(this, &AARPlayerStateBase::HandleRuntimeSpicyTrackCursorChanged);
+	BoundRuntimeForDelegates = CurrentCharacterRuntime;
 }
 
-void AARPlayerStateBase::OnRep_InvaderComboCount(int32 OldComboCount)
+void AARPlayerStateBase::UnbindCurrentRuntimeDelegates()
 {
-	OnInvaderComboChanged.Broadcast(this, ResolveSignalCharacterTag(this), InvaderComboCount, OldComboCount);
+	AARCharacterStateRuntime* Runtime = BoundRuntimeForDelegates.Get();
+	if (!Runtime)
+	{
+		return;
+	}
+
+	Runtime->OnLoadoutChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeLoadoutChanged);
+	Runtime->OnDownedStateChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeDownedChanged);
+	Runtime->OnDeadStateChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeDeadChanged);
+	Runtime->OnInvaderPlayerColorChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeInvaderColorChanged);
+	Runtime->OnInvaderComboChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeInvaderComboChanged);
+	Runtime->OnActivatedInvaderUpgradesChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeActivatedUpgradesChanged);
+	Runtime->OnSpiceSharingStateChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeSpiceSharingChanged);
+	Runtime->OnSpicyTrackCursorChanged.RemoveDynamic(this, &AARPlayerStateBase::HandleRuntimeSpicyTrackCursorChanged);
+	BoundRuntimeForDelegates = nullptr;
 }
 
-void AARPlayerStateBase::OnRep_ActivatedInvaderUpgrades(const FGameplayTagContainer& OldActivatedTags)
+void AARPlayerStateBase::HandleRuntimeLoadoutChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	const FGameplayTagContainer& NewLoadoutTags,
+	const FGameplayTagContainer& OldLoadoutTags)
 {
-	OnInvaderActivatedUpgradesChanged.Broadcast(this, ResolveSignalCharacterTag(this), ActivatedInvaderUpgradeTags, OldActivatedTags);
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	OnLoadoutTagsChanged.Broadcast(this, ResolveSignalCharacterTag(this), NewLoadoutTags, OldLoadoutTags);
 }
 
-void AARPlayerStateBase::OnRep_IsSharingSpice(bool bOldIsSharingSpice)
+void AARPlayerStateBase::HandleRuntimeDownedChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	FGameplayTag CharacterTag,
+	bool bNewDowned,
+	bool bOldDowned)
 {
-	OnSpiceSharingStateChanged.Broadcast(this, ResolveSignalCharacterTag(this), bIsSharingSpice, bOldIsSharingSpice);
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	OnDownedStateChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), bNewDowned, bOldDowned);
 }
 
-void AARPlayerStateBase::OnRep_SpicyTrackCursorTier(int32 OldCursorTier)
+void AARPlayerStateBase::HandleRuntimeDeadChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	FGameplayTag CharacterTag,
+	bool bNewDead,
+	bool bOldDead)
 {
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	OnDeadStateChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), bNewDead, bOldDead);
+}
+
+void AARPlayerStateBase::HandleRuntimeInvaderColorChanged(EARAffinityColor NewColor, EARAffinityColor OldColor)
+{
+	OnInvaderPlayerColorChanged.Broadcast(NewColor, OldColor);
+}
+
+void AARPlayerStateBase::HandleRuntimeInvaderComboChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	FGameplayTag CharacterTag,
+	int32 NewCombo,
+	int32 OldCombo)
+{
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	OnInvaderComboChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), NewCombo, OldCombo);
+}
+
+void AARPlayerStateBase::HandleRuntimeActivatedUpgradesChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	FGameplayTag CharacterTag,
+	const FGameplayTagContainer& NewActivatedTags,
+	const FGameplayTagContainer& OldActivatedTags)
+{
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	OnInvaderActivatedUpgradesChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), NewActivatedTags, OldActivatedTags);
+}
+
+void AARPlayerStateBase::HandleRuntimeSpiceSharingChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	FGameplayTag CharacterTag,
+	bool bNewSharing,
+	bool bOldSharing)
+{
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
+	OnSpiceSharingStateChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), bNewSharing, bOldSharing);
+}
+
+void AARPlayerStateBase::HandleRuntimeSpicyTrackCursorChanged(
+	AARCharacterStateRuntime* SourceRuntime,
+	FGameplayTag CharacterTag,
+	int32 NewCursorTier,
+	int32 OldCursorTier)
+{
+	if (SourceRuntime != CurrentCharacterRuntime)
+	{
+		return;
+	}
+
 	if (bHasPredictedSpicyTrackCursorTier)
 	{
 		const int32 OldPredictedCursorTier = PredictedSpicyTrackCursorTier;
 		ClearPredictedSpicyTrackCursorTier();
-		if (OldPredictedCursorTier != SpicyTrackCursorTier)
+		if (OldPredictedCursorTier != NewCursorTier)
 		{
-			OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), SpicyTrackCursorTier, OldPredictedCursorTier);
+			OnSpicyTrackCursorChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), NewCursorTier, OldPredictedCursorTier);
 		}
 		return;
 	}
 
-	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), SpicyTrackCursorTier, OldCursorTier);
+	OnSpicyTrackCursorChanged.Broadcast(this, ARPlayer::NormalizeCharacterTag(CharacterTag), NewCursorTier, OldCursorTier);
 }
 
 void AARPlayerStateBase::SetCharacterPicked_Internal(EARCharacterChoice NewCharacter)
@@ -946,13 +1157,22 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 	FGameplayTagContainer NextProjectedLoadout;
 	bool bHasProjectedLoadout = false;
 
-	CacheCharacterOwnedLoadout(CurrentCharacterTag, LoadoutTags);
+	const FGameplayTagContainer PreviousLoadoutTags = GetCurrentCharacterLoadoutTags();
+	CacheCharacterOwnedLoadout(CurrentCharacterTag, PreviousLoadoutTags);
 
 	UARSaveGame* SaveGame = GetCurrentSaveGame(this);
 	if (SaveGame && CurrentCharacterTag.IsValid())
 	{
 		FARCharacterSaveData& CurrentCharacterState = SaveGame->FindOrAddCharacterStateData(CurrentCharacterTag);
-		CurrentCharacterState.LoadoutTags = LoadoutTags;
+		if (CurrentCharacterRuntime
+			&& ARPlayer::NormalizeCharacterTag(CurrentCharacterRuntime->GetCharacterTag()).MatchesTagExact(ARPlayer::NormalizeCharacterTag(CurrentCharacterTag)))
+		{
+			CurrentCharacterRuntime->WriteSaveData(CurrentCharacterState);
+		}
+		else
+		{
+			CurrentCharacterState.LoadoutTags = PreviousLoadoutTags;
+		}
 	}
 
 	if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
@@ -961,7 +1181,6 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
 
 		PlayerSaveData->CurrentCharacterTag = NormalizedTag;
-		PlayerSaveData->CharacterPicked = NewCharacter;
 		PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 	}
 
@@ -981,7 +1200,6 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 	{
 		OnCurrentCharacterTagChanged.Broadcast(NormalizedNewCharacterTag, NormalizedOldCharacterTag);
 	}
-	SetInvaderPlayerColor_Internal(ResolveDefaultInvaderPlayerColorFromCharacter(NewCharacter));
 
 	if (OldCharacter != CharacterPicked)
 	{
@@ -994,6 +1212,30 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 
 	SetLoadoutTags_Internal(NextProjectedLoadout, bMarkSaveDirty);
 	EnsureDefaultLoadoutIfEmpty();
+
+	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	{
+		bool bCreatedRuntime = false;
+		if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(this, CurrentCharacterTag, bCreatedRuntime))
+		{
+			if (bCreatedRuntime)
+			{
+				if (UARSaveGame* SaveGameForRuntimeHydration = GetCurrentSaveGame(this))
+				{
+					FARCharacterSaveData CharacterState;
+					int32 CharacterStateIndex = INDEX_NONE;
+					if (SaveGameForRuntimeHydration->FindCharacterStateDataByTag(CurrentCharacterTag, CharacterState, CharacterStateIndex))
+					{
+						Runtime->ApplySaveData(CharacterState);
+					}
+				}
+			}
+
+			SetCurrentCharacterRuntime(Runtime);
+			Runtime->SetCurrentPawn(GetPawn());
+		}
+	}
+
 	ForceNetUpdate();
 }
 
@@ -1014,14 +1256,22 @@ void AARPlayerStateBase::SetInvaderPlayerColor_Internal(EARAffinityColor NewColo
 		ApplyInvaderColorGameplayTags(NewColor);
 	}
 
-	if (!bForceBroadcast && InvaderPlayerColor == NewColor)
+	if (CurrentCharacterRuntime && !bForceBroadcast && CurrentCharacterRuntime->GetInvaderPlayerColor() == NewColor)
 	{
 		return;
 	}
 
-	const EARAffinityColor OldColor = InvaderPlayerColor;
-	InvaderPlayerColor = NewColor;
-	OnRep_InvaderPlayerColor(OldColor);
+	const EARAffinityColor OldColor = GetInvaderPlayerColor();
+
+	if (CurrentCharacterRuntime)
+	{
+		CurrentCharacterRuntime->SetInvaderPlayerColor(NewColor);
+	}
+	else
+	{
+		return;
+	}
+
 	ForceNetUpdate();
 
 	if (NewColor == EARAffinityColor::None || NewColor == EARAffinityColor::White)
@@ -1045,14 +1295,17 @@ void AARPlayerStateBase::SetSpiceSharingActive_Internal(const bool bNewIsSharing
 		return;
 	}
 
-	if (!bForceBroadcast && bIsSharingSpice == bNewIsSharing)
+	if (!CurrentCharacterRuntime)
 	{
 		return;
 	}
 
-	const bool bOldIsSharing = bIsSharingSpice;
-	bIsSharingSpice = bNewIsSharing;
-	OnRep_IsSharingSpice(bOldIsSharing);
+	if (!bForceBroadcast && CurrentCharacterRuntime->IsSpiceSharingActive() == bNewIsSharing)
+	{
+		return;
+	}
+
+	CurrentCharacterRuntime->SetSpiceSharingActive(bNewIsSharing);
 	ForceNetUpdate();
 }
 
@@ -1063,15 +1316,18 @@ void AARPlayerStateBase::SetSpicyTrackCursorTier_Internal(int32 NewCursorTier, c
 		return;
 	}
 
-	const int32 ClampedCursor = ClampSpicyTrackCursorTier(NewCursorTier);
-	if (!bForceBroadcast && SpicyTrackCursorTier == ClampedCursor)
+	if (!CurrentCharacterRuntime)
 	{
 		return;
 	}
 
-	const int32 OldCursorTier = SpicyTrackCursorTier;
-	SpicyTrackCursorTier = ClampedCursor;
-	OnRep_SpicyTrackCursorTier(OldCursorTier);
+	const int32 ClampedCursor = ClampSpicyTrackCursorTier(NewCursorTier);
+	if (!bForceBroadcast && CurrentCharacterRuntime->GetSpicyTrackCursorTier() == ClampedCursor)
+	{
+		return;
+	}
+
+	CurrentCharacterRuntime->SetSpicyTrackCursorTier(ClampedCursor);
 	ForceNetUpdate();
 }
 
@@ -1187,15 +1443,18 @@ void AARPlayerStateBase::SetDowned_Internal(bool bNewDowned)
 		return;
 	}
 
-	const bool bResolvedDowned = bIsDeadState ? false : bNewDowned;
-	if (bIsDowned == bResolvedDowned)
+	if (!CurrentCharacterRuntime)
 	{
 		return;
 	}
 
-	const bool bOldDowned = bIsDowned;
-	bIsDowned = bResolvedDowned;
-	OnRep_IsDowned(bOldDowned);
+	const bool bResolvedDowned = CurrentCharacterRuntime->IsDeadState() ? false : bNewDowned;
+	if (CurrentCharacterRuntime->IsDowned() == bResolvedDowned)
+	{
+		return;
+	}
+
+	CurrentCharacterRuntime->SetDownedState(bResolvedDowned);
 	ForceNetUpdate();
 }
 
@@ -1206,20 +1465,18 @@ void AARPlayerStateBase::SetDead_Internal(bool bNewDead)
 		return;
 	}
 
-	if (bIsDeadState == bNewDead)
+	if (!CurrentCharacterRuntime)
 	{
 		return;
 	}
 
-	const bool bOldDead = bIsDeadState;
-	bIsDeadState = bNewDead;
-	OnRep_IsDeadState(bOldDead);
-	ForceNetUpdate();
-
-	if (bIsDeadState && bIsDowned)
+	if (CurrentCharacterRuntime->IsDeadState() == bNewDead)
 	{
-		SetDowned_Internal(false);
+		return;
 	}
+
+	CurrentCharacterRuntime->SetDeadState(bNewDead);
+	ForceNetUpdate();
 }
 
 void AARPlayerStateBase::SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled)
@@ -1239,7 +1496,6 @@ void AARPlayerStateBase::SetDialogueAutoAdvanceEnabled_Internal(bool bEnabled)
 		PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
 		PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
 		PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
-		PlayerSaveData->CharacterPicked = CharacterPicked;
 		PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 	}
 }
@@ -1320,17 +1576,24 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	FGameplayTagContainer NormalizedTags = NewLoadoutTags;
 	NormalizeLoadoutTagsForSlotRules(NormalizedTags);
 
-	if (LoadoutTags == NormalizedTags)
+	const FGameplayTagContainer CurrentLoadoutTags = GetCurrentCharacterLoadoutTags();
+	if (CurrentLoadoutTags == NormalizedTags)
 	{
 		return;
 	}
 
-	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
-	LoadoutTags = NormalizedTags;
+	const FGameplayTagContainer OldLoadoutTags = CurrentLoadoutTags;
+	if (!CurrentCharacterRuntime)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[PlayerState] SetLoadoutTags_Internal ignored for '%s': no current character runtime."), *GetNameSafe(this));
+		return;
+	}
+
+	CurrentCharacterRuntime->SetLoadoutTags(NormalizedTags);
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
-	CacheCharacterOwnedLoadout(CurrentCharacterTag, LoadoutTags);
+	CacheCharacterOwnedLoadout(CurrentCharacterTag, NormalizedTags);
 
 	// Mirror the projected runtime loadout into the canonical character-owned save row.
 	if (UGameInstance* GI = GetGameInstance())
@@ -1340,14 +1603,21 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame(); SaveGame && CurrentCharacterTag.IsValid())
 			{
 				FARCharacterSaveData& ActiveCharacterState = SaveGame->FindOrAddCharacterStateData(CurrentCharacterTag);
-				ActiveCharacterState.LoadoutTags = LoadoutTags;
+				if (CurrentCharacterRuntime
+					&& ARPlayer::NormalizeCharacterTag(CurrentCharacterRuntime->GetCharacterTag()).MatchesTagExact(ARPlayer::NormalizeCharacterTag(CurrentCharacterTag)))
+				{
+					CurrentCharacterRuntime->WriteSaveData(ActiveCharacterState);
+				}
+				else
+				{
+					ActiveCharacterState.LoadoutTags = NormalizedTags;
+				}
 			}
 
 			if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
 			{
 				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
 				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
-				PlayerSaveData->CharacterPicked = CharacterPicked;
 				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
 				PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 			}
@@ -1368,7 +1638,13 @@ void AARPlayerStateBase::CacheCharacterOwnedLoadout(const FGameplayTag Character
 		return;
 	}
 
-	RuntimeCharacterOwnedLoadouts.FindOrAdd(NormalizedCharacterTag) = LoadoutTagsToCache;
+	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	{
+		if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->FindCharacterRuntimeForPlayer(this, NormalizedCharacterTag))
+		{
+			Runtime->SetLoadoutTags(LoadoutTagsToCache);
+		}
+	}
 }
 
 bool AARPlayerStateBase::TryResolveCharacterOwnedLoadout(const FGameplayTag CharacterTag, FGameplayTagContainer& OutLoadoutTags) const
@@ -1380,10 +1656,13 @@ bool AARPlayerStateBase::TryResolveCharacterOwnedLoadout(const FGameplayTag Char
 		return false;
 	}
 
-	if (const FGameplayTagContainer* RuntimeLoadout = RuntimeCharacterOwnedLoadouts.Find(NormalizedCharacterTag))
+	if (const UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
 	{
-		OutLoadoutTags = *RuntimeLoadout;
-		return true;
+		if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->FindCharacterRuntimeForPlayer(this, NormalizedCharacterTag))
+		{
+			OutLoadoutTags = Runtime->GetLoadoutTags();
+			return true;
+		}
 	}
 
 	if (const UARSaveGame* SaveGame = GetCurrentSaveGame(this))
@@ -1418,7 +1697,7 @@ void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
 	FGameplayTag SlotRootTag;
 	const bool bHasSlotRoot = UGameplayTagUtilities::TryGetTagAtDepth(NewTag, 2, SlotRootTag);
 
-	FGameplayTagContainer NewLoadout = LoadoutTags;
+	FGameplayTagContainer NewLoadout = GetCurrentCharacterLoadoutTags();
 	if (bHasSlotRoot && IsSingleSlotLoadoutRootTag(SlotRootTag))
 	{
 		if (!UGameplayTagUtilities::ReplaceTagInSlot(NewLoadout, NewTag))
@@ -1448,12 +1727,13 @@ void AARPlayerStateBase::RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove)
 		return;
 	}
 
-	if (!LoadoutTags.HasTagExact(TagToRemove))
+	const FGameplayTagContainer CurrentLoadout = GetCurrentCharacterLoadoutTags();
+	if (!CurrentLoadout.HasTagExact(TagToRemove))
 	{
 		return;
 	}
 
-	FGameplayTagContainer NewLoadout = LoadoutTags;
+	FGameplayTagContainer NewLoadout = CurrentLoadout;
 	NewLoadout.RemoveTag(TagToRemove);
 	SetLoadoutTags_Internal(NewLoadout);
 }
@@ -1534,32 +1814,10 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	{
 		TargetPS->CharacterPicked = CharacterPicked;
 	}
-
-	// Carry runtime character-owned loadout cache through seamless travel.
-	TargetPS->RuntimeCharacterOwnedLoadouts = RuntimeCharacterOwnedLoadouts;
-	TargetPS->LoadoutTags = LoadoutTags;
-	TargetPS->NormalizeLoadoutTagsForSlotRules(TargetPS->LoadoutTags);
-	TargetPS->CacheCharacterOwnedLoadout(TargetPS->CurrentCharacterTag, TargetPS->LoadoutTags);
 	TargetPS->DisplayName = DisplayName;
 	TargetPS->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
-
-	// Mark copied/traveled state as setup-complete; ready and offer/cursor state remain transient.
 	TargetPS->bIsSetup = true;
 	TargetPS->bIsReady = false;
-	TargetPS->InvaderComboCount = 0;
-	TargetPS->LastInvaderKillCreditServerTime = -1.0f;
-	TargetPS->ActivatedInvaderUpgradeTags.Reset();
-	TargetPS->bIsSharingSpice = false;
-	TargetPS->SpicyTrackCursorTier = 0;
-	TargetPS->PredictedSpiceValue = 0.0f;
-	TargetPS->bHasPredictedSpiceValue = false;
-	TargetPS->PredictedSpicyTrackCursorTier = 0;
-	TargetPS->bHasPredictedSpicyTrackCursorTier = false;
-
-	const EARAffinityColor ResolvedTravelColor = InvaderPlayerColor != EARAffinityColor::Unknown
-		? InvaderPlayerColor
-		: ResolveDefaultInvaderPlayerColorFromCharacter(TargetPS->CharacterPicked);
-	TargetPS->InvaderPlayerColor = ResolvedTravelColor;
 	TargetPS->bCachedTravelReady = TargetPS->IsTravelReady();
 	TargetPS->ForceNetUpdate();
 }
@@ -1587,7 +1845,7 @@ bool AARPlayerStateBase::ApplyStateFromStruct_Implementation(const FInstancedStr
 
 void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 {
-	if (!HasAuthority() || !LoadoutTags.IsEmpty())
+	if (!HasAuthority() || !GetCurrentCharacterLoadoutTags().IsEmpty())
 	{
 		return;
 	}
@@ -1607,44 +1865,50 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 
 void AARPlayerStateBase::BindTrackedAttributeDelegates()
 {
-	if (!AbilitySystemComponent)
+	UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!ActiveASC)
 	{
 		return;
 	}
 
+	if (BoundTrackedASC.Get() != ActiveASC)
+	{
+		UnbindTrackedAttributeDelegates();
+	}
+
 	if (!HealthChangedDelegateHandle.IsValid())
 	{
-		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute())
+		HealthChangedDelegateHandle = ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleHealthAttributeChanged);
 	}
 
 	if (!MaxHealthChangedDelegateHandle.IsValid())
 	{
-		MaxHealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute())
+		MaxHealthChangedDelegateHandle = ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleMaxHealthAttributeChanged);
 	}
 
 	if (!SpiceChangedDelegateHandle.IsValid())
 	{
-		SpiceChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute())
+		SpiceChangedDelegateHandle = ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleSpiceAttributeChanged);
 	}
 
 	if (!MaxSpiceChangedDelegateHandle.IsValid())
 	{
-		MaxSpiceChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute())
+		MaxSpiceChangedDelegateHandle = ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleMaxSpiceAttributeChanged);
 	}
 
 	if (!MoveSpeedChangedDelegateHandle.IsValid())
 	{
-		MoveSpeedChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
+		MoveSpeedChangedDelegateHandle = ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleMoveSpeedAttributeChanged);
 	}
 
 	if (!StrengthChangedDelegateHandle.IsValid())
 	{
-		StrengthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetStrengthAttribute())
+		StrengthChangedDelegateHandle = ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetStrengthAttribute())
 			.AddUObject(this, &AARPlayerStateBase::HandleStrengthAttributeChanged);
 	}
 
@@ -1653,7 +1917,7 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
 		if (DownedTag.IsValid())
 		{
-			DownedTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(DownedTag, EGameplayTagEventType::NewOrRemoved)
+			DownedTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(DownedTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleDownedTagChanged);
 		}
 	}
@@ -1663,7 +1927,7 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
 		if (DeadTag.IsValid())
 		{
-			DeadTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved)
+			DeadTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleDeadTagChanged);
 		}
 	}
@@ -1673,7 +1937,7 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
 		if (ColorNoneTag.IsValid())
 		{
-			ColorNoneTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved)
+			ColorNoneTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
 		}
 	}
@@ -1683,7 +1947,7 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
 		if (ColorRedTag.IsValid())
 		{
-			ColorRedTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved)
+			ColorRedTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
 		}
 	}
@@ -1693,7 +1957,7 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
 		if (ColorWhiteTag.IsValid())
 		{
-			ColorWhiteTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved)
+			ColorWhiteTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
 		}
 	}
@@ -1703,7 +1967,7 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
 		if (ColorBlueTag.IsValid())
 		{
-			ColorBlueTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved)
+			ColorBlueTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleInvaderColorOverrideTagChanged);
 		}
 	}
@@ -1713,18 +1977,20 @@ void AARPlayerStateBase::BindTrackedAttributeDelegates()
 		const FGameplayTag SharingSpiceTag = FGameplayTag::RequestGameplayTag(TEXT("State.Sharing"), false);
 		if (SharingSpiceTag.IsValid())
 		{
-			SharingSpiceTagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(SharingSpiceTag, EGameplayTagEventType::NewOrRemoved)
+			SharingSpiceTagChangedDelegateHandle = ActiveASC->RegisterGameplayTagEvent(SharingSpiceTag, EGameplayTagEventType::NewOrRemoved)
 				.AddUObject(this, &AARPlayerStateBase::HandleSpiceSharingTagChanged);
-			SetSpiceSharingActive_Internal(AbilitySystemComponent->HasMatchingGameplayTag(SharingSpiceTag), true);
+			SetSpiceSharingActive_Internal(ActiveASC->HasMatchingGameplayTag(SharingSpiceTag), true);
 		}
 	}
 
+	BoundTrackedASC = ActiveASC;
 	EvaluateInvaderColorFromASCOverrideTags();
 }
 
 void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 {
-	if (!AbilitySystemComponent)
+	UAbilitySystemComponent* ActiveASC = BoundTrackedASC.Get();
+	if (!ActiveASC)
 	{
 		HealthChangedDelegateHandle.Reset();
 		MaxHealthChangedDelegateHandle.Reset();
@@ -1744,88 +2010,90 @@ void AARPlayerStateBase::UnbindTrackedAttributeDelegates()
 
 	if (HealthChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute()).Remove(HealthChangedDelegateHandle);
+		ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute()).Remove(HealthChangedDelegateHandle);
 		HealthChangedDelegateHandle.Reset();
 	}
 
 	if (MaxHealthChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute()).Remove(MaxHealthChangedDelegateHandle);
+		ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute()).Remove(MaxHealthChangedDelegateHandle);
 		MaxHealthChangedDelegateHandle.Reset();
 	}
 
 	if (SpiceChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute()).Remove(SpiceChangedDelegateHandle);
+		ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetSpiceAttribute()).Remove(SpiceChangedDelegateHandle);
 		SpiceChangedDelegateHandle.Reset();
 	}
 
 	if (MaxSpiceChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute()).Remove(MaxSpiceChangedDelegateHandle);
+		ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxSpiceAttribute()).Remove(MaxSpiceChangedDelegateHandle);
 		MaxSpiceChangedDelegateHandle.Reset();
 	}
 
 	if (MoveSpeedChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute()).Remove(MoveSpeedChangedDelegateHandle);
+		ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMoveSpeedAttribute()).Remove(MoveSpeedChangedDelegateHandle);
 		MoveSpeedChangedDelegateHandle.Reset();
 	}
 
 	if (StrengthChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetStrengthAttribute()).Remove(StrengthChangedDelegateHandle);
+		ActiveASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetStrengthAttribute()).Remove(StrengthChangedDelegateHandle);
 		StrengthChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
 	if (DownedTag.IsValid() && DownedTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(DownedTag, EGameplayTagEventType::NewOrRemoved).Remove(DownedTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(DownedTag, EGameplayTagEventType::NewOrRemoved).Remove(DownedTagChangedDelegateHandle);
 		DownedTagChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
 	if (DeadTag.IsValid() && DeadTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved).Remove(DeadTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(DeadTag, EGameplayTagEventType::NewOrRemoved).Remove(DeadTagChangedDelegateHandle);
 		DeadTagChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag ColorNoneTag = FGameplayTag::RequestGameplayTag(TEXT("Color.None"), false);
 	if (ColorNoneTag.IsValid() && ColorNoneTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorNoneTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(ColorNoneTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorNoneTagChangedDelegateHandle);
 		ColorNoneTagChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag ColorRedTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Red"), false);
 	if (ColorRedTag.IsValid() && ColorRedTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorRedTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(ColorRedTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorRedTagChangedDelegateHandle);
 		ColorRedTagChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag ColorWhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Color.White"), false);
 	if (ColorWhiteTag.IsValid() && ColorWhiteTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorWhiteTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(ColorWhiteTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorWhiteTagChangedDelegateHandle);
 		ColorWhiteTagChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
 	if (ColorBlueTag.IsValid() && ColorBlueTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorBlueTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(ColorBlueTag, EGameplayTagEventType::NewOrRemoved).Remove(ColorBlueTagChangedDelegateHandle);
 		ColorBlueTagChangedDelegateHandle.Reset();
 	}
 
 	const FGameplayTag SharingSpiceTag = FGameplayTag::RequestGameplayTag(TEXT("State.Sharing"), false);
 	if (SharingSpiceTag.IsValid() && SharingSpiceTagChangedDelegateHandle.IsValid())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(SharingSpiceTag, EGameplayTagEventType::NewOrRemoved).Remove(SharingSpiceTagChangedDelegateHandle);
+		ActiveASC->RegisterGameplayTagEvent(SharingSpiceTag, EGameplayTagEventType::NewOrRemoved).Remove(SharingSpiceTagChangedDelegateHandle);
 		SharingSpiceTagChangedDelegateHandle.Reset();
 	}
+
+	BoundTrackedASC = nullptr;
 }
 
 void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
@@ -1844,7 +2112,8 @@ void AARPlayerStateBase::BroadcastTrackedAttributeSnapshot()
 	OnMaxSpiceChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.MaxSpice, Snapshot.MaxSpice);
 	OnMoveSpeedChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.MoveSpeed, Snapshot.MoveSpeed);
 	OnStrengthChanged.Broadcast(this, ResolveSignalCharacterTag(this), Snapshot.Strength, Snapshot.Strength);
-	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), SpicyTrackCursorTier, SpicyTrackCursorTier);
+	const int32 CurrentCursorTier = GetSpicyTrackCursorTier();
+	OnSpicyTrackCursorChanged.Broadcast(this, ResolveSignalCharacterTag(this), CurrentCursorTier, CurrentCursorTier);
 }
 
 void AARPlayerStateBase::HandleHealthAttributeChanged(const FOnAttributeChangeData& ChangeData)
@@ -1879,7 +2148,7 @@ void AARPlayerStateBase::HandleSpiceAttributeChanged(const FOnAttributeChangeDat
 		else
 		{
 			// Keep cursor valid if spice dropped below current selection.
-			SetSpicyTrackCursorTier_Internal(SpicyTrackCursorTier);
+			SetSpicyTrackCursorTier_Internal(GetSpicyTrackCursorTier());
 		}
 	}
 }
@@ -1891,7 +2160,7 @@ void AARPlayerStateBase::HandleMaxSpiceAttributeChanged(const FOnAttributeChange
 
 	if (HasAuthority())
 	{
-		SetSpicyTrackCursorTier_Internal(SpicyTrackCursorTier);
+		SetSpicyTrackCursorTier_Internal(GetSpicyTrackCursorTier());
 	}
 }
 
@@ -1924,19 +2193,20 @@ void AARPlayerStateBase::HandleInvaderColorOverrideTagChanged(const FGameplayTag
 
 void AARPlayerStateBase::HandleSpiceSharingTagChanged(const FGameplayTag /*Tag*/, int32 /*NewCount*/)
 {
-	if (!HasAuthority() || !AbilitySystemComponent)
+	UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!HasAuthority() || !ActiveASC)
 	{
 		return;
 	}
 
 	const FGameplayTag SharingSpiceTag = FGameplayTag::RequestGameplayTag(TEXT("State.Sharing"), false);
-	const bool bSharingNow = SharingSpiceTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(SharingSpiceTag);
+	const bool bSharingNow = SharingSpiceTag.IsValid() && ActiveASC->HasMatchingGameplayTag(SharingSpiceTag);
 	SetSpiceSharingActive_Internal(bSharingNow);
 }
 
 void AARPlayerStateBase::EvaluateInvaderColorFromASCOverrideTags()
 {
-	if (!HasAuthority() || !AbilitySystemComponent)
+	if (!HasAuthority() || !GetASC())
 	{
 		return;
 	}
@@ -1949,7 +2219,8 @@ void AARPlayerStateBase::EvaluateInvaderColorFromASCOverrideTags()
 
 EARAffinityColor AARPlayerStateBase::ResolveInvaderColorFromASCOverrideTags() const
 {
-	if (!AbilitySystemComponent)
+	const UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!ActiveASC)
 	{
 		return ResolveDefaultInvaderPlayerColorFromCharacter(CharacterPicked);
 	}
@@ -1960,22 +2231,22 @@ EARAffinityColor AARPlayerStateBase::ResolveInvaderColorFromASCOverrideTags() co
 	const FGameplayTag ColorBlueTag = FGameplayTag::RequestGameplayTag(TEXT("Color.Blue"), false);
 
 	// Override precedence: None > White > Red > Blue.
-	if (ColorNoneTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorNoneTag))
+	if (ColorNoneTag.IsValid() && ActiveASC->HasMatchingGameplayTag(ColorNoneTag))
 	{
 		return EARAffinityColor::None;
 	}
 
-	if (ColorWhiteTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorWhiteTag))
+	if (ColorWhiteTag.IsValid() && ActiveASC->HasMatchingGameplayTag(ColorWhiteTag))
 	{
 		return EARAffinityColor::White;
 	}
 
-	if (ColorRedTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorRedTag))
+	if (ColorRedTag.IsValid() && ActiveASC->HasMatchingGameplayTag(ColorRedTag))
 	{
 		return EARAffinityColor::Red;
 	}
 
-	if (ColorBlueTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(ColorBlueTag))
+	if (ColorBlueTag.IsValid() && ActiveASC->HasMatchingGameplayTag(ColorBlueTag))
 	{
 		return EARAffinityColor::Blue;
 	}
@@ -1985,7 +2256,8 @@ EARAffinityColor AARPlayerStateBase::ResolveInvaderColorFromASCOverrideTags() co
 
 void AARPlayerStateBase::ApplyInvaderColorGameplayTags(const EARAffinityColor NewColor)
 {
-	if (!HasAuthority() || !AbilitySystemComponent || bApplyingInvaderColorTags)
+	UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!HasAuthority() || !ActiveASC || bApplyingInvaderColorTags)
 	{
 		return;
 	}
@@ -2004,7 +2276,7 @@ void AARPlayerStateBase::ApplyInvaderColorGameplayTags(const EARAffinityColor Ne
 	if (!AllColorTags.IsEmpty())
 	{
 		bApplyingInvaderColorTags = true;
-		AbilitySystemComponent->RemoveLooseGameplayTags(AllColorTags, 1, EGameplayTagReplicationState::TagOnly);
+		ActiveASC->RemoveLooseGameplayTags(AllColorTags, 1, EGameplayTagReplicationState::TagOnly);
 
 		FGameplayTagContainer ActiveColorTag;
 		switch (NewColor)
@@ -2027,7 +2299,7 @@ void AARPlayerStateBase::ApplyInvaderColorGameplayTags(const EARAffinityColor Ne
 
 		if (!ActiveColorTag.IsEmpty())
 		{
-			AbilitySystemComponent->AddLooseGameplayTags(ActiveColorTag, 1, EGameplayTagReplicationState::TagOnly);
+			ActiveASC->AddLooseGameplayTags(ActiveColorTag, 1, EGameplayTagReplicationState::TagOnly);
 		}
 		bApplyingInvaderColorTags = false;
 	}
@@ -2035,18 +2307,19 @@ void AARPlayerStateBase::ApplyInvaderColorGameplayTags(const EARAffinityColor Ne
 
 void AARPlayerStateBase::EvaluateLifeStateFromASC()
 {
-	if (!HasAuthority() || !AbilitySystemComponent)
+	UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!HasAuthority() || !ActiveASC)
 	{
 		return;
 	}
 
 	const FGameplayTag DownedTag = FGameplayTag::RequestGameplayTag(TEXT("State.Downed"), false);
 	const FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag(TEXT("State.Dead"), false);
-	const bool bDeadFromTag = DeadTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(DeadTag);
-	const bool bDownedFromTag = DownedTag.IsValid() && AbilitySystemComponent->HasMatchingGameplayTag(DownedTag);
+	const bool bDeadFromTag = DeadTag.IsValid() && ActiveASC->HasMatchingGameplayTag(DeadTag);
+	const bool bDownedFromTag = DownedTag.IsValid() && ActiveASC->HasMatchingGameplayTag(DownedTag);
 
-	const float MaxHealth = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
-	const float Health = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
+	const float MaxHealth = ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
+	const float Health = ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
 	const bool bDownedFromHealth = (MaxHealth > 0.f && Health <= 0.f);
 
 	SetDead_Internal(bDeadFromTag);
@@ -2060,24 +2333,36 @@ void AARPlayerStateBase::BroadcastCoreAttributeChanged(EARCoreAttributeType Attr
 
 void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)
 {
-	if (!HasAuthority() || !AbilitySystemComponent)
+	UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!HasAuthority() || !ActiveASC)
 	{
 		return;
 	}
 
-	const float MaxSpice = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
+	const float MaxSpice = ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
 	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.f, FMath::Max(0.f, MaxSpice));
-	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
+	ActiveASC->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
+
+	if (CurrentCharacterRuntime)
+	{
+		CurrentCharacterRuntime->SetSpiceMeter(ClampedValue);
+	}
 }
 
 void AARPlayerStateBase::SetStrength_Internal(const float NewStrength)
 {
-	if (!HasAuthority() || !AbilitySystemComponent)
+	UAbilitySystemComponent* ActiveASC = GetASC();
+	if (!HasAuthority() || !ActiveASC)
 	{
 		return;
 	}
 
-	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetStrengthAttribute(), FMath::Max(0.0f, NewStrength));
+	ActiveASC->SetNumericAttributeBase(UARAttributeSetCore::GetStrengthAttribute(), FMath::Max(0.0f, NewStrength));
+
+	if (CurrentCharacterRuntime)
+	{
+		CurrentCharacterRuntime->SetStrength(NewStrength);
+	}
 }
 
 bool AARPlayerStateBase::IsTravelReady() const

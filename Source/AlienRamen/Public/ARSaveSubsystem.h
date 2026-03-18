@@ -34,12 +34,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
-	/** Saves current runtime state to disk (optionally creating a new revision). Returns false immediately with ResultCode=InProgress if a save is already running. */
+	/** Starts an async save of current runtime state to disk (optionally creating a new revision). Returns false immediately with ResultCode=InProgress if a save is already running. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
 	/** C++ helper that bypasses save throttling for critical durability points such as post-finalization handoffs. */
 	bool SaveCurrentGameUnthrottled(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
+
+	/** C++ helper that preserves the old blocking behavior for flows that must not continue until the save is durable. */
+	bool SaveCurrentGameBlocking(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
 	/** Loads a save by base name + revision (RevisionOrLatest=-1 uses most recent). Leaves save in memory for later hydrate/travel. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -91,7 +94,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FormatTimeSinceLastSave(FText& OutText) const;
 
-	// Whether a save is currently running (authority only, sync path).
+	// Whether an async save is currently running (authority only).
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool IsSaveInProgress() const { return bSaveInProgress; }
 
@@ -120,11 +123,11 @@ public:
 
 	/** Returns player-owned progression tags saved for this player identity. These do not switch when the player swaps characters. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
-	bool GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags, bool bAllowSlotFallback = true) const;
+	bool GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags) const;
 
 	/** Checks a player-owned progression tag saved for this player identity. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
-	bool HasPlayerProgressionTag(AARPlayerStateBase* Requester, FGameplayTag ProgressionTag, bool bAllowSlotFallback = true) const;
+	bool HasPlayerProgressionTag(AARPlayerStateBase* Requester, FGameplayTag ProgressionTag) const;
 
 	/** Adds a player-owned progression tag to this player's save row and marks the save dirty. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
@@ -147,10 +150,6 @@ public:
 	// Advances world day/cycle count. Authority only; can optionally persist immediately.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	bool AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediately, FARSaveResult& OutResult);
-
-	// Legacy compatibility wrapper. Prefer AdvanceWorldDays.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
-	bool IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void RequestGameStateHydration(AARGameStateBase* Requester);
@@ -184,10 +183,9 @@ public:
 	void ClearPendingFreshLoadEntry();
 
 	// Applies player-specific save payload onto Requester when identity is found in CurrentSaveGame.
-	// bAllowSlotFallback is a legacy compatibility flag and is ignored by current character-native matching.
 	// Returns true when a matching player row was found and applied.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
-	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, bool bAllowSlotFallback = false);
+	bool TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester);
 
 	// Server-authoritative helper: sends current canonical snapshot to a specific player controller.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
@@ -234,15 +232,19 @@ private:
 	bool LoadOrCreateIndex(UARSaveIndexGame*& OutIndex, FARSaveResult& OutResult) const;
 	bool SaveIndex(UARSaveIndexGame* IndexObj, FARSaveResult& OutResult) const;
 	bool SaveSaveObject(UARSaveGame* SaveObject, FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult) const;
+	bool RollbackRevisionWrite(FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult) const;
 	UARSaveGame* LoadSaveObjectWithRollback(FName SlotBaseName, int32 RevisionOrLatest, int32& OutResolvedSlotNumber, FARSaveResult& OutResult, const TCHAR* IndexSlotName) const;
 	void PruneOldRevisions(FName SlotBaseName, int32 LatestRevision) const;
 	void GatherRuntimeData(UARSaveGame* SaveObject);
-	bool SaveCurrentGameInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, bool bIgnoreThrottle);
+	bool SaveCurrentGameBlockingInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, bool bIgnoreThrottle);
+	bool SaveCurrentGameAsyncInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, bool bIgnoreThrottle);
 	void BroadcastSaveFailure(const FARSaveResult& Result);
 	void BroadcastLoadFailure(const FARSaveResult& Result);
 	void ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveResult& LoadResult);
 	void QueuePendingCanonicalSyncRequest(AARPlayerController* TargetPlayerController);
 	void FlushPendingCanonicalSyncRequests();
+	void LogCanonicalSavePayloadSize(const TCHAR* Context, FName SlotBaseName, int32 SlotNumber, int32 PayloadSizeBytes, int32 RemoteRecipientCount) const;
+	void HandleAsyncCurrentGameSaveComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful);
 
 	int32 UpsertIndexEntry(UARSaveIndexGame* IndexObj, const FARSaveSlotDescriptor& Descriptor) const;
 	bool RemoveIndexEntry(UARSaveIndexGame* IndexObj, FName SlotBaseName) const;
@@ -251,7 +253,25 @@ private:
 	TObjectPtr<UARSaveGame> CurrentSaveGame;
 
 	UPROPERTY(Transient)
+	TObjectPtr<UARSaveGame> PendingAsyncSaveGame;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UARSaveIndexGame> PendingAsyncSaveIndex;
+
+	UPROPERTY(Transient)
 	FName CurrentSlotBaseName = NAME_None;
+
+	UPROPERTY(Transient)
+	FName PendingAsyncSaveSlotBase = NAME_None;
+
+	UPROPERTY(Transient)
+	FString PendingAsyncIndexSlotName;
+
+	UPROPERTY(Transient)
+	int32 PendingAsyncSaveSlotNumber = INDEX_NONE;
+
+	UPROPERTY(Transient)
+	bool bPendingAsyncSaveHasRemoteRecipients = false;
 
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<AARPlayerController>> PendingCanonicalSyncRequests;

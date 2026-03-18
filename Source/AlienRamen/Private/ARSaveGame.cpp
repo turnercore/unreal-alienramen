@@ -258,9 +258,8 @@ int32 UARSaveGame::MigrateToCurrentSchema(TArray<FString>* OutWarnings)
 		for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 		{
 			const FGameplayTag OldTag = PlayerData.CurrentCharacterTag;
-			const EARCharacterChoice OldChoice = PlayerData.CharacterPicked;
 			PlayerData.SyncCharacterSelectionFromCurrentTag();
-			ChangeCount += (PlayerData.CurrentCharacterTag != OldTag || PlayerData.CharacterPicked != OldChoice) ? 1 : 0;
+			ChangeCount += (PlayerData.CurrentCharacterTag != OldTag) ? 1 : 0;
 		}
 	}
 
@@ -589,15 +588,13 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 	for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 	{
-		ClampNonNegative(PlayerData.Identity.LegacyId, TEXT("PlayerState.Identity.LegacyId"));
 		SanitizeTagContainer(PlayerData.ProgressionTags, TEXT("PlayerState.ProgressionTags"));
 		const FGameplayTag OldTag = PlayerData.CurrentCharacterTag;
-		const EARCharacterChoice OldChoice = PlayerData.CharacterPicked;
 		PlayerData.SyncCharacterSelectionFromCurrentTag();
-		if (PlayerData.CurrentCharacterTag != OldTag || PlayerData.CharacterPicked != OldChoice)
+		if (PlayerData.CurrentCharacterTag != OldTag)
 		{
 			++ClampedCount;
-			AddWarning(OutWarnings, TEXT("PlayerState character selection fields were normalized from compatibility data."));
+			AddWarning(OutWarnings, TEXT("PlayerState current character tag was normalized."));
 		}
 	}
 
@@ -688,6 +685,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		}
 
 		SanitizeTagContainer(CharacterState.LoadoutTags, TEXT("CharacterStates.LoadoutTags"));
+		SanitizeTagContainer(CharacterState.InvaderRuntime.ActivatedUpgradeTags, TEXT("CharacterStates.InvaderRuntime.ActivatedUpgradeTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.ProgressionTags, TEXT("CharacterStates.DialogueState.ProgressionTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.CompletedConversationTags, TEXT("CharacterStates.DialogueState.CompletedConversationTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.SeenConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SeenConversationTagsThisCycle"));
@@ -732,6 +730,41 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				++ClampedCount;
 				AddWarning(OutWarnings, TEXT("CharacterStates.ShopSnapshot had bHasHeldItem=true with no actor class and it was cleared."));
 			}
+		}
+
+		CharacterState.CoreAttributes.MaxHealth = FMath::Max(0.0f, CharacterState.CoreAttributes.MaxHealth);
+		CharacterState.CoreAttributes.Health = FMath::Clamp(CharacterState.CoreAttributes.Health, 0.0f, CharacterState.CoreAttributes.MaxHealth);
+		CharacterState.CoreAttributes.MaxSpice = FMath::Max(0.0f, CharacterState.CoreAttributes.MaxSpice);
+		CharacterState.CoreAttributes.Spice = FMath::Clamp(CharacterState.CoreAttributes.Spice, 0.0f, CharacterState.CoreAttributes.MaxSpice);
+		CharacterState.CoreAttributes.MoveSpeed = FMath::Max(0.0f, CharacterState.CoreAttributes.MoveSpeed);
+		CharacterState.CoreAttributes.Strength = FMath::Max(0.0f, CharacterState.CoreAttributes.Strength);
+
+		if (CharacterState.bIsDeadState && CharacterState.bIsDowned)
+		{
+			CharacterState.bIsDowned = false;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("CharacterStates had bIsDeadState and bIsDowned both true; bIsDowned was cleared."));
+		}
+
+		if (CharacterState.InvaderRuntime.PlayerColor == EARAffinityColor::Unknown)
+		{
+			CharacterState.InvaderRuntime.PlayerColor = EARAffinityColor::None;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("CharacterStates.InvaderRuntime.PlayerColor had Unknown and was normalized to None."));
+		}
+
+		if (CharacterState.InvaderRuntime.ComboCount < 0)
+		{
+			CharacterState.InvaderRuntime.ComboCount = 0;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("CharacterStates.InvaderRuntime.ComboCount was negative and clamped to 0."));
+		}
+
+		if (CharacterState.InvaderRuntime.SpicyTrackCursorTier < 0)
+		{
+			CharacterState.InvaderRuntime.SpicyTrackCursorTier = 0;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("CharacterStates.InvaderRuntime.SpicyTrackCursorTier was negative and clamped to 0."));
 		}
 	}
 

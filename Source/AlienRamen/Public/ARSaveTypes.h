@@ -123,10 +123,6 @@ struct ALIENRAMEN_API FARPlayerIdentity
 {
 	GENERATED_BODY()
 
-	/** Legacy numeric id used only for older saves; online ids are preferred. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	int32 LegacyId = 0;
-
 	/** Display name at time of save (for UI/debug). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FText DisplayName;
@@ -161,24 +157,23 @@ struct ALIENRAMEN_API FARPlayerIdentity
 
 	bool Matches(const FARPlayerIdentity& Other) const
 	{
-		if (!UniqueNetIdString.IsEmpty() && !Other.UniqueNetIdString.IsEmpty())
+		if (UniqueNetIdString.IsEmpty() || Other.UniqueNetIdString.IsEmpty())
 		{
-			if (!UniqueNetIdType.IsEmpty() && !Other.UniqueNetIdType.IsEmpty()
-				&& !UniqueNetIdType.Equals(Other.UniqueNetIdType, ESearchCase::CaseSensitive))
-			{
-				return false;
-			}
-
-			if (!UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive))
-			{
-				return false;
-			}
-
-			return bSharedOnlineIdSecondaryProfile == Other.bSharedOnlineIdSecondaryProfile;
+			return false;
 		}
 
-		// Legacy fallback path for non-online identities.
-		return LegacyId > 0 && Other.LegacyId > 0 && LegacyId == Other.LegacyId;
+		if (!UniqueNetIdType.IsEmpty() && !Other.UniqueNetIdType.IsEmpty()
+			&& !UniqueNetIdType.Equals(Other.UniqueNetIdType, ESearchCase::CaseSensitive))
+		{
+			return false;
+		}
+
+		if (!UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive))
+		{
+			return false;
+		}
+
+		return bSharedOnlineIdSecondaryProfile == Other.bSharedOnlineIdSecondaryProfile;
 	}
 
 };
@@ -196,10 +191,6 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Canonical gameplay-tag identity for the player's currently active character."))
 	FGameplayTag CurrentCharacterTag;
 
-	// Legacy compatibility mirror for existing Blueprints.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Compatibility mirror of CurrentCharacterTag for existing Blueprint logic."))
-	EARCharacterChoice CharacterPicked = EARCharacterChoice::None;
-
 	// Player-owned preference, not character-owned state.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Whether this player's dialogue should auto-advance when possible."))
 	bool bDialogueAutoAdvanceEnabled = false;
@@ -208,14 +199,59 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Player-owned progression tags that follow this player identity regardless of active character."))
 	FGameplayTagContainer ProgressionTags;
 
-		FGameplayTag ResolveCurrentCharacterTag() const
-		{
-			return CurrentCharacterTag.IsValid()
-				? ARPlayer::NormalizeCharacterTag(CurrentCharacterTag)
-				: ARPlayer::NormalizeCharacterTag(ARPlayer::GetCharacterTagForChoice(CharacterPicked));
-		}
+	FGameplayTag ResolveCurrentCharacterTag() const
+	{
+		return ARPlayer::NormalizeCharacterTag(CurrentCharacterTag);
+	}
 
 	void SyncCharacterSelectionFromCurrentTag();
+};
+
+/** Persistent core-attribute snapshot for character-runtime owned state. */
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARCharacterRuntimeCoreAttributeSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Attributes")
+	float Health = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Attributes")
+	float MaxHealth = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Attributes")
+	float Spice = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Attributes")
+	float MaxSpice = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Attributes")
+	float MoveSpeed = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Attributes")
+	float Strength = 0.0f;
+};
+
+/** Persistent invader runtime state for character-runtime ownership. */
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARCharacterInvaderRuntimeSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Invader")
+	EARAffinityColor PlayerColor = EARAffinityColor::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Invader")
+	int32 ComboCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Invader")
+	FGameplayTagContainer ActivatedUpgradeTags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Invader")
+	bool bIsSharingSpice = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Invader")
+	int32 SpicyTrackCursorTier = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -360,6 +396,5 @@ struct ALIENRAMEN_API FARSaveResult
 inline void FARPlayerStateSaveData::SyncCharacterSelectionFromCurrentTag()
 {
 	const FGameplayTag ActiveCharacterTag = ResolveCurrentCharacterTag();
-	CharacterPicked = ARPlayer::GetCharacterChoiceForTag(ActiveCharacterTag);
 	CurrentCharacterTag = ActiveCharacterTag;
 }

@@ -1,6 +1,7 @@
 #include "ARProjectileBase.h"
 
 #include "ARInvaderCollisionChannels.h"
+#include "ARInvaderDirectorSubsystem.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
 #include "HelperLibrary.h"
@@ -118,12 +119,19 @@ void AARProjectileBase::BeginPlay()
 	}
 
 	EvaluateOffscreenReleaseInternal(0.f);
+	UpdateInvaderDirectorTracking(true);
 }
 
 void AARProjectileBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	EvaluateOffscreenReleaseInternal(DeltaSeconds);
+}
+
+void AARProjectileBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UpdateInvaderDirectorTracking(false);
+	Super::EndPlay(EndPlayReason);
 }
 
 void AARProjectileBase::EvaluateOffscreenRelease()
@@ -169,6 +177,42 @@ void AARProjectileBase::EvaluateOffscreenReleaseInternal(float DeltaSeconds)
 	ReleaseProjectile();
 }
 
+void AARProjectileBase::UpdateInvaderDirectorTracking(const bool bShouldTrack)
+{
+	if (bShouldTrack)
+	{
+		if (bRegisteredWithInvaderDirector)
+		{
+			return;
+		}
+
+		if (UWorld* World = GetWorld())
+		{
+			if (UARInvaderDirectorSubsystem* DirectorSubsystem = World->GetSubsystem<UARInvaderDirectorSubsystem>())
+			{
+				DirectorSubsystem->RegisterTrackedProjectile(this);
+				bRegisteredWithInvaderDirector = true;
+			}
+		}
+		return;
+	}
+
+	if (!bRegisteredWithInvaderDirector)
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (UARInvaderDirectorSubsystem* DirectorSubsystem = World->GetSubsystem<UARInvaderDirectorSubsystem>())
+		{
+			DirectorSubsystem->UnregisterTrackedProjectile(this);
+		}
+	}
+
+	bRegisteredWithInvaderDirector = false;
+}
+
 bool AARProjectileBase::IsOutsideGameplayBounds() const
 {
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
@@ -192,5 +236,6 @@ bool AARProjectileBase::IsOutsideGameplayBounds() const
 
 void AARProjectileBase::ReleaseProjectile_Implementation()
 {
+	UpdateInvaderDirectorTracking(false);
 	Destroy();
 }

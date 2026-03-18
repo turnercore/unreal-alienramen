@@ -170,6 +170,20 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestKickActor(AActor* TargetActor);
 
+	/** Requests a character swap to another owned character runtime. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Character")
+	void RequestSwapCharacter(FGameplayTag TargetCharacterTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSwapCharacter(FGameplayTag TargetCharacterTag);
+
+	/** Client-only rejection callback for authority-validated swap failures. */
+	UFUNCTION(Client, Reliable)
+	void ClientNotifySwapCharacterRejected(FGameplayTag TargetCharacterTag, const FString& FailureReason);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Player|Character")
+	void BP_OnSwapCharacterRejected(FGameplayTag TargetCharacterTag, const FString& FailureReason);
+
 	/** Sets the current primary interactable being actively interacted with (hold/ongoing flows). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
 	void SetActiveInteractable(AActor* InteractableActor);

@@ -6,10 +6,33 @@ public class AlienRamen : ModuleRules
 	public AlienRamen(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-			PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "GameplayTags", "GameplayAbilities","GameplayTasks", "AIModule", "NavigationSystem", "StateTreeModule", "GameplayStateTreeModule", "DeveloperSettings", "TagKey", "Parley", "Emo" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"EnhancedInput",
+			"UMG",
+			"GameplayTags",
+			"GameplayAbilities",
+			"GameplayTasks",
+			"AIModule",
+			"StateTreeModule",
+			"GameplayStateTreeModule",
+			"DeveloperSettings",
+			"Parley",
+			"Emo"
+		});
+
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"OnlineSubsystem",
+			"OnlineSubsystemUtils",
+			"NavigationSystem",
+			"TagKey"
+		});
 
 		bool bDesktopTarget =
 			Target.Platform == UnrealTargetPlatform.Win64 ||

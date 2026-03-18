@@ -6,7 +6,9 @@
 #include "ARNetworkUserSettings.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
+#include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
+#include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerController.h"
@@ -36,9 +38,70 @@ namespace
 			|| Name.Equals(TEXT("UNSET"), ESearchCase::IgnoreCase);
 	}
 
+	static ULocalPlayer* ResolvePreferredLocalPlayer(const UGameInstance* GameInstance)
+	{
+		if (!GameInstance)
+		{
+			return nullptr;
+		}
+
+		ULocalPlayer* FallbackLocalPlayer = nullptr;
+		for (ULocalPlayer* LocalPlayer : GameInstance->GetLocalPlayers())
+		{
+			if (!LocalPlayer)
+			{
+				continue;
+			}
+
+			if (!FallbackLocalPlayer)
+			{
+				FallbackLocalPlayer = LocalPlayer;
+			}
+
+			if (LocalPlayer->GetPreferredUniqueNetId().IsValid())
+			{
+				return LocalPlayer;
+			}
+		}
+
+		return FallbackLocalPlayer;
+	}
+
+	static ULocalPlayer* ResolveLocalPlayerForControllerId(UWorld* World, const int32 ControllerId)
+	{
+		if (ControllerId >= 0 && GEngine)
+		{
+			if (ULocalPlayer* LocalPlayer = GEngine->FindFirstLocalPlayerFromControllerId(ControllerId))
+			{
+				return LocalPlayer;
+			}
+		}
+
+		return World ? World->GetFirstLocalPlayerFromController() : nullptr;
+	}
+
+	static int32 ResolveLocalUserNum(const UGameInstance* GameInstance, const ULocalPlayer* LocalPlayer = nullptr)
+	{
+		const ULocalPlayer* ResolvedLocalPlayer = LocalPlayer ? LocalPlayer : ResolvePreferredLocalPlayer(GameInstance);
+		return ResolvedLocalPlayer ? ResolvedLocalPlayer->GetLocalPlayerIndex() : 0;
+	}
+
 	static APlayerController* ResolveLocalPlayerController(UWorld* World)
 	{
-		return World ? World->GetFirstPlayerController() : nullptr;
+		if (!World)
+		{
+			return nullptr;
+		}
+
+		if (ULocalPlayer* LocalPlayer = World->GetFirstLocalPlayerFromController())
+		{
+			if (APlayerController* LocalController = UGameplayStatics::GetPlayerController(World, LocalPlayer->GetLocalPlayerIndex()))
+			{
+				return LocalController;
+			}
+		}
+
+		return World->GetFirstPlayerController();
 	}
 
 	static void AddUniqueSubsystemName(TArray<FName>& Names, const FName Name)
@@ -180,7 +243,7 @@ IOnlineSessionPtr UARSessionSubsystem::GetActiveSessionInterface() const
 	return GetSessionInterfaceForSubsystem(ActiveSubsystemName);
 }
 
-void UARSessionSubsystem::ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, const bool bClearFindFriendHandle)
+void UARSessionSubsystem::ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, const bool bClearFindFriendHandle, const int32 FindFriendUserNum)
 {
 	if (!Session.IsValid())
 	{
@@ -225,7 +288,7 @@ void UARSessionSubsystem::ClearTrackedSessionDelegateHandles(const IOnlineSessio
 
 	if (bClearFindFriendHandle && FindFriendSessionCompleteHandle.IsValid())
 	{
-		Session->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
+		Session->ClearOnFindFriendSessionCompleteDelegate_Handle(FindFriendUserNum, FindFriendSessionCompleteHandle);
 		FindFriendSessionCompleteHandle.Reset();
 	}
 }
@@ -243,6 +306,7 @@ void UARSessionSubsystem::ResetFindState()
 	LastFindResults.Reset();
 	bFindRetryWithoutFilters = false;
 	LastFindMaxResults = 50;
+	FindFriendLocalUserNum = 0;
 }
 
 void UARSessionSubsystem::Deinitialize()
@@ -255,7 +319,7 @@ void UARSessionSubsystem::Deinitialize()
 		ActiveSubsystem = IOnlineSubsystem::Get(ActiveSubsystemName);
 		if (ActiveSubsystem)
 		{
-			ClearTrackedSessionDelegateHandles(ActiveSubsystem->GetSessionInterface(), false);
+			ClearTrackedSessionDelegateHandles(ActiveSubsystem->GetSessionInterface(), FindFriendSessionCompleteHandle.IsValid(), FindFriendLocalUserNum);
 		}
 	}
 
@@ -270,7 +334,7 @@ void UARSessionSubsystem::Deinitialize()
 
 		if (DefaultSession.IsValid() && FindFriendSessionCompleteHandle.IsValid())
 		{
-			DefaultSession->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FindFriendSessionCompleteHandle);
+			DefaultSession->ClearOnFindFriendSessionCompleteDelegate_Handle(FindFriendLocalUserNum, FindFriendSessionCompleteHandle);
 			FindFriendSessionCompleteHandle.Reset();
 		}
 	}
@@ -398,11 +462,12 @@ bool UARSessionSubsystem::CreateSessionNamed(const bool bUseLAN, const FString& 
 	}
 	else
 	{
+		const int32 LocalUserNum = ResolveLocalUserNum(GetGameInstance());
 		FOnCreateSessionCompleteDelegate Delegate;
 		Delegate.BindUObject(this, &UARSessionSubsystem::HandleCreateSessionComplete);
 		CreateSessionCompleteHandle = Session->AddOnCreateSessionCompleteDelegate_Handle(Delegate);
 
-		if (!Session->CreateSession(0, GameSessionName, DesiredSettings))
+		if (!Session->CreateSession(LocalUserNum, GameSessionName, DesiredSettings))
 		{
 			ClearTrackedSessionDelegateHandles(Session, false);
 			ResetOperationState();
@@ -470,7 +535,8 @@ bool UARSessionSubsystem::FindSessions(const bool bLANQuery, const int32 MaxResu
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleFindSessionsComplete);
 	FindSessionsCompleteHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(Delegate);
 
-	if (!Session->FindSessions(0, ActiveSessionSearch.ToSharedRef()))
+	const int32 LocalUserNum = ResolveLocalUserNum(GetGameInstance());
+	if (!Session->FindSessions(LocalUserNum, ActiveSessionSearch.ToSharedRef()))
 	{
 		ClearTrackedSessionDelegateHandles(Session, false);
 		ResetOperationState();
@@ -588,7 +654,7 @@ bool UARSessionSubsystem::JoinSessionByIndex(const int32 ResultIndex, FARSession
 		*Candidate.GetSessionIdStr());
 
 	ActiveSubsystemName = SubsystemName;
-	return BeginJoinSession(Session, 0, Candidate, OutResult);
+	return BeginJoinSession(Session, ResolveLocalUserNum(GetGameInstance()), Candidate, OutResult);
 }
 
 bool UARSessionSubsystem::FindFriendSession(const FUniqueNetIdRepl& FriendUniqueNetId, FARSessionResult& OutResult)
@@ -629,11 +695,12 @@ bool UARSessionSubsystem::FindFriendSession(const FUniqueNetIdRepl& FriendUnique
 
 	FOnFindFriendSessionCompleteDelegate Delegate;
 	Delegate.BindUObject(this, &UARSessionSubsystem::HandleFindFriendSessionComplete);
-	FindFriendSessionCompleteHandle = Session->AddOnFindFriendSessionCompleteDelegate_Handle(0, Delegate);
+	FindFriendLocalUserNum = ResolveLocalUserNum(GetGameInstance());
+	FindFriendSessionCompleteHandle = Session->AddOnFindFriendSessionCompleteDelegate_Handle(FindFriendLocalUserNum, Delegate);
 
-	if (!Session->FindFriendSession(0, *FriendNetId))
+	if (!Session->FindFriendSession(FindFriendLocalUserNum, *FriendNetId))
 	{
-		ClearTrackedSessionDelegateHandles(Session, true);
+		ClearTrackedSessionDelegateHandles(Session, true, FindFriendLocalUserNum);
 		ResetOperationState();
 		FillResult(OutResult, false, EARSessionResultCode::FindFailed, TEXT("FindFriendSession failed to start."));
 		OnFindFriendSessionCompleted.Broadcast(OutResult, LastFindResults);
@@ -671,8 +738,13 @@ bool UARSessionSubsystem::InviteFriendToSession(const FUniqueNetIdRepl& FriendUn
 	}
 
 	UWorld* World = GetWorld();
-	APlayerController* PC = ResolveLocalPlayerController(World);
-	const FUniqueNetIdRepl LocalUserIdRepl = PC && PC->PlayerState ? PC->PlayerState->GetUniqueId() : FUniqueNetIdRepl();
+	ULocalPlayer* LocalPlayer = ResolvePreferredLocalPlayer(GetGameInstance());
+	if (!LocalPlayer && World)
+	{
+		LocalPlayer = World->GetFirstLocalPlayerFromController();
+	}
+
+	const FUniqueNetIdRepl LocalUserIdRepl = LocalPlayer ? LocalPlayer->GetPreferredUniqueNetId() : FUniqueNetIdRepl();
 	const FUniqueNetId* LocalUserId = LocalUserIdRepl.GetUniqueNetId().Get();
 	if (!LocalUserId)
 	{
@@ -1375,6 +1447,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 	{
 		const FOnlineSessionSearchResult InviteJoinResult = PendingInviteSearchResult;
 		const int32 InviteControllerId = PendingInviteControllerId;
+		const int32 InviteLocalUserNum = ResolveLocalUserNum(GetGameInstance(), ResolveLocalPlayerForControllerId(GetWorld(), InviteControllerId));
 
 		bPendingInviteJoinAfterDestroy = false;
 		PendingInviteControllerId = 0;
@@ -1393,7 +1466,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		ActiveSubsystemName = JoinSubsystemName;
 
 		FARSessionResult JoinStartResult;
-		BeginJoinSession(JoinSession, InviteControllerId, InviteJoinResult, JoinStartResult);
+		BeginJoinSession(JoinSession, InviteLocalUserNum, InviteJoinResult, JoinStartResult);
 		return;
 	}
 
@@ -1401,6 +1474,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 	{
 		const FOnlineSessionSearchResult JoinResult = PendingJoinSearchResult;
 		const int32 JoinControllerId = PendingJoinControllerId;
+		const int32 JoinLocalUserNum = ResolveLocalUserNum(GetGameInstance(), ResolveLocalPlayerForControllerId(GetWorld(), JoinControllerId));
 
 		bPendingJoinAfterDestroy = false;
 		PendingJoinControllerId = 0;
@@ -1419,7 +1493,7 @@ void UARSessionSubsystem::HandleDestroySessionComplete(FName SessionName, bool b
 		ActiveSubsystemName = JoinSubsystemName;
 
 		FARSessionResult JoinStartResult;
-		BeginJoinSession(JoinSession, JoinControllerId, JoinResult, JoinStartResult);
+		BeginJoinSession(JoinSession, JoinLocalUserNum, JoinResult, JoinStartResult);
 		return;
 	}
 
@@ -1469,7 +1543,8 @@ void UARSessionSubsystem::HandleFindSessionsComplete(bool bWasSuccessful)
 			RetryDelegate.BindUObject(this, &UARSessionSubsystem::HandleFindSessionsComplete);
 			FindSessionsCompleteHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(RetryDelegate);
 
-			if (Session->FindSessions(0, ActiveSessionSearch.ToSharedRef()))
+			const int32 LocalUserNum = ResolveLocalUserNum(GetGameInstance());
+			if (Session->FindSessions(LocalUserNum, ActiveSessionSearch.ToSharedRef()))
 			{
 				return;
 			}
@@ -1602,7 +1677,7 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 		return;
 	}
 
-	APlayerController* PC = World->GetFirstPlayerController();
+	APlayerController* PC = ResolveLocalPlayerController(World);
 	if (!PC)
 	{
 		FillResult(Result, false, EARSessionResultCode::JoinFailed, TEXT("No local player controller available for join travel."));
@@ -1618,9 +1693,8 @@ void UARSessionSubsystem::HandleJoinSessionComplete(FName SessionName, EOnJoinSe
 
 void UARSessionSubsystem::HandleFindFriendSessionComplete(int32 LocalUserNum, bool bWasSuccessful, const TArray<FOnlineSessionSearchResult>& SessionInfo)
 {
-	(void)LocalUserNum;
-
-	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), true);
+	FindFriendLocalUserNum = LocalUserNum;
+	ClearTrackedSessionDelegateHandles(GetActiveSessionInterface(), true, LocalUserNum);
 	ResetOperationState();
 	CachedNativeSearchResults.Reset();
 
@@ -1734,5 +1808,6 @@ void UARSessionSubsystem::HandleSessionUserInviteAccepted(
 
 	ActiveSubsystemName = SubsystemName;
 	FARSessionResult JoinStartResult;
-	BeginJoinSession(Session, FMath::Max(0, ControllerId), InviteResult, JoinStartResult);
+	const int32 LocalUserNum = ResolveLocalUserNum(GetGameInstance(), ResolveLocalPlayerForControllerId(GetWorld(), ControllerId));
+	BeginJoinSession(Session, LocalUserNum, InviteResult, JoinStartResult);
 }

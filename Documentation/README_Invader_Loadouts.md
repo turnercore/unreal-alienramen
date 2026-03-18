@@ -6,13 +6,16 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 
 ## Current Runtime Shape
 
-- Loadouts are persisted as player-character-owned state and projected onto `AARPlayerStateBase`.
-- The Ability System Component is owned by `AARPlayerStateBase`.
-- The Invader pawn/avatar initializes ASC actor info and applies loadout-driven abilities, effects, and tags.
+- Loadouts are canonical character-owned state in `FARCharacterSaveData` and runtime-owned on `AARCharacterStateRuntime`.
+- `AARCharacterStateRuntime` owns ASC + `UARAttributeSetCore` and per-character runtime state (loadout, downed/dead, invader runtime).
+- `AARPlayerStateBase` is player-owned only (identity, readiness/preferences, current selected character pointer).
+- `UARCharacterSubsystem` coordinates runtime lookup, swap execution, spawn/rebind, and runtime-to-pawn/controller resolution.
+- The Invader pawn/avatar initializes ASC actor info with `OwnerActor = AARCharacterStateRuntime`, `AvatarActor = Pawn`.
 - Server possession now treats loadout init as complete only after ASC is valid and ship baseline applies successfully; otherwise it keeps retrying and logs the blocking reason.
 - Common controller ability-set grants are tied to that same retryable init path so they are not lost when possession order races happen in-editor.
 - Possession by non-`AARPlayerController` no longer hard-aborts ship loadout initialization; pawn-side ship baseline abilities/effects still initialize while controller-common ability set grant is skipped until/if a gameplay controller is present.
-- UI should read replicated attributes from `PlayerState`, not from a local pawn copy.
+- Inactive player-character pawns remain spawned and unpossessed by default; swap flow re-possesses existing pawns when available.
+- UI should read replicated attributes through `AARPlayerStateBase` convenience accessors, which resolve the active character runtime.
 
 ## Data Table Row Contracts
 
