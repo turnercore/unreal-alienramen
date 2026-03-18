@@ -391,6 +391,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void PlayerTick(float DeltaTime) override;
+	virtual void SetPawn(APawn* InPawn) override;
 
 	/** Automatically applies/removes DefaultInputMappings for local controllers at lifecycle boundaries. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Input")
@@ -480,6 +481,9 @@ protected:
 	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 
 private:
+	UFUNCTION()
+	void HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag);
+
 	bool IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, bool bLogFailures) const;
 	void TickActiveInteractionRangeValidation(float DeltaTime);
 	void NotifyInteractableOutOfRange(AActor* InteractableActor, bool bWasSecondaryInteraction);
@@ -493,6 +497,8 @@ private:
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
 	void HandleHUDInitializationRetry();
+	void RebindCurrentCharacterTagChangeDelegate(APlayerState* CurrentPlayerState);
+	void UnbindCurrentCharacterTagChangeDelegate();
 	void SetPauseMenuOpenLocal(bool bOpen);
 	void ApplyDefaultInputMappings(bool bEnable);
 	void ApplyPauseInputContexts(bool bEnable);
@@ -541,6 +547,9 @@ private:
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<AGameStateBase> LastHUDInitGameState;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<class AARPlayerStateBase> BoundCurrentCharacterTagPlayerState;
 
 	FTimerHandle HUDInitializationRetryTimer;
 

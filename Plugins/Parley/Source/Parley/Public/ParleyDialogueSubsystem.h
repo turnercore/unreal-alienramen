@@ -61,7 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Submits the selected choice branch for the requesting controller on authoritative runtime state."))
 	bool SubmitChoice(APlayerController* RequestingController, FGuid ChoiceBranchId);
 
-	/** Toggle eavesdrop mode, letting a character hear another character's conversation. Use in shop two-up flows. */
+	/** Toggle eavesdrop mode, letting one character hear another character's conversation. */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Enables or disables eavesdrop mode for the requesting controller on authoritative runtime state."))
 	bool ForceEavesdrop(APlayerController* RequestingController, bool bEnable, FGameplayTag TargetCharacterTag);
 
@@ -88,15 +88,6 @@ public:
 	/** Apply faction relationship delta; authority-only. */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Applies a faction relationship delta on authoritative runtime state."))
 	bool ApplyDialogueFactionMutation(const FDialogueFactionMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
-
-	// Shop/customer integration endpoint: applies relationship delta and emotion output in one call.
-	/** Convenience helper for shop serve results: bumps relationship and records reaction emotion for the given speaker. */
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Records a ramen-serve relationship outcome and reaction emotion on authoritative runtime state."))
-	bool ApplyRamenServeOutcome(
-		FGameplayTag SpeakerTag,
-		int32 RelationshipDeltaPoints,
-		FGameplayTag ReactionEmotionTag,
-		AActor* PreferredSpeakerActor = nullptr);
 
 	/** Run validation on a conversation asset (runtime-safe). Use in editor tooling and runtime assertions. */
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Validates a conversation asset and returns a report without mutating subsystem state."))

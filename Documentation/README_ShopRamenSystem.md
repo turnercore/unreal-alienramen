@@ -19,7 +19,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `AARRamenBowlActor` owns bowl fill progression (strict sequence).
   - `AARMeatStorageBoxActor` is the meat-reserve specialization of `AARShopDispenserActor`.
 - **Dialogue-owned outcomes**:
-  - relationship mutation and emotion output are applied through `UParleyDialogueSubsystem::ApplyRamenServeOutcome(...)`.
+- relationship results are forwarded into Parley's generic mutation APIs while reaction emotion presentation stays in Alien Ramen systems.
   - shop code does not own dialogue/emotion/relationship authority.
 
 ## Configuration Sources

@@ -265,13 +265,13 @@ namespace
 	static FString BuildConversationOfferGatingSignature(const FDialogueConversationHeader& Header)
 	{
 		return FString::Printf(
-			TEXT("Speaker=%s|Pri=%d|Weight=%d|Chance=%s|CycleBlock=%d|CharRestrict=%d|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
+			TEXT("Speaker=%s|Pri=%d|Weight=%d|Chance=%s|CycleBlock=%d|CharRestrict=%s|MinRel=%s|Repeat=%d|SeenG=%d|SeenP=%d|DoneG=%d|Lock=%s|Block=%s"),
 			*Header.PrimarySpeakerTag.ToString(),
 			Header.Priority,
 			Header.OfferWeight,
 			*FString::SanitizeFloat(Header.ChanceOffered),
 			Header.bBlockOfferPerCycle ? 1 : 0,
-			static_cast<int32>(Header.CharacterRestriction),
+			*Header.CharacterRestrictionTag.ToString(),
 			*FString::SanitizeFloat(Header.MinimumRelationshipPoints),
 			Header.bRepeatable ? 1 : 0,
 			Header.bSeenByGameBlocksReoffer ? 1 : 0,
@@ -715,15 +715,13 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 			if (bUsesPlayerPlaceholderSpeaker)
 			{
 				TArray<FGameplayTag> ResolvedPlayerSpeakerTagsToValidate;
-				const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-				const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-				if (BrotherTag.IsValid())
+				if (RequesterPlaceholderTag.IsValid())
 				{
-					ResolvedPlayerSpeakerTagsToValidate.AddUnique(BrotherTag);
+					ResolvedPlayerSpeakerTagsToValidate.AddUnique(RequesterPlaceholderTag);
 				}
-				if (SisterTag.IsValid())
+				if (OwnerPlaceholderTag.IsValid())
 				{
-					ResolvedPlayerSpeakerTagsToValidate.AddUnique(SisterTag);
+					ResolvedPlayerSpeakerTagsToValidate.AddUnique(OwnerPlaceholderTag);
 				}
 
 				for (const FGameplayTag& ResolvedPlayerSpeakerTag : ResolvedPlayerSpeakerTagsToValidate)
@@ -773,7 +771,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 					EDialogueValidationSeverity::Warning,
 					NodeId,
 					FString::Printf(
-						TEXT("%s uses Parley.Speaker.Requester/Owner but speaker-emotion cue fallback is missing for at least one resolved player speaker (Brother/Sister)."),
+						TEXT("%s uses Parley.Speaker.Requester/Owner but speaker-emotion cue fallback is missing for at least one placeholder speaker row."),
 						ContextLabel));
 			}
 			else if (!bSignalAudioMode && LineData.Line.LengthSeconds <= 0.0f && !bHasNativeAudio)
@@ -795,7 +793,7 @@ bool UParleyDialogueSubsystem::ValidateConversation(UParleyConversationAsset* Co
 					EDialogueValidationSeverity::Warning,
 					NodeId,
 					FString::Printf(
-						TEXT("%s uses Parley.Speaker.Requester/Owner but speaker-emotion native fallback is missing for at least one resolved player speaker (Brother/Sister)."),
+						TEXT("%s uses Parley.Speaker.Requester/Owner but speaker-emotion native fallback is missing for at least one placeholder speaker row."),
 						ContextLabel));
 			}
 			if (!LineData.Line.SpeakerTag.IsValid())
@@ -1417,6 +1415,7 @@ static FDialogueRuntimeContext BuildOfferContext(
 	Context.PrimarySpeakerTag = Conversation ? Conversation->Header.PrimarySpeakerTag : FGameplayTag();
 	Context.ActivePlayerState = RequesterPS;
 	Context.ActivePlayerController = RequesterPS ? Cast<APlayerController>(RequesterPS->GetOwner()) : nullptr;
+	Context.ActivePawn = Context.ActivePlayerController ? Context.ActivePlayerController->GetPawn() : nullptr;
 	Context.ResolvedPlayerSpeakerTag = ResolvePlayerSpeakerTag(RequesterPS);
 	Context.SourceSpeakerTag = SourceSpeakerTagOverride.IsValid()
 		? ResolveSpeakerTagForContext(SourceSpeakerTagOverride, Context, Context.ResolvedPlayerSpeakerTag)
@@ -1453,7 +1452,7 @@ static bool PassesConversationOfferRules(
 	const FDialogueRuntimeContext& Context,
 	const FDialogueConversationHeader& Header)
 {
-	if (!PassesCharacterRestriction(Header.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	if (!PassesCharacterRestriction(Header.CharacterRestrictionTag, Context.ResolvedPlayerSpeakerTag))
 	{
 		return false;
 	}
@@ -1482,11 +1481,11 @@ static bool EvaluateConversationOfferRules(
 	const FDialogueConversationHeader& Header,
 	FString* OutFailureReason)
 {
-	if (!PassesCharacterRestriction(Header.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	if (!PassesCharacterRestriction(Header.CharacterRestrictionTag, Context.ResolvedPlayerSpeakerTag))
 	{
 		if (OutFailureReason)
 		{
-			*OutFailureReason = TEXT("CharacterRestriction failed.");
+			*OutFailureReason = TEXT("CharacterRestrictionTag failed.");
 		}
 		return false;
 	}

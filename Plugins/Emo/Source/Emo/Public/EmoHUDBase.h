@@ -52,6 +52,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Adds or removes a named suppression reason that temporarily blocks emotion rendering."))
 	void SetEmotionRenderingSuppressed(bool bSuppressed, FName Reason = NAME_None);
 
+	/** Sets the gameplay tags this HUD should use when resolving targeted emotion registrations. */
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Sets the gameplay tags this HUD uses when resolving targeted emotion registrations. Empty tags resolve global registrations only."))
+	void SetViewedEmotionTags(FGameplayTagContainer NewViewedEmotionTags);
+
+	/** Returns the gameplay tags this HUD currently uses when resolving targeted emotion registrations. */
+	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns the gameplay tags this HUD currently uses when resolving targeted emotion registrations."))
+	FGameplayTagContainer GetViewedEmotionTags() const { return ViewedEmotionTags; }
+
 	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Enables or disables emotion icon rendering globally for this HUD instance."))
 	void SetEmotionRenderingEnabled(bool bEnabled) { bEnableEmotionView = bEnabled; }
 
@@ -122,11 +130,12 @@ private:
 
 	mutable TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	mutable TWeakObjectPtr<const APlayerController> ActiveProjectionController;
-	mutable FGameplayTag ActiveProjectionViewerSlotTag;
+	mutable FGameplayTagContainer ActiveProjectionViewedEmotionTags;
 	TArray<TWeakObjectPtr<UEmoComponent>> CachedEmotionComponents;
 	TSet<FSoftObjectPath> PendingAsyncIconLoads;
 	TArray<TSharedPtr<FStreamableHandle>> ActiveAsyncIconHandles;
 	double LastEmotionComponentCacheRefreshTimeSeconds = -1.0;
 	mutable uint32 OcclusionTraceCountThisFrame = 0;
 	TSet<FName> SuppressionReasons;
+	FGameplayTagContainer ViewedEmotionTags;
 };

@@ -21,9 +21,7 @@ void FEmoModule::StartupModule()
 		TEXT("Parley.Emotion"),
 		TEXT("Parley.Emotion.Busy"),
 		TEXT("Parley.Emotion.WantsToTalk"),
-		TEXT("Parley.Emotion.Preview"),
-		TEXT("Player.Slot.P1"),
-		TEXT("Player.Slot.P2")
+		TEXT("Parley.Emotion.Preview")
 	};
 
 	for (const TCHAR* RequiredTag : RequiredTags)

@@ -12,81 +12,9 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
-#include "GameFramework/PlayerState.h"
 #include "HAL/PlatformTime.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
-#include "UObject/UObjectIterator.h"
-#include "UObject/UnrealType.h"
-
-namespace
-{
-	static bool TryGetPlayerSlotTagFromObject(const UObject* SourceObject, FGameplayTag& OutPlayerSlotTag)
-	{
-		OutPlayerSlotTag = FGameplayTag();
-		if (!SourceObject)
-		{
-			return false;
-		}
-
-		if (UFunction* GetPlayerSlotTagFunction = SourceObject->FindFunction(TEXT("GetPlayerSlotTag")))
-		{
-			struct FGetPlayerSlotTagParams
-			{
-				FGameplayTag ReturnValue;
-			};
-
-			FGetPlayerSlotTagParams Params;
-			const_cast<UObject*>(SourceObject)->ProcessEvent(GetPlayerSlotTagFunction, &Params);
-			if (Params.ReturnValue.IsValid())
-			{
-				OutPlayerSlotTag = Params.ReturnValue;
-				return true;
-			}
-		}
-
-		const FStructProperty* SlotTagProperty = FindFProperty<FStructProperty>(SourceObject->GetClass(), TEXT("PlayerSlotTag"));
-		if (!SlotTagProperty || SlotTagProperty->Struct != TBaseStructure<FGameplayTag>::Get())
-		{
-			return false;
-		}
-
-		if (const FGameplayTag* SlotTagValue = SlotTagProperty->ContainerPtrToValuePtr<FGameplayTag>(SourceObject))
-		{
-			if (SlotTagValue->IsValid())
-			{
-				OutPlayerSlotTag = *SlotTagValue;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	static FGameplayTag ResolveViewerSlotTag(const APlayerController* ViewerController)
-	{
-		if (!ViewerController)
-		{
-			return FGameplayTag();
-		}
-
-		FGameplayTag SlotTag;
-		if (TryGetPlayerSlotTagFromObject(ViewerController, SlotTag))
-		{
-			return SlotTag;
-		}
-
-		if (const APlayerState* ViewerState = ViewerController->GetPlayerState<APlayerState>())
-		{
-			if (TryGetPlayerSlotTagFromObject(ViewerState, SlotTag))
-			{
-				return SlotTag;
-			}
-		}
-
-		return FGameplayTag();
-	}
-}
 
 DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_EmoHUD, STATCAT_Advanced);
 DECLARE_CYCLE_STAT(TEXT("Emotion HUD Render"), STAT_EmoHUD_Render, STATGROUP_EmoHUD);
@@ -108,7 +36,7 @@ void AEmoHUDBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	PendingAsyncIconLoads.Reset();
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
-	ActiveProjectionViewerSlotTag = FGameplayTag();
+	ActiveProjectionViewedEmotionTags.Reset();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -131,17 +59,6 @@ void AEmoHUDBase::RefreshEmotionComponentCacheIfNeeded()
 	if (UEmoComponentRegistrySubsystem* Registry = World ? World->GetSubsystem<UEmoComponentRegistrySubsystem>() : nullptr)
 	{
 		Registry->GetRegisteredEmotionComponents(CachedEmotionComponents);
-	}
-	else
-	{
-		for (TObjectIterator<UEmoComponent> It; It; ++It)
-		{
-			UEmoComponent* EmotionComponent = *It;
-			if (IsValid(EmotionComponent) && !EmotionComponent->IsTemplate() && EmotionComponent->GetWorld() == World)
-			{
-				CachedEmotionComponents.Add(EmotionComponent);
-			}
-		}
 	}
 }
 
@@ -213,7 +130,7 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas = Canvas;
 	ActiveProjectionController = LocalController;
-	ActiveProjectionViewerSlotTag = ResolveViewerSlotTag(LocalController);
+	ActiveProjectionViewedEmotionTags = ViewedEmotionTags;
 	ActiveAsyncIconHandles.RemoveAll([](const TSharedPtr<FStreamableHandle>& Handle)
 		{
 			return !Handle.IsValid() || Handle->HasLoadCompleted();
@@ -378,7 +295,7 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
-	ActiveProjectionViewerSlotTag = FGameplayTag();
+	ActiveProjectionViewedEmotionTags.Reset();
 	SET_DWORD_STAT(STAT_EmoHUD_Candidates, CandidateCount);
 	SET_DWORD_STAT(STAT_EmoHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
 	SET_DWORD_STAT(STAT_EmoHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
@@ -504,6 +421,11 @@ void AEmoHUDBase::RequestHUDInitialization(APlayerController* SourceController, 
 	BP_OnHUDInitializationRequested(SourceController, CurrentPlayerState, CurrentGameState);
 }
 
+void AEmoHUDBase::SetViewedEmotionTags(FGameplayTagContainer NewViewedEmotionTags)
+{
+	ViewedEmotionTags = MoveTemp(NewViewedEmotionTags);
+}
+
 void AEmoHUDBase::DrawHUD()
 {
 	Super::DrawHUD();
@@ -570,10 +492,10 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 		return false;
 	}
 
-	const FGameplayTag ViewerSlotTag = ActiveProjectionViewerSlotTag.IsValid()
-		? ActiveProjectionViewerSlotTag
-		: ResolveViewerSlotTag(LocalController);
-	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForPlayerSlotTag(ViewerSlotTag);
+	const FGameplayTagContainer& ViewerTags = ActiveProjectionViewedEmotionTags.IsEmpty()
+		? ViewedEmotionTags
+		: ActiveProjectionViewedEmotionTags;
+	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForViewerTags(ViewerTags);
 	if (!DisplayTag.IsValid())
 	{
 		if (ShouldLogEmotionRenderVerbose())

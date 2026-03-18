@@ -54,12 +54,44 @@ namespace
 
 		for (APlayerState* PlayerState : GameState->PlayerArray)
 		{
-			const FGameplayTag CharacterTag = ReadCharacterTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
+			FGameplayTag CharacterTag;
+			if (const APlayerController* OwnerController = PlayerState ? Cast<APlayerController>(PlayerState->GetOwner()) : nullptr)
+			{
+				if (const APawn* Pawn = OwnerController->GetPawn())
+				{
+					if (const UParleySpeakerComponent* SpeakerComponent = Pawn->FindComponentByClass<UParleySpeakerComponent>())
+					{
+						CharacterTag = SpeakerComponent->GetSpeakerTag();
+					}
+				}
+			}
+			if (!CharacterTag.IsValid())
+			{
+				CharacterTag = ReadCharacterTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
+			}
 			if (CharacterTag.IsValid())
 			{
 				OutCharacterTags.AddUnique(CharacterTag);
 			}
 		}
+	}
+
+	static FGameplayTag ResolveSourceSpeakerTagFromController(const APlayerController* InteractingController)
+	{
+		if (!InteractingController)
+		{
+			return FGameplayTag();
+		}
+
+		if (const APawn* InteractingPawn = InteractingController->GetPawn())
+		{
+			if (const UParleySpeakerComponent* SourceSpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
+			{
+				return SourceSpeakerComponent->GetSpeakerTag();
+			}
+		}
+
+		return FGameplayTag();
 	}
 }
 
@@ -121,14 +153,16 @@ void UParleySpeakerComponent::InteractByController(APlayerController* Interactin
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			// Prefer explicit source->target speaker identity when the interacting pawn has a speaker component.
-			FGameplayTag SourceSpeakerTag;
-			if (const APawn* InteractingPawn = InteractingController->GetPawn())
+			const FGameplayTag SourceSpeakerTag = ResolveSourceSpeakerTagFromController(InteractingController);
+			if (!SourceSpeakerTag.IsValid())
 			{
-				if (const UParleySpeakerComponent* SourceSpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
-				{
-					SourceSpeakerTag = SourceSpeakerComponent->GetSpeakerTag();
-				}
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Speaker] Interact ignored for '%s': controller '%s' has no possessed pawn speaker component."),
+					*GetNameSafe(GetOwner()),
+					*GetNameSafe(InteractingController));
+				return;
 			}
 
 			const bool bStarted = DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, SpeakerTag);

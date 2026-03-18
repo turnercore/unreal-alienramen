@@ -130,7 +130,7 @@ private:
 	bool ResolveDefinitionRow(FARCustomerDefinitionRow& OutRow) const;
 	bool SelectOrderForRelationshipLevel(const FARCustomerDefinitionRow& Row, int32 RelationshipLevel, FARRamenOrderRequest& OutOrder) const;
 	bool BuildProceduralFallbackOrder(FARRamenOrderRequest& OutOrder) const;
-	bool ApplyServeOutcomeToDialogue(const FARRamenServeResult& ServeResult) const;
+	bool ApplyServeOutcomeToDialogue(APlayerController* InteractingController, const FARRamenServeResult& ServeResult) const;
 	bool CanGenerateAdditionalOrders() const;
 	void SetDoneOrdering(bool bNewDoneOrdering);
 	void UpdateDialogueGateFromOrderState() const;

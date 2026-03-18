@@ -691,7 +691,7 @@ static bool ShouldShowLineForLookahead(
 	const FDialogueLineNodeData& LineData,
 	const FDialogueRuntimeContext& Context)
 {
-	if (!PassesCharacterRestriction(LineData.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	if (!PassesCharacterRestriction(LineData.CharacterRestrictionTag, Context.ResolvedPlayerSpeakerTag))
 	{
 		return false;
 	}
@@ -1224,7 +1224,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 
 	auto ShouldShowLineEntry = [&](const FDialogueLineNodeData& LineData, const FDialogueRuntimeContext& Context) -> bool
 	{
-		if (!PassesCharacterRestriction(LineData.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+		if (!PassesCharacterRestriction(LineData.CharacterRestrictionTag, Context.ResolvedPlayerSpeakerTag))
 		{
 			return false;
 		}
@@ -1958,7 +1958,12 @@ bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(
 	APlayerState* RequestingPlayerState = RequestingController->GetPlayerState<APlayerState>();
 	if (!SourceSpeakerTag.IsValid())
 	{
-		SourceSpeakerTag = ResolvePlayerSpeakerTag(RequestingPlayerState);
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Start-with-speaker rejected: controller '%s' has no valid source speaker tag."),
+			*GetNameSafe(RequestingController));
+		return false;
 	}
 	if (RequestingPlayerState)
 	{

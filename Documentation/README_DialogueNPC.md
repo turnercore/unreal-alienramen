@@ -22,7 +22,7 @@ Ownership reminder:
 
 - This runtime is inside the Dialogue plugin ownership boundary.
 - Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.
-- Shop/customer-serving built-on-top systems should route serving results through `ApplyRamenServeOutcome(...)` for relationship + emotion output.
+- Shop/customer-serving built-on-top systems should bridge customer outcomes into Parley relationship mutations and project-owned emotion presentation instead of relying on a plugin-owned helper.
 
 ## Runtime Entry Points
 
@@ -57,7 +57,7 @@ Core subsystem API:
 - `ValidateSpeaker(...)`
 - `PreviewConversation(...)`
 - `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
-- `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
+- game-owned relationship bridge from customer/order systems
 - `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/owner-character context)
 - `OnDialogueAudioRequested` (broadcast when line audio resolves into either native sound payload or cue-tag signal payload)
 
@@ -204,7 +204,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
   - mode enabled by `UParleyDialogueSettings` shared/per-player mode tags
   - primary speaker exact match
   - per-speaker cycle offer cap (`FParleySpeakerRow::MaxOffersPerCycle`, `0` = unlimited) evaluated per character state
-  - optional conversation-level active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`)
+- optional conversation-level active-character restriction via `CharacterRestrictionTag`
   - relationship minimum
   - locked/blocked condition groups
   - seen/completed/repeatability suppression flags
@@ -213,7 +213,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
   - that preference is persisted as player-owned save data
 - Runtime line presentation supports token + style parsing at execute time (source `FText` is kept authored/localized, formatting is applied on the delivered view text):
-  - lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcuts `[Speaker]`, `[Brother]`, `[Sister]`
+- lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcut `[Speaker]`
   - unknown/failed commands fail loudly: unresolved bracket commands are replaced with `UNKNOWN` and logged as runtime errors
   - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
   - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
@@ -224,7 +224,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Per-player mode supports optional busy-speaker lock (`UParleyDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`): when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
 - Busy query helpers are exposed for gameplay/UI traces: `UParleyDialogueSubsystem::IsSpeakerBusyForController(...)` and `AARNPCCharacterBase::IsSpeakerBusyForController(...)`.
 - Busy-speaker presentation routes through emotion-system source overrides (source `DialogueBusy`) using `UEmoSettings::BusyEmotionTag` and `BusyEmotionPriority`.
-- Line nodes (including multiline entries) support the same convenience active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`) before skip-conditions are evaluated.
+- Line nodes (including multiline entries) support the same `CharacterRestrictionTag` filter before skip-conditions are evaluated.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
 
@@ -309,7 +309,7 @@ Conversation graph tooling now provides:
 - `Faction Mutation` inline authoring now supports both faction popularity delta and faction-speaker reputation delta (`FactionTag` + optional `TargetSpeakerTag`)
 - when a speaker-target field uses `Parley.Speaker.Requester`/`Parley.Speaker.Owner`, runtime resolves it using the requester/owner `UParleySpeakerComponent` tags for relationship/faction condition and mutation evaluation
 - character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
-- player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
+- active player identity resolves from the possessed pawn's `UParleySpeakerComponent` speaker tag first, then falls back to project bridge data when that component is unavailable
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit

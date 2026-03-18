@@ -107,7 +107,7 @@ struct PARLEY_API FParleyFactionSpeakerReputationState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (ToolTip = "Faction tag for this speaker reputation record."))
 	FGameplayTag FactionTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (Categories = "Parley.Speaker", ToolTip = "Speaker tag for this reputation record (for example Parley.Speaker.Requester, Parley.Speaker.Owner, or Parley.Speaker.Brother)."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (Categories = "Parley.Speaker", ToolTip = "Speaker tag for this reputation record (for example Parley.Speaker.Requester, Parley.Speaker.Owner, or a project-defined character speaker tag)."))
 	FGameplayTag SpeakerTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (ToolTip = "Persisted reputation value for this faction-speaker pair."))

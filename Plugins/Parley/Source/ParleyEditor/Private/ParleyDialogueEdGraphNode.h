@@ -70,13 +70,6 @@ enum class EDialogueEditorStatsConditionSource : uint8
 	TimePlayed UMETA(DisplayName = "Time Played")
 };
 
-UENUM(meta = (ToolTip = "Editor-only active-character selector for CheckCharacter nodes."))
-enum class EDialogueEditorCharacterCondition : uint8
-{
-	Brother = 0 UMETA(DisplayName = "Brother"),
-	Sister UMETA(DisplayName = "Sister")
-};
-
 USTRUCT()
 struct FDialogueEditorConditionInput
 {
@@ -181,8 +174,8 @@ struct FDialogueEditorCheckCharacterNodeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "", meta = (DisplayName = "Character", ToolTip = "Active character required for this condition to pass."))
-	EDialogueEditorCharacterCondition Character = EDialogueEditorCharacterCondition::Brother;
+	UPROPERTY(EditAnywhere, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Character Tag", ToolTip = "Active character tag required for this condition to pass."))
+	FGameplayTag CharacterTag;
 };
 
 USTRUCT()
@@ -280,7 +273,7 @@ public:
 	bool SetCheckProgressExpectedValue(bool bExpectedValue);
 	bool SetCheckLoadoutOperator(EDialogueComparisonOp NewOperator);
 	bool SetCheckLoadoutTag(const FGameplayTag& NewTag);
-	bool SetCheckCharacterCondition(EDialogueEditorCharacterCondition NewCharacter);
+	bool SetCheckCharacterTag(const FGameplayTag& NewCharacterTag);
 	bool SetCheckVariableName(FName NewVariableName);
 	bool SetCheckVariableOperator(EDialogueComparisonOp NewOperator);
 	bool AddMultiLineEntry();

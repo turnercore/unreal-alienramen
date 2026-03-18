@@ -135,10 +135,10 @@ bool FDialogueTypesDefaultsTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Header default priority is zero"), Header.Priority, 0);
 	TestFalse(TEXT("Header default repeatable is false"), Header.bRepeatable);
 	TestFalse(TEXT("Header default important is false"), Header.bImportant);
-	TestEqual(TEXT("Header default character restriction is Any"), Header.CharacterRestriction, EDialogueActiveCharacterRestriction::Any);
+	TestFalse(TEXT("Header default character restriction tag is unset"), Header.CharacterRestrictionTag.IsValid());
 
 	const FDialogueLineNodeData LineNodeData;
-	TestEqual(TEXT("Line node default character restriction is Any"), LineNodeData.CharacterRestriction, EDialogueActiveCharacterRestriction::Any);
+	TestFalse(TEXT("Line node default character restriction tag is unset"), LineNodeData.CharacterRestrictionTag.IsValid());
 
 	const FDialogueClientView View;
 	TestFalse(TEXT("Default view waiting-for-choice is false"), View.bWaitingForChoice);

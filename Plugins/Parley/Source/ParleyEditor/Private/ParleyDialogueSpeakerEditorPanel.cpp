@@ -3313,7 +3313,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	if (!FPackageName::IsValidLongPackageName(PackageFolder))
 	{
 		AppendLogLine(FString::Printf(
-			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Alien Ramen -> Dialogue Tooling."),
+			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Parley -> Dialogue Tooling."),
 			*PackageFolder));
 		return FReply::Handled();
 	}
@@ -3464,7 +3464,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		NewConversation->Header.MinimumRelationshipPoints));
 
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(NewConversation);
-	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("Parley_DialogueConversationGraphEditor")));
 
 	RefreshData();
 	SetSelectedSpeakerRow(SelectedSpeakerRowName);
@@ -3486,7 +3486,7 @@ FReply SDialogueSpeakerEditorPanel::HandleOpenConversation()
 	}
 
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(SelectedItems[0]->Asset.Get());
-	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("Parley_DialogueConversationGraphEditor")));
 	return FReply::Handled();
 }
 
@@ -4971,7 +4971,7 @@ void SDialogueSpeakerEditorPanel::OnConversationDoubleClicked(TSharedPtr<FConver
 	}
 
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(Item->Asset.Get());
-	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("Parley_DialogueConversationGraphEditor")));
 }
 
 void SDialogueSpeakerEditorPanel::OnConversationSelectionChanged(TSharedPtr<FConversationEntry> Item, ESelectInfo::Type SelectInfo)

@@ -1,6 +1,6 @@
 /**
  * @file ParleyDialogueTypes.h
- * @brief Shared dialogue runtime, persistence, and authoring data types for Alien Ramen.
+ * @brief Shared dialogue runtime, persistence, and authoring data types for Parley.
  */
 #pragma once
 
@@ -180,14 +180,6 @@ enum class EDialogueComparisonOp : uint8
 	Absent
 };
 
-UENUM(BlueprintType)
-enum class EDialogueActiveCharacterRestriction : uint8
-{
-	Any = 0,
-	BrotherOnly,
-	SisterOnly
-};
-
 USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueCondition
 {
@@ -261,8 +253,8 @@ struct PARLEY_API FDialogueConversationHeader
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Block Offer Per Cycle", ToolTip = "When true, once this conversation is seen or skipped for a player in the current cycle it will not be offered again until temporary cycle state is cleared."))
 	bool bBlockOfferPerCycle = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Character Restriction", ToolTip = "Convenience filter for active player character. Use Any to allow all characters."))
-	EDialogueActiveCharacterRestriction CharacterRestriction = EDialogueActiveCharacterRestriction::Any;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Character Restriction Tag", ToolTip = "Optional active-character tag required for this conversation to be offered. Leave unset to allow all active characters."))
+	FGameplayTag CharacterRestrictionTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Repeatable", ToolTip = "If enabled, this conversation may be offered again after completion when other gates allow it."))
 	bool bRepeatable = false;
@@ -299,7 +291,7 @@ struct PARLEY_API FParleyConversationAssetRow : public FTableRowBase
 	GENERATED_BODY()
 
 	// Authoritative conversation tag. If left unset, the loader will try to build one from the conversation root + row name.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Conversation Tag", ToolTip = "Conversation tag served by this registry row. If unset, systems may derive a tag from root+row name."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Conversation Tag", ToolTip = "Conversation tag provided by this registry row. If unset, systems may derive a tag from root+row name."))
 	FGameplayTag ConversationTag;
 
 	// Reference to the authored conversation asset.
@@ -371,8 +363,8 @@ struct PARLEY_API FDialogueLineNodeData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Skip Blocked Conditions", ToolTip = "If this condition group passes, this line is skipped. Defaults to Match Any for convenience."))
 	FDialogueConditionGroup SkipBlockedConditions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Character Restriction", ToolTip = "Convenience skip filter for active player character. Use Any to allow all characters."))
-	EDialogueActiveCharacterRestriction CharacterRestriction = EDialogueActiveCharacterRestriction::Any;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Character Restriction Tag", ToolTip = "Optional active-character tag required for this line to play. Leave unset to allow all active characters."))
+	FGameplayTag CharacterRestrictionTag;
 };
 
 USTRUCT(BlueprintType)

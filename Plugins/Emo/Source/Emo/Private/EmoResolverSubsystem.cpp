@@ -182,11 +182,13 @@ namespace
 		UDataTable*& OutDataTable,
 		EEmoEmotionTableSource& OutSource,
 		FGameplayTag& OutRouteRootTag,
+		FSoftObjectPath& OutResolvedDataTablePath,
 		FString& OutResolveError)
 	{
 		OutDataTable = nullptr;
 		OutSource = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 		OutRouteRootTag = FGameplayTag();
+		OutResolvedDataTablePath.Reset();
 		OutResolveError.Reset();
 
 		auto AppendError = [&OutResolveError](const FString& Message)
@@ -215,6 +217,7 @@ namespace
 					{
 						OutSource = EEmoEmotionTableSource::TagKeyRuntime;
 						OutRouteRootTag = ResolverRootTag;
+						OutResolvedDataTablePath = FSoftObjectPath(OutDataTable);
 						return true;
 					}
 
@@ -241,6 +244,7 @@ namespace
 			{
 				OutSource = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 				OutRouteRootTag = ResolverRootTag;
+				OutResolvedDataTablePath = FSoftObjectPath(OutDataTable);
 				return true;
 			}
 
@@ -355,8 +359,9 @@ namespace
 
 		EEmoEmotionTableSource Source = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 		FGameplayTag RouteRootTag;
+		FSoftObjectPath RouteDataTablePath;
 		FString ResolveError;
-		if (!TryResolveEmotionDataTable(GameInstance, OutResolvedDataTable, Source, RouteRootTag, ResolveError))
+		if (!TryResolveEmotionDataTable(GameInstance, OutResolvedDataTable, Source, RouteRootTag, RouteDataTablePath, ResolveError))
 		{
 			if (bLogRowWarnings || (bLogResolveSummary && ShouldLogResolverVerbose()))
 			{
@@ -369,7 +374,7 @@ namespace
 			return false;
 		}
 
-		OutResolvedDataTablePath = FSoftObjectPath(OutResolvedDataTable);
+		OutResolvedDataTablePath = RouteDataTablePath;
 		OutResolvedDataSource = RouteRootTag.IsValid()
 			? FString::Printf(TEXT("%s Root=%s"), ToEmotionTableSourceText(Source), *RouteRootTag.ToString())
 			: FString(ToEmotionTableSourceText(Source));
@@ -741,6 +746,7 @@ bool UEmoResolverSubsystem::HasConfigInputsChanged() const
 	const FGameplayTag CurrentResolverRootTag = ResolveEmotionResolverRootTag();
 	const FGameplayTag CurrentGenericRootTag = Settings ? Settings->GenericEmotionRootTag : FGameplayTag();
 	UDataTable* CurrentResolvedDataTable = nullptr;
+	FGameplayTag CurrentResolvedRouteRootTag;
 	FSoftObjectPath CurrentResolvedDataTablePath;
 	EEmoEmotionTableSource CurrentResolvedSource = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
 	FString CurrentResolveError;
@@ -748,6 +754,7 @@ bool UEmoResolverSubsystem::HasConfigInputsChanged() const
 		GetGameInstance(),
 		CurrentResolvedDataTable,
 		CurrentResolvedSource,
+		CurrentResolvedRouteRootTag,
 		CurrentResolvedDataTablePath,
 		CurrentResolveError);
 
@@ -758,5 +765,6 @@ bool UEmoResolverSubsystem::HasConfigInputsChanged() const
 
 	return !AreResolverTagsEqual(CurrentResolverRootTag, CachedResolverRootTag)
 		|| !AreResolverTagsEqual(CurrentGenericRootTag, CachedGenericRootTag)
+		|| !AreResolverTagsEqual(CurrentResolvedRouteRootTag, CachedResolverRootTag)
 		|| CurrentResolvedDataTablePath != CachedEmotionDataTablePath;
 }

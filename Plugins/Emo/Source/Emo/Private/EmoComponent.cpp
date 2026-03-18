@@ -1,6 +1,7 @@
 #include "EmoComponent.h"
 
 #include "EmoComponentRegistrySubsystem.h"
+#include "EmoLog.h"
 #include "EmoResolverSubsystem.h"
 #include "EmoSettings.h"
 #include "Engine/GameInstance.h"
@@ -8,74 +9,36 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
-#include "GameFramework/PlayerState.h"
 #include "GameplayTagsManager.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
-#include "UObject/UnrealType.h"
 #if WITH_EDITOR
 #include "Components/BillboardComponent.h"
 #endif
 
 namespace
 {
-	static FGameplayTag GetP1SlotTag()
+	struct FResolvedEmotionRegistrationResult
 	{
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Player.Slot.P1")), false);
-	}
+		FGameplayTag EmotionTag;
+		int32 WinningPriority = TNumericLimits<int32>::Lowest();
+		bool bUsedTargetedRegistration = false;
+		TArray<int32> TiedTargetedIndices;
+	};
 
-	static FGameplayTag GetP2SlotTag()
+	static bool HasAnyExactSharedTag(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
 	{
-		return UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Player.Slot.P2")), false);
-	}
-
-	static bool IsP1SlotTag(const FGameplayTag& SlotTag)
-	{
-		const FGameplayTag P1Tag = GetP1SlotTag();
-		return P1Tag.IsValid() && SlotTag.MatchesTagExact(P1Tag);
-	}
-
-	static bool IsP2SlotTag(const FGameplayTag& SlotTag)
-	{
-		const FGameplayTag P2Tag = GetP2SlotTag();
-		return P2Tag.IsValid() && SlotTag.MatchesTagExact(P2Tag);
-	}
-
-	static bool TryGetPlayerSlotTagFromObject(const UObject* SourceObject, FGameplayTag& OutPlayerSlotTag)
-	{
-		OutPlayerSlotTag = FGameplayTag();
-		if (!SourceObject)
+		if (Left.IsEmpty() || Right.IsEmpty())
 		{
 			return false;
 		}
 
-		if (UFunction* GetPlayerSlotTagFunction = SourceObject->FindFunction(TEXT("GetPlayerSlotTag")))
+		TArray<FGameplayTag> LeftTags;
+		Left.GetGameplayTagArray(LeftTags);
+		for (const FGameplayTag& Tag : LeftTags)
 		{
-			struct FGetPlayerSlotTagParams
+			if (Right.HasTagExact(Tag))
 			{
-				FGameplayTag ReturnValue;
-			};
-
-			FGetPlayerSlotTagParams Params;
-			const_cast<UObject*>(SourceObject)->ProcessEvent(GetPlayerSlotTagFunction, &Params);
-			if (Params.ReturnValue.IsValid())
-			{
-				OutPlayerSlotTag = Params.ReturnValue;
-				return true;
-			}
-		}
-
-		const FStructProperty* SlotTagProperty = FindFProperty<FStructProperty>(SourceObject->GetClass(), TEXT("PlayerSlotTag"));
-		if (!SlotTagProperty || SlotTagProperty->Struct != TBaseStructure<FGameplayTag>::Get())
-		{
-			return false;
-		}
-
-		if (const FGameplayTag* SlotTagValue = SlotTagProperty->ContainerPtrToValuePtr<FGameplayTag>(SourceObject))
-		{
-			if (SlotTagValue->IsValid())
-			{
-				OutPlayerSlotTag = *SlotTagValue;
 				return true;
 			}
 		}
@@ -83,95 +46,161 @@ namespace
 		return false;
 	}
 
-	static FGameplayTag ResolveViewerSlotTag(const APlayerController* ViewerController)
+	static FString BuildSortedViewerTagKey(const FGameplayTagContainer& ViewerTags)
 	{
-		if (!ViewerController)
-		{
-			return FGameplayTag();
-		}
+		TArray<FGameplayTag> Tags;
+		ViewerTags.GetGameplayTagArray(Tags);
 
-		FGameplayTag SlotTag;
-		if (TryGetPlayerSlotTagFromObject(ViewerController, SlotTag))
+		TArray<FString> TagStrings;
+		TagStrings.Reserve(Tags.Num());
+		for (const FGameplayTag& Tag : Tags)
 		{
-			return SlotTag;
-		}
-
-		if (const APlayerState* ViewerState = ViewerController->GetPlayerState<APlayerState>())
-		{
-			if (TryGetPlayerSlotTagFromObject(ViewerState, SlotTag))
+			if (Tag.IsValid())
 			{
-				return SlotTag;
+				TagStrings.Add(Tag.ToString());
 			}
 		}
 
-		return FGameplayTag();
+		TagStrings.Sort();
+		return FString::Join(TagStrings, TEXT("|"));
 	}
 
-	static bool AreTagsEqual(const FGameplayTag& Left, const FGameplayTag& Right)
+	static void MaybeLogTargetedConflict(
+		const UEmoComponent* Component,
+		const FGameplayTagContainer& ViewerTags,
+		const TArray<FEmoEmotionRegistration>& Registrations,
+		const FResolvedEmotionRegistrationResult& Result)
 	{
-		if (!Left.IsValid() && !Right.IsValid())
+		if (!Component || Result.TiedTargetedIndices.Num() <= 1)
 		{
-			return true;
+			return;
 		}
-		if (!Left.IsValid() || !Right.IsValid())
+
+		TArray<FString> EntryDescriptions;
+		EntryDescriptions.Reserve(Result.TiedTargetedIndices.Num());
+		TArray<FString> SerialStrings;
+		SerialStrings.Reserve(Result.TiedTargetedIndices.Num());
+		for (const int32 Index : Result.TiedTargetedIndices)
 		{
-			return false;
+			if (!Registrations.IsValidIndex(Index))
+			{
+				continue;
+			}
+
+			const FEmoEmotionRegistration& Registration = Registrations[Index];
+			EntryDescriptions.Add(FString::Printf(
+				TEXT("%s:%s:[%s]"),
+				*Registration.SourceId.ToString(),
+				*Registration.EmotionTag.ToString(),
+				*BuildSortedViewerTagKey(Registration.TargetViewerTags)));
+			SerialStrings.Add(LexToString(Registration.WriteSerial));
 		}
-		return Left.MatchesTagExact(Right);
+
+		static TSet<FString> LoggedConflictSignatures;
+		const FString ConflictSignature = FString::Printf(
+			TEXT("%s|%s|%d|%s"),
+			*GetPathNameSafe(Component),
+			*BuildSortedViewerTagKey(ViewerTags),
+			Result.WinningPriority,
+			*FString::Join(SerialStrings, TEXT(",")));
+		if (LoggedConflictSignatures.Contains(ConflictSignature))
+		{
+			return;
+		}
+
+		LoggedConflictSignatures.Add(ConflictSignature);
+		UE_LOG(
+			EmoLog,
+			Warning,
+			TEXT("[Emotion] Same-priority targeted emotion registrations matched viewer tags on '%s'. Priority=%d Viewer=[%s] Entries=[%s]. Latest write wins deterministically."),
+			*GetNameSafe(Component->GetOwner()),
+			Result.WinningPriority,
+			*BuildSortedViewerTagKey(ViewerTags),
+			*FString::Join(EntryDescriptions, TEXT(", ")));
 	}
 
-	static FGameplayTag GetSlotEmotionTag(const FEmoDisplayState& State, const FGameplayTag& SlotTag)
+	static FResolvedEmotionRegistrationResult ResolveDisplayedRegistration(
+		const UEmoComponent* Component,
+		const TArray<FEmoEmotionRegistration>& Registrations,
+		const FGameplayTagContainer& ViewerTags)
 	{
-		if (IsP1SlotTag(SlotTag))
+		FResolvedEmotionRegistrationResult Result;
+		TArray<int32> TargetedIndices;
+		TArray<int32> GlobalIndices;
+
+		for (int32 Index = 0; Index < Registrations.Num(); ++Index)
 		{
-			return State.P1EmotionTag;
+			const FEmoEmotionRegistration& Registration = Registrations[Index];
+			if (!Registration.EmotionTag.IsValid())
+			{
+				continue;
+			}
+
+			const bool bIsGlobalRegistration = Registration.TargetViewerTags.IsEmpty();
+			const bool bMatchesTargetedViewer = !bIsGlobalRegistration && HasAnyExactSharedTag(Registration.TargetViewerTags, ViewerTags);
+			if (!bIsGlobalRegistration && !bMatchesTargetedViewer)
+			{
+				continue;
+			}
+
+			if (Registration.Priority > Result.WinningPriority)
+			{
+				Result.WinningPriority = Registration.Priority;
+				TargetedIndices.Reset();
+				GlobalIndices.Reset();
+			}
+
+			if (Registration.Priority != Result.WinningPriority)
+			{
+				continue;
+			}
+
+			if (bIsGlobalRegistration)
+			{
+				GlobalIndices.Add(Index);
+			}
+			else
+			{
+				TargetedIndices.Add(Index);
+			}
 		}
 
-		if (IsP2SlotTag(SlotTag))
+		auto ResolveLatestWrite = [&Registrations](const TArray<int32>& CandidateIndices) -> FGameplayTag
 		{
-			return State.P2EmotionTag;
+			const FEmoEmotionRegistration* BestRegistration = nullptr;
+			for (const int32 CandidateIndex : CandidateIndices)
+			{
+				if (!Registrations.IsValidIndex(CandidateIndex))
+				{
+					continue;
+				}
+
+				const FEmoEmotionRegistration& Candidate = Registrations[CandidateIndex];
+				if (!BestRegistration || Candidate.WriteSerial > BestRegistration->WriteSerial)
+				{
+					BestRegistration = &Candidate;
+				}
+			}
+
+			return BestRegistration ? BestRegistration->EmotionTag : FGameplayTag();
+		};
+
+		if (!TargetedIndices.IsEmpty())
+		{
+			Result.EmotionTag = ResolveLatestWrite(TargetedIndices);
+			Result.bUsedTargetedRegistration = true;
+			Result.TiedTargetedIndices = TargetedIndices;
+			MaybeLogTargetedConflict(Component, ViewerTags, Registrations, Result);
+			return Result;
 		}
 
-		return FGameplayTag();
+		if (!GlobalIndices.IsEmpty())
+		{
+			Result.EmotionTag = ResolveLatestWrite(GlobalIndices);
+		}
+
+		return Result;
 	}
-
-	static FGameplayTag ResolveDisplayedEmotionTagFromStates(
-		const FEmoDisplayState& BaseState,
-		const FEmoDisplayState& DialogueState,
-		const FEmoDisplayState& SystemState,
-		const FGameplayTag& SlotTag)
-	{
-		const FGameplayTag SystemSlotTag = GetSlotEmotionTag(SystemState, SlotTag);
-		if (SystemSlotTag.IsValid())
-		{
-			return SystemSlotTag;
-		}
-
-		if (SystemState.SharedEmotionTag.IsValid())
-		{
-			return SystemState.SharedEmotionTag;
-		}
-
-		const FGameplayTag DialogueSlotTag = GetSlotEmotionTag(DialogueState, SlotTag);
-		if (DialogueSlotTag.IsValid())
-		{
-			return DialogueSlotTag;
-		}
-
-		if (DialogueState.SharedEmotionTag.IsValid())
-		{
-			return DialogueState.SharedEmotionTag;
-		}
-
-		const FGameplayTag BaseSlotTag = GetSlotEmotionTag(BaseState, SlotTag);
-		if (BaseSlotTag.IsValid())
-		{
-			return BaseSlotTag;
-		}
-
-		return BaseState.SharedEmotionTag;
-	}
-
 }
 
 UEmoComponent::UEmoComponent()
@@ -202,6 +231,7 @@ void UEmoComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 	}
 
+	TimedEmotionRegistrationClearHandles.Reset();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -225,229 +255,67 @@ void UEmoComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 }
 #endif
 
-void UEmoComponent::SetEmotionTag(const FGameplayTag NewEmotionTag)
-{
-	if (!IsAuthorityOwner() || AreTagsEqual(BaseEmotionState.SharedEmotionTag, NewEmotionTag))
-	{
-		return;
-	}
-
-	const FEmoDisplayState OldBaseState = BaseEmotionState;
-	BaseEmotionState.SharedEmotionTag = NewEmotionTag;
-	OnRep_BaseEmotionState(OldBaseState);
-	ForceOwnerNetUpdate();
-}
-
-void UEmoComponent::SetEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag, const FGameplayTag NewEmotionTag)
-{
-	if (!IsAuthorityOwner())
-	{
-		return;
-	}
-
-	const FGameplayTag Existing = GetStateSlotTag(BaseEmotionState, PlayerSlotTag);
-	if (AreTagsEqual(Existing, NewEmotionTag))
-	{
-		return;
-	}
-
-	const FEmoDisplayState OldBaseState = BaseEmotionState;
-	SetStateSlotTag(BaseEmotionState, PlayerSlotTag, NewEmotionTag);
-	OnRep_BaseEmotionState(OldBaseState);
-	ForceOwnerNetUpdate();
-}
-
-void UEmoComponent::ClearEmotionTag()
-{
-	SetEmotionTag(FGameplayTag());
-}
-
-void UEmoComponent::ClearEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag)
-{
-	SetEmotionTagForPlayerSlotTag(PlayerSlotTag, FGameplayTag());
-}
-
-void UEmoComponent::ClearAllEmotionTags()
-{
-	if (!IsAuthorityOwner())
-	{
-		return;
-	}
-
-	if (!BaseEmotionState.SharedEmotionTag.IsValid()
-		&& !BaseEmotionState.P1EmotionTag.IsValid()
-		&& !BaseEmotionState.P2EmotionTag.IsValid())
-	{
-		return;
-	}
-
-	const FEmoDisplayState OldBaseState = BaseEmotionState;
-	BaseEmotionState = FEmoDisplayState();
-	OnRep_BaseEmotionState(OldBaseState);
-	ForceOwnerNetUpdate();
-}
-
-void UEmoComponent::SetDialogueEmotionTag(const FGameplayTag NewEmotionTag)
-{
-	if (!IsAuthorityOwner() || AreTagsEqual(DialogueOverrideState.SharedEmotionTag, NewEmotionTag))
-	{
-		return;
-	}
-
-	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
-	DialogueOverrideState.SharedEmotionTag = NewEmotionTag;
-	OnRep_DialogueOverrideState(OldDialogueState);
-	ForceOwnerNetUpdate();
-}
-
-void UEmoComponent::SetDialogueEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag, const FGameplayTag NewEmotionTag)
-{
-	if (!IsAuthorityOwner())
-	{
-		return;
-	}
-
-	const FGameplayTag Existing = GetStateSlotTag(DialogueOverrideState, PlayerSlotTag);
-	if (AreTagsEqual(Existing, NewEmotionTag))
-	{
-		return;
-	}
-
-	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
-	SetStateSlotTag(DialogueOverrideState, PlayerSlotTag, NewEmotionTag);
-	OnRep_DialogueOverrideState(OldDialogueState);
-	ForceOwnerNetUpdate();
-}
-
-void UEmoComponent::ClearDialogueEmotionTag()
-{
-	SetDialogueEmotionTag(FGameplayTag());
-}
-
-void UEmoComponent::ClearDialogueEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag)
-{
-	SetDialogueEmotionTagForPlayerSlotTag(PlayerSlotTag, FGameplayTag());
-}
-
-void UEmoComponent::ClearAllDialogueEmotionTags()
-{
-	if (!IsAuthorityOwner())
-	{
-		return;
-	}
-
-	if (!DialogueOverrideState.SharedEmotionTag.IsValid()
-		&& !DialogueOverrideState.P1EmotionTag.IsValid()
-		&& !DialogueOverrideState.P2EmotionTag.IsValid())
-	{
-		return;
-	}
-
-	const FEmoDisplayState OldDialogueState = DialogueOverrideState;
-	DialogueOverrideState = FEmoDisplayState();
-	OnRep_DialogueOverrideState(OldDialogueState);
-	ForceOwnerNetUpdate();
-}
-
-void UEmoComponent::SetSystemEmotionTag(const FName SourceId, const FGameplayTag NewEmotionTag, const int32 Priority)
+void UEmoComponent::SetEmotionRegistration(
+	const FName SourceId,
+	const FGameplayTag NewEmotionTag,
+	const int32 Priority,
+	FGameplayTagContainer TargetViewerTags)
 {
 	if (!IsAuthorityOwner() || SourceId.IsNone())
 	{
 		return;
 	}
 
-	const int32 OldSourceCount = SystemEmotionSources.Num();
-	FSystemEmotionSourceState& SourceState = SystemEmotionSources.FindOrAdd(SourceId);
-	SourceState.Priority = Priority;
-	SourceState.SharedWriteSerial = NextSystemEmotionWriteSerial++;
-	SourceState.State.SharedEmotionTag = NewEmotionTag;
-	if (!HasAnyStateTag(SourceState.State))
-	{
-		ClearAllTimedSystemOverrideTimersForSource(SourceId);
-		SystemEmotionSources.Remove(SourceId);
-	}
-
-	if (RebuildSystemOverrideStateFromSources())
-	{
-		ForceOwnerNetUpdate();
-	}
-
-	if (OldSourceCount != SystemEmotionSources.Num())
-	{
-		OnEmotionQueueChanged.Broadcast(SystemEmotionSources.Num());
-	}
-}
-
-void UEmoComponent::SetSystemEmotionTagForDuration(const FName SourceId, const FGameplayTag NewEmotionTag, const float DurationSeconds, const int32 Priority)
-{
-	SetSystemEmotionTag(SourceId, NewEmotionTag, Priority);
-	if (!IsAuthorityOwner() || SourceId.IsNone())
-	{
-		return;
-	}
-
+	TargetViewerTags = SanitizeViewerTags(TargetViewerTags);
 	if (!NewEmotionTag.IsValid())
 	{
-		ClearTimedSystemOverrideTimer(SourceId);
+		ClearEmotionRegistration(SourceId, TargetViewerTags);
 		return;
 	}
 
-	const float EffectiveDuration = ResolveTimedSystemOverrideDurationSeconds(DurationSeconds);
-	SetTimedSystemOverrideClearTimer(SourceId, EffectiveDuration);
-}
-
-void UEmoComponent::SetSystemEmotionTagForPlayerSlotTag(
-	const FName SourceId,
-	const FGameplayTag PlayerSlotTag,
-	const FGameplayTag NewEmotionTag,
-	const int32 Priority)
-{
-	if (!IsAuthorityOwner() || SourceId.IsNone())
+	const int32 ExistingIndex = FindEmotionRegistrationIndex(SourceId, TargetViewerTags);
+	if (EmotionRegistrations.IsValidIndex(ExistingIndex))
 	{
-		return;
+		const FEmoEmotionRegistration& Existing = EmotionRegistrations[ExistingIndex];
+		if (AreTagsEqual(Existing.EmotionTag, NewEmotionTag)
+			&& Existing.Priority == Priority)
+		{
+			return;
+		}
 	}
 
-	const int32 OldSourceCount = SystemEmotionSources.Num();
-	FSystemEmotionSourceState& SourceState = SystemEmotionSources.FindOrAdd(SourceId);
-	SourceState.Priority = Priority;
-	if (IsP1SlotTag(PlayerSlotTag))
+	const TArray<FEmoEmotionRegistration> OldRegistrations = EmotionRegistrations;
+	FEmoEmotionRegistration* Registration = nullptr;
+	if (EmotionRegistrations.IsValidIndex(ExistingIndex))
 	{
-		SourceState.P1WriteSerial = NextSystemEmotionWriteSerial++;
-	}
-	else if (IsP2SlotTag(PlayerSlotTag))
-	{
-		SourceState.P2WriteSerial = NextSystemEmotionWriteSerial++;
+		Registration = &EmotionRegistrations[ExistingIndex];
 	}
 	else
 	{
-		SourceState.SharedWriteSerial = NextSystemEmotionWriteSerial++;
-	}
-	SetStateSlotTag(SourceState.State, PlayerSlotTag, NewEmotionTag);
-	if (!HasAnyStateTag(SourceState.State))
-	{
-		ClearAllTimedSystemOverrideTimersForSource(SourceId);
-		SystemEmotionSources.Remove(SourceId);
+		Registration = &EmotionRegistrations.AddDefaulted_GetRef();
+		Registration->SourceId = SourceId;
+		Registration->TargetViewerTags = TargetViewerTags;
 	}
 
-	if (RebuildSystemOverrideStateFromSources())
-	{
-		ForceOwnerNetUpdate();
-	}
+	Registration->SourceId = SourceId;
+	Registration->EmotionTag = NewEmotionTag;
+	Registration->Priority = Priority;
+	Registration->TargetViewerTags = TargetViewerTags;
+	Registration->WriteSerial = NextEmotionWriteSerial++;
 
-	if (OldSourceCount != SystemEmotionSources.Num())
-	{
-		OnEmotionQueueChanged.Broadcast(SystemEmotionSources.Num());
-	}
+	OnRep_EmotionRegistrations(OldRegistrations);
+	ForceOwnerNetUpdate();
 }
 
-void UEmoComponent::SetSystemEmotionTagForPlayerSlotTagForDuration(
+void UEmoComponent::SetEmotionRegistrationForDuration(
 	const FName SourceId,
-	const FGameplayTag PlayerSlotTag,
 	const FGameplayTag NewEmotionTag,
 	const float DurationSeconds,
-	const int32 Priority)
+	const int32 Priority,
+	FGameplayTagContainer TargetViewerTags)
 {
-	SetSystemEmotionTagForPlayerSlotTag(SourceId, PlayerSlotTag, NewEmotionTag, Priority);
+	TargetViewerTags = SanitizeViewerTags(TargetViewerTags);
+	SetEmotionRegistration(SourceId, NewEmotionTag, Priority, TargetViewerTags);
 	if (!IsAuthorityOwner() || SourceId.IsNone())
 	{
 		return;
@@ -455,189 +323,101 @@ void UEmoComponent::SetSystemEmotionTagForPlayerSlotTagForDuration(
 
 	if (!NewEmotionTag.IsValid())
 	{
-		ClearTimedSystemOverrideSlotTimer(SourceId, PlayerSlotTag);
+		ClearTimedEmotionRegistrationTimer(SourceId, TargetViewerTags);
 		return;
 	}
 
-	const float EffectiveDuration = ResolveTimedSystemOverrideDurationSeconds(DurationSeconds);
-	SetTimedSystemOverrideSlotClearTimer(SourceId, PlayerSlotTag, EffectiveDuration);
+	const float EffectiveDuration = ResolveTimedEmotionRegistrationDurationSeconds(DurationSeconds);
+	SetTimedEmotionRegistrationClearTimer(SourceId, TargetViewerTags, EffectiveDuration);
 }
 
-void UEmoComponent::ClearSystemEmotionTag(const FName SourceId)
+void UEmoComponent::ClearEmotionRegistration(FName SourceId, FGameplayTagContainer TargetViewerTags)
 {
 	if (!IsAuthorityOwner() || SourceId.IsNone())
 	{
 		return;
 	}
 
-	const int32 OldSourceCount = SystemEmotionSources.Num();
-	ClearTimedSystemOverrideTimer(SourceId);
-	if (FSystemEmotionSourceState* SourceState = SystemEmotionSources.Find(SourceId))
+	TargetViewerTags = SanitizeViewerTags(TargetViewerTags);
+	const int32 ExistingIndex = FindEmotionRegistrationIndex(SourceId, TargetViewerTags);
+	if (!EmotionRegistrations.IsValidIndex(ExistingIndex))
 	{
-		SourceState->SharedWriteSerial = NextSystemEmotionWriteSerial++;
-		SourceState->State.SharedEmotionTag = FGameplayTag();
-		if (!HasAnyStateTag(SourceState->State))
-		{
-			SystemEmotionSources.Remove(SourceId);
-		}
+		return;
 	}
 
-	if (RebuildSystemOverrideStateFromSources())
-	{
-		ForceOwnerNetUpdate();
-	}
-
-	if (OldSourceCount != SystemEmotionSources.Num())
-	{
-		OnEmotionQueueChanged.Broadcast(SystemEmotionSources.Num());
-	}
+	const TArray<FEmoEmotionRegistration> OldRegistrations = EmotionRegistrations;
+	ClearTimedEmotionRegistrationTimer(SourceId, TargetViewerTags);
+	EmotionRegistrations.RemoveAt(ExistingIndex);
+	OnRep_EmotionRegistrations(OldRegistrations);
+	ForceOwnerNetUpdate();
 }
 
-void UEmoComponent::ClearSystemEmotionTagForPlayerSlotTag(const FName SourceId, const FGameplayTag PlayerSlotTag)
+void UEmoComponent::ClearAllEmotionRegistrationsForSource(const FName SourceId)
 {
 	if (!IsAuthorityOwner() || SourceId.IsNone())
 	{
 		return;
 	}
 
-	const int32 OldSourceCount = SystemEmotionSources.Num();
-	ClearTimedSystemOverrideSlotTimer(SourceId, PlayerSlotTag);
-	if (FSystemEmotionSourceState* SourceState = SystemEmotionSources.Find(SourceId))
+	bool bFoundAny = false;
+	for (const FEmoEmotionRegistration& Registration : EmotionRegistrations)
 	{
-		if (IsP1SlotTag(PlayerSlotTag))
+		if (Registration.SourceId == SourceId)
 		{
-			SourceState->P1WriteSerial = NextSystemEmotionWriteSerial++;
-		}
-		else if (IsP2SlotTag(PlayerSlotTag))
-		{
-			SourceState->P2WriteSerial = NextSystemEmotionWriteSerial++;
-		}
-		else
-		{
-			SourceState->SharedWriteSerial = NextSystemEmotionWriteSerial++;
-		}
-		SetStateSlotTag(SourceState->State, PlayerSlotTag, FGameplayTag());
-		if (!HasAnyStateTag(SourceState->State))
-		{
-			SystemEmotionSources.Remove(SourceId);
+			bFoundAny = true;
+			break;
 		}
 	}
 
-	if (RebuildSystemOverrideStateFromSources())
-	{
-		ForceOwnerNetUpdate();
-	}
-
-	if (OldSourceCount != SystemEmotionSources.Num())
-	{
-		OnEmotionQueueChanged.Broadcast(SystemEmotionSources.Num());
-	}
-}
-
-void UEmoComponent::ClearAllSystemEmotionTagsForSource(const FName SourceId)
-{
-	if (!IsAuthorityOwner() || SourceId.IsNone())
+	if (!bFoundAny)
 	{
 		return;
 	}
 
-	const int32 OldSourceCount = SystemEmotionSources.Num();
-	ClearAllTimedSystemOverrideTimersForSource(SourceId);
-	if (SystemEmotionSources.Remove(SourceId) <= 0)
+	const TArray<FEmoEmotionRegistration> OldRegistrations = EmotionRegistrations;
+	ClearAllTimedEmotionRegistrationTimersForSource(SourceId);
+	EmotionRegistrations.RemoveAll([SourceId](const FEmoEmotionRegistration& Registration)
+		{
+			return Registration.SourceId == SourceId;
+		});
+	OnRep_EmotionRegistrations(OldRegistrations);
+	ForceOwnerNetUpdate();
+}
+
+void UEmoComponent::ClearAllEmotionRegistrations()
+{
+	if (!IsAuthorityOwner() || EmotionRegistrations.IsEmpty())
 	{
 		return;
 	}
 
-	if (RebuildSystemOverrideStateFromSources())
+	const TArray<FEmoEmotionRegistration> OldRegistrations = EmotionRegistrations;
+	for (TPair<FName, FTimerHandle>& Pair : TimedEmotionRegistrationClearHandles)
 	{
-		ForceOwnerNetUpdate();
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(Pair.Value);
+		}
 	}
-
-	if (OldSourceCount != SystemEmotionSources.Num())
-	{
-		OnEmotionQueueChanged.Broadcast(SystemEmotionSources.Num());
-	}
+	TimedEmotionRegistrationClearHandles.Reset();
+	EmotionRegistrations.Reset();
+	OnRep_EmotionRegistrations(OldRegistrations);
+	ForceOwnerNetUpdate();
 }
 
-void UEmoComponent::ClearAllSystemEmotionTags()
+FGameplayTag UEmoComponent::GetDisplayedEmotionTagForViewerTags(FGameplayTagContainer ViewerTags) const
 {
-	if (!IsAuthorityOwner() || SystemEmotionSources.IsEmpty())
-	{
-		return;
-	}
-
-	const int32 OldSourceCount = SystemEmotionSources.Num();
-	TArray<FName> SourceIds;
-	SystemEmotionSources.GetKeys(SourceIds);
-	for (const FName SourceId : SourceIds)
-	{
-		ClearAllTimedSystemOverrideTimersForSource(SourceId);
-	}
-	SystemEmotionSources.Reset();
-	if (RebuildSystemOverrideStateFromSources())
-	{
-		ForceOwnerNetUpdate();
-	}
-
-	if (OldSourceCount != SystemEmotionSources.Num())
-	{
-		OnEmotionQueueChanged.Broadcast(SystemEmotionSources.Num());
-	}
+	ViewerTags = SanitizeViewerTags(ViewerTags);
+	return ResolveDisplayedRegistration(this, EmotionRegistrations, ViewerTags).EmotionTag;
 }
 
-FGameplayTag UEmoComponent::GetDisplayedEmotionTagForPlayerSlotTag(const FGameplayTag PlayerSlotTag) const
-{
-	const FGameplayTag SystemSlotTag = GetStateSlotTag(SystemOverrideState, PlayerSlotTag);
-	if (SystemSlotTag.IsValid())
-	{
-		return SystemSlotTag;
-	}
-
-	if (SystemOverrideState.SharedEmotionTag.IsValid())
-	{
-		return SystemOverrideState.SharedEmotionTag;
-	}
-
-	const FGameplayTag DialogueSlotTag = GetStateSlotTag(DialogueOverrideState, PlayerSlotTag);
-	if (DialogueSlotTag.IsValid())
-	{
-		return DialogueSlotTag;
-	}
-
-	if (DialogueOverrideState.SharedEmotionTag.IsValid())
-	{
-		return DialogueOverrideState.SharedEmotionTag;
-	}
-
-	const FGameplayTag BaseSlotTag = GetStateSlotTag(BaseEmotionState, PlayerSlotTag);
-	if (BaseSlotTag.IsValid())
-	{
-		return BaseSlotTag;
-	}
-
-	return BaseEmotionState.SharedEmotionTag;
-}
-
-FGameplayTag UEmoComponent::GetDisplayedEmotionTagForController(const APlayerController* ViewerController) const
-{
-	return GetDisplayedEmotionTagForPlayerSlotTag(ResolveViewerSlotTag(ViewerController));
-}
-
-bool UEmoComponent::TryResolveDisplayedEmotionIconForPlayerSlot(
-	const FGameplayTag PlayerSlotTag,
+bool UEmoComponent::TryResolveDisplayedEmotionIconForViewerTags(
+	FGameplayTagContainer ViewerTags,
 	TSoftObjectPtr<UTexture2D>& OutIconTexture,
 	FGameplayTag& OutResolvedEmotionTag) const
 {
-	const FGameplayTag DisplayTag = GetDisplayedEmotionTagForPlayerSlotTag(PlayerSlotTag);
+	const FGameplayTag DisplayTag = GetDisplayedEmotionTagForViewerTags(ViewerTags);
 	return TryResolveEmotionIconForTag(DisplayTag, OutIconTexture, OutResolvedEmotionTag);
-}
-
-bool UEmoComponent::TryResolveDisplayedEmotionIconForController(
-	const APlayerController* ViewerController,
-	TSoftObjectPtr<UTexture2D>& OutIconTexture,
-	FGameplayTag& OutResolvedEmotionTag) const
-{
-	return TryResolveDisplayedEmotionIconForPlayerSlot(ResolveViewerSlotTag(ViewerController), OutIconTexture, OutResolvedEmotionTag);
 }
 
 bool UEmoComponent::TryResolveEmotionIconForTag(
@@ -734,194 +514,73 @@ void UEmoComponent::SetRegisteredSpeakerTag(const FGameplayTag NewSpeakerTag)
 	ForceOwnerNetUpdate();
 }
 
-FGameplayTag UEmoComponent::GetStateSlotTag(const FEmoDisplayState& State, const FGameplayTag& PlayerSlotTag)
+bool UEmoComponent::AreTagsEqual(const FGameplayTag& Left, const FGameplayTag& Right)
 {
-	if (IsP1SlotTag(PlayerSlotTag))
+	if (!Left.IsValid() && !Right.IsValid())
 	{
-		return State.P1EmotionTag;
+		return true;
 	}
 
-	if (IsP2SlotTag(PlayerSlotTag))
-	{
-		return State.P2EmotionTag;
-	}
-
-	return FGameplayTag();
-}
-
-void UEmoComponent::SetStateSlotTag(FEmoDisplayState& State, const FGameplayTag& PlayerSlotTag, const FGameplayTag& EmotionTag)
-{
-	if (IsP1SlotTag(PlayerSlotTag))
-	{
-		State.P1EmotionTag = EmotionTag;
-		return;
-	}
-
-	if (IsP2SlotTag(PlayerSlotTag))
-	{
-		State.P2EmotionTag = EmotionTag;
-	}
-}
-
-bool UEmoComponent::AreDisplayStatesEqual(const FEmoDisplayState& Left, const FEmoDisplayState& Right)
-{
-	return AreTagsEqual(Left.SharedEmotionTag, Right.SharedEmotionTag)
-		&& AreTagsEqual(Left.P1EmotionTag, Right.P1EmotionTag)
-		&& AreTagsEqual(Left.P2EmotionTag, Right.P2EmotionTag);
-}
-
-bool UEmoComponent::HasAnyStateTag(const FEmoDisplayState& State)
-{
-	return State.SharedEmotionTag.IsValid() || State.P1EmotionTag.IsValid() || State.P2EmotionTag.IsValid();
-}
-
-FName UEmoComponent::MakeTimedSlotKey(const FName SourceId, const FGameplayTag& SlotTag)
-{
-	return FName(*FString::Printf(TEXT("%s|%s"), *SourceId.ToString(), *SlotTag.ToString()));
-}
-
-bool UEmoComponent::RebuildSystemOverrideStateFromSources()
-{
-	FEmoDisplayState ResolvedState;
-	int32 SharedPriority = TNumericLimits<int32>::Lowest();
-	uint64 SharedSerial = 0;
-	int32 P1Priority = TNumericLimits<int32>::Lowest();
-	uint64 P1Serial = 0;
-	int32 P2Priority = TNumericLimits<int32>::Lowest();
-	uint64 P2Serial = 0;
-
-	for (const TPair<FName, FSystemEmotionSourceState>& Pair : SystemEmotionSources)
-	{
-		const FSystemEmotionSourceState& SourceState = Pair.Value;
-		auto ShouldReplace = [](const int32 CandidatePriority, const uint64 CandidateSerial, const int32 CurrentPriority, const uint64 CurrentSerial)
-		{
-			return CandidatePriority > CurrentPriority || (CandidatePriority == CurrentPriority && CandidateSerial > CurrentSerial);
-		};
-
-		if (SourceState.State.SharedEmotionTag.IsValid()
-			&& ShouldReplace(SourceState.Priority, SourceState.SharedWriteSerial, SharedPriority, SharedSerial))
-		{
-			ResolvedState.SharedEmotionTag = SourceState.State.SharedEmotionTag;
-			SharedPriority = SourceState.Priority;
-			SharedSerial = SourceState.SharedWriteSerial;
-		}
-
-		if (SourceState.State.P1EmotionTag.IsValid()
-			&& ShouldReplace(SourceState.Priority, SourceState.P1WriteSerial, P1Priority, P1Serial))
-		{
-			ResolvedState.P1EmotionTag = SourceState.State.P1EmotionTag;
-			P1Priority = SourceState.Priority;
-			P1Serial = SourceState.P1WriteSerial;
-		}
-
-		if (SourceState.State.P2EmotionTag.IsValid()
-			&& ShouldReplace(SourceState.Priority, SourceState.P2WriteSerial, P2Priority, P2Serial))
-		{
-			ResolvedState.P2EmotionTag = SourceState.State.P2EmotionTag;
-			P2Priority = SourceState.Priority;
-			P2Serial = SourceState.P2WriteSerial;
-		}
-	}
-
-	if (AreDisplayStatesEqual(SystemOverrideState, ResolvedState))
+	if (!Left.IsValid() || !Right.IsValid())
 	{
 		return false;
 	}
 
-	const FEmoDisplayState OldState = SystemOverrideState;
-	SystemOverrideState = ResolvedState;
-	OnRep_SystemOverrideState(OldState);
-	return true;
+	return Left.MatchesTagExact(Right);
 }
 
-float UEmoComponent::ResolveTimedSystemOverrideDurationSeconds(const float RequestedDurationSeconds) const
+bool UEmoComponent::AreViewerTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right)
 {
-	if (RequestedDurationSeconds > 0.0f)
+	return Left.Num() == Right.Num() && Left.HasAllExact(Right) && Right.HasAllExact(Left);
+}
+
+bool UEmoComponent::AreRegistrationsEquivalent(const FEmoEmotionRegistration& Left, const FEmoEmotionRegistration& Right)
+{
+	return Left.SourceId == Right.SourceId
+		&& AreTagsEqual(Left.EmotionTag, Right.EmotionTag)
+		&& Left.Priority == Right.Priority
+		&& Left.WriteSerial == Right.WriteSerial
+		&& AreViewerTagContainersEquivalent(Left.TargetViewerTags, Right.TargetViewerTags);
+}
+
+FGameplayTagContainer UEmoComponent::SanitizeViewerTags(const FGameplayTagContainer& ViewerTags)
+{
+	FGameplayTagContainer SanitizedTags;
+
+	TArray<FGameplayTag> ViewerTagArray;
+	ViewerTags.GetGameplayTagArray(ViewerTagArray);
+	for (const FGameplayTag& Tag : ViewerTagArray)
 	{
-		return RequestedDurationSeconds;
+		if (Tag.IsValid())
+		{
+			SanitizedTags.AddTag(Tag);
+		}
 	}
 
-	const UEmoSettings* Settings = GetDefault<UEmoSettings>();
-	const float DefaultDuration = Settings ? Settings->DefaultTimedSystemOverrideDurationSeconds : 1.5f;
-	return FMath::Max(0.01f, DefaultDuration);
+	return SanitizedTags;
 }
 
-void UEmoComponent::SetTimedSystemOverrideClearTimer(const FName SourceId, const float DurationSeconds)
+FName UEmoComponent::MakeRegistrationTimerKey(const FName SourceId, const FGameplayTagContainer& TargetViewerTags)
 {
-	UWorld* World = GetWorld();
-	if (!World || SourceId.IsNone())
+	return FName(*FString::Printf(
+		TEXT("%s|%s"),
+		*SourceId.ToString(),
+		*BuildSortedViewerTagKey(TargetViewerTags)));
+}
+
+int32 UEmoComponent::FindEmotionRegistrationIndex(const FName SourceId, const FGameplayTagContainer& TargetViewerTags) const
+{
+	for (int32 Index = 0; Index < EmotionRegistrations.Num(); ++Index)
 	{
-		return;
+		const FEmoEmotionRegistration& Registration = EmotionRegistrations[Index];
+		if (Registration.SourceId == SourceId
+			&& AreViewerTagContainersEquivalent(Registration.TargetViewerTags, TargetViewerTags))
+		{
+			return Index;
+		}
 	}
 
-	FTimerHandle& Handle = TimedSystemOverrideClearHandles.FindOrAdd(SourceId);
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, GET_FUNCTION_NAME_CHECKED(UEmoComponent, HandleTimedSystemOverrideClear), SourceId);
-	World->GetTimerManager().SetTimer(Handle, Delegate, FMath::Max(0.01f, DurationSeconds), false);
-}
-
-void UEmoComponent::SetTimedSystemOverrideSlotClearTimer(const FName SourceId, const FGameplayTag& SlotTag, const float DurationSeconds)
-{
-	UWorld* World = GetWorld();
-	if (!World || SourceId.IsNone() || !SlotTag.IsValid())
-	{
-		return;
-	}
-
-	const FName TimerKey = MakeTimedSlotKey(SourceId, SlotTag);
-	FTimerHandle& Handle = TimedSystemOverrideSlotClearHandles.FindOrAdd(TimerKey);
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, GET_FUNCTION_NAME_CHECKED(UEmoComponent, HandleTimedSystemOverrideSlotClear), SourceId, SlotTag);
-	World->GetTimerManager().SetTimer(Handle, Delegate, FMath::Max(0.01f, DurationSeconds), false);
-}
-
-void UEmoComponent::ClearTimedSystemOverrideTimer(const FName SourceId)
-{
-	UWorld* World = GetWorld();
-	FTimerHandle* Handle = TimedSystemOverrideClearHandles.Find(SourceId);
-	if (World && Handle)
-	{
-		World->GetTimerManager().ClearTimer(*Handle);
-	}
-
-	TimedSystemOverrideClearHandles.Remove(SourceId);
-}
-
-void UEmoComponent::ClearTimedSystemOverrideSlotTimer(const FName SourceId, const FGameplayTag& SlotTag)
-{
-	if (!SlotTag.IsValid())
-	{
-		return;
-	}
-
-	const FName TimerKey = MakeTimedSlotKey(SourceId, SlotTag);
-	UWorld* World = GetWorld();
-	FTimerHandle* Handle = TimedSystemOverrideSlotClearHandles.Find(TimerKey);
-	if (World && Handle)
-	{
-		World->GetTimerManager().ClearTimer(*Handle);
-	}
-
-	TimedSystemOverrideSlotClearHandles.Remove(TimerKey);
-}
-
-void UEmoComponent::ClearAllTimedSystemOverrideTimersForSource(const FName SourceId)
-{
-	ClearTimedSystemOverrideTimer(SourceId);
-	ClearTimedSystemOverrideSlotTimer(SourceId, GetP1SlotTag());
-	ClearTimedSystemOverrideSlotTimer(SourceId, GetP2SlotTag());
-}
-
-void UEmoComponent::HandleTimedSystemOverrideClear(const FName SourceId)
-{
-	ClearTimedSystemOverrideTimer(SourceId);
-	ClearSystemEmotionTag(SourceId);
-}
-
-void UEmoComponent::HandleTimedSystemOverrideSlotClear(const FName SourceId, const FGameplayTag SlotTag)
-{
-	ClearTimedSystemOverrideSlotTimer(SourceId, SlotTag);
-	ClearSystemEmotionTagForPlayerSlotTag(SourceId, SlotTag);
+	return INDEX_NONE;
 }
 
 bool UEmoComponent::IsAuthorityOwner() const
@@ -938,36 +597,92 @@ void UEmoComponent::ForceOwnerNetUpdate() const
 	}
 }
 
-void UEmoComponent::BroadcastDisplayStateDelta(
-	const FEmoDisplayState& OldBaseState,
-	const FEmoDisplayState& OldDialogueState,
-	const FEmoDisplayState& OldSystemState)
+float UEmoComponent::ResolveTimedEmotionRegistrationDurationSeconds(const float RequestedDurationSeconds) const
 {
-	const FGameplayTag OldDisplayedTag = ResolveDisplayedEmotionTagFromStates(
-		OldBaseState,
-		OldDialogueState,
-		OldSystemState,
-		FGameplayTag());
-	const FGameplayTag OldP1DisplayedTag = ResolveDisplayedEmotionTagFromStates(
-		OldBaseState,
-		OldDialogueState,
-		OldSystemState,
-		GetP1SlotTag());
-	const FGameplayTag OldP2DisplayedTag = ResolveDisplayedEmotionTagFromStates(
-		OldBaseState,
-		OldDialogueState,
-		OldSystemState,
-		GetP2SlotTag());
+	if (RequestedDurationSeconds > 0.0f)
+	{
+		return RequestedDurationSeconds;
+	}
 
-	const FGameplayTag NewDisplayedTag = GetDisplayedEmotionTagForPlayerSlotTag(FGameplayTag());
-	const FGameplayTag NewP1DisplayedTag = GetDisplayedEmotionTagForPlayerSlotTag(GetP1SlotTag());
-	const FGameplayTag NewP2DisplayedTag = GetDisplayedEmotionTagForPlayerSlotTag(GetP2SlotTag());
-	const bool bAnyDisplayChanged = !AreTagsEqual(OldDisplayedTag, NewDisplayedTag)
-		|| !AreTagsEqual(OldP1DisplayedTag, NewP1DisplayedTag)
-		|| !AreTagsEqual(OldP2DisplayedTag, NewP2DisplayedTag);
+	const UEmoSettings* Settings = GetDefault<UEmoSettings>();
+	const float DefaultDuration = Settings ? Settings->DefaultTimedSystemOverrideDurationSeconds : 1.5f;
+	return FMath::Max(0.01f, DefaultDuration);
+}
+
+void UEmoComponent::SetTimedEmotionRegistrationClearTimer(
+	const FName SourceId,
+	const FGameplayTagContainer& TargetViewerTags,
+	const float DurationSeconds)
+{
+	UWorld* World = GetWorld();
+	if (!World || SourceId.IsNone())
+	{
+		return;
+	}
+
+	const FGameplayTagContainer SanitizedTags = SanitizeViewerTags(TargetViewerTags);
+	const FName TimerKey = MakeRegistrationTimerKey(SourceId, SanitizedTags);
+	FTimerHandle& Handle = TimedEmotionRegistrationClearHandles.FindOrAdd(TimerKey);
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, GET_FUNCTION_NAME_CHECKED(UEmoComponent, HandleTimedEmotionRegistrationClear), SourceId, SanitizedTags);
+	World->GetTimerManager().SetTimer(Handle, Delegate, FMath::Max(0.01f, DurationSeconds), false);
+}
+
+void UEmoComponent::ClearTimedEmotionRegistrationTimer(FName SourceId, const FGameplayTagContainer& TargetViewerTags)
+{
+	const FName TimerKey = MakeRegistrationTimerKey(SourceId, SanitizeViewerTags(TargetViewerTags));
+	UWorld* World = GetWorld();
+	FTimerHandle* Handle = TimedEmotionRegistrationClearHandles.Find(TimerKey);
+	if (World && Handle)
+	{
+		World->GetTimerManager().ClearTimer(*Handle);
+	}
+
+	TimedEmotionRegistrationClearHandles.Remove(TimerKey);
+}
+
+void UEmoComponent::ClearAllTimedEmotionRegistrationTimersForSource(const FName SourceId)
+{
+	TArray<FName> KeysToRemove;
+	for (const TPair<FName, FTimerHandle>& Pair : TimedEmotionRegistrationClearHandles)
+	{
+		if (Pair.Key.ToString().StartsWith(SourceId.ToString() + TEXT("|")))
+		{
+			KeysToRemove.Add(Pair.Key);
+		}
+	}
+
+	for (const FName TimerKey : KeysToRemove)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			if (FTimerHandle* Handle = TimedEmotionRegistrationClearHandles.Find(TimerKey))
+			{
+				World->GetTimerManager().ClearTimer(*Handle);
+			}
+		}
+
+		TimedEmotionRegistrationClearHandles.Remove(TimerKey);
+	}
+}
+
+void UEmoComponent::HandleTimedEmotionRegistrationClear(const FName SourceId, FGameplayTagContainer TargetViewerTags)
+{
+	TargetViewerTags = SanitizeViewerTags(TargetViewerTags);
+	ClearTimedEmotionRegistrationTimer(SourceId, TargetViewerTags);
+	ClearEmotionRegistration(SourceId, TargetViewerTags);
+}
+
+void UEmoComponent::BroadcastRegistrationDelta(const TArray<FEmoEmotionRegistration>& OldRegistrations)
+{
+	const FGameplayTagContainer EmptyViewerTags;
+	const FGameplayTag OldDisplayedTag = ResolveDisplayedRegistration(this, OldRegistrations, EmptyViewerTags).EmotionTag;
+	const FGameplayTag NewDisplayedTag = GetDisplayedEmotionTagForViewerTags(EmptyViewerTags);
+	const bool bGlobalDisplayChanged = !AreTagsEqual(OldDisplayedTag, NewDisplayedTag);
+
 	OnEmotionDisplayStateChanged.Broadcast();
 
-	if (bAnyDisplayChanged)
+	if (bGlobalDisplayChanged)
 	{
 		OnEmotionDisplayChanged.Broadcast(NewDisplayedTag, OldDisplayedTag);
 		if (!NewDisplayedTag.IsValid())
@@ -984,42 +699,44 @@ void UEmoComponent::BroadcastDisplayStateDelta(
 		}
 	}
 
+	if (OldRegistrations.Num() != EmotionRegistrations.Num())
+	{
+		OnEmotionQueueChanged.Broadcast(EmotionRegistrations.Num());
+	}
+
 #if WITH_EDITOR
 	RefreshEditorPreviewBillboard();
 #endif
 }
 
-void UEmoComponent::OnRep_BaseEmotionState(const FEmoDisplayState OldState)
+void UEmoComponent::OnRep_EmotionRegistrations(const TArray<FEmoEmotionRegistration>& OldRegistrations)
 {
-	if (!AreDisplayStatesEqual(OldState, BaseEmotionState))
+	if (OldRegistrations.Num() == EmotionRegistrations.Num())
 	{
-		BroadcastDisplayStateDelta(OldState, DialogueOverrideState, SystemOverrideState);
-	}
-}
+		bool bAnyChanged = false;
+		for (int32 Index = 0; Index < EmotionRegistrations.Num(); ++Index)
+		{
+			if (!AreRegistrationsEquivalent(OldRegistrations[Index], EmotionRegistrations[Index]))
+			{
+				bAnyChanged = true;
+				break;
+			}
+		}
 
-void UEmoComponent::OnRep_DialogueOverrideState(const FEmoDisplayState OldState)
-{
-	if (!AreDisplayStatesEqual(OldState, DialogueOverrideState))
-	{
-		BroadcastDisplayStateDelta(BaseEmotionState, OldState, SystemOverrideState);
+		if (!bAnyChanged)
+		{
+			return;
+		}
 	}
-}
 
-void UEmoComponent::OnRep_SystemOverrideState(const FEmoDisplayState OldState)
-{
-	if (!AreDisplayStatesEqual(OldState, SystemOverrideState))
-	{
-		BroadcastDisplayStateDelta(BaseEmotionState, DialogueOverrideState, OldState);
-	}
+	BroadcastRegistrationDelta(OldRegistrations);
 }
 
 void UEmoComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UEmoComponent, RegisteredSpeakerTag);
-	DOREPLIFETIME(UEmoComponent, BaseEmotionState);
-	DOREPLIFETIME(UEmoComponent, DialogueOverrideState);
-	DOREPLIFETIME(UEmoComponent, SystemOverrideState);
+	DOREPLIFETIME(UEmoComponent, EmotionRegistrations);
 }
 
 #if WITH_EDITOR
@@ -1050,6 +767,7 @@ void UEmoComponent::RefreshEditorPreviewBillboard()
 	{
 		LoadedTexture = PreviewIconTexture.LoadSynchronous();
 	}
+
 	if (!LoadedTexture)
 	{
 		DestroyEditorPreviewBillboard();
@@ -1085,7 +803,6 @@ void UEmoComponent::RefreshEditorPreviewBillboard()
 
 	const float PreviewScale = FMath::Max(0.05f, IconScreenSize / 64.0f);
 	EditorPreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
-
 	EditorPreviewBillboardComponent->SetWorldLocation(GetEmotionAnchorWorldLocation());
 #endif
 }

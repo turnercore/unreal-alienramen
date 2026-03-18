@@ -1,5 +1,28 @@
 // Split from ParleyDialogueSubsystem.cpp for maintainability.
 
+static FGameplayTag ResolvePreviewOwnerCharacterTag(const FDialogueRuntimeContext& PreviewContext)
+{
+	if (PreviewContext.ResolvedPlayerSpeakerTag.IsValid())
+	{
+		return PreviewContext.ResolvedPlayerSpeakerTag;
+	}
+
+	if (PreviewContext.SourceSpeakerTag.IsValid())
+	{
+		return PreviewContext.SourceSpeakerTag;
+	}
+
+	if (PreviewContext.ActivePawn)
+	{
+		if (const UParleySpeakerComponent* SpeakerComponent = PreviewContext.ActivePawn->FindComponentByClass<UParleySpeakerComponent>())
+		{
+			return SpeakerComponent->GetSpeakerTag();
+		}
+	}
+
+	return FGameplayTag();
+}
+
 bool UParleyDialogueSubsystem::PreviewConversationTrace(
 	UParleyConversationAsset* ConversationAsset,
 	const FDialogueRuntimeContext& PreviewContext,
@@ -27,16 +50,20 @@ bool UParleyDialogueSubsystem::PreviewConversationTrace(
 	PreviewSession.CurrentNodeId = ConversationAsset->CompiledData.EnterNodeId;
 	PreviewSession.bConversationImportant = ConversationAsset->Header.bImportant;
 	PreviewSession.bConversationPrivate = ConversationAsset->Header.bPrivateConversation;
-	PreviewSession.OwnerCharacterTag = GetDialogueSpeakerBrotherTag();
-	PreviewSession.InitiatorCharacterTag = GetDialogueSpeakerBrotherTag();
-	PreviewSession.Participants.Add(GetDialogueSpeakerBrotherTag());
+	const FGameplayTag PreviewCharacterTag = ResolvePreviewOwnerCharacterTag(PreviewContext);
+	PreviewSession.OwnerCharacterTag = PreviewCharacterTag;
+	PreviewSession.InitiatorCharacterTag = PreviewCharacterTag;
+	if (PreviewCharacterTag.IsValid())
+	{
+		PreviewSession.Participants.Add(PreviewCharacterTag);
+	}
 	PreviewSession.TransientConversationTags = PreviewContext.TransientConversationTags;
 
 	TMap<FGameplayTag, FGameplayTagContainer> PreviewSeenByPlayer;
 	FGameplayTagContainer PreviewSeenByGame;
 	if (PreviewContext.bSeenByPlayer && PreviewSession.ConversationTag.IsValid())
 	{
-		PreviewSeenByPlayer.FindOrAdd(GetDialogueSpeakerBrotherTag()).AddTag(PreviewSession.ConversationTag);
+		PreviewSeenByPlayer.FindOrAdd(PreviewCharacterTag).AddTag(PreviewSession.ConversationTag);
 	}
 	if (PreviewContext.bSeenByGame && PreviewSession.ConversationTag.IsValid())
 	{
@@ -61,7 +88,7 @@ bool UParleyDialogueSubsystem::PreviewConversationTrace(
 		if (Result == EDialogueExecutionResult::Waiting)
 		{
 			FDialogueClientView View;
-			FillClientViewForCharacter(PreviewSession, GetDialogueSpeakerBrotherTag(), View);
+			FillClientViewForCharacter(PreviewSession, PreviewCharacterTag, View);
 			OutViews.Add(View);
 
 			if (PreviewSession.bWaitingForChoice)

@@ -3,7 +3,7 @@
   "Version": 1,
   "VersionName": "1.0.0",
   "FriendlyName": "Emo",
-  "Description": "Priority-queued emotion display component and EmoVision HUD for NPC emotion feedback.",
+  "Description": "Gameplay-tag-scoped emotion display component and HUD runtime for overhead emotion feedback.",
   "Category": "Gameplay",
   "CreatedBy": "Alien Ramen",
   "CanContainContent": false,
@@ -14,10 +14,6 @@
   "Plugins": [
     {
       "Name": "TagKey",
-      "Enabled": true
-    },
-    {
-      "Name": "Parley",
       "Enabled": true
     }
   ],

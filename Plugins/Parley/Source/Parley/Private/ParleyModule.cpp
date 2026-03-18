@@ -21,8 +21,6 @@ void FParleyModule::StartupModule()
 		TEXT("Parley.Speaker"),
 		TEXT("Parley.Speaker.Requester"),
 		TEXT("Parley.Speaker.Owner"),
-		TEXT("Parley.Speaker.Brother"),
-		TEXT("Parley.Speaker.Sister"),
 		TEXT("Parley.Conversations"),
 		TEXT("Parley.Emotion"),
 		TEXT("Parley.Emotion.Busy"),

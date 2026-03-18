@@ -170,6 +170,7 @@ void AARPlayerController::BeginPlay()
 
 	ApplyDefaultInputMappings(true);
 	InitializeCustomCursor();
+	RebindCurrentCharacterTagChangeDelegate(PlayerState);
 	RequestHUDInitializationInternal(false);
 	EnsureDialogueWidget();
 	RefreshDialogueInputStateFromSession();
@@ -183,6 +184,7 @@ void AARPlayerController::BeginPlay()
 
 void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	UnbindCurrentCharacterTagChangeDelegate();
 	SetPauseMenuOpenLocal(false);
 	ApplyDialogueInputContexts(false);
 	if (bDialogueInputModeApplied)
@@ -199,12 +201,27 @@ void AARPlayerController::PlayerTick(const float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
+	if (IsLocalController() && LastHUDInitPlayerState.Get() != PlayerState)
+	{
+		RequestHUDInitializationInternal(true);
+	}
+
 	if (bPauseMenuOpenLocal && IsPauseMenuBlockedLocal())
 	{
 		RequestClosePauseMenu();
 	}
 
 	TickActiveInteractionRangeValidation(DeltaTime);
+}
+
+void AARPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (IsLocalController())
+	{
+		RequestHUDInitializationInternal(true);
+	}
 }
 
 void AARPlayerController::InitializeCustomCursor()
@@ -1135,6 +1152,7 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 {
 	if (!IsLocalController())
 	{
+		UnbindCurrentCharacterTagChangeDelegate();
 		StopHUDInitializationRetry();
 		return;
 	}
@@ -1150,6 +1168,7 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 	}
 
 	APlayerState* CurrentPlayerState = PlayerState;
+	RebindCurrentCharacterTagChangeDelegate(CurrentPlayerState);
 	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	const bool bContextChanged = LastHUDInitPlayerState.Get() != CurrentPlayerState
 		|| LastHUDInitGameState.Get() != CurrentGameState;
@@ -1226,6 +1245,44 @@ void AARPlayerController::StopHUDInitializationRetry()
 void AARPlayerController::HandleHUDInitializationRetry()
 {
 	RequestHUDInitializationInternal(false);
+}
+
+void AARPlayerController::RebindCurrentCharacterTagChangeDelegate(APlayerState* CurrentPlayerState)
+{
+	AARPlayerStateBase* NewPlayerState = Cast<AARPlayerStateBase>(CurrentPlayerState);
+	if (BoundCurrentCharacterTagPlayerState.Get() == NewPlayerState)
+	{
+		return;
+	}
+
+	UnbindCurrentCharacterTagChangeDelegate();
+	BoundCurrentCharacterTagPlayerState = NewPlayerState;
+	if (NewPlayerState)
+	{
+		NewPlayerState->OnCurrentCharacterTagChanged.RemoveDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+		NewPlayerState->OnCurrentCharacterTagChanged.AddDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+	}
+}
+
+void AARPlayerController::UnbindCurrentCharacterTagChangeDelegate()
+{
+	if (AARPlayerStateBase* PlayerStateBase = BoundCurrentCharacterTagPlayerState.Get())
+	{
+		PlayerStateBase->OnCurrentCharacterTagChanged.RemoveDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+	}
+
+	BoundCurrentCharacterTagPlayerState.Reset();
+}
+
+void AARPlayerController::HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag)
+{
+	(void)NewCharacterTag;
+	(void)OldCharacterTag;
+
+	if (IsLocalController())
+	{
+		RequestHUDInitializationInternal(true);
+	}
 }
 
 void AARPlayerController::RequestOpenPauseMenu()

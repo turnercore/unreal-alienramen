@@ -1,6 +1,6 @@
 /**
  * @file ParleyDialogueWidgetBase.h
- * @brief Reusable dialogue UI bridge widget base for Alien Ramen.
+ * @brief Reusable dialogue UI bridge widget base for Parley.
  */
 #pragma once
 

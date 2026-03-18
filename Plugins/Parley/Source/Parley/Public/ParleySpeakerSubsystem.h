@@ -1,6 +1,6 @@
 /**
  * @file ParleySpeakerSubsystem.h
- * @brief Server-authoritative speaker talkable-state runtime for Alien Ramen.
+ * @brief Server-authoritative speaker talkable-state runtime for Parley.
  */
 #pragma once
 
