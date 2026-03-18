@@ -59,6 +59,7 @@ void UParleyDialogueWidgetBase::InitializeDialogueWidget(APlayerController* InOw
 	}
 
 	UnbindControllerDelegates();
+	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BoundController = InOwningController;
 	BindControllerDelegates();
 	PushInitialViewFromController();
@@ -69,12 +70,7 @@ void UParleyDialogueWidgetBase::DeinitializeDialogueWidget()
 {
 	UnbindControllerDelegates();
 	BoundController = nullptr;
-	CurrentDialogueView = FDialogueClientView();
-	bHasActiveDialogueView = false;
-	if (bAutoToggleVisibilityFromSessionState)
-	{
-		SetVisibility(ESlateVisibility::Collapsed);
-	}
+	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BP_OnDialogueWidgetDeinitialized();
 }
 
@@ -186,12 +182,7 @@ void UParleyDialogueWidgetBase::HandleControllerDialogueViewUpdated(const FDialo
 	FDialogueClientView LocalView;
 	if (!ControllerInterface->QueryLocalDialogueView(LocalView) && !ControllerInterface->GetCachedDialogueView(LocalView))
 	{
-		CurrentDialogueView = FDialogueClientView();
-		bHasActiveDialogueView = false;
-		if (bAutoToggleVisibilityFromSessionState)
-		{
-			SetVisibility(ESlateVisibility::Collapsed);
-		}
+		ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 		return;
 	}
 
@@ -212,15 +203,12 @@ void UParleyDialogueWidgetBase::HandleControllerDialogueSessionEnded(const FStri
 		return;
 	}
 
-	if (bHasActiveDialogueView && CurrentDialogueView.SessionId == SessionId)
+	if (!bHasActiveDialogueView || CurrentDialogueView.SessionId != SessionId)
 	{
-		CurrentDialogueView = FDialogueClientView();
-		bHasActiveDialogueView = false;
-		if (bAutoToggleVisibilityFromSessionState)
-		{
-			SetVisibility(ESlateVisibility::Collapsed);
-		}
+		return;
 	}
+
+	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BP_OnDialogueSessionEnded(SessionId);
 }
 
@@ -264,16 +252,28 @@ void UParleyDialogueWidgetBase::UnbindControllerDelegates()
 	}
 }
 
+void UParleyDialogueWidgetBase::ClearCachedDialogueView(const bool bCollapseVisibility)
+{
+	CurrentDialogueView = FDialogueClientView();
+	bHasActiveDialogueView = false;
+	if (bCollapseVisibility && bAutoToggleVisibilityFromSessionState)
+	{
+		SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
 void UParleyDialogueWidgetBase::PushInitialViewFromController()
 {
 	if (!IsValid(BoundController))
 	{
+		ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 		return;
 	}
 
 	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
 	if (!ControllerInterface)
 	{
+		ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 		return;
 	}
 
@@ -281,5 +281,8 @@ void UParleyDialogueWidgetBase::PushInitialViewFromController()
 	if (ControllerInterface->QueryLocalDialogueView(CurrentView) || ControllerInterface->GetCachedDialogueView(CurrentView))
 	{
 		HandleControllerDialogueViewUpdated(CurrentView);
+		return;
 	}
+
+	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 }

@@ -20,16 +20,16 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Rebuilds the resolver's internal route map and caches from current Project Settings plus any registered route providers. Use this after changing routes at runtime, enabling/disabling providers, or when you need a clean resolver state. If bPreloadConfiguredTables is true, preloading runs immediately after rebuild using the active preload policy."))
+	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Rebuilds the resolver's internal route map and caches from current Project Settings plus any registered route providers. Use this after changing routes at runtime, enabling/disabling providers, or when you need a clean resolver state. If bPreloadConfiguredTables is true, preloading runs after the rebuild using the active preload policy."))
 	void RebuildRouteCache(bool bPreloadConfiguredTables = true);
 
 	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Clears only loaded DataTable cache entries. Route configuration remains intact. Use this to release loaded table references or force the next lookup to reload tables from soft references without rebuilding route definitions."))
 	void ClearResolvedTableCache();
 
-	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Checks whether a row can be resolved for a full gameplay tag path. The resolver first chooses a route by tag hierarchy (best matching root), then uses the leaf segment as row name. Returns true only when both route/table and row exist. Returns false with OutError describing the failure reason."))
+	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Checks whether a row can be resolved for a full gameplay tag path. The resolver walks up the tag's parent chain to find the first configured root, then uses the leaf segment as row name. Overlapping roots are rejected by validation. Returns true only when both route/table and row exist. Returns false with OutError describing the failure reason."))
 	bool TryCheckRowExistsForTag(FGameplayTag Tag, FString& OutError);
 
-	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Validates configured routes without mutating runtime state. Detects invalid root tags, null table references, duplicate roots, and empty route sets. Use this in setup/validation flows to surface configuration issues early."))
+	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Validates configured routes without mutating runtime state. Detects invalid root tags, null table references, duplicate roots, and overlapping root hierarchies. Empty route sets are valid but inert. Use this in setup/validation flows to surface configuration issues early."))
 	bool TryValidateRouteConfiguration(FString& OutError);
 
 	// Copy-owning resolve: returns an InstancedStruct copy (safe to keep after table unload).
@@ -71,7 +71,7 @@ public:
 		FGameplayTag& OutMatchedRootTag,
 		FString& OutError);
 
-	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Resolves which configured root tag would handle a full gameplay tag. This does not return row data; it only tells you the matched route root. Use this to inspect routing decisions, debug tag hierarchies, or build diagnostics."))
+	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Resolves which configured root tag would handle a full gameplay tag. This does not return row data; it only tells you the matched route root selected by ancestry walk. Use this to inspect routing decisions, debug tag hierarchies, or build diagnostics."))
 	bool TryResolveRootTagForTag(FGameplayTag Tag, FGameplayTag& OutMatchedRootTag, FString& OutError);
 
 	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Preloads DataTables for the provided root tag list and stores them in cache. Use this during loading screens or phase transitions to avoid first-lookup sync load hitches. Returns false when one or more roots fail to resolve or load; OutError aggregates all encountered failures."))
@@ -85,6 +85,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Preloads tables according to Project Settings PreloadPolicy. Never: no preload. Only Routes Marked as Preload: loads routes with bPreload=true. All Routes: loads every route. Use this as the default one-call preload entry point in loading screens."))
 	bool PreloadConfiguredRoutesForPolicy(FString& OutError);
+
+	/** Clears the static configured-route cache used by the static routing helpers. Call this after editor-time asset edits when the route path stays the same but the table content/schema changed. */
+	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Clears the static configured-route cache used by the static routing helpers. Call this after editor-time asset edits when the route path stays the same but the table content or schema changed."))
+	static void ResetConfiguredRouteCache();
 
 	UFUNCTION(BlueprintCallable, Category = "TagKey", meta=(ToolTip="Returns resolver runtime diagnostics, including route count, loaded table cache size, matched/unresolved tag cache sizes, and deduplicated failure log count. Use this for debug UI, telemetry, and performance verification."))
 	void GetResolverDiagnostics(FTagKeyDiagnostics& OutDiagnostics) const;

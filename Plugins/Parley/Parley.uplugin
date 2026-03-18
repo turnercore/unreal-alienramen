@@ -18,7 +18,10 @@
     },
     {
       "Name": "GameplayTagsEditor",
-      "Enabled": true
+      "Enabled": true,
+      "TargetAllowList": [
+        "Editor"
+      ]
     }
   ],
   "Modules": [

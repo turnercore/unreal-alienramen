@@ -474,7 +474,20 @@ bool UParleyDialogueSubsystem::ApplyRamenServeOutcome(
 		{
 			if (UParleySpeakerComponent* PreferredSpeaker = PreferredSpeakerActor->FindComponentByClass<UParleySpeakerComponent>())
 			{
-				TargetSpeakerComponent = PreferredSpeaker;
+				if (MatchesSpeakerTag(PreferredSpeaker->GetSpeakerTag()))
+				{
+					TargetSpeakerComponent = PreferredSpeaker;
+				}
+				else
+				{
+					UE_LOG(
+						ParleyLog,
+						Verbose,
+						TEXT("[Dialogue] ApplyRamenServeOutcome ignored preferred actor '%s' because its speaker tag '%s' does not match requested speaker '%s'."),
+						*GetNameSafe(PreferredSpeakerActor),
+						*PreferredSpeaker->GetSpeakerTag().ToString(),
+						*SpeakerTag.ToString());
+				}
 			}
 		}
 

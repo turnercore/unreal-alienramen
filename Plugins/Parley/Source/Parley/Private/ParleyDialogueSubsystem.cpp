@@ -1659,6 +1659,11 @@ static FGameplayTag GetDialogueEmotionRootTag()
 	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion"), false);
 }
 
+static FGameplayTag GetDialogueDefaultEmotionTag()
+{
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion.Default"), false);
+}
+
 static FGameplayTag BuildEmotionTagFromSpeakerTag(
 	const FGameplayTag& SpeakerTag,
 	const FGameplayTag& ResolvedSpeakerRowTag)
@@ -1732,6 +1737,19 @@ static FGameplayTag BuildEmotionTagFromSpeakerTag(
 	return FGameplayTag();
 }
 
+static FGameplayTag ResolvePresentationEmotionTagFromSpeakerTag(
+	const FGameplayTag& SpeakerTag,
+	const FGameplayTag& ResolvedSpeakerRowTag)
+{
+	const FGameplayTag ExplicitEmotionTag = BuildEmotionTagFromSpeakerTag(SpeakerTag, ResolvedSpeakerRowTag);
+	if (ExplicitEmotionTag.IsValid())
+	{
+		return ExplicitEmotionTag;
+	}
+
+	return GetDialogueDefaultEmotionTag();
+}
+
 static bool ResolveSpeakerEmotionFallbackAudioForSpeaker(
 	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& LineSpeakerTag,
@@ -1749,7 +1767,7 @@ static bool ResolveSpeakerEmotionFallbackAudioForSpeaker(
 	}
 
 	const FGameplayTag ResolvedEmotionTag = BuildEmotionTagFromSpeakerTag(LineSpeakerTag, SpeakerRowTag);
-	const FGameplayTag DefaultEmotionTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion.Default"), false);
+	const FGameplayTag DefaultEmotionTag = GetDialogueDefaultEmotionTag();
 	const FParleySpeakerEmotionAudioEntry* DefaultEntry = nullptr;
 	const FParleySpeakerEmotionAudioEntry* UnscopedEntry = nullptr;
 

@@ -1,5 +1,6 @@
 #include "EmoComponent.h"
 
+#include "EmoComponentRegistrySubsystem.h"
 #include "EmoResolverSubsystem.h"
 #include "EmoSettings.h"
 #include "Engine/GameInstance.h"
@@ -178,6 +179,32 @@ UEmoComponent::UEmoComponent()
 	SetIsReplicatedByDefault(true);
 }
 
+void UEmoComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (UWorld* World = GetWorld())
+	{
+		if (UEmoComponentRegistrySubsystem* Registry = World->GetSubsystem<UEmoComponentRegistrySubsystem>())
+		{
+			Registry->RegisterEmotionComponent(this);
+		}
+	}
+}
+
+void UEmoComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (UEmoComponentRegistrySubsystem* Registry = World->GetSubsystem<UEmoComponentRegistrySubsystem>())
+		{
+			Registry->UnregisterEmotionComponent(this);
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 #if WITH_EDITOR
 void UEmoComponent::OnRegister()
 {
@@ -332,7 +359,7 @@ void UEmoComponent::SetSystemEmotionTag(const FName SourceId, const FGameplayTag
 	const int32 OldSourceCount = SystemEmotionSources.Num();
 	FSystemEmotionSourceState& SourceState = SystemEmotionSources.FindOrAdd(SourceId);
 	SourceState.Priority = Priority;
-	SourceState.LastWriteSerial = NextSystemEmotionWriteSerial++;
+	SourceState.SharedWriteSerial = NextSystemEmotionWriteSerial++;
 	SourceState.State.SharedEmotionTag = NewEmotionTag;
 	if (!HasAnyStateTag(SourceState.State))
 	{
@@ -383,7 +410,18 @@ void UEmoComponent::SetSystemEmotionTagForPlayerSlotTag(
 	const int32 OldSourceCount = SystemEmotionSources.Num();
 	FSystemEmotionSourceState& SourceState = SystemEmotionSources.FindOrAdd(SourceId);
 	SourceState.Priority = Priority;
-	SourceState.LastWriteSerial = NextSystemEmotionWriteSerial++;
+	if (IsP1SlotTag(PlayerSlotTag))
+	{
+		SourceState.P1WriteSerial = NextSystemEmotionWriteSerial++;
+	}
+	else if (IsP2SlotTag(PlayerSlotTag))
+	{
+		SourceState.P2WriteSerial = NextSystemEmotionWriteSerial++;
+	}
+	else
+	{
+		SourceState.SharedWriteSerial = NextSystemEmotionWriteSerial++;
+	}
 	SetStateSlotTag(SourceState.State, PlayerSlotTag, NewEmotionTag);
 	if (!HasAnyStateTag(SourceState.State))
 	{
@@ -436,7 +474,7 @@ void UEmoComponent::ClearSystemEmotionTag(const FName SourceId)
 	ClearTimedSystemOverrideTimer(SourceId);
 	if (FSystemEmotionSourceState* SourceState = SystemEmotionSources.Find(SourceId))
 	{
-		SourceState->LastWriteSerial = NextSystemEmotionWriteSerial++;
+		SourceState->SharedWriteSerial = NextSystemEmotionWriteSerial++;
 		SourceState->State.SharedEmotionTag = FGameplayTag();
 		if (!HasAnyStateTag(SourceState->State))
 		{
@@ -466,7 +504,18 @@ void UEmoComponent::ClearSystemEmotionTagForPlayerSlotTag(const FName SourceId, 
 	ClearTimedSystemOverrideSlotTimer(SourceId, PlayerSlotTag);
 	if (FSystemEmotionSourceState* SourceState = SystemEmotionSources.Find(SourceId))
 	{
-		SourceState->LastWriteSerial = NextSystemEmotionWriteSerial++;
+		if (IsP1SlotTag(PlayerSlotTag))
+		{
+			SourceState->P1WriteSerial = NextSystemEmotionWriteSerial++;
+		}
+		else if (IsP2SlotTag(PlayerSlotTag))
+		{
+			SourceState->P2WriteSerial = NextSystemEmotionWriteSerial++;
+		}
+		else
+		{
+			SourceState->SharedWriteSerial = NextSystemEmotionWriteSerial++;
+		}
 		SetStateSlotTag(SourceState->State, PlayerSlotTag, FGameplayTag());
 		if (!HasAnyStateTag(SourceState->State))
 		{
@@ -643,11 +692,14 @@ FVector UEmoComponent::GetEmotionAnchorWorldLocation() const
 	}
 
 	FVector EffectiveOffset = AnchorWorldOffset;
-	if (const UEmoSettings* Settings = GetDefault<UEmoSettings>())
+	if (bUseSettingsDefaultAnchorWorldOffset)
 	{
-		if (EffectiveOffset.IsNearlyZero() && !Settings->DefaultAnchorWorldOffset.IsNearlyZero())
+		if (const UEmoSettings* Settings = GetDefault<UEmoSettings>())
 		{
-			EffectiveOffset = Settings->DefaultAnchorWorldOffset;
+			if (EffectiveOffset.IsNearlyZero() && !Settings->DefaultAnchorWorldOffset.IsNearlyZero())
+			{
+				EffectiveOffset = Settings->DefaultAnchorWorldOffset;
+			}
 		}
 	}
 
@@ -747,27 +799,27 @@ bool UEmoComponent::RebuildSystemOverrideStateFromSources()
 		};
 
 		if (SourceState.State.SharedEmotionTag.IsValid()
-			&& ShouldReplace(SourceState.Priority, SourceState.LastWriteSerial, SharedPriority, SharedSerial))
+			&& ShouldReplace(SourceState.Priority, SourceState.SharedWriteSerial, SharedPriority, SharedSerial))
 		{
 			ResolvedState.SharedEmotionTag = SourceState.State.SharedEmotionTag;
 			SharedPriority = SourceState.Priority;
-			SharedSerial = SourceState.LastWriteSerial;
+			SharedSerial = SourceState.SharedWriteSerial;
 		}
 
 		if (SourceState.State.P1EmotionTag.IsValid()
-			&& ShouldReplace(SourceState.Priority, SourceState.LastWriteSerial, P1Priority, P1Serial))
+			&& ShouldReplace(SourceState.Priority, SourceState.P1WriteSerial, P1Priority, P1Serial))
 		{
 			ResolvedState.P1EmotionTag = SourceState.State.P1EmotionTag;
 			P1Priority = SourceState.Priority;
-			P1Serial = SourceState.LastWriteSerial;
+			P1Serial = SourceState.P1WriteSerial;
 		}
 
 		if (SourceState.State.P2EmotionTag.IsValid()
-			&& ShouldReplace(SourceState.Priority, SourceState.LastWriteSerial, P2Priority, P2Serial))
+			&& ShouldReplace(SourceState.Priority, SourceState.P2WriteSerial, P2Priority, P2Serial))
 		{
 			ResolvedState.P2EmotionTag = SourceState.State.P2EmotionTag;
 			P2Priority = SourceState.Priority;
-			P2Serial = SourceState.LastWriteSerial;
+			P2Serial = SourceState.P2WriteSerial;
 		}
 	}
 

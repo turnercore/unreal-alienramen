@@ -24,12 +24,12 @@ struct TAGKEY_API FTagKeyProjectRoute
 {
 	GENERATED_BODY()
 
-	/** Root gameplay tag prefix this route handles. Example: Dialogue.Speaker */
+	/** Root gameplay tag prefix this route handles. Example: Dialogue.Speaker. */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "TagKey", meta=(ToolTip="Root gameplay tag prefix this route handles. Example: Dialogue.Speaker"))
 	FGameplayTag RootTag;
 
-	/** When true, this route is preloaded when PreloadPolicy = Only Routes Marked as Preload. */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "TagKey", meta=(ToolTip="When PreloadPolicy is set to Only Routes Marked as Preload, this route's table is loaded during subsystem startup."))
+	/** When true, this route is included in explicit critical-route preload requests. */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "TagKey", meta=(ToolTip="When PreloadPolicy is set to Only Routes Marked as Preload, this route is included in the critical-route preload set."))
 	bool bPreload = false;
 
 	/** DataTable soft reference resolved for this route. Row names are expected to match tag leaf strings. */
@@ -40,9 +40,9 @@ struct TAGKEY_API FTagKeyProjectRoute
 UENUM(BlueprintType)
 enum class ETagKeyPreloadPolicy : uint8
 {
-	None UMETA(DisplayName = "Never", ToolTip = "Do not preload tables at startup. Tables load on first use."),
-	CriticalRoots UMETA(DisplayName = "Only Routes Marked as Preload", ToolTip = "Preload only routes in ProjectRoutes with bPreload enabled."),
-	AllRoutes UMETA(DisplayName = "All Routes", ToolTip = "Preload all configured routes at startup.")
+	None UMETA(DisplayName = "Never", ToolTip = "Do not preload tables automatically. Tables load on first use or through explicit preload calls."),
+	CriticalRoots UMETA(DisplayName = "Only Routes Marked as Preload", ToolTip = "Preload only routes in ProjectRoutes with bPreload enabled when a preload pass is requested."),
+	AllRoutes UMETA(DisplayName = "All Routes", ToolTip = "Preload all configured routes when a preload pass is requested.")
 };
 
 USTRUCT(BlueprintType)

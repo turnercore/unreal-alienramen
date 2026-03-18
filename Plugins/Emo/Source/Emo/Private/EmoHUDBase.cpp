@@ -1,6 +1,7 @@
 #include "EmoHUDBase.h"
 
 #include "EmoComponent.h"
+#include "EmoComponentRegistrySubsystem.h"
 #include "EmoSettings.h"
 #include "EmoLog.h"
 #include "CanvasItem.h"
@@ -14,7 +15,76 @@
 #include "HAL/PlatformTime.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
-#include "UObject/UObjectIterator.h"
+#include "UObject/UnrealType.h"
+
+namespace
+{
+	static bool TryGetPlayerSlotTagFromObject(const UObject* SourceObject, FGameplayTag& OutPlayerSlotTag)
+	{
+		OutPlayerSlotTag = FGameplayTag();
+		if (!SourceObject)
+		{
+			return false;
+		}
+
+		if (UFunction* GetPlayerSlotTagFunction = SourceObject->FindFunction(TEXT("GetPlayerSlotTag")))
+		{
+			struct FGetPlayerSlotTagParams
+			{
+				FGameplayTag ReturnValue;
+			};
+
+			FGetPlayerSlotTagParams Params;
+			const_cast<UObject*>(SourceObject)->ProcessEvent(GetPlayerSlotTagFunction, &Params);
+			if (Params.ReturnValue.IsValid())
+			{
+				OutPlayerSlotTag = Params.ReturnValue;
+				return true;
+			}
+		}
+
+		const FStructProperty* SlotTagProperty = FindFProperty<FStructProperty>(SourceObject->GetClass(), TEXT("PlayerSlotTag"));
+		if (!SlotTagProperty || SlotTagProperty->Struct != TBaseStructure<FGameplayTag>::Get())
+		{
+			return false;
+		}
+
+		if (const FGameplayTag* SlotTagValue = SlotTagProperty->ContainerPtrToValuePtr<FGameplayTag>(SourceObject))
+		{
+			if (SlotTagValue->IsValid())
+			{
+				OutPlayerSlotTag = *SlotTagValue;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	static FGameplayTag ResolveViewerSlotTag(const APlayerController* ViewerController)
+	{
+		if (!ViewerController)
+		{
+			return FGameplayTag();
+		}
+
+		FGameplayTag SlotTag;
+		if (TryGetPlayerSlotTagFromObject(ViewerController, SlotTag))
+		{
+			return SlotTag;
+		}
+
+		if (const APlayerState* ViewerState = ViewerController->GetPlayerState<APlayerState>())
+		{
+			if (TryGetPlayerSlotTagFromObject(ViewerState, SlotTag))
+			{
+				return SlotTag;
+			}
+		}
+
+		return FGameplayTag();
+	}
+}
 
 DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_EmoHUD, STATCAT_Advanced);
 DECLARE_CYCLE_STAT(TEXT("Emotion HUD Render"), STAT_EmoHUD_Render, STATGROUP_EmoHUD);
@@ -55,12 +125,19 @@ void AEmoHUDBase::RefreshEmotionComponentCacheIfNeeded()
 	CachedEmotionComponents.Reset();
 
 	UWorld* World = GetWorld();
-	for (TObjectIterator<UEmoComponent> It; It; ++It)
+	if (UEmoComponentRegistrySubsystem* Registry = World ? World->GetSubsystem<UEmoComponentRegistrySubsystem>() : nullptr)
 	{
-		UEmoComponent* EmotionComponent = *It;
-		if (IsValid(EmotionComponent) && !EmotionComponent->IsTemplate() && EmotionComponent->GetWorld() == World)
+		Registry->GetRegisteredEmotionComponents(CachedEmotionComponents);
+	}
+	else
+	{
+		for (TObjectIterator<UEmoComponent> It; It; ++It)
 		{
-			CachedEmotionComponents.Add(EmotionComponent);
+			UEmoComponent* EmotionComponent = *It;
+			if (IsValid(EmotionComponent) && !EmotionComponent->IsTemplate() && EmotionComponent->GetWorld() == World)
+			{
+				CachedEmotionComponents.Add(EmotionComponent);
+			}
 		}
 	}
 }
@@ -133,6 +210,7 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas = Canvas;
 	ActiveProjectionController = LocalController;
+	ActiveProjectionViewerSlotTag = ResolveViewerSlotTag(LocalController);
 	ActiveAsyncIconHandles.RemoveAll([](const TSharedPtr<FStreamableHandle>& Handle)
 		{
 			return !Handle.IsValid() || Handle->HasLoadCompleted();
@@ -297,6 +375,7 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
+	ActiveProjectionViewerSlotTag = FGameplayTag();
 	SET_DWORD_STAT(STAT_EmoHUD_Candidates, CandidateCount);
 	SET_DWORD_STAT(STAT_EmoHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
 	SET_DWORD_STAT(STAT_EmoHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
@@ -488,12 +567,10 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 		return false;
 	}
 
-	if (bHideOccludedEmotion && !IsEmotionVisibleForViewer(EmotionComponent, LocalController))
-	{
-		return false;
-	}
-
-	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForController(LocalController);
+	const FGameplayTag ViewerSlotTag = ActiveProjectionViewerSlotTag.IsValid()
+		? ActiveProjectionViewerSlotTag
+		: ResolveViewerSlotTag(LocalController);
+	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForPlayerSlotTag(ViewerSlotTag);
 	if (!DisplayTag.IsValid())
 	{
 		if (ShouldLogEmotionRenderVerbose())
@@ -518,6 +595,11 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 				*GetNameSafe(EmotionComponent->GetOwner()),
 				*DisplayTag.ToString());
 		}
+		return false;
+	}
+
+	if (bHideOccludedEmotion && !IsEmotionVisibleForViewer(EmotionComponent, LocalController))
+	{
 		return false;
 	}
 

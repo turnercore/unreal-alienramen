@@ -16,10 +16,10 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Project-owned routes. Other plugins can still contribute additional routes via providers. Each entry maps a root tag (e.g., Dialogue.Speaker) to a DataTable soft reference."))
 	TArray<FTagKeyProjectRoute> ProjectRoutes;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Controls which route tables are preloaded at subsystem startup. Never = none, Only Routes Marked as Preload = project routes with bPreload=true, All Routes = every configured route."))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Routes", meta=(ToolTip="Controls which route tables are included when an explicit preload pass runs. Never = none, Only Routes Marked as Preload = project routes with bPreload=true, All Routes = every configured route."))
 	ETagKeyPreloadPolicy PreloadPolicy = ETagKeyPreloadPolicy::CriticalRoots;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Async Loading", meta=(ToolTip="When enabled, successful row resolves request async loads for unresolved soft object/class references found in the resolved row data. Keeps future resolves hitch-free at the cost of background IO."))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Async Loading", meta=(ToolTip="When enabled, successful row resolves request unmanaged async warm-ups for unresolved soft object/class references found in the resolved row data. This avoids first-use hitches without pinning those assets with a managed streamable handle."))
 	bool bAutoPreloadRowSoftReferences = true;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Diagnostics", meta=(ToolTip="When enabled, repeated identical resolver failures are logged once to reduce spam."))

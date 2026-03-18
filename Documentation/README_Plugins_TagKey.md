@@ -8,13 +8,21 @@
 - Keeps plugin and gameplay systems data-driven without hard-coded table references.
 - Provides shared routes consumed by Shop, Parley, Faction, Scrapyard, and Invader systems.
 - Supports preload workflows:
-  - Route table preloads for startup policies.
+  - Explicit route-table preload passes driven by `RebuildRouteCache(true)` or `PreloadConfiguredRoutesForPolicy`.
   - `PreloadRootTableAndSoftReferences` for a root table plus discovered soft object and soft class references.
   - Optional recursive walk of referenced DataTables (depth-limited) without synchronously loading every non-table soft reference.
 
 ## Runtime constraints
 
 - Resolver APIs are game-thread-only; static configured-route helpers enforce the same thread requirement as subsystem instance methods.
+- Empty route configurations are valid but inert; they no longer make the subsystem invalid at startup.
+- Startup initialization now builds the route cache without forcing a preload pass. Call one of the explicit preload entry points when you actually want warm assets.
+- Static configured-route helpers expose `ResetConfiguredRouteCache()` for editor-time table/schema changes when the route path stays the same.
+
+## Provider contract
+
+- Route providers still register by pointer, so they must unregister before destruction.
+- New provider implementations should prefer `FTagKeyRouteProviderRegistration` to make that lifetime explicit and automatic.
 
 ## Where to read details
 

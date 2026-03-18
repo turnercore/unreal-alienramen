@@ -528,6 +528,7 @@ static UParleySpeakerComponent* FindSpeakerComponentForSpeakerTag(UWorld* World,
 
 static void ApplyDialogueEmotionForPresentedSpeaker(
 	FParleyActiveDialogueSession& Session,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FDialogueRuntimeContext& Context,
 	const FGameplayTag& ResolvedSpeakerTag)
 {
@@ -542,8 +543,16 @@ static void ApplyDialogueEmotionForPresentedSpeaker(
 		return;
 	}
 
+	FGameplayTag SpeakerRowTag;
+	ResolveSpeakerRowForPresentation(SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+	const FGameplayTag PresentationEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+	if (!PresentationEmotionTag.IsValid())
+	{
+		return;
+	}
+
 	SpeakerComponent->OnSpeakerEmotionRequested.Broadcast(
-		ResolvedSpeakerTag,
+		PresentationEmotionTag,
 		GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
 		true);
 	Session.SpeakerComponentsWithEmotionOverride.Add(SpeakerComponent);
@@ -752,8 +761,10 @@ static bool TryResolveChoiceLookaheadEmotion(
 				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(LineData->Line, Context);
 				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
 				{
-					OutPreviewEmotionTag = ResolvedSpeakerTag;
-					return true;
+					FGameplayTag SpeakerRowTag;
+					ResolveSpeakerRowForPresentation(DialogueSubsystem->GetRuntimeState().SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+					OutPreviewEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+					return OutPreviewEmotionTag.IsValid();
 				}
 			}
 
@@ -779,8 +790,10 @@ static bool TryResolveChoiceLookaheadEmotion(
 				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(Entry.LineData.Line, Context);
 				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
 				{
-					OutPreviewEmotionTag = ResolvedSpeakerTag;
-					return true;
+					FGameplayTag SpeakerRowTag;
+					ResolveSpeakerRowForPresentation(DialogueSubsystem->GetRuntimeState().SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+					OutPreviewEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+					return OutPreviewEmotionTag.IsValid();
 				}
 			}
 
@@ -811,8 +824,10 @@ static bool TryResolveChoiceLookaheadEmotion(
 				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(Entry.LineData.Line, Context);
 				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
 				{
-					OutPreviewEmotionTag = ResolvedSpeakerTag;
-					return true;
+					FGameplayTag SpeakerRowTag;
+					ResolveSpeakerRowForPresentation(DialogueSubsystem->GetRuntimeState().SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+					OutPreviewEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+					return OutPreviewEmotionTag.IsValid();
 				}
 			}
 
@@ -1089,7 +1104,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.CurrentSpeakerLineFontStyleTag,
 			Session.CurrentSpeakerLineFont);
 		Session.CurrentSpeakerPortrait = ResolvePortraitForSpeaker(SpeakerRowsByTag, ResolvedSpeakerTag);
-		ApplyDialogueEmotionForPresentedSpeaker(Session, Context, ResolvedSpeakerTag);
+		ApplyDialogueEmotionForPresentedSpeaker(Session, SpeakerRowsByTag, Context, ResolvedSpeakerTag);
 		Session.bWaitingForAdvanceInput = true;
 		Session.WaitingLineNodeId = WaitingNodeId;
 		Session.WaitingMultiLineEntryIndex = MultiLineEntryIndex;

@@ -740,7 +740,23 @@ bool UEmoResolverSubsystem::HasConfigInputsChanged() const
 	const UEmoSettings* Settings = GetDefault<UEmoSettings>();
 	const FGameplayTag CurrentResolverRootTag = ResolveEmotionResolverRootTag();
 	const FGameplayTag CurrentGenericRootTag = Settings ? Settings->GenericEmotionRootTag : FGameplayTag();
+	UDataTable* CurrentResolvedDataTable = nullptr;
+	FSoftObjectPath CurrentResolvedDataTablePath;
+	EEmoEmotionTableSource CurrentResolvedSource = EEmoEmotionTableSource::TagKeyConfiguredRoutes;
+	FString CurrentResolveError;
+	const bool bResolved = TryResolveEmotionDataTable(
+		GetGameInstance(),
+		CurrentResolvedDataTable,
+		CurrentResolvedSource,
+		CurrentResolvedDataTablePath,
+		CurrentResolveError);
+
+	if (!bResolved)
+	{
+		return !CachedEmotionDataTablePath.IsNull();
+	}
 
 	return !AreResolverTagsEqual(CurrentResolverRootTag, CachedResolverRootTag)
-		|| !AreResolverTagsEqual(CurrentGenericRootTag, CachedGenericRootTag);
+		|| !AreResolverTagsEqual(CurrentGenericRootTag, CachedGenericRootTag)
+		|| CurrentResolvedDataTablePath != CachedEmotionDataTablePath;
 }

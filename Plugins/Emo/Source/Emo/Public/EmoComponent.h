@@ -152,6 +152,8 @@ public:
 	FEmoOnEmotionQueueChanged OnEmotionQueueChanged;
 
 protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 #if WITH_EDITOR
 	virtual void OnRegister() override;
@@ -173,7 +175,9 @@ private:
 	{
 		FEmoDisplayState State;
 		int32 Priority = 0;
-		uint64 LastWriteSerial = 0;
+		uint64 SharedWriteSerial = 0;
+		uint64 P1WriteSerial = 0;
+		uint64 P2WriteSerial = 0;
 	};
 
 	static FGameplayTag GetStateSlotTag(const FEmoDisplayState& State, const FGameplayTag& PlayerSlotTag);
@@ -213,6 +217,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the actor top-bound anchor."))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
+
+	/** When true, a zero anchor offset uses the configured default offset from UEmoSettings. Disable to allow a literal zero override. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When enabled, a zero component offset falls back to the configured default anchor offset. Disable to allow a literal zero offset."))
+	bool bUseSettingsDefaultAnchorWorldOffset = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
 	float IconScreenSize = 48.0f;

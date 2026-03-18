@@ -100,6 +100,7 @@ private:
 	void ForceOwnerNetUpdate() const;
 
 	UPROPERTY(
+		Replicated,
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Parley|Talk",

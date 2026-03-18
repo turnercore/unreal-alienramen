@@ -76,8 +76,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.1", UIMin = "0.1", ToolTip = "Additional scale multiplier applied to emotion icon draw size."))
 	float EmotionIconRenderScale = 1.0f;
 
-	/** Minimum screen size (pixels) after projection; icons smaller than this are culled. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling."))
+	/** Minimum rendered size clamp in pixels after projection; smaller icons are scaled up to this size rather than culled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling. Smaller icons are clamped up rather than culled."))
 	float MinimumIconScreenSizePixels = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "Configures HUD emotion rendering behavior."))
@@ -122,6 +122,7 @@ private:
 
 	mutable TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	mutable TWeakObjectPtr<const APlayerController> ActiveProjectionController;
+	mutable FGameplayTag ActiveProjectionViewerSlotTag;
 	TArray<TWeakObjectPtr<UEmoComponent>> CachedEmotionComponents;
 	TSet<FSoftObjectPath> PendingAsyncIconLoads;
 	TArray<TSharedPtr<FStreamableHandle>> ActiveAsyncIconHandles;

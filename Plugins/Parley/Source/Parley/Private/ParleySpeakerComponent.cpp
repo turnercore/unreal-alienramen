@@ -194,26 +194,30 @@ void UParleySpeakerComponent::SetSpeakerTag(const FGameplayTag NewSpeakerTag)
 	if (IsAuthorityOwner())
 	{
 		RefreshTalkableFromSubsystem();
+		ForceOwnerNetUpdate();
 	}
 }
 
 void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 {
-	if (!IsAuthorityOwner() || !SpeakerTag.IsValid())
+	if (!IsAuthorityOwner())
 	{
 		UE_LOG(
 			ParleyLog,
 			Verbose,
-			TEXT("[Speaker] Component refresh skipped for '%s': Authority=%s SpeakerTagValid=%s"),
-			*GetNameSafe(GetOwner()),
-			IsAuthorityOwner() ? TEXT("true") : TEXT("false"),
-			SpeakerTag.IsValid() ? TEXT("true") : TEXT("false"));
+			TEXT("[Speaker] Component refresh skipped for '%s': authority required."),
+			*GetNameSafe(GetOwner()));
 		return;
 	}
 
 	const FGameplayTagContainer OldTalkableCharacterTags = TalkableCharacterTags;
 	FGameplayTagContainer NewTalkableCharacterTags;
-	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
+
+	if (!SpeakerTag.IsValid())
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': invalid speaker tag; clearing talkable state."), *GetNameSafe(GetOwner()));
+	}
+	else if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
@@ -237,12 +241,12 @@ void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 		}
 		else
 		{
-			UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': dialogue subsystem unavailable."), *GetNameSafe(GetOwner()));
+			UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': dialogue subsystem unavailable; clearing talkable state."), *GetNameSafe(GetOwner()));
 		}
 	}
 	else
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable."), *GetNameSafe(GetOwner()));
+		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable; clearing talkable state."), *GetNameSafe(GetOwner()));
 	}
 
 	const bool bCharacterTagsChanged = !AreCharacterTagContainersEquivalent(OldTalkableCharacterTags, NewTalkableCharacterTags);
@@ -342,6 +346,7 @@ void UParleySpeakerComponent::ForceOwnerNetUpdate() const
 void UParleySpeakerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UParleySpeakerComponent, SpeakerTag);
 	DOREPLIFETIME(UParleySpeakerComponent, bIsTalkable);
 	DOREPLIFETIME(UParleySpeakerComponent, TalkableCharacterTags);
 }
