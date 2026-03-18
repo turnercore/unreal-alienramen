@@ -12,9 +12,11 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 #include "HAL/PlatformTime.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
+#include "UObject/UObjectIterator.h"
 #include "UObject/UnrealType.h"
 
 namespace
@@ -106,6 +108,7 @@ void AEmoHUDBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	PendingAsyncIconLoads.Reset();
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
+	ActiveProjectionViewerSlotTag = FGameplayTag();
 	Super::EndPlay(EndPlayReason);
 }
 

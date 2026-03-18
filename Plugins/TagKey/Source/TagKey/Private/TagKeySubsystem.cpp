@@ -1,6 +1,7 @@
 #include "TagKeySubsystem.h"
 
 #include "Algo/Sort.h"
+#include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
