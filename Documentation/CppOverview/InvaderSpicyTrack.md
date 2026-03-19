@@ -3,6 +3,7 @@ Paths:
 - `Source/AlienRamen/Public/ARInvaderGameState.h`
 - `Source/AlienRamen/Public/ARInvaderSpicyTrackSettings.h`
 - `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`
+- `Source/AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h`
 
 ## Ownership and Authority
 - Server-authoritative runtime in `AARInvaderGameState`.
@@ -99,6 +100,21 @@ Not yet implemented (open hardening work):
 - receives session payload via `BP_OnFullBlastMenuUpdated(...)`,
 - and sends selection/skip/presence back through owning controller (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
 - Menu is auto-shown for all local invader players while a session is active; only the requesting character owner is chooser-authorized (`bIsChooser=true`), and menu is removed when session ends.
+
+## Spicy Track HUD Widget Base
+- Native bridge class: `UARInvaderSpicyTrackHUDWidgetBase` (owned by `AARInvaderHUD` and exposed for Blueprint HUD elements).
+- Binding contract:
+  - Initialize with `InitializeInvaderSpicyTrackHUDWidget(AARInvaderHUD*)` or use `TryBindOwningInvaderHUD`.
+  - The widget resolves `AARInvaderGameState`, tracks all replicated `AARPlayerStateBase` entries, and listens for tracked-player churn via `OnTrackedPlayersChanged`.
+- Per-character events (character-tag keyed, not local-player-only):
+  - `OnInvaderWidgetCharacterSpiceTrackChanged` -> current spice meter value changed (`AARPlayerStateBase::OnSpiceChanged` source).
+  - `OnInvaderWidgetCharacterMaxSpiceTrackChanged` -> max spice cap changed (`AARPlayerStateBase::OnMaxSpiceChanged` source).
+  - `OnInvaderWidgetCharacterCursorChanged` -> highlighted spicy-track tier changed (`AARPlayerStateBase::OnSpicyTrackCursorChanged` source, includes predicted local cursor updates).
+- Shared-track event:
+  - `OnInvaderWidgetSharedTrackChanged` -> shared slotted-upgrade lane changed (`AARInvaderGameState::OnInvaderSharedTrackChanged` source).
+- Snapshot helpers:
+  - `GetCachedCharacterStates` and `GetCharacterStateByTag` provide latest per-character HUD cache.
+  - `GetSharedTrackSlots` returns cached replicated shared lane state.
 
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.

@@ -107,10 +107,6 @@ struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	FText Description;
 
-	/** Legacy authoring hint only; runtime meat color is carried by spawned meat/drop actors and may vary per enemy. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	EARAffinityColor Color = EARAffinityColor::None;
-
 	/** Number of bowl fill units one item contributes when loaded into a station. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "1", UIMin = "1"))
 	int32 StationFillAmount = 1;

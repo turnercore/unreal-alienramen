@@ -19,6 +19,7 @@
 class UARAbilitySet;
 class UInputMappingContext;
 class UParleyDialogueWidgetBase;
+class UParleyDialogueSubsystem;
 class UUserWidget;
 class AARNPCCharacterBase;
 class AARMeatStorageBoxActor;
@@ -99,6 +100,21 @@ public:
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
 	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
 	virtual void NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request) override;
+	virtual void NotifyDialogueConversationStarted(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueConversationEnded(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag, bool bCompleted) override;
+	virtual void NotifyDialogueLineDelivered(FGameplayTag SpeakerTag, FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueImportantChoiceMade(FGuid ChoiceBranchId, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueSpeakerRelationshipLevelChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, int32 OldLevel, int32 NewLevel, float NewTotal) override;
+	virtual void NotifyDialogueConversationCompleted(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag) override;
+	virtual void NotifyDialogueSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal) override;
+	virtual void NotifyDialogueProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueProgressionStateMarkedDirty() override;
+	virtual void NotifyDialogueChoiceLookaheadEmotion(FGameplayTag PrimarySpeakerTag, FGameplayTag PreviewEmotionTag, FGuid ChoiceBranchId) override;
+	virtual void NotifyDialogueChoiceLookaheadCleared(FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueSignalFired(FGameplayTag SignalTag, FGameplayTagContainer PayloadTags, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifySpeakerTalkableChanged(FGameplayTag SpeakerTag, bool bNewTalkable) override;
+	virtual void NotifyFactionPopularityChanged(FGameplayTag FactionTag, float Delta, float NewTotal) override;
+	virtual void NotifyFactionSpeakerReputationChanged(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal) override;
 	virtual void RequestInteractWithActor(AActor* Actor) override;
 	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) override;
 	virtual void RequestAdvanceDialogueInput() override;
@@ -267,6 +283,52 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientDialogueAudioRequested(const FDialogueAudioRequest& Request);
 
+	// Client relays for dialogue/widget-facing runtime signals. These rebroadcast into the local Parley subsystems so HUD widgets can stay bound to subsystem delegates.
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueConversationStarted(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueConversationEnded(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag, bool bCompleted);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueLineDelivered(FGameplayTag SpeakerTag, FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueImportantChoiceMade(FGuid ChoiceBranchId, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSpeakerRelationshipLevelChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, int32 OldLevel, int32 NewLevel, float NewTotal);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueConversationCompleted(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueProgressionStateMarkedDirty();
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueChoiceLookaheadEmotion(FGameplayTag PrimarySpeakerTag, FGameplayTag PreviewEmotionTag, FGuid ChoiceBranchId);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueChoiceLookaheadCleared(FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSignalFired(FGameplayTag SignalTag, FGameplayTagContainer PayloadTags, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientSpeakerTalkableChanged(FGameplayTag SpeakerTag, bool bNewTalkable);
+
+	UFUNCTION(Client, Reliable)
+	void ClientFactionPopularityChanged(FGameplayTag FactionTag, float Delta, float NewTotal);
+
+	UFUNCTION(Client, Reliable)
+	void ClientFactionSpeakerReputationChanged(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal);
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
 	void BP_OnDialogueSessionUpdated(const FDialogueClientView& View);
 
@@ -323,25 +385,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction|Animation")
 	void NotifyInteractionActionCue(EARInteractionActionCue ActionCue, AActor* ActionTarget = nullptr);
 
-	// Optional auto-created dialogue widget for local controllers.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	/** Returns the HUD-owned dialogue widget, if present. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Returns the HUD-owned dialogue widget, if present."))
+	UParleyDialogueWidgetBase* GetDialogueWidget() const;
+
+	/** Requests the HUD-owned dialogue widget to exist and bind to this controller. The HUD owns viewport attachment and z-order. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Requests the HUD-owned dialogue widget to exist and bind to this controller. The HUD owns viewport attachment and z-order."))
 	void EnsureDialogueWidget();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	/** Requests the HUD-owned dialogue widget to be removed from the viewport. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Requests the HUD-owned dialogue widget to be removed from the viewport."))
 	void RemoveDialogueWidget();
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI")
-	UParleyDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
 
 	// Initializes a custom default cursor widget on local controllers only.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
 	void InitializeCustomCursor();
 
-	// Requests HUD initialization/rebind for the local controller context.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD")
+	/** Requests HUD initialization/rebind for the local controller context and refreshes HUD-owned presentation state. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD", meta = (ToolTip = "Requests HUD initialization/rebind for the local controller context and refreshes HUD-owned presentation state."))
 	void RequestHUDInitialization();
 
-	// BP hook to create/rebind HUD widgets when local controller context is ready or refreshed.
+	/** BP hook to create/rebind HUD widgets when local controller context is ready or refreshed. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
 	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
@@ -429,18 +493,6 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
 	TObjectPtr<UUserWidget> Cursor = nullptr;
 
-	// Automatically creates a dialogue widget on local controller begin play.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI")
-	bool bAutoCreateDialogueWidget = false;
-
-	// Widget class for dialogue presentation/input (typically deriving from UParleyDialogueWidgetBase).
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
-	TSubclassOf<UParleyDialogueWidgetBase> DialogueWidgetClass;
-
-	// Viewport z-order for auto-created dialogue widget.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
-	int32 DialogueWidgetZOrder = 1800;
-
 	/** Automatically swaps Enhanced Input mapping contexts when pause menu opens/closes. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
 	bool bAutoManagePauseInputContexts = true;
@@ -499,6 +551,8 @@ protected:
 private:
 	UFUNCTION()
 	void HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag);
+	// Reuse the local widget-facing subsystem broadcast path after a client RPC arrives.
+	void BroadcastDialogueSubsystemEventOnClient(TFunctionRef<void(UParleyDialogueSubsystem&)> BroadcastCallback);
 
 	bool IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, bool bLogFailures) const;
 	void TickActiveInteractionRangeValidation(float DeltaTime);
@@ -598,9 +652,6 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UParleyDialogueWidgetBase> DialogueWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input", meta = (AllowPrivateAccess = "true"))
 	int32 SelectedDialogueChoiceIndex = INDEX_NONE;

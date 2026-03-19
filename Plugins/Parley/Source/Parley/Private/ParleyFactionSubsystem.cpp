@@ -2,23 +2,45 @@
 
 #include "ParleyFactionSettings.h"
 #include "ParleyLog.h"
+#include "ParleyPlayerControllerInterface.h"
 #include "TagKeySubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
+#include "GameFramework/PlayerController.h"
 #include "GameplayTagsManager.h"
 #include "StructUtils/InstancedStruct.h"
 
 namespace
 {
-	static bool IsAuthorityWorld_Faction(const UWorld* World)
+static bool IsAuthorityWorld_Faction(const UWorld* World)
+{
+	if (!World)
 	{
-		if (!World)
-		{
-			return false;
-		}
-
-		return World->GetNetMode() == NM_Standalone || World->GetAuthGameMode() != nullptr;
+		return false;
 	}
+
+	return World->GetNetMode() == NM_Standalone || World->GetAuthGameMode() != nullptr;
+}
+
+// Faction mutation events are purely authoritative, so relay them to every local/controller-bound widget receiver.
+template <typename TCallback>
+static void ForEachFactionWidgetController(UWorld* World, TCallback&& Callback)
+{
+	if (!World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* Controller = It->Get();
+		if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(Controller))
+		{
+			Callback(*ControllerInterface);
+		}
+	}
+}
 }
 
 void UParleyFactionSubsystem::Deinitialize()
@@ -150,6 +172,10 @@ bool UParleyFactionSubsystem::ModifyFactionPopularity(const FGameplayTag Faction
 	}
 
 	OnFactionPopularityChanged.Broadcast(FactionTag, AppliedDelta, NewValue);
+	ForEachFactionWidgetController(GetWorld(), [FactionTag, AppliedDelta, NewValue](IParleyPlayerControllerInterface& ControllerInterface)
+	{
+		ControllerInterface.NotifyFactionPopularityChanged(FactionTag, AppliedDelta, NewValue);
+	});
 	return true;
 }
 
@@ -184,7 +210,61 @@ bool UParleyFactionSubsystem::ModifyFactionSpeakerReputation(
 	}
 
 	OnFactionSpeakerReputationChanged.Broadcast(FactionTag, SpeakerTag, AppliedDelta, NewValue);
+	ForEachFactionWidgetController(GetWorld(), [FactionTag, SpeakerTag, AppliedDelta, NewValue](IParleyPlayerControllerInterface& ControllerInterface)
+	{
+		ControllerInterface.NotifyFactionSpeakerReputationChanged(FactionTag, SpeakerTag, AppliedDelta, NewValue);
+	});
 	return true;
+}
+
+void UParleyFactionSubsystem::UpdateFactionPopularityFromReplication(
+	const FGameplayTag FactionTag,
+	const float DeltaPopularity,
+	const float NewTotal)
+{
+	if (!FactionTag.IsValid())
+	{
+		return;
+	}
+
+	if (FParleyFactionState* Existing = FindFactionPopularityStateMutable(FactionTag))
+	{
+		Existing->Popularity = NewTotal;
+	}
+	else
+	{
+		FParleyFactionState& Added = PersistedFactionPopularityStates.AddDefaulted_GetRef();
+		Added.FactionTag = FactionTag;
+		Added.Popularity = NewTotal;
+	}
+
+	OnFactionPopularityChanged.Broadcast(FactionTag, DeltaPopularity, NewTotal);
+}
+
+void UParleyFactionSubsystem::UpdateFactionSpeakerReputationFromReplication(
+	const FGameplayTag FactionTag,
+	const FGameplayTag SpeakerTag,
+	const float DeltaReputation,
+	const float NewTotal)
+{
+	if (!FactionTag.IsValid() || !SpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	if (FParleyFactionSpeakerReputationState* Existing = FindSpeakerReputationStateMutable(FactionTag, SpeakerTag))
+	{
+		Existing->Reputation = NewTotal;
+	}
+	else
+	{
+		FParleyFactionSpeakerReputationState& Added = PersistedFactionSpeakerReputationStates.AddDefaulted_GetRef();
+		Added.FactionTag = FactionTag;
+		Added.SpeakerTag = SpeakerTag;
+		Added.Reputation = NewTotal;
+	}
+
+	OnFactionSpeakerReputationChanged.Broadcast(FactionTag, SpeakerTag, DeltaReputation, NewTotal);
 }
 
 void UParleyFactionSubsystem::SetFactionPopularityStates(const TArray<FParleyFactionState>& States)

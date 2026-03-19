@@ -18,6 +18,7 @@
 #include "Engine/Texture2D.h"
 #include "Sound/SoundBase.h"
 #include "TimerManager.h"
+#include "GameFramework/PlayerController.h"
 #include "UObject/UnrealType.h"
 
 namespace
@@ -173,6 +174,19 @@ namespace
 			if (Owner)
 			{
 				Owner->OnProgressionStateMarkedDirty.Broadcast();
+				if (UWorld* World = Owner->GetWorld())
+				{
+					for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+					{
+						if (APlayerController* Controller = It->Get())
+						{
+							if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(Controller))
+							{
+								ControllerInterface->NotifyDialogueProgressionStateMarkedDirty();
+							}
+						}
+					}
+				}
 			}
 		}
 

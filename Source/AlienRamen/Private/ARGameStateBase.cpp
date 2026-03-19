@@ -842,13 +842,15 @@ void AARGameStateBase::OnRep_Scrap(int32 OldScrap)
 
 void AARGameStateBase::OnRep_Meat(FARMeatState OldMeat)
 {
+	const int32 OldTotalMeat = OldMeat.GetTotalAmount();
+	const int32 NewTotalMeat = Meat.GetTotalAmount();
 	UE_LOG(
 		ARLog,
 		Verbose,
 		TEXT("[Save|Currency] Meat changed oldTotal=%d newTotal=%d"),
-		OldMeat.GetTotalAmount(),
-		Meat.GetTotalAmount());
-	OnMeatChanged.Broadcast(Meat, OldMeat);
+		OldTotalMeat,
+		NewTotalMeat);
+	OnMeatChanged.Broadcast(Meat, OldMeat, NewTotalMeat, OldTotalMeat);
 }
 
 void AARGameStateBase::OnRep_RunLedgerScrap(int32 OldRunLedgerScrap)

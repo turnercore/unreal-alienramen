@@ -982,9 +982,30 @@ static bool PersistCompletedConversation(
 	FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
 	if (!ProgressionStore)
 	{
-		UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] PersistCompletedConversation failed: runtime progression state unavailable for '%s'."),
+		UE_LOG(
+			ParleyLog,
+			Warning,
+			TEXT("[Dialogue] PersistCompletedConversation failed: runtime progression state unavailable for '%s'."),
 			*Session.ConversationTag.ToString());
 		DialogueSubsystem->OnConversationCompleted.Broadcast(Session.ConversationTag);
+		for (const FGameplayTag Slot : Session.Participants)
+		{
+			if (!Slot.IsValid())
+			{
+				continue;
+			}
+
+			if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
+			{
+				if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+				{
+					ControllerInterface->NotifyDialogueConversationCompleted(
+						Session.ConversationTag,
+						GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
+						FGameplayTag());
+				}
+			}
+		}
 		return false;
 	}
 
@@ -1026,6 +1047,24 @@ static bool PersistCompletedConversation(
 		Session.ConversationTag,
 		GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
 		ProgressionStore->CharacterTagByIdentity.FindRef(Session.OwnerCharacterTag));
+	for (const FGameplayTag Slot : Session.Participants)
+	{
+		if (!Slot.IsValid())
+		{
+			continue;
+		}
+
+		if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
+		{
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			{
+				ControllerInterface->NotifyDialogueConversationCompleted(
+					Session.ConversationTag,
+					GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
+					ProgressionStore->CharacterTagByIdentity.FindRef(Session.OwnerCharacterTag));
+			}
+		}
+	}
 
 	// Keep speaker talkable icons/state in sync after completion changes offer availability.
 	if (UGameInstance* GI = DialogueSubsystem->GetGameInstance())
@@ -1229,6 +1268,24 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 				ResolvedSpeakerTag,
 				Session.ConversationTag,
 				GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+			for (const FGameplayTag Slot : Session.Participants)
+			{
+				if (!Slot.IsValid())
+				{
+					continue;
+				}
+
+				if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
+				{
+					if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+					{
+						ControllerInterface->NotifyDialogueLineDelivered(
+							ResolvedSpeakerTag,
+							Session.ConversationTag,
+							GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+					}
+				}
+			}
 		}
 
 		return EDialogueExecutionResult::Waiting;
@@ -1771,6 +1828,26 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 					Context.ConversationTag,
 					Context.PrimarySpeakerTag,
 					GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+				for (const FGameplayTag Slot : Session.Participants)
+				{
+					if (!Slot.IsValid())
+					{
+						continue;
+					}
+
+					if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
+					{
+						if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+						{
+							ControllerInterface->NotifyDialogueSignalFired(
+								SignalData->SignalTag,
+								SignalData->PayloadTags,
+								Context.ConversationTag,
+								Context.PrimarySpeakerTag,
+								GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+						}
+					}
+				}
 			}
 
 			Session.CurrentNodeId = Node->NextNodeId;
@@ -1935,6 +2012,26 @@ static void RemoveSessionAt(UParleyDialogueSubsystem* DialogueSubsystem, TArray<
 		SessionSnapshot.PrimarySpeakerTag,
 		GetDefaultCharacterTagForSlot(SessionSnapshot.OwnerCharacterTag),
 		bCompleted);
+	for (const FGameplayTag Slot : ParticipantSlots)
+	{
+		if (!Slot.IsValid())
+		{
+			continue;
+		}
+
+		if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
+		{
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			{
+				ControllerInterface->NotifyDialogueChoiceLookaheadCleared(GetDefaultCharacterTagForSlot(SessionSnapshot.OwnerCharacterTag));
+				ControllerInterface->NotifyDialogueConversationEnded(
+					SessionSnapshot.ConversationTag,
+					SessionSnapshot.PrimarySpeakerTag,
+					GetDefaultCharacterTagForSlot(SessionSnapshot.OwnerCharacterTag),
+					bCompleted);
+			}
+		}
+	}
 	for (const FGameplayTag Slot : ParticipantSlots)
 	{
 		if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
@@ -2277,8 +2374,26 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 		ConversationTag,
 		PrimarySpeakerTag,
 		GetDefaultCharacterTagForSlot(RequesterSlot));
-	RefreshBusyEmotionForSpeaker(this, PrimarySpeakerTag, Runtime.ActiveSessions);
 	const int32 NewSessionIndex = Runtime.ActiveSessions.Num() - 1;
+	for (const FGameplayTag Slot : Runtime.ActiveSessions[NewSessionIndex].Participants)
+	{
+		if (!Slot.IsValid())
+		{
+			continue;
+		}
+
+		if (APlayerController* TargetController = FindPlayerControllerByCharacter(World, Slot))
+		{
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			{
+				ControllerInterface->NotifyDialogueConversationStarted(
+					ConversationTag,
+					PrimarySpeakerTag,
+					GetDefaultCharacterTagForSlot(RequesterSlot));
+			}
+		}
+	}
+	RefreshBusyEmotionForSpeaker(this, PrimarySpeakerTag, Runtime.ActiveSessions);
 	EDialogueExecutionResult Result = ExecuteSessionUntilWait(
 		this,
 		Runtime.ActiveSessions[NewSessionIndex],
@@ -2445,6 +2560,25 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 			Session.ConversationTag,
 			Session.PrimarySpeakerTag,
 			GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+		for (const FGameplayTag Slot : Session.Participants)
+		{
+			if (!Slot.IsValid())
+			{
+				continue;
+			}
+
+			if (APlayerController* TargetController = FindPlayerControllerByCharacter(World, Slot))
+			{
+				if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+				{
+					ControllerInterface->NotifyDialogueImportantChoiceMade(
+						ChoiceBranchId,
+						Session.ConversationTag,
+						Session.PrimarySpeakerTag,
+						GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+				}
+			}
+		}
 	}
 
 	ClearChoiceLookaheadPreviewForSpeaker(
@@ -2452,6 +2586,21 @@ bool UParleyDialogueSubsystem::SubmitChoice(APlayerController* RequestingControl
 		Session.PrimarySpeakerTag,
 		GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
 	OnChoiceLookaheadCleared.Broadcast(GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+	for (const FGameplayTag Slot : Session.Participants)
+	{
+		if (!Slot.IsValid())
+		{
+			continue;
+		}
+
+		if (APlayerController* TargetController = FindPlayerControllerByCharacter(World, Slot))
+		{
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			{
+				ControllerInterface->NotifyDialogueChoiceLookaheadCleared(GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag));
+			}
+		}
+	}
 	ClearSessionPresentationState(Session);
 	Session.RuntimeChoiceSelections.Add(ChoiceNode->NodeId, ChoiceBranchId);
 	Session.CurrentNodeId = SelectedBranch->NextNodeId;
@@ -2497,6 +2646,7 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 	}
 
 	const FGameplayTag ViewerSlotTag = GetDefaultCharacterTagForSlot(ViewerSlot);
+	IParleyPlayerControllerInterface* RequestingControllerInterface = Cast<IParleyPlayerControllerInterface>(RequestingController);
 	if (!ChoiceBranchId.IsValid())
 	{
 		const int32 SessionIndex = FindSessionIndexForCharacter(GetRuntimeState().ActiveSessions, ViewerSlot);
@@ -2506,6 +2656,10 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 			ClearChoiceLookaheadPreviewForSpeaker(World, Session.PrimarySpeakerTag, ViewerSlotTag);
 		}
 		OnChoiceLookaheadCleared.Broadcast(ViewerSlotTag);
+		if (RequestingControllerInterface)
+		{
+			RequestingControllerInterface->NotifyDialogueChoiceLookaheadCleared(ViewerSlotTag);
+		}
 		return true;
 	}
 
@@ -2537,6 +2691,10 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 			ChoiceBranchId,
 			FGameplayTag());
 		OnChoiceLookaheadEmotion.Broadcast(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
+		if (RequestingControllerInterface)
+		{
+			RequestingControllerInterface->NotifyDialogueChoiceLookaheadEmotion(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
+		}
 		return false;
 	}
 
@@ -2554,6 +2712,10 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 			ChoiceBranchId,
 			FGameplayTag());
 		OnChoiceLookaheadEmotion.Broadcast(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
+		if (RequestingControllerInterface)
+		{
+			RequestingControllerInterface->NotifyDialogueChoiceLookaheadEmotion(Session.PrimarySpeakerTag, FGameplayTag(), ChoiceBranchId);
+		}
 		return false;
 	}
 
@@ -2575,6 +2737,13 @@ bool UParleyDialogueSubsystem::HighlightDialogueChoice(APlayerController* Reques
 		Session.PrimarySpeakerTag,
 		bResolvedPreview ? PreviewEmotionTag : FGameplayTag(),
 		ChoiceBranchId);
+	if (RequestingControllerInterface)
+	{
+		RequestingControllerInterface->NotifyDialogueChoiceLookaheadEmotion(
+			Session.PrimarySpeakerTag,
+			bResolvedPreview ? PreviewEmotionTag : FGameplayTag(),
+			ChoiceBranchId);
+	}
 	return true;
 }
 

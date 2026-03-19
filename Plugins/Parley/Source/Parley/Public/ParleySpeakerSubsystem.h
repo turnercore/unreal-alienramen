@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Runs a speaker component operation that routes through Parley runtime systems."))
 	void RefreshAllSpeakerTalkableStates();
 
+	/** Client-side relay from replicated speaker components. Keeps local UI caches and widgets in sync without requiring authority broadcasts. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Updates local cached speaker talkable state from replicated component data and relays the change to widgets."))
+	void UpdateTalkableStateFromReplication(FGameplayTag SpeakerTag, bool bNewTalkable);
+
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue|Speaker", meta = (ToolTip = "Broadcast when cached talkable state changes for a speaker tag."))
 	FParleyOnSpeakerTalkableChanged OnSpeakerTalkableChanged;
 

@@ -173,7 +173,7 @@ This document captures the runtime ownership and integration contract for the sh
   - reserve inventory is canonical by meat type tag (`FARMeatState::AdditionalAmountsByType`); legacy color buckets are compatibility mirrors.
   - `TryDispenseMeat(...)` uses random typed dispense across eligible typed stock (`TryDispenseRandomMeatByContainerColor`), and applies storage/container color to the spawned world meat actor.
   - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Item.Meat` tag.
-  - color-only compatibility paths resolve to the first deterministic meat row for that color (sorted row-name order).
+  - color-only compatibility paths resolve to the first deterministic meat row by MeatTag hierarchy (`Item.Meat.<Color>.*`, sorted row-name order).
   - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching runtime meat color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
   - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
