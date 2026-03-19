@@ -26,6 +26,7 @@ Path: `Source/AlienRamen/Public/ARInvaderDropBase.h`
 
 - `DropType = Scrap` -> increments `GameState.Scrap`.
 - `DropType = Meat` -> increments `GameState.Meat` bucket by `DropColor` (`Red`, `Blue`, `White`, fallback `Unspecified`).
+- `DropColor` is runtime-authored by the killing enemy state (enemy color at drop spawn time), so meat type identity and drop color remain decoupled.
 
 ## Blueprint Hooks
 

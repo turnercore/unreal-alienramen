@@ -78,7 +78,10 @@ private:
 	void RegisterDebugConsoleCommands();
 	void UnregisterDebugConsoleCommands();
 	void HandleConsoleArDebug(const TArray<FString>& Args);
+	void HandleConsoleArDebugAll(const TArray<FString>& Args);
+	bool TryResolveDebugVerbosityArg(const TArray<FString>& Args, FString& OutTargetVerbosity) const;
 	IConsoleObject* CmdArDebug = nullptr;
+	IConsoleObject* CmdArDebugAll = nullptr;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UARParleySaveBridge> ParleySaveBridge;

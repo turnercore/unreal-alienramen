@@ -36,6 +36,11 @@ public:
 	FParleyOnSpeakerTalkableChanged OnSpeakerTalkableChanged;
 
 private:
+	/** Re-evaluate all cached talkable speakers after dialogue progression mutates. */
+	UFUNCTION()
+	void HandleDialogueProgressionStateMarkedDirty();
+
+private:
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, bool> SpeakerTalkableCache;
 };

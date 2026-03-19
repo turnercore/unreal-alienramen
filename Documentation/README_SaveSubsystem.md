@@ -39,6 +39,7 @@ Authoritative persisted fields currently include:
   - `ActiveRunBuffPayloads`
   - `ActiveRunBuffCycleId`
   - `ShopTransientCarryables`
+    - meat snapshots include `MeatQualityTier` (`EARVendingQualityTier`, default `Standard`)
 - Player payload:
   - `PlayerStates[]`:
     - `Identity` (optional online id/type, display name, shared-account primary/secondary profile flag)
@@ -167,6 +168,7 @@ Travel execution is owned by `UARTravelSubsystem` (not `UARSaveSubsystem`).
 - `OnSaveFailed`
 - `OnLoadFailed`
 - `OnGameLoaded`
+- `CreateNewSave(...)` does not broadcast `OnSaveCompleted` because it intentionally does not persist to disk.
 
 ## Hydration Order (Current Contract)
 
@@ -192,7 +194,10 @@ PlayerState hydration is split by lifecycle:
 
 1. Get subsystem.
 2. Call `CreateNewSave(NAME_None or custom base, OutSlot, OutResult, bUseDebugSaves)`.
-3. On success, travel/start flow as needed.
+3. On success, the subsystem keeps a new canonical save in memory, marks it dirty, and does not write any slot/index files yet.
+4. The in-memory-only new save keeps `LastSaved` unset (`FDateTime()`/zero ticks) until the first persisted write.
+5. Joining clients do not receive/persist canonical save bytes for that new run until the first real save has happened.
+6. First explicit save/autosave writes revision `0` for that slot base.
 
 ## Save current run
 

@@ -55,6 +55,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Travel")
 	bool TravelDirectInMode(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
+	/**
+	 * Authoritative hold-style character-switch request endpoint.
+	 * bIsRequesting=true is "holding switch"; false releases and re-arms the request latch.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Players|Character Switch", meta = (BlueprintAuthorityOnly))
+	bool SubmitCharacterSwitchHoldRequest(APlayerController* RequestingController, bool bIsRequesting);
+
 protected:
 	// Authoritative mode identity tag for this GameMode class/instance.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Game Mode")
@@ -92,6 +99,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Transition", meta = (EditCondition = "bRouteModeTravelThroughTransitionMap"))
 	EARTransitionReason TransitionReason = EARTransitionReason::GenericContinue;
 
+	/** Ordered canonical character tags used by switch-character request cycling. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Players|Character Switch", meta = (ToolTip = "Ordered canonical character tags used when cycling switch-character requests."))
+	TArray<FGameplayTag> PlayableCharacterSwitchOrder;
+
 	UFUNCTION(BlueprintNativeEvent, Category = "Alien Ramen|Players")
 	void BP_OnPlayerJoined(AARPlayerStateBase* JoinedPlayerState);
 	virtual void BP_OnPlayerJoined_Implementation(AARPlayerStateBase* JoinedPlayerState);
@@ -117,8 +128,25 @@ private:
 	void EnsureJoinedPlayerHasUniqueIdentity(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
 	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
 	void PreparePlayerSpawnIdentity(AController* Player, AARPlayerStateBase* PlayerState) const;
+	void CleanupCharacterSwitchRequests();
+	bool CollectSwitchEligibleControllers(TArray<APlayerController*>& OutEligibleControllers) const;
+	void BuildPlayableCharacterSwitchList(const TArray<APlayerController*>& EligibleControllers, TArray<FGameplayTag>& OutPlayableCharacterTags) const;
+	bool TryFindNextFreeSwitchTargetTag(
+		const FGameplayTag& CurrentCharacterTag,
+		const TArray<FGameplayTag>& OrderedCharacterTags,
+		const TMap<FGameplayTag, TWeakObjectPtr<APlayerController>>& OccupancyByCharacterTag,
+		const APlayerController* RequestingController,
+		FGameplayTag& OutTargetCharacterTag) const;
+	bool TryResolveQueuedCharacterSwitches();
+	bool ApplyCharacterSwitchAssignments(const TMap<TWeakObjectPtr<APlayerController>, FGameplayTag>& AssignmentByController);
 
 	/** Per-controller character-tag cache captured in ChoosePlayerStart to keep pawn class/start identity aligned. */
 	TMap<TWeakObjectPtr<const AController>, FGameplayTag> PendingSpawnCharacterTagsByController;
+
+	/** Controllers currently holding switch-character input. */
+	TSet<TWeakObjectPtr<APlayerController>> ActiveCharacterSwitchRequests;
+
+	/** Post-switch latch; controller must release before another switch request is accepted. */
+	TSet<TWeakObjectPtr<APlayerController>> CharacterSwitchRequestLatchUntilRelease;
 };
 

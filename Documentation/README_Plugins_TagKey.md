@@ -18,6 +18,14 @@
 - Empty route configurations are valid but inert; they no longer make the subsystem invalid at startup.
 - Startup initialization now builds the route cache without forcing a preload pass. Call one of the explicit preload entry points when you actually want warm assets.
 - Static configured-route helpers expose `ResetConfiguredRouteCache()` for editor-time table/schema changes when the route path stays the same.
+- Root-tag hierarchy overlap is allowed intentionally; tag resolution walks parent tags from leaf to root and uses the nearest configured ancestor root.
+
+## Debugging
+
+- `tagkey.debug.log` defaults `TagKeyLog` to `VeryVerbose`.
+- `tagkey.debug.log verbose|log|warning|error|off|reset` supports the same verbosity shorthands as `ar.debug.log`.
+- `tagkey.debug.log` requires an active PIE/Game world context; it will no-op with a warning from editor-only/non-game contexts.
+- Native console command `log logtagkey <level>` still works for direct log-category control.
 
 ## Provider contract
 

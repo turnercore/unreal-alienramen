@@ -32,6 +32,13 @@
 - Same-priority targeted conflicts log a warning and still resolve deterministically.
 - `OnEmotionDisplayChanged` remains the empty-viewer/global signal; tag-scoped-only changes still raise `OnEmotionDisplayStateChanged`.
 
+## Debugging
+
+- `emo.debug.log` defaults `EmoLog` to `VeryVerbose`.
+- `emo.debug.log verbose|log|warning|error|off|reset` supports the same verbosity shorthands as `ar.debug.log`.
+- `emo.debug.log` requires an active PIE/Game world context; it will no-op with a warning from editor-only/non-game contexts.
+- Native console command `log emolog <level>` still works when you want direct category control.
+
 ## Full contract
 
 - [Parley runtime (Dialogue + Speaker)](README_DialogueNPC.md)

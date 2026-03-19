@@ -188,6 +188,14 @@ void AARShopAIController::RefreshSpeakerDialogueGateFromStateTags()
 		return;
 	}
 
+	// Pure dialogue NPCs in shop should remain interactable; only customer-driven speakers
+	// need the shop-state dialogue window gate.
+	if (!SpeakerPawn->GetCustomerComponent())
+	{
+		SpeakerPawn->SetSpeakerLocalStateAllowsDialogue(true);
+		return;
+	}
+
 	const FGameplayTagContainer ActiveTags = StateTreeComponent->GetCurrentActiveStateTags();
 	const FGameplayTag ShopStateRootTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC")), false);
 	bool bAllowsDialogue = true;

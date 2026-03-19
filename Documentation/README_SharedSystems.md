@@ -24,6 +24,19 @@ Use this section when the question is not "what happens in Shop/Invader/Scrapyar
 
 Read this when a feature needs to survive listen-server play, couch co-op, LAN, or future online backend routing.
 
+## Controller Identity and Character Assignment UI
+
+- Runtime controller identity is `AARPlayerStateBase::PlayerSlotId` (controller/profile-owned, not character-owned).
+- Canonical gameplay ownership remains character-tag-based (`CurrentCharacterTag`).
+- Shared Blueprint widget bridge for lobby/pause character assignment:
+  - `Source/AlienRamen/Public/ARCharacterAssignmentWidgetBase.h`
+  - `Source/AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp`
+- Concrete Widget Blueprint parent for UMG assets:
+  - `Source/AlienRamen/Public/ARLobbyCharacterAssignmentWidget.h`
+  - `Source/AlienRamen/Private/ARLobbyCharacterAssignmentWidget.cpp`
+- `UARCharacterAssignmentWidgetBase` publishes controller-id -> character-tag snapshots, supports deferred selection + confirm flows, and emits `OnAllTrackedControllersReadyChanged` for menu owners to close/unpause/continue.
+- Create lobby Widget Blueprints from `UARLobbyCharacterAssignmentWidget`; keep `UARCharacterAssignmentWidgetBase` as the reusable abstract runtime bridge.
+
 ## Save, Travel, and Progression
 
 - [Persistence Overview](README_Persistence.md)
@@ -42,6 +55,13 @@ Read this when data needs to persist across maps, survive mode handoffs, or proj
 - [Emo](README_Plugins_Emo.md)
 
 This is the shared runtime foundation section. GAS lives here because it is a cross-mode system, even though Invader is its heaviest gameplay consumer.
+
+## Debug Commands
+
+- `ar.debug.log` controls `ARLog`.
+- `ar.debug.log.all` controls `ARLog`, `EmoLog`, `ParleyLog`, and `TagKeyLog` together.
+- `emo.debug.log`, `parley.debug.log`, and `tagkey.debug.log` control their plugin categories independently.
+- Plugin-specific debug commands require an active PIE/Game world context to apply verbosity at runtime.
 
 ## Dialogue, Speakers, and Factions
 

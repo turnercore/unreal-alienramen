@@ -157,23 +157,37 @@ struct ALIENRAMEN_API FARPlayerIdentity
 
 	bool Matches(const FARPlayerIdentity& Other) const
 	{
-		if (UniqueNetIdString.IsEmpty() || Other.UniqueNetIdString.IsEmpty())
+		const bool bHasStrictIdentity = HasStrictOnlineIdentity();
+		const bool bOtherHasStrictIdentity = Other.HasStrictOnlineIdentity();
+		if (bHasStrictIdentity || bOtherHasStrictIdentity)
+		{
+			if (!bHasStrictIdentity || !bOtherHasStrictIdentity)
+			{
+				return false;
+			}
+
+			if (!UniqueNetIdType.Equals(Other.UniqueNetIdType, ESearchCase::CaseSensitive))
+			{
+				return false;
+			}
+
+			if (!UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive))
+			{
+				return false;
+			}
+
+			return bSharedOnlineIdSecondaryProfile == Other.bSharedOnlineIdSecondaryProfile;
+		}
+
+		const FString ThisDisplayName = DisplayName.ToString().TrimStartAndEnd();
+		const FString OtherDisplayName = Other.DisplayName.ToString().TrimStartAndEnd();
+		if (ThisDisplayName.IsEmpty() || OtherDisplayName.IsEmpty())
 		{
 			return false;
 		}
 
-		if (!UniqueNetIdType.IsEmpty() && !Other.UniqueNetIdType.IsEmpty()
-			&& !UniqueNetIdType.Equals(Other.UniqueNetIdType, ESearchCase::CaseSensitive))
-		{
-			return false;
-		}
-
-		if (!UniqueNetIdString.Equals(Other.UniqueNetIdString, ESearchCase::CaseSensitive))
-		{
-			return false;
-		}
-
-		return bSharedOnlineIdSecondaryProfile == Other.bSharedOnlineIdSecondaryProfile;
+		return bSharedOnlineIdSecondaryProfile == Other.bSharedOnlineIdSecondaryProfile
+			&& ThisDisplayName.Equals(OtherDisplayName, ESearchCase::CaseSensitive);
 	}
 
 };
@@ -275,6 +289,10 @@ struct ALIENRAMEN_API FARCharacterHeldShopItemSnapshot
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (Categories = "Item.Meat", ToolTip = "Meat definition tag used when the held item snapshot is meat."))
 	FGameplayTag MeatTag;
 
+	/** Meat quality tier when the held item is meat (defaults to Average/Standard). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Meat quality tier used for value scaling when this held-item snapshot is meat."))
+	EARVendingQualityTier MeatQualityTier = EARVendingQualityTier::Standard;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1", ToolTip = "Meat amount used when the held item snapshot is meat."))
 	int32 MeatAmount = 1;
 
@@ -357,6 +375,10 @@ struct ALIENRAMEN_API FARShopTransientCarryableSnapshot
 	/** Meat definition tag when this snapshot represents meat (Item.Meat.*). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (Categories = "Item.Meat"))
 	FGameplayTag MeatTag;
+
+	/** Meat quality tier when this snapshot represents meat (defaults to Average/Standard). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	EARVendingQualityTier MeatQualityTier = EARVendingQualityTier::Standard;
 
 	/** Meat amount when this snapshot represents meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1"))

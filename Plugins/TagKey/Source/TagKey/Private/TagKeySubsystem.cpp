@@ -295,7 +295,7 @@ namespace
 			Paths,
 			FStreamableDelegate(),
 			FStreamableManager::DefaultAsyncLoadPriority,
-			false);
+			true);
 	}
 }
 
@@ -1099,7 +1099,7 @@ bool UTagKeySubsystem::PreloadRootTableAndSoftReferences(
 			Paths,
 			FStreamableDelegate(),
 			FStreamableManager::DefaultAsyncLoadPriority,
-			false);
+			true);
 	}
 
 	return true;
@@ -1415,23 +1415,8 @@ bool UTagKeySubsystem::TryValidateRoutes(const TArray<FTagKeyRoute>& Routes, FSt
 		}
 	}
 
-	for (int32 IndexA = 0; IndexA < Routes.Num(); ++IndexA)
-	{
-		const FGameplayTag TagA = Routes[IndexA].RootTag;
-		for (int32 IndexB = IndexA + 1; IndexB < Routes.Num(); ++IndexB)
-		{
-			const FGameplayTag TagB = Routes[IndexB].RootTag;
-			if (TagA.MatchesTag(TagB) || TagB.MatchesTag(TagA))
-			{
-				OutError = FString::Printf(
-					TEXT("Overlapping RootTag hierarchy detected: '%s' and '%s'."),
-					*TagA.ToString(),
-					*TagB.ToString());
-				return false;
-			}
-		}
-	}
-
+	// Root-tag hierarchy overlap is intentional: route resolution walks parent tags from leaf->root and
+	// picks the nearest configured ancestor, so overlap remains deterministic instead of order-dependent.
 	return true;
 }
 

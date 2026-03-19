@@ -124,6 +124,440 @@ AARGameModeBase::AARGameModeBase()
 {
 	bUseSeamlessTravel = true;
 	DefaultPlayerName = FText::FromString(TEXT("Tenshu"));
+	PlayableCharacterSwitchOrder.Add(ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother));
+	PlayableCharacterSwitchOrder.Add(ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister));
+}
+
+bool AARGameModeBase::SubmitCharacterSwitchHoldRequest(APlayerController* RequestingController, const bool bIsRequesting)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(ARLog, Warning, TEXT("[GameMode] SubmitCharacterSwitchHoldRequest ignored: not authority."));
+		return false;
+	}
+
+	if (!RequestingController)
+	{
+		return false;
+	}
+
+	CleanupCharacterSwitchRequests();
+
+	const TWeakObjectPtr<APlayerController> RequestingControllerKey(RequestingController);
+	if (!bIsRequesting)
+	{
+		ActiveCharacterSwitchRequests.Remove(RequestingControllerKey);
+		CharacterSwitchRequestLatchUntilRelease.Remove(RequestingControllerKey);
+		return true;
+	}
+
+	if (CharacterSwitchRequestLatchUntilRelease.Contains(RequestingControllerKey))
+	{
+		return false;
+	}
+
+	ActiveCharacterSwitchRequests.Add(RequestingControllerKey);
+	return TryResolveQueuedCharacterSwitches();
+}
+
+void AARGameModeBase::CleanupCharacterSwitchRequests()
+{
+	for (auto It = ActiveCharacterSwitchRequests.CreateIterator(); It; ++It)
+	{
+		const APlayerController* Controller = It->Get();
+		if (!Controller || Controller->IsPendingKillPending())
+		{
+			It.RemoveCurrent();
+		}
+	}
+
+	for (auto It = CharacterSwitchRequestLatchUntilRelease.CreateIterator(); It; ++It)
+	{
+		const APlayerController* Controller = It->Get();
+		if (!Controller || Controller->IsPendingKillPending())
+		{
+			It.RemoveCurrent();
+		}
+	}
+}
+
+bool AARGameModeBase::CollectSwitchEligibleControllers(TArray<APlayerController*>& OutEligibleControllers) const
+{
+	OutEligibleControllers.Reset();
+
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PlayerController = It->Get();
+		if (!PlayerController || PlayerController->IsPendingKillPending())
+		{
+			continue;
+		}
+
+		const AARPlayerStateBase* PlayerState = PlayerController->GetPlayerState<AARPlayerStateBase>();
+		if (!IsIdentityRelevantPlayerState(PlayerState))
+		{
+			continue;
+		}
+
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+		if (!CharacterTag.IsValid())
+		{
+			continue;
+		}
+
+		OutEligibleControllers.Add(PlayerController);
+	}
+
+	OutEligibleControllers.Sort(
+		[](const APlayerController& Left, const APlayerController& Right)
+		{
+			const AARPlayerStateBase* LeftState = Left.GetPlayerState<AARPlayerStateBase>();
+			const AARPlayerStateBase* RightState = Right.GetPlayerState<AARPlayerStateBase>();
+			const int32 LeftSlotId = LeftState ? LeftState->GetPlayerSlotId() : MAX_int32;
+			const int32 RightSlotId = RightState ? RightState->GetPlayerSlotId() : MAX_int32;
+			if (LeftSlotId != RightSlotId)
+			{
+				return LeftSlotId < RightSlotId;
+			}
+
+			return Left.GetName() < Right.GetName();
+		});
+
+	return OutEligibleControllers.Num() > 0;
+}
+
+void AARGameModeBase::BuildPlayableCharacterSwitchList(const TArray<APlayerController*>& EligibleControllers, TArray<FGameplayTag>& OutPlayableCharacterTags) const
+{
+	OutPlayableCharacterTags.Reset();
+
+	auto AddCharacterTagIfMissing = [&OutPlayableCharacterTags](const FGameplayTag& InCharacterTag)
+	{
+		const FGameplayTag CanonicalTag = ARPlayer::NormalizeCharacterTag(InCharacterTag);
+		if (!CanonicalTag.IsValid() || OutPlayableCharacterTags.Contains(CanonicalTag))
+		{
+			return;
+		}
+
+		OutPlayableCharacterTags.Add(CanonicalTag);
+	};
+
+	for (const FGameplayTag& ConfiguredCharacterTag : PlayableCharacterSwitchOrder)
+	{
+		AddCharacterTagIfMissing(ConfiguredCharacterTag);
+	}
+
+	for (APlayerController* PlayerController : EligibleControllers)
+	{
+		const AARPlayerStateBase* PlayerState = PlayerController ? PlayerController->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		AddCharacterTagIfMissing(PlayerState ? PlayerState->GetCurrentCharacterTag() : FGameplayTag());
+	}
+}
+
+bool AARGameModeBase::TryFindNextFreeSwitchTargetTag(
+	const FGameplayTag& CurrentCharacterTag,
+	const TArray<FGameplayTag>& OrderedCharacterTags,
+	const TMap<FGameplayTag, TWeakObjectPtr<APlayerController>>& OccupancyByCharacterTag,
+	const APlayerController* RequestingController,
+	FGameplayTag& OutTargetCharacterTag) const
+{
+	OutTargetCharacterTag = FGameplayTag();
+
+	if (!RequestingController || OrderedCharacterTags.Num() < 2)
+	{
+		return false;
+	}
+
+	const FGameplayTag CanonicalCurrentTag = ARPlayer::NormalizeCharacterTag(CurrentCharacterTag);
+	const int32 CurrentTagIndex = OrderedCharacterTags.IndexOfByPredicate(
+		[&CanonicalCurrentTag](const FGameplayTag& CandidateTag)
+		{
+			return CandidateTag.MatchesTagExact(CanonicalCurrentTag);
+		});
+	const int32 StartIndex = CurrentTagIndex == INDEX_NONE ? -1 : CurrentTagIndex;
+	const int32 IterationCount = CurrentTagIndex == INDEX_NONE ? OrderedCharacterTags.Num() : OrderedCharacterTags.Num() - 1;
+
+	for (int32 Step = 1; Step <= IterationCount; ++Step)
+	{
+		const int32 CandidateIndex = (StartIndex + Step) % OrderedCharacterTags.Num();
+		const FGameplayTag CandidateTag = OrderedCharacterTags[CandidateIndex];
+		if (!CandidateTag.IsValid() || CandidateTag.MatchesTagExact(CanonicalCurrentTag))
+		{
+			continue;
+		}
+
+		const TWeakObjectPtr<APlayerController>* OccupyingController = OccupancyByCharacterTag.Find(CandidateTag);
+		if (!OccupyingController || !OccupyingController->IsValid() || OccupyingController->Get() == RequestingController)
+		{
+			OutTargetCharacterTag = CandidateTag;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AARGameModeBase::TryResolveQueuedCharacterSwitches()
+{
+	TArray<APlayerController*> EligibleControllers;
+	if (!CollectSwitchEligibleControllers(EligibleControllers))
+	{
+		return false;
+	}
+
+	TArray<FGameplayTag> OrderedCharacterTags;
+	BuildPlayableCharacterSwitchList(EligibleControllers, OrderedCharacterTags);
+	if (OrderedCharacterTags.Num() < 2)
+	{
+		return false;
+	}
+
+	TSet<TWeakObjectPtr<APlayerController>> EligibleControllerKeys;
+	for (APlayerController* EligibleController : EligibleControllers)
+	{
+		EligibleControllerKeys.Add(TWeakObjectPtr<APlayerController>(EligibleController));
+	}
+
+	for (auto It = ActiveCharacterSwitchRequests.CreateIterator(); It; ++It)
+	{
+		if (!EligibleControllerKeys.Contains(*It))
+		{
+			It.RemoveCurrent();
+		}
+	}
+
+	for (auto It = CharacterSwitchRequestLatchUntilRelease.CreateIterator(); It; ++It)
+	{
+		if (!EligibleControllerKeys.Contains(*It))
+		{
+			It.RemoveCurrent();
+		}
+	}
+
+	TMap<FGameplayTag, TWeakObjectPtr<APlayerController>> OccupancyByCharacterTag;
+	for (APlayerController* EligibleController : EligibleControllers)
+	{
+		const AARPlayerStateBase* PlayerState = EligibleController ? EligibleController->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const FGameplayTag CurrentTag = ARPlayer::NormalizeCharacterTag(PlayerState ? PlayerState->GetCurrentCharacterTag() : FGameplayTag());
+		if (!CurrentTag.IsValid())
+		{
+			continue;
+		}
+
+		const TWeakObjectPtr<APlayerController> ControllerKey(EligibleController);
+		if (const TWeakObjectPtr<APlayerController>* ExistingOccupant = OccupancyByCharacterTag.Find(CurrentTag))
+		{
+			if (ExistingOccupant->IsValid() && ExistingOccupant->Get() != EligibleController)
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[GameMode] Duplicate occupied character '%s' detected while resolving switch request; preserving first occupant '%s'."),
+					*CurrentTag.ToString(),
+					*GetNameSafe(ExistingOccupant->Get()));
+			}
+			continue;
+		}
+
+		OccupancyByCharacterTag.Add(CurrentTag, ControllerKey);
+	}
+
+	TArray<APlayerController*> ActiveRequestControllers;
+	for (APlayerController* EligibleController : EligibleControllers)
+	{
+		const TWeakObjectPtr<APlayerController> ControllerKey(EligibleController);
+		if (ActiveCharacterSwitchRequests.Contains(ControllerKey) && !CharacterSwitchRequestLatchUntilRelease.Contains(ControllerKey))
+		{
+			ActiveRequestControllers.Add(EligibleController);
+		}
+	}
+
+	if (ActiveRequestControllers.IsEmpty())
+	{
+		return false;
+	}
+
+	for (APlayerController* RequestingController : ActiveRequestControllers)
+	{
+		const AARPlayerStateBase* RequestingPlayerState = RequestingController ? RequestingController->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const FGameplayTag CurrentTag = ARPlayer::NormalizeCharacterTag(RequestingPlayerState ? RequestingPlayerState->GetCurrentCharacterTag() : FGameplayTag());
+		FGameplayTag NextFreeTargetTag;
+		if (!TryFindNextFreeSwitchTargetTag(CurrentTag, OrderedCharacterTags, OccupancyByCharacterTag, RequestingController, NextFreeTargetTag))
+		{
+			continue;
+		}
+
+		TMap<TWeakObjectPtr<APlayerController>, FGameplayTag> AssignmentByController;
+		AssignmentByController.Add(TWeakObjectPtr<APlayerController>(RequestingController), NextFreeTargetTag);
+		if (!ApplyCharacterSwitchAssignments(AssignmentByController))
+		{
+			return false;
+		}
+
+		const TWeakObjectPtr<APlayerController> RequestingControllerKey(RequestingController);
+		ActiveCharacterSwitchRequests.Remove(RequestingControllerKey);
+		CharacterSwitchRequestLatchUntilRelease.Add(RequestingControllerKey);
+		return true;
+	}
+
+	for (APlayerController* EligibleController : EligibleControllers)
+	{
+		const TWeakObjectPtr<APlayerController> ControllerKey(EligibleController);
+		if (CharacterSwitchRequestLatchUntilRelease.Contains(ControllerKey) || !ActiveCharacterSwitchRequests.Contains(ControllerKey))
+		{
+			return false;
+		}
+	}
+
+	TMap<TWeakObjectPtr<APlayerController>, FGameplayTag> AssignmentByController;
+	TSet<FGameplayTag> AssignedTargetTags;
+	for (APlayerController* EligibleController : EligibleControllers)
+	{
+		const AARPlayerStateBase* EligiblePlayerState = EligibleController ? EligibleController->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const FGameplayTag CurrentTag = ARPlayer::NormalizeCharacterTag(EligiblePlayerState ? EligiblePlayerState->GetCurrentCharacterTag() : FGameplayTag());
+		const int32 CurrentTagIndex = OrderedCharacterTags.IndexOfByPredicate(
+			[&CurrentTag](const FGameplayTag& CandidateTag)
+			{
+				return CandidateTag.MatchesTagExact(CurrentTag);
+			});
+		if (CurrentTagIndex == INDEX_NONE)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[GameMode] Character switch synchronization aborted for '%s': current tag '%s' is not in switch order."),
+				*GetNameSafe(EligibleController),
+				*CurrentTag.ToString());
+			return false;
+		}
+
+		const FGameplayTag NextTag = OrderedCharacterTags[(CurrentTagIndex + 1) % OrderedCharacterTags.Num()];
+		if (!NextTag.IsValid() || NextTag.MatchesTagExact(CurrentTag) || AssignedTargetTags.Contains(NextTag))
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[GameMode] Character switch synchronization aborted: invalid/duplicate next tag '%s' for '%s'."),
+				*NextTag.ToString(),
+				*GetNameSafe(EligibleController));
+			return false;
+		}
+
+		AssignedTargetTags.Add(NextTag);
+		AssignmentByController.Add(TWeakObjectPtr<APlayerController>(EligibleController), NextTag);
+	}
+
+	if (!ApplyCharacterSwitchAssignments(AssignmentByController))
+	{
+		return false;
+	}
+
+	for (APlayerController* EligibleController : EligibleControllers)
+	{
+		const TWeakObjectPtr<APlayerController> ControllerKey(EligibleController);
+		ActiveCharacterSwitchRequests.Remove(ControllerKey);
+		CharacterSwitchRequestLatchUntilRelease.Add(ControllerKey);
+	}
+
+	return true;
+}
+
+bool AARGameModeBase::ApplyCharacterSwitchAssignments(const TMap<TWeakObjectPtr<APlayerController>, FGameplayTag>& AssignmentByController)
+{
+	if (AssignmentByController.Num() <= 0 || !HasAuthority())
+	{
+		return false;
+	}
+
+	struct FResolvedCharacterSwitchAssignment
+	{
+		TWeakObjectPtr<APlayerController> Controller;
+		TWeakObjectPtr<AARPlayerStateBase> PlayerState;
+		FGameplayTag TargetTag;
+		FTransform RespawnTransform = FTransform::Identity;
+		bool bHasRespawnTransform = false;
+	};
+
+	TArray<FResolvedCharacterSwitchAssignment> ResolvedAssignments;
+	ResolvedAssignments.Reserve(AssignmentByController.Num());
+	for (const TPair<TWeakObjectPtr<APlayerController>, FGameplayTag>& Entry : AssignmentByController)
+	{
+		APlayerController* PlayerController = Entry.Key.Get();
+		AARPlayerStateBase* PlayerState = PlayerController ? PlayerController->GetPlayerState<AARPlayerStateBase>() : nullptr;
+		const FGameplayTag TargetTag = ARPlayer::NormalizeCharacterTag(Entry.Value);
+		if (!PlayerController || !PlayerState || !TargetTag.IsValid())
+		{
+			return false;
+		}
+
+		FResolvedCharacterSwitchAssignment& Assignment = ResolvedAssignments.AddDefaulted_GetRef();
+		Assignment.Controller = PlayerController;
+		Assignment.PlayerState = PlayerState;
+		Assignment.TargetTag = TargetTag;
+		if (const APawn* ExistingPawn = PlayerController->GetPawn())
+		{
+			Assignment.RespawnTransform = ExistingPawn->GetActorTransform();
+			Assignment.bHasRespawnTransform = true;
+		}
+	}
+
+	for (const FResolvedCharacterSwitchAssignment& Assignment : ResolvedAssignments)
+	{
+		AARPlayerStateBase* PlayerState = Assignment.PlayerState.Get();
+		if (!PlayerState)
+		{
+			return false;
+		}
+
+		PlayerState->SetCurrentCharacterTagDirect(Assignment.TargetTag);
+	}
+
+	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
+	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
+	for (const FResolvedCharacterSwitchAssignment& Assignment : ResolvedAssignments)
+	{
+		APlayerController* PlayerController = Assignment.Controller.Get();
+		if (!PlayerController)
+		{
+			return false;
+		}
+
+		if (APawn* ExistingPawn = PlayerController->GetPawn())
+		{
+			PlayerController->UnPossess();
+			ExistingPawn->Destroy();
+		}
+
+		CachePendingSpawnCharacterTagForController(PlayerController, Assignment.TargetTag);
+		if (!bIsTransitionMode)
+		{
+			PrepareControllerForGameplaySpawn(PlayerController);
+		}
+
+		if (Assignment.bHasRespawnTransform)
+		{
+			RestartPlayerAtTransform(PlayerController, Assignment.RespawnTransform);
+		}
+		else
+		{
+			RestartPlayer(PlayerController);
+		}
+	}
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GI->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
+		}
+	}
+
+	return true;
 }
 
 FString AARGameModeBase::BuildModeTravelURL(const FString& DestinationURL, const EARTravelRoutePolicy RoutePolicy) const
@@ -1297,6 +1731,13 @@ APawn* AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AController* 
 void AARGameModeBase::Logout(AController* Exiting)
 {
 	CachePendingSpawnCharacterTagForController(Exiting, FGameplayTag());
+	if (APlayerController* ExitingPlayerController = Cast<APlayerController>(Exiting))
+	{
+		const TWeakObjectPtr<APlayerController> ExitingControllerKey(ExitingPlayerController);
+		ActiveCharacterSwitchRequests.Remove(ExitingControllerKey);
+		CharacterSwitchRequestLatchUntilRelease.Remove(ExitingControllerKey);
+	}
+	CleanupCharacterSwitchRequests();
 
 	AARPlayerStateBase* LeavingPS = Exiting ? Exiting->GetPlayerState<AARPlayerStateBase>() : nullptr;
 
@@ -1326,6 +1767,8 @@ void AARGameModeBase::Logout(AController* Exiting)
 void AARGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	PendingSpawnCharacterTagsByController.Reset();
+	ActiveCharacterSwitchRequests.Reset();
+	CharacterSwitchRequestLatchUntilRelease.Reset();
 
 	if (HasAuthority() && EndPlayReason == EEndPlayReason::Quit && bAutosaveOnQuit)
 	{

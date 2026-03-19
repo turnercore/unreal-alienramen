@@ -76,12 +76,14 @@ namespace
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FTagKey_OverlapRootsFailTest,
-	"AlienRamen.TagKey.Validation.OverlappingRootsFail",
+	FTagKey_OverlapRootsPreferMostSpecificRouteTest,
+	"AlienRamen.TagKey.Validation.OverlappingRootsPreferMostSpecificRoute",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FTagKey_OverlapRootsFailTest::RunTest(const FString& Parameters)
+bool FTagKey_OverlapRootsPreferMostSpecificRouteTest::RunTest(const FString& Parameters)
 {
+	(void)Parameters;
+
 	FScopedTagResolverSettingsOverride ScopedSettings;
 	UTagKeySettings* Settings = GetMutableDefault<UTagKeySettings>();
 	TestNotNull(TEXT("Settings should exist"), Settings);
@@ -90,30 +92,60 @@ bool FTagKey_OverlapRootsFailTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	const FGameplayTag ShopRoot = RequestTagChecked(TEXT("Shop"));
-	const FGameplayTag ShopStationRoot = RequestTagChecked(TEXT("Shop.Station"));
+	const FGameplayTag ParentRoot = RequestTagChecked(TEXT("Item"));
+	const FGameplayTag ChildRoot = RequestTagChecked(TEXT("Item.Meat"));
 
 	FTagKeyProjectRoute ParentRoute;
-	ParentRoute.RootTag = ShopRoot;
-	ParentRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_ShopStations.DT_ShopStations")));
+	ParentRoute.RootTag = ParentRoot;
+	ParentRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Items.DT_Items")));
 
 	FTagKeyProjectRoute ChildRoute;
-	ChildRoute.RootTag = ShopStationRoot;
-	ChildRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_ShopStations.DT_ShopStations")));
+	ChildRoute.RootTag = ChildRoot;
+	ChildRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Meat.DT_Meat")));
 
 	Settings->ProjectRoutes = { ParentRoute, ChildRoute };
 
-	UDataTable* Table = nullptr;
+	UDataTable* ParentTable = nullptr;
+	UDataTable* ChildTable = nullptr;
 	FString Error;
-	const bool bResolved = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
-		ShopStationRoot,
-		Table,
-		Error);
 
-	TestFalse(TEXT("Overlapping route hierarchy must fail validation"), bResolved);
-	TestTrue(
-		TEXT("Failure should explicitly describe overlapping hierarchy"),
-		Error.Contains(TEXT("Overlapping RootTag hierarchy detected")));
+	const bool bResolvedParent = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+		ParentRoot,
+		ParentTable,
+		Error);
+	TestTrue(TEXT("Parent route should resolve even when a child root exists"), bResolvedParent);
+	TestNotNull(TEXT("Parent route should load its configured table"), ParentTable);
+
+	const bool bResolvedChild = UTagKeySubsystem::TryResolveDataTableForRootTagFromConfiguredRoutes(
+		ChildRoot,
+		ChildTable,
+		Error);
+	TestTrue(TEXT("Child route should resolve even when nested under a parent root"), bResolvedChild);
+	TestNotNull(TEXT("Child route should load its configured table"), ChildTable);
+
+	UGameInstance* TestGameInstance = NewObject<UGameInstance>(GetTransientPackage());
+	TestNotNull(TEXT("Transient game instance should be constructible"), TestGameInstance);
+	if (!TestGameInstance)
+	{
+		return false;
+	}
+
+	UTagKeySubsystem* Resolver = NewObject<UTagKeySubsystem>(TestGameInstance);
+	TestNotNull(TEXT("Transient resolver should be constructible"), Resolver);
+	if (!Resolver)
+	{
+		return false;
+	}
+
+	Resolver->RebuildRouteCache(false);
+
+	FGameplayTag MatchedRoot;
+	const bool bResolvedNestedTag = Resolver->TryResolveRootTagForTag(
+		RequestTagChecked(TEXT("Item.Meat.Red")),
+		MatchedRoot,
+		Error);
+	TestTrue(TEXT("Nested child tag should resolve through the most specific root"), bResolvedNestedTag);
+	TestEqual(TEXT("Most specific matching root should win"), MatchedRoot, ChildRoot);
 
 	return true;
 }

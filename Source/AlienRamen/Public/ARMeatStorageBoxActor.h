@@ -30,7 +30,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseSpecificMeat(AARPlayerController* RequestingController, FGameplayTag MeatTag);
 
-	/** Dispenses a random meat type whose definition color matches this storage's MeatColor. */
+	/** Dispenses a random eligible typed-stock meat and applies this storage's MeatColor to the spawned world actor. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseRandomMeatByContainerColor(AARPlayerController* RequestingController);
 
@@ -82,6 +82,6 @@ private:
 	void AddTypedMeatToState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, int32 AmountToAdd) const;
 	void PromoteLegacyBucketsToTyped(FARMeatState& InOutMeatState) const;
 	void RebuildLegacyColorBucketsFromTyped(FARMeatState& InOutMeatState) const;
-	bool SelectRandomEligibleMeatTagForContainerColor(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const;
+	bool SelectRandomEligibleMeatTagFromTypedStock(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const;
 	bool TryStoreMeatActorInternal(AARRamenMeatActor* MeatActor, AARPlayerController* RequestingController, bool bRequireWorldReturnArmed);
 };

@@ -16,6 +16,7 @@
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
 #include "ParleySpeakerComponent.h"
+#include "ParleySpeakerSubsystem.h"
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
@@ -70,12 +71,40 @@ namespace
 
 		return FMath::Max(0.0f, Strength) * 100.0f;
 	}
+
+	static void RefreshParleySpeakerTalkableStatesIfAuthority(AARPlayerController* Controller)
+	{
+		if (!Controller || !Controller->HasAuthority())
+		{
+			return;
+		}
+
+		if (UGameInstance* GameInstance = Controller->GetGameInstance())
+		{
+			if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+			{
+				SpeakerSubsystem->RefreshAllSpeakerTalkableStates();
+			}
+		}
+	}
 }
 
 AARPlayerController::AARPlayerController()
 {
 	// Nothing required here yet.
 	// Input bindings can stay in BP; this controller just provides the CommonAbilitySet reference.
+}
+
+void AARPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	RefreshParleySpeakerTalkableStatesIfAuthority(this);
+}
+
+void AARPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+	RefreshParleySpeakerTalkableStatesIfAuthority(this);
 }
 
 bool AARPlayerController::IsDialogueAutoAdvanceEnabled() const
@@ -93,6 +122,31 @@ FGameplayTag AARPlayerController::GetCharacterTag() const
 	}
 
 	return ARPS->GetCurrentCharacterTag();
+}
+
+FGameplayTag AARPlayerController::GetPlayerSlotTag() const
+{
+	const AARPlayerStateBase* ARPS = GetPlayerState<AARPlayerStateBase>();
+	return ARPS ? ARPS->GetPlayerSlotTag() : FGameplayTag();
+}
+
+void AARPlayerController::RequestSwitchToNextPlayableCharacter(const bool bIsRequesting)
+{
+	if (HasAuthority())
+	{
+		if (AARGameModeBase* ARGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AARGameModeBase>() : nullptr)
+		{
+			ARGameMode->SubmitCharacterSwitchHoldRequest(this, bIsRequesting);
+		}
+		return;
+	}
+
+	ServerRequestSwitchToNextPlayableCharacter(bIsRequesting);
+}
+
+void AARPlayerController::ServerRequestSwitchToNextPlayableCharacter_Implementation(const bool bIsRequesting)
+{
+	RequestSwitchToNextPlayableCharacter(bIsRequesting);
 }
 
 void AARPlayerController::NotifyDialogueViewUpdated(const FDialogueClientView& View)

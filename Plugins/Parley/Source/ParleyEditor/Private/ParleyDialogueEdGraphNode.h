@@ -281,6 +281,8 @@ public:
 	bool ReorderMultiLineEntry(const FGuid& MovingEntryId, const FGuid& TargetEntryId);
 	bool SetMultiLineEntrySpeakerTag(const FGuid& EntryId, const FGameplayTag& NewSpeakerTag);
 	bool SetMultiLineEntryText(const FGuid& EntryId, const FText& NewText);
+	bool SetLineLengthSeconds(float NewLengthSeconds);
+	bool SetMultiLineEntryLengthSeconds(const FGuid& EntryId, float NewLengthSeconds);
 
 	void ApplyValidation(EDialogueValidationSeverity Severity, const FString& Message);
 	void ClearValidation();

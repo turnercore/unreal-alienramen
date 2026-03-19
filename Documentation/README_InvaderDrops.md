@@ -73,6 +73,7 @@ Paths:
 - if exact decomposition is not possible, emit largest denomination pickups plus one remainder pickup using the lowest-denomination class
 - if stack definitions are empty/invalid, no drop actor is spawned
 8. Spawn one pickup actor per planned denomination amount.
+9. For meat drops, set pickup `DropColor` from the enemy's runtime color at kill time (not from static meat-definition color).
 
 ## Pickup / Reward Contract
 

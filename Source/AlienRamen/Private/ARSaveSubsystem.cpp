@@ -299,6 +299,7 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 		{
 			Snapshot.MeatColor = MeatActor->GetMeatColor();
 			Snapshot.MeatTag = MeatActor->GetMeatTag();
+			Snapshot.MeatQualityTier = MeatActor->GetMeatQualityTier();
 			Snapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 		}
 	}
@@ -361,6 +362,7 @@ static bool CaptureHeldShopItemSnapshot(AActor* HeldActor, FARCharacterHeldShopI
 		OutSnapshot.ActorClass = MeatActor->GetClass();
 		OutSnapshot.MeatColor = MeatActor->GetMeatColor();
 		OutSnapshot.MeatTag = MeatActor->GetMeatTag();
+		OutSnapshot.MeatQualityTier = MeatActor->GetMeatQualityTier();
 		OutSnapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
 		return true;
 	}
@@ -569,9 +571,25 @@ FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 
 	if (bEnsureUnique)
 	{
-		FARSaveResult IndexResult;
 		UARSaveIndexGame* CanonicalIndex = nullptr;
-		if (LoadOrCreateIndexForSlot(CanonicalIndex, IndexResult, ARSaveInternal::SaveIndexSlot) && CanonicalIndex)
+		if (UGameplayStatics::DoesSaveGameExist(ARSaveInternal::SaveIndexSlot, DefaultUserIndex))
+		{
+			if (USaveGame* LoadedIndex = UGameplayStatics::LoadGameFromSlot(ARSaveInternal::SaveIndexSlot, DefaultUserIndex))
+			{
+				CanonicalIndex = Cast<UARSaveIndexGame>(LoadedIndex);
+				if (!CanonicalIndex)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: index slot '%s' exists but is incompatible. Falling back to disk probes for uniqueness."),
+						ARSaveInternal::SaveIndexSlot);
+				}
+			}
+			else
+			{
+				UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: failed loading index slot '%s'. Falling back to disk probes for uniqueness."),
+					ARSaveInternal::SaveIndexSlot);
+			}
+		}
+		if (CanonicalIndex)
 		{
 			for (const FARSaveSlotDescriptor& Entry : CanonicalIndex->SlotNames)
 			{
@@ -580,7 +598,24 @@ FName UARSaveSubsystem::GenerateRandomSlotBaseName(const bool bEnsureUnique)
 		}
 
 		UARSaveIndexGame* DebugIndex = nullptr;
-		if (LoadOrCreateIndexForSlot(DebugIndex, IndexResult, ARSaveInternal::DebugSaveIndexSlot) && DebugIndex)
+		if (UGameplayStatics::DoesSaveGameExist(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex))
+		{
+			if (USaveGame* LoadedIndex = UGameplayStatics::LoadGameFromSlot(ARSaveInternal::DebugSaveIndexSlot, DefaultUserIndex))
+			{
+				DebugIndex = Cast<UARSaveIndexGame>(LoadedIndex);
+				if (!DebugIndex)
+				{
+					UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: debug index slot '%s' exists but is incompatible. Falling back to disk probes for uniqueness."),
+						ARSaveInternal::DebugSaveIndexSlot);
+				}
+			}
+			else
+			{
+				UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] GenerateRandomSlotBaseName: failed loading debug index slot '%s'. Falling back to disk probes for uniqueness."),
+					ARSaveInternal::DebugSaveIndexSlot);
+			}
+		}
+		if (DebugIndex)
 		{
 			for (const FARSaveSlotDescriptor& Entry : DebugIndex->SlotNames)
 			{
@@ -1117,6 +1152,7 @@ UARSaveGame* UARSaveSubsystem::LoadSaveObjectWithRollback(FName SlotBaseName, in
 
 bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
+	OutSlot = FARSaveSlotDescriptor();
 	OutResult = FARSaveResult();
 
 	if (CurrentSaveGame)
@@ -1134,10 +1170,28 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
 
 	UARSaveIndexGame* IndexObj = nullptr;
-	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, IndexSlotName))
+	if (UGameplayStatics::DoesSaveGameExist(IndexSlotName, DefaultUserIndex))
 	{
-		BroadcastSaveFailure(OutResult);
-		return false;
+		IndexObj = Cast<UARSaveIndexGame>(UGameplayStatics::LoadGameFromSlot(IndexSlotName, DefaultUserIndex));
+		if (!IndexObj)
+		{
+			OutResult.Error = FString::Printf(TEXT("Failed to load save index '%s'."), IndexSlotName);
+			OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+			BroadcastSaveFailure(OutResult);
+			return false;
+		}
+	}
+	else
+	{
+		// New game should not persist anything to disk yet, including an empty index.
+		IndexObj = Cast<UARSaveIndexGame>(UGameplayStatics::CreateSaveGameObject(UARSaveIndexGame::StaticClass()));
+		if (!IndexObj)
+		{
+			OutResult.Error = TEXT("Failed to create transient save index object.");
+			OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+			BroadcastSaveFailure(OutResult);
+			return false;
+		}
 	}
 
 	for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
@@ -1145,15 +1199,26 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 		if (Entry.SlotName == SlotBase)
 		{
 			OutResult.Error = FString::Printf(TEXT("Save slot '%s' already exists."), *SlotBase.ToString());
+			OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 			BroadcastSaveFailure(OutResult);
 			return false;
 		}
+	}
+
+	const FName RevisionZeroSlot = BuildRevisionSlotName(SlotBase, 0);
+	if (UGameplayStatics::DoesSaveGameExist(RevisionZeroSlot.ToString(), DefaultUserIndex))
+	{
+		OutResult.Error = FString::Printf(TEXT("Save slot '%s' already exists on disk."), *SlotBase.ToString());
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+		BroadcastSaveFailure(OutResult);
+		return false;
 	}
 
 	UARSaveGame* NewSave = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(UARSaveGame::StaticClass()));
 	if (!NewSave)
 	{
 		OutResult.Error = TEXT("Failed to create UARSaveGame.");
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		BroadcastSaveFailure(OutResult);
 		return false;
 	}
@@ -1162,14 +1227,8 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	NewSave->SaveSlot = ARSaveInternal::GetLogicalSlotBaseForNamespace(SlotBase, bUseDebugSaves);
 	NewSave->SaveSlotNumber = 0;
 	NewSave->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
-	NewSave->LastSaved = FDateTime::UtcNow();
+	NewSave->LastSaved = FDateTime();
 	OutResult.ClampedFieldCount = NewSave->ValidateAndSanitize(nullptr);
-
-	if (!SaveSaveObject(NewSave, SlotBase, 0, OutResult))
-	{
-		BroadcastSaveFailure(OutResult);
-		return false;
-	}
 
 	FARSaveSlotDescriptor Descriptor;
 	Descriptor.SlotName = SlotBase;
@@ -1178,23 +1237,18 @@ bool UARSaveSubsystem::CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescripto
 	Descriptor.CyclesPlayed = NewSave->Cycles;
 	Descriptor.LastSavedTime = NewSave->LastSaved;
 	Descriptor.Money = NewSave->Money;
-	UpsertIndexEntry(IndexObj, Descriptor);
-
-	if (!SaveIndexForSlot(IndexObj, OutResult, IndexSlotName))
-	{
-		RollbackRevisionWrite(SlotBase, 0, OutResult);
-		BroadcastSaveFailure(OutResult);
-		return false;
-	}
 
 	CurrentSaveGame = NewSave;
 	CurrentSlotBaseName = SlotBase;
+	LastSaveTimestampUtc = FDateTime();
+	bSaveDirty = true;
 	ClearPendingFreshLoadEntry();
 	OutSlot = Descriptor;
 	OutResult.bSuccess = true;
+	OutResult.ResultCode = EARSaveResultCode::Success;
 	OutResult.SlotName = SlotBase;
 	OutResult.SlotNumber = 0;
-	OnSaveCompleted.Broadcast(OutResult);
+	// New-save creation is intentionally in-memory only; OnSaveCompleted is reserved for persisted writes.
 	return true;
 }
 
@@ -2012,6 +2066,14 @@ bool UARSaveSubsystem::PushCurrentSaveToPlayer(AARPlayerController* TargetPlayer
 	{
 		QueuePendingCanonicalSyncRequest(TargetPlayerController);
 		OutResult.Error = TEXT("PushCurrentSaveToPlayer deferred: no current save loaded yet; request queued.");
+		return false;
+	}
+
+	if (CurrentSaveGame->LastSaved.GetTicks() == 0)
+	{
+		QueuePendingCanonicalSyncRequest(TargetPlayerController);
+		OutResult.Error = TEXT("PushCurrentSaveToPlayer deferred: current save has not been persisted yet.");
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		return false;
 	}
 

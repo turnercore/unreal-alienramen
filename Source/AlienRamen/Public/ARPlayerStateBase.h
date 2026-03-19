@@ -107,6 +107,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	bool,
 	bOldReady);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FAROnPlayerSlotIdChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	int32,
+	NewPlayerSlotId,
+	int32,
+	OldPlayerSlotId);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnDownedStateChangedSignature,
 	AARPlayerStateBase*,
@@ -195,6 +204,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
 	void SetPlayerSlotId(int32 NewSlotId);
 
+	/** Canonical player-slot tag for viewer-specific systems such as Emo HUD rendering. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
+	FGameplayTag GetPlayerSlotTag() const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	EARCharacterChoice GetCharacterPicked() const { return CharacterPicked; }
 
@@ -231,6 +244,13 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetCurrentCharacterTag(FGameplayTag NewCharacterTag);
+
+	/**
+	 * Authority-only direct character assignment that bypasses occupancy auto-swap.
+	 * Used by GameMode-coordinated multi-controller switch flows to apply final targets atomically.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player", meta = (BlueprintAuthorityOnly))
+	void SetCurrentCharacterTagDirect(FGameplayTag NewCharacterTag);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	FString GetDisplayNameValue() const { return DisplayName; }
@@ -483,6 +503,9 @@ public:
 	FAROnReadyStatusChangedSignature OnReadyStatusChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
+	FAROnPlayerSlotIdChangedSignature OnPlayerSlotIdChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
 	FAROnDownedStateChangedSignature OnDownedStateChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player")
@@ -606,6 +629,7 @@ protected:
 		int32 NewCursorTier,
 		int32 OldCursorTier);
 	void SetCharacterPicked_Internal(EARCharacterChoice NewCharacter);
+	void SetCurrentCharacterTagWithSwap_Internal(FGameplayTag NewCharacterTag);
 	void SetCurrentCharacterTag_Internal(FGameplayTag NewCharacterTag, bool bMarkSaveDirty = true);
 	void SetInvaderPlayerColor_Internal(EARAffinityColor NewColor, bool bForceBroadcast = false);
 	void SetSpiceSharingActive_Internal(bool bNewIsSharing, bool bForceBroadcast = false);

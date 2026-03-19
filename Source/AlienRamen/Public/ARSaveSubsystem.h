@@ -31,6 +31,10 @@ class ALIENRAMEN_API UARSaveSubsystem : public UGameInstanceSubsystem
 public:
 	static constexpr int32 DefaultUserIndex = 0;
 
+	/**
+	 * Creates a fresh canonical save in memory and marks it dirty, but does not write to disk yet.
+	 * The first explicit save/autosave persists revision 0 for the chosen slot base.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	bool CreateNewSave(FName DesiredSlotBase, FARSaveSlotDescriptor& OutSlot, FARSaveResult& OutResult, bool bUseDebugSaves = false);
 
