@@ -34,6 +34,9 @@ This document captures the runtime ownership and integration contract for the sh
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Unlock.Shop.Station` -> `FARShopStationConfigRow`
 - `Item.Meat` -> `FARMeatDefinitionRow`
+  - `EnemyIdentifierTag` maps invader enemy identity to canonical meat identity (`MeatTag`)
+  - optional `InvaderDropActorClass` lets invader-mode pickup visuals/behavior differ from shop/scrapyard item actors
+  - deprecated color-based meat lookup helpers remain as a compatibility bridge and map legacy colors to canonical `Item.Meat.*` tags
 - Character table rows for shop/runtime character spawning can use `FARShopCharacterDefRow` (`Source/AlienRamen/Public/ARLoadoutTypes.h`) with:
   - `CharacterTag` (`Shop.Character.*`)
   - `CustomerTag` (`Shop.Customer.*`)
@@ -86,7 +89,7 @@ This document captures the runtime ownership and integration contract for the sh
   - mirrored to `AARShopGameState::BaseBowlPayout` for UI/readability
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
-  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> meat row `ItemTag` -> shared item `SellMoneyValue` and applies item-quality multiplier (defaults to `Standard` = `1.0`)
+  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> shared item `SellMoneyValue`; runtime uses `MeatTag` as single identity and resolves shared item rows through the `Item` root by leaf row name when `Item.Meat` route overlap exists
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
   - item quality multipliers are authored on `AARShopGameMode` (`Low/Standard/High/Premium` defaults `0.25 / 1.0 / 1.25 / 2.0`)
 - Vending settlement:
@@ -173,8 +176,8 @@ This document captures the runtime ownership and integration contract for the sh
   - reserve inventory is canonical by meat type tag (`FARMeatState::AdditionalAmountsByType`); legacy color buckets are compatibility mirrors.
   - `TryDispenseMeat(...)` uses random typed dispense across eligible typed stock (`TryDispenseRandomMeatByContainerColor`), and applies storage/container color to the spawned world meat actor.
   - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Item.Meat` tag.
-  - color-only compatibility paths resolve to the first deterministic meat row by MeatTag hierarchy (`Item.Meat.<Color>.*`, sorted row-name order).
-  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching runtime meat color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
+  - world/held store requires a valid resolved `Item.Meat` tag on the runtime meat actor; storage no longer infers meat type from color.
+  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) only when runtime meat color matches storage color (or storage color is `None`).
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
   - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
 - `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
@@ -183,7 +186,7 @@ This document captures the runtime ownership and integration contract for the sh
 
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
-- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*|red|white|blue|colorless|none>` supports explicit type-tag adds or color-token deterministic resolution.
+- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*>` supports explicit type-tag adds only.
 - Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
 - Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
@@ -212,12 +215,13 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARShopStateTreeAIComponentSchema`
   - `AARShopAIController` start/event helpers
 - `AARShopAIController` maps active `State.ShopNPC.*` tags to speaker dialogue gating:
-  - dialogue allowed when `State.ShopNPC.DialogueWindow` is active
+  - dialogue allowed when `State.ShopNPC.Dialogue` is active (legacy `State.ShopNPC.DialogueWindow` still maps through tag redirects)
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
   - dialogue gate automatically reopens when `State.ShopNPC` is not active and on controller unpossess cleanup.
 - Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.
 - Shop AI controller also bridges dialogue lifecycle into ShopNPC StateTree tags for the possessed speaker:
   - `Event.ShopNPC.ConversationOffered` when talkable becomes true.
+  - `Event.ShopNPC.ConversationOffered` is also emitted once on possess when the speaker is already talkable, so event-driven StateTree graphs can bootstrap into dialogue without waiting for a false->true edge.
   - `Event.ShopNPC.DialogueStarted` when a session starts for that speaker.
   - `Event.ShopNPC.DialogueEnded` when the speaker no longer has an active session.
   - `Event.ShopNPC.ConversationCompleted` when a completed conversation belongs to that speaker.

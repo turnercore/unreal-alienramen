@@ -507,20 +507,22 @@ static bool AddConversationToRuntimeRegistry(
 		return false;
 	}
 
-	if (ForcedConversationTag.IsValid() && !Conversation->Header.ConversationTag.IsValid())
+	FGameplayTag ConversationTag = Conversation->Header.ConversationTag;
+	if (ForcedConversationTag.IsValid() && !ConversationTag.IsValid())
 	{
 		Conversation->Header.ConversationTag = ForcedConversationTag;
+		ConversationTag = Conversation->Header.ConversationTag;
 	}
-
-	const FGameplayTag ConversationTag = Conversation->Header.ConversationTag;
-	if (ForcedConversationTag.IsValid() && ConversationTag.IsValid() && !ConversationTag.MatchesTagExact(ForcedConversationTag))
+	else if (ForcedConversationTag.IsValid() && ConversationTag.IsValid() && !ConversationTag.MatchesTagExact(ForcedConversationTag))
 	{
 		UE_LOG(ParleyLog, Warning,
-			TEXT("[Dialogue] Conversation '%s' tag mismatch: asset '%s' vs lookup '%s' (%s). Asset tag will be used."),
+			TEXT("[Dialogue] Conversation '%s' tag mismatch: asset '%s' vs lookup '%s' (%s). Lookup tag will override asset tag."),
 			*GetNameSafe(Conversation),
 			*ConversationTag.ToString(),
 			*ForcedConversationTag.ToString(),
 			*SourceLabel);
+		Conversation->Header.ConversationTag = ForcedConversationTag;
+		ConversationTag = Conversation->Header.ConversationTag;
 	}
 
 	if (!ConversationTag.IsValid())
@@ -2500,17 +2502,7 @@ static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FG
 	return nullptr;
 }
 
-static bool IsModeDialogueEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
-{
-	if (!Settings || !ModeTag.IsValid())
-	{
-		return false;
-	}
-
-	return IsModeInContainer(ModeTag, Settings->SharedDialogueModeTags)
-		|| IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
-}
-
+// The busy-speaker lock is intentionally scoped to per-player modes.
 static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
 {
 	return Settings

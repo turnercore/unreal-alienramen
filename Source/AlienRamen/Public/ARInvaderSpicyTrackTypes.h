@@ -85,6 +85,12 @@ struct ALIENRAMEN_API FARInvaderUpgradeDefRow : public FTableRowBase
 	bool bInfiniteActivationUses = false;
 };
 
+/**
+ * Authoritative shared-track slot state replicated by `AARInvaderGameState`.
+ *
+ * This is the runtime/gameplay representation. UI should usually consume the
+ * derived display snapshot instead of resolving presentation data itself.
+ */
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARInvaderTrackSlotState
 {
@@ -112,6 +118,13 @@ struct ALIENRAMEN_API FARInvaderTrackSlotState
 	bool bInfiniteUses = false;
 };
 
+/**
+ * UI-facing shared-track slot snapshot derived from `FARInvaderTrackSlotState`.
+ *
+ * This bundles runtime slot information with resolved presentation data such as
+ * the localized upgrade display name, so HUD widgets do not need to duplicate
+ * lookup logic.
+ */
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARInvaderTrackSlotDisplayState
 {

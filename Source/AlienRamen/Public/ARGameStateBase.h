@@ -337,7 +337,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void AddRunLedgerScrap(int32 ScrapDelta);
 
-	/** Adds meat into run ledger by affinity color bucket. Authority only. */
+	/** Adds typed meat into the run ledger. SourceColor is informational for diagnostics; typed ledger identity is MeatTag. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void AddRunLedgerTypedMeat(FGameplayTag MeatTag, EARAffinityColor SourceColor, int32 MeatAmount);
+
+	/** Legacy untyped run-ledger write path. Prefer AddRunLedgerTypedMeat for gameplay flows. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void AddRunLedgerMeat(EARAffinityColor ColorBucket, int32 MeatAmount);
 

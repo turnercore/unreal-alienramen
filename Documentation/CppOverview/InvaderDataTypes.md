@@ -47,7 +47,9 @@ Paths:
 - leak values and soft caps
 - active wave array
 - `FARInvaderTrackSlotState`
-- Shared spicy-track slot state (`SlotIndex`, `UpgradeTag`, `UpgradeLevel`, activation flag)
+- Authoritative shared spicy-track slot state (`SlotIndex`, `UpgradeTag`, `UpgradeLevel`, activation flag).
+- `FARInvaderTrackSlotDisplayState`
+- UI-ready snapshot derived from slot state, including resolved display name and `bHasUpgrade`.
 - `FARInvaderUpgradeOffer`
 - Offer item for a full-blast choice set (`UpgradeTag`, rolled level)
 - `FARInvaderFullBlastSessionState`

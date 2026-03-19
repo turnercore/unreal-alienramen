@@ -180,6 +180,10 @@ enum class EDialogueComparisonOp : uint8
 	Absent
 };
 
+/**
+ * Legacy serialized active-character restriction enum kept only to preserve cooked/header layout
+ * compatibility for conversation assets and compiled line data authored before tag-based restrictions.
+ */
 USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueCondition
 {

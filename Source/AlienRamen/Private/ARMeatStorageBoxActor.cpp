@@ -185,9 +185,9 @@ bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(AARPlayerController* Reques
 	{
 		if (UARItemDefinitionSubsystem* ItemDefinitions = GI->GetSubsystem<UARItemDefinitionSubsystem>())
 		{
-			if (MeatDefinition.ItemTag.IsValid())
+			if (MeatDefinition.MeatTag.IsValid())
 			{
-				ItemDefinitions->ApplyItemPhysicsProperties(SpawnedMeat, MeatDefinition.ItemTag);
+				ItemDefinitions->ApplyItemPhysicsProperties(SpawnedMeat, MeatDefinition.MeatTag);
 			}
 		}
 	}
@@ -260,26 +260,19 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 	FGameplayTag DepositMeatTag = MeatActor->GetMeatTag();
 	EARAffinityColor DepositColor = SanitizeColor(MeatActor->GetMeatColor());
 	FARMeatDefinitionRow DepositDefinition;
-	if (DepositMeatTag.IsValid() && ItemDefinitions->ResolveMeatDefinition(DepositMeatTag, DepositDefinition))
+	if (!DepositMeatTag.IsValid() || !ItemDefinitions->ResolveMeatDefinition(DepositMeatTag, DepositDefinition))
 	{
-		if (DepositDefinition.MeatTag.IsValid())
-		{
-			DepositMeatTag = DepositDefinition.MeatTag;
-		}
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Storage] Store rejected storage='%s': meat '%s' has no resolved MeatTag definition."),
+			*GetNameSafe(this),
+			*GetNameSafe(MeatActor));
+		return false;
 	}
-	else
+	if (DepositDefinition.MeatTag.IsValid())
 	{
-		if (DepositColor == EARAffinityColor::None)
-		{
-			DepositColor = SanitizeColor(MeatColor);
-		}
-
-		if (!ItemDefinitions->ResolveFirstMeatTagForColor(DepositColor, DepositMeatTag))
-		{
-			return false;
-		}
-
-		ItemDefinitions->ResolveMeatDefinition(DepositMeatTag, DepositDefinition);
+		DepositMeatTag = DepositDefinition.MeatTag;
 	}
 
 	const EARAffinityColor StorageColor = SanitizeColor(MeatColor);
@@ -441,34 +434,27 @@ void AARMeatStorageBoxActor::PromoteLegacyBucketsToTyped(FARMeatState& InOutMeat
 {
 	UGameInstance* GI = GetGameInstance();
 	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
-	if (!ItemDefinitions)
+	const int32 LegacyTotal = FMath::Max(0, InOutMeatState.RedAmount)
+		+ FMath::Max(0, InOutMeatState.BlueAmount)
+		+ FMath::Max(0, InOutMeatState.WhiteAmount)
+		+ FMath::Max(0, InOutMeatState.UnspecifiedAmount);
+	if (LegacyTotal <= 0 || !ItemDefinitions)
 	{
 		return;
 	}
+	InOutMeatState.RedAmount = 0;
+	InOutMeatState.BlueAmount = 0;
+	InOutMeatState.WhiteAmount = 0;
+	InOutMeatState.UnspecifiedAmount = 0;
 
-	auto PromoteBucket = [this, &InOutMeatState, ItemDefinitions](const EARAffinityColor BucketColor, int32& BucketAmount)
+	FGameplayTag FallbackMeatTag;
+	if (!ItemDefinitions->ResolveFirstMeatTag(FallbackMeatTag) || !FallbackMeatTag.IsValid())
 	{
-		const int32 SanitizedAmount = FMath::Max(0, BucketAmount);
-		if (SanitizedAmount <= 0)
-		{
-			BucketAmount = 0;
-			return;
-		}
+		InOutMeatState.UnspecifiedAmount = LegacyTotal;
+		return;
+	}
 
-		FGameplayTag ResolvedMeatTag;
-		if (!ItemDefinitions->ResolveFirstMeatTagForColor(BucketColor, ResolvedMeatTag))
-		{
-			return;
-		}
-
-		AddTypedMeatToState(InOutMeatState, ResolvedMeatTag, SanitizedAmount);
-		BucketAmount = 0;
-	};
-
-	PromoteBucket(EARAffinityColor::Red, InOutMeatState.RedAmount);
-	PromoteBucket(EARAffinityColor::Blue, InOutMeatState.BlueAmount);
-	PromoteBucket(EARAffinityColor::White, InOutMeatState.WhiteAmount);
-	PromoteBucket(EARAffinityColor::None, InOutMeatState.UnspecifiedAmount);
+	AddTypedMeatToState(InOutMeatState, FallbackMeatTag, LegacyTotal);
 	InOutMeatState.NormalizeAdditionalAmounts();
 }
 

@@ -34,7 +34,7 @@ Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
 - `RequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag)` (character-native targeting)
 - `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (targets the opposite canonical character of the local controller)
-- Actor-targeted interaction requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
+- Actor-targeted interaction requests are server reachability-gated by controller pawn proximity to the target actor's collision bounds (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
 
 World actor convenience entrypoint:
 
@@ -49,6 +49,7 @@ Core subsystem API:
 
 - `GetAvailableConversationForSpeaker(...)`
 - `StartConversation(...)`
+- `StartConversationByTagForCharacters(...)` (scripted start by requester/owner character tags + exact conversation tag; bypasses standard offer/reoffer gate checks)
 - `TryStartDialogueBetweenSpeakers(...)` (explicit source-speaker + target-speaker start; ownership resolves through runtime character/controller identity)
 - `AdvanceConversation(...)`
 - `SubmitChoice(...)`
@@ -169,7 +170,7 @@ Settings live in `Plugins/Parley/Source/Parley/Public/ParleyDialogueSettings.h`:
 
 - `SpeakerDefinitionRootTag` (speaker row lookup root)
 - `ConversationDefinitionRootTag` (conversation lookup row root)
-- shared/per-player mode tag containers
+- shared/per-player mode tag containers (shared-session behavior routing only; not an offer/start gate)
 - execution guard `MaxExecutionStepsPerAdvance`
 - audio mode switch `DialogueAudioMode` (`NativeAudio` / `AudioSignals`)
 
@@ -218,9 +219,9 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Per-cycle blockers are character-specific (`seen this cycle`, `skipped this cycle`), controlled by `bBlockOfferPerCycle` (default `true`).
 - Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority `1`.
 - Offer checks include:
-  - mode enabled by `UParleyDialogueSettings` shared/per-player mode tags
   - primary speaker exact match
   - per-speaker cycle offer cap (`FParleySpeakerRow::MaxOffersPerCycle`, `0` = unlimited) evaluated per character state
+- Scripted conversation starts through `StartConversationByTagForCharacters(...)` intentionally bypass standard offer/reoffer gate checks (character restriction, seen/completed suppression, per-cycle blocker, and per-cycle speaker cap) while still enforcing authority/runtime validity and active-session ownership constraints.
 - optional conversation-level active-character restriction via `CharacterRestrictionTag`
   - relationship minimum
   - locked/blocked condition groups
@@ -238,7 +239,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Shop eavesdrop requests are immediate-only: `ForceEavesdrop` rejects enable requests when the target slot has no active dialogue session (no queued eavesdrop registration).
 - Conversations can be authored as private (`FDialogueConversationHeader::bPrivateConversation`): active private sessions reject eavesdrop requests by default.
 - Important choice flow overrides private-session eavesdrop lock while the choice is actively forcing all viewers.
-- Per-player mode supports optional busy-speaker lock (`UParleyDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`): when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
+- Optional busy-speaker lock (`UParleyDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`) is mode-agnostic: when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
 - Busy query helpers are exposed for gameplay/UI traces: `UParleyDialogueSubsystem::IsSpeakerBusyForController(...)` and `AARNPCCharacterBase::IsSpeakerBusyForController(...)`.
 - Busy-speaker presentation routes through generic emotion registrations (source `DialogueBusy`) using `UEmoSettings::BusyEmotionTag` and `BusyEmotionPriority`.
 - Line nodes (including multiline entries) support the same `CharacterRestrictionTag` filter before skip-conditions are evaluated.
@@ -334,9 +335,10 @@ Conversation graph tooling now provides:
 - player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - player-speaker resolution prefers the currently possessed pawn's `UParleySpeakerComponent` speaker tag before falling back to mirrored player-state character tags, so swaps/possess flows immediately evaluate offers against the live pawn identity
 - speaker talkable cache now refreshes when dialogue progression state mutates and when controllers possess/unpossess pawns, so relationship/tag/completion changes and pawn swaps immediately update NPC talkability
-- `AARShopAIController` only applies `State.ShopNPC.DialogueWindow` local dialogue gating to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
+- `AARShopAIController` applies local shop dialogue gating from `State.ShopNPC.Dialogue` (legacy `State.ShopNPC.DialogueWindow` maps via redirects) to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
 - AR player controllers/player states now expose `GetPlayerSlotTag()` so Emo can resolve viewer-specific P1/P2 dialogue overrides instead of falling back to shared-only display
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
+- editor-side validation fallback now uses per-call transient `UGameInstance`-owned `UParleyDialogueSubsystem` instances outside PIE, avoiding invalid `UGameInstanceSubsystem` outer creation during graph compile/save without rooting editor-lifetime validation objects.
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit + inline `Length Seconds` float edit; newly created line, multi-line, and split-line entries default authored length to `1.0`
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)
@@ -369,7 +371,7 @@ Speaker hub currently provides:
 - inline portrait list with explicit `Add New` emotion button (tag + texture fields) and highlighted-entry removal
 - relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
 - conversation cards are draggable between level headers to change minimum-relationship level assignment (replaces level cycle toggle)
-- conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Dialogue.Conversation.Id.<Speaker>.*`)
+- conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Parley.Conversations.<Speaker>.*`)
 - conversation map `Required Tags` uses gameplay tag container editing (no CSV string entry)
 - conversation map rows expose right-click context actions for `Open`, `Rename`, `Duplicate`, `Remove From Lookup`, and `Delete Asset + Remove From Lookup`
 - speaker editor supports transaction-backed `Ctrl+Z` / `Ctrl+Y` (`Ctrl+Shift+Z`) undo/redo for conversation create/duplicate/delete flows

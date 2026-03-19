@@ -7,6 +7,7 @@
 #include "ARLog.h"
 #include "ARNetworkUserSettings.h"
 #include "ARTaggedPlayerStart.h"
+#include "ParleyDialogueSubsystem.h"
 #include "ParleySpeakerSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
@@ -617,6 +618,55 @@ bool AARGameModeBase::EndModeAndTravel(const FString& URL, const FString& Option
 bool AARGameModeBase::TravelDirectInMode(const FString& URL, const FString& Options, const bool bSkipReadyChecks, const bool bAbsolute, const bool bSkipGameNotify, const bool bUseOpenLevelInPIE)
 {
 	return TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, EARTravelRoutePolicy::ForceDirect);
+}
+
+bool AARGameModeBase::StartParleyConversationByTagForCharacters(
+	const FGameplayTag RequesterCharacterTag,
+	const FGameplayTag OwnerCharacterTag,
+	const FGameplayTag ConversationTag)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters ignored: not authority (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UParleyDialogueSubsystem* DialogueSubsystem = GameInstance ? GameInstance->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
+	if (!DialogueSubsystem)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters failed: ParleyDialogueSubsystem unavailable (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	const bool bStarted = DialogueSubsystem->StartConversationByTagForCharacters(
+		RequesterCharacterTag,
+		OwnerCharacterTag,
+		ConversationTag);
+	if (!bStarted)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters returned false (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+	}
+
+	return bStarted;
 }
 
 TSubclassOf<AGameSession> AARGameModeBase::GetGameSessionClass() const
@@ -1359,6 +1409,40 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 	if (!PlayerController)
 	{
 		return;
+	}
+
+	const TSubclassOf<APlayerController> DesiredControllerClass = GetPlayerControllerClassToSpawnForSeamlessTravel(PlayerController);
+	if (DesiredControllerClass && !PlayerController->IsA(DesiredControllerClass))
+	{
+		APlayerController* ReplacementController = SpawnPlayerControllerCommon(
+			PlayerController->IsLocalPlayerController() ? ROLE_SimulatedProxy : ROLE_AutonomousProxy,
+			PlayerController->GetFocalLocation(),
+			PlayerController->GetControlRotation(),
+			DesiredControllerClass);
+		if (ReplacementController)
+		{
+			PlayerController->SeamlessTravelTo(ReplacementController);
+			ReplacementController->SeamlessTravelFrom(PlayerController);
+			SwapPlayerControllers(PlayerController, ReplacementController);
+			C = ReplacementController;
+			PlayerController = ReplacementController;
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[GameMode] Seamless controller class corrected for mode '%s': now '%s'."),
+				*ModeTag.ToString(),
+				*GetNameSafe(PlayerController->GetClass()));
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[GameMode] Failed to spawn desired seamless controller class '%s' for mode '%s'; keeping '%s'."),
+				*GetNameSafe(DesiredControllerClass.Get()),
+				*ModeTag.ToString(),
+				*GetNameSafe(PlayerController->GetClass()));
+		}
 	}
 
 	if (PlayerController->PlayerState)

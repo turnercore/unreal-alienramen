@@ -11,6 +11,7 @@
 #include "AssetRegistry/AssetData.h"
 #include "Editor.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "Framework/Docking/TabManager.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GameplayTagsManager.h"
@@ -202,12 +203,37 @@ namespace
 
 	static UParleyDialogueSubsystem* GetTransientDialogueValidationSubsystem()
 	{
-		static TWeakObjectPtr<UParleyDialogueSubsystem> Cached;
-		if (!Cached.IsValid())
+		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
+		static TWeakObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
+		if (!CachedValidationGameInstance.IsValid())
 		{
-			Cached = NewObject<UParleyDialogueSubsystem>(GetTransientPackage());
+			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
+			if (!ValidationGameInstance)
+			{
+				return nullptr;
+			}
+
+			// Keep one editor-validation instance alive instead of reallocating each query.
+			ValidationGameInstance->AddToRoot();
+			CachedValidationGameInstance = ValidationGameInstance;
+			CachedValidationSubsystem.Reset();
 		}
-		return Cached.Get();
+
+		if (!CachedValidationSubsystem.IsValid())
+		{
+			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(
+				CachedValidationGameInstance.Get(),
+				NAME_None,
+				RF_Transient);
+			if (!ValidationSubsystem)
+			{
+				return nullptr;
+			}
+
+			CachedValidationSubsystem = ValidationSubsystem;
+		}
+
+		return CachedValidationSubsystem.Get();
 	}
 
 	static const TCHAR* DialogueAutoTagConfigRelativePath = TEXT("Tags/DialogueConversationGeneratedTags.ini");
@@ -658,7 +684,7 @@ namespace
 		}
 
 		return FString::Printf(
-			TEXT("%s.Id.%s"),
+			TEXT("%s.%s"),
 			*Settings->ConversationDefinitionRootTag.ToString(),
 			*GetSpeakerLeafSegment(SpeakerTag));
 	}

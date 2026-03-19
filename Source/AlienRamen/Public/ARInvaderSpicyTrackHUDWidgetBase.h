@@ -76,7 +76,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FAROnInvaderWidgetSharedTrackChangedSignature,
-	const TArray<FARInvaderTrackSlotState>&,
+	const TArray<FARInvaderTrackSlotDisplayState>&,
 	SharedTrackSlots);
 
 /**
@@ -86,7 +86,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
  * - bind to an owning `AARInvaderHUD` and resolve `AARInvaderGameState`
  * - track all replicated Invader player states, not only the local player
  * - expose per-character spicy/max-spice/cursor change events for HUD visuals
- * - expose shared-track slot changes for team upgrade lane rendering
+ * - expose shared-track display-state changes for team upgrade lane rendering
  */
 UCLASS(Abstract, Blueprintable)
 class ALIENRAMEN_API UARInvaderSpicyTrackHUDWidgetBase : public UUserWidget
@@ -124,9 +124,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|UI|Spice Track")
 	const TArray<FARInvaderSpicyTrackCharacterState>& GetCachedCharacterStates() const { return CachedCharacterStates; }
 
-	/** Returns the latest shared-track slots cached from `AARInvaderGameState`. */
+	/** Returns the latest UI-ready shared-track display snapshot cached from `AARInvaderGameState`. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|UI|Spice Track")
-	bool GetSharedTrackSlots(TArray<FARInvaderTrackSlotState>& OutSharedTrackSlots) const;
+	bool GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrackSlotDisplayState>& OutSharedTrackSlots) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|UI|Spice Track")
 	bool HasSharedTrackSnapshot() const { return bHasSharedTrackSnapshot; }
@@ -147,6 +147,7 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	/** Fires before the first snapshot broadcast so Blueprint can cache bound HUD/GameState references safely. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Invader|UI|Spice Track")
 	void BP_OnInvaderSpicyTrackHUDWidgetInitialized(AARInvaderHUD* InInvaderHUD, AARInvaderGameState* InInvaderGameState);
 
@@ -175,7 +176,7 @@ protected:
 		int32 OldCursorTier);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Invader|UI|Spice Track")
-	void BP_OnInvaderWidgetSharedTrackChanged(const TArray<FARInvaderTrackSlotState>& SharedTrackSlots);
+	void BP_OnInvaderWidgetSharedTrackChanged(const TArray<FARInvaderTrackSlotDisplayState>& SharedTrackSlots);
 
 	/** Attempts owning-HUD binding in `NativeConstruct`. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|UI|Spice Track")
@@ -218,11 +219,14 @@ private:
 	TArray<FARInvaderSpicyTrackCharacterState> CachedCharacterStates;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|UI|Spice Track", meta = (AllowPrivateAccess = "true"))
-	TArray<FARInvaderTrackSlotState> CachedSharedTrackSlots;
+	TArray<FARInvaderTrackSlotDisplayState> CachedSharedTrackSlots;
 
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<AARPlayerStateBase>> TrackedPlayerStates;
 
 	UPROPERTY(Transient)
 	bool bHasSharedTrackSnapshot = false;
+
+	UPROPERTY(Transient)
+	bool bHasInvaderSpicyTrackHUDWidgetInitialized = false;
 };
