@@ -10,6 +10,7 @@
 #include "ARGameStateBase.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ARProjectileBase.h"
 #include "ARRunBuffSubsystem.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
@@ -74,6 +75,7 @@ void UARInvaderDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collectio
 {
 	Super::Initialize(Collection);
 	RegisterConsoleCommands();
+	ResolveTrackedProjectileClass();
 	RebuildPlayerStatusBindings();
 	RefreshPlayerStatusSignals();
 }
@@ -82,7 +84,61 @@ void UARInvaderDirectorSubsystem::Deinitialize()
 {
 	ClearPlayerStatusBindings();
 	UnregisterConsoleCommands();
+	ActiveProjectileActors.Reset();
+	CachedActiveProjectileCount = 0;
+	CachedProjectileActorClass = nullptr;
+	bProjectileActorClassResolved = false;
 	Super::Deinitialize();
+}
+
+UClass* UARInvaderDirectorSubsystem::ResolveTrackedProjectileClass() const
+{
+	if (!bProjectileActorClassResolved)
+	{
+		bProjectileActorClassResolved = true;
+
+		const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
+		CachedProjectileActorClass = Settings ? Settings->ProjectileActorClass.LoadSynchronous() : nullptr;
+		if (!CachedProjectileActorClass)
+		{
+			CachedProjectileActorClass = AARProjectileBase::StaticClass();
+		}
+	}
+
+	return CachedProjectileActorClass.Get();
+}
+
+void UARInvaderDirectorSubsystem::RegisterTrackedProjectile(AActor* Projectile)
+{
+	if (!Projectile)
+	{
+		return;
+	}
+
+	UClass* TrackedProjectileClass = ResolveTrackedProjectileClass();
+	if (!TrackedProjectileClass || !Projectile->IsA(TrackedProjectileClass))
+	{
+		return;
+	}
+
+	if (!ActiveProjectileActors.Contains(Projectile))
+	{
+		ActiveProjectileActors.Add(Projectile);
+		++CachedActiveProjectileCount;
+	}
+}
+
+void UARInvaderDirectorSubsystem::UnregisterTrackedProjectile(AActor* Projectile)
+{
+	if (!Projectile)
+	{
+		return;
+	}
+
+	if (ActiveProjectileActors.Remove(Projectile) > 0)
+	{
+		CachedActiveProjectileCount = FMath::Max(0, CachedActiveProjectileCount - 1);
+	}
 }
 
 bool UARInvaderDirectorSubsystem::IsTickable() const
@@ -664,13 +720,19 @@ void UARInvaderDirectorSubsystem::UpdateWaves(float DeltaTime)
 				continue;
 			}
 
-			UClass* EnemyClass = EnemyDef.EnemyClass.LoadSynchronous();
+			UClass* EnemyClass = EnemyDef.EnemyClass.Get();
 			if (!EnemyClass)
 			{
-				UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Enemy tag '%s' resolved with no enemy class for wave '%s'."),
-					*SpawnDef.EnemyIdentifierTag.ToString(), *Wave.RowName.ToString());
-				Wave.NextSpawnIndex++;
-				continue;
+				if (EnemyDef.EnemyClass.IsNull())
+				{
+					UE_LOG(ARLog, Warning, TEXT("[InvaderDirector|Validation] Enemy tag '%s' resolved with no enemy class for wave '%s'."),
+						*SpawnDef.EnemyIdentifierTag.ToString(), *Wave.RowName.ToString());
+					Wave.NextSpawnIndex++;
+					continue;
+				}
+
+				// The class is still streaming; retry on a later tick instead of blocking the game thread.
+				break;
 			}
 
 			const FVector FormationTargetLocation = ComputeFormationTargetLocation(SpawnDef, Wave.bFlipX, Wave.bFlipY);
@@ -1946,22 +2008,7 @@ int32 UARInvaderDirectorSubsystem::GetAliveEnemyCount() const
 
 int32 UARInvaderDirectorSubsystem::GetActiveProjectileCount() const
 {
-	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
-	UClass* ProjectileClass = Settings->ProjectileActorClass.LoadSynchronous();
-	if (!ProjectileClass || !GetWorld())
-	{
-		return 0;
-	}
-
-	int32 Count = 0;
-	for (TActorIterator<AActor> It(GetWorld(), ProjectileClass); It; ++It)
-	{
-		if (IsValid(*It))
-		{
-			Count++;
-		}
-	}
-	return Count;
+	return CachedActiveProjectileCount;
 }
 
 int32 UARInvaderDirectorSubsystem::GetActivePlayerCount() const

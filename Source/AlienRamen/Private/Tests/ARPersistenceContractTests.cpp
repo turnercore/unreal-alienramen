@@ -22,7 +22,6 @@ bool FARPersistencePlayerProjectionTest::RunTest(const FString& Parameters)
 	PlayerData.SyncCharacterSelectionFromCurrentTag();
 
 	TestEqual(TEXT("Current character resolves to brother tag"), PlayerData.ResolveCurrentCharacterTag(), FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
-	TestEqual(TEXT("Compatibility enum mirrors canonical tag"), PlayerData.CharacterPicked, EARCharacterChoice::Brother);
 	TestTrue(TEXT("Player-owned progression tags remain on the player row"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
 	return true;
 }
@@ -289,7 +288,6 @@ bool FARPersistenceLegacyDialogueMergeTest::RunTest(const FString& Parameters)
 
 	FARPlayerStateSaveData& PlayerData = Save->PlayerStates.AddDefaulted_GetRef();
 	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
-	PlayerData.CharacterPicked = EARCharacterChoice::Brother;
 
 	FDialoguePlayerPersistentState& LegacyA = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
 	LegacyA.OwnerCharacterTag = ARPlayer::GetBrotherCharacterTag();

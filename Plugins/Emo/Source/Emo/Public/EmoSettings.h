@@ -49,11 +49,11 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (ToolTip = "Emotion tags used by runtime behavior policies."))
 	FGameplayTag BusyEmotionTag;
 
-	// Priority used when dialogue runtime applies BusyEmotionTag through generic system override source.
+	// Priority used when dialogue runtime applies BusyEmotionTag through a generic emotion registration source.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (ToolTip = "Numeric runtime tuning values for emotion behavior."))
 	int32 BusyEmotionPriority = 3;
 
-	// Default duration used by timed system-emotion override helpers when duration input is <= 0.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (ClampMin = "0.01", UIMin = "0.01", ToolTip = "Default duration used when timed system emotion overrides omit a positive duration."))
+	// Default duration used by timed emotion registration helpers when duration input is <= 0.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Emotion|Behavior", meta = (ClampMin = "0.01", UIMin = "0.01", ToolTip = "Default duration used when timed emotion registrations omit a positive duration."))
 	float DefaultTimedSystemOverrideDurationSeconds = 1.5f;
 };

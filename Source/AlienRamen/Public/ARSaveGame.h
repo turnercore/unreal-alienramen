@@ -28,6 +28,21 @@ struct ALIENRAMEN_API FARCharacterSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character", meta = (ToolTip = "Canonical loadout state owned by this character and reused when any player takes control of the same character."))
 	FGameplayTagContainer LoadoutTags;
 
+	// Character-owned core attribute values (health/spice/speed/strength) captured from runtime ASC state.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character")
+	FARCharacterRuntimeCoreAttributeSaveData CoreAttributes;
+
+	// Character-owned life state.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character")
+	bool bIsDowned = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character")
+	bool bIsDeadState = false;
+
+	// Character-owned invader runtime state.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character|Invader")
+	FARCharacterInvaderRuntimeSaveData InvaderRuntime;
+
 	// Shop-only world snapshot used when loading directly back into the saved shop state.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ToolTip = "Shop-only world snapshot restored when loading directly back into the saved shop state."))
 	FARCharacterShopSnapshot ShopSnapshot;
@@ -40,7 +55,7 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 18;
+	static constexpr int32 CurrentSchemaVersion = 19;
 	static constexpr int32 MinSupportedSchemaVersion = 18;
 
 	UARSaveGame();

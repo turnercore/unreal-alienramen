@@ -39,6 +39,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void ReleaseProjectile_Implementation();
 
@@ -75,7 +76,9 @@ protected:
 
 private:
 	void EvaluateOffscreenReleaseInternal(float DeltaSeconds);
+	void UpdateInvaderDirectorTracking(bool bShouldTrack);
 
 	bool bReleased = false;
 	float OffscreenSeconds = 0.f;
+	bool bRegisteredWithInvaderDirector = false;
 };

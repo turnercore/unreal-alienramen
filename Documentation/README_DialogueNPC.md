@@ -22,7 +22,7 @@ Ownership reminder:
 
 - This runtime is inside the Dialogue plugin ownership boundary.
 - Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.
-- Shop/customer-serving built-on-top systems should route serving results through `ApplyRamenServeOutcome(...)` for relationship + emotion output.
+- Shop/customer-serving built-on-top systems should bridge customer outcomes into Parley relationship mutations and project-owned emotion presentation instead of relying on a plugin-owned helper.
 
 ## Runtime Entry Points
 
@@ -57,7 +57,7 @@ Core subsystem API:
 - `ValidateSpeaker(...)`
 - `PreviewConversation(...)`
 - `PreviewConversationTrace(...)` (tooling-oriented multi-step trace simulation)
-- `ApplyRamenServeOutcome(...)` (built-on-top customer/order systems)
+- game-owned relationship bridge from customer/order systems
 - `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/owner-character context)
 - `OnDialogueAudioRequested` (broadcast when line audio resolves into either native sound payload or cue-tag signal payload)
 
@@ -170,23 +170,32 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 ## Emotion Runtime
 
 - `UEmoComponent` provides replicated overhead-emotion display state for speaker actors and player characters.
-- Emotion state is server-authoritative with shared + per-viewer variants (legacy slot tags, now character-derived in gameplay flows).
-- Emotion display precedence is now: `System Override` (source+priority arbitration) -> `Dialogue Override` -> `Base`.
-- `SetDialogueEmotionTag*`/`ClearDialogueEmotionTag*` APIs write directly to replicated `DialogueOverrideState`; they do not enqueue into system-source arbitration.
-- Dialogue applies session-scoped emotion overrides and clears them when the session ends, revealing base state again.
-- Dialogue line emotion is written as a system source (`DialogueLine`) with priority above `BusyEmotionPriority`; if line-tag resolve fails, no line source is written so lower-priority state (for example busy) remains visible.
-- Dialogue clears prior line-emotion source entries when presenting the next line, so line emotion holds until next line or session end.
+- Emotion state is now a generic registration pool: `SourceId + TargetViewerTags -> EmotionTag/Priority/WriteSerial`.
+- Viewer matching is exact-tag overlap only. Empty target tags are global fallback registrations.
+- Resolution order is:
+  - highest priority first
+  - targeted registrations before global registrations on equal priority
+  - latest write when same-priority targeted registrations still tie
+- Same-priority targeted winner conflicts log a warning and still resolve deterministically.
+- `SetEmotionRegistration*` / `ClearEmotionRegistration*` are the only write surface in `UEmoComponent`; slot-specific and layer-specific APIs were removed.
+- Dialogue/session systems now bridge through those generic registrations instead of writing plugin-owned base/dialogue/system layers.
+- Dialogue applies session-scoped emotion registrations and clears them when the session ends.
+- Dialogue line emotion is written as a named registration with priority above `BusyEmotionPriority`; if line-tag resolve fails, no line registration is written so lower-priority state (for example busy) remains visible.
+- Dialogue clears prior line-emotion registrations when presenting the next line, so line emotion holds until next line or session end.
 - Dialogue line `SpeakerTag` may include an emotion leaf (example: `Parley.Speaker.Fred.Angry`).
 - Emotion icon lookup resolves through `UTagKeySubsystem` route root `UEmoSettings::EmotionResolverRootTag` (row type `FEmoIconRow`) and is cached by `UEmoResolverSubsystem`.
 - Fallback order is: exact requested tag first, then generic fallback under `GenericEmotionRootTag` (default `Parley.Emotion`) when a speaker tag includes an explicit emotion leaf (for example `Parley.Speaker.Fred.Angry` -> `Parley.Emotion.Angry`).
 - `UEmoComponent` remains light-weight authoring: anchor placement + local icon size + optional local preview tag.
 - Emotion anchor authoring is offset-only: `AnchorWorldOffset` is applied from owner actor top bounds fallback.
-- Built-on-top systems can set/clear generic system overrides by source id and priority (`SetSystemEmotionTag*` / `ClearSystemEmotionTag*`), including timed auto-clear helpers (`SetSystemEmotionTagForDuration*`) with default duration from `UEmoSettings::DefaultTimedSystemOverrideDurationSeconds`.
+- Built-on-top systems can set/clear generic registrations by source id and priority, including timed auto-clear helpers, with default duration from `UEmoSettings::DefaultTimedSystemOverrideDurationSeconds`.
 - Runtime overhead emotion rendering is owned directly by `AARHUDBase` (no separate HUD emotion component).
 - `AARHUDBase::DrawHUD` renders overhead emotions natively and applies projection/size/occlusion policy from HUD properties.
-- HUD viewer identity resolution falls back to shared display state when the local viewer has no resolved character/controller context (for example single-player/spectator/untagged local controllers).
+- `AARHUDBase` is authoritative for local viewer context and now resolves against `ViewedEmotionTags`.
+- Alien Ramen builds `ViewedEmotionTags` from the local player state's current character tag plus the possessed pawn `UParleySpeakerComponent` tag when present.
+- Local HUD viewer tags are refreshed when the local controller changes pawn and when `AARPlayerStateBase::CurrentCharacterTag` changes.
+- Global registrations are the fallback when the HUD has no matching targeted registrations.
 - Runtime suppression (for example cutscenes) should use `AARHUDBase::SetEmotionRenderingSuppressed(...)`.
-- `UEmoComponent` display change notifications now fire when effective shared or slot-specific (`P1`/`P2`) display tags change, so delegate-driven UI/subsystems are informed without polling.
+- `UEmoComponent` display change notifications still fire when effective display state changes, so delegate-driven UI/subsystems are informed without polling.
 
 ## Offer + Execution Rules (Current Runtime)
 
@@ -204,7 +213,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
   - mode enabled by `UParleyDialogueSettings` shared/per-player mode tags
   - primary speaker exact match
   - per-speaker cycle offer cap (`FParleySpeakerRow::MaxOffersPerCycle`, `0` = unlimited) evaluated per character state
-  - optional conversation-level active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`)
+- optional conversation-level active-character restriction via `CharacterRestrictionTag`
   - relationship minimum
   - locked/blocked condition groups
   - seen/completed/repeatability suppression flags
@@ -213,7 +222,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
   - that preference is persisted as player-owned save data
 - Runtime line presentation supports token + style parsing at execute time (source `FText` is kept authored/localized, formatting is applied on the delivered view text):
-  - lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcuts `[Speaker]`, `[Brother]`, `[Sister]`
+- lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcut `[Speaker]`
   - unknown/failed commands fail loudly: unresolved bracket commands are replaced with `UNKNOWN` and logged as runtime errors
   - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
   - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
@@ -223,8 +232,8 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Important choice flow overrides private-session eavesdrop lock while the choice is actively forcing all viewers.
 - Per-player mode supports optional busy-speaker lock (`UParleyDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes`): when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (`bAutoEavesdropOnBusySpeakerByDefault`).
 - Busy query helpers are exposed for gameplay/UI traces: `UParleyDialogueSubsystem::IsSpeakerBusyForController(...)` and `AARNPCCharacterBase::IsSpeakerBusyForController(...)`.
-- Busy-speaker presentation routes through emotion-system source overrides (source `DialogueBusy`) using `UEmoSettings::BusyEmotionTag` and `BusyEmotionPriority`.
-- Line nodes (including multiline entries) support the same convenience active-character restriction (`Any` / `BrotherOnly` / `SisterOnly`) before skip-conditions are evaluated.
+- Busy-speaker presentation routes through generic emotion registrations (source `DialogueBusy`) using `UEmoSettings::BusyEmotionTag` and `BusyEmotionPriority`.
+- Line nodes (including multiline entries) support the same `CharacterRestrictionTag` filter before skip-conditions are evaluated.
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
 
@@ -278,7 +287,11 @@ Speaker actor integration now routes through `UParleySpeakerComponent`:
 
 - `UParleySpeakerComponent` owns speaker-side dialogue interaction + replicated dialogue talkable mask/state.
 - `AARNPCCharacterBase` remains the owner of non-dialogue local speaker gates (for example serving/customer mode) and combines that with component talkability for public speaker talk checks.
-- effective talkable state drives a persistent emotion-system override source `TalkableState` using `UEmoSettings::WantsToTalkEmotionTag` (set while talkable, cleared when not talkable).
+- effective talkable state drives a persistent emotion registration source `TalkableState` using `UEmoSettings::WantsToTalkEmotionTag` (set while talkable, cleared when not talkable).
+- `AARNPCCharacterBase` bridges Parley speaker emotion requests into EMO registrations:
+  - valid `ViewerCharacterTag` requests become targeted registrations for that exact tag
+  - empty `ViewerCharacterTag` requests become global registrations
+  - customer ordering and talkable-state presentation currently stay global
 
 ## Emotion Resolver Runtime
 
@@ -309,6 +322,7 @@ Conversation graph tooling now provides:
 - `Faction Mutation` inline authoring now supports both faction popularity delta and faction-speaker reputation delta (`FactionTag` + optional `TargetSpeakerTag`)
 - when a speaker-target field uses `Parley.Speaker.Requester`/`Parley.Speaker.Owner`, runtime resolves it using the requester/owner `UParleySpeakerComponent` tags for relationship/faction condition and mutation evaluation
 - character-owned progression resolution prioritizes live `PlayerState.CurrentCharacterTag` for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable
+- active player identity resolves from the possessed pawn's `UParleySpeakerComponent` speaker tag first, then falls back to project bridge data when that component is unavailable
 - player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - player-speaker resolution prefers the currently possessed pawn's `UParleySpeakerComponent` speaker tag before falling back to mirrored player-state character tags, so swaps/possess flows immediately evaluate offers against the live pawn identity
 - speaker talkable cache now refreshes when dialogue progression state mutates and when controllers possess/unpossess pawns, so relationship/tag/completion changes and pawn swaps immediately update NPC talkability

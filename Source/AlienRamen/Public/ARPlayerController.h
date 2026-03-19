@@ -186,6 +186,20 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestKickActor(AActor* TargetActor);
 
+	/** Requests a character swap to another owned character runtime. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Character")
+	void RequestSwapCharacter(FGameplayTag TargetCharacterTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSwapCharacter(FGameplayTag TargetCharacterTag);
+
+	/** Client-only rejection callback for authority-validated swap failures. */
+	UFUNCTION(Client, Reliable)
+	void ClientNotifySwapCharacterRejected(FGameplayTag TargetCharacterTag, const FString& FailureReason);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Player|Character")
+	void BP_OnSwapCharacterRejected(FGameplayTag TargetCharacterTag, const FString& FailureReason);
+
 	/** Sets the current primary interactable being actively interacted with (hold/ongoing flows). */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
 	void SetActiveInteractable(AActor* InteractableActor);
@@ -393,6 +407,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void PlayerTick(float DeltaTime) override;
+	virtual void SetPawn(APawn* InPawn) override;
 
 	/** Automatically applies/removes DefaultInputMappings for local controllers at lifecycle boundaries. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Input")
@@ -482,6 +497,9 @@ protected:
 	bool IsServerInteractionTargetReachable(const AActor* TargetActor, const TCHAR* ContextLabel) const;
 
 private:
+	UFUNCTION()
+	void HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag);
+
 	bool IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, bool bLogFailures) const;
 	void TickActiveInteractionRangeValidation(float DeltaTime);
 	void NotifyInteractableOutOfRange(AActor* InteractableActor, bool bWasSecondaryInteraction);
@@ -495,6 +513,8 @@ private:
 	void StartHUDInitializationRetry();
 	void StopHUDInitializationRetry();
 	void HandleHUDInitializationRetry();
+	void RebindCurrentCharacterTagChangeDelegate(APlayerState* CurrentPlayerState);
+	void UnbindCurrentCharacterTagChangeDelegate();
 	void SetPauseMenuOpenLocal(bool bOpen);
 	void ApplyDefaultInputMappings(bool bEnable);
 	void ApplyPauseInputContexts(bool bEnable);
@@ -543,6 +563,9 @@ private:
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<AGameStateBase> LastHUDInitGameState;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<class AARPlayerStateBase> BoundCurrentCharacterTagPlayerState;
 
 	FTimerHandle HUDInitializationRetryTimer;
 

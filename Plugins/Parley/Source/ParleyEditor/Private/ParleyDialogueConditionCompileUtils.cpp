@@ -147,9 +147,7 @@ namespace ParleyDialogueConditionCompile
 
 			OutCondition.Source = EDialogueConditionSource::ActiveCharacter;
 			OutCondition.Operator = EDialogueComparisonOp::Present;
-			OutCondition.TagValue = UGameplayTagsManager::Get().RequestGameplayTag(
-				Data->Character == EDialogueEditorCharacterCondition::Brother ? FName(TEXT("Parley.Speaker.Brother")) : FName(TEXT("Parley.Speaker.Sister")),
-				false);
+			OutCondition.TagValue = Data->CharacterTag;
 			return true;
 		}
 		case EDialogueEditorNodeType::CheckVariable:

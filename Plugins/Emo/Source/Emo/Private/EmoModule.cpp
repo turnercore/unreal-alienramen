@@ -111,7 +111,8 @@ void FEmoModule::StartupModule()
 	{
 		TEXT("Parley.Emotion"),
 		TEXT("Parley.Emotion.Busy"),
-		TEXT("Parley.Emotion.WantsToTalk")
+		TEXT("Parley.Emotion.WantsToTalk"),
+		TEXT("Parley.Emotion.Preview")
 	};
 
 	for (const TCHAR* RequiredTag : RequiredTags)

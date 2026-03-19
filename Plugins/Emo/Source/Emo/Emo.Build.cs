@@ -12,8 +12,12 @@ public class Emo : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"GameplayTags",
-			"Projects",
 			"DeveloperSettings",
+		});
+
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
+			"Projects",
 			"TagKey"
 		});
 	}

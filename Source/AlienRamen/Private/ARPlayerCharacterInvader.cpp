@@ -3,6 +3,7 @@
 #include "ARPlayerCharacterInvader.h"
 #include "ARLog.h"
 
+#include "ARCharacterStateRuntime.h"
 #include "ARPlayerStateBase.h"
 #include "ARPlayerController.h"
 #include "ARAbilitySet.h"
@@ -110,21 +111,9 @@ namespace
 			}
 
 			const bool bTaggedAsRangeTrigger = Primitive->ComponentHasTag(RangeTriggerComponentTag);
-			const bool bLegacyNameMatch = Primitive->GetName().Contains(TEXT("RangeTrigger"), ESearchCase::IgnoreCase);
-			if (!bTaggedAsRangeTrigger && !bLegacyNameMatch)
+			if (!bTaggedAsRangeTrigger)
 			{
 				continue;
-			}
-
-			if (!bTaggedAsRangeTrigger && bLegacyNameMatch)
-			{
-				UE_LOG(
-					ARLog,
-					Verbose,
-					TEXT("[ShipCollision] Range trigger '%s' on '%s' matched legacy name path. Add component tag '%s'."),
-					*GetNameSafe(Primitive),
-					*GetNameSafe(OwnerActor),
-					*RangeTriggerComponentTag.ToString());
 			}
 
 			const bool bWasBlockingPawn = Primitive->GetCollisionResponseToChannel(ECC_Pawn) == ECR_Block
@@ -698,7 +687,8 @@ void AARPlayerCharacterInvader::InitAbilityActorInfo()
 		return;
 	}
 
-	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+	AARCharacterStateRuntime* CharacterRuntime = PS->GetCurrentCharacterRuntime();
+	UAbilitySystemComponent* ASC = CharacterRuntime ? CharacterRuntime->GetAbilitySystemComponent() : nullptr;
 	if (!ASC)
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
@@ -713,8 +703,12 @@ void AARPlayerCharacterInvader::InitAbilityActorInfo()
 
 	CachedASC = ASC;
 
-	// Owner = PlayerState, Avatar = this pawn
-	ASC->InitAbilityActorInfo(PS, this);
+	// Owner = CharacterRuntime, Avatar = this pawn.
+	ASC->InitAbilityActorInfo(CharacterRuntime, this);
+	if (CharacterRuntime && CharacterRuntime->HasAuthority())
+	{
+		CharacterRuntime->SetCurrentPawn(this);
+	}
 	EnsureDefaultPickupRadiusOnASC(ASC);
 	BindMoveSpeedChangeDelegate(ASC);
 	RefreshCharacterMovementSpeedFromAttributes();
@@ -947,15 +941,7 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 
 	// Ship baseline is required.
 	FGameplayTag ShipTag;
-	bool bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootShips(), ShipTag);
-	if (!bFoundShipTag)
-	{
-		static const FGameplayTag LegacyShipRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Ships"), false);
-		if (LegacyShipRoot.IsValid())
-		{
-			bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, LegacyShipRoot, ShipTag);
-		}
-	}
+	const bool bFoundShipTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootShips(), ShipTag);
 	if (!bFoundShipTag)
 	{
 		if (bLogErrors)
@@ -985,17 +971,9 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		return false;
 	}
 
-	// Secondary (optional legacy lane; never required for loadout init).
+	// Secondary is optional and never required for loadout initialization.
 	FGameplayTag SecondaryTag;
-	bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootSecondaries(), SecondaryTag);
-	if (!bFoundSecondaryTag)
-	{
-		static const FGameplayTag LegacySecondaryRoot = FGameplayTag::RequestGameplayTag(TEXT("Unlocks.Secondaries"), false);
-		if (LegacySecondaryRoot.IsValid())
-		{
-			bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, LegacySecondaryRoot, SecondaryTag);
-		}
-	}
+	const bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootSecondaries(), SecondaryTag);
 	if (bFoundSecondaryTag)
 	{
 		FInstancedStruct SecondaryRow;
@@ -1270,7 +1248,7 @@ bool AARPlayerCharacterInvader::GetPlayerLoadoutTags(FGameplayTagContainer& OutL
 	// This avoids accidentally reading a BP shadow variable with the same name.
 	if (const AARPlayerStateBase* ARPS = Cast<AARPlayerStateBase>(PS))
 	{
-		OutLoadoutTags = ARPS->LoadoutTags;
+		OutLoadoutTags = ARPS->GetCurrentCharacterLoadoutTags();
 		return true;
 	}
 

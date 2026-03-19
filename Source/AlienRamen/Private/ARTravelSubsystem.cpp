@@ -151,7 +151,7 @@ bool UARTravelSubsystem::RequestServerTravel(
 	if (bPersistSaveBeforeTravel)
 	{
 		FARSaveResult SaveResult;
-		if (!SaveSubsystem->SaveCurrentGame(NAME_None, true, SaveResult))
+		if (!SaveSubsystem->SaveCurrentGameBlocking(NAME_None, true, SaveResult))
 		{
 			UE_LOG(ARLog, Warning, TEXT("[TravelSubsystem] ServerTravel blocked: save failed: %s"), *SaveResult.Error);
 			return false;
@@ -192,7 +192,7 @@ bool UARTravelSubsystem::RequestOpenLevel(
 	if (bPersistSaveBeforeTravel)
 	{
 		FARSaveResult SaveResult;
-		if (!SaveSubsystem->SaveCurrentGame(NAME_None, true, SaveResult))
+		if (!SaveSubsystem->SaveCurrentGameBlocking(NAME_None, true, SaveResult))
 		{
 			UE_LOG(ARLog, Warning, TEXT("[TravelSubsystem] OpenLevel blocked: save failed: %s"), *SaveResult.Error);
 			return false;

@@ -528,6 +528,7 @@ static UParleySpeakerComponent* FindSpeakerComponentForSpeakerTag(UWorld* World,
 
 static void ApplyDialogueEmotionForPresentedSpeaker(
 	FParleyActiveDialogueSession& Session,
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FDialogueRuntimeContext& Context,
 	const FGameplayTag& ResolvedSpeakerTag)
 {
@@ -547,14 +548,23 @@ static void ApplyDialogueEmotionForPresentedSpeaker(
 		return;
 	}
 
+	FGameplayTag SpeakerRowTag;
+	ResolveSpeakerRowForPresentation(SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+	const FGameplayTag PresentationEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+	if (!PresentationEmotionTag.IsValid())
+	{
+		return;
+	}
+
 	UE_LOG(
 		ParleyLog,
 		Verbose,
-		TEXT("[Dialogue] Requesting presented-speaker emotion: SpeakerTag=%s OwnerCharacter=%s"),
+		TEXT("[Dialogue] Requesting presented-speaker emotion: SpeakerTag=%s OwnerCharacter=%s EmotionTag=%s"),
 		*ResolvedSpeakerTag.ToString(),
-		*GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag).ToString());
+		*GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag).ToString(),
+		*PresentationEmotionTag.ToString());
 	SpeakerComponent->OnSpeakerEmotionRequested.Broadcast(
-		ResolvedSpeakerTag,
+		PresentationEmotionTag,
 		GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
 		true);
 	Session.SpeakerComponentsWithEmotionOverride.Add(SpeakerComponent);
@@ -693,7 +703,7 @@ static bool ShouldShowLineForLookahead(
 	const FDialogueLineNodeData& LineData,
 	const FDialogueRuntimeContext& Context)
 {
-	if (!PassesCharacterRestriction(LineData.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+	if (!PassesCharacterRestriction(LineData.CharacterRestrictionTag, Context.ResolvedPlayerSpeakerTag))
 	{
 		return false;
 	}
@@ -763,8 +773,10 @@ static bool TryResolveChoiceLookaheadEmotion(
 				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(LineData->Line, Context);
 				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
 				{
-					OutPreviewEmotionTag = ResolvedSpeakerTag;
-					return true;
+					FGameplayTag SpeakerRowTag;
+					ResolveSpeakerRowForPresentation(DialogueSubsystem->GetRuntimeState().SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+					OutPreviewEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+					return OutPreviewEmotionTag.IsValid();
 				}
 			}
 
@@ -790,8 +802,10 @@ static bool TryResolveChoiceLookaheadEmotion(
 				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(Entry.LineData.Line, Context);
 				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
 				{
-					OutPreviewEmotionTag = ResolvedSpeakerTag;
-					return true;
+					FGameplayTag SpeakerRowTag;
+					ResolveSpeakerRowForPresentation(DialogueSubsystem->GetRuntimeState().SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+					OutPreviewEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+					return OutPreviewEmotionTag.IsValid();
 				}
 			}
 
@@ -822,8 +836,10 @@ static bool TryResolveChoiceLookaheadEmotion(
 				const FGameplayTag ResolvedSpeakerTag = ResolveLineSpeakerTagForContext(Entry.LineData.Line, Context);
 				if (DoesSpeakerTagMatchPrimarySpeaker(ResolvedSpeakerTag, Session.PrimarySpeakerTag))
 				{
-					OutPreviewEmotionTag = ResolvedSpeakerTag;
-					return true;
+					FGameplayTag SpeakerRowTag;
+					ResolveSpeakerRowForPresentation(DialogueSubsystem->GetRuntimeState().SpeakerRowsByTag, ResolvedSpeakerTag, SpeakerRowTag);
+					OutPreviewEmotionTag = ResolvePresentationEmotionTagFromSpeakerTag(ResolvedSpeakerTag, SpeakerRowTag);
+					return OutPreviewEmotionTag.IsValid();
 				}
 			}
 
@@ -1100,7 +1116,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 			Session.CurrentSpeakerLineFontStyleTag,
 			Session.CurrentSpeakerLineFont);
 		Session.CurrentSpeakerPortrait = ResolvePortraitForSpeaker(SpeakerRowsByTag, ResolvedSpeakerTag);
-		ApplyDialogueEmotionForPresentedSpeaker(Session, Context, ResolvedSpeakerTag);
+		ApplyDialogueEmotionForPresentedSpeaker(Session, SpeakerRowsByTag, Context, ResolvedSpeakerTag);
 		Session.bWaitingForAdvanceInput = true;
 		Session.WaitingLineNodeId = WaitingNodeId;
 		Session.WaitingMultiLineEntryIndex = MultiLineEntryIndex;
@@ -1220,7 +1236,7 @@ static EDialogueExecutionResult ExecuteSessionUntilWait(
 
 	auto ShouldShowLineEntry = [&](const FDialogueLineNodeData& LineData, const FDialogueRuntimeContext& Context) -> bool
 	{
-		if (!PassesCharacterRestriction(LineData.CharacterRestriction, Context.ResolvedPlayerSpeakerTag))
+		if (!PassesCharacterRestriction(LineData.CharacterRestrictionTag, Context.ResolvedPlayerSpeakerTag))
 		{
 			return false;
 		}
@@ -1954,7 +1970,12 @@ bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(
 	APlayerState* RequestingPlayerState = RequestingController->GetPlayerState<APlayerState>();
 	if (!SourceSpeakerTag.IsValid())
 	{
-		SourceSpeakerTag = ResolvePlayerSpeakerTag(RequestingPlayerState);
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Start-with-speaker rejected: controller '%s' has no valid source speaker tag."),
+			*GetNameSafe(RequestingController));
+		return false;
 	}
 	if (RequestingPlayerState)
 	{

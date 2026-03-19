@@ -61,7 +61,7 @@ namespace
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FParleyConditionSourceMappingTest,
-	"AlienRamen.Parley.Editor.ConditionCompile.SourceMapping",
+	"Parley.Editor.ConditionCompile.SourceMapping",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
@@ -167,12 +167,11 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 	{
 		UParleyDialogueEdGraphNode* Node = AddTestNode(Graph, EDialogueEditorNodeType::CheckCharacter);
 		FDialogueEditorCheckCharacterNodeData* Data = Node->RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckCharacterNodeData>();
-		Data->Character = EDialogueEditorCharacterCondition::Sister;
-		const FGameplayTag ExpectedTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+		Data->CharacterTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Parley.Speaker.TestCharacter")), false);
 		TestTrue(TEXT("CheckCharacter condition builds"), ParleyDialogueConditionCompile::BuildConditionFromSourceNode(Node, Condition, Error));
 		TestEqual(TEXT("CheckCharacter source"), Condition.Source, EDialogueConditionSource::ActiveCharacter);
 		TestEqual(TEXT("CheckCharacter operator"), Condition.Operator, EDialogueComparisonOp::Present);
-		TestTrue(TEXT("CheckCharacter tag matches expected"), Condition.TagValue == ExpectedTag);
+		TestTrue(TEXT("CheckCharacter tag matches expected"), Condition.TagValue == Data->CharacterTag);
 	}
 
 	{
@@ -195,7 +194,7 @@ bool FParleyConditionSourceMappingTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FParleyBranchConditionGroupAndOrTest,
-	"AlienRamen.Parley.Editor.ConditionCompile.BranchAndOr",
+	"Parley.Editor.ConditionCompile.BranchAndOr",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FParleyBranchConditionGroupAndOrTest::RunTest(const FString& Parameters)
@@ -272,7 +271,7 @@ bool FParleyBranchConditionGroupAndOrTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FParleyBranchConditionValidationTest,
-	"AlienRamen.Parley.Editor.ConditionCompile.Validation",
+	"Parley.Editor.ConditionCompile.Validation",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FParleyBranchConditionValidationTest::RunTest(const FString& Parameters)
@@ -345,7 +344,7 @@ bool FParleyBranchConditionValidationTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FParleyConditionSchemaRulesTest,
-	"AlienRamen.Parley.Editor.ConditionCompile.SchemaRules",
+	"Parley.Editor.ConditionCompile.SchemaRules",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FParleyConditionSchemaRulesTest::RunTest(const FString& Parameters)

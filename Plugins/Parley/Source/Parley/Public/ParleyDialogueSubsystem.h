@@ -50,19 +50,19 @@ public:
 	bool GetAvailableConversationForSpeaker(APlayerController* RequestingController, FGameplayTag PrimarySpeakerTag, FDialogueConversationOffer& OutOffer, bool bSpeakerLocalStateAllowsDialogue = true);
 
 	/** Starts a conversation by tag for the requesting controller/speaker pair. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Starts a conversation for the requesting controller and speaker on authoritative runtime state."))
 	bool StartConversation(APlayerController* RequestingController, FGameplayTag ConversationTag, FGameplayTag PrimarySpeakerTag);
 
 	/** Advances the active conversation to the next node when no choice is required. Call on interact/confirm input. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Advances the active conversation for the requesting controller on authoritative runtime state."))
 	bool AdvanceConversation(APlayerController* RequestingController);
 
 	/** Submits a player choice by branch id (from the latest client view). Returns false if choice is invalid. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Submits the selected choice branch for the requesting controller on authoritative runtime state."))
 	bool SubmitChoice(APlayerController* RequestingController, FGuid ChoiceBranchId);
 
-	/** Toggle eavesdrop mode, letting a character hear another character's conversation. Use in shop two-up flows. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	/** Toggle eavesdrop mode, letting one character hear another character's conversation. */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Enables or disables eavesdrop mode for the requesting controller on authoritative runtime state."))
 	bool ForceEavesdrop(APlayerController* RequestingController, bool bEnable, FGameplayTag TargetCharacterTag);
 
 	/** Preview the highlighted choice branch without mutating dialogue state. Pass invalid branch id to clear preview. */
@@ -74,40 +74,31 @@ public:
 	FGameplayTagContainer GetCombinedDialogueTags(const FGameplayTagContainer& PlayerOnlyProgressionTags, const FGameplayTagContainer& GameOnlyProgressionTags) const;
 
 	/** Evaluate a single dialogue condition against the provided runtime context (pure helper for graph testing). */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Evaluates a dialogue condition against the provided runtime context without mutating subsystem state."))
 	bool EvaluateDialogueCondition(const FDialogueCondition& Condition, const FDialogueRuntimeContext& Context) const;
 
 	/** Apply tag mutations (add/remove) to the runtime state; authority-only. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Applies a dialogue progression tag mutation on authoritative runtime state."))
 	bool ApplyDialogueTagMutation(const FDialogueTagMutation& Mutation, const FDialogueRuntimeContext& Context);
 
 	/** Apply relationship delta for a speaker; authority-only. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Applies a directed relationship delta on authoritative runtime state."))
 	bool ApplyDialogueRelationshipMutation(const FDialogueRelationshipMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
 
 	/** Apply faction relationship delta; authority-only. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Applies a faction relationship delta on authoritative runtime state."))
 	bool ApplyDialogueFactionMutation(const FDialogueFactionMutationNodeData& Mutation, const FDialogueRuntimeContext& Context);
 
-	// Shop/customer integration endpoint: applies relationship delta and emotion output in one call.
-	/** Convenience helper for shop serve results: bumps relationship and records reaction emotion for the given speaker. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
-	bool ApplyRamenServeOutcome(
-		FGameplayTag SpeakerTag,
-		int32 RelationshipDeltaPoints,
-		FGameplayTag ReactionEmotionTag,
-		AActor* PreferredSpeakerActor = nullptr);
-
 	/** Run validation on a conversation asset (runtime-safe). Use in editor tooling and runtime assertions. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Validates a conversation asset and returns a report without mutating subsystem state."))
 	bool ValidateConversation(UParleyConversationAsset* ConversationAsset, FDialogueValidationReport& OutReport) const;
 
 	/** Validate a single speaker row for required fields. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Validates a speaker row and returns a report without mutating subsystem state."))
 	bool ValidateSpeaker(const FParleySpeakerRow& SpeakerRow, FDialogueValidationReport& OutReport) const;
 
 	/** Preview a conversation with a provided runtime context to see the first client view without committing state. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Builds a read-only preview of a conversation's first client view for the supplied runtime context."))
 	bool PreviewConversation(UParleyConversationAsset* ConversationAsset, const FDialogueRuntimeContext& PreviewContext, FDialogueClientView& OutFirstView, FDialogueValidationReport& OutReport) const;
 
 	// Editor/tooling preview runner: simulates a full conversation trace with auto-advance and auto-choice routing.
@@ -121,7 +112,7 @@ public:
 		FDialogueValidationReport& OutReport) const;
 
 	/** Starts dialogue using explicit source and target speaker identities while keeping owning-character authority. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Starts dialogue between the specified speaker identities on authoritative runtime state."))
 	bool TryStartDialogueBetweenSpeakers(APlayerController* RequestingController, FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag);
 
 	/** Returns true when the given character has unlocked any conversation for this speaker. */
@@ -158,7 +149,7 @@ public:
 
 	// Clears transient per-cycle offer blockers (seen/skipped). Pass invalid tag to clear all character states.
 	/** Clear seen/skipped blockers for the current offer cycle. Pass invalid tag to clear all characters. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Clears per-cycle offer blockers for one character, or all characters when passed an invalid tag."))
 	void ClearConversationCycleOfferState(FGameplayTag CharacterTag = FGameplayTag());
 
 	/** Current directed relationship points for Source -> Target speakers. */
@@ -170,15 +161,15 @@ public:
 	int32 GetRelationshipLevelForSpeakerPair(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag) const;
 
 	/** Injects persistent progression state for a character from an external save system bridge. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Injects persistent progression state for a character from an external save bridge."))
 	void SetProgressionStateForCharacter(FGameplayTag CharacterTag, const FParleyProgressionState& State);
 
 	/** Injects global game-owned progression tags used by dialogue conditions. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Injects game-scope progression tags used during dialogue evaluation."))
 	void SetGameProgressionTags(const FGameplayTagContainer& Tags);
 
 	/** Injects game-scope completed conversation tags used by dialogue completion checks. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Injects game-scope completed conversation tags used by dialogue completion checks."))
 	void SetCompletedConversationTagsByGame(const FGameplayTagContainer& Tags);
 
 	/** Returns the currently injected game-scope completed conversation tags. */
@@ -186,16 +177,16 @@ public:
 	void GetCompletedConversationTagsByGame(FGameplayTagContainer& OutTags) const;
 
 	/** Injects directed speaker relationship states from an external save system bridge. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Injects directed speaker relationship state from an external save bridge."))
 	void SetSpeakerRelationshipStates(const TArray<FDialogueSpeakerRelationshipState>& States);
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast delegate exposed to Blueprint for dialogue lifecycle updates."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when the active client view changes for a dialogue session."))
 	FParleyOnDialogueSessionUpdated OnDialogueSessionUpdated;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast delegate exposed to Blueprint for dialogue lifecycle updates."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a dialogue session ends after the widget filters to the active session."))
 	FParleyOnDialogueSessionEnded OnDialogueSessionEnded;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast delegate exposed to Blueprint for dialogue lifecycle updates."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation completes for any owning character."))
 	FParleyOnConversationCompletedSignature OnConversationCompleted;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Dialogue", meta = (ToolTip = "Broadcast when a conversation session starts. Params: ConversationTag, SpeakerTag, OwnerCharacterTag."))

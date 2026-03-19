@@ -54,12 +54,44 @@ namespace
 
 		for (APlayerState* PlayerState : GameState->PlayerArray)
 		{
-			const FGameplayTag CharacterTag = ReadCharacterTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
+			FGameplayTag CharacterTag;
+			if (const APlayerController* OwnerController = PlayerState ? Cast<APlayerController>(PlayerState->GetOwner()) : nullptr)
+			{
+				if (const APawn* Pawn = OwnerController->GetPawn())
+				{
+					if (const UParleySpeakerComponent* SpeakerComponent = Pawn->FindComponentByClass<UParleySpeakerComponent>())
+					{
+						CharacterTag = SpeakerComponent->GetSpeakerTag();
+					}
+				}
+			}
+			if (!CharacterTag.IsValid())
+			{
+				CharacterTag = ReadCharacterTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
+			}
 			if (CharacterTag.IsValid())
 			{
 				OutCharacterTags.AddUnique(CharacterTag);
 			}
 		}
+	}
+
+	static FGameplayTag ResolveSourceSpeakerTagFromController(const APlayerController* InteractingController)
+	{
+		if (!InteractingController)
+		{
+			return FGameplayTag();
+		}
+
+		if (const APawn* InteractingPawn = InteractingController->GetPawn())
+		{
+			if (const UParleySpeakerComponent* SourceSpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
+			{
+				return SourceSpeakerComponent->GetSpeakerTag();
+			}
+		}
+
+		return FGameplayTag();
 	}
 }
 
@@ -121,14 +153,16 @@ void UParleySpeakerComponent::InteractByController(APlayerController* Interactin
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
-			// Prefer explicit source->target speaker identity when the interacting pawn has a speaker component.
-			FGameplayTag SourceSpeakerTag;
-			if (const APawn* InteractingPawn = InteractingController->GetPawn())
+			const FGameplayTag SourceSpeakerTag = ResolveSourceSpeakerTagFromController(InteractingController);
+			if (!SourceSpeakerTag.IsValid())
 			{
-				if (const UParleySpeakerComponent* SourceSpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
-				{
-					SourceSpeakerTag = SourceSpeakerComponent->GetSpeakerTag();
-				}
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Speaker] Interact ignored for '%s': controller '%s' has no possessed pawn speaker component."),
+					*GetNameSafe(GetOwner()),
+					*GetNameSafe(InteractingController));
+				return;
 			}
 
 			const bool bStarted = DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, SpeakerTag);
@@ -194,26 +228,30 @@ void UParleySpeakerComponent::SetSpeakerTag(const FGameplayTag NewSpeakerTag)
 	if (IsAuthorityOwner())
 	{
 		RefreshTalkableFromSubsystem();
+		ForceOwnerNetUpdate();
 	}
 }
 
 void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 {
-	if (!IsAuthorityOwner() || !SpeakerTag.IsValid())
+	if (!IsAuthorityOwner())
 	{
 		UE_LOG(
 			ParleyLog,
 			Verbose,
-			TEXT("[Speaker] Component refresh skipped for '%s': Authority=%s SpeakerTagValid=%s"),
-			*GetNameSafe(GetOwner()),
-			IsAuthorityOwner() ? TEXT("true") : TEXT("false"),
-			SpeakerTag.IsValid() ? TEXT("true") : TEXT("false"));
+			TEXT("[Speaker] Component refresh skipped for '%s': authority required."),
+			*GetNameSafe(GetOwner()));
 		return;
 	}
 
 	const FGameplayTagContainer OldTalkableCharacterTags = TalkableCharacterTags;
 	FGameplayTagContainer NewTalkableCharacterTags;
-	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
+
+	if (!SpeakerTag.IsValid())
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': invalid speaker tag; clearing talkable state."), *GetNameSafe(GetOwner()));
+	}
+	else if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
@@ -237,12 +275,12 @@ void UParleySpeakerComponent::RefreshTalkableFromSubsystem()
 		}
 		else
 		{
-			UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': dialogue subsystem unavailable."), *GetNameSafe(GetOwner()));
+			UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': dialogue subsystem unavailable; clearing talkable state."), *GetNameSafe(GetOwner()));
 		}
 	}
 	else
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable."), *GetNameSafe(GetOwner()));
+		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Component refresh '%s': game instance unavailable; clearing talkable state."), *GetNameSafe(GetOwner()));
 	}
 
 	const bool bCharacterTagsChanged = !AreCharacterTagContainersEquivalent(OldTalkableCharacterTags, NewTalkableCharacterTags);
@@ -342,6 +380,7 @@ void UParleySpeakerComponent::ForceOwnerNetUpdate() const
 void UParleySpeakerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UParleySpeakerComponent, SpeakerTag);
 	DOREPLIFETIME(UParleySpeakerComponent, bIsTalkable);
 	DOREPLIFETIME(UParleySpeakerComponent, TalkableCharacterTags);
 }

@@ -103,7 +103,7 @@ UClass* AARScrapyardGameMode::GetDefaultPawnClassForController_Implementation(AC
 		FGameplayTag ShipTag;
 		if (PlayerState
 			&& ShipRootTag.IsValid()
-			&& FindFirstTagUnderRoot(PlayerState->LoadoutTags, ShipRootTag, ShipTag))
+			&& FindFirstTagUnderRoot(PlayerState->GetCurrentCharacterLoadoutTags(), ShipRootTag, ShipTag))
 		{
 			TSubclassOf<APawn> ResolvedPawnClass;
 			if (ResolveScrapyardPawnClassFromShipTag(ShipTag, ResolvedPawnClass) && ResolvedPawnClass)

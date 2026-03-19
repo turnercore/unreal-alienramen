@@ -72,10 +72,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Talk", meta = (ToolTip = "Broadcast when this speaker's talkable state changes."))
 	FParleyOnSpeakerTalkableStateChanged OnSpeakerTalkableStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker to display an emotion. Game module should bridge this to Emo component."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker to display an emotion. Game code should bridge this to project-specific presentation systems."))
 	FParleyOnSpeakerEmotionRequested OnSpeakerEmotionRequested;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker emotion override to clear. Game module should bridge this to Emo component."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when Parley requests this speaker emotion override to clear. Game code should bridge this to project-specific presentation systems."))
 	FParleyOnSpeakerEmotionCleared OnSpeakerEmotionCleared;
 
 	UPROPERTY(BlueprintAssignable, Category = "Parley|Emotion", meta = (ToolTip = "Broadcast when highlighted-choice lookahead resolves or clears a preview emotion for this speaker."))
@@ -100,6 +100,7 @@ private:
 	void ForceOwnerNetUpdate() const;
 
 	UPROPERTY(
+		Replicated,
 		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Parley|Talk",
@@ -113,4 +114,3 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_TalkableCharacterTags, BlueprintReadOnly, Category = "Parley|Talk", meta = (AllowPrivateAccess = "true", DisplayName = "Talkable Character Tags", ToolTip = "Character tags that can currently start dialogue with this speaker."))
 	FGameplayTagContainer TalkableCharacterTags;
 };
-

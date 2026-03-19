@@ -109,6 +109,12 @@ public:
 		))
 	bool ReportEnemyLeaked(AAREnemyBase* Enemy);
 
+	/** Registers a tracked projectile actor for active-projectile counting. */
+	void RegisterTrackedProjectile(AActor* Projectile);
+
+	/** Unregisters a tracked projectile actor from active-projectile counting. */
+	void UnregisterTrackedProjectile(AActor* Projectile);
+
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
 	FAROnInvaderRunEndedSignature OnRunEnded;
 
@@ -213,6 +219,7 @@ private:
 	void HandleConsoleChooseStage(const TArray<FString>& Args, UWorld* InWorld);
 	void HandleConsoleCaptureBounds(const TArray<FString>& Args, UWorld* InWorld);
 	void DestroyManagedInvaderEnemies();
+	UClass* ResolveTrackedProjectileClass() const;
 
 private:
 	bool bRunActive = false;
@@ -250,6 +257,7 @@ private:
 	TSet<FName> OneTimeWaveRowsUsed;
 	FName LastWaveRowName = NAME_None;
 	TSet<TWeakObjectPtr<AAREnemyBase>> ReportedLeakedEnemies;
+	TSet<TWeakObjectPtr<const AActor>> ActiveProjectileActors;
 	bool bAllPlayersDownCached = false;
 	bool bAllPlayersDeadCached = false;
 	int32 EvaluatedPlayerCountCached = 0;
@@ -258,6 +266,9 @@ private:
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDownedCache;
 	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDeadCache;
 	TSet<int32> EarlyBailVotesByPlayerSlotId;
+	mutable TObjectPtr<UClass> CachedProjectileActorClass = nullptr;
+	mutable bool bProjectileActorClassResolved = false;
+	int32 CachedActiveProjectileCount = 0;
 
 	struct FPlayerStatusBinding
 	{

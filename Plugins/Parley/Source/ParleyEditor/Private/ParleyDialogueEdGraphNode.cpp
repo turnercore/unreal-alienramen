@@ -1588,19 +1588,19 @@ bool UParleyDialogueEdGraphNode::SetCheckLoadoutTag(const FGameplayTag& NewTag)
 		false);
 }
 
-bool UParleyDialogueEdGraphNode::SetCheckCharacterCondition(const EDialogueEditorCharacterCondition NewCharacter)
+bool UParleyDialogueEdGraphNode::SetCheckCharacterTag(const FGameplayTag& NewCharacterTag)
 {
 	return CommitRuntimeNodeMutation(
-		LOCTEXT("SetCheckCharacterCondition", "Set Check Character"),
-		[this, NewCharacter]() -> bool
+		LOCTEXT("SetCheckCharacterTag", "Set Check Character Tag"),
+		[this, NewCharacterTag]() -> bool
 		{
 			FDialogueEditorCheckCharacterNodeData* Data = RuntimeNode.NodeData.GetMutablePtr<FDialogueEditorCheckCharacterNodeData>();
-			if (EditorNodeType != EDialogueEditorNodeType::CheckCharacter || !Data || Data->Character == NewCharacter)
+			if (EditorNodeType != EDialogueEditorNodeType::CheckCharacter || !Data || Data->CharacterTag.MatchesTagExact(NewCharacterTag))
 			{
 				return false;
 			}
 
-			Data->Character = NewCharacter;
+			Data->CharacterTag = NewCharacterTag;
 			return true;
 		},
 		false);
@@ -3326,9 +3326,7 @@ FString UParleyDialogueEdGraphNode::BuildInlineSummary() const
 	case EDialogueEditorNodeType::CheckCharacter:
 	{
 		const FDialogueEditorCheckCharacterNodeData* Data = RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
-		return Data
-			? (Data->Character == EDialogueEditorCharacterCondition::Brother ? TEXT("Brother") : TEXT("Sister"))
-			: TEXT("Invalid character payload");
+		return Data ? Data->CharacterTag.ToString() : TEXT("Invalid character payload");
 	}
 	case EDialogueEditorNodeType::CheckVariable:
 	{

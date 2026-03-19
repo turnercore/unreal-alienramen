@@ -127,6 +127,7 @@ private:
 	void HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const;
 	void EnsureJoinedPlayerHasUniqueIdentity(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
 	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
+	void PreparePlayerSpawnIdentity(AController* Player, AARPlayerStateBase* PlayerState) const;
 	void CleanupCharacterSwitchRequests();
 	bool CollectSwitchEligibleControllers(TArray<APlayerController*>& OutEligibleControllers) const;
 	void BuildPlayableCharacterSwitchList(const TArray<APlayerController*>& EligibleControllers, TArray<FGameplayTag>& OutPlayableCharacterTags) const;

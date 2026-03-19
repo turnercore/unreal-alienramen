@@ -735,9 +735,10 @@ TSharedRef<SWidget> SParleyDialogueInlineGraphNode::BuildConditionSourceInlineCo
 	case EDialogueEditorNodeType::CheckCharacter:
 	{
 		const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
-		return SNew(SButton)
-			.Text(FText::FromString(Data && Data->Character == EDialogueEditorCharacterCondition::Sister ? TEXT("Character: Sister") : TEXT("Character: Brother")))
-			.OnClicked(this, &SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked);
+		return SNew(SGameplayTagCombo)
+			.Filter(TEXT("Parley.Speaker"))
+			.Tag(Data ? Data->CharacterTag : FGameplayTag())
+			.OnTagChanged(this, &SParleyDialogueInlineGraphNode::HandleConditionTagChanged);
 	}
 	case EDialogueEditorNodeType::CheckVariable:
 	{
@@ -1881,14 +1882,7 @@ FReply SParleyDialogueInlineGraphNode::HandleToggleConditionBoolClicked() const
 			break;
 		}
 		case EDialogueEditorNodeType::CheckCharacter:
-		{
-			const FDialogueEditorCheckCharacterNodeData* Data = DialogueNode->RuntimeNode.NodeData.GetPtr<FDialogueEditorCheckCharacterNodeData>();
-			const EDialogueEditorCharacterCondition Next = (Data && Data->Character == EDialogueEditorCharacterCondition::Brother)
-				? EDialogueEditorCharacterCondition::Sister
-				: EDialogueEditorCharacterCondition::Brother;
-			DialogueNode->SetCheckCharacterCondition(Next);
 			break;
-		}
 		default:
 			break;
 		}
@@ -1910,6 +1904,10 @@ void SParleyDialogueInlineGraphNode::HandleConditionTagChanged(const FGameplayTa
 		else if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::CheckLoadout)
 		{
 			DialogueNode->SetCheckLoadoutTag(NewTag);
+		}
+		else if (DialogueNode->EditorNodeType == EDialogueEditorNodeType::CheckCharacter)
+		{
+			DialogueNode->SetCheckCharacterTag(NewTag);
 		}
 	}
 }

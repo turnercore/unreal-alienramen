@@ -37,3 +37,9 @@ Use this section when you are working on player combat runtime, loadouts, waves,
 - Invader controller runtime should not rely on `BeginPlay` as the only setup hook after transition-map seamless travel.
 - `AARInvaderPlayerController::SetPawn` now rebinds invader GameState wiring when controller instances persist across travel.
 - Camera ownership should remain in the Invader mode/Blueprint shared-camera flow; native `SetPawn` should not force view target to pawn.
+
+## Character Runtime Ownership Note
+
+- Character combat/loadout runtime state is authoritative on `AARCharacterStateRuntime`, not on `AARPlayerStateBase`.
+- `UARCharacterSubsystem` is orchestration/lookup only (runtime registry, spawn/rebind/swap routing) and is not a replicated data owner.
+- `AARPlayerStateBase` remains player-owned: identity, slot/profile, readiness, dialogue preference, and current selected character pointer.

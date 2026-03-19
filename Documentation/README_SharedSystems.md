@@ -10,6 +10,7 @@ Use this section when the question is not "what happens in Shop/Invader/Scrapyar
 | --- | --- | --- |
 | listen server flow, LAN/online sessions, couch co-op seat handling | [Networking Overview](README_Networking.md) | Shop, Invader, Scrapyard |
 | save ownership, hydration, load-entry rules, travel overlays | [Persistence Overview](README_Persistence.md) | Shop, Invader, Scrapyard, Transition |
+| character runtime ownership, swaps, runtime-to-pawn orchestration | [Invader Loadouts and Player Runtime](README_Invader_Loadouts.md) | mostly Invader, plus mode spawn/travel hooks |
 | loadouts, attributes, ASC ownership, player ability surfaces | [GAS Overview](README_GAS.md) | mostly Invader, plus Shop/Scrapyard integration points |
 | Blueprint UI reads for replicated attributes | [GAS Blueprint Attributes](README_GAS_Blueprint_Attributes.md) | Invader HUD, Scrapyard ship/UI |
 | dialogue, speakers, emotion, speaker talkability | [Parley Runtime](README_DialogueNPC.md) | Shop and other NPC-facing flows |

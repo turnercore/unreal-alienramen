@@ -5,7 +5,7 @@
   "FriendlyName": "Parley",
   "Description": "Dialogue runtime, speaker system, faction system, and relationship tracking for NPC social interactions.",
   "Category": "Gameplay",
-  "CreatedBy": "Alien Ramen",
+  "CreatedBy": "Parley",
   "CanContainContent": false,
   "EnabledByDefault": true,
   "IsBetaVersion": false,
@@ -18,7 +18,10 @@
     },
     {
       "Name": "GameplayTagsEditor",
-      "Enabled": true
+      "Enabled": true,
+      "TargetAllowList": [
+        "Editor"
+      ]
     }
   ],
   "Modules": [

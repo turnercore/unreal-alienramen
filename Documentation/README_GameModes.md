@@ -35,6 +35,7 @@ Invader is the combat run. It owns the director, waves, scoring, pickups, and th
 
 - Entry point: [Invader Overview](README_Invader.md)
 - Player runtime: [Loadouts and Player Runtime](README_Invader_Loadouts.md)
+- Runtime ownership contract: character-owned combat/loadout state is authoritative on `AARCharacterStateRuntime`; player-owned identity/pointer state remains on `AARPlayerStateBase`.
 - Supporting systems:
   - [GAS Overview](README_GAS.md)
   - [GAS Blueprint Attributes](README_GAS_Blueprint_Attributes.md)

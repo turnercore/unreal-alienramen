@@ -3,6 +3,8 @@
 #include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARLog.h"
+#include "ARCharacterStateRuntime.h"
+#include "ARCharacterSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
 #include "ARLoadoutSettings.h"
@@ -17,6 +19,7 @@
 #include "ARShopCarryComponent.h"
 #include "ARShopCarryItemBase.h"
 #include "Components/SceneComponent.h"
+#include "Async/Async.h"
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
 #include "Engine/Engine.h"
@@ -238,7 +241,7 @@ static void BuildHeldShopCarrySet(const UWorld* World, TSet<const AActor*>& OutH
 	for (APlayerState* PlayerStateBase : GameState->PlayerArray)
 	{
 		const AARPlayerStateBase* PlayerState = Cast<AARPlayerStateBase>(PlayerStateBase);
-		const APawn* Pawn = PlayerState ? PlayerState->GetPawn() : nullptr;
+		const APawn* Pawn = PlayerState ? PlayerState->GetCurrentCharacterPawn() : nullptr;
 		const UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
 		const AActor* HeldActor = CarryComponent ? CarryComponent->GetHeldActor() : nullptr;
 		if (HeldActor)
@@ -382,7 +385,10 @@ static void CaptureShopCharacterSnapshot(UARSaveGame* SaveGame, const AARPlayerS
 		return;
 	}
 
-	const FGameplayTag CharacterTag = PlayerState->GetCurrentCharacterTag();
+	const AARCharacterStateRuntime* Runtime = PlayerState->GetCurrentCharacterRuntime();
+	const FGameplayTag CharacterTag = Runtime
+		? ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag())
+		: ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
 	if (!CharacterTag.IsValid())
 	{
 		return;
@@ -394,9 +400,14 @@ static void CaptureShopCharacterSnapshot(UARSaveGame* SaveGame, const AARPlayerS
 		return;
 	}
 
+	if (Runtime)
+	{
+		Runtime->WriteSaveData(*CharacterState);
+	}
+
 	CharacterState->ShopSnapshot = FARCharacterShopSnapshot();
 
-	const APawn* Pawn = PlayerState->GetPawn();
+	const APawn* Pawn = PlayerState->GetCurrentCharacterPawn();
 	if (Pawn)
 	{
 		CharacterState->ShopSnapshot.bHasCharacterTransform = true;
@@ -505,7 +516,6 @@ FARPlayerIdentity UARSaveSubsystem::BuildRuntimePlayerIdentity(const APlayerStat
 		return Identity;
 	}
 
-	Identity.LegacyId = ARPS->GetPlayerId();
 	Identity.DisplayName = FText::FromString(ARPS->GetDisplayNameValue());
 
 	if (PlayerState->GetUniqueId().IsValid())
@@ -644,6 +654,74 @@ int32 UARSaveSubsystem::GetMaxBackupRevisions() const
 	return Settings ? FMath::Clamp(Settings->MaxBackupRevisions, 1, 100) : 5;
 }
 
+void UARSaveSubsystem::LogCanonicalSavePayloadSize(const TCHAR* Context, FName SlotBaseName, int32 SlotNumber, int32 PayloadSizeBytes, int32 RemoteRecipientCount) const
+{
+	const UARSaveUserSettings* Settings = GetDefault<UARSaveUserSettings>();
+	if (!Settings || !Settings->bLogCanonicalSavePayloadSize)
+	{
+		return;
+	}
+
+	const int32 WarningThresholdBytes = FMath::Max(1, Settings->CanonicalSaveWarningSizeBytes);
+	const int32 CriticalThresholdBytes = FMath::Max(WarningThresholdBytes, Settings->CanonicalSaveCriticalSizeBytes);
+	const double PayloadSizeKiB = static_cast<double>(PayloadSizeBytes) / 1024.0;
+	const bool bAtOrAboveCritical = PayloadSizeBytes >= CriticalThresholdBytes;
+	const bool bAtOrAboveWarning = PayloadSizeBytes >= WarningThresholdBytes;
+
+	const TCHAR* ContextLabel = Context ? Context : TEXT("Unknown");
+	const TCHAR* SeveritySuffix = bAtOrAboveCritical
+		? TEXT(" - chunking should be prioritized")
+		: (bAtOrAboveWarning ? TEXT(" - approaching chunking territory") : TEXT(""));
+
+	if (bAtOrAboveCritical)
+	{
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[SaveSubsystem] Canonical save payload (%s) Slot=%s Rev=%d Bytes=%d (%.1f KiB) Recipients=%d Thresholds: warn>=%d critical>=%d%s"),
+			ContextLabel,
+			*SlotBaseName.ToString(),
+			SlotNumber,
+			PayloadSizeBytes,
+			PayloadSizeKiB,
+			RemoteRecipientCount,
+			WarningThresholdBytes,
+			CriticalThresholdBytes,
+			SeveritySuffix);
+	}
+	else if (bAtOrAboveWarning)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[SaveSubsystem] Canonical save payload (%s) Slot=%s Rev=%d Bytes=%d (%.1f KiB) Recipients=%d Thresholds: warn>=%d critical>=%d%s"),
+			ContextLabel,
+			*SlotBaseName.ToString(),
+			SlotNumber,
+			PayloadSizeBytes,
+			PayloadSizeKiB,
+			RemoteRecipientCount,
+			WarningThresholdBytes,
+			CriticalThresholdBytes,
+			SeveritySuffix);
+	}
+	else
+	{
+		UE_LOG(
+			ARLog,
+			Display,
+			TEXT("[SaveSubsystem] Canonical save payload (%s) Slot=%s Rev=%d Bytes=%d (%.1f KiB) Recipients=%d Thresholds: warn>=%d critical>=%d"),
+			ContextLabel,
+			*SlotBaseName.ToString(),
+			SlotNumber,
+			PayloadSizeBytes,
+			PayloadSizeKiB,
+			RemoteRecipientCount,
+			WarningThresholdBytes,
+			CriticalThresholdBytes);
+	}
+}
+
 int32 UARSaveSubsystem::GetCurrentSlotRevision() const
 {
 	return CurrentSaveGame ? CurrentSaveGame->SaveSlotNumber : INDEX_NONE;
@@ -775,6 +853,33 @@ bool UARSaveSubsystem::SaveSaveObject(UARSaveGame* SaveObject, FName SlotBaseNam
 		return false;
 	}
 	return true;
+}
+
+bool UARSaveSubsystem::RollbackRevisionWrite(FName SlotBaseName, int32 SlotNumber, FARSaveResult& OutResult) const
+{
+	const FString RevisionSlotName = BuildRevisionSlotName(SlotBaseName, SlotNumber).ToString();
+	if (!UGameplayStatics::DoesSaveGameExist(RevisionSlotName, DefaultUserIndex))
+	{
+		return true;
+	}
+
+	if (UGameplayStatics::DeleteGameInSlot(RevisionSlotName, DefaultUserIndex))
+	{
+		return true;
+	}
+
+	const FString RollbackError = FString::Printf(TEXT("Failed to delete revision slot '%s' during rollback."), *RevisionSlotName);
+	UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] %s"), *RollbackError);
+	if (OutResult.Error.IsEmpty())
+	{
+		OutResult.Error = RollbackError;
+	}
+	else
+	{
+		OutResult.Error += TEXT(" ");
+		OutResult.Error += RollbackError;
+	}
+	return false;
 }
 
 void UARSaveSubsystem::PruneOldRevisions(FName SlotBaseName, int32 LatestRevision) const
@@ -939,14 +1044,22 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 			PlayerData = ExistingPlayerStates[BestMatchIndex];
 		}
 
+		const AARCharacterStateRuntime* CurrentRuntime = ARPS->GetCurrentCharacterRuntime();
+		const FGameplayTag RuntimeCharacterTag = CurrentRuntime
+			? ARPlayer::NormalizeCharacterTag(CurrentRuntime->GetCharacterTag())
+			: FGameplayTag();
 		PlayerData.Identity = RuntimeIdentity;
-		PlayerData.CurrentCharacterTag = ARPS->GetCurrentCharacterTag();
-		PlayerData.CharacterPicked = ARPS->GetCharacterPicked();
+		PlayerData.CurrentCharacterTag = RuntimeCharacterTag.IsValid()
+			? RuntimeCharacterTag
+			: ARPlayer::NormalizeCharacterTag(ARPS->GetCurrentCharacterTag());
 		PlayerData.bDialogueAutoAdvanceEnabled = ARPS->IsDialogueAutoAdvanceEnabled();
 		if (PlayerData.CurrentCharacterTag.IsValid())
 		{
 			FARCharacterSaveData& ActiveCharacterState = SaveObject->FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
-			ActiveCharacterState.LoadoutTags = ARPS->LoadoutTags;
+			if (CurrentRuntime)
+			{
+				CurrentRuntime->WriteSaveData(ActiveCharacterState);
+			}
 		}
 		PlayerData.SyncCharacterSelectionFromCurrentTag();
 
@@ -955,6 +1068,32 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 		if (ARSaveInternal::IsShopModeWorld(World))
 		{
 			ARSaveInternal::CaptureShopCharacterSnapshot(SaveObject, ARPS);
+		}
+	}
+
+	if (UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+	{
+		TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+		CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+		for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
+		{
+			if (!Runtime)
+			{
+				continue;
+			}
+
+			const FGameplayTag RuntimeCharacterTag = ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag());
+			if (!RuntimeCharacterTag.IsValid())
+			{
+				continue;
+			}
+
+			FARCharacterSaveData& CharacterState = SaveObject->FindOrAddCharacterStateData(RuntimeCharacterTag);
+			Runtime->WriteSaveData(CharacterState);
+			if (!ARSaveInternal::IsShopModeWorld(World))
+			{
+				CharacterState.ShopSnapshot = FARCharacterShopSnapshot();
+			}
 		}
 	}
 }
@@ -1152,6 +1291,7 @@ void UARSaveSubsystem::UnloadCurrentSave()
 		}
 
 		// Reset player identity/loadout runtime to first-join baseline for a fresh save flow.
+		PlayerState->SetCurrentCharacterRuntime(nullptr);
 		PlayerState->SetLoadoutTags(FGameplayTagContainer());
 		PlayerState->InitializeForFirstSessionJoin();
 		PlayerState->SetReadyForRun(false);
@@ -1175,6 +1315,8 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 		OutResult.Error = TEXT("Canonical save bytes are empty.");
 		return false;
 	}
+
+	LogCanonicalSavePayloadSize(TEXT("PersistCanonicalSaveFromBytes"), SlotBaseName, SlotNumber, SaveBytes.Num(), 0);
 
 	UARSaveGame* SaveObject = Cast<UARSaveGame>(UGameplayStatics::LoadGameFromMemory(SaveBytes));
 	if (!SaveObject)
@@ -1222,6 +1364,7 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 	UpsertIndexEntry(IndexObj, Descriptor);
 	if (!SaveIndex(IndexObj, OutResult))
 	{
+		RollbackRevisionWrite(SlotBaseName, SlotNumber, OutResult);
 		return false;
 	}
 	PruneOldRevisions(SlotBaseName, SlotNumber);
@@ -1236,15 +1379,20 @@ bool UARSaveSubsystem::PersistCanonicalSaveFromBytes(const TArray<uint8>& SaveBy
 
 bool UARSaveSubsystem::SaveCurrentGame(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
-	return SaveCurrentGameInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, false);
+	return SaveCurrentGameAsyncInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, false);
 }
 
 bool UARSaveSubsystem::SaveCurrentGameUnthrottled(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
 {
-	return SaveCurrentGameInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, true);
+	return SaveCurrentGameAsyncInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, true);
 }
 
-bool UARSaveSubsystem::SaveCurrentGameInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, const bool bIgnoreThrottle)
+bool UARSaveSubsystem::SaveCurrentGameBlocking(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves)
+{
+	return SaveCurrentGameBlockingInternal(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves, false);
+}
+
+bool UARSaveSubsystem::SaveCurrentGameBlockingInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, const bool bIgnoreThrottle)
 {
 	OutResult = FARSaveResult();
 
@@ -1380,6 +1528,7 @@ bool UARSaveSubsystem::SaveCurrentGameInternal(FName SlotBaseName, bool bCreateN
 
 	if (!SaveIndexForSlot(IndexObj, OutResult, IndexSlotName))
 	{
+		RollbackRevisionWrite(SlotBase, NewSlotNumber, OutResult);
 		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
 		BroadcastSaveFailure(OutResult);
 		return false;
@@ -1387,16 +1536,34 @@ bool UARSaveSubsystem::SaveCurrentGameInternal(FName SlotBaseName, bool bCreateN
 	PruneOldRevisions(SlotBase, NewSlotNumber);
 
 	// Distribute canonical save to clients so each machine persists equivalent snapshot.
-	TArray<uint8> SaveBytes;
-	if (UGameplayStatics::SaveGameToMemory(SaveObject, SaveBytes))
+	bool bHasRemoteRecipients = false;
+	int32 RemoteRecipientCount = 0;
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
 	{
-		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		if (AARPlayerController* PC = Cast<AARPlayerController>(It->Get()))
 		{
-			if (AARPlayerController* PC = Cast<AARPlayerController>(It->Get()))
+			if (PC->GetNetMode() != NM_Standalone && !PC->IsLocalController())
 			{
-				if (PC->GetNetMode() != NM_Standalone && !PC->IsLocalController())
+				bHasRemoteRecipients = true;
+				++RemoteRecipientCount;
+			}
+		}
+	}
+
+	if (bHasRemoteRecipients)
+	{
+		TArray<uint8> SaveBytes;
+		if (UGameplayStatics::SaveGameToMemory(SaveObject, SaveBytes))
+		{
+			LogCanonicalSavePayloadSize(TEXT("BlockingSaveFanOut"), SlotBase, NewSlotNumber, SaveBytes.Num(), RemoteRecipientCount);
+			for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+			{
+				if (AARPlayerController* PC = Cast<AARPlayerController>(It->Get()))
 				{
-					PC->ClientPersistCanonicalSave(SaveBytes, SlotBase, NewSlotNumber);
+					if (PC->GetNetMode() != NM_Standalone && !PC->IsLocalController())
+					{
+						PC->ClientPersistCanonicalSave(SaveBytes, SlotBase, NewSlotNumber);
+					}
 				}
 			}
 		}
@@ -1422,6 +1589,153 @@ bool UARSaveSubsystem::SaveCurrentGameInternal(FName SlotBaseName, bool bCreateN
 	}
 
 	OnSaveCompleted.Broadcast(OutResult);
+	return true;
+}
+
+bool UARSaveSubsystem::SaveCurrentGameAsyncInternal(FName SlotBaseName, bool bCreateNewRevision, FARSaveResult& OutResult, bool bUseDebugSaves, const bool bIgnoreThrottle)
+{
+	OutResult = FARSaveResult();
+
+	if (bSaveInProgress)
+	{
+		OutResult.Error = TEXT("Save already in progress.");
+		OutResult.ResultCode = EARSaveResultCode::InProgress;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		OutResult.Error = TEXT("No world available for save.");
+		OutResult.ResultCode = EARSaveResultCode::NoWorld;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
+	if (World->GetNetMode() != NM_Standalone && World->GetAuthGameMode() == nullptr)
+	{
+		OutResult.Error = TEXT("SaveCurrentGame must run on authority/server for canonical snapshot.");
+		OutResult.ResultCode = EARSaveResultCode::AuthorityRequired;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GI->GetSubsystem<UParleyDialogueSubsystem>())
+		{
+			if (DialogueSubsystem->HasActiveDialogueSession())
+			{
+				OutResult.Error = TEXT("SaveCurrentGame blocked: game cannot be saved mid-conversation.");
+				OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+				BroadcastSaveFailure(OutResult);
+				return false;
+			}
+		}
+	}
+
+	const FDateTime NowUtc = FDateTime::UtcNow();
+	if (!bIgnoreThrottle && MinSaveIntervalSeconds > 0.f && LastSaveTimestampUtc.GetTicks() != 0)
+	{
+		const double Elapsed = (NowUtc - LastSaveTimestampUtc).GetTotalSeconds();
+		if (Elapsed < MinSaveIntervalSeconds)
+		{
+			OutResult.Error = FString::Printf(TEXT("Save throttled (%.2fs < min %.2fs)."), Elapsed, MinSaveIntervalSeconds);
+			OutResult.ResultCode = EARSaveResultCode::Throttled;
+			BroadcastSaveFailure(OutResult);
+			return false;
+		}
+	}
+
+	FName SlotBase = SlotBaseName.IsNone() ? NAME_None : NormalizeSlotBaseName(SlotBaseName);
+	if (SlotBase.IsNone())
+	{
+		SlotBase = CurrentSlotBaseName;
+	}
+	if (SlotBase.IsNone())
+	{
+		SlotBase = GenerateRandomSlotBaseName(true);
+	}
+	SlotBase = ARSaveInternal::NormalizeSlotBaseForNamespace(SlotBase, bUseDebugSaves);
+
+	const TCHAR* IndexSlotName = ARSaveInternal::GetIndexSlotNameForNamespace(bUseDebugSaves);
+
+	int32 ExistingLatest = -1;
+	UARSaveIndexGame* IndexObj = nullptr;
+	if (!LoadOrCreateIndexForSlot(IndexObj, OutResult, IndexSlotName))
+	{
+		OutResult.ResultCode = EARSaveResultCode::Unknown;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
+	for (const FARSaveSlotDescriptor& Entry : IndexObj->SlotNames)
+	{
+		if (Entry.SlotName == SlotBase)
+		{
+			ExistingLatest = Entry.SlotNumber;
+			break;
+		}
+	}
+
+	int32 NewSlotNumber = 0;
+	if (ExistingLatest >= 0)
+	{
+		NewSlotNumber = bCreateNewRevision ? ExistingLatest + 1 : ExistingLatest;
+	}
+
+	UARSaveGame* SaveObject = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(UARSaveGame::StaticClass()));
+	if (!SaveObject)
+	{
+		OutResult.Error = TEXT("Failed to allocate UARSaveGame.");
+		OutResult.ResultCode = EARSaveResultCode::ValidationFailed;
+		BroadcastSaveFailure(OutResult);
+		return false;
+	}
+
+	GatherRuntimeData(SaveObject);
+	SaveObject->SaveSlot = ARSaveInternal::GetLogicalSlotBaseForNamespace(SlotBase, bUseDebugSaves);
+	SaveObject->SaveSlotNumber = NewSlotNumber;
+	SaveObject->SaveGameVersion = UARSaveGame::GetCurrentSchemaVersion();
+	SaveObject->LastSaved = FDateTime::UtcNow();
+
+	TArray<FString> Warnings;
+	OutResult.ClampedFieldCount = SaveObject->ValidateAndSanitize(&Warnings);
+	for (const FString& Warning : Warnings)
+	{
+		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] %s"), *Warning);
+	}
+
+	const FName RevisionSlot = BuildRevisionSlotName(SlotBase, NewSlotNumber);
+	PendingAsyncSaveGame = SaveObject;
+	PendingAsyncSaveIndex = IndexObj;
+	PendingAsyncSaveSlotBase = SlotBase;
+	PendingAsyncSaveSlotNumber = NewSlotNumber;
+	PendingAsyncIndexSlotName = IndexSlotName;
+	bPendingAsyncSaveHasRemoteRecipients = false;
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (AARPlayerController* PC = Cast<AARPlayerController>(It->Get()))
+		{
+			if (PC->GetNetMode() != NM_Standalone && !PC->IsLocalController())
+			{
+				bPendingAsyncSaveHasRemoteRecipients = true;
+			}
+		}
+	}
+
+	bSaveInProgress = true;
+	OnSaveStarted.Broadcast();
+
+	FAsyncSaveGameToSlotDelegate SaveDelegate;
+	SaveDelegate.BindUObject(this, &UARSaveSubsystem::HandleAsyncCurrentGameSaveComplete);
+	UGameplayStatics::AsyncSaveGameToSlot(SaveObject, RevisionSlot.ToString(), DefaultUserIndex, SaveDelegate);
+
+	OutResult.bSuccess = true;
+	OutResult.ResultCode = EARSaveResultCode::Success;
+	OutResult.SlotName = SlotBase;
+	OutResult.SlotNumber = NewSlotNumber;
 	return true;
 }
 
@@ -1475,6 +1789,184 @@ bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARS
 	OnLoadCompleted.Broadcast(OutResult);
 	OnGameLoaded.Broadcast();
 	return true;
+}
+
+void UARSaveSubsystem::HandleAsyncCurrentGameSaveComplete(const FString& SlotName, const int32 UserIndex, const bool bWasSuccessful)
+{
+	(void)UserIndex;
+
+	FARSaveResult Result;
+	const FName SlotBase = PendingAsyncSaveSlotBase;
+	const int32 SlotNumber = PendingAsyncSaveSlotNumber;
+	UARSaveGame* SaveObject = PendingAsyncSaveGame.Get();
+	UARSaveIndexGame* IndexObj = PendingAsyncSaveIndex.Get();
+	const FString IndexSlotName = PendingAsyncIndexSlotName;
+	const bool bHasRemoteRecipients = bPendingAsyncSaveHasRemoteRecipients;
+
+	auto ClearPendingState = [this]()
+	{
+		bSaveInProgress = false;
+		PendingAsyncSaveGame = nullptr;
+		PendingAsyncSaveIndex = nullptr;
+		PendingAsyncSaveSlotBase = NAME_None;
+		PendingAsyncSaveSlotNumber = INDEX_NONE;
+		PendingAsyncIndexSlotName.Reset();
+		bPendingAsyncSaveHasRemoteRecipients = false;
+	};
+
+	if (!bWasSuccessful || !SaveObject || !IndexObj)
+	{
+		Result.bSuccess = false;
+		Result.ResultCode = EARSaveResultCode::ValidationFailed;
+		Result.Error = !bWasSuccessful
+			? FString::Printf(TEXT("Async save failed for slot '%s'."), *SlotName)
+			: TEXT("Async save completed without a live save object.");
+		RollbackRevisionWrite(SlotBase, SlotNumber, Result);
+		ClearPendingState();
+		BroadcastSaveFailure(Result);
+		return;
+	}
+
+	FARSaveSlotDescriptor Descriptor;
+	Descriptor.SlotName = SlotBase;
+	Descriptor.SlotNumber = SlotNumber;
+	Descriptor.SaveVersion = SaveObject->SaveGameVersion;
+	Descriptor.CyclesPlayed = SaveObject->Cycles;
+	Descriptor.LastSavedTime = SaveObject->LastSaved;
+	Descriptor.Money = SaveObject->Money;
+	UpsertIndexEntry(IndexObj, Descriptor);
+
+	TArray<uint8> IndexBytes;
+	if (!UGameplayStatics::SaveGameToMemory(IndexObj, IndexBytes))
+	{
+		Result.bSuccess = false;
+		Result.ResultCode = EARSaveResultCode::ValidationFailed;
+		Result.Error = TEXT("Could not serialize save index to memory.");
+		RollbackRevisionWrite(SlotBase, SlotNumber, Result);
+		ClearPendingState();
+		BroadcastSaveFailure(Result);
+		return;
+	}
+
+	const int32 MaxBackups = GetMaxBackupRevisions();
+	const int32 FirstRevisionToKeep = FMath::Max(0, SlotNumber - (MaxBackups - 1));
+	TArray<FString> RevisionSlotsToDelete;
+	for (int32 Revision = 0; Revision < FirstRevisionToKeep; ++Revision)
+	{
+		RevisionSlotsToDelete.Add(BuildRevisionSlotName(SlotBase, Revision).ToString());
+	}
+
+	TWeakObjectPtr<UARSaveSubsystem> WeakThis(this);
+	Async(EAsyncExecution::ThreadPool, [WeakThis, IndexBytes = MoveTemp(IndexBytes), IndexSlotName, SlotBase, SlotNumber, SlotName, SaveObject, bHasRemoteRecipients, RevisionSlotsToDelete = MoveTemp(RevisionSlotsToDelete)]() mutable
+	{
+		const bool bIndexSaved = UGameplayStatics::SaveDataToSlot(IndexBytes, IndexSlotName, DefaultUserIndex);
+		bool bPruneOk = true;
+		if (bIndexSaved)
+		{
+			for (const FString& RevisionSlot : RevisionSlotsToDelete)
+			{
+				if (UGameplayStatics::DoesSaveGameExist(RevisionSlot, DefaultUserIndex))
+				{
+					bPruneOk = UGameplayStatics::DeleteGameInSlot(RevisionSlot, DefaultUserIndex) && bPruneOk;
+				}
+			}
+		}
+
+		AsyncTask(ENamedThreads::GameThread, [WeakThis, bIndexSaved, bPruneOk, SlotBase, SlotNumber, SlotName, SaveObject, bHasRemoteRecipients]() mutable
+		{
+			UARSaveSubsystem* StrongThis = WeakThis.Get();
+			if (!StrongThis)
+			{
+				return;
+			}
+
+			FARSaveResult FinalResult;
+			if (!bIndexSaved || !bPruneOk)
+			{
+				FinalResult.bSuccess = false;
+				FinalResult.ResultCode = EARSaveResultCode::ValidationFailed;
+				FinalResult.Error = !bIndexSaved
+					? TEXT("Async save failed while writing the save index.")
+					: TEXT("Async save failed while pruning old revisions.");
+				StrongThis->RollbackRevisionWrite(SlotBase, SlotNumber, FinalResult);
+				StrongThis->bSaveInProgress = false;
+				StrongThis->PendingAsyncSaveGame = nullptr;
+				StrongThis->PendingAsyncSaveIndex = nullptr;
+				StrongThis->PendingAsyncSaveSlotBase = NAME_None;
+				StrongThis->PendingAsyncSaveSlotNumber = INDEX_NONE;
+				StrongThis->PendingAsyncIndexSlotName.Reset();
+				StrongThis->bPendingAsyncSaveHasRemoteRecipients = false;
+				StrongThis->BroadcastSaveFailure(FinalResult);
+				return;
+			}
+
+			TArray<uint8> SaveBytes;
+			if (UGameplayStatics::SaveGameToMemory(SaveObject, SaveBytes))
+			{
+				if (bHasRemoteRecipients)
+				{
+					int32 RemoteRecipientCount = 0;
+					if (UWorld* World = StrongThis->GetWorld())
+					{
+						for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+						{
+							if (AARPlayerController* PC = Cast<AARPlayerController>(It->Get()))
+							{
+								if (PC->GetNetMode() != NM_Standalone && !PC->IsLocalController())
+								{
+									++RemoteRecipientCount;
+								}
+							}
+						}
+					}
+
+					StrongThis->LogCanonicalSavePayloadSize(TEXT("AsyncSaveFanOut"), SlotBase, SlotNumber, SaveBytes.Num(), RemoteRecipientCount);
+					if (UWorld* World = StrongThis->GetWorld())
+					{
+						for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+						{
+							if (AARPlayerController* PC = Cast<AARPlayerController>(It->Get()))
+							{
+								if (PC->GetNetMode() != NM_Standalone && !PC->IsLocalController())
+								{
+									PC->ClientPersistCanonicalSave(SaveBytes, SlotBase, SlotNumber);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			StrongThis->CurrentSaveGame = SaveObject;
+			StrongThis->CurrentSlotBaseName = SlotBase;
+			StrongThis->FlushPendingCanonicalSyncRequests();
+			StrongThis->LastSaveTimestampUtc = SaveObject->LastSaved;
+			StrongThis->bSaveDirty = false;
+
+			FinalResult.bSuccess = true;
+			FinalResult.ResultCode = EARSaveResultCode::Success;
+			FinalResult.SlotName = SlotBase;
+			FinalResult.SlotNumber = SlotNumber;
+
+			if (StrongThis->bLogSaveSuccess)
+			{
+				UE_LOG(ARLog, Log, TEXT("[SaveSubsystem] Async save succeeded (Slot=%s Rev=%d Time=%s DirtyCleared=%s)"),
+					*SlotBase.ToString(),
+					SlotNumber,
+					*SaveObject->LastSaved.ToString(),
+					StrongThis->bSaveDirty ? TEXT("false") : TEXT("true"));
+			}
+
+			StrongThis->bSaveInProgress = false;
+			StrongThis->PendingAsyncSaveGame = nullptr;
+			StrongThis->PendingAsyncSaveIndex = nullptr;
+			StrongThis->PendingAsyncSaveSlotBase = NAME_None;
+			StrongThis->PendingAsyncSaveSlotNumber = INDEX_NONE;
+			StrongThis->PendingAsyncIndexSlotName.Reset();
+			StrongThis->bPendingAsyncSaveHasRemoteRecipients = false;
+			StrongThis->OnSaveCompleted.Broadcast(FinalResult);
+		});
+	});
 }
 
 bool UARSaveSubsystem::ListSaves(TArray<FARSaveSlotDescriptor>& OutSlots, FARSaveResult& OutResult, bool bUseDebugSaves) const
@@ -1611,6 +2103,7 @@ bool UARSaveSubsystem::PushCurrentSaveToPlayer(AARPlayerController* TargetPlayer
 		return false;
 	}
 
+	LogCanonicalSavePayloadSize(TEXT("PushCurrentSaveToPlayer"), SlotBase, Revision, SaveBytes.Num(), 1);
 	TargetPlayerController->ClientPersistCanonicalSave(SaveBytes, SlotBase, Revision);
 	PendingCanonicalSyncRequests.RemoveAll([TargetPlayerController](const TWeakObjectPtr<AARPlayerController>& PendingPC)
 	{
@@ -1682,9 +2175,8 @@ void UARSaveSubsystem::ClearPendingTravelGameStateData()
 	PendingTravelGameStateData.Reset();
 }
 
-bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester, const bool bAllowSlotFallback)
+bool UARSaveSubsystem::TryHydratePlayerStateFromCurrentSave(AARPlayerStateBase* Requester)
 {
-	(void)bAllowSlotFallback;
 	if (!Requester || !CurrentSaveGame)
 	{
 		return false;
@@ -1727,7 +2219,7 @@ bool UARSaveSubsystem::AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediatel
 	if (!CurrentSaveGame)
 	{
 		// Create an initial save so cycles have a home.
-		if (!SaveCurrentGame(NAME_None, true, OutResult))
+		if (!SaveCurrentGameBlocking(NAME_None, true, OutResult))
 		{
 			return false;
 		}
@@ -1752,13 +2244,8 @@ bool UARSaveSubsystem::AdvanceWorldDays(int32 DeltaDays, bool bPersistImmediatel
 	}
 
 	// Persist to the current slot (no forced new revision unless configured in SaveCurrentGame).
-	const bool bSaved = SaveCurrentGame(CurrentSlotBaseName, true, OutResult);
+	const bool bSaved = SaveCurrentGameBlocking(CurrentSlotBaseName, true, OutResult);
 	return bSaved;
-}
-
-bool UARSaveSubsystem::IncrementSaveCycles(int32 Delta, bool bSaveAfterIncrement, FARSaveResult& OutResult)
-{
-	return AdvanceWorldDays(Delta, bSaveAfterIncrement, OutResult);
 }
 
 bool UARSaveSubsystem::GetTimeSinceLastSave(FTimespan& OutElapsed) const
@@ -1814,9 +2301,8 @@ bool UARSaveSubsystem::HasProgressionTag(FGameplayTag ProgressionTag) const
 	return CurrentSaveGame && ProgressionTag.IsValid() && CurrentSaveGame->ProgressionTags.HasTag(ProgressionTag);
 }
 
-bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags, const bool bAllowSlotFallback) const
+bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags) const
 {
-	(void)bAllowSlotFallback;
 	OutTags.Reset();
 	if (!Requester || !CurrentSaveGame)
 	{
@@ -1834,7 +2320,7 @@ bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, F
 	return true;
 }
 
-bool UARSaveSubsystem::HasPlayerProgressionTag(AARPlayerStateBase* Requester, const FGameplayTag ProgressionTag, const bool bAllowSlotFallback) const
+bool UARSaveSubsystem::HasPlayerProgressionTag(AARPlayerStateBase* Requester, const FGameplayTag ProgressionTag) const
 {
 	if (!ProgressionTag.IsValid())
 	{
@@ -1842,7 +2328,7 @@ bool UARSaveSubsystem::HasPlayerProgressionTag(AARPlayerStateBase* Requester, co
 	}
 
 	FGameplayTagContainer OutTags;
-	return GetPlayerProgressionTags(Requester, OutTags, bAllowSlotFallback) && OutTags.HasTag(ProgressionTag);
+	return GetPlayerProgressionTags(Requester, OutTags) && OutTags.HasTag(ProgressionTag);
 }
 
 bool UARSaveSubsystem::AddProgressionTag(FGameplayTag ProgressionTag)
@@ -1875,13 +2361,18 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 	{
 		FARPlayerStateSaveData& AddedPlayerData = CurrentSaveGame->PlayerStates.AddDefaulted_GetRef();
 		AddedPlayerData.Identity = QueryIdentity;
-		AddedPlayerData.CurrentCharacterTag = Requester->GetCurrentCharacterTag();
-		AddedPlayerData.CharacterPicked = Requester->GetCharacterPicked();
+		const AARCharacterStateRuntime* Runtime = Requester->GetCurrentCharacterRuntime();
+		AddedPlayerData.CurrentCharacterTag = Runtime
+			? ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag())
+			: ARPlayer::NormalizeCharacterTag(Requester->GetCurrentCharacterTag());
 		AddedPlayerData.bDialogueAutoAdvanceEnabled = Requester->IsDialogueAutoAdvanceEnabled();
 		if (AddedPlayerData.CurrentCharacterTag.IsValid())
 		{
 			FARCharacterSaveData& ActiveCharacterState = CurrentSaveGame->FindOrAddCharacterStateData(AddedPlayerData.CurrentCharacterTag);
-			ActiveCharacterState.LoadoutTags = Requester->LoadoutTags;
+			if (const AARCharacterStateRuntime* CurrentRuntime = Requester->GetCurrentCharacterRuntime())
+			{
+				CurrentRuntime->WriteSaveData(ActiveCharacterState);
+			}
 		}
 		AddedPlayerData.SyncCharacterSelectionFromCurrentTag();
 		PlayerIndex = CurrentSaveGame->PlayerStates.Num() - 1;

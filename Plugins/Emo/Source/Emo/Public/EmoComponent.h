@@ -1,13 +1,12 @@
 /**
  * @file EmoComponent.h
- * @brief Replicated emotion display component with slot-aware state.
+ * @brief Replicated emotion display component with generic viewer-tag registrations.
  */
 #pragma once
 
 #include "CoreMinimal.h"
 #include "EmoTypes.h"
 #include "Components/ActorComponent.h"
-#include "Engine/EngineTypes.h"
 #include "GameplayTagContainer.h"
 #include "EmoComponent.generated.h"
 
@@ -32,126 +31,100 @@ class EMO_API UEmoComponent : public UActorComponent
 public:
 	UEmoComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets the shared base emotion tag shown to all viewers unless higher-priority overrides are active."))
-	void SetEmotionTag(FGameplayTag NewEmotionTag);
+	/**
+	 * Sets or updates a generic emotion registration.
+	 * Reusing the same source id and exact target viewer tags overwrites the existing entry.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets or updates a named emotion registration. Empty target viewer tags create a global fallback registration."))
+	void SetEmotionRegistration(FName SourceId, FGameplayTag NewEmotionTag, int32 Priority = 0, FGameplayTagContainer TargetViewerTags = FGameplayTagContainer());
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets the base emotion tag for a specific player slot viewer context."))
-	void SetEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag);
+	/**
+	 * Sets a timed generic emotion registration.
+	 * The entry auto-clears using the same SourceId + exact TargetViewerTags key.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets or updates a timed emotion registration. Empty target viewer tags create a global fallback registration."))
+	void SetEmotionRegistrationForDuration(
+		FName SourceId,
+		FGameplayTag NewEmotionTag,
+		float DurationSeconds = -1.0f,
+		int32 Priority = 0,
+		FGameplayTagContainer TargetViewerTags = FGameplayTagContainer());
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears the shared base emotion tag used when no slot-specific base tag is set."))
-	void ClearEmotionTag();
+	/** Clears one registration entry identified by SourceId + exact TargetViewerTags. */
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears one emotion registration entry identified by source id and exact target viewer tags. Empty target viewer tags address the global entry for that source."))
+	void ClearEmotionRegistration(FName SourceId, FGameplayTagContainer TargetViewerTags = FGameplayTagContainer());
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears the base emotion tag override for a specific player slot."))
-	void ClearEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag);
+	/** Clears every registration entry owned by SourceId across global and targeted contexts. */
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears every emotion registration owned by the provided source id."))
+	void ClearAllEmotionRegistrationsForSource(FName SourceId);
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears all base emotion tags, including shared and slot-scoped entries."))
-	void ClearAllEmotionTags();
+	/** Clears every active emotion registration on this component. */
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears every active emotion registration on this component."))
+	void ClearAllEmotionRegistrations();
 
-	// Dialogue override helpers (higher priority than base state).
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets the dialogue-layer override emotion tag for all viewers."))
-	void SetDialogueEmotionTag(FGameplayTag NewEmotionTag);
+	/** Resolves the effective displayed emotion tag for an explicit HUD viewer tag container. */
+	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the effective displayed emotion tag for the provided HUD viewer tags. Empty viewer tags only resolve global registrations."))
+	FGameplayTag GetDisplayedEmotionTagForViewerTags(FGameplayTagContainer ViewerTags) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets the dialogue-layer override emotion tag for a specific player slot."))
-	void SetDialogueEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears the shared dialogue-layer emotion override."))
-	void ClearDialogueEmotionTag();
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears the dialogue-layer emotion override for a specific player slot."))
-	void ClearDialogueEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears all dialogue-layer overrides, including shared and slot-scoped entries."))
-	void ClearAllDialogueEmotionTags();
-
-	// Generic runtime override layer for built-on-top systems (for example ordering, scripted events, mode logic).
-	// Highest-priority active source wins; ties resolve by most-recent write.
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets or updates a named system override source with priority for the shared viewer context."))
-	void SetSystemEmotionTag(FName SourceId, FGameplayTag NewEmotionTag, int32 Priority = 0);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets a timed named system override for the shared viewer context and auto-clears when it expires."))
-	void SetSystemEmotionTagForDuration(FName SourceId, FGameplayTag NewEmotionTag, float DurationSeconds = -1.0f, int32 Priority = 0);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets or updates a named system override source for a specific player slot."))
-	void SetSystemEmotionTagForPlayerSlotTag(FName SourceId, FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag, int32 Priority = 0);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets a timed named system override for a specific player slot and auto-clears when it expires."))
-	void SetSystemEmotionTagForPlayerSlotTagForDuration(FName SourceId, FGameplayTag PlayerSlotTag, FGameplayTag NewEmotionTag, float DurationSeconds = -1.0f, int32 Priority = 0);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears the shared system override entry for the given source id."))
-	void ClearSystemEmotionTag(FName SourceId);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears the system override entry for a source id in one player slot context."))
-	void ClearSystemEmotionTagForPlayerSlotTag(FName SourceId, FGameplayTag PlayerSlotTag);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears every override entry owned by a source id across shared and slot-scoped contexts."))
-	void ClearAllSystemEmotionTagsForSource(FName SourceId);
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Clears all active system override sources and recomputes the displayed emotion tag."))
-	void ClearAllSystemEmotionTags();
-
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the effective displayed emotion tag for a given player slot after applying priority layers."))
-	FGameplayTag GetDisplayedEmotionTagForPlayerSlotTag(FGameplayTag PlayerSlotTag) const;
-
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the effective displayed emotion tag for a viewer controller using its player slot mapping."))
-	FGameplayTag GetDisplayedEmotionTagForController(const APlayerController* ViewerController) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Resolves icon content for the currently displayed emotion of a specific player slot."))
-	bool TryResolveDisplayedEmotionIconForPlayerSlot(
-		FGameplayTag PlayerSlotTag,
+	/** Resolves icon content for the current displayed emotion of a specific HUD viewer tag container. */
+	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Resolves icon content for the current displayed emotion of the provided HUD viewer tags."))
+	bool TryResolveDisplayedEmotionIconForViewerTags(
+		FGameplayTagContainer ViewerTags,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Resolves icon content for the currently displayed emotion of a viewer controller."))
-	bool TryResolveDisplayedEmotionIconForController(
-		const APlayerController* ViewerController,
-		TSoftObjectPtr<UTexture2D>& OutIconTexture,
-		FGameplayTag& OutResolvedEmotionTag) const;
-
+	/** Resolves icon content for an explicit emotion tag using resolver fallback rules. */
 	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Resolves icon content for an explicit emotion tag using resolver fallback rules."))
 	bool TryResolveEmotionIconForTag(
 		FGameplayTag EmotionTag,
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
+	/** Resolves icon content for PreviewEmotionTag used by editor/runtime preview paths. */
 	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Resolves icon content for PreviewEmotionTag used by editor/runtime preview paths."))
 	bool TryResolvePreviewEmotionIcon(
 		TSoftObjectPtr<UTexture2D>& OutIconTexture,
 		FGameplayTag& OutResolvedEmotionTag) const;
 
+	/** Returns the world-space anchor location used to project this component's emotion icon. */
 	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the world-space anchor location used to project this component's emotion icon."))
 	FVector GetEmotionAnchorWorldLocation() const;
 
+	/** Calculates a facing rotation so emotion rendering can billboard toward the viewer controller. */
 	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Calculates a facing rotation so emotion rendering can billboard toward the viewer controller."))
 	bool GetEmotionFacingRotationForController(const APlayerController* ViewerController, FRotator& OutFacingRotation) const;
 
+	/** Sets the optional speaker tag associated with this emotion component for dialogue integration. */
 	UFUNCTION(BlueprintCallable, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Sets the optional speaker tag associated with this emotion component for dialogue integration."))
 	void SetRegisteredSpeakerTag(FGameplayTag NewSpeakerTag);
 
+	/** Returns the optional speaker tag currently associated with this emotion component. */
 	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the optional speaker tag currently associated with this emotion component."))
 	FGameplayTag GetRegisteredSpeakerTag() const { return RegisteredSpeakerTag; }
 
+	/** Returns the configured icon draw size in screen pixels. */
 	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the configured icon draw size in screen pixels."))
 	float GetIconScreenSize() const { return IconScreenSize; }
 
-	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the shared base emotion tag before dialogue/system override layers are applied."))
-	FGameplayTag GetBaseEmotionTag() const { return BaseEmotionState.SharedEmotionTag; }
-
+	/** Returns the authored preview emotion tag used when no replicated display state is active. */
 	UFUNCTION(BlueprintPure, Category = "Emo|Dialogue|Emotion", meta = (ToolTip = "Returns the authored preview emotion tag used when no replicated display state is active."))
 	FGameplayTag GetPreviewEmotionTag() const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when displayed emotion state changes and UI should refresh."))
 	FEmoOnEmotionDisplayStateChanged OnEmotionDisplayStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when the effective displayed emotion tag changes. Params: NewEmotionTag, OldEmotionTag."))
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when the empty-viewer/global displayed emotion tag changes. Params: NewEmotionTag, OldEmotionTag."))
 	FEmoOnEmotionDisplayChanged OnEmotionDisplayChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when the effective displayed emotion tag becomes invalid (cleared)."))
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when the effective empty-viewer/global displayed emotion tag becomes invalid (cleared)."))
 	FEmoOnEmotionDisplayCleared OnEmotionDisplayCleared;
 
-	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when active system override source count changes. Param: ActiveEntryCount."))
+	UPROPERTY(BlueprintAssignable, Category = "Emo|Emotion", meta = (ToolTip = "Broadcast when active emotion registration count changes. Param: ActiveEntryCount."))
 	FEmoOnEmotionQueueChanged OnEmotionQueueChanged;
 
 protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 #if WITH_EDITOR
 	virtual void OnRegister() override;
@@ -160,49 +133,32 @@ protected:
 #endif
 
 	UFUNCTION()
-	void OnRep_BaseEmotionState(FEmoDisplayState OldState);
-
-	UFUNCTION()
-	void OnRep_DialogueOverrideState(FEmoDisplayState OldState);
-
-	UFUNCTION()
-	void OnRep_SystemOverrideState(FEmoDisplayState OldState);
+	void OnRep_EmotionRegistrations(const TArray<FEmoEmotionRegistration>& OldRegistrations);
 
 private:
-	struct FSystemEmotionSourceState
-	{
-		FEmoDisplayState State;
-		int32 Priority = 0;
-		uint64 LastWriteSerial = 0;
-	};
+	static bool AreTagsEqual(const FGameplayTag& Left, const FGameplayTag& Right);
+	static bool AreViewerTagContainersEquivalent(const FGameplayTagContainer& Left, const FGameplayTagContainer& Right);
+	static bool AreRegistrationsEquivalent(const FEmoEmotionRegistration& Left, const FEmoEmotionRegistration& Right);
+	static FGameplayTagContainer SanitizeViewerTags(const FGameplayTagContainer& ViewerTags);
+	static FName MakeRegistrationTimerKey(FName SourceId, const FGameplayTagContainer& TargetViewerTags);
 
-	static FGameplayTag GetStateSlotTag(const FEmoDisplayState& State, const FGameplayTag& PlayerSlotTag);
-	static void SetStateSlotTag(FEmoDisplayState& State, const FGameplayTag& PlayerSlotTag, const FGameplayTag& EmotionTag);
-	static bool AreDisplayStatesEqual(const FEmoDisplayState& Left, const FEmoDisplayState& Right);
-	static bool HasAnyStateTag(const FEmoDisplayState& State);
-	static FName MakeTimedSlotKey(FName SourceId, const FGameplayTag& SlotTag);
-
+	int32 FindEmotionRegistrationIndex(FName SourceId, const FGameplayTagContainer& TargetViewerTags) const;
 	bool IsAuthorityOwner() const;
 	void ForceOwnerNetUpdate() const;
-	bool RebuildSystemOverrideStateFromSources();
-	float ResolveTimedSystemOverrideDurationSeconds(float RequestedDurationSeconds) const;
-	void SetTimedSystemOverrideClearTimer(FName SourceId, float DurationSeconds);
-	void SetTimedSystemOverrideSlotClearTimer(FName SourceId, const FGameplayTag& SlotTag, float DurationSeconds);
-	void ClearTimedSystemOverrideTimer(FName SourceId);
-	void ClearTimedSystemOverrideSlotTimer(FName SourceId, const FGameplayTag& SlotTag);
-	void ClearAllTimedSystemOverrideTimersForSource(FName SourceId);
+	float ResolveTimedEmotionRegistrationDurationSeconds(float RequestedDurationSeconds) const;
+	void SetTimedEmotionRegistrationClearTimer(FName SourceId, const FGameplayTagContainer& TargetViewerTags, float DurationSeconds);
+	void ClearTimedEmotionRegistrationTimer(FName SourceId, const FGameplayTagContainer& TargetViewerTags);
+	void ClearAllTimedEmotionRegistrationTimersForSource(FName SourceId);
+
 	UFUNCTION()
-	void HandleTimedSystemOverrideClear(FName SourceId);
-	UFUNCTION()
-	void HandleTimedSystemOverrideSlotClear(FName SourceId, FGameplayTag SlotTag);
+	void HandleTimedEmotionRegistrationClear(FName SourceId, FGameplayTagContainer TargetViewerTags);
+
 	/**
-	 * Broadcasts display-state change delegates after recomputing effective display tags for shared and slot contexts.
-	 * Any effective tag change in shared/P1/P2 contexts triggers change notifications.
+	 * Broadcasts display-state change delegates after recomputing effective display tags for the
+	 * empty-viewer/global context. Tag-scoped-only changes still raise the state-change delegate.
 	 */
-	void BroadcastDisplayStateDelta(
-		const FEmoDisplayState& OldBaseState,
-		const FEmoDisplayState& OldDialogueState,
-		const FEmoDisplayState& OldSystemState);
+	void BroadcastRegistrationDelta(const TArray<FEmoEmotionRegistration>& OldRegistrations);
+
 #if WITH_EDITOR
 	void RefreshEditorPreviewBillboard();
 	void DestroyEditorPreviewBillboard();
@@ -214,25 +170,22 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the actor top-bound anchor."))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
 
+	/** When true, a zero anchor offset uses the configured default offset from UEmoSettings. Disable to allow a literal zero override. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "When enabled, a zero component offset falls back to the configured default anchor offset. Disable to allow a literal zero offset."))
+	bool bUseSettingsDefaultAnchorWorldOffset = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "1.0", UIMin = "1.0", ToolTip = "Desired icon size for HUD and editor preview rendering."))
 	float IconScreenSize = 48.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "Editor/runtime preview emotion tag used when no active replicated emotion state is present."))
 	FGameplayTag PreviewEmotionTag;
 
-	UPROPERTY(ReplicatedUsing = OnRep_BaseEmotionState, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Base Emotion State", ToolTip = "Replicated base emotion state. Dialogue override state can temporarily supersede this."))
-	FEmoDisplayState BaseEmotionState;
+	/** Server-authoritative generic registration pool resolved against HUD viewer tags. */
+	UPROPERTY(ReplicatedUsing = OnRep_EmotionRegistrations, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Emotion Registrations", ToolTip = "Replicated emotion registrations resolved against HUD viewer tags. Empty target viewer tags act as global fallback entries."))
+	TArray<FEmoEmotionRegistration> EmotionRegistrations;
 
-	UPROPERTY(ReplicatedUsing = OnRep_DialogueOverrideState, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "Dialogue Override State", ToolTip = "Replicated dialogue-scoped override state (higher priority than base emotion state)."))
-	FEmoDisplayState DialogueOverrideState;
-
-	UPROPERTY(ReplicatedUsing = OnRep_SystemOverrideState, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", DisplayName = "System Override State", ToolTip = "Replicated top-priority runtime override state resolved from active system sources."))
-	FEmoDisplayState SystemOverrideState;
-
-	TMap<FName, FSystemEmotionSourceState> SystemEmotionSources;
-	uint64 NextSystemEmotionWriteSerial = 1;
-	TMap<FName, FTimerHandle> TimedSystemOverrideClearHandles;
-	TMap<FName, FTimerHandle> TimedSystemOverrideSlotClearHandles;
+	uint64 NextEmotionWriteSerial = 1;
+	TMap<FName, FTimerHandle> TimedEmotionRegistrationClearHandles;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(Transient, DuplicateTransient, TextExportTransient)

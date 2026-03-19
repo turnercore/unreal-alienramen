@@ -70,13 +70,11 @@ If the data should stay with the character regardless of which player controls t
 ## Canonical Identity Rules
 
 - Character identity is canonical as a gameplay tag.
-- `EARCharacterChoice` is a compatibility mirror for existing Blueprint logic.
 - Runtime controller identity is `AARPlayerStateBase::PlayerSlotId` (controller/profile-owned, not gameplay ownership).
 - `EARPlayerSlot`/slot-tag helpers are legacy migration/plugin-boundary shims only and are no longer authoritative runtime ownership keys.
 - Save player rows do not persist slot snapshot as a durable identity key.
 - Shared-account local players are disambiguated by a persisted primary/secondary profile flag under the same online id (`FARPlayerIdentity::bSharedOnlineIdSecondaryProfile`), while runtime join/travel normalization remains authoritative for controller slot-id assignment.
-- Runtime control still projects through `AARPlayerStateBase`.
-- New logic should prefer `CurrentCharacterTag` over `CharacterPicked`.
+- Character runtime ownership is on `AARCharacterStateRuntime`; runtime control projects through `AARPlayerStateBase` current-character pointers.
 
 ## Runtime Flow
 
@@ -89,9 +87,14 @@ High-level sequence:
 1. gather current runtime state into a fresh `UARSaveGame`
 2. merge in persisted state that does not have a live runtime mirror in the current map
 3. sanitize/migrate payload
-4. write save to disk
-5. update current in-memory canonical save
+4. queue disk persistence asynchronously
+5. on completion, update the current in-memory canonical save and index/prune state
 6. send canonical save bytes to remote clients
+
+If the revision file is already on disk but the index write fails, the subsystem rolls back the revision slot before surfacing the failure.
+Canonical snapshot sends also log payload size and recipient count, with configurable warning/critical thresholds in `UARSaveUserSettings` so the path becomes monitorable before chunking is needed.
+
+Blocking travel/save-gate flows use `UARSaveSubsystem::SaveCurrentGameBlocking(...)` instead.
 
 Important expectations:
 - save is authority-only
@@ -140,10 +143,11 @@ Order:
 1. resolve player row by identity
 2. apply player-owned fields to `AARPlayerStateBase`
 3. resolve active `CurrentCharacterTag`
-4. project character-owned state onto runtime `PlayerState`
-5. keep character identity fields synchronized
-6. gameplay-mode join normalization enforces unique runtime character occupancy (`Brother`/`Sister`) and does not source ownership from save slot fallbacks
-- if projected character-owned `LoadoutTags` are empty after hydration, `AARPlayerStateBase` seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so raw editor map starts and runtime joins get defaults.
+4. ensure/hydrate `AARCharacterStateRuntime` for the resolved character tag and apply character-owned save data there
+5. bind `AARPlayerStateBase::CurrentCharacterRuntime` and sync active runtime projection reads
+6. bind runtime to active pawn through `UARCharacterSubsystem` orchestration
+7. gameplay-mode join normalization enforces unique runtime character occupancy (`Brother`/`Sister`) and does not source ownership from save slot fallbacks
+8. if projected character-owned `LoadoutTags` are empty after hydration, runtime setup seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so raw editor map starts and runtime joins get defaults.
 
 ### Seamless travel
 
@@ -152,8 +156,9 @@ Primary runtime carry path:
 
 Expectation:
 - seamless travel keeps the active projected runtime state alive without requiring disk save/load
-- `AARPlayerStateBase::CopyProperties(...)` uses an explicit PlayerState field copy contract (runtime controller slot id, character identity, projected active-character loadout, display name, dialogue preference, and selected transient resets) and intentionally does not run generic StructSerializable by-name overlays for PlayerState handoff
-- character-owned loadouts remain canonical by `CurrentCharacterTag`; `PlayerState.LoadoutTags` is only the active projection and is refreshed on character switch
+- `AARPlayerStateBase::CopyProperties(...)` only carries player-owned fields (slot id, character pointer identity, display name, dialogue preference, and selected transient resets) and intentionally does not run generic StructSerializable by-name overlays for PlayerState handoff
+- character-owned runtime carry/hydration is explicit via save/travel + `UARCharacterSubsystem` + `AARCharacterStateRuntime`; it is not implicit via PlayerState state copies
+- character-owned loadouts remain canonical by `CurrentCharacterTag`; `PlayerState` no longer owns a mirrored authoritative loadout payload
 - authoritative mode join/travel normalization ensures `CurrentCharacterTag` remains valid (`Brother`/`Sister`) and resolves non-taken fallback selection when a tag is missing/invalid
 - `AARGameModeBase::HandleStartingNewPlayer(...)` normalizes character assignment before spawn so `ChoosePlayerStart` and pawn-class resolution do not run on unknown identity.
 - `HandleFirstSessionJoinSetup(...)` hydrates player identity from save using strict identity matching (no slot fallback), then preserves character-native ownership.
@@ -276,6 +281,7 @@ Do not use shared `ProgressionTags` for those.
 - arbitrary transient actor state
 - generic per-map runtime scratch state
 - station processing runtime
+- temporary GAS cooldown timers/effects (cooldowns reset on spawn/travel by design)
 - anything not extracted into save structs or travel overlay structs
 
 ### Common pitfalls

@@ -11,6 +11,7 @@
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
 #include "ARMeatStorageBoxActor.h"
+#include "ARCharacterSubsystem.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
@@ -223,6 +224,7 @@ void AARPlayerController::BeginPlay()
 
 	ApplyDefaultInputMappings(true);
 	InitializeCustomCursor();
+	RebindCurrentCharacterTagChangeDelegate(PlayerState);
 	RequestHUDInitializationInternal(false);
 	EnsureDialogueWidget();
 	RefreshDialogueInputStateFromSession();
@@ -236,6 +238,7 @@ void AARPlayerController::BeginPlay()
 
 void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	UnbindCurrentCharacterTagChangeDelegate();
 	SetPauseMenuOpenLocal(false);
 	ApplyDialogueInputContexts(false);
 	if (bDialogueInputModeApplied)
@@ -252,12 +255,27 @@ void AARPlayerController::PlayerTick(const float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
+	if (IsLocalController() && LastHUDInitPlayerState.Get() != PlayerState)
+	{
+		RequestHUDInitializationInternal(true);
+	}
+
 	if (bPauseMenuOpenLocal && IsPauseMenuBlockedLocal())
 	{
 		RequestClosePauseMenu();
 	}
 
 	TickActiveInteractionRangeValidation(DeltaTime);
+}
+
+void AARPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (IsLocalController())
+	{
+		RequestHUDInitializationInternal(true);
+	}
 }
 
 void AARPlayerController::InitializeCustomCursor()
@@ -820,6 +838,54 @@ void AARPlayerController::ServerRequestKickActor_Implementation(AActor* TargetAc
 	RequestKickActor(TargetActor);
 }
 
+void AARPlayerController::RequestSwapCharacter(FGameplayTag TargetCharacterTag)
+{
+	TargetCharacterTag = ARPlayer::NormalizeCharacterTag(TargetCharacterTag);
+	if (!TargetCharacterTag.IsValid())
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+		if (!CharacterSubsystem)
+		{
+			ClientNotifySwapCharacterRejected(TargetCharacterTag, TEXT("Character subsystem is unavailable."));
+			return;
+		}
+
+		FString FailureReason;
+		if (!CharacterSubsystem->TrySwapCharacter(this, TargetCharacterTag, FailureReason))
+		{
+			ClientNotifySwapCharacterRejected(
+				TargetCharacterTag,
+				FailureReason.IsEmpty() ? TEXT("Character swap request was rejected.") : FailureReason);
+		}
+		return;
+	}
+
+	ServerRequestSwapCharacter(TargetCharacterTag);
+}
+
+void AARPlayerController::ServerRequestSwapCharacter_Implementation(FGameplayTag TargetCharacterTag)
+{
+	RequestSwapCharacter(TargetCharacterTag);
+}
+
+void AARPlayerController::ClientNotifySwapCharacterRejected_Implementation(
+	FGameplayTag TargetCharacterTag,
+	const FString& FailureReason)
+{
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[CharacterSwap] Rejected swap request for '%s': %s"),
+		*TargetCharacterTag.ToString(),
+		*FailureReason);
+	BP_OnSwapCharacterRejected(TargetCharacterTag, FailureReason);
+}
+
 void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)
 {
 	if (!StorageActor)
@@ -1140,6 +1206,7 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 {
 	if (!IsLocalController())
 	{
+		UnbindCurrentCharacterTagChangeDelegate();
 		StopHUDInitializationRetry();
 		return;
 	}
@@ -1155,6 +1222,7 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 	}
 
 	APlayerState* CurrentPlayerState = PlayerState;
+	RebindCurrentCharacterTagChangeDelegate(CurrentPlayerState);
 	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	const bool bContextChanged = LastHUDInitPlayerState.Get() != CurrentPlayerState
 		|| LastHUDInitGameState.Get() != CurrentGameState;
@@ -1231,6 +1299,44 @@ void AARPlayerController::StopHUDInitializationRetry()
 void AARPlayerController::HandleHUDInitializationRetry()
 {
 	RequestHUDInitializationInternal(false);
+}
+
+void AARPlayerController::RebindCurrentCharacterTagChangeDelegate(APlayerState* CurrentPlayerState)
+{
+	AARPlayerStateBase* NewPlayerState = Cast<AARPlayerStateBase>(CurrentPlayerState);
+	if (BoundCurrentCharacterTagPlayerState.Get() == NewPlayerState)
+	{
+		return;
+	}
+
+	UnbindCurrentCharacterTagChangeDelegate();
+	BoundCurrentCharacterTagPlayerState = NewPlayerState;
+	if (NewPlayerState)
+	{
+		NewPlayerState->OnCurrentCharacterTagChanged.RemoveDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+		NewPlayerState->OnCurrentCharacterTagChanged.AddDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+	}
+}
+
+void AARPlayerController::UnbindCurrentCharacterTagChangeDelegate()
+{
+	if (AARPlayerStateBase* PlayerStateBase = BoundCurrentCharacterTagPlayerState.Get())
+	{
+		PlayerStateBase->OnCurrentCharacterTagChanged.RemoveDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+	}
+
+	BoundCurrentCharacterTagPlayerState.Reset();
+}
+
+void AARPlayerController::HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag)
+{
+	(void)NewCharacterTag;
+	(void)OldCharacterTag;
+
+	if (IsLocalController())
+	{
+		RequestHUDInitializationInternal(true);
+	}
 }
 
 void AARPlayerController::RequestOpenPauseMenu()
