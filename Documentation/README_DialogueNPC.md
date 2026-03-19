@@ -371,7 +371,7 @@ Speaker hub currently provides:
 - inline portrait list with explicit `Add New` emotion button (tag + texture fields) and highlighted-entry removal
 - relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints
 - conversation cards are draggable between level headers to change minimum-relationship level assignment (replaces level cycle toggle)
-- conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Dialogue.Conversation.Id.<Speaker>.*`)
+- conversation map `Locked by` is inline editable as speaker-scoped gameplay-tag locks (`Parley.Conversations.<Speaker>.*`)
 - conversation map `Required Tags` uses gameplay tag container editing (no CSV string entry)
 - conversation map rows expose right-click context actions for `Open`, `Rename`, `Duplicate`, `Remove From Lookup`, and `Delete Asset + Remove From Lookup`
 - speaker editor supports transaction-backed `Ctrl+Z` / `Ctrl+Y` (`Ctrl+Shift+Z`) undo/redo for conversation create/duplicate/delete flows

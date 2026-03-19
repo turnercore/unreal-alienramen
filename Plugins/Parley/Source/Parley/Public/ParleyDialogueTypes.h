@@ -180,6 +180,18 @@ enum class EDialogueComparisonOp : uint8
 	Absent
 };
 
+/**
+ * Legacy serialized active-character restriction enum kept only to preserve cooked/header layout
+ * compatibility for conversation assets and compiled line data authored before tag-based restrictions.
+ */
+UENUM()
+enum class EDialogueActiveCharacterRestriction : uint8
+{
+	Any = 0,
+	BrotherOnly,
+	SisterOnly
+};
+
 USTRUCT(BlueprintType)
 struct PARLEY_API FDialogueCondition
 {
@@ -252,6 +264,10 @@ struct PARLEY_API FDialogueConversationHeader
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Block Offer Per Cycle", ToolTip = "When true, once this conversation is seen or skipped for a player in the current cycle it will not be offered again until temporary cycle state is cleared."))
 	bool bBlockOfferPerCycle = true;
+
+	/** Deprecated cooked-asset compatibility slot preserved ahead of CharacterRestrictionTag. */
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Use CharacterRestrictionTag."))
+	EDialogueActiveCharacterRestriction CharacterRestriction = EDialogueActiveCharacterRestriction::Any;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Character Restriction Tag", ToolTip = "Optional active-character tag required for this conversation to be offered. Leave unset to allow all active characters."))
 	FGameplayTag CharacterRestrictionTag;
@@ -362,6 +378,10 @@ struct PARLEY_API FDialogueLineNodeData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Skip Blocked Conditions", ToolTip = "If this condition group passes, this line is skipped. Defaults to Match Any for convenience."))
 	FDialogueConditionGroup SkipBlockedConditions;
+
+	/** Deprecated cooked-asset compatibility slot preserved ahead of CharacterRestrictionTag. */
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Use CharacterRestrictionTag."))
+	EDialogueActiveCharacterRestriction CharacterRestriction = EDialogueActiveCharacterRestriction::Any;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", DisplayName = "Character Restriction Tag", ToolTip = "Optional active-character tag required for this line to play. Leave unset to allow all active characters."))
 	FGameplayTag CharacterRestrictionTag;

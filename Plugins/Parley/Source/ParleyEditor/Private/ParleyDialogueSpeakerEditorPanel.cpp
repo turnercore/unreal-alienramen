@@ -684,7 +684,7 @@ namespace
 		}
 
 		return FString::Printf(
-			TEXT("%s.Id.%s"),
+			TEXT("%s.%s"),
 			*Settings->ConversationDefinitionRootTag.ToString(),
 			*GetSpeakerLeafSegment(SpeakerTag));
 	}
