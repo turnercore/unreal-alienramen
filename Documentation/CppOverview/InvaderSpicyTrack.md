@@ -111,10 +111,10 @@ Not yet implemented (open hardening work):
   - `OnInvaderWidgetCharacterMaxSpiceTrackChanged` -> max spice cap changed (`AARPlayerStateBase::OnMaxSpiceChanged` source).
   - `OnInvaderWidgetCharacterCursorChanged` -> highlighted spicy-track tier changed (`AARPlayerStateBase::OnSpicyTrackCursorChanged` source, includes predicted local cursor updates).
 - Shared-track event:
-  - `OnInvaderWidgetSharedTrackChanged` -> shared slotted-upgrade lane changed (`AARInvaderGameState::OnInvaderSharedTrackChanged` source).
+  - `OnInvaderWidgetSharedTrackChanged` -> shared slotted-upgrade lane changed (`AARInvaderGameState::OnInvaderSharedTrackChanged` source) and passes `FARInvaderTrackSlotDisplayState` UI snapshots.
 - Snapshot helpers:
   - `GetCachedCharacterStates` and `GetCharacterStateByTag` provide latest per-character HUD cache.
-  - `GetSharedTrackSlots` returns cached replicated shared lane state.
+  - `GetSharedTrackSlotDisplayStates` returns the cached UI-ready shared lane snapshot.
 
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.

@@ -2287,7 +2287,17 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 	}
 
 	TArray<FDropSpawnPlanEntry> SpawnPlan;
-	if (!BuildDropSpawnPlan(DropType, FinalDropAmount, SpawnPlan) || SpawnPlan.IsEmpty() || !GetWorld())
+	const bool bBuiltSpawnPlan = BuildDropSpawnPlan(DropType, FinalDropAmount, SpawnPlan);
+	if ((!bBuiltSpawnPlan || SpawnPlan.IsEmpty()) && DropType == EARInvaderDropType::Meat && MeatDropClassOverride)
+	{
+		FDropSpawnPlanEntry FallbackEntry;
+		FallbackEntry.Amount = FinalDropAmount;
+		FallbackEntry.DropClass = MeatDropClassOverride;
+		SpawnPlan.Reset();
+		SpawnPlan.Add(FallbackEntry);
+	}
+
+	if (SpawnPlan.IsEmpty() || !GetWorld())
 	{
 		return;
 	}

@@ -58,8 +58,10 @@ void UARInvaderSpicyTrackHUDWidgetBase::InitializeInvaderSpicyTrackHUDWidget(AAR
 
 	BindInvaderGameStateDelegates();
 	RebindTrackedPlayerStateDelegates();
-	RefreshInvaderSpicyTrackSnapshot(true);
+	RefreshInvaderSpicyTrackSnapshot(false);
+	bHasInvaderSpicyTrackHUDWidgetInitialized = true;
 	BP_OnInvaderSpicyTrackHUDWidgetInitialized(BoundInvaderHUD.Get(), BoundInvaderGameState.Get());
+	RefreshInvaderSpicyTrackSnapshot(true);
 }
 
 void UARInvaderSpicyTrackHUDWidgetBase::DeinitializeInvaderSpicyTrackHUDWidget()
@@ -77,6 +79,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::DeinitializeInvaderSpicyTrackHUDWidget()
 	CachedCharacterStates.Reset();
 	CachedSharedTrackSlots.Reset();
 	bHasSharedTrackSnapshot = false;
+	bHasInvaderSpicyTrackHUDWidgetInitialized = false;
 
 	if (bHadBindingOrState)
 	{
@@ -115,7 +118,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::RefreshInvaderSpicyTrackSnapshot(const b
 	RefreshCachedCharacterStates();
 	RefreshSharedTrackSnapshot();
 
-	if (!bBroadcastSnapshotEvents)
+	if (!bBroadcastSnapshotEvents || !bHasInvaderSpicyTrackHUDWidgetInitialized)
 	{
 		return;
 	}
@@ -187,9 +190,9 @@ bool UARInvaderSpicyTrackHUDWidgetBase::GetCharacterStateByTag(
 	return false;
 }
 
-bool UARInvaderSpicyTrackHUDWidgetBase::GetSharedTrackSlots(TArray<FARInvaderTrackSlotState>& OutSharedTrackSlots) const
+bool UARInvaderSpicyTrackHUDWidgetBase::GetSharedTrackSlotDisplayStates(TArray<FARInvaderTrackSlotDisplayState>& OutSharedTrackSlots) const
 {
-	OutSharedTrackSlots = bHasSharedTrackSnapshot ? CachedSharedTrackSlots : TArray<FARInvaderTrackSlotState>();
+	OutSharedTrackSlots = bHasSharedTrackSnapshot ? CachedSharedTrackSlots : TArray<FARInvaderTrackSlotDisplayState>();
 	return bHasSharedTrackSnapshot;
 }
 
@@ -294,7 +297,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::RefreshSharedTrackSnapshot()
 		return;
 	}
 
-	CachedSharedTrackSlots = InvaderGameState->GetSharedTrackSlots();
+	InvaderGameState->GetSharedTrackSlotDisplayStates(CachedSharedTrackSlots);
 	bHasSharedTrackSnapshot = true;
 }
 
