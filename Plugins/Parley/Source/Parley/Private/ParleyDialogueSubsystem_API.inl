@@ -225,7 +225,8 @@ bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForCharacter(FGamepl
 	}
 
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
-	if (IsBusySpeakerLockEnabled(Settings)
+	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
+	if (IsBusySpeakerLockEnabled(Settings, ModeTag)
 		&& FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, PlayerCharacterTag) != nullptr)
 	{
 		return false;
@@ -393,7 +394,8 @@ bool UParleyDialogueSubsystem::IsSpeakerBusyForController(const APlayerControlle
 	}
 
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
-	if (!IsBusySpeakerLockEnabled(Settings))
+	const FGameplayTag ModeTag = GetCurrentModeTag(this, GetWorld());
+	if (!IsBusySpeakerLockEnabled(Settings, ModeTag))
 	{
 		return false;
 	}

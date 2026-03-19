@@ -11,6 +11,7 @@
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARProjectileBase.h"
+#include "GameplayTagUtilities.h"
 #include "TagKeySubsystem.h"
 #include "AbilitySystemComponent.h"
 #include "Curves/CurveFloat.h"
@@ -191,6 +192,7 @@ void AARInvaderGameState::BeginPlay()
 	if (HasAuthority())
 	{
 		RegisterDebugConsoleCommands();
+		PreloadMeatDropActorClasses();
 		InitializeSpicyTrackState();
 		OnTrackedPlayersChanged.AddUniqueDynamic(this, &AARInvaderGameState::HandleTrackedPlayersChanged);
 		HandleTrackedPlayersChanged();
@@ -207,6 +209,88 @@ void AARInvaderGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		UnregisterDebugConsoleCommands();
 	}
 	Super::EndPlay(EndPlayReason);
+}
+
+void AARInvaderGameState::PreloadMeatDropActorClasses()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	UGameInstance* GI = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	if (!ItemDefinitions)
+	{
+		return;
+	}
+
+	const FGameplayTag MeatRootTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
+	if (!MeatRootTag.IsValid())
+	{
+		return;
+	}
+
+	TArray<FGameplayTag> MeatTags;
+	bool bFoundAny = false;
+	FGameplayTag FirstChildTag;
+	if (!UGameplayTagUtilities::GetDirectChildrenOfTag(MeatRootTag, MeatTags, bFoundAny, FirstChildTag) || !bFoundAny)
+	{
+		return;
+	}
+
+	MeatTags.Sort([](const FGameplayTag& A, const FGameplayTag& B)
+		{
+			return A.ToString() < B.ToString();
+		});
+
+	for (const FGameplayTag& MeatTag : MeatTags)
+	{
+		FARMeatDefinitionRow MeatDefinition;
+		if (!ItemDefinitions->ResolveMeatDefinition(MeatTag, MeatDefinition) || !MeatDefinition.MeatTag.IsValid())
+		{
+			continue;
+		}
+
+		if (TSubclassOf<AARInvaderDropBase>* CachedDropClass = CachedMeatDropActorClassesByTag.Find(MeatDefinition.MeatTag))
+		{
+			if (CachedDropClass->Get())
+			{
+				continue;
+			}
+
+			CachedMeatDropActorClassesByTag.Remove(MeatDefinition.MeatTag);
+		}
+
+		if (MeatDefinition.InvaderDropActorClass.IsNull())
+		{
+			continue;
+		}
+
+		UClass* LoadedDropClass = MeatDefinition.InvaderDropActorClass.LoadSynchronous();
+		if (!LoadedDropClass)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop|Preload] Meat='%s' has no valid InvaderDropActorClass."),
+				*MeatDefinition.MeatTag.ToString());
+			continue;
+		}
+
+		if (!LoadedDropClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop|Preload] Meat='%s' override class '%s' does not derive from AARInvaderDropBase."),
+				*MeatDefinition.MeatTag.ToString(),
+				*GetNameSafe(LoadedDropClass));
+			continue;
+		}
+
+		CachedMeatDropActorClassesByTag.Add(MeatDefinition.MeatTag, LoadedDropClass);
+	}
 }
 
 void AARInvaderGameState::RegisterDebugConsoleCommands()
@@ -2287,15 +2371,12 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		}
 
 		ResolvedMeatDefinitionTag = MeatDefinition.MeatTag;
-		if (TWeakObjectPtr<UClass>* CachedDropClass = CachedMeatDropActorClassesByTag.Find(MeatDefinition.MeatTag))
+		if (TSubclassOf<AARInvaderDropBase>* CachedDropClass = CachedMeatDropActorClassesByTag.Find(MeatDefinition.MeatTag))
 		{
-			if (CachedDropClass->IsValid())
+			UClass* CachedClass = CachedDropClass->Get();
+			if (CachedClass && CachedClass->IsChildOf(AARInvaderDropBase::StaticClass()))
 			{
-				UClass* CachedClass = CachedDropClass->Get();
-				if (CachedClass->IsChildOf(AARInvaderDropBase::StaticClass()))
-				{
-					MeatDropClassOverride = CachedClass;
-				}
+				MeatDropClassOverride = CachedClass;
 			}
 			else
 			{
@@ -2306,7 +2387,27 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		if (!MeatDropClassOverride && !MeatDefinition.InvaderDropActorClass.IsNull())
 		{
 			UClass* LoadedDropClass = MeatDefinition.InvaderDropActorClass.LoadSynchronous();
-			if (LoadedDropClass && LoadedDropClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+			if (!LoadedDropClass)
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[InvaderDrop|Spawn] Meat drop override skipped for enemy='%s' meat='%s': failed to load '%s'."),
+					*GetNameSafe(Enemy),
+					*MeatDefinition.MeatTag.ToString(),
+					*MeatDefinition.InvaderDropActorClass.ToSoftObjectPath().ToString());
+			}
+			else if (!LoadedDropClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+			{
+				UE_LOG(
+					ARLog,
+					Warning,
+					TEXT("[InvaderDrop|Spawn] Meat drop override skipped for enemy='%s' meat='%s': class '%s' is not an AARInvaderDropBase."),
+					*GetNameSafe(Enemy),
+					*MeatDefinition.MeatTag.ToString(),
+					*GetNameSafe(LoadedDropClass));
+			}
+			else
 			{
 				MeatDropClassOverride = LoadedDropClass;
 				CachedMeatDropActorClassesByTag.Add(MeatDefinition.MeatTag, LoadedDropClass);

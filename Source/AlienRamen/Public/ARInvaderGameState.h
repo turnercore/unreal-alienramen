@@ -208,6 +208,7 @@ private:
 	void ResolveFullBlastCommonPostChoice(bool bSkipped, FGameplayTag RequestingCharacterTag, int32 ActivationTier);
 	void ApplyFullBlastGameplayCue();
 	void ClearEnemyProjectilesByTag();
+	void PreloadMeatDropActorClasses();
 	bool BuildUpgradeDefinitionMap(TMap<FGameplayTag, FARInvaderUpgradeDefRow>& OutDefinitions) const;
 	bool IsUpgradeEligibleForOffer(
 		const FARInvaderUpgradeDefRow& UpgradeDef,
@@ -268,8 +269,9 @@ private:
 	UPROPERTY(Transient)
 	int32 CachedRngRunEndEventId = TNumericLimits<int32>::Min();
 
-	// Runtime cache to avoid repeated synchronous soft-class loads on enemy kill paths.
-	TMap<FGameplayTag, TWeakObjectPtr<UClass>> CachedMeatDropActorClassesByTag;
+	// Strong cache of loaded meat drop classes, warmed during authoritative startup so normal kill paths do not pay soft-load cost.
+	UPROPERTY(Transient)
+	TMap<FGameplayTag, TSubclassOf<AARInvaderDropBase>> CachedMeatDropActorClassesByTag;
 
 	mutable bool bUpgradeDefinitionCacheValid = false;
 	mutable TWeakObjectPtr<UDataTable> CachedUpgradeDefinitionTable;

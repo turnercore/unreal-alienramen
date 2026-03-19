@@ -20,6 +20,24 @@ namespace
 		return FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
 	}
 
+	static FGameplayTag ResolveLegacyMeatTagForColor(const EARAffinityColor Color)
+	{
+		switch (Color)
+		{
+		case EARAffinityColor::Red:
+			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Red"), false);
+		case EARAffinityColor::Blue:
+			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Blue"), false);
+		case EARAffinityColor::White:
+			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.White"), false);
+		case EARAffinityColor::Colorless:
+			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Colorless"), false);
+		case EARAffinityColor::None:
+		default:
+			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.None"), false);
+		}
+	}
+
 	static FName ExtractLeafRowNameFromTag(const FGameplayTag Tag)
 	{
 		if (!Tag.IsValid())
@@ -265,9 +283,15 @@ bool UARItemDefinitionSubsystem::ResolveMeatDefinitionForEnemy(const FGameplayTa
 
 bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const
 {
-	(void)Color;
 	OutMeatDef = FARMeatDefinitionRow();
-	return false;
+
+	const FGameplayTag LegacyColorTag = ResolveLegacyMeatTagForColor(Color);
+	if (LegacyColorTag.IsValid() && ResolveMeatDefinition(LegacyColorTag, OutMeatDef))
+	{
+		return true;
+	}
+
+	return ResolveFirstMeatDefinition(OutMeatDef);
 }
 
 bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) const
@@ -286,16 +310,30 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) c
 
 bool UARItemDefinitionSubsystem::ResolveFirstMeatTagForColor(const EARAffinityColor Color, FGameplayTag& OutMeatTag) const
 {
-	(void)Color;
 	OutMeatTag = FGameplayTag();
+
+	FARMeatDefinitionRow MeatDef;
+	if (ResolveFirstMeatDefinitionForColor(Color, MeatDef) && MeatDef.MeatTag.IsValid())
+	{
+		OutMeatTag = MeatDef.MeatTag;
+		return true;
+	}
+
 	return false;
 }
 
 bool UARItemDefinitionSubsystem::GetMeatTagsForColor(const EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const
 {
-	(void)Color;
 	OutMeatTags.Reset();
-	return false;
+
+	FGameplayTag MeatTag;
+	if (!ResolveFirstMeatTagForColor(Color, MeatTag) || !MeatTag.IsValid())
+	{
+		return false;
+	}
+
+	OutMeatTags.Add(MeatTag);
+	return true;
 }
 
 int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const

@@ -2502,10 +2502,12 @@ static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FG
 	return nullptr;
 }
 
-static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings)
+// The busy-speaker lock is intentionally scoped to per-player modes.
+static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
 {
 	return Settings
-		&& Settings->bOnlyOneTalkerPerSpeakerInPerPlayerModes;
+		&& Settings->bOnlyOneTalkerPerSpeakerInPerPlayerModes
+		&& IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
 }
 
 static bool DoesSessionRejectEavesdrop(const FParleyActiveDialogueSession& Session)

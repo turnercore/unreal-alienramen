@@ -36,6 +36,7 @@ This document captures the runtime ownership and integration contract for the sh
 - `Item.Meat` -> `FARMeatDefinitionRow`
   - `EnemyIdentifierTag` maps invader enemy identity to canonical meat identity (`MeatTag`)
   - optional `InvaderDropActorClass` lets invader-mode pickup visuals/behavior differ from shop/scrapyard item actors
+  - deprecated color-based meat lookup helpers remain as a compatibility bridge and map legacy colors to canonical `Item.Meat.*` tags
 - Character table rows for shop/runtime character spawning can use `FARShopCharacterDefRow` (`Source/AlienRamen/Public/ARLoadoutTypes.h`) with:
   - `CharacterTag` (`Shop.Character.*`)
   - `CustomerTag` (`Shop.Customer.*`)

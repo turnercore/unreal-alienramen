@@ -81,7 +81,8 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 		return false;
 	}
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
-	if (IsBusySpeakerLockEnabled(Settings))
+	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
+	if (IsBusySpeakerLockEnabled(Settings, ModeTag))
 	{
 		if (const FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 		{
@@ -597,7 +598,8 @@ static void RefreshBusyEmotionForSpeaker(
 	}
 
 	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
-	const bool bBusyLockEnabled = IsBusySpeakerLockEnabled(DialogueSettings);
+	const FGameplayTag ModeTag = GetCurrentModeTag(DialogueSubsystem, World);
+	const bool bBusyLockEnabled = IsBusySpeakerLockEnabled(DialogueSettings, ModeTag);
 	const bool bSpeakerBusy = bBusyLockEnabled
 		&& FindPerPlayerSessionByPrimarySpeaker(Sessions, SpeakerTag, FGameplayTag()) != nullptr;
 
@@ -2096,7 +2098,8 @@ bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(
 	{
 		const FGameplayTag RequesterSlot = GetCharacterTagFromPlayerState(RequestingPlayerState);
 		const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
-		if (RequesterSlot.IsValid() && IsBusySpeakerLockEnabled(Settings))
+		const FGameplayTag ModeTag = GetCurrentModeTag(this, GetWorld());
+		if (RequesterSlot.IsValid() && IsBusySpeakerLockEnabled(Settings, ModeTag))
 		{
 			FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 			if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, TargetSpeakerTag, RequesterSlot))
@@ -2377,7 +2380,7 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 			return false;
 		}
 	}
-	else if (IsBusySpeakerLockEnabled(Settings))
+	else if (IsBusySpeakerLockEnabled(Settings, ModeTag))
 	{
 		if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 		{
