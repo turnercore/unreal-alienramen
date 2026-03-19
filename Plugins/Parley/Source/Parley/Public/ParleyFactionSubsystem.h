@@ -56,6 +56,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Applies an immediate faction reputation delta on authoritative runtime state."))
 	bool ModifyFactionSpeakerReputation(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float DeltaReputation);
 
+	/** Client-side relay used to keep local UI caches in sync after a faction popularity mutation. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Updates cached faction popularity state and relays the change to local widgets."))
+	void UpdateFactionPopularityFromReplication(FGameplayTag FactionTag, float DeltaPopularity, float NewTotal);
+
+	/** Client-side relay used to keep local UI caches in sync after a faction-speaker reputation mutation. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Updates cached faction-speaker reputation state and relays the change to local widgets."))
+	void UpdateFactionSpeakerReputationFromReplication(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float DeltaReputation, float NewTotal);
+
 	/** Injects persisted faction popularity states from an external save bridge. */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Injects persisted faction popularity state from an external save bridge."))
 	void SetFactionPopularityStates(const TArray<FParleyFactionState>& States);

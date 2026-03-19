@@ -29,6 +29,26 @@ namespace
 
 		return Cast<IParleyPlayerControllerInterface>(Controller);
 	}
+
+	static FGameplayTag GetControllerCharacterTag(const APlayerController* Controller)
+	{
+		if (const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(Controller))
+		{
+			return ControllerInterface->GetCharacterTag();
+		}
+
+		return FGameplayTag();
+	}
+
+	static bool DoesSpeakerTagMatchPrimarySpeaker(const FGameplayTag& CandidateSpeakerTag, const FGameplayTag& PrimarySpeakerTag)
+	{
+		if (!CandidateSpeakerTag.IsValid() || !PrimarySpeakerTag.IsValid())
+		{
+			return false;
+		}
+
+		return CandidateSpeakerTag.MatchesTag(PrimarySpeakerTag) || PrimarySpeakerTag.MatchesTag(CandidateSpeakerTag);
+	}
 }
 
 void UParleyDialogueWidgetBase::NativeConstruct()
@@ -325,7 +345,24 @@ void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion(const FGame
 		return;
 	}
 
-	if (!bHasActiveDialogueView || !CurrentDialogueView.SpeakerTag.IsValid() || CurrentDialogueView.SpeakerTag != PrimarySpeakerTag)
+	// Choice lookahead is keyed by conversation primary speaker, which can differ from the latest delivered line speaker.
+	if (bHasActiveDialogueView && CurrentDialogueView.ConversationTag.IsValid())
+	{
+		const UParleyDialogueSubsystem* DialogueSubsystem = BoundDialogueSubsystem.Get();
+		FGameplayTag ActiveConversationPrimarySpeakerTag;
+		if (DialogueSubsystem && DialogueSubsystem->GetPrimarySpeakerForConversation(CurrentDialogueView.ConversationTag, ActiveConversationPrimarySpeakerTag))
+		{
+			if (!DoesSpeakerTagMatchPrimarySpeaker(ActiveConversationPrimarySpeakerTag, PrimarySpeakerTag))
+			{
+				return;
+			}
+
+			BP_OnDialogueChoiceLookaheadEmotion(PrimarySpeakerTag, PreviewEmotionTag, ChoiceBranchId);
+			return;
+		}
+	}
+
+	if (!bHasActiveDialogueView || !DoesSpeakerTagMatchPrimarySpeaker(CurrentDialogueView.SpeakerTag, PrimarySpeakerTag))
 	{
 		return;
 	}
@@ -435,14 +472,15 @@ bool UParleyDialogueWidgetBase::ShouldHandleOwnerCharacterTag(const FGameplayTag
 		return true;
 	}
 
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	if (!ControllerInterface)
+	const FGameplayTag ControllerCharacterTag = GetControllerCharacterTag(BoundController);
+	if (ControllerCharacterTag.IsValid() && OwnerCharacterTag == ControllerCharacterTag)
 	{
-		return false;
+		return true;
 	}
 
-	const FGameplayTag ControllerCharacterTag = ControllerInterface->GetCharacterTag();
-	return ControllerCharacterTag.IsValid() ? OwnerCharacterTag == ControllerCharacterTag : false;
+	// Owner-scoped events are routed only to the intended participant controllers; before the first
+	// dialogue view arrives, accept the event so eavesdrop/start hooks are not dropped on the floor.
+	return !bHasActiveDialogueView;
 }
 
 void UParleyDialogueWidgetBase::BindParleySubsystemDelegates()

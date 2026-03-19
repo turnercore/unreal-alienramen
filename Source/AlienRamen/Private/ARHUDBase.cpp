@@ -55,10 +55,12 @@ void AARHUDBase::EnsureDialogueWidget(APlayerController* SourceController, APlay
 		return;
 	}
 
+	bool bWidgetRecreated = false;
 	if (!DialogueWidget || DialogueWidget->GetClass() != DialogueWidgetClass)
 	{
 		RemoveDialogueWidget();
 		DialogueWidget = CreateWidget<UParleyDialogueWidgetBase>(SourceController, DialogueWidgetClass);
+		bWidgetRecreated = true;
 	}
 
 	if (!DialogueWidget)
@@ -72,7 +74,11 @@ void AARHUDBase::EnsureDialogueWidget(APlayerController* SourceController, APlay
 		DialogueWidget->AddToPlayerScreen(DialogueWidgetZOrder);
 	}
 
-	DialogueWidget->InitializeDialogueWidget(SourceController);
+	const APlayerController* OwningPlayerController = Cast<APlayerController>(DialogueWidget->GetOwningPlayer());
+	if (bWidgetRecreated || OwningPlayerController != SourceController)
+	{
+		DialogueWidget->InitializeDialogueWidget(SourceController);
+	}
 
 	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(SourceController);
 	if (ControllerInterface)

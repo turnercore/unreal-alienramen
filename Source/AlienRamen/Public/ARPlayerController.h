@@ -19,6 +19,7 @@
 class UARAbilitySet;
 class UInputMappingContext;
 class UParleyDialogueWidgetBase;
+class UParleyDialogueSubsystem;
 class UUserWidget;
 class AARNPCCharacterBase;
 class AARMeatStorageBoxActor;
@@ -99,6 +100,21 @@ public:
 	virtual void NotifyDialogueViewUpdated(const FDialogueClientView& View) override;
 	virtual void NotifyDialogueSessionEnded(const FString& SessionId) override;
 	virtual void NotifyDialogueAudioRequested(const FDialogueAudioRequest& Request) override;
+	virtual void NotifyDialogueConversationStarted(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueConversationEnded(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag, bool bCompleted) override;
+	virtual void NotifyDialogueLineDelivered(FGameplayTag SpeakerTag, FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueImportantChoiceMade(FGuid ChoiceBranchId, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueSpeakerRelationshipLevelChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, int32 OldLevel, int32 NewLevel, float NewTotal) override;
+	virtual void NotifyDialogueConversationCompleted(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag) override;
+	virtual void NotifyDialogueSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal) override;
+	virtual void NotifyDialogueProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueProgressionStateMarkedDirty() override;
+	virtual void NotifyDialogueChoiceLookaheadEmotion(FGameplayTag PrimarySpeakerTag, FGameplayTag PreviewEmotionTag, FGuid ChoiceBranchId) override;
+	virtual void NotifyDialogueChoiceLookaheadCleared(FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifyDialogueSignalFired(FGameplayTag SignalTag, FGameplayTagContainer PayloadTags, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag) override;
+	virtual void NotifySpeakerTalkableChanged(FGameplayTag SpeakerTag, bool bNewTalkable) override;
+	virtual void NotifyFactionPopularityChanged(FGameplayTag FactionTag, float Delta, float NewTotal) override;
+	virtual void NotifyFactionSpeakerReputationChanged(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal) override;
 	virtual void RequestInteractWithActor(AActor* Actor) override;
 	virtual void RequestStartDialogueBySpeakerTag(const FGameplayTag& SpeakerTag) override;
 	virtual void RequestAdvanceDialogueInput() override;
@@ -266,6 +282,52 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ClientDialogueAudioRequested(const FDialogueAudioRequest& Request);
+
+	// Client relays for dialogue/widget-facing runtime signals. These rebroadcast into the local Parley subsystems so HUD widgets can stay bound to subsystem delegates.
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueConversationStarted(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueConversationEnded(FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag, bool bCompleted);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueLineDelivered(FGameplayTag SpeakerTag, FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueImportantChoiceMade(FGuid ChoiceBranchId, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSpeakerRelationshipLevelChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, int32 OldLevel, int32 NewLevel, float NewTotal);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueConversationCompleted(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSpeakerRelationshipChanged(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueProgressionTagMutated(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueProgressionStateMarkedDirty();
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueChoiceLookaheadEmotion(FGameplayTag PrimarySpeakerTag, FGameplayTag PreviewEmotionTag, FGuid ChoiceBranchId);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueChoiceLookaheadCleared(FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientDialogueSignalFired(FGameplayTag SignalTag, FGameplayTagContainer PayloadTags, FGameplayTag ConversationTag, FGameplayTag SpeakerTag, FGameplayTag OwnerCharacterTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientSpeakerTalkableChanged(FGameplayTag SpeakerTag, bool bNewTalkable);
+
+	UFUNCTION(Client, Reliable)
+	void ClientFactionPopularityChanged(FGameplayTag FactionTag, float Delta, float NewTotal);
+
+	UFUNCTION(Client, Reliable)
+	void ClientFactionSpeakerReputationChanged(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Dialogue")
 	void BP_OnDialogueSessionUpdated(const FDialogueClientView& View);
@@ -489,6 +551,8 @@ protected:
 private:
 	UFUNCTION()
 	void HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag);
+	// Reuse the local widget-facing subsystem broadcast path after a client RPC arrives.
+	void BroadcastDialogueSubsystemEventOnClient(TFunctionRef<void(UParleyDialogueSubsystem&)> BroadcastCallback);
 
 	bool IsServerInteractionTargetReachableInternal(const AActor* TargetActor, const TCHAR* ContextLabel, bool bLogFailures) const;
 	void TickActiveInteractionRangeValidation(float DeltaTime);

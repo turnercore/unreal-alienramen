@@ -322,6 +322,14 @@ void UParleySpeakerComponent::OnRep_IsTalkable(const bool bOldTalkable)
 	{
 		OnSpeakerTalkableStateChanged.Broadcast(bIsTalkable);
 	}
+
+	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
+	{
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			SpeakerSubsystem->UpdateTalkableStateFromReplication(SpeakerTag, bIsTalkable);
+		}
+	}
 }
 
 void UParleySpeakerComponent::OnRep_TalkableCharacterTags(FGameplayTagContainer OldTalkableCharacterTags)
@@ -334,6 +342,14 @@ void UParleySpeakerComponent::OnRep_TalkableCharacterTags(FGameplayTagContainer 
 	// Always broadcast on per-character changes so listeners refresh per-character indicators even
 	// if bIsTalkable replication is delayed or unchanged.
 	OnSpeakerTalkableStateChanged.Broadcast(TalkableCharacterTags.Num() > 0);
+
+	if (UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
+	{
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			SpeakerSubsystem->UpdateTalkableStateFromReplication(SpeakerTag, TalkableCharacterTags.Num() > 0);
+		}
+	}
 }
 
 bool UParleySpeakerComponent::IsTalkableForCharacterTag(const FGameplayTag CharacterTag) const

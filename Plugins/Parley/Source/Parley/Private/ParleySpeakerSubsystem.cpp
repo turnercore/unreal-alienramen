@@ -2,7 +2,10 @@
 
 #include "ParleyDialogueSubsystem.h"
 #include "ParleyLog.h"
+#include "ParleyPlayerControllerInterface.h"
 #include "Engine/GameInstance.h"
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 namespace
 {
@@ -13,6 +16,34 @@ namespace
 			return GI->GetSubsystem<UParleyDialogueSubsystem>();
 		}
 		return nullptr;
+	}
+
+	static bool IsAuthorityWorld_Speaker(const UWorld* World)
+	{
+		if (!World)
+		{
+			return false;
+		}
+
+		return World->GetNetMode() == NM_Standalone || World->GetAuthGameMode() != nullptr;
+	}
+
+	template <typename TCallback>
+	static void ForEachSpeakerWidgetController(UWorld* World, TCallback&& Callback)
+	{
+		if (!World)
+		{
+			return;
+		}
+
+		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		{
+			APlayerController* Controller = It->Get();
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(Controller))
+			{
+				Callback(*ControllerInterface);
+			}
+		}
 	}
 }
 
@@ -37,6 +68,23 @@ void UParleySpeakerSubsystem::Deinitialize()
 
 	SpeakerTalkableCache.Reset();
 	Super::Deinitialize();
+}
+
+void UParleySpeakerSubsystem::UpdateTalkableStateFromReplication(const FGameplayTag SpeakerTag, const bool bNewTalkable)
+{
+	if (!SpeakerTag.IsValid())
+	{
+		return;
+	}
+
+	const bool bHadExisting = SpeakerTalkableCache.Contains(SpeakerTag);
+	const bool bOldTalkable = SpeakerTalkableCache.FindRef(SpeakerTag);
+	SpeakerTalkableCache.Add(SpeakerTag, bNewTalkable);
+
+	if (!bHadExisting || bOldTalkable != bNewTalkable)
+	{
+		OnSpeakerTalkableChanged.Broadcast(SpeakerTag, bNewTalkable);
+	}
 }
 
 bool UParleySpeakerSubsystem::IsSpeakerTalkable(FGameplayTag SpeakerTag) const
@@ -72,7 +120,7 @@ bool UParleySpeakerSubsystem::RefreshSpeakerTalkableState(FGameplayTag SpeakerTa
 	const bool bNewTalkable = DialogueSubsystem->HasUnlockedDialogueForSpeakerForAnyPlayer(SpeakerTag);
 	const bool bHadExisting = SpeakerTalkableCache.Contains(SpeakerTag);
 	const bool bOldTalkable = SpeakerTalkableCache.FindRef(SpeakerTag);
-	SpeakerTalkableCache.Add(SpeakerTag, bNewTalkable);
+	UpdateTalkableStateFromReplication(SpeakerTag, bNewTalkable);
 
 	UE_LOG(
 		ParleyLog,
@@ -86,7 +134,13 @@ bool UParleySpeakerSubsystem::RefreshSpeakerTalkableState(FGameplayTag SpeakerTa
 	if (!bHadExisting || bOldTalkable != bNewTalkable)
 	{
 		UE_LOG(ParleyLog, Verbose, TEXT("[Speaker] Talkable changed '%s' -> %s; broadcasting."), *SpeakerTag.ToString(), bNewTalkable ? TEXT("true") : TEXT("false"));
-		OnSpeakerTalkableChanged.Broadcast(SpeakerTag, bNewTalkable);
+		if (UWorld* World = GetWorld(); IsAuthorityWorld_Speaker(World))
+		{
+			ForEachSpeakerWidgetController(World, [SpeakerTag, bNewTalkable](IParleyPlayerControllerInterface& ControllerInterface)
+			{
+				ControllerInterface.NotifySpeakerTalkableChanged(SpeakerTag, bNewTalkable);
+			});
+		}
 	}
 
 	return true;
