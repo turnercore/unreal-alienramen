@@ -56,6 +56,7 @@ void UParleyDialogueWidgetBase::InitializeDialogueWidget(APlayerController* InOw
 {
 	if (BoundController == InOwningController)
 	{
+		RefreshBoundCharacterTag();
 		PushInitialViewFromController();
 		return;
 	}
@@ -64,6 +65,7 @@ void UParleyDialogueWidgetBase::InitializeDialogueWidget(APlayerController* InOw
 	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BoundController = InOwningController;
 	BindParleySubsystemDelegates();
+	RefreshBoundCharacterTag();
 	PushInitialViewFromController();
 	BP_OnDialogueWidgetInitialized(BoundController);
 }
@@ -72,6 +74,7 @@ void UParleyDialogueWidgetBase::DeinitializeDialogueWidget()
 {
 	UnbindParleySubsystemDelegates();
 	BoundController = nullptr;
+	BoundCharacterTag = FGameplayTag();
 	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BP_OnDialogueWidgetDeinitialized();
 }
@@ -221,14 +224,7 @@ void UParleyDialogueWidgetBase::HandleControllerDialogueSessionEnded(const FStri
 
 void UParleyDialogueWidgetBase::HandleDialogueConversationStarted(const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -238,14 +234,7 @@ void UParleyDialogueWidgetBase::HandleDialogueConversationStarted(const FGamepla
 
 void UParleyDialogueWidgetBase::HandleDialogueConversationEnded(const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag, const bool bCompleted)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -255,14 +244,7 @@ void UParleyDialogueWidgetBase::HandleDialogueConversationEnded(const FGameplayT
 
 void UParleyDialogueWidgetBase::HandleDialogueLineDelivered(const FGameplayTag SpeakerTag, const FGameplayTag ConversationTag, const FGameplayTag OwnerCharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -272,14 +254,7 @@ void UParleyDialogueWidgetBase::HandleDialogueLineDelivered(const FGameplayTag S
 
 void UParleyDialogueWidgetBase::HandleDialogueImportantChoiceMade(const FGuid ChoiceBranchId, const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -295,14 +270,7 @@ void UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipLevelChanged(
 	const int32 NewLevel,
 	const float NewTotal)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -312,14 +280,7 @@ void UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipLevelChanged(
 
 void UParleyDialogueWidgetBase::HandleDialogueConversationCompleted(const FGameplayTag ConversationTag, const FGameplayTag OwnerCharacterTag, const FGameplayTag CharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -329,14 +290,7 @@ void UParleyDialogueWidgetBase::HandleDialogueConversationCompleted(const FGamep
 
 void UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipChanged(const FGameplayTag SourceSpeakerTag, const FGameplayTag TargetSpeakerTag, const FGameplayTag OwnerCharacterTag, const float Delta, const float NewTotal)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -346,14 +300,7 @@ void UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipChanged(const F
 
 void UParleyDialogueWidgetBase::HandleDialogueProgressionTagMutated(const FGameplayTag ProgressionTag, const bool bAdded, const FGameplayTag OwnerCharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -388,14 +335,7 @@ void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion(const FGame
 
 void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadCleared(const FGameplayTag OwnerCharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -410,14 +350,7 @@ void UParleyDialogueWidgetBase::HandleDialogueSignalFired(
 	const FGameplayTag SpeakerTag,
 	const FGameplayTag OwnerCharacterTag)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(OwnerCharacterTag))
 	{
 		return;
 	}
@@ -427,14 +360,7 @@ void UParleyDialogueWidgetBase::HandleDialogueSignalFired(
 
 void UParleyDialogueWidgetBase::HandleDialogueAudioRequested(const FDialogueAudioRequest& Request)
 {
-	if (!IsValid(BoundController))
-	{
-		return;
-	}
-
-	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
-	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
-	if (Request.ListenerCharacterTag.IsValid() && Request.ListenerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != Request.ListenerCharacterTag))
+	if (!ShouldHandleOwnerCharacterTag(Request.ListenerCharacterTag))
 	{
 		return;
 	}
@@ -470,6 +396,53 @@ void UParleyDialogueWidgetBase::HandleFactionSpeakerReputationChanged(const FGam
 	}
 
 	BP_OnFactionSpeakerReputationChanged(FactionTag, SpeakerTag, Delta, NewTotal);
+}
+
+void UParleyDialogueWidgetBase::SetBoundCharacterTag(const FGameplayTag NewCharacterTag)
+{
+	if (BoundCharacterTag == NewCharacterTag)
+	{
+		return;
+	}
+
+	const FGameplayTag OldCharacterTag = BoundCharacterTag;
+	BoundCharacterTag = NewCharacterTag;
+	BP_OnDialogueWidgetBoundCharacterChanged(NewCharacterTag, OldCharacterTag);
+}
+
+bool UParleyDialogueWidgetBase::ShouldHandleOwnerCharacterTag(const FGameplayTag OwnerCharacterTag) const
+{
+	if (!IsValid(BoundController))
+	{
+		return false;
+	}
+
+	if (!OwnerCharacterTag.IsValid())
+	{
+		return true;
+	}
+
+	if (BoundCharacterTag.IsValid())
+	{
+		if (OwnerCharacterTag == BoundCharacterTag)
+		{
+			return true;
+		}
+	}
+
+	if (bHasActiveDialogueView && CurrentDialogueView.OwnerCharacterTag.IsValid() && OwnerCharacterTag == CurrentDialogueView.OwnerCharacterTag)
+	{
+		return true;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	if (!ControllerInterface)
+	{
+		return false;
+	}
+
+	const FGameplayTag ControllerCharacterTag = ControllerInterface->GetCharacterTag();
+	return ControllerCharacterTag.IsValid() ? OwnerCharacterTag == ControllerCharacterTag : false;
 }
 
 void UParleyDialogueWidgetBase::BindParleySubsystemDelegates()
@@ -514,6 +487,23 @@ void UParleyDialogueWidgetBase::BindParleySubsystemDelegates()
 			FactionSubsystem->OnFactionSpeakerReputationChanged.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleFactionSpeakerReputationChanged);
 		}
 	}
+}
+
+void UParleyDialogueWidgetBase::RefreshBoundCharacterTag()
+{
+	if (!IsValid(BoundController))
+	{
+		SetBoundCharacterTag(FGameplayTag());
+		return;
+	}
+
+	FGameplayTag NewBoundCharacterTag;
+	if (const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController))
+	{
+		NewBoundCharacterTag = ControllerInterface->GetCharacterTag();
+	}
+
+	SetBoundCharacterTag(NewBoundCharacterTag);
 }
 
 void UParleyDialogueWidgetBase::UnbindParleySubsystemDelegates()
@@ -570,6 +560,8 @@ void UParleyDialogueWidgetBase::PushInitialViewFromController()
 		ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 		return;
 	}
+
+	RefreshBoundCharacterTag();
 
 	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
 	if (!ControllerInterface)

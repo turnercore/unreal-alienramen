@@ -68,6 +68,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns cached dialogue widget state without mutating runtime data."))
 	APlayerController* GetBoundController() const { return BoundController; }
 
+	/** Returns the currently bound character tag for this widget, if known. */
+	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Returns the currently bound character tag for this widget."))
+	FGameplayTag GetBoundCharacterTag() const { return BoundCharacterTag; }
+
+	/** Explicitly updates the widget's bound character tag and notifies Blueprint listeners. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Updates the widget's bound character tag and fires the associated Blueprint hook when it changes."))
+	void SetBoundCharacterTag(FGameplayTag NewCharacterTag);
+
 	/** Blueprint hook fired after controller binding is established. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Blueprint hook fired after controller binding is established."))
 	void BP_OnDialogueWidgetInitialized(APlayerController* InOwningController);
@@ -87,6 +95,10 @@ public:
 	/** Blueprint hook fired after controller binding is removed. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Blueprint hook fired after controller binding is removed."))
 	void BP_OnDialogueWidgetDeinitialized();
+
+	/** Blueprint hook fired when the widget's bound character tag changes. */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Parley|Dialogue|UI", meta = (ToolTip = "Blueprint hook fired when the widget's bound character tag changes."))
+	void BP_OnDialogueWidgetBoundCharacterChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag);
 
 	/** Blueprint hook fired when a dialogue conversation starts. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Parley|Dialogue|UI|Signals", meta = (ToolTip = "Blueprint hook fired when a dialogue conversation starts."))
@@ -219,8 +231,10 @@ private:
 	UFUNCTION()
 	void HandleFactionSpeakerReputationChanged(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal);
 
+	bool ShouldHandleOwnerCharacterTag(FGameplayTag OwnerCharacterTag) const;
 	void BindParleySubsystemDelegates();
 	void UnbindParleySubsystemDelegates();
+	void RefreshBoundCharacterTag();
 	void PushInitialViewFromController();
 	void ClearCachedDialogueView(bool bCollapseVisibility);
 
@@ -232,6 +246,9 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Parley|Dialogue|UI", meta = (AllowPrivateAccess = "true", ToolTip = "Runtime dialogue widget state cached for Blueprint UI reads."))
 	bool bHasActiveDialogueView = false;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Parley|Dialogue|UI", meta = (AllowPrivateAccess = "true", ToolTip = "Runtime dialogue widget state cached for Blueprint UI reads."))
+	FGameplayTag BoundCharacterTag;
 
 	TWeakObjectPtr<UParleyDialogueSubsystem> BoundDialogueSubsystem;
 	TWeakObjectPtr<UParleySpeakerSubsystem> BoundSpeakerSubsystem;

@@ -1188,6 +1188,7 @@ void AARPlayerController::EnsureDialogueWidget()
 	}
 
 	DialogueWidget->InitializeDialogueWidget(this);
+	DialogueWidget->SetBoundCharacterTag(GetCharacterTag());
 	DialogueWidget->AddToViewport(DialogueWidgetZOrder);
 }
 
@@ -1330,12 +1331,15 @@ void AARPlayerController::UnbindCurrentCharacterTagChangeDelegate()
 
 void AARPlayerController::HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag)
 {
-	(void)NewCharacterTag;
 	(void)OldCharacterTag;
 
 	if (IsLocalController())
 	{
 		RequestHUDInitializationInternal(true);
+		if (DialogueWidget)
+		{
+			DialogueWidget->SetBoundCharacterTag(NewCharacterTag);
+		}
 	}
 }
 

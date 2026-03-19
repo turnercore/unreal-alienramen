@@ -146,6 +146,7 @@ Runtime UI is intentionally separate from editor preview tooling.
   - dialogue session/view lifecycle: initialized, session started, view updated, session ended, deinitialized
   - dialogue events: conversation started/ended, line delivered, important choice made, relationship changes, progression tag mutations, progression dirty, choice lookahead, signal fired, audio requested
   - shared runtime events: speaker talkable changes, faction popularity changes, faction speaker reputation changes
+- The widget now caches its bound character tag explicitly and exposes it through `GetBoundCharacterTag()`, `SetBoundCharacterTag(...)`, and `BP_OnDialogueWidgetBoundCharacterChanged(...)`, so HUD and UMG logic can react to character swaps without inferring identity from the controller every time.
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
 - Client runtime now mirrors controller RPC dialogue updates back into `UParleyDialogueSubsystem::OnDialogueSessionUpdated/OnDialogueSessionEnded` so subsystem-bound widgets receive live updates on clients without extra project glue.
 
