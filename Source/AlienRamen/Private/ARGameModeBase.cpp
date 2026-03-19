@@ -7,6 +7,7 @@
 #include "ARLog.h"
 #include "ARNetworkUserSettings.h"
 #include "ARTaggedPlayerStart.h"
+#include "ParleyDialogueSubsystem.h"
 #include "ParleySpeakerSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
@@ -617,6 +618,55 @@ bool AARGameModeBase::EndModeAndTravel(const FString& URL, const FString& Option
 bool AARGameModeBase::TravelDirectInMode(const FString& URL, const FString& Options, const bool bSkipReadyChecks, const bool bAbsolute, const bool bSkipGameNotify, const bool bUseOpenLevelInPIE)
 {
 	return TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, EARTravelRoutePolicy::ForceDirect);
+}
+
+bool AARGameModeBase::StartParleyConversationByTagForCharacters(
+	const FGameplayTag RequesterCharacterTag,
+	const FGameplayTag OwnerCharacterTag,
+	const FGameplayTag ConversationTag)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters ignored: not authority (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UParleyDialogueSubsystem* DialogueSubsystem = GameInstance ? GameInstance->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
+	if (!DialogueSubsystem)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters failed: ParleyDialogueSubsystem unavailable (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	const bool bStarted = DialogueSubsystem->StartConversationByTagForCharacters(
+		RequesterCharacterTag,
+		OwnerCharacterTag,
+		ConversationTag);
+	if (!bStarted)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters returned false (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+	}
+
+	return bStarted;
 }
 
 TSubclassOf<AGameSession> AARGameModeBase::GetGameSessionClass() const

@@ -53,6 +53,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Starts a conversation for the requesting controller and speaker on authoritative runtime state."))
 	bool StartConversation(APlayerController* RequestingController, FGameplayTag ConversationTag, FGameplayTag PrimarySpeakerTag);
 
+	/**
+	 * Starts a specific conversation by tag using explicit requester/owner character routing.
+	 * This is intended for scripted flows that bypass normal offer selection (for example mode scripts).
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Starts a specific conversation by tag for explicit requester/owner character tags on authoritative runtime state."))
+	bool StartConversationByTagForCharacters(FGameplayTag RequesterCharacterTag, FGameplayTag OwnerCharacterTag, FGameplayTag ConversationTag);
+
 	/** Advances the active conversation to the next node when no choice is required. Call on interact/confirm input. */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Advances the active conversation for the requesting controller on authoritative runtime state."))
 	bool AdvanceConversation(APlayerController* RequestingController);
@@ -249,7 +256,9 @@ private:
 		APlayerController* RequestingController,
 		FGameplayTag ConversationTag,
 		FGameplayTag PrimarySpeakerTag,
-		FGameplayTag SourceSpeakerTagOverride);
+		FGameplayTag SourceSpeakerTagOverride,
+		FGameplayTag InitiatorCharacterTagOverride = FGameplayTag(),
+		bool bBypassStandardStartGuards = false);
 
 	struct FParleyDialogueRuntimeStateDeleter
 	{

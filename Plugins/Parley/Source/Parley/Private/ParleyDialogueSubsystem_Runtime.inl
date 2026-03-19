@@ -81,14 +81,7 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 		return false;
 	}
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
-	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
-	if (!IsModeDialogueEnabled(Settings, ModeTag))
-	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Offer blocked: mode '%s' not in dialogue-enabled tags."), *ModeTag.ToString());
-		return false;
-	}
-
-	if (IsBusySpeakerLockEnabled(Settings, ModeTag))
+	if (IsBusySpeakerLockEnabled(Settings))
 	{
 		if (const FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 		{
@@ -604,8 +597,7 @@ static void RefreshBusyEmotionForSpeaker(
 	}
 
 	const UParleyDialogueSettings* DialogueSettings = GetDefault<UParleyDialogueSettings>();
-	const FGameplayTag ModeTag = GetCurrentModeTag(DialogueSubsystem, World);
-	const bool bBusyLockEnabled = IsBusySpeakerLockEnabled(DialogueSettings, ModeTag);
+	const bool bBusyLockEnabled = IsBusySpeakerLockEnabled(DialogueSettings);
 	const bool bSpeakerBusy = bBusyLockEnabled
 		&& FindPerPlayerSessionByPrimarySpeaker(Sessions, SpeakerTag, FGameplayTag()) != nullptr;
 
@@ -2104,8 +2096,7 @@ bool UParleyDialogueSubsystem::TryStartDialogueBetweenSpeakers(
 	{
 		const FGameplayTag RequesterSlot = GetCharacterTagFromPlayerState(RequestingPlayerState);
 		const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
-		const FGameplayTag ModeTag = GetCurrentModeTag(this, GetWorld());
-		if (RequesterSlot.IsValid() && IsBusySpeakerLockEnabled(Settings, ModeTag))
+		if (RequesterSlot.IsValid() && IsBusySpeakerLockEnabled(Settings))
 		{
 			FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 			if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, TargetSpeakerTag, RequesterSlot))
@@ -2154,14 +2145,86 @@ bool UParleyDialogueSubsystem::StartConversation(
 		RequestingController,
 		ConversationTag,
 		PrimarySpeakerTag,
-		FGameplayTag());
+		FGameplayTag(),
+		FGameplayTag(),
+		false);
+}
+
+bool UParleyDialogueSubsystem::StartConversationByTagForCharacters(
+	FGameplayTag RequesterCharacterTag,
+	FGameplayTag OwnerCharacterTag,
+	FGameplayTag ConversationTag)
+{
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversationByTagForCharacters rejected: authority required."));
+		return false;
+	}
+
+	const FGameplayTag RequesterSlot = NormalizeCharacterTagForDialogue(RequesterCharacterTag);
+	const FGameplayTag OwnerSlot = NormalizeCharacterTagForDialogue(OwnerCharacterTag);
+	if (!RequesterSlot.IsValid() || !OwnerSlot.IsValid() || !ConversationTag.IsValid())
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversationByTagForCharacters rejected: invalid tags (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	APlayerController* OwnerController = FindPlayerControllerByCharacter(World, OwnerSlot);
+	if (!OwnerController)
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversationByTagForCharacters rejected: no owner controller for slot %s."),
+			LexToStringParleySlot(OwnerSlot));
+		return false;
+	}
+
+	const APlayerState* RequesterPlayerState = FindPlayerStateByCharacterTag(World, RequesterSlot);
+	if (!RequesterPlayerState)
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversationByTagForCharacters rejected: no requester player state for slot %s."),
+			LexToStringParleySlot(RequesterSlot));
+		return false;
+	}
+
+	const FGameplayTag SourceSpeakerTagOverride = ResolvePlayerSpeakerTag(RequesterPlayerState);
+	if (!SourceSpeakerTagOverride.IsValid())
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversationByTagForCharacters rejected: requester slot %s has no resolved speaker tag."),
+			LexToStringParleySlot(RequesterSlot));
+		return false;
+	}
+
+	return StartConversationInternal(
+		OwnerController,
+		ConversationTag,
+		FGameplayTag(),
+		SourceSpeakerTagOverride,
+		RequesterSlot,
+		/*bBypassStandardStartGuards=*/ true);
 }
 
 bool UParleyDialogueSubsystem::StartConversationInternal(
 	APlayerController* RequestingController,
 	FGameplayTag ConversationTag,
 	FGameplayTag PrimarySpeakerTag,
-	const FGameplayTag SourceSpeakerTagOverride)
+	const FGameplayTag SourceSpeakerTagOverride,
+	const FGameplayTag InitiatorCharacterTagOverride,
+	const bool bBypassStandardStartGuards)
 {
 	UWorld* World = GetWorld();
 	if (!IsAuthorityWorld_Dialogue(World) || !RequestingController || !ConversationTag.IsValid())
@@ -2227,67 +2290,74 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 	}
 	const bool bSkippedThisCycle = Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).HasTagExact(ConversationTag);
 
-	FString StartGateFailure;
-	if (!EvaluateConversationOfferRules(this, StartContext, Conversation->Header, &StartGateFailure))
+	if (!bBypassStandardStartGuards)
 	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation gated out for '%s': %s"), *ConversationTag.ToString(), *StartGateFailure);
-		return false;
-	}
+		FString StartGateFailure;
+		if (!EvaluateConversationOfferRules(this, StartContext, Conversation->Header, &StartGateFailure))
+		{
+			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation gated out for '%s': %s"), *ConversationTag.ToString(), *StartGateFailure);
+			return false;
+		}
 
-	if (!Conversation->Header.bRepeatable && StartContext.bCompletedByPlayer)
-	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: non-repeatable already completed by player '%s'."), *ConversationTag.ToString());
-		return false;
-	}
-	if (Conversation->Header.bCompletedByGameBlocksReoffer && StartContext.bCompletedByGame)
-	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: completed-by-game suppression for '%s'."), *ConversationTag.ToString());
-		return false;
-	}
-	if (Conversation->Header.bSeenByGameBlocksReoffer && StartContext.bSeenByGame)
-	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: seen-by-game suppression for '%s'."), *ConversationTag.ToString());
-		return false;
-	}
-	if (Conversation->Header.bSeenByPlayerBlocksReoffer && StartContext.bSeenByPlayer)
-	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: seen-by-player suppression for '%s'."), *ConversationTag.ToString());
-		return false;
-	}
-	if (Conversation->Header.bBlockOfferPerCycle && (StartContext.bSeenByPlayer || bSkippedThisCycle))
-	{
-		UE_LOG(ParleyLog, Verbose,
-			TEXT("[Dialogue] StartConversation blocked: per-cycle blocker active for '%s' (seen=%d skipped=%d)."),
-			*ConversationTag.ToString(),
-			StartContext.bSeenByPlayer ? 1 : 0,
-			bSkippedThisCycle ? 1 : 0);
-		return false;
-	}
+		if (!Conversation->Header.bRepeatable && StartContext.bCompletedByPlayer)
+		{
+			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: non-repeatable already completed by player '%s'."), *ConversationTag.ToString());
+			return false;
+		}
+		if (Conversation->Header.bCompletedByGameBlocksReoffer && StartContext.bCompletedByGame)
+		{
+			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: completed-by-game suppression for '%s'."), *ConversationTag.ToString());
+			return false;
+		}
+		if (Conversation->Header.bSeenByGameBlocksReoffer && StartContext.bSeenByGame)
+		{
+			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: seen-by-game suppression for '%s'."), *ConversationTag.ToString());
+			return false;
+		}
+		if (Conversation->Header.bSeenByPlayerBlocksReoffer && StartContext.bSeenByPlayer)
+		{
+			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: seen-by-player suppression for '%s'."), *ConversationTag.ToString());
+			return false;
+		}
+		if (Conversation->Header.bBlockOfferPerCycle && (StartContext.bSeenByPlayer || bSkippedThisCycle))
+		{
+			UE_LOG(ParleyLog, Verbose,
+				TEXT("[Dialogue] StartConversation blocked: per-cycle blocker active for '%s' (seen=%d skipped=%d)."),
+				*ConversationTag.ToString(),
+				StartContext.bSeenByPlayer ? 1 : 0,
+				bSkippedThisCycle ? 1 : 0);
+			return false;
+		}
 
-	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
-	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
-	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
-	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
+		const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+		const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
+		const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
+		if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
+		{
+			UE_LOG(
+				ParleyLog,
+				Verbose,
+				TEXT("[Dialogue] StartConversation blocked: speaker '%s' cycle offer cap reached (%d/%d) for slot %s."),
+				*PrimarySpeakerTag.ToString(),
+				ExistingOfferCount,
+				MaxOffersPerCycle,
+				LexToStringParleySlot(RequesterSlot));
+			return false;
+		}
+	}
+	else
 	{
 		UE_LOG(
 			ParleyLog,
 			Verbose,
-			TEXT("[Dialogue] StartConversation blocked: speaker '%s' cycle offer cap reached (%d/%d) for slot %s."),
-			*PrimarySpeakerTag.ToString(),
-			ExistingOfferCount,
-			MaxOffersPerCycle,
-			LexToStringParleySlot(RequesterSlot));
-		return false;
+			TEXT("[Dialogue] StartConversation bypassing standard offer guards for scripted start (Conversation=%s Owner=%s Initiator=%s)."),
+			*ConversationTag.ToString(),
+			*GetDefaultCharacterTagForSlot(RequesterSlot).ToString(),
+			*GetDefaultCharacterTagForSlot(InitiatorCharacterTagOverride.IsValid() ? InitiatorCharacterTagOverride : RequesterSlot).ToString());
 	}
 
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
 	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
-	if (!IsModeDialogueEnabled(Settings, ModeTag))
-	{
-		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation rejected: mode '%s' not dialogue-enabled."), *ModeTag.ToString());
-		return false;
-	}
-
 	const bool bSharedMode = Settings && IsModeInContainer(ModeTag, Settings->SharedDialogueModeTags);
 
 	if (bSharedMode)
@@ -2307,7 +2377,7 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 			return false;
 		}
 	}
-	else if (IsBusySpeakerLockEnabled(Settings, ModeTag))
+	else if (IsBusySpeakerLockEnabled(Settings))
 	{
 		if (FParleyActiveDialogueSession* BusySession = FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, RequesterSlot))
 		{
@@ -2344,7 +2414,9 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 	Session.SourceSpeakerTag = StartContext.SourceSpeakerTag;
 	Session.ConversationAsset = Conversation;
 	Session.CurrentNodeId = Conversation->CompiledData.EnterNodeId;
-	Session.InitiatorCharacterTag = RequesterSlot;
+	Session.InitiatorCharacterTag = InitiatorCharacterTagOverride.IsValid()
+		? InitiatorCharacterTagOverride
+		: RequesterSlot;
 	Session.OwnerCharacterTag = RequesterSlot;
 	Session.bIsSharedSession = bSharedMode;
 	Session.bConversationImportant = Conversation->Header.bImportant;

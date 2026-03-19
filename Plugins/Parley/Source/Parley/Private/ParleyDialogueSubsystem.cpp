@@ -2500,22 +2500,10 @@ static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FG
 	return nullptr;
 }
 
-static bool IsModeDialogueEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
-{
-	if (!Settings || !ModeTag.IsValid())
-	{
-		return false;
-	}
-
-	return IsModeInContainer(ModeTag, Settings->SharedDialogueModeTags)
-		|| IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
-}
-
-static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
+static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings)
 {
 	return Settings
-		&& Settings->bOnlyOneTalkerPerSpeakerInPerPlayerModes
-		&& IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
+		&& Settings->bOnlyOneTalkerPerSpeakerInPerPlayerModes;
 }
 
 static bool DoesSessionRejectEavesdrop(const FParleyActiveDialogueSession& Session)

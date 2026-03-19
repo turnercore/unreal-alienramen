@@ -63,30 +63,13 @@ namespace
 			return DialogueSubsystem;
 		}
 
-		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
-		static TWeakObjectPtr<UParleyDialogueSubsystem> Cached;
-
-		if (!CachedValidationGameInstance.IsValid())
-		{
-			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
-			if (ValidationGameInstance)
-			{
-				ValidationGameInstance->AddToRoot();
-				CachedValidationGameInstance = ValidationGameInstance;
-			}
-		}
-
-		UGameInstance* ValidationGameInstance = CachedValidationGameInstance.Get();
+		UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
 		if (!ValidationGameInstance)
 		{
 			return nullptr;
 		}
 
-		if (!Cached.IsValid())
-		{
-			Cached = NewObject<UParleyDialogueSubsystem>(ValidationGameInstance);
-		}
-		return Cached.Get();
+		return NewObject<UParleyDialogueSubsystem>(ValidationGameInstance, NAME_None, RF_Transient);
 	}
 
 	static void AddValidationIssue(
