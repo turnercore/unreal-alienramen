@@ -136,11 +136,14 @@ Local delivery contract:
 Runtime UI is intentionally separate from editor preview tooling.
 
 - `UParleyDialogueWidgetBase` (`Plugins/Parley/Source/Parley/Public/ParleyDialogueWidgetBase.h`) is the shared Blueprint-facing widget base for dialogue presentation and input forwarding.
-- `AARPlayerController` now exposes a local runtime UI bridge:
+- `AARPlayerController` exposes the local runtime UI bridge for dialogue input and controller-bound state, but the HUD owns whether the widget exists on screen:
   - dialogue delegates: `OnDialogueViewUpdated`, `OnDialogueSessionEndedSignal`
   - cached view helpers: `GetCachedDialogueView(...)`, `QueryLocalDialogueView(...)`
   - widget lifecycle: `EnsureDialogueWidget()`, `RemoveDialogueWidget()`, `GetDialogueWidget()`
+- `AARHUDBase` owns the viewport-side dialogue widget presentation:
   - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
+  - widget instance management: `EnsureDialogueWidget(...)`, `RemoveDialogueWidget()`, `GetDialogueWidget()`
+- `AARPlayerController::RequestHUDInitialization()` refreshes HUD presentation when the local controller or current character changes, so the existing widget instance can stay alive and just repush view/state when possible.
 - `UParleyDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithCharacter`) back to the bound controller.
 - The widget base now also mirrors the common Parley runtime signal surface into Blueprint events out of the box:
   - dialogue session/view lifecycle: initialized, session started, view updated, session ended, deinitialized

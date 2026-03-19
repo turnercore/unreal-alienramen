@@ -323,25 +323,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction|Animation")
 	void NotifyInteractionActionCue(EARInteractionActionCue ActionCue, AActor* ActionTarget = nullptr);
 
-	// Optional auto-created dialogue widget for local controllers.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	/** Returns the HUD-owned dialogue widget, if present. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Returns the HUD-owned dialogue widget, if present."))
+	UParleyDialogueWidgetBase* GetDialogueWidget() const;
+
+	/** Requests the HUD-owned dialogue widget to exist and bind to this controller. The HUD owns viewport attachment and z-order. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Requests the HUD-owned dialogue widget to exist and bind to this controller. The HUD owns viewport attachment and z-order."))
 	void EnsureDialogueWidget();
 
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI")
+	/** Requests the HUD-owned dialogue widget to be removed from the viewport. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Requests the HUD-owned dialogue widget to be removed from the viewport."))
 	void RemoveDialogueWidget();
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue|UI")
-	UParleyDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidget; }
 
 	// Initializes a custom default cursor widget on local controllers only.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|Cursor")
 	void InitializeCustomCursor();
 
-	// Requests HUD initialization/rebind for the local controller context.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD")
+	/** Requests HUD initialization/rebind for the local controller context and refreshes HUD-owned presentation state. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|UI|HUD", meta = (ToolTip = "Requests HUD initialization/rebind for the local controller context and refreshes HUD-owned presentation state."))
 	void RequestHUDInitialization();
 
-	// BP hook to create/rebind HUD widgets when local controller context is ready or refreshed.
+	/** BP hook to create/rebind HUD widgets when local controller context is ready or refreshed. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|HUD")
 	void BP_OnHUDInitializationRequested(AARPlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
@@ -428,18 +430,6 @@ protected:
 	// Runtime cursor widget instance used for EMouseCursor::Default.
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Cursor")
 	TObjectPtr<UUserWidget> Cursor = nullptr;
-
-	// Automatically creates a dialogue widget on local controller begin play.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI")
-	bool bAutoCreateDialogueWidget = false;
-
-	// Widget class for dialogue presentation/input (typically deriving from UParleyDialogueWidgetBase).
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
-	TSubclassOf<UParleyDialogueWidgetBase> DialogueWidgetClass;
-
-	// Viewport z-order for auto-created dialogue widget.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget"))
-	int32 DialogueWidgetZOrder = 1800;
 
 	/** Automatically swaps Enhanced Input mapping contexts when pause menu opens/closes. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause|Input")
@@ -598,9 +588,6 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|UI|Pause", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UUserWidget> PauseOverlayWidget = nullptr;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UParleyDialogueWidgetBase> DialogueWidget = nullptr;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|Input", meta = (AllowPrivateAccess = "true"))
 	int32 SelectedDialogueChoiceIndex = INDEX_NONE;
