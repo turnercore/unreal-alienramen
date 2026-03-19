@@ -1205,19 +1205,16 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 		return;
 	}
 
+	APlayerState* CurrentPlayerState = PlayerState;
+	RebindCurrentCharacterTagChangeDelegate(CurrentPlayerState);
+	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD());
 	if (!ARHUD)
 	{
 		StartHUDInitializationRetry();
-		if (!bForceBroadcast)
-		{
-			return;
-		}
+		return;
 	}
 
-	APlayerState* CurrentPlayerState = PlayerState;
-	RebindCurrentCharacterTagChangeDelegate(CurrentPlayerState);
-	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	const bool bContextChanged = LastHUDInitPlayerState.Get() != CurrentPlayerState
 		|| LastHUDInitGameState.Get() != CurrentGameState;
 	if (!bForceBroadcast && bHasBroadcastHUDInitialization && !bContextChanged)

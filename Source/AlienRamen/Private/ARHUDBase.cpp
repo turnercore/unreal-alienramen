@@ -69,7 +69,7 @@ void AARHUDBase::EnsureDialogueWidget(APlayerController* SourceController, APlay
 
 	if (!DialogueWidget->IsInViewport())
 	{
-		DialogueWidget->AddToViewport(DialogueWidgetZOrder);
+		DialogueWidget->AddToPlayerScreen(DialogueWidgetZOrder);
 	}
 
 	DialogueWidget->InitializeDialogueWidget(SourceController);

@@ -22,12 +22,12 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void RequestHUDInitialization(APlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState) override;
 
-	/** Ensures the HUD-owned dialogue widget exists and is attached to the viewport. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Ensures the HUD-owned dialogue widget exists and is attached to the viewport."))
+	/** Ensures the HUD-owned dialogue widget exists and is attached to the owning player screen. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Ensures the HUD-owned dialogue widget exists and is attached to the owning player screen."))
 	void EnsureDialogueWidget(APlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState);
 
-	/** Removes the HUD-owned dialogue widget from the viewport. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Removes the HUD-owned dialogue widget from the viewport."))
+	/** Removes the HUD-owned dialogue widget from the owning player screen. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue|UI", meta = (ToolTip = "Removes the HUD-owned dialogue widget from the owning player screen."))
 	void RemoveDialogueWidget();
 
 	/** Returns the current HUD-owned dialogue widget instance, if any. */
@@ -43,8 +43,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget", ToolTip = "Widget class for dialogue presentation and input."))
 	TSubclassOf<UParleyDialogueWidgetBase> DialogueWidgetClass;
 
-	/** Viewport z-order for the HUD-owned dialogue widget. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget", ToolTip = "Viewport z-order for the HUD-owned dialogue widget."))
+	/** Player-screen z-order for the HUD-owned dialogue widget. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (EditCondition = "bAutoCreateDialogueWidget", ToolTip = "Player-screen z-order for the HUD-owned dialogue widget."))
 	int32 DialogueWidgetZOrder = 1800;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue|UI", meta = (AllowPrivateAccess = "true", ToolTip = "HUD-owned dialogue widget instance, if created."))
