@@ -40,9 +40,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Parley|Dialogue", meta = (ToolTip = "Runs this dialogue subsystem operation on authoritative runtime state."))
 	void ClearCompiledData();
 
-	/** Migrates deprecated authored fields into current tag-based runtime fields after load. */
-	virtual void PostLoad() override;
-
 	const FDialogueCompiledNode* FindCompiledNode(const FGuid& NodeId) const;
 
 	FDialogueCompiledNode* FindCompiledNodeMutable(const FGuid& NodeId);
