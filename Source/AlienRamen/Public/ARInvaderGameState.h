@@ -268,6 +268,9 @@ private:
 	UPROPERTY(Transient)
 	int32 CachedRngRunEndEventId = TNumericLimits<int32>::Min();
 
+	// Runtime cache to avoid repeated synchronous soft-class loads on enemy kill paths.
+	TMap<FGameplayTag, TWeakObjectPtr<UClass>> CachedMeatDropActorClassesByTag;
+
 	mutable bool bUpgradeDefinitionCacheValid = false;
 	mutable TWeakObjectPtr<UDataTable> CachedUpgradeDefinitionTable;
 	mutable TMap<FGameplayTag, FARInvaderUpgradeDefRow> CachedUpgradeDefinitions;

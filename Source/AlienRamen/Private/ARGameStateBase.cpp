@@ -132,14 +132,14 @@ namespace
 			+ FMath::Max(0, InOutMeatState.BlueAmount)
 			+ FMath::Max(0, InOutMeatState.WhiteAmount)
 			+ FMath::Max(0, InOutMeatState.UnspecifiedAmount);
-		InOutMeatState.RedAmount = 0;
-		InOutMeatState.BlueAmount = 0;
-		InOutMeatState.WhiteAmount = 0;
-		InOutMeatState.UnspecifiedAmount = 0;
 		if (LegacyTotal <= 0 || !ItemDefinitions)
 		{
 			return;
 		}
+		InOutMeatState.RedAmount = 0;
+		InOutMeatState.BlueAmount = 0;
+		InOutMeatState.WhiteAmount = 0;
+		InOutMeatState.UnspecifiedAmount = 0;
 
 		FGameplayTag FallbackMeatTag;
 		if (!ItemDefinitions->ResolveFirstMeatTag(FallbackMeatTag) || !FallbackMeatTag.IsValid())

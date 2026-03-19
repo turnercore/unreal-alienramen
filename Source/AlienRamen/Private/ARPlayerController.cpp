@@ -385,7 +385,7 @@ void AARPlayerController::SetPawn(APawn* InPawn)
 
 	if (IsLocalController())
 	{
-		RequestHUDInitializationInternal(false);
+		RequestHUDInitializationInternal(true);
 	}
 }
 
@@ -1737,7 +1737,7 @@ void AARPlayerController::HandleCurrentCharacterTagChanged(FGameplayTag NewChara
 
 	if (IsLocalController())
 	{
-		RequestHUDInitializationInternal(false);
+		RequestHUDInitializationInternal(true);
 	}
 }
 

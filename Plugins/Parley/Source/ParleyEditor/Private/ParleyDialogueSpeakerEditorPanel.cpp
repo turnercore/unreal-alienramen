@@ -203,13 +203,37 @@ namespace
 
 	static UParleyDialogueSubsystem* GetTransientDialogueValidationSubsystem()
 	{
-		UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
-		if (!ValidationGameInstance)
+		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
+		static TWeakObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
+		if (!CachedValidationGameInstance.IsValid())
 		{
-			return nullptr;
+			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
+			if (!ValidationGameInstance)
+			{
+				return nullptr;
+			}
+
+			// Keep one editor-validation instance alive instead of reallocating each query.
+			ValidationGameInstance->AddToRoot();
+			CachedValidationGameInstance = ValidationGameInstance;
+			CachedValidationSubsystem.Reset();
 		}
 
-		return NewObject<UParleyDialogueSubsystem>(ValidationGameInstance, NAME_None, RF_Transient);
+		if (!CachedValidationSubsystem.IsValid())
+		{
+			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(
+				CachedValidationGameInstance.Get(),
+				NAME_None,
+				RF_Transient);
+			if (!ValidationSubsystem)
+			{
+				return nullptr;
+			}
+
+			CachedValidationSubsystem = ValidationSubsystem;
+		}
+
+		return CachedValidationSubsystem.Get();
 	}
 
 	static const TCHAR* DialogueAutoTagConfigRelativePath = TEXT("Tags/DialogueConversationGeneratedTags.ini");

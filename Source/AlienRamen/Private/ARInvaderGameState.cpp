@@ -2287,10 +2287,30 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		}
 
 		ResolvedMeatDefinitionTag = MeatDefinition.MeatTag;
-		UClass* LoadedDropClass = MeatDefinition.InvaderDropActorClass.LoadSynchronous();
-		if (LoadedDropClass && LoadedDropClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+		if (TWeakObjectPtr<UClass>* CachedDropClass = CachedMeatDropActorClassesByTag.Find(MeatDefinition.MeatTag))
 		{
-			MeatDropClassOverride = LoadedDropClass;
+			if (CachedDropClass->IsValid())
+			{
+				UClass* CachedClass = CachedDropClass->Get();
+				if (CachedClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+				{
+					MeatDropClassOverride = CachedClass;
+				}
+			}
+			else
+			{
+				CachedMeatDropActorClassesByTag.Remove(MeatDefinition.MeatTag);
+			}
+		}
+
+		if (!MeatDropClassOverride && !MeatDefinition.InvaderDropActorClass.IsNull())
+		{
+			UClass* LoadedDropClass = MeatDefinition.InvaderDropActorClass.LoadSynchronous();
+			if (LoadedDropClass && LoadedDropClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+			{
+				MeatDropClassOverride = LoadedDropClass;
+				CachedMeatDropActorClassesByTag.Add(MeatDefinition.MeatTag, LoadedDropClass);
+			}
 		}
 	}
 
