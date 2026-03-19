@@ -40,7 +40,7 @@ namespace
 		return FGameplayTag();
 	}
 
-	static bool DoesSpeakerTagMatchPrimarySpeaker(const FGameplayTag& CandidateSpeakerTag, const FGameplayTag& PrimarySpeakerTag)
+	static bool DoesDialogueWidgetSpeakerTagMatchPrimarySpeaker(const FGameplayTag& CandidateSpeakerTag, const FGameplayTag& PrimarySpeakerTag)
 	{
 		if (!CandidateSpeakerTag.IsValid() || !PrimarySpeakerTag.IsValid())
 		{
@@ -352,7 +352,7 @@ void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion(const FGame
 		FGameplayTag ActiveConversationPrimarySpeakerTag;
 		if (DialogueSubsystem && DialogueSubsystem->GetPrimarySpeakerForConversation(CurrentDialogueView.ConversationTag, ActiveConversationPrimarySpeakerTag))
 		{
-			if (!DoesSpeakerTagMatchPrimarySpeaker(ActiveConversationPrimarySpeakerTag, PrimarySpeakerTag))
+			if (!DoesDialogueWidgetSpeakerTagMatchPrimarySpeaker(ActiveConversationPrimarySpeakerTag, PrimarySpeakerTag))
 			{
 				return;
 			}
@@ -362,7 +362,7 @@ void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion(const FGame
 		}
 	}
 
-	if (!bHasActiveDialogueView || !DoesSpeakerTagMatchPrimarySpeaker(CurrentDialogueView.SpeakerTag, PrimarySpeakerTag))
+	if (!bHasActiveDialogueView || !DoesDialogueWidgetSpeakerTagMatchPrimarySpeaker(CurrentDialogueView.SpeakerTag, PrimarySpeakerTag))
 	{
 		return;
 	}

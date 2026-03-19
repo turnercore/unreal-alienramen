@@ -988,24 +988,24 @@ static bool PersistCompletedConversation(
 			TEXT("[Dialogue] PersistCompletedConversation failed: runtime progression state unavailable for '%s'."),
 			*Session.ConversationTag.ToString());
 		DialogueSubsystem->OnConversationCompleted.Broadcast(Session.ConversationTag);
-	for (const FGameplayTag Slot : Session.Participants)
-	{
-		if (!Slot.IsValid())
+		for (const FGameplayTag Slot : Session.Participants)
 		{
-			continue;
-		}
-
-		if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
-		{
-			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+			if (!Slot.IsValid())
 			{
-				ControllerInterface->NotifyDialogueConversationCompleted(
-					Session.ConversationTag,
-					GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
-					FGameplayTag());
+				continue;
+			}
+
+			if (APlayerController* TargetController = FindPlayerControllerByCharacter(DialogueSubsystem->GetWorld(), Slot))
+			{
+				if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(TargetController))
+				{
+					ControllerInterface->NotifyDialogueConversationCompleted(
+						Session.ConversationTag,
+						GetDefaultCharacterTagForSlot(Session.OwnerCharacterTag),
+						FGameplayTag());
+				}
 			}
 		}
-	}
 		return false;
 	}
 

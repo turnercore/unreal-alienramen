@@ -19,6 +19,40 @@ namespace
 	{
 		return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
 	}
+
+	static EARAffinityColor ResolveMeatColorFromTag(const FGameplayTag MeatTag)
+	{
+		if (!MeatTag.IsValid())
+		{
+			return EARAffinityColor::None;
+		}
+
+		const FGameplayTag RedTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Red"), false);
+		if (RedTag.IsValid() && MeatTag.MatchesTag(RedTag))
+		{
+			return EARAffinityColor::Red;
+		}
+
+		const FGameplayTag BlueTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Blue"), false);
+		if (BlueTag.IsValid() && MeatTag.MatchesTag(BlueTag))
+		{
+			return EARAffinityColor::Blue;
+		}
+
+		const FGameplayTag WhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.White"), false);
+		if (WhiteTag.IsValid() && MeatTag.MatchesTag(WhiteTag))
+		{
+			return EARAffinityColor::White;
+		}
+
+		const FGameplayTag ColorlessTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Colorless"), false);
+		if (ColorlessTag.IsValid() && MeatTag.MatchesTag(ColorlessTag))
+		{
+			return EARAffinityColor::Colorless;
+		}
+
+		return EARAffinityColor::None;
+	}
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemDefinition(const FGameplayTag ItemTag, FARScrapyardItemDefRow& OutItemDef) const
@@ -201,7 +235,7 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAff
 	for (const TPair<FName, FARMeatDefinitionRow>& Entry : Definitions)
 	{
 		const FARMeatDefinitionRow& Row = Entry.Value;
-		if (SanitizeAffinityColor(Row.Color) != SanitizedColor)
+		if (ResolveMeatColorFromTag(Row.MeatTag) != SanitizedColor)
 		{
 			continue;
 		}
@@ -241,7 +275,7 @@ bool UARItemDefinitionSubsystem::GetMeatTagsForColor(const EARAffinityColor Colo
 	for (const TPair<FName, FARMeatDefinitionRow>& Entry : Definitions)
 	{
 		const FARMeatDefinitionRow& Row = Entry.Value;
-		if (SanitizeAffinityColor(Row.Color) == SanitizedColor && Row.MeatTag.IsValid())
+		if (ResolveMeatColorFromTag(Row.MeatTag) == SanitizedColor && Row.MeatTag.IsValid())
 		{
 			OutMeatTags.Add(Row.MeatTag);
 		}
@@ -392,7 +426,6 @@ bool UARItemDefinitionSubsystem::ResolveMeatDefinition_Internal(const FGameplayT
 	{
 		OutMeatDef.MeatTag = MeatTag;
 	}
-	OutMeatDef.Color = SanitizeAffinityColor(OutMeatDef.Color);
 	OutMeatDef.StationFillAmount = FMath::Max(1, OutMeatDef.StationFillAmount);
 	return true;
 }
@@ -442,7 +475,6 @@ bool UARItemDefinitionSubsystem::GatherAllMeatDefinitions(TArray<TPair<FName, FA
 			const FString FullTagName = FString::Printf(TEXT("%s.%s"), *MeatRootTag.ToString(), *RowName.ToString());
 			CopiedRow.MeatTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*FullTagName), false);
 		}
-		CopiedRow.Color = SanitizeAffinityColor(CopiedRow.Color);
 		CopiedRow.StationFillAmount = FMath::Max(1, CopiedRow.StationFillAmount);
 		OutDefinitions.Add(TPair<FName, FARMeatDefinitionRow>(RowName, CopiedRow));
 	}

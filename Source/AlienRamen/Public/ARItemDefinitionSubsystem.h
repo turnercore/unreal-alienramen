@@ -39,15 +39,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveMeatDefinition(FGameplayTag MeatTag, FARMeatDefinitionRow& OutMeatDef) const;
 
-	/** Resolves the first deterministic meat definition row that matches the requested color. */
+	/** Resolves the first deterministic meat definition row whose MeatTag hierarchy matches the requested color (for example Item.Meat.Red.*). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveFirstMeatDefinitionForColor(EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const;
 
-	/** Resolves the first deterministic Item.Meat tag that matches the requested color. */
+	/** Resolves the first deterministic Item.Meat tag whose hierarchy matches the requested color (for example Item.Meat.Red.*). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveFirstMeatTagForColor(EARAffinityColor Color, FGameplayTag& OutMeatTag) const;
 
-	/** Returns all Item.Meat tags matching the requested color in deterministic row-name order. */
+	/** Returns all Item.Meat tags whose hierarchy matches the requested color in deterministic row-name order. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool GetMeatTagsForColor(EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const;
 

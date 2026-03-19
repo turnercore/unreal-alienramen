@@ -54,12 +54,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	NewScrap,
 	int32,
 	OldScrap);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FAROnMeatChangedSignature,
 	FARMeatState,
 	NewMeat,
 	FARMeatState,
-	OldMeat);
+	OldMeat,
+	int32,
+	NewTotalMeat,
+	int32,
+	OldTotalMeat);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnRunLedgerScrapChangedSignature,
 	int32,
@@ -193,6 +197,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnScrapChangedSignature OnScrapChanged;
 
+	/** Broadcast whenever canonical meat reserve changes (full state + aggregate totals). Params: NewMeat, OldMeat, NewTotalMeat, OldTotalMeat. */
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnMeatChangedSignature OnMeatChanged;
 

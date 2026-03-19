@@ -175,5 +175,10 @@ void UParleySpeakerSubsystem::RefreshAllSpeakerTalkableStates()
 
 void UParleySpeakerSubsystem::HandleDialogueProgressionStateMarkedDirty()
 {
+	if (!IsAuthorityWorld_Speaker(GetWorld()))
+	{
+		return;
+	}
+
 	RefreshAllSpeakerTalkableStates();
 }

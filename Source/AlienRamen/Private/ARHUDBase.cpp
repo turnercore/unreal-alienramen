@@ -30,7 +30,10 @@ void AARHUDBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AARHUDBase::RequestHUDInitialization(APlayerController* SourceController, APlayerState* CurrentPlayerState, AGameStateBase* CurrentGameState)
 {
 	SetViewedEmotionTags(AREmotion::BuildEmotionViewerTags(CurrentPlayerState, SourceController ? SourceController->GetPawn() : nullptr));
-	EnsureDialogueWidget(SourceController, CurrentPlayerState, CurrentGameState);
+	if (bAutoCreateDialogueWidget)
+	{
+		EnsureDialogueWidget(SourceController, CurrentPlayerState, CurrentGameState);
+	}
 	Super::RequestHUDInitialization(SourceController, CurrentPlayerState, CurrentGameState);
 }
 
@@ -40,11 +43,6 @@ void AARHUDBase::EnsureDialogueWidget(APlayerController* SourceController, APlay
 	(void)CurrentGameState;
 
 	if (!SourceController || !SourceController->IsLocalController())
-	{
-		return;
-	}
-
-	if (!bAutoCreateDialogueWidget)
 	{
 		return;
 	}
@@ -75,15 +73,24 @@ void AARHUDBase::EnsureDialogueWidget(APlayerController* SourceController, APlay
 	}
 
 	const APlayerController* OwningPlayerController = Cast<APlayerController>(DialogueWidget->GetOwningPlayer());
+	bool bWidgetInitialized = false;
 	if (bWidgetRecreated || OwningPlayerController != SourceController)
 	{
 		DialogueWidget->InitializeDialogueWidget(SourceController);
+		bWidgetInitialized = true;
 	}
 
 	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(SourceController);
 	if (ControllerInterface)
 	{
-		DialogueWidget->SetBoundCharacterTag(ControllerInterface->GetCharacterTag());
+		const FGameplayTag PreviousBoundCharacterTag = DialogueWidget->GetBoundCharacterTag();
+		const FGameplayTag NewBoundCharacterTag = ControllerInterface->GetCharacterTag();
+		DialogueWidget->SetBoundCharacterTag(NewBoundCharacterTag);
+		if (!bWidgetInitialized && PreviousBoundCharacterTag != NewBoundCharacterTag)
+		{
+			// Character swaps can reuse the same controller/HUD instance; refresh the cached view immediately.
+			DialogueWidget->InitializeDialogueWidget(SourceController);
+		}
 	}
 }
 

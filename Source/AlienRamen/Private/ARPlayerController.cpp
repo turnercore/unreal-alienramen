@@ -1600,6 +1600,13 @@ void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroa
 	AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD());
 	if (!ARHUD)
 	{
+		if (bForceBroadcast)
+		{
+			bHasBroadcastHUDInitialization = false;
+			LastHUDInitPlayerState = nullptr;
+			LastHUDInitGameState = nullptr;
+		}
+
 		StartHUDInitializationRetry();
 		return;
 	}
