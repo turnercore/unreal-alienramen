@@ -14,6 +14,7 @@
 #include "EdGraphNode_Comment.h"
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
+#include "Engine/GameInstance.h"
 #include "EdGraphUtilities.h"
 #include "FileHelpers.h"
 #include "Framework/Commands/GenericCommands.h"
@@ -62,10 +63,28 @@ namespace
 			return DialogueSubsystem;
 		}
 
+		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
 		static TWeakObjectPtr<UParleyDialogueSubsystem> Cached;
+
+		if (!CachedValidationGameInstance.IsValid())
+		{
+			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
+			if (ValidationGameInstance)
+			{
+				ValidationGameInstance->AddToRoot();
+				CachedValidationGameInstance = ValidationGameInstance;
+			}
+		}
+
+		UGameInstance* ValidationGameInstance = CachedValidationGameInstance.Get();
+		if (!ValidationGameInstance)
+		{
+			return nullptr;
+		}
+
 		if (!Cached.IsValid())
 		{
-			Cached = NewObject<UParleyDialogueSubsystem>(GetTransientPackage());
+			Cached = NewObject<UParleyDialogueSubsystem>(ValidationGameInstance);
 		}
 		return Cached.Get();
 	}

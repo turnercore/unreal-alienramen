@@ -214,12 +214,13 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARShopStateTreeAIComponentSchema`
   - `AARShopAIController` start/event helpers
 - `AARShopAIController` maps active `State.ShopNPC.*` tags to speaker dialogue gating:
-  - dialogue allowed when `State.ShopNPC.DialogueWindow` is active
+  - dialogue allowed when `State.ShopNPC.Dialogue` is active (legacy `State.ShopNPC.DialogueWindow` still maps through tag redirects)
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
   - dialogue gate automatically reopens when `State.ShopNPC` is not active and on controller unpossess cleanup.
 - Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.
 - Shop AI controller also bridges dialogue lifecycle into ShopNPC StateTree tags for the possessed speaker:
   - `Event.ShopNPC.ConversationOffered` when talkable becomes true.
+  - `Event.ShopNPC.ConversationOffered` is also emitted once on possess when the speaker is already talkable, so event-driven StateTree graphs can bootstrap into dialogue without waiting for a false->true edge.
   - `Event.ShopNPC.DialogueStarted` when a session starts for that speaker.
   - `Event.ShopNPC.DialogueEnded` when the speaker no longer has an active session.
   - `Event.ShopNPC.ConversationCompleted` when a completed conversation belongs to that speaker.

@@ -38,6 +38,27 @@ void AARShopAIController::OnPossess(APawn* InPawn)
 	TryStartStateTreeForCurrentPawn();
 	RefreshSpeakerDialogueGateFromStateTags();
 	RefreshSpeakerDialogueSessionState(/*bEmitEvents=*/ false);
+
+	// StateTree transitions commonly listen for ConversationOffered as an edge-trigger.
+	// If the speaker is already talkable when possession starts, emit a bootstrap event
+	// so idle->dialogue transitions do not wait forever for a false->true toggle.
+	if (HasAuthority())
+	{
+		AARNPCCharacterBase* SpeakerPawn = Cast<AARNPCCharacterBase>(GetPawn());
+		const UParleySpeakerComponent* SpeakerComponent = SpeakerPawn ? SpeakerPawn->GetSpeakerComponent() : nullptr;
+		const bool bHasDialogueToSay = SpeakerPawn
+			&& SpeakerPawn->IsSpeakerLocalStateAllowingDialogue()
+			&& SpeakerComponent
+			&& SpeakerComponent->HasDialogueToSay();
+		if (bHasDialogueToSay)
+		{
+			const FGameplayTag ConversationOfferedEvent = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("Event.ShopNPC.ConversationOffered")), false);
+			if (ConversationOfferedEvent.IsValid())
+			{
+				SendShopStateTreeEventByTag(ConversationOfferedEvent, TEXT("OnPossessSpeakerAlreadyTalkable"));
+			}
+		}
+	}
 }
 
 void AARShopAIController::OnUnPossess()
@@ -198,11 +219,23 @@ void AARShopAIController::RefreshSpeakerDialogueGateFromStateTags()
 
 	const FGameplayTagContainer ActiveTags = StateTreeComponent->GetCurrentActiveStateTags();
 	const FGameplayTag ShopStateRootTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC")), false);
-	bool bAllowsDialogue = true;
-	if (ShopStateRootTag.IsValid() && ActiveTags.HasTag(ShopStateRootTag))
+	FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.Dialogue")), false);
+	if (!DialogueWindowTag.IsValid())
 	{
-		const FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.DialogueWindow")), false);
-		bAllowsDialogue = DialogueWindowTag.IsValid() && ActiveTags.HasTagExact(DialogueWindowTag);
+		// Legacy fallback for older content still authored against the deprecated tag name.
+		DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.DialogueWindow")), false);
+	}
+	const bool bShopStateActive = ShopStateRootTag.IsValid() && ActiveTags.HasTag(ShopStateRootTag);
+	const bool bDialogueWindowActive = DialogueWindowTag.IsValid() && ActiveTags.HasTagExact(DialogueWindowTag);
+	const bool bHasActiveOrder = SpeakerPawn->GetCustomerComponent()->HasOrderForInteraction();
+
+	bool bAllowsDialogue = true;
+	if (bShopStateActive)
+	{
+		// Keep dialogue available whenever the customer has no active order so repeatable chatter
+		// and ambient speaker conversations are not silently suppressed by missing DialogueWindow tags.
+		// While an order is active, DialogueWindow can still explicitly re-open dialogue.
+		bAllowsDialogue = !bHasActiveOrder || bDialogueWindowActive;
 	}
 
 	SpeakerPawn->SetSpeakerLocalStateAllowsDialogue(bAllowsDialogue);

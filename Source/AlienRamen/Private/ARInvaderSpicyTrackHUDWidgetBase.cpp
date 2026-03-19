@@ -237,7 +237,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::RebindTrackedPlayerStateDelegates()
 			continue;
 		}
 
-		TrackedPlayerStates.Add(PlayerState);
+		TrackedPlayerStates.AddUnique(PlayerState);
 		PlayerState->OnCurrentCharacterTagChanged.AddUniqueDynamic(this, &UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCurrentCharacterTagChanged);
 		PlayerState->OnSpiceChanged.AddUniqueDynamic(this, &UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged);
 		PlayerState->OnMaxSpiceChanged.AddUniqueDynamic(this, &UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerMaxSpiceTrackChanged);
@@ -349,14 +349,19 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged(
 	const float NewSpiceValue,
 	const float OldSpiceValue)
 {
+	const float NormalizedNewSpiceValue = FMath::Max(0.0f, NewSpiceValue);
 	bool bUpdatedSnapshot = false;
+	bool bHadSnapshotBeforeUpdate = false;
+	float PreviousSnapshotSpiceValue = 0.0f;
 	for (FARInvaderSpicyTrackCharacterState& Snapshot : CachedCharacterStates)
 	{
 		if (Snapshot.SourcePlayerState == SourcePlayerState || DoesSnapshotMatchCharacterTag(Snapshot, SourceCharacterTag))
 		{
+			bHadSnapshotBeforeUpdate = true;
+			PreviousSnapshotSpiceValue = Snapshot.CurrentSpiceValue;
 			Snapshot.SourcePlayerState = SourcePlayerState;
 			Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
-			Snapshot.CurrentSpiceValue = FMath::Max(0.0f, NewSpiceValue);
+			Snapshot.CurrentSpiceValue = NormalizedNewSpiceValue;
 			bUpdatedSnapshot = true;
 			break;
 		}
@@ -366,7 +371,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged(
 		FARInvaderSpicyTrackCharacterState Snapshot;
 		BuildCharacterStateSnapshot(SourcePlayerState, Snapshot);
 		Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
-		Snapshot.CurrentSpiceValue = FMath::Max(0.0f, NewSpiceValue);
+		Snapshot.CurrentSpiceValue = NormalizedNewSpiceValue;
 		CachedCharacterStates.Add(MoveTemp(Snapshot));
 		CachedCharacterStates.Sort([](const FARInvaderSpicyTrackCharacterState& Left, const FARInvaderSpicyTrackCharacterState& Right)
 			{
@@ -374,15 +379,22 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged(
 			});
 	}
 
+	// Some PIE/world-lifecycle paths can forward identical spice updates more than once.
+	// Once our cached snapshot already matches this value, suppress redundant rebroadcasts.
+	if (bHadSnapshotBeforeUpdate && FMath::IsNearlyEqual(PreviousSnapshotSpiceValue, NormalizedNewSpiceValue))
+	{
+		return;
+	}
+
 	OnInvaderWidgetCharacterSpiceTrackChanged.Broadcast(
 		SourcePlayerState,
 		NormalizeCharacterTag(SourceCharacterTag),
-		NewSpiceValue,
+		NormalizedNewSpiceValue,
 		OldSpiceValue);
 	BP_OnInvaderWidgetCharacterSpiceTrackChanged(
 		SourcePlayerState,
 		NormalizeCharacterTag(SourceCharacterTag),
-		NewSpiceValue,
+		NormalizedNewSpiceValue,
 		OldSpiceValue);
 }
 

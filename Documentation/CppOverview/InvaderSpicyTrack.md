@@ -10,6 +10,7 @@ Paths:
 - Shared track/full-blast state is replicated from GameState.
 - Per-character runtime spicy metadata (color/combo/activated-upgrade ledger/sharing/cursor) lives on `AARCharacterStateRuntime`.
 - Character-owned spicy runtime data persists through `FARCharacterSaveData::InvaderRuntime`; temporary GAS cooldown timers/effects are intentionally not persisted.
+- Character-tag changes on `AARPlayerStateBase` re-evaluate invader color from ASC override tags so baseline team colors stay in sync with character identity (`Sister=Red`, `Brother=Blue`) unless an explicit color override tag is active.
 - `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via `FARShipDefRow` (`ARLoadoutTypes.h`) field `InvaderPawnClass` with `DummyPawnClass` fallback.
 
 ## Runtime Ownership Matrix
@@ -106,6 +107,7 @@ Not yet implemented (open hardening work):
 - Binding contract:
   - Initialize with `InitializeInvaderSpicyTrackHUDWidget(AARInvaderHUD*)` or use `TryBindOwningInvaderHUD`.
   - The widget resolves `AARInvaderGameState`, tracks all replicated `AARPlayerStateBase` entries, and listens for tracked-player churn via `OnTrackedPlayersChanged`.
+  - Tracked player-state references are stored uniquely, and repeated same-value spice callbacks are ignored once cache already matches the new value (helps PIE/lifecycle duplicate-signal noise).
 - Per-character events (character-tag keyed, not local-player-only):
   - `OnInvaderWidgetCharacterSpiceTrackChanged` -> current spice meter value changed (`AARPlayerStateBase::OnSpiceChanged` source).
   - `OnInvaderWidgetCharacterMaxSpiceTrackChanged` -> max spice cap changed (`AARPlayerStateBase::OnMaxSpiceChanged` source).
@@ -115,6 +117,11 @@ Not yet implemented (open hardening work):
 - Snapshot helpers:
   - `GetCachedCharacterStates` and `GetCharacterStateByTag` provide latest per-character HUD cache.
   - `GetSharedTrackSlotDisplayStates` returns the cached UI-ready shared lane snapshot.
+
+## Currency Signal Note (Invader HUD)
+- Invader combat rewards mutate `RunLedgerScrap` (`AARGameStateBase::AddRunLedgerScrap`), not persistent `Scrap`.
+- HUD elements that should react to in-run scrap changes must bind `OnRunLedgerScrapChanged`, not `OnScrapChanged`.
+- `ar.invader.debug.add_scrap` is a RunLedger debug command and intentionally does not broadcast `OnScrapChanged`.
 
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.

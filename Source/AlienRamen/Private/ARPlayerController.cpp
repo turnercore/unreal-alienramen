@@ -385,7 +385,7 @@ void AARPlayerController::SetPawn(APawn* InPawn)
 
 	if (IsLocalController())
 	{
-		RequestHUDInitializationInternal(true);
+		RequestHUDInitializationInternal(false);
 	}
 }
 
@@ -694,19 +694,35 @@ bool AARPlayerController::IsServerInteractionTargetReachableInternal(const AActo
 	}
 
 	const float MaxDistance = FMath::Max(50.0f, ServerInteractionMaxDistance);
-	const float DistanceSq = FVector::DistSquared(ControlledPawn->GetActorLocation(), TargetActor->GetActorLocation());
-	if (DistanceSq > FMath::Square(MaxDistance))
+	const FVector ControllerLocation = ControlledPawn->GetActorLocation();
+	const FVector TargetLocation = TargetActor->GetActorLocation();
+	FVector ClosestTargetPoint = TargetLocation;
+
+	// Use collision bounds edge distance instead of actor-origin distance so interaction checks
+	// stay stable for actors with pivots/origins offset from visible collision.
+	FVector TargetBoundsOrigin = FVector::ZeroVector;
+	FVector TargetBoundsExtent = FVector::ZeroVector;
+	TargetActor->GetActorBounds(/*bOnlyCollidingComponents=*/ true, TargetBoundsOrigin, TargetBoundsExtent, /*bIncludeFromChildActors=*/ true);
+	if (!TargetBoundsExtent.IsNearlyZero())
+	{
+		const FBox TargetBounds(TargetBoundsOrigin - TargetBoundsExtent, TargetBoundsOrigin + TargetBoundsExtent);
+		ClosestTargetPoint = TargetBounds.GetClosestPointTo(ControllerLocation);
+	}
+
+	const float EdgeDistanceSq = FVector::DistSquared(ControllerLocation, ClosestTargetPoint);
+	if (EdgeDistanceSq > FMath::Square(MaxDistance))
 	{
 		if (bLogFailures)
 		{
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (distance=%.1f max=%.1f)."),
+				TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (edgeDistance=%.1f centerDistance=%.1f max=%.1f)."),
 				SafeContextLabel,
 				*GetNameSafe(this),
 				*GetNameSafe(TargetActor),
-				FMath::Sqrt(DistanceSq),
+				FMath::Sqrt(EdgeDistanceSq),
+				FVector::Distance(ControllerLocation, TargetLocation),
 				MaxDistance);
 		}
 		return false;
@@ -1721,7 +1737,7 @@ void AARPlayerController::HandleCurrentCharacterTagChanged(FGameplayTag NewChara
 
 	if (IsLocalController())
 	{
-		RequestHUDInitializationInternal(true);
+		RequestHUDInitializationInternal(false);
 	}
 }
 

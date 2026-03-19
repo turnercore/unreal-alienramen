@@ -34,7 +34,7 @@ Player/UI entrypoints route through `AARPlayerController` RPC wrappers:
 - `RequestSubmitDialogueChoice(FGuid ChoiceBranchId)`
 - `RequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag)` (character-native targeting)
 - `RequestSetDialogueEavesdropOtherPlayer(bool bEnable)` (targets the opposite canonical character of the local controller)
-- Actor-targeted interaction requests are server reachability-gated by controller pawn distance (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
+- Actor-targeted interaction requests are server reachability-gated by controller pawn proximity to the target actor's collision bounds (`AARPlayerController::ServerInteractionMaxDistance`) before runtime mutation.
 
 World actor convenience entrypoint:
 
@@ -334,9 +334,10 @@ Conversation graph tooling now provides:
 - player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - player-speaker resolution prefers the currently possessed pawn's `UParleySpeakerComponent` speaker tag before falling back to mirrored player-state character tags, so swaps/possess flows immediately evaluate offers against the live pawn identity
 - speaker talkable cache now refreshes when dialogue progression state mutates and when controllers possess/unpossess pawns, so relationship/tag/completion changes and pawn swaps immediately update NPC talkability
-- `AARShopAIController` only applies `State.ShopNPC.DialogueWindow` local dialogue gating to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
+- `AARShopAIController` applies local shop dialogue gating from `State.ShopNPC.Dialogue` (legacy `State.ShopNPC.DialogueWindow` maps via redirects) to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
 - AR player controllers/player states now expose `GetPlayerSlotTag()` so Emo can resolve viewer-specific P1/P2 dialogue overrides instead of falling back to shared-only display
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
+- editor-side validation fallback now uses a transient `UGameInstance`-owned `UParleyDialogueSubsystem` outside PIE, avoiding invalid `UGameInstanceSubsystem` outer creation during graph compile/save.
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit + inline `Length Seconds` float edit; newly created line, multi-line, and split-line entries default authored length to `1.0`
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)

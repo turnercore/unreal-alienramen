@@ -176,6 +176,24 @@ void AARPlayerStateBase::SetCurrentCharacterRuntime(AARCharacterStateRuntime* Ne
 
 	CurrentCharacterRuntime = NewRuntime;
 	OnRep_CurrentCharacterRuntime();
+
+	// Invader spicy meter is clamped by MaxSpice on the character runtime ASC.
+	// Runtime rebinds can occur after InvaderGameState performed its global sync pass,
+	// so push the current shared cap immediately when this player gets a runtime.
+	if (CurrentCharacterRuntime)
+	{
+		if (const AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
+		{
+			if (UAbilitySystemComponent* ActiveASC = GetASC())
+			{
+				ActiveASC->SetNumericAttributeBase(
+					UARAttributeSetCore::GetMaxSpiceAttribute(),
+					static_cast<float>(InvaderGameState->GetSharedMaxSpice()));
+				SetSpiceMeter_Internal(GetCoreAttributeValue(EARCoreAttributeType::Spice));
+			}
+		}
+	}
+
 	ForceNetUpdate();
 }
 
@@ -1330,6 +1348,10 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		}
 	}
 
+	// Character identity drives baseline invader color. Re-evaluate after tag/runtime changes so
+	// swap flows that bind runtime first cannot leave stale previous-character color.
+	EvaluateInvaderColorFromASCOverrideTags();
+
 	ForceNetUpdate();
 }
 
@@ -2433,14 +2455,26 @@ void AARPlayerStateBase::SetSpiceMeter_Internal(float NewSpiceValue)
 		return;
 	}
 
-	const float MaxSpice = ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
-	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.f, FMath::Max(0.f, MaxSpice));
-	ActiveASC->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
-
-	if (CurrentCharacterRuntime)
+	float MaxSpice = ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
+	if (MaxSpice <= KINDA_SMALL_NUMBER)
 	{
-		CurrentCharacterRuntime->SetSpiceMeter(ClampedValue);
+		// Defensive recovery: if this runtime missed a prior max-spice sync, recover from
+		// Invader's shared-cap authority (tier1=100, +100 per tier) before clamping.
+		if (const AARInvaderGameState* InvaderGameState = GetWorld() ? GetWorld()->GetGameState<AARInvaderGameState>() : nullptr)
+		{
+			MaxSpice = static_cast<float>(InvaderGameState->GetSharedMaxSpice());
+			ActiveASC->SetNumericAttributeBase(UARAttributeSetCore::GetMaxSpiceAttribute(), MaxSpice);
+		}
 	}
+
+	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.f, FMath::Max(0.f, MaxSpice));
+	const float CurrentValue = ActiveASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceAttribute());
+	if (FMath::IsNearlyEqual(CurrentValue, ClampedValue))
+	{
+		return;
+	}
+
+	ActiveASC->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
 }
 
 void AARPlayerStateBase::SetStrength_Internal(const float NewStrength)

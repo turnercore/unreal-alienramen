@@ -233,7 +233,7 @@ void AARInvaderGameState::RegisterDebugConsoleCommands()
 
 	CmdDebugAddScrap = ConsoleManager.RegisterConsoleCommand(
 		TEXT("ar.invader.debug.add_scrap"),
-		TEXT("Usage: ar.invader.debug.add_scrap <delta>"),
+		TEXT("Usage: ar.invader.debug.add_scrap <delta> (adds to RunLedgerScrap; does not change persistent Scrap currency)"),
 		FConsoleCommandWithWorldAndArgsDelegate::CreateUObject(this, &AARInvaderGameState::HandleConsoleAddScrap),
 		ECVF_Cheat);
 
@@ -514,15 +514,23 @@ void AARInvaderGameState::HandleConsoleAddScrap(const TArray<FString>& Args, UWo
 {
 	if (!HasAuthority() || Args.Num() < 1)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_scrap <delta>"));
+		UE_LOG(ARLog, Warning, TEXT("[InvaderSave|Debug] Usage: ar.invader.debug.add_scrap <delta> (RunLedgerScrap only)"));
 		return;
 	}
 
 	const int32 Delta = FCString::Atoi(*Args[0]);
-	const int32 OldScrap = GetRunLedgerScrap();
+	const int32 OldRunLedgerScrap = GetRunLedgerScrap();
+	const int32 OldPersistentScrap = GetScrap();
 	AddRunLedgerScrap(Delta);
 
-	UE_LOG(ARLog, Log, TEXT("[InvaderSave|Debug] AddRunLedgerScrap %+d -> %d"), Delta, GetRunLedgerScrap());
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[InvaderSave|Debug] AddRunLedgerScrap %+d -> %d (old=%d, persistent Scrap unchanged=%d)"),
+		Delta,
+		GetRunLedgerScrap(),
+		OldRunLedgerScrap,
+		OldPersistentScrap);
 }
 
 void AARInvaderGameState::HandleConsoleAddMoney(const TArray<FString>& Args, UWorld* /*World*/)

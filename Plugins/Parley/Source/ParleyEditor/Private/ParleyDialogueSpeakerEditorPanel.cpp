@@ -11,6 +11,7 @@
 #include "AssetRegistry/AssetData.h"
 #include "Editor.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "Framework/Docking/TabManager.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GameplayTagsManager.h"
@@ -202,10 +203,28 @@ namespace
 
 	static UParleyDialogueSubsystem* GetTransientDialogueValidationSubsystem()
 	{
+		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
 		static TWeakObjectPtr<UParleyDialogueSubsystem> Cached;
+
+		if (!CachedValidationGameInstance.IsValid())
+		{
+			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
+			if (ValidationGameInstance)
+			{
+				ValidationGameInstance->AddToRoot();
+				CachedValidationGameInstance = ValidationGameInstance;
+			}
+		}
+
+		UGameInstance* ValidationGameInstance = CachedValidationGameInstance.Get();
+		if (!ValidationGameInstance)
+		{
+			return nullptr;
+		}
+
 		if (!Cached.IsValid())
 		{
-			Cached = NewObject<UParleyDialogueSubsystem>(GetTransientPackage());
+			Cached = NewObject<UParleyDialogueSubsystem>(ValidationGameInstance);
 		}
 		return Cached.Get();
 	}

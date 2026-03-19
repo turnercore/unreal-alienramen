@@ -59,6 +59,12 @@ Scrapyard is the post-run extraction and conversion mode. It reconciles run-earn
 
 If your change touches more than one mode, start in [Shared Systems Overview](README_SharedSystems.md).
 
+## Seamless Travel Controller Class
+
+- `AARGameModeBase::HandleSeamlessTravelPlayer(...)` now enforces the destination mode's `PlayerControllerClass` (mode defaults/BP class settings) after seamless handoff.
+- If the carried controller class does not match the destination mode default, game mode spawns/swaps to the desired controller class before gameplay reinitialization.
+- Keep per-mode controller selection authored in GameMode defaults; do not hardcode mode-to-controller maps in travel callers.
+
 ## Runtime Character Switch Requests
 
 - Authority entrypoint: `AARGameModeBase::SubmitCharacterSwitchHoldRequest(APlayerController*, bool bIsRequesting)`.
