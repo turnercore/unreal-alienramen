@@ -142,6 +142,10 @@ Runtime UI is intentionally separate from editor preview tooling.
   - widget lifecycle: `EnsureDialogueWidget()`, `RemoveDialogueWidget()`, `GetDialogueWidget()`
   - auto-widget config: `bAutoCreateDialogueWidget`, `DialogueWidgetClass`, `DialogueWidgetZOrder`
 - `UParleyDialogueWidgetBase` forwards core interaction calls (`AdvanceDialogue`, `SubmitChoice`, `SetEavesdrop`, `SetEavesdropOtherPlayer`, `StartDialogueWithSpeakerTag`, `InteractWithCharacter`) back to the bound controller.
+- The widget base now also mirrors the common Parley runtime signal surface into Blueprint events out of the box:
+  - dialogue session/view lifecycle: initialized, session started, view updated, session ended, deinitialized
+  - dialogue events: conversation started/ended, line delivered, important choice made, relationship changes, progression tag mutations, progression dirty, choice lookahead, signal fired, audio requested
+  - shared runtime events: speaker talkable changes, faction popularity changes, faction speaker reputation changes
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
 - Client runtime now mirrors controller RPC dialogue updates back into `UParleyDialogueSubsystem::OnDialogueSessionUpdated/OnDialogueSessionEnded` so subsystem-bound widgets receive live updates on clients without extra project glue.
 

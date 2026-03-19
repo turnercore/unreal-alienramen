@@ -1,7 +1,9 @@
 #include "ParleyDialogueWidgetBase.h"
 
 #include "ParleyDialogueSubsystem.h"
+#include "ParleyFactionSubsystem.h"
 #include "ParleyPlayerControllerInterface.h"
+#include "ParleySpeakerSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
@@ -58,17 +60,17 @@ void UParleyDialogueWidgetBase::InitializeDialogueWidget(APlayerController* InOw
 		return;
 	}
 
-	UnbindControllerDelegates();
+	UnbindParleySubsystemDelegates();
 	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BoundController = InOwningController;
-	BindControllerDelegates();
+	BindParleySubsystemDelegates();
 	PushInitialViewFromController();
 	BP_OnDialogueWidgetInitialized(BoundController);
 }
 
 void UParleyDialogueWidgetBase::DeinitializeDialogueWidget()
 {
-	UnbindControllerDelegates();
+	UnbindParleySubsystemDelegates();
 	BoundController = nullptr;
 	ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
 	BP_OnDialogueWidgetDeinitialized();
@@ -180,6 +182,7 @@ void UParleyDialogueWidgetBase::HandleControllerDialogueViewUpdated(const FDialo
 	}
 
 	FDialogueClientView LocalView;
+	const bool bWasActive = bHasActiveDialogueView;
 	if (!ControllerInterface->QueryLocalDialogueView(LocalView) && !ControllerInterface->GetCachedDialogueView(LocalView))
 	{
 		ClearCachedDialogueView(/*bCollapseVisibility=*/ true);
@@ -188,6 +191,10 @@ void UParleyDialogueWidgetBase::HandleControllerDialogueViewUpdated(const FDialo
 
 	CurrentDialogueView = LocalView;
 	bHasActiveDialogueView = true;
+	if (!bWasActive)
+	{
+		BP_OnDialogueSessionStarted(LocalView);
+	}
 	if (bAutoToggleVisibilityFromSessionState)
 	{
 		SetVisibility(ESlateVisibility::Visible);
@@ -212,7 +219,260 @@ void UParleyDialogueWidgetBase::HandleControllerDialogueSessionEnded(const FStri
 	BP_OnDialogueSessionEnded(SessionId);
 }
 
-void UParleyDialogueWidgetBase::BindControllerDelegates()
+void UParleyDialogueWidgetBase::HandleDialogueConversationStarted(const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueConversationStarted(ConversationTag, SpeakerTag, OwnerCharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueConversationEnded(const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag, const bool bCompleted)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueConversationEnded(ConversationTag, SpeakerTag, OwnerCharacterTag, bCompleted);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueLineDelivered(const FGameplayTag SpeakerTag, const FGameplayTag ConversationTag, const FGameplayTag OwnerCharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueLineDelivered(SpeakerTag, ConversationTag, OwnerCharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueImportantChoiceMade(const FGuid ChoiceBranchId, const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueImportantChoiceMade(ChoiceBranchId, ConversationTag, SpeakerTag, OwnerCharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipLevelChanged(
+	const FGameplayTag SourceSpeakerTag,
+	const FGameplayTag TargetSpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const int32 OldLevel,
+	const int32 NewLevel,
+	const float NewTotal)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueSpeakerRelationshipLevelChanged(SourceSpeakerTag, TargetSpeakerTag, OwnerCharacterTag, OldLevel, NewLevel, NewTotal);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueConversationCompleted(const FGameplayTag ConversationTag, const FGameplayTag OwnerCharacterTag, const FGameplayTag CharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueConversationCompleted(ConversationTag, OwnerCharacterTag, CharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipChanged(const FGameplayTag SourceSpeakerTag, const FGameplayTag TargetSpeakerTag, const FGameplayTag OwnerCharacterTag, const float Delta, const float NewTotal)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueSpeakerRelationshipChanged(SourceSpeakerTag, TargetSpeakerTag, OwnerCharacterTag, Delta, NewTotal);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueProgressionTagMutated(const FGameplayTag ProgressionTag, const bool bAdded, const FGameplayTag OwnerCharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueProgressionTagMutated(ProgressionTag, bAdded, OwnerCharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueProgressionStateMarkedDirty()
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	BP_OnDialogueProgressionStateMarkedDirty();
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion(const FGameplayTag PrimarySpeakerTag, const FGameplayTag PreviewEmotionTag, const FGuid ChoiceBranchId)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	if (!bHasActiveDialogueView || !CurrentDialogueView.SpeakerTag.IsValid() || CurrentDialogueView.SpeakerTag != PrimarySpeakerTag)
+	{
+		return;
+	}
+
+	BP_OnDialogueChoiceLookaheadEmotion(PrimarySpeakerTag, PreviewEmotionTag, ChoiceBranchId);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadCleared(const FGameplayTag OwnerCharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueChoiceLookaheadCleared(OwnerCharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueSignalFired(
+	const FGameplayTag SignalTag,
+	const FGameplayTagContainer PayloadTags,
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (OwnerCharacterTag.IsValid() && OwnerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != OwnerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueSignalFired(SignalTag, PayloadTags, ConversationTag, SpeakerTag, OwnerCharacterTag);
+}
+
+void UParleyDialogueWidgetBase::HandleDialogueAudioRequested(const FDialogueAudioRequest& Request)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	const IParleyPlayerControllerInterface* ControllerInterface = ResolveParleyControllerInterface(BoundController);
+	const FGameplayTag ControllerCharacterTag = ControllerInterface ? ControllerInterface->GetCharacterTag() : FGameplayTag();
+	if (Request.ListenerCharacterTag.IsValid() && Request.ListenerCharacterTag != ControllerCharacterTag && (!bHasActiveDialogueView || CurrentDialogueView.OwnerCharacterTag != Request.ListenerCharacterTag))
+	{
+		return;
+	}
+
+	BP_OnDialogueAudioRequested(Request);
+}
+
+void UParleyDialogueWidgetBase::HandleSpeakerTalkableChanged(const FGameplayTag SpeakerTag, const bool bNewTalkable)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	BP_OnSpeakerTalkableChanged(SpeakerTag, bNewTalkable);
+}
+
+void UParleyDialogueWidgetBase::HandleFactionPopularityChanged(const FGameplayTag FactionTag, const float Delta, const float NewTotal)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	BP_OnFactionPopularityChanged(FactionTag, Delta, NewTotal);
+}
+
+void UParleyDialogueWidgetBase::HandleFactionSpeakerReputationChanged(const FGameplayTag FactionTag, const FGameplayTag SpeakerTag, const float Delta, const float NewTotal)
+{
+	if (!IsValid(BoundController))
+	{
+		return;
+	}
+
+	BP_OnFactionSpeakerReputationChanged(FactionTag, SpeakerTag, Delta, NewTotal);
+}
+
+void UParleyDialogueWidgetBase::BindParleySubsystemDelegates()
 {
 	if (!IsValid(BoundController))
 	{
@@ -223,33 +483,74 @@ void UParleyDialogueWidgetBase::BindControllerDelegates()
 	{
 		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
 		{
+			BoundDialogueSubsystem = DialogueSubsystem;
 			DialogueSubsystem->OnDialogueSessionUpdated.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleControllerDialogueViewUpdated);
 			DialogueSubsystem->OnDialogueSessionEnded.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleControllerDialogueSessionEnded);
+			DialogueSubsystem->OnConversationStarted.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueConversationStarted);
+			DialogueSubsystem->OnConversationEnded.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueConversationEnded);
+			DialogueSubsystem->OnLineDelivered.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueLineDelivered);
+			DialogueSubsystem->OnImportantChoiceMade.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueImportantChoiceMade);
+			DialogueSubsystem->OnSpeakerRelationshipLevelChanged.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipLevelChanged);
+			DialogueSubsystem->OnParleyConversationCompleted.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueConversationCompleted);
+			DialogueSubsystem->OnSpeakerRelationshipChanged.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipChanged);
+			DialogueSubsystem->OnProgressionTagMutated.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueProgressionTagMutated);
+			DialogueSubsystem->OnProgressionStateMarkedDirty.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueProgressionStateMarkedDirty);
+			DialogueSubsystem->OnChoiceLookaheadEmotion.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion);
+			DialogueSubsystem->OnChoiceLookaheadCleared.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadCleared);
+			DialogueSubsystem->OnDialogueSignalFired.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueSignalFired);
+			DialogueSubsystem->OnDialogueAudioRequested.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueAudioRequested);
+		}
+
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			BoundSpeakerSubsystem = SpeakerSubsystem;
+			SpeakerSubsystem->OnSpeakerTalkableChanged.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleSpeakerTalkableChanged);
+		}
+
+		if (UParleyFactionSubsystem* FactionSubsystem = GameInstance->GetSubsystem<UParleyFactionSubsystem>())
+		{
+			BoundFactionSubsystem = FactionSubsystem;
+			FactionSubsystem->OnFactionPopularityChanged.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleFactionPopularityChanged);
+			FactionSubsystem->OnFactionSpeakerReputationChanged.AddUniqueDynamic(this, &UParleyDialogueWidgetBase::HandleFactionSpeakerReputationChanged);
 		}
 	}
 }
 
-void UParleyDialogueWidgetBase::UnbindControllerDelegates()
+void UParleyDialogueWidgetBase::UnbindParleySubsystemDelegates()
 {
-	if (!BoundController)
+	if (UParleyDialogueSubsystem* DialogueSubsystem = BoundDialogueSubsystem.Get())
 	{
-		return;
+		DialogueSubsystem->OnDialogueSessionUpdated.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleControllerDialogueViewUpdated);
+		DialogueSubsystem->OnDialogueSessionEnded.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleControllerDialogueSessionEnded);
+		DialogueSubsystem->OnConversationStarted.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueConversationStarted);
+		DialogueSubsystem->OnConversationEnded.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueConversationEnded);
+		DialogueSubsystem->OnLineDelivered.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueLineDelivered);
+		DialogueSubsystem->OnImportantChoiceMade.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueImportantChoiceMade);
+		DialogueSubsystem->OnSpeakerRelationshipLevelChanged.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipLevelChanged);
+		DialogueSubsystem->OnParleyConversationCompleted.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueConversationCompleted);
+		DialogueSubsystem->OnSpeakerRelationshipChanged.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueSpeakerRelationshipChanged);
+		DialogueSubsystem->OnProgressionTagMutated.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueProgressionTagMutated);
+		DialogueSubsystem->OnProgressionStateMarkedDirty.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueProgressionStateMarkedDirty);
+		DialogueSubsystem->OnChoiceLookaheadEmotion.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadEmotion);
+		DialogueSubsystem->OnChoiceLookaheadCleared.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueChoiceLookaheadCleared);
+		DialogueSubsystem->OnDialogueSignalFired.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueSignalFired);
+		DialogueSubsystem->OnDialogueAudioRequested.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleDialogueAudioRequested);
 	}
 
-	if (!IsValid(BoundController))
+	if (UParleySpeakerSubsystem* SpeakerSubsystem = BoundSpeakerSubsystem.Get())
 	{
-		BoundController = nullptr;
-		return;
+		SpeakerSubsystem->OnSpeakerTalkableChanged.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleSpeakerTalkableChanged);
 	}
 
-	if (UGameInstance* GameInstance = BoundController->GetGameInstance())
+	if (UParleyFactionSubsystem* FactionSubsystem = BoundFactionSubsystem.Get())
 	{
-		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
-		{
-			DialogueSubsystem->OnDialogueSessionUpdated.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleControllerDialogueViewUpdated);
-			DialogueSubsystem->OnDialogueSessionEnded.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleControllerDialogueSessionEnded);
-		}
+		FactionSubsystem->OnFactionPopularityChanged.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleFactionPopularityChanged);
+		FactionSubsystem->OnFactionSpeakerReputationChanged.RemoveDynamic(this, &UParleyDialogueWidgetBase::HandleFactionSpeakerReputationChanged);
 	}
+
+	BoundDialogueSubsystem = nullptr;
+	BoundSpeakerSubsystem = nullptr;
+	BoundFactionSubsystem = nullptr;
 }
 
 void UParleyDialogueWidgetBase::ClearCachedDialogueView(const bool bCollapseVisibility)
