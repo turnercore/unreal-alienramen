@@ -7,6 +7,7 @@
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
 #include "ARInvaderSpicyTrackSettings.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARProjectileBase.h"
@@ -2249,6 +2250,42 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		return;
 	}
 
+	FGameplayTag ResolvedMeatDefinitionTag;
+	UClass* MeatDropClassOverride = nullptr;
+	if (DropType == EARInvaderDropType::Meat)
+	{
+		UGameInstance* GI = GetGameInstance();
+		UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+		if (!ItemDefinitions)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop|Spawn] Meat drop skipped for enemy='%s': missing item definition subsystem."),
+				*GetNameSafe(Enemy));
+			return;
+		}
+
+		FARMeatDefinitionRow MeatDefinition;
+		if (!ItemDefinitions->ResolveMeatDefinitionForEnemy(Enemy->GetEnemyIdentifierTag(), MeatDefinition) || !MeatDefinition.MeatTag.IsValid())
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop|Spawn] Meat drop skipped for enemy='%s': no FARMeatDefinitionRow mapped to EnemyIdentifierTag='%s'."),
+				*GetNameSafe(Enemy),
+				*Enemy->GetEnemyIdentifierTag().ToString());
+			return;
+		}
+
+		ResolvedMeatDefinitionTag = MeatDefinition.MeatTag;
+		UClass* LoadedDropClass = MeatDefinition.InvaderDropActorClass.LoadSynchronous();
+		if (LoadedDropClass && LoadedDropClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+		{
+			MeatDropClassOverride = LoadedDropClass;
+		}
+	}
+
 	TArray<FDropSpawnPlanEntry> SpawnPlan;
 	if (!BuildDropSpawnPlan(DropType, FinalDropAmount, SpawnPlan) || SpawnPlan.IsEmpty() || !GetWorld())
 	{
@@ -2266,13 +2303,19 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 
 	for (const FDropSpawnPlanEntry& PlanEntry : SpawnPlan)
 	{
-		if (PlanEntry.Amount <= 0 || !PlanEntry.DropClass)
+		UClass* DropClassToSpawn = PlanEntry.DropClass;
+		if (DropType == EARInvaderDropType::Meat && MeatDropClassOverride)
+		{
+			DropClassToSpawn = MeatDropClassOverride;
+		}
+
+		if (PlanEntry.Amount <= 0 || !DropClassToSpawn)
 		{
 			continue;
 		}
 
 		AARInvaderDropBase* SpawnedDrop = GetWorld()->SpawnActor<AARInvaderDropBase>(
-			PlanEntry.DropClass,
+			DropClassToSpawn,
 			Enemy->GetActorLocation(),
 			FRotator::ZeroRotator,
 			SpawnParams);
@@ -2281,7 +2324,12 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 			continue;
 		}
 
-		SpawnedDrop->InitializeDrop(DropType, PlanEntry.Amount, Enemy->GetEnemyColor());
+		SpawnedDrop->InitializeDrop(
+			DropType,
+			PlanEntry.Amount,
+			Enemy->GetEnemyColor(),
+			Enemy->GetEnemyIdentifierTag(),
+			ResolvedMeatDefinitionTag);
 		SpawnedDrop->SetEarthGravityEnabled(bDebugDropEarthGravityEnabled);
 
 		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedDrop->GetRootComponent()))

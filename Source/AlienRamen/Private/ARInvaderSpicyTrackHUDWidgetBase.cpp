@@ -99,6 +99,19 @@ bool UARInvaderSpicyTrackHUDWidgetBase::TryBindOwningInvaderHUD()
 
 void UARInvaderSpicyTrackHUDWidgetBase::RefreshInvaderSpicyTrackSnapshot(const bool bBroadcastSnapshotEvents)
 {
+	AARInvaderHUD* InvaderHUD = BoundInvaderHUD.Get();
+	AARInvaderGameState* ResolvedInvaderGameState = InvaderHUD && InvaderHUD->GetWorld()
+		? InvaderHUD->GetWorld()->GetGameState<AARInvaderGameState>()
+		: nullptr;
+	if (ResolvedInvaderGameState != BoundInvaderGameState.Get())
+	{
+		UnbindTrackedPlayerStateDelegates();
+		UnbindInvaderGameStateDelegates();
+		BoundInvaderGameState = ResolvedInvaderGameState;
+		BindInvaderGameStateDelegates();
+		RebindTrackedPlayerStateDelegates();
+	}
+
 	RefreshCachedCharacterStates();
 	RefreshSharedTrackSnapshot();
 
@@ -333,6 +346,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged(
 	const float NewSpiceValue,
 	const float OldSpiceValue)
 {
+	bool bUpdatedSnapshot = false;
 	for (FARInvaderSpicyTrackCharacterState& Snapshot : CachedCharacterStates)
 	{
 		if (Snapshot.SourcePlayerState == SourcePlayerState || DoesSnapshotMatchCharacterTag(Snapshot, SourceCharacterTag))
@@ -340,8 +354,21 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged(
 			Snapshot.SourcePlayerState = SourcePlayerState;
 			Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
 			Snapshot.CurrentSpiceValue = FMath::Max(0.0f, NewSpiceValue);
+			bUpdatedSnapshot = true;
 			break;
 		}
+	}
+	if (!bUpdatedSnapshot && SourcePlayerState)
+	{
+		FARInvaderSpicyTrackCharacterState Snapshot;
+		BuildCharacterStateSnapshot(SourcePlayerState, Snapshot);
+		Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
+		Snapshot.CurrentSpiceValue = FMath::Max(0.0f, NewSpiceValue);
+		CachedCharacterStates.Add(MoveTemp(Snapshot));
+		CachedCharacterStates.Sort([](const FARInvaderSpicyTrackCharacterState& Left, const FARInvaderSpicyTrackCharacterState& Right)
+			{
+				return Left.SourceCharacterTag.ToString() < Right.SourceCharacterTag.ToString();
+			});
 	}
 
 	OnInvaderWidgetCharacterSpiceTrackChanged.Broadcast(
@@ -362,6 +389,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerMaxSpiceTrackChanged(
 	const float NewMaxSpiceValue,
 	const float OldMaxSpiceValue)
 {
+	bool bUpdatedSnapshot = false;
 	for (FARInvaderSpicyTrackCharacterState& Snapshot : CachedCharacterStates)
 	{
 		if (Snapshot.SourcePlayerState == SourcePlayerState || DoesSnapshotMatchCharacterTag(Snapshot, SourceCharacterTag))
@@ -369,8 +397,21 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerMaxSpiceTrackChanged(
 			Snapshot.SourcePlayerState = SourcePlayerState;
 			Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
 			Snapshot.MaxSpiceValue = FMath::Max(0.0f, NewMaxSpiceValue);
+			bUpdatedSnapshot = true;
 			break;
 		}
+	}
+	if (!bUpdatedSnapshot && SourcePlayerState)
+	{
+		FARInvaderSpicyTrackCharacterState Snapshot;
+		BuildCharacterStateSnapshot(SourcePlayerState, Snapshot);
+		Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
+		Snapshot.MaxSpiceValue = FMath::Max(0.0f, NewMaxSpiceValue);
+		CachedCharacterStates.Add(MoveTemp(Snapshot));
+		CachedCharacterStates.Sort([](const FARInvaderSpicyTrackCharacterState& Left, const FARInvaderSpicyTrackCharacterState& Right)
+			{
+				return Left.SourceCharacterTag.ToString() < Right.SourceCharacterTag.ToString();
+			});
 	}
 
 	OnInvaderWidgetCharacterMaxSpiceTrackChanged.Broadcast(
@@ -391,6 +432,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCursorChanged(
 	const int32 NewCursorTier,
 	const int32 OldCursorTier)
 {
+	bool bUpdatedSnapshot = false;
 	for (FARInvaderSpicyTrackCharacterState& Snapshot : CachedCharacterStates)
 	{
 		if (Snapshot.SourcePlayerState == SourcePlayerState || DoesSnapshotMatchCharacterTag(Snapshot, SourceCharacterTag))
@@ -398,8 +440,21 @@ void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCursorChanged(
 			Snapshot.SourcePlayerState = SourcePlayerState;
 			Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
 			Snapshot.CurrentCursorTier = FMath::Max(0, NewCursorTier);
+			bUpdatedSnapshot = true;
 			break;
 		}
+	}
+	if (!bUpdatedSnapshot && SourcePlayerState)
+	{
+		FARInvaderSpicyTrackCharacterState Snapshot;
+		BuildCharacterStateSnapshot(SourcePlayerState, Snapshot);
+		Snapshot.SourceCharacterTag = NormalizeCharacterTag(SourceCharacterTag);
+		Snapshot.CurrentCursorTier = FMath::Max(0, NewCursorTier);
+		CachedCharacterStates.Add(MoveTemp(Snapshot));
+		CachedCharacterStates.Sort([](const FARInvaderSpicyTrackCharacterState& Left, const FARInvaderSpicyTrackCharacterState& Right)
+			{
+				return Left.SourceCharacterTag.ToString() < Right.SourceCharacterTag.ToString();
+			});
 	}
 
 	OnInvaderWidgetCharacterCursorChanged.Broadcast(

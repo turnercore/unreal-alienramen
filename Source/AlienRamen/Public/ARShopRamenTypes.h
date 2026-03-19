@@ -7,8 +7,11 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
+#include "UObject/SoftObjectPtr.h"
 #include "ARColorTypes.h"
 #include "ARShopRamenTypes.generated.h"
+
+class AARInvaderDropBase;
 
 UENUM(BlueprintType)
 enum class EARRamenTasteReaction : uint8
@@ -87,7 +90,7 @@ struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	/** Canonical meat identity gameplay tag used by shop inventory/runtime flows. */
+	/** Canonical meat identity gameplay tag used by shop inventory/runtime flows and shared item-definition lookup. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
 	FGameplayTag MeatTag;
 
@@ -95,9 +98,9 @@ struct ALIENRAMEN_API FARMeatDefinitionRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Enemy.Identifier"))
 	FGameplayTag EnemyIdentifierTag;
 
-	/** Shared item definition tag used to resolve item metadata (value/icon/weight/etc). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item"))
-	FGameplayTag ItemTag;
+	/** Optional invader pickup actor class override for this meat when spawned as an invader drop. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Optional invader-mode pickup actor class override for this meat definition. Must derive from ARInvaderDropBase."))
+	TSoftClassPtr<AARInvaderDropBase> InvaderDropActorClass;
 
 	/** Display name used for UI and diagnostics. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")

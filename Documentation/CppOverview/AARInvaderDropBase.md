@@ -24,9 +24,10 @@ Path: `Source/AlienRamen/Public/ARInvaderDropBase.h`
 
 ## Reward Routing
 
-- `DropType = Scrap` -> increments `GameState.Scrap`.
-- `DropType = Meat` -> increments `GameState.Meat` bucket by `DropColor` (`Red`, `Blue`, `White`, fallback `Unspecified`).
+- `DropType = Scrap` -> increments run-ledger scrap (`AARGameStateBase::AddRunLedgerScrap`).
+- `DropType = Meat` -> uses the drop actor's replicated `MeatDefinitionTag` (resolved at spawn) and writes run-ledger typed meat (`AARGameStateBase::AddRunLedgerTypedMeat`).
 - `DropColor` is runtime-authored by the killing enemy state (enemy color at drop spawn time), so meat type identity and drop color remain decoupled.
+- `SourceEnemyIdentifierTag` is retained for diagnostics/fallback validation; gameplay reward identity is `MeatDefinitionTag`.
 
 ## Blueprint Hooks
 

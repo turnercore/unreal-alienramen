@@ -10,48 +10,31 @@
 
 namespace
 {
-	static EARAffinityColor SanitizeAffinityColor(const EARAffinityColor InColor)
-	{
-		return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
-	}
-
 	static FGameplayTag ResolveMeatRootTag()
 	{
 		return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
 	}
 
-	static EARAffinityColor ResolveMeatColorFromTag(const FGameplayTag MeatTag)
+	static FGameplayTag ResolveItemRootTag()
 	{
-		if (!MeatTag.IsValid())
+		return FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
+	}
+
+	static FName ExtractLeafRowNameFromTag(const FGameplayTag Tag)
+	{
+		if (!Tag.IsValid())
 		{
-			return EARAffinityColor::None;
+			return NAME_None;
 		}
 
-		const FGameplayTag RedTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Red"), false);
-		if (RedTag.IsValid() && MeatTag.MatchesTag(RedTag))
+		const FString TagString = Tag.ToString();
+		int32 LastDotIndex = INDEX_NONE;
+		if (TagString.FindLastChar(TEXT('.'), LastDotIndex) && LastDotIndex >= 0 && LastDotIndex < TagString.Len() - 1)
 		{
-			return EARAffinityColor::Red;
+			return FName(*TagString.Mid(LastDotIndex + 1));
 		}
 
-		const FGameplayTag BlueTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Blue"), false);
-		if (BlueTag.IsValid() && MeatTag.MatchesTag(BlueTag))
-		{
-			return EARAffinityColor::Blue;
-		}
-
-		const FGameplayTag WhiteTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.White"), false);
-		if (WhiteTag.IsValid() && MeatTag.MatchesTag(WhiteTag))
-		{
-			return EARAffinityColor::White;
-		}
-
-		const FGameplayTag ColorlessTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Colorless"), false);
-		if (ColorlessTag.IsValid() && MeatTag.MatchesTag(ColorlessTag))
-		{
-			return EARAffinityColor::Colorless;
-		}
-
-		return EARAffinityColor::None;
+		return FName(*TagString);
 	}
 }
 
@@ -221,7 +204,7 @@ bool UARItemDefinitionSubsystem::ResolveMeatDefinition(const FGameplayTag MeatTa
 	return ResolveMeatDefinition_Internal(MeatTag, OutMeatDef);
 }
 
-bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const
+bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinition(FARMeatDefinitionRow& OutMeatDef) const
 {
 	OutMeatDef = FARMeatDefinitionRow();
 
@@ -231,11 +214,10 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAff
 		return false;
 	}
 
-	const EARAffinityColor SanitizedColor = SanitizeAffinityColor(Color);
 	for (const TPair<FName, FARMeatDefinitionRow>& Entry : Definitions)
 	{
 		const FARMeatDefinitionRow& Row = Entry.Value;
-		if (ResolveMeatColorFromTag(Row.MeatTag) != SanitizedColor)
+		if (!Row.MeatTag.IsValid())
 		{
 			continue;
 		}
@@ -247,12 +229,53 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAff
 	return false;
 }
 
-bool UARItemDefinitionSubsystem::ResolveFirstMeatTagForColor(const EARAffinityColor Color, FGameplayTag& OutMeatTag) const
+bool UARItemDefinitionSubsystem::ResolveMeatDefinitionForEnemy(const FGameplayTag EnemyIdentifierTag, FARMeatDefinitionRow& OutMeatDef) const
+{
+	OutMeatDef = FARMeatDefinitionRow();
+	if (!EnemyIdentifierTag.IsValid())
+	{
+		return false;
+	}
+
+	TArray<TPair<FName, FARMeatDefinitionRow>> Definitions;
+	if (!GatherAllMeatDefinitions(Definitions))
+	{
+		return false;
+	}
+
+	for (const TPair<FName, FARMeatDefinitionRow>& Entry : Definitions)
+	{
+		const FARMeatDefinitionRow& Row = Entry.Value;
+		if (!Row.MeatTag.IsValid() || !Row.EnemyIdentifierTag.IsValid())
+		{
+			continue;
+		}
+
+		if (!Row.EnemyIdentifierTag.MatchesTagExact(EnemyIdentifierTag))
+		{
+			continue;
+		}
+
+		OutMeatDef = Row;
+		return true;
+	}
+
+	return false;
+}
+
+bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const
+{
+	(void)Color;
+	OutMeatDef = FARMeatDefinitionRow();
+	return false;
+}
+
+bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) const
 {
 	OutMeatTag = FGameplayTag();
 
 	FARMeatDefinitionRow MeatDef;
-	if (!ResolveFirstMeatDefinitionForColor(Color, MeatDef))
+	if (!ResolveFirstMeatDefinition(MeatDef))
 	{
 		return false;
 	}
@@ -261,27 +284,18 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatTagForColor(const EARAffinityCo
 	return OutMeatTag.IsValid();
 }
 
+bool UARItemDefinitionSubsystem::ResolveFirstMeatTagForColor(const EARAffinityColor Color, FGameplayTag& OutMeatTag) const
+{
+	(void)Color;
+	OutMeatTag = FGameplayTag();
+	return false;
+}
+
 bool UARItemDefinitionSubsystem::GetMeatTagsForColor(const EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const
 {
+	(void)Color;
 	OutMeatTags.Reset();
-
-	TArray<TPair<FName, FARMeatDefinitionRow>> Definitions;
-	if (!GatherAllMeatDefinitions(Definitions))
-	{
-		return false;
-	}
-
-	const EARAffinityColor SanitizedColor = SanitizeAffinityColor(Color);
-	for (const TPair<FName, FARMeatDefinitionRow>& Entry : Definitions)
-	{
-		const FARMeatDefinitionRow& Row = Entry.Value;
-		if (ResolveMeatColorFromTag(Row.MeatTag) == SanitizedColor && Row.MeatTag.IsValid())
-		{
-			OutMeatTags.Add(Row.MeatTag);
-		}
-	}
-
-	return OutMeatTags.Num() > 0;
+	return false;
 }
 
 int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const
@@ -294,40 +308,22 @@ int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBow
 		BowlSpec.BrothMeatTag,
 		BowlSpec.ToppingsMeatTag
 	};
-	const EARAffinityColor SlotColors[3] =
-	{
-		BowlSpec.NoodlesColor,
-		BowlSpec.BrothColor,
-		BowlSpec.ToppingsColor
-	};
-
 	for (int32 SlotIndex = 0; SlotIndex < UE_ARRAY_COUNT(SlotTags); ++SlotIndex)
 	{
 		FARMeatDefinitionRow MeatDef;
 		const FGameplayTag SlotMeatTag = SlotTags[SlotIndex];
-		const EARAffinityColor SlotColor = SanitizeAffinityColor(SlotColors[SlotIndex]);
 		if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
 		{
-			// Compatibility fallback for older bowls authored before meat-slot tags existed.
-			// Do not infer value from pure None slots (empty processing should remain value-free).
-			if (SlotColor == EARAffinityColor::None)
-			{
-				continue;
-			}
-
-			if (!ResolveFirstMeatDefinitionForColor(SlotColor, MeatDef))
-			{
-				continue;
-			}
+			continue;
 		}
 
-		if (!MeatDef.ItemTag.IsValid())
+		if (!MeatDef.MeatTag.IsValid())
 		{
 			continue;
 		}
 
 		FARScrapyardItemDefRow ItemDef;
-		if (!ResolveItemDefinition(MeatDef.ItemTag, ItemDef))
+		if (!ResolveItemDefinition(MeatDef.MeatTag, ItemDef))
 		{
 			continue;
 		}
@@ -355,10 +351,52 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 		return false;
 	}
 
+	auto TryResolveViaItemRootRowName = [this, Resolver, ItemTag, &OutItemDef]() -> bool
+	{
+		const FGameplayTag ItemRootTag = ResolveItemRootTag();
+		const FGameplayTag MeatRootTag = ResolveMeatRootTag();
+		if (!ItemRootTag.IsValid() || !MeatRootTag.IsValid() || !ItemTag.MatchesTag(MeatRootTag))
+		{
+			return false;
+		}
+
+		UDataTable* ItemDataTable = nullptr;
+		FString ItemTableResolveError;
+		if (!Resolver->TryResolveDataTableForRootTag(ItemRootTag, ItemDataTable, ItemTableResolveError) || !ItemDataTable)
+		{
+			return false;
+		}
+
+		const FName ItemRowName = ExtractLeafRowNameFromTag(ItemTag);
+		if (ItemRowName.IsNone())
+		{
+			return false;
+		}
+
+		const FARScrapyardItemDefRow* ItemRow = ItemDataTable->FindRow<FARScrapyardItemDefRow>(ItemRowName, TEXT("ResolveItemDefinition_ItemRootFallback"), false);
+		if (!ItemRow)
+		{
+			return false;
+		}
+
+		OutItemDef = *ItemRow;
+		if (!OutItemDef.ItemTag.IsValid())
+		{
+			OutItemDef.ItemTag = ItemTag;
+		}
+		ApplyKnowledgeTextFallback(ItemTag, OutItemDef);
+		return true;
+	};
+
 	FInstancedStruct RowData;
 	FString ResolveError;
 	if (!Resolver->TryResolveRowStructForTag(ItemTag, RowData, ResolveError))
 	{
+		if (TryResolveViaItemRootRowName())
+		{
+			return true;
+		}
+
 		UE_LOG(
 			ARLog,
 			Warning,
@@ -371,6 +409,11 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 	const FARScrapyardItemDefRow* TypedDef = RowData.GetPtr<FARScrapyardItemDefRow>();
 	if (!TypedDef)
 	{
+		if (TryResolveViaItemRootRowName())
+		{
+			return true;
+		}
+
 		UE_LOG(
 			ARLog,
 			Warning,
