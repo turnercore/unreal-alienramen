@@ -53,6 +53,7 @@ Authoritative persisted fields currently include:
     - canonical character-owned `LoadoutTags`
     - dialogue progression/completion/choice-memory state
     - shop-only character world snapshot (`CharacterTransform`, held supported carryable snapshot)
+    - held ramen bowl snapshot preserves per-slot dish payload (`SlotType`, `Color`, slot `Item.Meat` tag, `QualityTier`) and fill step for mid-shop save/load continuity
 - Save metadata:
   - `SaveSlot`
   - `SaveGameVersion`

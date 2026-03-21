@@ -17,9 +17,9 @@ bool FARShopCustomerMatchScoringTest::RunTest(const FString& Parameters)
 	SingleRedOrder.RequestedColors = { EARAffinityColor::Red };
 
 	FARRamenBowlSpec RedBlueWhiteBowl;
-	RedBlueWhiteBowl.NoodlesColor = EARAffinityColor::Red;
-	RedBlueWhiteBowl.BrothColor = EARAffinityColor::Blue;
-	RedBlueWhiteBowl.ToppingsColor = EARAffinityColor::White;
+	RedBlueWhiteBowl.Noodles.Color = EARAffinityColor::Red;
+	RedBlueWhiteBowl.Broth.Color = EARAffinityColor::Blue;
+	RedBlueWhiteBowl.Toppings.Color = EARAffinityColor::White;
 
 	const FARRamenServeResult SingleColorResult = UARCustomerComponent::EvaluateServeResult(
 		SingleRedOrder,
@@ -52,9 +52,9 @@ bool FARShopCustomerMatchScoringTest::RunTest(const FString& Parameters)
 	FARRamenOrderRequest DuplicateOrder;
 	DuplicateOrder.RequestedColors = { EARAffinityColor::Red, EARAffinityColor::Red };
 	FARRamenBowlSpec SingleRedBowl;
-	SingleRedBowl.NoodlesColor = EARAffinityColor::Red;
-	SingleRedBowl.BrothColor = EARAffinityColor::None;
-	SingleRedBowl.ToppingsColor = EARAffinityColor::None;
+	SingleRedBowl.Noodles.Color = EARAffinityColor::Red;
+	SingleRedBowl.Broth.Color = EARAffinityColor::None;
+	SingleRedBowl.Toppings.Color = EARAffinityColor::None;
 
 	const FARRamenServeResult DuplicateResult = UARCustomerComponent::EvaluateServeResult(
 		DuplicateOrder,
@@ -84,14 +84,14 @@ bool FARShopCustomerPickyExactTest::RunTest(const FString& Parameters)
 	SingleRedOrder.RequestedColors = { EARAffinityColor::Red };
 
 	FARRamenBowlSpec ExactSingleRed;
-	ExactSingleRed.NoodlesColor = EARAffinityColor::Red;
-	ExactSingleRed.BrothColor = EARAffinityColor::None;
-	ExactSingleRed.ToppingsColor = EARAffinityColor::None;
+	ExactSingleRed.Noodles.Color = EARAffinityColor::Red;
+	ExactSingleRed.Broth.Color = EARAffinityColor::None;
+	ExactSingleRed.Toppings.Color = EARAffinityColor::None;
 
 	FARRamenBowlSpec NonExactSingleRed;
-	NonExactSingleRed.NoodlesColor = EARAffinityColor::Red;
-	NonExactSingleRed.BrothColor = EARAffinityColor::Blue;
-	NonExactSingleRed.ToppingsColor = EARAffinityColor::None;
+	NonExactSingleRed.Noodles.Color = EARAffinityColor::Red;
+	NonExactSingleRed.Broth.Color = EARAffinityColor::Blue;
+	NonExactSingleRed.Toppings.Color = EARAffinityColor::None;
 
 	const FARRamenServeResult ExactResult = UARCustomerComponent::EvaluateServeResult(
 		SingleRedOrder,
@@ -134,9 +134,9 @@ bool FARShopCustomerColorlessAndNoneMatchingTest::RunTest(const FString& Paramet
 	ColorlessOrder.RequestedColors = { EARAffinityColor::Colorless };
 
 	FARRamenBowlSpec RedBowl;
-	RedBowl.NoodlesColor = EARAffinityColor::Red;
-	RedBowl.BrothColor = EARAffinityColor::None;
-	RedBowl.ToppingsColor = EARAffinityColor::None;
+	RedBowl.Noodles.Color = EARAffinityColor::Red;
+	RedBowl.Broth.Color = EARAffinityColor::None;
+	RedBowl.Toppings.Color = EARAffinityColor::None;
 
 	const FARRamenServeResult ColorlessResult = UARCustomerComponent::EvaluateServeResult(
 		ColorlessOrder,
@@ -154,9 +154,9 @@ bool FARShopCustomerColorlessAndNoneMatchingTest::RunTest(const FString& Paramet
 	NoneOrder.RequestedColors = { EARAffinityColor::None };
 
 	FARRamenBowlSpec NoneBowl;
-	NoneBowl.NoodlesColor = EARAffinityColor::None;
-	NoneBowl.BrothColor = EARAffinityColor::None;
-	NoneBowl.ToppingsColor = EARAffinityColor::None;
+	NoneBowl.Noodles.Color = EARAffinityColor::None;
+	NoneBowl.Broth.Color = EARAffinityColor::None;
+	NoneBowl.Toppings.Color = EARAffinityColor::None;
 
 	const FARRamenServeResult NoneExactResult = UARCustomerComponent::EvaluateServeResult(
 		NoneOrder,
@@ -171,9 +171,9 @@ bool FARShopCustomerColorlessAndNoneMatchingTest::RunTest(const FString& Paramet
 	TestEqual(TEXT("None match maps to Ok"), NoneExactResult.Reaction, EARRamenTasteReaction::Ok);
 
 	FARRamenBowlSpec RedOnlyBowl;
-	RedOnlyBowl.NoodlesColor = EARAffinityColor::Red;
-	RedOnlyBowl.BrothColor = EARAffinityColor::None;
-	RedOnlyBowl.ToppingsColor = EARAffinityColor::None;
+	RedOnlyBowl.Noodles.Color = EARAffinityColor::Red;
+	RedOnlyBowl.Broth.Color = EARAffinityColor::None;
+	RedOnlyBowl.Toppings.Color = EARAffinityColor::None;
 	const FARRamenServeResult NoneMismatchResult = UARCustomerComponent::EvaluateServeResult(
 		NoneOrder,
 		RedOnlyBowl,

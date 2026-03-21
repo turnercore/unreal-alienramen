@@ -492,7 +492,8 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 
 	EARAffinityColor ColorToApply = EARAffinityColor::None;
 	FGameplayTag MeatTagToApply;
-	if (!TryConsumeForBowl(StationType, ColorToApply, MeatTagToApply))
+	EARVendingQualityTier QualityToApply = EARVendingQualityTier::Standard;
+	if (!TryConsumeForBowl(StationType, ColorToApply, MeatTagToApply, QualityToApply))
 	{
 		UE_LOG(
 			ARLog,
@@ -505,12 +506,13 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 		return false;
 	}
 
-	if (!HeldBowl->TryApplyFillFromStation(StationType, ColorToApply, MeatTagToApply))
+	if (!HeldBowl->TryApplyFillFromStation(StationType, ColorToApply, MeatTagToApply, QualityToApply))
 	{
 		if (ProcessedStockAmount <= 0)
 		{
 			ProcessedStockColor = ColorToApply;
 			ProcessedStockMeatTag = MeatTagToApply;
+			ProcessedStockQualityTier = QualityToApply;
 		}
 		ProcessedStockAmount = FMath::Clamp(ProcessedStockAmount + 1, 0, ResolveEffectiveMaxStock());
 		if (RuntimeState == EARRamenStationRuntimeState::Idle)
@@ -536,10 +538,15 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 	return true;
 }
 
-bool AARShopStationActor::TryConsumeForBowl(const EARRamenStationType RequestedStationType, EARAffinityColor& OutColor, FGameplayTag& OutMeatTag)
+bool AARShopStationActor::TryConsumeForBowl(
+	const EARRamenStationType RequestedStationType,
+	EARAffinityColor& OutColor,
+	FGameplayTag& OutMeatTag,
+	EARVendingQualityTier& OutQualityTier)
 {
 	OutColor = EARAffinityColor::None;
 	OutMeatTag = FGameplayTag();
+	OutQualityTier = EARVendingQualityTier::Standard;
 	if (!HasAuthority() || RequestedStationType != StationType)
 	{
 		return false;
@@ -558,11 +565,13 @@ bool AARShopStationActor::TryConsumeForBowl(const EARRamenStationType RequestedS
 
 	OutColor = SanitizeColor(ProcessedStockColor);
 	OutMeatTag = ProcessedStockMeatTag;
+	OutQualityTier = ProcessedStockQualityTier;
 	ProcessedStockAmount = FMath::Max(0, ProcessedStockAmount - 1);
 	if (ProcessedStockAmount <= 0)
 	{
 		ProcessedStockColor = EARAffinityColor::None;
 		ProcessedStockMeatTag = FGameplayTag();
+		ProcessedStockQualityTier = EARVendingQualityTier::Standard;
 		if (RuntimeState == EARRamenStationRuntimeState::Processed)
 		{
 			SetRuntimeState(SlottedMeatActor ? EARRamenStationRuntimeState::MeatReady : EARRamenStationRuntimeState::Idle);
@@ -771,6 +780,7 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 
 	EARAffinityColor NextColor = SanitizeColor(SlottedMeatActor->GetMeatColor());
 	FGameplayTag NextMeatTag = SlottedMeatActor->GetMeatTag();
+	EARVendingQualityTier NextQualityTier = SlottedMeatActor->GetMeatQualityTier();
 	int32 NextProcessAmount = FMath::Max(1, SlottedMeatActor->GetMeatAmount());
 	if (NextMeatTag.IsValid())
 	{
@@ -791,12 +801,13 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 	const bool bSameMeatType =
 		(ProcessedStockMeatTag.IsValid() && NextMeatTag.IsValid() && ProcessedStockMeatTag.MatchesTagExact(NextMeatTag))
 		|| (!ProcessedStockMeatTag.IsValid() && !NextMeatTag.IsValid());
+	const bool bSameQualityTier = ProcessedStockQualityTier == NextQualityTier;
 
 	// If stock is already buffered, only allow processing when explicitly swapping
 	// to a materially different output type (color/meat tag pair).
 	if (ProcessedStockAmount > 0)
 	{
-		if (NextColor == ExistingColor && bSameMeatType)
+		if (NextColor == ExistingColor && bSameMeatType && bSameQualityTier)
 		{
 			return false;
 		}
@@ -804,6 +815,7 @@ bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 
 	PendingProcessColor = NextColor;
 	PendingProcessMeatTag = NextMeatTag;
+	PendingProcessQualityTier = NextQualityTier;
 	PendingProcessAmount = NextProcessAmount;
 
 	SlottedMeatActor->ReleaseCarryItem();
@@ -830,6 +842,7 @@ bool AARShopStationActor::BeginProcessingNoneIfAllowed()
 
 	PendingProcessColor = EARAffinityColor::None;
 	PendingProcessMeatTag = FGameplayTag();
+	PendingProcessQualityTier = EARVendingQualityTier::Standard;
 	PendingProcessAmount = 1;
 	if (RuntimeState != EARRamenStationRuntimeState::Processing)
 	{
@@ -854,13 +867,15 @@ void AARShopStationActor::CompleteProcessingCycle()
 	{
 		ProcessedStockColor = FinalColor;
 		ProcessedStockMeatTag = PendingProcessMeatTag;
+		ProcessedStockQualityTier = PendingProcessQualityTier;
 		ProcessedStockAmount = FMath::Clamp(AddedUnits, 0, EffectiveMaxStock);
 	}
 	else if (
 		ProcessedStockColor == FinalColor
 		&& (
 			(ProcessedStockMeatTag.IsValid() && PendingProcessMeatTag.IsValid() && ProcessedStockMeatTag.MatchesTagExact(PendingProcessMeatTag))
-			|| (!ProcessedStockMeatTag.IsValid() && !PendingProcessMeatTag.IsValid())))
+			|| (!ProcessedStockMeatTag.IsValid() && !PendingProcessMeatTag.IsValid()))
+		&& ProcessedStockQualityTier == PendingProcessQualityTier)
 	{
 		ProcessedStockAmount = FMath::Clamp(ProcessedStockAmount + AddedUnits, 0, EffectiveMaxStock);
 	}
@@ -868,11 +883,13 @@ void AARShopStationActor::CompleteProcessingCycle()
 	{
 		ProcessedStockColor = FinalColor;
 		ProcessedStockMeatTag = PendingProcessMeatTag;
+		ProcessedStockQualityTier = PendingProcessQualityTier;
 		ProcessedStockAmount = FMath::Clamp(AddedUnits, 0, EffectiveMaxStock);
 	}
 
 	PendingProcessColor = EARAffinityColor::None;
 	PendingProcessMeatTag = FGameplayTag();
+	PendingProcessQualityTier = EARVendingQualityTier::Standard;
 	PendingProcessAmount = 0;
 	ProcessingProgress01 = 0.0f;
 	ActiveProcessingControllers.Reset();
@@ -980,9 +997,11 @@ void AARShopStationActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AARShopStationActor, SlottedMeatActor);
 	DOREPLIFETIME(AARShopStationActor, PendingProcessColor);
 	DOREPLIFETIME(AARShopStationActor, PendingProcessMeatTag);
+	DOREPLIFETIME(AARShopStationActor, PendingProcessQualityTier);
 	DOREPLIFETIME(AARShopStationActor, PendingProcessAmount);
 	DOREPLIFETIME(AARShopStationActor, ProcessedStockColor);
 	DOREPLIFETIME(AARShopStationActor, ProcessedStockMeatTag);
+	DOREPLIFETIME(AARShopStationActor, ProcessedStockQualityTier);
 	DOREPLIFETIME(AARShopStationActor, ProcessedStockAmount);
 	DOREPLIFETIME(AARShopStationActor, ProcessingProgress01);
 	DOREPLIFETIME(AARShopStationActor, bProcessingActive);

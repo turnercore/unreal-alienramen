@@ -252,56 +252,42 @@ bool UARItemDefinitionSubsystem::GetMeatTagsForColor(const EARAffinityColor Colo
 
 int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const
 {
-	int32 TotalValue = 0;
+	return ResolveBowlSlotItemValue(BowlSpec.Noodles)
+		+ ResolveBowlSlotItemValue(BowlSpec.Broth)
+		+ ResolveBowlSlotItemValue(BowlSpec.Toppings);
+}
 
-	const FGameplayTag SlotTags[3] =
+int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue(const FARRamenBowlSlotSpec& SlotSpec) const
+{
+	FARMeatDefinitionRow MeatDef;
+	const FGameplayTag SlotMeatTag = SlotSpec.MeatTag;
+	const EARAffinityColor SlotColor = SanitizeAffinityColor(SlotSpec.Color);
+	if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
 	{
-		BowlSpec.NoodlesMeatTag,
-		BowlSpec.BrothMeatTag,
-		BowlSpec.ToppingsMeatTag
-	};
-	const EARAffinityColor SlotColors[3] =
-	{
-		BowlSpec.NoodlesColor,
-		BowlSpec.BrothColor,
-		BowlSpec.ToppingsColor
-	};
-
-	for (int32 SlotIndex = 0; SlotIndex < UE_ARRAY_COUNT(SlotTags); ++SlotIndex)
-	{
-		FARMeatDefinitionRow MeatDef;
-		const FGameplayTag SlotMeatTag = SlotTags[SlotIndex];
-		const EARAffinityColor SlotColor = SanitizeAffinityColor(SlotColors[SlotIndex]);
-		if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
+		// Fallback for slots that only carry color identity.
+		if (SlotColor == EARAffinityColor::None)
 		{
-			// Compatibility fallback for older bowls authored before meat-slot tags existed.
-			// Do not infer value from pure None slots (empty processing should remain value-free).
-			if (SlotColor == EARAffinityColor::None)
-			{
-				continue;
-			}
-
-			if (!ResolveFirstMeatDefinitionForColor(SlotColor, MeatDef))
-			{
-				continue;
-			}
+			return 0;
 		}
 
-		if (!MeatDef.ItemTag.IsValid())
+		if (!ResolveFirstMeatDefinitionForColor(SlotColor, MeatDef))
 		{
-			continue;
+			return 0;
 		}
-
-		FARScrapyardItemDefRow ItemDef;
-		if (!ResolveItemDefinition(MeatDef.ItemTag, ItemDef))
-		{
-			continue;
-		}
-
-		TotalValue += FMath::Max(0, ItemDef.SellMoneyValue);
 	}
 
-	return TotalValue;
+	if (!MeatDef.ItemTag.IsValid())
+	{
+		return 0;
+	}
+
+	FARScrapyardItemDefRow ItemDef;
+	if (!ResolveItemDefinition(MeatDef.ItemTag, ItemDef))
+	{
+		return 0;
+	}
+
+	return FMath::Max(0, ItemDef.SellMoneyValue);
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(

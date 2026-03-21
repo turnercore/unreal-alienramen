@@ -86,7 +86,8 @@ This document captures the runtime ownership and integration contract for the sh
   - mirrored to `AARShopGameState::BaseBowlPayout` for UI/readability
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
-  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> meat row `ItemTag` -> shared item `SellMoneyValue` and applies item-quality multiplier (defaults to `Standard` = `1.0`)
+  - `CombinedMeatValue` resolves per bowl slot (`Noodles`, `Broth`, `Toppings`) from slot `Item.Meat` tag -> meat row `ItemTag` -> shared item `SellMoneyValue`
+  - each slot applies its own slot-quality multiplier (`Low/Standard/High/Premium`) before slot values are summed
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
   - item quality multipliers are authored on `AARShopGameMode` (`Low/Standard/High/Premium` defaults `0.25 / 1.0 / 1.25 / 2.0`)
 - Vending settlement:
@@ -120,7 +121,7 @@ This document captures the runtime ownership and integration contract for the sh
   - processing `None` is blocked whenever the station already has any buffered stock (colored or `None`); it is only allowed when stock is fully empty
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill
-  - bowl fill records both slot color and slot `Item.Meat` tag (`NoodlesMeatTag`, `BrothMeatTag`, `ToppingsMeatTag`)
+  - bowl fill records slot payload (`SlotType`, `Color`, slot `Item.Meat` tag, `QualityTier`) for each slot (`Noodles`, `Broth`, `Toppings`)
   - bowl sequence is strict: `Noodles -> Broth -> Toppings`
   - `AARRamenBowlActor` exposes `OnFillStepChanged(PreviousFillStep, NewFillStep)` for animation/UI hooks on local authority changes and replicated client updates
 

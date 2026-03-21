@@ -33,7 +33,7 @@ public:
 	EARRamenStationType GetNextRequiredStationType() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Bowl", meta = (BlueprintAuthorityOnly))
-	bool TryApplyFillFromStation(EARRamenStationType StationType, EARAffinityColor StationColor, FGameplayTag StationMeatTag);
+	bool TryApplyFillFromStation(EARRamenStationType StationType, EARAffinityColor StationColor, FGameplayTag StationMeatTag, EARVendingQualityTier StationQualityTier = EARVendingQualityTier::Standard);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Bowl", meta = (BlueprintAuthorityOnly))
 	void ClearBowl();

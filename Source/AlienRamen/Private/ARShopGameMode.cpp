@@ -200,8 +200,8 @@ int32 AARShopGameMode::CalculateServePayout(
 	const uint32 Seed = HashCombineFast(
 		HashCombineFast(
 			HashCombineFast(GetTypeHash(++ServeTipRollCounter), GetTypeHash(Reaction)),
-			HashCombineFast(GetTypeHash(ServedBowl.NoodlesMeatTag), GetTypeHash(ServedBowl.BrothMeatTag))),
-		GetTypeHash(ServedBowl.ToppingsMeatTag));
+			HashCombineFast(GetTypeHash(ServedBowl.Noodles.MeatTag), GetTypeHash(ServedBowl.Broth.MeatTag))),
+		GetTypeHash(ServedBowl.Toppings.MeatTag));
 	FRandomStream TipRandom(static_cast<int32>(Seed));
 	OutAppliedTipMultiplier = TipRandom.FRandRange(RangeMin, RangeMax);
 	OutTipPayout = FMath::Max(0, FMath::RoundToInt(OutCombinedMeatValue * OutAppliedTipMultiplier));
@@ -262,9 +262,21 @@ bool AARShopGameMode::QueueVendingStockedBowl(const FARVendingStockedBowlEntry& 
 	{
 		return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
 	};
-	SanitizedEntry.BowlSpec.NoodlesColor = SanitizeColor(SanitizedEntry.BowlSpec.NoodlesColor);
-	SanitizedEntry.BowlSpec.BrothColor = SanitizeColor(SanitizedEntry.BowlSpec.BrothColor);
-	SanitizedEntry.BowlSpec.ToppingsColor = SanitizeColor(SanitizedEntry.BowlSpec.ToppingsColor);
+	auto SanitizeQuality = [](const EARVendingQualityTier InTier)
+	{
+		return StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(InTier))
+			? InTier
+			: EARVendingQualityTier::Standard;
+	};
+	SanitizedEntry.BowlSpec.Noodles.SlotType = EARRamenStationType::Noodles;
+	SanitizedEntry.BowlSpec.Broth.SlotType = EARRamenStationType::Broth;
+	SanitizedEntry.BowlSpec.Toppings.SlotType = EARRamenStationType::Toppings;
+	SanitizedEntry.BowlSpec.Noodles.Color = SanitizeColor(SanitizedEntry.BowlSpec.Noodles.Color);
+	SanitizedEntry.BowlSpec.Broth.Color = SanitizeColor(SanitizedEntry.BowlSpec.Broth.Color);
+	SanitizedEntry.BowlSpec.Toppings.Color = SanitizeColor(SanitizedEntry.BowlSpec.Toppings.Color);
+	SanitizedEntry.BowlSpec.Noodles.QualityTier = SanitizeQuality(SanitizedEntry.BowlSpec.Noodles.QualityTier);
+	SanitizedEntry.BowlSpec.Broth.QualityTier = SanitizeQuality(SanitizedEntry.BowlSpec.Broth.QualityTier);
+	SanitizedEntry.BowlSpec.Toppings.QualityTier = SanitizeQuality(SanitizedEntry.BowlSpec.Toppings.QualityTier);
 	SaveGame->PendingVendingStockedBowls.Add(SanitizedEntry);
 	SaveSubsystem->MarkSaveDirty();
 	return true;
@@ -750,17 +762,29 @@ bool AARShopGameMode::RestoreBowlSnapshot(AARRamenBowlActor* BowlActor, const FA
 
 	BowlActor->ClearBowl();
 	const int32 FillStep = FMath::Clamp(Snapshot.BowlFillStep, 0, 3);
-	if (FillStep >= 1 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, Snapshot.BowlSpec.NoodlesColor, Snapshot.BowlSpec.NoodlesMeatTag))
+	if (FillStep >= 1 && !BowlActor->TryApplyFillFromStation(
+		EARRamenStationType::Noodles,
+		Snapshot.BowlSpec.Noodles.Color,
+		Snapshot.BowlSpec.Noodles.MeatTag,
+		Snapshot.BowlSpec.Noodles.QualityTier))
 	{
 		return false;
 	}
 
-	if (FillStep >= 2 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, Snapshot.BowlSpec.BrothColor, Snapshot.BowlSpec.BrothMeatTag))
+	if (FillStep >= 2 && !BowlActor->TryApplyFillFromStation(
+		EARRamenStationType::Broth,
+		Snapshot.BowlSpec.Broth.Color,
+		Snapshot.BowlSpec.Broth.MeatTag,
+		Snapshot.BowlSpec.Broth.QualityTier))
 	{
 		return false;
 	}
 
-	if (FillStep >= 3 && !BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, Snapshot.BowlSpec.ToppingsColor, Snapshot.BowlSpec.ToppingsMeatTag))
+	if (FillStep >= 3 && !BowlActor->TryApplyFillFromStation(
+		EARRamenStationType::Toppings,
+		Snapshot.BowlSpec.Toppings.Color,
+		Snapshot.BowlSpec.Toppings.MeatTag,
+		Snapshot.BowlSpec.Toppings.QualityTier))
 	{
 		return false;
 	}
@@ -975,18 +999,30 @@ void AARShopGameMode::FinalizePendingVendingPayout(UARSaveGame* SaveGame, UARSav
 	SaveSubsystem->MarkSaveDirty();
 }
 
-int32 AARShopGameMode::ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec, const EARVendingQualityTier QualityTier) const
+int32 AARShopGameMode::ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec) const
 {
 	UGameInstance* GI = GetGameInstance();
 	const UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
-	const int32 BaseValue = ItemDefinitions ? FMath::Max(0, ItemDefinitions->ResolveCombinedMeatItemValue(BowlSpec)) : 0;
-	const float QualityMultiplier = GetItemQualityMultiplier(QualityTier);
-	return FMath::Max(0, FMath::RoundToInt(static_cast<float>(BaseValue) * QualityMultiplier));
+	if (!ItemDefinitions)
+	{
+		return 0;
+	}
+
+	const auto ResolveSlotValue = [this, ItemDefinitions](const FARRamenBowlSlotSpec& SlotSpec)
+	{
+		const int32 SlotBaseValue = FMath::Max(0, ItemDefinitions->ResolveBowlSlotItemValue(SlotSpec));
+		const float SlotQualityMultiplier = GetItemQualityMultiplier(SlotSpec.QualityTier);
+		return FMath::Max(0, FMath::RoundToInt(static_cast<float>(SlotBaseValue) * SlotQualityMultiplier));
+	};
+
+	return ResolveSlotValue(BowlSpec.Noodles)
+		+ ResolveSlotValue(BowlSpec.Broth)
+		+ ResolveSlotValue(BowlSpec.Toppings);
 }
 
 int32 AARShopGameMode::ResolveVendingBowlPayout(const FARVendingStockedBowlEntry& Entry) const
 {
-	const int32 CombinedMeatValue = ResolveCombinedMeatValue(Entry.BowlSpec, Entry.QualityTier);
+	const int32 CombinedMeatValue = ResolveCombinedMeatValue(Entry.BowlSpec);
 	const float Multiplier = GetVendingQualityMultiplier(Entry.QualityTier);
 	return FMath::Max(0, FMath::RoundToInt(1.0f + (CombinedMeatValue * Multiplier)));
 }

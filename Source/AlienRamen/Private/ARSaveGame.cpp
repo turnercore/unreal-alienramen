@@ -563,35 +563,44 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			++ClampedCount;
 			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlFillStep was clamped to 0."), FieldName));
 		}
+
+		auto SanitizeHeldBowlSlot = [&SanitizeMeatQualityTier](FARRamenBowlSlotSpec& Slot, const EARRamenStationType ExpectedSlotType)
+		{
+			Slot.SlotType = ExpectedSlotType;
+			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
+			SanitizeMeatQualityTier(Slot.QualityTier);
+		};
+		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Noodles, EARRamenStationType::Noodles);
+		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Broth, EARRamenStationType::Broth);
+		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Toppings, EARRamenStationType::Toppings);
 	};
 
 	auto SanitizeVendingStockedBowls =
-		[OutWarnings, &ClampedCount](TArray<FARVendingStockedBowlEntry>& Entries)
+		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](TArray<FARVendingStockedBowlEntry>& Entries)
 	{
 		bool bChanged = false;
+		auto SanitizeBowlSlot = [&SanitizeMeatQualityTier, &bChanged](
+			FARRamenBowlSlotSpec& Slot,
+			const EARRamenStationType ExpectedSlotType)
+		{
+			const EARAffinityColor OldColor = Slot.Color;
+			const EARRamenStationType OldSlotType = Slot.SlotType;
+			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
+			Slot.SlotType = ExpectedSlotType;
+			bChanged = bChanged || Slot.Color != OldColor || Slot.SlotType != OldSlotType || SanitizeMeatQualityTier(Slot.QualityTier);
+		};
+
 		for (FARVendingStockedBowlEntry& Entry : Entries)
 		{
-			auto SanitizeColor = [](const EARAffinityColor InColor)
-			{
-				return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
-			};
-
-			const EARAffinityColor OldNoodles = Entry.BowlSpec.NoodlesColor;
-			const EARAffinityColor OldBroth = Entry.BowlSpec.BrothColor;
-			const EARAffinityColor OldToppings = Entry.BowlSpec.ToppingsColor;
-			Entry.BowlSpec.NoodlesColor = SanitizeColor(Entry.BowlSpec.NoodlesColor);
-			Entry.BowlSpec.BrothColor = SanitizeColor(Entry.BowlSpec.BrothColor);
-			Entry.BowlSpec.ToppingsColor = SanitizeColor(Entry.BowlSpec.ToppingsColor);
-			bChanged = bChanged
-				|| Entry.BowlSpec.NoodlesColor != OldNoodles
-				|| Entry.BowlSpec.BrothColor != OldBroth
-				|| Entry.BowlSpec.ToppingsColor != OldToppings;
+			SanitizeBowlSlot(Entry.BowlSpec.Noodles, EARRamenStationType::Noodles);
+			SanitizeBowlSlot(Entry.BowlSpec.Broth, EARRamenStationType::Broth);
+			SanitizeBowlSlot(Entry.BowlSpec.Toppings, EARRamenStationType::Toppings);
 		}
 
 		if (bChanged)
 		{
 			++ClampedCount;
-			AddWarning(OutWarnings, TEXT("PendingVendingStockedBowls contained unknown colors and was normalized."));
+			AddWarning(OutWarnings, TEXT("PendingVendingStockedBowls contained invalid bowl slot data and was normalized."));
 		}
 	};
 

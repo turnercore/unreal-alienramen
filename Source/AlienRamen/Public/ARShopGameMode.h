@@ -147,7 +147,7 @@ private:
 	bool ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const;
 	void PersistCanonicalShopEntryIfNeeded(UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 	void FinalizePendingVendingPayout(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem, class AARShopGameState* ShopGameState) const;
-	int32 ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec, EARVendingQualityTier QualityTier = EARVendingQualityTier::Standard) const;
+	int32 ResolveCombinedMeatValue(const FARRamenBowlSpec& BowlSpec) const;
 	int32 ResolveVendingBowlPayout(const FARVendingStockedBowlEntry& Entry) const;
 
 	int32 ServeTipRollCounter = 0;
