@@ -333,6 +333,14 @@ struct ALIENRAMEN_API FARShopTransientCarryableSnapshot
 	/** Meat amount when this snapshot represents meat. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "1", UIMin = "1"))
 	int32 MeatAmount = 1;
+
+	/** Bowl recipe snapshot when this snapshot represents a ramen bowl. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop")
+	FARRamenBowlSpec BowlSpec;
+
+	/** How far through bowl fill order this loose bowl had progressed. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Shop", meta = (ClampMin = "0", UIMin = "0"))
+	int32 BowlFillStep = 0;
 };
 
 USTRUCT(BlueprintType)

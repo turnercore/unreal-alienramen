@@ -12,8 +12,8 @@
 #include "ARScrapyardTypes.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
+#include "ARCarryItemBase.h"
 #include "ARShopCarryComponent.h"
-#include "ARShopCarryItemBase.h"
 #include "ARShopGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
@@ -507,7 +507,7 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 	for (const FARShopTransientCarryableSnapshot& Snapshot : SaveGame->ShopTransientCarryables)
 	{
 		UClass* SpawnClass = Snapshot.ActorClass.LoadSynchronous();
-		if (!SpawnClass || !SpawnClass->IsChildOf(AARShopCarryItemBase::StaticClass()))
+		if (!SpawnClass || !SpawnClass->IsChildOf(AARCarryItemBase::StaticClass()))
 		{
 			UE_LOG(
 				ARLog,
@@ -530,7 +530,7 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		AARShopCarryItemBase* Spawned = World->SpawnActor<AARShopCarryItemBase>(SpawnClass, Snapshot.WorldTransform, SpawnParams);
+		AARCarryItemBase* Spawned = World->SpawnActor<AARCarryItemBase>(SpawnClass, Snapshot.WorldTransform, SpawnParams);
 		if (!Spawned)
 		{
 			continue;
@@ -547,6 +547,40 @@ bool AARShopGameMode::RestoreTransientShopCarryables(UARSaveGame* SaveGame) cons
 		else if (AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(Spawned))
 		{
 			MeatActor->SetMeatDataByTag(Snapshot.MeatTag, Snapshot.MeatColor, FMath::Max(1, Snapshot.MeatAmount), Snapshot.MeatQualityTier);
+		}
+		else if (AARRamenBowlActor* BowlActor = Cast<AARRamenBowlActor>(Spawned))
+		{
+			BowlActor->ClearBowl();
+			const int32 FillStep = FMath::Clamp(Snapshot.BowlFillStep, 0, 3);
+			if (FillStep >= 1 && !BowlActor->TryApplyFillFromStation(
+				EARRamenStationType::Noodles,
+				Snapshot.BowlSpec.Noodles.Color,
+				Snapshot.BowlSpec.Noodles.MeatTag,
+				Snapshot.BowlSpec.Noodles.QualityTier))
+			{
+				Spawned->Destroy();
+				continue;
+			}
+
+			if (FillStep >= 2 && !BowlActor->TryApplyFillFromStation(
+				EARRamenStationType::Broth,
+				Snapshot.BowlSpec.Broth.Color,
+				Snapshot.BowlSpec.Broth.MeatTag,
+				Snapshot.BowlSpec.Broth.QualityTier))
+			{
+				Spawned->Destroy();
+				continue;
+			}
+
+			if (FillStep >= 3 && !BowlActor->TryApplyFillFromStation(
+				EARRamenStationType::Toppings,
+				Snapshot.BowlSpec.Toppings.Color,
+				Snapshot.BowlSpec.Toppings.MeatTag,
+				Snapshot.BowlSpec.Toppings.QualityTier))
+			{
+				Spawned->Destroy();
+				continue;
+			}
 		}
 
 		SanitizedSnapshots.Add(Snapshot);
@@ -704,7 +738,7 @@ bool AARShopGameMode::RestoreHeldShopItemSnapshot(UARShopCarryComponent* CarryCo
 	}
 
 	UClass* SpawnClass = Snapshot.ActorClass.LoadSynchronous();
-	if (!SpawnClass || !SpawnClass->IsChildOf(AARShopCarryItemBase::StaticClass()))
+	if (!SpawnClass || !SpawnClass->IsChildOf(AARCarryItemBase::StaticClass()))
 	{
 		UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Skipping invalid held item restore class '%s'."),
 			*Snapshot.ActorClass.ToSoftObjectPath().ToString());
@@ -713,7 +747,7 @@ bool AARShopGameMode::RestoreHeldShopItemSnapshot(UARShopCarryComponent* CarryCo
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AARShopCarryItemBase* SpawnedItem = World->SpawnActor<AARShopCarryItemBase>(SpawnClass, OwnerActor->GetActorTransform(), SpawnParams);
+	AARCarryItemBase* SpawnedItem = World->SpawnActor<AARCarryItemBase>(SpawnClass, OwnerActor->GetActorTransform(), SpawnParams);
 	if (!SpawnedItem)
 	{
 		return false;

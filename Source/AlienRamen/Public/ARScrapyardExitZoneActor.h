@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "ARScrapyardExitZoneActor.generated.h"
 
-class AARScrapyardCarryItemBase;
+class AARCarryItemBase;
 class AARScrapyardPlayerController;
 class AARScrapyardGameState;
 class AARPlayerStateBase;
@@ -33,12 +33,12 @@ public:
 
 	/** Withdraws a deposited item back into controller hands and refunds reserved scrap. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Exit")
-	bool TryWithdrawDepositedItem(AARScrapyardPlayerController* Controller, AARScrapyardCarryItemBase* ItemActor);
+	bool TryWithdrawDepositedItem(AARScrapyardPlayerController* Controller, AARCarryItemBase* ItemActor);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit", meta = (BlueprintAuthorityOnly))
-	TArray<AARScrapyardCarryItemBase*> GetDepositedItems() const;
+	TArray<AARCarryItemBase*> GetDepositedItems() const;
 
-	const TArray<TObjectPtr<AARScrapyardCarryItemBase>>& GetDepositedItemsRef() const;
+	const TArray<TObjectPtr<AARCarryItemBase>>& GetDepositedItemsRef() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit")
 	bool IsPlayerStateInsideExit(const AARPlayerStateBase* PlayerState) const;
@@ -46,7 +46,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|Exit")
 	int32 GetDepositedReservedScrapValue() const { return DepositedReservedScrapValue; }
 
-	void GatherHeldItemsInZone(TArray<AARScrapyardCarryItemBase*>& OutHeldItems) const;
+	void GatherHeldItemsInZone(TArray<AARCarryItemBase*>& OutHeldItems) const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Scrapyard|Exit")
 	FAROnScrapyardExitZoneChangedSignature OnExitZoneChanged;
@@ -90,7 +90,7 @@ protected:
 	TSet<TWeakObjectPtr<AARPlayerStateBase>> PlayerStatesInZone;
 
 	UPROPERTY(Transient)
-	TArray<TObjectPtr<AARScrapyardCarryItemBase>> DepositedItems;
+	TArray<TObjectPtr<AARCarryItemBase>> DepositedItems;
 
 	UPROPERTY(ReplicatedUsing = OnRep_DepositedReservedScrapValue, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Exit", meta = (AllowPrivateAccess = "true"))
 	int32 DepositedReservedScrapValue = 0;

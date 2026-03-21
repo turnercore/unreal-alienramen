@@ -14,8 +14,8 @@
 #include "ARSaveGame.h"
 #include "ARSaveIndexGame.h"
 #include "ARSaveUserSettings.h"
+#include "ARCarryItemBase.h"
 #include "ARShopCarryComponent.h"
-#include "ARShopCarryItemBase.h"
 #include "Components/SceneComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
@@ -259,9 +259,9 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 	TSet<const AActor*> HeldActors;
 	BuildHeldShopCarrySet(World, HeldActors);
 
-	for (TActorIterator<AARShopCarryItemBase> It(World); It; ++It)
+	for (TActorIterator<AARCarryItemBase> It(World); It; ++It)
 	{
-		AARShopCarryItemBase* CarryActor = *It;
+		AARCarryItemBase* CarryActor = *It;
 		if (!CarryActor || !IsValid(CarryActor))
 		{
 			continue;
@@ -269,10 +269,7 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 
 		const AAREnergyDrinkCarryItem* EnergyDrinkActor = Cast<AAREnergyDrinkCarryItem>(CarryActor);
 		const AARRamenMeatActor* MeatActor = Cast<AARRamenMeatActor>(CarryActor);
-		if (!EnergyDrinkActor && !MeatActor)
-		{
-			continue;
-		}
+		const AARRamenBowlActor* BowlActor = Cast<AARRamenBowlActor>(CarryActor);
 
 		if (HeldActors.Contains(CarryActor))
 		{
@@ -298,6 +295,11 @@ static void CaptureShopTransientCarryables(UWorld* World, TArray<FARShopTransien
 			Snapshot.MeatTag = MeatActor->GetMeatTag();
 			Snapshot.MeatQualityTier = MeatActor->GetMeatQualityTier();
 			Snapshot.MeatAmount = FMath::Max(1, MeatActor->GetMeatAmount());
+		}
+		if (BowlActor)
+		{
+			Snapshot.BowlSpec = BowlActor->GetBowlSpec();
+			Snapshot.BowlFillStep = FMath::Max(0, BowlActor->GetFillStep());
 		}
 	}
 

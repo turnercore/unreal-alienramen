@@ -39,7 +39,9 @@ Authoritative persisted fields currently include:
   - `ActiveRunBuffPayloads`
   - `ActiveRunBuffCycleId`
   - `ShopTransientCarryables`
+    - loose world carryables are persisted by class + transform
     - meat snapshots include `MeatQualityTier` (`EARVendingQualityTier`, default `Standard`)
+    - bowl snapshots include per-slot payload (`SlotType`, `Color`, slot `Item.Meat` tag, `QualityTier`) + `BowlFillStep`
 - Player payload:
   - `PlayerStates[]`:
     - `Identity` (optional online id/type, legacy id/name, shared-account primary/secondary profile flag)

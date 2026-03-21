@@ -510,6 +510,17 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](TArray<FARShopTransientCarryableSnapshot>& Snapshots)
 	{
 		bool bChanged = false;
+		auto SanitizeBowlSlot = [&SanitizeMeatQualityTier, &bChanged](
+			FARRamenBowlSlotSpec& Slot,
+			const EARRamenStationType ExpectedSlotType)
+		{
+			const EARAffinityColor OldColor = Slot.Color;
+			const EARRamenStationType OldSlotType = Slot.SlotType;
+			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
+			Slot.SlotType = ExpectedSlotType;
+			bChanged = bChanged || Slot.Color != OldColor || Slot.SlotType != OldSlotType || SanitizeMeatQualityTier(Slot.QualityTier);
+		};
+
 		for (int32 SnapshotIndex = Snapshots.Num() - 1; SnapshotIndex >= 0; --SnapshotIndex)
 		{
 			FARShopTransientCarryableSnapshot& Snapshot = Snapshots[SnapshotIndex];
@@ -526,11 +537,21 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				bChanged = true;
 			}
 
+			if (Snapshot.BowlFillStep < 0)
+			{
+				Snapshot.BowlFillStep = 0;
+				bChanged = true;
+			}
+
 			const bool bWasQualityTierInvalid = SanitizeMeatQualityTier(Snapshot.MeatQualityTier);
 			if (bWasQualityTierInvalid)
 			{
 				bChanged = true;
 			}
+
+			SanitizeBowlSlot(Snapshot.BowlSpec.Noodles, EARRamenStationType::Noodles);
+			SanitizeBowlSlot(Snapshot.BowlSpec.Broth, EARRamenStationType::Broth);
+			SanitizeBowlSlot(Snapshot.BowlSpec.Toppings, EARRamenStationType::Toppings);
 		}
 
 		if (bChanged)

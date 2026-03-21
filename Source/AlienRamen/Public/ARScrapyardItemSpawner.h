@@ -10,7 +10,7 @@
 #include "ARScrapyardTypes.h"
 #include "ARScrapyardItemSpawner.generated.h"
 
-class AARScrapyardCarryItemBase;
+class AARCarryItemBase;
 class AARGameStateBase;
 class UGameInstance;
 struct FARScrapyardSpawnCandidate;
@@ -24,13 +24,13 @@ public:
 	AARScrapyardItemSpawner();
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Spawner", meta = (BlueprintAuthorityOnly))
-	AARScrapyardCarryItemBase* TrySpawnItem(int32 OverrideSeed = 0);
+	AARCarryItemBase* TrySpawnItem(int32 OverrideSeed = 0);
 
 	// GameMode helper: build eligible items for this spawner (authority only).
 	bool BuildEligibleItems(const class AARGameStateBase* GameState, class UGameInstance* GameInstance, TArray<FARScrapyardSpawnCandidate>& OutCandidates) const;
 
 	// GameMode helper: spawn a specific item definition deterministically.
-	AARScrapyardCarryItemBase* SpawnItemByDefinition(const FARScrapyardItemDefRow& ItemDef, const FGameplayTag& ItemTag, int32 OverrideSeed = 0);
+	AARCarryItemBase* SpawnItemByDefinition(const FARScrapyardItemDefRow& ItemDef, const FGameplayTag& ItemTag, int32 OverrideSeed = 0);
 
 	bool HasSpawned() const { return bHasSpawned; }
 	void MarkSpawned() { bHasSpawned = true; }
@@ -59,7 +59,7 @@ protected:
 	EARScrapyardItemRarity MaxRarity = EARScrapyardItemRarity::Legendary;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")
-	TSubclassOf<AARScrapyardCarryItemBase> FallbackCarryItemClass;
+	TSubclassOf<AARCarryItemBase> FallbackCarryItemClass;
 
 	// When true, this spawner always attempts to spawn regardless of GameMode quotas/noise.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|Spawner")

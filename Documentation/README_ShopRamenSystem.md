@@ -15,7 +15,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARCustomerComponent` owns customer order state and serving evaluation.
   - `AARShopDispenserActor` owns generic item dispense flow (spawn + optional carry handoff + source consumption policy).
   - `AARShopStationActor` owns station slot/processing/stock runtime.
-  - `AARShopCarryItemBase` owns shared shop carry-item lifecycle (`ReleaseCarryItem`) for bowl/meat actors.
+  - `AARCarryItemBase` owns shared carry-item lifecycle (`ReleaseCarryItem`) for bowl/meat actors and the shared scrapyard carry contract.
   - `AARRamenBowlActor` owns bowl fill progression (strict sequence).
   - `AARMeatStorageBoxActor` is the meat-reserve specialization of `AARShopDispenserActor`.
 - **Dialogue-owned outcomes**:
@@ -127,18 +127,18 @@ This document captures the runtime ownership and integration contract for the sh
 
 ## World Carry Item Interaction
 
-- World carryables (`AARShopCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
+- World carryables (`AARCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
 - World carryables expose `ForwardSecondaryUseToController(AActor* UsingActor)` for BI-style held-secondary forwarding (consume/throw/etc via held-item secondary behavior).
 - World carryables expose `ForwardKickToController(AActor* UsingActor)` for BI-style world-item kick forwarding to controller kick requests (`AARPlayerController::RequestKickActor`).
 - `ForwardUseToController(...)` resolves `AARShopPlayerController` (direct controller or pawn owner controller) and routes to `RequestShopPickupCarryItem(...)`.
 - Shop station request APIs are intentionally owned by `AARShopPlayerController` (not `AARPlayerController`).
 - Shop-only interaction requests live on `AARShopPlayerController`:
   - `RequestShopUseOrDrop(AActor*)` for one-shot input routing (`ForwardUseToController` when target exists, fallback drop when null)
-  - `RequestShopPickupCarryItem(AARShopCarryItemBase*)`
+  - `RequestShopPickupCarryItem(AARCarryItemBase*)`
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
     - when `ThrowStrength <= 0`, server resolves throw power from thrower GAS `Strength` (`Strength * 100`, so default Strength `10` => throw strength `1000`)
-  - `RequestUseSecondaryOnHeldCarryItem()` generic held-secondary dispatch (routes to held item `AARShopCarryItemBase::UseSecondaryByController(...)`)
+  - `RequestUseSecondaryOnHeldCarryItem()` generic held-secondary dispatch (routes to held item `AARCarryItemBase::UseSecondaryByController(...)`)
   - `RequestShopStationPlaceHeldMeat(AARShopStationActor*)`
   - `RequestShopStationPickupMeat(AARShopStationActor*)`
   - `RequestShopStationStartProcessing(AARShopStationActor*)`
@@ -164,8 +164,8 @@ This document captures the runtime ownership and integration contract for the sh
 - `AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation(...)` performs a collision-adjusted fallback spawn (`AdjustIfPossibleButAlwaysSpawn`) when the engine default pawn spawn path fails at the chosen start, so blocked starts still produce a possessed pawn.
 - `HandleStartingNewPlayer(...)` performs a one-time corrective respawn when character identity drifts across the initial spawn pass (for example pre-spawn `Brother` -> post-spawn `Sister`), ensuring final spawn transform aligns with final character identity.
 - `HandleStartingNewPlayer(...)` performs a one-shot respawn retry only if the initial spawn path leaves the controller without a pawn, so direct-load/editor startup failures recover without requiring manual PIE restart.
-- `AARShopCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
-- `AARShopCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
+- `AARCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
+- `AARCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
 - Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
@@ -179,7 +179,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching runtime meat color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
   - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
-- `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
+- `AARCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
 
 ## Persistence + Replication
 
@@ -188,7 +188,8 @@ This document captures the runtime ownership and integration contract for the sh
 - Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*|red|white|blue|colorless|none>` supports explicit type-tag adds or color-token deterministic resolution.
 - Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
-- Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
+- Transient snapshot capture/restore scope includes loose world `AARCarryItemBase` instances (held/attached actors are excluded).
+- Type-specific payload restore is applied for supported runtime shop items (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`); other carryables restore class + transform.
 - Character-owned shop restore snapshots live in `UARSaveGame::CharacterStates[]` and currently capture:
   - shop character transform
   - held supported carryable snapshot (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`)

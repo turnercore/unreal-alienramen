@@ -7,7 +7,7 @@
 #include "ARPlayerStateBase.h"
 #include "ARRunBuffTypes.h"
 #include "ARRunBuffSubsystem.h"
-#include "ARScrapyardCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
 #include "ARSaveSubsystem.h"
 #include "ARTravelSubsystem.h"
@@ -150,7 +150,7 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 	BuildExtractionCandidates(Candidates);
 
 	int32 ReservedTotal = 0;
-	for (const TPair<TWeakObjectPtr<AARScrapyardCarryItemBase>, int32>& Pair : ReservedCostByItem)
+	for (const TPair<TWeakObjectPtr<AARCarryItemBase>, int32>& Pair : ReservedCostByItem)
 	{
 		ReservedTotal += FMath::Max(0, Pair.Value);
 	}
@@ -393,7 +393,7 @@ bool AARScrapyardGameState::FinalizeScrapyardRunAndTravelToShop(const FString& I
 	return true;
 }
 
-bool AARScrapyardGameState::ReserveScrapForItem(AARScrapyardCarryItemBase* ItemActor, int32& OutReservedCost)
+bool AARScrapyardGameState::ReserveScrapForItem(AARCarryItemBase* ItemActor, int32& OutReservedCost)
 {
 	OutReservedCost = 0;
 	if (!HasAuthority() || !ItemActor)
@@ -415,7 +415,7 @@ bool AARScrapyardGameState::ReserveScrapForItem(AARScrapyardCarryItemBase* ItemA
 	return true;
 }
 
-bool AARScrapyardGameState::RefundScrapForItem(AARScrapyardCarryItemBase* ItemActor, int32& OutRefundCost)
+bool AARScrapyardGameState::RefundScrapForItem(AARCarryItemBase* ItemActor, int32& OutRefundCost)
 {
 	OutRefundCost = 0;
 	if (!HasAuthority() || !ItemActor)
@@ -437,7 +437,7 @@ bool AARScrapyardGameState::RefundScrapForItem(AARScrapyardCarryItemBase* ItemAc
 	return true;
 }
 
-bool AARScrapyardGameState::ResolveItemDefinitionForActor(AARScrapyardCarryItemBase* ItemActor, FARScrapyardItemDefRow& OutDef) const
+bool AARScrapyardGameState::ResolveItemDefinitionForActor(AARCarryItemBase* ItemActor, FARScrapyardItemDefRow& OutDef) const
 {
 	OutDef = FARScrapyardItemDefRow();
 	if (!ItemActor)
@@ -448,7 +448,7 @@ bool AARScrapyardGameState::ResolveItemDefinitionForActor(AARScrapyardCarryItemB
 	return ResolveItemDefinitionForTag(ItemActor->GetScrapyardItemTag(), OutDef);
 }
 
-int32 AARScrapyardGameState::ResolveItemCostForActor(AARScrapyardCarryItemBase* ItemActor) const
+int32 AARScrapyardGameState::ResolveItemCostForActor(AARCarryItemBase* ItemActor) const
 {
 	if (!ItemActor)
 	{
@@ -464,12 +464,12 @@ int32 AARScrapyardGameState::ResolveItemCostForActor(AARScrapyardCarryItemBase* 
 	return FMath::Max(0, ItemActor->GetFallbackScrapCost());
 }
 
-bool AARScrapyardGameState::IsItemReservedForExtraction(AARScrapyardCarryItemBase* ItemActor) const
+bool AARScrapyardGameState::IsItemReservedForExtraction(AARCarryItemBase* ItemActor) const
 {
 	return ItemActor && ReservedCostByItem.Contains(ItemActor);
 }
 
-bool AARScrapyardGameState::TryGetReservedScrapForItem(AARScrapyardCarryItemBase* ItemActor, int32& OutReservedCost) const
+bool AARScrapyardGameState::TryGetReservedScrapForItem(AARCarryItemBase* ItemActor, int32& OutReservedCost) const
 {
 	OutReservedCost = 0;
 	if (!ItemActor)
@@ -625,7 +625,7 @@ void AARScrapyardGameState::RefreshExtractionSummary(bool bBroadcast)
 	NewSummary.CurrentScrap = GetScrap();
 
 	int32 ReservedTotal = 0;
-	for (const TPair<TWeakObjectPtr<AARScrapyardCarryItemBase>, int32>& Pair : ReservedCostByItem)
+	for (const TPair<TWeakObjectPtr<AARCarryItemBase>, int32>& Pair : ReservedCostByItem)
 	{
 		ReservedTotal += FMath::Max(0, Pair.Value);
 	}
@@ -694,7 +694,7 @@ void AARScrapyardGameState::BuildExtractionCandidates(TArray<FScrapyardExtractio
 {
 	OutCandidates.Reset();
 
-	TSet<TWeakObjectPtr<AARScrapyardCarryItemBase>> SeenItems;
+	TSet<TWeakObjectPtr<AARCarryItemBase>> SeenItems;
 	for (const TWeakObjectPtr<AARScrapyardExitZoneActor>& ExitZoneWeak : RegisteredExitZones)
 	{
 		AARScrapyardExitZoneActor* ExitZone = ExitZoneWeak.Get();
@@ -703,7 +703,7 @@ void AARScrapyardGameState::BuildExtractionCandidates(TArray<FScrapyardExtractio
 			continue;
 		}
 
-		for (AARScrapyardCarryItemBase* DepositedItem : ExitZone->GetDepositedItems())
+		for (AARCarryItemBase* DepositedItem : ExitZone->GetDepositedItems())
 		{
 			if (!DepositedItem || SeenItems.Contains(DepositedItem))
 			{
@@ -725,9 +725,9 @@ void AARScrapyardGameState::BuildExtractionCandidates(TArray<FScrapyardExtractio
 			}
 		}
 
-		TArray<AARScrapyardCarryItemBase*> HeldItemsInZone;
+		TArray<AARCarryItemBase*> HeldItemsInZone;
 		ExitZone->GatherHeldItemsInZone(HeldItemsInZone);
-		for (AARScrapyardCarryItemBase* HeldItem : HeldItemsInZone)
+		for (AARCarryItemBase* HeldItem : HeldItemsInZone)
 		{
 			if (!HeldItem || SeenItems.Contains(HeldItem))
 			{
@@ -836,7 +836,7 @@ bool AARScrapyardGameState::GrantRewardForCandidate(const FScrapyardExtractionCa
 
 void AARScrapyardGameState::CleanupCandidateActor(const FScrapyardExtractionCandidate& Candidate)
 {
-	if (AARScrapyardCarryItemBase* ItemActor = Candidate.ItemActor.Get())
+	if (AARCarryItemBase* ItemActor = Candidate.ItemActor.Get())
 	{
 		ReservedCostByItem.Remove(ItemActor);
 

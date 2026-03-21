@@ -5,7 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ARShopCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARShopRamenTypes.h"
 #include "ARRamenBowlActor.generated.h"
 
@@ -13,7 +13,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FARRamenBowlFillStepChangedSignature, int32, PreviousFillStep, int32, NewFillStep);
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARRamenBowlActor : public AARShopCarryItemBase
+class ALIENRAMEN_API AARRamenBowlActor : public AARCarryItemBase
 {
 	GENERATED_BODY()
 

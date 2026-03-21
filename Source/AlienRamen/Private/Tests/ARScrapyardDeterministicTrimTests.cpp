@@ -2,7 +2,7 @@
 
 #include "Misc/AutomationTest.h"
 
-#include "ARScrapyardCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
 #include "ARScrapyardGameState.h"
 #include "Engine/Engine.h"
@@ -29,14 +29,14 @@ namespace
 		return nullptr;
 	}
 
-	static void SetFallbackCost(AARScrapyardCarryItemBase* ItemActor, int32 FallbackCost)
+	static void SetFallbackCost(AARCarryItemBase* ItemActor, int32 FallbackCost)
 	{
 		if (!ItemActor)
 		{
 			return;
 		}
 
-		FIntProperty* FallbackCostProperty = FindFProperty<FIntProperty>(AARScrapyardCarryItemBase::StaticClass(), TEXT("FallbackScrapCost"));
+		FIntProperty* FallbackCostProperty = FindFProperty<FIntProperty>(AARCarryItemBase::StaticClass(), TEXT("FallbackScrapCost"));
 		if (FallbackCostProperty)
 		{
 			FallbackCostProperty->SetPropertyValue_InContainer(ItemActor, FMath::Max(0, FallbackCost));
@@ -48,7 +48,7 @@ namespace
 		int32 Seed,
 		AARScrapyardGameState*& OutGameState,
 		AARScrapyardExitZoneActor*& OutExitZone,
-		TArray<AARScrapyardCarryItemBase*>& OutItems)
+		TArray<AARCarryItemBase*>& OutItems)
 	{
 		OutGameState = nullptr;
 		OutExitZone = nullptr;
@@ -80,8 +80,8 @@ namespace
 		const int32 ItemCosts[3] = {9, 6, 6};
 		for (const int32 Cost : ItemCosts)
 		{
-			AARScrapyardCarryItemBase* ItemActor = TestWorld->SpawnActor<AARScrapyardCarryItemBase>(
-				AARScrapyardCarryItemBase::StaticClass(),
+			AARCarryItemBase* ItemActor = TestWorld->SpawnActor<AARCarryItemBase>(
+				AARCarryItemBase::StaticClass(),
 				FVector::ZeroVector,
 				FRotator::ZeroRotator,
 				SpawnParams);
@@ -96,7 +96,7 @@ namespace
 
 		OutGameState->StartScrapyardRun(999.0f, Seed);
 		OutGameState->SetScrapFromSave(12);
-		for (AARScrapyardCarryItemBase* ItemActor : OutItems)
+		for (AARCarryItemBase* ItemActor : OutItems)
 		{
 			int32 ReservedCost = 0;
 			if (!OutGameState->ReserveScrapForItem(ItemActor, ReservedCost))
@@ -106,8 +106,8 @@ namespace
 		}
 
 		auto& DepositedItems =
-			const_cast<TArray<TObjectPtr<AARScrapyardCarryItemBase>>&>(OutExitZone->GetDepositedItemsRef());
-		for (AARScrapyardCarryItemBase* ItemActor : OutItems)
+			const_cast<TArray<TObjectPtr<AARCarryItemBase>>&>(OutExitZone->GetDepositedItemsRef());
+		for (AARCarryItemBase* ItemActor : OutItems)
 		{
 			DepositedItems.Add(ItemActor);
 		}
@@ -140,7 +140,7 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 	{
 		AARScrapyardGameState* GameState = nullptr;
 		AARScrapyardExitZoneActor* ExitZone = nullptr;
-		TArray<AARScrapyardCarryItemBase*> Items;
+		TArray<AARCarryItemBase*> Items;
 		if (!BuildDeterminismScenario(TestWorld, 777, GameState, ExitZone, Items))
 		{
 			AddError(TEXT("Failed to build deterministic trim scenario."));
@@ -173,7 +173,7 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 		{
 			GameState->Destroy();
 		}
-		for (AARScrapyardCarryItemBase* ItemActor : Items)
+		for (AARCarryItemBase* ItemActor : Items)
 		{
 			if (IsValid(ItemActor))
 			{

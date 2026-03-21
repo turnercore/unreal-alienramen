@@ -1,10 +1,9 @@
 #include "ARScrapyardPlayerController.h"
 
 #include "ARLog.h"
-#include "ARScrapyardCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARScrapyardExitZoneActor.h"
 #include "ARScrapyardGameState.h"
-#include "ARShopCarryItemBase.h"
 #include "ARShopCarryComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
@@ -48,7 +47,7 @@ AARScrapyardPlayerController::AARScrapyardPlayerController()
 {
 }
 
-void AARScrapyardPlayerController::RequestScrapyardPickupCarryItem(AARScrapyardCarryItemBase* CarryItemActor)
+void AARScrapyardPlayerController::RequestScrapyardPickupCarryItem(AARCarryItemBase* CarryItemActor)
 {
 	if (!CarryItemActor)
 	{
@@ -87,7 +86,7 @@ void AARScrapyardPlayerController::RequestScrapyardPickupCarryItem(AARScrapyardC
 	ServerRequestScrapyardPickupCarryItem(CarryItemActor);
 }
 
-void AARScrapyardPlayerController::ServerRequestScrapyardPickupCarryItem_Implementation(AARScrapyardCarryItemBase* CarryItemActor)
+void AARScrapyardPlayerController::ServerRequestScrapyardPickupCarryItem_Implementation(AARCarryItemBase* CarryItemActor)
 {
 	RequestScrapyardPickupCarryItem(CarryItemActor);
 }
@@ -172,7 +171,7 @@ void AARScrapyardPlayerController::RequestUseSecondaryOnHeldCarryItem()
 	if (HasAuthority())
 	{
 		UARShopCarryComponent* CarryComponent = ResolveScrapyardCarryComponent(this);
-		AARShopCarryItemBase* HeldCarryItem = CarryComponent ? Cast<AARShopCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
+		AARCarryItemBase* HeldCarryItem = CarryComponent ? Cast<AARCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
 		if (!HeldCarryItem)
 		{
 			return;
@@ -227,7 +226,7 @@ void AARScrapyardPlayerController::ServerRequestScrapyardDepositToExit_Implement
 	RequestScrapyardDepositToExit(ExitZone);
 }
 
-void AARScrapyardPlayerController::RequestScrapyardWithdrawFromExit(AARScrapyardExitZoneActor* ExitZone, AARScrapyardCarryItemBase* ItemActor)
+void AARScrapyardPlayerController::RequestScrapyardWithdrawFromExit(AARScrapyardExitZoneActor* ExitZone, AARCarryItemBase* ItemActor)
 {
 	if (!ExitZone || !ItemActor)
 	{
@@ -253,7 +252,7 @@ void AARScrapyardPlayerController::RequestScrapyardWithdrawFromExit(AARScrapyard
 	ServerRequestScrapyardWithdrawFromExit(ExitZone, ItemActor);
 }
 
-void AARScrapyardPlayerController::ServerRequestScrapyardWithdrawFromExit_Implementation(AARScrapyardExitZoneActor* ExitZone, AARScrapyardCarryItemBase* ItemActor)
+void AARScrapyardPlayerController::ServerRequestScrapyardWithdrawFromExit_Implementation(AARScrapyardExitZoneActor* ExitZone, AARCarryItemBase* ItemActor)
 {
 	RequestScrapyardWithdrawFromExit(ExitZone, ItemActor);
 }

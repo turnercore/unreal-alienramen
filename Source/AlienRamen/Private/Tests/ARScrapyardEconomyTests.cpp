@@ -2,7 +2,7 @@
 
 #include "Misc/AutomationTest.h"
 
-#include "ARScrapyardCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARScrapyardGameState.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -52,8 +52,8 @@ bool FARScrapyardReserveRefundScrapTest::RunTest(const FString& Parameters)
 		FVector::ZeroVector,
 		FRotator::ZeroRotator,
 		SpawnParams);
-	AARScrapyardCarryItemBase* ItemActor = TestWorld->SpawnActor<AARScrapyardCarryItemBase>(
-		AARScrapyardCarryItemBase::StaticClass(),
+	AARCarryItemBase* ItemActor = TestWorld->SpawnActor<AARCarryItemBase>(
+		AARCarryItemBase::StaticClass(),
 		FVector::ZeroVector,
 		FRotator::ZeroRotator,
 		SpawnParams);
@@ -72,7 +72,7 @@ bool FARScrapyardReserveRefundScrapTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	FIntProperty* FallbackCostProperty = FindFProperty<FIntProperty>(AARScrapyardCarryItemBase::StaticClass(), TEXT("FallbackScrapCost"));
+	FIntProperty* FallbackCostProperty = FindFProperty<FIntProperty>(AARCarryItemBase::StaticClass(), TEXT("FallbackScrapCost"));
 	if (!TestNotNull(TEXT("FallbackScrapCost property found"), FallbackCostProperty))
 	{
 		ItemActor->Destroy();
