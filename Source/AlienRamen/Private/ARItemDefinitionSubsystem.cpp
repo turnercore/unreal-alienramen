@@ -393,7 +393,7 @@ int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue(const FARRamenBowlSlo
 		}
 	}
 
-	if (!MeatDef.ItemTag.IsValid())
+	if (!MeatDef.MeatTag.IsValid())
 	{
 		return 0;
 	}
