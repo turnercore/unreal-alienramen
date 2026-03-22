@@ -542,6 +542,11 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				Snapshot.BowlFillStep = 0;
 				bChanged = true;
 			}
+			else if (Snapshot.BowlFillStep > 3)
+			{
+				Snapshot.BowlFillStep = 3;
+				bChanged = true;
+			}
 
 			const bool bWasQualityTierInvalid = SanitizeMeatQualityTier(Snapshot.MeatQualityTier);
 			if (bWasQualityTierInvalid)
@@ -564,6 +569,8 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	auto SanitizeHeldShopItem =
 		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](FARCharacterHeldShopItemSnapshot& Snapshot, const TCHAR* FieldName)
 	{
+		bool bChanged = false;
+
 		if (Snapshot.MeatAmount < 1)
 		{
 			Snapshot.MeatAmount = 1;
@@ -584,16 +591,30 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			++ClampedCount;
 			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlFillStep was clamped to 0."), FieldName));
 		}
-
-		auto SanitizeHeldBowlSlot = [&SanitizeMeatQualityTier](FARRamenBowlSlotSpec& Slot, const EARRamenStationType ExpectedSlotType)
+		else if (Snapshot.BowlFillStep > 3)
 		{
+			Snapshot.BowlFillStep = 3;
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlFillStep was clamped to 3."), FieldName));
+		}
+
+		auto SanitizeHeldBowlSlot = [&SanitizeMeatQualityTier, &bChanged](FARRamenBowlSlotSpec& Slot, const EARRamenStationType ExpectedSlotType)
+		{
+			const EARAffinityColor OldColor = Slot.Color;
+			const EARRamenStationType OldSlotType = Slot.SlotType;
 			Slot.SlotType = ExpectedSlotType;
 			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
-			SanitizeMeatQualityTier(Slot.QualityTier);
+			bChanged = bChanged || Slot.Color != OldColor || Slot.SlotType != OldSlotType || SanitizeMeatQualityTier(Slot.QualityTier);
 		};
 		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Noodles, EARRamenStationType::Noodles);
 		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Broth, EARRamenStationType::Broth);
 		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Toppings, EARRamenStationType::Toppings);
+
+		if (bChanged)
+		{
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlSpec contained invalid bowl slot data and was normalized."), FieldName));
+		}
 	};
 
 	auto SanitizeVendingStockedBowls =
@@ -613,6 +634,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 		for (FARVendingStockedBowlEntry& Entry : Entries)
 		{
+			bChanged = bChanged || SanitizeMeatQualityTier(Entry.QualityTier);
 			SanitizeBowlSlot(Entry.BowlSpec.Noodles, EARRamenStationType::Noodles);
 			SanitizeBowlSlot(Entry.BowlSpec.Broth, EARRamenStationType::Broth);
 			SanitizeBowlSlot(Entry.BowlSpec.Toppings, EARRamenStationType::Toppings);

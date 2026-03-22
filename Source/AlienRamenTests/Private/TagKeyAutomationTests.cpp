@@ -101,7 +101,7 @@ bool FTagKey_OverlapRootsPreferMostSpecificRouteTest::RunTest(const FString& Par
 
 	FTagKeyProjectRoute ChildRoute;
 	ChildRoute.RootTag = ChildRoot;
-	ChildRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Meat.DT_Meat")));
+	ChildRoute.DataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(TEXT("/Game/Data/DT_Meats.DT_Meats")));
 
 	Settings->ProjectRoutes = { ParentRoute, ChildRoute };
 

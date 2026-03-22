@@ -289,6 +289,7 @@ bool AARShopGameMode::QueueVendingStockedBowl(const FARVendingStockedBowlEntry& 
 	SanitizedEntry.BowlSpec.Noodles.Color = SanitizeColor(SanitizedEntry.BowlSpec.Noodles.Color);
 	SanitizedEntry.BowlSpec.Broth.Color = SanitizeColor(SanitizedEntry.BowlSpec.Broth.Color);
 	SanitizedEntry.BowlSpec.Toppings.Color = SanitizeColor(SanitizedEntry.BowlSpec.Toppings.Color);
+	SanitizedEntry.QualityTier = SanitizeQuality(SanitizedEntry.QualityTier);
 	SanitizedEntry.BowlSpec.Noodles.QualityTier = SanitizeQuality(SanitizedEntry.BowlSpec.Noodles.QualityTier);
 	SanitizedEntry.BowlSpec.Broth.QualityTier = SanitizeQuality(SanitizedEntry.BowlSpec.Broth.QualityTier);
 	SanitizedEntry.BowlSpec.Toppings.QualityTier = SanitizeQuality(SanitizedEntry.BowlSpec.Toppings.QualityTier);

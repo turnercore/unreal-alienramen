@@ -12,6 +12,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "Misc/ScopeExit.h"
 
 namespace
 {
@@ -52,6 +53,18 @@ bool FARScrapyardExitZoneDepositWithdrawContractTest::RunTest(const FString& Par
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+	TArray<TWeakObjectPtr<AActor>> SpawnedActors;
+	ON_SCOPE_EXIT
+	{
+		for (TWeakObjectPtr<AActor>& SpawnedActor : SpawnedActors)
+		{
+			if (AActor* Actor = SpawnedActor.Get())
+			{
+				Actor->Destroy();
+			}
+		}
+	};
+
 	AARScrapyardGameState* ScrapyardGameState = TestWorld->SpawnActor<AARScrapyardGameState>(
 		AARScrapyardGameState::StaticClass(),
 		FVector::ZeroVector,
@@ -82,6 +95,31 @@ bool FARScrapyardExitZoneDepositWithdrawContractTest::RunTest(const FString& Par
 		FVector(500.0f, 20.0f, 100.0f),
 		FRotator::ZeroRotator,
 		SpawnParams);
+
+	if (ScrapyardGameState)
+	{
+		SpawnedActors.Add(ScrapyardGameState);
+	}
+	if (ExitZone)
+	{
+		SpawnedActors.Add(ExitZone);
+	}
+	if (Controller)
+	{
+		SpawnedActors.Add(Controller);
+	}
+	if (PlayerState)
+	{
+		SpawnedActors.Add(PlayerState);
+	}
+	if (Pawn)
+	{
+		SpawnedActors.Add(Pawn);
+	}
+	if (ItemActor)
+	{
+		SpawnedActors.Add(ItemActor);
+	}
 
 	if (!TestNotNull(TEXT("Spawned scrapyard game state"), ScrapyardGameState)
 		|| !TestNotNull(TEXT("Spawned scrapyard exit zone"), ExitZone)

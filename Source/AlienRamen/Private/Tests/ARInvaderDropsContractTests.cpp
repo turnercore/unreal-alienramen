@@ -36,10 +36,10 @@ bool FARInvaderDropDirectorSettingsDefaultsTest::RunTest(const FString& Paramete
 		return false;
 	}
 
-	TestEqual(TEXT("Legacy default enemy drop chance starts at 0.5"), Settings->DefaultEnemyDropChance, 0.5f);
+	TestEqual(TEXT("Default enemy drop chance starts at 0.5"), Settings->DefaultEnemyDropChance, 0.5f);
 	TestEqual(TEXT("Default scrap drop chance starts at 0.5"), Settings->DefaultEnemyScrapDropChance, 0.5f);
 	TestEqual(TEXT("Default meat drop chance starts at 0.2"), Settings->DefaultEnemyMeatDropChance, 0.2f);
-	TestEqual(TEXT("Legacy drop variance fraction starts at 0.25"), Settings->DropAmountVarianceFraction, 0.25f);
+	TestEqual(TEXT("Default drop variance fraction starts at 0.25"), Settings->DropAmountVarianceFraction, 0.25f);
 	TestEqual(TEXT("Scrap drop variance fraction starts at 0.25"), Settings->ScrapDropAmountVarianceFraction, 0.25f);
 	TestEqual(TEXT("Meat drop variance fraction starts at 0.25"), Settings->MeatDropAmountVarianceFraction, 0.25f);
 	TestTrue(

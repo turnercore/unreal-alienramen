@@ -170,13 +170,13 @@ bool FARShopCustomerColorlessAndNoneMatchingTest::RunTest(const FString& Paramet
 	TestEqual(TEXT("None request matches only none served color"), NoneExactResult.MatchedColorCount, 1);
 	TestEqual(TEXT("None match maps to Ok"), NoneExactResult.Reaction, EARRamenTasteReaction::Ok);
 
-	FARRamenBowlSpec RedOnlyBowl;
-	RedOnlyBowl.Noodles.Color = EARAffinityColor::Red;
-	RedOnlyBowl.Broth.Color = EARAffinityColor::None;
-	RedOnlyBowl.Toppings.Color = EARAffinityColor::None;
+	FARRamenBowlSpec NonNoneBowl;
+	NonNoneBowl.Noodles.Color = EARAffinityColor::Red;
+	NonNoneBowl.Broth.Color = EARAffinityColor::Blue;
+	NonNoneBowl.Toppings.Color = EARAffinityColor::White;
 	const FARRamenServeResult NoneMismatchResult = UARCustomerComponent::EvaluateServeResult(
 		NoneOrder,
-		RedOnlyBowl,
+		NonNoneBowl,
 		/*bUsePickyExactRule=*/false,
 		0,
 		1,

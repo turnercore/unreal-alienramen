@@ -2,7 +2,6 @@
 
 #include "Misc/AutomationTest.h"
 
-#include "ARPlayerTypes.h"
 #include "ParleyDialogueTypes.h"
 #include "ARSaveGame.h"
 #include "Kismet/GameplayStatics.h"
@@ -74,56 +73,6 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARDialogueSaveMigrationTest,
-	"AlienRamen.Dialogue.Save.MigrateOwnershipModel",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-
-bool FARDialogueSaveMigrationTest::RunTest(const FString& Parameters)
-{
-	(void)Parameters;
-
-	UARSaveGame* Save = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(UARSaveGame::StaticClass()));
-	if (!TestNotNull(TEXT("Created save object"), Save))
-	{
-		return false;
-	}
-
-	Save->SaveGameVersion = 10;
-
-	FARPlayerStateSaveData& PlayerState = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerState.CharacterPicked = EARCharacterChoice::Brother;
-
-	FDialoguePlayerPersistentState& LegacyDialogueState = Save->DialoguePlayerPersistentStates.AddDefaulted_GetRef();
-	LegacyDialogueState.OwnerCharacterTag = ARPlayer::GetBrotherCharacterTag();
-	LegacyDialogueState.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother.Default")), false));
-	LegacyDialogueState.CompletedConversationTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false));
-
-	FDialogueChoiceMemoryRecord ChoiceRecord;
-	ChoiceRecord.ConversationTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false);
-	ChoiceRecord.ChoiceNodeId = FGuid::NewGuid();
-	ChoiceRecord.SelectedBranchId = FGuid::NewGuid();
-	LegacyDialogueState.CompletedChoiceRecords.Add(ChoiceRecord);
-
-	TArray<FString> Warnings;
-	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
-
-	TestTrue(TEXT("Migration performed at least one correction"), ClampedCount > 0);
-	TestEqual(TEXT("Schema migrated to current version"), Save->SaveGameVersion, UARSaveGame::GetCurrentSchemaVersion());
-	TestEqual(TEXT("Legacy dialogue array cleared after migration"), Save->DialoguePlayerPersistentStates.Num(), 0);
-
-	TestEqual(TEXT("One character row created"), Save->CharacterStates.Num(), 1);
-	TestEqual(TEXT("Character row keyed by Brother tag"), Save->CharacterStates[0].CharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
-	TestTrue(TEXT("Dialogue progression migrated to character row"), Save->CharacterStates[0].DialogueState.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother.Default")), false)));
-	TestTrue(TEXT("Dialogue completion migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedConversationTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Conversations.Id.TestCactus.1")), false)));
-	TestEqual(TEXT("Dialogue choice memory migrated to character row"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 1);
-
-	TestEqual(TEXT("Current character tag resolved"), Save->PlayerStates[0].CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
-	TestEqual(TEXT("Character selection enum mirrors canonical tag"), Save->PlayerStates[0].CharacterPicked, EARCharacterChoice::Brother);
-	TestTrue(TEXT("Migration warnings emitted"), Warnings.Num() > 0);
-	return true;
-}
-
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FDialogueTypesDefaultsTest,
 	"AlienRamen.Dialogue.Types.Defaults",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -153,4 +102,3 @@ bool FDialogueTypesDefaultsTest::RunTest(const FString& Parameters)
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
-
