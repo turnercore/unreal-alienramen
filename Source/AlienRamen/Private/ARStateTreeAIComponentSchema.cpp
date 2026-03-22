@@ -6,36 +6,14 @@
 UARStateTreeAIComponentSchema::UARStateTreeAIComponentSchema(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	AIControllerClass = AAREnemyAIController::StaticClass();
-	ContextActorClass = AAREnemyBase::StaticClass();
-	SyncContextDescriptorTypes();
 }
 
-void UARStateTreeAIComponentSchema::PostLoad()
+UClass* UARStateTreeAIComponentSchema::ResolveContextActorClass() const
 {
-	Super::PostLoad();
-	SyncContextDescriptorTypes();
+	return AAREnemyBase::StaticClass();
 }
 
-#if WITH_EDITOR
-void UARStateTreeAIComponentSchema::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
+UClass* UARStateTreeAIComponentSchema::ResolveAIControllerClass() const
 {
-	Super::PostEditChangeChainProperty(PropertyChangedEvent);
-	SyncContextDescriptorTypes();
-}
-#endif
-
-void UARStateTreeAIComponentSchema::SyncContextDescriptorTypes()
-{
-	ContextActorClass = AAREnemyBase::StaticClass();
-	AIControllerClass = AAREnemyAIController::StaticClass();
-
-	if (ContextDataDescs.IsValidIndex(0))
-	{
-		ContextDataDescs[0].Struct = ContextActorClass.Get();
-	}
-	if (ContextDataDescs.IsValidIndex(1))
-	{
-		ContextDataDescs[1].Struct = AIControllerClass.Get();
-	}
+	return AAREnemyAIController::StaticClass();
 }

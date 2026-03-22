@@ -14,28 +14,6 @@ namespace
 	{
 		return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
 	}
-
-	static FGameplayTag ResolveItemRootTag()
-	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
-	}
-
-	static FName ExtractLeafRowNameFromTag(const FGameplayTag Tag)
-	{
-		if (!Tag.IsValid())
-		{
-			return NAME_None;
-		}
-
-		const FString TagString = Tag.ToString();
-		int32 LastDotIndex = INDEX_NONE;
-		if (TagString.FindLastChar(TEXT('.'), LastDotIndex) && LastDotIndex >= 0 && LastDotIndex < TagString.Len() - 1)
-		{
-			return FName(*TagString.Mid(LastDotIndex + 1));
-		}
-
-		return FName(*TagString);
-	}
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemDefinition(const FGameplayTag ItemTag, FARScrapyardItemDefRow& OutItemDef) const
@@ -96,18 +74,7 @@ bool UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition(
 	{
 		return true;
 	}
-
-	if (ItemDef.RunBuffGameplayEffects.IsEmpty() && ItemDef.RunBuffGrantedTags.IsEmpty())
-	{
-		return false;
-	}
-
-	OutEnergyDrinkDef.EnergyDrinkTag = LinkedEnergyDrinkTag;
-	OutEnergyDrinkDef.RunBuffGameplayEffects = ItemDef.RunBuffGameplayEffects;
-	OutEnergyDrinkDef.RunBuffGrantedTags = ItemDef.RunBuffGrantedTags;
-	OutEnergyDrinkDef.StackRule = ItemDef.StackRule;
-	OutEnergyDrinkDef.MaxStackCount = FMath::Max(1, ItemDef.MaxStackCount);
-	return true;
+	return false;
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemActorClass(const FGameplayTag ItemTag, TSubclassOf<AActor>& OutActorClass) const
@@ -356,52 +323,10 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 		return false;
 	}
 
-	auto TryResolveViaItemRootRowName = [this, Resolver, ItemTag, &OutItemDef]() -> bool
-	{
-		const FGameplayTag ItemRootTag = ResolveItemRootTag();
-		const FGameplayTag MeatRootTag = ResolveMeatRootTag();
-		if (!ItemRootTag.IsValid() || !MeatRootTag.IsValid() || !ItemTag.MatchesTag(MeatRootTag))
-		{
-			return false;
-		}
-
-		UDataTable* ItemDataTable = nullptr;
-		FString ItemTableResolveError;
-		if (!Resolver->TryResolveDataTableForRootTag(ItemRootTag, ItemDataTable, ItemTableResolveError) || !ItemDataTable)
-		{
-			return false;
-		}
-
-		const FName ItemRowName = ExtractLeafRowNameFromTag(ItemTag);
-		if (ItemRowName.IsNone())
-		{
-			return false;
-		}
-
-		const FARScrapyardItemDefRow* ItemRow = ItemDataTable->FindRow<FARScrapyardItemDefRow>(ItemRowName, TEXT("ResolveItemDefinition_ItemRootFallback"), false);
-		if (!ItemRow)
-		{
-			return false;
-		}
-
-		OutItemDef = *ItemRow;
-		if (!OutItemDef.ItemTag.IsValid())
-		{
-			OutItemDef.ItemTag = ItemTag;
-		}
-		ApplyKnowledgeTextFallback(ItemTag, OutItemDef);
-		return true;
-	};
-
 	FInstancedStruct RowData;
 	FString ResolveError;
 	if (!Resolver->TryResolveRowStructForTag(ItemTag, RowData, ResolveError))
 	{
-		if (TryResolveViaItemRootRowName())
-		{
-			return true;
-		}
-
 		UE_LOG(
 			ARLog,
 			Warning,
@@ -414,11 +339,6 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 	const FARScrapyardItemDefRow* TypedDef = RowData.GetPtr<FARScrapyardItemDefRow>();
 	if (!TypedDef)
 	{
-		if (TryResolveViaItemRootRowName())
-		{
-			return true;
-		}
-
 		UE_LOG(
 			ARLog,
 			Warning,

@@ -52,10 +52,10 @@ void AARPlayerCharacterBase::RefreshParleySpeakerFromPlayerState()
 	switch (ARPlayer::GetCharacterChoiceForTag(CharacterTag))
 	{
 	case EARCharacterChoice::Brother:
-		ParleySpeakerComponent->SetSpeakerTag(ARPlayer::GetBrotherCharacterTag());
+		ParleySpeakerComponent->SetSpeakerTag(ARPlayer::GetBrotherParleySpeakerTag());
 		break;
 	case EARCharacterChoice::Sister:
-		ParleySpeakerComponent->SetSpeakerTag(ARPlayer::GetSisterCharacterTag());
+		ParleySpeakerComponent->SetSpeakerTag(ARPlayer::GetSisterParleySpeakerTag());
 		break;
 	default:
 		break;

@@ -13,7 +13,6 @@ class UDataTable;
 class UARInvaderWaveRowProxy;
 class UARInvaderStageRowProxy;
 class UARInvaderSpawnProxy;
-class UARInvaderPIESaveLoadedBridge;
 class SInvaderWaveCanvas;
 class FSpawnTabArgs;
 class SDockTab;
@@ -289,7 +288,6 @@ private:
 	TStrongObjectPtr<UARInvaderWaveRowProxy> WaveProxy;
 	TStrongObjectPtr<UARInvaderStageRowProxy> StageProxy;
 	TStrongObjectPtr<UARInvaderSpawnProxy> SpawnProxy;
-	TStrongObjectPtr<UARInvaderPIESaveLoadedBridge> PIESaveLoadedBridge;
 
 	bool bApplyingProxyToModel = false;
 	bool bSyncingSpawnSelection = false;

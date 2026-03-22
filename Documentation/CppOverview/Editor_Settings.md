@@ -9,7 +9,6 @@ Purpose:
 Key fields:
 - Data tables: `WaveDataTable`, `StageDataTable`
 - Enemy palette source folder: `EnemiesFolder`
-- Persistence: `bAutoSaveTablesOnEdit`
 - Backups: `bCreateBackupOnToolOpen`, `BackupRetentionCount`, `BackupsFolder`
 - PIE bootstrap:
 - `bEnablePIESaveBootstrap`
@@ -28,5 +27,4 @@ Purpose:
 Key fields:
 - Testing: `DefaultTestMap`, `LastSeed`
 - Palette: `FavoriteEnemyClasses`, `EnemyClassShapeCycles`
-- Preview toggles: `bHideOtherLayersInWavePreview`, `bShowApproximatePreviewBanner`
-
+- Preview toggles: `bHideOtherLayersInWavePreview`

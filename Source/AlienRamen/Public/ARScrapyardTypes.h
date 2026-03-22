@@ -107,13 +107,6 @@ struct ALIENRAMEN_API FARScrapyardItemDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	FGameplayTag ProgressionRewardTag;
 
-	// Legacy inline run-buff payload (prefer FAREnergyDrinkDefRow via Item.EnergyDrink route).
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
-	TArray<TSubclassOf<UGameplayEffect>> RunBuffGameplayEffects;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
-	FGameplayTagContainer RunBuffGrantedTags;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard", meta = (ClampMin = "0", UIMin = "0"))
 	int32 SellMoneyValue = 0;
 

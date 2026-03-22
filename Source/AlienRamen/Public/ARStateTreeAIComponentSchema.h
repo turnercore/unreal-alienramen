@@ -5,7 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/StateTreeAIComponentSchema.h"
+#include "ARTypedStateTreeAIComponentSchema.h"
 
 #include "ARStateTreeAIComponentSchema.generated.h"
 
@@ -16,19 +16,14 @@
  * - ContextActorClass: AAREnemyBase
  */
 UCLASS(BlueprintType, EditInlineNew, CollapseCategories, meta = (DisplayName = "AR StateTree AI Schema", CommonSchema))
-class ALIENRAMEN_API UARStateTreeAIComponentSchema : public UStateTreeAIComponentSchema
+class ALIENRAMEN_API UARStateTreeAIComponentSchema : public UARTypedStateTreeAIComponentSchema
 {
 	GENERATED_BODY()
 
 public:
 	UARStateTreeAIComponentSchema(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	virtual void PostLoad() override;
-
-#if WITH_EDITOR
-	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
-#endif
-
 private:
-	void SyncContextDescriptorTypes();
+	virtual UClass* ResolveContextActorClass() const override;
+	virtual UClass* ResolveAIControllerClass() const override;
 };

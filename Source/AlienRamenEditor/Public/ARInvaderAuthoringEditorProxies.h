@@ -44,18 +44,3 @@ public:
 	UPROPERTY(EditAnywhere, Category = "", meta=(ShowOnlyInnerProperties))
 	FARWaveEnemySpawnDef Spawn;
 };
-
-UCLASS(Transient)
-class ALIENRAMENEDITOR_API UARInvaderPIESaveLoadedBridge : public UObject
-{
-	GENERATED_BODY()
-
-public:
-	void Configure(FSimpleDelegate InOnLoaded);
-
-	UFUNCTION()
-	void HandleSignalOnGameLoaded();
-
-private:
-	FSimpleDelegate OnLoaded;
-};

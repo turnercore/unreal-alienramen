@@ -54,8 +54,7 @@ public:
 		FGameplayTag SignalTag,
 		AActor* RelatedActor = nullptr,
 		FVector WorldLocation = FVector::ZeroVector,
-		float ScalarValue = 0.f,
-		bool bForwardToStateTree = true) override;
+		float ScalarValue = 0.f) override;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

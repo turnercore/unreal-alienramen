@@ -18,7 +18,6 @@
 #include "ARSaveUserSettings.h"
 #include "ARCarryItemBase.h"
 #include "ARShopCarryComponent.h"
-#include "ARModeMapPathUtility.h"
 #include "Components/SceneComponent.h"
 #include "Async/Async.h"
 #include "Engine/World.h"
@@ -136,53 +135,6 @@ static bool IsShopModeWorld(const UWorld* World)
 	const AARGameModeBase* GameMode = Cast<AARGameModeBase>(World->GetAuthGameMode());
 	const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
 	return GameMode && ShopModeTag.IsValid() && GameMode->GetModeTag() == ShopModeTag;
-}
-
-static int32 BackfillLegacySaveLocationMetadata(UARSaveGame* SaveGame, const UWorld* World, TArray<FString>* OutWarnings)
-{
-	if (!SaveGame)
-	{
-		return 0;
-	}
-
-	int32 ChangeCount = 0;
-	if (!SaveGame->LastSavedModeTag.IsValid())
-	{
-		const AARGameModeBase* GameMode = World ? Cast<AARGameModeBase>(World->GetAuthGameMode()) : nullptr;
-		if (GameMode && GameMode->GetModeTag().IsValid())
-		{
-			SaveGame->LastSavedModeTag = GameMode->GetModeTag();
-			++ChangeCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("Loaded legacy save had no saved mode tag; it was backfilled from the current world."));
-			}
-		}
-	}
-
-	if (SaveGame->LastSavedMapPath.IsEmpty())
-	{
-		FString BackfilledMapPath = ARModeMapPath::ResolveDefaultMapPathForModeTag(SaveGame->LastSavedModeTag);
-		if (BackfilledMapPath.IsEmpty() && World)
-		{
-			if (const UPackage* WorldPackage = World->PersistentLevel ? World->PersistentLevel->GetOutermost() : nullptr)
-			{
-				BackfilledMapPath = WorldPackage->GetName();
-			}
-		}
-
-		if (!BackfilledMapPath.IsEmpty())
-		{
-			SaveGame->LastSavedMapPath = BackfilledMapPath;
-			++ChangeCount;
-			if (OutWarnings)
-			{
-				OutWarnings->Add(TEXT("Loaded legacy save had no saved map path; it was backfilled for save-load travel compatibility."));
-			}
-		}
-	}
-
-	return ChangeCount;
 }
 
 static void BuildHeldShopCarrySet(const UWorld* World, TSet<const AActor*>& OutHeldActors)
@@ -1729,7 +1681,6 @@ bool UARSaveSubsystem::LoadGame(FName SlotBaseName, int32 RevisionOrLatest, FARS
 
 	TArray<FString> Warnings;
 	OutResult.ClampedFieldCount = LoadedSave->ValidateAndSanitize(&Warnings);
-	OutResult.ClampedFieldCount += ARSaveInternal::BackfillLegacySaveLocationMetadata(LoadedSave, GetWorld(), &Warnings);
 	for (const FString& Warning : Warnings)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[SaveSubsystem] %s"), *Warning);

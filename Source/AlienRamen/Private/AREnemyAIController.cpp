@@ -506,21 +506,15 @@ bool AAREnemyAIController::ReceivePawnSignal(
 	FGameplayTag SignalTag,
 	AActor* RelatedActor,
 	FVector WorldLocation,
-	float ScalarValue,
-	bool bForwardToStateTree)
+	float ScalarValue)
 {
-	if (!Super::ReceivePawnSignal(SignalTag, RelatedActor, WorldLocation, ScalarValue, bForwardToStateTree))
+	if (!Super::ReceivePawnSignal(SignalTag, RelatedActor, WorldLocation, ScalarValue))
 	{
 		return false;
 	}
 
-	if (bForwardToStateTree)
-	{
-		const FName Origin = RelatedActor ? FName(*GetNameSafe(RelatedActor)) : NAME_None;
-		return SendStateTreeEventByTag(SignalTag, Origin);
-	}
-
-	return true;
+	const FName Origin = RelatedActor ? FName(*GetNameSafe(RelatedActor)) : NAME_None;
+	return SendStateTreeEventByTag(SignalTag, Origin);
 }
 
 void AAREnemyAIController::StopStateTree(const FString& Reason)

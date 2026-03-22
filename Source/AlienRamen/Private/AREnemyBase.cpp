@@ -1433,8 +1433,7 @@ bool AAREnemyBase::SendEnemySignalToController(
 	FGameplayTag SignalTag,
 	AActor* RelatedActor,
 	FVector WorldLocation,
-	float ScalarValue,
-	bool bForwardToStateTree)
+	float ScalarValue)
 {
 	if (!HasAuthority() || !SignalTag.IsValid())
 	{
@@ -1456,8 +1455,7 @@ bool AAREnemyBase::SendEnemySignalToController(
 			SignalTag,
 			RelatedActor,
 			WorldLocation,
-			ScalarValue,
-			bForwardToStateTree);
+			ScalarValue);
 	}
 
 	UE_LOG(ARLog, Warning, TEXT("[EnemyBase] SendEnemySignalToController failed for '%s': no enemy AI controller (Signal=%s)."),

@@ -1,17 +1,17 @@
 #include "ARPlayerASCAttributeWidgetBase.h"
 
+#include "ARASCAttributeWidgetShared.h"
 #include "ARAttributeSetCore.h"
 
 void UARPlayerASCAttributeWidgetBase::BuildTrackedAttributeDefinitions(TArray<FARASCTrackedAttributeDefinition>& OutDefinitions) const
 {
 	OutDefinitions.Reset();
 
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetHealthAttribute(), TEXT("Health"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetMaxHealthAttribute(), TEXT("MaxHealth"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetSpiceAttribute(), TEXT("Spice"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetMaxSpiceAttribute(), TEXT("MaxSpice"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetMoveSpeedAttribute(), TEXT("MoveSpeed"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetStrengthAttribute(), TEXT("Strength"));
+	ARASCAttributeWidgetShared::AddCoreTrackedAttributes(
+		[this, &OutDefinitions](const FGameplayAttribute& Attribute, const TCHAR* Name)
+		{
+			AddTrackedAttributeDefinition(OutDefinitions, Attribute, Name);
+		});
 
 	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetDamageAttribute(), TEXT("Damage"));
 	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetFireRateAttribute(), TEXT("FireRate"));
@@ -32,7 +32,7 @@ void UARPlayerASCAttributeWidgetBase::HandleTrackedAttributeValueChanged(
 	Super::HandleTrackedAttributeValueChanged(RuntimeState, NewValue, OldValue);
 
 	EARCoreAttributeType CoreAttributeType = EARCoreAttributeType::Health;
-	if (TryResolveCoreAttributeType(RuntimeState.Attribute, CoreAttributeType))
+	if (ARASCAttributeWidgetShared::TryResolveCoreAttributeType(RuntimeState.Attribute, CoreAttributeType))
 	{
 		OnPlayerASCWidgetCoreAttributeChanged.Broadcast(CoreAttributeType, NewValue, OldValue);
 		BP_OnPlayerASCWidgetCoreAttributeChanged(CoreAttributeType, NewValue, OldValue);
@@ -52,48 +52,6 @@ void UARPlayerASCAttributeWidgetBase::HandleTrackedAttributeValueChanged(
 		BP_OnPlayerASCWidgetHatAttributeChanged(HatAttributeType, NewValue, OldValue);
 	}
 }
-
-bool UARPlayerASCAttributeWidgetBase::TryResolveCoreAttributeType(const FGameplayAttribute& Attribute, EARCoreAttributeType& OutType)
-{
-	if (Attribute == UARAttributeSetCore::GetHealthAttribute())
-	{
-		OutType = EARCoreAttributeType::Health;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetMaxHealthAttribute())
-	{
-		OutType = EARCoreAttributeType::MaxHealth;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetSpiceAttribute())
-	{
-		OutType = EARCoreAttributeType::Spice;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetMaxSpiceAttribute())
-	{
-		OutType = EARCoreAttributeType::MaxSpice;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetMoveSpeedAttribute())
-	{
-		OutType = EARCoreAttributeType::MoveSpeed;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetStrengthAttribute())
-	{
-		OutType = EARCoreAttributeType::Strength;
-		return true;
-	}
-
-	return false;
-}
-
 bool UARPlayerASCAttributeWidgetBase::TryResolvePrimaryAttributeType(
 	const FGameplayAttribute& Attribute,
 	EARPlayerPrimaryCombatAttributeType& OutType)

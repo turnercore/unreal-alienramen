@@ -78,7 +78,6 @@ protected:
 	void BP_OnPlayerASCWidgetHatAttributeChanged(EARPlayerHatAttributeType AttributeType, float NewValue, float OldValue);
 
 private:
-	static bool TryResolveCoreAttributeType(const FGameplayAttribute& Attribute, EARCoreAttributeType& OutType);
 	static bool TryResolvePrimaryAttributeType(const FGameplayAttribute& Attribute, EARPlayerPrimaryCombatAttributeType& OutType);
 	static bool TryResolveHatAttributeType(const FGameplayAttribute& Attribute, EARPlayerHatAttributeType& OutType);
 };
