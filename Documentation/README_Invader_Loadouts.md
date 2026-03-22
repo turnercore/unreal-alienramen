@@ -26,8 +26,8 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - Ship rows use `FARShipDefRow` (`Unlock.Ship.*`) and expose:
   - identity: `DisplayName`, `Description`
   - baseline gameplay: `Stats`, `PrimaryWeapon`, `StartupAbilities`, `StartupEffects`, `ShipTags`, `MovementType`
-  - mode-specific pawn classes: `ScrapyardPawnClass`, `DummyPawnClass`, `InvaderPawnClass`
-- Runtime consumers resolve ship fields by property name (reflection), so these names are contract-critical and should remain stable.
+  - mode-specific pawn classes: `ScrapyardPawnClass`, `InvaderPawnClass`
+- Runtime consumers resolve ship rows as typed `FARShipDefRow` contracts (no reflective fallback prefixes).
 - Ship baseline hydrate logs now explicitly warn when `StartupAbilities` is missing on the resolved row struct and print that struct's property list to speed up `DT_Ships` contract debugging after row/schema rebuilds.
 
 ## Gravity Frame Notes

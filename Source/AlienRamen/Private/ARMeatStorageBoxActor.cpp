@@ -319,7 +319,7 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 			DepositColor = SanitizeColor(MeatColor);
 		}
 
-		if (!ItemDefinitions->ResolveFirstMeatTagForColor(DepositColor, DepositMeatTag))
+		if (!ItemDefinitions->ResolveFirstMeatTag(DepositMeatTag))
 		{
 			return false;
 		}

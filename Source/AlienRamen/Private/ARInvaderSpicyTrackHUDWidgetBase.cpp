@@ -1,7 +1,7 @@
 #include "ARInvaderSpicyTrackHUDWidgetBase.h"
 
 #include "ARInvaderGameState.h"
-#include "ARInvaderHUD.h"
+#include "ARHUDBase.h"
 #include "ARPlayerStateBase.h"
 #include "ARPlayerTypes.h"
 #include "GameFramework/PlayerController.h"
@@ -37,7 +37,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UARInvaderSpicyTrackHUDWidgetBase::InitializeInvaderSpicyTrackHUDWidget(AARInvaderHUD* InInvaderHUD)
+void UARInvaderSpicyTrackHUDWidgetBase::InitializeInvaderSpicyTrackHUDWidget(AARHUDBase* InInvaderHUD)
 {
 	if (!InInvaderHUD)
 	{
@@ -90,7 +90,7 @@ void UARInvaderSpicyTrackHUDWidgetBase::DeinitializeInvaderSpicyTrackHUDWidget()
 bool UARInvaderSpicyTrackHUDWidgetBase::TryBindOwningInvaderHUD()
 {
 	APlayerController* OwningController = GetOwningPlayer();
-	AARInvaderHUD* OwningInvaderHUD = OwningController ? Cast<AARInvaderHUD>(OwningController->GetHUD()) : nullptr;
+	AARHUDBase* OwningInvaderHUD = OwningController ? Cast<AARHUDBase>(OwningController->GetHUD()) : nullptr;
 	if (!OwningInvaderHUD)
 	{
 		return false;
@@ -102,7 +102,7 @@ bool UARInvaderSpicyTrackHUDWidgetBase::TryBindOwningInvaderHUD()
 
 void UARInvaderSpicyTrackHUDWidgetBase::RefreshInvaderSpicyTrackSnapshot(const bool bBroadcastSnapshotEvents)
 {
-	AARInvaderHUD* InvaderHUD = BoundInvaderHUD.Get();
+	AARHUDBase* InvaderHUD = BoundInvaderHUD.Get();
 	AARInvaderGameState* ResolvedInvaderGameState = InvaderHUD && InvaderHUD->GetWorld()
 		? InvaderHUD->GetWorld()->GetGameState<AARInvaderGameState>()
 		: nullptr;

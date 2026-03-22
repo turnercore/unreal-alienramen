@@ -8,7 +8,11 @@ public class AlienRamenEditor : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new[]
 		{
-			"Core",
+			"Core"
+		});
+
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
 			"CoreUObject",
 			"Engine",
 			"Slate",

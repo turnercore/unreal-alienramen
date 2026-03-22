@@ -1,12 +1,12 @@
 #include "ARStateTreeAIComponentSchema.h"
 
-#include "ARInvaderAIController.h"
+#include "AREnemyAIController.h"
 #include "AREnemyBase.h"
 
 UARStateTreeAIComponentSchema::UARStateTreeAIComponentSchema(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	AIControllerClass = AARInvaderAIController::StaticClass();
+	AIControllerClass = AAREnemyAIController::StaticClass();
 	ContextActorClass = AAREnemyBase::StaticClass();
 	SyncContextDescriptorTypes();
 }
@@ -28,7 +28,7 @@ void UARStateTreeAIComponentSchema::PostEditChangeChainProperty(FPropertyChanged
 void UARStateTreeAIComponentSchema::SyncContextDescriptorTypes()
 {
 	ContextActorClass = AAREnemyBase::StaticClass();
-	AIControllerClass = AARInvaderAIController::StaticClass();
+	AIControllerClass = AAREnemyAIController::StaticClass();
 
 	if (ContextDataDescs.IsValidIndex(0))
 	{

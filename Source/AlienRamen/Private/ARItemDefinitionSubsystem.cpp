@@ -20,24 +20,6 @@ namespace
 		return FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
 	}
 
-	static FGameplayTag ResolveLegacyMeatTagForColor(const EARAffinityColor Color)
-	{
-		switch (Color)
-		{
-		case EARAffinityColor::Red:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Red"), false);
-		case EARAffinityColor::Blue:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Blue"), false);
-		case EARAffinityColor::White:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.White"), false);
-		case EARAffinityColor::Colorless:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Colorless"), false);
-		case EARAffinityColor::None:
-		default:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.None"), false);
-		}
-	}
-
 	static FName ExtractLeafRowNameFromTag(const FGameplayTag Tag)
 	{
 		if (!Tag.IsValid())
@@ -281,19 +263,6 @@ bool UARItemDefinitionSubsystem::ResolveMeatDefinitionForEnemy(const FGameplayTa
 	return false;
 }
 
-bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const
-{
-	OutMeatDef = FARMeatDefinitionRow();
-
-	const FGameplayTag LegacyColorTag = ResolveLegacyMeatTagForColor(Color);
-	if (LegacyColorTag.IsValid() && ResolveMeatDefinition(LegacyColorTag, OutMeatDef))
-	{
-		return true;
-	}
-
-	return ResolveFirstMeatDefinition(OutMeatDef);
-}
-
 bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) const
 {
 	OutMeatTag = FGameplayTag();
@@ -306,34 +275,6 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) c
 
 	OutMeatTag = MeatDef.MeatTag;
 	return OutMeatTag.IsValid();
-}
-
-bool UARItemDefinitionSubsystem::ResolveFirstMeatTagForColor(const EARAffinityColor Color, FGameplayTag& OutMeatTag) const
-{
-	OutMeatTag = FGameplayTag();
-
-	FARMeatDefinitionRow MeatDef;
-	if (ResolveFirstMeatDefinitionForColor(Color, MeatDef) && MeatDef.MeatTag.IsValid())
-	{
-		OutMeatTag = MeatDef.MeatTag;
-		return true;
-	}
-
-	return false;
-}
-
-bool UARItemDefinitionSubsystem::GetMeatTagsForColor(const EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const
-{
-	OutMeatTags.Reset();
-
-	FGameplayTag MeatTag;
-	if (!ResolveFirstMeatTagForColor(Color, MeatTag) || !MeatTag.IsValid())
-	{
-		return false;
-	}
-
-	OutMeatTags.Add(MeatTag);
-	return true;
 }
 
 int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const
@@ -376,18 +317,9 @@ int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue(const FARRamenBowlSlo
 {
 	FARMeatDefinitionRow MeatDef;
 	const FGameplayTag SlotMeatTag = SlotSpec.MeatTag;
-	const EARAffinityColor SlotColor = StaticEnum<EARAffinityColor>()->IsValidEnumValue(static_cast<int64>(SlotSpec.Color))
-		? SlotSpec.Color
-		: EARAffinityColor::None;
 	if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
 	{
-		// Fallback for slots that only carry color identity.
-		if (SlotColor == EARAffinityColor::None)
-		{
-			return 0;
-		}
-
-		if (!ResolveFirstMeatDefinitionForColor(SlotColor, MeatDef))
+		if (!ResolveFirstMeatDefinition(MeatDef))
 		{
 			return 0;
 		}

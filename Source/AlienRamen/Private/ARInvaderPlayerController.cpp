@@ -3,14 +3,12 @@
 #include "ARInvaderFullBlastMenuWidget.h"
 #include "ARInvaderDirectorSubsystem.h"
 #include "ARInvaderGameState.h"
-#include "ARPlayerCharacterInvader.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "TagKeySubsystem.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
-#include "UObject/UnrealType.h"
 #include "TimerManager.h"
 
 AARInvaderPlayerController::AARInvaderPlayerController()
@@ -20,7 +18,6 @@ AARInvaderPlayerController::AARInvaderPlayerController()
 void AARInvaderPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	SyncLegacyShipReferenceFromPawn(GetPawn());
 	TryBindInvaderGameState();
 }
 
@@ -47,7 +44,6 @@ void AARInvaderPlayerController::OnRep_PlayerState()
 void AARInvaderPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
-	SyncLegacyShipReferenceFromPawn(InPawn);
 	TryBindInvaderGameState();
 
 	UE_LOG(
@@ -243,45 +239,6 @@ bool AARInvaderPlayerController::IsChooserForSession(const FARInvaderFullBlastSe
 
 	const FGameplayTag LocalCharacterTag = ARPlayer::NormalizeCharacterTag(InvaderPlayerState->GetCurrentCharacterTag());
 	return LocalCharacterTag.IsValid() && LocalCharacterTag.MatchesTagExact(SessionRequestingCharacterTag);
-}
-
-void AARInvaderPlayerController::SyncLegacyShipReferenceFromPawn(APawn* InPawn)
-{
-	FProperty* ShipProperty = GetClass()->FindPropertyByName(TEXT("Ship"));
-	FObjectProperty* ShipObjectProperty = CastField<FObjectProperty>(ShipProperty);
-	if (!ShipObjectProperty)
-	{
-		return;
-	}
-
-	UObject* ShipObject = Cast<AARPlayerCharacterInvader>(InPawn);
-	if (ShipObject && !ShipObject->IsA(ShipObjectProperty->PropertyClass))
-	{
-		ShipObject = nullptr;
-	}
-
-	if (InPawn && !ShipObject)
-	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[InvaderController] Could not bind legacy Ship property on '%s' from pawn '%s' (PawnClass=%s ShipPropertyClass=%s)."),
-			*GetNameSafe(this),
-			*GetNameSafe(InPawn),
-			*GetNameSafe(InPawn->GetClass()),
-			*GetNameSafe(ShipObjectProperty->PropertyClass));
-	}
-
-	if (ShipObjectProperty->GetObjectPropertyValue_InContainer(this) != ShipObject)
-	{
-		ShipObjectProperty->SetObjectPropertyValue_InContainer(this, ShipObject);
-		UE_LOG(
-			ARLog,
-			Verbose,
-			TEXT("[InvaderController] Legacy Ship binding updated on '%s': %s"),
-			*GetNameSafe(this),
-			*GetNameSafe(ShipObject));
-	}
 }
 
 void AARInvaderPlayerController::ShowOrUpdateFullBlastMenu(

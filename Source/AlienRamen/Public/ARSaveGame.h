@@ -64,7 +64,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
 	static int32 GetCurrentSchemaVersion() { return CurrentSchemaVersion; }
 
-	/** Oldest schema version we can still load (for migration). */
+	/** Oldest schema version we can still load. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Meta")
 	static int32 GetMinSupportedSchemaVersion() { return MinSupportedSchemaVersion; }
 
@@ -173,10 +173,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue")
 	FGameplayTagContainer DialogueCompletedConversationTagsByGame;
 
-	// Legacy compatibility root retained only for migration of older save schema versions.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Legacy dialogue state array retained only for migration from older save versions."))
-	TArray<FDialoguePlayerPersistentState> DialoguePlayerPersistentStates;
-
 	/** Finds a player save row by identity (platform/user + display name). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	bool FindPlayerStateDataByIdentity(const FARPlayerIdentity& Identity, FARPlayerStateSaveData& OutData, int32& OutIndex) const;
@@ -187,6 +183,5 @@ public:
 
 	FARCharacterSaveData* FindCharacterStateDataMutable(FGameplayTag CharacterTag, int32& OutIndex);
 	FARCharacterSaveData& FindOrAddCharacterStateData(FGameplayTag CharacterTag);
-	int32 MigrateToCurrentSchema(TArray<FString>* OutWarnings);
 	int32 ValidateAndSanitize(TArray<FString>* OutWarnings);
 };

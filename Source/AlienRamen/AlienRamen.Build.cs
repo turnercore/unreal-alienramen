@@ -1,5 +1,6 @@
 using UnrealBuildTool;
 using System.IO;
+using System;
 
 public class AlienRamen : ModuleRules
 {
@@ -44,31 +45,28 @@ public class AlienRamen : ModuleRules
 			DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 		}
 
-		// Stage Steam redistributables from tracked project SDK location.
-		string ProjectRoot = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../"));
-		string SteamRedistributableRoot = Path.Combine(ProjectRoot, "sdks", "Steamworks", "SteamvLatest");
-		if (Directory.Exists(SteamRedistributableRoot))
+		const string SteamStageEnvName = "ALIENRAMEN_STAGE_STEAM_REDIST";
+		bool bStageSteamRedistributables = string.Equals(Environment.GetEnvironmentVariable(SteamStageEnvName), "1", StringComparison.OrdinalIgnoreCase)
+			|| string.Equals(Environment.GetEnvironmentVariable(SteamStageEnvName), "true", StringComparison.OrdinalIgnoreCase);
+		if (bStageSteamRedistributables)
 		{
-			if (Target.Platform == UnrealTargetPlatform.Win64)
+			string ProjectRoot = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../"));
+			string SteamRedistributableRoot = Path.Combine(ProjectRoot, "sdks", "Steamworks", "SteamvLatest");
+			if (Directory.Exists(SteamRedistributableRoot))
 			{
-				RuntimeDependencies.Add("$(BinaryOutputDir)/steam_api64.dll", Path.Combine(SteamRedistributableRoot, "Win64", "steam_api64.dll"));
-			}
-			else if (Target.Platform == UnrealTargetPlatform.Mac)
-			{
-				RuntimeDependencies.Add("$(BinaryOutputDir)/libsteam_api.dylib", Path.Combine(SteamRedistributableRoot, "Mac", "libsteam_api.dylib"));
-			}
-			else if (Target.Platform == UnrealTargetPlatform.Linux)
-			{
-				RuntimeDependencies.Add("$(BinaryOutputDir)/libsteam_api.so", Path.Combine(SteamRedistributableRoot, "x86_64-unknown-linux-gnu", "libsteam_api.so"));
+				if (Target.Platform == UnrealTargetPlatform.Win64)
+				{
+					RuntimeDependencies.Add("$(BinaryOutputDir)/steam_api64.dll", Path.Combine(SteamRedistributableRoot, "Win64", "steam_api64.dll"));
+				}
+				else if (Target.Platform == UnrealTargetPlatform.Mac)
+				{
+					RuntimeDependencies.Add("$(BinaryOutputDir)/libsteam_api.dylib", Path.Combine(SteamRedistributableRoot, "Mac", "libsteam_api.dylib"));
+				}
+				else if (Target.Platform == UnrealTargetPlatform.Linux)
+				{
+					RuntimeDependencies.Add("$(BinaryOutputDir)/libsteam_api.so", Path.Combine(SteamRedistributableRoot, "x86_64-unknown-linux-gnu", "libsteam_api.so"));
+				}
 			}
 		}
-
-		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
-		// Uncomment if you are using online features
-		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
-
-		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
 	}
 }

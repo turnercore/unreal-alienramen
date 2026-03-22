@@ -8,7 +8,11 @@ public class AlienRamenTests : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new[]
 		{
-			"Core",
+			"Core"
+		});
+
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
 			"CoreUObject",
 			"Engine",
 			"AlienRamen",
@@ -19,11 +23,7 @@ public class AlienRamenTests : ModuleRules
 			"DeveloperSettings",
 			"TagKey",
 			"Parley",
-			"Emo"
-		});
-
-		PrivateDependencyModuleNames.AddRange(new[]
-		{
+			"Emo",
 			"Slate",
 			"SlateCore"
 		});

@@ -109,11 +109,6 @@ namespace
 			return FGameplayTag();
 		}
 	}
-
-	static FGameplayTag GetLegacySecondaryLoadoutRootTag()
-	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"), false);
-	}
 }
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -1862,23 +1857,6 @@ void AARPlayerStateBase::RemoveTagFromLoadout_Internal(FGameplayTag TagToRemove)
 void AARPlayerStateBase::NormalizeLoadoutTagsForSlotRules(FGameplayTagContainer& InOutTags) const
 {
 	TArray<FGameplayTag> ExistingTags;
-	InOutTags.GetGameplayTagArray(ExistingTags);
-
-	const FGameplayTag LegacySecondaryRootTag = GetLegacySecondaryLoadoutRootTag();
-	for (const FGameplayTag& ExistingTag : ExistingTags)
-	{
-		if (!LegacySecondaryRootTag.IsValid() || !ExistingTag.IsValid())
-		{
-			continue;
-		}
-
-		if (ExistingTag.MatchesTag(LegacySecondaryRootTag))
-		{
-			InOutTags.RemoveTag(ExistingTag);
-		}
-	}
-
-	ExistingTags.Reset();
 	InOutTags.GetGameplayTagArray(ExistingTags);
 
 	TMap<FGameplayTag, FGameplayTag> LastTagBySingleSlotRoot;

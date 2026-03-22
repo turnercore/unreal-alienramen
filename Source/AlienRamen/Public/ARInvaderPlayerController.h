@@ -144,7 +144,6 @@ private:
 	void BuildOfferDefinitionsForSession(const FARInvaderFullBlastSessionState& Session, TArray<FARInvaderUpgradeDefRow>& OutDefinitions) const;
 	bool ShouldDisplayFullBlastMenuForSession(const FARInvaderFullBlastSessionState& Session) const;
 	bool IsChooserForSession(const FARInvaderFullBlastSessionState& Session) const;
-	void SyncLegacyShipReferenceFromPawn(APawn* InPawn);
 	void ShowOrUpdateFullBlastMenu(const FARInvaderFullBlastSessionState& Session, const TArray<FARInvaderUpgradeDefRow>& OfferDefinitions);
 	void CloseFullBlastMenu();
 

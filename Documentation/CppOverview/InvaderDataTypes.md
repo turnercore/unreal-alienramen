@@ -14,7 +14,7 @@ Paths:
 
 ## Authoring Rows
 - `FARWaveEnemySpawnDef`
-- Enemy class, color, edge, delay, authored offset, per-spawn effects
+- Enemy identifier tag, color, edge, delay, authored offset, per-spawn effects
 - `FARWaveDefRow`
 - `bEnabled`
 - Threat/player/selection fields

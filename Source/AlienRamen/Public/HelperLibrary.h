@@ -39,7 +39,6 @@ private:
 		UObject* Source,
 		const UStruct* StructType,
 		void* StructPtr,
-		bool bEnableLog,
-		bool bResetStructToDefaults
+		bool bEnableLog
 	);
 };

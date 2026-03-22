@@ -193,27 +193,6 @@ public:
 		}
 	}
 
-	static int32 GetPaletteShapeCycleForClass(const UClass* EnemyClass)
-	{
-		if (!EnemyClass)
-		{
-			return 0;
-		}
-
-		const UARInvaderAuthoringEditorSettings* Settings = GetDefault<UARInvaderAuthoringEditorSettings>();
-		if (!Settings)
-		{
-			return 0;
-		}
-
-		const FSoftClassPath ClassPath(EnemyClass);
-		if (const int32* SavedShape = Settings->EnemyClassShapeCycles.Find(ClassPath))
-		{
-			return *SavedShape;
-		}
-		return 0;
-	}
-
 	static FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& ClassPtr)
 	{
 		const FSoftObjectPath Path = ClassPtr.ToSoftObjectPath();
@@ -608,7 +587,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					DotColor.A = 0.20f;
 				}
 
-				const int32 ShapeCycle = GetPaletteShapeCycleForClass(Spawn.EnemyClass);
+				const int32 ShapeCycle = 0;
 				DrawShape(
 					OutDrawElements,
 					LayerId + 2,
@@ -2932,12 +2911,6 @@ FReply SInvaderAuthoringPanel::OnAddLayer()
 	Spawn.SpawnDelay = NewDelay;
 	if (ActivePaletteEntry.IsSet())
 	{
-		UClass* ResolvedClass = ActivePaletteEntry->EnemyClassPath.ResolveClass();
-		if (!ResolvedClass)
-		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ActivePaletteEntry->EnemyClassPath.ToString());
-		}
-		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = ActivePaletteEntry->Color;
 		ResolveIdentifierTagForPaletteClass(ActivePaletteEntry->EnemyClassPath, Spawn.EnemyIdentifierTag);
 	}
@@ -2969,12 +2942,6 @@ FReply SInvaderAuthoringPanel::OnAddSpawnToLayer()
 	Spawn.SpawnDelay = SelectedLayerDelay;
 	if (ActivePaletteEntry.IsSet())
 	{
-		UClass* ResolvedClass = ActivePaletteEntry->EnemyClassPath.ResolveClass();
-		if (!ResolvedClass)
-		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ActivePaletteEntry->EnemyClassPath.ToString());
-		}
-		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = ActivePaletteEntry->Color;
 		ResolveIdentifierTagForPaletteClass(ActivePaletteEntry->EnemyClassPath, Spawn.EnemyIdentifierTag);
 	}
@@ -3723,12 +3690,6 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	{
 		const FSoftClassPath ClassPath = ActiveEntry->EnemyClassPath;
 		EARAffinityColor Color = ActiveEntry->Color;
-		UClass* ResolvedClass = ClassPath.ResolveClass();
-		if (!ResolvedClass)
-		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
-		}
-		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = Color;
 		ResolveIdentifierTagForPaletteClass(ClassPath, Spawn.EnemyIdentifierTag);
 	}
@@ -3957,11 +3918,6 @@ void SInvaderAuthoringPanel::HandleSpawnPropertiesChanged(const FPropertyChanged
 	WaveTable->Modify();
 	Row->EnemySpawns[SelectedSpawnIndex] = SpawnProxy->Spawn;
 	Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset = ClampOffsetToGameplayBounds(Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset);
-	if (!Row->EnemySpawns[SelectedSpawnIndex].EnemyIdentifierTag.IsValid() && Row->EnemySpawns[SelectedSpawnIndex].EnemyClass)
-	{
-		const FSoftClassPath ClassPath(Row->EnemySpawns[SelectedSpawnIndex].EnemyClass);
-		ResolveIdentifierTagForPaletteClass(ClassPath, Row->EnemySpawns[SelectedSpawnIndex].EnemyIdentifierTag);
-	}
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
@@ -3999,7 +3955,6 @@ bool SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty(const FPropertyAndPar
 	{
 		TEXT("bFormationLockEnter"),
 		TEXT("bFormationLockActive"),
-		TEXT("EnemyClass")
 	};
 
 	return !HiddenSpawnProperties.Contains(PropertyName);
@@ -5290,4 +5245,3 @@ bool SInvaderAuthoringPanel::ExecPIECommand(const FString& Command)
 	}
 	return bResult;
 }
-

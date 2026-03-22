@@ -11,7 +11,7 @@ Paths:
 - Per-character runtime spicy metadata (color/combo/activated-upgrade ledger/sharing/cursor) lives on `AARCharacterStateRuntime`.
 - Character-owned spicy runtime data persists through `FARCharacterSaveData::InvaderRuntime`; temporary GAS cooldown timers/effects are intentionally not persisted.
 - Character-tag changes on `AARPlayerStateBase` re-evaluate invader color from ASC override tags so baseline team colors stay in sync with character identity (`Sister=Red`, `Brother=Blue`) unless an explicit color override tag is active.
-- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via `FARShipDefRow` (`ARLoadoutTypes.h`) field `InvaderPawnClass` with `DummyPawnClass` fallback.
+- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via canonical `FARShipDefRow::InvaderPawnClass`.
 
 ## Runtime Ownership Matrix
 | State | Class | Authority | Replication | Notes |
@@ -103,9 +103,9 @@ Not yet implemented (open hardening work):
 - Menu is auto-shown for all local invader players while a session is active; only the requesting character owner is chooser-authorized (`bIsChooser=true`), and menu is removed when session ends.
 
 ## Spicy Track HUD Widget Base
-- Native bridge class: `UARInvaderSpicyTrackHUDWidgetBase` (owned by `AARInvaderHUD` and exposed for Blueprint HUD elements).
+- Native bridge class: `UARInvaderSpicyTrackHUDWidgetBase` (owned by `AARHUDBase` and exposed for Blueprint HUD elements).
 - Binding contract:
-  - Initialize with `InitializeInvaderSpicyTrackHUDWidget(AARInvaderHUD*)` or use `TryBindOwningInvaderHUD`.
+  - Initialize with `InitializeInvaderSpicyTrackHUDWidget(AARHUDBase*)` or use `TryBindOwningInvaderHUD`.
   - The widget resolves `AARInvaderGameState`, tracks all replicated `AARPlayerStateBase` entries, and listens for tracked-player churn via `OnTrackedPlayersChanged`.
   - Tracked player-state references are stored uniquely, and repeated same-value spice callbacks are ignored once cache already matches the new value (helps PIE/lifecycle duplicate-signal noise).
 - Per-character events (character-tag keyed, not local-player-only):

@@ -1638,94 +1638,16 @@ bool UARInvaderDirectorSubsystem::ResolveEnemyDefinitionByTag(FGameplayTag Enemy
 		return false;
 	}
 
-	if (RowType == FARInvaderEnemyDefRow::StaticStruct())
+	if (RowType != FARInvaderEnemyDefRow::StaticStruct())
 	{
-		OutDef = *static_cast<const FARInvaderEnemyDefRow*>(RowData);
+		OutError = FString::Printf(
+			TEXT("Enemy row '%s' resolved to '%s' (expected FARInvaderEnemyDefRow)."),
+			*EnemyIdentifierTag.ToString(),
+			*GetNameSafe(RowType));
+		return false;
 	}
-	else
-	{
-		auto FindAnyProp = [RowType](const TCHAR* A, const TCHAR* B = nullptr) -> const FProperty*
-		{
-			if (const FProperty* P = RowType->FindPropertyByName(A))
-			{
-				return P;
-			}
-			return B ? RowType->FindPropertyByName(B) : nullptr;
-		};
 
-		if (const FProperty* EnabledProp = FindAnyProp(TEXT("bEnabled")))
-		{
-			if (const FBoolProperty* BoolProp = CastField<FBoolProperty>(EnabledProp))
-			{
-				OutDef.bEnabled = BoolProp->GetPropertyValue_InContainer(RowData);
-			}
-		}
-
-		if (const FProperty* DisplayNameProp = FindAnyProp(TEXT("DisplayName")))
-		{
-			if (const FTextProperty* TextProp = CastField<FTextProperty>(DisplayNameProp))
-			{
-				OutDef.DisplayName = TextProp->GetPropertyValue_InContainer(RowData);
-			}
-		}
-
-		if (const FProperty* DescriptionProp = FindAnyProp(TEXT("Description")))
-		{
-			if (const FTextProperty* TextProp = CastField<FTextProperty>(DescriptionProp))
-			{
-				OutDef.Description = TextProp->GetPropertyValue_InContainer(RowData);
-			}
-		}
-
-		if (const FProperty* IdentifierProp = FindAnyProp(TEXT("EnemyIdentifierTag"), TEXT("IdentifierTag")))
-		{
-			if (const FStructProperty* StructProp = CastField<FStructProperty>(IdentifierProp))
-			{
-				if (StructProp->Struct == FGameplayTag::StaticStruct())
-				{
-					const void* ValuePtr = StructProp->ContainerPtrToValuePtr<void>(RowData);
-					OutDef.EnemyIdentifierTag = *reinterpret_cast<const FGameplayTag*>(ValuePtr);
-				}
-			}
-		}
-
-		if (const FProperty* EnemyClassProp = FindAnyProp(TEXT("EnemyClass"), TEXT("Blueprint")))
-		{
-			if (const FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(EnemyClassProp))
-			{
-				const FSoftObjectPtr SoftClassObj = SoftClassProp->GetPropertyValue_InContainer(RowData);
-				OutDef.EnemyClass = TSoftClassPtr<AAREnemyBase>(SoftClassObj.ToSoftObjectPath());
-			}
-			else if (const FClassProperty* ClassProp = CastField<FClassProperty>(EnemyClassProp))
-			{
-				OutDef.EnemyClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(RowData));
-			}
-		}
-
-		if (const FProperty* RuntimeInitProp = FindAnyProp(TEXT("RuntimeInit")))
-		{
-			if (const FStructProperty* StructProp = CastField<FStructProperty>(RuntimeInitProp))
-			{
-				if (StructProp->Struct == FARInvaderEnemyRuntimeInitData::StaticStruct())
-				{
-					const void* ValuePtr = StructProp->ContainerPtrToValuePtr<void>(RowData);
-					OutDef.RuntimeInit = *reinterpret_cast<const FARInvaderEnemyRuntimeInitData*>(ValuePtr);
-				}
-			}
-		}
-
-		if (OutDef.RuntimeInit.MaxHealth <= 0.f)
-		{
-			if (const FProperty* MaxHealthProp = FindAnyProp(TEXT("MaxHealth"), TEXT("maxHp")))
-			{
-				if (const FNumericProperty* NumericProp = CastField<FNumericProperty>(MaxHealthProp))
-				{
-					const void* ValuePtr = NumericProp->ContainerPtrToValuePtr<void>(RowData);
-					OutDef.RuntimeInit.MaxHealth = static_cast<float>(NumericProp->GetFloatingPointPropertyValue(ValuePtr));
-				}
-			}
-		}
-	}
+	OutDef = *static_cast<const FARInvaderEnemyDefRow*>(RowData);
 
 	if (!OutDef.EnemyIdentifierTag.IsValid())
 	{
@@ -2618,4 +2540,3 @@ void UARInvaderDirectorSubsystem::HandleConsoleCaptureBounds(const TArray<FStrin
 
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector|BoundsCapture] Applied + saved GameplayBoundsMin/Max to project settings."));
 }
-

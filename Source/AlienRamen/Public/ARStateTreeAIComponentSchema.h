@@ -12,7 +12,7 @@
 /**
  * StateTree AI schema for Alien Ramen enemy AI components.
  * Defaults:
- * - AIControllerClass: AARInvaderAIController
+ * - AIControllerClass: AAREnemyAIController
  * - ContextActorClass: AAREnemyBase
  */
 UCLASS(BlueprintType, EditInlineNew, CollapseCategories, meta = (DisplayName = "AR StateTree AI Schema", CommonSchema))

@@ -60,9 +60,9 @@ bool FARShopEconomyCombinedBowlValueTest::RunTest(const FString& Parameters)
 	FARMeatDefinitionRow NoodlesMeatDef;
 	FARMeatDefinitionRow BrothMeatDef;
 	FARMeatDefinitionRow ToppingsMeatDef;
-	if (!TestTrue(TEXT("Resolved red meat definition"), ItemDefinitions->ResolveFirstMeatDefinitionForColor(EARAffinityColor::Red, NoodlesMeatDef))
-		|| !TestTrue(TEXT("Resolved blue meat definition"), ItemDefinitions->ResolveFirstMeatDefinitionForColor(EARAffinityColor::Blue, BrothMeatDef))
-		|| !TestTrue(TEXT("Resolved white meat definition"), ItemDefinitions->ResolveFirstMeatDefinitionForColor(EARAffinityColor::White, ToppingsMeatDef)))
+	if (!TestTrue(TEXT("Resolved first meat definition"), ItemDefinitions->ResolveFirstMeatDefinition(NoodlesMeatDef))
+		|| !TestTrue(TEXT("Resolved second meat definition"), ItemDefinitions->ResolveFirstMeatDefinition(BrothMeatDef))
+		|| !TestTrue(TEXT("Resolved third meat definition"), ItemDefinitions->ResolveFirstMeatDefinition(ToppingsMeatDef)))
 	{
 		return false;
 	}

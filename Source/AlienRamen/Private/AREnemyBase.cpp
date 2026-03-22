@@ -2,7 +2,6 @@
 #include "AREnemyAIController.h"
 #include "AREnemyAttributeSet.h"
 #include "AREnemyIncomingDamageEffect.h"
-#include "ARInvaderAIController.h"
 #include "ARInvaderCollisionChannels.h"
 #include "ARInvaderGameState.h"
 #include "ARPlayerCharacterInvader.h"
@@ -22,7 +21,6 @@
 #include "Net/UnrealNetwork.h"
 #include "StructUtils/InstancedStruct.h"
 #include "UObject/SoftObjectPtr.h"
-#include "UObject/UnrealType.h"
 
 namespace
 {
@@ -240,7 +238,7 @@ AAREnemyBase::AAREnemyBase()
 	bReplicates = true;
 	bUseControllerRotationYaw = false;
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	AIControllerClass = AARInvaderAIController::StaticClass();
+	AIControllerClass = AAREnemyAIController::StaticClass();
 
 	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
 	{
@@ -514,34 +512,16 @@ bool AAREnemyBase::ResolveEnemyDefinition(FARInvaderEnemyDefRow& OutRow, FString
 		return false;
 	}
 
-	if (RowType == FARInvaderEnemyDefRow::StaticStruct())
+	if (RowType != FARInvaderEnemyDefRow::StaticStruct())
 	{
-		OutRow = *static_cast<const FARInvaderEnemyDefRow*>(RowData);
+		OutError = FString::Printf(
+			TEXT("Enemy row '%s' resolved to '%s' (expected FARInvaderEnemyDefRow)."),
+			*EnemyIdentifierTag.ToString(),
+			*GetNameSafe(RowType));
+		return false;
 	}
-	else
-	{
-		// Backward-compatible extraction for legacy BP row structs (maxHp + Blueprint).
-		const FProperty* MaxHealthProp = RowType->FindPropertyByName(TEXT("maxHp"));
-		if (const FNumericProperty* NumProp = CastField<FNumericProperty>(MaxHealthProp))
-		{
-			const void* ValuePtr = NumProp->ContainerPtrToValuePtr<void>(RowData);
-			OutRow.RuntimeInit.MaxHealth = static_cast<float>(NumProp->GetFloatingPointPropertyValue(ValuePtr));
-		}
 
-		const FProperty* BPProp = RowType->FindPropertyByName(TEXT("Blueprint"));
-		if (const FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(BPProp))
-		{
-			const FSoftObjectPtr SoftClassObj = SoftClassProp->GetPropertyValue_InContainer(RowData);
-			OutRow.EnemyClass = TSoftClassPtr<AAREnemyBase>(SoftClassObj.ToSoftObjectPath());
-		}
-		else if (const FClassProperty* ClassProp = CastField<FClassProperty>(BPProp))
-		{
-			OutRow.EnemyClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(RowData));
-		}
-
-		OutRow.EnemyIdentifierTag = EnemyIdentifierTag;
-		OutRow.bEnabled = true;
-	}
+	OutRow = *static_cast<const FARInvaderEnemyDefRow*>(RowData);
 
 	if (!OutRow.EnemyIdentifierTag.IsValid())
 	{
@@ -1753,5 +1733,3 @@ void AAREnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AAREnemyBase, FormationTargetWorldLocation);
 	DOREPLIFETIME(AAREnemyBase, bHasFormationTargetWorldLocation);
 }
-
-

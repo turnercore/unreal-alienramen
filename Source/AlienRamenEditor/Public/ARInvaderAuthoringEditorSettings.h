@@ -32,9 +32,6 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Preview")
 	bool bHideOtherLayersInWavePreview = true;
 
-	UPROPERTY(Config, EditAnywhere, Category = "Preview")
-	bool bShowApproximatePreviewBanner = true;
-
 	// Snap authored spawn offsets to a configurable grid when placing/dragging in canvas.
 	UPROPERTY(Config, EditAnywhere, Category = "Preview")
 	bool bSnapCanvasToGrid = false;

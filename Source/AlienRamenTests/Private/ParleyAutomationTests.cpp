@@ -1,16 +1,9 @@
 #include "Misc/AutomationTest.h"
 
 #include "ARPlayerTypes.h"
+#include "ARTestGameplayTagHelpers.h"
 #include "GameplayTagContainer.h"
 #include "ParleyDialogueSettings.h"
-
-namespace
-{
-	static FGameplayTag RequestTagNoCrash(const TCHAR* TagName)
-	{
-		return FGameplayTag::RequestGameplayTag(FName(TagName), false);
-	}
-}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FParley_CharacterOwnershipTagContractTest,
@@ -21,8 +14,8 @@ bool FParley_CharacterOwnershipTagContractTest::RunTest(const FString& Parameter
 {
 	(void)Parameters;
 
-	const FGameplayTag BrotherTag = RequestTagNoCrash(TEXT("Parley.Speaker.Brother"));
-	const FGameplayTag SisterTag = RequestTagNoCrash(TEXT("Parley.Speaker.Sister"));
+	const FGameplayTag BrotherTag = ARTestGameplayTags::RequestTagNoCrash(TEXT("Parley.Speaker.Brother"));
+	const FGameplayTag SisterTag = ARTestGameplayTags::RequestTagNoCrash(TEXT("Parley.Speaker.Sister"));
 
 	TestTrue(TEXT("Brother character tag should resolve"), BrotherTag.IsValid());
 	TestTrue(TEXT("Sister character tag should resolve"), SisterTag.IsValid());
@@ -90,7 +83,7 @@ bool FParley_RequiredTagsPresentTest::RunTest(const FString& Parameters)
 
 	for (const TCHAR* TagName : RequiredTags)
 	{
-		const FGameplayTag Tag = RequestTagNoCrash(TagName);
+		const FGameplayTag Tag = ARTestGameplayTags::RequestTagNoCrash(TagName);
 		TestTrue(
 			*FString::Printf(TEXT("Required Parley tag should exist: %s"), TagName),
 			Tag.IsValid());

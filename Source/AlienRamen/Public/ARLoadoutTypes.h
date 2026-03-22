@@ -35,7 +35,7 @@ struct ALIENRAMEN_API FARHatDefRow : public FTableRowBase
 /**
  * Data table row for ship loadout entries (`Unlock.Ship.*`).
  *
- * These field names intentionally match reflective runtime readers in player/game-mode systems.
+ * Runtime systems resolve this row as FARShipDefRow and consume the canonical pawn fields directly.
  */
 USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARShipDefRow : public FTableRowBase
@@ -57,10 +57,6 @@ struct ALIENRAMEN_API FARShipDefRow : public FTableRowBase
 	/** Pawn class used when spawning this ship in Scrapyard mode. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Ship|Pawn", meta = (ToolTip = "Soft pawn class used by Scrapyard mode for this ship."))
 	TSoftClassPtr<APawn> ScrapyardPawnClass;
-
-	/** Optional mode-agnostic pawn fallback used when a mode-specific class is unset. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Ship|Pawn", meta = (ToolTip = "Optional fallback pawn class used when a mode-specific pawn class is unavailable."))
-	TSoftClassPtr<APawn> DummyPawnClass;
 
 	/** Pawn class used when spawning this ship in Invader mode. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Ship|Pawn", meta = (ToolTip = "Soft pawn class used by Invader mode for this ship."))
