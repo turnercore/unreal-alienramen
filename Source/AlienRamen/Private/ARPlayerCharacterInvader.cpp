@@ -50,11 +50,6 @@ FGameplayTag AARPlayerCharacterInvader::GetTagRootShips()
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"));
 }
 
-FGameplayTag AARPlayerCharacterInvader::GetTagRootSecondaries()
-{
-	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"));
-}
-
 FGameplayTag AARPlayerCharacterInvader::GetTagRootHats()
 {
 	return FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat"));
@@ -971,19 +966,6 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		return false;
 	}
 
-	// Secondary is optional and never required for loadout initialization.
-	FGameplayTag SecondaryTag;
-	const bool bFoundSecondaryTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootSecondaries(), SecondaryTag);
-	if (bFoundSecondaryTag)
-	{
-		FInstancedStruct SecondaryRow;
-		FString SecondaryError;
-		if (ResolveRowFromTag(SecondaryTag, SecondaryRow, SecondaryError))
-		{
-			ApplyResolvedRowBaseline(SecondaryRow, false);
-		}
-	}
-
 	// Hat (optional).
 	FGameplayTag HatTag;
 	const bool bFoundHatTag = FindFirstTagUnderRoot(LoadoutTags, GetTagRootHats(), HatTag);
@@ -1522,4 +1504,3 @@ void AARPlayerCharacterInvader::ApplyLoadoutTagsToASC(const FGameplayTagContaine
 
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Mirrored %d loadout tags into ASC."), InLoadoutTags.Num());
 }
-

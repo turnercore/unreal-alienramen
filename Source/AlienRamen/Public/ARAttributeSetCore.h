@@ -182,60 +182,6 @@ public:
 	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, MaxAmmo)
 
 		// -----------------------
-		// Combat - Secondary lane
-		// -----------------------
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SecondaryDamage, Category = "AR|Combat|Secondary")
-	FGameplayAttributeData SecondaryDamage;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SecondaryDamage)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SecondaryFireRate, Category = "AR|Combat|Secondary")
-	FGameplayAttributeData SecondaryFireRate;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SecondaryFireRate)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SecondaryProjectileSpeed, Category = "AR|Combat|Secondary")
-	FGameplayAttributeData SecondaryProjectileSpeed;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SecondaryProjectileSpeed)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SecondaryRange, Category = "AR|Combat|Secondary")
-	FGameplayAttributeData SecondaryRange;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SecondaryRange)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SecondaryAmmo, Category = "AR|Combat|Secondary")
-	FGameplayAttributeData SecondaryAmmo;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SecondaryAmmo)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SecondaryMaxAmmo, Category = "AR|Combat|Secondary")
-	FGameplayAttributeData SecondaryMaxAmmo;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SecondaryMaxAmmo)
-
-		// -----------------------
-		// Combat - Special lane
-		// -----------------------
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialDamage, Category = "AR|Combat|Special")
-	FGameplayAttributeData SpecialDamage;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpecialDamage)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialFireRate, Category = "AR|Combat|Special")
-	FGameplayAttributeData SpecialFireRate;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpecialFireRate)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialProjectileSpeed, Category = "AR|Combat|Special")
-	FGameplayAttributeData SpecialProjectileSpeed;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpecialProjectileSpeed)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialRange, Category = "AR|Combat|Special")
-	FGameplayAttributeData SpecialRange;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpecialRange)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialAmmo, Category = "AR|Combat|Special")
-	FGameplayAttributeData SpecialAmmo;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpecialAmmo)
-
-		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialMaxAmmo, Category = "AR|Combat|Special")
-	FGameplayAttributeData SpecialMaxAmmo;
-	AR_ATTRIBUTE_ACCESSORS(UARAttributeSetCore, SpecialMaxAmmo)
-
-		// -----------------------
 		// Spice system
 		// -----------------------
 		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Spice, Category = "AR|Spice")
@@ -347,20 +293,6 @@ protected:
 
 	UFUNCTION() void OnRep_Ammo(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_MaxAmmo(const FGameplayAttributeData& OldValue);
-
-	UFUNCTION() void OnRep_SecondaryDamage(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SecondaryFireRate(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SecondaryProjectileSpeed(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SecondaryRange(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SecondaryAmmo(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SecondaryMaxAmmo(const FGameplayAttributeData& OldValue);
-
-	UFUNCTION() void OnRep_SpecialDamage(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SpecialFireRate(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SpecialProjectileSpeed(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SpecialRange(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SpecialAmmo(const FGameplayAttributeData& OldValue);
-	UFUNCTION() void OnRep_SpecialMaxAmmo(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION() void OnRep_Spice(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_MaxSpice(const FGameplayAttributeData& OldValue);

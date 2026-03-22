@@ -61,9 +61,7 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 		Attribute == GetMaxJetpackFuelAttribute() ||
 		Attribute == GetMaxSpiceAttribute() ||
 		Attribute == GetMaxHatEnergyAttribute() ||
-		Attribute == GetMaxAmmoAttribute() ||
-		Attribute == GetSecondaryMaxAmmoAttribute() ||
-		Attribute == GetSpecialMaxAmmoAttribute())
+		Attribute == GetMaxAmmoAttribute())
 	{
 		NewValue = ClampNonNegative(NewValue);
 	}
@@ -122,14 +120,6 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 	{
 		SetAmmo(FMath::Clamp(GetAmmo(), 0.0f, NewValue));
 	}
-	else if (Attribute == GetSecondaryMaxAmmoAttribute())
-	{
-		SetSecondaryAmmo(FMath::Clamp(GetSecondaryAmmo(), 0.0f, NewValue));
-	}
-	else if (Attribute == GetSpecialMaxAmmoAttribute())
-	{
-		SetSpecialAmmo(FMath::Clamp(GetSpecialAmmo(), 0.0f, NewValue));
-	}
 }
 
 void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -186,14 +176,6 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 	else if (Attr == GetAmmoAttribute())
 	{
 		SetAmmo(FMath::Clamp(GetAmmo(), 0.0f, GetMaxAmmo()));
-	}
-	else if (Attr == GetSecondaryAmmoAttribute())
-	{
-		SetSecondaryAmmo(FMath::Clamp(GetSecondaryAmmo(), 0.0f, GetSecondaryMaxAmmo()));
-	}
-	else if (Attr == GetSpecialAmmoAttribute())
-	{
-		SetSpecialAmmo(FMath::Clamp(GetSpecialAmmo(), 0.0f, GetSpecialMaxAmmo()));
 	}
 
 	// Clamp [0..1] attributes post-mod too
@@ -295,20 +277,6 @@ void UARAttributeSetCore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Ammo, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxAmmo, COND_None, REPNOTIFY_Always);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SecondaryDamage, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SecondaryFireRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SecondaryProjectileSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SecondaryRange, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SecondaryAmmo, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SecondaryMaxAmmo, COND_None, REPNOTIFY_Always);
-
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpecialDamage, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpecialFireRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpecialProjectileSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpecialRange, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpecialAmmo, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpecialMaxAmmo, COND_None, REPNOTIFY_Always);
-
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Spice, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxSpice, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpiceGainMultiplier, COND_None, REPNOTIFY_Always);
@@ -371,20 +339,6 @@ AR_REP_NOTIFY(CritMultiplier)
 
 AR_REP_NOTIFY(Ammo)
 AR_REP_NOTIFY(MaxAmmo)
-
-AR_REP_NOTIFY(SecondaryDamage)
-AR_REP_NOTIFY(SecondaryFireRate)
-AR_REP_NOTIFY(SecondaryProjectileSpeed)
-AR_REP_NOTIFY(SecondaryRange)
-AR_REP_NOTIFY(SecondaryAmmo)
-AR_REP_NOTIFY(SecondaryMaxAmmo)
-
-AR_REP_NOTIFY(SpecialDamage)
-AR_REP_NOTIFY(SpecialFireRate)
-AR_REP_NOTIFY(SpecialProjectileSpeed)
-AR_REP_NOTIFY(SpecialRange)
-AR_REP_NOTIFY(SpecialAmmo)
-AR_REP_NOTIFY(SpecialMaxAmmo)
 
 AR_REP_NOTIFY(Spice)
 AR_REP_NOTIFY(MaxSpice)

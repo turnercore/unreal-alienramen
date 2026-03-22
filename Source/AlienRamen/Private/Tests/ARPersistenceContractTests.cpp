@@ -51,7 +51,7 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 
 	FARCharacterSaveData& InvalidCharacterState = Save->CharacterStates.AddDefaulted_GetRef();
 	InvalidCharacterState.CharacterTag = FGameplayTag();
-	InvalidCharacterState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false));
+	InvalidCharacterState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.HatActivate")), false));
 
 	TArray<FString> Warnings;
 	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
@@ -60,7 +60,7 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 	TestTrue(TEXT("Valid player-owned progression tag preserved"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
 	TestEqual(TEXT("Invalid character-owned row removed"), Save->CharacterStates.Num(), 1);
 	TestTrue(TEXT("Remaining character row keeps original loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
-	TestFalse(TEXT("Removed invalid row does not leak loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FireSecondary")), false)));
+	TestFalse(TEXT("Removed invalid row does not leak loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.HatActivate")), false)));
 	TestEqual(TEXT("Current character tag remains canonical brother tag"), PlayerData.CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
 	TestTrue(TEXT("Warnings emitted for sanitization"), Warnings.Num() > 0);
 	return true;

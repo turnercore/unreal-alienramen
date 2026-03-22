@@ -409,14 +409,13 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		bool bRemovedInvalidTag = false;
 		for (const FGameplayTag Tag : Container)
 		{
-			if (Tag.IsValid())
-			{
-				Sanitized.AddTag(Tag);
-			}
-			else
+			if (!Tag.IsValid())
 			{
 				bRemovedInvalidTag = true;
+				continue;
 			}
+
+			Sanitized.AddTag(Tag);
 		}
 
 		if (bRemovedInvalidTag)

@@ -17,6 +17,23 @@ Use this page after [GAS Overview](README_GAS.md) when the question is specifica
 - `AARPlayerStateBase` is the player-owned pointer/projection surface and convenience read API for the active runtime.
 - Attributes replicate through GAS/AttributeSet replication.
 - UI should read from PlayerState, not from the pawn.
+- For ASC-driven widgets, use the ASC widget bases below and bind to the character/enemy ASC source directly.
+
+## ASC Widget Bases (Event-Driven)
+
+The project includes a reusable widget stack for direct ASC delegate binding:
+
+- `UARASCAttributeWidgetBase`
+  - Generic base for anything exposing an ASC.
+  - Initialize via `InitializeFromASC` or `InitializeFromActor`.
+  - Emits `OnASCAttributeWidgetTrackedAttributeChanged(AttributeName, NewValue, OldValue)`.
+  - Cleans up delegates in `DeinitializeASCAttributeWidget` and `NativeDestruct`.
+- `UARPlayerASCAttributeWidgetBase`
+  - Tracks core attributes (`Health`, `MaxHealth`, `Spice`, `MaxSpice`, `MoveSpeed`, `Strength`).
+  - Tracks player primary lane (`Damage`, `FireRate`, `Ammo`, `MaxAmmo`).
+  - Tracks player hat lane (`HatEnergy`, `MaxHatEnergy`, `HatEnergyRegenRate`, `HatPower`).
+- `UAREnemyASCAttributeWidgetBase`
+  - Tracks core attributes plus enemy `CollisionDamage`.
 
 ## What You Can Use in Blueprints
 
