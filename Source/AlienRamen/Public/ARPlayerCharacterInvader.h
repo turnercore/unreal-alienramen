@@ -35,7 +35,6 @@ struct FOnAttributeChangeData;
  * Base ship character for Alien Ramen.
  * - ASC owner is the current AARCharacterStateRuntime, Avatar is this pawn.
  * - On server possession: clears loadout, grants common ability set, then resolves ship/hat rows from LoadoutTags and applies baseline.
- *   Secondary lane is optional.
  * - Exposes generic tag-based activation/cancel API for PlayerController / Blueprint.
  */
 UCLASS()
@@ -218,7 +217,5 @@ protected:
 
 	// ---- Tag roots (runtime-resolved; avoid static init order issues) ----
 	static FGameplayTag GetTagRootShips();
-	// Secondary lane remains optional and is never required for loadout initialization.
-	static FGameplayTag GetTagRootSecondaries();
 	static FGameplayTag GetTagRootHats();
 };

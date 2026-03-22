@@ -63,6 +63,7 @@ nav:
           - Plugins Overview: README_Plugins.md
           - GAS Overview: README_GAS.md
           - GAS Blueprint Attributes: README_GAS_Blueprint_Attributes.md
+          - Combat Lane Asset Audit: README_CombatLaneAssetAudit.md
           - TagKey: README_Plugins_TagKey.md
           - Emo: README_Plugins_Emo.md
   - API Reference (Doxygen): API-Reference.md

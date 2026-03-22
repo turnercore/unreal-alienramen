@@ -82,23 +82,12 @@ GAS is documented under the shared plugin/runtime section because it supports mo
 - `Ammo`
 - `MaxAmmo`
 
-### Combat - Secondary
+### Combat - Hat
 
-- `SecondaryDamage`
-- `SecondaryFireRate`
-- `SecondaryProjectileSpeed`
-- `SecondaryRange`
-- `SecondaryAmmo`
-- `SecondaryMaxAmmo`
-
-### Combat - Special
-
-- `SpecialDamage`
-- `SpecialFireRate`
-- `SpecialProjectileSpeed`
-- `SpecialRange`
-- `SpecialAmmo`
-- `SpecialMaxAmmo`
+- `HatEnergy`
+- `MaxHatEnergy`
+- `HatEnergyRegenRate`
+- `HatPower`
 
 ### Spice System
 
@@ -107,13 +96,6 @@ GAS is documented under the shared plugin/runtime section because it supports mo
 - `SpiceGainMultiplier`
 - `SpiceDrainRate`
 - `SpiceShareRatio`
-
-### Hat System
-
-- `HatEnergy`
-- `MaxHatEnergy`
-- `HatEnergyRegenRate`
-- `HatPower`
 
 ## Attributes That Are Commonly Missing (Candidates)
 

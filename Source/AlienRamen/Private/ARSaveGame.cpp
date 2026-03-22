@@ -403,29 +403,48 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		}
 	};
 
-	auto SanitizeTagContainer = [OutWarnings, &ClampedCount](FGameplayTagContainer& Container, const TCHAR* FieldName)
+	const FGameplayTag LegacySecondaryRootTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Secondary"), false);
+
+	auto SanitizeTagContainer = [OutWarnings, &ClampedCount, &LegacySecondaryRootTag](FGameplayTagContainer& Container, const TCHAR* FieldName)
 	{
 		FGameplayTagContainer Sanitized;
 		bool bRemovedInvalidTag = false;
+		bool bRemovedLegacySecondaryTag = false;
 		for (const FGameplayTag Tag : Container)
 		{
-			if (Tag.IsValid())
-			{
-				Sanitized.AddTag(Tag);
-			}
-			else
+			if (!Tag.IsValid())
 			{
 				bRemovedInvalidTag = true;
+				continue;
 			}
+
+			if (LegacySecondaryRootTag.IsValid() && Tag.MatchesTag(LegacySecondaryRootTag))
+			{
+				bRemovedLegacySecondaryTag = true;
+				continue;
+			}
+
+			Sanitized.AddTag(Tag);
 		}
 
-		if (bRemovedInvalidTag)
+		if (bRemovedInvalidTag || bRemovedLegacySecondaryTag)
 		{
 			Container = Sanitized;
 			++ClampedCount;
 			if (OutWarnings)
 			{
-				OutWarnings->Add(FString::Printf(TEXT("%s contained invalid tags and they were removed."), FieldName));
+				if (bRemovedInvalidTag && bRemovedLegacySecondaryTag)
+				{
+					OutWarnings->Add(FString::Printf(TEXT("%s contained invalid and deprecated secondary-lane tags and they were removed."), FieldName));
+				}
+				else if (bRemovedLegacySecondaryTag)
+				{
+					OutWarnings->Add(FString::Printf(TEXT("%s contained deprecated secondary-lane tags and they were removed."), FieldName));
+				}
+				else
+				{
+					OutWarnings->Add(FString::Printf(TEXT("%s contained invalid tags and they were removed."), FieldName));
+				}
 			}
 		}
 	};
