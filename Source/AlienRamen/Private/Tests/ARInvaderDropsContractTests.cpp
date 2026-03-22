@@ -45,8 +45,7 @@ bool FARInvaderDropDirectorSettingsDefaultsTest::RunTest(const FString& Paramete
 	TestTrue(
 		TEXT("Drop initial speed max is >= min"),
 		Settings->DropInitialLinearSpeedMax >= Settings->DropInitialLinearSpeedMin);
-	TestEqual(TEXT("Default scrap drop stacks start empty"), Settings->ScrapDropStacks.Num(), 0);
-	TestEqual(TEXT("Default meat drop stacks start empty"), Settings->MeatDropStacks.Num(), 0);
+	TestEqual(TEXT("Default scrap drop stacks keep authored denomination blueprints"), Settings->ScrapDropStacks.Num(), 1);
 	return true;
 }
 

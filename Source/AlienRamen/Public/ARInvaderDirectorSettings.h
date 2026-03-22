@@ -168,11 +168,6 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
 	TArray<FARInvaderDropStackDefinition> ScrapDropStacks;
 
-	// Optional denomination definitions for meat drops. Runtime decomposes the final
-	// drop amount into an optimal pickup set (fewest actors, then larger denominations).
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops")
-	TArray<FARInvaderDropStackDefinition> MeatDropStacks;
-
 	// Controls whether drifting drops collide with pawns (enemy bumping) or ignore all pawns.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Drops|Physics")
 	EARInvaderDropPawnCollisionMode DropPawnCollisionMode = EARInvaderDropPawnCollisionMode::CollideWithPawns;

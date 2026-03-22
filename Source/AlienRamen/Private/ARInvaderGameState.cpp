@@ -2251,12 +2251,6 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 		return;
 	}
 
-	TArray<FDropSpawnPlanEntry> SpawnPlan;
-	if (!BuildDropSpawnPlan(DropType, FinalDropAmount, SpawnPlan) || SpawnPlan.IsEmpty() || !GetWorld())
-	{
-		return;
-	}
-
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = Enemy->GetInstigator();
@@ -2269,6 +2263,7 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
 	FGameplayTag DropMeatTag;
 	EARVendingQualityTier DropMeatQualityTier = EARVendingQualityTier::Standard;
+	TSubclassOf<AARInvaderDropBase> MeatDropActorClass = AARInvaderDropBase::StaticClass();
 	if (DropType == EARInvaderDropType::Meat)
 	{
 		if (!ItemDefinitions || !ItemDefinitions->ResolveFirstMeatTagForColor(Enemy->GetEnemyColor(), DropMeatTag))
@@ -2280,6 +2275,68 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 				static_cast<int32>(Enemy->GetEnemyColor()));
 			return;
 		}
+
+		FARMeatDefinitionRow MeatDefinition;
+		if (!ItemDefinitions->ResolveMeatDefinition(DropMeatTag, MeatDefinition))
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop] Failed to resolve meat definition for tag='%s'; skipping meat drop spawn."),
+				*DropMeatTag.ToString());
+			return;
+		}
+
+		MeatDropActorClass = MeatDefinition.InvaderDropActorClass.LoadSynchronous();
+		if (!MeatDropActorClass || !MeatDropActorClass->IsChildOf(AARInvaderDropBase::StaticClass()))
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop] Meat definition for tag='%s' did not resolve a valid drop actor class; skipping meat drop spawn."),
+				*DropMeatTag.ToString());
+			return;
+		}
+	}
+
+	if (DropType == EARInvaderDropType::Meat)
+	{
+		if (!GetWorld())
+		{
+			return;
+		}
+
+		for (int32 Index = 0; Index < FinalDropAmount; ++Index)
+		{
+			AARInvaderDropBase* SpawnedDrop = GetWorld()->SpawnActor<AARInvaderDropBase>(
+				MeatDropActorClass,
+				Enemy->GetActorLocation(),
+				FRotator::ZeroRotator,
+				SpawnParams);
+			if (!SpawnedDrop)
+			{
+				continue;
+			}
+
+			SpawnedDrop->InitializeDrop(DropType, 1, Enemy->GetEnemyColor(), DropMeatTag, DropMeatQualityTier);
+			SpawnedDrop->SetEarthGravityEnabled(bDebugDropEarthGravityEnabled);
+
+			if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedDrop->GetRootComponent()))
+			{
+				const float AngleRadians = DropRng.FRandRange(0.0f, 2.0f * PI);
+				const float Speed = DropRng.FRandRange(MinSpeed, MaxSpeed);
+				const FVector InitialVelocity(FMath::Cos(AngleRadians) * Speed, FMath::Sin(AngleRadians) * Speed, 0.0f);
+				RootPrimitive->SetPhysicsLinearVelocity(InitialVelocity);
+			}
+		}
+
+		return;
+	}
+
+	TArray<FDropSpawnPlanEntry> SpawnPlan;
+	if (!BuildDropSpawnPlan(DropType, FinalDropAmount, SpawnPlan) || SpawnPlan.IsEmpty() || !GetWorld())
+	{
+		return;
 	}
 
 	for (const FDropSpawnPlanEntry& PlanEntry : SpawnPlan)
@@ -2420,12 +2477,13 @@ void AARInvaderGameState::ResolveDropStackDefinitions(
 		return;
 	}
 
-	const TArray<FARInvaderDropStackDefinition>* SourceDefs = nullptr;
-	if (DropType == EARInvaderDropType::Meat)
+	if (DropType != EARInvaderDropType::Scrap)
 	{
-		SourceDefs = &Settings->MeatDropStacks;
+		return;
 	}
-	else if (DropType == EARInvaderDropType::Scrap)
+
+	const TArray<FARInvaderDropStackDefinition>* SourceDefs = nullptr;
+	if (DropType == EARInvaderDropType::Scrap)
 	{
 		SourceDefs = &Settings->ScrapDropStacks;
 	}
@@ -2486,6 +2544,11 @@ bool AARInvaderGameState::BuildDropSpawnPlan(
 	OutPlan.Reset();
 
 	if (TotalAmount <= 0)
+	{
+		return false;
+	}
+
+	if (DropType != EARInvaderDropType::Scrap)
 	{
 		return false;
 	}
