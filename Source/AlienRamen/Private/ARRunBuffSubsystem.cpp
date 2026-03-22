@@ -643,7 +643,8 @@ FGameplayTag UARRunBuffSubsystem::ResolveCharacterTagFromPlayerState(const AARPl
 	static const FGameplayTag CharacterRootTag = FGameplayTag::RequestGameplayTag(TEXT("Player.Character"), false);
 	if (CharacterRootTag.IsValid())
 	{
-		for (const FGameplayTag LoadoutTag : PlayerState->LoadoutTags)
+		const FGameplayTagContainer LoadoutTags = PlayerState->GetCurrentCharacterLoadoutTags();
+		for (const FGameplayTag LoadoutTag : LoadoutTags)
 		{
 			if (LoadoutTag.IsValid() && LoadoutTag.MatchesTag(CharacterRootTag))
 			{

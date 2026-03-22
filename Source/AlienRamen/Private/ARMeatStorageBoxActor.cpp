@@ -229,9 +229,9 @@ bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(
 	{
 		if (UARItemDefinitionSubsystem* ItemDefinitions = GI->GetSubsystem<UARItemDefinitionSubsystem>())
 		{
-			if (MeatDefinition.ItemTag.IsValid())
+			if (MeatDefinition.MeatTag.IsValid())
 			{
-				ItemDefinitions->ApplyItemPhysicsProperties(SpawnedMeat, MeatDefinition.ItemTag);
+				ItemDefinitions->ApplyItemPhysicsProperties(SpawnedMeat, MeatDefinition.MeatTag);
 			}
 		}
 	}

@@ -14,6 +14,7 @@
 #include "EdGraphNode_Comment.h"
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
+#include "Engine/GameInstance.h"
 #include "EdGraphUtilities.h"
 #include "FileHelpers.h"
 #include "Framework/Commands/GenericCommands.h"
@@ -62,12 +63,37 @@ namespace
 			return DialogueSubsystem;
 		}
 
-		static TWeakObjectPtr<UParleyDialogueSubsystem> Cached;
-		if (!Cached.IsValid())
+		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
+		static TWeakObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
+		if (!CachedValidationGameInstance.IsValid())
 		{
-			Cached = NewObject<UParleyDialogueSubsystem>(GetTransientPackage());
+			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
+			if (!ValidationGameInstance)
+			{
+				return nullptr;
+			}
+
+			// Keep one editor-validation instance alive instead of reallocating each query.
+			ValidationGameInstance->AddToRoot();
+			CachedValidationGameInstance = ValidationGameInstance;
+			CachedValidationSubsystem.Reset();
 		}
-		return Cached.Get();
+
+		if (!CachedValidationSubsystem.IsValid())
+		{
+			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(
+				CachedValidationGameInstance.Get(),
+				NAME_None,
+				RF_Transient);
+			if (!ValidationSubsystem)
+			{
+				return nullptr;
+			}
+
+			CachedValidationSubsystem = ValidationSubsystem;
+		}
+
+		return CachedValidationSubsystem.Get();
 	}
 
 	static void AddValidationIssue(

@@ -15,11 +15,11 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARCustomerComponent` owns customer order state and serving evaluation.
   - `AARShopDispenserActor` owns generic item dispense flow (spawn + optional carry handoff + source consumption policy).
   - `AARShopStationActor` owns station slot/processing/stock runtime.
-  - `AARCarryItemBase` owns shared carry-item lifecycle (`ReleaseCarryItem`) for bowl/meat actors and the shared scrapyard carry contract.
+  - `AARShopCarryItemBase` owns shared shop carry-item lifecycle (`ReleaseCarryItem`) for bowl/meat actors.
   - `AARRamenBowlActor` owns bowl fill progression (strict sequence).
   - `AARMeatStorageBoxActor` is the meat-reserve specialization of `AARShopDispenserActor`.
 - **Dialogue-owned outcomes**:
-  - relationship mutation and emotion output are applied through `UParleyDialogueSubsystem::ApplyRamenServeOutcome(...)`.
+- relationship results are forwarded into Parley's generic mutation APIs while reaction emotion presentation stays in Alien Ramen systems.
   - shop code does not own dialogue/emotion/relationship authority.
 
 ## Configuration Sources
@@ -34,6 +34,9 @@ This document captures the runtime ownership and integration contract for the sh
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
   - `Unlock.Shop.Station` -> `FARShopStationConfigRow`
 - `Item.Meat` -> `FARMeatDefinitionRow`
+  - `EnemyIdentifierTag` maps invader enemy identity to canonical meat identity (`MeatTag`)
+  - optional `InvaderDropActorClass` lets invader-mode pickup visuals/behavior differ from shop/scrapyard item actors
+  - deprecated color-based meat lookup helpers remain as a compatibility bridge and map legacy colors to canonical `Item.Meat.*` tags
 - Character table rows for shop/runtime character spawning can use `FARShopCharacterDefRow` (`Source/AlienRamen/Public/ARLoadoutTypes.h`) with:
   - `CharacterTag` (`Shop.Character.*`)
   - `CustomerTag` (`Shop.Customer.*`)
@@ -76,7 +79,7 @@ This document captures the runtime ownership and integration contract for the sh
   - when finite budget is exhausted, customer marks done ordering and emits done signal.
   - runtime emits detailed signals for order generated, order served, and done-ordering states (counts + remaining budget).
   - customer runtime still drives the local speaker gate while orders are active; convenience interact paths can still attempt speaker fallback after delivery attempt.
-  - ordering emotion now routes through generic emotion-system overrides (state + timed reaction), so fallback returns to dialogue/base emotion automatically.
+  - ordering emotion now routes through generic emotion registrations (state + timed reaction), so fallback returns to lower-priority or global emotion automatically.
 
 ## Shop Economy + Vending
 
@@ -86,8 +89,7 @@ This document captures the runtime ownership and integration contract for the sh
   - mirrored to `AARShopGameState::BaseBowlPayout` for UI/readability
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
-  - `CombinedMeatValue` resolves per bowl slot (`Noodles`, `Broth`, `Toppings`) from slot `Item.Meat` tag -> meat row `ItemTag` -> shared item `SellMoneyValue`
-  - each slot applies its own slot-quality multiplier (`Low/Standard/High/Premium`) before slot values are summed
+  - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> shared item `SellMoneyValue`; runtime uses `MeatTag` as single identity and resolves shared item rows through the `Item` root by leaf row name when `Item.Meat` route overlap exists
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
   - item quality multipliers are authored on `AARShopGameMode` (`Low/Standard/High/Premium` defaults `0.25 / 1.0 / 1.25 / 2.0`)
 - Vending settlement:
@@ -121,24 +123,24 @@ This document captures the runtime ownership and integration contract for the sh
   - processing `None` is blocked whenever the station already has any buffered stock (colored or `None`); it is only allowed when stock is fully empty
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill
-  - bowl fill records slot payload (`SlotType`, `Color`, slot `Item.Meat` tag, `QualityTier`) for each slot (`Noodles`, `Broth`, `Toppings`)
+  - bowl fill records both slot color and slot `Item.Meat` tag (`NoodlesMeatTag`, `BrothMeatTag`, `ToppingsMeatTag`)
   - bowl sequence is strict: `Noodles -> Broth -> Toppings`
   - `AARRamenBowlActor` exposes `OnFillStepChanged(PreviousFillStep, NewFillStep)` for animation/UI hooks on local authority changes and replicated client updates
 
 ## World Carry Item Interaction
 
-- World carryables (`AARCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
+- World carryables (`AARShopCarryItemBase`, including bowl/meat actors) expose `ForwardUseToController(AActor* UsingActor)` for BI_Interactable forwarding.
 - World carryables expose `ForwardSecondaryUseToController(AActor* UsingActor)` for BI-style held-secondary forwarding (consume/throw/etc via held-item secondary behavior).
 - World carryables expose `ForwardKickToController(AActor* UsingActor)` for BI-style world-item kick forwarding to controller kick requests (`AARPlayerController::RequestKickActor`).
 - `ForwardUseToController(...)` resolves `AARShopPlayerController` (direct controller or pawn owner controller) and routes to `RequestShopPickupCarryItem(...)`.
 - Shop station request APIs are intentionally owned by `AARShopPlayerController` (not `AARPlayerController`).
 - Shop-only interaction requests live on `AARShopPlayerController`:
   - `RequestShopUseOrDrop(AActor*)` for one-shot input routing (`ForwardUseToController` when target exists, fallback drop when null)
-  - `RequestShopPickupCarryItem(AARCarryItemBase*)`
+  - `RequestShopPickupCarryItem(AARShopCarryItemBase*)`
   - `RequestShopDropHeldCarryItem()`
   - `RequestShopThrowHeldCarryItem(float ThrowStrength)`
     - when `ThrowStrength <= 0`, server resolves throw power from thrower GAS `Strength` (`Strength * 100`, so default Strength `10` => throw strength `1000`)
-  - `RequestUseSecondaryOnHeldCarryItem()` generic held-secondary dispatch (routes to held item `AARCarryItemBase::UseSecondaryByController(...)`)
+  - `RequestUseSecondaryOnHeldCarryItem()` generic held-secondary dispatch (routes to held item `AARShopCarryItemBase::UseSecondaryByController(...)`)
   - `RequestShopStationPlaceHeldMeat(AARShopStationActor*)`
   - `RequestShopStationPickupMeat(AARShopStationActor*)`
   - `RequestShopStationStartProcessing(AARShopStationActor*)`
@@ -156,30 +158,29 @@ This document captures the runtime ownership and integration contract for the sh
 - Interaction outcome animation cues are emitted through `AARPlayerController::OnInteractionActionCue` (`NotifyInteractionActionCue(...)`), with current secondary defaults emitting `Throw`, `Consume`, and kick-style cues that classify as `Kick` vs `Slap` by target height delta above pawn (`SlapCueMinHeightDeltaCm`).
 - `AARPlayerCharacterShop` exposes BP helpers `IsCarryingShopItem()` and `GetHeldShopActor()` for pawn-side input/UI branching.
 - Shop player pawn selection is native via `AARShopGameMode::GetDefaultPawnClassForController_Implementation(...)`, resolving by canonical `Shop.Character.*` map keys (`ShopPawnClassByCharacterTag`) with `FallbackShopPawnClass` fallback so BP join-spawn/possess wiring is optional and should be removed when redundant.
-- Legacy `Parley.Speaker.*` / `Shop.Customer.*` pawn-map keys are still runtime-normalized for compatibility, but new content should author canonical `Shop.Character.*` keys only.
-- Spawn transform selection is GameMode-owned through `AARGameModeBase::ChoosePlayerStart_Implementation(...)` using `AARTaggedPlayerStart::SpawnIdentityTag` (editor display name: `Player Start Tag (Gameplay)`, gameplay-tag picker) in this order: canonical character tag -> mirrored `Parley.Speaker`/`Shop.Character`/`Shop.Customer` first-segment aliases -> player slot tag -> default UE fallback. The inherited `PlayerStartTag` string field is editor-disabled on `AARTaggedPlayerStart` to avoid accidental non-gameplay-tag configuration.
+- Spawn transform selection is GameMode-owned through `AARGameModeBase::ChoosePlayerStart_Implementation(...)` using `AARTaggedPlayerStart::SpawnIdentityTag` (editor display name: `Player Start Tag (Gameplay)`, gameplay-tag picker) with canonical character tags as the primary identity signal.
 - `ChoosePlayerStart_Implementation(...)` performs an authority pre-pass to complete first-session setup (when needed) and normalize slot/character identity before evaluating spawn tags, so editor/raw-map starts do not pick a start from unresolved character state.
 - `AARGameModeBase` caches the canonical character tag chosen in `ChoosePlayerStart_Implementation(...)` per controller for the current spawn attempt, and `AARShopGameMode` consumes that cache in pawn-class resolution so start selection and pawn class cannot diverge mid-spawn.
-- First-join PlayerState hydration now prefers strict identity rows before slot-fallback rows; slot fallback is only used when runtime player state has no explicit character intent (`CharacterPicked`/`CurrentCharacterTag`). This avoids slot-biased `Brother` spawns that later flip to `Sister`.
+- First-join PlayerState hydration uses strict identity matching with canonical current-character tags.
 - `AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation(...)` performs a collision-adjusted fallback spawn (`AdjustIfPossibleButAlwaysSpawn`) when the engine default pawn spawn path fails at the chosen start, so blocked starts still produce a possessed pawn.
 - `HandleStartingNewPlayer(...)` performs a one-time corrective respawn when character identity drifts across the initial spawn pass (for example pre-spawn `Brother` -> post-spawn `Sister`), ensuring final spawn transform aligns with final character identity.
 - `HandleStartingNewPlayer(...)` performs a one-shot respawn retry only if the initial spawn path leaves the controller without a pawn, so direct-load/editor startup failures recover without requiring manual PIE restart.
-- `AARCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
-- `AARCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
+- `AARShopCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
+- `AARShopCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
 - Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.
 - Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use `DefaultSceneRoot` as long as they include at least one world-colliding primitive component.
 - Drop/throw restore world physics and gravity on the released carry item.
 - Meat storage interaction contract:
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
-  - reserve inventory is canonical tuple inventory (`FARMeatState::AdditionalAmountsByType`) keyed by meat tag + color + quality.
+  - reserve inventory is canonical by meat type tag (`FARMeatState::AdditionalAmountsByType`); legacy color buckets are compatibility mirrors.
   - `TryDispenseMeat(...)` uses random typed dispense across eligible typed stock (`TryDispenseRandomMeatByContainerColor`), and applies storage/container color to the spawned world meat actor.
   - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Item.Meat` tag.
-  - color-only compatibility paths resolve to the first deterministic meat row for that color (sorted row-name order).
-  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) against matching runtime meat color; `None`/unspecified meat is accepted into a color-specific storage and stored under that storage color.
+  - world/held store requires a valid resolved `Item.Meat` tag on the runtime meat actor; storage no longer infers meat type from color.
+  - `AARRamenMeatActor` auto-attempts store on storage hit/overlap (`TryStoreWorldMeat`) only when runtime meat color matches storage color (or storage color is `None`).
   - world auto-store is gated by travel-from-spawn distance (`MinWorldAutoStoreTravelDistance`) so freshly dispensed meat does not instantly return when spawned near/on storage.
   - intentional player pickup arms meat world-return (`AARRamenMeatActor::ArmStorageReturn` via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.
-- `AARCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
+- `AARShopCarryItemBase` exposes shared weight tuning: `WeightKg` (`0` = native primitive mass/default behavior, `>0` = explicit mass override in kg) for bowl/meat physics tuning.
 
 ## Persistence + Replication
 
@@ -188,8 +189,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>` mutates `RunLedgerMeat` with explicit tuple metadata.
 - Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
-- Transient snapshot capture/restore scope includes loose world `AARCarryItemBase` instances (held/attached actors are excluded).
-- Type-specific payload restore is applied for supported runtime shop items (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`); other carryables restore class + transform.
+- Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).
 - Character-owned shop restore snapshots live in `UARSaveGame::CharacterStates[]` and currently capture:
   - shop character transform
   - held supported carryable snapshot (`AAREnergyDrinkCarryItem`, `AARRamenMeatActor`, `AARRamenBowlActor`)
@@ -215,12 +215,13 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARShopStateTreeAIComponentSchema`
   - `AARShopAIController` start/event helpers
 - `AARShopAIController` maps active `State.ShopNPC.*` tags to speaker dialogue gating:
-  - dialogue allowed when `State.ShopNPC.DialogueWindow` is active
+  - dialogue allowed when `State.ShopNPC.Dialogue` is active (legacy `State.ShopNPC.DialogueWindow` still maps through tag redirects)
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
   - dialogue gate automatically reopens when `State.ShopNPC` is not active and on controller unpossess cleanup.
 - Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.
 - Shop AI controller also bridges dialogue lifecycle into ShopNPC StateTree tags for the possessed speaker:
   - `Event.ShopNPC.ConversationOffered` when talkable becomes true.
+  - `Event.ShopNPC.ConversationOffered` is also emitted once on possess when the speaker is already talkable, so event-driven StateTree graphs can bootstrap into dialogue without waiting for a false->true edge.
   - `Event.ShopNPC.DialogueStarted` when a session starts for that speaker.
   - `Event.ShopNPC.DialogueEnded` when the speaker no longer has an active session.
   - `Event.ShopNPC.ConversationCompleted` when a completed conversation belongs to that speaker.

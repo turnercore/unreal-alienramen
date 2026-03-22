@@ -11,11 +11,13 @@
 #include "ARLog.h"
 #include "ARNPCCharacterBase.h"
 #include "ARMeatStorageBoxActor.h"
+#include "ARCharacterSubsystem.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
 #include "ParleySpeakerComponent.h"
 #include "ParleySpeakerSubsystem.h"
+#include "ParleyFactionSubsystem.h"
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/GameInstance.h"
@@ -163,6 +165,118 @@ void AARPlayerController::NotifyDialogueAudioRequested(const FDialogueAudioReque
 	ClientDialogueAudioRequested(Request);
 }
 
+void AARPlayerController::NotifyDialogueConversationStarted(const FGameplayTag ConversationTag, const FGameplayTag SpeakerTag, const FGameplayTag OwnerCharacterTag)
+{
+	ClientDialogueConversationStarted(ConversationTag, SpeakerTag, OwnerCharacterTag);
+}
+
+void AARPlayerController::NotifyDialogueConversationEnded(
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const bool bCompleted)
+{
+	ClientDialogueConversationEnded(ConversationTag, SpeakerTag, OwnerCharacterTag, bCompleted);
+}
+
+void AARPlayerController::NotifyDialogueLineDelivered(const FGameplayTag SpeakerTag, const FGameplayTag ConversationTag, const FGameplayTag OwnerCharacterTag)
+{
+	ClientDialogueLineDelivered(SpeakerTag, ConversationTag, OwnerCharacterTag);
+}
+
+void AARPlayerController::NotifyDialogueImportantChoiceMade(
+	const FGuid ChoiceBranchId,
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	ClientDialogueImportantChoiceMade(ChoiceBranchId, ConversationTag, SpeakerTag, OwnerCharacterTag);
+}
+
+void AARPlayerController::NotifyDialogueSpeakerRelationshipLevelChanged(
+	const FGameplayTag SourceSpeakerTag,
+	const FGameplayTag TargetSpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const int32 OldLevel,
+	const int32 NewLevel,
+	const float NewTotal)
+{
+	ClientDialogueSpeakerRelationshipLevelChanged(SourceSpeakerTag, TargetSpeakerTag, OwnerCharacterTag, OldLevel, NewLevel, NewTotal);
+}
+
+void AARPlayerController::NotifyDialogueConversationCompleted(
+	const FGameplayTag ConversationTag,
+	const FGameplayTag OwnerCharacterTag,
+	const FGameplayTag CharacterTag)
+{
+	ClientDialogueConversationCompleted(ConversationTag, OwnerCharacterTag, CharacterTag);
+}
+
+void AARPlayerController::NotifyDialogueSpeakerRelationshipChanged(
+	const FGameplayTag SourceSpeakerTag,
+	const FGameplayTag TargetSpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const float Delta,
+	const float NewTotal)
+{
+	ClientDialogueSpeakerRelationshipChanged(SourceSpeakerTag, TargetSpeakerTag, OwnerCharacterTag, Delta, NewTotal);
+}
+
+void AARPlayerController::NotifyDialogueProgressionTagMutated(
+	const FGameplayTag ProgressionTag,
+	const bool bAdded,
+	const FGameplayTag OwnerCharacterTag)
+{
+	ClientDialogueProgressionTagMutated(ProgressionTag, bAdded, OwnerCharacterTag);
+}
+
+void AARPlayerController::NotifyDialogueProgressionStateMarkedDirty()
+{
+	ClientDialogueProgressionStateMarkedDirty();
+}
+
+void AARPlayerController::NotifyDialogueChoiceLookaheadEmotion(
+	const FGameplayTag PrimarySpeakerTag,
+	const FGameplayTag PreviewEmotionTag,
+	const FGuid ChoiceBranchId)
+{
+	ClientDialogueChoiceLookaheadEmotion(PrimarySpeakerTag, PreviewEmotionTag, ChoiceBranchId);
+}
+
+void AARPlayerController::NotifyDialogueChoiceLookaheadCleared(const FGameplayTag OwnerCharacterTag)
+{
+	ClientDialogueChoiceLookaheadCleared(OwnerCharacterTag);
+}
+
+void AARPlayerController::NotifyDialogueSignalFired(
+	const FGameplayTag SignalTag,
+	const FGameplayTagContainer PayloadTags,
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	ClientDialogueSignalFired(SignalTag, PayloadTags, ConversationTag, SpeakerTag, OwnerCharacterTag);
+}
+
+void AARPlayerController::NotifySpeakerTalkableChanged(const FGameplayTag SpeakerTag, const bool bNewTalkable)
+{
+	ClientSpeakerTalkableChanged(SpeakerTag, bNewTalkable);
+}
+
+void AARPlayerController::NotifyFactionPopularityChanged(const FGameplayTag FactionTag, const float Delta, const float NewTotal)
+{
+	ClientFactionPopularityChanged(FactionTag, Delta, NewTotal);
+}
+
+void AARPlayerController::NotifyFactionSpeakerReputationChanged(
+	const FGameplayTag FactionTag,
+	const FGameplayTag SpeakerTag,
+	const float Delta,
+	const float NewTotal)
+{
+	ClientFactionSpeakerReputationChanged(FactionTag, SpeakerTag, Delta, NewTotal);
+}
+
 void AARPlayerController::RequestInteractWithActor(AActor* Actor)
 {
 	if (AARNPCCharacterBase* CharacterActor = Cast<AARNPCCharacterBase>(Actor))
@@ -223,8 +337,8 @@ void AARPlayerController::BeginPlay()
 
 	ApplyDefaultInputMappings(true);
 	InitializeCustomCursor();
+	RebindCurrentCharacterTagChangeDelegate(PlayerState);
 	RequestHUDInitializationInternal(false);
-	EnsureDialogueWidget();
 	RefreshDialogueInputStateFromSession();
 
 	if (IsLocalController() && !HasAuthority() && !bRequestedInitialCanonicalSaveSync)
@@ -236,13 +350,13 @@ void AARPlayerController::BeginPlay()
 
 void AARPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	UnbindCurrentCharacterTagChangeDelegate();
 	SetPauseMenuOpenLocal(false);
 	ApplyDialogueInputContexts(false);
 	if (bDialogueInputModeApplied)
 	{
 		ApplyDialogueInputMode(false);
 	}
-	RemoveDialogueWidget();
 	ApplyDefaultInputMappings(false);
 	StopHUDInitializationRetry();
 	Super::EndPlay(EndPlayReason);
@@ -252,12 +366,27 @@ void AARPlayerController::PlayerTick(const float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
+	if (IsLocalController() && LastHUDInitPlayerState.Get() != PlayerState)
+	{
+		RequestHUDInitializationInternal(true);
+	}
+
 	if (bPauseMenuOpenLocal && IsPauseMenuBlockedLocal())
 	{
 		RequestClosePauseMenu();
 	}
 
 	TickActiveInteractionRangeValidation(DeltaTime);
+}
+
+void AARPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (IsLocalController())
+	{
+		RequestHUDInitializationInternal(true);
+	}
 }
 
 void AARPlayerController::InitializeCustomCursor()
@@ -565,19 +694,35 @@ bool AARPlayerController::IsServerInteractionTargetReachableInternal(const AActo
 	}
 
 	const float MaxDistance = FMath::Max(50.0f, ServerInteractionMaxDistance);
-	const float DistanceSq = FVector::DistSquared(ControlledPawn->GetActorLocation(), TargetActor->GetActorLocation());
-	if (DistanceSq > FMath::Square(MaxDistance))
+	const FVector ControllerLocation = ControlledPawn->GetActorLocation();
+	const FVector TargetLocation = TargetActor->GetActorLocation();
+	FVector ClosestTargetPoint = TargetLocation;
+
+	// Use collision bounds edge distance instead of actor-origin distance so interaction checks
+	// stay stable for actors with pivots/origins offset from visible collision.
+	FVector TargetBoundsOrigin = FVector::ZeroVector;
+	FVector TargetBoundsExtent = FVector::ZeroVector;
+	TargetActor->GetActorBounds(/*bOnlyCollidingComponents=*/ true, TargetBoundsOrigin, TargetBoundsExtent, /*bIncludeFromChildActors=*/ true);
+	if (!TargetBoundsExtent.IsNearlyZero())
+	{
+		const FBox TargetBounds(TargetBoundsOrigin - TargetBoundsExtent, TargetBoundsOrigin + TargetBoundsExtent);
+		ClosestTargetPoint = TargetBounds.GetClosestPointTo(ControllerLocation);
+	}
+
+	const float EdgeDistanceSq = FVector::DistSquared(ControllerLocation, ClosestTargetPoint);
+	if (EdgeDistanceSq > FMath::Square(MaxDistance))
 	{
 		if (bLogFailures)
 		{
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (distance=%.1f max=%.1f)."),
+				TEXT("[%s] Rejected out-of-range interaction from '%s' to '%s' (edgeDistance=%.1f centerDistance=%.1f max=%.1f)."),
 				SafeContextLabel,
 				*GetNameSafe(this),
 				*GetNameSafe(TargetActor),
-				FMath::Sqrt(DistanceSq),
+				FMath::Sqrt(EdgeDistanceSq),
+				FVector::Distance(ControllerLocation, TargetLocation),
 				MaxDistance);
 		}
 		return false;
@@ -820,6 +965,54 @@ void AARPlayerController::ServerRequestKickActor_Implementation(AActor* TargetAc
 	RequestKickActor(TargetActor);
 }
 
+void AARPlayerController::RequestSwapCharacter(FGameplayTag TargetCharacterTag)
+{
+	TargetCharacterTag = ARPlayer::NormalizeCharacterTag(TargetCharacterTag);
+	if (!TargetCharacterTag.IsValid())
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+		if (!CharacterSubsystem)
+		{
+			ClientNotifySwapCharacterRejected(TargetCharacterTag, TEXT("Character subsystem is unavailable."));
+			return;
+		}
+
+		FString FailureReason;
+		if (!CharacterSubsystem->TrySwapCharacter(this, TargetCharacterTag, FailureReason))
+		{
+			ClientNotifySwapCharacterRejected(
+				TargetCharacterTag,
+				FailureReason.IsEmpty() ? TEXT("Character swap request was rejected.") : FailureReason);
+		}
+		return;
+	}
+
+	ServerRequestSwapCharacter(TargetCharacterTag);
+}
+
+void AARPlayerController::ServerRequestSwapCharacter_Implementation(FGameplayTag TargetCharacterTag)
+{
+	RequestSwapCharacter(TargetCharacterTag);
+}
+
+void AARPlayerController::ClientNotifySwapCharacterRejected_Implementation(
+	FGameplayTag TargetCharacterTag,
+	const FString& FailureReason)
+{
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[CharacterSwap] Rejected swap request for '%s': %s"),
+		*TargetCharacterTag.ToString(),
+		*FailureReason);
+	BP_OnSwapCharacterRejected(TargetCharacterTag, FailureReason);
+}
+
 void AARPlayerController::RequestShopDispenseMeat(AARMeatStorageBoxActor* StorageActor)
 {
 	if (!StorageActor)
@@ -1005,6 +1198,10 @@ void AARPlayerController::ClientDialogueAudioRequested_Implementation(const FDia
 {
 	// Expose the resolved payload to BP listeners before default local bridge handling.
 	OnDialogueAudioRequested.Broadcast(Request);
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnDialogueAudioRequested.Broadcast(Request);
+	});
 
 	if (UARDialogueAudioBridgeSubsystem* AudioBridge = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARDialogueAudioBridgeSubsystem>() : nullptr)
 	{
@@ -1098,64 +1295,338 @@ void AARPlayerController::RequestDialogueChoiceDelta(const int32 Delta)
 
 void AARPlayerController::EnsureDialogueWidget()
 {
-	if (!IsLocalController() || !bAutoCreateDialogueWidget)
+	if (!IsLocalController())
 	{
 		return;
 	}
 
-	if (DialogueWidget)
+	if (AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD()))
+	{
+		ARHUD->EnsureDialogueWidget(this, PlayerState, GetWorld() ? GetWorld()->GetGameState() : nullptr);
+	}
+}
+
+void AARPlayerController::ClientDialogueConversationStarted_Implementation(
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	if (HasAuthority())
 	{
 		return;
 	}
 
-	if (!DialogueWidgetClass)
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[Dialogue|UI] Auto dialogue widget skipped on '%s': DialogueWidgetClass is not set."), *GetNameSafe(this));
+		DialogueSubsystem.OnConversationStarted.Broadcast(ConversationTag, SpeakerTag, OwnerCharacterTag);
+	});
+}
+
+void AARPlayerController::ClientDialogueConversationEnded_Implementation(
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const bool bCompleted)
+{
+	if (HasAuthority())
+	{
 		return;
 	}
 
-	DialogueWidget = CreateWidget<UParleyDialogueWidgetBase>(this, DialogueWidgetClass);
-	if (!DialogueWidget)
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
 	{
-		UE_LOG(ARLog, Warning, TEXT("[Dialogue|UI] Failed to create auto dialogue widget for '%s'."), *GetNameSafe(this));
+		DialogueSubsystem.OnConversationEnded.Broadcast(ConversationTag, SpeakerTag, OwnerCharacterTag, bCompleted);
+	});
+}
+
+void AARPlayerController::ClientDialogueLineDelivered_Implementation(
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag ConversationTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	if (HasAuthority())
+	{
 		return;
 	}
 
-	DialogueWidget->InitializeDialogueWidget(this);
-	DialogueWidget->AddToViewport(DialogueWidgetZOrder);
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnLineDelivered.Broadcast(SpeakerTag, ConversationTag, OwnerCharacterTag);
+	});
+}
+
+void AARPlayerController::ClientDialogueImportantChoiceMade_Implementation(
+	const FGuid ChoiceBranchId,
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnImportantChoiceMade.Broadcast(ChoiceBranchId, ConversationTag, SpeakerTag, OwnerCharacterTag);
+	});
+}
+
+void AARPlayerController::ClientDialogueSpeakerRelationshipLevelChanged_Implementation(
+	const FGameplayTag SourceSpeakerTag,
+	const FGameplayTag TargetSpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const int32 OldLevel,
+	const int32 NewLevel,
+	const float NewTotal)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnSpeakerRelationshipLevelChanged.Broadcast(
+			SourceSpeakerTag,
+			TargetSpeakerTag,
+			OwnerCharacterTag,
+			OldLevel,
+			NewLevel,
+			NewTotal);
+	});
+}
+
+void AARPlayerController::ClientDialogueConversationCompleted_Implementation(
+	const FGameplayTag ConversationTag,
+	const FGameplayTag OwnerCharacterTag,
+	const FGameplayTag CharacterTag)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnParleyConversationCompleted.Broadcast(ConversationTag, OwnerCharacterTag, CharacterTag);
+	});
+}
+
+void AARPlayerController::ClientDialogueSpeakerRelationshipChanged_Implementation(
+	const FGameplayTag SourceSpeakerTag,
+	const FGameplayTag TargetSpeakerTag,
+	const FGameplayTag OwnerCharacterTag,
+	const float Delta,
+	const float NewTotal)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnSpeakerRelationshipChanged.Broadcast(
+			SourceSpeakerTag,
+			TargetSpeakerTag,
+			OwnerCharacterTag,
+			Delta,
+			NewTotal);
+	});
+}
+
+void AARPlayerController::ClientDialogueProgressionTagMutated_Implementation(
+	const FGameplayTag ProgressionTag,
+	const bool bAdded,
+	const FGameplayTag OwnerCharacterTag)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnProgressionTagMutated.Broadcast(ProgressionTag, bAdded, OwnerCharacterTag);
+	});
+}
+
+void AARPlayerController::ClientDialogueProgressionStateMarkedDirty_Implementation()
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnProgressionStateMarkedDirty.Broadcast();
+	});
+}
+
+void AARPlayerController::ClientDialogueChoiceLookaheadEmotion_Implementation(
+	const FGameplayTag PrimarySpeakerTag,
+	const FGameplayTag PreviewEmotionTag,
+	const FGuid ChoiceBranchId)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnChoiceLookaheadEmotion.Broadcast(PrimarySpeakerTag, PreviewEmotionTag, ChoiceBranchId);
+	});
+}
+
+void AARPlayerController::ClientDialogueChoiceLookaheadCleared_Implementation(const FGameplayTag OwnerCharacterTag)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnChoiceLookaheadCleared.Broadcast(OwnerCharacterTag);
+	});
+}
+
+void AARPlayerController::ClientDialogueSignalFired_Implementation(
+	const FGameplayTag SignalTag,
+	const FGameplayTagContainer PayloadTags,
+	const FGameplayTag ConversationTag,
+	const FGameplayTag SpeakerTag,
+	const FGameplayTag OwnerCharacterTag)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	BroadcastDialogueSubsystemEventOnClient([&](UParleyDialogueSubsystem& DialogueSubsystem)
+	{
+		DialogueSubsystem.OnDialogueSignalFired.Broadcast(SignalTag, PayloadTags, ConversationTag, SpeakerTag, OwnerCharacterTag);
+	});
+}
+
+void AARPlayerController::ClientSpeakerTalkableChanged_Implementation(const FGameplayTag SpeakerTag, const bool bNewTalkable)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UParleySpeakerSubsystem* SpeakerSubsystem = GameInstance->GetSubsystem<UParleySpeakerSubsystem>())
+		{
+			SpeakerSubsystem->UpdateTalkableStateFromReplication(SpeakerTag, bNewTalkable);
+		}
+	}
+}
+
+void AARPlayerController::ClientFactionPopularityChanged_Implementation(
+	const FGameplayTag FactionTag,
+	const float Delta,
+	const float NewTotal)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UParleyFactionSubsystem* FactionSubsystem = GameInstance->GetSubsystem<UParleyFactionSubsystem>())
+		{
+			FactionSubsystem->UpdateFactionPopularityFromReplication(FactionTag, Delta, NewTotal);
+		}
+	}
+}
+
+void AARPlayerController::ClientFactionSpeakerReputationChanged_Implementation(
+	const FGameplayTag FactionTag,
+	const FGameplayTag SpeakerTag,
+	const float Delta,
+	const float NewTotal)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UParleyFactionSubsystem* FactionSubsystem = GameInstance->GetSubsystem<UParleyFactionSubsystem>())
+		{
+			FactionSubsystem->UpdateFactionSpeakerReputationFromReplication(FactionTag, SpeakerTag, Delta, NewTotal);
+		}
+	}
+}
+
+void AARPlayerController::BroadcastDialogueSubsystemEventOnClient(TFunctionRef<void(UParleyDialogueSubsystem&)> BroadcastCallback)
+{
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UParleyDialogueSubsystem* DialogueSubsystem = GameInstance->GetSubsystem<UParleyDialogueSubsystem>())
+		{
+			BroadcastCallback(*DialogueSubsystem);
+		}
+	}
 }
 
 void AARPlayerController::RemoveDialogueWidget()
 {
-	if (!DialogueWidget)
+	if (!IsLocalController())
 	{
 		return;
 	}
 
-	DialogueWidget->RemoveFromParent();
-	DialogueWidget = nullptr;
+	if (AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD()))
+	{
+		ARHUD->RemoveDialogueWidget();
+	}
+}
+
+UParleyDialogueWidgetBase* AARPlayerController::GetDialogueWidget() const
+{
+	if (const AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD()))
+	{
+		return ARHUD->GetDialogueWidget();
+	}
+
+	return nullptr;
 }
 
 void AARPlayerController::RequestHUDInitializationInternal(const bool bForceBroadcast)
 {
 	if (!IsLocalController())
 	{
+		UnbindCurrentCharacterTagChangeDelegate();
 		StopHUDInitializationRetry();
 		return;
 	}
 
+	APlayerState* CurrentPlayerState = PlayerState;
+	RebindCurrentCharacterTagChangeDelegate(CurrentPlayerState);
+	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	AARHUDBase* ARHUD = Cast<AARHUDBase>(GetHUD());
 	if (!ARHUD)
 	{
-		StartHUDInitializationRetry();
-		if (!bForceBroadcast)
+		if (bForceBroadcast)
 		{
-			return;
+			bHasBroadcastHUDInitialization = false;
+			LastHUDInitPlayerState = nullptr;
+			LastHUDInitGameState = nullptr;
 		}
+
+		StartHUDInitializationRetry();
+		return;
 	}
 
-	APlayerState* CurrentPlayerState = PlayerState;
-	AGameStateBase* CurrentGameState = GetWorld() ? GetWorld()->GetGameState() : nullptr;
 	const bool bContextChanged = LastHUDInitPlayerState.Get() != CurrentPlayerState
 		|| LastHUDInitGameState.Get() != CurrentGameState;
 	if (!bForceBroadcast && bHasBroadcastHUDInitialization && !bContextChanged)
@@ -1231,6 +1702,43 @@ void AARPlayerController::StopHUDInitializationRetry()
 void AARPlayerController::HandleHUDInitializationRetry()
 {
 	RequestHUDInitializationInternal(false);
+}
+
+void AARPlayerController::RebindCurrentCharacterTagChangeDelegate(APlayerState* CurrentPlayerState)
+{
+	AARPlayerStateBase* NewPlayerState = Cast<AARPlayerStateBase>(CurrentPlayerState);
+	if (BoundCurrentCharacterTagPlayerState.Get() == NewPlayerState)
+	{
+		return;
+	}
+
+	UnbindCurrentCharacterTagChangeDelegate();
+	BoundCurrentCharacterTagPlayerState = NewPlayerState;
+	if (NewPlayerState)
+	{
+		NewPlayerState->OnCurrentCharacterTagChanged.RemoveDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+		NewPlayerState->OnCurrentCharacterTagChanged.AddDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+	}
+}
+
+void AARPlayerController::UnbindCurrentCharacterTagChangeDelegate()
+{
+	if (AARPlayerStateBase* PlayerStateBase = BoundCurrentCharacterTagPlayerState.Get())
+	{
+		PlayerStateBase->OnCurrentCharacterTagChanged.RemoveDynamic(this, &AARPlayerController::HandleCurrentCharacterTagChanged);
+	}
+
+	BoundCurrentCharacterTagPlayerState.Reset();
+}
+
+void AARPlayerController::HandleCurrentCharacterTagChanged(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag)
+{
+	(void)OldCharacterTag;
+
+	if (IsLocalController())
+	{
+		RequestHUDInitializationInternal(true);
+	}
 }
 
 void AARPlayerController::RequestOpenPauseMenu()
@@ -1651,7 +2159,7 @@ void AARPlayerController::ApplyDialogueInputMode(const bool bEnable)
 		bShowMouseCursor = true;
 
 		FInputModeGameAndUI InputMode;
-		if (DialogueWidget)
+		if (UParleyDialogueWidgetBase* DialogueWidget = GetDialogueWidget())
 		{
 			InputMode.SetWidgetToFocus(DialogueWidget->TakeWidget());
 		}

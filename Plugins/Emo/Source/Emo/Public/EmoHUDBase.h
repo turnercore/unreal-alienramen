@@ -52,6 +52,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Adds or removes a named suppression reason that temporarily blocks emotion rendering."))
 	void SetEmotionRenderingSuppressed(bool bSuppressed, FName Reason = NAME_None);
 
+	/** Sets the gameplay tags this HUD should use when resolving targeted emotion registrations. */
+	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Sets the gameplay tags this HUD uses when resolving targeted emotion registrations. Empty tags resolve global registrations only."))
+	void SetViewedEmotionTags(FGameplayTagContainer NewViewedEmotionTags);
+
+	/** Returns the gameplay tags this HUD currently uses when resolving targeted emotion registrations. */
+	UFUNCTION(BlueprintPure, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Returns the gameplay tags this HUD currently uses when resolving targeted emotion registrations."))
+	FGameplayTagContainer GetViewedEmotionTags() const { return ViewedEmotionTags; }
+
 	UFUNCTION(BlueprintCallable, Category = "Emo|UI|HUD|Emotion", meta = (ToolTip = "Enables or disables emotion icon rendering globally for this HUD instance."))
 	void SetEmotionRenderingEnabled(bool bEnabled) { bEnableEmotionView = bEnabled; }
 
@@ -76,8 +84,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.1", UIMin = "0.1", ToolTip = "Additional scale multiplier applied to emotion icon draw size."))
 	float EmotionIconRenderScale = 1.0f;
 
-	/** Minimum screen size (pixels) after projection; icons smaller than this are culled. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling."))
+	/** Minimum rendered size clamp in pixels after projection; smaller icons are scaled up to this size rather than culled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0", ToolTip = "Minimum on-screen max dimension in pixels for emotion icons after world projection scaling. Smaller icons are clamped up rather than culled."))
 	float MinimumIconScreenSizePixels = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|UI|HUD|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "Configures HUD emotion rendering behavior."))
@@ -122,10 +130,12 @@ private:
 
 	mutable TWeakObjectPtr<UCanvas> ActiveProjectionCanvas;
 	mutable TWeakObjectPtr<const APlayerController> ActiveProjectionController;
+	mutable FGameplayTagContainer ActiveProjectionViewedEmotionTags;
 	TArray<TWeakObjectPtr<UEmoComponent>> CachedEmotionComponents;
 	TSet<FSoftObjectPath> PendingAsyncIconLoads;
 	TArray<TSharedPtr<FStreamableHandle>> ActiveAsyncIconHandles;
 	double LastEmotionComponentCacheRefreshTimeSeconds = -1.0;
 	mutable uint32 OcclusionTraceCountThisFrame = 0;
 	TSet<FName> SuppressionReasons;
+	FGameplayTagContainer ViewedEmotionTags;
 };

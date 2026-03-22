@@ -21,7 +21,7 @@ public:
 	virtual void Deinitialize() override;
 
 	/** Resolves faction definition data for a faction tag via TagKey. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Resolves faction definition data without mutating faction subsystem state."))
 	bool GetFactionDefinition(FGameplayTag FactionTag, FParleyFactionDefinitionRow& OutDefinition) const;
 
 	/** Gets all configured faction tags resolved under FactionDefinitionRootTag. */
@@ -49,29 +49,37 @@ public:
 	float GetFactionSpeakerReputation(FGameplayTag FactionTag, FGameplayTag SpeakerTag) const;
 
 	/** Applies an immediate popularity delta to faction state. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Applies an immediate popularity delta on authoritative runtime state."))
 	bool ModifyFactionPopularity(FGameplayTag FactionTag, float DeltaPopularity);
 
 	/** Applies an immediate faction reputation delta for a specific speaker tag. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Applies an immediate faction reputation delta on authoritative runtime state."))
 	bool ModifyFactionSpeakerReputation(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float DeltaReputation);
 
+	/** Client-side relay used to keep local UI caches in sync after a faction popularity mutation. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Updates cached faction popularity state and relays the change to local widgets."))
+	void UpdateFactionPopularityFromReplication(FGameplayTag FactionTag, float DeltaPopularity, float NewTotal);
+
+	/** Client-side relay used to keep local UI caches in sync after a faction-speaker reputation mutation. */
+	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Updates cached faction-speaker reputation state and relays the change to local widgets."))
+	void UpdateFactionSpeakerReputationFromReplication(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float DeltaReputation, float NewTotal);
+
 	/** Injects persisted faction popularity states from an external save bridge. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Injects persisted faction popularity state from an external save bridge."))
 	void SetFactionPopularityStates(const TArray<FParleyFactionState>& States);
 
 	/** Injects persisted faction-speaker reputation states from an external save bridge. */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Injects persisted faction-speaker reputation state from an external save bridge."))
 	void SetFactionSpeakerReputationStates(const TArray<FParleyFactionSpeakerReputationState>& States);
 
 	/** Injects game-owned progression tags used for faction modifier rules (optional). */
-	UFUNCTION(BlueprintCallable, Category = "Parley|Faction", meta = (ToolTip = "Runs this faction subsystem operation on authoritative runtime state."))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Faction", meta = (ToolTip = "Injects game-owned progression tags used for faction modifier rules."))
 	void SetProgressionTags(const FGameplayTagContainer& Tags);
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Faction", meta = (ToolTip = "Broadcast when faction popularity is mutated by dialogue or scripted runtime. Save bridges should persist and mark dirty."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Faction", meta = (ToolTip = "Broadcast when faction popularity changes on authoritative runtime state."))
 	FParleyOnFactionPopularityChanged OnFactionPopularityChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Parley|Faction", meta = (ToolTip = "Broadcast when faction reputation for a speaker is mutated. Save bridges should persist and mark dirty."))
+	UPROPERTY(BlueprintAssignable, Category = "Parley|Faction", meta = (ToolTip = "Broadcast when faction reputation for a speaker changes on authoritative runtime state."))
 	FParleyOnFactionSpeakerReputationChanged OnFactionSpeakerReputationChanged;
 
 private:

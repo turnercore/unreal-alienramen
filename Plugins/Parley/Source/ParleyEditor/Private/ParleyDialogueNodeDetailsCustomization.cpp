@@ -249,7 +249,7 @@ void FParleyDialogueLineNodeDataCustomization::CustomizeChildren(
 		ChildBuilder.AddProperty(SkipBlockedHandle.ToSharedRef());
 	}
 
-	const TSharedPtr<IPropertyHandle> CharacterRestrictionHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDialogueLineNodeData, CharacterRestriction));
+	const TSharedPtr<IPropertyHandle> CharacterRestrictionHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDialogueLineNodeData, CharacterRestrictionTag));
 	if (CharacterRestrictionHandle.IsValid() && CharacterRestrictionHandle->IsValidHandle())
 	{
 		ChildBuilder.AddProperty(CharacterRestrictionHandle.ToSharedRef());

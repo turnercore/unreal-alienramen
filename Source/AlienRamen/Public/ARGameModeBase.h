@@ -56,6 +56,13 @@ public:
 	bool TravelDirectInMode(const FString& URL, const FString& Options = "", bool bSkipReadyChecks = false, bool bAbsolute = false, bool bSkipGameNotify = false, bool bUseOpenLevelInPIE = false);
 
 	/**
+	 * Starts a specific Parley conversation by tag for explicit requester/owner character tags.
+	 * Intended for scripted mode flows that need deterministic conversation selection.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Dialogue", meta = (BlueprintAuthorityOnly, ToolTip = "Starts a specific Parley conversation by tag for explicit requester and owner character tags on authoritative runtime state."))
+	bool StartParleyConversationByTagForCharacters(FGameplayTag RequesterCharacterTag, FGameplayTag OwnerCharacterTag, FGameplayTag ConversationTag);
+
+	/**
 	 * Authoritative hold-style character-switch request endpoint.
 	 * bIsRequesting=true is "holding switch"; false releases and re-arms the request latch.
 	 */
@@ -127,6 +134,7 @@ private:
 	void HandleFirstSessionJoinSetup(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState, UARSaveSubsystem* SaveSubsystem) const;
 	void EnsureJoinedPlayerHasUniqueIdentity(AARGameStateBase* InGameState, AARPlayerStateBase* JoinedPlayerState) const;
 	void NormalizeConnectedPlayersIdentity(AARGameStateBase* InGameState) const;
+	void PreparePlayerSpawnIdentity(AController* Player, AARPlayerStateBase* PlayerState) const;
 	void CleanupCharacterSwitchRequests();
 	bool CollectSwitchEligibleControllers(TArray<APlayerController*>& OutEligibleControllers) const;
 	void BuildPlayableCharacterSwitchList(const TArray<APlayerController*>& EligibleControllers, TArray<FGameplayTag>& OutPlayableCharacterTags) const;

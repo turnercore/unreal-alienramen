@@ -39,16 +39,37 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveMeatDefinition(FGameplayTag MeatTag, FARMeatDefinitionRow& OutMeatDef) const;
 
-	/** Resolves the first deterministic meat definition row that matches the requested color. */
+	/** Resolves the first deterministic meat definition row (row-name sort) for callers that need a generic default meat entry. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool ResolveFirstMeatDefinition(FARMeatDefinitionRow& OutMeatDef) const;
+
+	/** Resolves the canonical meat definition row mapped to an invader enemy identifier tag. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool ResolveMeatDefinitionForEnemy(FGameplayTag EnemyIdentifierTag, FARMeatDefinitionRow& OutMeatDef) const;
+
+	/** Legacy color-based meat-definition lookup is deprecated. This remains a compatibility bridge that maps legacy colors to canonical Item.Meat tags. */
+	UFUNCTION(
+		BlueprintPure,
+		Category = "Alien Ramen|Items|Meat",
+		meta = (DeprecatedFunction, DeprecationMessage = "Use ResolveMeatDefinition or ResolveMeatDefinitionForEnemy. Legacy color-based lookups still map to canonical Item.Meat tags for compatibility."))
 	bool ResolveFirstMeatDefinitionForColor(EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const;
 
-	/** Resolves the first deterministic Item.Meat tag that matches the requested color. */
+	/** Resolves the first deterministic Item.Meat tag (row-name sort). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	bool ResolveFirstMeatTag(FGameplayTag& OutMeatTag) const;
+
+	/** Legacy color-based meat-tag lookup is deprecated. This remains a compatibility bridge that maps legacy colors to canonical Item.Meat tags. */
+	UFUNCTION(
+		BlueprintPure,
+		Category = "Alien Ramen|Items|Meat",
+		meta = (DeprecatedFunction, DeprecationMessage = "Use ResolveFirstMeatTag or ResolveMeatDefinitionForEnemy. Legacy color-based lookups still map to canonical Item.Meat tags for compatibility."))
 	bool ResolveFirstMeatTagForColor(EARAffinityColor Color, FGameplayTag& OutMeatTag) const;
 
-	/** Returns all Item.Meat tags matching the requested color in deterministic row-name order. */
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
+	/** Legacy color-based meat-tag query is deprecated. This remains a compatibility bridge that maps legacy colors to canonical Item.Meat tags. */
+	UFUNCTION(
+		BlueprintPure,
+		Category = "Alien Ramen|Items|Meat",
+		meta = (DeprecatedFunction, DeprecationMessage = "Legacy color-based lookups still map to canonical Item.Meat tags for compatibility."))
 	bool GetMeatTagsForColor(EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const;
 
 	/** Resolves summed item sell value for all meat tags authored on a completed bowl. */

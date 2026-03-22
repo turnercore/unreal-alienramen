@@ -27,19 +27,30 @@ struct EMO_API FEmoIconRow : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct EMO_API FEmoDisplayState
+struct EMO_API FEmoEmotionRegistration
 {
 	GENERATED_BODY()
 
-	// Shared tag used when no per-slot override exists.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed emotion data field used by runtime display logic."))
-	FGameplayTag SharedEmotionTag;
+	/** Logical writer id used to update or clear this registration deterministically. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Logical source id that owns this registration entry. Reusing the same source id and target viewer tags updates the existing entry."))
+	FName SourceId = NAME_None;
 
-	// Player-slot override for P1.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed emotion data field used by runtime display logic."))
-	FGameplayTag P1EmotionTag;
+	/** Emotion tag displayed when this registration wins viewer resolution. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Emotion tag displayed when this registration wins viewer resolution."))
+	FGameplayTag EmotionTag;
 
-	// Player-slot override for P2.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed emotion data field used by runtime display logic."))
-	FGameplayTag P2EmotionTag;
+	/** Higher values win before tie-break rules apply. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Priority used when multiple matching or global registrations compete. Higher values win first."))
+	int32 Priority = 0;
+
+	/**
+	 * Exact-match viewer tags for this registration.
+	 * Empty means global fallback visible to any HUD when no higher-priority targeted registration wins.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Viewer tags that must match exactly against the HUD viewer container. Empty means this registration is global."))
+	FGameplayTagContainer TargetViewerTags;
+
+	/** Monotonic write order used to break same-priority ties deterministically. */
+	UPROPERTY()
+	uint64 WriteSerial = 0;
 };

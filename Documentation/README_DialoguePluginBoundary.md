@@ -25,7 +25,7 @@ This page defines what is owned by the Parley dialogue plugin boundary (`Plugins
 ## Integration Rule
 
 - Built-on-top systems may read and write dialogue-owned state only through stable runtime APIs/contracts; they should not become ownership authorities for dialogue, speaker, conversation, or relationship data.
-- Shop/customer-serving systems should use `UParleyDialogueSubsystem::ApplyRamenServeOutcome(...)` for relationship + emotion output instead of mutating save/emotion state directly.
+- Shop/customer-serving systems should bridge into generic Parley relationship APIs and project-owned emotion systems instead of depending on plugin-owned convenience helpers.
 - Systems reacting to dialogue `Signal` nodes should bind `OnDialogueSignalFired` in game layer and keep gameplay effects out of dialogue graph execution code.
 - Systems reacting to dialogue audio should consume controller-local requests in game layer; Parley should not depend on FMOD modules.
 

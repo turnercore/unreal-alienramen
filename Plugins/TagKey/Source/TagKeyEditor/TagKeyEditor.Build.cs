@@ -10,9 +10,13 @@ public class TagKeyEditor : ModuleRules
 		{
 			"Core",
 			"CoreUObject",
+			"GameplayTags"
+		});
+
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
 			"Engine",
 			"UnrealEd",
-			"GameplayTags",
 			"TagKey"
 		});
 	}

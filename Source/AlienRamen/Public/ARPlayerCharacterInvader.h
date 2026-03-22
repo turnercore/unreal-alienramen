@@ -33,9 +33,9 @@ struct FOnAttributeChangeData;
 
 /**
  * Base ship character for Alien Ramen.
- * - ASC is owned by PlayerState, Avatar is this pawn.
+ * - ASC owner is the current AARCharacterStateRuntime, Avatar is this pawn.
  * - On server possession: clears loadout, grants common ability set, then resolves ship/hat rows from LoadoutTags and applies baseline.
- *   Secondary lane is legacy/deprecated and optional.
+ *   Secondary lane is optional.
  * - Exposes generic tag-based activation/cancel API for PlayerController / Blueprint.
  */
 UCLASS()
@@ -134,10 +134,10 @@ protected:
 	// Returns false when baseline cannot be applied yet (for retry path).
 	bool ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct, bool bLogMissingStartupAbilities);
 
-	// Reads LoadoutTags from PlayerState even if it's only defined in a BP child (reflection).
+	// Reads current character loadout tags from PlayerState/runtime.
 	bool GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadoutTags) const;
 
-	// Find the first tag under a root (e.g. Unlocks.Ships.*)
+	// Find the first tag under a root (e.g. Unlock.Ship.*)
 	bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& Root, FGameplayTag& OutTag) const;
 
 	// Resolve a row using TagKeySubsystem (returns an InstancedStruct)
@@ -218,7 +218,7 @@ protected:
 
 	// ---- Tag roots (runtime-resolved; avoid static init order issues) ----
 	static FGameplayTag GetTagRootShips();
-	// Secondary lane remains optional/deprecated; never required for loadout initialization.
+	// Secondary lane remains optional and is never required for loadout initialization.
 	static FGameplayTag GetTagRootSecondaries();
 	static FGameplayTag GetTagRootHats();
 };

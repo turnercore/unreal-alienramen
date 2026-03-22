@@ -1,6 +1,7 @@
 #include "EmoHUDBase.h"
 
 #include "EmoComponent.h"
+#include "EmoComponentRegistrySubsystem.h"
 #include "EmoSettings.h"
 #include "EmoLog.h"
 #include "CanvasItem.h"
@@ -14,7 +15,6 @@
 #include "HAL/PlatformTime.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Stats/Stats.h"
-#include "UObject/UObjectIterator.h"
 
 DECLARE_STATS_GROUP(TEXT("AR Emotion HUD"), STATGROUP_EmoHUD, STATCAT_Advanced);
 DECLARE_CYCLE_STAT(TEXT("Emotion HUD Render"), STAT_EmoHUD_Render, STATGROUP_EmoHUD);
@@ -36,6 +36,7 @@ void AEmoHUDBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	PendingAsyncIconLoads.Reset();
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
+	ActiveProjectionViewedEmotionTags.Reset();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -55,13 +56,9 @@ void AEmoHUDBase::RefreshEmotionComponentCacheIfNeeded()
 	CachedEmotionComponents.Reset();
 
 	UWorld* World = GetWorld();
-	for (TObjectIterator<UEmoComponent> It; It; ++It)
+	if (UEmoComponentRegistrySubsystem* Registry = World ? World->GetSubsystem<UEmoComponentRegistrySubsystem>() : nullptr)
 	{
-		UEmoComponent* EmotionComponent = *It;
-		if (IsValid(EmotionComponent) && !EmotionComponent->IsTemplate() && EmotionComponent->GetWorld() == World)
-		{
-			CachedEmotionComponents.Add(EmotionComponent);
-		}
+		Registry->GetRegisteredEmotionComponents(CachedEmotionComponents);
 	}
 }
 
@@ -133,6 +130,7 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas = Canvas;
 	ActiveProjectionController = LocalController;
+	ActiveProjectionViewedEmotionTags = ViewedEmotionTags;
 	ActiveAsyncIconHandles.RemoveAll([](const TSharedPtr<FStreamableHandle>& Handle)
 		{
 			return !Handle.IsValid() || Handle->HasLoadCompleted();
@@ -297,6 +295,7 @@ int32 AEmoHUDBase::RenderEmotionView()
 
 	ActiveProjectionCanvas.Reset();
 	ActiveProjectionController.Reset();
+	ActiveProjectionViewedEmotionTags.Reset();
 	SET_DWORD_STAT(STAT_EmoHUD_Candidates, CandidateCount);
 	SET_DWORD_STAT(STAT_EmoHUD_Drawn, static_cast<uint32>(DrawnEmotionCount));
 	SET_DWORD_STAT(STAT_EmoHUD_OcclusionTraces, OcclusionTraceCountThisFrame);
@@ -422,6 +421,11 @@ void AEmoHUDBase::RequestHUDInitialization(APlayerController* SourceController, 
 	BP_OnHUDInitializationRequested(SourceController, CurrentPlayerState, CurrentGameState);
 }
 
+void AEmoHUDBase::SetViewedEmotionTags(FGameplayTagContainer NewViewedEmotionTags)
+{
+	ViewedEmotionTags = MoveTemp(NewViewedEmotionTags);
+}
+
 void AEmoHUDBase::DrawHUD()
 {
 	Super::DrawHUD();
@@ -488,12 +492,10 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 		return false;
 	}
 
-	if (bHideOccludedEmotion && !IsEmotionVisibleForViewer(EmotionComponent, LocalController))
-	{
-		return false;
-	}
-
-	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForController(LocalController);
+	const FGameplayTagContainer& ViewerTags = ActiveProjectionViewedEmotionTags.IsEmpty()
+		? ViewedEmotionTags
+		: ActiveProjectionViewedEmotionTags;
+	const FGameplayTag DisplayTag = EmotionComponent->GetDisplayedEmotionTagForViewerTags(ViewerTags);
 	if (!DisplayTag.IsValid())
 	{
 		if (ShouldLogEmotionRenderVerbose())
@@ -518,6 +520,11 @@ bool AEmoHUDBase::TryProjectEmotionForComponent(
 				*GetNameSafe(EmotionComponent->GetOwner()),
 				*DisplayTag.ToString());
 		}
+		return false;
+	}
+
+	if (bHideOccludedEmotion && !IsEmotionVisibleForViewer(EmotionComponent, LocalController))
+	{
 		return false;
 	}
 

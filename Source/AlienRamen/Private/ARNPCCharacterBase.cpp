@@ -15,6 +15,7 @@
 namespace
 {
 	static const FName TalkableStateEmotionSourceId(TEXT("TalkableState"));
+	static const FName SpeakerEmotionSourceId(TEXT("ParleySpeakerEmotion"));
 
 	static FString DescribeActorComponentsForDiagnostics(AActor* Actor)
 	{
@@ -318,7 +319,6 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 
 	if (!SpeakerComponent)
 	{
-		// Compatibility fallback: customer-driven actors can still open dialogue using their customer speaker identity.
 		if (HasAuthority() && CustomerComponent)
 		{
 			const FGameplayTag CustomerSpeakerTag = CustomerComponent->GetSpeakerTag();
@@ -336,13 +336,24 @@ void AARNPCCharacterBase::InteractByController(AARPlayerController* InteractingC
 								SourceSpeakerTag = SourceSpeakerComponent->GetSpeakerTag();
 							}
 						}
+						if (!SourceSpeakerTag.IsValid())
+						{
+							UE_LOG(
+								ARLog,
+								Verbose,
+								TEXT("[Interact] '%s' cannot start dialogue via customer speaker '%s': controller '%s' has no possessed pawn speaker component."),
+								*GetNameSafe(this),
+								*CustomerSpeakerTag.ToString(),
+								*GetNameSafe(InteractingController));
+							return;
+						}
 
 						if (DialogueSubsystem->TryStartDialogueBetweenSpeakers(InteractingController, SourceSpeakerTag, CustomerSpeakerTag))
 						{
 							UE_LOG(
 								ARLog,
 								Verbose,
-								TEXT("[Interact] '%s' started dialogue via customer speaker fallback '%s'."),
+								TEXT("[Interact] '%s' started dialogue via customer speaker '%s'."),
 								*GetNameSafe(this),
 								*CustomerSpeakerTag.ToString());
 							return;
@@ -468,27 +479,27 @@ void AARNPCCharacterBase::HandleSpeakerEmotionRequested(FGameplayTag EmotionTag,
 	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(ViewerCharacterTag);
 	if (NormalizedCharacterTag.IsValid())
 	{
+		FGameplayTagContainer ViewerTags;
+		ViewerTags.AddTag(ViewerCharacterTag);
+
 		if (EmotionTag.IsValid())
 		{
-			EmotionComponent->SetDialogueEmotionTagForPlayerSlotTag(
-				ARPlayer::GetPlayerSlotTag(ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag)),
-				EmotionTag);
+			EmotionComponent->SetEmotionRegistration(SpeakerEmotionSourceId, EmotionTag, 0, ViewerTags);
 		}
 		else
 		{
-			EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(
-				ARPlayer::GetPlayerSlotTag(ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag)));
+			EmotionComponent->ClearEmotionRegistration(SpeakerEmotionSourceId, ViewerTags);
 		}
 		return;
 	}
 
 	if (EmotionTag.IsValid())
 	{
-		EmotionComponent->SetDialogueEmotionTag(EmotionTag);
+		EmotionComponent->SetEmotionRegistration(SpeakerEmotionSourceId, EmotionTag, 0);
 	}
 	else
 	{
-		EmotionComponent->ClearDialogueEmotionTag();
+		EmotionComponent->ClearEmotionRegistration(SpeakerEmotionSourceId);
 	}
 }
 
@@ -507,12 +518,13 @@ void AARNPCCharacterBase::HandleSpeakerEmotionCleared(FGameplayTag ViewerCharact
 	const FGameplayTag NormalizedCharacterTag = ARPlayer::NormalizeCharacterTag(ViewerCharacterTag);
 	if (NormalizedCharacterTag.IsValid())
 	{
-		EmotionComponent->ClearDialogueEmotionTagForPlayerSlotTag(
-			ARPlayer::GetPlayerSlotTag(ARPlayer::GetPlayerSlotForCharacterTag(NormalizedCharacterTag)));
+		FGameplayTagContainer ViewerTags;
+		ViewerTags.AddTag(ViewerCharacterTag);
+		EmotionComponent->ClearEmotionRegistration(SpeakerEmotionSourceId, ViewerTags);
 		return;
 	}
 
-	EmotionComponent->ClearDialogueEmotionTag();
+	EmotionComponent->ClearEmotionRegistration(SpeakerEmotionSourceId);
 }
 
 void AARNPCCharacterBase::OnRep_SpeakerLocalStateAllowsDialogue(const bool bOldAllowsDialogue)
@@ -579,7 +591,7 @@ void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTal
 	const FGameplayTag WantsToTalkTag = EmotionSettings ? EmotionSettings->WantsToTalkEmotionTag : FGameplayTag();
 	if (!WantsToTalkTag.IsValid())
 	{
-		EmotionComponent->ClearSystemEmotionTag(TalkableStateEmotionSourceId);
+		EmotionComponent->ClearEmotionRegistration(TalkableStateEmotionSourceId);
 		bAutoWantsToTalkEmotionApplied = false;
 		UE_LOG(ARLog, Verbose, TEXT("[Emotion][Talkable] '%s' no WantsToTalkEmotionTag configured; cleared TalkableState source."), *GetNameSafe(this));
 		return;
@@ -587,7 +599,7 @@ void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTal
 
 	if (bEffectiveTalkable)
 	{
-		EmotionComponent->SetSystemEmotionTag(TalkableStateEmotionSourceId, WantsToTalkTag, 0);
+		EmotionComponent->SetEmotionRegistration(TalkableStateEmotionSourceId, WantsToTalkTag, 0);
 		bAutoWantsToTalkEmotionApplied = true;
 		UE_LOG(
 			ARLog,
@@ -598,7 +610,7 @@ void AARNPCCharacterBase::RefreshAutoWantsToTalkEmotion(const bool bEffectiveTal
 		return;
 	}
 
-	EmotionComponent->ClearSystemEmotionTag(TalkableStateEmotionSourceId);
+	EmotionComponent->ClearEmotionRegistration(TalkableStateEmotionSourceId);
 	UE_LOG(ARLog, Verbose, TEXT("[Emotion][Talkable] '%s' cleared TalkableState (effective talkable=false)."), *GetNameSafe(this));
 	bAutoWantsToTalkEmotionApplied = false;
 }

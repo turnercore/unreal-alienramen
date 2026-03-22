@@ -202,7 +202,7 @@ private:
 	void RebuildLastFindResults();
 	void DestroySessionBestEffort();
 
-	void ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, bool bClearFindFriendHandle);
+	void ClearTrackedSessionDelegateHandles(const IOnlineSessionPtr& Session, bool bClearFindFriendHandle, int32 FindFriendUserNum = 0);
 	void ResetOperationState();
 	void ResetFindState();
 	const UARNetworkRoutingSettings* GetRoutingSettings() const;
@@ -248,6 +248,7 @@ private:
 	bool bPendingJoinAfterDestroy = false;
 
 	int32 LastFindMaxResults = 50;
+	int32 FindFriendLocalUserNum = 0;
 	int32 PendingInviteControllerId = 0;
 	int32 PendingJoinControllerId = 0;
 

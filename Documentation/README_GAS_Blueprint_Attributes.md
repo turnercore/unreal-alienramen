@@ -12,8 +12,9 @@ Use this page after [GAS Overview](README_GAS.md) when the question is specifica
 
 ## Source of Truth
 
-- Player attributes live on `AARPlayerStateBase` (ASC owner).
-- Ship pawn (`AARShipCharacterBase`) is the ASC avatar.
+- Player-character attributes live on `AARCharacterStateRuntime` (ASC owner).
+- Active pawn (`AARPlayerCharacterInvader` in Invader) is the ASC avatar.
+- `AARPlayerStateBase` is the player-owned pointer/projection surface and convenience read API for the active runtime.
 - Attributes replicate through GAS/AttributeSet replication.
 - UI should read from PlayerState, not from the pawn.
 
@@ -42,7 +43,7 @@ Blueprint-assignable events:
 - `OnMaxSpiceChanged(NewValue, OldValue)`
 - `OnMoveSpeedChanged(NewValue, OldValue)`
 - `OnInvaderPlayerColorChanged(NewColor, OldColor)`
-- `OnInvaderComboChanged(SourcePlayerState, SourcePlayerSlot, NewCombo, OldCombo)`
+- `OnInvaderComboChanged(SourcePlayerState, SourceCharacterTag, NewCombo, OldCombo)`
 - `OnInvaderActivatedUpgradesChanged(...)`
 - `OnPredictedSpiceChanged(PredictedSpice, AuthoritativeSpice, bHasPrediction)`
 
@@ -84,7 +85,7 @@ Use `GameState.PlayerArray` and cast entries to `AARPlayerStateBase`.
 - For local panel: bind to local player's PlayerState.
 - For teammate panel: bind to the other replicated PlayerState.
 
-Because the attributes are replicated on ASC/AttributeSet, both players can see each other’s values through PlayerState.
+Because the attributes are replicated on runtime ASC/AttributeSet, both players can see each other's values through PlayerState reads.
 
 ## Writing Attribute Values
 

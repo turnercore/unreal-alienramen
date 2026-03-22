@@ -1,10 +1,13 @@
 #include "ARGameModeBase.h"
 
 #include "ARGameStateBase.h"
+#include "ARCharacterStateRuntime.h"
+#include "ARCharacterSubsystem.h"
 #include "ARLoadoutSettings.h"
 #include "ARLog.h"
 #include "ARNetworkUserSettings.h"
 #include "ARTaggedPlayerStart.h"
+#include "ParleyDialogueSubsystem.h"
 #include "ParleySpeakerSubsystem.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
@@ -81,94 +84,6 @@ namespace
 		}
 	}
 
-	static bool TryGetFirstSegmentUnderRoot(const FGameplayTag& InTag, const FGameplayTag& RootTag, FString& OutSegment)
-	{
-		OutSegment.Reset();
-		if (!InTag.IsValid() || !RootTag.IsValid())
-		{
-			return false;
-		}
-
-		const FString TagString = InTag.ToString();
-		const FString RootString = RootTag.ToString();
-		const FString RootPrefix = RootString + TEXT(".");
-		if (!TagString.StartsWith(RootPrefix))
-		{
-			return false;
-		}
-
-		const FString Suffix = TagString.Mid(RootPrefix.Len());
-		if (Suffix.IsEmpty())
-		{
-			return false;
-		}
-
-		FString FirstSegment;
-		if (!Suffix.Split(TEXT("."), &FirstSegment, nullptr))
-		{
-			FirstSegment = Suffix;
-		}
-
-		if (FirstSegment.IsEmpty())
-		{
-			return false;
-		}
-
-		OutSegment = FirstSegment;
-		return true;
-	}
-
-	static void AddSpawnIdentityMirrorTags(const FGameplayTag& CharacterTag, TArray<FGameplayTag>& InOutTags)
-	{
-		if (!CharacterTag.IsValid())
-		{
-			return;
-		}
-
-		const FGameplayTag ParleySpeakerRoot = FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker"), false);
-		const FGameplayTag ShopCharacterRoot = FGameplayTag::RequestGameplayTag(TEXT("Shop.Character"), false);
-		const FGameplayTag ShopCustomerRoot = FGameplayTag::RequestGameplayTag(TEXT("Shop.Customer"), false);
-
-		FString Segment;
-		if (!TryGetFirstSegmentUnderRoot(CharacterTag, ParleySpeakerRoot, Segment)
-			&& !TryGetFirstSegmentUnderRoot(CharacterTag, ShopCharacterRoot, Segment)
-			&& !TryGetFirstSegmentUnderRoot(CharacterTag, ShopCustomerRoot, Segment))
-		{
-			return;
-		}
-
-		auto TryAppendTag = [&InOutTags](const FGameplayTag& TagToAppend)
-		{
-			if (!TagToAppend.IsValid() || InOutTags.Contains(TagToAppend))
-			{
-				return;
-			}
-
-			InOutTags.Add(TagToAppend);
-		};
-
-		if (ParleySpeakerRoot.IsValid())
-		{
-			TryAppendTag(FGameplayTag::RequestGameplayTag(
-				*FString::Printf(TEXT("%s.%s"), *ParleySpeakerRoot.ToString(), *Segment),
-				false));
-		}
-
-		if (ShopCharacterRoot.IsValid())
-		{
-			TryAppendTag(FGameplayTag::RequestGameplayTag(
-				*FString::Printf(TEXT("%s.%s"), *ShopCharacterRoot.ToString(), *Segment),
-				false));
-		}
-
-		if (ShopCustomerRoot.IsValid())
-		{
-			TryAppendTag(FGameplayTag::RequestGameplayTag(
-				*FString::Printf(TEXT("%s.%s"), *ShopCustomerRoot.ToString(), *Segment),
-				false));
-		}
-	}
-
 	static FGameplayTag ResolveCharacterTagForSpawnIdentity(const AARPlayerStateBase* PlayerState)
 	{
 		if (!PlayerState)
@@ -176,30 +91,8 @@ namespace
 			return FGameplayTag();
 		}
 
-		const FGameplayTag CanonicalCharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
-		const FGameplayTag ChoiceCharacterTag = ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
-
-		// Runtime can briefly carry mismatched mirrors during join/load flows. Prefer explicit
-		// picked character when present so start selection and pawn class stay user-intent aligned.
-		if (ChoiceCharacterTag.IsValid())
-		{
-			if (!CanonicalCharacterTag.IsValid() || !CanonicalCharacterTag.MatchesTagExact(ChoiceCharacterTag))
-			{
-				return ChoiceCharacterTag;
-			}
-		}
-
-	if (CanonicalCharacterTag.IsValid())
-	{
-		return CanonicalCharacterTag;
+		return ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
 	}
-
-	const int32 RuntimeSlotId = PlayerState->GetPlayerSlotId();
-	const EARCharacterChoice FallbackChoice = (RuntimeSlotId > 0 && RuntimeSlotId % 2 == 0)
-		? EARCharacterChoice::Sister
-		: EARCharacterChoice::Brother;
-	return ARPlayer::GetCharacterTagForChoice(FallbackChoice);
-}
 
 	static void PrepareControllerForGameplaySpawn(AController* Controller)
 	{
@@ -727,6 +620,55 @@ bool AARGameModeBase::TravelDirectInMode(const FString& URL, const FString& Opti
 	return TryStartTravel(URL, Options, bSkipReadyChecks, bAbsolute, bSkipGameNotify, bUseOpenLevelInPIE, EARTravelRoutePolicy::ForceDirect);
 }
 
+bool AARGameModeBase::StartParleyConversationByTagForCharacters(
+	const FGameplayTag RequesterCharacterTag,
+	const FGameplayTag OwnerCharacterTag,
+	const FGameplayTag ConversationTag)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters ignored: not authority (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UParleyDialogueSubsystem* DialogueSubsystem = GameInstance ? GameInstance->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
+	if (!DialogueSubsystem)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters failed: ParleyDialogueSubsystem unavailable (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	const bool bStarted = DialogueSubsystem->StartConversationByTagForCharacters(
+		RequesterCharacterTag,
+		OwnerCharacterTag,
+		ConversationTag);
+	if (!bStarted)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[GameMode] StartParleyConversationByTagForCharacters returned false (Requester=%s Owner=%s Conversation=%s)."),
+			*RequesterCharacterTag.ToString(),
+			*OwnerCharacterTag.ToString(),
+			*ConversationTag.ToString());
+	}
+
+	return bStarted;
+}
+
 TSubclassOf<AGameSession> AARGameModeBase::GetGameSessionClass() const
 {
 	// Keep runtime independent from BP-configured AdvancedGameSession classes.
@@ -955,8 +897,7 @@ void AARGameModeBase::HandleFirstSessionJoinSetup(AARGameStateBase* InGameState,
 	bool bHydratedFromSave = false;
 	if (SaveSubsystem)
 	{
-		// Character-native hydration only: no slot fallback.
-		bHydratedFromSave = SaveSubsystem->TryHydratePlayerStateFromCurrentSave(JoinedPlayerState, false);
+		bHydratedFromSave = SaveSubsystem->TryHydratePlayerStateFromCurrentSave(JoinedPlayerState);
 	}
 
 	if (!bHydratedFromSave)
@@ -1223,7 +1164,7 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 
 			bool bHasShipTag = false;
 			TArray<FGameplayTag> PlayerLoadoutTags;
-			Player->LoadoutTags.GetGameplayTagArray(PlayerLoadoutTags);
+			Player->GetCurrentCharacterLoadoutTags().GetGameplayTagArray(PlayerLoadoutTags);
 			for (const FGameplayTag& LoadoutTag : PlayerLoadoutTags)
 			{
 				if (LoadoutTag.IsValid() && ShipRootTag.IsValid() && LoadoutTag.MatchesTag(ShipRootTag))
@@ -1320,6 +1261,15 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 	const EARCharacterChoice PreSuperChoice = JoinedPS->GetCharacterPicked();
 	const FGameplayTag PreSuperCharacterTag = ResolveCharacterTagForSpawnIdentity(JoinedPS);
 	CachePendingSpawnCharacterTagForController(NewPlayer, PreSuperCharacterTag);
+	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	{
+		bool bCreatedRuntime = false;
+		if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(JoinedPS, PreSuperCharacterTag, bCreatedRuntime))
+		{
+			(void)bCreatedRuntime;
+			JoinedPS->SetCurrentCharacterRuntime(Runtime);
+		}
+	}
 
 	// Identity must be normalized before Super so spawn class/start selection sees non-unknown character.
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
@@ -1384,6 +1334,15 @@ void AARGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* 
 			PostSuperSlotId,
 			*PostSuperCharacterTag.ToString());
 		RestartPlayer(NewPlayer);
+	}
+
+	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	{
+		if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(JoinedPS, PostSuperCharacterTag))
+		{
+			JoinedPS->SetCurrentCharacterRuntime(Runtime);
+			CharacterSubsystem->BindRuntimePawn(Runtime, NewPlayer->GetPawn());
+		}
 	}
 
 	if (UGameInstance* GI = GetGameInstance())
@@ -1452,6 +1411,40 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 		return;
 	}
 
+	const TSubclassOf<APlayerController> DesiredControllerClass = GetPlayerControllerClassToSpawnForSeamlessTravel(PlayerController);
+	if (DesiredControllerClass && !PlayerController->IsA(DesiredControllerClass))
+	{
+		APlayerController* ReplacementController = SpawnPlayerControllerCommon(
+			PlayerController->IsLocalPlayerController() ? ROLE_SimulatedProxy : ROLE_AutonomousProxy,
+			PlayerController->GetFocalLocation(),
+			PlayerController->GetControlRotation(),
+			DesiredControllerClass);
+		if (ReplacementController)
+		{
+			PlayerController->SeamlessTravelTo(ReplacementController);
+			ReplacementController->SeamlessTravelFrom(PlayerController);
+			SwapPlayerControllers(PlayerController, ReplacementController);
+			C = ReplacementController;
+			PlayerController = ReplacementController;
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[GameMode] Seamless controller class corrected for mode '%s': now '%s'."),
+				*ModeTag.ToString(),
+				*GetNameSafe(PlayerController->GetClass()));
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[GameMode] Failed to spawn desired seamless controller class '%s' for mode '%s'; keeping '%s'."),
+				*GetNameSafe(DesiredControllerClass.Get()),
+				*ModeTag.ToString(),
+				*GetNameSafe(PlayerController->GetClass()));
+		}
+	}
+
 	if (PlayerController->PlayerState)
 	{
 		PlayerController->PlayerState->SetIsSpectator(false);
@@ -1513,6 +1506,19 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 
 		NormalizeConnectedPlayersIdentity(GS);
 	}
+
+	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	{
+		if (AARPlayerStateBase* JoinedPS = PlayerController->GetPlayerState<AARPlayerStateBase>())
+		{
+			const FGameplayTag CharacterTag = ResolveCharacterTagForSpawnIdentity(JoinedPS);
+			if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(JoinedPS, CharacterTag))
+			{
+				JoinedPS->SetCurrentCharacterRuntime(Runtime);
+				CharacterSubsystem->BindRuntimePawn(Runtime, PlayerController->GetPawn());
+			}
+		}
+	}
 }
 
 TSubclassOf<APlayerController> AARGameModeBase::GetPlayerControllerClassToSpawnForSeamlessTravel(APlayerController* PreviousPlayerController)
@@ -1537,6 +1543,33 @@ TSubclassOf<APlayerController> AARGameModeBase::GetPlayerControllerClassToSpawnF
 	return ControllerClassToSpawn;
 }
 
+void AARGameModeBase::PreparePlayerSpawnIdentity(AController* Player, AARPlayerStateBase* PlayerState) const
+{
+	(void)Player;
+
+	if (!HasAuthority() || !PlayerState)
+	{
+		return;
+	}
+
+	if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
+	{
+		if (!PlayerState->IsSetupComplete())
+		{
+			UARSaveSubsystem* SaveSubsystem = nullptr;
+			if (UGameInstance* GI = GetGameInstance())
+			{
+				SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
+			}
+
+			HandleFirstSessionJoinSetup(GS, PlayerState, SaveSubsystem);
+		}
+
+		EnsureJoinedPlayerHasUniqueIdentity(GS, PlayerState);
+		NormalizeConnectedPlayersIdentity(GS);
+	}
+}
+
 AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 {
 	if (!Player)
@@ -1556,25 +1589,7 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 
 	// Spawn-point selection must never run against an unresolved identity; editor/raw-map flows
 	// can still reach here before earlier join normalization has finalized character assignment.
-	if (HasAuthority())
-	{
-		if (AARGameStateBase* GS = GetGameState<AARGameStateBase>())
-		{
-			if (!PlayerState->IsSetupComplete())
-			{
-				UARSaveSubsystem* SaveSubsystem = nullptr;
-				if (UGameInstance* GI = GetGameInstance())
-				{
-					SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
-				}
-
-				HandleFirstSessionJoinSetup(GS, PlayerState, SaveSubsystem);
-			}
-
-			EnsureJoinedPlayerHasUniqueIdentity(GS, PlayerState);
-			NormalizeConnectedPlayersIdentity(GS);
-		}
-	}
+	PreparePlayerSpawnIdentity(Player, PlayerState);
 
 	FGameplayTag CharacterTag = ResolveCharacterTagForSpawnIdentity(PlayerState);
 	const FGameplayTag PendingCharacterTag = ARPlayer::NormalizeCharacterTag(GetPendingSpawnCharacterTagForController(Player));
@@ -1606,10 +1621,9 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[GameMode] ChoosePlayerStart still has invalid character identity for '%s' after normalization (CurrentCharacterTag=%s CharacterPicked=%d)."),
+			TEXT("[GameMode] ChoosePlayerStart still has invalid character identity for '%s' after normalization (CurrentCharacterTag=%s)."),
 			*GetNameSafe(PlayerState),
-			*PlayerState->GetCurrentCharacterTag().ToString(),
-			static_cast<int32>(PlayerState->GetCharacterPicked()));
+			*PlayerState->GetCurrentCharacterTag().ToString());
 	}
 
 	TArray<FGameplayTag> IdentityQueryTags;
@@ -1618,7 +1632,6 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	{
 		IdentityQueryTags.Add(CharacterTag);
 	}
-	AddSpawnIdentityMirrorTags(CharacterTag, IdentityQueryTags);
 	if (IdentityQueryTags.IsEmpty())
 	{
 		UE_LOG(
@@ -1708,35 +1721,95 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 
 APawn* AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
 {
+	if (HasAuthority() && NewPlayer)
+	{
+		AARPlayerStateBase* PlayerState = NewPlayer->GetPlayerState<AARPlayerStateBase>();
+		UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+		if (PlayerState && CharacterSubsystem)
+		{
+			FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(GetPendingSpawnCharacterTagForController(NewPlayer));
+			if (!CharacterTag.IsValid())
+			{
+				CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+			}
+
+			if (CharacterTag.IsValid())
+			{
+				bool bCreatedRuntime = false;
+				AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(PlayerState, CharacterTag, bCreatedRuntime);
+				(void)bCreatedRuntime;
+				if (Runtime)
+				{
+					PlayerState->SetCurrentCharacterRuntime(Runtime);
+					if (APawn* ExistingPawn = Runtime->GetCurrentPawn())
+					{
+						if (IsValid(ExistingPawn) && !ExistingPawn->GetController())
+						{
+							ExistingPawn->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
+							CharacterSubsystem->BindRuntimePawn(Runtime, ExistingPawn);
+							return ExistingPawn;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	APawn* SpawnedPawn = Super::SpawnDefaultPawnAtTransform_Implementation(NewPlayer, SpawnTransform);
-	if (SpawnedPawn || !HasAuthority() || !NewPlayer)
+	if (!HasAuthority() || !NewPlayer)
 	{
 		return SpawnedPawn;
 	}
 
-	UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer);
-	UWorld* World = GetWorld();
-	if (!World || !PawnClass)
+	APawn* FinalPawn = SpawnedPawn;
+	if (!FinalPawn)
 	{
-		return SpawnedPawn;
+		UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer);
+		UWorld* World = GetWorld();
+		if (!World || !PawnClass)
+		{
+			return SpawnedPawn;
+		}
+
+		FActorSpawnParameters SpawnInfo;
+		SpawnInfo.Instigator = GetInstigator();
+		SpawnInfo.ObjectFlags |= RF_Transient;
+		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		APawn* CollisionAdjustedPawn = World->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo);
+		if (CollisionAdjustedPawn)
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[GameMode] Super pawn spawn failed; forced collision-adjusted pawn spawn for controller '%s' using class '%s'."),
+				*GetNameSafe(NewPlayer),
+				*GetNameSafe(PawnClass));
+		}
+
+		FinalPawn = CollisionAdjustedPawn ? CollisionAdjustedPawn : SpawnedPawn;
 	}
 
-	FActorSpawnParameters SpawnInfo;
-	SpawnInfo.Instigator = GetInstigator();
-	SpawnInfo.ObjectFlags |= RF_Transient;
-	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	APawn* CollisionAdjustedPawn = World->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo);
-	if (CollisionAdjustedPawn)
+	if (FinalPawn)
 	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[GameMode] Super pawn spawn failed; forced collision-adjusted pawn spawn for controller '%s' using class '%s'."),
-			*GetNameSafe(NewPlayer),
-			*GetNameSafe(PawnClass));
+		AARPlayerStateBase* PlayerState = NewPlayer->GetPlayerState<AARPlayerStateBase>();
+		UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+		if (PlayerState && CharacterSubsystem)
+		{
+			FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(GetPendingSpawnCharacterTagForController(NewPlayer));
+			if (!CharacterTag.IsValid())
+			{
+				CharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+			}
+
+			if (AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(PlayerState, CharacterTag))
+			{
+				PlayerState->SetCurrentCharacterRuntime(Runtime);
+				CharacterSubsystem->BindRuntimePawn(Runtime, FinalPawn);
+			}
+		}
 	}
 
-	return CollisionAdjustedPawn ? CollisionAdjustedPawn : SpawnedPawn;
+	return FinalPawn;
 }
 
 void AARGameModeBase::Logout(AController* Exiting)

@@ -7,8 +7,9 @@ GAS is documented under the shared plugin/runtime section because it supports mo
 ## Where GAS Is Used
 
 - Invader player runtime:
-  - `AARPlayerStateBase` owns the ASC
-  - the Invader pawn/avatar initializes actor info and applies loadout-driven abilities/effects/tags
+  - `AARCharacterStateRuntime` owns the ASC + `UARAttributeSetCore` for each canonical character
+  - `AARPlayerStateBase` owns player identity and the current-character pointer (`CurrentCharacterTag`, `CurrentCharacterRuntime`)
+  - the Invader pawn/avatar initializes actor info with `OwnerActor = AARCharacterStateRuntime` and `AvatarActor = Pawn`
 - Shop integration:
   - shop throw strength falls back to thrower GAS `Strength`
 - Scrapyard integration:
@@ -22,7 +23,8 @@ GAS is documented under the shared plugin/runtime section because it supports mo
 
 ## Current GAS Setup (Quick Context)
 
-- Ability System Component (ASC) is owned by PlayerState (`AARPlayerStateBase`).
+- Ability System Component (ASC) is owned by character runtime actor (`AARCharacterStateRuntime`).
+- PlayerState remains the player-owned access surface and delegates attribute reads to the active runtime ASC.
 - Pawn (`AARPlayerCharacterInvader`) initializes ASC actor info and applies loadout-driven abilities/effects/tags.
 - A single shared attribute set is used today: `UARAttributeSetCore`.
 - Loadout terminology uses `Hat` (`Unlock.Hat`).

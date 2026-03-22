@@ -31,7 +31,7 @@ namespace
 				continue;
 			}
 
-			if (PlayerState->LoadoutTags.HasTag(Tag))
+			if (PlayerState->GetCurrentCharacterLoadoutTags().HasTag(Tag))
 			{
 				return true;
 			}

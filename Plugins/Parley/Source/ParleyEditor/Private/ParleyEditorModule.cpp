@@ -19,12 +19,12 @@
 
 namespace ParleyDialogueSpeakerEditor
 {
-	static const FName TabName(TEXT("AR_DialogueSpeakerEditor"));
+	static const FName TabName(TEXT("Parley_DialogueSpeakerEditor"));
 }
 
 namespace ParleyDialogueConversationGraphEditor
 {
-	static const FName TabName(TEXT("AR_DialogueConversationGraphEditor"));
+	static const FName TabName(TEXT("Parley_DialogueConversationGraphEditor"));
 }
 
 IMPLEMENT_MODULE(FParleyEditorModule, ParleyEditor)

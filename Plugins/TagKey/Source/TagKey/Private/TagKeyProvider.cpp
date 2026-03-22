@@ -11,6 +11,43 @@ namespace
 	TAtomic<uint64> GProviderGeneration(0);
 }
 
+FTagKeyRouteProviderRegistration::FTagKeyRouteProviderRegistration(ITagKeyRouteProvider* InProvider)
+	: Provider(InProvider)
+{
+	FTagKeyRouteProviderRegistry::RegisterProvider(Provider);
+}
+
+FTagKeyRouteProviderRegistration::~FTagKeyRouteProviderRegistration()
+{
+	Reset();
+}
+
+FTagKeyRouteProviderRegistration::FTagKeyRouteProviderRegistration(FTagKeyRouteProviderRegistration&& Other) noexcept
+	: Provider(Other.Provider)
+{
+	Other.Provider = nullptr;
+}
+
+FTagKeyRouteProviderRegistration& FTagKeyRouteProviderRegistration::operator=(FTagKeyRouteProviderRegistration&& Other) noexcept
+{
+	if (this != &Other)
+	{
+		Reset();
+		Provider = Other.Provider;
+		Other.Provider = nullptr;
+	}
+	return *this;
+}
+
+void FTagKeyRouteProviderRegistration::Reset()
+{
+	if (Provider)
+	{
+		FTagKeyRouteProviderRegistry::UnregisterProvider(Provider);
+		Provider = nullptr;
+	}
+}
+
 void FTagKeyRouteProviderRegistry::RegisterProvider(ITagKeyRouteProvider* Provider)
 {
 	if (!Provider)
@@ -38,6 +75,11 @@ void FTagKeyRouteProviderRegistry::UnregisterProvider(ITagKeyRouteProvider* Prov
 	{
 		++GProviderGeneration;
 	}
+}
+
+FTagKeyRouteProviderRegistration FTagKeyRouteProviderRegistry::RegisterProviderScoped(ITagKeyRouteProvider* Provider)
+{
+	return FTagKeyRouteProviderRegistration(Provider);
 }
 
 void FTagKeyRouteProviderRegistry::GetProviders(TArray<ITagKeyRouteProvider*>& OutProviders)

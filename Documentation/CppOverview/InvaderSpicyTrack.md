@@ -3,29 +3,31 @@ Paths:
 - `Source/AlienRamen/Public/ARInvaderGameState.h`
 - `Source/AlienRamen/Public/ARInvaderSpicyTrackSettings.h`
 - `Source/AlienRamen/Public/ARInvaderSpicyTrackTypes.h`
+- `Source/AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h`
 
 ## Ownership and Authority
 - Server-authoritative runtime in `AARInvaderGameState`.
 - Shared track/full-blast state is replicated from GameState.
-- Per-player runtime spicy metadata (color/combo/activated-upgrade ledger) lives on `AARPlayerStateBase`.
-- System is runtime-only for Invader and is not persisted in save/hydration structs.
+- Per-character runtime spicy metadata (color/combo/activated-upgrade ledger/sharing/cursor) lives on `AARCharacterStateRuntime`.
+- Character-owned spicy runtime data persists through `FARCharacterSaveData::InvaderRuntime`; temporary GAS cooldown timers/effects are intentionally not persisted.
+- Character-tag changes on `AARPlayerStateBase` re-evaluate invader color from ASC override tags so baseline team colors stay in sync with character identity (`Sister=Red`, `Brother=Blue`) unless an explicit color override tag is active.
 - `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via `FARShipDefRow` (`ARLoadoutTypes.h`) field `InvaderPawnClass` with `DummyPawnClass` fallback.
 
 ## Runtime Ownership Matrix
 | State | Class | Authority | Replication | Notes |
 | --- | --- | --- | --- | --- |
-| `InvaderPlayerColor` | `AARPlayerStateBase` | Server | Replicated to all | Used for combo color matching. |
-| `InvaderComboCount` | `AARPlayerStateBase` | Server | Replicated to all | Drives HUD combo display via `OnInvaderComboChanged`. |
-| `LastInvaderKillCreditServerTime` | `AARPlayerStateBase` | Server | Not replicated | Timeout bookkeeping for combo reset. |
-| `Spice` | `AARPlayerStateBase` (ASC `UARAttributeSetCore`) | Server | GAS attribute replication | Individual player meter value. |
-| `MaxSpice` | `AARPlayerStateBase` (ASC `UARAttributeSetCore`) | Server (synced by Invader GS) | GAS attribute replication | Shared cap derived from `SharedFullBlastTier`. |
-| `ActivatedInvaderUpgradeTags` | `AARPlayerStateBase` | Server | Replicated to all | "Has upgrade" ledger for claim/prereq logic. |
+| `InvaderPlayerColor` | `AARCharacterStateRuntime` | Server | Replicated to all | Used for combo color matching. |
+| `InvaderComboCount` | `AARCharacterStateRuntime` | Server | Replicated to all | Drives HUD combo display via `OnInvaderComboChanged`. |
+| `LastInvaderKillCreditServerTime` | `AARCharacterStateRuntime` | Server | Not replicated | Timeout bookkeeping for combo reset. |
+| `Spice` | `AARCharacterStateRuntime` (ASC `UARAttributeSetCore`) | Server | GAS attribute replication | Individual player meter value. |
+| `MaxSpice` | `AARCharacterStateRuntime` (ASC `UARAttributeSetCore`) | Server (synced by Invader GS) | GAS attribute replication | Shared cap derived from `SharedFullBlastTier`. |
+| `ActivatedInvaderUpgradeTags` | `AARCharacterStateRuntime` | Server | Replicated to all | "Has upgrade" ledger for claim/prereq logic. |
 | `SharedTrackSlots` | `AARInvaderGameState` | Server | Replicated to all | Team-shared slotted upgrades. |
 | `SharedFullBlastTier` | `AARInvaderGameState` | Server | Replicated to all | Tier progression (default max 5). |
 | `FullBlastSession` (`bIsActive`, `Offers`, `RequestingCharacterTag`, `ActivationTier`) | `AARInvaderGameState` | Server | Replicated to all | Authoritative offer session snapshot. |
 | `OfferPresenceStates` (`PlayerCharacterTag`, hovered offer, destination slot, selected offer, selected destination`) | `AARInvaderGameState` | Server | Replicated to all | Live UI presence for both players during active offer session, including teammate "presence select" highlights. |
 | `ActiveSpiceSharers` | `AARInvaderGameState` | Server | Not replicated | Server tick loop membership for hold-to-share transfer. |
-| `PredictedSpiceValue`, `bHasPredictedSpiceValue` | `AARPlayerStateBase` | Client local | Not replicated | Cosmetic HUD prediction overlay only. |
+| `PredictedSpiceValue`, `bHasPredictedSpiceValue` | `AARPlayerStateBase` | Client local | Not replicated | Cosmetic HUD prediction overlay only (player-owned convenience layer). |
 | Kill-credit FX event (`FARInvaderKillCreditFxEvent`) | `AARInvaderGameState` | Server emit | NetMulticast to all | Cosmetic hook for enemy->meter particles/cues with target character tag. |
 
 ## Offer Session Lifecycle (v1)
@@ -99,6 +101,27 @@ Not yet implemented (open hardening work):
 - receives session payload via `BP_OnFullBlastMenuUpdated(...)`,
 - and sends selection/skip/presence back through owning controller (`SubmitSelection`, `SubmitSkip`, `PublishOfferPresence`, `ClearOfferPresence`).
 - Menu is auto-shown for all local invader players while a session is active; only the requesting character owner is chooser-authorized (`bIsChooser=true`), and menu is removed when session ends.
+
+## Spicy Track HUD Widget Base
+- Native bridge class: `UARInvaderSpicyTrackHUDWidgetBase` (owned by `AARInvaderHUD` and exposed for Blueprint HUD elements).
+- Binding contract:
+  - Initialize with `InitializeInvaderSpicyTrackHUDWidget(AARInvaderHUD*)` or use `TryBindOwningInvaderHUD`.
+  - The widget resolves `AARInvaderGameState`, tracks all replicated `AARPlayerStateBase` entries, and listens for tracked-player churn via `OnTrackedPlayersChanged`.
+  - Tracked player-state references are stored uniquely, and repeated same-value spice callbacks are ignored once cache already matches the new value (helps PIE/lifecycle duplicate-signal noise).
+- Per-character events (character-tag keyed, not local-player-only):
+  - `OnInvaderWidgetCharacterSpiceTrackChanged` -> current spice meter value changed (`AARPlayerStateBase::OnSpiceChanged` source).
+  - `OnInvaderWidgetCharacterMaxSpiceTrackChanged` -> max spice cap changed (`AARPlayerStateBase::OnMaxSpiceChanged` source).
+  - `OnInvaderWidgetCharacterCursorChanged` -> highlighted spicy-track tier changed (`AARPlayerStateBase::OnSpicyTrackCursorChanged` source, includes predicted local cursor updates).
+- Shared-track event:
+  - `OnInvaderWidgetSharedTrackChanged` -> shared slotted-upgrade lane changed (`AARInvaderGameState::OnInvaderSharedTrackChanged` source) and passes `FARInvaderTrackSlotDisplayState` UI snapshots.
+- Snapshot helpers:
+  - `GetCachedCharacterStates` and `GetCharacterStateByTag` provide latest per-character HUD cache.
+  - `GetSharedTrackSlotDisplayStates` returns the cached UI-ready shared lane snapshot.
+
+## Currency Signal Note (Invader HUD)
+- Invader combat rewards mutate `RunLedgerScrap` (`AARGameStateBase::AddRunLedgerScrap`), not persistent `Scrap`.
+- HUD elements that should react to in-run scrap changes must bind `OnRunLedgerScrapChanged`, not `OnScrapChanged`.
+- `ar.invader.debug.add_scrap` is a RunLedger debug command and intentionally does not broadcast `OnScrapChanged`.
 
 ## Gameplay Rules Implemented
 - Offer generation is unique and excludes currently slotted upgrades.

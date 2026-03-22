@@ -959,11 +959,10 @@ void AARGameStateBase::HandleConsoleAddMeat(const TArray<FString>& Args, UWorld*
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[Save|Debug] AddRunLedgerMeat type='%s' color=%d quality=%d (resolvedDefColor=%d) %+d -> total=%d"),
+		TEXT("[Save|Debug] AddRunLedgerMeat type='%s' color=%d quality=%d %+d -> total=%d"),
 		*TargetMeatTag.ToString(),
 		static_cast<int32>(ParsedColor),
 		static_cast<int32>(ParsedQuality),
-		static_cast<int32>(MeatDefinition.Color),
 		Delta,
 		GetRunLedgerMeat().GetTotalAmount());
 }

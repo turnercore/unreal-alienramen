@@ -1,6 +1,6 @@
 /**
  * @file ParleyFactionSettings.h
- * @brief Faction system settings for Alien Ramen.
+ * @brief Faction system settings for Parley.
  */
 #pragma once
 

@@ -232,7 +232,7 @@ UClass* AARInvaderGameMode::GetDefaultPawnClassForController_Implementation(ACon
 		FGameplayTag ShipTag;
 		if (PlayerState
 			&& ShipRootTag.IsValid()
-			&& FindFirstTagUnderRoot(PlayerState->LoadoutTags, ShipRootTag, ShipTag))
+			&& FindFirstTagUnderRoot(PlayerState->GetCurrentCharacterLoadoutTags(), ShipRootTag, ShipTag))
 		{
 			TSubclassOf<APawn> ResolvedPawnClass;
 			if (ResolveInvaderPawnClassFromShipTag(ShipTag, ResolvedPawnClass) && ResolvedPawnClass)

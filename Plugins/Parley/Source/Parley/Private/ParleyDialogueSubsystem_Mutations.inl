@@ -262,6 +262,19 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 		}
 
 		OnProgressionTagMutated.Broadcast(Mutation.Tag, bAdded, FGameplayTag());
+		if (UWorld* World = GetWorld())
+		{
+			for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+			{
+				if (APlayerController* Controller = It->Get())
+				{
+					if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(Controller))
+					{
+						ControllerInterface->NotifyDialogueProgressionTagMutated(Mutation.Tag, bAdded, FGameplayTag());
+					}
+				}
+			}
+		}
 		return true;
 	}
 	case EDialogueTagMutationTarget::ActivePlayerProgression:
@@ -300,6 +313,33 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 				Mutation.Tag,
 				bAdded,
 				GetDefaultCharacterTagForSlot(GetCharacterTagFromPlayerState(ActivePS)));
+			const FGameplayTag OwnerCharacterTag = GetDefaultCharacterTagForSlot(GetCharacterTagFromPlayerState(ActivePS));
+			const FGameplayTag ActiveCharacterTag = GetCharacterTagFromPlayerState(ActivePS);
+			if (FParleyActiveDialogueSession* ActiveSession = FindSessionForCharacter(GetRuntimeState().ActiveSessions, ActiveCharacterTag))
+			{
+				for (const FGameplayTag Slot : ActiveSession->Participants)
+				{
+					if (!Slot.IsValid())
+					{
+						continue;
+					}
+
+					if (APlayerController* OwnerController = FindPlayerControllerByCharacter(GetWorld(), Slot))
+					{
+						if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(OwnerController))
+						{
+							ControllerInterface->NotifyDialogueProgressionTagMutated(Mutation.Tag, bAdded, OwnerCharacterTag);
+						}
+					}
+				}
+			}
+			else if (APlayerController* OwnerController = FindPlayerControllerByCharacter(GetWorld(), ActiveCharacterTag))
+			{
+				if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(OwnerController))
+				{
+					ControllerInterface->NotifyDialogueProgressionTagMutated(Mutation.Tag, bAdded, OwnerCharacterTag);
+				}
+			}
 			return true;
 		}
 		return false;
@@ -373,6 +413,41 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 		OwnerCharacterTag,
 		Mutation.DeltaPoints,
 		RelationshipState->RelationshipPoints);
+	if (FParleyActiveDialogueSession* ActiveSession = FindSessionForCharacter(GetRuntimeState().ActiveSessions, PlayerCharacterTag))
+	{
+		for (const FGameplayTag Slot : ActiveSession->Participants)
+		{
+			if (!Slot.IsValid())
+			{
+				continue;
+			}
+
+			if (APlayerController* OwnerController = FindPlayerControllerByCharacter(GetWorld(), Slot))
+			{
+				if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(OwnerController))
+				{
+					ControllerInterface->NotifyDialogueSpeakerRelationshipChanged(
+						SourceSpeakerTag,
+						TargetSpeakerTag,
+						OwnerCharacterTag,
+						Mutation.DeltaPoints,
+						RelationshipState->RelationshipPoints);
+				}
+			}
+		}
+	}
+	else if (APlayerController* OwnerController = FindPlayerControllerByCharacter(GetWorld(), PlayerCharacterTag))
+	{
+		if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(OwnerController))
+		{
+			ControllerInterface->NotifyDialogueSpeakerRelationshipChanged(
+				SourceSpeakerTag,
+				TargetSpeakerTag,
+				OwnerCharacterTag,
+				Mutation.DeltaPoints,
+				RelationshipState->RelationshipPoints);
+		}
+	}
 
 	if (OldLevel != NewLevel)
 	{
@@ -383,6 +458,43 @@ bool UParleyDialogueSubsystem::ApplyDialogueRelationshipMutation(const FDialogue
 			OldLevel,
 			NewLevel,
 			RelationshipState->RelationshipPoints);
+		if (FParleyActiveDialogueSession* ActiveSession = FindSessionForCharacter(GetRuntimeState().ActiveSessions, PlayerCharacterTag))
+		{
+			for (const FGameplayTag Slot : ActiveSession->Participants)
+			{
+				if (!Slot.IsValid())
+				{
+					continue;
+				}
+
+				if (APlayerController* OwnerController = FindPlayerControllerByCharacter(GetWorld(), Slot))
+				{
+					if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(OwnerController))
+					{
+						ControllerInterface->NotifyDialogueSpeakerRelationshipLevelChanged(
+							SourceSpeakerTag,
+							TargetSpeakerTag,
+							OwnerCharacterTag,
+							OldLevel,
+							NewLevel,
+							RelationshipState->RelationshipPoints);
+					}
+				}
+			}
+		}
+		else if (APlayerController* OwnerController = FindPlayerControllerByCharacter(GetWorld(), PlayerCharacterTag))
+		{
+			if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(OwnerController))
+			{
+				ControllerInterface->NotifyDialogueSpeakerRelationshipLevelChanged(
+					SourceSpeakerTag,
+					TargetSpeakerTag,
+					OwnerCharacterTag,
+					OldLevel,
+					NewLevel,
+					RelationshipState->RelationshipPoints);
+			}
+		}
 	}
 	return true;
 }
@@ -430,83 +542,5 @@ bool UParleyDialogueSubsystem::ApplyDialogueFactionMutation(const FDialogueFacti
 	}
 	UE_LOG(ParleyLog, Warning, TEXT("[Dialogue] Faction mutation failed: faction subsystem unavailable."));
 	return false;
-}
-
-bool UParleyDialogueSubsystem::ApplyRamenServeOutcome(
-	const FGameplayTag SpeakerTag,
-	const int32 RelationshipDeltaPoints,
-	const FGameplayTag ReactionEmotionTag,
-	AActor* PreferredSpeakerActor)
-{
-	const bool bValidSpeaker = SpeakerTag.IsValid();
-	if (!bValidSpeaker)
-	{
-		return false;
-	}
-
-	bool bApplied = false;
-
-	if (RelationshipDeltaPoints != 0)
-	{
-		FDialogueRelationshipMutationNodeData RelationshipMutation;
-		RelationshipMutation.TargetSpeakerTag = SpeakerTag;
-		RelationshipMutation.DeltaPoints = static_cast<float>(RelationshipDeltaPoints);
-
-		FDialogueRuntimeContext Context;
-		Context.PrimarySpeakerTag = SpeakerTag;
-		Context.PrimarySpeakerActor = PreferredSpeakerActor;
-		Context.ResolvedPlayerSpeakerTag = GetDialogueSpeakerPlayerPlaceholderTag();
-		Context.SourceSpeakerTag = Context.ResolvedPlayerSpeakerTag;
-		Context.World = GetWorld();
-		bApplied |= ApplyDialogueRelationshipMutation(RelationshipMutation, Context);
-	}
-
-	if (ReactionEmotionTag.IsValid())
-	{
-		auto MatchesSpeakerTag = [&SpeakerTag](const FGameplayTag CandidateTag) -> bool
-		{
-			return CandidateTag.IsValid()
-				&& (SpeakerTag.MatchesTag(CandidateTag) || CandidateTag.MatchesTag(SpeakerTag));
-		};
-
-		UParleySpeakerComponent* TargetSpeakerComponent = nullptr;
-		if (PreferredSpeakerActor)
-		{
-			if (UParleySpeakerComponent* PreferredSpeaker = PreferredSpeakerActor->FindComponentByClass<UParleySpeakerComponent>())
-			{
-				TargetSpeakerComponent = PreferredSpeaker;
-			}
-		}
-
-		UWorld* World = GetWorld();
-		if (!TargetSpeakerComponent && World)
-		{
-			for (TActorIterator<AActor> It(World); It; ++It)
-			{
-				AActor* Actor = *It;
-				if (!Actor)
-				{
-					continue;
-				}
-
-				if (const UParleySpeakerComponent* TalkComponent = Actor->FindComponentByClass<UParleySpeakerComponent>())
-				{
-					if (MatchesSpeakerTag(TalkComponent->GetSpeakerTag()))
-					{
-						TargetSpeakerComponent = const_cast<UParleySpeakerComponent*>(TalkComponent);
-						break;
-					}
-				}
-			}
-		}
-
-		if (TargetSpeakerComponent)
-		{
-			TargetSpeakerComponent->OnSpeakerEmotionRequested.Broadcast(ReactionEmotionTag, FGameplayTag(), false);
-			bApplied = true;
-		}
-	}
-
-	return bApplied;
 }
 

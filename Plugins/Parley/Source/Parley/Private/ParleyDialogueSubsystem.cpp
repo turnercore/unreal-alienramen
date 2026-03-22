@@ -18,20 +18,11 @@
 #include "Engine/Texture2D.h"
 #include "Sound/SoundBase.h"
 #include "TimerManager.h"
+#include "GameFramework/PlayerController.h"
 #include "UObject/UnrealType.h"
 
 namespace
 {
-	static FGameplayTag GetCanonicalBrotherCharacterTag()
-	{
-		return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
-	}
-
-	static FGameplayTag GetCanonicalSisterCharacterTag()
-	{
-		return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
-	}
-
 	static const TCHAR* LexToStringParleySlot(const FGameplayTag CharacterTag)
 	{
 		if (!CharacterTag.IsValid())
@@ -39,46 +30,17 @@ namespace
 			return TEXT("None");
 		}
 
-		const FGameplayTag BrotherTag = GetCanonicalBrotherCharacterTag();
-		if (BrotherTag.IsValid() && CharacterTag.MatchesTag(BrotherTag))
-		{
-			return TEXT("Brother");
-		}
-
-		const FGameplayTag SisterTag = GetCanonicalSisterCharacterTag();
-		if (SisterTag.IsValid() && CharacterTag.MatchesTag(SisterTag))
-		{
-			return TEXT("Sister");
-		}
-
 		return TEXT("Character");
 	}
 
 	static FGameplayTag NormalizeCharacterTagForDialogue(const FGameplayTag CharacterTag)
 	{
-		if (!CharacterTag.IsValid())
-		{
-			return FGameplayTag();
-		}
-
-		const FGameplayTag BrotherTag = GetCanonicalBrotherCharacterTag();
-		if (BrotherTag.IsValid() && CharacterTag.MatchesTag(BrotherTag))
-		{
-			return BrotherTag;
-		}
-
-		const FGameplayTag SisterTag = GetCanonicalSisterCharacterTag();
-		if (SisterTag.IsValid() && CharacterTag.MatchesTag(SisterTag))
-		{
-			return SisterTag;
-		}
-
 		return CharacterTag;
 	}
 
 	static FGameplayTag GetDefaultCharacterTagForSlot(const FGameplayTag CharacterTag)
 	{
-		return NormalizeCharacterTagForDialogue(CharacterTag);
+		return CharacterTag;
 	}
 
 	struct FParleyPlayerIdentity
@@ -212,6 +174,19 @@ namespace
 			if (Owner)
 			{
 				Owner->OnProgressionStateMarkedDirty.Broadcast();
+				if (UWorld* World = Owner->GetWorld())
+				{
+					for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+					{
+						if (APlayerController* Controller = It->Get())
+						{
+							if (IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(Controller))
+							{
+								ControllerInterface->NotifyDialogueProgressionStateMarkedDirty();
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -354,7 +329,22 @@ namespace
 			return FGameplayTag();
 		}
 
-		return NormalizeCharacterTagForDialogue(ReadGameplayTagProperty(PlayerState, TEXT("CurrentCharacterTag")));
+		if (const APlayerController* OwnerController = Cast<APlayerController>(PlayerState->GetOwner()))
+		{
+			if (const APawn* Pawn = OwnerController->GetPawn())
+			{
+				if (const UParleySpeakerComponent* SpeakerComponent = Pawn->FindComponentByClass<UParleySpeakerComponent>())
+				{
+					const FGameplayTag PawnSpeakerTag = SpeakerComponent->GetSpeakerTag();
+					if (PawnSpeakerTag.IsValid())
+					{
+						return PawnSpeakerTag;
+					}
+				}
+			}
+		}
+
+		return ReadGameplayTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
 	}
 
 	static FGameplayTag GetCurrentCharacterTagFromPlayerState(const APlayerState* PlayerState)
@@ -413,7 +403,7 @@ namespace
 
 		if (const IParleyPlayerControllerInterface* ControllerInterface = Cast<IParleyPlayerControllerInterface>(const_cast<APlayerController*>(PC)))
 		{
-			const FGameplayTag InterfaceSlot = NormalizeCharacterTagForDialogue(ControllerInterface->GetCharacterTag());
+			const FGameplayTag InterfaceSlot = ControllerInterface->GetCharacterTag();
 			if (InterfaceSlot.IsValid())
 			{
 				return InterfaceSlot;
@@ -517,20 +507,22 @@ static bool AddConversationToRuntimeRegistry(
 		return false;
 	}
 
-	if (ForcedConversationTag.IsValid() && !Conversation->Header.ConversationTag.IsValid())
+	FGameplayTag ConversationTag = Conversation->Header.ConversationTag;
+	if (ForcedConversationTag.IsValid() && !ConversationTag.IsValid())
 	{
 		Conversation->Header.ConversationTag = ForcedConversationTag;
+		ConversationTag = Conversation->Header.ConversationTag;
 	}
-
-	const FGameplayTag ConversationTag = Conversation->Header.ConversationTag;
-	if (ForcedConversationTag.IsValid() && ConversationTag.IsValid() && !ConversationTag.MatchesTagExact(ForcedConversationTag))
+	else if (ForcedConversationTag.IsValid() && ConversationTag.IsValid() && !ConversationTag.MatchesTagExact(ForcedConversationTag))
 	{
 		UE_LOG(ParleyLog, Warning,
-			TEXT("[Dialogue] Conversation '%s' tag mismatch: asset '%s' vs lookup '%s' (%s). Asset tag will be used."),
+			TEXT("[Dialogue] Conversation '%s' tag mismatch: asset '%s' vs lookup '%s' (%s). Lookup tag will override asset tag."),
 			*GetNameSafe(Conversation),
 			*ConversationTag.ToString(),
 			*ForcedConversationTag.ToString(),
 			*SourceLabel);
+		Conversation->Header.ConversationTag = ForcedConversationTag;
+		ConversationTag = Conversation->Header.ConversationTag;
 	}
 
 	if (!ConversationTag.IsValid())
@@ -1333,73 +1325,22 @@ static bool IsOwnerPlaceholderSpeakerTag(const FGameplayTag& SpeakerTag)
 		&& SpeakerTag.MatchesTagExact(OwnerPlaceholderTag);
 }
 
-static FGameplayTag GetDialogueSpeakerBrotherTag()
-{
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
-}
-
-static FGameplayTag GetDialogueSpeakerSisterTag()
-{
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
-}
-
-static FGameplayTag GetShopCharacterBrotherTag()
-{
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Shop.Character.Brother"), false);
-}
-
-static FGameplayTag GetShopCharacterSisterTag()
-{
-	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Shop.Character.Sister"), false);
-}
-
 static FGameplayTag ResolvePlayerSpeakerTagFromCharacterTag(const FGameplayTag& CharacterTag)
 {
-	if (!CharacterTag.IsValid())
-	{
-		return FGameplayTag();
-	}
-
-	const FGameplayTag BrotherSpeakerTag = GetDialogueSpeakerBrotherTag();
-	const FGameplayTag BrotherShopTag = GetShopCharacterBrotherTag();
-	if ((BrotherSpeakerTag.IsValid() && CharacterTag.MatchesTag(BrotherSpeakerTag))
-		|| (BrotherShopTag.IsValid() && CharacterTag.MatchesTag(BrotherShopTag)))
-	{
-		return BrotherSpeakerTag;
-	}
-
-	const FGameplayTag SisterSpeakerTag = GetDialogueSpeakerSisterTag();
-	const FGameplayTag SisterShopTag = GetShopCharacterSisterTag();
-	if ((SisterSpeakerTag.IsValid() && CharacterTag.MatchesTag(SisterSpeakerTag))
-		|| (SisterShopTag.IsValid() && CharacterTag.MatchesTag(SisterShopTag)))
-	{
-		return SisterSpeakerTag;
-	}
-
-	return FGameplayTag();
+	return CharacterTag;
 }
 
 static bool PassesCharacterRestriction(
-	const EDialogueActiveCharacterRestriction Restriction,
+	const FGameplayTag& RestrictionTag,
 	const FGameplayTag& ResolvedPlayerSpeakerTag)
 {
-	switch (Restriction)
+	if (!RestrictionTag.IsValid())
 	{
-	case EDialogueActiveCharacterRestriction::Any:
-		return true;
-	case EDialogueActiveCharacterRestriction::BrotherOnly:
-	{
-		const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-		return BrotherTag.IsValid() && ResolvedPlayerSpeakerTag.MatchesTag(BrotherTag);
-	}
-	case EDialogueActiveCharacterRestriction::SisterOnly:
-	{
-		const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-		return SisterTag.IsValid() && ResolvedPlayerSpeakerTag.MatchesTag(SisterTag);
-	}
-	default:
 		return true;
 	}
+
+	return ResolvedPlayerSpeakerTag.IsValid()
+		&& (ResolvedPlayerSpeakerTag.MatchesTag(RestrictionTag) || RestrictionTag.MatchesTag(ResolvedPlayerSpeakerTag));
 }
 
 static FGameplayTag ResolvePlayerSpeakerTag(const APlayerState* PlayerState)
@@ -1433,20 +1374,7 @@ static FGameplayTag ResolvePlayerSpeakerTag(const APlayerState* PlayerState)
 		return CharacterResolvedSpeakerTag;
 	}
 
-	const FGameplayTag PlayerCharacterTag = GetCharacterTagFromPlayerState(PlayerState);
-	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-	if (BrotherTag.IsValid() && PlayerCharacterTag.MatchesTag(BrotherTag))
-	{
-		return BrotherTag;
-	}
-
-	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-	if (SisterTag.IsValid() && PlayerCharacterTag.MatchesTag(SisterTag))
-	{
-		return SisterTag;
-	}
-
-	return FGameplayTag();
+	return GetCharacterTagFromPlayerState(PlayerState);
 }
 
 static FGameplayTag ResolveSpeakerTagForContext(
@@ -1536,18 +1464,6 @@ static bool IsBuiltInDialogueSpeakerTag(const FGameplayTag& SpeakerTag)
 		return true;
 	}
 
-	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-	if (BrotherTag.IsValid() && SpeakerTag.MatchesTag(BrotherTag))
-	{
-		return true;
-	}
-
-	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-	if (SisterTag.IsValid() && SpeakerTag.MatchesTag(SisterTag))
-	{
-		return true;
-	}
-
 	return false;
 }
 
@@ -1603,23 +1519,13 @@ static const FParleySpeakerRow* ResolveSpeakerRowForPresentation(
 	TArray<FGameplayTag> FallbackCandidates;
 	const FGameplayTag RequesterTag = GetDialogueSpeakerPlayerPlaceholderTag();
 	const FGameplayTag OwnerTag = GetDialogueSpeakerOwnerPlaceholderTag();
-	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-	if (RequestedSpeakerTag.MatchesTag(BrotherTag))
+	if (OwnerTag.IsValid() && RequestedSpeakerTag.MatchesTag(OwnerTag))
 	{
-		FallbackCandidates = { RequesterTag, OwnerTag, SisterTag };
-	}
-	else if (RequestedSpeakerTag.MatchesTag(SisterTag))
-	{
-		FallbackCandidates = { RequesterTag, OwnerTag, BrotherTag };
-	}
-	else if (OwnerTag.IsValid() && RequestedSpeakerTag.MatchesTag(OwnerTag))
-	{
-		FallbackCandidates = { RequesterTag, BrotherTag, SisterTag };
+		FallbackCandidates = { RequesterTag };
 	}
 	else
 	{
-		FallbackCandidates = { OwnerTag, RequesterTag, BrotherTag, SisterTag };
+		FallbackCandidates = { OwnerTag, RequesterTag };
 	}
 
 	for (const FGameplayTag CandidateTag : FallbackCandidates)
@@ -1709,6 +1615,11 @@ static FGameplayTag GetDialogueEmotionRootTag()
 	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion"), false);
 }
 
+static FGameplayTag GetDialogueDefaultEmotionTag()
+{
+	return UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion.Default"), false);
+}
+
 static FGameplayTag BuildEmotionTagFromSpeakerTag(
 	const FGameplayTag& SpeakerTag,
 	const FGameplayTag& ResolvedSpeakerRowTag)
@@ -1743,16 +1654,6 @@ static FGameplayTag BuildEmotionTagFromSpeakerTag(
 	{
 		CandidateBasePaths.AddUnique(OwnerTag.ToString());
 	}
-	const FGameplayTag BrotherTag = GetDialogueSpeakerBrotherTag();
-	if (BrotherTag.IsValid())
-	{
-		CandidateBasePaths.AddUnique(BrotherTag.ToString());
-	}
-	const FGameplayTag SisterTag = GetDialogueSpeakerSisterTag();
-	if (SisterTag.IsValid())
-	{
-		CandidateBasePaths.AddUnique(SisterTag.ToString());
-	}
 
 	// Only treat explicit suffix segments as emotion keys.
 	// This avoids misinterpreting base speaker ids (for example Parley.Speaker.Fred) as Parley.Emotion.Fred.
@@ -1782,6 +1683,19 @@ static FGameplayTag BuildEmotionTagFromSpeakerTag(
 	return FGameplayTag();
 }
 
+static FGameplayTag ResolvePresentationEmotionTagFromSpeakerTag(
+	const FGameplayTag& SpeakerTag,
+	const FGameplayTag& ResolvedSpeakerRowTag)
+{
+	const FGameplayTag ExplicitEmotionTag = BuildEmotionTagFromSpeakerTag(SpeakerTag, ResolvedSpeakerRowTag);
+	if (ExplicitEmotionTag.IsValid())
+	{
+		return ExplicitEmotionTag;
+	}
+
+	return GetDialogueDefaultEmotionTag();
+}
+
 static bool ResolveSpeakerEmotionFallbackAudioForSpeaker(
 	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
 	const FGameplayTag& LineSpeakerTag,
@@ -1799,7 +1713,7 @@ static bool ResolveSpeakerEmotionFallbackAudioForSpeaker(
 	}
 
 	const FGameplayTag ResolvedEmotionTag = BuildEmotionTagFromSpeakerTag(LineSpeakerTag, SpeakerRowTag);
-	const FGameplayTag DefaultEmotionTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Parley.Emotion.Default"), false);
+	const FGameplayTag DefaultEmotionTag = GetDialogueDefaultEmotionTag();
 	const FParleySpeakerEmotionAudioEntry* DefaultEntry = nullptr;
 	const FParleySpeakerEmotionAudioEntry* UnscopedEntry = nullptr;
 
@@ -2212,14 +2126,6 @@ static FString ApplyDialogueLookupTokens(
 		{
 			TargetTag = CurrentLineSpeakerTag.IsValid() ? CurrentLineSpeakerTag : Context.PrimarySpeakerTag;
 		}
-		else if (CommandTokenLower == TEXT("brother"))
-		{
-			TargetTag = GetDialogueSpeakerBrotherTag();
-		}
-		else if (CommandTokenLower == TEXT("sister"))
-		{
-			TargetTag = GetDialogueSpeakerSisterTag();
-		}
 		else
 		{
 			if (!CommandToken.Contains(TEXT(".")))
@@ -2596,17 +2502,7 @@ static APlayerState* FindPlayerStateByCharacterTag(const UWorld* World, const FG
 	return nullptr;
 }
 
-static bool IsModeDialogueEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
-{
-	if (!Settings || !ModeTag.IsValid())
-	{
-		return false;
-	}
-
-	return IsModeInContainer(ModeTag, Settings->SharedDialogueModeTags)
-		|| IsModeInContainer(ModeTag, Settings->PerPlayerDialogueModeTags);
-}
-
+// The busy-speaker lock is intentionally scoped to per-player modes.
 static bool IsBusySpeakerLockEnabled(const UParleyDialogueSettings* Settings, const FGameplayTag& ModeTag)
 {
 	return Settings

@@ -73,7 +73,8 @@ Paths:
 - if exact decomposition is not possible, emit largest denomination pickups plus one remainder pickup using the lowest-denomination class
 - if stack definitions are empty/invalid, no drop actor is spawned
 8. Spawn one pickup actor per planned denomination amount.
-9. For meat drops, set pickup `DropColor` from the enemy's runtime color at kill time (not from static meat-definition color).
+9. For meat drops, resolve `FARMeatDefinitionRow` from enemy `EnemyIdentifierTag` at spawn time and store the resolved `MeatTag` on the drop actor (`MeatDefinitionTag`); set pickup `DropColor` from enemy runtime color.
+10. Optional: if `FARMeatDefinitionRow::InvaderDropActorClass` is authored, it overrides the stack-definition drop class for that meat definition.
 
 ## Pickup / Reward Contract
 
@@ -99,5 +100,6 @@ Paths:
 - optional gameplay cue executes on collecting player's ASC
 - predicted local visual rolls back automatically if server has not accepted collection within a short timeout
 - authority applies reward to `AARGameStateBase`:
-- `Scrap` increments `SetScrapFromSave(...)`
-- `Meat` increments color bucket (`Red`, `Blue`, `White`, otherwise `Unspecified`) and commits via `SetMeatFromSave(...)`
+- `Scrap` increments run-ledger scrap via `AddRunLedgerScrap(...)`
+- `Meat` requires a valid `MeatDefinitionTag` carried by the drop actor and writes run-ledger typed meat; if unresolved/invalid, reward is skipped with warning
+- `DropColor` remains runtime payload authored by the killing enemy state and does not determine meat identity

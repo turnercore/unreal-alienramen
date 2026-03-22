@@ -71,5 +71,5 @@ Use the in-game console (`~`).
 11. **`ar.invader.debug.add_spice [p1|p2] <delta>`** - adds/subtracts player spice (`p1` default).
 12. **`ar.invader.debug.add_scrap <delta>`** - adds/subtracts replicated scrap on GameState.
 13. **`ar.invader.debug.add_money <delta>`** - adds/subtracts replicated money on GameState.
-14. **`ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>`** - adds/subtracts replicated typed meat tuples in the run ledger (`RunLedgerMeat`) using explicit meat tag, color, and quality metadata.
+14. **`ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>`** - adds/subtracts replicated typed meat tuples in `RunLedgerMeat` using explicit tag/color/quality metadata.
 15. **`ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`** - sets runtime `ARLog` verbosity via a lowercase shortcut.

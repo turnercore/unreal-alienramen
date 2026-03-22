@@ -35,6 +35,7 @@ Invader is the combat run. It owns the director, waves, scoring, pickups, and th
 
 - Entry point: [Invader Overview](README_Invader.md)
 - Player runtime: [Loadouts and Player Runtime](README_Invader_Loadouts.md)
+- Runtime ownership contract: character-owned combat/loadout state is authoritative on `AARCharacterStateRuntime`; player-owned identity/pointer state remains on `AARPlayerStateBase`.
 - Supporting systems:
   - [GAS Overview](README_GAS.md)
   - [GAS Blueprint Attributes](README_GAS_Blueprint_Attributes.md)
@@ -58,6 +59,12 @@ Scrapyard is the post-run extraction and conversion mode. It reconciles run-earn
 
 If your change touches more than one mode, start in [Shared Systems Overview](README_SharedSystems.md).
 
+## Seamless Travel Controller Class
+
+- `AARGameModeBase::HandleSeamlessTravelPlayer(...)` now enforces the destination mode's `PlayerControllerClass` (mode defaults/BP class settings) after seamless handoff.
+- If the carried controller class does not match the destination mode default, game mode spawns/swaps to the desired controller class before gameplay reinitialization.
+- Keep per-mode controller selection authored in GameMode defaults; do not hardcode mode-to-controller maps in travel callers.
+
 ## Runtime Character Switch Requests
 
 - Authority entrypoint: `AARGameModeBase::SubmitCharacterSwitchHoldRequest(APlayerController*, bool bIsRequesting)`.
@@ -71,3 +78,9 @@ If your change touches more than one mode, start in [Shared Systems Overview](RE
   - requests are consumed by a release latch after any successful switch so holding input cannot instantly bounce players back
 - Possession/update path is server-authoritative: GameMode applies final target character tags, respawns controllers with the updated identity, and refreshes speaker talkable state so dialogue/view-targeted systems stay aligned after the switch.
 - Current limitation: canonical character normalization is still `Brother`/`Sister`-based in `ARPlayer` helpers; adding additional playable identities requires extending that canonicalization contract first.
+
+## Scripted Dialogue Helper
+
+- Authority entrypoint: `AARGameModeBase::StartParleyConversationByTagForCharacters(RequesterCharacterTag, OwnerCharacterTag, ConversationTag)`.
+- Use this when mode logic needs deterministic conversation startup by exact conversation tag (for example Invader-mode scripted beats) without mode-specific subsystem plumbing.
+- Helper forwards to Parley runtime scripted start API and returns `false` when authority/subsystem/runtime prerequisites are unavailable.

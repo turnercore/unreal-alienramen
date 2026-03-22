@@ -16,16 +16,65 @@
 #include "ARRamenBowlActor.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerState.h"
 #include "GameplayTagsManager.h"
 #include "Net/UnrealNetwork.h"
 #include "StructUtils/InstancedStruct.h"
 #include "TagKeySubsystem.h"
+#include "UObject/UnrealType.h"
 #include "Blueprint/UserWidget.h"
 
 namespace
 {
 	static const FName OrderingStateEmotionSourceId(TEXT("OrderingState"));
 	static const FName OrderingReactionEmotionSourceId(TEXT("OrderingReaction"));
+
+	static FGameplayTag ReadGameplayTagProperty(const UObject* Object, const FName PropertyName)
+	{
+		if (!Object)
+		{
+			return FGameplayTag();
+		}
+
+		const FStructProperty* Property = FindFProperty<FStructProperty>(Object->GetClass(), PropertyName);
+		if (!Property || Property->Struct != TBaseStructure<FGameplayTag>::Get())
+		{
+			return FGameplayTag();
+		}
+
+		return *Property->ContainerPtrToValuePtr<FGameplayTag>(Object);
+	}
+
+	static FGameplayTag ResolveActiveSpeakerTagFromController(const APlayerController* InteractingController)
+	{
+		if (!InteractingController)
+		{
+			return FGameplayTag();
+		}
+
+		if (const APawn* InteractingPawn = InteractingController->GetPawn())
+		{
+			if (const UParleySpeakerComponent* SpeakerComponent = InteractingPawn->FindComponentByClass<UParleySpeakerComponent>())
+			{
+				const FGameplayTag SpeakerTag = SpeakerComponent->GetSpeakerTag();
+				if (SpeakerTag.IsValid())
+				{
+					return SpeakerTag;
+				}
+			}
+		}
+
+		if (const APlayerState* PlayerState = InteractingController->GetPlayerState<APlayerState>())
+		{
+			const FGameplayTag CurrentCharacterTag = ReadGameplayTagProperty(PlayerState, TEXT("CurrentCharacterTag"));
+			if (CurrentCharacterTag.IsValid())
+			{
+				return CurrentCharacterTag;
+			}
+		}
+
+		return FGameplayTag();
+	}
 
 	static EARAffinityColor SanitizeColor(const EARAffinityColor InColor)
 	{
@@ -344,7 +393,7 @@ bool UARCustomerComponent::TryServeBowl(AARPlayerController* InteractingControll
 		}
 	}
 
-	ApplyServeOutcomeToDialogue(OutResult);
+	ApplyServeOutcomeToDialogue(InteractingController, OutResult);
 	ApplyOrderingReactionEmotion(OutResult.AppliedReactionEmotionTag);
 	OnCustomerOrderResolved.Broadcast(OutResult);
 	OnCustomerOrderServedDetailed.Broadcast(OutResult, OrdersGeneratedCount, OrdersServedCount, GetRemainingOrdersToGenerate());
@@ -815,11 +864,11 @@ void UARCustomerComponent::RefreshOrderingEmotionState() const
 
 	if (bHasActiveOrder && ActiveOrderEmotionTag.IsValid())
 	{
-		EmotionComponent->SetSystemEmotionTag(OrderingStateEmotionSourceId, ActiveOrderEmotionTag, OrderingPriority);
+		EmotionComponent->SetEmotionRegistration(OrderingStateEmotionSourceId, ActiveOrderEmotionTag, OrderingPriority);
 	}
 	else
 	{
-		EmotionComponent->ClearSystemEmotionTag(OrderingStateEmotionSourceId);
+		EmotionComponent->ClearEmotionRegistration(OrderingStateEmotionSourceId);
 	}
 }
 
@@ -840,20 +889,35 @@ void UARCustomerComponent::ApplyOrderingReactionEmotion(const FGameplayTag& Reac
 	const UARCustomerSettings* CustomerSettings = GetDefault<UARCustomerSettings>();
 	const int32 ReactionPriority = CustomerSettings ? CustomerSettings->OrderingReactionEmotionPriority : 2;
 	const float ReactionDuration = CustomerSettings ? CustomerSettings->OrderingReactionEmotionDurationSeconds : -1.0f;
-	EmotionComponent->SetSystemEmotionTagForDuration(OrderingReactionEmotionSourceId, ReactionEmotionTag, ReactionDuration, ReactionPriority);
+	EmotionComponent->SetEmotionRegistrationForDuration(OrderingReactionEmotionSourceId, ReactionEmotionTag, ReactionDuration, ReactionPriority);
 }
 
-bool UARCustomerComponent::ApplyServeOutcomeToDialogue(const FARRamenServeResult& ServeResult) const
+bool UARCustomerComponent::ApplyServeOutcomeToDialogue(APlayerController* InteractingController, const FARRamenServeResult& ServeResult) const
 {
 	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
 	UParleyDialogueSubsystem* DialogueSubsystem = GI ? GI->GetSubsystem<UParleyDialogueSubsystem>() : nullptr;
-	if (!DialogueSubsystem)
+	if (!DialogueSubsystem || ServeResult.RelationshipDeltaPoints == 0)
 	{
 		return false;
 	}
 
 	const FGameplayTag SpeakerTag = CachedSpeakerTag.IsValid() ? CachedSpeakerTag : GetSpeakerTag();
-	return DialogueSubsystem->ApplyRamenServeOutcome(SpeakerTag, ServeResult.RelationshipDeltaPoints, ServeResult.AppliedReactionEmotionTag, GetOwner());
+	if (!SpeakerTag.IsValid())
+	{
+		return false;
+	}
+
+	FDialogueRelationshipMutationNodeData RelationshipMutation;
+	RelationshipMutation.TargetSpeakerTag = SpeakerTag;
+	RelationshipMutation.DeltaPoints = static_cast<float>(ServeResult.RelationshipDeltaPoints);
+
+	FDialogueRuntimeContext Context;
+	Context.PrimarySpeakerTag = SpeakerTag;
+	Context.PrimarySpeakerActor = GetOwner();
+	Context.SourceSpeakerTag = ResolveActiveSpeakerTagFromController(InteractingController);
+	Context.ResolvedPlayerSpeakerTag = Context.SourceSpeakerTag;
+	Context.World = GetWorld();
+	return DialogueSubsystem->ApplyDialogueRelationshipMutation(RelationshipMutation, Context);
 }
 
 void UARCustomerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -11,6 +11,7 @@
 #include "AssetRegistry/AssetData.h"
 #include "Editor.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "Framework/Docking/TabManager.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GameplayTagsManager.h"
@@ -202,12 +203,37 @@ namespace
 
 	static UParleyDialogueSubsystem* GetTransientDialogueValidationSubsystem()
 	{
-		static TWeakObjectPtr<UParleyDialogueSubsystem> Cached;
-		if (!Cached.IsValid())
+		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
+		static TWeakObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
+		if (!CachedValidationGameInstance.IsValid())
 		{
-			Cached = NewObject<UParleyDialogueSubsystem>(GetTransientPackage());
+			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
+			if (!ValidationGameInstance)
+			{
+				return nullptr;
+			}
+
+			// Keep one editor-validation instance alive instead of reallocating each query.
+			ValidationGameInstance->AddToRoot();
+			CachedValidationGameInstance = ValidationGameInstance;
+			CachedValidationSubsystem.Reset();
 		}
-		return Cached.Get();
+
+		if (!CachedValidationSubsystem.IsValid())
+		{
+			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(
+				CachedValidationGameInstance.Get(),
+				NAME_None,
+				RF_Transient);
+			if (!ValidationSubsystem)
+			{
+				return nullptr;
+			}
+
+			CachedValidationSubsystem = ValidationSubsystem;
+		}
+
+		return CachedValidationSubsystem.Get();
 	}
 
 	static const TCHAR* DialogueAutoTagConfigRelativePath = TEXT("Tags/DialogueConversationGeneratedTags.ini");
@@ -658,7 +684,7 @@ namespace
 		}
 
 		return FString::Printf(
-			TEXT("%s.Id.%s"),
+			TEXT("%s.%s"),
 			*Settings->ConversationDefinitionRootTag.ToString(),
 			*GetSpeakerLeafSegment(SpeakerTag));
 	}
@@ -3313,7 +3339,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 	if (!FPackageName::IsValidLongPackageName(PackageFolder))
 	{
 		AppendLogLine(FString::Printf(
-			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Alien Ramen -> Dialogue Tooling."),
+			TEXT("Invalid ConversationAssetsFolder '%s'. Use a package path like '/Game/Data/Conversations' in Project Settings -> Parley -> Dialogue Tooling."),
 			*PackageFolder));
 		return FReply::Handled();
 	}
@@ -3464,7 +3490,7 @@ FReply SDialogueSpeakerEditorPanel::HandleCreateConversation()
 		NewConversation->Header.MinimumRelationshipPoints));
 
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(NewConversation);
-	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("Parley_DialogueConversationGraphEditor")));
 
 	RefreshData();
 	SetSelectedSpeakerRow(SelectedSpeakerRowName);
@@ -3486,7 +3512,7 @@ FReply SDialogueSpeakerEditorPanel::HandleOpenConversation()
 	}
 
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(SelectedItems[0]->Asset.Get());
-	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("Parley_DialogueConversationGraphEditor")));
 	return FReply::Handled();
 }
 
@@ -4971,7 +4997,7 @@ void SDialogueSpeakerEditorPanel::OnConversationDoubleClicked(TSharedPtr<FConver
 	}
 
 	SDialogueConversationGraphEditorPanel::RequestOpenConversation(Item->Asset.Get());
-	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("AR_DialogueConversationGraphEditor")));
+	FGlobalTabmanager::Get()->TryInvokeTab(FName(TEXT("Parley_DialogueConversationGraphEditor")));
 }
 
 void SDialogueSpeakerEditorPanel::OnConversationSelectionChanged(TSharedPtr<FConversationEntry> Item, ESelectInfo::Type SelectInfo)

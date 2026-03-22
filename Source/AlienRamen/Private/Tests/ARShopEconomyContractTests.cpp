@@ -100,17 +100,17 @@ bool FARShopEconomyCombinedBowlValueTest::RunTest(const FString& Parameters)
 
 	FARRamenBowlSpec BowlSpec;
 	BowlSpec.Noodles.SlotType = EARRamenStationType::Noodles;
-	BowlSpec.Noodles.Color = NoodlesMeatDef.Color;
+	BowlSpec.Noodles.Color = EARAffinityColor::None;
 	BowlSpec.Noodles.MeatTag = NoodlesMeatDef.MeatTag;
 	BowlSpec.Noodles.QualityTier = EARVendingQualityTier::Low;
 
 	BowlSpec.Broth.SlotType = EARRamenStationType::Broth;
-	BowlSpec.Broth.Color = BrothMeatDef.Color;
+	BowlSpec.Broth.Color = EARAffinityColor::None;
 	BowlSpec.Broth.MeatTag = BrothMeatDef.MeatTag;
 	BowlSpec.Broth.QualityTier = EARVendingQualityTier::High;
 
 	BowlSpec.Toppings.SlotType = EARRamenStationType::Toppings;
-	BowlSpec.Toppings.Color = ToppingsMeatDef.Color;
+	BowlSpec.Toppings.Color = EARAffinityColor::None;
 	BowlSpec.Toppings.MeatTag = ToppingsMeatDef.MeatTag;
 	BowlSpec.Toppings.QualityTier = EARVendingQualityTier::Premium;
 
