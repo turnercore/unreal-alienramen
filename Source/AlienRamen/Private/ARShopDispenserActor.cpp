@@ -268,12 +268,15 @@ bool AARShopDispenserActor::ConsumeSource(
 			const EARAffinityColor SourceColor = Definition.SourceColor == EARAffinityColor::Unknown
 				? EARAffinityColor::None
 				: Definition.SourceColor;
+			const EARVendingQualityTier SourceQualityTier = StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(Definition.SourceMeatQualityTier))
+				? Definition.SourceMeatQualityTier
+				: EARVendingQualityTier::Standard;
 			int32* MatchingAmount = nullptr;
 			for (FARMeatTypeAmount& Entry : NewMeatState.AdditionalAmountsByType)
 			{
 				if (!Entry.MeatType.MatchesTagExact(Definition.ItemTag)
 					|| Entry.MeatColor != SourceColor
-					|| Entry.MeatQualityTier != Definition.SourceMeatQualityTier)
+					|| Entry.MeatQualityTier != SourceQualityTier)
 				{
 					continue;
 				}
