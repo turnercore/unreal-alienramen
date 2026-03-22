@@ -8,6 +8,7 @@
 - Preserve intent and constraints for future work (what must stay true), not just what exists today.
 - HIGH PRIORITY: never initialize Unreal/engine-dependent values at namespace/global static initialization time (for example `FGameplayTag::RequestGameplayTag`, `FPaths::*`, subsystem access, asset loads in static/global constructors). Resolve these at runtime via functions/instance lifecycle (`Initialize`, `BeginPlay`, constructor body, function-local static accessor) to avoid packaged `CrashDuringStaticInit` (`777006`) failures.
 - Favor lean current-state code over backward compatibility unless explicitly requested; remove obsolete/legacy paths instead of maintaining dual systems during pre-production.
+- Important: do not keep legacy/backward-compatibility code, tests, or data paths unless the user explicitly asks for them.
 - Prefer forward declarations in headers and move concrete `#include` dependencies to `.cpp` files wherever UHT/type requirements allow.
 - When multiple systems consume the same enums/structs, extract them into focused shared type headers (for example `*Types.h`) to avoid dragging large owner headers across module boundaries.
 - Keep shared headers in `Source/AlienRamen/Public` and implementations in `Source/AlienRamen/Private`; `UHelperLibrary` now follows this (`Public/HelperLibrary.h`, `Private/HelperLibrary.cpp`) and callers should include `"HelperLibrary.h"` (no relative `../` includes).

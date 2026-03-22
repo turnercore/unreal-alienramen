@@ -372,6 +372,41 @@ int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBow
 	return TotalValue;
 }
 
+int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue(const FARRamenBowlSlotSpec& SlotSpec) const
+{
+	FARMeatDefinitionRow MeatDef;
+	const FGameplayTag SlotMeatTag = SlotSpec.MeatTag;
+	const EARAffinityColor SlotColor = StaticEnum<EARAffinityColor>()->IsValidEnumValue(static_cast<int64>(SlotSpec.Color))
+		? SlotSpec.Color
+		: EARAffinityColor::None;
+	if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
+	{
+		// Fallback for slots that only carry color identity.
+		if (SlotColor == EARAffinityColor::None)
+		{
+			return 0;
+		}
+
+		if (!ResolveFirstMeatDefinitionForColor(SlotColor, MeatDef))
+		{
+			return 0;
+		}
+	}
+
+	if (!MeatDef.ItemTag.IsValid())
+	{
+		return 0;
+	}
+
+	FARScrapyardItemDefRow ItemDef;
+	if (!ResolveItemDefinition(MeatDef.MeatTag, ItemDef))
+	{
+		return 0;
+	}
+
+	return FMath::Max(0, ItemDef.SellMoneyValue);
+}
+
 bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 	const FGameplayTag ItemTag,
 	FARScrapyardItemDefRow& OutItemDef) const

@@ -11,6 +11,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
+#include "UObject/UnrealType.h"
 
 namespace
 {
@@ -71,6 +72,14 @@ namespace
 
 		return UsingController;
 	}
+
+	static float ResolveSlapCueMinHeightDeltaCm(const AARPlayerController* Controller)
+	{
+		const FFloatProperty* SlapCueThresholdProperty = FindFProperty<FFloatProperty>(AARPlayerController::StaticClass(), TEXT("SlapCueMinHeightDeltaCm"));
+		return (Controller && SlapCueThresholdProperty)
+			? FMath::Max(0.0f, SlapCueThresholdProperty->GetPropertyValue_InContainer(Controller))
+			: 80.0f;
+	}
 }
 
 AARCarryItemBase::AARCarryItemBase()
@@ -105,7 +114,7 @@ void AARCarryItemBase::SetWeightKg(const float NewWeightKg)
 	}
 
 	const float SanitizedWeight = FMath::Max(0.0f, NewWeightKg);
-	if (FMath::IsNearlyEqual(WeightKg, SanitizedWeight))
+	if (SanitizedWeight > 0.0f && FMath::IsNearlyEqual(WeightKg, SanitizedWeight))
 	{
 		return;
 	}
@@ -288,11 +297,33 @@ bool AARCarryItemBase::UseSecondaryInWorldByController_Implementation(AARPlayerC
 
 	PhysicsPrimitive->SetEnableGravity(true);
 	PhysicsPrimitive->WakeAllRigidBodies();
-	const float Strength = ResolveSecondaryForceForController(UsingController);
-	const FVector ForwardDirection = UsingController->GetPawn()
-		? UsingController->GetPawn()->GetActorForwardVector()
-		: UsingController->GetControlRotation().Vector();
-	PhysicsPrimitive->AddImpulse(ForwardDirection * Strength, NAME_None, true);
+
+	const float KickStrength = FMath::Max(50.0f, ResolveSecondaryForceForController(UsingController));
+	const FVector KickDirection = UsingController->GetControlRotation().Vector().GetSafeNormal();
+	PhysicsPrimitive->AddImpulse(KickDirection * KickStrength, NAME_None, true);
+
+	const APawn* ControlledPawn = UsingController->GetPawn();
+	const float PawnZ = ControlledPawn ? ControlledPawn->GetActorLocation().Z : 0.0f;
+	FVector TargetOrigin = GetActorLocation();
+	FVector TargetExtent = FVector::ZeroVector;
+	GetActorBounds(true, TargetOrigin, TargetExtent);
+	const float HeightDelta = TargetOrigin.Z - PawnZ;
+	const float SlapCueMinHeightDeltaCm = ResolveSlapCueMinHeightDeltaCm(UsingController);
+	const EARInteractionActionCue KickOrSlapCue =
+		HeightDelta >= SlapCueMinHeightDeltaCm
+		? EARInteractionActionCue::Slap
+		: EARInteractionActionCue::Kick;
+
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[Carry|Secondary] Applied world-secondary impulse item='%s' controller='%s' strength=%.1f heightDelta=%.1f cue=%s."),
+		*GetNameSafe(this),
+		*GetNameSafe(UsingController),
+		KickStrength,
+		HeightDelta,
+		*StaticEnum<EARInteractionActionCue>()->GetValueAsString(KickOrSlapCue));
+	UsingController->NotifyInteractionActionCue(KickOrSlapCue, this);
 	return true;
 }
 
@@ -367,12 +398,6 @@ void AARCarryItemBase::OnRep_VisualModelClass()
 
 void AARCarryItemBase::ApplyWeightToPrimitiveComponents() const
 {
-	const float ResolvedWeight = GetResolvedWeightKg();
-	if (ResolvedWeight <= 0.0f)
-	{
-		return;
-	}
-
 	TArray<UPrimitiveComponent*> PrimitiveComponents;
 	GetComponents<UPrimitiveComponent>(PrimitiveComponents);
 	if (PrimitiveComponents.IsEmpty())
@@ -410,7 +435,8 @@ void AARCarryItemBase::ApplyWeightToPrimitiveComponents() const
 		TargetPrimitive = PrimitiveComponents[0];
 	}
 
-	TargetPrimitive->SetMassOverrideInKg(NAME_None, ResolvedWeight, true);
+	const bool bUseExplicitMassOverride = WeightKg > 0.0f;
+	TargetPrimitive->SetMassOverrideInKg(NAME_None, bUseExplicitMassOverride ? WeightKg : 0.0f, bUseExplicitMassOverride);
 	if (TargetPrimitive->IsSimulatingPhysics())
 	{
 		TargetPrimitive->WakeAllRigidBodies();
