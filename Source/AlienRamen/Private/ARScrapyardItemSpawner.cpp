@@ -5,7 +5,7 @@
 #include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
-#include "ARScrapyardCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARScrapyardGameState.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -57,7 +57,7 @@ void AARScrapyardItemSpawner::BeginPlay()
 	}
 }
 
-AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 OverrideSeed)
+AARCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 OverrideSeed)
 {
 	if (!HasAuthority() || SpawnChance <= 0.0f || bHasSpawned)
 	{
@@ -128,7 +128,7 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::TrySpawnItem(const int32 Ove
 		Selected = &Candidates.Last();
 	}
 
-	AARScrapyardCarryItemBase* SpawnedItem = SpawnItemByDefinition(Selected->ItemDef, Selected->ItemTag, Rng.RandHelper(INT32_MAX));
+	AARCarryItemBase* SpawnedItem = SpawnItemByDefinition(Selected->ItemDef, Selected->ItemTag, Rng.RandHelper(INT32_MAX));
 	return SpawnedItem;
 }
 
@@ -195,7 +195,7 @@ bool AARScrapyardItemSpawner::BuildEligibleItems(const AARGameStateBase* GameSta
 	return !OutCandidates.IsEmpty();
 }
 
-AARScrapyardCarryItemBase* AARScrapyardItemSpawner::SpawnItemByDefinition(const FARScrapyardItemDefRow& ItemDef, const FGameplayTag& ItemTag, const int32 OverrideSeed)
+AARCarryItemBase* AARScrapyardItemSpawner::SpawnItemByDefinition(const FARScrapyardItemDefRow& ItemDef, const FGameplayTag& ItemTag, const int32 OverrideSeed)
 {
 	if (!HasAuthority() || bHasSpawned)
 	{
@@ -214,7 +214,7 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::SpawnItemByDefinition(const 
 	if (!ItemDef.ItemModelClass.IsNull())
 	{
 		UClass* AuthoredClass = ItemDef.ItemModelClass.LoadSynchronous();
-		if (AuthoredClass && AuthoredClass->IsChildOf(AARScrapyardCarryItemBase::StaticClass()))
+		if (AuthoredClass && AuthoredClass->IsChildOf(AARCarryItemBase::StaticClass()))
 		{
 			SpawnClass = AuthoredClass;
 		}
@@ -228,7 +228,7 @@ AARScrapyardCarryItemBase* AARScrapyardItemSpawner::SpawnItemByDefinition(const 
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	AARScrapyardCarryItemBase* SpawnedItem = World->SpawnActor<AARScrapyardCarryItemBase>(
+	AARCarryItemBase* SpawnedItem = World->SpawnActor<AARCarryItemBase>(
 		SpawnClass,
 		GetActorTransform(),
 		SpawnParams);

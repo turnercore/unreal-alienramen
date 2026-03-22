@@ -186,7 +186,7 @@ This document captures the runtime ownership and integration contract for the sh
 
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
-- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*>` supports explicit type-tag adds only.
+- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>` mutates `RunLedgerMeat` with explicit tuple metadata.
 - Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
 - Transient snapshot capture/restore scope currently includes loose world `AAREnergyDrinkCarryItem` and `AARRamenMeatActor` instances (held/attached actors are excluded).

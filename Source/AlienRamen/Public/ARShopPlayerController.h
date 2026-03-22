@@ -9,7 +9,7 @@
 #include "ARShopPlayerController.generated.h"
 
 class AARShopDispenserActor;
-class AARShopCarryItemBase;
+class AARCarryItemBase;
 class AARShopStationActor;
 class AAREnergyDrinkCarryItem;
 class AActor;
@@ -86,10 +86,10 @@ public:
 
 	// Picks up a world carry item (for example meat/bowl) into this controller's pawn carry slot.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")
-	void RequestShopPickupCarryItem(AARShopCarryItemBase* CarryItemActor);
+	void RequestShopPickupCarryItem(AARCarryItemBase* CarryItemActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestShopPickupCarryItem(AARShopCarryItemBase* CarryItemActor);
+	void ServerRequestShopPickupCarryItem(AARCarryItemBase* CarryItemActor);
 
 	// Drops currently held carry item to world physics.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Interaction")

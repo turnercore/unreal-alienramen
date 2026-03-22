@@ -4,12 +4,10 @@
 #include "ARInvaderCollisionChannels.h"
 #include "ARGameStateBase.h"
 #include "ARInvaderDirectorSettings.h"
-#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerCharacterInvader.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
-#include "Engine/GameInstance.h"
 #include "EngineUtils.h"
 #include "Net/UnrealNetwork.h"
 
@@ -92,8 +90,8 @@ void AARInvaderDropBase::InitializeDrop(
 	const EARInvaderDropType InDropType,
 	const int32 InDropAmount,
 	const EARAffinityColor InDropColor,
-	const FGameplayTag InSourceEnemyIdentifierTag,
-	const FGameplayTag InMeatDefinitionTag)
+	const FGameplayTag InDropMeatTag,
+	const EARVendingQualityTier InDropMeatQualityTier)
 {
 	if (!HasAuthority())
 	{
@@ -103,8 +101,10 @@ void AARInvaderDropBase::InitializeDrop(
 	DropType = InDropType;
 	DropAmount = FMath::Max(0, InDropAmount);
 	DropColor = (InDropColor == EARAffinityColor::Unknown) ? EARAffinityColor::None : InDropColor;
-	SourceEnemyIdentifierTag = InSourceEnemyIdentifierTag;
-	MeatDefinitionTag = InMeatDefinitionTag;
+	DropMeatTag = InDropMeatTag;
+	DropMeatQualityTier = StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(InDropMeatQualityTier))
+		? InDropMeatQualityTier
+		: EARVendingQualityTier::Standard;
 	ForceNetUpdate();
 }
 
@@ -240,11 +240,13 @@ void AARInvaderDropBase::FinalizeCollection()
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderDrop|Collect] Finalize drop='%s' type=%d amount=%d color=%d collector='%s'"),
+		TEXT("[InvaderDrop|Collect] Finalize drop='%s' type=%d amount=%d color=%d meatTag='%s' quality=%d collector='%s'"),
 		*GetNameSafe(this),
 		static_cast<int32>(DropType),
 		DropAmount,
 		static_cast<int32>(DropColor),
+		*DropMeatTag.ToString(),
+		static_cast<int32>(DropMeatQualityTier),
 		*GetNameSafe(CollectingPlayerPtr.Get()));
 	ApplyDropReward();
 	BP_OnRewardApplied(CollectingPlayerPtr.Get());
@@ -306,61 +308,25 @@ void AARInvaderDropBase::ApplyDropReward_Implementation()
 	}
 
 	const FARMeatState OldRunLedgerMeat = GameState->GetRunLedgerMeat();
-	FGameplayTag ResolvedMeatTag = MeatDefinitionTag;
-	if (UGameInstance* GI = GetGameInstance())
-	{
-		if (UARItemDefinitionSubsystem* ItemDefinitions = GI->GetSubsystem<UARItemDefinitionSubsystem>())
-		{
-			FARMeatDefinitionRow MeatDefinition;
-			if (ResolvedMeatTag.IsValid())
-			{
-				if (!ItemDefinitions->ResolveMeatDefinition(ResolvedMeatTag, MeatDefinition))
-				{
-					UE_LOG(
-						ARLog,
-						Warning,
-						TEXT("[InvaderDrop|Reward] Invalid MeatDefinitionTag='%s' on drop='%s'."),
-						*ResolvedMeatTag.ToString(),
-						*GetNameSafe(this));
-					ResolvedMeatTag = FGameplayTag();
-				}
-				else
-				{
-					ResolvedMeatTag = MeatDefinition.MeatTag;
-				}
-			}
-
-			if (!ResolvedMeatTag.IsValid() && ItemDefinitions->ResolveMeatDefinitionForEnemy(SourceEnemyIdentifierTag, MeatDefinition))
-			{
-				ResolvedMeatTag = MeatDefinition.MeatTag;
-			}
-		}
-	}
-
-	if (ResolvedMeatTag.IsValid())
-	{
-		GameState->AddRunLedgerTypedMeat(ResolvedMeatTag, DropColor, DropAmount);
-	}
-	else
+	if (!DropMeatTag.IsValid())
 	{
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[InvaderDrop|Reward] Meat reward skipped drop='%s': unresolved meat definition (enemyIdentifier='%s' dropMeatTag='%s')."),
-			*GetNameSafe(this),
-			*SourceEnemyIdentifierTag.ToString(),
-			*MeatDefinitionTag.ToString());
+			TEXT("[InvaderDrop|Reward] MeatLedger skipped for drop='%s': DropMeatTag is invalid."),
+			*GetNameSafe(this));
 		return;
 	}
+
+	GameState->AddRunLedgerMeat(DropMeatTag, DropColor, DropMeatQualityTier, DropAmount);
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderDrop|Reward] MeatLedger +%d color=%d meatTag='%s' enemyIdentifier='%s' dropMeatTag='%s' oldTotal=%d newTotal=%d drop='%s'"),
+		TEXT("[InvaderDrop|Reward] MeatLedger +%d meatTag='%s' color=%d quality=%d oldTotal=%d newTotal=%d drop='%s'"),
 		DropAmount,
+		*DropMeatTag.ToString(),
 		static_cast<int32>(DropColor),
-		*ResolvedMeatTag.ToString(),
-		*SourceEnemyIdentifierTag.ToString(),
-		*MeatDefinitionTag.ToString(),
+		static_cast<int32>(DropMeatQualityTier),
 		OldRunLedgerMeat.GetTotalAmount(),
 		GameState->GetRunLedgerMeat().GetTotalAmount(),
 		*GetNameSafe(this));
@@ -426,7 +392,7 @@ void AARInvaderDropBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARInvaderDropBase, DropType);
 	DOREPLIFETIME(AARInvaderDropBase, DropAmount);
 	DOREPLIFETIME(AARInvaderDropBase, DropColor);
-	DOREPLIFETIME(AARInvaderDropBase, SourceEnemyIdentifierTag);
-	DOREPLIFETIME(AARInvaderDropBase, MeatDefinitionTag);
+	DOREPLIFETIME(AARInvaderDropBase, DropMeatTag);
+	DOREPLIFETIME(AARInvaderDropBase, DropMeatQualityTier);
 	DOREPLIFETIME(AARInvaderDropBase, bIsCollecting);
 }

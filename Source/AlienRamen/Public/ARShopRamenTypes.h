@@ -56,33 +56,75 @@ enum class EARRamenStationProcessingInputMode : uint8
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARRamenBowlSlotSpec
+{
+	GENERATED_BODY()
+
+	FARRamenBowlSlotSpec() = default;
+	explicit FARRamenBowlSlotSpec(const EARRamenStationType InSlotType)
+		: SlotType(InSlotType)
+	{
+	}
+
+	/** Canonical bowl slot this payload belongs to (noodles, broth, toppings). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARRamenStationType SlotType = EARRamenStationType::Noodles;
+
+	/** Color currently authored in this bowl slot (None means empty slot). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARAffinityColor Color = EARAffinityColor::None;
+
+	/** Meat item tag applied to this slot (invalid when no meat identity was applied). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
+	FGameplayTag MeatTag;
+
+	/** Quality tier applied to this slot when processed/filled. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARVendingQualityTier QualityTier = EARVendingQualityTier::Standard;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARRamenBowlSpec
 {
 	GENERATED_BODY()
 
-	/** Noodle color currently in the bowl (None means empty slot). */
+	/** Noodle slot payload. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	EARAffinityColor NoodlesColor = EARAffinityColor::None;
+	FARRamenBowlSlotSpec Noodles = FARRamenBowlSlotSpec(EARRamenStationType::Noodles);
 
-	/** Broth color currently in the bowl (None means empty slot). */
+	/** Broth slot payload. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	EARAffinityColor BrothColor = EARAffinityColor::None;
+	FARRamenBowlSlotSpec Broth = FARRamenBowlSlotSpec(EARRamenStationType::Broth);
 
-	/** Toppings color currently in the bowl (None means empty slot). */
+	/** Toppings slot payload. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	EARAffinityColor ToppingsColor = EARAffinityColor::None;
+	FARRamenBowlSlotSpec Toppings = FARRamenBowlSlotSpec(EARRamenStationType::Toppings);
 
-	/** Meat item tag used for the noodles slot (invalid when no meat identity was applied). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
-	FGameplayTag NoodlesMeatTag;
+	FARRamenBowlSlotSpec& GetSlot(const EARRamenStationType SlotType)
+	{
+		switch (SlotType)
+		{
+		case EARRamenStationType::Noodles:
+			return Noodles;
+		case EARRamenStationType::Broth:
+			return Broth;
+		default:
+			return Toppings;
+		}
+	}
 
-	/** Meat item tag used for the broth slot (invalid when no meat identity was applied). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
-	FGameplayTag BrothMeatTag;
-
-	/** Meat item tag used for the toppings slot (invalid when no meat identity was applied). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Item.Meat"))
-	FGameplayTag ToppingsMeatTag;
+	const FARRamenBowlSlotSpec& GetSlot(const EARRamenStationType SlotType) const
+	{
+		switch (SlotType)
+		{
+		case EARRamenStationType::Noodles:
+			return Noodles;
+		case EARRamenStationType::Broth:
+			return Broth;
+		default:
+			return Toppings;
+		}
+	}
 };
 
 USTRUCT(BlueprintType)

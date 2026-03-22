@@ -7,7 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
 #include "ARShopRamenTypes.h"
-#include "ARShopCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "GameplayTagContainer.h"
 #include "ARRamenMeatActor.generated.h"
 
@@ -15,7 +15,7 @@ class UPrimitiveComponent;
 struct FHitResult;
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARRamenMeatActor : public AARShopCarryItemBase
+class ALIENRAMEN_API AARRamenMeatActor : public AARCarryItemBase
 {
 	GENERATED_BODY()
 

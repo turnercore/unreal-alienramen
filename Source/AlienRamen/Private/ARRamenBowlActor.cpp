@@ -21,7 +21,11 @@ EARRamenStationType AARRamenBowlActor::GetNextRequiredStationType() const
 	}
 }
 
-bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType StationType, const EARAffinityColor StationColor, const FGameplayTag StationMeatTag)
+bool AARRamenBowlActor::TryApplyFillFromStation(
+	const EARRamenStationType StationType,
+	const EARAffinityColor StationColor,
+	const FGameplayTag StationMeatTag,
+	const EARVendingQualityTier StationQualityTier)
 {
 	if (!HasAuthority() || IsComplete() || StationType != GetNextRequiredStationType())
 	{
@@ -38,24 +42,30 @@ bool AARRamenBowlActor::TryApplyFillFromStation(const EARRamenStationType Statio
 	}
 
 	const int32 PreviousFillStep = FillStep;
-
+	FARRamenBowlSlotSpec* SlotToFill = nullptr;
 	switch (FillStep)
 	{
 	case 0:
-		BowlSpec.NoodlesColor = StationColor;
-		BowlSpec.NoodlesMeatTag = StationMeatTag;
+		SlotToFill = &BowlSpec.Noodles;
 		break;
 	case 1:
-		BowlSpec.BrothColor = StationColor;
-		BowlSpec.BrothMeatTag = StationMeatTag;
+		SlotToFill = &BowlSpec.Broth;
 		break;
 	case 2:
-		BowlSpec.ToppingsColor = StationColor;
-		BowlSpec.ToppingsMeatTag = StationMeatTag;
+		SlotToFill = &BowlSpec.Toppings;
 		break;
 	default:
 		return false;
 	}
+	if (!SlotToFill)
+	{
+		return false;
+	}
+
+	SlotToFill->SlotType = StationType;
+	SlotToFill->Color = StationColor;
+	SlotToFill->MeatTag = StationMeatTag;
+	SlotToFill->QualityTier = StationQualityTier;
 
 	++FillStep;
 	BroadcastFillStepChanged(PreviousFillStep, FillStep);

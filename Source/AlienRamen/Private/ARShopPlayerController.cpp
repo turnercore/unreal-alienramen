@@ -3,11 +3,11 @@
 #include "AREnergyDrinkCarryItem.h"
 #include "ARLog.h"
 #include "ARAttributeSetCore.h"
+#include "ARCarryItemBase.h"
 #include "ARNPCCharacterBase.h"
 #include "ARPlayerStateBase.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
-#include "ARShopCarryItemBase.h"
 #include "ARShopDispenserActor.h"
 #include "ARShopGameState.h"
 #include "ARShopStationActor.h"
@@ -486,7 +486,7 @@ void AARShopPlayerController::ServerRequestShopDispenseFromDispenser_Implementat
 	RequestShopDispenseFromDispenser(DispenserActor, ItemTag);
 }
 
-void AARShopPlayerController::RequestShopPickupCarryItem(AARShopCarryItemBase* CarryItemActor)
+void AARShopPlayerController::RequestShopPickupCarryItem(AARCarryItemBase* CarryItemActor)
 {
 	if (!CarryItemActor)
 	{
@@ -557,7 +557,7 @@ void AARShopPlayerController::RequestShopPickupCarryItem(AARShopCarryItemBase* C
 	ServerRequestShopPickupCarryItem(CarryItemActor);
 }
 
-void AARShopPlayerController::ServerRequestShopPickupCarryItem_Implementation(AARShopCarryItemBase* CarryItemActor)
+void AARShopPlayerController::ServerRequestShopPickupCarryItem_Implementation(AARCarryItemBase* CarryItemActor)
 {
 	RequestShopPickupCarryItem(CarryItemActor);
 }
@@ -636,7 +636,7 @@ void AARShopPlayerController::RequestUseSecondaryOnHeldCarryItem()
 	if (HasAuthority())
 	{
 		UARShopCarryComponent* CarryComponent = ResolveShopCarryComponentFromController(this);
-		AARShopCarryItemBase* HeldCarryItem = CarryComponent ? Cast<AARShopCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
+		AARCarryItemBase* HeldCarryItem = CarryComponent ? Cast<AARCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
 		if (!HeldCarryItem)
 		{
 			return;

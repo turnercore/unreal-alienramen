@@ -52,6 +52,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	FGameplayTag GetProcessedStockMeatTag() const { return ProcessedStockMeatTag; }
 
+	/** Quality tier associated with buffered stock. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
+	EARVendingQualityTier GetProcessedStockQualityTier() const { return ProcessedStockQualityTier; }
+
 	/** Processing progress in [0..1]; designers can bind this to progress bars. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Shop|Station")
 	float GetProcessingProgressNormalized() const { return ProcessingProgress01; }
@@ -97,7 +101,7 @@ public:
 
 	// Station->bowl consume endpoint used by bowl fill flow. Drains one processed stock unit.
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Station", meta = (BlueprintAuthorityOnly))
-	bool TryConsumeForBowl(EARRamenStationType RequestedStationType, EARAffinityColor& OutColor, FGameplayTag& OutMeatTag);
+	bool TryConsumeForBowl(EARRamenStationType RequestedStationType, EARAffinityColor& OutColor, FGameplayTag& OutMeatTag, EARVendingQualityTier& OutQualityTier);
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Shop|Station")
 	FAROnShopStationRuntimeChanged OnRuntimeStateChanged;
@@ -207,6 +211,9 @@ private:
 	FGameplayTag PendingProcessMeatTag;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	EARVendingQualityTier PendingProcessQualityTier = EARVendingQualityTier::Standard;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	int32 PendingProcessAmount = 0;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
@@ -214,6 +221,9 @@ private:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag ProcessedStockMeatTag;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	EARVendingQualityTier ProcessedStockQualityTier = EARVendingQualityTier::Standard;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ProcessedStockAmount, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	int32 ProcessedStockAmount = 0;

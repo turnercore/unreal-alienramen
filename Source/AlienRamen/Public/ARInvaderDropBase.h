@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
 #include "ARInvaderDropTypes.h"
+#include "ARShopRamenTypes.h"
 #include "ARInvaderPickupBase.h"
 #include "GameplayTagContainer.h"
 #include "ARInvaderDropBase.generated.h"
@@ -33,7 +34,7 @@ public:
 
 	/** Authority-only runtime setup called by invader kill/drop flow. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Drop", meta = (BlueprintAuthorityOnly))
-	void InitializeDrop(EARInvaderDropType InDropType, int32 InDropAmount, EARAffinityColor InDropColor, FGameplayTag InSourceEnemyIdentifierTag, FGameplayTag InMeatDefinitionTag);
+	void InitializeDrop(EARInvaderDropType InDropType, int32 InDropAmount, EARAffinityColor InDropColor, FGameplayTag InDropMeatTag, EARVendingQualityTier InDropMeatQualityTier);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
 	EARInvaderDropType GetDropType() const { return DropType; }
@@ -45,10 +46,10 @@ public:
 	EARAffinityColor GetDropColor() const { return DropColor; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
-	FGameplayTag GetSourceEnemyIdentifierTag() const { return SourceEnemyIdentifierTag; }
+	FGameplayTag GetDropMeatTag() const { return DropMeatTag; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
-	FGameplayTag GetMeatDefinitionTag() const { return MeatDefinitionTag; }
+	EARVendingQualityTier GetDropMeatQualityTier() const { return DropMeatQualityTier; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
 	bool IsAvailableForCollection() const;
@@ -109,13 +110,11 @@ private:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true"))
 	EARAffinityColor DropColor = EARAffinityColor::None;
 
-	/** Enemy identifier that authored this drop. Used for diagnostics and fallback validation. */
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true"))
-	FGameplayTag SourceEnemyIdentifierTag;
-
-	/** Resolved Item.Meat definition tag for this drop payload. Required for typed meat rewards on collection. */
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true", Categories = "Item.Meat"))
-	FGameplayTag MeatDefinitionTag;
+	FGameplayTag DropMeatTag;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true"))
+	EARVendingQualityTier DropMeatQualityTier = EARVendingQualityTier::Standard;
 
 	/** Time (sec) to lerp from world physics to player during collection. Shorter = snappier pickup. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true", ClampMin = "0.01"))

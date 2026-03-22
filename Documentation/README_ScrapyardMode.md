@@ -18,13 +18,13 @@ This document captures the server-authoritative runtime contract for:
   - Deposited-item tracking + in-zone player tracking.
   - Per-zone replicated reserved-scrap read model.
   - Reserve/refund mutation entrypoint into Scrapyard GameState.
-- `AARScrapyardCarryItemBase`
-  - Scrapyard world-carryable base actor for extraction items.
-  - `ForwardUseToController` routes BI_Interactable-style use to scrapyard pickup (`AARScrapyardPlayerController`) instead of shop pickup.
-  - Inherits `ForwardSecondaryUseToController` / `UseSecondaryInWorldByController` default behavior from `AARShopCarryItemBase` for secondary world-item kick handling.
-  - Replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`) for remote inspect/UI resolution.
+- `AARCarryItemBase`
+  - Shared carryable base actor for Shop and Scrapyard items.
+  - `ForwardUseToController` routes BI_Interactable-style use to scrapyard pickup (`AARScrapyardPlayerController`) or shop pickup (`AARShopPlayerController`) based on controller type.
+  - Owns shared `ForwardSecondaryUseToController` / `UseSecondaryInWorldByController` defaults for held/world secondary interactions.
+  - Replicates item identity fields (`ScrapyardItemTag`, `FallbackScrapCost`, `VisualModelClass`) for remote inspect/UI resolution.
 - `AARScrapyardPlayerController`
-  - `RequestUseSecondaryOnHeldCarryItem()` provides generic held-secondary dispatch through held `AARShopCarryItemBase::UseSecondaryByController(...)` (default throw unless item override).
+  - `RequestUseSecondaryOnHeldCarryItem()` provides generic held-secondary dispatch through held `AARCarryItemBase::UseSecondaryByController(...)` (default throw unless item override).
 - `AARPlayerController` (shared interaction runtime used by `AARScrapyardPlayerController`)
   - Tracks active hold targets (`ActiveInteractable`, `ActiveSecondaryInteractable`) plus latch state (`bIsInteracting`) for hold-style interaction input.
   - Performs server-side periodic range re-validation (`ActiveInteractionRangeCheckInterval`) for active targets and calls `IARInteractableRangeListener::OnPlayerOutOfRange(...)` on opted-in interactables before clearing target state.
@@ -60,6 +60,7 @@ This document captures the server-authoritative runtime contract for:
 ## Run Ledger Flow
 
 - Invader drops write to run ledger only (`AARGameStateBase::RunLedgerScrap/RunLedgerMeat`).
+  - run-ledger meat entries are canonical tuple rows keyed by `MeatTag + MeatColor + MeatQualityTier`.
 - Loss handling:
   - all-players-downed/dead ends run with loss reason.
   - configurable percent death penalty is applied to run ledger (not persistent storage).

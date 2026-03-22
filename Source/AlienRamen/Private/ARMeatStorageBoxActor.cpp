@@ -79,7 +79,38 @@ bool AARMeatStorageBoxActor::TryDispenseSpecificMeat(AARPlayerController* Reques
 		return false;
 	}
 
-	return TryDispenseResolvedMeat(RequestingController, MeatDefinition);
+	AARGameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr;
+	if (!GameState)
+	{
+		return false;
+	}
+
+	const FARMeatState MeatState = GameState->GetMeat();
+	const int32 DispenseAmount = FMath::Max(1, MeatAmountPerDispense);
+	FARMeatTypeAmount SelectedEntry;
+	for (const FARMeatTypeAmount& Entry : MeatState.AdditionalAmountsByType)
+	{
+		if (!Entry.MeatType.MatchesTagExact(MeatTag) || Entry.Amount < DispenseAmount)
+		{
+			continue;
+		}
+
+		SelectedEntry = Entry;
+		break;
+	}
+
+	if (!SelectedEntry.MeatType.IsValid())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Storage] TryDispenseSpecificMeat failed storage='%s': no eligible tuple stock for '%s'."),
+			*GetNameSafe(this),
+			*MeatTag.ToString());
+		return false;
+	}
+
+	return TryDispenseResolvedMeat(RequestingController, MeatDefinition, SelectedEntry.MeatColor, SelectedEntry.MeatQualityTier);
 }
 
 bool AARMeatStorageBoxActor::TryDispenseRandomMeatByContainerColor(AARPlayerController* RequestingController)
@@ -95,26 +126,40 @@ bool AARMeatStorageBoxActor::TryDispenseRandomMeatByContainerColor(AARPlayerCont
 		return false;
 	}
 
-	FARMeatState CandidateState = GameState->GetMeat();
-	PromoteLegacyBucketsToTyped(CandidateState);
-	RebuildLegacyColorBucketsFromTyped(CandidateState);
+	UGameInstance* GI = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	if (!ItemDefinitions)
+	{
+		return false;
+	}
 
-	FGameplayTag RandomMeatTag;
-	if (!SelectRandomEligibleMeatTagFromTypedStock(CandidateState, RandomMeatTag))
+	const FARMeatState CandidateState = GameState->GetMeat();
+	FARMeatTypeAmount RandomMeatEntry;
+	if (!SelectRandomEligibleMeatTupleFromTypedStock(CandidateState, RandomMeatEntry))
 	{
 		UE_LOG(
 			ARLog,
 			Verbose,
-			TEXT("[Shop|Storage] TryDispenseRandomMeatByContainerColor failed storage='%s': no eligible meat tags for color=%d."),
+			TEXT("[Shop|Storage] TryDispenseRandomMeatByContainerColor failed storage='%s': no eligible meat tuples for color=%d."),
 			*GetNameSafe(this),
 			static_cast<int32>(SanitizeColor(MeatColor)));
 		return false;
 	}
 
-	return TryDispenseSpecificMeat(RequestingController, RandomMeatTag);
+	FARMeatDefinitionRow MeatDefinition;
+	if (!ItemDefinitions->ResolveMeatDefinition(RandomMeatEntry.MeatType, MeatDefinition))
+	{
+		return false;
+	}
+
+	return TryDispenseResolvedMeat(RequestingController, MeatDefinition, RandomMeatEntry.MeatColor, RandomMeatEntry.MeatQualityTier);
 }
 
-bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(AARPlayerController* RequestingController, const FARMeatDefinitionRow& MeatDefinition)
+bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(
+	AARPlayerController* RequestingController,
+	const FARMeatDefinitionRow& MeatDefinition,
+	const EARAffinityColor MeatColorToDispense,
+	const EARVendingQualityTier MeatQualityToDispense)
 {
 	if (!HasAuthority() || !RequestingController || !MeatDefinition.MeatTag.IsValid())
 	{
@@ -136,19 +181,19 @@ bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(AARPlayerController* Reques
 
 	const int32 DispenseAmount = FMath::Max(1, MeatAmountPerDispense);
 	FARMeatState NewMeatState = GameState->GetMeat();
-	PromoteLegacyBucketsToTyped(NewMeatState);
-	if (!ConsumeTypedMeatFromState(NewMeatState, MeatDefinition.MeatTag, DispenseAmount))
+	if (!ConsumeTypedMeatFromState(NewMeatState, MeatDefinition.MeatTag, MeatColorToDispense, MeatQualityToDispense, DispenseAmount))
 	{
 		UE_LOG(
 			ARLog,
 			Verbose,
-			TEXT("[Shop|Storage] TryDispenseResolvedMeat failed storage='%s': insufficient stock for '%s' amount=%d."),
+			TEXT("[Shop|Storage] TryDispenseResolvedMeat failed storage='%s': insufficient stock for '%s' color=%d quality=%d amount=%d."),
 			*GetNameSafe(this),
 			*MeatDefinition.MeatTag.ToString(),
+			static_cast<int32>(MeatColorToDispense),
+			static_cast<int32>(MeatQualityToDispense),
 			DispenseAmount);
 		return false;
 	}
-	RebuildLegacyColorBucketsFromTyped(NewMeatState);
 
 	const FVector SpawnLocation = SpawnAnchor ? SpawnAnchor->GetComponentLocation() : GetActorLocation();
 	const FRotator SpawnRotation = SpawnAnchor ? SpawnAnchor->GetComponentRotation() : GetActorRotation();
@@ -166,9 +211,8 @@ bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(AARPlayerController* Reques
 		return false;
 	}
 
-	// Meat type and color are decoupled at runtime; storage color drives dispensed actor color.
-	const EARAffinityColor SpawnColor = SanitizeColor(MeatColor);
-	SpawnedMeat->SetMeatDataByTag(MeatDefinition.MeatTag, SpawnColor, DispenseAmount);
+	const EARAffinityColor SpawnColor = SanitizeColor(MeatColorToDispense);
+	SpawnedMeat->SetMeatDataByTag(MeatDefinition.MeatTag, SpawnColor, DispenseAmount, MeatQualityToDispense);
 	if (!CarryComponent->TrySetHeldActor(SpawnedMeat))
 	{
 		SpawnedMeat->ReleaseCarryItem();
@@ -196,11 +240,12 @@ bool AARMeatStorageBoxActor::TryDispenseResolvedMeat(AARPlayerController* Reques
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[Shop|Storage] Dispensed meat storage='%s' controller='%s' meatTag='%s' color=%d amount=%d."),
+		TEXT("[Shop|Storage] Dispensed meat storage='%s' controller='%s' meatTag='%s' color=%d quality=%d amount=%d."),
 		*GetNameSafe(this),
 		*GetNameSafe(RequestingController),
 		*MeatDefinition.MeatTag.ToString(),
 		static_cast<int32>(SpawnColor),
+		static_cast<int32>(MeatQualityToDispense),
 		DispenseAmount);
 	return true;
 }
@@ -260,19 +305,26 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 	FGameplayTag DepositMeatTag = MeatActor->GetMeatTag();
 	EARAffinityColor DepositColor = SanitizeColor(MeatActor->GetMeatColor());
 	FARMeatDefinitionRow DepositDefinition;
-	if (!DepositMeatTag.IsValid() || !ItemDefinitions->ResolveMeatDefinition(DepositMeatTag, DepositDefinition))
+	if (DepositMeatTag.IsValid() && ItemDefinitions->ResolveMeatDefinition(DepositMeatTag, DepositDefinition))
 	{
-		UE_LOG(
-			ARLog,
-			Verbose,
-			TEXT("[Shop|Storage] Store rejected storage='%s': meat '%s' has no resolved MeatTag definition."),
-			*GetNameSafe(this),
-			*GetNameSafe(MeatActor));
-		return false;
+		if (DepositDefinition.MeatTag.IsValid())
+		{
+			DepositMeatTag = DepositDefinition.MeatTag;
+		}
 	}
-	if (DepositDefinition.MeatTag.IsValid())
+	else
 	{
-		DepositMeatTag = DepositDefinition.MeatTag;
+		if (DepositColor == EARAffinityColor::None)
+		{
+			DepositColor = SanitizeColor(MeatColor);
+		}
+
+		if (!ItemDefinitions->ResolveFirstMeatTagForColor(DepositColor, DepositMeatTag))
+		{
+			return false;
+		}
+
+		ItemDefinitions->ResolveMeatDefinition(DepositMeatTag, DepositDefinition);
 	}
 
 	const EARAffinityColor StorageColor = SanitizeColor(MeatColor);
@@ -295,10 +347,9 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 	}
 
 	const int32 HeldAmount = FMath::Max(1, MeatActor->GetMeatAmount());
+	const EARVendingQualityTier HeldQualityTier = MeatActor->GetMeatQualityTier();
 	FARMeatState NewMeatState = GameState->GetMeat();
-	PromoteLegacyBucketsToTyped(NewMeatState);
-	AddTypedMeatToState(NewMeatState, DepositMeatTag, HeldAmount);
-	RebuildLegacyColorBucketsFromTyped(NewMeatState);
+	AddTypedMeatToState(NewMeatState, DepositMeatTag, DepositColor, HeldQualityTier, HeldAmount);
 	GameState->SetMeatFromSave(NewMeatState);
 
 	if (RequestingController)
@@ -315,12 +366,13 @@ bool AARMeatStorageBoxActor::TryStoreMeatActorInternal(
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[Shop|Storage] Stored meat storage='%s' controller='%s' meat='%s' meatTag='%s' color=%d amount=%d worldReturn=%d."),
+		TEXT("[Shop|Storage] Stored meat storage='%s' controller='%s' meat='%s' meatTag='%s' color=%d quality=%d amount=%d worldReturn=%d."),
 		*GetNameSafe(this),
 		*GetNameSafe(RequestingController),
 		*GetNameSafe(MeatActor),
 		*DepositMeatTag.ToString(),
 		static_cast<int32>(DepositColor),
+		static_cast<int32>(HeldQualityTier),
 		HeldAmount,
 		bRequireWorldReturnArmed ? 1 : 0);
 	return true;
@@ -368,6 +420,7 @@ void AARMeatStorageBoxActor::SyncLegacyDefinition()
 	Definition.AmountPerDispense = FMath::Max(1, MeatAmountPerDispense);
 	Definition.SourceType = EARShopDispenserSourceType::GameStateMeatReserve;
 	Definition.SourceColor = MeatColor;
+	Definition.SourceMeatQualityTier = EARVendingQualityTier::Standard;
 	Definition.bAutoPlaceIntoCarry = true;
 
 	if (DispenseDefinitions.Num() <= 0)
@@ -380,7 +433,12 @@ void AARMeatStorageBoxActor::SyncLegacyDefinition()
 	DispenseDefinitions[0] = Definition;
 }
 
-bool AARMeatStorageBoxActor::ConsumeTypedMeatFromState(FARMeatState& InOutMeatState, const FGameplayTag MeatTag, const int32 AmountToConsume) const
+bool AARMeatStorageBoxActor::ConsumeTypedMeatFromState(
+	FARMeatState& InOutMeatState,
+	const FGameplayTag MeatTag,
+	const EARAffinityColor MeatColorToConsume,
+	const EARVendingQualityTier MeatQualityToConsume,
+	const int32 AmountToConsume) const
 {
 	if (!MeatTag.IsValid() || AmountToConsume <= 0)
 	{
@@ -389,7 +447,9 @@ bool AARMeatStorageBoxActor::ConsumeTypedMeatFromState(FARMeatState& InOutMeatSt
 
 	for (FARMeatTypeAmount& Entry : InOutMeatState.AdditionalAmountsByType)
 	{
-		if (!Entry.MeatType.MatchesTagExact(MeatTag))
+		if (!Entry.MeatType.MatchesTagExact(MeatTag)
+			|| Entry.MeatColor != (MeatColorToConsume == EARAffinityColor::Unknown ? EARAffinityColor::None : MeatColorToConsume)
+			|| Entry.MeatQualityTier != MeatQualityToConsume)
 		{
 			continue;
 		}
@@ -407,7 +467,12 @@ bool AARMeatStorageBoxActor::ConsumeTypedMeatFromState(FARMeatState& InOutMeatSt
 	return false;
 }
 
-void AARMeatStorageBoxActor::AddTypedMeatToState(FARMeatState& InOutMeatState, const FGameplayTag MeatTag, const int32 AmountToAdd) const
+void AARMeatStorageBoxActor::AddTypedMeatToState(
+	FARMeatState& InOutMeatState,
+	const FGameplayTag MeatTag,
+	const EARAffinityColor MeatColorValue,
+	const EARVendingQualityTier MeatQualityTier,
+	const int32 AmountToAdd) const
 {
 	if (!MeatTag.IsValid() || AmountToAdd <= 0)
 	{
@@ -416,7 +481,9 @@ void AARMeatStorageBoxActor::AddTypedMeatToState(FARMeatState& InOutMeatState, c
 
 	for (FARMeatTypeAmount& Entry : InOutMeatState.AdditionalAmountsByType)
 	{
-		if (Entry.MeatType.MatchesTagExact(MeatTag))
+		if (Entry.MeatType.MatchesTagExact(MeatTag)
+			&& Entry.MeatColor == (MeatColorValue == EARAffinityColor::Unknown ? EARAffinityColor::None : MeatColorValue)
+			&& Entry.MeatQualityTier == MeatQualityTier)
 		{
 			Entry.Amount = FMath::Max(0, Entry.Amount) + AmountToAdd;
 			InOutMeatState.NormalizeAdditionalAmounts();
@@ -426,63 +493,17 @@ void AARMeatStorageBoxActor::AddTypedMeatToState(FARMeatState& InOutMeatState, c
 
 	FARMeatTypeAmount& Added = InOutMeatState.AdditionalAmountsByType.AddDefaulted_GetRef();
 	Added.MeatType = MeatTag;
+	Added.MeatColor = MeatColorValue == EARAffinityColor::Unknown ? EARAffinityColor::None : MeatColorValue;
+	Added.MeatQualityTier = MeatQualityTier;
 	Added.Amount = AmountToAdd;
 	InOutMeatState.NormalizeAdditionalAmounts();
 }
 
-void AARMeatStorageBoxActor::PromoteLegacyBucketsToTyped(FARMeatState& InOutMeatState) const
+bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTupleFromTypedStock(const FARMeatState& MeatState, FARMeatTypeAmount& OutMeatEntry) const
 {
-	UGameInstance* GI = GetGameInstance();
-	UARItemDefinitionSubsystem* ItemDefinitions = GI ? GI->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
-	const int32 LegacyTotal = FMath::Max(0, InOutMeatState.RedAmount)
-		+ FMath::Max(0, InOutMeatState.BlueAmount)
-		+ FMath::Max(0, InOutMeatState.WhiteAmount)
-		+ FMath::Max(0, InOutMeatState.UnspecifiedAmount);
-	if (LegacyTotal <= 0 || !ItemDefinitions)
-	{
-		return;
-	}
-	InOutMeatState.RedAmount = 0;
-	InOutMeatState.BlueAmount = 0;
-	InOutMeatState.WhiteAmount = 0;
-	InOutMeatState.UnspecifiedAmount = 0;
+	OutMeatEntry = FARMeatTypeAmount();
 
-	FGameplayTag FallbackMeatTag;
-	if (!ItemDefinitions->ResolveFirstMeatTag(FallbackMeatTag) || !FallbackMeatTag.IsValid())
-	{
-		InOutMeatState.UnspecifiedAmount = LegacyTotal;
-		return;
-	}
-
-	AddTypedMeatToState(InOutMeatState, FallbackMeatTag, LegacyTotal);
-	InOutMeatState.NormalizeAdditionalAmounts();
-}
-
-void AARMeatStorageBoxActor::RebuildLegacyColorBucketsFromTyped(FARMeatState& InOutMeatState) const
-{
-	InOutMeatState.RedAmount = 0;
-	InOutMeatState.BlueAmount = 0;
-	InOutMeatState.WhiteAmount = 0;
-	InOutMeatState.UnspecifiedAmount = 0;
-
-	for (const FARMeatTypeAmount& Entry : InOutMeatState.AdditionalAmountsByType)
-	{
-		const int32 Amount = FMath::Max(0, Entry.Amount);
-		if (!Entry.MeatType.IsValid() || Amount <= 0)
-		{
-			continue;
-		}
-
-		// Typed inventory no longer implies a canonical color. Keep legacy mirrors conservative.
-		InOutMeatState.UnspecifiedAmount += Amount;
-	}
-}
-
-bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTagFromTypedStock(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const
-{
-	OutMeatTag = FGameplayTag();
-
-	TArray<FGameplayTag> EligibleTags;
+	TArray<FARMeatTypeAmount> EligibleEntries;
 	const int32 DispenseAmount = FMath::Max(1, MeatAmountPerDispense);
 	for (const FARMeatTypeAmount& Entry : MeatState.AdditionalAmountsByType)
 	{
@@ -491,18 +512,25 @@ bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTagFromTypedStock(const FAR
 			continue;
 		}
 
+		const EARAffinityColor EntryColor = Entry.MeatColor == EARAffinityColor::Unknown ? EARAffinityColor::None : Entry.MeatColor;
+		const EARAffinityColor StorageColor = SanitizeColor(MeatColor);
+		if (StorageColor != EARAffinityColor::None && EntryColor != StorageColor)
+		{
+			continue;
+		}
+
 		if (Entry.Amount >= DispenseAmount)
 		{
-			EligibleTags.Add(Entry.MeatType);
+			EligibleEntries.Add(Entry);
 		}
 	}
 
-	if (EligibleTags.IsEmpty())
+	if (EligibleEntries.IsEmpty())
 	{
 		return false;
 	}
 
-	const int32 RandomIndex = FMath::RandRange(0, EligibleTags.Num() - 1);
-	OutMeatTag = EligibleTags[RandomIndex];
-	return OutMeatTag.IsValid();
+	const int32 RandomIndex = FMath::RandRange(0, EligibleEntries.Num() - 1);
+	OutMeatEntry = EligibleEntries[RandomIndex];
+	return OutMeatEntry.MeatType.IsValid();
 }

@@ -285,7 +285,7 @@ void AARScrapyardGameMode::InitializeScrapyardSpawns()
 		}
 
 		const int32 SpawnSeed = static_cast<int32>(HashCombine(HashCombine(GetTypeHash(RunSeed), GetTypeHash(Spawner->GetUniqueID())), GetTypeHash(Stream.RandHelper(INT32_MAX))));
-		AARScrapyardCarryItemBase* Spawned = Spawner->SpawnItemByDefinition(Selected->ItemDef, Selected->ItemTag, SpawnSeed);
+		AARCarryItemBase* Spawned = Spawner->SpawnItemByDefinition(Selected->ItemDef, Selected->ItemTag, SpawnSeed);
 		return Spawned ? TOptional<EARScrapyardItemRarity>(Selected->Rarity) : TOptional<EARScrapyardItemRarity>();
 	};
 
@@ -307,7 +307,7 @@ void AARScrapyardGameMode::InitializeScrapyardSpawns()
 			}
 
 			const int32 SpawnSeed = GlobalRng.RandHelper(INT32_MAX);
-			AARScrapyardCarryItemBase* Spawned = Candidate.Spawner->SpawnItemByDefinition(Candidate.ItemDef, Candidate.ItemTag, SpawnSeed);
+			AARCarryItemBase* Spawned = Candidate.Spawner->SpawnItemByDefinition(Candidate.ItemDef, Candidate.ItemTag, SpawnSeed);
 			if (Spawned)
 			{
 				SpawnedByRarity.FindOrAdd(Candidate.Rarity)++;

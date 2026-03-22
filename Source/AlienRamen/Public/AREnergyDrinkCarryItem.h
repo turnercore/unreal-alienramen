@@ -6,14 +6,14 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "ARShopCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "AREnergyDrinkCarryItem.generated.h"
 
 class AARShopPlayerController;
 class AARPlayerController;
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AAREnergyDrinkCarryItem : public AARShopCarryItemBase
+class ALIENRAMEN_API AAREnergyDrinkCarryItem : public AARCarryItemBase
 {
 	GENERATED_BODY()
 

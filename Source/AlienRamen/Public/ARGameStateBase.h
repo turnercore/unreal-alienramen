@@ -54,16 +54,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	NewScrap,
 	int32,
 	OldScrap);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnMeatChangedSignature,
 	FARMeatState,
 	NewMeat,
 	FARMeatState,
-	OldMeat,
-	int32,
-	NewTotalMeat,
-	int32,
-	OldTotalMeat);
+	OldMeat);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FAROnRunLedgerScrapChangedSignature,
 	int32,
@@ -197,7 +193,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnScrapChangedSignature OnScrapChanged;
 
-	/** Broadcast whenever canonical meat reserve changes (full state + aggregate totals). Params: NewMeat, OldMeat, NewTotalMeat, OldTotalMeat. */
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Save")
 	FAROnMeatChangedSignature OnMeatChanged;
 
@@ -337,13 +332,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void AddRunLedgerScrap(int32 ScrapDelta);
 
-	/** Adds typed meat into the run ledger. SourceColor is informational for diagnostics; typed ledger identity is MeatTag. Authority only. */
+	/** Adds meat into run ledger using canonical meat tuple metadata. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
-	void AddRunLedgerTypedMeat(FGameplayTag MeatTag, EARAffinityColor SourceColor, int32 MeatAmount);
-
-	/** Legacy untyped run-ledger write path. Prefer AddRunLedgerTypedMeat for gameplay flows. Authority only. */
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
-	void AddRunLedgerMeat(EARAffinityColor ColorBucket, int32 MeatAmount);
+	void AddRunLedgerMeat(FGameplayTag MeatTag, EARAffinityColor MeatColor, EARVendingQualityTier MeatQualityTier, int32 MeatAmount);
 
 	/** Applies a percentage loss to run-ledger values (0.25 => lose 25%). Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))

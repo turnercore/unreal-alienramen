@@ -225,7 +225,18 @@ void AARShopDispenserActor::InitializeSpawnedActorFromDefinition(
 		return;
 	}
 
-	MeatActor->SetMeatData(Definition.SourceColor, DispensedAmount);
+	if (Definition.ItemTag.IsValid())
+	{
+		MeatActor->SetMeatDataByTag(
+			Definition.ItemTag,
+			Definition.SourceColor,
+			DispensedAmount,
+			Definition.SourceMeatQualityTier);
+	}
+	else
+	{
+		MeatActor->SetMeatData(Definition.SourceColor, DispensedAmount);
+	}
 }
 
 bool AARShopDispenserActor::ConsumeSource(
@@ -246,7 +257,7 @@ bool AARShopDispenserActor::ConsumeSource(
 	case EARShopDispenserSourceType::GameStateMeatReserve:
 		{
 			AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr;
-			if (!ARGameState)
+			if (!ARGameState || !Definition.ItemTag.IsValid())
 			{
 				return false;
 			}
@@ -254,13 +265,33 @@ bool AARShopDispenserActor::ConsumeSource(
 			FARMeatState NewMeatState = ARGameState->GetMeat();
 			OutPreConsumeMeatState = NewMeatState;
 
-			int32* Bucket = ResolveMeatBucket(NewMeatState, Definition.SourceColor);
-			if (!Bucket || *Bucket < InOutDispenseAmount)
+			const EARAffinityColor SourceColor = Definition.SourceColor == EARAffinityColor::Unknown
+				? EARAffinityColor::None
+				: Definition.SourceColor;
+			const EARVendingQualityTier SourceQualityTier = StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(Definition.SourceMeatQualityTier))
+				? Definition.SourceMeatQualityTier
+				: EARVendingQualityTier::Standard;
+			int32* MatchingAmount = nullptr;
+			for (FARMeatTypeAmount& Entry : NewMeatState.AdditionalAmountsByType)
+			{
+				if (!Entry.MeatType.MatchesTagExact(Definition.ItemTag)
+					|| Entry.MeatColor != SourceColor
+					|| Entry.MeatQualityTier != SourceQualityTier)
+				{
+					continue;
+				}
+
+				MatchingAmount = &Entry.Amount;
+				break;
+			}
+
+			if (!MatchingAmount || *MatchingAmount < InOutDispenseAmount)
 			{
 				return false;
 			}
 
-			*Bucket -= InOutDispenseAmount;
+			*MatchingAmount -= InOutDispenseAmount;
+			NewMeatState.NormalizeAdditionalAmounts();
 			ARGameState->SetMeatFromSave(NewMeatState);
 			bOutUsedMeatReserve = true;
 			return true;
@@ -337,19 +368,4 @@ UARShopCarryComponent* AARShopDispenserActor::ResolveCarryComponentFromControlle
 {
 	APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
 	return Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
-}
-
-int32* AARShopDispenserActor::ResolveMeatBucket(FARMeatState& MeatState, const EARAffinityColor SourceColor)
-{
-	switch (SourceColor)
-	{
-	case EARAffinityColor::Red:
-		return &MeatState.RedAmount;
-	case EARAffinityColor::Blue:
-		return &MeatState.BlueAmount;
-	case EARAffinityColor::White:
-		return &MeatState.WhiteAmount;
-	default:
-		return &MeatState.UnspecifiedAmount;
-	}
 }

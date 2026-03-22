@@ -10,7 +10,7 @@
 #include "ARScrapyardTypes.h"
 #include "ARScrapyardGameState.generated.h"
 
-class AARScrapyardCarryItemBase;
+class AARCarryItemBase;
 class AARScrapyardExitZoneActor;
 class UARRunBuffSubsystem;
 
@@ -67,22 +67,22 @@ public:
 	bool FinalizeScrapyardRunAndTravelToShop(const FString& InShopTravelURL);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
-	bool ReserveScrapForItem(AARScrapyardCarryItemBase* ItemActor, int32& OutReservedCost);
+	bool ReserveScrapForItem(AARCarryItemBase* ItemActor, int32& OutReservedCost);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard", meta = (BlueprintAuthorityOnly))
-	bool RefundScrapForItem(AARScrapyardCarryItemBase* ItemActor, int32& OutRefundCost);
+	bool RefundScrapForItem(AARCarryItemBase* ItemActor, int32& OutRefundCost);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
-	bool ResolveItemDefinitionForActor(AARScrapyardCarryItemBase* ItemActor, FARScrapyardItemDefRow& OutDef) const;
+	bool ResolveItemDefinitionForActor(AARCarryItemBase* ItemActor, FARScrapyardItemDefRow& OutDef) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
-	int32 ResolveItemCostForActor(AARScrapyardCarryItemBase* ItemActor) const;
+	int32 ResolveItemCostForActor(AARCarryItemBase* ItemActor) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
-	bool IsItemReservedForExtraction(AARScrapyardCarryItemBase* ItemActor) const;
+	bool IsItemReservedForExtraction(AARCarryItemBase* ItemActor) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard")
-	bool TryGetReservedScrapForItem(AARScrapyardCarryItemBase* ItemActor, int32& OutReservedCost) const;
+	bool TryGetReservedScrapForItem(AARCarryItemBase* ItemActor, int32& OutReservedCost) const;
 
 	void RegisterExitZone(AARScrapyardExitZoneActor* ExitZone);
 	void UnregisterExitZone(AARScrapyardExitZoneActor* ExitZone);
@@ -123,7 +123,7 @@ protected:
 private:
 	struct FScrapyardExtractionCandidate
 	{
-		TWeakObjectPtr<AARScrapyardCarryItemBase> ItemActor;
+		TWeakObjectPtr<AARCarryItemBase> ItemActor;
 		FGameplayTag ItemTag;
 		int32 ScrapCost = 0;
 	};
@@ -182,7 +182,7 @@ private:
 	float DefaultRunDurationSeconds = 180.0f;
 
 	UPROPERTY(Transient)
-	TMap<TWeakObjectPtr<AARScrapyardCarryItemBase>, int32> ReservedCostByItem;
+	TMap<TWeakObjectPtr<AARCarryItemBase>, int32> ReservedCostByItem;
 
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<AARScrapyardExitZoneActor>> RegisteredExitZones;

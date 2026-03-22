@@ -8,7 +8,7 @@
 #include "ARPlayerController.h"
 #include "ARScrapyardPlayerController.generated.h"
 
-class AARScrapyardCarryItemBase;
+class AARCarryItemBase;
 class AARScrapyardExitZoneActor;
 
 UCLASS()
@@ -21,10 +21,10 @@ public:
 
 	/** Authority-routed pickup request for scrapyard carryables in reach. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
-	void RequestScrapyardPickupCarryItem(AARScrapyardCarryItemBase* CarryItemActor);
+	void RequestScrapyardPickupCarryItem(AARCarryItemBase* CarryItemActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestScrapyardPickupCarryItem(AARScrapyardCarryItemBase* CarryItemActor);
+	void ServerRequestScrapyardPickupCarryItem(AARCarryItemBase* CarryItemActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
 	void RequestScrapyardDropHeldCarryItem();
@@ -53,8 +53,8 @@ public:
 	void ServerRequestScrapyardDepositToExit(AARScrapyardExitZoneActor* ExitZone);
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Scrapyard|Interaction")
-	void RequestScrapyardWithdrawFromExit(AARScrapyardExitZoneActor* ExitZone, AARScrapyardCarryItemBase* ItemActor);
+	void RequestScrapyardWithdrawFromExit(AARScrapyardExitZoneActor* ExitZone, AARCarryItemBase* ItemActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestScrapyardWithdrawFromExit(AARScrapyardExitZoneActor* ExitZone, AARScrapyardCarryItemBase* ItemActor);
+	void ServerRequestScrapyardWithdrawFromExit(AARScrapyardExitZoneActor* ExitZone, AARCarryItemBase* ItemActor);
 };

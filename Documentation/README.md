@@ -53,7 +53,7 @@ Use the in-game console (`~`).
     - `ar.invader.debug.add_spice [p1|p2] <delta>`
     - `ar.invader.debug.add_scrap <delta>`
     - `ar.invader.debug.add_money <delta>`
-    - `ar.debug.add_meat [delta] [Item.Meat.*]`
+    - `ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>`
     - `ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`
 
 ### Expected behavior (authoritative server)
@@ -71,5 +71,5 @@ Use the in-game console (`~`).
 11. **`ar.invader.debug.add_spice [p1|p2] <delta>`** - adds/subtracts player spice (`p1` default).
 12. **`ar.invader.debug.add_scrap <delta>`** - adds/subtracts replicated scrap on GameState.
 13. **`ar.invader.debug.add_money <delta>`** - adds/subtracts replicated money on GameState.
-14. **`ar.debug.add_meat [delta] [Item.Meat.*]`** - adds/subtracts replicated typed meat using an explicit meat definition tag (`delta` defaults to `1`; if tag omitted, first deterministic meat row is used).
+14. **`ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>`** - adds/subtracts replicated typed meat tuples in `RunLedgerMeat` using explicit tag/color/quality metadata.
 15. **`ar.debug.log <veryverbose|verbose|log|warning|error|off|reset>`** - sets runtime `ARLog` verbosity via a lowercase shortcut.

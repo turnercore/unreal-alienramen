@@ -115,9 +115,9 @@ namespace
 	static void GetBowlColors(const FARRamenBowlSpec& BowlSpec, TArray<EARAffinityColor>& OutColors)
 	{
 		OutColors.Reset();
-		OutColors.Add(SanitizeColor(BowlSpec.NoodlesColor));
-		OutColors.Add(SanitizeColor(BowlSpec.BrothColor));
-		OutColors.Add(SanitizeColor(BowlSpec.ToppingsColor));
+		OutColors.Add(SanitizeColor(BowlSpec.Noodles.Color));
+		OutColors.Add(SanitizeColor(BowlSpec.Broth.Color));
+		OutColors.Add(SanitizeColor(BowlSpec.Toppings.Color));
 	}
 
 	static FGameplayTag BuildTagFromRootAndLeaf(const FGameplayTag& RootTag, const FGameplayTag& SourceTag)

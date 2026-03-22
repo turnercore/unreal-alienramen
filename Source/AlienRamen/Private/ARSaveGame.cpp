@@ -509,6 +509,17 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](TArray<FARShopTransientCarryableSnapshot>& Snapshots)
 	{
 		bool bChanged = false;
+		auto SanitizeBowlSlot = [&SanitizeMeatQualityTier, &bChanged](
+			FARRamenBowlSlotSpec& Slot,
+			const EARRamenStationType ExpectedSlotType)
+		{
+			const EARAffinityColor OldColor = Slot.Color;
+			const EARRamenStationType OldSlotType = Slot.SlotType;
+			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
+			Slot.SlotType = ExpectedSlotType;
+			bChanged = bChanged || Slot.Color != OldColor || Slot.SlotType != OldSlotType || SanitizeMeatQualityTier(Slot.QualityTier);
+		};
+
 		for (int32 SnapshotIndex = Snapshots.Num() - 1; SnapshotIndex >= 0; --SnapshotIndex)
 		{
 			FARShopTransientCarryableSnapshot& Snapshot = Snapshots[SnapshotIndex];
@@ -525,11 +536,26 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 				bChanged = true;
 			}
 
+			if (Snapshot.BowlFillStep < 0)
+			{
+				Snapshot.BowlFillStep = 0;
+				bChanged = true;
+			}
+			else if (Snapshot.BowlFillStep > 3)
+			{
+				Snapshot.BowlFillStep = 3;
+				bChanged = true;
+			}
+
 			const bool bWasQualityTierInvalid = SanitizeMeatQualityTier(Snapshot.MeatQualityTier);
 			if (bWasQualityTierInvalid)
 			{
 				bChanged = true;
 			}
+
+			SanitizeBowlSlot(Snapshot.BowlSpec.Noodles, EARRamenStationType::Noodles);
+			SanitizeBowlSlot(Snapshot.BowlSpec.Broth, EARRamenStationType::Broth);
+			SanitizeBowlSlot(Snapshot.BowlSpec.Toppings, EARRamenStationType::Toppings);
 		}
 
 		if (bChanged)
@@ -542,6 +568,8 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	auto SanitizeHeldShopItem =
 		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](FARCharacterHeldShopItemSnapshot& Snapshot, const TCHAR* FieldName)
 	{
+		bool bChanged = false;
+
 		if (Snapshot.MeatAmount < 1)
 		{
 			Snapshot.MeatAmount = 1;
@@ -562,35 +590,59 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			++ClampedCount;
 			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlFillStep was clamped to 0."), FieldName));
 		}
+		else if (Snapshot.BowlFillStep > 3)
+		{
+			Snapshot.BowlFillStep = 3;
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlFillStep was clamped to 3."), FieldName));
+		}
+
+		auto SanitizeHeldBowlSlot = [&SanitizeMeatQualityTier, &bChanged](FARRamenBowlSlotSpec& Slot, const EARRamenStationType ExpectedSlotType)
+		{
+			const EARAffinityColor OldColor = Slot.Color;
+			const EARRamenStationType OldSlotType = Slot.SlotType;
+			Slot.SlotType = ExpectedSlotType;
+			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
+			bChanged = bChanged || Slot.Color != OldColor || Slot.SlotType != OldSlotType || SanitizeMeatQualityTier(Slot.QualityTier);
+		};
+		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Noodles, EARRamenStationType::Noodles);
+		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Broth, EARRamenStationType::Broth);
+		SanitizeHeldBowlSlot(Snapshot.BowlSpec.Toppings, EARRamenStationType::Toppings);
+
+		if (bChanged)
+		{
+			++ClampedCount;
+			AddWarningf(OutWarnings, FString::Printf(TEXT("%s.BowlSpec contained invalid bowl slot data and was normalized."), FieldName));
+		}
 	};
 
 	auto SanitizeVendingStockedBowls =
-		[OutWarnings, &ClampedCount](TArray<FARVendingStockedBowlEntry>& Entries)
+		[OutWarnings, &ClampedCount, &SanitizeMeatQualityTier](TArray<FARVendingStockedBowlEntry>& Entries)
 	{
 		bool bChanged = false;
+		auto SanitizeBowlSlot = [&SanitizeMeatQualityTier, &bChanged](
+			FARRamenBowlSlotSpec& Slot,
+			const EARRamenStationType ExpectedSlotType)
+		{
+			const EARAffinityColor OldColor = Slot.Color;
+			const EARRamenStationType OldSlotType = Slot.SlotType;
+			Slot.Color = Slot.Color == EARAffinityColor::Unknown ? EARAffinityColor::None : Slot.Color;
+			Slot.SlotType = ExpectedSlotType;
+			bChanged = bChanged || Slot.Color != OldColor || Slot.SlotType != OldSlotType || SanitizeMeatQualityTier(Slot.QualityTier);
+		};
+
 		for (FARVendingStockedBowlEntry& Entry : Entries)
 		{
-			auto SanitizeColor = [](const EARAffinityColor InColor)
-			{
-				return InColor == EARAffinityColor::Unknown ? EARAffinityColor::None : InColor;
-			};
-
-			const EARAffinityColor OldNoodles = Entry.BowlSpec.NoodlesColor;
-			const EARAffinityColor OldBroth = Entry.BowlSpec.BrothColor;
-			const EARAffinityColor OldToppings = Entry.BowlSpec.ToppingsColor;
-			Entry.BowlSpec.NoodlesColor = SanitizeColor(Entry.BowlSpec.NoodlesColor);
-			Entry.BowlSpec.BrothColor = SanitizeColor(Entry.BowlSpec.BrothColor);
-			Entry.BowlSpec.ToppingsColor = SanitizeColor(Entry.BowlSpec.ToppingsColor);
-			bChanged = bChanged
-				|| Entry.BowlSpec.NoodlesColor != OldNoodles
-				|| Entry.BowlSpec.BrothColor != OldBroth
-				|| Entry.BowlSpec.ToppingsColor != OldToppings;
+			bChanged = bChanged || SanitizeMeatQualityTier(Entry.QualityTier);
+			SanitizeBowlSlot(Entry.BowlSpec.Noodles, EARRamenStationType::Noodles);
+			SanitizeBowlSlot(Entry.BowlSpec.Broth, EARRamenStationType::Broth);
+			SanitizeBowlSlot(Entry.BowlSpec.Toppings, EARRamenStationType::Toppings);
 		}
 
 		if (bChanged)
 		{
 			++ClampedCount;
-			AddWarning(OutWarnings, TEXT("PendingVendingStockedBowls contained unknown colors and was normalized."));
+			AddWarning(OutWarnings, TEXT("PendingVendingStockedBowls contained invalid bowl slot data and was normalized."));
 		}
 	};
 
@@ -599,14 +651,21 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	ClampNonNegative(Cycles, TEXT("Cycles"));
 	ClampNonNegative(FactionClout, TEXT("FactionClout"));
 	ClampNonNegative(ActiveRunBuffCycleId, TEXT("ActiveRunBuffCycleId"));
-	ClampNonNegative(Meat.RedAmount, TEXT("Meat.RedAmount"));
-	ClampNonNegative(Meat.BlueAmount, TEXT("Meat.BlueAmount"));
-	ClampNonNegative(Meat.WhiteAmount, TEXT("Meat.WhiteAmount"));
-	ClampNonNegative(Meat.UnspecifiedAmount, TEXT("Meat.UnspecifiedAmount"));
-
 	for (FARMeatTypeAmount& Entry : Meat.AdditionalAmountsByType)
 	{
 		ClampNonNegative(Entry.Amount, TEXT("Meat.AdditionalAmountsByType.Amount"));
+		if (Entry.MeatColor == EARAffinityColor::Unknown)
+		{
+			Entry.MeatColor = EARAffinityColor::None;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("Meat.AdditionalAmountsByType.MeatColor normalized from Unknown to None."));
+		}
+
+		if (SanitizeMeatQualityTier(Entry.MeatQualityTier))
+		{
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("Meat.AdditionalAmountsByType.MeatQualityTier reset to Standard."));
+		}
 	}
 	Meat.NormalizeAdditionalAmounts();
 

@@ -1,7 +1,7 @@
 #include "ARScrapyardExitZoneActor.h"
 
 #include "ARPlayerStateBase.h"
-#include "ARScrapyardCarryItemBase.h"
+#include "ARCarryItemBase.h"
 #include "ARScrapyardGameState.h"
 #include "ARScrapyardPlayerController.h"
 #include "ARShopCarryComponent.h"
@@ -22,11 +22,11 @@ AARScrapyardExitZoneActor::AARScrapyardExitZoneActor()
 	ExitVolume->SetGenerateOverlapEvents(true);
 }
 
-TArray<AARScrapyardCarryItemBase*> AARScrapyardExitZoneActor::GetDepositedItems() const
+TArray<AARCarryItemBase*> AARScrapyardExitZoneActor::GetDepositedItems() const
 {
-	TArray<AARScrapyardCarryItemBase*> Result;
+	TArray<AARCarryItemBase*> Result;
 	Result.Reserve(DepositedItems.Num());
-	for (const TObjectPtr<AARScrapyardCarryItemBase>& Item : DepositedItems)
+	for (const TObjectPtr<AARCarryItemBase>& Item : DepositedItems)
 	{
 		if (Item)
 		{
@@ -37,7 +37,7 @@ TArray<AARScrapyardCarryItemBase*> AARScrapyardExitZoneActor::GetDepositedItems(
 	return Result;
 }
 
-const TArray<TObjectPtr<AARScrapyardCarryItemBase>>& AARScrapyardExitZoneActor::GetDepositedItemsRef() const
+const TArray<TObjectPtr<AARCarryItemBase>>& AARScrapyardExitZoneActor::GetDepositedItemsRef() const
 {
 	return DepositedItems;
 }
@@ -91,7 +91,7 @@ bool AARScrapyardExitZoneActor::TryDepositHeldItem(AARScrapyardPlayerController*
 
 	APawn* Pawn = Controller->GetPawn();
 	UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
-	AARScrapyardCarryItemBase* HeldItem = CarryComponent ? Cast<AARScrapyardCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
+	AARCarryItemBase* HeldItem = CarryComponent ? Cast<AARCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
 	if (!CarryComponent || !HeldItem)
 	{
 		return false;
@@ -140,7 +140,7 @@ bool AARScrapyardExitZoneActor::TryDepositHeldItem(AARScrapyardPlayerController*
 	return true;
 }
 
-bool AARScrapyardExitZoneActor::TryWithdrawDepositedItem(AARScrapyardPlayerController* Controller, AARScrapyardCarryItemBase* ItemActor)
+bool AARScrapyardExitZoneActor::TryWithdrawDepositedItem(AARScrapyardPlayerController* Controller, AARCarryItemBase* ItemActor)
 {
 	if (!HasAuthority() || !Controller || !ItemActor || !IsControllerEligibleForExit(Controller))
 	{
@@ -191,7 +191,7 @@ bool AARScrapyardExitZoneActor::IsPlayerStateInsideExit(const AARPlayerStateBase
 	return PlayerState && PlayerStatesInZone.Contains(PlayerState);
 }
 
-void AARScrapyardExitZoneActor::GatherHeldItemsInZone(TArray<AARScrapyardCarryItemBase*>& OutHeldItems) const
+void AARScrapyardExitZoneActor::GatherHeldItemsInZone(TArray<AARCarryItemBase*>& OutHeldItems) const
 {
 	OutHeldItems.Reset();
 
@@ -200,7 +200,7 @@ void AARScrapyardExitZoneActor::GatherHeldItemsInZone(TArray<AARScrapyardCarryIt
 		const AARPlayerStateBase* PlayerState = PlayerStateWeak.Get();
 		APawn* Pawn = PlayerState ? PlayerState->GetPawn() : nullptr;
 		const UARShopCarryComponent* CarryComponent = Pawn ? Pawn->FindComponentByClass<UARShopCarryComponent>() : nullptr;
-		AARScrapyardCarryItemBase* HeldItem = CarryComponent ? Cast<AARScrapyardCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
+		AARCarryItemBase* HeldItem = CarryComponent ? Cast<AARCarryItemBase>(CarryComponent->GetHeldActor()) : nullptr;
 		if (HeldItem)
 		{
 			OutHeldItems.AddUnique(HeldItem);
@@ -308,7 +308,7 @@ void AARScrapyardExitZoneActor::RefreshDepositedReservedScrapValue(const bool bB
 
 	int32 NewReservedValue = 0;
 	AARScrapyardGameState* ScrapyardGameState = ResolveScrapyardGameState();
-	for (AARScrapyardCarryItemBase* DepositedItem : DepositedItems)
+	for (AARCarryItemBase* DepositedItem : DepositedItems)
 	{
 		if (!DepositedItem)
 		{

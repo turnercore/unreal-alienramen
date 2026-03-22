@@ -1,16 +1,17 @@
-#include "ARShopCarryItemBase.h"
+#include "ARCarryItemBase.h"
 
 #include "ARAttributeSetCore.h"
 #include "ARLog.h"
 #include "ARPlayerController.h"
 #include "ARPlayerStateBase.h"
-#include "ARScrapyardPlayerController.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopPlayerController.h"
+#include "ARScrapyardPlayerController.h"
 #include "AbilitySystemComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
+#include "UObject/UnrealType.h"
 
 namespace
 {
@@ -71,26 +72,41 @@ namespace
 
 		return UsingController;
 	}
+
+	static float ResolveSlapCueMinHeightDeltaCm(const AARPlayerController* Controller)
+	{
+		const FFloatProperty* SlapCueThresholdProperty = FindFProperty<FFloatProperty>(AARPlayerController::StaticClass(), TEXT("SlapCueMinHeightDeltaCm"));
+		return (Controller && SlapCueThresholdProperty)
+			? FMath::Max(0.0f, SlapCueThresholdProperty->GetPropertyValue_InContainer(Controller))
+			: 80.0f;
+	}
 }
 
-AARShopCarryItemBase::AARShopCarryItemBase()
+AARCarryItemBase::AARCarryItemBase()
 {
 	bReplicates = true;
 	SetReplicateMovement(true);
 }
 
-void AARShopCarryItemBase::BeginPlay()
+void AARCarryItemBase::BeginPlay()
 {
 	Super::BeginPlay();
 	ApplyWeightToPrimitiveComponents();
+	RefreshVisualModelActor();
 }
 
-float AARShopCarryItemBase::GetResolvedWeightKg() const
+void AARCarryItemBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	DestroyVisualModelActor();
+	Super::EndPlay(EndPlayReason);
+}
+
+float AARCarryItemBase::GetResolvedWeightKg() const
 {
 	return WeightKg > 0.0f ? WeightKg : ResolveDefaultWeightKg();
 }
 
-void AARShopCarryItemBase::SetWeightKg(const float NewWeightKg)
+void AARCarryItemBase::SetWeightKg(const float NewWeightKg)
 {
 	if (!HasAuthority())
 	{
@@ -98,7 +114,7 @@ void AARShopCarryItemBase::SetWeightKg(const float NewWeightKg)
 	}
 
 	const float SanitizedWeight = FMath::Max(0.0f, NewWeightKg);
-	if (FMath::IsNearlyEqual(WeightKg, SanitizedWeight))
+	if (SanitizedWeight > 0.0f && FMath::IsNearlyEqual(WeightKg, SanitizedWeight))
 	{
 		return;
 	}
@@ -108,31 +124,41 @@ void AARShopCarryItemBase::SetWeightKg(const float NewWeightKg)
 	ForceNetUpdate();
 }
 
-void AARShopCarryItemBase::ForwardUseToController(AActor* UsingActor)
+void AARCarryItemBase::ForwardUseToController(AActor* UsingActor)
 {
-	AARShopPlayerController* UsingController = Cast<AARShopPlayerController>(ResolvePlayerControllerFromActor(UsingActor));
-
+	AARPlayerController* UsingController = ResolvePlayerControllerFromActor(UsingActor);
 	if (!UsingController)
 	{
 		UE_LOG(
 			ARLog,
 			Warning,
-			TEXT("[Shop|Carry] '%s' use-forward ignored: could not resolve AARShopPlayerController from '%s'."),
+			TEXT("[Carry] '%s' use-forward ignored: could not resolve AARPlayerController from '%s'."),
 			*GetNameSafe(this),
 			*GetNameSafe(UsingActor));
 		return;
 	}
 
-	UsingController->RequestShopPickupCarryItem(this);
+	if (AARShopPlayerController* ShopController = Cast<AARShopPlayerController>(UsingController))
+	{
+		ShopController->RequestShopPickupCarryItem(this);
+		return;
+	}
+
+	if (AARScrapyardPlayerController* ScrapyardController = Cast<AARScrapyardPlayerController>(UsingController))
+	{
+		ScrapyardController->RequestScrapyardPickupCarryItem(this);
+		return;
+	}
+
 	UE_LOG(
 		ARLog,
-		Verbose,
-		TEXT("[Shop|Carry] ForwardUse routed actor='%s' controller='%s'."),
+		Warning,
+		TEXT("[Carry] '%s' use-forward ignored: unsupported controller '%s'."),
 		*GetNameSafe(this),
 		*GetNameSafe(UsingController));
 }
 
-void AARShopCarryItemBase::ForwardSecondaryUseToController(AActor* UsingActor)
+void AARCarryItemBase::ForwardSecondaryUseToController(AActor* UsingActor)
 {
 	AARPlayerController* UsingController = ResolvePlayerControllerFromActor(UsingActor);
 	if (!UsingController)
@@ -170,7 +196,7 @@ void AARShopCarryItemBase::ForwardSecondaryUseToController(AActor* UsingActor)
 		bHandled ? 1 : 0);
 }
 
-void AARShopCarryItemBase::ForwardKickToController(AActor* UsingActor)
+void AARCarryItemBase::ForwardKickToController(AActor* UsingActor)
 {
 	AARPlayerController* UsingController = ResolvePlayerControllerFromActor(UsingActor);
 	if (!UsingController)
@@ -193,12 +219,12 @@ void AARShopCarryItemBase::ForwardKickToController(AActor* UsingActor)
 		*GetNameSafe(UsingController));
 }
 
-void AARShopCarryItemBase::ReleaseCarryItem_Implementation()
+void AARCarryItemBase::ReleaseCarryItem_Implementation()
 {
 	Destroy();
 }
 
-bool AARShopCarryItemBase::UseSecondaryByController_Implementation(AARPlayerController* UsingController)
+bool AARCarryItemBase::UseSecondaryByController_Implementation(AARPlayerController* UsingController)
 {
 	if (!UsingController)
 	{
@@ -238,7 +264,7 @@ bool AARShopCarryItemBase::UseSecondaryByController_Implementation(AARPlayerCont
 	return false;
 }
 
-bool AARShopCarryItemBase::UseSecondaryInWorldByController_Implementation(AARPlayerController* UsingController)
+bool AARCarryItemBase::UseSecondaryInWorldByController_Implementation(AARPlayerController* UsingController)
 {
 	if (!HasAuthority() || !UsingController)
 	{
@@ -268,55 +294,160 @@ bool AARShopCarryItemBase::UseSecondaryInWorldByController_Implementation(AARPla
 	{
 		PhysicsPrimitive->SetSimulatePhysics(true);
 	}
+
 	PhysicsPrimitive->SetEnableGravity(true);
 	PhysicsPrimitive->WakeAllRigidBodies();
 
-	const FVector KickDirection = UsingController->GetControlRotation().Vector().GetSafeNormal();
 	const float KickStrength = FMath::Max(50.0f, ResolveSecondaryForceForController(UsingController));
+	const FVector KickDirection = UsingController->GetControlRotation().Vector().GetSafeNormal();
 	PhysicsPrimitive->AddImpulse(KickDirection * KickStrength, NAME_None, true);
+
+	const APawn* ControlledPawn = UsingController->GetPawn();
+	const float PawnZ = ControlledPawn ? ControlledPawn->GetActorLocation().Z : 0.0f;
+	FVector TargetOrigin = GetActorLocation();
+	FVector TargetExtent = FVector::ZeroVector;
+	GetActorBounds(true, TargetOrigin, TargetExtent);
+	const float HeightDelta = TargetOrigin.Z - PawnZ;
+	const float SlapCueMinHeightDeltaCm = ResolveSlapCueMinHeightDeltaCm(UsingController);
+	const EARInteractionActionCue KickOrSlapCue =
+		HeightDelta >= SlapCueMinHeightDeltaCm
+		? EARInteractionActionCue::Slap
+		: EARInteractionActionCue::Kick;
+
 	UE_LOG(
 		ARLog,
 		Verbose,
-		TEXT("[Carry|Secondary] '%s' world-secondary kick by '%s' strength=%.1f."),
+		TEXT("[Carry|Secondary] Applied world-secondary impulse item='%s' controller='%s' strength=%.1f heightDelta=%.1f cue=%s."),
 		*GetNameSafe(this),
 		*GetNameSafe(UsingController),
-		KickStrength);
-	UsingController->NotifyInteractionActionCue(EARInteractionActionCue::Kick, this);
+		KickStrength,
+		HeightDelta,
+		*StaticEnum<EARInteractionActionCue>()->GetValueAsString(KickOrSlapCue));
+	UsingController->NotifyInteractionActionCue(KickOrSlapCue, this);
 	return true;
 }
 
-void AARShopCarryItemBase::OnRep_WeightKg()
+void AARCarryItemBase::SetScrapyardItemTag(const FGameplayTag NewItemTag)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (ScrapyardItemTag == NewItemTag)
+	{
+		return;
+	}
+
+	ScrapyardItemTag = NewItemTag;
+	ForceNetUpdate();
+}
+
+void AARCarryItemBase::SetFallbackScrapCost(const int32 NewFallbackCost)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const int32 SanitizedCost = FMath::Max(0, NewFallbackCost);
+	if (FallbackScrapCost == SanitizedCost)
+	{
+		return;
+	}
+
+	FallbackScrapCost = SanitizedCost;
+	ForceNetUpdate();
+}
+
+void AARCarryItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AARCarryItemBase, WeightKg);
+	DOREPLIFETIME(AARCarryItemBase, ScrapyardItemTag);
+	DOREPLIFETIME(AARCarryItemBase, FallbackScrapCost);
+	DOREPLIFETIME(AARCarryItemBase, VisualModelClass);
+}
+
+void AARCarryItemBase::SetVisualModelClass(TSoftClassPtr<AActor> NewVisualModelClass)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (VisualModelClass == NewVisualModelClass)
+	{
+		return;
+	}
+
+	VisualModelClass = NewVisualModelClass;
+	RefreshVisualModelActor();
+	ForceNetUpdate();
+}
+
+void AARCarryItemBase::OnRep_WeightKg()
 {
 	ApplyWeightToPrimitiveComponents();
 }
 
-void AARShopCarryItemBase::ApplyWeightToPrimitiveComponents() const
+void AARCarryItemBase::OnRep_VisualModelClass()
+{
+	RefreshVisualModelActor();
+}
+
+void AARCarryItemBase::ApplyWeightToPrimitiveComponents() const
 {
 	TArray<UPrimitiveComponent*> PrimitiveComponents;
 	GetComponents<UPrimitiveComponent>(PrimitiveComponents);
-
-	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	if (PrimitiveComponents.IsEmpty())
 	{
-		if (!Primitive)
-		{
-			continue;
-		}
+		return;
+	}
 
-		if (WeightKg > 0.0f)
+	UPrimitiveComponent* TargetPrimitive = Cast<UPrimitiveComponent>(GetRootComponent());
+	if (!TargetPrimitive)
+	{
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 		{
-			Primitive->SetMassOverrideInKg(NAME_None, WeightKg, true);
+			if (Primitive && Primitive->IsSimulatingPhysics())
+			{
+				TargetPrimitive = Primitive;
+				break;
+			}
 		}
-		else
+	}
+
+	if (!TargetPrimitive)
+	{
+		for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 		{
-			Primitive->SetMassOverrideInKg(NAME_None, 0.0f, false);
+			if (Primitive && Primitive->GetCollisionEnabled() != ECollisionEnabled::NoCollision)
+			{
+				TargetPrimitive = Primitive;
+				break;
+			}
 		}
+	}
+
+	if (!TargetPrimitive)
+	{
+		TargetPrimitive = PrimitiveComponents[0];
+	}
+
+	const bool bUseExplicitMassOverride = WeightKg > 0.0f;
+	TargetPrimitive->SetMassOverrideInKg(NAME_None, bUseExplicitMassOverride ? WeightKg : 0.0f, bUseExplicitMassOverride);
+	if (TargetPrimitive->IsSimulatingPhysics())
+	{
+		TargetPrimitive->WakeAllRigidBodies();
 	}
 }
 
-float AARShopCarryItemBase::ResolveDefaultWeightKg() const
+float AARCarryItemBase::ResolveDefaultWeightKg() const
 {
 	TArray<UPrimitiveComponent*> PrimitiveComponents;
 	GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+
 	for (const UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
 		if (!Primitive)
@@ -334,8 +465,48 @@ float AARShopCarryItemBase::ResolveDefaultWeightKg() const
 	return 0.0f;
 }
 
-void AARShopCarryItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void AARCarryItemBase::RefreshVisualModelActor()
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AARShopCarryItemBase, WeightKg);
+	DestroyVisualModelActor();
+
+	if (VisualModelClass.IsNull())
+	{
+		return;
+	}
+
+	UClass* LoadedClass = VisualModelClass.LoadSynchronous();
+	if (!LoadedClass)
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[Carry] '%s' RefreshVisualModelActor: failed to load VisualModelClass '%s'."),
+			*GetNameSafe(this),
+			*VisualModelClass.ToString());
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnedVisualModelActor = World->SpawnActor<AActor>(LoadedClass, GetActorTransform(), SpawnParams);
+	if (SpawnedVisualModelActor)
+	{
+		SpawnedVisualModelActor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	}
+}
+
+void AARCarryItemBase::DestroyVisualModelActor()
+{
+	if (SpawnedVisualModelActor)
+	{
+		SpawnedVisualModelActor->Destroy();
+		SpawnedVisualModelActor = nullptr;
+	}
 }
