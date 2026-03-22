@@ -1,6 +1,6 @@
 /**
  * @file ARMeatStorageBoxActor.h
- * @brief Shop meat storage dispenser backed by replicated GameState meat buckets.
+ * @brief Shop meat storage dispenser backed by replicated typed GameState meat tuples.
  */
 #pragma once
 
@@ -14,6 +14,7 @@ class AARRamenMeatActor;
 class AActor;
 class UStaticMeshComponent;
 struct FARMeatDefinitionRow;
+struct FARMeatTypeAmount;
 
 UCLASS(Blueprintable)
 class ALIENRAMEN_API AARMeatStorageBoxActor : public AARShopDispenserActor
@@ -77,11 +78,9 @@ protected:
 
 private:
 	void SyncLegacyDefinition();
-	bool TryDispenseResolvedMeat(AARPlayerController* RequestingController, const FARMeatDefinitionRow& MeatDefinition);
-	bool ConsumeTypedMeatFromState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, int32 AmountToConsume) const;
-	void AddTypedMeatToState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, int32 AmountToAdd) const;
-	void PromoteLegacyBucketsToTyped(FARMeatState& InOutMeatState) const;
-	void RebuildLegacyColorBucketsFromTyped(FARMeatState& InOutMeatState) const;
-	bool SelectRandomEligibleMeatTagFromTypedStock(const FARMeatState& MeatState, FGameplayTag& OutMeatTag) const;
+	bool TryDispenseResolvedMeat(AARPlayerController* RequestingController, const FARMeatDefinitionRow& MeatDefinition, EARAffinityColor MeatColorToDispense, EARVendingQualityTier MeatQualityToDispense);
+	bool ConsumeTypedMeatFromState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, EARAffinityColor MeatColor, EARVendingQualityTier MeatQualityTier, int32 AmountToConsume) const;
+	void AddTypedMeatToState(FARMeatState& InOutMeatState, FGameplayTag MeatTag, EARAffinityColor MeatColor, EARVendingQualityTier MeatQualityTier, int32 AmountToAdd) const;
+	bool SelectRandomEligibleMeatTupleFromTypedStock(const FARMeatState& MeatState, FARMeatTypeAmount& OutMeatEntry) const;
 	bool TryStoreMeatActorInternal(AARRamenMeatActor* MeatActor, AARPlayerController* RequestingController, bool bRequireWorldReturnArmed);
 };

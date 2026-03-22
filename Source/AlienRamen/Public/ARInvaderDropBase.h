@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
 #include "ARInvaderDropTypes.h"
+#include "ARShopRamenTypes.h"
 #include "ARInvaderPickupBase.h"
 #include "GameplayTagContainer.h"
 #include "ARInvaderDropBase.generated.h"
@@ -33,7 +34,7 @@ public:
 
 	/** Authority-only runtime setup called by invader kill/drop flow. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|Drop", meta = (BlueprintAuthorityOnly))
-	void InitializeDrop(EARInvaderDropType InDropType, int32 InDropAmount, EARAffinityColor InDropColor);
+	void InitializeDrop(EARInvaderDropType InDropType, int32 InDropAmount, EARAffinityColor InDropColor, FGameplayTag InDropMeatTag, EARVendingQualityTier InDropMeatQualityTier);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
 	EARInvaderDropType GetDropType() const { return DropType; }
@@ -43,6 +44,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
 	EARAffinityColor GetDropColor() const { return DropColor; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
+	FGameplayTag GetDropMeatTag() const { return DropMeatTag; }
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
+	EARVendingQualityTier GetDropMeatQualityTier() const { return DropMeatQualityTier; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|Drop")
 	bool IsAvailableForCollection() const;
@@ -102,6 +109,12 @@ private:
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true"))
 	EARAffinityColor DropColor = EARAffinityColor::None;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true", Categories = "Item.Meat"))
+	FGameplayTag DropMeatTag;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop", meta = (AllowPrivateAccess = "true"))
+	EARVendingQualityTier DropMeatQualityTier = EARVendingQualityTier::Standard;
 
 	/** Time (sec) to lerp from world physics to player during collection. Shorter = snappier pickup. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Invader|Drop|Pickup", meta = (AllowPrivateAccess = "true", ClampMin = "0.01"))

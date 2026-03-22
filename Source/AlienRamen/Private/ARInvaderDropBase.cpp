@@ -86,7 +86,12 @@ void AARInvaderDropBase::Tick(float DeltaSeconds)
 	}
 }
 
-void AARInvaderDropBase::InitializeDrop(const EARInvaderDropType InDropType, const int32 InDropAmount, const EARAffinityColor InDropColor)
+void AARInvaderDropBase::InitializeDrop(
+	const EARInvaderDropType InDropType,
+	const int32 InDropAmount,
+	const EARAffinityColor InDropColor,
+	const FGameplayTag InDropMeatTag,
+	const EARVendingQualityTier InDropMeatQualityTier)
 {
 	if (!HasAuthority())
 	{
@@ -96,6 +101,10 @@ void AARInvaderDropBase::InitializeDrop(const EARInvaderDropType InDropType, con
 	DropType = InDropType;
 	DropAmount = FMath::Max(0, InDropAmount);
 	DropColor = (InDropColor == EARAffinityColor::Unknown) ? EARAffinityColor::None : InDropColor;
+	DropMeatTag = InDropMeatTag;
+	DropMeatQualityTier = StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(InDropMeatQualityTier))
+		? InDropMeatQualityTier
+		: EARVendingQualityTier::Standard;
 	ForceNetUpdate();
 }
 
@@ -231,11 +240,13 @@ void AARInvaderDropBase::FinalizeCollection()
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderDrop|Collect] Finalize drop='%s' type=%d amount=%d color=%d collector='%s'"),
+		TEXT("[InvaderDrop|Collect] Finalize drop='%s' type=%d amount=%d color=%d meatTag='%s' quality=%d collector='%s'"),
 		*GetNameSafe(this),
 		static_cast<int32>(DropType),
 		DropAmount,
 		static_cast<int32>(DropColor),
+		*DropMeatTag.ToString(),
+		static_cast<int32>(DropMeatQualityTier),
 		*GetNameSafe(CollectingPlayerPtr.Get()));
 	ApplyDropReward();
 	BP_OnRewardApplied(CollectingPlayerPtr.Get());
@@ -297,13 +308,25 @@ void AARInvaderDropBase::ApplyDropReward_Implementation()
 	}
 
 	const FARMeatState OldRunLedgerMeat = GameState->GetRunLedgerMeat();
-	GameState->AddRunLedgerMeat(DropColor, DropAmount);
+	if (!DropMeatTag.IsValid())
+	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[InvaderDrop|Reward] MeatLedger skipped for drop='%s': DropMeatTag is invalid."),
+			*GetNameSafe(this));
+		return;
+	}
+
+	GameState->AddRunLedgerMeat(DropMeatTag, DropColor, DropMeatQualityTier, DropAmount);
 	UE_LOG(
 		ARLog,
 		Log,
-		TEXT("[InvaderDrop|Reward] MeatLedger +%d color=%d oldTotal=%d newTotal=%d drop='%s'"),
+		TEXT("[InvaderDrop|Reward] MeatLedger +%d meatTag='%s' color=%d quality=%d oldTotal=%d newTotal=%d drop='%s'"),
 		DropAmount,
+		*DropMeatTag.ToString(),
 		static_cast<int32>(DropColor),
+		static_cast<int32>(DropMeatQualityTier),
 		OldRunLedgerMeat.GetTotalAmount(),
 		GameState->GetRunLedgerMeat().GetTotalAmount(),
 		*GetNameSafe(this));
@@ -369,5 +392,7 @@ void AARInvaderDropBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARInvaderDropBase, DropType);
 	DOREPLIFETIME(AARInvaderDropBase, DropAmount);
 	DOREPLIFETIME(AARInvaderDropBase, DropColor);
+	DOREPLIFETIME(AARInvaderDropBase, DropMeatTag);
+	DOREPLIFETIME(AARInvaderDropBase, DropMeatQualityTier);
 	DOREPLIFETIME(AARInvaderDropBase, bIsCollecting);
 }

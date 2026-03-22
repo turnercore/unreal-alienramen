@@ -172,7 +172,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Drop/throw restore world physics and gravity on the released carry item.
 - Meat storage interaction contract:
   - `AARMeatStorageBoxActor::TryHandleStorageInteraction(...)` stores held meat when the interacting controller is holding `AARRamenMeatActor`; otherwise it dispenses from reserve.
-  - reserve inventory is canonical by meat type tag (`FARMeatState::AdditionalAmountsByType`); legacy color buckets are compatibility mirrors.
+  - reserve inventory is canonical tuple inventory (`FARMeatState::AdditionalAmountsByType`) keyed by meat tag + color + quality.
   - `TryDispenseMeat(...)` uses random typed dispense across eligible typed stock (`TryDispenseRandomMeatByContainerColor`), and applies storage/container color to the spawned world meat actor.
   - `TryDispenseSpecificMeat(...)` supports explicit typed retrieval by `Item.Meat` tag.
   - color-only compatibility paths resolve to the first deterministic meat row for that color (sorted row-name order).
@@ -185,7 +185,7 @@ This document captures the runtime ownership and integration contract for the sh
 
 - Station processing progress is replicated runtime state only (not persisted in `UARSaveGame`).
 - Meat inventory remains save-facing through `AARGameStateBase::Meat`.
-- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*|red|white|blue|colorless|none>` supports explicit type-tag adds or color-token deterministic resolution.
+- Meat debug command `ar.debug.add_meat <delta> <Item.Meat.*> <red|blue|white|colorless|none> <low|standard|high|premium>` mutates `RunLedgerMeat` with explicit tuple metadata.
 - Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.
 - Loose shop carryables use save-backed transient snapshots (`UARSaveGame::ShopTransientCarryables`) for reload-before-run continuity.
 - Transient snapshot capture/restore scope includes loose world `AARCarryItemBase` instances (held/attached actors are excluded).

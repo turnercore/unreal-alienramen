@@ -25,33 +25,52 @@ namespace
 	static FARMeatState MergeMeatStates(const FARMeatState& A, const FARMeatState& B)
 	{
 		FARMeatState Out = A;
-		Out.RedAmount += FMath::Max(0, B.RedAmount);
-		Out.BlueAmount += FMath::Max(0, B.BlueAmount);
-		Out.WhiteAmount += FMath::Max(0, B.WhiteAmount);
-		Out.UnspecifiedAmount += FMath::Max(0, B.UnspecifiedAmount);
 
-		TMap<FGameplayTag, int32> AdditionalByType;
+		TMap<FString, FARMeatTypeAmount> AdditionalByTuple;
 		for (const FARMeatTypeAmount& Entry : Out.AdditionalAmountsByType)
 		{
 			if (Entry.MeatType.IsValid() && Entry.Amount > 0)
 			{
-				AdditionalByType.FindOrAdd(Entry.MeatType) += Entry.Amount;
+				const FString Key = FString::Printf(
+					TEXT("%s|%d|%d"),
+					*Entry.MeatType.ToString(),
+					static_cast<int32>(Entry.MeatColor),
+					static_cast<int32>(Entry.MeatQualityTier));
+				FARMeatTypeAmount& Aggregated = AdditionalByTuple.FindOrAdd(Key);
+				if (!Aggregated.MeatType.IsValid())
+				{
+					Aggregated.MeatType = Entry.MeatType;
+					Aggregated.MeatColor = Entry.MeatColor;
+					Aggregated.MeatQualityTier = Entry.MeatQualityTier;
+				}
+				Aggregated.Amount += Entry.Amount;
 			}
 		}
 		for (const FARMeatTypeAmount& Entry : B.AdditionalAmountsByType)
 		{
 			if (Entry.MeatType.IsValid() && Entry.Amount > 0)
 			{
-				AdditionalByType.FindOrAdd(Entry.MeatType) += Entry.Amount;
+				const FString Key = FString::Printf(
+					TEXT("%s|%d|%d"),
+					*Entry.MeatType.ToString(),
+					static_cast<int32>(Entry.MeatColor),
+					static_cast<int32>(Entry.MeatQualityTier));
+				FARMeatTypeAmount& Aggregated = AdditionalByTuple.FindOrAdd(Key);
+				if (!Aggregated.MeatType.IsValid())
+				{
+					Aggregated.MeatType = Entry.MeatType;
+					Aggregated.MeatColor = Entry.MeatColor;
+					Aggregated.MeatQualityTier = Entry.MeatQualityTier;
+				}
+				Aggregated.Amount += Entry.Amount;
 			}
 		}
 
 		Out.AdditionalAmountsByType.Reset();
-		for (const TPair<FGameplayTag, int32>& Pair : AdditionalByType)
+		for (const TPair<FString, FARMeatTypeAmount>& Pair : AdditionalByTuple)
 		{
 			FARMeatTypeAmount& Added = Out.AdditionalAmountsByType.AddDefaulted_GetRef();
-			Added.MeatType = Pair.Key;
-			Added.Amount = Pair.Value;
+			Added = Pair.Value;
 		}
 		Out.NormalizeAdditionalAmounts();
 		return Out;
@@ -82,10 +101,6 @@ namespace
 			Excess -= Removed;
 		};
 
-		TrimBucket(InOutMeat.UnspecifiedAmount);
-		TrimBucket(InOutMeat.RedAmount);
-		TrimBucket(InOutMeat.BlueAmount);
-		TrimBucket(InOutMeat.WhiteAmount);
 		for (FARMeatTypeAmount& Entry : InOutMeat.AdditionalAmountsByType)
 		{
 			TrimBucket(Entry.Amount);

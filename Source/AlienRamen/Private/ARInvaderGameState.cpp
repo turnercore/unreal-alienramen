@@ -7,6 +7,7 @@
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
 #include "ARInvaderSpicyTrackSettings.h"
+#include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARProjectileBase.h"
@@ -15,6 +16,7 @@
 #include "Curves/CurveFloat.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "GameFramework/Controller.h"
@@ -2263,6 +2265,22 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 	const UARInvaderDirectorSettings* Settings = GetDefault<UARInvaderDirectorSettings>();
 	const float MinSpeed = Settings ? FMath::Max(0.0f, Settings->DropInitialLinearSpeedMin) : 120.0f;
 	const float MaxSpeed = Settings ? FMath::Max(MinSpeed, Settings->DropInitialLinearSpeedMax) : 220.0f;
+	UGameInstance* GameInstance = GetGameInstance();
+	UARItemDefinitionSubsystem* ItemDefinitions = GameInstance ? GameInstance->GetSubsystem<UARItemDefinitionSubsystem>() : nullptr;
+	FGameplayTag DropMeatTag;
+	EARVendingQualityTier DropMeatQualityTier = EARVendingQualityTier::Standard;
+	if (DropType == EARInvaderDropType::Meat)
+	{
+		if (!ItemDefinitions || !ItemDefinitions->ResolveFirstMeatTagForColor(Enemy->GetEnemyColor(), DropMeatTag))
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderDrop] Failed to resolve Item.Meat tag for enemy color=%d; skipping meat drop spawn."),
+				static_cast<int32>(Enemy->GetEnemyColor()));
+			return;
+		}
+	}
 
 	for (const FDropSpawnPlanEntry& PlanEntry : SpawnPlan)
 	{
@@ -2281,7 +2299,7 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 			continue;
 		}
 
-		SpawnedDrop->InitializeDrop(DropType, PlanEntry.Amount, Enemy->GetEnemyColor());
+		SpawnedDrop->InitializeDrop(DropType, PlanEntry.Amount, Enemy->GetEnemyColor(), DropMeatTag, DropMeatQualityTier);
 		SpawnedDrop->SetEarthGravityEnabled(bDebugDropEarthGravityEnabled);
 
 		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedDrop->GetRootComponent()))
@@ -2882,4 +2900,3 @@ void AARInvaderGameState::ClearWhileSlottedEffectsForPlayer(AARPlayerStateBase* 
 		}
 	}
 }
-

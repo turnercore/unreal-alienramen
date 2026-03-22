@@ -8,7 +8,7 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
 - Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
-- Save schema version is `v18`; minimum supported is `v18`.
+- Save schema version is `v19`; minimum supported is `v19`.
 - Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 - Save ownership is explicit:
   - shared world state -> `UARSaveGame`
@@ -40,7 +40,7 @@ Authoritative persisted fields currently include:
   - `ActiveRunBuffCycleId`
   - `ShopTransientCarryables`
     - loose world carryables are persisted by class + transform
-    - meat snapshots include `MeatQualityTier` (`EARVendingQualityTier`, default `Standard`)
+    - meat snapshots include canonical tuple payload: `MeatTag`, `MeatColor`, `MeatQualityTier` (`EARVendingQualityTier`, default `Standard`)
     - bowl snapshots include per-slot payload (`SlotType`, `Color`, slot `Item.Meat` tag, `QualityTier`) + `BowlFillStep`
 - Player payload:
   - `PlayerStates[]`:

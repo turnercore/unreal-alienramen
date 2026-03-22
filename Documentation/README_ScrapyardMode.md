@@ -60,6 +60,7 @@ This document captures the server-authoritative runtime contract for:
 ## Run Ledger Flow
 
 - Invader drops write to run ledger only (`AARGameStateBase::RunLedgerScrap/RunLedgerMeat`).
+  - run-ledger meat entries are canonical tuple rows keyed by `MeatTag + MeatColor + MeatQualityTier`.
 - Loss handling:
   - all-players-downed/dead ends run with loss reason.
   - configurable percent death penalty is applied to run ledger (not persistent storage).

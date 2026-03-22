@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "ARColorTypes.h"
+#include "ARShopRamenTypes.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "ARShopDispenserActor.generated.h"
@@ -44,9 +45,13 @@ struct ALIENRAMEN_API FARShopDispenseDefinition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	EARShopDispenserSourceType SourceType = EARShopDispenserSourceType::Unlimited;
 
-	// Source color for reserve-backed outputs (for example meat buckets).
+	// Source color for reserve-backed outputs (for example typed meat tuples).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	EARAffinityColor SourceColor = EARAffinityColor::None;
+
+	// Source quality for reserve-backed outputs (for example typed meat tuples).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	EARVendingQualityTier SourceMeatQualityTier = EARVendingQualityTier::Standard;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 	bool bAutoPlaceIntoCarry = true;
@@ -110,5 +115,4 @@ private:
 		const struct FARMeatState& PreConsumeMeatState);
 	const FARShopDispenseDefinition* ResolveDispenseDefinition(FGameplayTag RequestedItemTag) const;
 	static class UARShopCarryComponent* ResolveCarryComponentFromController(AARPlayerController* Controller);
-	static int32* ResolveMeatBucket(struct FARMeatState& MeatState, EARAffinityColor SourceColor);
 };

@@ -332,9 +332,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void AddRunLedgerScrap(int32 ScrapDelta);
 
-	/** Adds meat into run ledger by affinity color bucket. Authority only. */
+	/** Adds meat into run ledger using canonical meat tuple metadata. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
-	void AddRunLedgerMeat(EARAffinityColor ColorBucket, int32 MeatAmount);
+	void AddRunLedgerMeat(FGameplayTag MeatTag, EARAffinityColor MeatColor, EARVendingQualityTier MeatQualityTier, int32 MeatAmount);
 
 	/** Applies a percentage loss to run-ledger values (0.25 => lose 25%). Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))

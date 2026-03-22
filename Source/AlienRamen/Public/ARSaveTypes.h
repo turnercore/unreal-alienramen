@@ -36,6 +36,14 @@ struct ALIENRAMEN_API FARMeatTypeAmount
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	FGameplayTag MeatType;
 
+	/** Meat color associated with this meat stack entry. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	EARAffinityColor MeatColor = EARAffinityColor::None;
+
+	/** Meat quality tier associated with this meat stack entry. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	EARVendingQualityTier MeatQualityTier = EARVendingQualityTier::Standard;
+
 	/** Amount stored for this meat type. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	int32 Amount = 0;
@@ -46,27 +54,14 @@ struct ALIENRAMEN_API FARMeatState
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	int32 RedAmount = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	int32 BlueAmount = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	int32 WhiteAmount = 0;
-
-	// Bucket used when callers only know an aggregate value.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	int32 UnspecifiedAmount = 0;
-
-	// Extensible typed buckets for future meat variants without schema churn.
-	// Array shape is replication-friendly; entries are normalized/sorted by MeatType.
+	// Canonical tuple-backed meat inventory entries.
+	// Entries are normalized/sorted by MeatType + MeatColor + MeatQualityTier.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	TArray<FARMeatTypeAmount> AdditionalAmountsByType;
 
 	int32 GetTotalAmount() const
 	{
-		int32 Total = FMath::Max(0, RedAmount) + FMath::Max(0, BlueAmount) + FMath::Max(0, WhiteAmount) + FMath::Max(0, UnspecifiedAmount);
+		int32 Total = 0;
 		for (const FARMeatTypeAmount& Entry : AdditionalAmountsByType)
 		{
 			Total += FMath::Max(0, Entry.Amount);
@@ -74,18 +69,9 @@ struct ALIENRAMEN_API FARMeatState
 		return Total;
 	}
 
-	void SetTotalAsUnspecified(const int32 InTotalAmount)
-	{
-		RedAmount = 0;
-		BlueAmount = 0;
-		WhiteAmount = 0;
-		AdditionalAmountsByType.Reset();
-		UnspecifiedAmount = FMath::Max(0, InTotalAmount);
-	}
-
 	void NormalizeAdditionalAmounts()
 	{
-		TMap<FGameplayTag, int32> Aggregated;
+		TMap<FString, FARMeatTypeAmount> Aggregated;
 		for (const FARMeatTypeAmount& Entry : AdditionalAmountsByType)
 		{
 			if (!Entry.MeatType.IsValid())
@@ -99,21 +85,53 @@ struct ALIENRAMEN_API FARMeatState
 				continue;
 			}
 
-			Aggregated.FindOrAdd(Entry.MeatType) += SanitizedAmount;
+			FARMeatTypeAmount SanitizedEntry = Entry;
+			SanitizedEntry.Amount = SanitizedAmount;
+			SanitizedEntry.MeatColor = SanitizedEntry.MeatColor == EARAffinityColor::Unknown ? EARAffinityColor::None : SanitizedEntry.MeatColor;
+			if (!StaticEnum<EARVendingQualityTier>()->IsValidEnumValue(static_cast<int64>(SanitizedEntry.MeatQualityTier)))
+			{
+				SanitizedEntry.MeatQualityTier = EARVendingQualityTier::Standard;
+			}
+
+			const FString Key = FString::Printf(
+				TEXT("%s|%d|%d"),
+				*SanitizedEntry.MeatType.ToString(),
+				static_cast<int32>(SanitizedEntry.MeatColor),
+				static_cast<int32>(SanitizedEntry.MeatQualityTier));
+			FARMeatTypeAmount& AggregatedEntry = Aggregated.FindOrAdd(Key);
+			if (!AggregatedEntry.MeatType.IsValid())
+			{
+				AggregatedEntry.MeatType = SanitizedEntry.MeatType;
+				AggregatedEntry.MeatColor = SanitizedEntry.MeatColor;
+				AggregatedEntry.MeatQualityTier = SanitizedEntry.MeatQualityTier;
+			}
+
+			AggregatedEntry.Amount += SanitizedAmount;
 		}
 
 		AdditionalAmountsByType.Reset(Aggregated.Num());
-		for (const TPair<FGameplayTag, int32>& Pair : Aggregated)
+		for (const TPair<FString, FARMeatTypeAmount>& Pair : Aggregated)
 		{
-			FARMeatTypeAmount Entry;
-			Entry.MeatType = Pair.Key;
-			Entry.Amount = Pair.Value;
-			AdditionalAmountsByType.Add(Entry);
+			AdditionalAmountsByType.Add(Pair.Value);
 		}
 
 		AdditionalAmountsByType.Sort([](const FARMeatTypeAmount& A, const FARMeatTypeAmount& B)
 		{
-			return A.MeatType.ToString() < B.MeatType.ToString();
+			const FString AType = A.MeatType.ToString();
+			const FString BType = B.MeatType.ToString();
+			if (AType != BType)
+			{
+				return AType < BType;
+			}
+
+			const int32 AColor = static_cast<int32>(A.MeatColor);
+			const int32 BColor = static_cast<int32>(B.MeatColor);
+			if (AColor != BColor)
+			{
+				return AColor < BColor;
+			}
+
+			return static_cast<int32>(A.MeatQualityTier) < static_cast<int32>(B.MeatQualityTier);
 		});
 	}
 };

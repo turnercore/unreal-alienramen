@@ -630,14 +630,21 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 	ClampNonNegative(Cycles, TEXT("Cycles"));
 	ClampNonNegative(FactionClout, TEXT("FactionClout"));
 	ClampNonNegative(ActiveRunBuffCycleId, TEXT("ActiveRunBuffCycleId"));
-	ClampNonNegative(Meat.RedAmount, TEXT("Meat.RedAmount"));
-	ClampNonNegative(Meat.BlueAmount, TEXT("Meat.BlueAmount"));
-	ClampNonNegative(Meat.WhiteAmount, TEXT("Meat.WhiteAmount"));
-	ClampNonNegative(Meat.UnspecifiedAmount, TEXT("Meat.UnspecifiedAmount"));
-
 	for (FARMeatTypeAmount& Entry : Meat.AdditionalAmountsByType)
 	{
 		ClampNonNegative(Entry.Amount, TEXT("Meat.AdditionalAmountsByType.Amount"));
+		if (Entry.MeatColor == EARAffinityColor::Unknown)
+		{
+			Entry.MeatColor = EARAffinityColor::None;
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("Meat.AdditionalAmountsByType.MeatColor normalized from Unknown to None."));
+		}
+
+		if (SanitizeMeatQualityTier(Entry.MeatQualityTier))
+		{
+			++ClampedCount;
+			AddWarning(OutWarnings, TEXT("Meat.AdditionalAmountsByType.MeatQualityTier reset to Standard."));
+		}
 	}
 	Meat.NormalizeAdditionalAmounts();
 
