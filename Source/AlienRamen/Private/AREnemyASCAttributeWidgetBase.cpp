@@ -1,18 +1,17 @@
 #include "AREnemyASCAttributeWidgetBase.h"
 
-#include "ARAttributeSetCore.h"
+#include "ARASCAttributeWidgetShared.h"
 #include "AREnemyAttributeSet.h"
 
 void UAREnemyASCAttributeWidgetBase::BuildTrackedAttributeDefinitions(TArray<FARASCTrackedAttributeDefinition>& OutDefinitions) const
 {
 	OutDefinitions.Reset();
 
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetHealthAttribute(), TEXT("Health"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetMaxHealthAttribute(), TEXT("MaxHealth"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetSpiceAttribute(), TEXT("Spice"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetMaxSpiceAttribute(), TEXT("MaxSpice"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetMoveSpeedAttribute(), TEXT("MoveSpeed"));
-	AddTrackedAttributeDefinition(OutDefinitions, UARAttributeSetCore::GetStrengthAttribute(), TEXT("Strength"));
+	ARASCAttributeWidgetShared::AddCoreTrackedAttributes(
+		[this, &OutDefinitions](const FGameplayAttribute& Attribute, const TCHAR* Name)
+		{
+			AddTrackedAttributeDefinition(OutDefinitions, Attribute, Name);
+		});
 	AddTrackedAttributeDefinition(OutDefinitions, UAREnemyAttributeSet::GetCollisionDamageAttribute(), TEXT("CollisionDamage"));
 }
 
@@ -24,7 +23,7 @@ void UAREnemyASCAttributeWidgetBase::HandleTrackedAttributeValueChanged(
 	Super::HandleTrackedAttributeValueChanged(RuntimeState, NewValue, OldValue);
 
 	EARCoreAttributeType CoreAttributeType = EARCoreAttributeType::Health;
-	if (TryResolveCoreAttributeType(RuntimeState.Attribute, CoreAttributeType))
+	if (ARASCAttributeWidgetShared::TryResolveCoreAttributeType(RuntimeState.Attribute, CoreAttributeType))
 	{
 		OnEnemyASCWidgetCoreAttributeChanged.Broadcast(CoreAttributeType, NewValue, OldValue);
 		BP_OnEnemyASCWidgetCoreAttributeChanged(CoreAttributeType, NewValue, OldValue);
@@ -35,45 +34,4 @@ void UAREnemyASCAttributeWidgetBase::HandleTrackedAttributeValueChanged(
 		OnEnemyASCWidgetCollisionDamageChanged.Broadcast(NewValue, OldValue);
 		BP_OnEnemyASCWidgetCollisionDamageChanged(NewValue, OldValue);
 	}
-}
-
-bool UAREnemyASCAttributeWidgetBase::TryResolveCoreAttributeType(const FGameplayAttribute& Attribute, EARCoreAttributeType& OutType)
-{
-	if (Attribute == UARAttributeSetCore::GetHealthAttribute())
-	{
-		OutType = EARCoreAttributeType::Health;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetMaxHealthAttribute())
-	{
-		OutType = EARCoreAttributeType::MaxHealth;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetSpiceAttribute())
-	{
-		OutType = EARCoreAttributeType::Spice;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetMaxSpiceAttribute())
-	{
-		OutType = EARCoreAttributeType::MaxSpice;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetMoveSpeedAttribute())
-	{
-		OutType = EARCoreAttributeType::MoveSpeed;
-		return true;
-	}
-
-	if (Attribute == UARAttributeSetCore::GetStrengthAttribute())
-	{
-		OutType = EARCoreAttributeType::Strength;
-		return true;
-	}
-
-	return false;
 }

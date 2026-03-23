@@ -7,6 +7,7 @@
 #include "AREnemyBase.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARLog.h"
+#include "ARSaveSubsystem.h"
 #include "TagKeySubsystem.h"
 #include "TagKeyEditorHelpers.h"
 
@@ -61,9 +62,6 @@ namespace
 	static constexpr float WaveCanvasGlyphSize = 24.0f;
 	static constexpr float WaveCanvasSelectedGlyphSize = 30.0f;
 	static constexpr float WaveCanvasPickRadius = 20.0f;
-	static constexpr float PIEBootstrapPollInterval = 0.2f;
-	static constexpr float PIEBootstrapFallbackDelaySeconds = 0.75f;
-	static constexpr float PIEBootstrapTimeoutSeconds = 20.0f;
 
 	static FString ResolveMapPackageName(const TSoftObjectPtr<UWorld>& MapRef)
 	{
@@ -191,27 +189,6 @@ public:
 		default:
 			return TEXT("■");
 		}
-	}
-
-	static int32 GetPaletteShapeCycleForClass(const UClass* EnemyClass)
-	{
-		if (!EnemyClass)
-		{
-			return 0;
-		}
-
-		const UARInvaderAuthoringEditorSettings* Settings = GetDefault<UARInvaderAuthoringEditorSettings>();
-		if (!Settings)
-		{
-			return 0;
-		}
-
-		const FSoftClassPath ClassPath(EnemyClass);
-		if (const int32* SavedShape = Settings->EnemyClassShapeCycles.Find(ClassPath))
-		{
-			return *SavedShape;
-		}
-		return 0;
 	}
 
 	static FSoftClassPath ToSoftClassPath(const TSoftClassPtr<AAREnemyBase>& ClassPtr)
@@ -355,97 +332,6 @@ public:
 		Name.ReplaceInline(TEXT("_"), TEXT(" "));
 		Name.TrimStartAndEndInline();
 		return Name.IsEmpty() ? FPackageName::ObjectPathToObjectName(ClassPath.ToString()) : Name;
-	}
-
-	static bool TryReadBoolPropertyByName(const UObject* Object, const FName PropertyName, bool& bOutValue)
-	{
-		if (!Object || PropertyName.IsNone())
-		{
-			return false;
-		}
-
-		const FBoolProperty* BoolProp = FindFProperty<FBoolProperty>(Object->GetClass(), PropertyName);
-		if (!BoolProp)
-		{
-			return false;
-		}
-
-		bOutValue = BoolProp->GetPropertyValue_InContainer(Object);
-		return true;
-	}
-
-	static bool TryCallNoArgBoolFunctionByName(UObject* Object, const FName FunctionName, bool& bOutValue)
-	{
-		if (!Object || FunctionName.IsNone())
-		{
-			return false;
-		}
-
-		UFunction* Fn = Object->FindFunction(FunctionName);
-		if (!Fn)
-		{
-			return false;
-		}
-
-		if (Fn->NumParms != 1 || !Fn->GetReturnProperty())
-		{
-			return false;
-		}
-
-		const FBoolProperty* ReturnBool = CastField<FBoolProperty>(Fn->GetReturnProperty());
-		if (!ReturnBool)
-		{
-			return false;
-		}
-
-		TArray<uint8> Buffer;
-		Buffer.SetNumZeroed(Fn->ParmsSize);
-		Object->ProcessEvent(Fn, Buffer.GetData());
-		bOutValue = ReturnBool->GetPropertyValue(Buffer.GetData() + ReturnBool->GetOffset_ForUFunction());
-		return true;
-	}
-
-	static bool IsPIESaveLoadComplete(UObject* GameInstance, bool& bOutHadSignal)
-	{
-		bOutHadSignal = false;
-
-		bool bValue = false;
-		static const FName BoolFunctionCandidates[] =
-		{
-			TEXT("IsGameLoaded"),
-			TEXT("HasGameLoaded"),
-			TEXT("IsSaveLoaded"),
-			TEXT("HasSaveLoaded"),
-			TEXT("IsLoadCompleted"),
-			TEXT("HasLoadCompleted"),
-		};
-		for (const FName& Name : BoolFunctionCandidates)
-		{
-			if (TryCallNoArgBoolFunctionByName(GameInstance, Name, bValue))
-			{
-				bOutHadSignal = true;
-				return bValue;
-			}
-		}
-
-		static const FName BoolPropertyCandidates[] =
-		{
-			TEXT("bGameLoaded"),
-			TEXT("bIsGameLoaded"),
-			TEXT("bSaveLoaded"),
-			TEXT("bIsSaveLoaded"),
-			TEXT("bLoadCompleted"),
-		};
-		for (const FName& Name : BoolPropertyCandidates)
-		{
-			if (TryReadBoolPropertyByName(GameInstance, Name, bValue))
-			{
-				bOutHadSignal = true;
-				return bValue;
-			}
-		}
-
-		return false;
 	}
 
 }
@@ -608,7 +494,7 @@ class SInvaderWaveCanvas final : public SLeafWidget
 					DotColor.A = 0.20f;
 				}
 
-				const int32 ShapeCycle = GetPaletteShapeCycleForClass(Spawn.EnemyClass);
+				const int32 ShapeCycle = 0;
 				DrawShape(
 					OutDrawElements,
 					LayerId + 2,
@@ -2932,12 +2818,6 @@ FReply SInvaderAuthoringPanel::OnAddLayer()
 	Spawn.SpawnDelay = NewDelay;
 	if (ActivePaletteEntry.IsSet())
 	{
-		UClass* ResolvedClass = ActivePaletteEntry->EnemyClassPath.ResolveClass();
-		if (!ResolvedClass)
-		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ActivePaletteEntry->EnemyClassPath.ToString());
-		}
-		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = ActivePaletteEntry->Color;
 		ResolveIdentifierTagForPaletteClass(ActivePaletteEntry->EnemyClassPath, Spawn.EnemyIdentifierTag);
 	}
@@ -2969,12 +2849,6 @@ FReply SInvaderAuthoringPanel::OnAddSpawnToLayer()
 	Spawn.SpawnDelay = SelectedLayerDelay;
 	if (ActivePaletteEntry.IsSet())
 	{
-		UClass* ResolvedClass = ActivePaletteEntry->EnemyClassPath.ResolveClass();
-		if (!ResolvedClass)
-		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ActivePaletteEntry->EnemyClassPath.ToString());
-		}
-		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = ActivePaletteEntry->Color;
 		ResolveIdentifierTagForPaletteClass(ActivePaletteEntry->EnemyClassPath, Spawn.EnemyIdentifierTag);
 	}
@@ -3723,12 +3597,6 @@ void SInvaderAuthoringPanel::HandleCanvasAddSpawnAt(const FVector2D& NewOffset)
 	{
 		const FSoftClassPath ClassPath = ActiveEntry->EnemyClassPath;
 		EARAffinityColor Color = ActiveEntry->Color;
-		UClass* ResolvedClass = ClassPath.ResolveClass();
-		if (!ResolvedClass)
-		{
-			ResolvedClass = LoadClass<AAREnemyBase>(nullptr, *ClassPath.ToString());
-		}
-		Spawn.EnemyClass = ResolvedClass;
 		Spawn.EnemyColor = Color;
 		ResolveIdentifierTagForPaletteClass(ClassPath, Spawn.EnemyIdentifierTag);
 	}
@@ -3846,9 +3714,6 @@ FText SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText() const
 		const FARInvaderEnemyDefRow* EnemyDef = FindEnemyDefinitionByIdentifierTag(Spawn.EnemyIdentifierTag, nullptr);
 		if (!EnemyDef)
 		{
-			// Mirror runtime-ish fallback expectation when a row cannot be resolved.
-			TotalHealth += 100.0;
-			TotalDamageToClear += 100.0;
 			++MissingEnemyDefCount;
 			continue;
 		}
@@ -3882,7 +3747,7 @@ FText SInvaderAuthoringPanel::GetSelectedWaveComputedStatsText() const
 	FString Notes;
 	if (MissingEnemyDefCount > 0)
 	{
-		Notes += FString::Printf(TEXT("\n  Missing enemy rows: %d (using 100 HP fallback)."), MissingEnemyDefCount);
+		Notes += FString::Printf(TEXT("\n  Missing enemy rows: %d (excluded from computed totals)."), MissingEnemyDefCount);
 	}
 	if (ZeroMitigationCount > 0)
 	{
@@ -3957,11 +3822,6 @@ void SInvaderAuthoringPanel::HandleSpawnPropertiesChanged(const FPropertyChanged
 	WaveTable->Modify();
 	Row->EnemySpawns[SelectedSpawnIndex] = SpawnProxy->Spawn;
 	Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset = ClampOffsetToGameplayBounds(Row->EnemySpawns[SelectedSpawnIndex].AuthoredScreenOffset);
-	if (!Row->EnemySpawns[SelectedSpawnIndex].EnemyIdentifierTag.IsValid() && Row->EnemySpawns[SelectedSpawnIndex].EnemyClass)
-	{
-		const FSoftClassPath ClassPath(Row->EnemySpawns[SelectedSpawnIndex].EnemyClass);
-		ResolveIdentifierTagForPaletteClass(ClassPath, Row->EnemySpawns[SelectedSpawnIndex].EnemyIdentifierTag);
-	}
 	MarkTableDirty(WaveTable);
 	RefreshLayerItems();
 	RefreshSpawnItems();
@@ -3999,7 +3859,6 @@ bool SInvaderAuthoringPanel::ShouldShowSpawnDetailProperty(const FPropertyAndPar
 	{
 		TEXT("bFormationLockEnter"),
 		TEXT("bFormationLockActive"),
-		TEXT("EnemyClass")
 	};
 
 	return !HiddenSpawnProperties.Contains(PropertyName);
@@ -5054,60 +4913,23 @@ bool SInvaderAuthoringPanel::RunPIESaveBootstrap()
 		return false;
 	}
 
-	UFunction* LoadFn = GI->FindFunction(FName(TEXT("LoadSave")));
-	if (!LoadFn)
+	UARSaveSubsystem* SaveSubsystem = GI->GetSubsystem<UARSaveSubsystem>();
+	if (!SaveSubsystem)
 	{
-		SetStatus(TEXT("PIE save bootstrap failed: GameInstance function 'LoadSave' not found."));
+		SetStatus(TEXT("PIE save bootstrap failed: UARSaveSubsystem is unavailable."));
 		return false;
 	}
 
-	TArray<uint8> ParamsBuffer;
-	void* ParamsPtr = nullptr;
-	if (LoadFn->ParmsSize > 0)
+	FARSaveResult LoadResult;
+	const bool bLoaded = SaveSubsystem->LoadGame(ToolingSettings->PIELoadSlotName, ToolingSettings->PIELoadSlotNumber, LoadResult);
+	if (!bLoaded)
 	{
-		ParamsBuffer.SetNumZeroed(LoadFn->ParmsSize);
-		ParamsPtr = ParamsBuffer.GetData();
-
-		static const FName SlotNameParamName(TEXT("SlotName"));
-		static const FName SlotNumberParamName(TEXT("SlotNumber"));
-
-		for (TFieldIterator<FProperty> It(LoadFn); It; ++It)
-		{
-			FProperty* ParamProp = *It;
-			if (!ParamProp || !ParamProp->HasAnyPropertyFlags(CPF_Parm) || ParamProp->HasAnyPropertyFlags(CPF_ReturnParm))
-			{
-				continue;
-			}
-
-			void* ValuePtr = ParamProp->ContainerPtrToValuePtr<void>(ParamsPtr);
-			if (!ValuePtr)
-			{
-				continue;
-			}
-
-			if (ParamProp->GetFName() == SlotNameParamName)
-			{
-				if (FNameProperty* NameProp = CastField<FNameProperty>(ParamProp))
-				{
-					NameProp->SetPropertyValue(ValuePtr, ToolingSettings->PIELoadSlotName);
-				}
-				else if (FStrProperty* StrProp = CastField<FStrProperty>(ParamProp))
-				{
-					StrProp->SetPropertyValue(ValuePtr, ToolingSettings->PIELoadSlotName.ToString());
-				}
-			}
-			else if (ParamProp->GetFName() == SlotNumberParamName)
-			{
-				if (FIntProperty* IntProp = CastField<FIntProperty>(ParamProp))
-				{
-					IntProp->SetPropertyValue(ValuePtr, ToolingSettings->PIELoadSlotNumber);
-				}
-				else if (FInt64Property* Int64Prop = CastField<FInt64Property>(ParamProp))
-				{
-					Int64Prop->SetPropertyValue(ValuePtr, static_cast<int64>(ToolingSettings->PIELoadSlotNumber));
-				}
-			}
-		}
+		const FString ErrorText = LoadResult.Error.IsEmpty() ? TEXT("unknown load failure") : LoadResult.Error;
+		SetStatus(FString::Printf(TEXT("PIE save bootstrap failed to load save '%s' rev %d: %s"),
+			*ToolingSettings->PIELoadSlotName.ToString(),
+			ToolingSettings->PIELoadSlotNumber,
+			*ErrorText));
+		return false;
 	}
 
 	const TSoftObjectPtr<UWorld> DebugMap = !ToolingSettings->PIEBootstrapDebugMap.IsNull()
@@ -5120,115 +4942,11 @@ bool SInvaderAuthoringPanel::RunPIESaveBootstrap()
 		SetStatus(TEXT("PIE save bootstrap loaded save (no debug travel map set)."));
 		return true;
 	}
-
-	const TWeakPtr<SInvaderAuthoringPanel> WeakPanel = SharedThis(this);
-	const TWeakObjectPtr<UGameInstance> WeakGI = GI;
-	const FString TravelMap = DebugMapPackageName;
-	const TSharedRef<bool> bTravelIssued = MakeShared<bool>(false);
-	auto TryTravel = [WeakPanel, TravelMap, bTravelIssued](const FString& ReasonPrefix) -> bool
-	{
-		if (*bTravelIssued)
-		{
-			return true;
-		}
-
-		const TSharedPtr<SInvaderAuthoringPanel> Pinned = WeakPanel.Pin();
-		if (!Pinned.IsValid())
-		{
-			return false;
-		}
-
-		UWorld* CurrentPIEWorld = Pinned->GetPIEWorld();
-		if (!CurrentPIEWorld)
-		{
-			return false;
-		}
-
-		UGameplayStatics::OpenLevel(CurrentPIEWorld, FName(*TravelMap), true);
-		Pinned->SetStatus(FString::Printf(TEXT("%s opening level '%s'."), *ReasonPrefix, *TravelMap));
-		Pinned->PIESaveLoadedBridge.Reset();
-		*bTravelIssued = true;
-		return true;
-	};
-
-	bool bSubscribedToSignal = false;
-	if (FMulticastDelegateProperty* LoadedSignalProperty = FindFProperty<FMulticastDelegateProperty>(GI->GetClass(), FName(TEXT("SignalOnGameLoaded"))))
-	{
-		UARInvaderPIESaveLoadedBridge* Bridge = NewObject<UARInvaderPIESaveLoadedBridge>(GetTransientPackage());
-		Bridge->Configure(FSimpleDelegate::CreateLambda([TryTravel]()
-		{
-			TryTravel(TEXT("PIE save bootstrap received SignalOnGameLoaded;"));
-		}));
-
-		FScriptDelegate ScriptDelegate;
-		ScriptDelegate.BindUFunction(Bridge, GET_FUNCTION_NAME_CHECKED(UARInvaderPIESaveLoadedBridge, HandleSignalOnGameLoaded));
-		LoadedSignalProperty->RemoveDelegate(ScriptDelegate, GI);
-		LoadedSignalProperty->AddDelegate(ScriptDelegate, GI);
-		PIESaveLoadedBridge.Reset(Bridge);
-		bSubscribedToSignal = true;
-		SetStatus(TEXT("PIE save bootstrap subscribed to SignalOnGameLoaded."));
-	}
-
-	GI->ProcessEvent(LoadFn, ParamsPtr);
-	if (*bTravelIssued)
-	{
-		return true;
-	}
-
-	const double StartTimeSeconds = FPlatformTime::Seconds();
-	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([WeakPanel, WeakGI, TryTravel, bTravelIssued, bSubscribedToSignal, StartTimeSeconds](float)
-	{
-		if (*bTravelIssued)
-		{
-			return false;
-		}
-
-		const TSharedPtr<SInvaderAuthoringPanel> Pinned = WeakPanel.Pin();
-		if (!Pinned.IsValid())
-		{
-			return false;
-		}
-		if (!Pinned->GetPIEWorld())
-		{
-			return true;
-		}
-
-		const double ElapsedSeconds = FPlatformTime::Seconds() - StartTimeSeconds;
-		const bool bTimedOut = ElapsedSeconds >= PIEBootstrapTimeoutSeconds;
-
-		if (bSubscribedToSignal)
-		{
-			if (!bTimedOut)
-			{
-				return true;
-			}
-			TryTravel(TEXT("PIE save bootstrap timed out waiting for SignalOnGameLoaded;"));
-			return false;
-		}
-
-		bool bHadSignal = false;
-		const bool bLoadComplete = IsPIESaveLoadComplete(WeakGI.Get(), bHadSignal);
-		const bool bFallbackReady = ElapsedSeconds >= PIEBootstrapFallbackDelaySeconds;
-		if (!(bLoadComplete || (!bHadSignal && bFallbackReady) || bTimedOut))
-		{
-			return true;
-		}
-
-		if (bTimedOut)
-		{
-			TryTravel(TEXT("PIE save bootstrap timeout waiting for load complete;"));
-		}
-		else if (bLoadComplete)
-		{
-			TryTravel(TEXT("PIE save bootstrap load complete;"));
-		}
-		else
-		{
-			TryTravel(TEXT("PIE save bootstrap load invoked (no completion signal detected);"));
-		}
-		return false;
-	}), PIEBootstrapPollInterval);
-
+	UGameplayStatics::OpenLevel(PIEWorld, FName(*DebugMapPackageName), true);
+	SetStatus(FString::Printf(TEXT("PIE save bootstrap loaded '%s' rev %d; opening level '%s'."),
+		*ToolingSettings->PIELoadSlotName.ToString(),
+		ToolingSettings->PIELoadSlotNumber,
+		*DebugMapPackageName));
 	return true;
 }
 
@@ -5290,4 +5008,3 @@ bool SInvaderAuthoringPanel::ExecPIECommand(const FString& Command)
 	}
 	return bResult;
 }
-

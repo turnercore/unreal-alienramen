@@ -1,6 +1,7 @@
 #include "ARInvaderGameMode.h"
 
 #include "ARInvaderDirectorSubsystem.h"
+#include "ARLoadoutTypes.h"
 #include "ARInvaderPlayerController.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -12,7 +13,6 @@
 #include "StructUtils/InstancedStruct.h"
 #include "TagKeySubsystem.h"
 #include "TimerManager.h"
-#include "UObject/UnrealType.h"
 
 namespace
 {
@@ -243,7 +243,7 @@ UClass* AARInvaderGameMode::GetDefaultPawnClassForController_Implementation(ACon
 			UE_LOG(
 				ARLog,
 				Error,
-				TEXT("[InvaderGameMode] Missing/invalid invader pawn class for ship '%s' (expected ship row field 'InvaderPawnClass' or 'DummyPawnClass')."),
+				TEXT("[InvaderGameMode] Missing/invalid invader pawn class for ship '%s' (expected FARShipDefRow.InvaderPawnClass)."),
 				*ShipTag.ToString());
 			return nullptr;
 		}
@@ -254,25 +254,6 @@ UClass* AARInvaderGameMode::GetDefaultPawnClassForController_Implementation(ACon
 		Error,
 		TEXT("[InvaderGameMode] Could not resolve ship loadout tag for controller '%s'; invader pawn spawn aborted."),
 		*GetNameSafe(InController));
-
-	return nullptr;
-}
-
-FProperty* AARInvaderGameMode::FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix)
-{
-	if (!StructType)
-	{
-		return nullptr;
-	}
-
-	for (TFieldIterator<FProperty> It(StructType); It; ++It)
-	{
-		FProperty* Property = *It;
-		if (Property && Property->GetName().StartsWith(Prefix))
-		{
-			return Property;
-		}
-	}
 
 	return nullptr;
 }
@@ -305,82 +286,36 @@ bool AARInvaderGameMode::ResolveInvaderPawnClassFromShipTag(const FGameplayTag S
 		return false;
 	}
 
-	const UScriptStruct* StructType = ShipRow.GetScriptStruct();
-	const void* StructData = ShipRow.GetMemory();
-	if (!StructType || !StructData)
+	const FARShipDefRow* ShipDef = ShipRow.GetPtr<FARShipDefRow>();
+	if (!ShipDef)
+	{
+		const UScriptStruct* RowStruct = ShipRow.GetScriptStruct();
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[InvaderGameMode] Ship row '%s' resolved to unexpected struct '%s'; expected FARShipDefRow."),
+			*ShipTag.ToString(),
+			*GetNameSafe(RowStruct));
+		return false;
+	}
+
+	if (ShipDef->InvaderPawnClass.IsNull())
 	{
 		return false;
 	}
 
-	static const TCHAR* PawnClassPrefixes[] = {
-		TEXT("InvaderPawnClass"),
-		TEXT("DummyPawnClass")
-	};
-
-	FProperty* PawnClassProperty = nullptr;
-	for (const TCHAR* Prefix : PawnClassPrefixes)
+	if (UClass* PawnClass = ShipDef->InvaderPawnClass.LoadSynchronous())
 	{
-		PawnClassProperty = FindPropertyByNamePrefix(StructType, Prefix);
-		if (PawnClassProperty)
-		{
-			break;
-		}
+		OutPawnClass = PawnClass;
+		return true;
 	}
 
-	if (!PawnClassProperty)
-	{
-		UE_LOG(
-			ARLog,
-			Error,
-			TEXT("[InvaderGameMode] Ship row '%s' missing pawn-class field. Expected prefixes: InvaderPawnClass / DummyPawnClass (Struct=%s)."),
-			*ShipTag.ToString(),
-			*GetNameSafe(StructType));
-		return false;
-	}
-
-	if (const FClassProperty* ClassProperty = CastField<FClassProperty>(PawnClassProperty))
-	{
-		if (UClass* PawnClass = Cast<UClass>(ClassProperty->GetPropertyValue_InContainer(StructData)))
-		{
-			OutPawnClass = PawnClass;
-			return OutPawnClass != nullptr;
-		}
-
-		UE_LOG(
-			ARLog,
-			Error,
-			TEXT("[InvaderGameMode] Ship row '%s' field '%s' resolved as null hard class."),
-			*ShipTag.ToString(),
-			*PawnClassProperty->GetName());
-	}
-	else if (const FSoftClassProperty* SoftClassProperty = CastField<FSoftClassProperty>(PawnClassProperty))
-	{
-		const FSoftObjectPtr SoftClassPtr = SoftClassProperty->GetPropertyValue_InContainer(StructData);
-		if (UClass* PawnClass = Cast<UClass>(SoftClassPtr.LoadSynchronous()))
-		{
-			OutPawnClass = PawnClass;
-			return OutPawnClass != nullptr;
-		}
-
-		UE_LOG(
-			ARLog,
-			Error,
-			TEXT("[InvaderGameMode] Ship row '%s' field '%s' soft class failed to load (Path=%s)."),
-			*ShipTag.ToString(),
-			*PawnClassProperty->GetName(),
-			*SoftClassPtr.ToString());
-	}
-	else
-	{
-		UE_LOG(
-			ARLog,
-			Error,
-			TEXT("[InvaderGameMode] Ship row '%s' pawn field '%s' has unsupported property type '%s'."),
-			*ShipTag.ToString(),
-			*PawnClassProperty->GetName(),
-			*PawnClassProperty->GetClass()->GetName());
-	}
-
+	UE_LOG(
+		ARLog,
+		Error,
+		TEXT("[InvaderGameMode] Ship row '%s' InvaderPawnClass failed to load (Path=%s)."),
+		*ShipTag.ToString(),
+		*ShipDef->InvaderPawnClass.ToString());
 	return false;
 }
 

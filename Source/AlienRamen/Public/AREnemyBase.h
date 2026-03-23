@@ -211,8 +211,7 @@ public:
 		FGameplayTag SignalTag,
 		AActor* RelatedActor = nullptr,
 		FVector WorldLocation = FVector::ZeroVector,
-		float ScalarValue = 0.f,
-		bool bForwardToStateTree = true);
+		float ScalarValue = 0.f);
 
 	// Returns true only on the first frame this enemy is considered leaked.
 	UFUNCTION(BlueprintCallable, Category = "AR|Enemy|Invader")

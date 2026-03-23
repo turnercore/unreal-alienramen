@@ -11,7 +11,7 @@
 #include "ARInvaderSpicyTrackHUDWidgetBase.generated.h"
 
 class AARInvaderGameState;
-class AARInvaderHUD;
+class AARHUDBase;
 class AARPlayerStateBase;
 
 /**
@@ -83,7 +83,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
  * Base class for Invader spicy-track HUD elements.
  *
  * Responsibilities:
- * - bind to an owning `AARInvaderHUD` and resolve `AARInvaderGameState`
+ * - bind to an owning `AARHUDBase` and resolve `AARInvaderGameState`
  * - track all replicated Invader player states, not only the local player
  * - expose per-character spicy/max-spice/cursor change events for HUD visuals
  * - expose shared-track display-state changes for team upgrade lane rendering
@@ -96,13 +96,13 @@ class ALIENRAMEN_API UARInvaderSpicyTrackHUDWidgetBase : public UUserWidget
 public:
 	/** Binds this widget to an Invader HUD context and starts delegate tracking. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|UI|Spice Track")
-	void InitializeInvaderSpicyTrackHUDWidget(AARInvaderHUD* InInvaderHUD);
+	void InitializeInvaderSpicyTrackHUDWidget(AARHUDBase* InInvaderHUD);
 
 	/** Unbinds all delegate wiring and clears cached spicy-track snapshots. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|UI|Spice Track")
 	void DeinitializeInvaderSpicyTrackHUDWidget();
 
-	/** Attempts to bind from `GetOwningPlayer()->GetHUD()` if it is an `AARInvaderHUD`. */
+	/** Attempts to bind from `GetOwningPlayer()->GetHUD()` if it is an `AARHUDBase`. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader|UI|Spice Track")
 	bool TryBindOwningInvaderHUD();
 
@@ -111,7 +111,7 @@ public:
 	void RefreshInvaderSpicyTrackSnapshot(bool bBroadcastSnapshotEvents = true);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|UI|Spice Track")
-	AARInvaderHUD* GetBoundInvaderHUD() const { return BoundInvaderHUD.Get(); }
+	AARHUDBase* GetBoundInvaderHUD() const { return BoundInvaderHUD.Get(); }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader|UI|Spice Track")
 	AARInvaderGameState* GetBoundInvaderGameState() const { return BoundInvaderGameState.Get(); }
@@ -149,7 +149,7 @@ protected:
 
 	/** Fires before the first snapshot broadcast so Blueprint can cache bound HUD/GameState references safely. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Invader|UI|Spice Track")
-	void BP_OnInvaderSpicyTrackHUDWidgetInitialized(AARInvaderHUD* InInvaderHUD, AARInvaderGameState* InInvaderGameState);
+	void BP_OnInvaderSpicyTrackHUDWidgetInitialized(AARHUDBase* InInvaderHUD, AARInvaderGameState* InInvaderGameState);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Invader|UI|Spice Track")
 	void BP_OnInvaderSpicyTrackHUDWidgetDeinitialized();
@@ -210,7 +210,7 @@ private:
 	void HandleTrackedPlayerCursorChanged(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, int32 NewCursorTier, int32 OldCursorTier);
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|UI|Spice Track", meta = (AllowPrivateAccess = "true"))
-	TWeakObjectPtr<AARInvaderHUD> BoundInvaderHUD;
+	TWeakObjectPtr<AARHUDBase> BoundInvaderHUD;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|UI|Spice Track", meta = (AllowPrivateAccess = "true"))
 	TWeakObjectPtr<AARInvaderGameState> BoundInvaderGameState;

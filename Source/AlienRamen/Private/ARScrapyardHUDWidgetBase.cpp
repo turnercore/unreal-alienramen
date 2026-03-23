@@ -46,25 +46,12 @@ void UARScrapyardHUDWidgetBase::InitializeScrapyardHUDWidget(AARScrapyardHUD* In
 
 void UARScrapyardHUDWidgetBase::DeinitializeScrapyardHUDWidget()
 {
-	const bool bHadAnyBindingOrState =
-		BoundScrapyardHUD.IsValid()
-		|| bHasCurrentExtractionSummary
-		|| bHasCurrentRunTimer
-		|| bHasCurrentRunActive
-		|| bHasCurrentRunBuffStateSnapshot;
+	const bool bHadAnyBinding = BoundScrapyardHUD.IsValid();
 
 	UnbindScrapyardHUDDelegates();
 	BoundScrapyardHUD.Reset();
-	CurrentExtractionSummary = FARScrapyardExtractionSummary();
-	CurrentRunRemainingSeconds = 0.0f;
-	bCurrentRunActive = false;
-	CurrentRunBuffStateSnapshot = FARRunBuffStateSnapshot();
-	bHasCurrentExtractionSummary = false;
-	bHasCurrentRunTimer = false;
-	bHasCurrentRunActive = false;
-	bHasCurrentRunBuffStateSnapshot = false;
 
-	if (bHadAnyBindingOrState)
+	if (bHadAnyBinding)
 	{
 		BP_OnScrapyardHUDWidgetDeinitialized();
 	}
@@ -85,26 +72,74 @@ bool UARScrapyardHUDWidgetBase::TryBindOwningScrapyardHUD()
 
 bool UARScrapyardHUDWidgetBase::GetCurrentExtractionSummary(FARScrapyardExtractionSummary& OutSummary) const
 {
-	OutSummary = bHasCurrentExtractionSummary ? CurrentExtractionSummary : FARScrapyardExtractionSummary();
-	return bHasCurrentExtractionSummary;
+	const AARScrapyardHUD* ScrapyardHUD = BoundScrapyardHUD.Get();
+	if (!ScrapyardHUD)
+	{
+		OutSummary = FARScrapyardExtractionSummary();
+		return false;
+	}
+
+	return ScrapyardHUD->GetCachedExtractionSummary(OutSummary);
 }
 
 bool UARScrapyardHUDWidgetBase::GetCurrentRunRemainingSeconds(float& OutRemainingSeconds) const
 {
-	OutRemainingSeconds = bHasCurrentRunTimer ? CurrentRunRemainingSeconds : 0.0f;
-	return bHasCurrentRunTimer;
+	const AARScrapyardHUD* ScrapyardHUD = BoundScrapyardHUD.Get();
+	if (!ScrapyardHUD)
+	{
+		OutRemainingSeconds = 0.0f;
+		return false;
+	}
+
+	return ScrapyardHUD->GetCachedRunRemainingSeconds(OutRemainingSeconds);
 }
 
 bool UARScrapyardHUDWidgetBase::GetCurrentRunActive(bool& OutRunActive) const
 {
-	OutRunActive = bHasCurrentRunActive ? bCurrentRunActive : false;
-	return bHasCurrentRunActive;
+	const AARScrapyardHUD* ScrapyardHUD = BoundScrapyardHUD.Get();
+	if (!ScrapyardHUD)
+	{
+		OutRunActive = false;
+		return false;
+	}
+
+	return ScrapyardHUD->GetCachedRunActive(OutRunActive);
 }
 
 bool UARScrapyardHUDWidgetBase::GetCurrentRunBuffStateSnapshot(FARRunBuffStateSnapshot& OutSnapshot) const
 {
-	OutSnapshot = bHasCurrentRunBuffStateSnapshot ? CurrentRunBuffStateSnapshot : FARRunBuffStateSnapshot();
-	return bHasCurrentRunBuffStateSnapshot;
+	const AARScrapyardHUD* ScrapyardHUD = BoundScrapyardHUD.Get();
+	if (!ScrapyardHUD)
+	{
+		OutSnapshot = FARRunBuffStateSnapshot();
+		return false;
+	}
+
+	return ScrapyardHUD->GetCachedRunBuffStateSnapshot(OutSnapshot);
+}
+
+bool UARScrapyardHUDWidgetBase::HasCurrentExtractionSummary() const
+{
+	FARScrapyardExtractionSummary Ignored;
+	return GetCurrentExtractionSummary(Ignored);
+}
+
+bool UARScrapyardHUDWidgetBase::HasCurrentRunTimer() const
+{
+	float Ignored = 0.0f;
+	return GetCurrentRunRemainingSeconds(Ignored);
+}
+
+bool UARScrapyardHUDWidgetBase::HasCurrentRunActive() const
+{
+	bool bIgnored = false;
+	return GetCurrentRunActive(bIgnored);
+}
+
+bool UARScrapyardHUDWidgetBase::HasCurrentRunBuffStateSnapshot() const
+{
+	FARRunBuffStateSnapshot Ignored;
+	return GetCurrentRunBuffStateSnapshot(Ignored);
 }
 
 void UARScrapyardHUDWidgetBase::BindScrapyardHUDDelegates()
@@ -170,32 +205,24 @@ void UARScrapyardHUDWidgetBase::RefreshCachedStateFromHUD()
 
 void UARScrapyardHUDWidgetBase::HandleScrapyardExtractionSummaryChanged(const FARScrapyardExtractionSummary& Summary)
 {
-	CurrentExtractionSummary = Summary;
-	bHasCurrentExtractionSummary = true;
 	OnScrapyardWidgetExtractionSummaryChanged.Broadcast(Summary);
 	BP_OnScrapyardWidgetExtractionSummaryChanged(Summary);
 }
 
 void UARScrapyardHUDWidgetBase::HandleScrapyardRunTimerChanged(float RemainingSeconds)
 {
-	CurrentRunRemainingSeconds = RemainingSeconds;
-	bHasCurrentRunTimer = true;
 	OnScrapyardWidgetRunTimerChanged.Broadcast(RemainingSeconds);
 	BP_OnScrapyardWidgetRunTimerChanged(RemainingSeconds);
 }
 
 void UARScrapyardHUDWidgetBase::HandleScrapyardRunActiveChanged(bool bIsRunActive)
 {
-	bCurrentRunActive = bIsRunActive;
-	bHasCurrentRunActive = true;
 	OnScrapyardWidgetRunActiveChanged.Broadcast(bIsRunActive);
 	BP_OnScrapyardWidgetRunActiveChanged(bIsRunActive);
 }
 
 void UARScrapyardHUDWidgetBase::HandleRunBuffStateChanged(const FARRunBuffStateSnapshot& Snapshot)
 {
-	CurrentRunBuffStateSnapshot = Snapshot;
-	bHasCurrentRunBuffStateSnapshot = true;
 	OnScrapyardWidgetRunBuffStateChanged.Broadcast(Snapshot);
 	BP_OnScrapyardWidgetRunBuffStateChanged(Snapshot);
 }

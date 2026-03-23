@@ -6,11 +6,8 @@ bool AARAIControllerBase::ReceivePawnSignal(
 	FGameplayTag SignalTag,
 	AActor* RelatedActor,
 	FVector WorldLocation,
-	float ScalarValue,
-	bool bForwardToStateTree)
+	float ScalarValue)
 {
-	(void)bForwardToStateTree;
-
 	if (!HasAuthority())
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[AIBase] Ignored pawn signal on non-authority controller '%s' (Tag=%s)."),

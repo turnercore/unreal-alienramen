@@ -1,16 +1,9 @@
 #include "Misc/AutomationTest.h"
 
 #include "ARFactionVotingSettings.h"
+#include "ARTestGameplayTagHelpers.h"
 #include "ARFactionVotingTypes.h"
 #include "GameplayTagContainer.h"
-
-namespace
-{
-	static FGameplayTag RequestTagNoCrash(const TCHAR* TagName)
-	{
-		return FGameplayTag::RequestGameplayTag(FName(TagName), false);
-	}
-}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FARFactionVoting_SettingsContractTest,
@@ -53,7 +46,7 @@ bool FARFactionVoting_RequiredTagsPresentTest::RunTest(const FString& Parameters
 
 	for (const TCHAR* TagName : RequiredTags)
 	{
-		const FGameplayTag Tag = RequestTagNoCrash(TagName);
+		const FGameplayTag Tag = ARTestGameplayTags::RequestTagNoCrash(TagName);
 		TestTrue(
 			*FString::Printf(TEXT("Required faction voting tag should exist: %s"), TagName),
 			Tag.IsValid());

@@ -270,7 +270,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 
 ## Persistence
 
-Save schema is now `v18` with dialogue split by ownership:
+Save schema is now `v19` with dialogue split by ownership:
 
 - shared:
   - `DialogueSpeakerRelationshipStates` (directed `SourceSpeakerTag -> TargetSpeakerTag` matrix)
@@ -279,8 +279,6 @@ Save schema is now `v18` with dialogue split by ownership:
   - `CharacterStates[].DialogueState`
 
 Alien Ramen game-layer bridge mirrors Brother/Sister matrix edges so player-facing relationship values remain shared across player characters; Parley plugin core stays game-agnostic.
-
-Legacy `DialoguePlayerPersistentStates` rows migrate into `CharacterStates[]` by resolving the saved active character for the matching player identity.
 
 ## Speaker Talkable Runtime
 
@@ -335,7 +333,7 @@ Conversation graph tooling now provides:
 - player-speaker resolution normalizes gameplay character tags (`Shop.Character.Brother/Sister`) back to canonical dialogue speaker tags (`Parley.Speaker.Brother/Sister`) before character-restriction and requester-resolution checks
 - player-speaker resolution prefers the currently possessed pawn's `UParleySpeakerComponent` speaker tag before falling back to mirrored player-state character tags, so swaps/possess flows immediately evaluate offers against the live pawn identity
 - speaker talkable cache now refreshes when dialogue progression state mutates and when controllers possess/unpossess pawns, so relationship/tag/completion changes and pawn swaps immediately update NPC talkability
-- `AARShopAIController` applies local shop dialogue gating from `State.ShopNPC.Dialogue` (legacy `State.ShopNPC.DialogueWindow` maps via redirects) to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
+- `AARShopAIController` applies local shop dialogue gating from `State.ShopNPC.Dialogue` to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
 - AR player controllers/player states now expose `GetPlayerSlotTag()` so Emo can resolve viewer-specific P1/P2 dialogue overrides instead of falling back to shared-only display
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
 - editor-side validation fallback now uses per-call transient `UGameInstance`-owned `UParleyDialogueSubsystem` instances outside PIE, avoiding invalid `UGameInstanceSubsystem` outer creation during graph compile/save without rooting editor-lifetime validation objects.

@@ -59,5 +59,4 @@ protected:
 	void BP_OnEnemyASCWidgetCollisionDamageChanged(float NewValue, float OldValue);
 
 private:
-	static bool TryResolveCoreAttributeType(const FGameplayAttribute& Attribute, EARCoreAttributeType& OutType);
 };

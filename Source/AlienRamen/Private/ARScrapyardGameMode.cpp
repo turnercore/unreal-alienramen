@@ -2,6 +2,7 @@
 
 #include "AREconomySettings.h"
 #include "ARGameStateBase.h"
+#include "ARLoadoutTypes.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
 #include "ARRunBuffSubsystem.h"
@@ -14,7 +15,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "StructUtils/InstancedStruct.h"
 #include "TagKeySubsystem.h"
-#include "UObject/UnrealType.h"
 
 namespace
 {
@@ -404,25 +404,6 @@ void AARScrapyardGameMode::InitializeScrapyardSpawns()
 		*RarityCountsStr);
 }
 
-FProperty* AARScrapyardGameMode::FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix)
-{
-	if (!StructType)
-	{
-		return nullptr;
-	}
-
-	for (TFieldIterator<FProperty> It(StructType); It; ++It)
-	{
-		FProperty* Property = *It;
-		if (Property && Property->GetName().StartsWith(Prefix))
-		{
-			return Property;
-		}
-	}
-
-	return nullptr;
-}
-
 bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const
 {
 	OutPawnClass = nullptr;
@@ -451,53 +432,36 @@ bool AARScrapyardGameMode::ResolveScrapyardPawnClassFromShipTag(const FGameplayT
 		return false;
 	}
 
-	const UScriptStruct* StructType = ShipRow.GetScriptStruct();
-	const void* StructData = ShipRow.GetMemory();
-	if (!StructType || !StructData)
+	const FARShipDefRow* ShipDef = ShipRow.GetPtr<FARShipDefRow>();
+	if (!ShipDef)
+	{
+		const UScriptStruct* RowStruct = ShipRow.GetScriptStruct();
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ScrapyardGameMode] Ship row '%s' resolved to unexpected struct '%s'; expected FARShipDefRow."),
+			*ShipTag.ToString(),
+			*GetNameSafe(RowStruct));
+		return false;
+	}
+
+	if (ShipDef->ScrapyardPawnClass.IsNull())
 	{
 		return false;
 	}
 
-	static const TCHAR* PawnClassPrefixes[] = {
-		TEXT("ScrapyardPawnClass"),
-		TEXT("DummyPawnClass"),
-		TEXT("PawnClass"),
-		TEXT("PlayerPawnClass")
-	};
-
-	FProperty* PawnClassProperty = nullptr;
-	for (const TCHAR* Prefix : PawnClassPrefixes)
+	if (UClass* PawnClass = ShipDef->ScrapyardPawnClass.LoadSynchronous())
 	{
-		PawnClassProperty = FindPropertyByNamePrefix(StructType, Prefix);
-		if (PawnClassProperty)
-		{
-			break;
-		}
+		OutPawnClass = PawnClass;
+		return true;
 	}
 
-	if (!PawnClassProperty)
-	{
-		return false;
-	}
-
-	if (const FClassProperty* ClassProperty = CastField<FClassProperty>(PawnClassProperty))
-	{
-		if (UClass* PawnClass = Cast<UClass>(ClassProperty->GetPropertyValue_InContainer(StructData)))
-		{
-			OutPawnClass = PawnClass;
-			return OutPawnClass != nullptr;
-		}
-	}
-	else if (const FSoftClassProperty* SoftClassProperty = CastField<FSoftClassProperty>(PawnClassProperty))
-	{
-		const FSoftObjectPtr SoftClassPtr = SoftClassProperty->GetPropertyValue_InContainer(StructData);
-		if (UClass* PawnClass = Cast<UClass>(SoftClassPtr.LoadSynchronous()))
-		{
-			OutPawnClass = PawnClass;
-			return OutPawnClass != nullptr;
-		}
-	}
-
+	UE_LOG(
+		ARLog,
+		Warning,
+		TEXT("[ScrapyardGameMode] Ship row '%s' ScrapyardPawnClass failed to load (Path=%s)."),
+		*ShipTag.ToString(),
+		*ShipDef->ScrapyardPawnClass.ToString());
 	return false;
 }
 

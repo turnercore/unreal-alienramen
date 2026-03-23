@@ -20,8 +20,7 @@ public:
 		FGameplayTag SignalTag,
 		AActor* RelatedActor = nullptr,
 		FVector WorldLocation = FVector::ZeroVector,
-		float ScalarValue = 0.f,
-		bool bForwardToStateTree = true);
+		float ScalarValue = 0.f);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|AI|Signal")
 	void BP_OnPawnSignal(

@@ -14,46 +14,6 @@ namespace
 	{
 		return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat"), false);
 	}
-
-	static FGameplayTag ResolveItemRootTag()
-	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Item"), false);
-	}
-
-	static FGameplayTag ResolveLegacyMeatTagForColor(const EARAffinityColor Color)
-	{
-		switch (Color)
-		{
-		case EARAffinityColor::Red:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Red"), false);
-		case EARAffinityColor::Blue:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Blue"), false);
-		case EARAffinityColor::White:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.White"), false);
-		case EARAffinityColor::Colorless:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.Colorless"), false);
-		case EARAffinityColor::None:
-		default:
-			return FGameplayTag::RequestGameplayTag(TEXT("Item.Meat.None"), false);
-		}
-	}
-
-	static FName ExtractLeafRowNameFromTag(const FGameplayTag Tag)
-	{
-		if (!Tag.IsValid())
-		{
-			return NAME_None;
-		}
-
-		const FString TagString = Tag.ToString();
-		int32 LastDotIndex = INDEX_NONE;
-		if (TagString.FindLastChar(TEXT('.'), LastDotIndex) && LastDotIndex >= 0 && LastDotIndex < TagString.Len() - 1)
-		{
-			return FName(*TagString.Mid(LastDotIndex + 1));
-		}
-
-		return FName(*TagString);
-	}
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemDefinition(const FGameplayTag ItemTag, FARScrapyardItemDefRow& OutItemDef) const
@@ -114,18 +74,7 @@ bool UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition(
 	{
 		return true;
 	}
-
-	if (ItemDef.RunBuffGameplayEffects.IsEmpty() && ItemDef.RunBuffGrantedTags.IsEmpty())
-	{
-		return false;
-	}
-
-	OutEnergyDrinkDef.EnergyDrinkTag = LinkedEnergyDrinkTag;
-	OutEnergyDrinkDef.RunBuffGameplayEffects = ItemDef.RunBuffGameplayEffects;
-	OutEnergyDrinkDef.RunBuffGrantedTags = ItemDef.RunBuffGrantedTags;
-	OutEnergyDrinkDef.StackRule = ItemDef.StackRule;
-	OutEnergyDrinkDef.MaxStackCount = FMath::Max(1, ItemDef.MaxStackCount);
-	return true;
+	return false;
 }
 
 bool UARItemDefinitionSubsystem::ResolveItemActorClass(const FGameplayTag ItemTag, TSubclassOf<AActor>& OutActorClass) const
@@ -281,19 +230,6 @@ bool UARItemDefinitionSubsystem::ResolveMeatDefinitionForEnemy(const FGameplayTa
 	return false;
 }
 
-bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinitionForColor(const EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const
-{
-	OutMeatDef = FARMeatDefinitionRow();
-
-	const FGameplayTag LegacyColorTag = ResolveLegacyMeatTagForColor(Color);
-	if (LegacyColorTag.IsValid() && ResolveMeatDefinition(LegacyColorTag, OutMeatDef))
-	{
-		return true;
-	}
-
-	return ResolveFirstMeatDefinition(OutMeatDef);
-}
-
 bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) const
 {
 	OutMeatTag = FGameplayTag();
@@ -306,34 +242,6 @@ bool UARItemDefinitionSubsystem::ResolveFirstMeatTag(FGameplayTag& OutMeatTag) c
 
 	OutMeatTag = MeatDef.MeatTag;
 	return OutMeatTag.IsValid();
-}
-
-bool UARItemDefinitionSubsystem::ResolveFirstMeatTagForColor(const EARAffinityColor Color, FGameplayTag& OutMeatTag) const
-{
-	OutMeatTag = FGameplayTag();
-
-	FARMeatDefinitionRow MeatDef;
-	if (ResolveFirstMeatDefinitionForColor(Color, MeatDef) && MeatDef.MeatTag.IsValid())
-	{
-		OutMeatTag = MeatDef.MeatTag;
-		return true;
-	}
-
-	return false;
-}
-
-bool UARItemDefinitionSubsystem::GetMeatTagsForColor(const EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const
-{
-	OutMeatTags.Reset();
-
-	FGameplayTag MeatTag;
-	if (!ResolveFirstMeatTagForColor(Color, MeatTag) || !MeatTag.IsValid())
-	{
-		return false;
-	}
-
-	OutMeatTags.Add(MeatTag);
-	return true;
 }
 
 int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const
@@ -376,31 +284,36 @@ int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue(const FARRamenBowlSlo
 {
 	FARMeatDefinitionRow MeatDef;
 	const FGameplayTag SlotMeatTag = SlotSpec.MeatTag;
-	const EARAffinityColor SlotColor = StaticEnum<EARAffinityColor>()->IsValidEnumValue(static_cast<int64>(SlotSpec.Color))
-		? SlotSpec.Color
-		: EARAffinityColor::None;
 	if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
 	{
-		// Fallback for slots that only carry color identity.
-		if (SlotColor == EARAffinityColor::None)
-		{
-			return 0;
-		}
-
-		if (!ResolveFirstMeatDefinitionForColor(SlotColor, MeatDef))
-		{
-			return 0;
-		}
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ItemDefinitions|Meat] ResolveBowlSlotItemValue failed for slot='%s': invalid or unresolvable MeatTag='%s'. Returning 0 instead of falling back."),
+			*StaticEnum<EARRamenStationType>()->GetNameStringByValue(static_cast<int64>(SlotSpec.SlotType)),
+			*SlotMeatTag.ToString());
+		return 0;
 	}
 
 	if (!MeatDef.MeatTag.IsValid())
 	{
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ItemDefinitions|Meat] ResolveBowlSlotItemValue failed for slot='%s': resolved meat definition did not expose a valid MeatTag. Returning 0."),
+			*StaticEnum<EARRamenStationType>()->GetNameStringByValue(static_cast<int64>(SlotSpec.SlotType)));
 		return 0;
 	}
 
 	FARScrapyardItemDefRow ItemDef;
 	if (!ResolveItemDefinition(MeatDef.MeatTag, ItemDef))
 	{
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ItemDefinitions|Meat] ResolveBowlSlotItemValue failed for slot='%s': could not resolve shared item definition for MeatTag='%s'. Returning 0."),
+			*StaticEnum<EARRamenStationType>()->GetNameStringByValue(static_cast<int64>(SlotSpec.SlotType)),
+			*MeatDef.MeatTag.ToString());
 		return 0;
 	}
 
@@ -424,52 +337,10 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 		return false;
 	}
 
-	auto TryResolveViaItemRootRowName = [this, Resolver, ItemTag, &OutItemDef]() -> bool
-	{
-		const FGameplayTag ItemRootTag = ResolveItemRootTag();
-		const FGameplayTag MeatRootTag = ResolveMeatRootTag();
-		if (!ItemRootTag.IsValid() || !MeatRootTag.IsValid() || !ItemTag.MatchesTag(MeatRootTag))
-		{
-			return false;
-		}
-
-		UDataTable* ItemDataTable = nullptr;
-		FString ItemTableResolveError;
-		if (!Resolver->TryResolveDataTableForRootTag(ItemRootTag, ItemDataTable, ItemTableResolveError) || !ItemDataTable)
-		{
-			return false;
-		}
-
-		const FName ItemRowName = ExtractLeafRowNameFromTag(ItemTag);
-		if (ItemRowName.IsNone())
-		{
-			return false;
-		}
-
-		const FARScrapyardItemDefRow* ItemRow = ItemDataTable->FindRow<FARScrapyardItemDefRow>(ItemRowName, TEXT("ResolveItemDefinition_ItemRootFallback"), false);
-		if (!ItemRow)
-		{
-			return false;
-		}
-
-		OutItemDef = *ItemRow;
-		if (!OutItemDef.ItemTag.IsValid())
-		{
-			OutItemDef.ItemTag = ItemTag;
-		}
-		ApplyKnowledgeTextFallback(ItemTag, OutItemDef);
-		return true;
-	};
-
 	FInstancedStruct RowData;
 	FString ResolveError;
 	if (!Resolver->TryResolveRowStructForTag(ItemTag, RowData, ResolveError))
 	{
-		if (TryResolveViaItemRootRowName())
-		{
-			return true;
-		}
-
 		UE_LOG(
 			ARLog,
 			Warning,
@@ -482,11 +353,6 @@ bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal(
 	const FARScrapyardItemDefRow* TypedDef = RowData.GetPtr<FARScrapyardItemDefRow>();
 	if (!TypedDef)
 	{
-		if (TryResolveViaItemRootRowName())
-		{
-			return true;
-		}
-
 		UE_LOG(
 			ARLog,
 			Warning,

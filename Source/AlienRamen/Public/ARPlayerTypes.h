@@ -106,22 +106,22 @@ namespace ARPlayer
 
 	static inline FGameplayTag GetBrotherCharacterTag()
 	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
+		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Character.Brother"), false);
 	}
 
 	static inline FGameplayTag GetSisterCharacterTag()
 	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
+		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Character.Sister"), false);
 	}
 
 	static inline FGameplayTag GetBrotherParleySpeakerTag()
 	{
-		return GetBrotherCharacterTag();
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Brother"), false);
 	}
 
 	static inline FGameplayTag GetSisterParleySpeakerTag()
 	{
-		return GetSisterCharacterTag();
+		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Sister"), false);
 	}
 
 	static inline FGameplayTag GetBrotherShopCharacterTag()
@@ -132,16 +132,6 @@ namespace ARPlayer
 	static inline FGameplayTag GetSisterShopCharacterTag()
 	{
 		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Character.Sister"), false);
-	}
-
-	static inline FGameplayTag GetBrotherShopCustomerTag()
-	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Customer.Brother"), false);
-	}
-
-	static inline FGameplayTag GetSisterShopCustomerTag()
-	{
-		return FGameplayTag::RequestGameplayTag(TEXT("Shop.Customer.Sister"), false);
 	}
 
 	static inline FGameplayTag GetCharacterTagForChoice(const EARCharacterChoice Choice)
@@ -165,21 +155,13 @@ namespace ARPlayer
 		}
 
 		const FGameplayTag BrotherCanonicalTag = GetBrotherShopCharacterTag();
-		const FGameplayTag BrotherSpeakerTag = GetBrotherParleySpeakerTag();
-		const FGameplayTag BrotherCustomerTag = GetBrotherShopCustomerTag();
-		if ((BrotherCanonicalTag.IsValid() && CharacterTag.MatchesTag(BrotherCanonicalTag))
-			|| (BrotherSpeakerTag.IsValid() && CharacterTag.MatchesTag(BrotherSpeakerTag))
-			|| (BrotherCustomerTag.IsValid() && CharacterTag.MatchesTag(BrotherCustomerTag)))
+		if (BrotherCanonicalTag.IsValid() && CharacterTag.MatchesTagExact(BrotherCanonicalTag))
 		{
 			return EARCharacterChoice::Brother;
 		}
 
 		const FGameplayTag SisterCanonicalTag = GetSisterShopCharacterTag();
-		const FGameplayTag SisterSpeakerTag = GetSisterParleySpeakerTag();
-		const FGameplayTag SisterCustomerTag = GetSisterShopCustomerTag();
-		if ((SisterCanonicalTag.IsValid() && CharacterTag.MatchesTag(SisterCanonicalTag))
-			|| (SisterSpeakerTag.IsValid() && CharacterTag.MatchesTag(SisterSpeakerTag))
-			|| (SisterCustomerTag.IsValid() && CharacterTag.MatchesTag(SisterCustomerTag)))
+		if (SisterCanonicalTag.IsValid() && CharacterTag.MatchesTagExact(SisterCanonicalTag))
 		{
 			return EARCharacterChoice::Sister;
 		}
@@ -233,4 +215,3 @@ namespace ARPlayer
 		return FGameplayTag();
 	}
 }
-

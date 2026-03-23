@@ -47,7 +47,7 @@ This document captures the server-authoritative runtime contract for:
 
 - Scrapyard item definitions: route root `Item` (`FARScrapyardItemDefRow`).
   - Includes item type/rarity, main/alt text, knowledge gates, spawn conditions, rewards, sell value, stack/weight/model metadata.
-- Ship definitions (`Unlock.Ship.*`, `FARShipDefRow` in `ARLoadoutTypes.h`) should provide `ScrapyardPawnClass` and may provide `DummyPawnClass` as a mode-agnostic fallback for spawn selection. `InvaderPawnClass` remains the Invader-mode counterpart on the same row.
+- Ship definitions (`Unlock.Ship.*`, `FARShipDefRow` in `ARLoadoutTypes.h`) should provide canonical mode pawn classes directly: `ScrapyardPawnClass` for Scrapyard and `InvaderPawnClass` for Invader.
 - Energy drink definitions: route root `Item.EnergyDrink` (`FAREnergyDrinkDefRow`).
   - Includes icon + per-run GE/tag payload + stack rules.
 - Economy tuning: `UAREconomySettings`.

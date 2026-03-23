@@ -11,9 +11,7 @@
 
 class AController;
 class APawn;
-class FProperty;
 class APlayerController;
-class UScriptStruct;
 class UARInvaderDirectorSubsystem;
 
 UCLASS()
@@ -47,7 +45,6 @@ public:
 	bool FinalizeInvaderRunAndTravel(const FString& InTravelURL = TEXT(""));
 
 private:
-	static FProperty* FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix);
 	bool ResolveInvaderPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
 	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);
 

@@ -12,8 +12,6 @@
 class AController;
 class APawn;
 class APlayerController;
-class FProperty;
-class UScriptStruct;
 class UClass;
 
 UCLASS()
@@ -38,7 +36,6 @@ protected:
 	TSoftObjectPtr<UARScrapyardSpawnRuleSet> SpawnRuleSet;
 
 private:
-	static FProperty* FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix);
 	bool ResolveScrapyardPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
 	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);
 	void InitializeScrapyardSpawns();

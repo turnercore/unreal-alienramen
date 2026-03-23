@@ -69,10 +69,6 @@ struct FARWaveEnemySpawnDef
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	FGameplayTag EnemyIdentifierTag;
 
-	// Legacy path retained for migration support only; runtime spawn identity should use EnemyIdentifierTag.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta=(DeprecatedProperty, DeprecationMessage="Use EnemyIdentifierTag. EnemyClass is legacy migration-only."))
-	TSubclassOf<AAREnemyBase> EnemyClass;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	EARAffinityColor EnemyColor = EARAffinityColor::Red;
 

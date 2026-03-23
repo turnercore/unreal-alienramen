@@ -90,6 +90,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
   - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> shared item `SellMoneyValue`; runtime uses `MeatTag` as single identity and resolves shared item rows through the `Item` root by leaf row name when `Item.Meat` route overlap exists
+  - single-slot meat pricing requires a valid, resolvable `MeatTag`; malformed bowl slot data logs an error and resolves that slot to `0` instead of pricing it from a fallback meat definition
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
   - item quality multipliers are authored on `AARShopGameMode` (`Low/Standard/High/Premium` defaults `0.25 / 1.0 / 1.25 / 2.0`)
 - Vending settlement:
@@ -215,7 +216,7 @@ This document captures the runtime ownership and integration contract for the sh
   - `UARShopStateTreeAIComponentSchema`
   - `AARShopAIController` start/event helpers
 - `AARShopAIController` maps active `State.ShopNPC.*` tags to speaker dialogue gating:
-  - dialogue allowed when `State.ShopNPC.Dialogue` is active (legacy `State.ShopNPC.DialogueWindow` still maps through tag redirects)
+  - dialogue allowed when `State.ShopNPC.Dialogue` is active
   - otherwise dialogue is locally blocked while non-dialogue shop states are active
   - dialogue gate automatically reopens when `State.ShopNPC` is not active and on controller unpossess cleanup.
 - Customer component emits order lifecycle events (`Event.ShopNPC.OrderGenerated` / `Event.ShopNPC.OrderServed`) for StateTree-driven speaker behavior.

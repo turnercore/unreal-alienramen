@@ -212,6 +212,7 @@ If you need a blocking save before travel or another hard gate, call `SaveCurren
 1. Get subsystem.
 2. Call `LoadGame(SlotBaseName, -1, OutResult, bUseDebugSaves)` for latest revision.
 3. On `OnGameLoaded`, continue map/gameplay flow.
+4. Load no longer backfills missing location metadata into the save object. `LastSavedModeTag` / `LastSavedMapPath` must come from authored/current-schema saves; travel fallback resolution stays in `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`.
 
 ## Extend Save Data
 

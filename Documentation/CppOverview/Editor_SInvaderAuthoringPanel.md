@@ -24,6 +24,8 @@ Path: `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.h/.cpp`
 - `OnStartOrAttachPIE`, `OnStartRun`, `OnStopRun`, `OnForceStage`, `OnForceWave`, `OnForceThreat`, `OnDumpState`
 - Save bootstrap:
 - `SchedulePIESaveBootstrap`, `RunPIESaveBootstrap`
+  - Uses explicit `UARSaveSubsystem::LoadGame(...)` and then opens the configured debug map.
+  - Legacy reflection/polling paths (`FindFunction("LoadSave")`, `SignalOnGameLoaded`) were removed.
 
 ## Key Editor State Variables
 - Active mode: waves/stages
@@ -38,4 +40,3 @@ Path: `Source/AlienRamenEditor/Private/ARInvaderAuthoringPanel.h/.cpp`
 - disabled rows shown as gray with `[Disabled]`
 - canvas multiselect + drag move + rectangle select
 - standard dirty-package persistence flow (no forced autosave every edit)
-

@@ -27,9 +27,6 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring")
 	TSoftObjectPtr<UDataTable> EnemyDataTable;
 
-	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Persistence")
-	bool bAutoSaveTablesOnEdit = false;
-
 	UPROPERTY(Config, EditAnywhere, Category="Invader Authoring|Backups")
 	bool bCreateBackupOnToolOpen = true;
 

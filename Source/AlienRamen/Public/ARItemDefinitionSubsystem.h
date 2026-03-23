@@ -47,36 +47,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveMeatDefinitionForEnemy(FGameplayTag EnemyIdentifierTag, FARMeatDefinitionRow& OutMeatDef) const;
 
-	/** Legacy color-based meat-definition lookup is deprecated. This remains a compatibility bridge that maps legacy colors to canonical Item.Meat tags. */
-	UFUNCTION(
-		BlueprintPure,
-		Category = "Alien Ramen|Items|Meat",
-		meta = (DeprecatedFunction, DeprecationMessage = "Use ResolveMeatDefinition or ResolveMeatDefinitionForEnemy. Legacy color-based lookups still map to canonical Item.Meat tags for compatibility."))
-	bool ResolveFirstMeatDefinitionForColor(EARAffinityColor Color, FARMeatDefinitionRow& OutMeatDef) const;
-
 	/** Resolves the first deterministic Item.Meat tag (row-name sort). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	bool ResolveFirstMeatTag(FGameplayTag& OutMeatTag) const;
-
-	/** Legacy color-based meat-tag lookup is deprecated. This remains a compatibility bridge that maps legacy colors to canonical Item.Meat tags. */
-	UFUNCTION(
-		BlueprintPure,
-		Category = "Alien Ramen|Items|Meat",
-		meta = (DeprecatedFunction, DeprecationMessage = "Use ResolveFirstMeatTag or ResolveMeatDefinitionForEnemy. Legacy color-based lookups still map to canonical Item.Meat tags for compatibility."))
-	bool ResolveFirstMeatTagForColor(EARAffinityColor Color, FGameplayTag& OutMeatTag) const;
-
-	/** Legacy color-based meat-tag query is deprecated. This remains a compatibility bridge that maps legacy colors to canonical Item.Meat tags. */
-	UFUNCTION(
-		BlueprintPure,
-		Category = "Alien Ramen|Items|Meat",
-		meta = (DeprecatedFunction, DeprecationMessage = "Legacy color-based lookups still map to canonical Item.Meat tags for compatibility."))
-	bool GetMeatTagsForColor(EARAffinityColor Color, TArray<FGameplayTag>& OutMeatTags) const;
 
 	/** Resolves summed item sell value for all meat tags authored on a completed bowl. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	int32 ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const;
 
-	/** Resolves item sell value for a single bowl slot from meat tag (or color fallback when tag missing). */
+	/** Resolves item sell value for a single bowl slot from meat tag; invalid or unresolvable tags log an error and return 0. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	int32 ResolveBowlSlotItemValue(const FARRamenBowlSlotSpec& SlotSpec) const;
 

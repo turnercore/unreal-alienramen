@@ -219,12 +219,7 @@ void AARShopAIController::RefreshSpeakerDialogueGateFromStateTags()
 
 	const FGameplayTagContainer ActiveTags = StateTreeComponent->GetCurrentActiveStateTags();
 	const FGameplayTag ShopStateRootTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC")), false);
-	FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.Dialogue")), false);
-	if (!DialogueWindowTag.IsValid())
-	{
-		// Legacy fallback for older content still authored against the deprecated tag name.
-		DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.DialogueWindow")), false);
-	}
+	const FGameplayTag DialogueWindowTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TEXT("State.ShopNPC.Dialogue")), false);
 	const bool bShopStateActive = ShopStateRootTag.IsValid() && ActiveTags.HasTag(ShopStateRootTag);
 	const bool bDialogueWindowActive = DialogueWindowTag.IsValid() && ActiveTags.HasTagExact(DialogueWindowTag);
 	const bool bHasActiveOrder = SpeakerPawn->GetCustomerComponent()->HasOrderForInteraction();

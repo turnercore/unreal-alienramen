@@ -48,13 +48,6 @@ bool UGameplayTagUtilities::TryMakeTagFromParts(const TArray<FString>& Parts, in
 	return OutTag.IsValid();
 }
 
-int32 UGameplayTagUtilities::GetTagDepth(FGameplayTag Tag)
-{
-	TArray<FString> Parts;
-	if (!SplitTagToParts(Tag, Parts)) return 0;
-	return Parts.Num();
-}
-
 bool UGameplayTagUtilities::TryGetParentTag(FGameplayTag Tag, FGameplayTag& OutParent)
 {
 	TArray<FString> Parts;
@@ -62,26 +55,6 @@ bool UGameplayTagUtilities::TryGetParentTag(FGameplayTag Tag, FGameplayTag& OutP
 	if (Parts.Num() < 2) return false;
 
 	return TryMakeTagFromParts(Parts, Parts.Num() - 1, OutParent);
-}
-
-bool UGameplayTagUtilities::TryGetAncestorTag(FGameplayTag Tag, int32 UpLevels, FGameplayTag& OutAncestor)
-{
-	TArray<FString> Parts;
-	if (!SplitTagToParts(Tag, Parts)) return false;
-	if (UpLevels <= 0) return false;
-
-	const int32 WantedParts = Parts.Num() - UpLevels;
-	if (WantedParts < 1) return false;
-
-	return TryMakeTagFromParts(Parts, WantedParts, OutAncestor);
-}
-
-bool UGameplayTagUtilities::TryGetTopLevelTag(FGameplayTag Tag, FGameplayTag& OutTopLevel)
-{
-	TArray<FString> Parts;
-	if (!SplitTagToParts(Tag, Parts)) return false;
-
-	return TryMakeTagFromParts(Parts, 1, OutTopLevel);
 }
 
 bool UGameplayTagUtilities::TryGetTagAtDepth(FGameplayTag Tag, int32 Depth, FGameplayTag& OutTagAtDepth)
@@ -93,25 +66,6 @@ bool UGameplayTagUtilities::TryGetTagAtDepth(FGameplayTag Tag, int32 Depth, FGam
 	if (Depth < 1 || Depth > Parts.Num()) return false;
 
 	return TryMakeTagFromParts(Parts, Depth, OutTagAtDepth);
-}
-
-bool UGameplayTagUtilities::TryGetAllPrefixTags(FGameplayTag Tag, FGameplayTagContainer& OutPrefixes)
-{
-	OutPrefixes.Reset();
-
-	TArray<FString> Parts;
-	if (!SplitTagToParts(Tag, Parts)) return false;
-
-	for (int32 Depth = 1; Depth <= Parts.Num(); ++Depth)
-	{
-		FGameplayTag Prefix;
-		if (TryMakeTagFromParts(Parts, Depth, Prefix))
-		{
-			OutPrefixes.AddTag(Prefix);
-		}
-	}
-
-	return OutPrefixes.Num() > 0;
 }
 
 bool UGameplayTagUtilities::ReplaceTagInSlot(FGameplayTagContainer& InOutContainer, FGameplayTag NewTag)
@@ -146,56 +100,5 @@ bool UGameplayTagUtilities::ReplaceTagInSlot(FGameplayTagContainer& InOutContain
 
 	// Add the new selection tag itself
 	InOutContainer.AddTag(NewTag);
-	return true;
-}
-
-bool UGameplayTagUtilities::GetDirectChildrenOfTag(
-	FGameplayTag ParentTag,
-	TArray<FGameplayTag>& OutDirectChildren,
-	bool& bFoundAny,
-	FGameplayTag& OutFirstChild
-)
-{
-	OutDirectChildren.Reset();
-	bFoundAny = false;
-	OutFirstChild = FGameplayTag();
-
-	if (!ParentTag.IsValid())
-	{
-		return false; // invalid input
-	}
-
-	UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
-
-	// Get ALL descendants (subtree) of ParentTag
-	const FGameplayTagContainer Descendants = Manager.RequestGameplayTagChildren(ParentTag);
-
-	if (Descendants.IsEmpty())
-	{
-		return true; // valid input, just no children
-	}
-
-	const int32 ParentDepth = GetTagDepth(ParentTag);
-	TArray<FGameplayTag> All;
-	Descendants.GetGameplayTagArray(All);
-
-	// Filter to only tags that are exactly 1 level deeper than parent
-	for (const FGameplayTag& T : All)
-	{
-		if (!T.IsValid()) continue;
-
-		const int32 Depth = GetTagDepth(T);
-		if (Depth == ParentDepth + 1)
-		{
-			OutDirectChildren.Add(T);
-		}
-	}
-
-	bFoundAny = OutDirectChildren.Num() > 0;
-	if (bFoundAny)
-	{
-		OutFirstChild = OutDirectChildren[0];
-	}
-
 	return true;
 }

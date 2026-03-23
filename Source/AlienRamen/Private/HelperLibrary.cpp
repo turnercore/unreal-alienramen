@@ -196,7 +196,7 @@ FInstancedStruct UHelperLibrary::ExtractObjectToStructByName(UObject* Source, US
 	Out.InitializeAs(StructType);
 
 	void* StructPtr = Out.GetMutableMemory();
-	ExtractObjectToStructByName_Impl(Source, StructType, StructPtr, /*bEnableLog*/ true, /*bResetStructToDefaults*/ false);
+	ExtractObjectToStructByName_Impl(Source, StructType, StructPtr, /*bEnableLog*/ true);
 
 	return Out;
 }
@@ -209,8 +209,7 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 	UObject* Source,
 	const UStruct* StructType,
 	void* StructPtr,
-	bool bEnableLog,
-	bool bResetStructToDefaults)
+	bool bEnableLog)
 {
 	if (!Source || !StructType || !StructPtr)
 	{
@@ -223,14 +222,6 @@ void UHelperLibrary::ExtractObjectToStructByName_Impl(
 		*GetNameSafe(Source),
 		*GetNameSafe(SourceClass),
 		*GetNameSafe(StructType)));
-
-	// Only needed when caller passes in an already-live struct buffer they want reset.
-	// For FInstancedStruct::InitializeAs, the memory is already constructed.
-	if (bResetStructToDefaults)
-	{
-		StructType->DestroyStruct(StructPtr);
-		StructType->InitializeStruct(StructPtr);
-	}
 
 	// Map normalized name -> source candidates
 	TMultiMap<FString, FProperty*> SrcByName;

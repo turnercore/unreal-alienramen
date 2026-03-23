@@ -2266,24 +2266,28 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 	TSubclassOf<AARInvaderDropBase> MeatDropActorClass = AARInvaderDropBase::StaticClass();
 	if (DropType == EARInvaderDropType::Meat)
 	{
-		if (!ItemDefinitions || !ItemDefinitions->ResolveFirstMeatTagForColor(Enemy->GetEnemyColor(), DropMeatTag))
+		FARMeatDefinitionRow MeatDefinition;
+		const FGameplayTag EnemyIdentifierTag = Enemy->GetEnemyIdentifierTag();
+		if (!ItemDefinitions
+			|| !EnemyIdentifierTag.IsValid()
+			|| !ItemDefinitions->ResolveMeatDefinitionForEnemy(EnemyIdentifierTag, MeatDefinition))
 		{
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[InvaderDrop] Failed to resolve Item.Meat tag for enemy color=%d; skipping meat drop spawn."),
-				static_cast<int32>(Enemy->GetEnemyColor()));
+				TEXT("[InvaderDrop] Failed to resolve Item.Meat definition for enemy identifier '%s'; skipping meat drop spawn."),
+				*EnemyIdentifierTag.ToString());
 			return;
 		}
 
-		FARMeatDefinitionRow MeatDefinition;
-		if (!ItemDefinitions->ResolveMeatDefinition(DropMeatTag, MeatDefinition))
+		DropMeatTag = MeatDefinition.MeatTag;
+		if (!DropMeatTag.IsValid())
 		{
 			UE_LOG(
 				ARLog,
 				Warning,
-				TEXT("[InvaderDrop] Failed to resolve meat definition for tag='%s'; skipping meat drop spawn."),
-				*DropMeatTag.ToString());
+				TEXT("[InvaderDrop] Meat definition for enemy identifier '%s' returned an invalid meat tag; skipping meat drop spawn."),
+				*EnemyIdentifierTag.ToString());
 			return;
 		}
 

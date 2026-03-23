@@ -80,6 +80,8 @@
 		}
 	],
 	"TargetPlatforms": [
-		"Windows"
+		"Windows",
+		"Linux",
+		"Mac"
 	]
 }

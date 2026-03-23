@@ -50,16 +50,16 @@ public:
 	bool GetCurrentRunBuffStateSnapshot(FARRunBuffStateSnapshot& OutSnapshot) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
-	bool HasCurrentExtractionSummary() const { return bHasCurrentExtractionSummary; }
+	bool HasCurrentExtractionSummary() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
-	bool HasCurrentRunTimer() const { return bHasCurrentRunTimer; }
+	bool HasCurrentRunTimer() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
-	bool HasCurrentRunActive() const { return bHasCurrentRunActive; }
+	bool HasCurrentRunActive() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Scrapyard|UI")
-	bool HasCurrentRunBuffStateSnapshot() const { return bHasCurrentRunBuffStateSnapshot; }
+	bool HasCurrentRunBuffStateSnapshot() const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Scrapyard|UI")
 	FAROnScrapyardWidgetExtractionSummaryChangedSignature OnScrapyardWidgetExtractionSummaryChanged;
@@ -121,28 +121,4 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
 	TWeakObjectPtr<AARScrapyardHUD> BoundScrapyardHUD;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
-	FARScrapyardExtractionSummary CurrentExtractionSummary;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
-	float CurrentRunRemainingSeconds = 0.0f;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
-	bool bCurrentRunActive = false;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard|UI", meta = (AllowPrivateAccess = "true"))
-	FARRunBuffStateSnapshot CurrentRunBuffStateSnapshot;
-
-	UPROPERTY(Transient)
-	bool bHasCurrentExtractionSummary = false;
-
-	UPROPERTY(Transient)
-	bool bHasCurrentRunTimer = false;
-
-	UPROPERTY(Transient)
-	bool bHasCurrentRunActive = false;
-
-	UPROPERTY(Transient)
-	bool bHasCurrentRunBuffStateSnapshot = false;
 };

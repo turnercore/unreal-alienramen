@@ -2,55 +2,13 @@
 
 #include "ARGameStateBase.h"
 #include "ARLog.h"
+#include "ARModeMapPathUtility.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
 #include "StructSerializable.h"
 #include "Kismet/GameplayStatics.h"
 #include "StructUtils/InstancedStruct.h"
-
-namespace ARTravelInternal
-{
-	static FString ResolveDefaultMapPathForModeTag(const FGameplayTag& ModeTag)
-	{
-		if (!ModeTag.IsValid())
-		{
-			return FString();
-		}
-
-		const FGameplayTag LobbyModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Lobby"), false);
-		if (LobbyModeTag.IsValid() && ModeTag.MatchesTagExact(LobbyModeTag))
-		{
-			return TEXT("/Game/Maps/Lvl_MultiplayerLobby");
-		}
-
-		const FGameplayTag ShopModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Shop"), false);
-		if (ShopModeTag.IsValid() && ModeTag.MatchesTagExact(ShopModeTag))
-		{
-			return TEXT("/Game/Maps/Lvl_RamenShop");
-		}
-
-		const FGameplayTag InvaderModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Invader"), false);
-		if (InvaderModeTag.IsValid() && ModeTag.MatchesTagExact(InvaderModeTag))
-		{
-			return TEXT("/Game/Maps/Lvl_Invader");
-		}
-
-		const FGameplayTag ScrapyardModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Scrapyard"), false);
-		if (ScrapyardModeTag.IsValid() && ModeTag.MatchesTagExact(ScrapyardModeTag))
-		{
-			return TEXT("/Game/Maps/Lvl_Scrapyard");
-		}
-
-		const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
-		if (TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag))
-		{
-			return TEXT("/Game/Maps/Lvl_Loading");
-		}
-
-		return FString();
-	}
-}
 
 bool UARTravelSubsystem::TravelToLoadedSaveDestination(const bool bUseOpenLevelInPIE, const FString& TransitionMapURL)
 {
@@ -112,7 +70,7 @@ FString UARTravelSubsystem::BuildLoadedSaveTravelURL(
 {
 	const FString ResolvedDestinationURL = !PreferredDestinationURL.IsEmpty()
 		? PreferredDestinationURL
-		: ARTravelInternal::ResolveDefaultMapPathForModeTag(SavedModeTag);
+		: ARModeMapPath::ResolveDefaultMapPathForModeTag(SavedModeTag);
 	if (ResolvedDestinationURL.IsEmpty())
 	{
 		return FString();

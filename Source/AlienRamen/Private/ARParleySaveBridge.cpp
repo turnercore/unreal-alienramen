@@ -20,9 +20,31 @@ namespace
 		return FGameplayTag::RequestGameplayTag(TEXT("Parley.Speaker.Owner"), false);
 	}
 
+	static EARCharacterChoice GetCharacterChoiceFromSpeakerTag(const FGameplayTag& SpeakerTag)
+	{
+		if (!SpeakerTag.IsValid())
+		{
+			return EARCharacterChoice::None;
+		}
+
+		const FGameplayTag BrotherSpeakerTag = ARPlayer::GetBrotherParleySpeakerTag();
+		if (BrotherSpeakerTag.IsValid() && SpeakerTag.MatchesTagExact(BrotherSpeakerTag))
+		{
+			return EARCharacterChoice::Brother;
+		}
+
+		const FGameplayTag SisterSpeakerTag = ARPlayer::GetSisterParleySpeakerTag();
+		if (SisterSpeakerTag.IsValid() && SpeakerTag.MatchesTagExact(SisterSpeakerTag))
+		{
+			return EARCharacterChoice::Sister;
+		}
+
+		return ARPlayer::GetCharacterChoiceForTag(SpeakerTag);
+	}
+
 	static bool IsPlayerCharacterSpeakerTag(const FGameplayTag& SpeakerTag)
 	{
-		return ARPlayer::GetCharacterChoiceForTag(SpeakerTag) != EARCharacterChoice::None
+		return GetCharacterChoiceFromSpeakerTag(SpeakerTag) != EARCharacterChoice::None
 			|| SpeakerTag.MatchesTagExact(GetRequesterPlaceholderSpeakerTag())
 			|| SpeakerTag.MatchesTagExact(GetOwnerPlaceholderSpeakerTag());
 	}
@@ -35,20 +57,20 @@ namespace
 		}
 
 		OutVariants.AddUnique(SpeakerTag);
-		const EARCharacterChoice Choice = ARPlayer::GetCharacterChoiceForTag(SpeakerTag);
+		const EARCharacterChoice Choice = GetCharacterChoiceFromSpeakerTag(SpeakerTag);
 		if (Choice == EARCharacterChoice::Brother)
 		{
-			OutVariants.AddUnique(ARPlayer::GetSisterCharacterTag());
+			OutVariants.AddUnique(ARPlayer::GetSisterParleySpeakerTag());
 		}
 		else if (Choice == EARCharacterChoice::Sister)
 		{
-			OutVariants.AddUnique(ARPlayer::GetBrotherCharacterTag());
+			OutVariants.AddUnique(ARPlayer::GetBrotherParleySpeakerTag());
 		}
 		else if (SpeakerTag.MatchesTagExact(GetRequesterPlaceholderSpeakerTag())
 			|| SpeakerTag.MatchesTagExact(GetOwnerPlaceholderSpeakerTag()))
 		{
-			OutVariants.AddUnique(ARPlayer::GetBrotherCharacterTag());
-			OutVariants.AddUnique(ARPlayer::GetSisterCharacterTag());
+			OutVariants.AddUnique(ARPlayer::GetBrotherParleySpeakerTag());
+			OutVariants.AddUnique(ARPlayer::GetSisterParleySpeakerTag());
 		}
 	}
 
@@ -416,4 +438,3 @@ UARSaveGame* UARParleySaveBridge::GetCurrentSave() const
 {
 	return SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
 }
-
