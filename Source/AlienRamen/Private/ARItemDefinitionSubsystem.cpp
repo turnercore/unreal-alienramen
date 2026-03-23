@@ -286,20 +286,34 @@ int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue(const FARRamenBowlSlo
 	const FGameplayTag SlotMeatTag = SlotSpec.MeatTag;
 	if (!ResolveMeatDefinition(SlotMeatTag, MeatDef))
 	{
-		if (!ResolveFirstMeatDefinition(MeatDef))
-		{
-			return 0;
-		}
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ItemDefinitions|Meat] ResolveBowlSlotItemValue failed for slot='%s': invalid or unresolvable MeatTag='%s'. Returning 0 instead of falling back."),
+			*StaticEnum<EARRamenStationType>()->GetNameStringByValue(static_cast<int64>(SlotSpec.SlotType)),
+			*SlotMeatTag.ToString());
+		return 0;
 	}
 
 	if (!MeatDef.MeatTag.IsValid())
 	{
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ItemDefinitions|Meat] ResolveBowlSlotItemValue failed for slot='%s': resolved meat definition did not expose a valid MeatTag. Returning 0."),
+			*StaticEnum<EARRamenStationType>()->GetNameStringByValue(static_cast<int64>(SlotSpec.SlotType)));
 		return 0;
 	}
 
 	FARScrapyardItemDefRow ItemDef;
 	if (!ResolveItemDefinition(MeatDef.MeatTag, ItemDef))
 	{
+		UE_LOG(
+			ARLog,
+			Error,
+			TEXT("[ItemDefinitions|Meat] ResolveBowlSlotItemValue failed for slot='%s': could not resolve shared item definition for MeatTag='%s'. Returning 0."),
+			*StaticEnum<EARRamenStationType>()->GetNameStringByValue(static_cast<int64>(SlotSpec.SlotType)),
+			*MeatDef.MeatTag.ToString());
 		return 0;
 	}
 

@@ -90,6 +90,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Serve payout formula (`UARCustomerComponent::TryServeBowl`):
   - `Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)`
   - `CombinedMeatValue` resolves from bowl slot `Item.Meat` tags -> shared item `SellMoneyValue`; runtime uses `MeatTag` as single identity and resolves shared item rows through the `Item` root by leaf row name when `Item.Meat` route overlap exists
+  - single-slot meat pricing requires a valid, resolvable `MeatTag`; malformed bowl slot data logs an error and resolves that slot to `0` instead of pricing it from a fallback meat definition
   - sampled reaction multiplier range source is `AARShopGameMode` (`Hate/Ok/Like/Love` ranges)
   - item quality multipliers are authored on `AARShopGameMode` (`Low/Standard/High/Premium` defaults `0.25 / 1.0 / 1.25 / 2.0`)
 - Vending settlement:

@@ -55,7 +55,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	int32 ResolveCombinedMeatItemValue(const FARRamenBowlSpec& BowlSpec) const;
 
-	/** Resolves item sell value for a single bowl slot from meat tag. */
+	/** Resolves item sell value for a single bowl slot from meat tag; invalid or unresolvable tags log an error and return 0. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Items|Meat")
 	int32 ResolveBowlSlotItemValue(const FARRamenBowlSlotSpec& SlotSpec) const;
 

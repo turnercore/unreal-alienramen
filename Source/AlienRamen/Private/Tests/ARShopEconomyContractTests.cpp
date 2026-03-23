@@ -121,6 +121,10 @@ bool FARShopEconomyCombinedBowlValueTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Broth slot has a positive base value"), BrothBaseValue > 0);
 	TestTrue(TEXT("Toppings slot has a positive base value"), ToppingsBaseValue > 0);
 
+	FARRamenBowlSlotSpec InvalidSlotSpec;
+	InvalidSlotSpec.SlotType = EARRamenStationType::Noodles;
+	TestEqual(TEXT("Invalid bowl slot meat tag resolves to zero value"), ItemDefinitions->ResolveBowlSlotItemValue(InvalidSlotSpec), 0);
+
 	const FFloatProperty* LowMultiplierProperty = FindFProperty<FFloatProperty>(AARShopGameMode::StaticClass(), TEXT("ItemQualityLowMultiplier"));
 	const FFloatProperty* HighMultiplierProperty = FindFProperty<FFloatProperty>(AARShopGameMode::StaticClass(), TEXT("ItemQualityHighMultiplier"));
 	const FFloatProperty* PremiumMultiplierProperty = FindFProperty<FFloatProperty>(AARShopGameMode::StaticClass(), TEXT("ItemQualityPremiumMultiplier"));
